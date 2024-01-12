@@ -135,6 +135,35 @@ namespace iiMenu.Mods.Spammers
 
             GetIndex("Projectile Delay").overlapText = "Projectile Delay <color=grey>[</color><color=green>" + (Mathf.Floor(projDebounceType * 10f) / 10f).ToString() + "</color><color=grey>]</color>";
         }
+
+        public static void BetaProjectileSpam()
+        {
+            if (rightGrab)
+            {
+                string[] fullProjectileNames = new string[]
+                {
+                "SlingshotProjectile",
+                "SnowballProjectile",
+                "WaterBalloonProjectile",
+                "LavaRockProjectile",
+                "HornsSlingshotProjectile_PrefabV",
+                "CloudSlingshot_Projectile",
+                "CupidArrow_Projectile",
+                "IceSlingshotProjectile_PrefabV Variant",
+                "ElfBow_Projectile",
+                "MoltenRockSlingshot_Projectile",
+                "SpiderBowProjectile Variant",
+                "BucketGift_Cane_Projectile Variant",
+                "BucketGift_Coal_Projectile Variant",
+                "BucketGift_Roll_Projectile Variant",
+                "BucketGift_Round_Projectile Variant",
+                "BucketGift_Square_Projectile Variant"
+                };
+
+                GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballRightAnchor").transform.Find("LMACF.").GetComponent<SnowballThrowable>().projectilePrefab.tag = fullProjectileNames[projmode];
+                GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballRightAnchor").transform.Find("LMACF.").GetComponent<SnowballThrowable>().OnRelease(null, null);
+            }
+        }
         /*
         public static void ProjectileSpam()
         {
