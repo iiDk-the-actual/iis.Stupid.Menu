@@ -11,11 +11,11 @@ namespace iiMenu.Mods
         {
             foreach (GorillaBattleManager battle in UnityEngine.Object.FindObjectsOfType<GorillaBattleManager>())
             {
-                if (!battle.photonView.IsMine)
+                if (!PhotonView.Get(battle).IsMine)
                 {
-                    battle.photonView.RequestOwnership();
+                    PhotonView.Get(battle).RequestOwnership();
                 }
-                if (battle.photonView.IsMine)
+                if (PhotonView.Get(battle).IsMine)
                 {
                     battle.StartBattle();
                 }
@@ -26,11 +26,11 @@ namespace iiMenu.Mods
         {
             foreach (GorillaBattleManager battle in UnityEngine.Object.FindObjectsOfType<GorillaBattleManager>())
             {
-                if (!battle.photonView.IsMine)
+                if (!PhotonView.Get(battle).IsMine)
                 {
-                    battle.photonView.RequestOwnership();
+                    PhotonView.Get(battle).RequestOwnership();
                 }
-                if (battle.photonView.IsMine)
+                if (PhotonView.Get(battle).IsMine)
                 {
                     battle.BattleEnd();
                 }
@@ -41,11 +41,11 @@ namespace iiMenu.Mods
         {
             foreach (GorillaBattleManager battle in UnityEngine.Object.FindObjectsOfType<GorillaBattleManager>())
             {
-                if (!battle.photonView.IsMine)
+                if (!PhotonView.Get(battle).IsMine)
                 {
-                    battle.photonView.RequestOwnership();
+                    PhotonView.Get(battle).RequestOwnership();
                 }
-                if (battle.photonView.IsMine)
+                if (PhotonView.Get(battle).IsMine)
                 {
                     battle.BattleEnd();
                     battle.StartBattle();
@@ -57,11 +57,11 @@ namespace iiMenu.Mods
         {
             foreach (GorillaBattleManager battle in UnityEngine.Object.FindObjectsOfType<GorillaBattleManager>())
             {
-                if (!battle.photonView.IsMine)
+                if (!PhotonView.Get(battle).IsMine)
                 {
-                    battle.photonView.RequestOwnership();
+                    PhotonView.Get(battle).RequestOwnership();
                 }
-                if (battle.photonView.IsMine)
+                if (PhotonView.Get(battle).IsMine)
                 {
                     foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
                     {

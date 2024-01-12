@@ -161,6 +161,7 @@ namespace iiMenu.Patches
         }
     }
 
+    /*
     [HarmonyPatch(typeof(GorillaGameManager), "LaunchSlingshotProjectile")]
     public class AntiCrash
     {
@@ -186,5 +187,5 @@ namespace iiMenu.Patches
             }
             return true;
         }
-    }
+    }*/
 }

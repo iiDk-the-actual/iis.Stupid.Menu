@@ -104,7 +104,7 @@ namespace iiMenu.Mods
                 }
             }
         }
-
+        /*
         public static void BlindGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
@@ -227,7 +227,7 @@ namespace iiMenu.Mods
 
             comp.Launch(startpos, charvel, PhotonNetwork.LocalPlayer, false, false, hashc, 1f, true, Color.black);
         }
-
+        */
         public static void KickGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
@@ -257,7 +257,7 @@ namespace iiMenu.Mods
                         {
                             PhotonNetworkController.Instance.shuffler = UnityEngine.Random.Range(0, 99999999).ToString().PadLeft(8, '0');
                             PhotonNetworkController.Instance.keyStr = UnityEngine.Random.Range(0, 99999999).ToString().PadLeft(8, '0');
-                            GorillaGameManager.instance.photonView.RPC("JoinPubWithFriends", owner, new object[]
+                            PhotonView.Get(GorillaGameManager.instance).RPC("JoinPubWithFriends", owner, new object[]
                             {
                                 PhotonNetworkController.Instance.shuffler,
                                 PhotonNetworkController.Instance.keyStr
@@ -284,7 +284,7 @@ namespace iiMenu.Mods
                     {
                         PhotonNetworkController.Instance.shuffler = UnityEngine.Random.Range(0, 99999999).ToString().PadLeft(8, '0');
                         PhotonNetworkController.Instance.keyStr = UnityEngine.Random.Range(0, 99999999).ToString().PadLeft(8, '0');
-                        GorillaGameManager.instance.photonView.RPC("JoinPubWithFriends", player, new object[]
+                        PhotonView.Get(GorillaGameManager.instance).RPC("JoinPubWithFriends", player, new object[]
                         {
                             PhotonNetworkController.Instance.shuffler,
                             PhotonNetworkController.Instance.keyStr
@@ -295,7 +295,7 @@ namespace iiMenu.Mods
                 RPCProtection();
             }
         }
-
+        /*
         public static void CrashGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
@@ -538,7 +538,7 @@ namespace iiMenu.Mods
                 GorillaTagger.Instance.offlineVRRig.enabled = true;
             }
         }
-
+        */
         public static void DestroyGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)

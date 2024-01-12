@@ -135,7 +135,7 @@ namespace iiMenu.Mods.Spammers
 
             GetIndex("Projectile Delay").overlapText = "Projectile Delay <color=grey>[</color><color=green>" + (Mathf.Floor(projDebounceType * 10f) / 10f).ToString() + "</color><color=grey>]</color>";
         }
-
+        /*
         public static void ProjectileSpam()
         {
             string[] fullProjectileNames = new string[]
@@ -2215,6 +2215,6 @@ namespace iiMenu.Mods.Spammers
                     GorillaTagger.Instance.offlineVRRig.enabled = true;
                 }
             }
-        }
+        }*/
     }
 }

@@ -193,7 +193,7 @@ namespace iiMenu.Menu
                             }
                         }
                         motdTextB.text = @"
-You are using version 2.5p1. This menu was created by iiDk (@goldentrophy) on
+You are using version 2.5p2b1. This menu was created by iiDk (@goldentrophy) on
 discord. This menu is completely free and unobfuscated, if you paid for this
 menu you have been scammed. There are a total of <b> " + fullModAmount + @" </b> mods on this
 menu. <color=red>I, iiDk, am not responsible for any bans using this menu.</color> If you get
@@ -555,13 +555,13 @@ banned while using this, please report it to the discord server.";
                             {
                                 GorillaTagger.Instance.StartVibration(true, GorillaTagger.Instance.tagHapticStrength / 2f, GorillaTagger.Instance.tagHapticDuration / 2f);
                                 GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(8, true, 0.4f);
-                                if (GetIndex("Serversided Button Sounds").enabled)
+                                if (GetIndex("Serversided Button Sounds").enabled && PhotonNetwork.InRoom)
                                 {
                                     GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.Others, new object[]{
-                                    8,
-                                    true,
-                                    0.4f
-                                });
+                                        8,
+                                        GetIndex("Right Hand").enabled,
+                                        0.4f
+                                    });
                                     RPCProtection();
                                 }
                                 Toggle("PreviousPage");
@@ -572,13 +572,13 @@ banned while using this, please report it to the discord server.";
                             {
                                 GorillaTagger.Instance.StartVibration(false, GorillaTagger.Instance.tagHapticStrength / 2f, GorillaTagger.Instance.tagHapticDuration / 2f);
                                 GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(8, false, 0.4f);
-                                if (GetIndex("Serversided Button Sounds").enabled)
+                                if (GetIndex("Serversided Button Sounds").enabled && PhotonNetwork.InRoom)
                                 {
                                     GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.Others, new object[]{
-                                    8,
-                                    false,
-                                    0.4f
-                                });
+                                        8,
+                                        GetIndex("Right Hand").enabled,
+                                        0.4f
+                                    });
                                     RPCProtection();
                                 }
                                 Toggle("NextPage");
@@ -592,13 +592,13 @@ banned while using this, please report it to the discord server.";
                             {
                                 GorillaTagger.Instance.StartVibration(true, GorillaTagger.Instance.tagHapticStrength / 2f, GorillaTagger.Instance.tagHapticDuration / 2f);
                                 GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(8, true, 0.4f);
-                                if (GetIndex("Serversided Button Sounds").enabled)
+                                if (GetIndex("Serversided Button Sounds").enabled && PhotonNetwork.InRoom)
                                 {
                                     GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.Others, new object[]{
-                                    8,
-                                    true,
-                                    0.4f
-                                });
+                                        8,
+                                        GetIndex("Right Hand").enabled,
+                                        0.4f
+                                    });
                                     RPCProtection();
                                 }
                                 Toggle("PreviousPage");
@@ -609,13 +609,13 @@ banned while using this, please report it to the discord server.";
                             {
                                 GorillaTagger.Instance.StartVibration(false, GorillaTagger.Instance.tagHapticStrength / 2f, GorillaTagger.Instance.tagHapticDuration / 2f);
                                 GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(8, false, 0.4f);
-                                if (GetIndex("Serversided Button Sounds").enabled)
+                                if (GetIndex("Serversided Button Sounds").enabled && PhotonNetwork.InRoom)
                                 {
                                     GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.Others, new object[]{
-                                    8,
-                                    false,
-                                    0.4f
-                                });
+                                        8,
+                                        GetIndex("Right Hand").enabled,
+                                        0.4f
+                                    });
                                     RPCProtection();
                                 }
                                 Toggle("NextPage");
@@ -1834,7 +1834,7 @@ banned while using this, please report it to the discord server.";
                     GorillaNot.instance.rpcErrorMax = int.MaxValue;
                     GorillaNot.instance.rpcCallLimit = int.MaxValue;
                     GorillaNot.instance.logErrorMax = int.MaxValue;
-                    GorillaGameManager.instance.maxProjectilesToKeepTrackOfPerPlayer = int.MaxValue;
+                    // GorillaGameManager.instance.maxProjectilesToKeepTrackOfPerPlayer = int.MaxValue;
 
                     PhotonNetwork.RemoveRPCs(PhotonNetwork.LocalPlayer);
                     PhotonNetwork.OpCleanRpcBuffer(GorillaTagger.Instance.myVRRig);

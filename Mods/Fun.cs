@@ -314,7 +314,7 @@ namespace iiMenu.Mods
         {
             GameObject.Find("BeachBall").transform.position = new Vector3(99999f, 99999f, 99999f);
         }
-
+        /*
         public static void PopAllBalloons()
         {
             foreach (BalloonHoldable balloon in GameObject.FindObjectsOfType<BalloonHoldable>())
@@ -350,7 +350,7 @@ namespace iiMenu.Mods
                 originalprojectile.SetActive(true);
                 comp.Launch(startpos, charvel, PhotonNetwork.LocalPlayer, false, false, hashc, 1f, false);
             }
-        }
+        }*/
 
         public static void GrabBalloons()
         {
