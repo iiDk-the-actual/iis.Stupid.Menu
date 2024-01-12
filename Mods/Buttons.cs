@@ -427,7 +427,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Exit Experimental Mods", method =() => Settings.ReturnToMain(), isTogglable = false, toolTip = "Returns you back to the main page."},
 
                 new ButtonInfo { buttonText = "Experimental RPC Protection", toolTip = "Uses an experimental method of protecting your RPCs. Credits to Kante."},
-                new ButtonInfo { buttonText = "Anti Ban", method =() => Experimental.AntiBan(), isTogglable = false, toolTip = "Enables a probably not working anti ban, created by Cunzaki."},
+                //new ButtonInfo { buttonText = "Anti Ban", method =() => Experimental.AntiBan(), isTogglable = false, toolTip = "Enables a probably not working anti ban, created by Cunzaki."},
                 new ButtonInfo { buttonText = "Set Master <color=grey>[</color><color=red>Detected</color><color=grey>]</color>", method =() => Experimental.SetMaster(), isTogglable = false, toolTip = "Sets you as master client. Use the anti ban before this if you're not in a modded."},
             },
 

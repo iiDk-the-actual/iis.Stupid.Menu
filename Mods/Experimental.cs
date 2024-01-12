@@ -10,7 +10,7 @@ namespace iiMenu.Mods
 {
     internal class Experimental
     {
-        public static void AntiBan()
+        /*public static void AntiBan()
         {
             antiBanEnabled = true;
             ExecuteCloudScriptRequest executeCloudScriptRequest = new ExecuteCloudScriptRequest();
@@ -28,7 +28,7 @@ namespace iiMenu.Mods
             PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable, null, null);
 
             NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI BAN</color><color=grey>]</color> <color=white>The anti ban has been enabled! I take ZERO responsibility for bans using this.</color>");
-        }
+        }*/
 
         public static void SetMaster()
         {
