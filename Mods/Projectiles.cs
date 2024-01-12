@@ -1751,7 +1751,7 @@ namespace iiMenu.Mods.Spammers
                 Vector3 startpos = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, -0.15f, 0f);
                 Vector3 charvel = GorillaTagger.Instance.bodyCollider.transform.forward * 8.33f;
 
-                BetaFireProjectile("SlingshotProjectile", startpos, charvel, new Color32(0, 255, 255, 255));
+                BetaFireProjectile("SlingshotProjectile", startpos, charvel, new Color32(255, 255, 0, 255));
             }
         }
 
@@ -1914,7 +1914,7 @@ namespace iiMenu.Mods.Spammers
                     Vector3 startpos = whoCopy.transform.position + new Vector3(0f, -0.4f, 0f) + (whoCopy.transform.forward * 0.2f);
                     Vector3 charvel = whoCopy.transform.forward * 8.33f;
 
-                    BetaFireProjectile("SlingshotProjectile", startpos, charvel, new Color32(0, 255, 255, 255));
+                    BetaFireProjectile("SlingshotProjectile", startpos, charvel, new Color32(255, 255, 0, 255));
                 }
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {

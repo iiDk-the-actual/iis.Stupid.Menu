@@ -974,7 +974,7 @@ banned while using this, please report it to the discord server.";
 
         public static float projDebounce = 0f;
 
-        public static float projDebounceType = 0f;
+        public static float projDebounceType = 0.1f;
 
         public static float colorChangerDelay = 0f;
 
