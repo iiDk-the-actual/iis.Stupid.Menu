@@ -1,0 +1,481 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>ii's Stupid Menu</AssemblyName>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>8.0</LangVersion>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup />
+  <ItemGroup>
+    <None Remove="Resources\font" />
+    <None Remove="Resources\iimenu" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\font" />
+    <EmbeddedResource Include="Resources\iimenu" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="0Harmony">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\BepInEx\core\0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+    </Reference>
+    <Reference Include="AssistantCoreSDKRuntime">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\AssistantCoreSDKRuntime.dll</HintPath>
+    </Reference>
+    <Reference Include="AstarPathfindingProject">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\AstarPathfindingProject.dll</HintPath>
+    </Reference>
+    <Reference Include="Autodesk.Fbx">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Autodesk.Fbx.dll</HintPath>
+    </Reference>
+    <Reference Include="Backtrace.Unity">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Backtrace.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="BakeryRuntimeAssembly">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\BakeryRuntimeAssembly.dll</HintPath>
+    </Reference>
+    <Reference Include="BepInEx">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\BepInEx\core\BepInEx.dll</HintPath>
+    </Reference>
+    <Reference Include="BepInEx.Harmony">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\BepInEx\core\BepInEx.Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="BepInEx.Preloader">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\BepInEx\core\BepInEx.Preloader.dll</HintPath>
+    </Reference>
+    <Reference Include="Cinemachine">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Cinemachine.dll</HintPath>
+    </Reference>
+    <Reference Include="Facebook.Wit.Conduit">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Facebook.Wit.Conduit.dll</HintPath>
+    </Reference>
+    <Reference Include="Facebook.Wit.Dictation">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Facebook.Wit.Dictation.dll</HintPath>
+    </Reference>
+    <Reference Include="Facebook.Wit.TTS">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Facebook.Wit.TTS.dll</HintPath>
+    </Reference>
+    <Reference Include="Facebook.Wit.TTS.Samples">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Facebook.Wit.TTS.Samples.dll</HintPath>
+    </Reference>
+    <Reference Include="Facebook.WitAI">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Facebook.WitAI.dll</HintPath>
+    </Reference>
+    <Reference Include="FbxBuildTestAssets">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\FbxBuildTestAssets.dll</HintPath>
+    </Reference>
+    <Reference Include="HarmonyXInterop">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\BepInEx\core\HarmonyXInterop.dll</HintPath>
+    </Reference>
+    <Reference Include="LitJson">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\LitJson.dll</HintPath>
+    </Reference>
+    <Reference Include="MeshBakerCore">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\MeshBakerCore.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\BepInEx\core\Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Mdb">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\BepInEx\core\Mono.Cecil.Mdb.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Pdb">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\BepInEx\core\Mono.Cecil.Pdb.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Rocks">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\BepInEx\core\Mono.Cecil.Rocks.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Security">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Mono.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoMod.RuntimeDetour">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\BepInEx\core\MonoMod.RuntimeDetour.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoMod.Utils">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\BepInEx\core\MonoMod.Utils.dll</HintPath>
+    </Reference>
+    <Reference Include="NavMeshComponents">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\NavMeshComponents.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json.UnityConverters">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Newtonsoft.Json.UnityConverters.dll</HintPath>
+    </Reference>
+    <Reference Include="Oculus.AudioManager">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Oculus.AudioManager.dll</HintPath>
+    </Reference>
+    <Reference Include="Oculus.Interaction">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Oculus.Interaction.dll</HintPath>
+    </Reference>
+    <Reference Include="Oculus.Interaction.Samples">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Oculus.Interaction.Samples.dll</HintPath>
+    </Reference>
+    <Reference Include="Oculus.LipSync">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Oculus.LipSync.dll</HintPath>
+    </Reference>
+    <Reference Include="Oculus.Platform">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Oculus.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="Oculus.Spatializer">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Oculus.Spatializer.dll</HintPath>
+    </Reference>
+    <Reference Include="Oculus.Voice.Demo">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Oculus.Voice.Demo.dll</HintPath>
+    </Reference>
+    <Reference Include="Oculus.VR">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Oculus.VR.dll</HintPath>
+    </Reference>
+    <Reference Include="Pathfinding.ClipperLib">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Pathfinding.ClipperLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Pathfinding.Ionic.Zip.Reduced">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Pathfinding.Ionic.Zip.Reduced.dll</HintPath>
+    </Reference>
+    <Reference Include="Pathfinding.Poly2Tri">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Pathfinding.Poly2Tri.dll</HintPath>
+    </Reference>
+    <Reference Include="Photon3Unity3D">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Photon3Unity3D.dll</HintPath>
+    </Reference>
+    <Reference Include="PhotonChat">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\PhotonChat.dll</HintPath>
+    </Reference>
+    <Reference Include="PhotonRealtime">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\PhotonRealtime.dll</HintPath>
+    </Reference>
+    <Reference Include="PhotonUnityNetworking">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\PhotonUnityNetworking.dll</HintPath>
+    </Reference>
+    <Reference Include="PhotonUnityNetworking.Utilities">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\PhotonUnityNetworking.Utilities.dll</HintPath>
+    </Reference>
+    <Reference Include="PhotonVoice">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\PhotonVoice.dll</HintPath>
+    </Reference>
+    <Reference Include="PhotonVoice.API">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\PhotonVoice.API.dll</HintPath>
+    </Reference>
+    <Reference Include="PhotonVoice.PUN">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\PhotonVoice.PUN.dll</HintPath>
+    </Reference>
+    <Reference Include="PlayFab">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\PlayFab.dll</HintPath>
+    </Reference>
+    <Reference Include="Sirenix.OdinInspector.Attributes">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Sirenix.OdinInspector.Attributes.dll</HintPath>
+    </Reference>
+    <Reference Include="SteamVR">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\SteamVR.dll</HintPath>
+    </Reference>
+    <Reference Include="SteamVR_Actions">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\SteamVR_Actions.dll</HintPath>
+    </Reference>
+    <Reference Include="TechniePhysicsCreator">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\TechniePhysicsCreator.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.AI.Navigation">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Unity.AI.Navigation.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Animation.Rigging">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Unity.Animation.Rigging.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Animation.Rigging.DocCodeExamples">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Unity.Animation.Rigging.DocCodeExamples.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Burst">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Unity.Burst.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Burst.Unsafe">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Unity.Burst.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Formats.Fbx.Runtime">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Unity.Formats.Fbx.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.InputSystem">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Unity.InputSystem.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.InputSystem.ForUI">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Unity.InputSystem.ForUI.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Mathematics">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Unity.Mathematics.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.RenderPipeline.Universal.ShaderLibrary">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Unity.RenderPipeline.Universal.ShaderLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.RenderPipelines.Core.Runtime">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Unity.RenderPipelines.Core.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.RenderPipelines.Core.ShaderLibrary">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Unity.RenderPipelines.Core.ShaderLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.RenderPipelines.Universal.Runtime">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Unity.RenderPipelines.Universal.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.RenderPipelines.Universal.Shaders">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Unity.RenderPipelines.Universal.Shaders.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Timeline">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Unity.Timeline.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.XR.CoreUtils">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Unity.XR.CoreUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.XR.Interaction.Toolkit">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Unity.XR.Interaction.Toolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.XR.Management">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Unity.XR.Management.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.XR.Oculus">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Unity.XR.Oculus.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.XR.OpenVR">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Unity.XR.OpenVR.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AccessibilityModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.AccessibilityModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AIModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.AIModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AndroidJNIModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.AndroidJNIModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AnimationModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.AnimationModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.ARModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.ARModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AssetBundleModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AudioModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.AudioModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.ClothModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.ClothModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.ClusterInputModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.ClusterInputModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.ClusterRendererModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.ClusterRendererModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.ContentLoadModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.ContentLoadModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CrashReportingModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.CrashReportingModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.DirectorModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.DirectorModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.DSPGraphModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.DSPGraphModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.GameCenterModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.GameCenterModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.GIModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.GIModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.GridModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.GridModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.HotReloadModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.HotReloadModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.ImageConversionModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.InputLegacyModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.InputModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.InputModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.JSONSerializeModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.JSONSerializeModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.LocalizationModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.LocalizationModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.NVIDIAModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.NVIDIAModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.ParticleSystemModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.PerformanceReportingModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.PerformanceReportingModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.Physics2DModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.Physics2DModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.ProfilerModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.ProfilerModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.PropertiesModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.PropertiesModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.RuntimeInitializeOnLoadManagerInitializerModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.RuntimeInitializeOnLoadManagerInitializerModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.ScreenCaptureModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.ScreenCaptureModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.SharedInternalsModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.SharedInternalsModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.SpatialTracking">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.SpatialTracking.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.SpriteMaskModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.SpriteMaskModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.SpriteShapeModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.SpriteShapeModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.StreamingModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.StreamingModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.SubstanceModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.SubstanceModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.SubsystemsModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.SubsystemsModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.TerrainModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.TerrainModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.TerrainPhysicsModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.TerrainPhysicsModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.TextCoreFontEngineModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.TextCoreFontEngineModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.TextCoreTextEngineModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.TextCoreTextEngineModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.TilemapModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.TilemapModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.TLSModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.TLSModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UIElementsModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.UIElementsModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UIModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.UIModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UmbraModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.UmbraModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UnityAnalyticsCommonModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.UnityAnalyticsCommonModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UnityAnalyticsModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.UnityAnalyticsModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UnityConnectModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.UnityConnectModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UnityCurlModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.UnityCurlModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UnityTestProtocolModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.UnityTestProtocolModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestAssetBundleModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.UnityWebRequestAssetBundleModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestAudioModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.UnityWebRequestAudioModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.UnityWebRequestModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestTextureModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.UnityWebRequestTextureModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestWWWModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.UnityWebRequestWWWModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.VehiclesModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.VehiclesModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.VFXModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.VFXModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.VideoModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.VideoModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.VirtualTexturingModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.VirtualTexturingModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.VRModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.VRModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.WindModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.WindModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.XR.LegacyInputHelpers">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.XR.LegacyInputHelpers.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.XRModule">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\UnityEngine.XRModule.dll</HintPath>
+    </Reference>
+    <Reference Include="Utilla">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\BepInEx\plugins\Utilla\Utilla.dll</HintPath>
+    </Reference>
+    <Reference Include="Valve.Newtonsoft.Json">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Valve.Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="VoiceSDK.Dictation.Runtime">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\VoiceSDK.Dictation.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="VoiceSDK.Runtime">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\VoiceSDK.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="websocket-sharp">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\websocket-sharp.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>
