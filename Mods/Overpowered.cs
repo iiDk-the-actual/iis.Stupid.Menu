@@ -1,13 +1,11 @@
-﻿using ExitGames.Client.Photon;
-using GorillaNetworking;
+﻿using GorillaNetworking;
 using Photon.Pun;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
-using static Unity.Burst.Intrinsics.X86.Avx;
-using static UnityEngine.UI.GridLayoutGroup;
+using static iiMenu.Mods.Spammers.Projectiles;
 
 namespace iiMenu.Mods
 {
@@ -104,7 +102,7 @@ namespace iiMenu.Mods
                 }
             }
         }
-        /*
+        
         public static void BlindGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
@@ -136,43 +134,10 @@ namespace iiMenu.Mods
 
                 if (isCopying)
                 {
-                    GameObject projectile = GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools/WaterBalloonProjectile(Clone)");
-                    GameObject originalprojectile = projectile;
-                    projectile = ObjectPools.instance.Instantiate(projectile);
-
-                    SlingshotProjectile comp = projectile.GetComponent<SlingshotProjectile>();
-
-                    GameObject trail = GorillaTagger.Instance.offlineVRRig.slingshot.projectileTrail;
-
-                    int hasha = PoolUtils.GameObjHashCode(projectile);
-                    int hashb = PoolUtils.GameObjHashCode(trail);
-                    int hashc = GorillaGameManager.instance.IncrementLocalPlayerProjectileCount();
-
                     Vector3 startpos = whoCopy.headMesh.transform.position + (whoCopy.headMesh.transform.forward * 0.5f);
                     Vector3 charvel = Vector3.zero;
 
-                    GorillaGameManager.instance.photonView.RPC("LaunchSlingshotProjectile", GetPlayerFromVRRig(whoCopy), new object[]
-                    {
-                        startpos,
-                        charvel,
-                        hasha,
-                        hashb,
-                        false,
-                        hashc,
-                        true,
-                        0f,
-                        0f,
-                        0f,
-                        1f
-                    });
-                    RPCProtection();
-
-                    originalprojectile.SetActive(true);
-
-                    trail.SetActive(true);
-                    ObjectPools.instance.Instantiate(trail).GetComponent<SlingshotProjectileTrail>().AttachTrail(projectile, false, false);
-
-                    comp.Launch(startpos, charvel, PhotonNetwork.LocalPlayer, false, false, hashc, 1f, true, Color.black);
+                    BetaFireProjectile("WaterBalloonProjectile", startpos, charvel, new Color32(0, 0, 0, 255));
                 }
             }
             else
@@ -187,47 +152,14 @@ namespace iiMenu.Mods
 
         public static void BlindAll()
         {
-            GameObject projectile = GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools/WaterBalloonProjectile(Clone)");
-            GameObject originalprojectile = projectile;
-            projectile = ObjectPools.instance.Instantiate(projectile);
-
-            SlingshotProjectile comp = projectile.GetComponent<SlingshotProjectile>();
-
-            GameObject trail = GorillaTagger.Instance.offlineVRRig.slingshot.projectileTrail;
-
-            int hasha = PoolUtils.GameObjHashCode(projectile);
-            int hashb = PoolUtils.GameObjHashCode(trail);
-            int hashc = GorillaGameManager.instance.IncrementLocalPlayerProjectileCount();
-
             VRRig randomRig = GetRandomVRRig(false);
 
             Vector3 startpos = randomRig.headMesh.transform.position + (randomRig.headMesh.transform.forward * 0.5f);
             Vector3 charvel = Vector3.zero;
 
-            GorillaGameManager.instance.photonView.RPC("LaunchSlingshotProjectile", RpcTarget.All, new object[]
-            {
-                startpos,
-                charvel,
-                hasha,
-                hashb,
-                false,
-                hashc,
-                true,
-                0f,
-                0f,
-                0f,
-                1f
-            });
-            RPCProtection();
-
-            originalprojectile.SetActive(true);
-
-            trail.SetActive(true);
-            ObjectPools.instance.Instantiate(trail).GetComponent<SlingshotProjectileTrail>().AttachTrail(projectile, false, false);
-
-            comp.Launch(startpos, charvel, PhotonNetwork.LocalPlayer, false, false, hashc, 1f, true, Color.black);
+            BetaFireProjectile("WaterBalloonProjectile", startpos, charvel, new Color32(0, 0, 0, 255));
         }
-        */
+        
         public static void KickGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
