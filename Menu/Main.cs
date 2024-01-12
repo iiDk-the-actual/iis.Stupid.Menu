@@ -17,7 +17,7 @@ using UnityEngine.XR;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Mods.Reconnect;
 
-namespace iiMenu.Menu
+namespace iiMenu.Menu //!
 {
     [HarmonyPatch(typeof(GorillaLocomotion.Player))]
     [HarmonyPatch("LateUpdate", MethodType.Normal)]
