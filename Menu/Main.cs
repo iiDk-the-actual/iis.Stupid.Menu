@@ -1635,7 +1635,7 @@ banned while using this, please report it to the discord server.";
                 RectTransform component = text.GetComponent<RectTransform>();
                 component.localPosition = Vector3.zero;
                 component.sizeDelta = new Vector2(0.2f, 0.03f);
-                component.localPosition = new Vector3(0.064f, 0f, 0.109f - num4 / 2.55f); // 109 - 111
+                component.localPosition = new Vector3(0.064f, 0f, 0.109f - num4 / 2.55f);
                 component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
                 num4 = 0.1f;
                 GameObject gameObject2 = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -1682,7 +1682,7 @@ banned while using this, please report it to the discord server.";
                 RectTransform component2 = text2.GetComponent<RectTransform>();
                 component2.localPosition = Vector3.zero;
                 component2.sizeDelta = new Vector2(0.2f, 0.03f);
-                component2.localPosition = new Vector3(0.064f, 0f, 0.109f - num4 / 2.55f); // 109 - 111
+                component2.localPosition = new Vector3(0.064f, 0f, 0.109f - num4 / 2.55f);
                 component2.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
             }
 

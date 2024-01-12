@@ -7,7 +7,7 @@ namespace iiMenu.Classes
 	internal class Button : MonoBehaviour
 	{
 		public string relatedText;
-		//
+		
 		public void OnTriggerEnter(Collider collider)
 		{
 			if (Time.time > buttonCooldown && collider == buttonCollider && menu != null)
