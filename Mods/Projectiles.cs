@@ -17,19 +17,21 @@ namespace iiMenu.Mods.Spammers
             {
                 Vector3 startpos = position;
                 Vector3 charvel = velocity;
-                currentProjectileColor = color;
 
                 Vector3 oldVel = GorillaTagger.Instance.GetComponent<Rigidbody>().velocity;
                 GorillaTagger.Instance.GetComponent<Rigidbody>().velocity = charvel;
                 SnowballThrowable fart = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballRightAnchor").transform.Find("LMACF.").GetComponent<SnowballThrowable>();
                 Vector3 oldPos = fart.transform.position;
                 fart.randomizeColor = true;
+                GorillaTagger.Instance.offlineVRRig.SetThrowableProjectileColor(false, color);
                 fart.transform.position = startpos;
                 fart.projectilePrefab.tag = projectileName;
                 fart.OnRelease(null, null);
                 RPCProtection();
                 fart.transform.position = oldPos;
                 GorillaTagger.Instance.GetComponent<Rigidbody>().velocity = oldVel;
+                fart.randomizeColor = false;
+                fart.projectilePrefab.tag = "SnowballProjectile";
                 if (projDebounceType > 0f)
                 {
                     projDebounce = Time.time + projDebounceType;
@@ -173,13 +175,13 @@ namespace iiMenu.Mods.Spammers
 
         public static void ProjectileDelay()
         {
-            projDebounceType = projDebounceType + 0.1f;
-            if (projDebounceType > 1.05f)
+            projDebounceType = projDebounceType + 0.01f;
+            if (projDebounceType > 0.105f)
             {
                 projDebounceType = 0f;
             }
 
-            GetIndex("Projectile Delay").overlapText = "Projectile Delay <color=grey>[</color><color=green>" + (Mathf.Floor(projDebounceType * 10f) / 10f).ToString() + "</color><color=grey>]</color>";
+            GetIndex("Projectile Delay").overlapText = "Projectile Delay <color=grey>[</color><color=green>" + (Mathf.Floor(projDebounceType * 100f) / 100f).ToString() + "</color><color=grey>]</color>";
         }
 
         public static void ProjectileSpam()
@@ -1538,6 +1540,36 @@ namespace iiMenu.Mods.Spammers
                 UnityEngine.Object.Destroy(ProjBombObject);
                 ProjBombObject = null;
             }
+        }
+
+        public static void RandomColorSnowballs()
+        {
+            GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballRightAnchor").transform.Find("LMACF.").GetComponent<SnowballThrowable>().randomizeColor = true;
+            GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballLeftAnchor").transform.Find("LMACE.").GetComponent<SnowballThrowable>().randomizeColor = true;
+        }
+
+        public static void NoRandomColorSnowballs()
+        {
+            GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballRightAnchor").transform.Find("LMACF.").GetComponent<SnowballThrowable>().randomizeColor = false;
+            GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballLeftAnchor").transform.Find("LMACE.").GetComponent<SnowballThrowable>().randomizeColor = false;
+        }
+
+        public static void BlackSnowballs()
+        {
+            currentProjectileColor = Color.black;
+            GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballRightAnchor").transform.Find("LMACF.").GetComponent<SnowballThrowable>().randomizeColor = true;
+            GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballRightAnchor").transform.Find("LMACF.").GetComponent<SnowballThrowable>().randomColorHSVRanges = new GTColor.HSVRanges(0f, 0f, 0f, 0f, 0f, 0f);
+            GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballLeftAnchor").transform.Find("LMACE.").GetComponent<SnowballThrowable>().randomizeColor = true;
+            GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballLeftAnchor").transform.Find("LMACE.").GetComponent<SnowballThrowable>().randomColorHSVRanges = new GTColor.HSVRanges(0f, 0f, 0f, 0f, 0f, 0f);
+        }
+
+        public static void FixBlackSnowballs()
+        {
+            currentProjectileColor = Color.white;
+            GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballRightAnchor").transform.Find("LMACF.").GetComponent<SnowballThrowable>().randomizeColor = false;
+            GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballRightAnchor").transform.Find("LMACF.").GetComponent<SnowballThrowable>().randomColorHSVRanges = new GTColor.HSVRanges(0f, 1f, 0.7f, 1f, 1f, 1f);
+            GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballLeftAnchor").transform.Find("LMACE.").GetComponent<SnowballThrowable>().randomizeColor = true;
+            GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballLeftAnchor").transform.Find("LMACE.").GetComponent<SnowballThrowable>().randomColorHSVRanges = new GTColor.HSVRanges(0f, 1f, 0.7f, 1f, 1f, 1f);
         }
 
         public static void ImpactSpam()

@@ -1387,9 +1387,9 @@ banned while using this, please report it to the discord server.";
                     "GorillaTaggingKid Menu",
                     "fart"
                 };
-                if (UnityEngine.Random.Range(1,10) == 5)
+                if (UnityEngine.Random.Range(1, 5) == 2)
                 {
-                    text.text = randomMenuNames[UnityEngine.Random.Range(0,randomMenuNames.Length-1)] + " v" + UnityEngine.Random.Range(8, 159);
+                    text.text = randomMenuNames[UnityEngine.Random.Range(0, randomMenuNames.Length - 1)] + " v" + UnityEngine.Random.Range(8, 159);
                 }
             }
             text.fontSize = 1;
@@ -1485,19 +1485,33 @@ banned while using this, please report it to the discord server.";
 
             AddPageButtons();
 
-            if (buttonsType != 19)
+            if (annoyingMode && UnityEngine.Random.Range(1, 5) == 3)
             {
-                ButtonInfo[] array2 = Buttons.buttons[buttonsType].Skip(pageNumber * pageSize).Take(pageSize).ToArray();
+                ButtonInfo disconnect = GetIndex("Disconnect");
+                ButtonInfo[] array2 = new ButtonInfo[] { disconnect, disconnect, disconnect, disconnect, disconnect, disconnect, disconnect, disconnect, disconnect, disconnect };
+                array2 = array2.Take(pageSize).ToArray();
                 for (int i = 0; i < array2.Length; i++)
                 {
                     AddButton(i * 0.1f + (buttonOffset / 10), i, array2[i]);
                 }
-            } else
+            }
+            else
             {
-                string[] array2 = favorites.Skip(pageNumber * pageSize).Take(pageSize).ToArray();
-                for (int i = 0; i < array2.Length; i++)
+                if (buttonsType != 19)
                 {
-                    AddButton(i * 0.1f + (buttonOffset / 10), i, GetIndex(array2[i]));
+                    ButtonInfo[] array2 = Buttons.buttons[buttonsType].Skip(pageNumber * pageSize).Take(pageSize).ToArray();
+                    for (int i = 0; i < array2.Length; i++)
+                    {
+                        AddButton(i * 0.1f + (buttonOffset / 10), i, array2[i]);
+                    }
+                }
+                else
+                {
+                    string[] array2 = favorites.Skip(pageNumber * pageSize).Take(pageSize).ToArray();
+                    for (int i = 0; i < array2.Length; i++)
+                    {
+                        AddButton(i * 0.1f + (buttonOffset / 10), i, GetIndex(array2[i]));
+                    }
                 }
             }
             RecenterMenu();
@@ -2001,6 +2015,14 @@ banned while using this, please report it to the discord server.";
 
         public static void Toggle(string buttonText, bool fromMenu = false)
         {
+            if (annoyingMode)
+            {
+                if (UnityEngine.Random.Range(1, 5) == 2)
+                {
+                    NotifiLib.SendNotification("<color=red>try again</color>");
+                    return;
+                }
+            }
             int lastPage = ((Buttons.buttons[buttonsType].Length + pageSize - 1) / pageSize) - 1;
             if (buttonsType == 19)
             {
@@ -2026,14 +2048,6 @@ banned while using this, please report it to the discord server.";
                 }
                 else
                 {
-                    if (annoyingMode)
-                    {
-                        if (UnityEngine.Random.Range(1, 10) == 5)
-                        {
-                            NotifiLib.SendNotification("<color=red>try again</color>");
-                            return;
-                        }
-                    }
                     ButtonInfo target = GetIndex(buttonText);
                     if (target != null)
                     {

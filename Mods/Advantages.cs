@@ -12,10 +12,31 @@ namespace iiMenu.Mods
     {
         public static void TagSelf()
         {
-            if (!GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected") && Time.time > delaythinggg)
+            /*if (!GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected") && Time.time > delaythinggg)
             {
                 PhotonView.Get(GorillaGameManager.instance).RPC("ReportContactWithLavaRPC", RpcTarget.MasterClient, Array.Empty<object>());
                 delaythinggg = Time.time + 0.5f;
+            }*/
+            foreach (GorillaTagManager gorillaTagManager in GameObject.FindObjectsOfType<GorillaTagManager>())
+            {
+                if (gorillaTagManager.currentInfected.Contains(PhotonNetwork.LocalPlayer))
+                {
+                    NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>You have been tagged!</color>");
+                    GorillaTagger.Instance.offlineVRRig.enabled = true;
+                    GetIndex("Tag Self").enabled = false;
+                }
+                else
+                {
+                    foreach (VRRig rig in GorillaParent.instance.vrrigs)
+                    {
+                        if (rig.mainSkin.material.name.Contains("fected"))
+                        {
+                            GorillaTagger.Instance.offlineVRRig.enabled = false;
+                            GorillaTagger.Instance.offlineVRRig.transform.position = rig.rightHandTransform.position;
+                            GorillaTagger.Instance.myVRRig.transform.position = rig.rightHandTransform.position;
+                        }
+                    }
+                }
             }
         }
 
@@ -91,7 +112,7 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void RPCTagAura()
+        /*public static void RPCTagAura()
         {
             if (GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected"))
             {
@@ -117,7 +138,7 @@ namespace iiMenu.Mods
                     }
                 }
             }
-        }
+        }*/
 
         public static void TagGun()
         {
