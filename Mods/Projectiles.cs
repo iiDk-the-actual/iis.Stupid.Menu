@@ -40,7 +40,7 @@ namespace iiMenu.Mods.Spammers
         public static void ChangeProjectile()
         {
             projmode++;
-            if (projmode > 5)
+            if (projmode > 16)
             {
                 projmode = 0;
             }
@@ -68,8 +68,19 @@ namespace iiMenu.Mods.Spammers
                 "Snowball",
                 "Water Balloon",
                 "Lava Rock",
+                "Deadshot",
                 "Pride",
-                "Leaves"
+                "Cupid",
+                "Ice",
+                "Leaves",
+                "Lava Slingshot",
+                "Cotton Swab",
+                "Candy Cane",
+                "Coal",
+                "Roll Present",
+                "Round Present",
+                "Square Present",
+                "Mentos"
             };
 
             GetIndex("Change Projectile").overlapText = "Change Projectile <color=grey>[</color><color=green>" + shortProjectileNames[projmode] + "</color><color=grey>]</color>";
@@ -179,18 +190,19 @@ namespace iiMenu.Mods.Spammers
                 "SnowballProjectile",
                 "WaterBalloonProjectile",
                 "LavaRockProjectile",
-                //"HornsSlingshotProjectile_PrefabV",
+                "HornsSlingshotProjectile",
                 "CloudSlingshot_Projectile",
-                //"CupidArrow_Projectile",
-                //"IceSlingshotProjectile_PrefabV Variant",
+                "CupidBow_Projectile",
+                "IceSlingshot_Projectile",
                 "ElfBow_Projectile",
-                //"MoltenRockSlingshot_Projectile",
-                //"SpiderBowProjectile Variant",
-                //"BucketGift_Cane_Projectile Variant",
-                //"BucketGift_Coal_Projectile Variant",
-                //"BucketGift_Roll_Projectile Variant",
-                //"BucketGift_Round_Projectile Variant",
-                //"BucketGift_Square_Projectile Variant"
+                "MoltenSlingshot_Projectile",
+                "SpiderBow_Projectile",
+                "BucketGiftCane",
+                "BucketGiftCoal",
+                "BucketGiftRoll",
+                "BucketGiftRound",
+                "BucketGiftSquare",
+                "ScienceCandyProjectile"
             };
 
             string[] fullTrailNames = new string[]
@@ -209,7 +221,7 @@ namespace iiMenu.Mods.Spammers
             int projIndex = projmode;
             int trailIndex = trailmode;
 
-            if ((rightGrab || Mouse.current.leftButton.isPressed) && Time.time > projDebounce)
+            if (rightGrab || Mouse.current.leftButton.isPressed)
             {
                 if (GetIndex("Random Projectile").enabled)
                 {
@@ -341,7 +353,7 @@ namespace iiMenu.Mods.Spammers
                 BetaFireProjectile(projectilename, startpos, charvel, new Color32((byte)randa, (byte)randb, (byte)randc,255));
             }
 
-            if (leftGrab && Time.time > projDebounce)
+            if (leftGrab)
             {
                 if (GetIndex("Random Projectile").enabled)
                 {
@@ -869,18 +881,19 @@ namespace iiMenu.Mods.Spammers
                         "SnowballProjectile",
                         "WaterBalloonProjectile",
                         "LavaRockProjectile",
-                        //"HornsSlingshotProjectile_PrefabV",
+                        "HornsSlingshotProjectile",
                         "CloudSlingshot_Projectile",
-                        //"CupidArrow_Projectile",
-                        //"IceSlingshotProjectile_PrefabV Variant",
+                        "CupidBow_Projectile",
+                        "IceSlingshot_Projectile",
                         "ElfBow_Projectile",
-                        //"MoltenRockSlingshot_Projectile",
-                        //"SpiderBowProjectile Variant",
-                        //"BucketGift_Cane_Projectile Variant",
-                        //"BucketGift_Coal_Projectile Variant",
-                        //"BucketGift_Roll_Projectile Variant",
-                        //"BucketGift_Round_Projectile Variant",
-                        //"BucketGift_Square_Projectile Variant"
+                        "MoltenSlingshot_Projectile",
+                        "SpiderBow_Projectile",
+                        "BucketGiftCane",
+                        "BucketGiftCoal",
+                        "BucketGiftRoll",
+                        "BucketGiftRound",
+                        "BucketGiftSquare",
+                        "ScienceCandyProjectile"
                     };
 
                     string[] fullTrailNames = new string[]
@@ -1413,18 +1426,19 @@ namespace iiMenu.Mods.Spammers
                             "SnowballProjectile",
                             "WaterBalloonProjectile",
                             "LavaRockProjectile",
-                            //"HornsSlingshotProjectile_PrefabV",
+                            "HornsSlingshotProjectile",
                             "CloudSlingshot_Projectile",
-                            //"CupidArrow_Projectile",
-                            //"IceSlingshotProjectile_PrefabV Variant",
+                            "CupidBow_Projectile",
+                            "IceSlingshot_Projectile",
                             "ElfBow_Projectile",
-                            //"MoltenRockSlingshot_Projectile",
-                            //"SpiderBowProjectile Variant",
-                            //"BucketGift_Cane_Projectile Variant",
-                            //"BucketGift_Coal_Projectile Variant",
-                            //"BucketGift_Roll_Projectile Variant",
-                            //"BucketGift_Round_Projectile Variant",
-                            //"BucketGift_Square_Projectile Variant"
+                            "MoltenSlingshot_Projectile",
+                            "SpiderBow_Projectile",
+                            "BucketGiftCane",
+                            "BucketGiftCoal",
+                            "BucketGiftRoll",
+                            "BucketGiftRound",
+                            "BucketGiftSquare",
+                            "ScienceCandyProjectile"
                         };
 
                         string[] fullTrailNames = new string[]
@@ -1796,18 +1810,19 @@ namespace iiMenu.Mods.Spammers
                 "SnowballProjectile",
                 "WaterBalloonProjectile",
                 "LavaRockProjectile",
-                //"HornsSlingshotProjectile_PrefabV",
+                "HornsSlingshotProjectile",
                 "CloudSlingshot_Projectile",
-                //"CupidArrow_Projectile",
-                //"IceSlingshotProjectile_PrefabV Variant",
+                "CupidBow_Projectile",
+                "IceSlingshot_Projectile",
                 "ElfBow_Projectile",
-                //"MoltenRockSlingshot_Projectile",
-                //"SpiderBowProjectile Variant",
-                //"BucketGift_Cane_Projectile Variant",
-                //"BucketGift_Coal_Projectile Variant",
-                //"BucketGift_Roll_Projectile Variant",
-                //"BucketGift_Round_Projectile Variant",
-                //"BucketGift_Square_Projectile Variant"
+                "MoltenSlingshot_Projectile",
+                "SpiderBow_Projectile",
+                "BucketGiftCane",
+                "BucketGiftCoal",
+                "BucketGiftRoll",
+                "BucketGiftRound",
+                "BucketGiftSquare",
+                "ScienceCandyProjectile"
             };
 
             string[] fullTrailNames = new string[]

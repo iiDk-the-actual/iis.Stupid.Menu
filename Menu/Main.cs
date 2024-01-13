@@ -193,7 +193,7 @@ namespace iiMenu.Menu
                             }
                         }
                         motdTextB.text = @"
-You are using version 2.5p2b3. This menu was created by iiDk (@goldentrophy) on
+You are using version 2.5p2b4. This menu was created by iiDk (@goldentrophy) on
 discord. This menu is completely free and unobfuscated, if you paid for this
 menu you have been scammed. There are a total of <b> " + fullModAmount + @" </b> mods on this
 menu. <color=red>I, iiDk, am not responsible for any bans using this menu.</color> If you get
@@ -862,6 +862,8 @@ banned while using this, please report it to the discord server.";
         public static Font gtagfont = null;
 
         public static Font Verdana = Font.CreateDynamicFontFromOSFont("Verdana", 24);
+
+        public static Font sans = Font.CreateDynamicFontFromOSFont("Comic Sans MS", 24);
 
         public static Font Arial = (Resources.GetBuiltinResource(typeof(Font), "Arial.ttf") as Font);
 
@@ -1808,13 +1810,23 @@ banned while using this, please report it to the discord server.";
         public static GameObject LoadAsset(string assetName, string bundle = "iimenu")
         {
             GameObject gameObject = null;
-            if (assetBundle == null)
+            if (bundle != "iimenu")
             {
                 Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("iiMenu.Resources." + bundle);
-                assetBundle = AssetBundle.LoadFromStream(stream);
+                AssetBundle ass = AssetBundle.LoadFromStream(stream);
+                gameObject = Instantiate<GameObject>(ass.LoadAsset<GameObject>(assetName));
                 stream.Close();
             }
-            gameObject = Instantiate<GameObject>(assetBundle.LoadAsset<GameObject>(assetName));
+            else
+            {
+                if (assetBundle == null)
+                {
+                    Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("iiMenu.Resources." + bundle);
+                    assetBundle = AssetBundle.LoadFromStream(stream);
+                    stream.Close();
+                }
+                gameObject = Instantiate<GameObject>(assetBundle.LoadAsset<GameObject>(assetName));
+            }
             return gameObject;
         }
 

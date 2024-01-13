@@ -321,7 +321,7 @@ namespace iiMenu.Mods
         public static void ChangeFontType()
         {
             fontCycle++;
-            if (fontCycle > 3)
+            if (fontCycle > 4)
             {
                 fontCycle = 0;
             }
@@ -347,6 +347,10 @@ namespace iiMenu.Mods
                     UnityEngine.Object.Destroy(fart);
                 }
                 activeFont = gtagfont;
+            }
+            if (fontCycle == 4)
+            {
+                activeFont = sans;
             }
         }
 

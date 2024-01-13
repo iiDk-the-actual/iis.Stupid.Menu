@@ -38,7 +38,7 @@ namespace iiMenu.Mods
         public static void ChangePlatformType()
         {
             platformMode++;
-            if (platformMode > 9)
+            if (platformMode > 10)
             {
                 platformMode = 0;
             }
@@ -53,7 +53,8 @@ namespace iiMenu.Mods
                 "Snowball",
                 "Water Balloon",
                 "Rock",
-                "Present"
+                "Present",
+                "Mentos"
             };
 
             GetIndex("Change Platform Type").overlapText = "Change Platform Type <color=grey>[</color><color=green>" + platformNames[platformMode] + "</color><color=grey>]</color>";
@@ -183,6 +184,11 @@ namespace iiMenu.Mods
                     if (platformMode == 9)
                     {
                         leftplat.AddComponent<GorillaSurfaceOverride>().overrideIndex = 240;
+                        leftplat.GetComponent<Renderer>().enabled = false;
+                    }
+                    if (platformMode == 10)
+                    {
+                        leftplat.AddComponent<GorillaSurfaceOverride>().overrideIndex = 249;
                         leftplat.GetComponent<Renderer>().enabled = false;
                     }
                 }
