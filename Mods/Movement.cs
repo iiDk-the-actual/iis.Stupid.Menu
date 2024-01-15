@@ -352,6 +352,11 @@ namespace iiMenu.Mods
                         rightplat.AddComponent<GorillaSurfaceOverride>().overrideIndex = 240;
                         rightplat.GetComponent<Renderer>().enabled = false;
                     }
+                    if (platformMode == 10)
+                    {
+                        rightplat.AddComponent<GorillaSurfaceOverride>().overrideIndex = 249;
+                        rightplat.GetComponent<Renderer>().enabled = false;
+                    }
                 }
                 else
                 {
@@ -516,6 +521,11 @@ namespace iiMenu.Mods
                         leftplat.AddComponent<GorillaSurfaceOverride>().overrideIndex = 240;
                         leftplat.GetComponent<Renderer>().enabled = false;
                     }
+                    if (platformMode == 10)
+                    {
+                        leftplat.AddComponent<GorillaSurfaceOverride>().overrideIndex = 249;
+                        leftplat.GetComponent<Renderer>().enabled = false;
+                    }
                 }
                 else
                 {
@@ -675,6 +685,11 @@ namespace iiMenu.Mods
                     if (platformMode == 9)
                     {
                         rightplat.AddComponent<GorillaSurfaceOverride>().overrideIndex = 240;
+                        rightplat.GetComponent<Renderer>().enabled = false;
+                    }
+                    if (platformMode == 10)
+                    {
+                        rightplat.AddComponent<GorillaSurfaceOverride>().overrideIndex = 249;
                         rightplat.GetComponent<Renderer>().enabled = false;
                     }
                 }
@@ -1988,7 +2003,7 @@ namespace iiMenu.Mods
         public static void EnableWeakSlideControl()
         {
             oldSlide = GorillaLocomotion.Player.Instance.slideControl;
-            GorillaLocomotion.Player.Instance.slideControl = 0.5f;
+            GorillaLocomotion.Player.Instance.slideControl = oldSlide*2f;
         }
 
         public static void DisableSlideControl()

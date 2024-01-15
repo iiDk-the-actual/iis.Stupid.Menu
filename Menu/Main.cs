@@ -1065,6 +1065,8 @@ banned while using this, please report it to the discord server.";
 
         public static Color currentProjectileColor = Color.white;
 
+        public static GameObject toget = null;
+
         public static bool changingColor = false;
 
         public static string nameChange = "";

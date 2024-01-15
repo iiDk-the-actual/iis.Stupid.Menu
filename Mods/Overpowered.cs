@@ -1,6 +1,10 @@
-﻿using GorillaNetworking;
+﻿using ExitGames.Client.Photon;
+using GorillaNetworking;
+using Mono.Cecil.Cil;
 using Photon.Pun;
+using Photon.Realtime;
 using System.Collections.Generic;
+using System.Xml.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static iiMenu.Classes.RigManager;
@@ -187,7 +191,7 @@ namespace iiMenu.Mods
                         Photon.Realtime.Player owner = GetPlayerFromVRRig(possibly);
                         if (GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(owner.UserId) && GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(PhotonNetwork.LocalPlayer.UserId))
                         {
-                            PhotonNetworkController.Instance.shuffler = UnityEngine.Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+                            /*PhotonNetworkController.Instance.shuffler = UnityEngine.Random.Range(0, 99999999).ToString().PadLeft(8, '0');
                             PhotonNetworkController.Instance.keyStr = UnityEngine.Random.Range(0, 99999999).ToString().PadLeft(8, '0');
                             PhotonView.Get(GorillaGameManager.instance).RPC("JoinPubWithFriends", owner, new object[]
                             {
@@ -195,7 +199,7 @@ namespace iiMenu.Mods
                                 PhotonNetworkController.Instance.keyStr
                             });
                             PhotonNetwork.SendAllOutgoingCommands();
-                            RPCProtection();
+                            RPCProtection();*/
                         }
                         kgDebounce = Time.time + 0.5f;
                     }

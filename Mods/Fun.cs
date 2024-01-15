@@ -314,43 +314,17 @@ namespace iiMenu.Mods
         {
             GameObject.Find("BeachBall").transform.position = new Vector3(99999f, 99999f, 99999f);
         }
-        /*
+        
         public static void PopAllBalloons()
         {
             foreach (BalloonHoldable balloon in GameObject.FindObjectsOfType<BalloonHoldable>())
             {
-                GameObject projectile = GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools/SlingshotProjectile(Clone)");
-                GameObject originalprojectile = projectile;
-                projectile = ObjectPools.instance.Instantiate(projectile);
-
-                SlingshotProjectile comp = projectile.GetComponent<SlingshotProjectile>();
-
-                int hasha = PoolUtils.GameObjHashCode(projectile);
-                int hashb = PoolUtils.GameObjHashCode(GorillaTagger.Instance.offlineVRRig.slingshot.projectileTrail);
-                int hashc = GorillaGameManager.instance.IncrementLocalPlayerProjectileCount();
-
                 Vector3 startpos = balloon.gameObject.transform.position;
                 Vector3 charvel = Vector3.zero;
 
-                GorillaGameManager.instance.photonView.RPC("LaunchSlingshotProjectile", (RpcTarget)1, new object[]
-                {
-                    startpos,
-                    charvel,
-                    hasha,
-                    hashb,
-                    false,
-                    hashc,
-                    false,
-                    0f,
-                    0f,
-                    0f,
-                    0f
-                });
-                RPCProtection();
-                originalprojectile.SetActive(true);
-                comp.Launch(startpos, charvel, PhotonNetwork.LocalPlayer, false, false, hashc, 1f, false);
+                Mods.Spammers.Projectiles.BetaFireProjectile("SlingshotProjectile", startpos, charvel, Color.white, true);
             }
-        }*/
+        }
 
         public static void GrabBalloons()
         {

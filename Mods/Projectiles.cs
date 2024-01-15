@@ -1,9 +1,12 @@
-﻿using GorillaTag;
+﻿using GorillaExtensions;
+using GorillaTag;
 using Photon.Pun;
+using POpusCodec.Enums;
 using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -11,7 +14,7 @@ namespace iiMenu.Mods.Spammers
 {
     internal class Projectiles
     {
-        public static void BetaFireProjectile(string projectileName, Vector3 position, Vector3 velocity, Color color)
+        public static void BetaFireProjectile(string projectileName, Vector3 position, Vector3 velocity, Color color, bool noDelay = false)
         {
             if (Time.time > projDebounce)
             {
@@ -32,7 +35,7 @@ namespace iiMenu.Mods.Spammers
                 GorillaTagger.Instance.GetComponent<Rigidbody>().velocity = oldVel;
                 fart.randomizeColor = false;
                 fart.projectilePrefab.tag = "SnowballProjectile";
-                if (projDebounceType > 0f)
+                if (projDebounceType > 0f && !noDelay)
                 {
                     projDebounce = Time.time + projDebounceType;
                 }
@@ -175,13 +178,13 @@ namespace iiMenu.Mods.Spammers
 
         public static void ProjectileDelay()
         {
-            projDebounceType = projDebounceType + 0.01f;
-            if (projDebounceType > 0.105f)
+            projDebounceType = projDebounceType + 0.1f;
+            if (projDebounceType > 1.05f)
             {
                 projDebounceType = 0f;
             }
 
-            GetIndex("Projectile Delay").overlapText = "Projectile Delay <color=grey>[</color><color=green>" + (Mathf.Floor(projDebounceType * 100f) / 100f).ToString() + "</color><color=grey>]</color>";
+            GetIndex("Projectile Delay").overlapText = "Projectile Delay <color=grey>[</color><color=green>" + (Mathf.Floor(projDebounceType * 10f) / 10f).ToString() + "</color><color=grey>]</color>";
         }
 
         public static void ProjectileSpam()
@@ -1420,7 +1423,7 @@ namespace iiMenu.Mods.Spammers
                     UnityEngine.Object.Destroy(ProjBombObject);
                     ProjBombObject = null;
 
-                    for (var i = 0; i < 20; i++)
+                    for (var i = 0; i < 5; i++)
                     {
                         string[] fullProjectileNames = new string[]
                         {
@@ -1523,13 +1526,28 @@ namespace iiMenu.Mods.Spammers
                             randc = blue * 255;
                         }
 
-                        BetaFireProjectile(projectilename, startpos, charvel, new Color32((byte)randa, (byte)randb, (byte)randc, 255));
+                        BetaFireProjectile(projectilename, startpos, charvel, new Color32((byte)randa, (byte)randb, (byte)randc, 255), true);
+                    }
+                    if (projDebounceType > 0f)
+                    {
+                        projDebounce = Time.time + projDebounceType;
                     }
                 }
                 else
                 {
                     ProjBombObject.GetComponent<Renderer>().material.color = buttonDefaultA;
                 }
+            }
+        }
+
+        public static void SlingshotSpam()
+        {
+            if (toget == null)
+            {
+                toget = GameObject.Find("Player Objects/RigCache/Rig Parent/Gorilla Player Networked(Clone)/rig/body/Slingshot Chest Snap/DropZoneAnchor/Slingshot Anchor/Slingshot");
+            } else
+            {
+                UnityEngine.Debug.Log(toget.transform.GetPath());
             }
         }
 

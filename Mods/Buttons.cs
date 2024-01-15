@@ -282,7 +282,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Destroy Bat", method =() => Fun.DestroyBat(), isTogglable = false, toolTip = "Sends the bat to hell." },
                 new ButtonInfo { buttonText = "Destroy Beach Ball", method =() => Fun.DestroyBeachBall(), isTogglable = false, toolTip = "Sends the beach ball to hell." },
 
-                //new ButtonInfo { buttonText = "Pop All Balloons", method =() => Fun.PopAllBalloons(), isTogglable = false, toolTip = "Pops every single balloon cosmetic." },
+                new ButtonInfo { buttonText = "Pop All Balloons", method =() => Fun.PopAllBalloons(), isTogglable = false, toolTip = "Pops every single balloon cosmetic." },
                 new ButtonInfo { buttonText = "Grab Balloons", method =() => Fun.GrabBalloons(), toolTip = "Puts every single balloon cosmetic in your hand." },
                 new ButtonInfo { buttonText = "Balloon Gun", method =() => Fun.BalloonGun(), toolTip = "Moves every single balloon cosmetic to wherever your hand desires." },
                 new ButtonInfo { buttonText = "Destroy Balloons", method =() => Fun.DestroyBalloons(), isTogglable = false, toolTip = "Sends every single balloon cosmetic to hell." },
@@ -352,8 +352,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Projectile Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Projectiles.ProjectileSpam(), toolTip = "Spams projectiles when holding <color=green>grip</color>." },
                 //new ButtonInfo { buttonText = "Projectile Gun", method =() => Projectiles.ProjectileGun(), toolTip = "Acts like the projectile spam, but the projectiles only show up for you and whoever your hand desires." },
                 new ButtonInfo { buttonText = "Give Projectile Spam Gun", method =() => Projectiles.GiveProjectileSpamGun(), toolTip = "Acts like the projectile spam, but you can give it to whoever your hand desires." },
-                new ButtonInfo { buttonText = "Projectile Bomb <color=grey>[</color><color=green>A</color><color=grey>]</color>", method =() => Projectiles.ProjectileBomb(), disableMethod =() => Projectiles.DisableProjectileBomb(), toolTip = "Acts like C4, but instead of launching you, it spawns 20 projectiles in random directions." },
+                new ButtonInfo { buttonText = "Projectile Bomb <color=grey>[</color><color=green>A</color><color=grey>]</color>", method =() => Projectiles.ProjectileBomb(), disableMethod =() => Projectiles.DisableProjectileBomb(), toolTip = "Acts like C4, but instead of launching you, it spawns 5 projectiles in random directions." },
 
+                new ButtonInfo { buttonText = "Slingshot Spam <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Projectiles.SlingshotSpam(), toolTip = "Spams the slingshot when holding <color=green>trigger</color>." },
                 //new ButtonInfo { buttonText = "Random Color Snowballs", enableMethod =() => Projectiles.RandomColorSnowballs(), disableMethod =() => Projectiles.NoRandomColorSnowballs(), toolTip = "Makes your snowballs random colors." },
                 //new ButtonInfo { buttonText = "Black Snowballs", enableMethod =() => Projectiles.BlackSnowballs(), disableMethod =() => Projectiles.FixBlackSnowballs(), toolTip = "Makes your snowballs black." },
                 //new ButtonInfo { buttonText = "Impact Spam", method =() => Projectiles.ImpactSpam(), toolTip = "Acts like the projectile spam, but uses the impacts instead." },
@@ -411,8 +412,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Blind Gun", method =() => Overpowered.BlindGun(), toolTip = "Spanws a bunch of black water balloons in front of whoever your hand desires' faces." },
                 new ButtonInfo { buttonText = "Blind All", method =() => Overpowered.BlindAll(), toolTip = "Spanws a bunch of black water balloons in front of everyone's faces." },
 
-                new ButtonInfo { buttonText = "Kick Gun <color=grey>[</color><color=red>Stump</color><color=grey>]</color> <color=grey>[</color><color=red>Private</color><color=grey>]</color> <color=grey>[</color><color=red>Detected</color><color=grey>]</color>", method =() => Overpowered.KickGun(), toolTip = "Kicks whoever your hand desires to a random public." },
-                new ButtonInfo { buttonText = "Kick All <color=grey>[</color><color=red>Stump</color><color=grey>]</color> <color=grey>[</color><color=red>Private</color><color=grey>]</color> <color=grey>[</color><color=red>Detected</color><color=grey>]</color>", method =() => Overpowered.KickAll(), isTogglable = false, toolTip = "Kicks everyone inside of stump to a random public." },
+                //new ButtonInfo { buttonText = "Kick Gun <color=grey>[</color><color=red>Stump</color><color=grey>]</color> <color=grey>[</color><color=red>Private</color><color=grey>]</color> <color=grey>[</color><color=red>Detected</color><color=grey>]</color>", method =() => Overpowered.KickGun(), toolTip = "Kicks whoever your hand desires to a random public." },
+                //new ButtonInfo { buttonText = "Kick All <color=grey>[</color><color=red>Stump</color><color=grey>]</color> <color=grey>[</color><color=red>Private</color><color=grey>]</color> <color=grey>[</color><color=red>Detected</color><color=grey>]</color>", method =() => Overpowered.KickAll(), isTogglable = false, toolTip = "Kicks everyone inside of stump to a random public." },
 
                 //new ButtonInfo { buttonText = "Crash Gun", method =() => Overpowered.CrashGun(), toolTip = "Crashes or lags whoever your hand desires." },
                 //new ButtonInfo { buttonText = "Crash All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.CrashAll(), toolTip = "Crashes every quest player, and lags/crashes every steam player when holding <color=green>trigger</color>" },
