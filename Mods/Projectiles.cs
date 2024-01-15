@@ -1540,14 +1540,13 @@ namespace iiMenu.Mods.Spammers
             }
         }
 
-        public static void SlingshotSpam()
+        public static void SlingshotHelper()
         {
-            if (toget == null)
+            GameObject slingy = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/palm.01.L/TransferrableItemLeftHand/Slingshot Anchor/Slingshot");
+            if (slingy != null)
             {
-                toget = GameObject.Find("Player Objects/RigCache/Rig Parent/Gorilla Player Networked(Clone)/rig/body/Slingshot Chest Snap/DropZoneAnchor/Slingshot Anchor/Slingshot");
-            } else
-            {
-                UnityEngine.Debug.Log(toget.transform.GetPath());
+                Slingshot yay = slingy.GetComponent<Slingshot>();
+                yay.itemState = TransferrableObject.ItemStates.State2;
             }
         }
 
