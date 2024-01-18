@@ -14,12 +14,12 @@ namespace iiMenu.Mods
     {
         public static void AntiCrashEnabled()
         {
-            AntiCrashToggle = true;
+            GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools").SetActive(false);
         }
 
         public static void AntiCrashDisabled()
         {
-            AntiCrashToggle = false;
+            GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools").SetActive(true);
         }
 
         public static void AntiReportDisconnect()
@@ -42,36 +42,29 @@ namespace iiMenu.Mods
                             {
                                 Text name = v2.Find("Player Name").GetComponent<Text>();
                                 Transform report = v2.Find("ReportButton");
-                                if (name != null)
+                                if (!report.gameObject.activeSelf)
                                 {
-                                    if (name.text == PhotonNetwork.LocalPlayer.NickName.ToUpper())
+                                    foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                                     {
-                                        foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                                        if (vrrig != GorillaTagger.Instance.offlineVRRig)
                                         {
-                                            if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                                            float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
+                                            float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
+
+                                            float threshold = 0.35f;
+                                            if (!Name.Contains("Forest"))
                                             {
-                                                float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
-                                                float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
+                                                threshold = 0.2f;
+                                            }
 
-                                                float threshold = 0.35f;
-                                                if (!Name.Contains("Forest"))
-                                                {
-                                                    threshold = 0.2f;
-                                                }
-
-                                                if (D1 < threshold || D2 < threshold)
-                                                {
-                                                    PhotonNetwork.Disconnect();
-                                                    RPCProtection();
-                                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>Someone attempted to report you, you have been disconnected.</color>");
-                                                }
+                                            if (D1 < threshold || D2 < threshold)
+                                            {
+                                                PhotonNetwork.Disconnect();
+                                                RPCProtection();
+                                                NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>Someone attempted to report you, you have been disconnected.</color>");
                                             }
                                         }
                                     }
-                                }
-                                else
-                                {
-                                    UnityEngine.Debug.LogError("Odd error, no name");
                                 }
                             }
                         }
@@ -101,38 +94,31 @@ namespace iiMenu.Mods
                             {
                                 Text name = v2.Find("Player Name").GetComponent<Text>();
                                 Transform report = v2.Find("ReportButton");
-                                if (name != null)
+                                if (!report.gameObject.activeSelf)
                                 {
-                                    if (name.text == PhotonNetwork.LocalPlayer.NickName.ToUpper())
+                                    foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                                     {
-                                        foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                                        if (vrrig != GorillaTagger.Instance.offlineVRRig)
                                         {
-                                            if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                                            float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
+                                            float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
+
+                                            float threshold = 0.35f;
+                                            if (!Name.Contains("Forest"))
                                             {
-                                                float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
-                                                float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
+                                                threshold = 0.2f;
+                                            }
 
-                                                float threshold = 0.35f;
-                                                if (!Name.Contains("Forest"))
-                                                {
-                                                    threshold = 0.2f;
-                                                }
-
-                                                if (D1 < threshold || D2 < threshold)
-                                                {
-                                                    rejRoom = PhotonNetwork.CurrentRoom.Name;
-                                                    rejDebounce = Time.time + 2f;
-                                                    PhotonNetwork.Disconnect();
-                                                    RPCProtection();
-                                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>Someone attempted to report you, you have been disconnected and will be reconnected shortly.</color>");
-                                                }
+                                            if (D1 < threshold || D2 < threshold)
+                                            {
+                                                rejRoom = PhotonNetwork.CurrentRoom.Name;
+                                                rejDebounce = Time.time + 2f;
+                                                PhotonNetwork.Disconnect();
+                                                RPCProtection();
+                                                NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>Someone attempted to report you, you have been disconnected and will be reconnected shortly.</color>");
                                             }
                                         }
                                     }
-                                }
-                                else
-                                {
-                                    UnityEngine.Debug.LogError("Odd error, no name");
                                 }
                             }
                         }
@@ -162,38 +148,31 @@ namespace iiMenu.Mods
                             {
                                 Text name = v2.Find("Player Name").GetComponent<Text>();
                                 Transform report = v2.Find("ReportButton");
-                                if (name != null)
+                                if (!report.gameObject.activeSelf)
                                 {
-                                    if (name.text == PhotonNetwork.LocalPlayer.NickName.ToUpper())
+                                    foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                                     {
-                                        foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                                        if (vrrig != GorillaTagger.Instance.offlineVRRig)
                                         {
-                                            if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                                            float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
+                                            float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
+
+                                            float threshold = 0.35f;
+                                            if (!Name.Contains("Forest"))
                                             {
-                                                float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
-                                                float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
+                                                threshold = 0.2f;
+                                            }
 
-                                                float threshold = 0.35f;
-                                                if (!Name.Contains("Forest"))
-                                                {
-                                                    threshold = 0.2f;
-                                                }
-
-                                                if (D1 < threshold || D2 < threshold)
-                                                {
-                                                    PhotonNetwork.Disconnect();
-                                                    RPCProtection();
-                                                    isJoiningRandom = true;
-                                                    jrDebounce = Time.time + internetFloat;
-                                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>Someone attempted to report you, you have been disconnected and will be connected to a random lobby shortly.</color>");
-                                                }
+                                            if (D1 < threshold || D2 < threshold)
+                                            {
+                                                PhotonNetwork.Disconnect();
+                                                RPCProtection();
+                                                isJoiningRandom = true;
+                                                jrDebounce = Time.time + internetFloat;
+                                                NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>Someone attempted to report you, you have been disconnected and will be connected to a random lobby shortly.</color>");
                                             }
                                         }
                                     }
-                                }
-                                else
-                                {
-                                    UnityEngine.Debug.LogError("Odd error, no name");
                                 }
                             }
                         }

@@ -154,7 +154,7 @@ namespace iiMenu.Mods
 
         public static void JoinDiscord()
         {
-            Process.Start("https://discord.gg/Z89PjRGbNn");
+            Process.Start("https://discord.gg/iidk");
         }
 
         public static void EnableAntiAFK()
@@ -199,7 +199,7 @@ namespace iiMenu.Mods
 
         public static void ForceLagGame()
         {
-            foreach (MeshCollider v in Resources.FindObjectsOfTypeAll<MeshCollider>())
+            foreach (MeshCollider v in GameObject.FindObjectsOfType<MeshCollider>())
             {
             }
         }

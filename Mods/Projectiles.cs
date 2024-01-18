@@ -1,9 +1,14 @@
-﻿using GorillaExtensions;
+﻿using ExitGames.Client.Photon;
+using GorillaExtensions;
 using GorillaTag;
+using iiMenu.Classes;
+using Mono.Cecil.Cil;
 using Photon.Pun;
+using Photon.Realtime;
 using POpusCodec.Enums;
 using System;
 using System.Runtime.InteropServices;
+using System.Xml.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
@@ -30,11 +35,44 @@ namespace iiMenu.Mods.Spammers
                 fart.transform.position = startpos;
                 fart.projectilePrefab.tag = projectileName;
                 fart.OnRelease(null, null);
-                RPCProtection();
-                fart.transform.position = oldPos;
+                try
+                {
+                    RPCProtection();
+                } catch { /*wtf*/ }
                 GorillaTagger.Instance.GetComponent<Rigidbody>().velocity = oldVel;
+                fart.transform.position = oldPos;
                 fart.randomizeColor = false;
                 fart.projectilePrefab.tag = "SnowballProjectile";
+                if (projDebounceType > 0f && !noDelay)
+                {
+                    projDebounce = Time.time + projDebounceType;
+                }
+            }
+        }
+
+        public static void BetaFireImpact(Vector3 position, Color color, bool noDelay = false)
+        {
+            if (Time.time > projDebounce)
+            {
+                object[] impactSendData = new object[6];
+                impactSendData[0] = position;
+                impactSendData[1] = color.r;
+                impactSendData[2] = color.g;
+                impactSendData[3] = color.b;
+                impactSendData[4] = color.a;
+                impactSendData[5] = 1;
+
+                object[] sendEventData = new object[3];
+                sendEventData[0] = PhotonNetwork.ServerTimestamp;
+                sendEventData[1] = (byte)1;
+                sendEventData[2] = impactSendData;
+                PhotonNetwork.RaiseEvent(3, sendEventData, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendUnreliable);
+                try
+                {
+                    RPCProtection();
+                }
+                catch { /*wtf*/ }
+
                 if (projDebounceType > 0f && !noDelay)
                 {
                     projDebounce = Time.time + projDebounceType;
@@ -1789,7 +1827,7 @@ namespace iiMenu.Mods.Spammers
                     randc = blue * 255;
                 }
 
-                PhotonView.Get(GorillaGameManager.instance).RPC("SpawnSlingshotPlayerImpactEffect", RpcTarget.All, new object[]
+                /*PhotonView.Get(GorillaGameManager.instance).RPC("SpawnSlingshotPlayerImpactEffect", RpcTarget.All, new object[]
                 {
                     startpos,
                     randa / 255f,
@@ -1798,12 +1836,8 @@ namespace iiMenu.Mods.Spammers
                     1f,
                     1
                 });
-                RPCProtection();
-
-                if (projDebounceType > 0f)
-                {
-                    projDebounce = Time.time + projDebounceType;
-                }
+                RPCProtection();*/
+                BetaFireImpact(startpos, new Color32((byte)(randa / 255f), (byte)(randb / 255f), (byte)(randc / 255f), 255));
             }
         }
 

@@ -10,6 +10,7 @@ using UnityEngine.InputSystem;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 using static iiMenu.Mods.Spammers.Projectiles;
+using static UnityEngine.UI.GridLayoutGroup;
 
 namespace iiMenu.Mods
 {
@@ -191,15 +192,25 @@ namespace iiMenu.Mods
                         Photon.Realtime.Player owner = GetPlayerFromVRRig(possibly);
                         if (GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(owner.UserId) && GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(PhotonNetwork.LocalPlayer.UserId))
                         {
-                            /*PhotonNetworkController.Instance.shuffler = UnityEngine.Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+                            PhotonNetworkController.Instance.friendIDList = new List<string>(GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching);
+                            PhotonNetworkController.Instance.shuffler = UnityEngine.Random.Range(0, 99999999).ToString().PadLeft(8, '0');
                             PhotonNetworkController.Instance.keyStr = UnityEngine.Random.Range(0, 99999999).ToString().PadLeft(8, '0');
-                            PhotonView.Get(GorillaGameManager.instance).RPC("JoinPubWithFriends", owner, new object[]
+
+                            object[] groupJoinSendData = new object[2];
+                            groupJoinSendData[0] = PhotonNetworkController.Instance.shuffler;
+                            groupJoinSendData[1] = PhotonNetworkController.Instance.keyStr;
+                            RaiseEventOptions raiseEventOptions = new RaiseEventOptions
                             {
-                                PhotonNetworkController.Instance.shuffler,
-                                PhotonNetworkController.Instance.keyStr
-                            });
-                            PhotonNetwork.SendAllOutgoingCommands();
-                            RPCProtection();*/
+                                TargetActors = new int[1] { owner.ActorNumber }
+                            };
+
+                            object obj = groupJoinSendData;
+                            object[] sendEventData = new object[3];
+                            sendEventData[0] = PhotonNetwork.ServerTimestamp;
+                            sendEventData[1] = (byte)4;
+                            sendEventData[2] = groupJoinSendData;
+                            PhotonNetwork.RaiseEvent(3, sendEventData, raiseEventOptions, SendOptions.SendUnreliable);
+                            RPCProtection();
                         }
                         kgDebounce = Time.time + 0.5f;
                     }
@@ -218,13 +229,21 @@ namespace iiMenu.Mods
                 {
                     if (GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(player.UserId) && player != PhotonNetwork.LocalPlayer)
                     {
-                        PhotonNetworkController.Instance.shuffler = UnityEngine.Random.Range(0, 99999999).ToString().PadLeft(8, '0');
-                        PhotonNetworkController.Instance.keyStr = UnityEngine.Random.Range(0, 99999999).ToString().PadLeft(8, '0');
-                        PhotonView.Get(GorillaGameManager.instance).RPC("JoinPubWithFriends", player, new object[]
+                        object[] groupJoinSendData = new object[2];
+                        groupJoinSendData[0] = PhotonNetworkController.Instance.shuffler;
+                        groupJoinSendData[1] = PhotonNetworkController.Instance.keyStr;
+                        RaiseEventOptions raiseEventOptions = new RaiseEventOptions
                         {
-                            PhotonNetworkController.Instance.shuffler,
-                            PhotonNetworkController.Instance.keyStr
-                        });
+                            TargetActors = new int[1] { player.ActorNumber }
+                        };
+
+                        object obj = groupJoinSendData;
+                        object[] sendEventData = new object[3];
+                        sendEventData[0] = PhotonNetwork.ServerTimestamp;
+                        sendEventData[1] = (byte)4;
+                        sendEventData[2] = groupJoinSendData;
+                        PhotonNetwork.RaiseEvent(3, sendEventData, raiseEventOptions, SendOptions.SendUnreliable);
+                        RPCProtection();
                     }
                 }
                 PhotonNetwork.SendAllOutgoingCommands();
