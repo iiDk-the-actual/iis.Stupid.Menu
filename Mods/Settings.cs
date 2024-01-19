@@ -3,8 +3,10 @@ using iiMenu.Menu;
 using iiMenu.Notifications;
 using System.IO;
 using UnityEngine;
+using System.Linq;
 using UnityEngine.UI;
 using static iiMenu.Menu.Main;
+using System;
 
 namespace iiMenu.Mods
 {
@@ -351,6 +353,26 @@ namespace iiMenu.Mods
             if (fontCycle == 4)
             {
                 activeFont = sans;
+            }
+        }
+
+        public static void DisorganizeMenu()
+        {
+            if (!disorganized)
+            {
+                disorganized = true;
+                foreach (ButtonInfo[] buttonArray in Buttons.buttons)
+                {
+                    if (buttonArray.Length > 0)
+                    {
+                        for (int i = 0; i < buttonArray.Length; i++)
+                        {
+                            Buttons.buttons[0] = Buttons.buttons[0].Concat(new[] { buttonArray[i] }).ToArray();
+                        }
+
+                        Array.Clear(buttonArray, 0, buttonArray.Length);
+                    }
+                }
             }
         }
 

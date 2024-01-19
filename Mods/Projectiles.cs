@@ -27,18 +27,18 @@ namespace iiMenu.Mods.Spammers
                 Vector3 charvel = velocity;
 
                 Vector3 oldVel = GorillaTagger.Instance.GetComponent<Rigidbody>().velocity;
-                GorillaTagger.Instance.GetComponent<Rigidbody>().velocity = charvel;
                 SnowballThrowable fart = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballRightAnchor").transform.Find("LMACF.").GetComponent<SnowballThrowable>();
                 Vector3 oldPos = fart.transform.position;
                 fart.randomizeColor = true;
-                GorillaTagger.Instance.offlineVRRig.SetThrowableProjectileColor(false, color);
                 fart.transform.position = startpos;
                 fart.projectilePrefab.tag = projectileName;
-                fart.OnRelease(null, null);
+                GorillaTagger.Instance.GetComponent<Rigidbody>().velocity = charvel;
+                GorillaTagger.Instance.offlineVRRig.SetThrowableProjectileColor(false, color);
                 try
                 {
-                    RPCProtection();
-                } catch { /*wtf*/ }
+                    fart.OnRelease(null, null);
+                } catch { /* wtf */ }
+                RPCProtection();
                 GorillaTagger.Instance.GetComponent<Rigidbody>().velocity = oldVel;
                 fart.transform.position = oldPos;
                 fart.randomizeColor = false;
@@ -1722,7 +1722,7 @@ namespace iiMenu.Mods.Spammers
                     randc = blue * 255;
                 }
 
-                PhotonView.Get(GorillaGameManager.instance).RPC("SpawnSlingshotPlayerImpactEffect", RpcTarget.All, new object[]
+                /*PhotonView.Get(GorillaGameManager.instance).RPC("SpawnSlingshotPlayerImpactEffect", RpcTarget.All, new object[]
                 {
                     startpos,
                     randa / 255f,
@@ -1730,7 +1730,8 @@ namespace iiMenu.Mods.Spammers
                     randc / 255f,
                     1f,
                     1
-                });
+                });*/
+                BetaFireImpact(startpos, new Color32((byte)randa, (byte)randb, (byte)randc, 255));
                 RPCProtection();
 
                 if (projDebounceType > 0f)
@@ -1835,9 +1836,32 @@ namespace iiMenu.Mods.Spammers
                     randc / 255f,
                     1f,
                     1
-                });
-                RPCProtection();*/
-                BetaFireImpact(startpos, new Color32((byte)(randa / 255f), (byte)(randb / 255f), (byte)(randc / 255f), 255));
+                });*/
+                BetaFireImpact(startpos, new Color32((byte)randa, (byte)randb, (byte)randc, 255));
+                RPCProtection();
+            }
+        }
+
+        public static void PaperPlaneSpam()
+        {
+            if (rightGrab && !lastRG)
+            {
+                funnyplanes = GameObject.FindObjectsOfType<PaperPlaneThrowable>();
+            }
+            lastRG = rightGrab;
+
+            if (rightGrab)
+            {
+                foreach (PaperPlaneThrowable funnyplane in funnyplanes)
+                {
+                    if (Time.time > projDebounce)
+                    {
+                        Vector3 oldPos = funnyplane.gameObject.transform.position;
+                        funnyplane.gameObject.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                        funnyplane.OnRelease(null, EquipmentInteractor.instance.rightHand);
+                        projDebounce = Time.time + 0.1f;
+                    }
+                }
             }
         }
 

@@ -11,7 +11,7 @@ namespace iiMenu.Mods
     internal class Experimental
     {
         /*public static void AntiBan()
-        {
+        { this shit was skidded and wont come back
             antiBanEnabled = true;
             ExecuteCloudScriptRequest executeCloudScriptRequest = new ExecuteCloudScriptRequest();
             executeCloudScriptRequest.FunctionName = "RoomClosed";

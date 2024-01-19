@@ -193,7 +193,7 @@ namespace iiMenu.Menu
                             }
                         }
                         motdTextB.text = @"
-You are using version 2.6. This menu was created by iiDk (@goldentrophy) on
+You are using version 2.7. This menu was created by iiDk (@goldentrophy) on
 discord. This menu is completely free and unobfuscated, if you paid for this
 menu you have been scammed. There are a total of <b> " + fullModAmount + @" </b> mods on this
 menu. <color=red>I, iiDk, am not responsible for any bans using this menu.</color> If you get
@@ -216,6 +216,12 @@ banned while using this, please report it to the discord server.";
                     if (menuBackground != null && reference != null)
                     {
                         reference.GetComponent<Renderer>().material.color = menuBackground.GetComponent<Renderer>().material.color;
+                    }
+
+                    if (disorganized && buttonsType != 0)
+                    {
+                        buttonsType = 0;
+                        ReloadMenu();
                     }
 
                     if (frameFixColliders)
@@ -738,6 +744,7 @@ banned while using this, please report it to the discord server.";
             }
         }
 
+        // the variable warehouse
         public static int buttonsType = 0;
 
         public static float buttonCooldown = 0f;
@@ -928,6 +935,8 @@ banned while using this, please report it to the discord server.";
 
         public static Vector2 lerpygerpy = Vector2.zero;
 
+        public static PaperPlaneThrowable[] funnyplanes = null;
+
         public static bool bothHands = false;
 
         public static bool waitingForRun = true;
@@ -996,6 +1005,10 @@ banned while using this, please report it to the discord server.";
 
         public static bool lastHit2 = false;
 
+        public static bool lastRG;
+
+        public static int tindex = 1;
+
         public static bool FATMENU = false;
 
         public static bool antiBanEnabled = false;
@@ -1003,6 +1016,8 @@ banned while using this, please report it to the discord server.";
         public static bool lastHitL = false;
 
         public static bool lastHitR = false;
+
+        public static bool disorganized = false;
 
         public static bool lastHitLP = false;
 
@@ -1236,6 +1251,14 @@ banned while using this, please report it to the discord server.";
             favoriteColors[2].color = new Color32(252, 186, 3, 255);
             favoriteColors[2].time = 1f;
 
+            GradientColorKey[] favoriteColorsEnabled = new GradientColorKey[3];
+            favoriteColorsEnabled[0].color = new Color32(126, 93, 3, 255);
+            favoriteColorsEnabled[0].time = 0f;
+            favoriteColorsEnabled[1].color = new Color32(126, 99, 36, 255);
+            favoriteColorsEnabled[1].time = 0.5f;
+            favoriteColorsEnabled[2].color = new Color32(126, 93, 3, 255);
+            favoriteColorsEnabled[2].time = 1f;
+
             ColorChanger colorChanger = gameObject.AddComponent<ColorChanger>();
             if (method.enabled)
             {
@@ -1259,10 +1282,20 @@ banned while using this, please report it to the discord server.";
             {
                 colorChanger.isRainbow = false;
                 colorChanger.isMonkeColors = false;
-                colorChanger.colors = new Gradient
+                if (method.enabled)
                 {
-                    colorKeys = favoriteColors
-                };
+                    colorChanger.colors = new Gradient
+                    {
+                        colorKeys = favoriteColorsEnabled
+                    };
+                }
+                else
+                {
+                    colorChanger.colors = new Gradient
+                    {
+                        colorKeys = favoriteColors
+                    };
+                }
             }
             colorChanger.Start();
             Text text2 = new GameObject
