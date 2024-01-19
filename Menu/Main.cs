@@ -1058,7 +1058,7 @@ banned while using this, please report it to the discord server.";
         public static float TagAuraDelay = 0f;
 
         public static float jspeed = 7.5f;
-        public static float jmulti = 1.5f;
+        public static float jmulti = 1.25f;
 
         public static float teleDebounce = 0;
 

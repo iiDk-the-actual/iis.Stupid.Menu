@@ -1858,7 +1858,8 @@ namespace iiMenu.Mods.Spammers
                     {
                         Vector3 oldPos = funnyplane.gameObject.transform.position;
                         funnyplane.gameObject.transform.position = GorillaTagger.Instance.rightHandTransform.position;
-                        funnyplane.OnRelease(null, EquipmentInteractor.instance.rightHand);
+                        try { funnyplane.OnRelease(null, EquipmentInteractor.instance.rightHand); } catch { }
+                        funnyplane.gameObject.transform.position = oldPos;
                         projDebounce = Time.time + 0.1f;
                     }
                 }
