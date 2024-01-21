@@ -163,6 +163,16 @@ namespace iiMenu.Mods
             wristOpen = false;
         }
 
+        public static void LongMenuOn()
+        {
+            longmenu = true;
+        }
+
+        public static void LongMenuOff()
+        {
+            longmenu = false;
+        }
+
         public static void ChangeMenuTheme()
         {
             themeType++;

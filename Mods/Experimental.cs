@@ -1,9 +1,6 @@
-﻿using ExitGames.Client.Photon;
-using iiMenu.Notifications;
+﻿using iiMenu.Notifications;
 using Photon.Pun;
-using PlayFab;
-using PlayFab.ClientModels;
-using System.Text.RegularExpressions;
+using UnityEngine;
 using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods
@@ -29,6 +26,21 @@ namespace iiMenu.Mods
 
             NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI BAN</color><color=grey>]</color> <color=white>The anti ban has been enabled! I take ZERO responsibility for bans using this.</color>");
         }*/
+
+        public static void ProtectionEn() // somehow people accidentally click set master so i have  to make this shit now
+        {
+            protsavetimekys = Time.time + 1f;
+            NotifiLib.SendNotification("<color=grey>[</color><color=purple>PROTECTION</color><color=grey>]</color> <color=white>To prevent against accidentally clicking this, you need to press the button twice.</color>");
+        }
+
+        public static void Protection()
+        {
+            if (Time.time > protsavetimekys)
+            {
+                GetIndex("Set Master <color=grey>[</color><color=red>Detected</color><color=grey>]</color>").enabled = false;
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>PROTECTION</color><color=grey>]</color> <color=white>To prevent against accidentally clicking this, you need to press the button twice.</color>");
+            }
+        }
 
         public static void SetMaster()
         {

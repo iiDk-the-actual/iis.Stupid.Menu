@@ -1,4 +1,6 @@
-﻿using Steamworks;
+﻿using GorillaTag;
+using Photon.Pun;
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static iiMenu.Menu.Main;
@@ -7,6 +9,15 @@ namespace iiMenu.Mods
 {
     internal class Basement
     {
+        public static void SodaSelf()
+        {
+            ScienceExperimentManager.instance.photonView.RPC("PlayerTouchedLavaRPC", RpcTarget.All, Array.Empty<object>());
+        }
+        public static void UnsodaSelf()
+        {
+            ScienceExperimentManager.instance.photonView.RPC("PlayerTouchedRefreshWaterRPC", RpcTarget.All, Array.Empty<object>());
+        }
+
         public static void SlowMonsters()
         {
             foreach (MonkeyeAI monkeyeAI in GameObject.FindObjectsOfType<MonkeyeAI>())

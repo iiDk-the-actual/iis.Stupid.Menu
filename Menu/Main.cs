@@ -113,7 +113,6 @@ namespace iiMenu.Menu
                     RecenterMenu();
                 }
                 {
-                    hasLoaded = true;
                     hasRemovedThisFrame = false;
 
                     try
@@ -139,28 +138,7 @@ namespace iiMenu.Menu
 
                     try
                     {
-                        GradientColorKey[] array = new GradientColorKey[3];
-                        array[0].color = bgColorA;
-                        array[0].time = 0f;
-                        array[1].color = bgColorB;
-                        array[1].time = 0.5f;
-                        array[2].color = bgColorA;
-                        array[2].time = 1f;
-
-                        Gradient bg = new Gradient
-                        {
-                            colorKeys = array
-                        };
-
-                        if (themeType == 6)
-                        {
-                            float h = (Time.frameCount / 180f) % 1f;
-                            OrangeUI.color = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
-                        }
-                        else
-                        {
-                            OrangeUI.color = bg.Evaluate((Time.time / 2f) % 1);
-                        }
+                        OrangeUI.color = GetBGColor(0f);
 
                         GameObject motdText = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/motd");
                         Text motdTC = motdText.GetComponent<Text>();
@@ -221,6 +199,12 @@ banned while using this, please report it to the discord server.";
                     if (disorganized && buttonsType != 0)
                     {
                         buttonsType = 0;
+                        ReloadMenu();
+                    }
+
+                    if (longmenu && pageNumber != 0)
+                    {
+                        pageNumber = 0;
                         ReloadMenu();
                     }
 
@@ -307,7 +291,7 @@ banned while using this, please report it to the discord server.";
                                 }
                                 if (!ownerInServer && lastOwner)
                                 {
-                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>OWNER</color><color=grey>]</color> <cyeaolor=white>Goldentrophy has left your room.</color>");
+                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>OWNER</color><color=grey>]</color> <color=white>Goldentrophy has left your room.</color>");
                                 }
                                 if (ownerInServer == true)
                                 {
@@ -744,465 +728,32 @@ banned while using this, please report it to the discord server.";
             }
         }
 
-        // the variable warehouse
-        public static int buttonsType = 0;
-
-        public static float buttonCooldown = 0f;
-
-        public static GameObject menu = null;
-
-        public static GameObject menuBackground = null;
-
-        public static Text title = null;
-
-        private static Text fpsCount = null;
-
-        private static GameObject canvasObj = null;
-
-        public static GameObject reference = null;
-
-        public static GameObject CheckPoint = null;
-
-        public static GameObject BombObject = null;
-
-        public static GameObject ProjBombObject = null;
-
-        public static SphereCollider buttonCollider = null;
-
-        public static GameObject airSwimPart = null;
-
-        public static GameObject leftplat;
-
-        public static GameObject rightplat;
-
-        public static GameObject leftThrow;
-
-        public static GameObject rightThrow;
-
-        public static GameObject cam;
-
-        public static Vector3 rightgrapplePoint;
-        public static Vector3 leftgrapplePoint;
-        public static SpringJoint rightjoint;
-        public static SpringJoint leftjoint;
-
-        public static bool lastInRoom = false;
-        public static string lastRoom = "";
-
-        public static bool isLeftGrappling = false;
-
-        public static bool isRightGrappling = false;
-
-        public static float mastertimer = 0;
-
-        public static int fullModAmount = -1;
-
-        public static bool noti = true;
-
-        public static bool customSoundOnJoin = false;
-
-        public static bool disableNotifications = false;
-
-        public static int pageSize = 6;
-
-        public static int pageNumber = 0;
-
-        public static int pageButtonType = 1;
-
-        public static float buttonOffset = 2;
-
-        public static bool DoOneTime = false;
-
-        public static bool noclip = false;
-
-        public static float debounce = 0;
-
-        public static float delaythinggg = 0f;
-
-        public static int projmode = 0;
-
-        public static int trailmode = 0;
-
-        public static int hat = 0;
-
-        public static float oldSlide = 0f;
-
-        public static int accessoryType = 0;
-
-        public static int soundId = 0;
-
-        public static int platformMode = 0;
-
-        public static int platformShape = 0;
-
-        public static bool isCopying = false;
-
-        public static float red = 1f;
-        public static float green = 0.5f;
-        public static float blue = 0f;
-
-        public static float internetFloat = 3f;
-
-        public static string ownerPlayerId = "E19CE8918FD9E927";
-        public static string questPlayerId = "373BOCBEF62D8F44";
-
-        public static string inputText = "";
-
-        public static bool lastOwner = false;
-
-        public static string lastCommand = "";
-
-        public static int fontCycle = 0;
-
-        public static bool hasLoaded = false;
-
-        public static Vector3 walkPos;
-
-        public static Vector3 walkNormal;
-
-        public static VRRig whoCopy = null;
-
-        public static Camera TPC = null;
-
-        public static Font agency = Font.CreateDynamicFontFromOSFont("Agency FB", 24);
-
-        public static Font gtagfont = null;
-
-        public static Font Verdana = Font.CreateDynamicFontFromOSFont("Verdana", 24);
-
-        public static Font sans = Font.CreateDynamicFontFromOSFont("Comic Sans MS", 24);
-
-        public static Font Arial = (Resources.GetBuiltinResource(typeof(Font), "Arial.ttf") as Font);
-
-        public static Font activeFont = agency;
-
-        public static Material OrangeUI = new Material(Shader.Find("GorillaTag/UberShader"));
-
-        public static Material glass = null;
-
-        public static Font defaultGtag = GameObject.Find("COC Text").GetComponent<Text>().font;
-
-        public static List<GameObject> leaves = new List<GameObject> { };
-
-        public static List<GameObject> lights = new List<GameObject> { };
-
-        public static List<string> favorites = new List<string> { "Exit Favorite Mods" };
-
-        public static List<GameObject> holidayobjects = new List<GameObject> { };
-
-        public static List<GorillaNetworkJoinTrigger> triggers = new List<GorillaNetworkJoinTrigger> { };
-
-        public static Vector3 offsetLH = Vector3.zero;
-
-        public static Vector3 offsetRH = Vector3.zero;
-
-        public static Vector3 offsetH = Vector3.zero;
-
-        public static Vector3 longJumpPower = Vector3.zero;
-
-        public static Vector3[] lastLeft = new Vector3[] { Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero };
-
-        public static Vector3[] lastRight = new Vector3[] { Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero };
-
-        public static string[] letters = new string[]
+        public static Color GetBGColor(float offset)
         {
-            "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "A", "S", "D", "F", "G", "H", "J", "K", "L", "Z", "X", "C", "V", "B", "N", "M"
-        };
-
-        public static int[] bones = new int[] {
-            4, 3, 5, 4, 19, 18, 20, 19, 3, 18, 21, 20, 22, 21, 25, 21, 29, 21, 31, 29, 27, 25, 24, 22, 6, 5, 7, 6, 10, 6, 14, 6, 16, 14, 12, 10, 9, 7
-        };
-
-        public static Color bgColorA = new Color32(255, 128, 0, 128);
-
-        public static Color bgColorB = new Color32(255, 102, 0, 128);
-
-        public static Color buttonDefaultA = new Color32(170, 85, 0, 255);
-
-        public static Color buttonDefaultB = new Color32(170, 85, 0, 255);
-
-        public static Color buttonClickedA = new Color32(85, 42, 0, 255);
-
-        public static Color buttonClickedB = new Color32(85, 42, 0, 255);
-
-        public static Color textColor = new Color32(255, 190, 125, 255);
-
-        public static Color colorChange = Color.black;
-
-        public static AssetBundle assetBundle = null;
-
-        public static bool rightHand = false;
-
-        public static Vector2 lerpygerpy = Vector2.zero;
-
-        public static PaperPlaneThrowable[] funnyplanes = null;
-
-        public static bool bothHands = false;
-
-        public static bool waitingForRun = true;
-
-        public static bool hasRemovedThisFrame = false;
-
-        public static bool frameFixColliders = false;
-
-        public static int themeType = 1;
-
-        public static float kgDebounce = 0f;
-
-        public static float ShootStrength = 19.44f;
-
-        public static int shootCycle = 1;
-
-        public static float flySpeed = 10f;
-
-        public static int flySpeedCycle = 1;
-
-        public static int speedboostCycle = 1;
-
-        public static int nameCycleIndex = 0;
-
-        public static float nameCycleDelay = 0f;
-
-        public static float stealIdentityDelay = 0f;
-
-        public static float beesDelay = 0f;
-
-        public static float laggyRigDelay = 0f;
-
-        public static bool lastprimaryhit = false;
-
-        public static bool idiotfixthingy = false;
-
-        public static bool wristThing = false;
-        public static bool wristOpen = false;
-        public static bool lastChecker = false;
-
-        public static int crashAmount = 2;
-
-        public static bool isJoiningRandom = false;
-
-        public static float jrDebounce = 0f;
-
-        public static float projDebounce = 0f;
-
-        public static float projDebounceType = 0.1f;
-
-        public static float colorChangerDelay = 0f;
-
-        public static int colorChangeType = 0;
-
-        public static bool strobeColor = false;
-
-        public static bool AntiCrashToggle = false;
-
-        public static bool AntiCheatSelf = false;
-
-        public static bool AntiCheatAll = false;
-
-        public static bool lastHit = false;
-
-        public static bool ghostMonke = false;
-
-        public static bool lastHit2 = false;
-
-        public static bool lastRG;
-
-        public static int tindex = 1;
-
-        public static bool FATMENU = false;
-
-        public static bool antiBanEnabled = false;
-
-        public static bool lastHitL = false;
-
-        public static bool lastHitR = false;
-
-        public static bool disorganized = false;
-
-        public static bool lastHitLP = false;
-
-        public static bool lastHitRP = false;
-
-        public static bool lastHitRS = false;
-
-        public static bool plastLeftGrip = false;
-
-        public static bool plastRightGrip = false;
-
-        public static bool invisMonke = false;
-
-        public static bool EverythingSlippery = false;
-
-        public static bool EverythingGrippy = false;
-
-        public static bool headspazType = false;
-
-        public static float headspazDelay = 0f;
-
-        public static bool shouldBePC = false;
-        public static bool rightPrimary = false;
-        public static bool rightSecondary = false;
-        public static bool leftPrimary = false;
-        public static bool leftSecondary = false;
-        public static bool leftGrab = false;
-        public static bool rightGrab = false;
-        public static float leftTrigger = 0f;
-        public static float rightTrigger = 0f;
-
-        public static float subThingy = 0f;
-
-        public static float sizeScale = 1f;
-
-        public static float turnAmnt = 0f;
-
-        public static float TagAuraDelay = 0f;
-
-        public static float jspeed = 7.5f;
-        public static float jmulti = 1.25f;
-
-        public static float teleDebounce = 0;
-
-        public static float splashDel = 0f;
-
-        public static float startX = -1f;
-
-        public static bool HasRan = false;
-
-        public static bool isRightHand = false;
-
-        public static object RigManager { get; private set; }
-
-        public static bool isUpdatingValues = false;
-
-        public static float valueChangeDelay = 0f;
-
-        public static bool changingName = false;
-
-        public static Color currentProjectileColor = Color.white;
-
-        public static GameObject toget = null;
-
-        public static bool changingColor = false;
-
-        public static string nameChange = "";
-
-        // Annoying Data
-            public static bool annoyingMode = false;
-
-            public static string[] facts = new string[] {
-                "The honeybee is the only insect that produces food eaten by humans.",
-                "Bananas are berries, but strawberries aren't.",
-                "The Eiffel Tower can be 15 cm taller during the summer due to thermal expansion.",
-                "A group of flamingos is called a 'flamboyance.'",
-                "The shortest war in history was between Britain and Zanzibar on August 27, 1896 – Zanzibar surrendered after 38 minutes.",
-                "Cows have best friends and can become stressed when they are separated.",
-                "The first computer programmer was a woman named Ada Lovelace.",
-                "A 'jiffy' is an actual unit of time, equivalent to 1/100th of a second.",
-                "Octopuses have three hearts and blue blood.",
-                "The world's largest desert is Antarctica.",
-                "Honey never spoils. Archaeologists have found pots of honey in ancient Egyptian tombs that are over 3,000 years old and still perfectly edible.",
-                "The smell of freshly-cut grass is actually a plant distress call.",
-                "The average person spends six months of their life waiting for red lights to turn green.",
-                "A group of owls is called a parliament.",
-                "The longest word in the English language without a vowel is 'rhythms.'",
-                "The Great Wall of China is not visible from the moon without aid.",
-                "Venus rotates so slowly on its axis that a day on Venus (one full rotation) is longer than a year on Venus (orbit around the sun).",
-                "The world's largest recorded snowflake was 15 inches wide.",
-                "There are more possible iterations of a game of chess than there are atoms in the known universe.",
-                "A newborn kangaroo is the size of a lima bean and is unable to hop until it's about 8 months old.",
-                "The longest hiccuping spree lasted for 68 years!",
-                "A single cloud can weigh more than 1 million pounds.",
-                "Honeybees can recognize human faces.",
-                "Cats have five toes on their front paws but only four on their back paws.",
-                "The inventor of the frisbee was turned into a frisbee. Walter Morrison, the inventor, was cremated, and his ashes were turned into a frisbee after he passed away.",
-                "Penguins give each other pebbles as a way of proposing."
+            Color oColor = bgColorA;
+            GradientColorKey[] array = new GradientColorKey[3];
+            array[0].color = bgColorA;
+            array[0].time = 0f;
+            array[1].color = bgColorB;
+            array[1].time = 0.5f;
+            array[2].color = bgColorA;
+            array[2].time = 1f;
+
+            Gradient bg = new Gradient
+            {
+                colorKeys = array
             };
-
-        public class TimedBehaviour : MonoBehaviour
-        {
-            public virtual void Start()
+            if (themeType == 6)
             {
-                this.startTime = Time.time;
+                float h = ((Time.frameCount / 180f) + offset) % 1f;
+                oColor = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
+            }
+            else
+            {
+                oColor = bg.Evaluate(((Time.time / 2f) + offset) % 1);
             }
 
-            public virtual void Update()
-            {
-                if (!this.complete)
-                {
-                    this.progress = Mathf.Clamp((Time.time - this.startTime) / this.duration, 0f, 1f);
-                    if (Time.time - this.startTime > this.duration)
-                    {
-                        if (this.loop)
-                        {
-                            this.OnLoop();
-                        }
-                        else
-                        {
-                            this.complete = true;
-                        }
-                    }
-                }
-            }
-
-            public virtual void OnLoop()
-            {
-                this.startTime = Time.time;
-            }
-
-            public bool complete = false;
-
-            public bool loop = true;
-
-            public float progress = 0f;
-
-            protected bool paused = false;
-
-            protected float startTime;
-
-            protected float duration = 2f;
-        }
-
-        public class ColorChanger : TimedBehaviour
-        {
-            public override void Start()
-            {
-                base.Start();
-                this.gameObjectRenderer = base.GetComponent<Renderer>();
-                this.Update();
-            }
-
-            public override void Update()
-            {
-                base.Update();
-                if (this.colors != null)
-                {
-                    if (!this.isMonkeColors)
-                    {
-                        if (this.timeBased)
-                        {
-                            //this.color = this.colors.Evaluate(this.progress);
-                            this.color = this.colors.Evaluate((Time.time / 2f) % 1);
-                        }
-                        if (this.isRainbow)
-                        {
-                            float h = (Time.frameCount / 180f) % 1f;
-                            this.color = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
-                        }
-                        this.gameObjectRenderer.material.color = this.color;
-                    }
-                    else
-                    {
-                        this.gameObjectRenderer.material = GorillaTagger.Instance.offlineVRRig.mainSkin.material;
-                    }
-                }
-            }
-
-            public Renderer gameObjectRenderer;
-            public Gradient colors = null;
-            public Color32 color;
-            public bool timeBased = true;
-            public bool isRainbow = false;
-            public bool isMonkeColors = false;
+            return oColor;
         }
 
         private static void AddButton(float offset, int buttonIndex, ButtonInfo method)
@@ -1223,6 +774,11 @@ banned while using this, please report it to the discord server.";
             else
             {
                 gameObject.transform.localScale = new Vector3(0.09f, 1.3f, 0.08f);
+            }
+            if (longmenu && buttonIndex > (pageSize - 1))
+            {
+                menuBackground.transform.localScale += new Vector3(0f, 0f, 0.1f);
+                menuBackground.transform.localPosition += new Vector3(0f, 0f, -0.05f);
             }
             gameObject.transform.localPosition = new Vector3(0.56f, 0f, 0.28f - offset);
             gameObject.AddComponent<Classes.Button>().relatedText = method.buttonText;
@@ -1525,6 +1081,7 @@ banned while using this, please report it to the discord server.";
                 ButtonInfo disconnect = GetIndex("Disconnect");
                 ButtonInfo[] array2 = new ButtonInfo[] { disconnect, disconnect, disconnect, disconnect, disconnect, disconnect, disconnect, disconnect, disconnect, disconnect };
                 array2 = array2.Take(pageSize).ToArray();
+                if (longmenu) { array2 = Buttons.buttons[buttonsType]; }
                 for (int i = 0; i < array2.Length; i++)
                 {
                     AddButton(i * 0.1f + (buttonOffset / 10), i, array2[i]);
@@ -1535,6 +1092,7 @@ banned while using this, please report it to the discord server.";
                 if (buttonsType != 19)
                 {
                     ButtonInfo[] array2 = Buttons.buttons[buttonsType].Skip(pageNumber * pageSize).Take(pageSize).ToArray();
+                    if (longmenu) { array2 = Buttons.buttons[buttonsType]; }
                     for (int i = 0; i < array2.Length; i++)
                     {
                         AddButton(i * 0.1f + (buttonOffset / 10), i, array2[i]);
@@ -2140,5 +1698,266 @@ banned while using this, please report it to the discord server.";
             }
             ReloadMenu();
         }
+
+        // the variable warehouse
+        public static float internetFloat = 3f;
+        public static bool hasRemovedThisFrame = false;
+        public static bool frameFixColliders = false;
+        public static int buttonsType = 0;
+        public static float buttonCooldown = 0f;
+        public static bool noti = true;
+        public static bool disableNotifications = false;
+        public static int pageSize = 6;
+        public static int pageNumber = 0;
+        public static int pageButtonType = 1;
+        public static float buttonOffset = 2;
+        public static int fullModAmount = -1;
+        public static int fontCycle = 0;
+        public static bool rightHand = false;
+        public static bool isRightHand = false;
+        public static bool bothHands = false;
+        public static bool wristThing = false;
+        public static bool wristOpen = false;
+        public static bool lastChecker = false;
+        public static bool FATMENU = false;
+        public static bool longmenu = false;
+        public static bool isCopying = false;
+        public static bool disorganized = false;
+
+        public static bool shouldBePC = false;
+        public static bool rightPrimary = false;
+        public static bool rightSecondary = false;
+        public static bool leftPrimary = false;
+        public static bool leftSecondary = false;
+        public static bool leftGrab = false;
+        public static bool rightGrab = false;
+        public static float leftTrigger = 0f;
+        public static float rightTrigger = 0f;
+
+        public static string ownerPlayerId = "E19CE8918FD9E927";
+        public static string questPlayerId = "373BOCBEF62D8F44";
+
+        public static GameObject cam = null;
+        public static Camera TPC = null;
+        public static GameObject menu = null;
+        public static GameObject menuBackground = null;
+        public static GameObject reference = null;
+        public static SphereCollider buttonCollider = null;
+        public static GameObject canvasObj = null;
+        public static AssetBundle assetBundle = null;
+        public static Text fpsCount = null;
+        public static Text title = null;
+        public static VRRig whoCopy = null;
+
+        public static Font agency = Font.CreateDynamicFontFromOSFont("Agency FB", 24);
+        public static Font Arial = (Resources.GetBuiltinResource(typeof(Font), "Arial.ttf") as Font);
+        public static Font Verdana = Font.CreateDynamicFontFromOSFont("Verdana", 24);
+        public static Font sans = Font.CreateDynamicFontFromOSFont("Comic Sans MS", 24);
+        public static Font gtagfont = null;
+        public static Font activeFont = agency;
+
+        public static GameObject leftplat = null;
+        public static GameObject rightplat = null;
+
+        public static GameObject leftThrow = null;
+        public static GameObject rightThrow = null;
+
+        public static GameObject CheckPoint = null;
+        public static GameObject BombObject = null;
+        public static GameObject ProjBombObject = null;
+
+        public static GameObject airSwimPart = null;
+
+        public static List<GameObject> leaves = new List<GameObject> { };
+        public static List<GameObject> lights = new List<GameObject> { };
+        public static List<GameObject> holidayobjects = new List<GameObject> { };
+
+        public static Vector3 rightgrapplePoint;
+        public static Vector3 leftgrapplePoint;
+        public static SpringJoint rightjoint;
+        public static SpringJoint leftjoint;
+        public static bool isLeftGrappling = false;
+        public static bool isRightGrappling = false;
+
+        public static Material OrangeUI = new Material(Shader.Find("GorillaTag/UberShader"));
+        public static Material glass = null;
+
+        public static List<string> favorites = new List<string> { "Exit Favorite Mods" };
+
+        public static List<GorillaNetworkJoinTrigger> triggers = new List<GorillaNetworkJoinTrigger> { };
+
+        public static Vector3 offsetLH = Vector3.zero;
+        public static Vector3 offsetRH = Vector3.zero;
+        public static Vector3 offsetH = Vector3.zero;
+
+        public static Vector3 longJumpPower = Vector3.zero;
+        public static Vector2 lerpygerpy = Vector2.zero;
+
+        public static Vector3[] lastLeft = new Vector3[] { Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero };
+        public static Vector3[] lastRight = new Vector3[] { Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero };
+
+        public static string[] letters = new string[]
+        {
+            "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "A", "S", "D", "F", "G", "H", "J", "K", "L", "Z", "X", "C", "V", "B", "N", "M"
+        };
+        public static int[] bones = new int[] {
+            4, 3, 5, 4, 19, 18, 20, 19, 3, 18, 21, 20, 22, 21, 25, 21, 29, 21, 31, 29, 27, 25, 24, 22, 6, 5, 7, 6, 10, 6, 14, 6, 16, 14, 12, 10, 9, 7
+        };
+
+        public static int themeType = 1;
+        public static Color bgColorA = new Color32(255, 128, 0, 128);
+        public static Color bgColorB = new Color32(255, 102, 0, 128);
+
+        public static Color buttonDefaultA = new Color32(170, 85, 0, 255);
+        public static Color buttonDefaultB = new Color32(170, 85, 0, 255);
+
+        public static Color buttonClickedA = new Color32(85, 42, 0, 255);
+        public static Color buttonClickedB = new Color32(85, 42, 0, 255);
+
+        public static Color textColor = new Color32(255, 190, 125, 255);
+        public static Color colorChange = Color.black;
+
+        public static Vector3 walkPos;
+        public static Vector3 walkNormal;
+
+        public static bool noclip = false;
+
+        public static bool lastInRoom = false;
+        public static string lastRoom = "";
+
+        public static int platformMode = 0;
+        public static int platformShape = 0;
+
+        public static bool customSoundOnJoin = false;
+
+        public static float delaythinggg = 0f;
+        public static float debounce = 0f;
+        public static float kgDebounce = 0f;
+        public static float nameCycleDelay = 0f;
+        public static float stealIdentityDelay = 0f;
+        public static float beesDelay = 0f;
+        public static float laggyRigDelay = 0f;
+        public static float jrDebounce = 0f;
+        public static float projDebounce = 0f;
+        public static float projDebounceType = 0.1f;
+        public static float colorChangerDelay = 0f;
+        public static float teleDebounce = 0f;
+        public static float splashDel = 0f;
+        public static float headspazDelay = 0f;
+        public static float protsavetimekys = 0f;
+
+        public static bool isUpdatingValues = false;
+        public static float valueChangeDelay = 0f;
+
+        public static bool changingName = false;
+        public static bool changingColor = false;
+        public static string nameChange = "";
+
+        public static int projmode = 0;
+        public static int trailmode = 0;
+
+        public static float oldSlide = 0f;
+
+        public static int accessoryType = 0;
+        public static int hat = 0;
+
+        public static int soundId = 0;
+
+        public static float red = 1f;
+        public static float green = 0.5f;
+        public static float blue = 0f;
+
+        public static bool lastOwner = false;
+        public static string inputText = "";
+        public static string lastCommand = "";
+
+        public static int shootCycle = 1;
+        public static float ShootStrength = 19.44f;
+
+        public static int flySpeedCycle = 1;
+        public static float flySpeed = 10f;
+
+        public static int speedboostCycle = 1;
+        public static float jspeed = 7.5f;
+        public static float jmulti = 1.25f;
+
+        public static int nameCycleIndex = 0;
+
+        public static bool lastprimaryhit = false;
+        public static bool idiotfixthingy = false;
+
+        public static int crashAmount = 2;
+
+        public static bool isJoiningRandom = false;
+
+        public static int colorChangeType = 0;
+        public static bool strobeColor = false;
+
+        public static bool AntiCheatSelf = false;
+        public static bool AntiCheatAll = false;
+
+        public static bool lastHit = false;
+        public static bool lastHit2 = false;
+        public static bool lastRG;
+
+        public static bool ghostMonke = false;
+        public static bool invisMonke = false;
+
+        public static int tindex = 1;
+
+        public static bool antiBanEnabled = false;
+
+        public static bool lastHitL = false;
+        public static bool lastHitR = false;
+        public static bool lastHitLP = false;
+        public static bool lastHitRP = false;
+        public static bool lastHitRS = false;
+
+        public static bool plastLeftGrip = false;
+        public static bool plastRightGrip = false;
+
+        public static bool EverythingSlippery = false;
+        public static bool EverythingGrippy = false;
+
+        public static bool headspazType = false;
+
+        public static float subThingy = 0f;
+
+        public static float sizeScale = 1f;
+
+        public static float turnAmnt = 0f;
+        public static float TagAuraDelay = 0f;
+        public static float startX = -1f;
+
+        public static bool annoyingMode = false; // build with this enabled for a surprise
+
+        public static string[] facts = new string[] {
+            "The honeybee is the only insect that produces food eaten by humans.",
+            "Bananas are berries, but strawberries aren't.",
+            "The Eiffel Tower can be 15 cm taller during the summer due to thermal expansion.",
+            "A group of flamingos is called a 'flamboyance.'",
+            "The shortest war in history was between Britain and Zanzibar on August 27, 1896 – Zanzibar surrendered after 38 minutes.",
+            "Cows have best friends and can become stressed when they are separated.",
+            "The first computer programmer was a woman named Ada Lovelace.",
+            "A 'jiffy' is an actual unit of time, equivalent to 1/100th of a second.",
+            "Octopuses have three hearts and blue blood.",
+            "The world's largest desert is Antarctica.",
+            "Honey never spoils. Archaeologists have found pots of honey in ancient Egyptian tombs that are over 3,000 years old and still perfectly edible.",
+            "The smell of freshly-cut grass is actually a plant distress call.",
+            "The average person spends six months of their life waiting for red lights to turn green.",
+            "A group of owls is called a parliament.",
+            "The longest word in the English language without a vowel is 'rhythms.'",
+            "The Great Wall of China is not visible from the moon without aid.",
+            "Venus rotates so slowly on its axis that a day on Venus (one full rotation) is longer than a year on Venus (orbit around the sun).",
+            "The world's largest recorded snowflake was 15 inches wide.",
+            "There are more possible iterations of a game of chess than there are atoms in the known universe.",
+            "A newborn kangaroo is the size of a lima bean and is unable to hop until it's about 8 months old.",
+            "The longest hiccuping spree lasted for 68 years!",
+            "A single cloud can weigh more than 1 million pounds.",
+            "Honeybees can recognize human faces.",
+            "Cats have five toes on their front paws but only four on their back paws.",
+            "The inventor of the frisbee was turned into a frisbee. Walter Morrison, the inventor, was cremated, and his ashes were turned into a frisbee after he passed away.",
+            "Penguins give each other pebbles as a way of proposing."
+        };
     }
 }

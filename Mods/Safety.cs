@@ -52,10 +52,6 @@ namespace iiMenu.Mods
                                             float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
 
                                             float threshold = 0.35f;
-                                            if (!Name.Contains("Forest"))
-                                            {
-                                                threshold = 0.2f;
-                                            }
 
                                             if (D1 < threshold || D2 < threshold)
                                             {
@@ -104,10 +100,6 @@ namespace iiMenu.Mods
                                             float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
 
                                             float threshold = 0.35f;
-                                            if (!Name.Contains("Forest"))
-                                            {
-                                                threshold = 0.2f;
-                                            }
 
                                             if (D1 < threshold || D2 < threshold)
                                             {
@@ -158,10 +150,6 @@ namespace iiMenu.Mods
                                             float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
 
                                             float threshold = 0.35f;
-                                            if (!Name.Contains("Forest"))
-                                            {
-                                                threshold = 0.2f;
-                                            }
 
                                             if (D1 < threshold || D2 < threshold)
                                             {

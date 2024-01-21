@@ -1611,7 +1611,7 @@ namespace iiMenu.Mods.Spammers
 
         public static void BlackSnowballs()
         {
-            currentProjectileColor = Color.black;
+            //currentProjectileColor = Color.black;
             GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballRightAnchor").transform.Find("LMACF.").GetComponent<SnowballThrowable>().randomizeColor = true;
             GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballRightAnchor").transform.Find("LMACF.").GetComponent<SnowballThrowable>().randomColorHSVRanges = new GTColor.HSVRanges(0f, 0f, 0f, 0f, 0f, 0f);
             GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballLeftAnchor").transform.Find("LMACE.").GetComponent<SnowballThrowable>().randomizeColor = true;
@@ -1620,7 +1620,7 @@ namespace iiMenu.Mods.Spammers
 
         public static void FixBlackSnowballs()
         {
-            currentProjectileColor = Color.white;
+            //currentProjectileColor = Color.white;
             GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballRightAnchor").transform.Find("LMACF.").GetComponent<SnowballThrowable>().randomizeColor = false;
             GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballRightAnchor").transform.Find("LMACF.").GetComponent<SnowballThrowable>().randomColorHSVRanges = new GTColor.HSVRanges(0f, 1f, 0.7f, 1f, 1f, 1f);
             GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballLeftAnchor").transform.Find("LMACE.").GetComponent<SnowballThrowable>().randomizeColor = true;
@@ -1844,25 +1844,27 @@ namespace iiMenu.Mods.Spammers
 
         public static void PaperPlaneSpam()
         {
-            if (rightGrab && !lastRG)
-            {
-                funnyplanes = GameObject.FindObjectsOfType<PaperPlaneThrowable>();
-            }
-            lastRG = rightGrab;
+            //if (rightGrab && !lastRG)
+            //{
+                //funnyplanes = GameObject.FindObjectsOfType<PaperPlaneThrowable>();
+            //}
+            //lastRG = rightGrab;
 
             if (rightGrab)
             {
-                foreach (PaperPlaneThrowable funnyplane in funnyplanes)
+                /* foreach (PaperPlaneThrowable funnyplane in funnyplanes)
+                 {*/
+                PaperPlaneThrowable funnyplane = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.L/upper_arm.L/forearm.L/TransferrableItemLeftArm/DropZoneAnchor/PaperAirplaneAnchor/LMAHY.").GetComponent<PaperPlaneThrowable>();
+                if (Time.time > projDebounce)
                 {
-                    if (Time.time > projDebounce)
-                    {
-                        Vector3 oldPos = funnyplane.gameObject.transform.position;
-                        funnyplane.gameObject.transform.position = GorillaTagger.Instance.rightHandTransform.position;
-                        try { funnyplane.OnRelease(null, EquipmentInteractor.instance.rightHand); } catch { }
-                        funnyplane.gameObject.transform.position = oldPos;
-                        projDebounce = Time.time + 0.1f;
-                    }
+                    UnityEngine.Debug.Log(funnyplane.gameObject.GetPath());
+                    Vector3 oldPos = funnyplane.gameObject.transform.position;
+                    funnyplane.gameObject.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                    try { funnyplane.OnRelease(null, EquipmentInteractor.instance.rightHand); } catch { }
+                    funnyplane.gameObject.transform.position = oldPos;
+                    projDebounce = Time.time + 0.1f;
                 }
+                //}
             }
         }
 
