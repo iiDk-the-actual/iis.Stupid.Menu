@@ -17,7 +17,6 @@ using UnityEngine.XR;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Mods.Reconnect;
 
-// Test
 namespace iiMenu.Menu
 {
     [HarmonyPatch(typeof(GorillaLocomotion.Player))]
