@@ -11,11 +11,14 @@ namespace iiMenu.Mods
     {
         public static void SodaSelf()
         {
+            ScienceExperimentManager.instance.photonView.RPC("PlayerEnteredGameAreaRPC", RpcTarget.All, Array.Empty<object>());
             ScienceExperimentManager.instance.photonView.RPC("PlayerTouchedLavaRPC", RpcTarget.All, Array.Empty<object>());
+            RPCProtection();
         }
         public static void UnsodaSelf()
         {
             ScienceExperimentManager.instance.photonView.RPC("PlayerTouchedRefreshWaterRPC", RpcTarget.All, Array.Empty<object>());
+            RPCProtection();
         }
 
         public static void SlowMonsters()
