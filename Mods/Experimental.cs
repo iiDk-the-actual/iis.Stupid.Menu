@@ -1,5 +1,6 @@
 ﻿using iiMenu.Notifications;
 using Photon.Pun;
+using PlayFab;
 using UnityEngine;
 using static iiMenu.Menu.Main;
 
@@ -26,7 +27,7 @@ namespace iiMenu.Mods
 
             NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI BAN</color><color=grey>]</color> <color=white>The anti ban has been enabled! I take ZERO responsibility for bans using this.</color>");
         }*/
-
+        
         public static void ProtectionEn() // somehow people accidentally click set master so i have  to make this shit now
         {
             protsavetimekys = Time.time + 1f;

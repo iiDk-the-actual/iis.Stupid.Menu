@@ -18,6 +18,7 @@ namespace iiMenu.Mods
         public static void UnsodaSelf()
         {
             ScienceExperimentManager.instance.photonView.RPC("PlayerTouchedRefreshWaterRPC", RpcTarget.All, Array.Empty<object>());
+            ScienceExperimentManager.instance.photonView.RPC("PlayerExitedGameAreaRPC", RpcTarget.All, Array.Empty<object>());
             RPCProtection();
         }
 

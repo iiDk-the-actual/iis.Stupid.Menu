@@ -986,12 +986,6 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void StickLongArms()
-        {
-            GorillaLocomotion.Player.Instance.leftControllerTransform.transform.position = GorillaTagger.Instance.leftHandTransform.position + (GorillaTagger.Instance.leftHandTransform.forward * 0.333f);
-            GorillaLocomotion.Player.Instance.rightControllerTransform.transform.position = GorillaTagger.Instance.rightHandTransform.position + (GorillaTagger.Instance.rightHandTransform.forward * 0.333f);
-        }
-
         public static void IronMan()
         {
             if (leftPrimary)
@@ -2136,6 +2130,12 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void StickLongArms()
+        {
+            GorillaLocomotion.Player.Instance.leftControllerTransform.transform.position = GorillaTagger.Instance.leftHandTransform.position + (GorillaTagger.Instance.leftHandTransform.forward * 0.333f);
+            GorillaLocomotion.Player.Instance.rightControllerTransform.transform.position = GorillaTagger.Instance.rightHandTransform.position + (GorillaTagger.Instance.rightHandTransform.forward * 0.333f);
+        }
+
         public static void EnableSteamLongArms()
         {
             GorillaLocomotion.Player.Instance.transform.localScale = new Vector3(1.25f, 1.25f, 1.25f);
@@ -2144,6 +2144,34 @@ namespace iiMenu.Mods
         public static void DisableSteamLongArms()
         {
             GorillaLocomotion.Player.Instance.transform.localScale = new Vector3(1f, 1f, 1f);
+        }
+
+        public static void MultipliedLongArms()
+        {
+            GorillaLocomotion.Player.Instance.leftControllerTransform.transform.position = GorillaTagger.Instance.headCollider.transform.position - (GorillaTagger.Instance.headCollider.transform.position - GorillaTagger.Instance.leftHandTransform.position) * 1.25f;
+            GorillaLocomotion.Player.Instance.rightControllerTransform.transform.position = GorillaTagger.Instance.headCollider.transform.position - (GorillaTagger.Instance.headCollider.transform.position - GorillaTagger.Instance.rightHandTransform.position) *1.25f;
+        }
+
+        public static void VerticalLongArms()
+        {
+            Vector3 lefty = GorillaTagger.Instance.headCollider.transform.position - GorillaTagger.Instance.leftHandTransform.position;
+            lefty.y *= 1.5f;
+            Vector3 righty = GorillaTagger.Instance.headCollider.transform.position - GorillaTagger.Instance.rightHandTransform.position;
+            righty.y *= 1.5f;
+            GorillaLocomotion.Player.Instance.leftControllerTransform.transform.position = GorillaTagger.Instance.headCollider.transform.position - lefty;
+            GorillaLocomotion.Player.Instance.rightControllerTransform.transform.position = GorillaTagger.Instance.headCollider.transform.position - righty;
+        }
+
+        public static void HorizontalLongArms()
+        {
+            Vector3 lefty = GorillaTagger.Instance.headCollider.transform.position - GorillaTagger.Instance.leftHandTransform.position;
+            lefty.x *= 1.5f;
+            lefty.z *= 1.5f;
+            Vector3 righty = GorillaTagger.Instance.headCollider.transform.position - GorillaTagger.Instance.rightHandTransform.position;
+            righty.x *= 1.5f;
+            righty.z *= 1.5f;
+            GorillaLocomotion.Player.Instance.leftControllerTransform.transform.position = GorillaTagger.Instance.headCollider.transform.position - lefty;
+            GorillaLocomotion.Player.Instance.rightControllerTransform.transform.position = GorillaTagger.Instance.headCollider.transform.position - righty;
         }
 
         public static void FlickJump()

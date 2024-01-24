@@ -1,4 +1,7 @@
-﻿using Photon.Pun;
+﻿using ExitGames.Client.Photon;
+using OVR;
+using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine;
 using static iiMenu.Menu.Main;
 
@@ -6,6 +9,29 @@ namespace iiMenu.Mods.Spammers
 {
     internal class Sound
     {
+        public static void BetaPlayTag(int id, float volume)
+        {
+            if (Time.time > soundDebounce)
+            {
+                object[] soundSendData = new object[2];
+                soundSendData[0] = id;
+                soundSendData[1] = volume;
+
+                object[] sendEventData = new object[3];
+                sendEventData[0] = PhotonNetwork.ServerTimestamp;
+                sendEventData[1] = (byte)3;
+                sendEventData[2] = soundSendData;
+                try
+                {
+                    PhotonNetwork.RaiseEvent(3, sendEventData, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendUnreliable);
+                }
+                catch { /* wtf */ }
+                RPCProtection();
+
+                soundDebounce = Time.time + 0.1f;
+            }
+        }
+
         public static void RandomSoundSpam()
         {
             if (rightGrab)
@@ -143,12 +169,13 @@ namespace iiMenu.Mods.Spammers
         {
             if (rightGrab)
             {
-                GorillaTagger.Instance.myVRRig.RPC("PlayTagSound", RpcTarget.All, new object[]
+                /*GorillaTagger.Instance.myVRRig.RPC("PlayTagSound", RpcTarget.All, new object[]
                 {
                     1,
                     999999f
                 });
-                RPCProtection();
+                RPCProtection();*/
+                BetaPlayTag(1, 999999f);
             }
         }
 
@@ -156,12 +183,7 @@ namespace iiMenu.Mods.Spammers
         {
             if (rightGrab)
             {
-                GorillaTagger.Instance.myVRRig.RPC("PlayTagSound", RpcTarget.All, new object[]
-                {
-                    6,
-                    999999f
-                });
-                RPCProtection();
+                BetaPlayTag(6, 999999f);
             }
         }
 
@@ -169,12 +191,7 @@ namespace iiMenu.Mods.Spammers
         {
             if (rightGrab)
             {
-                GorillaTagger.Instance.myVRRig.RPC("PlayTagSound", RpcTarget.All, new object[]
-                {
-                    7,
-                    999999f
-                });
-                RPCProtection();
+                BetaPlayTag(7, 999999f);
             }
         }
 
@@ -182,12 +199,7 @@ namespace iiMenu.Mods.Spammers
         {
             if (rightGrab)
             {
-                GorillaTagger.Instance.myVRRig.RPC("PlayTagSound", RpcTarget.All, new object[]
-                {
-                    0,
-                    999999f
-                });
-                RPCProtection();
+                BetaPlayTag(0, 999999f);
             }
         }
 
@@ -195,12 +207,7 @@ namespace iiMenu.Mods.Spammers
         {
             if (rightGrab)
             {
-                GorillaTagger.Instance.myVRRig.RPC("PlayTagSound", RpcTarget.All, new object[]
-                {
-                    2,
-                    999999f
-                });
-                RPCProtection();
+                BetaPlayTag(2, 999999f);
             }
         }
 
@@ -208,12 +215,7 @@ namespace iiMenu.Mods.Spammers
         {
             if (rightGrab)
             {
-                GorillaTagger.Instance.myVRRig.RPC("PlayTagSound", RpcTarget.All, new object[]
-                {
-                    4,
-                    999999f
-                });
-                RPCProtection();
+                BetaPlayTag(4, 999999f);
             }
         }
     }

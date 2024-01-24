@@ -70,9 +70,9 @@ namespace iiMenu.Menu
             new ButtonInfo[] { // Projectiles (in Settings) [5]
                 new ButtonInfo { buttonText = "Exit Projectile Settings", method =() => Settings.EnableSettings(), isTogglable = false, toolTip = "Brings you back to the settings menu."},
                 new ButtonInfo { buttonText = "Change Projectile", overlapText = "Change Projectile <color=grey>[</color><color=green>Slingshot</color><color=grey>]</color>", method =() => Projectiles.ChangeProjectile(), isTogglable = false, toolTip = "Changes the projectile of the projectile spam." },
-                //new ButtonInfo { buttonText = "Change Trail", overlapText = "Change Trail <color=grey>[</color><color=green>Regular</color><color=grey>]</color>", method =() => Projectiles.ChangeTrail(), isTogglable = false, toolTip = "Changes the trail of the projectile spam." },
+                new ButtonInfo { buttonText = "Change Trail", overlapText = "Change Trail <color=grey>[</color><color=green>Regular</color><color=grey>]</color>", method =() => Projectiles.ChangeTrail(), isTogglable = false, toolTip = "Changes the trail of the projectile spam." },
                 new ButtonInfo { buttonText = "Random Projectile", toolTip = "Makes the projectiles random." },
-                //new ButtonInfo { buttonText = "Random Trail", toolTip = "Makes the projectiles have a random trail." },
+                new ButtonInfo { buttonText = "Random Trail", toolTip = "Makes the projectiles have a random trail." },
                 new ButtonInfo { buttonText = "Random Direction", toolTip = "Makes the projectiles go everywhere." },
                 new ButtonInfo { buttonText = "Random Color", toolTip = "Makes the projectiles random colors." },
                 new ButtonInfo { buttonText = "Change Shoot Speed", overlapText = "Change Shoot Speed <color=grey>[</color><color=green>Medium</color><color=grey>]</color>", method =() => Projectiles.ChangeShootSpeed(), isTogglable = false, toolTip = "Changes the speed of shooting projectiles." },
@@ -93,7 +93,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>0.5</color><color=grey>]</color>", method =() => Projectiles.IncreaseGreen(), isTogglable = false, toolTip = "Makes projectiles more green." },
                 new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>0</color><color=grey>]</color>", method =() => Projectiles.IncreaseBlue(), isTogglable = false, toolTip = "Makes projectiles more blue." },
                 new ButtonInfo { buttonText = "Custom Colored Projectiles", toolTip = "Makes the projectile color the custom color (buttons above)." },
-                //new ButtonInfo { buttonText = "Client Sided Projectiles", toolTip = "Only fires the bullets for you. Impacts are still server sided." },
+                new ButtonInfo { buttonText = "Client Sided Projectiles", toolTip = "Only fires the bullets for you. Impacts are still server sided." },
                 new ButtonInfo { buttonText = "Projectile Delay", overlapText = "Projectile Delay <color=grey>[</color><color=green>0.1</color><color=grey>]</color>", method =() => Projectiles.ProjectileDelay(), isTogglable = false, toolTip = "Gives the projectiles a delay before spawning another." },
             },
 
@@ -123,7 +123,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Disable Network Triggers", enableMethod =() => Important.DisableNetworkTriggers(), disableMethod =() => Important.EnableNetworkTriggers(), toolTip = "Disables the network triggers, so you can change maps without disconnecting."},
                 new ButtonInfo { buttonText = "Disable Quit Box", enableMethod =() => Important.DisableQuitBox(), disableMethod =() => Important.EnableQuitBox(), toolTip = "Disables the box under the map that closes your game."},
 
-                new ButtonInfo { buttonText = "FPS Boost", enableMethod =() => Important.EnableFPSBoost(), disableMethod =() => Important.DisableFPSBoost(), toolTip = "Makes everything low quality in an attempt to boost your FPS."},
                 new ButtonInfo { buttonText = "60 Hz / 60 FPS", method =() => Important.ForceLagGame(), toolTip = "Caps your FPS at 60 frames per second."},
 
                 new ButtonInfo { buttonText = "Connect to US", method =() => Important.USServers(), isTogglable = false, toolTip = "Connects you to the United States servers."},
@@ -210,6 +209,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Throw Controllers", method =() => Movement.ThrowControllers(), toolTip = "Lets you throw your controllers with <color=green>X</color> and <color=green>A</color>."},
                 new ButtonInfo { buttonText = "Steam Long Arms", enableMethod =() => Movement.EnableSteamLongArms(), disableMethod =() => Movement.DisableSteamLongArms(), toolTip = "Gives you long arms similar to override world scale."},
                 new ButtonInfo { buttonText = "Stick Long Arms", method =() => Movement.StickLongArms(), toolTip = "Makes you look like you're using sticks."},
+                new ButtonInfo { buttonText = "Multiplied Long Arms", method =() => Movement.MultipliedLongArms(), toolTip = "Gives you a weird version of long arms."},
+                new ButtonInfo { buttonText = "Vertical Long Arms", method =() => Movement.VerticalLongArms(), toolTip = "Gives you a version of long arms to help you vertically."},
+                new ButtonInfo { buttonText = "Horizontal Long Arms", method =() => Movement.HorizontalLongArms(), toolTip = "Gives you a version of long arms to help you horizontally."},
                 new ButtonInfo { buttonText = "Flick Jump <color=grey>[</color><color=green>A</color><color=grey>]</color>", method =() => Movement.FlickJump(), toolTip = "Makes your hand go down really fast when holding <color=green>A</color>."},
                 new ButtonInfo { buttonText = "Long Jump <color=grey>[</color><color=green>A</color><color=grey>]</color>", method =() => Movement.LongJump(), toolTip = "Makes you look like you're legitimately long jumping when holding <color=green>A</color>."},
                 new ButtonInfo { buttonText = "Solid Water", enableMethod =() => Beach.SolidWater(), disableMethod =() => Beach.FixWater(), toolTip = "Makes the water solid in the beach map." },
@@ -243,6 +245,8 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Day Time", method =() => Fun.DayTime(), toolTip = "Makes time day."},
                 new ButtonInfo { buttonText = "Night Time", method =() => Fun.NightTime(), toolTip = "Makes time night."},
+
+                new ButtonInfo { buttonText = "FPS Boost", enableMethod =() => Important.EnableFPSBoost(), disableMethod =() => Important.DisableFPSBoost(), toolTip = "Makes everything low quality in an attempt to boost your FPS."},
 
                 new ButtonInfo { buttonText = "Fix Rig Colors", method =() => Visuals.FixRigColors(), toolTip = "Fixes a steam bug where other players' color would be wrong between servers."},
                 new ButtonInfo { buttonText = "Remove Leaves", enableMethod =() => Visuals.EnableRemoveLeaves(), disableMethod =() => Visuals.DisableRemoveLeaves(), toolTip = "Removes leaves on trees, good for branching."},
@@ -436,8 +440,8 @@ namespace iiMenu.Menu
             new ButtonInfo[] { // Experimental Mods [18]
                 new ButtonInfo { buttonText = "Exit Experimental Mods", method =() => Settings.ReturnToMain(), isTogglable = false, toolTip = "Returns you back to the main page."},
 
-                new ButtonInfo { buttonText = "Experimental RPC Protection", enabled = true, toolTip = "Uses an experimental method of protecting your RPCs. Credits to Kante."},
-                new ButtonInfo { buttonText = "Set Master <color=grey>[</color><color=red>Detected</color><color=grey>]</color>", enableMethod =() => Experimental.ProtectionEn(), method =() => Experimental.Protection(), disableMethod =() => Experimental.SetMaster(), isTogglable = false, toolTip = "Sets you as master client. Use the anti ban before this if you're not in a modded."},
+                new ButtonInfo { buttonText = "Experimental RPC Protection", toolTip = "Uses an experimental method of protecting your RPCs. Credits to Kante."},
+                new ButtonInfo { buttonText = "Set Master <color=grey>[</color><color=red>Detected</color><color=grey>]</color>", enableMethod =() => Experimental.ProtectionEn(), method =() => Experimental.Protection(), disableMethod =() => Experimental.SetMaster(), toolTip = "Sets you as master client. Use the anti ban before this if you're not in a modded."},
             },
 
             new ButtonInfo[] { // Favorite Mods [19]

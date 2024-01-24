@@ -14,6 +14,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
+using static Pathfinding.Util.RetainedGizmos;
 
 namespace iiMenu.Mods.Spammers
 {
@@ -50,29 +51,105 @@ namespace iiMenu.Mods.Spammers
             }
         }
 
-        public static void BetaFireImpact(Vector3 position, Color color, bool noDelay = false)
+        public static void SysFireProjectile(string projectilename, string trailname, Vector3 position, Vector3 velocity, float r, float g, float b, bool bluet, bool oranget, bool noDelay = false)
+        {
+            if (Time.time > projDebounce)
+            {
+                GameObject projectile = GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools/" + projectilename + "(Clone)");
+                GameObject originalprojectile = projectile;
+                projectile = ObjectPools.instance.Instantiate(projectile);
+                //Debug.Log("Finished batch one");
+
+                GameObject trail;
+                if (trailname == "none")
+                {
+                    trail = GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools/SlingshotProjectileTrail(Clone)");
+                } else
+                {
+                    trail = GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools/" + trailname + "(Clone)");
+                }
+                //Debug.Log("Finished batch two");
+
+                SlingshotProjectile comp = projectile.GetComponent<SlingshotProjectile>();
+
+                int hasha = PoolUtils.GameObjHashCode(projectile);
+                int hashb = PoolUtils.GameObjHashCode(trail);
+                //Debug.Log("Finished batch three");
+
+                if (trailname == "none")
+                {
+                    hashb = -1;
+                }
+                //Debug.Log("Finished batch four");
+
+                if (!GetIndex("Client Sided Projectiles").enabled)
+                {
+                    object[] projectileSendData = new object[11];
+                    projectileSendData[0] = position;
+                    projectileSendData[1] = velocity;
+                    projectileSendData[2] = hasha;
+                    projectileSendData[3] = hashb;
+                    projectileSendData[4] = false;
+                    projectileSendData[5] = 1;
+                    projectileSendData[6] = !(bluet || oranget);
+                    projectileSendData[7] = r;
+                    projectileSendData[8] = g;
+                    projectileSendData[9] = b;
+                    projectileSendData[10] = 1f;
+
+                    object[] sendEventData = new object[3];
+                    sendEventData[0] = PhotonNetwork.ServerTimestamp;
+                    sendEventData[1] = (byte)0;
+                    sendEventData[2] = projectileSendData;
+                    
+                    try
+                    {
+                        PhotonNetwork.RaiseEvent(3, sendEventData, new RaiseEventOptions { Receivers = ReceiverGroup.Others }, SendOptions.SendUnreliable);
+                    }
+                    catch { /* wtf */ }
+                }
+                //Debug.Log("Finished batch five");
+                RPCProtection();
+
+                originalprojectile.SetActive(true);
+
+                if (trailname != "none")
+                {
+                    trail.SetActive(true);
+                    ObjectPools.instance.Instantiate(trail).GetComponent<SlingshotProjectileTrail>().AttachTrail(projectile, false, false);
+                }
+                //Debug.Log("Finished batch six");
+
+                comp.Launch(position, velocity, PhotonNetwork.LocalPlayer, bluet, oranget, 1, 1f, true, new UnityEngine.Color(r, g, b, 1f));
+                if (projDebounceType > 0f && !noDelay)
+                {
+                    projDebounce = Time.time + projDebounceType;
+                }
+                //Debug.Log("Finished batch seven");
+            }
+        }
+
+        public static void BetaFireImpact(Vector3 position, float r, float g, float b, bool noDelay = false)
         {
             if (Time.time > projDebounce)
             {
                 object[] impactSendData = new object[6];
                 impactSendData[0] = position;
-                impactSendData[1] = color.r;
-                impactSendData[2] = color.g;
-                impactSendData[3] = color.b;
-                impactSendData[4] = color.a;
+                impactSendData[1] = r;
+                impactSendData[2] = g;
+                impactSendData[3] = b;
+                impactSendData[4] = 1f;
                 impactSendData[5] = 1;
 
                 object[] sendEventData = new object[3];
                 sendEventData[0] = PhotonNetwork.ServerTimestamp;
                 sendEventData[1] = (byte)1;
                 sendEventData[2] = impactSendData;
-                PhotonNetwork.RaiseEvent(3, sendEventData, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendUnreliable);
                 try
                 {
-                    RPCProtection();
+                    PhotonNetwork.RaiseEvent(3, sendEventData, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendUnreliable);
                 }
                 catch { /*wtf*/ }
-
                 if (projDebounceType > 0f && !noDelay)
                 {
                     projDebounce = Time.time + projDebounceType;
@@ -227,67 +304,29 @@ namespace iiMenu.Mods.Spammers
 
         public static void ProjectileSpam()
         {
-            string[] fullProjectileNames = new string[]
-            {
-                "SlingshotProjectile",
-                "SnowballProjectile",
-                "WaterBalloonProjectile",
-                "LavaRockProjectile",
-                "HornsSlingshotProjectile",
-                "CloudSlingshot_Projectile",
-                "CupidBow_Projectile",
-                "IceSlingshot_Projectile",
-                "ElfBow_Projectile",
-                "MoltenSlingshot_Projectile",
-                "SpiderBow_Projectile",
-                "BucketGiftCane",
-                "BucketGiftCoal",
-                "BucketGiftRoll",
-                "BucketGiftRound",
-                "BucketGiftSquare",
-                "ScienceCandyProjectile"
-            };
-
-            string[] fullTrailNames = new string[]
-            {
-                "SlingshotProjectileTrail",
-                "HornsSlingshotProjectileTrail_PrefabV",
-                "CloudSlingshot_ProjectileTrailFX",
-                "CupidArrow_ProjectileTrailFX",
-                "IceSlingshotProjectileTrail Variant",
-                "ElfBow_ProjectileTrail",
-                "MoltenRockSlingshotProjectileTrail",
-                "SpiderBowProjectileTrail Variant",
-                "SlingshotProjectileTrail"
-            };
-
             int projIndex = projmode;
             int trailIndex = trailmode;
 
             if (rightGrab || Mouse.current.leftButton.isPressed)
             {
+                //UnityEngine.Debug.Log("grip is holding");
                 if (GetIndex("Random Projectile").enabled)
                 {
-                    projIndex = UnityEngine.Random.Range(0, 15);
+                    projIndex = UnityEngine.Random.Range(0, 16);
                 }
                 string projectilename = fullProjectileNames[projIndex];
+                //UnityEngine.Debug.Log("set proj");
 
-                if (true /*GetIndex("Random Trail").enabled*/)
+                if (GetIndex("Random Trail").enabled)
                 {
                     trailIndex = UnityEngine.Random.Range(0, 8);
                 }
                 string trailname = fullTrailNames[trailIndex];
-
-                /*GameObject projectile = GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools/" + projectilename + "(Clone)");
-                GameObject originalprojectile = projectile;
-                projectile = ObjectPools.instance.Instantiate(projectile);
-
-                GameObject trail = GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools/" + trailname + "(Clone)");
-
-                SlingshotProjectile comp = projectile.GetComponent<SlingshotProjectile>();*/
+                //UnityEngine.Debug.Log("set trail");
 
                 Vector3 startpos = GorillaTagger.Instance.rightHandTransform.position;
                 Vector3 charvel = GorillaLocomotion.Player.Instance.currentVelocity;
+                //UnityEngine.Debug.Log("set pos");
 
                 if (GetIndex("Shoot Projectiles").enabled)
                 {
@@ -392,19 +431,21 @@ namespace iiMenu.Mods.Spammers
                     randb = green * 255;
                     randc = blue * 255;
                 }
+                //UnityEngine.Debug.Log("updated stuff");
 
-                BetaFireProjectile(projectilename, startpos, charvel, new Color32((byte)randa, (byte)randb, (byte)randc,255));
+                SysFireProjectile(projectilename, trailname, startpos, charvel, randa / 255f, randb / 255f, randc / 255f, GetIndex("Blue Team Projectiles").enabled, GetIndex("Orange Team Projectiles").enabled);
+                //UnityEngine.Debug.Log("fried proj");
             }
 
             if (leftGrab)
             {
                 if (GetIndex("Random Projectile").enabled)
                 {
-                    projIndex = UnityEngine.Random.Range(0, 15);
+                    projIndex = UnityEngine.Random.Range(0, 16);
                 }
                 string projectilename = fullProjectileNames[projIndex];
 
-                if (true /*GetIndex("Random Trail").enabled*/)
+                if (GetIndex("Random Trail").enabled)
                 {
                     trailIndex = UnityEngine.Random.Range(0, 8);
                 }
@@ -516,7 +557,7 @@ namespace iiMenu.Mods.Spammers
                     randc = blue * 255;
                 }
 
-                BetaFireProjectile(projectilename, startpos, charvel, new Color32((byte)randa, (byte)randb, (byte)randc, 255));
+                SysFireProjectile(projectilename, trailname, startpos, charvel, randa / 255f, randb / 255f, randc / 255f, GetIndex("Blue Team Projectiles").enabled, GetIndex("Orange Team Projectiles").enabled);
             }
         }
         /*
@@ -918,40 +959,6 @@ namespace iiMenu.Mods.Spammers
                 UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
                 if (isCopying && whoCopy != null)
                 {
-                    string[] fullProjectileNames = new string[]
-                    {
-                        "SlingshotProjectile",
-                        "SnowballProjectile",
-                        "WaterBalloonProjectile",
-                        "LavaRockProjectile",
-                        "HornsSlingshotProjectile",
-                        "CloudSlingshot_Projectile",
-                        "CupidBow_Projectile",
-                        "IceSlingshot_Projectile",
-                        "ElfBow_Projectile",
-                        "MoltenSlingshot_Projectile",
-                        "SpiderBow_Projectile",
-                        "BucketGiftCane",
-                        "BucketGiftCoal",
-                        "BucketGiftRoll",
-                        "BucketGiftRound",
-                        "BucketGiftSquare",
-                        "ScienceCandyProjectile"
-                    };
-
-                    string[] fullTrailNames = new string[]
-                    {
-                        "SlingshotProjectileTrail",
-                        "HornsSlingshotProjectileTrail_PrefabV",
-                        "CloudSlingshot_ProjectileTrailFX",
-                        "CupidArrow_ProjectileTrailFX",
-                        "IceSlingshotProjectileTrail Variant",
-                        "ElfBow_ProjectileTrail",
-                        "MoltenRockSlingshotProjectileTrail",
-                        "SpiderBowProjectileTrail Variant",
-                        "SlingshotProjectileTrail"
-                    };
-
                     int projIndex = projmode;
                     int trailIndex = trailmode;
                     
@@ -959,11 +966,11 @@ namespace iiMenu.Mods.Spammers
                     {
                         if (GetIndex("Random Projectile").enabled)
                         {
-                            projIndex = UnityEngine.Random.Range(0, 15);
+                            projIndex = UnityEngine.Random.Range(0, 16);
                         }
                         string projectilename = fullProjectileNames[projIndex];
 
-                        if (true /*GetIndex("Random Trail").enabled*/)
+                        if (GetIndex("Random Trail").enabled)
                         {
                             trailIndex = UnityEngine.Random.Range(0, 8);
                         }
@@ -1062,18 +1069,18 @@ namespace iiMenu.Mods.Spammers
                             randc = blue * 255;
                         }
 
-                        BetaFireProjectile(projectilename, startpos, charvel, new Color32((byte)randa, (byte)randb, (byte)randc, 255));
+                        SysFireProjectile(projectilename, trailname, startpos, charvel, randa / 255f, randb / 255f, randc / 255f, GetIndex("Blue Team Projectiles").enabled, GetIndex("Orange Team Projectiles").enabled);
                     }
 
                     if (whoCopy.leftMiddle.calcT > 0.5f && Time.time > projDebounce)
                     {
                         if (GetIndex("Random Projectile").enabled)
                         {
-                            projIndex = UnityEngine.Random.Range(0, 15);
+                            projIndex = UnityEngine.Random.Range(0, 16);
                         }
                         string projectilename = fullProjectileNames[projIndex];
 
-                        if (true /*GetIndex("Random Trail").enabled*/)
+                        if (GetIndex("Random Trail").enabled)
                         {
                             trailIndex = UnityEngine.Random.Range(0, 8);
                         }
@@ -1172,7 +1179,7 @@ namespace iiMenu.Mods.Spammers
                             randc = blue * 255;
                         }
 
-                        BetaFireProjectile(projectilename, startpos, charvel, new Color32((byte)randa, (byte)randb, (byte)randc, 255));
+                        SysFireProjectile(projectilename, trailname, startpos, charvel, randa / 255f, randb / 255f, randc / 255f, GetIndex("Blue Team Projectiles").enabled, GetIndex("Orange Team Projectiles").enabled);
                     }
                 }
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
@@ -1494,7 +1501,7 @@ namespace iiMenu.Mods.Spammers
                             "ElfBow_ProjectileTrail",
                             "MoltenRockSlingshotProjectileTrail",
                             "SpiderBowProjectileTrail Variant",
-                            "SlingshotProjectileTrail"
+                            "none"
                         };
 
                         int projIndex = projmode;
@@ -1564,7 +1571,7 @@ namespace iiMenu.Mods.Spammers
                             randc = blue * 255;
                         }
 
-                        BetaFireProjectile(projectilename, startpos, charvel, new Color32((byte)randa, (byte)randb, (byte)randc, 255), true);
+                        SysFireProjectile(projectilename, trailname, startpos, charvel, randa / 255f, randb / 255f, randc / 255f, GetIndex("Blue Team Projectiles").enabled, GetIndex("Orange Team Projectiles").enabled, true);
                     }
                     if (projDebounceType > 0f)
                     {
@@ -1731,7 +1738,7 @@ namespace iiMenu.Mods.Spammers
                     1f,
                     1
                 });*/
-                BetaFireImpact(startpos, new Color32((byte)randa, (byte)randb, (byte)randc, 255));
+                BetaFireImpact(startpos, randa / 255f, randb / 255f, randc / 255f);
                 RPCProtection();
 
                 if (projDebounceType > 0f)
@@ -1837,7 +1844,7 @@ namespace iiMenu.Mods.Spammers
                     1f,
                     1
                 });*/
-                BetaFireImpact(startpos, new Color32((byte)randa, (byte)randb, (byte)randc, 255));
+                BetaFireImpact(startpos, randa / 255f, randb / 255f, randc / 255f);
                 RPCProtection();
             }
         }
@@ -1857,7 +1864,6 @@ namespace iiMenu.Mods.Spammers
                 PaperPlaneThrowable funnyplane = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.L/upper_arm.L/forearm.L/TransferrableItemLeftArm/DropZoneAnchor/PaperAirplaneAnchor/LMAHY.").GetComponent<PaperPlaneThrowable>();
                 if (Time.time > projDebounce)
                 {
-                    UnityEngine.Debug.Log(funnyplane.gameObject.GetPath());
                     Vector3 oldPos = funnyplane.gameObject.transform.position;
                     funnyplane.gameObject.transform.position = GorillaTagger.Instance.rightHandTransform.position;
                     try { funnyplane.OnRelease(null, EquipmentInteractor.instance.rightHand); } catch { }
@@ -1875,7 +1881,7 @@ namespace iiMenu.Mods.Spammers
                 Vector3 startpos = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, -0.15f, 0f);
                 Vector3 charvel = GorillaTagger.Instance.bodyCollider.transform.forward * 8.33f;
 
-                BetaFireProjectile("SlingshotProjectile", startpos, charvel, new Color32(255, 255, 0, 255));
+                SysFireProjectile("SlingshotProjectile", "none", startpos, charvel, 255f, 255f, 0f, false, false);
             }
         }
 
@@ -1886,7 +1892,7 @@ namespace iiMenu.Mods.Spammers
                 Vector3 startpos = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, -0.3f, 0f);
                 Vector3 charvel = Vector3.zero;
 
-                BetaFireProjectile("SnowballProjectile", startpos, charvel, new Color32(99, 43, 0, 255));
+                SysFireProjectile("SnowballProjectile", "none", startpos, charvel, 99f/255f, 43f/255f, 0f, false, false);
             }
         }
 
@@ -1897,7 +1903,7 @@ namespace iiMenu.Mods.Spammers
                 Vector3 startpos = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, -0.15f, 0f);
                 Vector3 charvel = GorillaTagger.Instance.bodyCollider.transform.forward * 8.33f;
 
-                BetaFireProjectile("SlingshotProjectile", startpos, charvel, new Color32(255, 255, 255, 255));
+                SysFireProjectile("SlingshotProjectile", "none", startpos, charvel, 255f, 255f, 255f, false, false);
             }
         }
 
@@ -1908,7 +1914,7 @@ namespace iiMenu.Mods.Spammers
                 Vector3 startpos = GorillaTagger.Instance.headCollider.transform.position + (GorillaTagger.Instance.headCollider.transform.forward * 0.1f) + (GorillaTagger.Instance.headCollider.transform.up * -0.15f);
                 Vector3 charvel = GorillaTagger.Instance.headCollider.transform.forward * 8.33f;
 
-                BetaFireProjectile("SnowballProjectile", startpos, charvel, new Color32(0, 255, 0, 255));
+                SysFireProjectile("SnowballProjectile", "none", startpos, charvel, 0f, 255f, 0f, false, false);
             }
         }
 
@@ -1945,7 +1951,7 @@ namespace iiMenu.Mods.Spammers
                 "ElfBow_ProjectileTrail",
                 "MoltenRockSlingshotProjectileTrail",
                 "SpiderBowProjectileTrail Variant",
-                "SlingshotProjectileTrail"
+                "none"
             };
 
             int projIndex = projmode;

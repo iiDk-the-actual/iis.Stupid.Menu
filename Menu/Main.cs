@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using Unity.XR.CoreUtils.Datums;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -171,7 +172,7 @@ namespace iiMenu.Menu
                             }
                         }
                         motdTextB.text = @"
-You are using version 2.7. This menu was created by iiDk (@goldentrophy) on
+You are using version 2.8. This menu was created by iiDk (@goldentrophy) on
 discord. This menu is completely free and open sourced, if you paid for this
 menu you have been scammed. There are a total of <b> " + fullModAmount + @" </b> mods on this
 menu. <color=red>I, iiDk, am not responsible for any bans using this menu.</color> If you get
@@ -1804,6 +1805,40 @@ banned while using this, please report it to the discord server.";
             4, 3, 5, 4, 19, 18, 20, 19, 3, 18, 21, 20, 22, 21, 25, 21, 29, 21, 31, 29, 27, 25, 24, 22, 6, 5, 7, 6, 10, 6, 14, 6, 16, 14, 12, 10, 9, 7
         };
 
+        public static string[] fullProjectileNames = new string[]
+        {
+            "SlingshotProjectile",
+            "SnowballProjectile",
+            "WaterBalloonProjectile",
+            "LavaRockProjectile",
+            "HornsSlingshotProjectile_PrefabV",
+            "CloudSlingshot_Projectile",
+            "CupidArrow_Projectile",
+            "IceSlingshotProjectile_PrefabV Variant",
+            "ElfBow_Projectile",
+            "MoltenRockSlingshot_Projectile",
+            "SpiderBowProjectile Variant",
+            "BucketGift_Cane_Projectile Variant",
+            "BucketGift_Coal_Projectile Variant",
+            "BucketGift_Roll_Projectile Variant",
+            "BucketGift_Round_Projectile Variant",
+            "BucketGift_Square_Projectile Variant",
+            "ScienceCandyProjectile Variant(Clone)"
+        };
+
+        public static string[] fullTrailNames = new string[]
+        {
+            "SlingshotProjectileTrail",
+            "HornsSlingshotProjectileTrail_PrefabV",
+            "CloudSlingshot_ProjectileTrailFX",
+            "CupidArrow_ProjectileTrailFX",
+            "IceSlingshotProjectileTrail Variant",
+            "ElfBow_ProjectileTrail",
+            "MoltenRockSlingshotProjectileTrail",
+            "SpiderBowProjectileTrail Variant",
+            "none"
+        };
+
         public static int themeType = 1;
         public static Color bgColorA = new Color32(255, 128, 0, 128);
         public static Color bgColorB = new Color32(255, 102, 0, 128);
@@ -1840,6 +1875,7 @@ banned while using this, please report it to the discord server.";
         public static float jrDebounce = 0f;
         public static float projDebounce = 0f;
         public static float projDebounceType = 0.1f;
+        public static float soundDebounce = 0f;
         public static float colorChangerDelay = 0f;
         public static float teleDebounce = 0f;
         public static float splashDel = 0f;
