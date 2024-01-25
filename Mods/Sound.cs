@@ -71,6 +71,19 @@ namespace iiMenu.Mods.Spammers
             }
         }
 
+        public static void CatSoundSpam()
+        {
+            if (rightGrab)
+            {
+                GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                    236,
+                    false,
+                    999999f
+                });
+                RPCProtection();
+            }
+        }
+
         public static void TurkeySoundSpam()
         {
             if (rightGrab)
@@ -123,12 +136,38 @@ namespace iiMenu.Mods.Spammers
             }
         }
 
+        public static void DingSoundSpam()
+        {
+            if (rightGrab)
+            {
+                GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                    244,
+                    false,
+                    999999f
+                });
+                RPCProtection();
+            }
+        }
+
         public static void BigCrystalSoundSpam()
         {
             if (rightGrab)
             {
                 GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
                     213,
+                    false,
+                    999999f
+                });
+                RPCProtection();
+            }
+        }
+
+        public static void PanSoundSpam()
+        {
+            if (rightGrab)
+            {
+                GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                    248,
                     false,
                     999999f
                 });

@@ -2272,6 +2272,27 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void DisableAir()
+        {
+            foreach (ForceVolume fv in Resources.FindObjectsOfTypeAll<ForceVolume>())
+            {
+                if (fv.enabled)
+                {
+                    fv.enabled = false;
+                    fvol.Add(fv);
+                }
+            }
+        }
+
+        public static void EnableAir()
+        {
+            foreach (ForceVolume fv in fvol)
+            {
+                fv.enabled = true;
+            }
+            fvol.Clear();
+        }
+
         public static void CopyMovementGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
@@ -2708,7 +2729,7 @@ namespace iiMenu.Mods
                         GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = whoCopy.transform.rotation;
                     } else
                     {
-                        GorillaTagger.Instance.offlineVRRig.transform.position = whoCopy.transform.position + (whoCopy.transform.forward * -(0.2f + (Mathf.Sin(Time.frameCount / 8f) * 0.1f)));
+                        GorillaTagger.Instance.offlineVRRig.transform.position = whoCopy.transform.position + (whoCopy.transform.forward * (0.2f + (Mathf.Sin(Time.frameCount / 8f) * 0.1f)));
                         GorillaTagger.Instance.myVRRig.transform.position = whoCopy.transform.position + (whoCopy.transform.forward * (0.2f + (Mathf.Sin(Time.frameCount / 8f) * 0.1f)));
 
                         GorillaTagger.Instance.offlineVRRig.transform.rotation = whoCopy.transform.rotation;

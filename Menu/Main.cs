@@ -172,7 +172,7 @@ namespace iiMenu.Menu
                             }
                         }
                         motdTextB.text = @"
-You are using version 2.8. This menu was created by iiDk (@goldentrophy) on
+You are using version 2.8p1. This menu was created by iiDk (@goldentrophy) on
 discord. This menu is completely free and open sourced, if you paid for this
 menu you have been scammed. There are a total of <b> " + fullModAmount + @" </b> mods on this
 menu. <color=red>I, iiDk, am not responsible for any bans using this menu.</color> If you get
@@ -1769,6 +1769,7 @@ banned while using this, please report it to the discord server.";
 
         public static GameObject airSwimPart = null;
 
+        public static List<ForceVolume> fvol = new List<ForceVolume> { };
         public static List<GameObject> leaves = new List<GameObject> { };
         public static List<GameObject> lights = new List<GameObject> { };
         public static List<GameObject> holidayobjects = new List<GameObject> { };
