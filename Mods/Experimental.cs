@@ -39,6 +39,7 @@ namespace iiMenu.Mods
             if (Time.time > protsavetimekys)
             {
                 GetIndex("Set Master <color=grey>[</color><color=red>Detected</color><color=grey>]</color>").enabled = false;
+                ReloadMenu();
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>PROTECTION</color><color=grey>]</color> <color=white>To prevent against accidentally clicking this, you need to press the button twice.</color>");
             }
         }

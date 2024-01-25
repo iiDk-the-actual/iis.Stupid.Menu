@@ -1,4 +1,5 @@
 ﻿using GorillaTag;
+using Oculus.Platform.Models;
 using Photon.Pun;
 using System;
 using UnityEngine;
@@ -11,8 +12,8 @@ namespace iiMenu.Mods
     {
         public static void SodaSelf()
         {
-            ScienceExperimentManager.instance.photonView.RPC("PlayerEnteredGameAreaRPC", RpcTarget.All, Array.Empty<object>());
-            ScienceExperimentManager.instance.photonView.RPC("PlayerTouchedLavaRPC", RpcTarget.All, Array.Empty<object>());
+            ScienceExperimentManager.instance.photonView.RPC("PlayerEnteredGameAreaRPC", RpcTarget.MasterClient, Array.Empty<object>());
+            ScienceExperimentManager.instance.photonView.RPC("PlayerTouchedLavaRPC", RpcTarget.MasterClient, Array.Empty<object>());
             RPCProtection();
         }
         public static void UnsodaSelf()

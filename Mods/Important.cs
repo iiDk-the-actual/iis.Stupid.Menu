@@ -199,9 +199,7 @@ namespace iiMenu.Mods
 
         public static void ForceLagGame()
         {
-            foreach (MeshCollider v in GameObject.FindObjectsOfType<MeshCollider>())
-            {
-            }
+            foreach (GameObject g in Object.FindObjectsByType<GameObject>(0)) { }
         }
 
         public static void EUServers()

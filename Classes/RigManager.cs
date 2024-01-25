@@ -39,7 +39,7 @@ namespace iiMenu.Classes
             VRRig outRig = null;
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, vrrig.transform.position) < num)
+                if (Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, vrrig.transform.position) < num && vrrig != GorillaTagger.Instance.offlineVRRig)
                 {
                     num = Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, vrrig.transform.position);
                     outRig = vrrig;

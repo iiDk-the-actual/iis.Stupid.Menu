@@ -28,7 +28,7 @@ namespace iiMenu.Mods.Spammers
                 catch { /* wtf */ }
                 RPCProtection();
 
-                soundDebounce = Time.time + 0.1f;
+                soundDebounce = Time.time + 0.2f;
             }
         }
 
@@ -64,6 +64,45 @@ namespace iiMenu.Mods.Spammers
             {
                 GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
                     195,
+                    false,
+                    999999f
+                });
+                RPCProtection();
+            }
+        }
+
+        public static void TurkeySoundSpam()
+        {
+            if (rightGrab)
+            {
+                GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                    83,
+                    false,
+                    999999f
+                });
+                RPCProtection();
+            }
+        }
+
+        public static void FrogSoundSpam()
+        {
+            if (rightGrab)
+            {
+                GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                    91,
+                    false,
+                    999999f
+                });
+                RPCProtection();
+            }
+        }
+
+        public static void BeeSoundSpam()
+        {
+            if (rightGrab)
+            {
+                GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                    191,
                     false,
                     999999f
                 });

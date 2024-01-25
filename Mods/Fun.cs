@@ -710,9 +710,9 @@ namespace iiMenu.Mods
             if (rightGrab && !lastHitR)
             {
                 hat++;
-                if (hat < 1)
+                if (hat > 3)
                 {
-                    hat = 3;
+                    hat = 1;
                 }
 
                 if (hat == 1)

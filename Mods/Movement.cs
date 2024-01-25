@@ -63,7 +63,7 @@ namespace iiMenu.Mods
         public static void ChangePlatformShape()
         {
             platformShape++;
-            if (platformShape > 3)
+            if (platformShape > 5)
             {
                 platformShape = 0;
             }
@@ -72,7 +72,9 @@ namespace iiMenu.Mods
                 "Sphere",
                 "Cube",
                 "Cylinder",
-                "Legacy"
+                "Legacy",
+                "Small",
+                "Long"
             };
 
             GetIndex("Change Platform Shape").overlapText = "Change Platform Shape <color=grey>[</color><color=green>" + platformShapes[platformShape] + "</color><color=grey>]</color>";
@@ -104,6 +106,16 @@ namespace iiMenu.Mods
                         leftplat = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         leftplat.transform.localScale = new Vector3(0.025f, 0.3f, 0.4f);
                     }
+                    if (platformShape == 4)
+                    {
+                        leftplat = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        leftplat.transform.localScale = new Vector3(0.025f, 0.15f, 0.2f);
+                    }
+                    if (platformShape == 5)
+                    {
+                        leftplat = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        leftplat.transform.localScale = new Vector3(0.025f, 0.3f, 0.8f);
+                    }
                     leftplat.transform.position = GorillaTagger.Instance.leftHandTransform.position;
                     leftplat.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
                     if (platformMode != 5)
@@ -133,7 +145,7 @@ namespace iiMenu.Mods
                     }
                     if (GetIndex("Stick Long Arms").enabled)
                     {
-                        leftplat.transform.position = GorillaTagger.Instance.leftHandTransform.position + GorillaTagger.Instance.leftHandTransform.forward * 0.333f;
+                        leftplat.transform.position = GorillaTagger.Instance.leftHandTransform.position + GorillaTagger.Instance.leftHandTransform.forward * (armlength - 0.917f);
                     }
                     if (platformMode == 1)
                     {
@@ -270,6 +282,16 @@ namespace iiMenu.Mods
                         rightplat = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         rightplat.transform.localScale = new Vector3(0.025f, 0.3f, 0.4f);
                     }
+                    if (platformShape == 4)
+                    {
+                        rightplat = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        rightplat.transform.localScale = new Vector3(0.025f, 0.15f, 0.2f);
+                    }
+                    if (platformShape == 5)
+                    {
+                        rightplat = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        rightplat.transform.localScale = new Vector3(0.025f, 0.3f, 0.8f);
+                    }
                     rightplat.transform.position = GorillaTagger.Instance.rightHandTransform.position;
                     rightplat.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
                     if (platformMode != 5)
@@ -299,7 +321,7 @@ namespace iiMenu.Mods
                     }
                     if (GetIndex("Stick Long Arms").enabled)
                     {
-                        rightplat.transform.position = GorillaTagger.Instance.rightHandTransform.position + GorillaTagger.Instance.rightHandTransform.forward * 0.333f;
+                        rightplat.transform.position = GorillaTagger.Instance.rightHandTransform.position + GorillaTagger.Instance.rightHandTransform.forward * (armlength - 0.917f);
                     }
                     if (platformMode == 1)
                     {
@@ -439,6 +461,16 @@ namespace iiMenu.Mods
                         leftplat = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         leftplat.transform.localScale = new Vector3(0.025f, 0.3f, 0.4f);
                     }
+                    if (platformShape == 4)
+                    {
+                        leftplat = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        leftplat.transform.localScale = new Vector3(0.025f, 0.15f, 0.2f);
+                    }
+                    if (platformShape == 5)
+                    {
+                        leftplat = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        leftplat.transform.localScale = new Vector3(0.025f, 0.3f, 0.8f);
+                    }
                     leftplat.transform.position = GorillaTagger.Instance.leftHandTransform.position;
                     leftplat.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
                     if (platformMode != 5)
@@ -468,7 +500,7 @@ namespace iiMenu.Mods
                     }
                     if (GetIndex("Stick Long Arms").enabled)
                     {
-                        leftplat.transform.position = GorillaTagger.Instance.leftHandTransform.position + GorillaTagger.Instance.leftHandTransform.forward * 0.333f;
+                        leftplat.transform.position = GorillaTagger.Instance.leftHandTransform.position + GorillaTagger.Instance.leftHandTransform.forward * (armlength - 0.917f);
                     }
                     if (platformMode == 1)
                     {
@@ -605,6 +637,16 @@ namespace iiMenu.Mods
                         rightplat = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         rightplat.transform.localScale = new Vector3(0.025f, 0.3f, 0.4f);
                     }
+                    if (platformShape == 4)
+                    {
+                        rightplat = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        rightplat.transform.localScale = new Vector3(0.025f, 0.15f, 0.2f);
+                    }
+                    if (platformShape == 5)
+                    {
+                        rightplat = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        rightplat.transform.localScale = new Vector3(0.025f, 0.3f, 0.8f);
+                    }
                     rightplat.transform.position = GorillaTagger.Instance.rightHandTransform.position;
                     rightplat.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
                     if (platformMode != 5)
@@ -634,7 +676,7 @@ namespace iiMenu.Mods
                     }
                     if (GetIndex("Stick Long Arms").enabled)
                     {
-                        rightplat.transform.position = GorillaTagger.Instance.rightHandTransform.position + GorillaTagger.Instance.rightHandTransform.forward * 0.333f;
+                        rightplat.transform.position = GorillaTagger.Instance.rightHandTransform.position + GorillaTagger.Instance.rightHandTransform.forward * (armlength - 0.917f);
                     }
                     if (platformMode == 1)
                     {
@@ -791,6 +833,22 @@ namespace iiMenu.Mods
             GetIndex("Change Speed Boost Amount").overlapText = "Change Speed Boost Amount <color=grey>[</color><color=green>" + speedNames[speedboostCycle] + "</color><color=grey>]</color>";
         }
 
+        public static void PlatformSpam()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                GameObject platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                UnityEngine.Object.Destroy(platform.GetComponent<BoxCollider>());
+                platform.GetComponent<Renderer>().material.color = bgColorA;
+                platform.GetComponent<Renderer>().material.shader = Shader.Find("GorillaTag/UberShader");
+                platform.transform.localScale = new Vector3(0.025f, 0.3f, 0.4f);
+                platform.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                platform.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
+                UnityEngine.Object.Destroy(platform, 1f);
+                PhotonNetwork.RaiseEvent(69, new object[2] { platform.transform.position, platform.transform.rotation }, new RaiseEventOptions { Receivers = ReceiverGroup.Others }, SendOptions.SendReliable);
+            }
+        }
+
         public static void PlatformGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
@@ -838,6 +896,21 @@ namespace iiMenu.Mods
 
             string[] speedNames = new string[] { "Slow", "Normal", "Fast", "Extra Fast" };
             GetIndex("Change Fly Speed").overlapText = "Change Fly Speed <color=grey>[</color><color=green>" + speedNames[flySpeedCycle] + "</color><color=grey>]</color>";
+        }
+
+        public static void ChangeArmLength()
+        {
+            longarmCycle++;
+            if (longarmCycle > 4)
+            {
+                longarmCycle = 0;
+            }
+
+            float[] lengthAmounts = new float[] { 0.75f, 1.1f, 1.25f, 1.5f, 2f };
+            armlength = lengthAmounts[longarmCycle];
+
+            string[] lengthNames = new string[] { "Shorter", "Unnoticable", "Normal", "Long", "Extreme" };
+            GetIndex("Change Arm Length").overlapText = "Change Arm Length <color=grey>[</color><color=green>" + lengthNames[longarmCycle] + "</color><color=grey>]</color>";
         }
 
         public static void Fly()
@@ -2132,13 +2205,13 @@ namespace iiMenu.Mods
 
         public static void StickLongArms()
         {
-            GorillaLocomotion.Player.Instance.leftControllerTransform.transform.position = GorillaTagger.Instance.leftHandTransform.position + (GorillaTagger.Instance.leftHandTransform.forward * 0.333f);
-            GorillaLocomotion.Player.Instance.rightControllerTransform.transform.position = GorillaTagger.Instance.rightHandTransform.position + (GorillaTagger.Instance.rightHandTransform.forward * 0.333f);
+            GorillaLocomotion.Player.Instance.leftControllerTransform.transform.position = GorillaTagger.Instance.leftHandTransform.position + (GorillaTagger.Instance.leftHandTransform.forward * (armlength - 0.917f));
+            GorillaLocomotion.Player.Instance.rightControllerTransform.transform.position = GorillaTagger.Instance.rightHandTransform.position + (GorillaTagger.Instance.rightHandTransform.forward * (armlength - 0.917f));
         }
 
         public static void EnableSteamLongArms()
         {
-            GorillaLocomotion.Player.Instance.transform.localScale = new Vector3(1.25f, 1.25f, 1.25f);
+            GorillaLocomotion.Player.Instance.transform.localScale = new Vector3(armlength, armlength, armlength);
         }
 
         public static void DisableSteamLongArms()
@@ -2148,16 +2221,16 @@ namespace iiMenu.Mods
 
         public static void MultipliedLongArms()
         {
-            GorillaLocomotion.Player.Instance.leftControllerTransform.transform.position = GorillaTagger.Instance.headCollider.transform.position - (GorillaTagger.Instance.headCollider.transform.position - GorillaTagger.Instance.leftHandTransform.position) * 1.25f;
-            GorillaLocomotion.Player.Instance.rightControllerTransform.transform.position = GorillaTagger.Instance.headCollider.transform.position - (GorillaTagger.Instance.headCollider.transform.position - GorillaTagger.Instance.rightHandTransform.position) *1.25f;
+            GorillaLocomotion.Player.Instance.leftControllerTransform.transform.position = GorillaTagger.Instance.headCollider.transform.position - (GorillaTagger.Instance.headCollider.transform.position - GorillaTagger.Instance.leftHandTransform.position) * armlength;
+            GorillaLocomotion.Player.Instance.rightControllerTransform.transform.position = GorillaTagger.Instance.headCollider.transform.position - (GorillaTagger.Instance.headCollider.transform.position - GorillaTagger.Instance.rightHandTransform.position) * armlength;
         }
 
         public static void VerticalLongArms()
         {
             Vector3 lefty = GorillaTagger.Instance.headCollider.transform.position - GorillaTagger.Instance.leftHandTransform.position;
-            lefty.y *= 1.5f;
+            lefty.y *= armlength;
             Vector3 righty = GorillaTagger.Instance.headCollider.transform.position - GorillaTagger.Instance.rightHandTransform.position;
-            righty.y *= 1.5f;
+            righty.y *= armlength;
             GorillaLocomotion.Player.Instance.leftControllerTransform.transform.position = GorillaTagger.Instance.headCollider.transform.position - lefty;
             GorillaLocomotion.Player.Instance.rightControllerTransform.transform.position = GorillaTagger.Instance.headCollider.transform.position - righty;
         }
@@ -2165,11 +2238,11 @@ namespace iiMenu.Mods
         public static void HorizontalLongArms()
         {
             Vector3 lefty = GorillaTagger.Instance.headCollider.transform.position - GorillaTagger.Instance.leftHandTransform.position;
-            lefty.x *= 1.5f;
-            lefty.z *= 1.5f;
+            lefty.x *= armlength;
+            lefty.z *= armlength;
             Vector3 righty = GorillaTagger.Instance.headCollider.transform.position - GorillaTagger.Instance.rightHandTransform.position;
-            righty.x *= 1.5f;
-            righty.z *= 1.5f;
+            righty.x *= armlength;
+            righty.z *= armlength;
             GorillaLocomotion.Player.Instance.leftControllerTransform.transform.position = GorillaTagger.Instance.headCollider.transform.position - lefty;
             GorillaLocomotion.Player.Instance.rightControllerTransform.transform.position = GorillaTagger.Instance.headCollider.transform.position - righty;
         }
@@ -2512,6 +2585,91 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void AnnoyPlayerGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray);
+                if (shouldBePC)
+                {
+                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
+                    Physics.Raycast(ray, out Ray, 100);
+                }
+
+                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                NewPointer.GetComponent<Renderer>().material.color = bgColorA;
+                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+                NewPointer.transform.position = Ray.point;
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
+                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+                if (isCopying && whoCopy != null)
+                {
+                    GorillaTagger.Instance.offlineVRRig.enabled = false;
+
+                    Vector3 position = whoCopy.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
+
+                    GorillaTagger.Instance.offlineVRRig.transform.position = position;
+                    GorillaTagger.Instance.myVRRig.transform.position = position;
+
+                    GorillaTagger.Instance.offlineVRRig.transform.LookAt(whoCopy.transform.position);
+                    GorillaTagger.Instance.myVRRig.transform.LookAt(whoCopy.transform.position);
+
+                    GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+                    GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.position = whoCopy.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
+                    GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.position = GorillaTagger.Instance.offlineVRRig.transform.position + whoCopy.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
+
+                    GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+                    GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+
+                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                        91,
+                        false,
+                        999999f
+                    });
+                    RPCProtection();
+
+                    GameObject l = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                    UnityEngine.Object.Destroy(l.GetComponent<Rigidbody>());
+                    UnityEngine.Object.Destroy(l.GetComponent<SphereCollider>());
+
+                    l.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                    l.transform.position = GorillaTagger.Instance.leftHandTransform.position;
+
+                    GameObject r = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                    UnityEngine.Object.Destroy(r.GetComponent<Rigidbody>());
+                    UnityEngine.Object.Destroy(r.GetComponent<SphereCollider>());
+
+                    r.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                    r.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+
+                    l.GetComponent<Renderer>().material.color = bgColorA;
+                    r.GetComponent<Renderer>().material.color = bgColorA;
+
+                    UnityEngine.Object.Destroy(l, Time.deltaTime);
+                    UnityEngine.Object.Destroy(r, Time.deltaTime);
+                }
+                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        isCopying = true;
+                        whoCopy = possibly;
+                    }
+                }
+            }
+            else
+            {
+                if (isCopying)
+                {
+                    isCopying = false;
+                    GorillaTagger.Instance.offlineVRRig.enabled = true;
+                }
+            }
+        }
+
         public static void IntercourseGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
@@ -2535,17 +2693,35 @@ namespace iiMenu.Mods
                 {
                     GorillaTagger.Instance.offlineVRRig.enabled = false;
 
-                    GorillaTagger.Instance.offlineVRRig.transform.position = whoCopy.transform.position + (whoCopy.transform.forward * -(0.2f + (Mathf.Sin(Time.frameCount / 8f) * 0.1f)));
-                    GorillaTagger.Instance.myVRRig.transform.position = whoCopy.transform.position + (whoCopy.transform.forward * -(0.2f + (Mathf.Sin(Time.frameCount / 8f) * 0.1f)));
+                    if (!GetIndex("Reverse Intercourse").enabled)
+                    {
+                        GorillaTagger.Instance.offlineVRRig.transform.position = whoCopy.transform.position + (whoCopy.transform.forward * -(0.2f + (Mathf.Sin(Time.frameCount / 8f) * 0.1f)));
+                        GorillaTagger.Instance.myVRRig.transform.position = whoCopy.transform.position + (whoCopy.transform.forward * -(0.2f + (Mathf.Sin(Time.frameCount / 8f) * 0.1f)));
 
-                    GorillaTagger.Instance.offlineVRRig.transform.rotation = whoCopy.transform.rotation;
-                    GorillaTagger.Instance.myVRRig.transform.rotation = whoCopy.transform.rotation;
+                        GorillaTagger.Instance.offlineVRRig.transform.rotation = whoCopy.transform.rotation;
+                        GorillaTagger.Instance.myVRRig.transform.rotation = whoCopy.transform.rotation;
 
-                    GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.position = (whoCopy.transform.position + whoCopy.transform.right * -0.2f) + whoCopy.transform.up * -0.4f;
-                    GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.position = (whoCopy.transform.position + whoCopy.transform.right * 0.2f) + whoCopy.transform.up * -0.4f;
+                        GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.position = (whoCopy.transform.position + whoCopy.transform.right * -0.2f) + whoCopy.transform.up * -0.4f;
+                        GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.position = (whoCopy.transform.position + whoCopy.transform.right * 0.2f) + whoCopy.transform.up * -0.4f;
 
-                    GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = whoCopy.transform.rotation;
-                    GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = whoCopy.transform.rotation;
+                        GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = whoCopy.transform.rotation;
+                        GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = whoCopy.transform.rotation;
+                    } else
+                    {
+                        GorillaTagger.Instance.offlineVRRig.transform.position = whoCopy.transform.position + (whoCopy.transform.forward * -(0.2f + (Mathf.Sin(Time.frameCount / 8f) * 0.1f)));
+                        GorillaTagger.Instance.myVRRig.transform.position = whoCopy.transform.position + (whoCopy.transform.forward * (0.2f + (Mathf.Sin(Time.frameCount / 8f) * 0.1f)));
+
+                        GorillaTagger.Instance.offlineVRRig.transform.rotation = whoCopy.transform.rotation;
+                        GorillaTagger.Instance.myVRRig.transform.rotation = whoCopy.transform.rotation;
+
+                        GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.position = (GorillaTagger.Instance.offlineVRRig.transform.position + whoCopy.transform.right * -0.2f) + whoCopy.transform.up * -0.4f;
+                        GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.position = (GorillaTagger.Instance.offlineVRRig.transform.position + whoCopy.transform.right * 0.2f) + whoCopy.transform.up * -0.4f;
+
+                        GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = whoCopy.transform.rotation;
+                        GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = whoCopy.transform.rotation;
+
+                        GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = whoCopy.transform.rotation;
+                    }
 
                     GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = whoCopy.transform.rotation;
 

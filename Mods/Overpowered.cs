@@ -1,16 +1,13 @@
 ﻿using ExitGames.Client.Photon;
 using GorillaNetworking;
-using Mono.Cecil.Cil;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections.Generic;
-using System.Xml.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 using static iiMenu.Mods.Spammers.Projectiles;
-using static UnityEngine.UI.GridLayoutGroup;
 
 namespace iiMenu.Mods
 {
@@ -25,6 +22,34 @@ namespace iiMenu.Mods
             sendEventData[1] = (byte)2;
             sendEventData[2] = statusSendData;
             PhotonNetwork.RaiseEvent(3, sendEventData, balls, SendOptions.SendUnreliable);
+        }
+
+        public static void InfectionGamemode()
+        {
+            Hashtable hashtable = new Hashtable();
+            hashtable.Add("gameMode", "forestDEFAULTMODDED_MODDED_INFECTION");
+            PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable, null, null);
+        }
+
+        public static void CasualGamemode()
+        {
+            Hashtable hashtable = new Hashtable();
+            hashtable.Add("gameMode", "forestDEFAULTMODDED_MODDED_CASUALCASUAL");
+            PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable, null, null);
+        }
+
+        public static void HuntGamemode()
+        {
+            Hashtable hashtable = new Hashtable();
+            hashtable.Add("gameMode", "forestDEFAULTMODDED_MODDED_HUNTHUNT");
+            PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable, null, null);
+        }
+
+        public static void BattleGamemode()
+        {
+            Hashtable hashtable = new Hashtable();
+            hashtable.Add("gameMode", "forestDEFAULTMODDED_MODDED_BATTLEPAINTBRAWL");
+            PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable, null, null);
         }
 
         public static void SlowGun()
@@ -55,7 +80,7 @@ namespace iiMenu.Mods
                         //GorillaGameManager.instance.FindVRRigForPlayer(player).RPC("SetTaggedTime", player, null);
                         BetaSetStatus(0, new RaiseEventOptions { TargetActors = new int[1] { player.ActorNumber } });
                         RPCProtection();
-                        kgDebounce = Time.time + 0.2f;
+                        kgDebounce = Time.time + 1f;
                     }
                 }
             }
@@ -70,7 +95,7 @@ namespace iiMenu.Mods
                 GorillaGameManager.instance.FindVRRigForPlayer(player).RPC("SetTaggedTime", player, null);*/
                 BetaSetStatus(0, new RaiseEventOptions { Receivers = ReceiverGroup.Others });
                 RPCProtection();
-                kgDebounce = Time.time + 0.5f;
+                kgDebounce = Time.time + 1f;
                 //}
             }
         }
@@ -103,7 +128,7 @@ namespace iiMenu.Mods
                         //GorillaTagger.Instance.myVRRig.RPC("SetJoinTaggedTime", owner, null);
                         BetaSetStatus(1, new RaiseEventOptions { TargetActors = new int[1] { owner.ActorNumber } });
                         RPCProtection();
-                        kgDebounce = Time.time + 0.2f;
+                        kgDebounce = Time.time + 0.5f;
                     }
                 }
             }
@@ -575,9 +600,10 @@ namespace iiMenu.Mods
                 if (isCopying && whoCopy != null)
                 {
                     GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", GetPlayerFromVRRig(whoCopy), new object[]{
-                        213,
+                        111,
                         false,
-                        0.01f
+                        999999f
+                        //0.01f
                     });
                     RPCProtection();
                 }
@@ -603,12 +629,14 @@ namespace iiMenu.Mods
 
         public static void BreakAudioAll()
         {
-            GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.Others, new object[]{
-                213,
-                false,
-                //999999f
-                0.01f
-            });
+            if (rightTrigger > 0.5f)
+            {
+                GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.Others, new object[]{
+                    111,
+                    false,
+                    999999f
+                });
+            }
         }
     }
 }

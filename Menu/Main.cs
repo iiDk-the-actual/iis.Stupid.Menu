@@ -1823,7 +1823,7 @@ banned while using this, please report it to the discord server.";
             "BucketGift_Roll_Projectile Variant",
             "BucketGift_Round_Projectile Variant",
             "BucketGift_Square_Projectile Variant",
-            "ScienceCandyProjectile Variant(Clone)"
+            "ScienceCandyProjectile Variant"
         };
 
         public static string[] fullTrailNames = new string[]
@@ -1916,6 +1916,9 @@ banned while using this, please report it to the discord server.";
         public static int speedboostCycle = 1;
         public static float jspeed = 7.5f;
         public static float jmulti = 1.25f;
+
+        public static int longarmCycle = 2;
+        public static float armlength = 1.25f;
 
         public static int nameCycleIndex = 0;
 

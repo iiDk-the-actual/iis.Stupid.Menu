@@ -105,7 +105,7 @@ namespace iiMenu.Mods
                 Vector3 notthem = GorillaTagger.Instance.offlineVRRig.head.rigTarget.position;
                 float distance = Vector3.Distance(they, notthem);
 
-                if (GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected") && !vrrig.mainSkin.material.name.Contains("fected") && GorillaLocomotion.Player.Instance.disableMovement == false && distance < 1.667)
+                if (GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected") && !vrrig.mainSkin.material.name.Contains("fected") && GorillaLocomotion.Player.Instance.disableMovement == false && distance < GorillaGameManager.instance.tagDistanceThreshold)
                 {
                     if (rightHand == true) { GorillaLocomotion.Player.Instance.rightControllerTransform.position = they; } else { GorillaLocomotion.Player.Instance.leftControllerTransform.position = they; }
                 }
@@ -380,7 +380,7 @@ namespace iiMenu.Mods
         {
             foreach (GameObject g in Resources.FindObjectsOfTypeAll<GameObject>())
             {
-                if (g.activeSelf && g.name.Contains("Holiday2023"))
+                if (g.activeSelf && g.name.Contains("WinterJan2024"))
                 {
                     g.SetActive(false);
                     holidayobjects.Add(g);
