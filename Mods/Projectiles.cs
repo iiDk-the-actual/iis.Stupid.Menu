@@ -53,79 +53,81 @@ namespace iiMenu.Mods.Spammers
 
         public static void SysFireProjectile(string projectilename, string trailname, Vector3 position, Vector3 velocity, float r, float g, float b, bool bluet, bool oranget, bool noDelay = false)
         {
-            if (Time.time > projDebounce)
+            if (GetIndex("Legacy Projectiles").enabled)
             {
-                GameObject projectile = GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools/" + projectilename + "(Clone)");
-                GameObject originalprojectile = projectile;
-                projectile = ObjectPools.instance.Instantiate(projectile);
-                //Debug.Log("Finished batch one");
-
-                GameObject trail;
-                if (trailname == "none")
+                GameObject stupid = GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools/" + projectilename + "(Clone)");
+                BetaFireProjectile(stupid.GetComponent<SlingshotProjectile>().tag, position, velocity, new Color(r, g, b, 1f), noDelay);
+            }
+            else
+            {
+                if (Time.time > projDebounce)
                 {
-                    trail = GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools/SlingshotProjectileTrail(Clone)");
-                } else
-                {
-                    trail = GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools/" + trailname + "(Clone)");
-                }
-                //Debug.Log("Finished batch two");
+                    GameObject projectile = GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools/" + projectilename + "(Clone)");
+                    GameObject originalprojectile = projectile;
+                    projectile = ObjectPools.instance.Instantiate(projectile);
 
-                SlingshotProjectile comp = projectile.GetComponent<SlingshotProjectile>();
-
-                int hasha = PoolUtils.GameObjHashCode(projectile);
-                int hashb = PoolUtils.GameObjHashCode(trail);
-                //Debug.Log("Finished batch three");
-
-                if (trailname == "none")
-                {
-                    hashb = -1;
-                }
-                //Debug.Log("Finished batch four");
-
-                if (!GetIndex("Client Sided Projectiles").enabled)
-                {
-                    object[] projectileSendData = new object[11];
-                    projectileSendData[0] = position;
-                    projectileSendData[1] = velocity;
-                    projectileSendData[2] = hasha;
-                    projectileSendData[3] = hashb;
-                    projectileSendData[4] = false;
-                    projectileSendData[5] = 1;
-                    projectileSendData[6] = !(bluet || oranget);
-                    projectileSendData[7] = r;
-                    projectileSendData[8] = g;
-                    projectileSendData[9] = b;
-                    projectileSendData[10] = 1f;
-
-                    object[] sendEventData = new object[3];
-                    sendEventData[0] = PhotonNetwork.ServerTimestamp;
-                    sendEventData[1] = (byte)0;
-                    sendEventData[2] = projectileSendData;
-                    
-                    try
+                    GameObject trail;
+                    if (trailname == "none")
                     {
-                        PhotonNetwork.RaiseEvent(3, sendEventData, new RaiseEventOptions { Receivers = ReceiverGroup.Others }, SendOptions.SendUnreliable);
+                        trail = GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools/SlingshotProjectileTrail(Clone)");
                     }
-                    catch { /* wtf */ }
-                }
-                //Debug.Log("Finished batch five");
-                RPCProtection();
+                    else
+                    {
+                        trail = GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools/" + trailname + "(Clone)");
+                    }
 
-                originalprojectile.SetActive(true);
+                    SlingshotProjectile comp = projectile.GetComponent<SlingshotProjectile>();
 
-                if (trailname != "none")
-                {
-                    trail.SetActive(true);
-                    ObjectPools.instance.Instantiate(trail).GetComponent<SlingshotProjectileTrail>().AttachTrail(projectile, false, false);
-                }
-                //Debug.Log("Finished batch six");
+                    int hasha = PoolUtils.GameObjHashCode(projectile);
+                    int hashb = PoolUtils.GameObjHashCode(trail);
 
-                comp.Launch(position, velocity, PhotonNetwork.LocalPlayer, bluet, oranget, 1, 1f, true, new UnityEngine.Color(r, g, b, 1f));
-                if (projDebounceType > 0f && !noDelay)
-                {
-                    projDebounce = Time.time + projDebounceType;
+                    if (trailname == "none")
+                    {
+                        hashb = -1;
+                    }
+
+                    if (!GetIndex("Client Sided Projectiles").enabled)
+                    {
+                        object[] projectileSendData = new object[11];
+                        projectileSendData[0] = position;
+                        projectileSendData[1] = velocity;
+                        projectileSendData[2] = hasha;
+                        projectileSendData[3] = hashb;
+                        projectileSendData[4] = false;
+                        projectileSendData[5] = 1;
+                        projectileSendData[6] = !(bluet || oranget);
+                        projectileSendData[7] = r;
+                        projectileSendData[8] = g;
+                        projectileSendData[9] = b;
+                        projectileSendData[10] = 1f;
+
+                        object[] sendEventData = new object[3];
+                        sendEventData[0] = PhotonNetwork.ServerTimestamp;
+                        sendEventData[1] = (byte)0;
+                        sendEventData[2] = projectileSendData;
+
+                        try
+                        {
+                            PhotonNetwork.RaiseEvent(3, sendEventData, new RaiseEventOptions { Receivers = ReceiverGroup.Others }, SendOptions.SendUnreliable);
+                        }
+                        catch { /* wtf */ }
+                    }
+                    RPCProtection();
+
+                    originalprojectile.SetActive(true);
+
+                    if (trailname != "none")
+                    {
+                        trail.SetActive(true);
+                        ObjectPools.instance.Instantiate(trail).GetComponent<SlingshotProjectileTrail>().AttachTrail(projectile, false, false);
+                    }
+
+                    comp.Launch(position, velocity, PhotonNetwork.LocalPlayer, bluet, oranget, 1, 1f, true, new UnityEngine.Color(r, g, b, 1f));
+                    if (projDebounceType > 0f && !noDelay)
+                    {
+                        projDebounce = Time.time + projDebounceType;
+                    }
                 }
-                //Debug.Log("Finished batch seven");
             }
         }
 
