@@ -49,6 +49,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Change Font Type", method =() => Settings.ChangeFontType(), isTogglable = false, toolTip = "Changes the type of font."},
                 new ButtonInfo { buttonText = "Serversided Button Sounds", toolTip = "Lets everyone in the lobby hear the buttons."},
                 new ButtonInfo { buttonText = "Disable Notifications", enableMethod =() => Settings.DisableNotifications(), disableMethod =() => Settings.EnableNotifications(), toolTip = "Disables all notifications."},
+                new ButtonInfo { buttonText = "Menu Presets", method =() => Settings.EnableMenuPresets(), isTogglable = false, toolTip = "Opens the page of presets."},
                 new ButtonInfo { buttonText = "Save Preferences", method =() => Settings.SavePreferences(), isTogglable = false, toolTip = "Saves your preferences to a file."},
                 new ButtonInfo { buttonText = "Load Preferences", method =() => Settings.LoadPreferences(), isTogglable = false, toolTip = "Loads your preferences from a file."},
                 new ButtonInfo { buttonText = "Panic", method =() => Settings.Panic(), isTogglable = false, toolTip = "Disables every single active mod."},
@@ -96,7 +97,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>0</color><color=grey>]</color>", method =() => Projectiles.IncreaseBlue(), isTogglable = false, toolTip = "Makes projectiles more blue." },
                 new ButtonInfo { buttonText = "Custom Colored Projectiles", toolTip = "Makes the projectile color the custom color (buttons above)." },
                 new ButtonInfo { buttonText = "Client Sided Projectiles", toolTip = "Only fires the bullets for you. Impacts are still server sided." },
-                new ButtonInfo { buttonText = "Legacy Projectiles", toolTip = "Uses the old method of firing projectiles. Grab a snowball.", enabled = true },
+                //new ButtonInfo { buttonText = "Legacy Projectiles", toolTip = "Uses the old method of firing projectiles. Grab a snowball.", enabled = true },
                 new ButtonInfo { buttonText = "Projectile Delay", overlapText = "Projectile Delay <color=grey>[</color><color=green>0.1</color><color=grey>]</color>", method =() => Projectiles.ProjectileDelay(), isTogglable = false, toolTip = "Gives the projectiles a delay before spawning another." },
             },
 
@@ -240,7 +241,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Tag Gun", method =() => Advantages.TagGun(), toolTip = "Tags whoever your hand desires."},
                 new ButtonInfo { buttonText = "Flick Tag Gun", method =() => Advantages.FlickTagGun(), toolTip = "Moves your hand to wherever your hand desires in an attempt to tag whoever your hand desires."},
                 new ButtonInfo { buttonText = "Tag All", method =() => Advantages.TagAll(), disableMethod =() => Movement.EnableRig(), toolTip = "Attempts to tag everyone in the lobby."},
+                new ButtonInfo { buttonText = "Hunt Tag All", method =() => Advantages.HuntTagAll(), disableMethod =() => Movement.EnableRig(), toolTip = "Attempts to tag everyone in the lobby, but for hunt."},
                 new ButtonInfo { buttonText = "Tag Bot", method =() => Advantages.TagBot(), disableMethod =() => Movement.EnableRig(), toolTip = "Automatically tags yourself and everyone else on a loop, use <color=green>B</color> to turn it off."},
+                new ButtonInfo { buttonText = "Hunt Tag Bot", method =() => Advantages.HuntTagBot(), disableMethod =() => Movement.EnableRig(), toolTip = "Automatically tags yourself and everyone else on a loop, but for hunt. Use <color=green>B</color> to turn it off."},
                 new ButtonInfo { buttonText = "No Tag on Join", method =() => Advantages.NoTagOnJoin(), disableMethod =() => Advantages.TagOnJoin(), toolTip = "When you join a lobby, you won't be tagged when you join."},
                 // new ButtonInfo { buttonText = "Remove Christmas Lights", enableMethod =() => Advantages.EnableRemoveChristmasLights(), disableMethod =() => Advantages.DisableRemoveChristmasLights(), toolTip = "Removes lights, good for walls."},
                 new ButtonInfo { buttonText = "Remove Winter Decorations", enableMethod =() => Advantages.EnableRemoveChristmasDecorations(), disableMethod =() => Advantages.DisableRemoveChristmasDecorations(), toolTip = "Removes snowmen and such, good for anyone but very obvious."},
@@ -465,12 +468,20 @@ namespace iiMenu.Menu
             new ButtonInfo[] { // Experimental Mods [18]
                 new ButtonInfo { buttonText = "Exit Experimental Mods", method =() => Settings.ReturnToMain(), isTogglable = false, toolTip = "Returns you back to the main page."},
 
-                new ButtonInfo { buttonText = "Experimental RPC Protection", toolTip = "Uses an experimental method of protecting your RPCs. Credits to Kante."},
-                new ButtonInfo { buttonText = "Set Master <color=grey>[</color><color=red>Detected</color><color=grey>]</color>", enableMethod =() => Experimental.ProtectionEn(), method =() => Experimental.Protection(), disableMethod =() => Experimental.SetMaster(), toolTip = "Sets you as master client. Use the anti ban before this if you're not in a modded."},
+                //new ButtonInfo { buttonText = "Experimental RPC Protection", toolTip = "Uses an experimental method of protecting your RPCs. Credits to Kante."},
+                new ButtonInfo { buttonText = "Set Master <color=grey>[</color><color=red>Detected</color><color=grey>]</color>", method =() => Experimental.SetMaster(), isTogglable = false, toolTip = "Sets you as master client. Only use this in moddeds."},
             },
 
             new ButtonInfo[] { // Favorite Mods [19]
                 new ButtonInfo { buttonText = "Exit Favorite Mods", method =() => Settings.ReturnToMain(), isTogglable = false, toolTip = "Returns you back to the main page."},
+            },
+
+            new ButtonInfo[] { // Menu Presets [20]
+                new ButtonInfo { buttonText = "Exit Menu Presets", method =() => Settings.EnableMenuSettings(), isTogglable = false, toolTip = "Returns to the settings for the menu."},
+
+                new ButtonInfo { buttonText = "Legitimate Preset", method =() => Presets.LegitimatePreset(), isTogglable = false, toolTip = "Mod preset using only visual mods, best for public lobbies."},
+                new ButtonInfo { buttonText = "Ghost Preset", method =() => Presets.GhostPreset(), isTogglable = false, toolTip = "Mod preset best for ghost trolling."},
+                new ButtonInfo { buttonText = "Goldentrophy Preset", method =() => Presets.GoldentrophyPreset(), isTogglable = false, toolTip = "Mod preset that goldentrophy uses."},
             }
         };
     }

@@ -132,6 +132,12 @@ namespace iiMenu.Mods
             pageNumber = 0;
         }
 
+        public static void EnableMenuPresets()
+        {
+            buttonsType = 20;
+            pageNumber = 0;
+        }
+
         public static void RightHand()
         {
             rightHand = true;

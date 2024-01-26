@@ -2735,8 +2735,8 @@ namespace iiMenu.Mods
                         GorillaTagger.Instance.offlineVRRig.transform.rotation = whoCopy.transform.rotation;
                         GorillaTagger.Instance.myVRRig.transform.rotation = whoCopy.transform.rotation;
 
-                        GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.position = (GorillaTagger.Instance.offlineVRRig.transform.position + whoCopy.transform.right * -0.2f) + whoCopy.transform.up * -0.4f;
-                        GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.position = (GorillaTagger.Instance.offlineVRRig.transform.position + whoCopy.transform.right * 0.2f) + whoCopy.transform.up * -0.4f;
+                        GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.position = (whoCopy.transform.position + whoCopy.transform.right * -0.2f) + whoCopy.transform.up * -0.4f;
+                        GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.position = (whoCopy.transform.position + whoCopy.transform.right * 0.2f) + whoCopy.transform.up * -0.4f;
 
                         GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = whoCopy.transform.rotation;
                         GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = whoCopy.transform.rotation;

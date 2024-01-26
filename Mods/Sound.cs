@@ -1,4 +1,5 @@
 ﻿using ExitGames.Client.Photon;
+using iiMenu.Notifications;
 using OVR;
 using Photon.Pun;
 using Photon.Realtime;
@@ -11,24 +12,31 @@ namespace iiMenu.Mods.Spammers
     {
         public static void BetaPlayTag(int id, float volume)
         {
-            if (Time.time > soundDebounce)
+            if (PhotonNetwork.LocalPlayer == PhotonNetwork.MasterClient)
             {
-                object[] soundSendData = new object[2];
-                soundSendData[0] = id;
-                soundSendData[1] = volume;
-
-                object[] sendEventData = new object[3];
-                sendEventData[0] = PhotonNetwork.ServerTimestamp;
-                sendEventData[1] = (byte)3;
-                sendEventData[2] = soundSendData;
-                try
+                if (Time.time > soundDebounce)
                 {
-                    PhotonNetwork.RaiseEvent(3, sendEventData, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendUnreliable);
-                }
-                catch { /* wtf */ }
-                RPCProtection();
+                    object[] soundSendData = new object[2];
+                    soundSendData[0] = id;
+                    soundSendData[1] = volume;
 
-                soundDebounce = Time.time + 0.2f;
+                    object[] sendEventData = new object[3];
+                    sendEventData[0] = PhotonNetwork.ServerTimestamp;
+                    sendEventData[1] = (byte)3;
+                    sendEventData[2] = soundSendData;
+                    try
+                    {
+                        PhotonNetwork.RaiseEvent(3, sendEventData, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendUnreliable);
+                    }
+                    catch { /* wtf */ }
+                    RPCProtection();
+
+                    soundDebounce = Time.time + 0.2f;
+                }
+            }
+            else
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master.</color>");
             }
         }
 

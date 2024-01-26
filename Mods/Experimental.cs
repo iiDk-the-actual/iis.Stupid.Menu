@@ -1,4 +1,5 @@
-﻿using iiMenu.Notifications;
+﻿using GorillaNetworking;
+using iiMenu.Notifications;
 using Photon.Pun;
 using PlayFab;
 using UnityEngine;
@@ -28,26 +29,16 @@ namespace iiMenu.Mods
             NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI BAN</color><color=grey>]</color> <color=white>The anti ban has been enabled! I take ZERO responsibility for bans using this.</color>");
         }*/
         
-        public static void ProtectionEn() // somehow people accidentally click set master so i have  to make this shit now
-        {
-            protsavetimekys = Time.time + 1f;
-            NotifiLib.SendNotification("<color=grey>[</color><color=purple>PROTECTION</color><color=grey>]</color> <color=white>To prevent against accidentally clicking this, you need to press the button twice.</color>");
-        }
-
-        public static void Protection()
-        {
-            if (Time.time > protsavetimekys)
-            {
-                GetIndex("Set Master <color=grey>[</color><color=red>Detected</color><color=grey>]</color>").enabled = false;
-                ReloadMenu();
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>PROTECTION</color><color=grey>]</color> <color=white>To prevent against accidentally clicking this, you need to press the button twice.</color>");
-            }
-        }
-
         public static void SetMaster()
         {
-            PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
-            NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI BAN</color><color=grey>]</color> <color=white>You are now master client! This should ONLY be enabled with the anti ban or in modded lobbies.</color>");
+            if (PhotonNetwork.InRoom && PhotonNetwork.CurrentRoom.CustomProperties["gameMode"].ToString().ToLower().Contains("modded"))
+            {
+                PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
+                NotifiLib.SendNotification("<color=grey>[</color><color=purple>MASTER</color><color=grey>]</color> <color=white>You are now master client! This should ONLY be enabled in modded lobbies.</color>");
+            } else
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are either not in a lobby, or your lobby is not modded.</color>");
+            }
         }
     }
 }

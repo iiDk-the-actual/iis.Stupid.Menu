@@ -1,5 +1,6 @@
 ﻿using ExitGames.Client.Photon;
 using GorillaNetworking;
+using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections.Generic;
@@ -15,41 +16,75 @@ namespace iiMenu.Mods
     {
         public static void BetaSetStatus(int state, RaiseEventOptions balls)
         {
-            object[] statusSendData = new object[1];
-            statusSendData[0] = state;
-            object[] sendEventData = new object[3];
-            sendEventData[0] = PhotonNetwork.ServerTimestamp;
-            sendEventData[1] = (byte)2;
-            sendEventData[2] = statusSendData;
-            PhotonNetwork.RaiseEvent(3, sendEventData, balls, SendOptions.SendUnreliable);
+            if (PhotonNetwork.LocalPlayer == PhotonNetwork.MasterClient)
+            {
+                object[] statusSendData = new object[1];
+                statusSendData[0] = state;
+                object[] sendEventData = new object[3];
+                sendEventData[0] = PhotonNetwork.ServerTimestamp;
+                sendEventData[1] = (byte)2;
+                sendEventData[2] = statusSendData;
+                PhotonNetwork.RaiseEvent(3, sendEventData, balls, SendOptions.SendUnreliable);
+            }
+            else
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master.</color>");
+            }
         }
 
         public static void InfectionGamemode()
         {
-            Hashtable hashtable = new Hashtable();
-            hashtable.Add("gameMode", "forestDEFAULTMODDED_MODDED_INFECTION");
-            PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable, null, null);
+            if (PhotonNetwork.LocalPlayer == PhotonNetwork.MasterClient)
+            {
+                Hashtable hashtable = new Hashtable();
+                hashtable.Add("gameMode", "forestDEFAULTMODDED_MODDED_INFECTION");
+                PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable, null, null);
+            } else
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master.</color>");
+            }
         }
 
         public static void CasualGamemode()
         {
-            Hashtable hashtable = new Hashtable();
-            hashtable.Add("gameMode", "forestDEFAULTMODDED_MODDED_CASUALCASUAL");
-            PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable, null, null);
+            if (PhotonNetwork.LocalPlayer == PhotonNetwork.MasterClient)
+            {
+                Hashtable hashtable = new Hashtable();
+                hashtable.Add("gameMode", "forestDEFAULTMODDED_MODDED_CASUALCASUAL");
+                PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable, null, null);
+            }
+            else
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master.</color>");
+            }
         }
 
         public static void HuntGamemode()
         {
-            Hashtable hashtable = new Hashtable();
-            hashtable.Add("gameMode", "forestDEFAULTMODDED_MODDED_HUNTHUNT");
-            PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable, null, null);
+            if (PhotonNetwork.LocalPlayer == PhotonNetwork.MasterClient)
+            {
+                Hashtable hashtable = new Hashtable();
+                hashtable.Add("gameMode", "forestDEFAULTMODDED_MODDED_HUNTHUNT");
+                PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable, null, null);
+            }
+            else
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master.</color>");
+            }
         }
 
         public static void BattleGamemode()
         {
-            Hashtable hashtable = new Hashtable();
-            hashtable.Add("gameMode", "forestDEFAULTMODDED_MODDED_BATTLEPAINTBRAWL");
-            PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable, null, null);
+            if (PhotonNetwork.LocalPlayer == PhotonNetwork.MasterClient)
+            {
+                Hashtable hashtable = new Hashtable();
+                hashtable.Add("gameMode", "forestDEFAULTMODDED_MODDED_BATTLEPAINTBRAWL");
+                PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable, null, null);
+            }
+            else
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master.</color>");
+            }
         }
 
         public static void SlowGun()

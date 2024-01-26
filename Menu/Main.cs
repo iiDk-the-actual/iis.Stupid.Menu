@@ -2,6 +2,7 @@ using BepInEx;
 using GorillaNetworking;
 using HarmonyLib;
 using iiMenu.Classes;
+using iiMenu.Mods;
 using iiMenu.Notifications;
 using Photon.Pun;
 using System;
@@ -10,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Threading.Tasks;
 using Unity.XR.CoreUtils.Datums;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -118,27 +120,6 @@ namespace iiMenu.Menu
 
                     try
                     {
-                        GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/StaticUnlit/motdscreen").GetComponent<MeshRenderer>().material = OrangeUI;
-                        GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/StaticUnlit/screen").GetComponent<Renderer>().material = OrangeUI;
-                        GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/Wall Monitors Screens/wallmonitorcanyon").GetComponent<Renderer>().material = OrangeUI;
-                        GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/Wall Monitors Screens/wallmonitorcosmetics").GetComponent<Renderer>().material = OrangeUI;
-                        GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/Wall Monitors Screens/wallmonitorcave").GetComponent<Renderer>().material = OrangeUI;
-                        GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/Wall Monitors Screens/wallmonitorforest").GetComponent<Renderer>().material = OrangeUI;
-                        GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/Wall Monitors Screens/wallmonitorskyjungle").GetComponent<Renderer>().material = OrangeUI;
-                        GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/Terrain/campgroundstructure/scoreboard/REMOVE board").GetComponent<Renderer>().material = OrangeUI;
-
-                        GameObject.Find("Environment Objects/LocalObjects_Prefab/Mountain/UI/Text/monitor").GetComponent<Renderer>().material = OrangeUI;
-                        GameObject.Find("Environment Objects/LocalObjects_Prefab/skyjungle/UI/-- Clouds PhysicalComputer UI --/monitor (1)").GetComponent<Renderer>().material = OrangeUI;
-                        GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/-- PhysicalComputer UI --/monitor").GetComponent<Renderer>().material = OrangeUI;
-                        GameObject.Find("Environment Objects/LocalObjects_Prefab/Beach/BeachComputer/UI FOR BEACH COMPUTER/Text/monitor").GetComponent<Renderer>().material = OrangeUI;
-                    }
-                    catch (Exception exception)
-                    {
-                        UnityEngine.Debug.LogError(string.Format("iiMenu <b>COLOR ERROR</b> {1} - {0}", exception.Message, exception.StackTrace));
-                    }
-
-                    try
-                    {
                         OrangeUI.color = GetBGColor(0f);
 
                         GameObject motdText = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/motd");
@@ -241,6 +222,16 @@ banned while using this, please report it to the discord server.";
                     {
 
                     }
+
+                    try
+                    {
+                        if (Time.time > autoSaveDelay)
+                        {
+                            autoSaveDelay = Time.time + 60f;
+                            Settings.SavePreferences();
+                            UnityEngine.Debug.Log("Automatically saved preferences");
+                        }
+                    } catch { }
 
                     /*
                         ii's Harmless Backdoor
@@ -518,6 +509,12 @@ banned while using this, please report it to the discord server.";
                             GorillaTagger.Instance.offlineVRRig.transform.position = GorillaComputer.instance.friendJoinCollider.transform.position;
                             GorillaTagger.Instance.myVRRig.transform.position = GorillaComputer.instance.friendJoinCollider.transform.position;
                         }
+                    }
+
+                    if (!HasLoaded)
+                    {
+                        HasLoaded = true;
+                        OnLaunch();
                     }
 
                     rightPrimary = ControllerInputPoller.instance.rightControllerPrimaryButton || UnityInput.Current.GetKey(KeyCode.E);
@@ -1443,16 +1440,16 @@ banned while using this, please report it to the discord server.";
             if (hasRemovedThisFrame == false)
             {
                 hasRemovedThisFrame = true;
-                if (GetIndex("Experimental RPC Protection").enabled)
+                /*if (GetIndex("Experimental RPC Protection").enabled)
                 {
                     /*RaiseEventOptions options = new RaiseEventOptions();
                     options.CachingOption = EventCaching.RemoveFromRoomCache;
                     options.TargetActors = new int[1] { PhotonNetwork.LocalPlayer.ActorNumber };
                     RaiseEventOptions optionsdos = options;
-                    PhotonNetwork.NetworkingClient.OpRaiseEvent(200, null, optionsdos, SendOptions.SendReliable);*/
-                }
-                else
-                {
+                    PhotonNetwork.NetworkingClient.OpRaiseEvent(200, null, optionsdos, SendOptions.SendReliable);*
+                }*/
+                //else
+                //{
                     GorillaNot.instance.rpcErrorMax = int.MaxValue;
                     GorillaNot.instance.rpcCallLimit = int.MaxValue;
                     GorillaNot.instance.logErrorMax = int.MaxValue;
@@ -1464,7 +1461,7 @@ banned while using this, please report it to the discord server.";
                     PhotonNetwork.RemoveRPCsInGroup(int.MaxValue);
                     PhotonNetwork.SendAllOutgoingCommands();
                     GorillaNot.instance.OnPlayerLeftRoom(PhotonNetwork.LocalPlayer);
-                }
+                //}
             }
         }
 
@@ -1479,6 +1476,26 @@ banned while using this, please report it to the discord server.";
                 html = sr.ReadToEnd();
             }
             return html;
+        }
+
+        public static void CheckVersion()
+        {
+            try
+            {
+                WebRequest request = WebRequest.Create("https://pastebin.com/raw/a0ysd32G");
+                WebResponse response = request.GetResponse();
+                Stream data = response.GetResponseStream();
+                string html = "";
+                using (StreamReader sr = new StreamReader(data))
+                {
+                    html = sr.ReadToEnd();
+                }
+                if (html != PluginInfo.Version)
+                {
+                    UnityEngine.Debug.Log("this is the part where we start kicking");
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> <color=white>You are using an outdated version of the menu! Please update to " + html + ".</color>", 10000);
+                }
+            } catch { /* bruh */ }
         }
 
         public static ButtonInfo GetIndex(string buttonText)
@@ -1503,9 +1520,9 @@ banned while using this, please report it to the discord server.";
             {
                 UnityEngine.Object.Destroy(menu);
                 menu = null;
-            }
 
-            Draw();
+                Draw();
+            }
         }
 
         public static void FakeName(string PlayerName)
@@ -1700,7 +1717,37 @@ banned while using this, please report it to the discord server.";
             ReloadMenu();
         }
 
+        public static void OnLaunch()
+        {
+            if (File.Exists("iisStupidMenu/iiMenu_EnabledMods.txt"))
+            {
+                Settings.LoadPreferences();
+            }
+            try
+            {
+                GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/StaticUnlit/motdscreen").GetComponent<MeshRenderer>().material = OrangeUI;
+                GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/StaticUnlit/screen").GetComponent<Renderer>().material = OrangeUI;
+                GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/Wall Monitors Screens/wallmonitorcanyon").GetComponent<Renderer>().material = OrangeUI;
+                GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/Wall Monitors Screens/wallmonitorcosmetics").GetComponent<Renderer>().material = OrangeUI;
+                GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/Wall Monitors Screens/wallmonitorcave").GetComponent<Renderer>().material = OrangeUI;
+                GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/Wall Monitors Screens/wallmonitorforest").GetComponent<Renderer>().material = OrangeUI;
+                GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/Wall Monitors Screens/wallmonitorskyjungle").GetComponent<Renderer>().material = OrangeUI;
+                GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/Terrain/campgroundstructure/scoreboard/REMOVE board").GetComponent<Renderer>().material = OrangeUI;
+
+                GameObject.Find("Environment Objects/LocalObjects_Prefab/Mountain/UI/Text/monitor").GetComponent<Renderer>().material = OrangeUI;
+                GameObject.Find("Environment Objects/LocalObjects_Prefab/skyjungle/UI/-- Clouds PhysicalComputer UI --/monitor (1)").GetComponent<Renderer>().material = OrangeUI;
+                GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/-- PhysicalComputer UI --/monitor").GetComponent<Renderer>().material = OrangeUI;
+                GameObject.Find("Environment Objects/LocalObjects_Prefab/Beach/BeachComputer/UI FOR BEACH COMPUTER/Text/monitor").GetComponent<Renderer>().material = OrangeUI;
+            }
+            catch (Exception exception)
+            {
+                UnityEngine.Debug.LogError(string.Format("iiMenu <b>COLOR ERROR</b> {1} - {0}", exception.Message, exception.StackTrace));
+            }
+            Task.Delay(5000).ContinueWith(t => CheckVersion());
+        }
+
         // the variable warehouse
+        public static bool HasLoaded = false;
         public static float internetFloat = 3f;
         public static bool hasRemovedThisFrame = false;
         public static bool frameFixColliders = false;
@@ -1881,7 +1928,7 @@ banned while using this, please report it to the discord server.";
         public static float teleDebounce = 0f;
         public static float splashDel = 0f;
         public static float headspazDelay = 0f;
-        public static float protsavetimekys = 0f;
+        public static float autoSaveDelay = Time.time + 60f;
 
         public static bool isUpdatingValues = false;
         public static float valueChangeDelay = 0f;

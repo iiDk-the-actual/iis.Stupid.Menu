@@ -1,4 +1,5 @@
-﻿using Photon.Pun;
+﻿using iiMenu.Notifications;
+using Photon.Pun;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,75 +10,103 @@ namespace iiMenu.Mods
     {
         public static void BattleStartGame()
         {
-            foreach (GorillaBattleManager battle in UnityEngine.Object.FindObjectsOfType<GorillaBattleManager>())
+            if (PhotonNetwork.LocalPlayer == PhotonNetwork.MasterClient)
             {
-                if (!PhotonView.Get(battle).IsMine)
+                foreach (GorillaBattleManager battle in UnityEngine.Object.FindObjectsOfType<GorillaBattleManager>())
                 {
-                    PhotonView.Get(battle).RequestOwnership();
+                    if (!PhotonView.Get(battle).IsMine)
+                    {
+                        PhotonView.Get(battle).RequestOwnership();
+                    }
+                    if (PhotonView.Get(battle).IsMine)
+                    {
+                        battle.StartBattle();
+                    }
                 }
-                if (PhotonView.Get(battle).IsMine)
-                {
-                    battle.StartBattle();
-                }
+            }
+            else
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master.</color>");
             }
         }
 
         public static void BattleEndGame()
         {
-            foreach (GorillaBattleManager battle in UnityEngine.Object.FindObjectsOfType<GorillaBattleManager>())
+            if (PhotonNetwork.LocalPlayer == PhotonNetwork.MasterClient)
             {
-                if (!PhotonView.Get(battle).IsMine)
+                foreach (GorillaBattleManager battle in UnityEngine.Object.FindObjectsOfType<GorillaBattleManager>())
                 {
-                    PhotonView.Get(battle).RequestOwnership();
+                    if (!PhotonView.Get(battle).IsMine)
+                    {
+                        PhotonView.Get(battle).RequestOwnership();
+                    }
+                    if (PhotonView.Get(battle).IsMine)
+                    {
+                        battle.BattleEnd();
+                    }
                 }
-                if (PhotonView.Get(battle).IsMine)
-                {
-                    battle.BattleEnd();
-                }
+            }
+            else
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master.</color>");
             }
         }
 
         public static void BattleRestartGame()
         {
-            foreach (GorillaBattleManager battle in UnityEngine.Object.FindObjectsOfType<GorillaBattleManager>())
+            if (PhotonNetwork.LocalPlayer == PhotonNetwork.MasterClient)
             {
-                if (!PhotonView.Get(battle).IsMine)
+                foreach (GorillaBattleManager battle in UnityEngine.Object.FindObjectsOfType<GorillaBattleManager>())
                 {
-                    PhotonView.Get(battle).RequestOwnership();
+                    if (!PhotonView.Get(battle).IsMine)
+                    {
+                        PhotonView.Get(battle).RequestOwnership();
+                    }
+                    if (PhotonView.Get(battle).IsMine)
+                    {
+                        battle.BattleEnd();
+                        battle.StartBattle();
+                    }
                 }
-                if (PhotonView.Get(battle).IsMine)
-                {
-                    battle.BattleEnd();
-                    battle.StartBattle();
-                }
+            }
+            else
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master.</color>");
             }
         }
 
         public static void BattleBalloonSpam()
         {
-            foreach (GorillaBattleManager battle in UnityEngine.Object.FindObjectsOfType<GorillaBattleManager>())
+            if (PhotonNetwork.LocalPlayer == PhotonNetwork.MasterClient)
             {
-                if (!PhotonView.Get(battle).IsMine)
+                foreach (GorillaBattleManager battle in UnityEngine.Object.FindObjectsOfType<GorillaBattleManager>())
                 {
-                    PhotonView.Get(battle).RequestOwnership();
-                }
-                if (PhotonView.Get(battle).IsMine)
-                {
-                    foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
+                    if (!PhotonView.Get(battle).IsMine)
                     {
-                        if (new System.Random().Next(0, 2) == 1)
+                        PhotonView.Get(battle).RequestOwnership();
+                    }
+                    if (PhotonView.Get(battle).IsMine)
+                    {
+                        foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
                         {
-                            battle.playerLives[player.ActorNumber] = 0;
-                        }
-                        else
-                        {
-                            if (battle.playerLives[player.ActorNumber] == 0)
+                            if (new System.Random().Next(0, 2) == 1)
                             {
-                                battle.playerLives[player.ActorNumber] = 3;
+                                battle.playerLives[player.ActorNumber] = 0;
+                            }
+                            else
+                            {
+                                if (battle.playerLives[player.ActorNumber] == 0)
+                                {
+                                    battle.playerLives[player.ActorNumber] = 3;
+                                }
                             }
                         }
                     }
                 }
+            }
+            else
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master.</color>");
             }
         }
     }

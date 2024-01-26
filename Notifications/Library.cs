@@ -91,7 +91,7 @@ namespace iiMenu.Notifications
             //}
         }
 
-        public static void SendNotification(string NotificationText)
+        public static void SendNotification(string NotificationText, int clearTime = 1000)
         {
             if (!disableNotifications)
             {
@@ -106,7 +106,10 @@ namespace iiMenu.Notifications
                         NotifiLib.NotifiText.text = NotifiLib.NotifiText.text + NotificationText;
                         NotifiLib.NotifiText.supportRichText = true;
                         NotifiLib.PreviousNotifi = NotificationText;
-                        Task.Delay(1000).ContinueWith(t => ClearLast());
+                        try
+                        {
+                            Task.Delay(clearTime).ContinueWith(t => ClearLast());
+                        } catch { /* cheeseburger */ }
                     }
                 }
                 catch

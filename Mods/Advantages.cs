@@ -1,4 +1,5 @@
 ﻿using ExitGames.Client.Photon;
+using iiMenu.Classes;
 using iiMenu.Notifications;
 using Photon.Pun;
 using System;
@@ -42,58 +43,86 @@ namespace iiMenu.Mods
 
         public static void UntagSelf()
         {
-            foreach (GorillaTagManager tagman in GameObject.FindObjectsOfType<GorillaTagManager>())
+            if (PhotonNetwork.LocalPlayer == PhotonNetwork.MasterClient)
             {
-                if (tagman.currentInfected.Contains(PhotonNetwork.LocalPlayer))
+                foreach (GorillaTagManager tagman in GameObject.FindObjectsOfType<GorillaTagManager>())
                 {
-                    tagman.currentInfected.Remove(PhotonNetwork.LocalPlayer);
+                    if (tagman.currentInfected.Contains(PhotonNetwork.LocalPlayer))
+                    {
+                        tagman.currentInfected.Remove(PhotonNetwork.LocalPlayer);
+                    }
                 }
+            }
+            else
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master.</color>");
             }
         }
 
         public static void UntagAll()
         {
-            foreach (GorillaTagManager tagman in GameObject.FindObjectsOfType<GorillaTagManager>())
+            if (PhotonNetwork.LocalPlayer == PhotonNetwork.MasterClient)
             {
-                foreach (Photon.Realtime.Player v in PhotonNetwork.PlayerList)
+                foreach (GorillaTagManager tagman in GameObject.FindObjectsOfType<GorillaTagManager>())
                 {
-                    if (tagman.currentInfected.Contains(v))
+                    foreach (Photon.Realtime.Player v in PhotonNetwork.PlayerList)
                     {
-                        tagman.currentInfected.Remove(v);
+                        if (tagman.currentInfected.Contains(v))
+                        {
+                            tagman.currentInfected.Remove(v);
+                        }
                     }
                 }
+            }
+            else
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master.</color>");
             }
         }
 
         public static void SpamTagSelf()
         {
-            foreach (GorillaTagManager tagman in GameObject.FindObjectsOfType<GorillaTagManager>())
+            if (PhotonNetwork.LocalPlayer == PhotonNetwork.MasterClient)
             {
-                if (tagman.currentInfected.Contains(PhotonNetwork.LocalPlayer))
+                foreach (GorillaTagManager tagman in GameObject.FindObjectsOfType<GorillaTagManager>())
                 {
-                    tagman.currentInfected.Remove(PhotonNetwork.LocalPlayer);
-                } else
-                {
-                    tagman.currentInfected.Add(PhotonNetwork.LocalPlayer);
+                    if (tagman.currentInfected.Contains(PhotonNetwork.LocalPlayer))
+                    {
+                        tagman.currentInfected.Remove(PhotonNetwork.LocalPlayer);
+                    } else
+                    {
+                        tagman.currentInfected.Add(PhotonNetwork.LocalPlayer);
+                    }
                 }
+            }
+            else
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master.</color>");
             }
         }
 
         public static void SpamTagAll()
         {
-            foreach (GorillaTagManager tagman in GameObject.FindObjectsOfType<GorillaTagManager>())
+            if (PhotonNetwork.LocalPlayer == PhotonNetwork.MasterClient)
             {
-                foreach (Photon.Realtime.Player v in PhotonNetwork.PlayerList)
+                foreach (GorillaTagManager tagman in GameObject.FindObjectsOfType<GorillaTagManager>())
                 {
-                    if (tagman.currentInfected.Contains(v))
+                    foreach (Photon.Realtime.Player v in PhotonNetwork.PlayerList)
                     {
-                        tagman.currentInfected.Remove(v);
-                    }
-                    else
-                    {
-                        tagman.currentInfected.Add(v);
+                        if (tagman.currentInfected.Contains(v))
+                        {
+                            tagman.currentInfected.Remove(v);
+                        }
+                        else
+                        {
+                            tagman.currentInfected.Add(v);
+                        }
                     }
                 }
+            }
+            else
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master.</color>");
             }
         }
 
@@ -293,6 +322,26 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void HuntTagAll()
+        {
+            GorillaHuntManager sillyComputer = GorillaGameManager.instance.gameObject.GetComponent<GorillaHuntManager>();
+            Photon.Realtime.Player target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
+            if (!GorillaLocomotion.Player.Instance.disableMovement)
+            {
+                VRRig vrrig = RigManager.GetVRRigFromPlayer(target);
+                GorillaTagger.Instance.offlineVRRig.enabled = false;
+                GorillaTagger.Instance.offlineVRRig.transform.position = vrrig.transform.position;
+                GorillaTagger.Instance.myVRRig.transform.position = vrrig.transform.position;
+                if (rightHand == true) { GorillaLocomotion.Player.Instance.rightControllerTransform.position = vrrig.transform.position; } else { GorillaLocomotion.Player.Instance.leftControllerTransform.position = vrrig.transform.position; }
+            }
+            else
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Everyone is tagged!</color>");
+                GorillaTagger.Instance.offlineVRRig.enabled = true;
+                GetIndex("Hunt Tag All").enabled = false;
+            }
+        }
+
         public static void TagBot()
         {
             if (rightSecondary)
@@ -333,6 +382,21 @@ namespace iiMenu.Mods
                     {
                         GetIndex("Tag All").enabled = true;
                     }
+                }
+            }
+        }
+
+        public static void HuntTagBot()
+        {
+            if (rightSecondary)
+            {
+                GetIndex("Hunt Tag Bot").enabled = false;
+            }
+            if (PhotonNetwork.InRoom)
+            {
+                if (!GorillaLocomotion.Player.Instance.disableMovement)
+                {
+                    GetIndex("Hunt Tag All").enabled = true;
                 }
             }
         }

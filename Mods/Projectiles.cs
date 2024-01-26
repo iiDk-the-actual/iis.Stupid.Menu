@@ -53,11 +53,11 @@ namespace iiMenu.Mods.Spammers
 
         public static void SysFireProjectile(string projectilename, string trailname, Vector3 position, Vector3 velocity, float r, float g, float b, bool bluet, bool oranget, bool noDelay = false)
         {
-            if (GetIndex("Legacy Projectiles").enabled)
-            {
+            //if (true)//GetIndex("Legacy Projectiles").enabled)
+            //{
                 GameObject stupid = GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools/" + projectilename + "(Clone)");
                 BetaFireProjectile(stupid.GetComponent<SlingshotProjectile>().tag, position, velocity, new Color(r, g, b, 1f), noDelay);
-            }
+            /*}
             else
             {
                 if (Time.time > projDebounce)
@@ -110,7 +110,7 @@ namespace iiMenu.Mods.Spammers
                         {
                             PhotonNetwork.RaiseEvent(3, sendEventData, new RaiseEventOptions { Receivers = ReceiverGroup.Others }, SendOptions.SendUnreliable);
                         }
-                        catch { /* wtf */ }
+                        catch { /* wtf * }
                     }
                     RPCProtection();
 
@@ -128,7 +128,7 @@ namespace iiMenu.Mods.Spammers
                         projDebounce = Time.time + projDebounceType;
                     }
                 }
-            }
+            }*/
         }
 
         public static void BetaFireImpact(Vector3 position, float r, float g, float b, bool noDelay = false)
