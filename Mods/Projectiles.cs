@@ -33,6 +33,7 @@ namespace iiMenu.Mods.Spammers
                 fart.randomizeColor = true;
                 fart.transform.position = startpos;
                 fart.projectilePrefab.tag = projectileName;
+                GorillaTagger.Instance.offlineVRRig.slingshot.myOnlineRig = GorillaTagger.Instance.offlineVRRig; // quilt yourself lemming
                 GorillaTagger.Instance.GetComponent<Rigidbody>().velocity = charvel;
                 GorillaTagger.Instance.offlineVRRig.SetThrowableProjectileColor(false, color);
                 try
