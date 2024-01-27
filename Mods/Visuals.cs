@@ -1,5 +1,6 @@
 ﻿using iiMenu.Classes;
 using Photon.Pun;
+using PlayFab.AuthenticationModels;
 using System.Linq;
 using UnityEngine;
 using static iiMenu.Menu.Main;
@@ -38,6 +39,29 @@ namespace iiMenu.Mods
                 l.SetActive(true);
             }
             leaves.Clear();
+        }
+
+        public static void DisableCosmetics()
+        {
+            Transform transform = GorillaTagger.Instance.offlineVRRig.mainCamera.transform.Find("Cosmetics");
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                GameObject v = transform.GetChild(i).gameObject;
+                if (v.GetComponent<Renderer>() && v.GetComponent<Renderer>().enabled)
+                {
+                    v.GetComponent<Renderer>().enabled = false;
+                    cosmetics.Add(v);
+                }
+            }
+        }
+
+        public static void EnableCosmetics()
+        {
+            foreach (GameObject c in cosmetics)
+            {
+                c.GetComponent<Renderer>().enabled = true;
+            }
+            cosmetics.Clear();
         }
 
         public static void CasualTracers()

@@ -2,6 +2,7 @@
 using GorillaExtensions;
 using GorillaTag;
 using iiMenu.Classes;
+using iiMenu.Notifications;
 using Mono.Cecil.Cil;
 using Photon.Pun;
 using Photon.Realtime;
@@ -24,27 +25,27 @@ namespace iiMenu.Mods.Spammers
         {
             if (Time.time > projDebounce)
             {
-                Vector3 startpos = position;
-                Vector3 charvel = velocity;
-
-                Vector3 oldVel = GorillaTagger.Instance.GetComponent<Rigidbody>().velocity;
-                SnowballThrowable fart = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballRightAnchor").transform.Find("LMACF.").GetComponent<SnowballThrowable>();
-                Vector3 oldPos = fart.transform.position;
-                fart.randomizeColor = true;
-                fart.transform.position = startpos;
-                fart.projectilePrefab.tag = projectileName;
-                //GorillaTagger.Instance.offlineVRRig.slingshot.myOnlineRig = GorillaTagger.Instance.offlineVRRig; // quilt yourself lemming
-                GorillaTagger.Instance.GetComponent<Rigidbody>().velocity = charvel;
-                GorillaTagger.Instance.offlineVRRig.SetThrowableProjectileColor(false, color);
                 try
                 {
+                    Vector3 startpos = position;
+                    Vector3 charvel = velocity;
+
+                    Vector3 oldVel = GorillaTagger.Instance.GetComponent<Rigidbody>().velocity;
+                    SnowballThrowable fart = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballRightAnchor").transform.Find("LMACF.").GetComponent<SnowballThrowable>();
+                    Vector3 oldPos = fart.transform.position;
+                    fart.randomizeColor = true;
+                    fart.transform.position = startpos;
+                    fart.projectilePrefab.tag = projectileName;
+                    //GorillaTagger.Instance.offlineVRRig.slingshot.myOnlineRig = GorillaTagger.Instance.offlineVRRig; // quilt yourself lemming
+                    GorillaTagger.Instance.GetComponent<Rigidbody>().velocity = charvel;
+                    GorillaTagger.Instance.offlineVRRig.SetThrowableProjectileColor(false, color);
                     fart.OnRelease(null, null);
-                } catch { /* wtf */ }
-                RPCProtection();
-                GorillaTagger.Instance.GetComponent<Rigidbody>().velocity = oldVel;
-                fart.transform.position = oldPos;
-                fart.randomizeColor = false;
-                fart.projectilePrefab.tag = "SnowballProjectile";
+                    RPCProtection();
+                    GorillaTagger.Instance.GetComponent<Rigidbody>().velocity = oldVel;
+                    fart.transform.position = oldPos;
+                    fart.randomizeColor = false;
+                    fart.projectilePrefab.tag = "SnowballProjectile";
+                } catch { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>Grab a snowball in your right hand.</color>");  }
                 if (projDebounceType > 0f && !noDelay)
                 {
                     projDebounce = Time.time + projDebounceType;

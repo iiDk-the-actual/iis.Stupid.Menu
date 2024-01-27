@@ -118,7 +118,7 @@ namespace iiMenu.Mods
                         leftplat = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         leftplat.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
                     }
-                    leftplat.transform.position = GorillaTagger.Instance.leftHandTransform.position;
+                    leftplat.transform.position = GorillaTagger.Instance.leftHandTransform.position - GorillaTagger.Instance.offlineVRRig.leftHand.trackingPositionOffset;
                     leftplat.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
                     if (platformMode != 5)
                     {
@@ -299,7 +299,7 @@ namespace iiMenu.Mods
                         rightplat = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         rightplat.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
                     }
-                    rightplat.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                    rightplat.transform.position = GorillaTagger.Instance.rightHandTransform.position - GorillaTagger.Instance.offlineVRRig.rightHand.trackingPositionOffset;
                     rightplat.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
                     if (platformMode != 5)
                     {
