@@ -1,8 +1,5 @@
 ﻿using BepInEx;
 using ExitGames.Client.Photon;
-using GorillaLocomotion;
-using HarmonyLib;
-using iiMenu.Classes;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -10,7 +7,6 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.XR;
 using UnityEngine.XR.Interaction.Toolkit;
 using Valve.VR;
 using static iiMenu.Classes.RigManager;
@@ -63,7 +59,7 @@ namespace iiMenu.Mods
         public static void ChangePlatformShape()
         {
             platformShape++;
-            if (platformShape > 5)
+            if (platformShape > 6)
             {
                 platformShape = 0;
             }
@@ -74,7 +70,8 @@ namespace iiMenu.Mods
                 "Cylinder",
                 "Legacy",
                 "Small",
-                "Long"
+                "Long",
+                "1x1"
             };
 
             GetIndex("Change Platform Shape").overlapText = "Change Platform Shape <color=grey>[</color><color=green>" + platformShapes[platformShape] + "</color><color=grey>]</color>";
@@ -115,6 +112,11 @@ namespace iiMenu.Mods
                     {
                         leftplat = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         leftplat.transform.localScale = new Vector3(0.025f, 0.3f, 0.8f);
+                    }
+                    if (platformShape == 6)
+                    {
+                        leftplat = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        leftplat.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
                     }
                     leftplat.transform.position = GorillaTagger.Instance.leftHandTransform.position;
                     leftplat.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
@@ -291,6 +293,11 @@ namespace iiMenu.Mods
                     {
                         rightplat = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         rightplat.transform.localScale = new Vector3(0.025f, 0.3f, 0.8f);
+                    }
+                    if (platformShape == 6)
+                    {
+                        rightplat = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        rightplat.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
                     }
                     rightplat.transform.position = GorillaTagger.Instance.rightHandTransform.position;
                     rightplat.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
@@ -471,6 +478,11 @@ namespace iiMenu.Mods
                         leftplat = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         leftplat.transform.localScale = new Vector3(0.025f, 0.3f, 0.8f);
                     }
+                    if (platformShape == 6)
+                    {
+                        leftplat = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        leftplat.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                    }
                     leftplat.transform.position = GorillaTagger.Instance.leftHandTransform.position;
                     leftplat.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
                     if (platformMode != 5)
@@ -646,6 +658,11 @@ namespace iiMenu.Mods
                     {
                         rightplat = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         rightplat.transform.localScale = new Vector3(0.025f, 0.3f, 0.8f);
+                    }
+                    if (platformShape == 6)
+                    {
+                        rightplat = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        rightplat.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
                     }
                     rightplat.transform.position = GorillaTagger.Instance.rightHandTransform.position;
                     rightplat.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;

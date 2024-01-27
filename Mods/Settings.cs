@@ -7,6 +7,7 @@ using System.Linq;
 using UnityEngine.UI;
 using static iiMenu.Menu.Main;
 using System;
+using iiMenu.Mods.Spammers;
 
 namespace iiMenu.Mods
 {
@@ -182,7 +183,7 @@ namespace iiMenu.Mods
         public static void ChangeMenuTheme()
         {
             themeType++;
-            if (themeType > 12)
+            if (themeType > 13)
             {
                 themeType = 1;
             }
@@ -307,6 +308,16 @@ namespace iiMenu.Mods
                 buttonDefaultB = new Color32(0, 100, 188, 255);
                 buttonClickedA = new Color32(0, 174, 255, 255);
                 buttonClickedB = new Color32(0, 136, 255, 255);
+                textColor = Color.black;
+            }
+            if (themeType == 13)
+            {
+                bgColorA = new Color32(0, 255, 246, 255);
+                bgColorB = new Color32(0, 255, 144, 255);
+                buttonDefaultA = new Color32(0, 255, 144, 255);
+                buttonDefaultB = new Color32(0, 255, 144, 255);
+                buttonClickedA = new Color32(0, 255, 246, 255);
+                buttonClickedB = new Color32(0, 255, 246, 255);
                 textColor = Color.black;
             }
         }
@@ -454,12 +465,15 @@ namespace iiMenu.Mods
                 }
             }
 
+            string ihateyouguys = platformMode+"\n"+platformShape+"\n"+flySpeedCycle+"\n"+longarmCycle+"\n"+speedboostCycle+"\n"+projmode+"\n"+trailmode+"\n"+shootCycle;
+
             if (!Directory.Exists("iisStupidMenu"))
             {
                 Directory.CreateDirectory("iisStupidMenu");
             }
             File.WriteAllText("iisStupidMenu/iiMenu_EnabledMods.txt", text);
             File.WriteAllText("iisStupidMenu/iiMenu_FavoriteMods.txt", favz);
+            File.WriteAllText("iisStupidMenu/iiMenu_ModData.txt", ihateyouguys.ToString());
             File.WriteAllText("iisStupidMenu/iiMenu_PageType.txt", pageButtonType.ToString());
             File.WriteAllText("iisStupidMenu/iiMenu_Theme.txt", themeType.ToString());
             File.WriteAllText("iisStupidMenu/iiMenu_Font.txt", fontCycle.ToString());
@@ -491,6 +505,28 @@ namespace iiMenu.Mods
                     favorites.Add(fav);
                 }
             } catch { }
+
+            try
+            {
+                string MODDER = File.ReadAllText("iisStupidMenu/iiMenu_ModData.txt");
+                string[] data = MODDER.Split("\n");
+
+                platformMode = int.Parse(data[0])-1;
+                Movement.ChangePlatformType();
+                platformShape = int.Parse(data[1]) - 1;
+                Movement.ChangePlatformShape();
+                flySpeedCycle = int.Parse(data[2]) - 1;
+                Movement.ChangeFlySpeed();
+                longarmCycle = int.Parse(data[3]) - 1;
+                Movement.ChangeArmLength();
+                speedboostCycle = int.Parse(data[4]) - 1;
+                Movement.ChangeSpeedBoostAmount();
+                projmode = int.Parse(data[5]) - 1;
+                Projectiles.ChangeProjectile();
+                trailmode = int.Parse(data[6]) - 1;
+                Projectiles.ChangeTrail();
+            }
+            catch { }
 
             string pager = File.ReadAllText("iisStupidMenu/iiMenu_PageType.txt");
             string themer = File.ReadAllText("iisStupidMenu/iiMenu_Theme.txt");

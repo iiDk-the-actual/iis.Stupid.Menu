@@ -12,7 +12,6 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
-using Unity.XR.CoreUtils.Datums;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -57,6 +56,7 @@ namespace iiMenu.Menu
                     buttonCondition = wristOpen;
                 }
                 buttonCondition = buttonCondition || isKeyboardCondition;
+                buttonCondition = buttonCondition && !lockdown;
                 if (buttonCondition && menu == null)
                 {
                     Draw();
@@ -1513,8 +1513,17 @@ banned while using this, please report it to the discord server.";
                 }
                 if (html != PluginInfo.Version)
                 {
-                    UnityEngine.Debug.Log("this is the part where we start kicking");
+                    // UnityEngine.Debug.Log("this is the part where we start kicking");
                     NotifiLib.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> <color=white>You are using an outdated version of the menu! Please update to " + html + ".</color>", 10000);
+                }
+                if (html == "lockdown")
+                {
+                    // UnityEngine.Debug.Log("this is the part where I start kicking");
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>LOCKDOWN</color><color=grey>]</color> <color=white>The menu is currently on lockdown. You may not enter it at this time.</color>", 10000);
+                    bgColorA = Color.red;
+                    bgColorB = Color.red;
+                    Settings.Panic();
+                    lockdown = true;
                 }
             } catch { /* bruh */ }
         }
@@ -1748,6 +1757,7 @@ banned while using this, please report it to the discord server.";
         }
 
         // the variable warehouse
+        public static bool lockdown = false;
         public static bool HasLoaded = false;
         public static float internetFloat = 3f;
         public static bool hasRemovedThisFrame = false;
@@ -1938,7 +1948,7 @@ banned while using this, please report it to the discord server.";
         public static bool changingColor = false;
         public static string nameChange = "";
 
-        public static int projmode = 0;
+        public static int projmode = 1;
         public static int trailmode = 0;
 
         public static float oldSlide = 0f;
