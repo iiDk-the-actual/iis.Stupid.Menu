@@ -1948,7 +1948,7 @@ banned while using this, please report it to the discord server.";
         public static bool changingColor = false;
         public static string nameChange = "";
 
-        public static int projmode = 1;
+        public static int projmode = 0;
         public static int trailmode = 0;
 
         public static float oldSlide = 0f;

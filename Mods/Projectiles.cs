@@ -32,8 +32,8 @@ namespace iiMenu.Mods.Spammers
                 Vector3 oldPos = fart.transform.position;
                 fart.randomizeColor = true;
                 fart.transform.position = startpos;
-                //fart.projectilePrefab.tag = projectileName;
-                //GorillaTagger.Instance.offlineVRRig.slingshot.myOnlineRig = GorillaTagger.Instance.offlineVRRig; quilt yourself lemming
+                fart.projectilePrefab.tag = projectileName;
+                //GorillaTagger.Instance.offlineVRRig.slingshot.myOnlineRig = GorillaTagger.Instance.offlineVRRig; // quilt yourself lemming
                 GorillaTagger.Instance.GetComponent<Rigidbody>().velocity = charvel;
                 GorillaTagger.Instance.offlineVRRig.SetThrowableProjectileColor(false, color);
                 try
@@ -44,7 +44,7 @@ namespace iiMenu.Mods.Spammers
                 GorillaTagger.Instance.GetComponent<Rigidbody>().velocity = oldVel;
                 fart.transform.position = oldPos;
                 fart.randomizeColor = false;
-                //fart.projectilePrefab.tag = "SnowballProjectile";
+                fart.projectilePrefab.tag = "SnowballProjectile";
                 if (projDebounceType > 0f && !noDelay)
                 {
                     projDebounce = Time.time + projDebounceType;
@@ -162,32 +162,13 @@ namespace iiMenu.Mods.Spammers
 
         public static void ChangeProjectile()
         {
-            /*projmode++;
+            projmode++;
             if (projmode > 16)
             {
                 projmode = 0;
-            }*/
-            projmode = 1;
+            }
+            //projmode = 1;
 
-
-            /*string[] shortProjectileNames = new string[] {
-                "Slingshot",
-                "Snowball",
-                "Water Balloon",
-                "Lava Rock",
-                "Deadshot",
-                "Pride",
-                "Cupid",
-                "Ice",
-                "Leaves",
-                "Lava Slingshot",
-                "Cotton Swab",
-                "Candy Cane",
-                "Coal",
-                "Roll Present",
-                "Round Present",
-                "Square Present"
-            };*/
             string[] shortProjectileNames = new string[] {
                 "Slingshot",
                 "Snowball",
