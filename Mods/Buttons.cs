@@ -422,6 +422,9 @@ namespace iiMenu.Menu
             new ButtonInfo[] { // Master Mods [16]
                 new ButtonInfo { buttonText = "Exit Master Mods", method =() => Settings.ReturnToMain(), isTogglable = false, toolTip = "Returns you back to the main page."},
 
+                new ButtonInfo { buttonText = "Crash Gun <color=grey>[</color><color=purple>Krisp</color><color=grey>]</color>", method =() => Overpowered.BubbleGun(), toolTip = "Spawns a massive bubble which crashes whoever your hand desires." },
+                new ButtonInfo { buttonText = "Crash All <color=grey>[</color><color=purple>Krisp</color><color=grey>]</color>", method =() => Overpowered.BubbleAll(), toolTip = "Spawns a massive bubble which crashes everyone." },
+
                 new ButtonInfo { buttonText = "Infection Gamemode <color=grey>[</color><color=red>Detected</color><color=grey>]</color>", method =() => Overpowered.InfectionGamemode(), isTogglable = false, toolTip = "Sets the gamemode to infection."},
                 new ButtonInfo { buttonText = "Casual Gamemode <color=grey>[</color><color=red>Detected</color><color=grey>]</color>", method =() => Overpowered.CasualGamemode(), isTogglable = false, toolTip = "Sets the gamemode to casual."},
                 new ButtonInfo { buttonText = "Hunt Gamemode <color=grey>[</color><color=red>Detected</color><color=grey>]</color>", method =() => Overpowered.HuntGamemode(), isTogglable = false, toolTip = "Sets the gamemode to hunt."},
@@ -465,8 +468,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Exit Overpowered Mods", method =() => Settings.ReturnToMain(), isTogglable = false, toolTip = "Returns you back to the main page."},
 
                 new ButtonInfo { buttonText = "Anti Ban <color=grey>[</color><color=purple>Krisp</color><color=grey>]</color>", method =() => Overpowered.AntiBan(), isTogglable = false, toolTip = "A working anti ban, created by Polar, kman, and Krisp, and leaked by REV." },
-                new ButtonInfo { buttonText = "Crash Gun <color=grey>[</color><color=purple>Krisp</color><color=grey>]</color>", method =() => Overpowered.BubbleGun(), toolTip = "Spawns a massive bubble which crashes whoever your hand desires." },
-                new ButtonInfo { buttonText = "Crash All <color=grey>[</color><color=purple>Krisp</color><color=grey>]</color>", method =() => Overpowered.BubbleAll(), toolTip = "Spawns a massive bubble which crashes everyone." },
 
                 new ButtonInfo { buttonText = "Blind Gun", method =() => Overpowered.BlindGun(), toolTip = "Spawns a bunch of black water balloons in front of whoever your hand desires' faces." },
                 new ButtonInfo { buttonText = "Blind All", method =() => Overpowered.BlindAll(), toolTip = "Spawns a bunch of black water balloons in front of everyone's faces." },
