@@ -118,7 +118,7 @@ namespace iiMenu.Mods
                         leftplat = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         leftplat.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
                     }
-                    leftplat.transform.position = GorillaTagger.Instance.leftHandTransform.position - GorillaTagger.Instance.offlineVRRig.leftHand.trackingPositionOffset;
+                    leftplat.transform.position = GorillaTagger.Instance.leftHandTransform.position;
                     leftplat.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
                     if (platformMode != 5)
                     {
@@ -299,7 +299,7 @@ namespace iiMenu.Mods
                         rightplat = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         rightplat.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
                     }
-                    rightplat.transform.position = GorillaTagger.Instance.rightHandTransform.position - GorillaTagger.Instance.offlineVRRig.rightHand.trackingPositionOffset;
+                    rightplat.transform.position = GorillaTagger.Instance.rightHandTransform.position;
                     rightplat.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
                     if (platformMode != 5)
                     {
@@ -2308,6 +2308,49 @@ namespace iiMenu.Mods
                 fv.enabled = true;
             }
             fvol.Clear();
+        }
+
+        public static void PiggybackGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray);
+                if (shouldBePC)
+                {
+                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
+                    Physics.Raycast(ray, out Ray, 100);
+                }
+
+                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                NewPointer.GetComponent<Renderer>().material.color = bgColorA;
+                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+                NewPointer.transform.position = Ray.point;
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
+                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+                if (isCopying && whoCopy != null)
+                {
+                    GorillaTagger.Instance.rigidbody.transform.position = whoCopy.transform.position + new Vector3(0f, 0.5f, 0f);
+                    GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity = Vector3.zero;
+                }
+                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        isCopying = true;
+                        whoCopy = possibly;
+                    }
+                }
+            }
+            else
+            {
+                if (isCopying)
+                {
+                    isCopying = false;
+                }
+            }
         }
 
         public static void CopyMovementGun()

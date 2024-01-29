@@ -634,6 +634,12 @@ namespace iiMenu.Mods
             ChangeColor(new Color32(230, 127, 102, 255));
         }
 
+        public static void BecomeJ3VU()
+        {
+            ChangeName("J3VU");
+            ChangeColor(Color.green);
+        }
+
         public static void BecomeECHO()
         {
             ChangeName("ECHO");

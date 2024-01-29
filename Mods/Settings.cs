@@ -183,7 +183,7 @@ namespace iiMenu.Mods
         public static void ChangeMenuTheme()
         {
             themeType++;
-            if (themeType > 13)
+            if (themeType > 14)
             {
                 themeType = 1;
             }
@@ -320,6 +320,16 @@ namespace iiMenu.Mods
                 buttonClickedB = new Color32(0, 255, 246, 255);
                 textColor = Color.black;
             }
+            if (themeType == 14)
+            {
+                bgColorA = new Color32(255, 130, 255, 255);
+                bgColorB = Color.white;
+                buttonDefaultA = new Color32(255, 130, 255, 255);
+                buttonDefaultB = new Color32(255, 130, 255, 255);
+                buttonClickedA = Color.white;
+                buttonClickedB = Color.white;
+                textColor = Color.black;
+            }
         }
 
         public static void ChangePageType()
@@ -350,7 +360,7 @@ namespace iiMenu.Mods
         public static void ChangeFontType()
         {
             fontCycle++;
-            if (fontCycle > 4)
+            if (fontCycle > 5)
             {
                 fontCycle = 0;
             }
@@ -380,6 +390,10 @@ namespace iiMenu.Mods
             if (fontCycle == 4)
             {
                 activeFont = sans;
+            }
+            if (fontCycle == 5)
+            {
+                activeFont = consolas;
             }
         }
 

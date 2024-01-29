@@ -5,6 +5,7 @@ using System.Diagnostics;
 using UnityEngine;
 using static iiMenu.Menu.Main;
 using static iiMenu.Mods.Reconnect;
+using Valve.VR;
 
 namespace iiMenu.Mods
 {
@@ -12,7 +13,7 @@ namespace iiMenu.Mods
     {
         public static void Disconnect()
         {
-            if ((GetIndex("Primary Room Mods").enabled && rightPrimary) || !GetIndex("Primary Room Mods").enabled)
+            if ((GetIndex("Primary Room Mods").enabled && rightPrimary) || (GetIndex("Secondary Room Mods").enabled && rightSecondary) || (GetIndex("Joystick Room Mods").enabled && SteamVR_Actions.gorillaTag_RightJoystickClick.state) || !(GetIndex("Primary Room Mods").enabled || GetIndex("Secondary Room Mods").enabled || GetIndex("Joystick Room Mods").enabled))
             {
                 PhotonNetwork.Disconnect();
             }
@@ -20,7 +21,7 @@ namespace iiMenu.Mods
 
         public static void Reconnect()
         {
-            if ((GetIndex("Primary Room Mods").enabled && rightPrimary) || !GetIndex("Primary Room Mods").enabled)
+            if ((GetIndex("Primary Room Mods").enabled && rightPrimary) || (GetIndex("Secondary Room Mods").enabled && rightSecondary) || (GetIndex("Joystick Room Mods").enabled && SteamVR_Actions.gorillaTag_RightJoystickClick.state) || !(GetIndex("Primary Room Mods").enabled || GetIndex("Secondary Room Mods").enabled || GetIndex("Joystick Room Mods").enabled))
             {
                 rejRoom = PhotonNetwork.CurrentRoom.Name;
                 rejDebounce = Time.time + internetFloat;
@@ -34,9 +35,14 @@ namespace iiMenu.Mods
             isJoiningRandom = false;
         }
 
+        public static void JoinLastRoom()
+        {
+            PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(lastRoom);
+        }
+
         public static void JoinRandom()
         {
-            if ((GetIndex("Primary Room Mods").enabled && rightPrimary) || !GetIndex("Primary Room Mods").enabled)
+            if ((GetIndex("Primary Room Mods").enabled && rightPrimary) || (GetIndex("Secondary Room Mods").enabled && rightSecondary) || (GetIndex("Joystick Room Mods").enabled && SteamVR_Actions.gorillaTag_RightJoystickClick.state) || !(GetIndex("Primary Room Mods").enabled || GetIndex("Secondary Room Mods").enabled || GetIndex("Joystick Room Mods").enabled))
             {
                 if (PhotonNetwork.InRoom)
                 {

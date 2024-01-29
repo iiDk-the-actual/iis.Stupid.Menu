@@ -7,6 +7,7 @@ using Mono.Cecil.Cil;
 using Photon.Pun;
 using Photon.Realtime;
 using POpusCodec.Enums;
+using Steamworks;
 using System;
 using System.Runtime.InteropServices;
 using System.Xml.Linq;
@@ -23,6 +24,14 @@ namespace iiMenu.Mods.Spammers
     {
         public static void BetaFireProjectile(string projectileName, Vector3 position, Vector3 velocity, Color color, bool noDelay = false)
         {
+            ControllerInputPoller.instance.leftControllerGripFloat = 1f;
+            GameObject lhelp = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            lhelp.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+            lhelp.transform.position = GorillaTagger.Instance.leftHandTransform.position;
+            lhelp.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
+            lhelp.AddComponent<GorillaSurfaceOverride>().overrideIndex = 32;
+            lhelp.GetComponent<Renderer>().enabled = false;
+            UnityEngine.Object.Destroy(lhelp, 0.1f);
             if (Time.time > projDebounce)
             {
                 try
@@ -31,21 +40,22 @@ namespace iiMenu.Mods.Spammers
                     Vector3 charvel = velocity;
 
                     Vector3 oldVel = GorillaTagger.Instance.GetComponent<Rigidbody>().velocity;
-                    SnowballThrowable fart = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballRightAnchor").transform.Find("LMACF.").GetComponent<SnowballThrowable>();
+                    //SnowballThrowable fart = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballRightAnchor").transform.Find("LMACF.").GetComponent<SnowballThrowable>();
+                    SnowballThrowable fart = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/palm.01.L/TransferrableItemLeftHand/SnowballLeftAnchor").transform.Find("LMACE.").GetComponent<SnowballThrowable>();
                     Vector3 oldPos = fart.transform.position;
                     fart.randomizeColor = true;
                     fart.transform.position = startpos;
-                    fart.projectilePrefab.tag = projectileName;
-                    //GorillaTagger.Instance.offlineVRRig.slingshot.myOnlineRig = GorillaTagger.Instance.offlineVRRig; // quilt yourself lemming
+                    //fart.projectilePrefab.tag = projectileName;
                     GorillaTagger.Instance.GetComponent<Rigidbody>().velocity = charvel;
-                    GorillaTagger.Instance.offlineVRRig.SetThrowableProjectileColor(false, color);
-                    fart.OnRelease(null, null);
+                    GorillaTagger.Instance.offlineVRRig.SetThrowableProjectileColor(true, color);
+                    GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/EquipmentInteractor").GetComponent<EquipmentInteractor>().ReleaseLeftHand();
+                    //fart.OnRelease(null, null);
                     RPCProtection();
                     GorillaTagger.Instance.GetComponent<Rigidbody>().velocity = oldVel;
                     fart.transform.position = oldPos;
                     fart.randomizeColor = false;
-                    fart.projectilePrefab.tag = "SnowballProjectile";
-                } catch { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>Grab a snowball in your right hand.</color>");  }
+                    //fart.projectilePrefab.tag = "SnowballProjectile";
+                } catch { /*NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>Grab a snowball in your left hand and put it in the snow.</color>");*/ }
                 if (projDebounceType > 0f && !noDelay)
                 {
                     projDebounce = Time.time + projDebounceType;
@@ -163,12 +173,12 @@ namespace iiMenu.Mods.Spammers
 
         public static void ChangeProjectile()
         {
-            projmode++;
-            if (projmode > 16)
-            {
-                projmode = 0;
-            }
-            //projmode = 1;
+            //projmode++;
+            //if (projmode > 16)
+            //{
+            //    projmode = 0;
+            //}
+            projmode = 1;
 
             string[] shortProjectileNames = new string[] {
                 "Slingshot",
@@ -247,7 +257,7 @@ namespace iiMenu.Mods.Spammers
 
         public static void IncreaseRed()
         {
-            red = red + 0.1f;
+            red += 0.1f;
             if (red > 1.05f)
             {
                 red = 0f;
@@ -258,7 +268,7 @@ namespace iiMenu.Mods.Spammers
 
         public static void IncreaseGreen()
         {
-            green = green + 0.1f;
+            green += 0.1f;
             if (green > 1.05f)
             {
                 green = 0f;
@@ -269,7 +279,7 @@ namespace iiMenu.Mods.Spammers
 
         public static void IncreaseBlue()
         {
-            blue = blue + 0.1f;
+            blue += 0.1f;
             if (blue > 1.05f)
             {
                 blue = 0f;
@@ -280,7 +290,7 @@ namespace iiMenu.Mods.Spammers
 
         public static void ProjectileDelay()
         {
-            projDebounceType = projDebounceType + 0.1f;
+            projDebounceType += 0.1f;
             if (projDebounceType > 1.05f)
             {
                 projDebounceType = 0f;
@@ -324,7 +334,7 @@ namespace iiMenu.Mods.Spammers
                         Physics.Raycast(ray, out var hit, 100);
                         charvel = hit.point - GorillaTagger.Instance.rightHandTransform.transform.position;
                         charvel.Normalize();
-                        charvel = charvel * (ShootStrength * 2);
+                        charvel *= (ShootStrength * 2);
                     }
                 }
 
@@ -1974,7 +1984,7 @@ namespace iiMenu.Mods.Spammers
                         Vector3 startpos = GorillaTagger.Instance.rightHandTransform.position;
                         Vector3 charvel = vrrig.transform.position - GorillaTagger.Instance.rightHandTransform.position;
                         charvel.Normalize();
-                        charvel = charvel * 100f;
+                        charvel *= 100f;
 
                         BetaFireProjectile(projectilename, startpos, charvel, new Color32(0, 255, 0, 255));
                     }
@@ -1987,7 +1997,7 @@ namespace iiMenu.Mods.Spammers
                         Vector3 startpos = GorillaTagger.Instance.rightHandTransform.position;
                         Vector3 charvel = vrrig.transform.position - GorillaTagger.Instance.rightHandTransform.position;
                         charvel.Normalize();
-                        charvel = charvel * 100f;
+                        charvel *= 100f;
 
                         BetaFireProjectile(projectilename, startpos, charvel, new Color32(0, 255, 0, 255));
                     }
@@ -2001,7 +2011,7 @@ namespace iiMenu.Mods.Spammers
                     Vector3 startpos = GorillaTagger.Instance.rightHandTransform.position;
                     Vector3 charvel = vrrig.transform.position - GorillaTagger.Instance.rightHandTransform.position;
                     charvel.Normalize();
-                    charvel = charvel * 100f;
+                    charvel *= 100f;
 
                     BetaFireProjectile(projectilename, startpos, charvel, new Color32(0, 255, 0, 255));
                 }

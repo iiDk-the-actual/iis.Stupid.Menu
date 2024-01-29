@@ -1,10 +1,13 @@
 using BepInEx;
+using ExitGames.Client.Photon;
 using GorillaNetworking;
 using HarmonyLib;
 using iiMenu.Classes;
 using iiMenu.Mods;
 using iiMenu.Notifications;
+using Oculus.Platform;
 using Photon.Pun;
+using Photon.Realtime;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -174,11 +177,18 @@ namespace iiMenu.Menu
                             }
                         }
                         motdTextB.text = @"
-You are using version 2.9. This menu was created by iiDk (@goldentrophy) on
+You are using version 2.9p1. This menu was created by iiDk (@goldentrophy) on
 discord. This menu is completely free and open sourced, if you paid for this
 menu you have been scammed. There are a total of <b> " + fullModAmount + @" </b> mods on this
 menu. <color=red>I, iiDk, am not responsible for any bans using this menu.</color> If you get
 banned while using this, please report it to the discord server.";
+                    }
+                    catch { }
+
+                    try
+                    {
+                        Menu.UIColorHelper.bgc = OrangeUI.color;
+                        Menu.UIColorHelper.txtc = textColor;
                     }
                     catch { }
 
@@ -1190,8 +1200,7 @@ banned while using this, please report it to the discord server.";
                         if (Mouse.current.leftButton.isPressed)
                         {
                             Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
-                            RaycastHit hit;
-                            bool worked = Physics.Raycast(ray, out hit, 100);
+                            bool worked = Physics.Raycast(ray, out RaycastHit hit, 100);
                             if (worked)
                             {
                                 Classes.Button collide = hit.transform.gameObject.GetComponent<Classes.Button>();
@@ -1461,16 +1470,16 @@ banned while using this, please report it to the discord server.";
             if (hasRemovedThisFrame == false)
             {
                 hasRemovedThisFrame = true;
-                /*if (GetIndex("Experimental RPC Protection").enabled)
+                if (GetIndex("Experimental RPC Protection").enabled)
                 {
-                    /*RaiseEventOptions options = new RaiseEventOptions();
+                    RaiseEventOptions options = new RaiseEventOptions();
                     options.CachingOption = EventCaching.RemoveFromRoomCache;
                     options.TargetActors = new int[1] { PhotonNetwork.LocalPlayer.ActorNumber };
                     RaiseEventOptions optionsdos = options;
-                    PhotonNetwork.NetworkingClient.OpRaiseEvent(200, null, optionsdos, SendOptions.SendReliable);*
-                }*/
-                //else
-                //{
+                    PhotonNetwork.NetworkingClient.OpRaiseEvent(200, null, optionsdos, SendOptions.SendReliable);
+                }
+                else
+                {
                     GorillaNot.instance.rpcErrorMax = int.MaxValue;
                     GorillaNot.instance.rpcCallLimit = int.MaxValue;
                     GorillaNot.instance.logErrorMax = int.MaxValue;
@@ -1482,7 +1491,7 @@ banned while using this, please report it to the discord server.";
                     PhotonNetwork.RemoveRPCsInGroup(int.MaxValue);
                     PhotonNetwork.SendAllOutgoingCommands();
                     GorillaNot.instance.OnPlayerLeftRoom(PhotonNetwork.LocalPlayer);
-                //}
+                }
             }
         }
 
@@ -1751,7 +1760,13 @@ banned while using this, please report it to the discord server.";
         {
             if (File.Exists("iisStupidMenu/iiMenu_EnabledMods.txt"))
             {
-                Settings.LoadPreferences();
+                try
+                {
+                    Settings.LoadPreferences();
+                } catch
+                {
+                    Task.Delay(1000).ContinueWith(t => Settings.LoadPreferences());
+                }
             }
             Task.Delay(5000).ContinueWith(t => CheckVersion());
         }
@@ -1812,6 +1827,7 @@ banned while using this, please report it to the discord server.";
         public static Font Arial = (Resources.GetBuiltinResource(typeof(Font), "Arial.ttf") as Font);
         public static Font Verdana = Font.CreateDynamicFontFromOSFont("Verdana", 24);
         public static Font sans = Font.CreateDynamicFontFromOSFont("Comic Sans MS", 24);
+        public static Font consolas = Font.CreateDynamicFontFromOSFont("Consolas", 24);
         public static Font gtagfont = null;
         public static Font activeFont = agency;
 

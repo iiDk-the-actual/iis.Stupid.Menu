@@ -57,7 +57,10 @@ namespace iiMenu.Menu
 
             new ButtonInfo[] { // Room (in Settings) [3]
                 new ButtonInfo { buttonText = "Exit Room Settings", method =() => Settings.EnableSettings(), isTogglable = false, toolTip = "Brings you back to the settings menu."},
+                
                 new ButtonInfo { buttonText = "Primary Room Mods", enableMethod =() => Settings.EnablePrimaryRoomMods(), disableMethod =() => Settings.DisablePrimaryRoomMods(), toolTip = "Makes the room mods (disconnect, reconnect, etc) only run when clicking primary."},
+                new ButtonInfo { buttonText = "Secondary Room Mods", enableMethod =() => Settings.EnablePrimaryRoomMods(), disableMethod =() => Settings.DisablePrimaryRoomMods(), toolTip = "Makes the room mods (disconnect, reconnect, etc) only run when clicking secondary."},
+                new ButtonInfo { buttonText = "Joystick Room Mods", enableMethod =() => Settings.EnablePrimaryRoomMods(), disableMethod =() => Settings.DisablePrimaryRoomMods(), toolTip = "Makes the room mods (disconnect, reconnect, etc) only run when clicking your joystick."},
             },
 
             new ButtonInfo[] { // Movement (in Settings) [4]
@@ -72,8 +75,8 @@ namespace iiMenu.Menu
 
             new ButtonInfo[] { // Projectiles (in Settings) [5]
                 new ButtonInfo { buttonText = "Exit Projectile Settings", method =() => Settings.EnableSettings(), isTogglable = false, toolTip = "Brings you back to the settings menu."},
-                new ButtonInfo { buttonText = "Change Projectile", overlapText = "Change Projectile <color=grey>[</color><color=green>Slingshot</color><color=grey>]</color>", method =() => Projectiles.ChangeProjectile(), isTogglable = false, toolTip = "Changes the projectile of the projectile spam." },
-                new ButtonInfo { buttonText = "Change Trail", overlapText = "Change Trail <color=grey>[</color><color=green>Regular</color><color=grey>]</color>", method =() => Projectiles.ChangeTrail(), isTogglable = false, toolTip = "Changes the trail of the projectile spam." },
+                //new ButtonInfo { buttonText = "Change Projectile", overlapText = "Change Projectile <color=grey>[</color><color=green>Slingshot</color><color=grey>]</color>", method =() => Projectiles.ChangeProjectile(), isTogglable = false, toolTip = "Changes the projectile of the projectile spam." },
+                //new ButtonInfo { buttonText = "Change Trail", overlapText = "Change Trail <color=grey>[</color><color=green>Regular</color><color=grey>]</color>", method =() => Projectiles.ChangeTrail(), isTogglable = false, toolTip = "Changes the trail of the projectile spam." },
                 new ButtonInfo { buttonText = "Random Projectile", toolTip = "Makes the projectiles random." },
                 new ButtonInfo { buttonText = "Random Trail", toolTip = "Makes the projectiles have a random trail." },
                 new ButtonInfo { buttonText = "Random Direction", toolTip = "Makes the projectiles go everywhere." },
@@ -107,6 +110,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Disconnect", method =() => Important.Disconnect(), isTogglable = false, toolTip = "Disconnects you from the lobby."},
                 new ButtonInfo { buttonText = "Reconnect", method =() => Important.Reconnect(), isTogglable = false, toolTip = "Reconnects you from and to the lobby."},
                 new ButtonInfo { buttonText = "Cancel Reconnect", method =() => Important.CancelReconnect(), isTogglable = false, toolTip = "Cancels the reconnection loop."},
+                new ButtonInfo { buttonText = "Join Last Room", method =() => Important.JoinLastRoom(), isTogglable = false, toolTip = "Joins the last room you left."},
                 new ButtonInfo { buttonText = "Join Random", method =() => Important.JoinRandom(), isTogglable = false, toolTip = "Joins a random public lobby." },
                 new ButtonInfo { buttonText = "Create Public", method =() => Important.CreatePublic(), isTogglable = false, toolTip = "Creates a public lobby."},
 
@@ -136,6 +140,8 @@ namespace iiMenu.Menu
 
             new ButtonInfo[] { // Safety Mods [8]
                 new ButtonInfo { buttonText = "Exit Safety Mods", method =() => Settings.ReturnToMain(), isTogglable = false, toolTip = "Returns you back to the main page."},
+
+                new ButtonInfo { buttonText = "No Finger Movement", method =() => Safety.NoFinger(), toolTip = "Makes your fingers not move, so you can use wall walk without getting called out." },
 
                 new ButtonInfo { buttonText = "Flush RPCs", method =() => RPCProtection(), isTogglable = false, toolTip = "Flushes all RPC calls, good after you stop spamming." },
                 new ButtonInfo { buttonText = "Anti Crash", enableMethod =() => Safety.AntiCrashEnabled(), disableMethod =() => Safety.AntiCrashDisabled(), toolTip = "Doesn't allow projectiles from other users that are far away."},
@@ -224,6 +230,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Air Swim", method =() => Beach.AirSwim(), disableMethod =() => Beach.DisableAirSwim(), toolTip = "Puts you in a block of water, letting you swim in the air." },
                 new ButtonInfo { buttonText = "Fast Swim", method =() => Beach.FastSwim(), toolTip = "Whenever you are in water, your velocity is slowly multiplied." },
                 new ButtonInfo { buttonText = "Disable Air", enableMethod =() => Movement.DisableAir(), disableMethod =() => Movement.EnableAir(), toolTip = "Disables air in every map." },
+                new ButtonInfo { buttonText = "Piggyback Gun", method =() => Movement.PiggybackGun(), toolTip = "Teleports you on top of whoever your hand desires repeatedly."},
                 new ButtonInfo { buttonText = "Copy Movement Gun", method =() => Movement.CopyMovementGun(), toolTip = "Makes your rig copy the movement of whoever your hand desires."},
                 new ButtonInfo { buttonText = "Follow Player Gun", method =() => Movement.FollowPlayerGun(), toolTip = "Flies your rig towards whoever your hand desires."},
                 new ButtonInfo { buttonText = "Orbit Player Gun", method =() => Movement.OrbitPlayerGun(), toolTip = "Orbits your rig around whoever your hand desires."},
@@ -342,6 +349,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Impossible Color <color=grey>[</color><color=red>Stump</color><color=grey>]</color>", method =() => Fun.NegativeColor(), isTogglable = false, toolTip = "Sets your colors to above the integer limit." },
                 new ButtonInfo { buttonText = "Become \"goldentrophy\"", method =() => Fun.BecomeGoldentrophy(), isTogglable = false, toolTip = "Sets your name to \"goldentrophy\" and color to orange." },
                 new ButtonInfo { buttonText = "Become \"PBBV\"", method =() => Fun.BecomePBBV(), isTogglable = false, toolTip = "Sets your name to \"PBBV\" and color to sky blue." },
+                new ButtonInfo { buttonText = "Become \"J3VU\"", method =() => Fun.BecomeJ3VU(), isTogglable = false, toolTip = "Sets your name to \"J3VU\" and color to green." },
                 new ButtonInfo { buttonText = "Become \"ECHO\"", method =() => Fun.BecomeECHO(), isTogglable = false, toolTip = "Sets your name to \"ECHO\" and color to salmon." },
                 new ButtonInfo { buttonText = "Become \"DAISY09\"", method =() => Fun.BecomeDAISY09(), isTogglable = false, toolTip = "Sets your name to \"DAISY09\" and color to a light pink." },
                 new ButtonInfo { buttonText = "Become Hidden on Leaderboard", method =() => Fun.BecomeHiddenOnLeaderboard(), isTogglable = false, toolTip = "Sets your name to nothing and your color to a dark red, matching the leaderboard." },
@@ -414,10 +422,13 @@ namespace iiMenu.Menu
             new ButtonInfo[] { // Master Mods [16]
                 new ButtonInfo { buttonText = "Exit Master Mods", method =() => Settings.ReturnToMain(), isTogglable = false, toolTip = "Returns you back to the main page."},
 
-                new ButtonInfo { buttonText = "Infection Gamemode", method =() => Overpowered.InfectionGamemode(), isTogglable = false, toolTip = "Sets the gamemode to infection."},
-                new ButtonInfo { buttonText = "Casual Gamemode", method =() => Overpowered.CasualGamemode(), isTogglable = false, toolTip = "Sets the gamemode to casual."},
-                new ButtonInfo { buttonText = "Hunt Gamemode", method =() => Overpowered.HuntGamemode(), isTogglable = false, toolTip = "Sets the gamemode to hunt."},
-                new ButtonInfo { buttonText = "Battle Gamemode", method =() => Overpowered.BattleGamemode(), isTogglable = false, toolTip = "Sets the gamemode to battle."},
+                new ButtonInfo { buttonText = "Infection Gamemode <color=grey>[</color><color=red>Detected</color><color=grey>]</color>", method =() => Overpowered.InfectionGamemode(), isTogglable = false, toolTip = "Sets the gamemode to infection."},
+                new ButtonInfo { buttonText = "Casual Gamemode <color=grey>[</color><color=red>Detected</color><color=grey>]</color>", method =() => Overpowered.CasualGamemode(), isTogglable = false, toolTip = "Sets the gamemode to casual."},
+                new ButtonInfo { buttonText = "Hunt Gamemode <color=grey>[</color><color=red>Detected</color><color=grey>]</color>", method =() => Overpowered.HuntGamemode(), isTogglable = false, toolTip = "Sets the gamemode to hunt."},
+                new ButtonInfo { buttonText = "Battle Gamemode <color=grey>[</color><color=red>Detected</color><color=grey>]</color>", method =() => Overpowered.BattleGamemode(), isTogglable = false, toolTip = "Sets the gamemode to battle."},
+
+                new ButtonInfo { buttonText = "Serversided Network Triggers <color=grey>[</color><color=red>Detected</color><color=grey>]</color>", method =() => Overpowered.SSDisableNetworkTriggers(), isTogglable = false, toolTip = "Disables network triggers for everyone."},
+                new ButtonInfo { buttonText = "Trap Stump <color=grey>[</color><color=red>Detected</color><color=grey>]</color>", method =() => Overpowered.TrapStump(), isTogglable = false, toolTip = "Anyone who enters the stump will be kicked."},
 
                 new ButtonInfo { buttonText = "Untag Self", method =() => Advantages.UntagSelf(), isTogglable = false, toolTip = "Removes you from the list of tagged players."},
                 new ButtonInfo { buttonText = "Untag All", method =() => Advantages.UntagAll(), isTogglable = false, toolTip = "Removes everyone from the list of tagged players."},
@@ -453,8 +464,12 @@ namespace iiMenu.Menu
             new ButtonInfo[] { // Overpowered Mods [17]
                 new ButtonInfo { buttonText = "Exit Overpowered Mods", method =() => Settings.ReturnToMain(), isTogglable = false, toolTip = "Returns you back to the main page."},
 
-                new ButtonInfo { buttonText = "Blind Gun", method =() => Overpowered.BlindGun(), toolTip = "Spanws a bunch of black water balloons in front of whoever your hand desires' faces." },
-                new ButtonInfo { buttonText = "Blind All", method =() => Overpowered.BlindAll(), toolTip = "Spanws a bunch of black water balloons in front of everyone's faces." },
+                new ButtonInfo { buttonText = "Anti Ban <color=grey>[</color><color=purple>Krisp</color><color=grey>]</color>", method =() => Overpowered.AntiBan(), isTogglable = false, toolTip = "A working anti ban, created by Polar, kman, and Krisp, and leaked by REV." },
+                new ButtonInfo { buttonText = "Crash Gun <color=grey>[</color><color=purple>Krisp</color><color=grey>]</color>", method =() => Overpowered.BubbleGun(), toolTip = "Spawns a massive bubble which crashes whoever your hand desires." },
+                new ButtonInfo { buttonText = "Crash All <color=grey>[</color><color=purple>Krisp</color><color=grey>]</color>", method =() => Overpowered.BubbleAll(), toolTip = "Spawns a massive bubble which crashes everyone." },
+
+                new ButtonInfo { buttonText = "Blind Gun", method =() => Overpowered.BlindGun(), toolTip = "Spawns a bunch of black water balloons in front of whoever your hand desires' faces." },
+                new ButtonInfo { buttonText = "Blind All", method =() => Overpowered.BlindAll(), toolTip = "Spawns a bunch of black water balloons in front of everyone's faces." },
 
                 new ButtonInfo { buttonText = "Destroy Gun", method =() => Overpowered.DestroyGun(), toolTip = "Makes new players not see whoever your hand desires." },
                 new ButtonInfo { buttonText = "Destroy All", method =() => Overpowered.DestroyAll(), isTogglable = false, toolTip = "Every player that joins after you will not be able to see anyone." },
@@ -469,7 +484,7 @@ namespace iiMenu.Menu
             new ButtonInfo[] { // Experimental Mods [18]
                 new ButtonInfo { buttonText = "Exit Experimental Mods", method =() => Settings.ReturnToMain(), isTogglable = false, toolTip = "Returns you back to the main page."},
 
-                //new ButtonInfo { buttonText = "Experimental RPC Protection", toolTip = "Uses an experimental method of protecting your RPCs. Credits to Kante."},
+                new ButtonInfo { buttonText = "Experimental RPC Protection", toolTip = "Uses an experimental method of protecting your RPCs. Credits to Kante."},
                 new ButtonInfo { buttonText = "Set Master <color=grey>[</color><color=red>Detected</color><color=grey>]</color>", method =() => Experimental.SetMaster(), isTogglable = false, toolTip = "Sets you as master client. Only use this in moddeds."},
             },
 

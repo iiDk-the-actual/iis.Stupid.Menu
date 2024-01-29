@@ -126,6 +126,24 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void AntiTag()
+        {
+            if (GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected"))
+            {
+                foreach (GorillaTagManager tagman in GameObject.FindObjectsOfType<GorillaTagManager>())
+                {
+                    if (tagman.currentInfected.Contains(PhotonNetwork.LocalPlayer))
+                    {
+                        tagman.currentInfected.Remove(PhotonNetwork.LocalPlayer);
+                    }
+                    else
+                    {
+                        tagman.currentInfected.Add(PhotonNetwork.LocalPlayer);
+                    }
+                }
+            }
+        }
+
         public static void PhysicalTagAura()
         {
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)

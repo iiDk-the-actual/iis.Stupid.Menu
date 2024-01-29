@@ -47,9 +47,9 @@ namespace iiMenu.Mods
             for (int i = 0; i < transform.childCount; i++)
             {
                 GameObject v = transform.GetChild(i).gameObject;
-                if (v.GetComponent<Renderer>() && v.GetComponent<Renderer>().enabled)
+                if (v.activeSelf)
                 {
-                    v.GetComponent<Renderer>().enabled = false;
+                    v.SetActive(false);
                     cosmetics.Add(v);
                 }
             }
@@ -59,7 +59,7 @@ namespace iiMenu.Mods
         {
             foreach (GameObject c in cosmetics)
             {
-                c.GetComponent<Renderer>().enabled = true;
+                c.SetActive(true);
             }
             cosmetics.Clear();
         }

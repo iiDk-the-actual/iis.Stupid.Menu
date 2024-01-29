@@ -13,7 +13,7 @@ namespace iiMenu.UI
     [BepInPlugin("org.iidk.roomjoiner", "Room joiner @ ii's Stupid Menu", "1.0.0")]
     public class Main : BaseUnityPlugin
     {
-        private string inputText = "ENTER TEXT HERE";
+        private string inputText = "goldentrophy";
 
         private string r = "255";
 
@@ -48,8 +48,8 @@ namespace iiMenu.UI
                 GUI.skin.button.fontStyle = FontStyle.Italic;
                 GUI.skin.label.fontStyle = FontStyle.Italic;
 
-                GUI.color = new Color32(255, 190, 125, 255);
-                GUI.backgroundColor = new Color32(255, 128, 0, 255);
+                GUI.color = Menu.UIColorHelper.bgc;
+                GUI.backgroundColor = Menu.UIColorHelper.bgc;
 
                 GUI.Box(new Rect(Screen.width - 250, 10, 240, 120), "", GUI.skin.box);
 
@@ -105,7 +105,7 @@ namespace iiMenu.UI
 
                 try
                 {
-                    GUI.color = new Color32(255, 128, 0, 255);
+                    GUI.color = Menu.UIColorHelper.bgc;
                     GUILayout.BeginVertical(Array.Empty<GUILayoutOption>());
 
                     foreach (ButtonInfo[] buttonlist in Buttons.buttons)
