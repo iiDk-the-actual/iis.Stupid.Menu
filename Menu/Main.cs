@@ -162,7 +162,7 @@ namespace iiMenu.Menu
                         RectTransform transformation = myfavorite.GetComponent<RectTransform>();
                         transformation.localPosition = new Vector3(-184.4942f, -49.3492f, -0.0006f);
                         motdTextB.supportRichText = true;
-                        motdTextB.fontSize = 64;
+                        motdTextB.fontSize = 32;
                         motdTextB.font = activeFont;
                         motdTextB.color = textColor;
                         motdTextB.horizontalOverflow = UnityEngine.HorizontalWrapMode.Overflow;
@@ -982,7 +982,7 @@ banned while using this, please report it to the discord server.";
             CanvasScaler canvasScaler = canvasObj.AddComponent<CanvasScaler>();
             canvasObj.AddComponent<GraphicRaycaster>();
             canvas.renderMode = RenderMode.WorldSpace;
-            canvasScaler.dynamicPixelsPerUnit = 1000f;
+            canvasScaler.dynamicPixelsPerUnit = 2000f;
 
             Text text = new GameObject
             {
@@ -2051,7 +2051,7 @@ banned while using this, please report it to the discord server.";
             "Bananas are berries, but strawberries aren't.",
             "The Eiffel Tower can be 15 cm taller during the summer due to thermal expansion.",
             "A group of flamingos is called a 'flamboyance.'",
-            "The shortest war in history was between Britain and Zanzibar on August 27, 1896 – Zanzibar surrendered after 38 minutes.",
+            "The shortest war in history was between Britain and Zanzibar on August 27, 1896 Â– Zanzibar surrendered after 38 minutes.",
             "Cows have best friends and can become stressed when they are separated.",
             "The first computer programmer was a woman named Ada Lovelace.",
             "A 'jiffy' is an actual unit of time, equivalent to 1/100th of a second.",
