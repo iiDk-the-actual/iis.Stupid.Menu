@@ -15,12 +15,7 @@ namespace iiMenu.Mods
             {
                 foreach (GorillaRopeSwing rope in GameObject.FindObjectsOfType(typeof(GorillaRopeSwing)))
                 {
-                    rope.photonView.RPC("SetVelocity", RpcTarget.All, new object[]
-                    {
-                        1,
-                        new Vector3(joy.x*50f, joy.y*50f, 0f),
-                        true
-                    });
+                    RopeSwingManager.instance.SendSetVelocity_RPC(rope.ropeId, 1, new Vector3(joy.x * 50f, joy.y * 50f, 0f), true);
                     RPCProtection();
                 }
             }

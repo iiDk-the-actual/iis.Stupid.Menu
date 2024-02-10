@@ -961,7 +961,7 @@ namespace iiMenu.Mods
 
         public static void BarkFly()
         {
-            GetIndex("Zero Gravity").enabled = true;
+            ZeroGravity();
 
             var rb = GorillaLocomotion.Player.Instance.bodyCollider.attachedRigidbody;
             Vector2 xz = SteamVR_Actions.gorillaTag_LeftJoystick2DAxis.axis;
@@ -978,11 +978,6 @@ namespace iiMenu.Mods
             rb.velocity = Vector3.Lerp(rb.velocity, velocity, 0.12875f);
         }
 
-        public static void DisableBarkFly()
-        {
-            GetIndex("Zero Gravity").enabled = false;
-        }
-
         public static void SlingshotFly()
         {
             if (rightPrimary)
@@ -995,12 +990,8 @@ namespace iiMenu.Mods
         {
             if (rightPrimary)
             {
-                GetIndex("Zero Gravity").enabled = true;
+                ZeroGravity();
                 GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity += GorillaLocomotion.Player.Instance.headCollider.transform.forward * Time.deltaTime * flySpeed;
-            }
-            else
-            {
-                GetIndex("Zero Gravity").enabled = false;
             }
         }
 
@@ -2179,6 +2170,7 @@ namespace iiMenu.Mods
                     leftThrow.transform.rotation = GorillaLocomotion.Player.Instance.leftControllerTransform.rotation;
                     Rigidbody comp = leftThrow.AddComponent(typeof(Rigidbody)) as Rigidbody;
                     comp.velocity = GorillaLocomotion.Player.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0);
+                    comp.angularVelocity = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").GetComponent<GorillaVelocityEstimator>().angularVelocity;
                 }
             }
             else
@@ -2208,6 +2200,7 @@ namespace iiMenu.Mods
                     rightThrow.transform.rotation = GorillaLocomotion.Player.Instance.rightControllerTransform.rotation;
                     Rigidbody comp = rightThrow.AddComponent(typeof(Rigidbody)) as Rigidbody;
                     comp.velocity = GorillaLocomotion.Player.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0);
+                    comp.angularVelocity = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").GetComponent<GorillaVelocityEstimator>().angularVelocity;
                 }
             }
             else
@@ -2455,7 +2448,7 @@ namespace iiMenu.Mods
                     Vector3 look = whoCopy.transform.position - GorillaTagger.Instance.offlineVRRig.transform.position;
                     look.Normalize();
 
-                    Vector3 position = GorillaTagger.Instance.offlineVRRig.transform.position + (look * 0.05f);
+                    Vector3 position = GorillaTagger.Instance.offlineVRRig.transform.position + (look * (flySpeed * Time.deltaTime));
 
                     GorillaTagger.Instance.offlineVRRig.transform.position = position;
                     GorillaTagger.Instance.myVRRig.transform.position = position;

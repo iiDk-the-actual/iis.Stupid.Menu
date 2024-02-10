@@ -100,16 +100,16 @@ namespace iiMenu.Mods
         public static void CreatePublic()
         {
             Hashtable customRoomProperties;
-            if (PhotonNetworkController.Instance.currentJoinTrigger.gameModeName != "city" && PhotonNetworkController.Instance.currentJoinTrigger.gameModeName != "basement")
+            /*if (PhotonNetworkController.Instance.currentJoinTrigger.gameModeName != "city" && PhotonNetworkController.Instance.currentJoinTrigger.gameModeName != "basement")
+            {*/
+            customRoomProperties = new Hashtable
             {
-                customRoomProperties = new Hashtable
                 {
-                    {
-                        "gameMode",
-                        PhotonNetworkController.Instance.currentJoinTrigger.gameModeName + GorillaComputer.instance.currentQueue + GorillaComputer.instance.currentGameMode
-                    }
-                };
-            }
+                    "gameMode",
+                    PhotonNetworkController.Instance.currentJoinTrigger.gameModeName + GorillaComputer.instance.currentQueue + GorillaComputer.instance.currentGameMode.Value
+                }
+            };
+            /*}
             else
             {
                 customRoomProperties = new Hashtable
@@ -119,7 +119,7 @@ namespace iiMenu.Mods
                         PhotonNetworkController.Instance.currentJoinTrigger.gameModeName + GorillaComputer.instance.currentQueue + "INFECTION"
                     }
                 };
-            }
+            }*/
             Photon.Realtime.RoomOptions roomOptions = new Photon.Realtime.RoomOptions();
             roomOptions.IsVisible = true;
             roomOptions.IsOpen = true;
@@ -131,6 +131,12 @@ namespace iiMenu.Mods
                 "gameMode"
             };
             PhotonNetwork.CreateRoom(RandomRoomName(), roomOptions, null, null);
+        }
+
+        public static void RestartGame()
+        {
+            Process.Start("steam://rungameid/1533390");
+            Application.Quit();
         }
 
         public static void EnableFPC()

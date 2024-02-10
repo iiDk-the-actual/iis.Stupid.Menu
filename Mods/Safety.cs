@@ -26,12 +26,14 @@ namespace iiMenu.Mods
 
         public static void AntiCrashEnabled()
         {
-            GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools").SetActive(false);
+            //GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools").SetActive(false);
+            AntiCrashToggle = true;
         }
 
         public static void AntiCrashDisabled()
         {
-            GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools").SetActive(true);
+            //GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools").SetActive(true);
+            AntiCrashToggle = false;
         }
 
         public static void AntiReportDisconnect()

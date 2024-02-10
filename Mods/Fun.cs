@@ -1,4 +1,7 @@
 ﻿using GorillaLocomotion.Gameplay;
+using GorillaTag;
+using HarmonyLib;
+using iiMenu.Notifications;
 using Photon.Pun;
 using System.ComponentModel;
 using UnityEngine;
@@ -382,6 +385,62 @@ namespace iiMenu.Mods
             {
                 balloon.gameObject.transform.position = new Vector3(99999f, 99999f, 99999f);
             }
+        }
+
+        public static void UnacidSelf()
+        {
+            ScienceExperimentManager.instance.photonView.RPC("PlayerHitByWaterBalloonRPC", RpcTarget.All, new object[]
+            {
+                PhotonNetwork.LocalPlayer.ActorNumber
+            });
+        }
+
+        public static void UnacidGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray);
+                if (shouldBePC)
+                {
+                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
+                    Physics.Raycast(ray, out Ray, 100);
+                }
+
+                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                NewPointer.GetComponent<Renderer>().material.color = bgColorA;
+                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+                NewPointer.transform.position = Ray.point;
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
+                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > kgDebounce)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        Photon.Realtime.Player player = GetPlayerFromVRRig(possibly);
+                        // Not created by me, leaked by REV
+                        ScienceExperimentManager.instance.photonView.RPC("PlayerHitByWaterBalloonRPC", RpcTarget.All, new object[]
+                        {
+                            player.ActorNumber
+                        });
+                        RPCProtection();
+                        kgDebounce = Time.time + 0.5f;
+                    }
+                }
+            }
+        }
+
+        public static void UnacidAll()
+        {
+            foreach (Photon.Realtime.Player plr in PhotonNetwork.PlayerList)
+            {
+                ScienceExperimentManager.instance.photonView.RPC("PlayerHitByWaterBalloonRPC", RpcTarget.All, new object[]
+                {
+                    plr.ActorNumber
+                });
+            };
         }
 
         public static void GrabTrain()

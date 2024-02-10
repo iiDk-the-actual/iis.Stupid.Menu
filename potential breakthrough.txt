@@ -1,0 +1,3291 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Http.Headers;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using BepInEx;
+using ExitGames.Client.Photon;
+using GorillaLocomotion;
+using GorillaLocomotion.Gameplay;
+using System.Diagnostics;
+using SynxMenuPatch1;
+using SynxButtonCollider1;
+using GorillaNetworking;
+using SynxMenuMods1;
+using HarmonyLib;
+using Cinemachine;
+using Photon.Pun;
+using Photon.Realtime;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.XR;
+using System.Reflection;
+using static MB3_MeshBakerRoot.ZSortObjects;
+using Valve.VR.InteractionSystem;
+using Steamworks;
+using GTAG_NotificationLib;
+using rigpatcher1;
+using GorillaTag;
+
+namespace SynxPRIVATEMenu1
+{
+	[HarmonyPatch(typeof(GorillaLocomotion.Player))]
+	[HarmonyPatch("LateUpdate", MethodType.Normal)]
+	internal class SynxPRIVATEMenu : MonoBehaviour
+	{
+        // MENU STUFF TO MAKE IT WORK
+
+        private static void Prefix()
+		{
+            try
+			{
+                if (SynxPRIVATEMenu.maxJumpSpeed == null)
+				{
+					SynxPRIVATEMenu.maxJumpSpeed = new float?(GorillaLocomotion.Player.Instance.maxJumpSpeed);
+				}
+				if (SynxPRIVATEMenu.jumpMultiplier == null)
+				{
+					SynxPRIVATEMenu.jumpMultiplier = new float?(GorillaLocomotion.Player.Instance.jumpMultiplier);
+				}
+				if (SynxPRIVATEMenu.maxArmLengthInitial == null)
+				{
+					SynxPRIVATEMenu.maxArmLengthInitial = new float?(GorillaLocomotion.Player.Instance.maxArmLength);
+					SynxPRIVATEMenu.leftHandOffsetInitial = new Vector3?(GorillaLocomotion.Player.Instance.leftHandOffset);
+					SynxPRIVATEMenu.rightHandOffsetInitial = new Vector3?(GorillaLocomotion.Player.Instance.rightHandOffset);
+				}
+                GameObject gameObject = GameObject.Find("Shoulder Camera");
+				Camera camera = (gameObject != null) ? gameObject.GetComponent<Camera>() : null;
+				List<InputDevice> list = new List<InputDevice>();
+				List<InputDevice> list2 = new List<InputDevice>();
+                InputDevices.GetDevicesWithCharacteristics(InputDeviceCharacteristics.HeldInHand | InputDeviceCharacteristics.Controller | InputDeviceCharacteristics.Left, list);
+				InputDevices.GetDevicesWithCharacteristics(InputDeviceCharacteristics.HeldInHand | InputDeviceCharacteristics.Controller | InputDeviceCharacteristics.Right, list2);
+				list[0].TryGetFeatureValue(CommonUsages.secondaryButton, out SynxPRIVATEMenu.gripDown);
+				list2[0].TryGetFeatureValue(CommonUsages.primaryButton, out SynxPRIVATEMenu.primaryRightDown);
+				list[0].TryGetFeatureValue(CommonUsages.grip, out SynxPRIVATEMenu.BoomGrip);
+				list[0].TryGetFeatureValue(CommonUsages.trigger, out SynxPRIVATEMenu.SpawnGrip);
+				if (ControllerInputPoller.instance.leftControllerSecondaryButton && SynxPRIVATEMenu.menu == null)
+				{
+					SynxPRIVATEMenu.Draw();
+					if (SynxPRIVATEMenu.reference == null)
+					{
+						SynxPRIVATEMenu.reference = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+						SynxPRIVATEMenu.reference.transform.parent = GorillaLocomotion.Player.Instance.rightControllerTransform;
+						SynxPRIVATEMenu.reference.GetComponent<Renderer>().material.color = Color.white;
+                        SynxPRIVATEMenu.reference.name = "POINTER";
+						SynxPRIVATEMenu.reference.transform.localPosition = new Vector3(0f, -0.1f, 0f);
+						SynxPRIVATEMenu.reference.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
+					}
+				}
+				else
+				{
+					if (!ControllerInputPoller.instance.leftControllerSecondaryButton && SynxPRIVATEMenu.menu != null)
+					{
+						      UnityEngine.Object.Destroy(SynxPRIVATEMenu.menu);
+						      SynxPRIVATEMenu.menu = null;
+						      UnityEngine.Object.Destroy(SynxPRIVATEMenu.reference);
+						      SynxPRIVATEMenu.reference = null;
+					}
+				}
+				if (ControllerInputPoller.instance.leftControllerSecondaryButton && SynxPRIVATEMenu.menu != null)
+				{
+					SynxPRIVATEMenu.menu.transform.position = GorillaLocomotion.Player.Instance.leftControllerTransform.position;
+					SynxPRIVATEMenu.menu.transform.rotation = GorillaLocomotion.Player.Instance.leftControllerTransform.rotation;
+				}
+                {
+                    bool? Menu = SynxPRIVATEMenu.buttonsActive[0];
+                    bool Menu2 = true;
+                    if (Menu.GetValueOrDefault() == Menu2 & Menu != null)
+                    {
+                        SynxMenuMods.Disconnect();
+                        buttonsActive[0] = false;
+                        UnityEngine.Object.Destroy(menu);
+                        menu = null;
+                        Draw();
+                    }
+                    if (buttonsActive[1] == true)
+                    {
+                        SynxMenuMods.SecondaryDisconnect();
+                    }
+                    if (buttonsActive[2] == true)
+                    {
+                        SynxMenuMods.JoinRandom();
+                        buttonsActive[2] = false;
+                        UnityEngine.Object.Destroy(menu);
+                        menu = null;
+                        Draw();
+                    }
+                    if (buttonsActive[3] == true)
+                    {
+                        SynxPRIVATEMenu.ProcessPlatformMonke(PlatformScale);
+                    }
+                    if (buttonsActive[4] == true)
+                    {
+                        AntiReportDisconnect3();
+                    }
+                    if (buttonsActive[5] == true)
+                    {
+                        if (PhotonNetwork.InRoom)
+                        {
+                            KEB2();
+                            Thing1();
+                            K3();
+                            Thing2();
+                        }
+                        NotifiLib.SendNotification("No ban hopefully", Color.green);
+                    }
+                    if (buttonsActive[6] == true)
+                        if (Gamemode().ToUpper().Contains("MOD") && PhotonNetwork.InRoom)
+                        {
+                            PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
+                            if (PhotonNetwork.IsMasterClient)
+                            {
+                                NotifiLib.SendNotification("Set master success", Color.green);
+                            }
+                        }
+                        else
+                        {
+                            NotifiLib.SendNotification("ERROR: Only works in modded servers!", Color.red);
+                        }
+                    if (buttonsActive[7] == true)
+                    {
+                        fpc();
+                    }
+                    else
+                    {
+                        fpcoff();
+                    }
+                    if (buttonsActive[8] == true)
+                    {
+                        aiprlane();
+                        NotifiLib.SendNotification("fly", Color.green);
+                    }
+                    if (buttonsActive[9] == true)
+                    {
+                        if (ColorIndex > 11)
+                        {
+                            ColorIndex = 0;
+                        }
+                        else
+                        {
+                            ColorIndex++;
+                        }
+                        if (ColorIndex == 0)
+                        {
+                            menuColor = Color.red;
+                            TextColor = Color.black;
+                            NotifiLib.SendNotification("Changed theme: 1", Color.red);
+                        }
+                        if (ColorIndex == 1)
+                        {
+                            menuColor = Color.black;
+                            TextColor = Color.red;
+                            NotifiLib.SendNotification("Changed theme: 2", Color.black);
+                        }
+                        if (ColorIndex == 2)
+                        {
+                            menuColor = Color.gray;
+                            TextColor = Color.black;
+                            NotifiLib.SendNotification("Changed theme: 3", Color.gray);
+                        }
+                        if (ColorIndex == 3)
+                        {
+                            menuColor = Color.white;
+                            TextColor = Color.black;
+                            NotifiLib.SendNotification("Changed theme: 4", Color.black);
+                        }
+                        if (ColorIndex == 4)
+                        {
+                            menuColor = Color.blue;
+                            TextColor = Color.black;
+                            NotifiLib.SendNotification("Changed theme: 5", Color.blue);
+                        }
+                        if (ColorIndex == 5)
+                        {
+                            menuColor = Color.cyan;
+                            TextColor = Color.black;
+                            NotifiLib.SendNotification("Changed theme: 6", Color.cyan);
+                        }
+                        if (ColorIndex == 6)
+                        {
+                            menuColor = new Color32(160, 0, 255, 1);
+                            TextColor = Color.black;
+                            NotifiLib.SendNotification("Changed theme: 7", new Color(160, 0, 255, 1));
+                        }
+                        if (ColorIndex == 7)
+                        {
+                            menuColor = Color.yellow;
+                            TextColor = Color.black;
+                            NotifiLib.SendNotification("Changed theme: 8", Color.yellow);
+                        }
+                        if (ColorIndex == 8)
+                        {
+                            menuColor = Color.green;
+                            TextColor = Color.black;
+                            NotifiLib.SendNotification("Changed theme: 9", Color.green);
+                        }
+                        if (ColorIndex == 9)
+                        {
+                            menuColor = Color.black;
+                            TextColor = Color.magenta;
+                            NotifiLib.SendNotification("Changed theme: 10", Color.black);
+                        }
+                        if (ColorIndex == 10)
+                        {
+                            menuColor = Color.blue;
+                            TextColor = Color.white;
+                            NotifiLib.SendNotification("Changed theme: 11", Color.blue);
+                        }
+                        if (ColorIndex == 11)
+                        {
+                            menuColor = new Color32(0, 170, 255, 1);
+                            TextColor = Color.black;
+                            NotifiLib.SendNotification("Changed theme: 12", new Color32(0, 170, 255, 1));
+                        }
+                        if (ColorIndex == 12)
+                        {
+                            menuColor = new Color32(42, 18, 90, 1);
+                            TextColor = Color.red;
+                            NotifiLib.SendNotification("Changed theme: 13", new Color32(42, 18, 90, 1));
+                        }
+                        if (ColorIndex == 13)
+                        {
+                            menuColor = Color.black;
+                            TextColor = Color.white;
+                            NotifiLib.SendNotification("Changed theme: 14", Color.black);
+                        }
+                        if (ColorIndex == 14)
+                        {
+                            menuColor = Color.blue;
+                            TextColor = Color.black;
+                            NotifiLib.SendNotification("Changed theme: 15", Color.blue);
+                        }
+                        buttonsActive[9] = false;
+                        UnityEngine.Object.Destroy(SynxPRIVATEMenu.menu);
+                        SynxPRIVATEMenu.menu = null;
+                        SynxPRIVATEMenu.Draw();
+                    }
+                    if (buttonsActive[10] == true)
+                    {
+                        NoClip();
+                        NotifiLib.SendNotification("Go to backrooms", Color.green);
+                    }
+                    if (buttonsActive[11] == true)
+                    {
+                        Process.Start("https://discord.gg/z2sQJJCu6V");
+                        buttonsActive[11] = false;
+                        Destroy(menu);
+                        menu = null;
+                    }
+                    if (buttonsActive[12] == true)
+                    {
+                        Process.Start("https://discord.gg/XCtQpPnJTW");
+                        buttonsActive[12] = false;
+                        Destroy(menu);
+                        menu = null;
+                    }
+                    if (buttonsActive[13] == true)
+                    {
+                        GetAllIDs();
+                        NotifiLib.SendNotification("steal id snatcher", Color.green);
+                    }
+                    if (buttonsActive[14] == true)
+                    {
+                        TagGun();
+                        NotifiLib.SendNotification("Tag Player", Color.green);
+                    }
+                    if (buttonsActive[15] == true)
+                    {
+                        if (ControllerInputPoller.instance.rightControllerIndexFloat >= 0.2f)
+                        {
+                            GorillaTagger.Instance.offlineVRRig.enabled = false;
+                            foreach (VRRig closestVrrig in GorillaParent.instance.vrrigs)
+                            {
+                                if (!closestVrrig.mainSkin.material.name.Contains("fected"))
+                                {
+                                    GorillaTagger.Instance.leftHandTransform.position = closestVrrig.transform.position;
+                                    GorillaTagger.Instance.rightHandTransform.position = closestVrrig.transform.position;
+                                    GorillaTagger.Instance.offlineVRRig.transform.position = closestVrrig.transform.position;
+                                    NotifiLib.SendNotification("Tagging Everyone", Color.green);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            GorillaTagger.Instance.offlineVRRig.enabled = true;
+                        }
+                    }
+                    if (buttonsActive[16] == true)
+                    {
+                        GameObject.Find("motdtext").GetComponent<Text>().text = "<color=cyan>Thanks for downloading the menu! We hope you have fun using this menu, as we work really hard on it everyday! Thank you to the Developers: KamGT, Gua, Ace, Void, Floated, and Axel for helping on the menu! </color>";
+                        GameObject.Find("COC Text").GetComponent<Text>().text = "<color=black> UND/UD - undetected\r\nD? - Might be detected\r\nD - detected \r\nD! - Very detected\r\nD!!! - Extreme detected/instaban\r\nW - Working\r\nNW - Not working\r\nW? - Might work\r\nLJ - Left Joystick\r\nRJ - Right Joystick\r\nJ - Joystick  </color>";
+                        GameObject.Find("CodeOfConduct").GetComponent<Text>().text = "<color=white> MENU MEANINGS! </color>";
+                        GameObject.Find("motd").GetComponent<Text>().text = "<color=red> Quick word from KamGT: </color>";
+                    }
+                    if (buttonsActive[17] == true)
+                    {
+                        TPGun();
+                        NotifiLib.SendNotification("Teleport around with gun", Color.green);
+                    }
+                    if (buttonsActive[18] == true)
+                    {
+                        if (ControllerInputPoller.instance.rightControllerIndexFloat >= 0.6f)
+                        {
+                            GorillaLocomotion.Player.Instance.bodyCollider.attachedRigidbody.velocity += -GorillaLocomotion.Player.Instance.leftControllerTransform.right / 6f;
+                            GorillaTagger.Instance.StartVibration(true, 0.5f, 0.05f);
+                        }
+                        if (ControllerInputPoller.instance.leftControllerIndexFloat >= 0.6f)
+                        {
+                            GorillaLocomotion.Player.Instance.bodyCollider.attachedRigidbody.velocity += GorillaLocomotion.Player.Instance.rightControllerTransform.right / 6f;
+                            GorillaTagger.Instance.StartVibration(false, 0.5f, 0.05f);
+                        }
+                    }
+                    if (buttonsActive[19] == true)
+                    {
+                        homemadecheckpoint();
+                        NotifiLib.SendNotification("Checkpoint", Color.green);
+                    }
+                    if (buttonsActive[20] == true)
+                    {
+                        BetterESP();
+                        NotifiLib.SendNotification("See others through walls", Color.green);
+                    }
+                    if (buttonsActive[21] == true)
+                    {
+                        Beacons();
+                        NotifiLib.SendNotification("beacon", Color.green);
+                    }
+                    if (buttonsActive[22] == true)
+                    {
+                        bonerlol();
+                        NotifiLib.SendNotification("Bone ESP", Color.green);
+                    }
+                    if (buttonsActive[23] == true)
+                    {
+                        RGB();
+                        NotifiLib.SendNotification("Fire RGB", Color.green);
+                    }
+                    if (buttonsActive[24] == true)
+                    {
+                        Tracers();
+                        NotifiLib.SendNotification("Get everyones position", Color.green);
+                    }
+                    if (buttonsActive[25] == true)
+                    {
+                        PunchMonke();
+                        NotifiLib.SendNotification("Punch", Color.green);
+                    }
+                    if (buttonsActive[26] == true)
+                    {
+                        Spazropegun();
+                        NotifiLib.SendNotification("Rope spazer Gun", Color.green);
+                    }
+                    if (buttonsActive[27] == true)
+                    {
+                        FreezeRopeGun();
+                        NotifiLib.SendNotification("Rope freezer Gun", Color.blue);
+                    }
+                    if (buttonsActive[28] == true)
+                    {
+                        RopeUP();
+                        NotifiLib.SendNotification("Send all ropes up", Color.green);
+                    }
+                    if (buttonsActive[29] == true)
+                    {
+                        FreezeAllRopes();
+                        NotifiLib.SendNotification("Freeze all ropes", Color.blue);
+                    }
+                    if (buttonsActive[30] == true)
+                    {
+                        Bomb();
+                        NotifiLib.SendNotification("Kaboom", Color.green);
+                    }
+                    if (buttonsActive[31] == true)
+                    {
+                        trapgun();
+                        NotifiLib.SendNotification("spawn platforms", Color.green);
+                    }
+                    if (buttonsActive[32] == true)
+                    {
+                        platformremover();
+                        NotifiLib.SendNotification("remove platforms", Color.green);
+                    }
+                    if (buttonsActive[33] == true)
+                    {
+                        GhostMonke();
+                        NotifiLib.SendNotification("be ghost", Color.green);
+                    }
+                    if (buttonsActive[34] == true)
+                    {
+                        InvisMonkey();
+                        NotifiLib.SendNotification("be invisible", Color.green);
+                    }
+                    if (buttonsActive[35] == true)
+                    {
+                        spamtarget();
+                        NotifiLib.SendNotification("Spam Targets", Color.green);
+                    }
+                    if (buttonsActive[36] == true)
+                    {
+                        block();
+                        NotifiLib.SendNotification("spawn blocks", Color.green);
+                    }
+                    if (buttonsActive[37] == true)
+                    {
+                        sphere();
+                        NotifiLib.SendNotification("spawn sphere", Color.green);
+                    }
+                    if (buttonsActive[38] == true)
+                    {
+                        bean();
+                        NotifiLib.SendNotification("spawn bean", Color.green);
+                    }
+                    if (buttonsActive[39] == true)
+                    {
+                        urmom();
+                        NotifiLib.SendNotification("remove objects", Color.green);
+                    }
+                    if (buttonsActive[40] == true)
+                    {
+                        FlushRPCS();
+                        buttonsActive[40] = false;
+                        UnityEngine.Object.Destroy(SynxPRIVATEMenu.menu);
+                        SynxPRIVATEMenu.menu = null;
+                        SynxPRIVATEMenu.Draw();
+                    }
+                    if (buttonsActive[41] == true)
+                    {
+                        custommuteall();
+                        NotifiLib.SendNotification("Mute All", Color.green);
+                        buttonsActive[41] = false;
+                        UnityEngine.Object.Destroy(SynxPRIVATEMenu.menu);
+                        SynxPRIVATEMenu.menu = null;
+                        SynxPRIVATEMenu.Draw();
+                    }
+                    if (buttonsActive[42] == true)
+                    {
+                        if (MenuLayout == Layout.Side)
+                        {
+                            MenuLayout = Layout.Default;
+                            CurrentLayout = 1;
+                        }
+                        else
+                        {
+                            if (MenuLayout == Layout.Default)
+                            {
+                                MenuLayout = Layout.Triggers;
+                                CurrentLayout = 2;
+                            }
+                            else
+                            {
+                                if (MenuLayout == Layout.Triggers)
+                                {
+                                    MenuLayout = Layout.Side;
+                                    CurrentLayout = 0;
+                                }
+                            }
+                        }
+                        buttonsActive[42] = false;
+                        UnityEngine.Object.Destroy(SynxPRIVATEMenu.menu);
+                        SynxPRIVATEMenu.menu = null;
+                        SynxPRIVATEMenu.Draw();
+                    }
+                    if (buttonsActive[43] == true)
+                    {
+                        BugTraces();
+                    }
+                    if (buttonsActive[44] == true)
+                    {
+                        ProcessDMod();
+                    }
+                    if (buttonsActive[45] == true)
+                    {
+                        if (ControllerInputPoller.instance.rightControllerIndexFloat >= 0.6f)
+                        {
+                            GorillaLocomotion.Player.Instance.transform.localScale += new Vector3(0.1f, 0.10f, 0.1f);
+                        }
+                        if (ControllerInputPoller.instance.leftControllerIndexFloat >= 0.6f)
+                        {
+                            GorillaLocomotion.Player.Instance.transform.localScale -= new Vector3(0.1f, 0.10f, 0.1f);
+                        }
+                        if (ControllerInputPoller.instance.leftControllerSecondaryButton)
+                        {
+                            GorillaLocomotion.Player.Instance.transform.localScale = new Vector3(1f, 1f, 1f);
+                        }
+                    }
+                    if (buttonsActive[46] == true)
+                    {
+                        BetterDayNightManager.instance.SetTimeOfDay(0);
+                        buttonsActive[46] = false;
+                        UnityEngine.Object.Destroy(SynxPRIVATEMenu.menu);
+                        SynxPRIVATEMenu.menu = null;
+                        SynxPRIVATEMenu.Draw();
+                    }
+                    if (buttonsActive[47] == true)
+                    {
+                        BetterDayNightManager.instance.SetTimeOfDay(1);
+                        buttonsActive[47] = false;
+                        UnityEngine.Object.Destroy(SynxPRIVATEMenu.menu);
+                        SynxPRIVATEMenu.menu = null;
+                        SynxPRIVATEMenu.Draw();
+                    }
+                    if (buttonsActive[48] == true)
+                    {
+                        SolidPlayers();
+                    }
+                    if (buttonsActive[49] == true)
+                    {
+                        ForceTagLag();
+                    }
+                    if (buttonsActive[50] == true)
+                    {
+                        if (ControllerInputPoller.instance.rightControllerIndexFloat >= 0.8f)
+                        {
+                            if (PhotonNetwork.InRoom)
+                            {
+                                GorillaTagger.Instance.offlineVRRig.enabled = false;
+                                VRRig rig = GetClosestRig(GorillaLocomotion.Player.Instance.bodyCollider.transform.position);
+                                GorillaTagger.Instance.offlineVRRig.transform.LookAt(rig.head.rigTarget.transform.position);
+                                GorillaTagger.Instance.offlineVRRig.transform.position = Vector3.MoveTowards(GorillaTagger.Instance.offlineVRRig.transform.position, rig.head.rigTarget.transform.position, Time.deltaTime * sp);
+                                sp += 0.05f; //customize the speed however you want
+                            }
+                            else
+                            {
+                                GorillaTagger.Instance.offlineVRRig.enabled = true;
+                                sp = 0;
+                            }
+                        }
+                        else
+                        {
+                            GorillaTagger.Instance.offlineVRRig.enabled = true;
+                            sp = 0;
+                        }
+                        NotifiLib.SendNotification("lukey", Color.green);
+                    }
+                    if (buttonsActive[51] == true)
+                    {
+                        MakeRopesCrazy();
+                        NotifiLib.SendNotification("Crazy ropes", Color.green);
+                    }
+                    if (buttonsActive[52] == true)
+                    {
+                        GorillaTagger.Instance.tapHapticStrength = 0;
+                        GorillaTagger.Instance.taggedHapticStrength = 0;
+                        GorillaTagger.Instance.tapHapticStrength = 0;
+                    }
+                    else
+                    {
+                        GorillaTagger.Instance.tapHapticStrength = 1;
+                        GorillaTagger.Instance.taggedHapticStrength = 1;
+                        GorillaTagger.Instance.tapHapticStrength = 1;
+                    }
+                    if (buttonsActive[53] == true)
+                    {
+                        if (ControllerInputPoller.instance.rightGrab)
+                        {
+                            GorillaTagger.Instance.offlineVRRig.enabled = false;
+                            GorillaTagger.Instance.offlineVRRig.transform.Rotate(0f, 3f, 0f);
+                        }
+                        else
+                        {
+                            GorillaTagger.Instance.offlineVRRig.enabled = true;
+                        }
+                    }
+                    if (buttonsActive[54] == true)
+                    {
+                        if (ControllerInputPoller.instance.rightControllerIndexFloat >= 0.6f) //right trigger is pressed
+                        {
+                            GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity += new Vector3(0, 0.18f, 0); // moves you up by 0.18
+                        }
+                        if (ControllerInputPoller.instance.leftControllerIndexFloat >= 0.6f) //left trigger is pressed
+                        {
+                            GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity -= new Vector3(0, 0.18f, 0); // moves you down by 0.18
+                        }
+                    }
+                    if (buttonsActive[55] == true)
+                    {
+
+                    }
+                    if (buttonsActive[56] == true)
+                    {
+                        for (int i = 0; i < buttonsActive.Length; i++)
+                        {
+                            if (i != 56)
+                            {
+                                buttonsActive[i] = false;
+                            }
+                        }
+                        buttonsActive[56] = false;
+                        UnityEngine.Object.Destroy(menu);
+                        menu = null;
+                        Draw();
+                    }
+                    if (buttonsActive[57] == true)
+                    {
+                        WallWalk();
+                    }
+                    if (buttonsActive[58] == true)
+                    {
+                        BatTraces();
+                        NotifiLib.SendNotification("Bat Tracers", Color.green);
+                    }
+                    if (buttonsActive[59] == true)
+                    {
+                        {
+                            GorillaTagger.Instance.offlineVRRig.head.rigTarget.eulerAngles = new Vector3((float)UnityEngine.Random.Range(0, 360), (float)UnityEngine.Random.Range(0, 360), (float)UnityEngine.Random.Range(0, 360));
+                            GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.eulerAngles = new Vector3((float)UnityEngine.Random.Range(0, 360), (float)UnityEngine.Random.Range(0, 360), (float)UnityEngine.Random.Range(0, 360));
+                            GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.eulerAngles = new Vector3((float)UnityEngine.Random.Range(0, 360), (float)UnityEngine.Random.Range(0, 360), (float)UnityEngine.Random.Range(0, 360));
+                            GorillaTagger.Instance.offlineVRRig.head.rigTarget.eulerAngles = new Vector3((float)UnityEngine.Random.Range(0, 360), (float)UnityEngine.Random.Range(0, 180), (float)UnityEngine.Random.Range(0, 180));
+                            GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.eulerAngles = new Vector3((float)UnityEngine.Random.Range(0, 360), (float)UnityEngine.Random.Range(0, 180), (float)UnityEngine.Random.Range(0, 180));
+                            GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.eulerAngles = new Vector3((float)UnityEngine.Random.Range(0, 360), (float)UnityEngine.Random.Range(0, 180), (float)UnityEngine.Random.Range(0, 180));
+                        }
+                    }
+                    if (buttonsActive[60] == true)
+                    {
+                        VRMap head = GorillaTagger.Instance.offlineVRRig.head;
+                        head.trackingRotationOffset.x = head.trackingRotationOffset.x + 10f;
+                    }
+                    if (buttonsActive[61] == true)
+                    {
+                        VRMap head = GorillaTagger.Instance.offlineVRRig.head;
+                        head.trackingRotationOffset.y = head.trackingRotationOffset.y + 10f;
+                    }
+                    if (buttonsActive[62] == true)
+                    {
+                        VRMap head = GorillaTagger.Instance.offlineVRRig.head;
+                        head.trackingRotationOffset.z = head.trackingRotationOffset.z + 10f;
+                    }
+                    if (buttonsActive[63] == true)
+                    {
+                        playerlocktaggun();
+                        NotifiLib.SendNotification("Lock onto a player with this tag gun", Color.green);
+                    }
+                    if (buttonsActive[64] == true)
+                    {
+                        SynxMenuMods.NotagOnJoin();
+                        NotifiLib.SendNotification("No more tagging", Color.green);
+                    }
+                    else
+                    {
+                        SynxMenuMods.tagOnJoin();
+                    }
+                    if (buttonsActive[65] == true)
+                    {
+                        SynxMenuMods.NoFingers();
+                        NotifiLib.SendNotification("Help you win no fingering february", Color.green);
+                    }
+                    if (buttonsActive[66] == true)
+                    {
+                        SynxMenuMods.ChangeIdentity();
+                    }
+                    if (buttonsActive[67] == true)
+                    {
+                        SynxMenuMods.AntiCrashEnabled();
+                        NotifiLib.SendNotification("Get no more crashy", Color.green);
+                    }
+                    else
+                    {
+                        SynxMenuMods.AntiCrashDisable();
+                    }
+                    if (buttonsActive[68] == true)
+                    {
+                        SynxMenuMods.FlipHand();
+                        NotifiLib.SendNotification("Make Hands do 360", Color.green);
+                    }
+                    if (buttonsActive[69] == true)
+                    {
+                        SynxMenuMods.BarkFly();
+                        NotifiLib.SendNotification("Fly with bark", Color.green);
+                        ModDescription = "this is the 69th mod";
+                    }
+                    if (buttonsActive[70] == true)
+                    {
+                        SynxMenuMods.StareAtPP();
+                        NotifiLib.SendNotification("Look at everyone", Color.green);
+                    }
+                    if (buttonsActive[71] == true)
+                    {
+                        SynxMenuMods.antimoderator();
+                        NotifiLib.SendNotification("If moderator joins, you leave", Color.green);
+                    }
+                    if (buttonsActive[72] == true)
+                    {
+                        SynxMenuMods.TpToStump();
+                        NotifiLib.SendNotification("Go to stump", Color.green);
+                    }
+                    if (buttonsActive[73] == true)
+                    {
+                        SynxMenuMods.FakeThrowControllersLeft();
+                        SynxMenuMods.FakeContollerTrhoewRight();
+                        NotifiLib.SendNotification("Drop Controllers", Color.green);
+                    }
+                    if (buttonsActive[74] == true)
+                    {
+                        SynxMenuMods.ZeroGravity();
+                        NotifiLib.SendNotification("Turn off gravity", Color.green);
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                UnityEngine.Debug.LogError(string.Format("[KavMenu] : {0}", exception));
+            }
+            Material mat = new Material(Shader.Find("GorillaTag/UberShader"));
+            mat.color = Color.Lerp(Color.blue, Color.cyan, Mathf.PingPong(Time.time, 1f));
+            GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/StaticUnlit/screen").GetComponent<Renderer>().material = mat;
+            GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/StaticUnlit/motdscreen").GetComponent<Renderer>().material = mat;
+            GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/Terrain/campgroundstructure/scoreboard/REMOVE board").GetComponent<Renderer>().material = mat;
+            GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/Wall Monitors Screens/wallmonitorforest").GetComponent<Renderer>().material = mat;
+            GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/Wall Monitors Screens/wallmonitorcave").GetComponent<Renderer>().material = mat;
+            GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/Wall Monitors Screens/wallmonitorskyjungle").GetComponent<Renderer>().material = mat;
+            GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/Wall Monitors Screens/wallmonitorcosmetics").GetComponent<Renderer>().material = mat;
+            GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/Wall Monitors Screens/wallmonitorcanyon").GetComponent<Renderer>().material = mat;
+        }
+
+        // BOOLS, STRINGS, INTS, FLOATS, ETC
+
+        private static string[] buttons = new string[]
+        {
+"Disconnect",
+"Secondary Disconnect",
+"Join Random Pub",
+"Platforms",
+"Anti Report",
+"Anti Ban",
+"Set Master [MODDED]",
+"FPC",
+"Fly [A]",
+"Theme Changer",
+"NoClip [LG]",
+"Kams Discord",
+"Voids Discord",
+"Id Snatch",
+"Tag Gun [D?]",
+"Tag All [D?]",
+"Custom Boards",
+"TP Gun",
+"Iron Monkey",
+"Checkpoint [RG+RT]",
+"ESP",
+"Beacons",
+"Bone ESP",
+"RGB [SS+STUMP]",
+"Tracers",
+"Punch Monkey",
+"Spaz Rope Gun",
+"Freeze Rope Gun",
+"Rope Up",
+"Freeze All Ropes",
+"C4",
+"Platform Gun",
+"Remove all Plats [RG]",
+"Ghost Monkey [RG]",
+"Invis Monkey [RT]",
+"Spam Target Gun [LM]",
+"Primative Gun 1",
+"Primative Gun 2",
+"Primative Gun 3",
+"Delete all Primatives",
+"Flush RPCS",
+"Mute All",
+"Change Menu Layout",
+"Bug Tracers",
+"Hit Puberty",
+"Custom Long Arms",
+"Change Time of Day 1",
+"Change Time of Day 2",
+"Solid Monkey",
+"Force Tag Lag [M]",
+"Become Lucy [RT]",
+"Spaz All Ropes",
+"No Tap Vibrations",
+"Helicopter Monkey [RG]",
+"Up & Down [RT + LT]",
+"Join Sound Spam [NW]",
+"Panic",
+"Wall Walk [RG]",
+"Bat Tracers",
+"Spaz Monkey",
+"Head Spin 1",
+"Head Spin 2",
+"Head Spin 3",
+"Lock on tag gun",
+"No Tag On Join",
+"No Fingers",
+"Change Identity",
+"Anti Crash",
+"Flip Hands",
+"Bark Fly [J]",
+"Look at Closest",
+"Anti Moderator",
+"Tp To Stump",
+"Drop Controllers [P]",
+"GravityEnabled = false",
+        };
+
+        private static float Teletime;
+
+        public static float minlag;
+
+        private XRNode lHandNode = XRNode.LeftHand;
+
+        private XRNode rHandNode = XRNode.RightHand;
+
+        public static float maxlag;
+
+        private static GradientColorKey[] colorKeys;
+
+        public static bool ResetSpeed = false;
+
+        public static int bigmonkecooldown;
+
+        private static bool?[] buttonsActive = new bool?[]
+        {
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+            new bool?(false),
+        };
+
+        public static GameObject hud;
+
+        private static bool gripDown;
+
+        private static bool primaryRightDown;
+
+        private static GameObject menu = null;
+
+        private static GameObject canvasObj = null;
+
+        public enum Layout
+        {
+            Default, Triggers, Side
+        }
+        public static int CurrentLayout = 0;
+        public static Layout MenuLayout = Layout.Side;
+
+        private static GameObject reference = null;
+
+        public static int framePressCooldown = 0;
+
+        private static GameObject pointer = null;
+
+        private static bool gravityToggled = false;
+
+        private static bool flying = false;
+
+        private static int btnCooldown = 0;
+
+        private static int soundCooldown = 0;
+
+        private static float? maxJumpSpeed = null;
+
+        private static float? jumpMultiplier = null;
+
+        public static string githubversion = null;
+
+        private static object index;
+
+        public static int BlueMaterial = 5;
+
+        private GameObject HUDObj;
+
+        private GameObject HUDObj2;
+
+        public static Color menuColor = new Color32(0, 170, 255, 1);
+
+        public static Color TextColor = Color.black;
+
+        public static int ColorIndex = 0;
+
+        private GameObject MainCamera;
+
+        public static float mastertimer = 0;
+
+        public static bool noti = true;
+
+        private Text Testtext;
+
+        private Material AlertText = new Material(Shader.Find("GorillaTag/UberShader"));
+
+        private int NotificationDecayTime = 150;
+
+        private int NotificationDecayTimeCounter;
+
+        private string[] Notifilines;
+
+        private string newtext;
+
+        public static string PreviousNotifi;
+
+        private bool HasInit;
+
+        public static int TransparentMaterial = 6;
+
+        public static int LavaMaterial = 2;
+
+        public static int RockMaterial = 1;
+
+        public static int DefaultMaterial = 5;
+
+        public static int NeonRed = 3;
+
+        public static int RedTransparent = 4;
+
+        public static int self = 0;
+
+        private static Vector3? leftHandOffsetInitial = null;
+
+        private static Vector3? rightHandOffsetInitial = null;
+
+        private static float? maxArmLengthInitial = null;
+
+        private static bool noClipDisabledOneshot = false;
+
+        private static bool noClipEnabledAtLeastOnce = false;
+
+        private static Vector3 head_direction;
+
+        private static Vector3 roll_direction;
+
+        private static Vector2 left_joystick;
+
+        private static float acceleration;
+
+        private static float maxs;
+
+        private static float distance;
+
+        private static float multiplier;
+
+        private static float speed;
+
+        private static bool Start;
+
+        private static bool ghostToggle = false;
+
+        private static bool bigMonkeyEnabled = false;
+
+        private static bool bigMonkeAntiRepeat = false;
+
+        private static int bigMonkeCooldown = 0;
+
+        private static bool ghostMonkeEnabled = false;
+
+        private static bool ghostMonkeAntiRepeat = false;
+
+        private static int ghostMonkeCooldown = 0;
+
+        private static bool checkedProps = false;
+
+        private static bool teleportGunAntiRepeat = false;
+
+        private static Color colorRgbMonke = new Color(0f, 0f, 0f);
+
+        private static float hueRgbMonke = 0f;
+
+        private static float timerRgbMonke = 0f;
+
+        private static float updateRateRgbMonke = 0f;
+
+        private static float updateTimerRgbMonke = 0f;
+
+        private static bool regbool2 = false;
+
+        private static bool regbool1 = true;
+
+        private static Vector3 scale = new Vector3(0.0125f, 0.28f, 0.3825f);
+
+        private static bool gripDown_left;
+
+        private static bool gripDown_right;
+
+        private static bool once_left;
+
+        private static bool once_right;
+
+        private static bool once_left_false;
+
+        private static bool once_right_false;
+
+        private static bool once_networking;
+
+        private static GameObject[] jump_left_network = new GameObject[9999];
+
+        private static GameObject[] jump_right_network = new GameObject[9999];
+
+        private static GameObject jump_left_local = null;
+
+        private static GameObject jump_right_local = null;
+
+        private static GradientColorKey[] colorKeysPlatformMonke = new GradientColorKey[4];
+
+        private static Vector3? checkpointPos;
+
+        private static bool checkpointTeleportAntiRepeat = false;
+
+        private static bool foundPlayer = false;
+
+        private static int btnTagSoundCooldown = 0;
+
+        private static float timeSinceLastChange = 0f;
+
+        private static float myVarY1 = 0f;
+
+        private static float myVarY2 = 0f;
+
+        private static bool gain = false;
+
+        private static bool less = false;
+
+        private static GameObject C4;
+
+        private static bool spawned;
+
+        private static float SpawnGrip;
+
+        private static float BoomGrip;
+
+        private static float rSpawnGrip;
+
+        private static float rBoomGrip;
+
+        private static bool reset = false;
+
+        private static bool fastr = false;
+
+        private static Color color;
+
+        private static bool speed1 = true;
+
+        private static float gainSpeed = 1f;
+
+        private static float bigScale = 2f;
+
+        private static int pageSize = 5;
+
+        private static int pageNumber = 0;
+
+        private static float updateRate;
+
+        private static float updateTimer;
+
+        private static float timer;
+
+        private static bool[] disclaimerbool = new bool[]
+        {
+            false, false, false, false, false, false, false, false, false, false, false, false,
+        };
+
+        private static string[] Disclaimer = new string[]
+        {
+            "ppppppp",
+        };
+
+        private static float hue;
+
+        public static bool DoOneTime = false;
+
+        private static int layers;
+
+        private static bool up;
+
+        private static bool down;
+
+        public static object RigManager { get; private set; }
+
+        public enum PhotonEventCodes
+        {
+            left_jump_photoncode = 69,
+            right_jump_photoncode,
+            left_jump_deletion,
+            right_jump_deletion
+        }
+
+        public class TimedBehaviour : MonoBehaviour
+        {
+            public virtual void Start()
+            {
+                this.startTime = Time.time;
+            }
+
+            public virtual void Update()
+            {
+                if (!this.complete)
+                {
+                    this.progress = Mathf.Clamp((Time.time - this.startTime) / this.duration, 0f, 1f);
+                    if (Time.time - this.startTime > this.duration)
+                    {
+                        if (this.loop)
+                        {
+                            this.OnLoop();
+                        }
+                        else
+                        {
+                            this.complete = true;
+                        }
+                    }
+                }
+            }
+
+            public virtual void OnLoop()
+            {
+                this.startTime = Time.time;
+            }
+
+            public bool complete = false;
+
+            public bool loop = true;
+
+            public float progress = 0f;
+
+            protected bool paused = false;
+
+            protected float startTime;
+
+            protected float duration = 2f;
+        }
+
+        public class ColorChanger : SynxPRIVATEMenu.TimedBehaviour
+        {
+            public override void Start()
+            {
+                base.Start();
+                this.gameObjectRenderer = base.GetComponent<Renderer>();
+            }
+
+            public override void Update()
+            {
+                base.Update();
+                if (this.colors != null)
+                {
+                    if (this.timeBased)
+                    {
+                        this.color = this.colors.Evaluate(this.progress);
+                    }
+                    this.gameObjectRenderer.material.SetColor("_Color", this.color);
+                    this.gameObjectRenderer.material.SetColor("_EmissionColor", this.color);
+                }
+            }
+
+            public Renderer gameObjectRenderer;
+
+            public Gradient colors = null;
+
+            public Color color;
+
+            public bool timeBased = true;
+        }
+
+        // VOIDS AND CLASSES
+
+        public static void StartRPCThread()
+        {
+            Thread rpcThread = new Thread(new ThreadStart(SynxMenuMods.FlushRPCS));
+            rpcThread.Start();
+        }
+
+        public static bool fpcc;
+        public static GameObject funn;
+        public static void fpc()
+        {
+            fpcc = true;
+            if (GameObject.Find("Third Person Camera") != null)
+            {
+                funn = GameObject.Find("Third Person Camera");
+                funn.SetActive(false);
+            }
+            if (GameObject.Find("CameraTablet(Clone)") != null)
+            {
+                funn = GameObject.Find("CameraTablet(Clone)");
+                funn.SetActive(false);
+            }
+        }
+
+        public static void WallWalk()
+        {
+            RaycastHit raycastHit;
+            Physics.Raycast(GorillaLocomotion.Player.Instance.rightControllerTransform.position, -GorillaLocomotion.Player.Instance.rightControllerTransform.right, out raycastHit, 100f, int.MaxValue);
+            RaycastHit raycastHit2;
+            Physics.Raycast(GorillaLocomotion.Player.Instance.leftControllerTransform.position, GorillaLocomotion.Player.Instance.leftControllerTransform.right, out raycastHit2, 100f, int.MaxValue);
+            if (ControllerInputPoller.instance.rightGrab)
+            {
+                if (raycastHit.distance < raycastHit2.distance)
+                {
+                    if (raycastHit.distance < 1f)
+                    {
+                        Vector3 normalized = (raycastHit.point - GorillaLocomotion.Player.Instance.rightControllerTransform.position).normalized;
+                        Physics.gravity = normalized * 9.81f;
+                    }
+                    else
+                    {
+                        Physics.gravity = new Vector3(0f, -9.81f, 0f);
+                    }
+                }
+                if (raycastHit.distance == raycastHit2.distance)
+                {
+                    Physics.gravity = new Vector3(0f, -9.81f, 0f);
+                }
+            }
+            else
+            {
+                Physics.gravity = new Vector3(0f, -9.81f, 0f);
+            }
+        }
+
+        public static bool nerdshit(float grabValue, float grabThreshold)
+        {
+            return grabValue >= grabThreshold;
+        }
+
+        private static bool ChangeCooldown;
+
+        public static void TriggerPageManager()
+        {
+            if (menu != null)
+            {
+                if (nerdshit(ControllerInputPoller.instance.leftControllerIndexFloat, 0.1f))
+                {
+                    if (!ChangeCooldown)
+                    {
+                        Toggle("PreviousPage");
+                        ChangeCooldown = true;
+                    }
+
+                }
+                else if (nerdshit(ControllerInputPoller.instance.rightControllerIndexFloat, 0.1f))
+                {
+                    if (!ChangeCooldown)
+                    {
+                        Toggle("NextPage");
+                        ChangeCooldown = true;
+                    }
+                }
+                else
+                {
+                    ChangeCooldown = false;
+                }
+            }
+        }
+
+
+        public static void GetAllIDs()
+        {
+            string text = "";
+            foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
+            {
+                text = string.Concat(new string[]
+                {
+                        text,
+                        "Player Name: ",
+                        player.NickName,
+                        " Player ID: ",
+                        player.UserId,
+                        "\n"
+                });
+            }
+            File.WriteAllText(PhotonNetwork.CurrentRoom.Name + "KAV Client_PlayerIDs.txt", text);
+        }
+
+        public static GameObject checkpoint;
+        public static Vector3 CHECKPOINT;
+        public static float CubeROT = 0;
+
+        public static void homemadecheckpoint()
+        {
+            checkpoint = GameObject.CreatePrimitive(PrimitiveType.Cube); // makes cube
+            GameObject.Destroy(checkpoint.GetComponent<Rigidbody>()); // Destroys Collider
+            GameObject.Destroy(checkpoint.GetComponent<BoxCollider>()); // same as above
+            checkpoint.GetComponent<Renderer>().material.color = UnityEngine.Color.blue; // Sets color to red
+            checkpoint.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f); // makes scale to 0.1f.
+            checkpoint.name = "CHECKPOINT"; // Naming the checkpoint
+            checkpoint.transform.position = CHECKPOINT; // Position it to vector "CHECKPOINT"
+            checkpoint.transform.Rotate(0f, CubeROT, 0f); // Sexy cube rotation
+            if (ControllerInputPoller.instance.rightGrab) // Right grip pressed
+            {
+                CHECKPOINT = GorillaLocomotion.Player.Instance.rightControllerTransform.position; // Sets the Vector's position to right controller's
+            }
+            if (ControllerInputPoller.instance.rightControllerIndexFloat >= 0.3f && !ControllerInputPoller.instance.rightGrab) // Right trigger pressed, and NOT right grip pressed
+            {
+                GorillaLocomotion.Player.Instance.headCollider.transform.position = checkpoint.transform.position + new Vector3(0f, 0.5f, 0f); // Move to checkpoint
+                GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity = new Vector3(0f, -0.1545f, 0f);// Velocity sets to this
+            }
+            CubeROT += 2f; // Makes cube rotation change. make number larger for faster rotation, smaller for slower rotation
+            GameObject.Destroy(checkpoint, Time.deltaTime); // Destroy checkpoint
+        }
+
+        public static void fpcoff()
+        {
+            fpcc = false;
+            if (funn != null)
+            {
+                funn.SetActive(true);
+                funn = null;
+            }
+        }
+
+        public static void SolidPlayers()
+        {
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (vrrig != GorillaTagger.Instance.offlineVRRig && Vector3.Distance(vrrig.transform.position, GorillaTagger.Instance.headCollider.transform.position) < 5f)
+                {
+                    Vector3 pointA = vrrig.head.rigTarget.transform.position + new Vector3(0f, 0.16f, 0f);
+                    Vector3 pointB = vrrig.head.rigTarget.transform.position - new Vector3(0f, 0.4f, 0f);
+                    GameObject bodyCollider = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    UnityEngine.Object.Destroy(bodyCollider.GetComponent<Rigidbody>());
+                    bodyCollider.GetComponent<Renderer>().enabled = false;
+                    bodyCollider.transform.position = Vector3.Lerp(pointA, pointB, 0.5f);
+                    bodyCollider.transform.rotation = vrrig.transform.rotation;
+                    bodyCollider.transform.localScale = new Vector3(0.3f, 0.55f, 0.3f);
+                    UnityEngine.Object.Destroy(bodyCollider, Time.deltaTime * 2);
+
+                    for (int i = 0; i < bones.Count<int>(); i += 2)
+                    {
+                        pointA = vrrig.mainSkin.bones[bones[i]].position;
+                        pointB = vrrig.mainSkin.bones[bones[i + 1]].position;
+                        bodyCollider = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        UnityEngine.Object.Destroy(bodyCollider.GetComponent<Rigidbody>());
+                        bodyCollider.GetComponent<Renderer>().enabled = false;
+                        bodyCollider.transform.position = Vector3.Lerp(pointA, pointB, 0.5f);
+                        bodyCollider.transform.LookAt(pointB);
+                        bodyCollider.transform.localScale = new Vector3(0.2f, 0.2f, Vector3.Distance(pointA, pointB));
+                        UnityEngine.Object.Destroy(bodyCollider, Time.deltaTime * 2);
+                    }
+                }
+            }
+        }
+
+        public static LineRenderer lineRenderer;
+
+        public static void Tracers()
+        {
+            foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerListOthers)
+            {
+                PhotonView photonView = GorillaGameManager.instance.FindVRRigForPlayer(player);
+                VRRig vrrig = GorillaGameManager.instance.FindPlayerVRRig(player);
+                bool flag = !vrrig.isOfflineVRRig && !vrrig.isMyPlayer && !photonView.IsMine && !vrrig.mainSkin.name.Contains("fected");
+                bool flag2 = flag;
+                if (flag2)
+                {
+                    GameObject gameObject = new GameObject("Line");
+                    lineRenderer = gameObject.AddComponent<LineRenderer>();
+                    lineRenderer.startColor = UnityEngine.Color.green;
+                    lineRenderer.endColor = UnityEngine.Color.green;
+                    lineRenderer.startWidth = 0.01f;
+                    lineRenderer.endWidth = 0.01f;
+                    lineRenderer.positionCount = 2;
+                    lineRenderer.useWorldSpace = true;
+                    lineRenderer.SetPosition(0, GorillaLocomotion.Player.Instance.rightControllerTransform.position);
+                    lineRenderer.SetPosition(1, vrrig.transform.position);
+                    lineRenderer.material.shader = Shader.Find("GUI/Text Shader");
+                    GameObject.Destroy(lineRenderer, Time.deltaTime);
+                    GameObject.Destroy(lineRenderer, Time.deltaTime);
+                    GameObject.Destroy(gameObject, Time.deltaTime);
+                    GameObject.Destroy(gameObject, Time.deltaTime);
+                }
+            }
+        }
+
+        public static void bonerlol()
+        {
+            Material material = new Material(Shader.Find("GUI/Text Shader"));
+            material.color = Color.Lerp(Color.cyan, Color.magenta, Mathf.PingPong(Time.time, 0.8f));
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (!vrrig.isOfflineVRRig && !vrrig.isMyPlayer && vrrig.playerText.text != PhotonNetwork.NickName)
+                {
+                    if (!vrrig.head.rigTarget.gameObject.GetComponent<LineRenderer>())
+                    {
+                        vrrig.head.rigTarget.gameObject.AddComponent<LineRenderer>();
+                    }
+                    vrrig.head.rigTarget.gameObject.GetComponent<LineRenderer>().endWidth = 0.025f;
+                    vrrig.head.rigTarget.gameObject.GetComponent<LineRenderer>().startWidth = 0.025f;
+                    vrrig.head.rigTarget.gameObject.GetComponent<LineRenderer>().material = material;
+                    vrrig.head.rigTarget.gameObject.GetComponent<LineRenderer>().SetPosition(0, vrrig.head.rigTarget.transform.position + new Vector3(0f, 0.16f, 0f));
+                    vrrig.head.rigTarget.gameObject.GetComponent<LineRenderer>().SetPosition(1, vrrig.head.rigTarget.transform.position - new Vector3(0f, 0.4f, 0f));
+                    for (int i = 0; i < Enumerable.Count<int>(bones); i += 2)
+                    {
+                        if (!vrrig.mainSkin.bones[bones[i]].gameObject.GetComponent<LineRenderer>())
+                        {
+                            vrrig.mainSkin.bones[bones[i]].gameObject.AddComponent<LineRenderer>();
+                        }
+                        vrrig.mainSkin.bones[bones[i]].gameObject.GetComponent<LineRenderer>().endWidth = 0.025f;
+                        vrrig.mainSkin.bones[bones[i]].gameObject.GetComponent<LineRenderer>().startWidth = 0.025f;
+                        vrrig.mainSkin.bones[bones[i]].gameObject.GetComponent<LineRenderer>().material = material;
+                        vrrig.mainSkin.bones[bones[i]].gameObject.GetComponent<LineRenderer>().SetPosition(0, vrrig.mainSkin.bones[bones[i]].position);
+                        vrrig.mainSkin.bones[bones[i]].gameObject.GetComponent<LineRenderer>().SetPosition(1, vrrig.mainSkin.bones[bones[i + 1]].position);
+                    }
+                }
+            }
+        }
+
+        public static int[] bones = new int[]
+        {
+    4,
+    3,
+    5,
+    4,
+    19,
+    18,
+    20,
+    19,
+    3,
+    18,
+    21,
+    20,
+    22,
+    21,
+    25,
+    21,
+    29,
+    21,
+    31,
+    29,
+    27,
+    25,
+    24,
+    22,
+    6,
+    5,
+    7,
+    6,
+    10,
+    6,
+    14,
+    6,
+    16,
+    14,
+    12,
+    10,
+    9,
+    7
+        };
+
+        public static void TagSpam(int index)
+        {
+            GorillaTagger.Instance.myVRRig.RPC("PlayTagSound", 0, new object[]
+            {
+                index,
+                0.25f
+            });
+        }
+
+        public static void Beacons()
+        {
+            if (PhotonNetwork.CurrentRoom != null)
+            {
+                Material mat = new Material(Shader.Find("GUI/Text Shader"));
+                mat.color = UnityEngine.Color.red;
+                foreach (Photon.Realtime.Player player3 in PhotonNetwork.PlayerListOthers)
+                {
+                    PhotonView photonView3 = GorillaGameManager.instance.FindVRRigForPlayer(player3);
+                    VRRig vrrig = GorillaGameManager.instance.FindPlayerVRRig(player3);
+                    if (!vrrig.isOfflineVRRig && !vrrig.isMyPlayer && !photonView3.IsMine)
+                    {
+                        GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                        UnityEngine.Object.Destroy(gameObject.GetComponent<BoxCollider>());
+                        UnityEngine.Object.Destroy(gameObject.GetComponent<Rigidbody>());
+                        UnityEngine.Object.Destroy(gameObject.GetComponent<Collider>());
+                        gameObject.GetComponent<MeshRenderer>().material.SetColor("_Color", Color.green);
+                        gameObject.transform.rotation = Quaternion.identity;
+                        gameObject.transform.localScale = new Vector3(0.04f, 200f, 0.04f);
+                        gameObject.transform.position = vrrig.transform.position;
+                        gameObject.GetComponent<MeshRenderer>().material = vrrig.mainSkin.material;
+                        UnityEngine.Object.Destroy(gameObject, Time.deltaTime);
+                    }
+                }
+            }
+        }
+
+        public static void K3()
+        {
+            try
+            {
+                GorillaNot.instance.OnPlayerLeftRoom(PhotonNetwork.LocalPlayer);
+                GorillaNot.instance.OnMasterClientSwitched(PhotonNetwork.LocalPlayer);
+                GorillaNot.instance.rpcCallLimit = 987654567;
+                GorillaNot.instance.OnLeftRoom();
+                GorillaNot.instance.OnPreLeavingRoom();
+                GorillaGameManager.instance.tagDistanceThreshold = 130f;
+                if (GorillaNot.instance != null)
+                {
+                    FieldInfo goofyshit = typeof(GorillaNot).GetField("sendReport", BindingFlags.NonPublic);
+                    if (goofyshit != null)
+                    {
+                        goofyshit.SetValue(GorillaNot.instance, false);
+                    }
+                    FieldInfo goofyshit2 = typeof(GorillaNot).GetField("_sendReport", BindingFlags.NonPublic);
+                    if (goofyshit != null)
+                    {
+                        goofyshit2.SetValue(GorillaNot.instance, false);
+                    }
+                }
+
+            }
+            catch
+            {
+            }
+
+        }
+        public static void KEB2()
+        {
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                if (!Gamemode().Contains("BATTLE"))
+                {
+                    GorillaGameManager.instance.OnPlayerLeftRoom(PhotonNetwork.LocalPlayer);
+                    GorillaGameManager.instance.OnMasterClientSwitched(PhotonNetwork.LocalPlayer);
+                }
+            }
+            else
+            {
+
+            }
+            if (!Gamemode().Contains("FECT"))
+            {
+                GameMode.ActiveGameMode.OnMasterClientSwitched(PhotonNetwork.LocalPlayer);
+                GameMode.ActiveGameMode.OnPlayerLeftRoom(PhotonNetwork.LocalPlayer);
+                PhotonNetworkController.Instance.OnPlayerLeftRoom(PhotonNetwork.LocalPlayer);
+
+            }
+
+            PhotonNetworkController.Instance.OnLeftRoom();
+            PhotonNetworkController.Instance.OnPreLeavingRoom();
+            PhotonNetworkController.Instance.OnLeftLobby();
+            //GorillaNetworking.GorillaComputer.instance.OnPlayerLeftRoom(PhotonNetwork.LocalPlayer);
+            PhotonNetworkController.Instance.OnMasterClientSwitched(PhotonNetwork.LocalPlayer);
+
+        }
+        public static void Thing1()
+        {
+            //GorillaBattleManager.instance.OnMasterClientSwitched(PhotonNetwork.LocalPlayer);
+            PhotonNetworkController.Instance.OnMasterClientSwitched(PhotonNetwork.LocalPlayer);
+            ScienceExperimentManager.instance.OnMasterClientSwitched(PhotonNetwork.LocalPlayer);
+            GorillaGameManager.instance.OnMasterClientSwitched(PhotonNetwork.LocalPlayer);
+        }
+        public static void Thing2()
+        {
+            GorillaNot.instance.rpcErrorMax = 999999999;
+            GorillaNot.instance.logErrorMax = 999999999;
+            GorillaNot.instance.OnLeftRoom();
+            GameMode.ActiveGameMode.tagDistanceThreshold = 999;
+        }
+
+        public static void RGB()
+        {
+            GradientColorKey[] array = new GradientColorKey[7];
+            array[0].color = Color.red;
+            array[0].time = 0f;
+            array[1].color = Color.yellow;
+            array[1].time = 0.2f;
+            array[2].color = Color.green;
+            array[2].time = 0.3f;
+            array[3].color = Color.cyan;
+            array[3].time = 0.5f;
+            array[4].color = Color.blue;
+            array[4].time = 0.6f;
+            array[5].color = Color.magenta;
+            array[5].time = 0.8f;
+            array[6].color = Color.black;
+            array[6].time = 1f;
+            Gradient gradient = new Gradient();
+            gradient.colorKeys = array;
+            float num = Mathf.PingPong(Time.time / 2f, 1f);
+            Color color = gradient.Evaluate(num);
+            if (GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(PhotonNetwork.LocalPlayer.UserId))
+            {
+                GorillaTagger.Instance.myVRRig.RPC("InitializeNoobMaterial", 0, new object[]
+                {
+            color.r,
+            color.g,
+            color.b,
+            true
+                });
+            }
+        }
+
+        public static void BetterESP()
+        {
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                ESPBox(rig.head.rigTarget.transform.position);
+            }
+        }
+
+        private static void ESPBox(Vector3 vector)
+        {
+            Material mat = new Material(Shader.Find("GUI/Text Shader"));
+            mat.color = UnityEngine.Color.red;
+
+            GameObject obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            obj.GetComponent<Renderer>().material.SetColor("_Color", UnityEngine.Color.red);
+            obj.GetComponent<MeshRenderer>().material = mat;
+            obj.transform.position = vector;
+            GameObject.Destroy(obj.GetComponent<BoxCollider>());
+            GameObject.Destroy(obj.GetComponent<Rigidbody>());
+            GameObject.Destroy(obj.GetComponent<Collider>());
+            obj.transform.localScale = new Vector3(0.2f, 0.2f, 0.01f);
+            obj.transform.LookAt(GorillaLocomotion.Player.Instance.headCollider.transform.position);
+            GameObject.Destroy(obj, Time.deltaTime);
+        }
+
+        public static void aiprlane()
+        {
+            if (ControllerInputPoller.instance.rightControllerPrimaryButton)
+            {
+                GorillaLocomotion.Player.Instance.transform.position += (GorillaLocomotion.Player.Instance.headCollider.transform.forward * Time.deltaTime) * 15;
+                GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity = Vector3.zero;
+            }
+        }
+
+        public static GameObject gunPointer123 = null;
+
+        public static Material color123 = new Material(Shader.Find("GorillaTag/UberShader"));
+        public static VRRig Vrrig;
+
+        public static void playerlocktaggun()
+        {
+            if (ControllerInputPoller.instance.rightControllerGripFloat == 1f)
+            {
+                RaycastHit raycastHit;
+                Physics.Raycast(GorillaLocomotion.Player.Instance.rightControllerTransform.position - GorillaLocomotion.Player.Instance.rightControllerTransform.up, -GorillaLocomotion.Player.Instance.rightControllerTransform.up, out raycastHit);
+                if (gunPointer123 == null)
+                {
+                    color123.color = Color.white;
+                    gunPointer123 = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                    GameObject.Destroy(gunPointer123.GetComponent<SphereCollider>());
+                    GameObject.Destroy(gunPointer123.GetComponent<Rigidbody>());
+                    gunPointer123.GetComponent<Renderer>().material = color123;
+                    gunPointer123.transform.localScale = new UnityEngine.Vector3(0.2f, 0.2f, 0.2f);
+                }
+                gunPointer123.transform.position = raycastHit.point;
+                if (ControllerInputPoller.TriggerFloat(XRNode.RightHand) == 1f)
+                {
+                    if (raycastHit.collider.GetComponentInParent<VRRig>())
+                    {
+                        Vrrig = raycastHit.collider.GetComponentInParent<VRRig>();
+                    }
+                }
+                if (ControllerInputPoller.TriggerFloat(XRNode.RightHand) == 1f)
+                {
+                    gunPointer123.transform.position = Vrrig.transform.position;
+                    GorillaTagger.Instance.offlineVRRig.enabled = false;
+                    GorillaLocomotion.Player.Instance.rightControllerTransform.position = Vrrig.transform.position;
+                    GorillaTagger.Instance.offlineVRRig.transform.position = Vrrig.transform.position;
+                    GorillaTagger.Instance.offlineVRRig.enabled = true;
+                }
+            }
+            else
+            {
+                GameObject.Destroy(gunPointer123);
+            }
+        }
+
+        private static void ProcessNoClip()
+        {
+            bool noclipbool = false;
+            List<InputDevice> list = new List<InputDevice>();
+            InputDevices.GetDevicesWithCharacteristics(InputDeviceCharacteristics.HeldInHand | InputDeviceCharacteristics.Controller | InputDeviceCharacteristics.Left, list);
+            list[0].TryGetFeatureValue(CommonUsages.triggerButton, out noclipbool);
+            if (noclipbool)
+            {
+                if (!SynxPRIVATEMenu.regbool2)
+                {
+                    MeshCollider[] array = Resources.FindObjectsOfTypeAll<MeshCollider>();
+                    foreach (MeshCollider meshCollider in array)
+                    {
+                        meshCollider.transform.localScale = meshCollider.transform.localScale / 10000f;
+                    }
+                    SynxPRIVATEMenu.regbool2 = true;
+                    SynxPRIVATEMenu.regbool1 = false;
+                }
+            }
+            else
+            {
+                if (!SynxPRIVATEMenu.regbool1)
+                {
+                    MeshCollider[] array3 = Resources.FindObjectsOfTypeAll<MeshCollider>();
+                    foreach (MeshCollider meshCollider2 in array3)
+                    {
+                        meshCollider2.transform.localScale = meshCollider2.transform.localScale * 10000f;
+                    }
+                    SynxPRIVATEMenu.regbool1 = true;
+                    SynxPRIVATEMenu.regbool2 = false;
+                }
+            }
+        }
+
+        public static void CreatePlatform(Vector3 vector)
+        {
+            GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            gameObject.GetComponent<Renderer>().material.SetColor("_Color", new Color32(0, 100, 100, 1));
+            gameObject.transform.localScale = scale;
+            gameObject.transform.position = vector;
+            gameObject.transform.LookAt(GorillaLocomotion.Player.Instance.headCollider.transform);
+            gameObject.name = "PLAT";
+            object[] array = new object[]
+            {
+                    gameObject.transform.position,
+                    gameObject.transform.rotation
+            };
+            RaiseEventOptions raiseEventOptions = new RaiseEventOptions
+            {
+                Receivers = 0
+            };
+            PhotonNetwork.RaiseEvent(69, array, raiseEventOptions, SendOptions.SendReliable);
+        }
+
+        public static void trapgun()
+        {
+            if (ControllerInputPoller.instance.rightGrab)
+            {
+                Physics.Raycast(GorillaLocomotion.Player.Instance.rightControllerTransform.position, -GorillaLocomotion.Player.Instance.rightControllerTransform.up, out var hitInfo);
+                NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                NewPointer.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+                NewPointer.GetComponent<Renderer>().material.color = Color.blue;
+                NewPointer.transform.position = hitInfo.point;
+                GameObject.Destroy(NewPointer.GetComponent<BoxCollider>());
+                GameObject.Destroy(NewPointer.GetComponent<Rigidbody>());
+                GameObject.Destroy(NewPointer.GetComponent<Collider>());
+                if (ControllerInputPoller.instance.rightControllerIndexFloat >= 0.3f)
+                {
+                    CreatePlatform(hitInfo.point);
+                    CreatePlatform(hitInfo.point);
+                    CreatePlatform(hitInfo.point);
+                    CreatePlatform(hitInfo.point);
+                    GameObject.Destroy(NewPointer);
+                }
+                else
+                {
+
+                }
+            }
+            if (NewPointer != null)
+            {
+                GameObject.Destroy(NewPointer, Time.deltaTime);
+            }
+        }
+
+        public static void platformremover()
+        {
+            if (ControllerInputPoller.instance.rightGrab)
+            {
+                GameObject.Destroy(GameObject.Find("PLAT"));
+                GameObject.Destroy(GameObject.Find("PLAT"));
+                GameObject.Destroy(GameObject.Find("PLAT"));
+                GameObject.Destroy(GameObject.Find("PLAT"));
+                GameObject.Destroy(GameObject.Find("PLAT"));
+            }
+        }
+
+        public static void block()
+        {
+            if (ControllerInputPoller.instance.rightGrab)
+            {
+                Physics.Raycast(GorillaLocomotion.Player.Instance.rightControllerTransform.position, -GorillaLocomotion.Player.Instance.rightControllerTransform.up, out var hitInfo);
+                NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                NewPointer.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+                NewPointer.GetComponent<Renderer>().material.color = Color.blue;
+                NewPointer.transform.position = hitInfo.point;
+                GameObject.Destroy(NewPointer.GetComponent<BoxCollider>());
+                GameObject.Destroy(NewPointer.GetComponent<Rigidbody>());
+                GameObject.Destroy(NewPointer.GetComponent<Collider>());
+                if (ControllerInputPoller.instance.rightControllerIndexFloat >= 0.3f)
+                {
+                    if (!AntiRepeatGun)
+                    {
+                        GameObject b = SpawnBlock(hitInfo.point + new Vector3(0, 0.6f, 0), true, 0.8f, PrimitiveType.Cube, "BLOCK");
+                        AntiRepeatGun = true;
+                    }
+                    GameObject.Destroy(NewPointer);
+                }
+                else
+                {
+                    AntiRepeatGun = false;
+                }
+            }
+            if (NewPointer != null)
+            {
+                GameObject.Destroy(NewPointer, Time.deltaTime);
+            }
+        }
+
+        public static void sphere()
+        {
+            if (ControllerInputPoller.instance.rightGrab)
+            {
+                Physics.Raycast(GorillaLocomotion.Player.Instance.rightControllerTransform.position, -GorillaLocomotion.Player.Instance.rightControllerTransform.up, out var hitInfo);
+                NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                NewPointer.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+                NewPointer.GetComponent<Renderer>().material.color = Color.blue;
+                NewPointer.transform.position = hitInfo.point;
+                GameObject.Destroy(NewPointer.GetComponent<BoxCollider>());
+                GameObject.Destroy(NewPointer.GetComponent<Rigidbody>());
+                GameObject.Destroy(NewPointer.GetComponent<Collider>());
+                if (ControllerInputPoller.instance.rightControllerIndexFloat >= 0.3f)
+                {
+                    if (!AntiRepeatGun)
+                    {
+                        GameObject b = SpawnBlock(hitInfo.point + new Vector3(0, 0.6f, 0), true, 0.8f, PrimitiveType.Sphere, "BLOCK");
+                        AntiRepeatGun = true;
+                    }
+                    GameObject.Destroy(NewPointer);
+                }
+                else
+                {
+                    AntiRepeatGun = false;
+                }
+            }
+            if (NewPointer != null)
+            {
+                GameObject.Destroy(NewPointer, Time.deltaTime);
+            }
+        }
+
+        public static void FreezeAllRopes()
+        {
+            {
+                UnityEngine.Object[] array = UnityEngine.Object.FindObjectsOfType(typeof(GorillaRopeSwing));
+                for (int i = 0; i < array.Length; i++)
+                {
+                    PhotonView photonView = ((GorillaRopeSwing)array[i]).photonView;
+                    string text = "SetVelocity";
+                    RpcTarget rpcTarget = 0;
+                    object[] array2 = new object[4];
+                    array2[0] = 1;
+                    array2[1] = new Vector3(0f, 0f, 0f);
+                    array2[2] = true;
+                    photonView.RPC(text, rpcTarget, array2);
+                    FlushRPCS();
+                }
+            }
+        }
+
+        public static void FreezeRopeGun()
+        {
+            if (ControllerInputPoller.instance.rightGrab)
+            {
+                Physics.Raycast(GorillaLocomotion.Player.Instance.rightControllerTransform.position, -GorillaLocomotion.Player.Instance.rightControllerTransform.up, out var hitInfo);
+                GorillaRopeSwing swing = hitInfo.collider.GetComponentInParent<GorillaRopeSwing>();
+                NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                NewPointer.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+                NewPointer.GetComponent<Renderer>().material.color = Color.blue;
+                NewPointer.transform.position = hitInfo.point;
+                GameObject.Destroy(NewPointer.GetComponent<BoxCollider>());
+                GameObject.Destroy(NewPointer.GetComponent<Rigidbody>());
+                GameObject.Destroy(NewPointer.GetComponent<Collider>());
+                if (ControllerInputPoller.instance.rightControllerIndexFloat >= 0.3f)
+                {
+                    if (swing != null)
+                    {
+                        PhotonView photonView = swing.photonView;
+                        string text = "SetVelocity";
+                        RpcTarget rpcTarget = 0;
+                        object[] array2 = new object[4];
+                        array2[0] = 1;
+                        array2[1] = new Vector3(0, 0, 0);
+                        array2[2] = true;
+                        photonView.RPC(text, rpcTarget, array2);
+                        SynxMenuMods.FlushRPCS();
+                    }
+
+                    GameObject.Destroy(NewPointer);
+                }
+                else
+                {
+
+                }
+            }
+            if (NewPointer != null)
+            {
+                GameObject.Destroy(NewPointer, Time.deltaTime);
+            }
+        }
+
+        public static void MakeRopesCrazy()
+        {
+            if (Timer > 4)
+            {
+                Timer = 0;
+                FlushRPCS();
+                foreach (GorillaRopeSwing swing in GameObject.FindObjectsOfType<GorillaRopeSwing>())
+                {
+                    PhotonView photonView = swing.photonView;
+                    string text = "SetVelocity";
+                    RpcTarget rpcTarget = 0;
+                    object[] array2 = new object[4];
+                    array2[0] = 1;
+                    array2[1] = new Vector3(UnityEngine.Random.Range(-680, 680), UnityEngine.Random.Range(-680, 680), UnityEngine.Random.Range(-680, 680));
+                    array2[2] = true;
+                    photonView.RPC(text, rpcTarget, array2);
+                    FlushRPCS();
+                }
+            }
+            else
+            {
+                Timer++;
+            }
+        }
+
+        public static int Timer3 = 0;
+
+        public static int Timer = 0;
+
+
+        public static void ForceTagLag()
+        {
+            foreach (GorillaTagManager gorillaTagManager in UnityEngine.Object.FindObjectsOfType<GorillaTagManager>())
+            {
+
+                gorillaTagManager.tagCoolDown = 999999f;
+                gorillaTagManager.tagCoolDown = 999999f;
+                gorillaTagManager.UpdateInfectionState();
+            }
+        }
+
+        public static bool CalculateGrabState(float grabValue, float grabThreshold)
+        {
+            return grabValue >= grabThreshold;
+        }
+
+        public static void custommuteall()
+        {
+            foreach (Photon.Realtime.Player owner in PhotonNetwork.PlayerList)
+            {
+                GorillaPlayerScoreboardLine[] array = (from x in GameObject.FindObjectsOfType<GorillaPlayerScoreboardLine>()
+                                                       where x.linePlayer == owner
+                                                       select x).ToArray<GorillaPlayerScoreboardLine>();
+                array[0].PressButton(true, GorillaPlayerLineButton.ButtonType.Mute);
+                foreach (GorillaPlayerScoreboardLine gorillaPlayerScoreboardLine in array)
+                {
+                    gorillaPlayerScoreboardLine.muteButton.isOn = true;
+                    gorillaPlayerScoreboardLine.muteButton.UpdateColor();
+                }
+            }
+        }
+
+        private static void UpdateScaleForBeacons(GameObject startObj, GameObject endObj, GameObject beaconObj)
+        {
+            float num = Vector3.Distance(startObj.transform.position, endObj.transform.position);
+            beaconObj.transform.localScale = new Vector3(beaconObj.transform.localScale.x, num / 2f, beaconObj.transform.localScale.z);
+            Vector3 position = (startObj.transform.position + endObj.transform.position) / 2f;
+            beaconObj.transform.position = position;
+            Vector3 up = endObj.transform.position - startObj.transform.position;
+            beaconObj.transform.up = up;
+        }
+
+        public static void BatTraces()
+        {
+            GameObject gameObject = GameObject.Find("Cave Bat Holdable");
+            GameObject gameObject2 = GameObject.CreatePrimitive((PrimitiveType)2);
+            UnityEngine.Object.Destroy(gameObject2.GetComponent<BoxCollider>());
+            UnityEngine.Object.Destroy(gameObject2.GetComponent<Rigidbody>());
+            UnityEngine.Object.Destroy(gameObject2.GetComponent<Collider>());
+            UnityEngine.Object.Destroy(gameObject2.GetComponent<MeshCollider>());
+            gameObject2.transform.rotation = Quaternion.identity;
+            gameObject2.transform.localScale = new Vector3(0.020f, 0.020f, 0.020f);
+            gameObject2.transform.position = gameObject.transform.position;
+            UpdateScaleForBeacons(GorillaTagger.Instance.rightHandTransform.gameObject, gameObject.gameObject, gameObject2);
+            Renderer component = gameObject2.GetComponent<Renderer>();
+            component.material.color = Color.Lerp(new Color(0f, 1f, 0f, 0.5f), new Color(0f, 1f, 1f, 0.5f), Mathf.PingPong(Time.time, 1f));
+            UnityEngine.Object.Destroy(gameObject2, Time.deltaTime);
+        }
+
+        public static void BugTraces()
+        {
+            GameObject gameObject = GameObject.Find("Floating Bug Holdable");
+            GameObject gameObject2 = GameObject.CreatePrimitive((PrimitiveType)2);
+            UnityEngine.Object.Destroy(gameObject2.GetComponent<BoxCollider>());
+            UnityEngine.Object.Destroy(gameObject2.GetComponent<Rigidbody>());
+            UnityEngine.Object.Destroy(gameObject2.GetComponent<Collider>());
+            UnityEngine.Object.Destroy(gameObject2.GetComponent<MeshCollider>());
+            gameObject2.transform.rotation = Quaternion.identity;
+            gameObject2.transform.localScale = new Vector3(0.020f, 0.020f, 0.020f);
+            gameObject2.transform.position = gameObject.transform.position;
+            UpdateScaleForBeacons(GorillaTagger.Instance.rightHandTransform.gameObject, gameObject.gameObject, gameObject2);
+            Renderer component = gameObject2.GetComponent<Renderer>();
+            component.material.color = Color.Lerp(new Color(0f, 1f, 0f, 0.5f), new Color(0f, 1f, 1f, 0.5f), Mathf.PingPong(Time.time, 1f));
+            UnityEngine.Object.Destroy(gameObject2, Time.deltaTime);
+        }
+
+        public static GameObject RCircle;
+        public static GameObject LCircle;
+        private static double cd;
+        public static float sp;
+
+        public static PhotonView GetPhotonViewFromRig(VRRig rig)
+        {
+            PhotonView value = Traverse.Create(rig).Field("photonView").GetValue<PhotonView>();
+            bool yashdj = value != null;
+            PhotonView result;
+            if (yashdj) {
+                result = value;
+            } else {
+                result = null;
+            }
+            return result;
+        }
+
+        public static VRRig GetClosestRig(Vector3 v)
+        {
+            float Closest = 999999999;
+            VRRig closestRig = null;
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (GetPhotonViewFromRig(rig).Owner.UserId != PhotonNetwork.LocalPlayer.UserId)
+                {
+                    if (Vector3.Distance(rig.transform.position, v) < Closest)
+                    {
+                        Closest = Vector3.Distance(rig.transform.position, v);
+                        closestRig = rig;
+                    }
+                }
+            }
+            return closestRig;
+        }
+
+        public static void InvisMonkey()
+        {
+            if (CalculateGrabState(ControllerInputPoller.instance.rightControllerIndexFloat, 0.1f))
+            {
+                GorillaTagger.Instance.offlineVRRig.headBodyOffset = new Vector3(9999f, 9999f, 9999f);
+                GameObject.Destroy(RCircle);
+                GameObject.Destroy(LCircle);
+                RCircle = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                RCircle.GetComponent<Renderer>().material.color = new Color32(255, 255, 255, 1);
+                RCircle.transform.position = GorillaLocomotion.Player.Instance.rightControllerTransform.position;
+                RCircle.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                UnityEngine.Object.Destroy(RCircle.GetComponent<Collider>());
+                UnityEngine.Object.Destroy(RCircle.GetComponent<Rigidbody>());
+                LCircle = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                LCircle.GetComponent<Renderer>().material.color = new Color32(255, 255, 255, 1);
+                LCircle.transform.position = GorillaLocomotion.Player.Instance.leftControllerTransform.position;
+                LCircle.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                UnityEngine.Object.Destroy(LCircle.GetComponent<Collider>());
+                UnityEngine.Object.Destroy(LCircle.GetComponent<Rigidbody>());
+            }
+            else
+            {
+                GorillaTagger.Instance.offlineVRRig.headBodyOffset = Vector3.zero;
+                LCircle.transform.position = new Vector3(9999, 9999, 9999);
+                RCircle.transform.position = new Vector3(9999, 9999, 9999);
+            }
+        }
+
+        public static void spamtarget()
+        {
+            if (ControllerInputPoller.instance.rightGrab)
+            {
+                Physics.Raycast(GorillaLocomotion.Player.Instance.rightControllerTransform.position, -GorillaLocomotion.Player.Instance.rightControllerTransform.up, out var hitInfo);
+                HitTargetWithScoreCounter h = hitInfo.collider.GetComponentInParent<HitTargetWithScoreCounter>();
+                NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                NewPointer.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+                NewPointer.GetComponent<Renderer>().material.color = Color.blue;
+                NewPointer.transform.position = hitInfo.point;
+                GameObject.Destroy(NewPointer.GetComponent<BoxCollider>());
+                GameObject.Destroy(NewPointer.GetComponent<Rigidbody>());
+                GameObject.Destroy(NewPointer.GetComponent<Collider>());
+                if (ControllerInputPoller.instance.rightControllerIndexFloat >= 0.3f)
+                {
+                    if (h != null)
+                    {
+                        h.hitCooldownTime = 0;
+                        h.TargetHit();
+                    }
+                    GameObject.Destroy(NewPointer);
+                }
+                else
+                {
+
+                }
+                if (NewPointer != null)
+                {
+                    GameObject.Destroy(NewPointer, Time.deltaTime);
+                }
+            }
+        }
+
+        public static void RopeUP()
+        {
+            UnityEngine.Object[] array = UnityEngine.Object.FindObjectsOfType(typeof(GorillaRopeSwing));
+            for (int i = 0; i < array.Length; i++)
+            {
+                PhotonView photonView = ((GorillaRopeSwing)array[i]).photonView;
+                string text = "SetVelocity";
+                RpcTarget rpcTarget = 0;
+                object[] array2 = new object[4];
+                array2[0] = 1;
+                array2[1] = new Vector3(0f, 5f, 0f);
+                array2[2] = true;
+                photonView.RPC(text, rpcTarget, array2);
+                FlushRPCS();
+            }
+        }
+
+        public static void Spazropegun()
+        {
+            if (ControllerInputPoller.instance.rightGrab)
+            {
+                Physics.Raycast(GorillaLocomotion.Player.Instance.rightControllerTransform.position, -GorillaLocomotion.Player.Instance.rightControllerTransform.up, out var hitInfo);
+                GorillaRopeSwing swing = hitInfo.collider.GetComponentInParent<GorillaRopeSwing>();
+                NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                NewPointer.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+                NewPointer.GetComponent<Renderer>().material.color = Color.blue;
+                NewPointer.transform.position = hitInfo.point;
+                GameObject.Destroy(NewPointer.GetComponent<BoxCollider>());
+                GameObject.Destroy(NewPointer.GetComponent<Rigidbody>());
+                GameObject.Destroy(NewPointer.GetComponent<Collider>());
+                if (ControllerInputPoller.instance.rightControllerIndexFloat >= 0.3f)
+                {
+                    if (swing != null)
+                    {
+                        PhotonView photonView = swing.photonView;
+                        string text = "SetVelocity";
+                        RpcTarget rpcTarget = 0;
+                        object[] array2 = new object[4];
+                        array2[0] = 1;
+                        array2[1] = new Vector3(UnityEngine.Random.Range(-100, 100), UnityEngine.Random.Range(-100, 100), UnityEngine.Random.Range(-100, 100));
+                        array2[2] = true;
+                        photonView.RPC(text, rpcTarget, array2);
+                        SynxMenuMods.FlushRPCS();
+                    }
+
+                    GameObject.Destroy(NewPointer);
+                }
+                else
+                {
+
+                }
+            }
+            if (NewPointer != null)
+            {
+                GameObject.Destroy(NewPointer, Time.deltaTime);
+            }
+        }
+
+        private static Texture menuImage;
+        private static bool AntiRepeatGun;
+
+        public static void urmom()
+        {
+            if (ControllerInputPoller.instance.rightGrab)
+            {
+                GameObject.Destroy(GameObject.Find("BLOCK"));
+                GameObject.Destroy(GameObject.Find("BLOCK"));
+                GameObject.Destroy(GameObject.Find("BLOCK"));
+                GameObject.Destroy(GameObject.Find("BLOCK"));
+                GameObject.Destroy(GameObject.Find("BLOCK"));
+                GameObject.Destroy(GameObject.Find("BLOCK"));
+            }
+        }
+        public static GameObject SpawnBlock(Vector3 vector, bool gravEnabled, float mass, PrimitiveType type, string name)
+        {
+            GameObject b = GameObject.CreatePrimitive(type);
+            b.transform.position = vector;
+            b.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+            b.name = name;
+            b.GetComponent<Renderer>().material.mainTexture = menuImage;
+            Rigidbody r = b.AddComponent<Rigidbody>();
+            r.detectCollisions = true;
+            r.isKinematic = false;
+            r.mass = mass;
+            r.useGravity = gravEnabled;
+            r.collisionDetectionMode = CollisionDetectionMode.Discrete;
+            BoxCollider bc = b.AddComponent<BoxCollider>();
+            return b;
+        }
+
+        public static void bean()
+        {
+            if (ControllerInputPoller.instance.rightGrab)
+            {
+                Physics.Raycast(GorillaLocomotion.Player.Instance.rightControllerTransform.position, -GorillaLocomotion.Player.Instance.rightControllerTransform.up, out var hitInfo);
+                NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                NewPointer.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+                NewPointer.GetComponent<Renderer>().material.color = Color.blue;
+                NewPointer.transform.position = hitInfo.point;
+                GameObject.Destroy(NewPointer.GetComponent<BoxCollider>());
+                GameObject.Destroy(NewPointer.GetComponent<Rigidbody>());
+                GameObject.Destroy(NewPointer.GetComponent<Collider>());
+                if (ControllerInputPoller.instance.rightControllerIndexFloat >= 0.3f)
+                {
+                    if (!AntiRepeatGun)
+                    {
+                        GameObject b = SpawnBlock(hitInfo.point + new Vector3(0, 0.6f, 0), true, 0.8f, PrimitiveType.Capsule, "BLOCK");
+                        AntiRepeatGun = true;
+                    }
+                    GameObject.Destroy(NewPointer);
+                }
+                else
+                {
+                    AntiRepeatGun = false;
+                }
+            }
+            if (NewPointer != null)
+            {
+                GameObject.Destroy(NewPointer, Time.deltaTime);
+            }
+        }
+
+        public static void ProcessDMod()
+        {
+            GameObject rb = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            GameObject lb = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            GameObject dick = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            WipeColliders(rb);
+            WipeColliders(lb);
+            WipeColliders(dick);
+            rb.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f) * 1.5f;
+            lb.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f) * 1.5f;
+            dick.transform.localScale = new Vector3(0.2f, 0.2f, 0.8f);
+            rb.GetComponent<Renderer>().material = GorillaTagger.Instance.offlineVRRig.mainSkin.material;
+            lb.GetComponent<Renderer>().material = GorillaTagger.Instance.offlineVRRig.mainSkin.material;
+            dick.GetComponent<Renderer>().material = GorillaTagger.Instance.offlineVRRig.mainSkin.material;
+            rb.transform.position = GorillaLocomotion.Player.Instance.bodyCollider.transform.position + GorillaLocomotion.Player.Instance.bodyCollider.transform.forward * 0.08f + GorillaLocomotion.Player.Instance.bodyCollider.transform.right * 0.07f - new Vector3(0, 0.3f, 0);
+            lb.transform.position = GorillaLocomotion.Player.Instance.bodyCollider.transform.position + GorillaLocomotion.Player.Instance.bodyCollider.transform.forward * 0.08f + GorillaLocomotion.Player.Instance.bodyCollider.transform.right * -0.07f - new Vector3(0, 0.3f, 0);
+            dick.transform.position = GorillaLocomotion.Player.Instance.bodyCollider.transform.position - new Vector3(0, 0.2f, 0) + GorillaLocomotion.Player.Instance.bodyCollider.transform.forward * 0.3f;
+            dick.transform.rotation = GorillaLocomotion.Player.Instance.bodyCollider.transform.rotation;
+            GameObject.Destroy(rb, Time.deltaTime);
+            GameObject.Destroy(lb, Time.deltaTime);
+            GameObject.Destroy(dick, Time.deltaTime);
+        }
+
+        public static void WipeColliders(GameObject o)
+        {
+            GameObject.Destroy(o.GetComponent<Collider>());
+            GameObject.Destroy(o.GetComponent<MeshCollider>());
+            GameObject.Destroy(o.GetComponent<BoxCollider>());
+            GameObject.Destroy(o.GetComponent<SphereCollider>());
+            GameObject.Destroy(o.GetComponent<CapsuleCollider>());
+        }
+
+        public static bool ghostToggled;
+
+        public static void GhostMonke()
+        {
+            if (ControllerInputPoller.instance.rightGrab)
+            {
+                if (!ghostToggled && GorillaTagger.Instance.offlineVRRig.enabled)
+                {
+                    if (GorillaTagger.Instance.offlineVRRig.enabled)
+                    {
+                        GhostPatch.Prefix(GorillaTagger.Instance.offlineVRRig);
+                    }
+                    GorillaTagger.Instance.offlineVRRig.enabled = false;
+                    GameObject.Destroy(RCircle);
+                    GameObject.Destroy(LCircle);
+                    RCircle = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                    RCircle.GetComponent<Renderer>().material.color = new Color32(255, 255, 255, 1);
+                    RCircle.transform.position = GorillaLocomotion.Player.Instance.rightControllerTransform.position;
+                    RCircle.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                    UnityEngine.Object.Destroy(RCircle.GetComponent<Collider>());
+                    UnityEngine.Object.Destroy(RCircle.GetComponent<Rigidbody>());
+                    LCircle = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                    LCircle.GetComponent<Renderer>().material.color = new Color32(255, 255, 255, 1);
+                    LCircle.transform.position = GorillaLocomotion.Player.Instance.leftControllerTransform.position;
+                    LCircle.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                    UnityEngine.Object.Destroy(LCircle.GetComponent<Collider>());
+                    UnityEngine.Object.Destroy(LCircle.GetComponent<Rigidbody>());
+                    ghostToggled = true;
+                }
+                else
+                {
+                    if (!ghostToggled && !GorillaTagger.Instance.offlineVRRig.enabled)
+                    {
+                        GorillaTagger.Instance.offlineVRRig.enabled = true;
+                        LCircle.transform.position = new Vector3(9999, 9999, 9999);
+                        RCircle.transform.position = new Vector3(9999, 9999, 9999);
+                        ghostToggled = true;
+                    }
+                }
+            }
+            else
+            {
+                ghostToggled = false;
+            }
+        }
+
+        public static GameObject bomb;
+        public static Color BombColor;
+        public static void Bomb()
+        {
+            if (ControllerInputPoller.instance.rightControllerGripFloat == 1f)
+            {
+                if (bomb == null)
+                {
+                    bomb = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    GameObject.Destroy(bomb.GetComponent<Collider>());
+                    GameObject.Destroy(bomb.GetComponent<Rigidbody>());
+                    bomb.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+                    BombColor = Color.red;
+                    bomb.GetComponent<Renderer>().material.color = BombColor;
+                }
+                bomb.transform.position = GorillaLocomotion.Player.Instance.rightControllerTransform.transform.position;
+            }
+            if (ControllerInputPoller.TriggerFloat(XRNode.RightHand) == 1f)
+            {
+                GameObject.Destroy(bomb);
+                GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().AddExplosionForce(99999f, bomb.transform.position, 5f);
+            }
+        }
+
+        public static GameObject NewPointer;
+
+        public static void TagGun()
+        {
+            if (ControllerInputPoller.instance.rightGrab)
+            {
+                Physics.Raycast(GorillaLocomotion.Player.Instance.rightControllerTransform.position, -GorillaLocomotion.Player.Instance.rightControllerTransform.up, out var hitInfo);
+                NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                NewPointer.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+                NewPointer.GetComponent<Renderer>().material.color = Color.blue;
+                NewPointer.transform.position = hitInfo.point;
+                GameObject.Destroy(NewPointer.GetComponent<BoxCollider>());
+                GameObject.Destroy(NewPointer.GetComponent<Rigidbody>());
+                GameObject.Destroy(NewPointer.GetComponent<Collider>());
+                if (ControllerInputPoller.instance.rightControllerIndexFloat >= 0.3f)
+                {
+                    GorillaTagger.Instance.offlineVRRig.enabled = false;
+                    GorillaLocomotion.Player.Instance.rightControllerTransform.position = hitInfo.point;
+                    GorillaTagger.Instance.offlineVRRig.transform.position = hitInfo.point;
+                    GorillaTagger.Instance.offlineVRRig.enabled = true;
+                    GameObject.Destroy(NewPointer);
+                }
+                else
+                {
+                    GorillaTagger.Instance.offlineVRRig.enabled = true;
+                }
+            }
+            if (NewPointer != null)
+            {
+                GameObject.Destroy(NewPointer, Time.deltaTime);
+            }
+        }
+
+        public static string Gamemode()
+        {
+            PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue("gameMode", out var obj1);
+            return obj1.ToString();
+        }
+
+        public static bool TPantirepeat;
+        public static void TPGun()
+        {
+            if (ControllerInputPoller.instance.rightGrab)
+            {
+                Physics.Raycast(GorillaLocomotion.Player.Instance.rightControllerTransform.position, -GorillaLocomotion.Player.Instance.rightControllerTransform.up, out var hitInfo);
+                NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                NewPointer.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+                NewPointer.GetComponent<Renderer>().material.color = Color.blue;
+                NewPointer.transform.position = hitInfo.point;
+                GameObject.Destroy(NewPointer.GetComponent<BoxCollider>());
+                GameObject.Destroy(NewPointer.GetComponent<Rigidbody>());
+                GameObject.Destroy(NewPointer.GetComponent<Collider>());
+                if (ControllerInputPoller.instance.rightControllerIndexFloat >= 0.3f)
+                {
+                    if (!TPantirepeat)
+                    {
+                        GorillaLocomotion.Player.Instance.headCollider.transform.position = hitInfo.point + new Vector3(0, 0.4f, 0);
+                        GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity = Vector3.zero;
+                        TPantirepeat = true;
+                    }
+                    GameObject.Destroy(NewPointer);
+                }
+                else
+                {
+                    TPantirepeat = false;
+                }
+            }
+            if (NewPointer != null)
+            {
+                GameObject.Destroy(NewPointer, Time.deltaTime);
+            }
+        }
+
+        public static void FlushRPCS()
+        {
+            GorillaNot.instance.rpcCallLimit = 99999999;
+            GorillaNot.instance.rpcErrorMax = 9999999;
+            GorillaNot.instance.rpcCallLimit = 9999999;
+            PhotonNetwork.RemoveRPCs(PhotonNetwork.LocalPlayer);
+            GorillaNot.instance.rpcCallLimit = 99999999;
+            GorillaNot.instance.rpcErrorMax = 9999999;
+            GorillaNot.instance.rpcCallLimit = 9999999;
+            PhotonNetwork.RemoveRPCs(PhotonNetwork.LocalPlayer);
+            GorillaNot.instance.rpcCallLimit = 9999;
+            PhotonNetwork.RemoveRPCs(PhotonNetwork.LocalPlayer);
+            PhotonNetwork.SendAllOutgoingCommands();
+            PhotonNetwork.RemoveRPCsInGroup(666);
+            PhotonNetwork.RemoveRPCsInGroup(666);
+            PhotonNetwork.RemoveRPCs(PhotonNetwork.LocalPlayer);
+        }
+
+
+        public static void NoClip()
+        {
+            bool rightTriggerButton = ControllerInputPoller.instance.leftGrab;
+            if (rightTriggerButton)
+            {
+                MeshCollider[] meshColliders = Resources.FindObjectsOfTypeAll<MeshCollider>();
+                foreach (MeshCollider collider in meshColliders)
+                {
+                    collider.enabled = false;
+                }
+            }
+            else
+            {
+                MeshCollider[] meshColliders = Resources.FindObjectsOfTypeAll<MeshCollider>();
+                foreach (MeshCollider collider in meshColliders)
+                {
+                    collider.enabled = true;
+                }
+            }
+        }
+
+        public static void AntiReportDisconnect3()
+        {
+            try
+            {
+                GameObject gameObject = GameObject.Find("Environment Objects/PersistentObjects_Prefab/GorillaUI");
+                Transform transform = gameObject.transform;
+                for (int i = 0; i < transform.childCount; i++)
+                {
+                    Transform transform2 = transform.GetChild(i);
+                    bool flag = transform2.gameObject.name.Contains("Anchor") && transform2.gameObject.activeSelf;
+                    if (flag)
+                    {
+                        string name = transform2.gameObject.name;
+                        transform2 = transform2.Find("GorillaScoreBoard/LineParent");
+                        for (int j = 0; j < transform2.childCount; j++)
+                        {
+                            Transform child = transform2.GetChild(j);
+                            bool flag2 = child.name.Contains("GorillaPlayerScoreboardLine");
+                            if (flag2)
+                            {
+                                Text component = child.Find("Player Name").GetComponent<Text>();
+                                Transform transform3 = child.Find("ReportButton");
+                                bool flag3 = component != null;
+                                if (flag3)
+                                {
+                                    bool flag4 = component.text == PhotonNetwork.LocalPlayer.NickName.ToUpper();
+                                    if (flag4)
+                                    {
+                                        foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                                        {
+                                            bool flag5 = vrrig != GorillaTagger.Instance.offlineVRRig;
+                                            if (flag5)
+                                            {
+                                                float num = Vector3.Distance(vrrig.rightHandTransform.position, transform3.position);
+                                                float num2 = Vector3.Distance(vrrig.leftHandTransform.position, transform3.position);
+                                                float num3 = 0.35f;
+                                                bool flag6 = !name.Contains("Forest");
+                                                if (flag6)
+                                                {
+                                                    num3 = 0.2f;
+                                                }
+                                                bool flag7 = num < num3 || num2 < num3;
+                                                if (flag7)
+                                                {
+                                                    PhotonNetwork.Disconnect();
+                                                    FlushRPCS();
+                                                    FlushRPCS();
+                                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>joining different room because someone tried to report you.</color>", Color.green);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch
+            {
+            }
+        }
+
+        public static Vector3[] lastLeft = new Vector3[] { Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero };
+
+        public static Vector3[] lastRight = new Vector3[] { Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero };
+
+        public static void PunchMonke()
+        {
+            int index = -1;
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                {
+                    index++;
+
+                    Vector3 they = vrrig.rightHandTransform.position;
+                    Vector3 notthem = GorillaTagger.Instance.offlineVRRig.head.rigTarget.position;
+                    float distance = Vector3.Distance(they, notthem);
+
+                    if (distance < 0.25)
+                    {
+                        GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity += Vector3.Normalize(vrrig.rightHandTransform.position - lastRight[index]) * 5;
+                    }
+                    lastRight[index] = vrrig.rightHandTransform.position;
+
+                    they = vrrig.leftHandTransform.position;
+                    distance = Vector3.Distance(they, notthem);
+
+                    if (distance < 0.25)
+                    {
+                        GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity += Vector3.Normalize(vrrig.rightHandTransform.position - lastLeft[index]) * 5;
+                    }
+                    lastLeft[index] = vrrig.leftHandTransform.position;
+                }
+            }
+        }
+
+        public static void AntiBan()
+        {
+            GorillaNot.instance.rpcCallLimit = int.MaxValue;
+            GorillaNot.instance.logErrorMax = int.MaxValue;
+            GorillaNot.instance.rpcErrorMax = int.MaxValue;
+            GorillaNot.instance.rpcCallLimit = int.MaxValue;
+
+            var fieldInfo = typeof(GorillaNot).GetField("_sendReport", BindingFlags.NonPublic | BindingFlags.Instance);
+            if (fieldInfo != null && GorillaNot.instance != null)
+            {
+                fieldInfo.SetValue(GorillaNot.instance, false);
+            }
+
+            var fieldInfo2 = typeof(GorillaNot).GetField("sendReport", BindingFlags.NonPublic | BindingFlags.Instance);
+            if (fieldInfo2 != null)
+            {
+                fieldInfo2.SetValue(GorillaNot.instance, false);
+            }
+            Type gorillaNotType = typeof(GorillaNot);
+            Type rpcCallTrackerType = gorillaNotType.GetNestedType("RPCCallTracker", BindingFlags.NonPublic);
+            object rpcCallTrackerInstance = Activator.CreateInstance(rpcCallTrackerType);
+            FieldInfo rpccallsField = rpcCallTrackerType.GetField("RPCCalls", BindingFlags.NonPublic | BindingFlags.Instance);
+            FieldInfo rpccallsMaxField = rpcCallTrackerType.GetField("RPCCallsMax", BindingFlags.NonPublic | BindingFlags.Instance);
+            GorillaNot gorillaNotInstance = GorillaNot.instance;
+            FieldInfo userRPCCallsField = gorillaNotType.GetField("userRPCCalls", BindingFlags.NonPublic | BindingFlags.Instance);
+            var userRPCCalls = userRPCCallsField.GetValue(gorillaNotInstance) as Dictionary<string, Dictionary<string, object>>;
+            string localPlayerUserId = PhotonNetwork.LocalPlayer.UserId;
+            if (userRPCCalls != null && userRPCCalls.ContainsKey(localPlayerUserId))
+            {
+                userRPCCalls.Remove(localPlayerUserId);
+            }
+        }
+        public static Color ButtonOffColor = Color.magenta;
+        public static Color ButtonOnColor = Color.grey;
+        public static string ModDescription = "";
+
+        public static GameObject lp;
+        public static GameObject rp;
+        public static bool l_p;
+        public static bool r_p;
+        public static Vector3 PlatformScale = new Vector3(0.02f, 0.3f, 0.38f);
+
+        public static void ProcessPlatformMonke(Vector3 Scale)
+        {
+            Material material = new Material(Shader.Find("GorillaTag/UberShader"));
+            material.color = Color.Lerp(Color.blue, Color.red, Mathf.PingPong(Time.time, 0.6f));
+            if (ControllerInputPoller.instance.leftGrab)
+            {
+                if (!l_p)
+                {
+                    if (lp == null)
+                    {
+                        lp = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        lp.transform.localScale = Scale;
+                        lp.transform.position = GorillaLocomotion.Player.Instance.leftControllerTransform.position + new Vector3(0, -0.03f, 0);
+                        lp.transform.rotation = GorillaLocomotion.Player.Instance.leftControllerTransform.rotation;
+                    }
+                    l_p = true;
+                }
+            }
+            else
+            {
+                l_p = false;
+                GameObject.Destroy(lp);
+                lp = null;
+            }
+            if (ControllerInputPoller.instance.rightGrab)
+            {
+                if (!r_p)
+                {
+                    if (rp == null)
+                    {
+                        rp = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        rp.transform.localScale = Scale;
+                        rp.transform.position = GorillaLocomotion.Player.Instance.rightControllerTransform.position + new Vector3(0, -0.03f, 0);
+                        rp.transform.rotation = GorillaLocomotion.Player.Instance.rightControllerTransform.rotation;
+                    }
+                    r_p = true;
+                }
+            }
+            else
+            {
+                r_p = false;
+                GameObject.Destroy(rp);
+                rp = null;
+            }
+            if (rp != null)
+            {
+                rp.GetComponent<Renderer>().material.color = material.color;
+            }
+            if (lp != null)
+            {
+                lp.GetComponent<Renderer>().material.color = material.color;
+            }
+
+        }
+
+        private static void AddButton(float offset, string text)
+        {
+            GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            UnityEngine.Object.Destroy(gameObject.GetComponent<Rigidbody>());
+            gameObject.GetComponent<BoxCollider>().isTrigger = true;
+            gameObject.transform.parent = SynxPRIVATEMenu.menu.transform;
+            gameObject.transform.rotation = Quaternion.identity;
+            gameObject.transform.localScale = new Vector3(0.09f, 0.8f, 0.08f);
+            gameObject.transform.localPosition = new Vector3(0.56f, 0f, 0.28f - offset);
+            gameObject.AddComponent<SynxButtonCollider>().relatedText = text;
+            int num = -1;
+            for (int i = 0; i < SynxPRIVATEMenu.buttons.Length; i++)
+            {
+                if (text == SynxPRIVATEMenu.buttons[i])
+                {
+                    num = i;
+                    break;
+                }
+            }
+            bool? button3 = SynxPRIVATEMenu.buttonsActive[num];
+            bool button4 = false;
+            bool button5 = button3.GetValueOrDefault() == button4 & button3 != null;
+            if (button5)
+            {
+                gameObject.GetComponent<Renderer>().material.color = ButtonOffColor;
+            }
+            else
+            {
+                button3 = SynxPRIVATEMenu.buttonsActive[num];
+                button4 = true;
+                if (button3.GetValueOrDefault() == button4 & button3 != null)
+                {
+                    gameObject.GetComponent<Renderer>().material.color = ButtonOnColor;
+                }
+                else
+                {
+                    gameObject.GetComponent<Renderer>().material.color = ButtonOffColor;
+                }
+            }
+            Text text2 = new GameObject
+            {
+                transform =
+                {
+                    parent = SynxPRIVATEMenu.canvasObj.transform
+                }
+            }.AddComponent<Text>();
+            text2.font = (Resources.GetBuiltinResource(typeof(Font), "Arial.ttf") as Font);
+            text2.text = text;
+            text2.fontSize = 1;
+            text2.alignment = TextAnchor.MiddleCenter;
+            text2.resizeTextForBestFit = true;
+            text2.resizeTextMinSize = 0;
+            RectTransform component = text2.GetComponent<RectTransform>();
+            component.localPosition = Vector3.zero;
+            component.sizeDelta = new Vector2(.2f, .03f);
+            component.localPosition = new Vector3(.064f, 0, .111f - offset / 2.55f);
+            component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+        }
+
+        public static void Draw()
+        {
+            StartRPCThread();
+            SynxPRIVATEMenu.menu = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            UnityEngine.Object.Destroy(SynxPRIVATEMenu.menu.GetComponent<Rigidbody>());
+            UnityEngine.Object.Destroy(SynxPRIVATEMenu.menu.GetComponent<BoxCollider>());
+            UnityEngine.Object.Destroy(SynxPRIVATEMenu.menu.GetComponent<Renderer>());
+            SynxPRIVATEMenu.menu.transform.localScale = new Vector3(0.1f, 0.3f, 0.3825f);
+            GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            UnityEngine.Object.Destroy(gameObject.GetComponent<Rigidbody>());
+            UnityEngine.Object.Destroy(gameObject.GetComponent<BoxCollider>());
+            gameObject.transform.parent = SynxPRIVATEMenu.menu.transform;
+            gameObject.transform.rotation = Quaternion.identity;
+            gameObject.transform.localScale = new Vector3(0.1f, 0.94f, 1.2f);
+            gameObject.GetComponent<Renderer>().material.color = menuColor;
+            gameObject.transform.position = new Vector3(0.05f, 0f, 0f);
+            GradientColorKey[] array = new GradientColorKey[5];
+            array[0].color = new Color32(30, 12, 73, 1);
+            array[0].time = 0f;
+            array[1].color = new Color32(30, 12, 73, 1);
+            array[1].time = 0.3f;
+            array[2].color = new Color32(30, 12, 73, 1);
+            array[2].time = 0.6f;
+            array[3].color = new Color32(30, 12, 73, 1);
+            array[3].time = 0.9f;
+            array[4].color = new Color32(30, 12, 73, 1);
+            array[4].time = 1f;
+            SynxPRIVATEMenu.ColorChanger colorChanger = gameObject.AddComponent<SynxPRIVATEMenu.ColorChanger>();
+            colorChanger.colors = new Gradient
+            {
+                colorKeys = array
+            };
+            colorChanger.Start();
+            SynxPRIVATEMenu.canvasObj = new GameObject();
+            SynxPRIVATEMenu.canvasObj.transform.parent = SynxPRIVATEMenu.menu.transform;
+            Canvas canvas = SynxPRIVATEMenu.canvasObj.AddComponent<Canvas>();
+            CanvasScaler canvasScaler = SynxPRIVATEMenu.canvasObj.AddComponent<CanvasScaler>();
+            SynxPRIVATEMenu.canvasObj.AddComponent<GraphicRaycaster>();
+            canvas.renderMode = RenderMode.WorldSpace;
+            canvasScaler.dynamicPixelsPerUnit = 1000f;
+            Text text = new GameObject
+            {
+                transform =
+                {
+                    parent = SynxPRIVATEMenu.canvasObj.transform
+                }
+            }.AddComponent<Text>();
+            text.font = (Resources.GetBuiltinResource(typeof(Font), "Arial.ttf") as Font);
+            text.text = "KAV Menu V3.141592653 [" + SynxPRIVATEMenu.pageNumber.ToString() + "]";
+            text.color = TextColor;
+            text.fontSize = 1;
+            text.fontStyle = FontStyle.BoldAndItalic;
+            text.alignment = TextAnchor.MiddleCenter;
+            text.resizeTextForBestFit = true;
+            text.resizeTextMinSize = 0;
+            RectTransform component = text.GetComponent<RectTransform>();
+            component.localPosition = Vector3.zero;
+            component.sizeDelta = new Vector2(0.28f, 0.05f);
+            component.position = new Vector3(0.06f, 0f, 0.148f);
+            component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+            Text text2 = new GameObject
+            {
+                transform =
+                {
+                    parent = SynxPRIVATEMenu.canvasObj.transform
+                }
+            }.AddComponent<Text>();
+            text2.font = (Resources.GetBuiltinResource(typeof(Font), "Arial.ttf") as Font);
+            text2.text = ModDescription;
+            text2.color = TextColor;
+            text2.fontSize = 2;
+            text2.fontStyle = FontStyle.BoldAndItalic;
+            text2.alignment = TextAnchor.MiddleCenter;
+            text2.resizeTextForBestFit = true;
+            text2.resizeTextMinSize = 0;
+            RectTransform component2 = text2.GetComponent<RectTransform>();
+            component2.localPosition = Vector3.zero;
+            component2.sizeDelta = new Vector2(0.28f, 0.05f);
+            component2.position = new Vector3(0.06f, 0f, -0.182f); // default .06f, 0f, 0.158f);
+            component2.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+            SynxPRIVATEMenu.AddPageButtons();
+            string[] array2 = SynxPRIVATEMenu.buttons.Skip(SynxPRIVATEMenu.pageNumber * SynxPRIVATEMenu.pageSize).Take(SynxPRIVATEMenu.pageSize).ToArray<string>();
+            for (int i = 0; i < array2.Length; i++)
+            {
+                SynxPRIVATEMenu.AddButton((float)i * 0.1f + 0.10f, array2[i]);
+            }
+        }
+
+        private static void AddPageButtons()
+        {
+            int num = (SynxPRIVATEMenu.buttons.Length + SynxPRIVATEMenu.pageSize - 1) / SynxPRIVATEMenu.pageSize;
+            int num2 = SynxPRIVATEMenu.pageNumber + 1;
+            int num3 = SynxPRIVATEMenu.pageNumber - 1;
+            if (num2 > num - 1)
+            {
+                num2 = 0;
+            }
+            if (num3 < 0)
+            {
+                num3 = num - 1;
+            }
+            if (MenuLayout == Layout.Default)
+            {
+                float num4 = 0f;
+                GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                UnityEngine.Object.Destroy(gameObject.GetComponent<Rigidbody>());
+                gameObject.GetComponent<BoxCollider>().isTrigger = true;
+                gameObject.transform.parent = menu.transform;
+                gameObject.transform.rotation = Quaternion.identity;
+                gameObject.transform.localScale = new Vector3(0.09f, 0.43f, 0.10f);
+                gameObject.transform.localPosition = new Vector3(0.56f, 0.23f, -0.34f - num4);
+                gameObject.AddComponent<SynxButtonCollider>().relatedText = "PreviousPage";
+                gameObject.GetComponent<Renderer>().material.color = new Color32(0, 0, 0, 1);
+                GameObject gameObject2 = new GameObject();
+                gameObject2.transform.parent = canvasObj.transform;
+                Text text = gameObject2.AddComponent<Text>();
+                text.font = Resources.GetBuiltinResource(typeof(Font), "Arial.ttf") as Font;
+                text.text = "<<<<<<";
+                text.fontSize = 1;
+                text.alignment = TextAnchor.MiddleCenter;
+                text.resizeTextForBestFit = true;
+                text.resizeTextMinSize = 0;
+                RectTransform component = text.GetComponent<RectTransform>();
+                component.localPosition = Vector3.zero;
+                component.sizeDelta = new Vector2(0.08f, 0.03f);
+                component.localPosition = new Vector3(0.064f, 0.07f, -0.13f);
+                component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+                num4 = 0.13f;
+                GameObject gameObject3 = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                UnityEngine.Object.Destroy(gameObject3.GetComponent<Rigidbody>());
+                gameObject3.GetComponent<BoxCollider>().isTrigger = true;
+                gameObject3.transform.parent = menu.transform;
+                gameObject3.transform.rotation = Quaternion.identity;
+                gameObject3.transform.localScale = new Vector3(0.09f, 0.43f, 0.10f);
+                gameObject3.transform.localPosition = new Vector3(0.56f, -0.23f, -0.21f - num4);
+                gameObject3.AddComponent<SynxButtonCollider>().relatedText = "NextPage";
+                gameObject3.GetComponent<Renderer>().material.color = new Color32(0, 0, 0, 1);
+                GameObject gameObject4 = new GameObject();
+                gameObject4.transform.parent = canvasObj.transform;
+                Text text2 = gameObject4.AddComponent<Text>();
+                text2.font = Resources.GetBuiltinResource(typeof(Font), "Arial.ttf") as Font;
+                text2.text = ">>>>>>";
+                text2.fontSize = 1;
+                text2.alignment = TextAnchor.MiddleCenter;
+                text2.resizeTextForBestFit = true;
+                text2.resizeTextMinSize = 0;
+                RectTransform component2 = text2.GetComponent<RectTransform>();
+                component2.localPosition = Vector3.zero;
+                component2.sizeDelta = new Vector2(0.08f, 0.03f);
+                component2.localPosition = new Vector3(0.064f, -0.07f, -0.13f);
+                component2.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+            }
+            else
+            {
+                if (MenuLayout == Layout.Side)
+                {
+                    float num4 = 0.28f;
+                    GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    GameObject.Destroy(gameObject.GetComponent<Rigidbody>());
+                    gameObject.GetComponent<BoxCollider>().isTrigger = true;
+                    gameObject.transform.parent = SynxPRIVATEMenu.menu.transform;
+                    gameObject.transform.rotation = Quaternion.identity;
+                    gameObject.transform.localScale = new Vector3(0.09f, 0.18f, 1f);
+                    gameObject.transform.localPosition = new Vector3(0.56f, 0.75f, 0.28f - num4);
+                    gameObject.AddComponent<SynxButtonCollider>().relatedText = "PreviousPage";
+                    gameObject.GetComponent<Renderer>().material.color = Color.black;
+                    Text text = new GameObject
+                    {
+                        transform =
+        {
+            parent = SynxPRIVATEMenu.canvasObj.transform
+        }
+                    }.AddComponent<Text>();
+                    text.font = (Resources.GetBuiltinResource(typeof(Font), "Arial.ttf") as Font);
+                    text.text = "";
+                    text.fontSize = 1;
+                    text.alignment = TextAnchor.MiddleCenter;
+                    text.resizeTextForBestFit = true;
+                    text.resizeTextMinSize = 0;
+                    RectTransform component = text.GetComponent<RectTransform>();
+                    component.localPosition = Vector3.zero;
+                    component.sizeDelta = new Vector2(0.2f, 0.03f);
+                    component.localPosition = new Vector3(0.064f, 0f, 0.111f - num4 / 2.55f);
+                    component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+                    num4 = 0.28f;
+                    GameObject gameObject2 = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    GameObject.Destroy(gameObject2.GetComponent<Rigidbody>());
+                    gameObject2.GetComponent<BoxCollider>().isTrigger = true;
+                    gameObject2.transform.parent = SynxPRIVATEMenu.menu.transform;
+                    gameObject2.transform.rotation = Quaternion.identity;
+                    gameObject2.transform.localScale = new Vector3(0.09f, 0.18f, 1f);
+                    gameObject2.transform.localPosition = new Vector3(0.56f, -0.75f, 0.28f - num4);
+                    gameObject2.AddComponent<SynxButtonCollider>().relatedText = "NextPage";
+                    gameObject2.GetComponent<Renderer>().material.color = Color.black;
+                    Text text2 = new GameObject
+                    {
+                        transform =
+        {
+            parent = SynxPRIVATEMenu.canvasObj.transform
+        }
+                    }.AddComponent<Text>();
+                    text2.font = (Resources.GetBuiltinResource(typeof(Font), "Arial.ttf") as Font);
+                    text2.text = "";
+                    text2.fontSize = 1;
+                    text2.alignment = TextAnchor.MiddleCenter;
+                    text2.resizeTextForBestFit = true;
+                    text2.resizeTextMinSize = 0;
+                    RectTransform component2 = text2.GetComponent<RectTransform>();
+                    component2.localPosition = Vector3.zero;
+                    component2.sizeDelta = new Vector2(0.2f, 0.03f);
+                    component2.localPosition = new Vector3(0.064f, 0f, 0.111f - num4 / 2.55f);
+                    component2.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+                }
+                if (MenuLayout == Layout.Triggers)
+                {
+                    TriggerPageManager();
+                }
+            }
+        }
+
+        public static void Toggle(string relatedText)
+        {
+            int num = (SynxPRIVATEMenu.buttons.Length + SynxPRIVATEMenu.pageSize - 1) / SynxPRIVATEMenu.pageSize;
+            if (relatedText == "NextPage")
+            {
+                if (SynxPRIVATEMenu.pageNumber < num - 1)
+                {
+                    SynxPRIVATEMenu.pageNumber++;
+                }
+                else
+                {
+                    SynxPRIVATEMenu.pageNumber = 0;
+                }
+                UnityEngine.Object.Destroy(SynxPRIVATEMenu.menu);
+                SynxPRIVATEMenu.menu = null;
+                SynxPRIVATEMenu.Draw();
+            }
+            else
+            {
+                if (relatedText == "PreviousPage")
+                {
+                    if (SynxPRIVATEMenu.pageNumber > 0)
+                    {
+                        SynxPRIVATEMenu.pageNumber--;
+                    }
+                    else
+                    {
+                        SynxPRIVATEMenu.pageNumber = num - 1;
+                    }
+                    UnityEngine.Object.Destroy(SynxPRIVATEMenu.menu);
+                    SynxPRIVATEMenu.menu = null;
+                    SynxPRIVATEMenu.Draw();
+                }
+                else
+                {
+                    int num2 = -1;
+                    for (int i = 0; i < SynxPRIVATEMenu.buttons.Length; i++)
+                    {
+                        if (relatedText == SynxPRIVATEMenu.buttons[i])
+                        {
+                            num2 = i;
+                            break;
+                        }
+                    }
+                    if (SynxPRIVATEMenu.buttonsActive[num2] != null)
+                    {
+                        SynxPRIVATEMenu.buttonsActive[num2] = !SynxPRIVATEMenu.buttonsActive[num2];
+                        UnityEngine.Object.Destroy(SynxPRIVATEMenu.menu);
+                        SynxPRIVATEMenu.menu = null;
+                        SynxPRIVATEMenu.Draw();
+                    }
+                }
+            }
+        }
+
+        private void Init()
+        {
+            MainCamera = GameObject.Find("Main Camera");
+            HUDObj = new GameObject();
+            HUDObj2 = new GameObject();
+            HUDObj2.name = "NOTIFICATIONLIB_HUD_OBJ";
+            HUDObj.name = "NOTIFICATIONLIB_HUD_OBJ";
+            HUDObj.AddComponent<Canvas>();
+            HUDObj.AddComponent<CanvasScaler>();
+            HUDObj.AddComponent<GraphicRaycaster>();
+            HUDObj.GetComponent<Canvas>().enabled = true;
+            HUDObj.GetComponent<Canvas>().renderMode = RenderMode.WorldSpace;
+            HUDObj.GetComponent<Canvas>().worldCamera = MainCamera.GetComponent<Camera>();
+            HUDObj.GetComponent<RectTransform>().sizeDelta = new Vector2(5f, 5f);
+            HUDObj.GetComponent<RectTransform>().position = new Vector3(MainCamera.transform.position.x, MainCamera.transform.position.y, MainCamera.transform.position.z);
+            HUDObj2.transform.position = new Vector3(MainCamera.transform.position.x, MainCamera.transform.position.y, MainCamera.transform.position.z - 4.6f);
+            HUDObj.transform.parent = HUDObj2.transform;
+            HUDObj.GetComponent<RectTransform>().localPosition = new Vector3(0f, 0f, 1.6f);
+            Vector3 eulerAngles = HUDObj.GetComponent<RectTransform>().rotation.eulerAngles;
+            eulerAngles.y = -270f;
+            HUDObj.transform.localScale = new Vector3(1f, 1f, 1f);
+            HUDObj.GetComponent<RectTransform>().rotation = Quaternion.Euler(eulerAngles);
+            Testtext = new GameObject
+            {
+                transform =
+                {
+                    parent = HUDObj.transform
+                }
+            }.AddComponent<Text>();
+            Testtext.text = "";
+            Testtext.fontSize = 10;
+            Testtext.font = GameObject.Find("COC Text").GetComponent<Text>().font;
+            Testtext.rectTransform.sizeDelta = new Vector2(260f, 70f);
+            Testtext.alignment = TextAnchor.LowerLeft;
+            Testtext.rectTransform.localScale = new Vector3(0.01f, 0.01f, 1f);
+            Testtext.rectTransform.localPosition = new Vector3(-1.5f, -0.9f, -0.6f);
+            Testtext.material = AlertText;
+        }
+
+        private void FixedUpdate()
+        {
+            if (!HasInit && GameObject.Find("Main Camera") != null)
+            {
+                Init();
+                HasInit = true;
+            }
+            HUDObj2.transform.position = new Vector3(MainCamera.transform.position.x, MainCamera.transform.position.y, MainCamera.transform.position.z);
+            HUDObj2.transform.rotation = MainCamera.transform.rotation;
+            if (Testtext.text != "")
+            {
+                NotificationDecayTimeCounter++;
+                if (NotificationDecayTimeCounter > NotificationDecayTime)
+                {
+                    Notifilines = null;
+                    newtext = "";
+                    NotificationDecayTimeCounter = 0;
+                    Notifilines = Testtext.text.Split(Environment.NewLine.ToCharArray()).Skip(1).ToArray<string>();
+                    foreach (string text in Notifilines)
+                    {
+                        if (text != "")
+                        {
+                            newtext = newtext + text + "\n";
+                        }
+                    }
+                    Testtext.text = newtext;
+                }
+            }
+            else
+            {
+                NotificationDecayTimeCounter = 0;
+            }
+        }
+    }
+}

@@ -75,7 +75,7 @@ namespace iiMenu.Menu
                             reference.transform.parent = GorillaTagger.Instance.rightHandTransform;
                         }
                         reference.GetComponent<Renderer>().material.color = bgColorA;
-                        reference.transform.localPosition = new Vector3(0f, -0.1f, 0f);
+                        reference.transform.localPosition = pointerOffset;
                         reference.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
                         buttonCollider = reference.GetComponent<SphereCollider>();
                     }
@@ -90,14 +90,17 @@ namespace iiMenu.Menu
                             if (rightHand || (bothHands && ControllerInputPoller.instance.rightControllerSecondaryButton))
                             {
                                 comp.velocity = GorillaLocomotion.Player.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0);
+                                comp.angularVelocity = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").GetComponent<GorillaVelocityEstimator>().angularVelocity;
                             }
                             else
                             {
                                 comp.velocity = GorillaLocomotion.Player.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0);
+                                comp.angularVelocity = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").GetComponent<GorillaVelocityEstimator>().angularVelocity;
                             }
                             if (annoyingMode)
                             {
                                 comp.velocity = new Vector3(UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33));
+                                comp.angularVelocity = new Vector3(UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33));
                             }
 
                             UnityEngine.Object.Destroy(menu, 2);
@@ -132,10 +135,10 @@ namespace iiMenu.Menu
                         GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/Wall Monitors Screens/wallmonitorskyjungle").GetComponent<Renderer>().material = OrangeUI;
                         GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/Terrain/campgroundstructure/scoreboard/REMOVE board").GetComponent<Renderer>().material = OrangeUI;
 
-                        GameObject.Find("Environment Objects/LocalObjects_Prefab/Mountain/UI/Text/monitor").GetComponent<Renderer>().material = OrangeUI;
-                        GameObject.Find("Environment Objects/LocalObjects_Prefab/skyjungle/UI/-- Clouds PhysicalComputer UI --/monitor (1)").GetComponent<Renderer>().material = OrangeUI;
-                        GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/-- PhysicalComputer UI --/monitor").GetComponent<Renderer>().material = OrangeUI;
-                        GameObject.Find("Environment Objects/LocalObjects_Prefab/Beach/BeachComputer/UI FOR BEACH COMPUTER/Text/monitor").GetComponent<Renderer>().material = OrangeUI;
+                        //GameObject.Find("Mountain/UI/Text/monitor").GetComponent<Renderer>().material = OrangeUI;
+                        //GameObject.Find("skyjungle/UI/-- Clouds PhysicalComputer UI --/monitor (1)").GetComponent<Renderer>().material = OrangeUI;
+                        //GameObject.Find("TreeRoom/TreeRoomInteractables/UI/-- PhysicalComputer UI --/monitor").GetComponent<Renderer>().material = OrangeUI;
+                        //GameObject.Find("Beach/BeachComputer/UI FOR BEACH COMPUTER/Text/monitor").GetComponent<Renderer>().material = OrangeUI;
                     }
                     catch (Exception exception)
                     {
@@ -177,7 +180,7 @@ namespace iiMenu.Menu
                             }
                         }
                         motdTextB.text = @"
-You are using version 2.9p1. This menu was created by iiDk (@goldentrophy) on
+You are using version 3.0b1. This menu was created by iiDk (@goldentrophy) on
 discord. This menu is completely free and open sourced, if you paid for this
 menu you have been scammed. There are a total of <b> " + fullModAmount + @" </b> mods on this
 menu. <color=red>I, iiDk, am not responsible for any bans using this menu.</color> If you get
@@ -1188,7 +1191,7 @@ banned while using this, please report it to the discord server.";
                     bg.transform.localScale = new Vector3(10f, 10f, 0.01f);
                     bg.transform.transform.position = TPC.transform.position + TPC.transform.forward;
                     bg.GetComponent<Renderer>().material.color = new Color32((byte)(bgColorA.r * 50), (byte)(bgColorA.g * 50), (byte)(bgColorA.b * 50), 255);
-                    GameObject.Destroy(bg, Time.deltaTime);
+                    GameObject.Destroy(bg, 1);
                     menu.transform.parent = TPC.transform;
                     menu.transform.position = (TPC.transform.position + (Vector3.Scale(TPC.transform.forward, new Vector3(0.5f, 0.5f, 0.5f)))) + (Vector3.Scale(TPC.transform.up, new Vector3(-0.02f, -0.02f, -0.02f)));
                     Vector3 rot = TPC.transform.rotation.eulerAngles;
@@ -1809,7 +1812,7 @@ banned while using this, please report it to the discord server.";
         public static float rightTrigger = 0f;
 
         public static string ownerPlayerId = "E19CE8918FD9E927";
-        public static string questPlayerId = "373BOCBEF62D8F44";
+        public static string questPlayerId = "879C16AE30FE4827";
 
         public static GameObject cam = null;
         public static Camera TPC = null;
@@ -1881,7 +1884,7 @@ banned while using this, please report it to the discord server.";
             4, 3, 5, 4, 19, 18, 20, 19, 3, 18, 21, 20, 22, 21, 25, 21, 29, 21, 31, 29, 27, 25, 24, 22, 6, 5, 7, 6, 10, 6, 14, 6, 16, 14, 12, 10, 9, 7
         };
 
-        public static string[] fullProjectileNames = new string[]
+        /*public static string[] fullProjectileNames = new string[]
         {
             "SlingshotProjectile",
             "SnowballProjectile",
@@ -1900,6 +1903,14 @@ banned while using this, please report it to the discord server.";
             "BucketGift_Round_Projectile Variant",
             "BucketGift_Square_Projectile Variant",
             "ScienceCandyProjectile Variant"
+        };*/
+        public static string[] fullProjectileNames = new string[]
+        {
+            "Snowball",
+            "WaterBalloon",
+            "LavaRock",
+            "ThrowableGift",
+            "ScienceCandy",
         };
 
         public static string[] fullTrailNames = new string[]
@@ -1930,6 +1941,9 @@ banned while using this, please report it to the discord server.";
 
         public static Vector3 walkPos;
         public static Vector3 walkNormal;
+
+        public static Vector3 pointerOffset = new Vector3(0f, -0.1f, 0f);
+        public static int pointerIndex = 0;
 
         public static bool noclip = false;
 
@@ -2008,6 +2022,7 @@ banned while using this, please report it to the discord server.";
         public static int colorChangeType = 0;
         public static bool strobeColor = false;
 
+        public static bool AntiCrashToggle = false;
         public static bool AntiCheatSelf = false;
         public static bool AntiCheatAll = false;
 

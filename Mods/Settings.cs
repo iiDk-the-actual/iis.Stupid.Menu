@@ -183,7 +183,7 @@ namespace iiMenu.Mods
         public static void ChangeMenuTheme()
         {
             themeType++;
-            if (themeType > 14)
+            if (themeType > 15)
             {
                 themeType = 1;
             }
@@ -330,6 +330,16 @@ namespace iiMenu.Mods
                 buttonClickedB = Color.white;
                 textColor = Color.black;
             }
+            if (themeType == 15)
+            {
+                bgColorA = new Color32(122, 35, 159, 255);
+                bgColorB = new Color32(60, 26, 89, 255);
+                buttonDefaultA = new Color32(60, 26, 89, 255);
+                buttonDefaultB = new Color32(60, 26, 89, 255);
+                buttonClickedA = new Color32(122, 35, 159, 255);
+                buttonClickedB = new Color32(122, 35, 159, 255);
+                textColor = Color.white;
+            }
         }
 
         public static void ChangePageType()
@@ -395,6 +405,25 @@ namespace iiMenu.Mods
             {
                 activeFont = consolas;
             }
+        }
+
+        public static void ChangePointerPosition()
+        {
+            pointerIndex++;
+            if (pointerIndex > 3)
+            {
+                pointerIndex = 0;
+            }
+
+            Vector3[] pointerPos = new Vector3[]
+            {
+                new Vector3(0f, -0.1f, 0f),
+                new Vector3(0f, -0.1f, -0.15f),
+                new Vector3(0f, 0.1f, -0.05f),
+                new Vector3(0f, 0.0666f, 0.1f)
+            };
+            pointerOffset = pointerPos[pointerIndex];
+            try { reference.transform.localPosition = pointerOffset; } catch { }
         }
 
         public static void DisorganizeMenu()
@@ -479,7 +508,7 @@ namespace iiMenu.Mods
                 }
             }
 
-            string ihateyouguys = platformMode+"\n"+platformShape+"\n"+flySpeedCycle+"\n"+longarmCycle+"\n"+speedboostCycle+"\n"+projmode+"\n"+trailmode+"\n"+shootCycle;
+            string ihateyouguys = platformMode+"\n"+platformShape+"\n"+flySpeedCycle+"\n"+longarmCycle+"\n"+speedboostCycle+"\n"+projmode+"\n"+trailmode+"\n"+shootCycle+"\n"+pointerIndex;
 
             if (!Directory.Exists("iisStupidMenu"))
             {
@@ -542,6 +571,10 @@ namespace iiMenu.Mods
                     Projectiles.ChangeProjectile();
                     trailmode = int.Parse(data[6]) - 1;
                     Projectiles.ChangeTrail();
+                    shootCycle = int.Parse(data[7]) - 1;
+                    Projectiles.ChangeShootSpeed();
+                    pointerIndex = int.Parse(data[8]) - 1;
+                    ChangePointerPosition();
                 }
                 catch { }
 

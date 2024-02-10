@@ -5,6 +5,7 @@ using UnityEngine;
 using static iiMenu.Menu.Main;
 using PlayFab.Internal;
 using PlayFab;
+using GorillaTag;
 
 namespace iiMenu.Patches
 {
@@ -161,6 +162,18 @@ namespace iiMenu.Patches
         }
     }
 
+    [HarmonyPatch(typeof(ScienceExperimentPlatformGenerator), "SpawnSodaBubbleRPC")]
+    public class AntiCrashPatch
+    {
+        public static bool Prefix(Vector2 surfacePosLocal, float spawnSize, float lifetime, double spawnTime)
+        {
+            if (AntiCrashToggle)
+            {
+                return false;
+            }
+            return true;
+        }
+    }
     /*
     [HarmonyPatch(typeof(GorillaGameManager), "LaunchSlingshotProjectile")]
     public class AntiCrash

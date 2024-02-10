@@ -14,12 +14,15 @@ using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 using static iiMenu.Mods.Spammers.Projectiles;
 using GorillaTag;
+using HarmonyLib;
+using System.Reflection;
+using UnityEngine.InputSystem.LowLevel;
 
 namespace iiMenu.Mods
 {
     internal class Overpowered
     {
-        public static void AntiBan() // NOT MINE MADE BY REV
+        public static void AntiBan() // patched ?
         {
             object obj;
             PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue("gameMode", out obj);
@@ -48,6 +51,42 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void ForceRiseLava()
+        {
+            InfectionLavaController controller = InfectionLavaController.Instance;
+            System.Type type = controller.GetType();
+
+            FieldInfo fieldInfo = type.GetField("reliableState", BindingFlags.NonPublic | BindingFlags.Instance);
+
+            object reliableState = fieldInfo.GetValue(controller);
+
+            FieldInfo stateFieldInfo = reliableState.GetType().GetField("state");
+            stateFieldInfo.SetValue(reliableState, InfectionLavaController.RisingLavaState.Full);
+
+            FieldInfo stateFieldInfo2 = reliableState.GetType().GetField("stateStartTime");
+            stateFieldInfo2.SetValue(reliableState, PhotonNetwork.Time);
+
+            fieldInfo.SetValue(controller, reliableState);
+        }
+
+        public static void ForceDrainLava()
+        {
+            InfectionLavaController controller = InfectionLavaController.Instance;
+            System.Type type = controller.GetType();
+
+            FieldInfo fieldInfo = type.GetField("reliableState", BindingFlags.NonPublic | BindingFlags.Instance);
+
+            object reliableState = fieldInfo.GetValue(controller);
+
+            FieldInfo stateFieldInfo = reliableState.GetType().GetField("state");
+            stateFieldInfo.SetValue(reliableState, InfectionLavaController.RisingLavaState.Drained);
+
+            FieldInfo stateFieldInfo2 = reliableState.GetType().GetField("stateStartTime");
+            stateFieldInfo2.SetValue(reliableState, PhotonNetwork.Time);
+
+            fieldInfo.SetValue(controller, reliableState);
+        }
+
         public static void BubbleGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
@@ -69,14 +108,20 @@ namespace iiMenu.Mods
                 UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
                 if (isCopying && whoCopy != null)
                 {
-                    ScienceExperimentManager.instance.photonView.RPC("SpawnSodaBubbleRPC", GetPlayerFromVRRig(whoCopy), new object[]
+                    if (PhotonNetwork.LocalPlayer.IsMasterClient)
                     {
-                        new Vector2(0f, 0f),
-                        float.MinValue,
-                        9999f,
-                        PhotonNetwork.InRoom ? PhotonNetwork.Time : ((double)Time.time)
-                    });
-                    RPCProtection();
+                        ScienceExperimentManager.instance.photonView.RPC("SpawnSodaBubbleRPC", GetPlayerFromVRRig(whoCopy), new object[]
+                        {
+                            new Vector2(0f, 0f),
+                            float.MinValue,
+                            9999f,
+                            PhotonNetwork.InRoom ? PhotonNetwork.Time : ((double)Time.time)
+                        });
+                        RPCProtection();
+                    } else
+                    {
+                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master.</color>");
+                    }
                 }
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
@@ -99,13 +144,164 @@ namespace iiMenu.Mods
 
         public static void BubbleAll()
         {
-            ScienceExperimentManager.instance.photonView.RPC("SpawnSodaBubbleRPC", RpcTarget.Others, new object[]
+            if (PhotonNetwork.LocalPlayer.IsMasterClient)
             {
-                new Vector2(0f, 0f),
-                float.MinValue,
-                9999f,
-                PhotonNetwork.InRoom ? PhotonNetwork.Time : ((double)Time.time)
-            });
+                ScienceExperimentManager.instance.photonView.RPC("SpawnSodaBubbleRPC", RpcTarget.Others, new object[]
+                {
+                    new Vector2(0f, 0f),
+                    float.MinValue,
+                    9999f,
+                    PhotonNetwork.InRoom ? PhotonNetwork.Time : ((double)Time.time)
+                });
+            }
+            else
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master.</color>");
+            }
+        }
+
+        public static void CrashGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray);
+                if (shouldBePC)
+                {
+                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
+                    Physics.Raycast(ray, out Ray, 100);
+                }
+
+                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                NewPointer.GetComponent<Renderer>().material.color = bgColorA;
+                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+                NewPointer.transform.position = Ray.point;
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
+                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+                if (isCopying && whoCopy != null)
+                {
+                    if (PhotonNetwork.LocalPlayer.IsMasterClient)
+                    {
+                        ScienceExperimentManager.instance.photonView.RPC("SpawnSodaBubbleRPC", GetPlayerFromVRRig(whoCopy), new object[]
+                        {
+                            Random.insideUnitCircle.normalized + new Vector2(0.5f, 2f),
+                            float.MaxValue,
+                            float.MaxValue,
+                            PhotonNetwork.InRoom ? PhotonNetwork.Time : ((double)Time.time)
+                        });
+                        RPCProtection();
+                    }
+                    else
+                    {
+                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master.</color>");
+                    }
+                }
+                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        isCopying = true;
+                        whoCopy = possibly;
+                    }
+                }
+            }
+            else
+            {
+                if (isCopying)
+                {
+                    isCopying = false;
+                }
+            }
+        }
+
+        public static void CrashAll()
+        {
+            if (PhotonNetwork.LocalPlayer.IsMasterClient)
+            {
+                ScienceExperimentManager.instance.photonView.RPC("SpawnSodaBubbleRPC", RpcTarget.Others, new object[]
+                {
+                    Random.insideUnitCircle.normalized + new Vector2(0.5f, 2f),
+                    float.MaxValue,
+                    float.MaxValue,
+                    PhotonNetwork.InRoom ? PhotonNetwork.Time : ((double)Time.time)
+                });
+            }
+            else
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master.</color>");
+            }
+        }
+
+        public static void AcidSelf()
+        {
+            Traverse.Create(ScienceExperimentManager.instance).Field("inGamePlayerCount").SetValue(1);
+            ScienceExperimentManager.PlayerGameState[] states = new ScienceExperimentManager.PlayerGameState[1];
+            int ownerIndex = states.Length > PhotonNetwork.LocalPlayer.ActorNumber ? PhotonNetwork.LocalPlayer.ActorNumber : 0;
+            states[ownerIndex].touchedLiquid = true;
+            states[ownerIndex].playerId = PhotonNetwork.LocalPlayer.ActorNumber;
+            Traverse.Create(ScienceExperimentManager.instance).Field("inGamePlayerStates").SetValue(states);
+        }
+
+        public static void AcidGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray);
+                if (shouldBePC)
+                {
+                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
+                    Physics.Raycast(ray, out Ray, 100);
+                }
+
+                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                NewPointer.GetComponent<Renderer>().material.color = bgColorA;
+                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+                NewPointer.transform.position = Ray.point;
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
+                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > kgDebounce)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        Photon.Realtime.Player player = GetPlayerFromVRRig(possibly);
+                        // Not created by me, leaked by REV
+                        Traverse.Create(ScienceExperimentManager.instance).Field("inGamePlayerCount").SetValue(1);
+                        ScienceExperimentManager.PlayerGameState[] states = new ScienceExperimentManager.PlayerGameState[1];
+                        int ownerIndex = states.Length > player.ActorNumber ? player.ActorNumber : 0;
+                        states[ownerIndex].touchedLiquid = true;
+                        states[ownerIndex].playerId = player.ActorNumber;
+                        Traverse.Create(ScienceExperimentManager.instance).Field("inGamePlayerStates").SetValue(states);
+                        RPCProtection();
+                        kgDebounce = Time.time + 1f;
+                    }
+                }
+            }
+        }
+
+        public static void AcidAll()
+        {
+            if (PhotonNetwork.LocalPlayer.IsMasterClient)
+            {
+                // Not created by me, leaked by REV
+                Traverse.Create(ScienceExperimentManager.instance).Field("inGamePlayerCount").SetValue(10);
+                ScienceExperimentManager.PlayerGameState[] states = new ScienceExperimentManager.PlayerGameState[10];
+                for (int i = 0; i < 10; i++)
+                {
+                    states[i].touchedLiquid = true;
+                    states[i].playerId = PhotonNetwork.PlayerList[i] == null ? 0 : PhotonNetwork.PlayerList[i].ActorNumber;
+                }
+                Traverse.Create(ScienceExperimentManager.instance).Field("inGamePlayerStates").SetValue(states);
+                RPCProtection();
+            }
+            else
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master.</color>");
+            }
         }
 
         public static void BetaSetStatus(int state, RaiseEventOptions balls)
@@ -200,7 +396,7 @@ namespace iiMenu.Mods
             if (PhotonNetwork.LocalPlayer == PhotonNetwork.MasterClient)
             {
                 Hashtable hashtable = new Hashtable();
-                string name = "basement";
+                string name = "";
                 foreach (char character in PhotonNetwork.CurrentRoom.CustomProperties["gameMode"].ToString())
                 {
                     if (!char.IsLower(character))

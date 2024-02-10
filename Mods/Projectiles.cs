@@ -26,12 +26,20 @@ namespace iiMenu.Mods.Spammers
         {
             ControllerInputPoller.instance.leftControllerGripFloat = 1f;
             GameObject lhelp = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            UnityEngine.Object.Destroy(lhelp, 0.1f);
             lhelp.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
             lhelp.transform.position = GorillaTagger.Instance.leftHandTransform.position;
             lhelp.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
-            lhelp.AddComponent<GorillaSurfaceOverride>().overrideIndex = 32;
+            int[] overrides = new int[]
+            {
+                32,
+                204,
+                231,
+                240,
+                249
+            };
+            lhelp.AddComponent<GorillaSurfaceOverride>().overrideIndex = overrides[Array.IndexOf(fullProjectileNames, projectileName)];
             lhelp.GetComponent<Renderer>().enabled = false;
-            UnityEngine.Object.Destroy(lhelp, 0.1f);
             if (Time.time > projDebounce)
             {
                 try
@@ -41,7 +49,15 @@ namespace iiMenu.Mods.Spammers
 
                     Vector3 oldVel = GorillaTagger.Instance.GetComponent<Rigidbody>().velocity;
                     //SnowballThrowable fart = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballRightAnchor").transform.Find("LMACF.").GetComponent<SnowballThrowable>();
-                    SnowballThrowable fart = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/palm.01.L/TransferrableItemLeftHand/SnowballLeftAnchor").transform.Find("LMACE.").GetComponent<SnowballThrowable>();
+                    string[] name2 = new string[]
+                    {
+                        "LMACE.",
+                        "LMAEX.",
+                        "LMAGD.",
+                        "LMAHQ.",
+                        "LMAIE."
+                    };
+                    SnowballThrowable fart = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/palm.01.L/TransferrableItemLeftHand/" + fullProjectileNames[System.Array.IndexOf(fullProjectileNames, projectileName)] + "LeftAnchor").transform.Find(name2[System.Array.IndexOf(fullProjectileNames, projectileName)]).GetComponent<SnowballThrowable>();
                     Vector3 oldPos = fart.transform.position;
                     fart.randomizeColor = true;
                     fart.transform.position = startpos;
@@ -67,8 +83,8 @@ namespace iiMenu.Mods.Spammers
         {
             //if (true)//GetIndex("Legacy Projectiles").enabled)
             //{
-                GameObject stupid = GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools/" + projectilename + "(Clone)");
-                BetaFireProjectile(stupid.GetComponent<SlingshotProjectile>().tag, position, velocity, new Color(r, g, b, 1f), noDelay);
+                //GameObject stupid = GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools/" + projectilename + "(Clone)");
+                BetaFireProjectile(projectilename, position, velocity, new Color(r, g, b, 1f), noDelay);
             /*}
             else
             {
@@ -173,32 +189,32 @@ namespace iiMenu.Mods.Spammers
 
         public static void ChangeProjectile()
         {
-            //projmode++;
-            //if (projmode > 16)
-            //{
-            //    projmode = 0;
-            //}
-            projmode = 1;
-
             string[] shortProjectileNames = new string[] {
-                "Slingshot",
+                //"Slingshot",
                 "Snowball",
                 "Water Balloon",
                 "Lava Rock",
-                "Deadshot",
-                "Pride",
-                "Cupid",
-                "Ice",
-                "Leaves",
-                "Lava Slingshot",
-                "Cotton Swab",
-                "Candy Cane",
-                "Coal",
-                "Roll Present",
-                "Round Present",
-                "Square Present",
+                //"Deadshot",
+                //"Pride",
+                //"Cupid",
+                //"Ice",
+                //"Leaves",
+                //"Lava Slingshot",
+                //"Cotton Swab",
+                //"Candy Cane",
+                //"Coal",
+                //"Roll Present",
+                //"Round Present",
+                //"Square Present",
+                "Present",
                 "Mentos"
             };
+
+            projmode++;
+            if (projmode > (shortProjectileNames.Length - 1))
+            {
+                projmode = 0;
+            }
 
             GetIndex("Change Projectile").overlapText = "Change Projectile <color=grey>[</color><color=green>" + shortProjectileNames[projmode] + "</color><color=grey>]</color>";
         }
@@ -224,7 +240,7 @@ namespace iiMenu.Mods.Spammers
                 "None"
             };
 
-            GetIndex("Change Trail").overlapText = "Change Trail <color=grey>[</color><color=green>" + shortTrailNames[trailmode] + "</color><color=grey>]</color>"; // Regular
+            //GetIndex("Change Trail").overlapText = "Change Trail <color=grey>[</color><color=green>" + shortTrailNames[trailmode] + "</color><color=grey>]</color>"; // Regular
         }
 
         public static void ChangeShootSpeed()
@@ -306,24 +322,20 @@ namespace iiMenu.Mods.Spammers
 
             if (rightGrab || Mouse.current.leftButton.isPressed)
             {
-                //UnityEngine.Debug.Log("grip is holding");
                 if (GetIndex("Random Projectile").enabled)
                 {
-                    projIndex = UnityEngine.Random.Range(0, 16);
+                    projIndex = UnityEngine.Random.Range(0, 4);
                 }
                 string projectilename = fullProjectileNames[projIndex];
-                //UnityEngine.Debug.Log("set proj");
 
                 if (GetIndex("Random Trail").enabled)
                 {
                     trailIndex = UnityEngine.Random.Range(0, 8);
                 }
                 string trailname = fullTrailNames[trailIndex];
-                //UnityEngine.Debug.Log("set trail");
 
                 Vector3 startpos = GorillaTagger.Instance.rightHandTransform.position;
                 Vector3 charvel = GorillaLocomotion.Player.Instance.currentVelocity;
-                //UnityEngine.Debug.Log("set pos");
 
                 if (GetIndex("Shoot Projectiles").enabled)
                 {
@@ -438,7 +450,7 @@ namespace iiMenu.Mods.Spammers
             {
                 if (GetIndex("Random Projectile").enabled)
                 {
-                    projIndex = UnityEngine.Random.Range(0, 16);
+                    projIndex = UnityEngine.Random.Range(0, 4);
                 }
                 string projectilename = fullProjectileNames[projIndex];
 
@@ -963,7 +975,7 @@ namespace iiMenu.Mods.Spammers
                     {
                         if (GetIndex("Random Projectile").enabled)
                         {
-                            projIndex = UnityEngine.Random.Range(0, 16);
+                            projIndex = UnityEngine.Random.Range(0, 4);
                         }
                         string projectilename = fullProjectileNames[projIndex];
 
@@ -1073,7 +1085,7 @@ namespace iiMenu.Mods.Spammers
                     {
                         if (GetIndex("Random Projectile").enabled)
                         {
-                            projIndex = UnityEngine.Random.Range(0, 16);
+                            projIndex = UnityEngine.Random.Range(0, 4);
                         }
                         string projectilename = fullProjectileNames[projIndex];
 
@@ -1467,44 +1479,10 @@ namespace iiMenu.Mods.Spammers
 
                     for (var i = 0; i < 5; i++)
                     {
-                        string[] fullProjectileNames = new string[]
-                        {
-                            "SlingshotProjectile",
-                            "SnowballProjectile",
-                            "WaterBalloonProjectile",
-                            "LavaRockProjectile",
-                            "HornsSlingshotProjectile",
-                            "CloudSlingshot_Projectile",
-                            "CupidBow_Projectile",
-                            "IceSlingshot_Projectile",
-                            "ElfBow_Projectile",
-                            "MoltenSlingshot_Projectile",
-                            "SpiderBow_Projectile",
-                            "BucketGiftCane",
-                            "BucketGiftCoal",
-                            "BucketGiftRoll",
-                            "BucketGiftRound",
-                            "BucketGiftSquare",
-                            "ScienceCandyProjectile"
-                        };
-
-                        string[] fullTrailNames = new string[]
-                        {
-                            "SlingshotProjectileTrail",
-                            "HornsSlingshotProjectileTrail_PrefabV",
-                            "CloudSlingshot_ProjectileTrailFX",
-                            "CupidArrow_ProjectileTrailFX",
-                            "IceSlingshotProjectileTrail Variant",
-                            "ElfBow_ProjectileTrail",
-                            "MoltenRockSlingshotProjectileTrail",
-                            "SpiderBowProjectileTrail Variant",
-                            "none"
-                        };
-
                         int projIndex = projmode;
                         if (GetIndex("Random Projectile").enabled)
                         {
-                            projIndex = UnityEngine.Random.Range(0, 15);
+                            projIndex = UnityEngine.Random.Range(0, 4);
                         }
                         string projectilename = fullProjectileNames[projIndex];
 
@@ -1878,7 +1856,7 @@ namespace iiMenu.Mods.Spammers
                 Vector3 startpos = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, -0.15f, 0f);
                 Vector3 charvel = GorillaTagger.Instance.bodyCollider.transform.forward * 8.33f;
 
-                SysFireProjectile("SlingshotProjectile", "none", startpos, charvel, 255f, 255f, 0f, false, false);
+                SysFireProjectile("Snowball", "none", startpos, charvel, 255f, 255f, 0f, false, false);
             }
         }
 
@@ -1889,7 +1867,7 @@ namespace iiMenu.Mods.Spammers
                 Vector3 startpos = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, -0.3f, 0f);
                 Vector3 charvel = Vector3.zero;
 
-                SysFireProjectile("SnowballProjectile", "none", startpos, charvel, 99f/255f, 43f/255f, 0f, false, false);
+                SysFireProjectile("Snowball", "none", startpos, charvel, 99f/255f, 43f/255f, 0f, false, false);
             }
         }
 
@@ -1900,7 +1878,7 @@ namespace iiMenu.Mods.Spammers
                 Vector3 startpos = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, -0.15f, 0f);
                 Vector3 charvel = GorillaTagger.Instance.bodyCollider.transform.forward * 8.33f;
 
-                SysFireProjectile("SlingshotProjectile", "none", startpos, charvel, 255f, 255f, 255f, false, false);
+                SysFireProjectile("Snowball", "none", startpos, charvel, 255f, 255f, 255f, false, false);
             }
         }
 
@@ -1911,50 +1889,16 @@ namespace iiMenu.Mods.Spammers
                 Vector3 startpos = GorillaTagger.Instance.headCollider.transform.position + (GorillaTagger.Instance.headCollider.transform.forward * 0.1f) + (GorillaTagger.Instance.headCollider.transform.up * -0.15f);
                 Vector3 charvel = GorillaTagger.Instance.headCollider.transform.forward * 8.33f;
 
-                SysFireProjectile("SnowballProjectile", "none", startpos, charvel, 0f, 255f, 0f, false, false);
+                SysFireProjectile("Snowball", "none", startpos, charvel, 0f, 255f, 0f, false, false);
             }
         }
 
         public static void ServersidedTracers()
         {
-            string[] fullProjectileNames = new string[]
-            {
-                "SlingshotProjectile",
-                "SnowballProjectile",
-                "WaterBalloonProjectile",
-                "LavaRockProjectile",
-                "HornsSlingshotProjectile",
-                "CloudSlingshot_Projectile",
-                "CupidBow_Projectile",
-                "IceSlingshot_Projectile",
-                "ElfBow_Projectile",
-                "MoltenSlingshot_Projectile",
-                "SpiderBow_Projectile",
-                "BucketGiftCane",
-                "BucketGiftCoal",
-                "BucketGiftRoll",
-                "BucketGiftRound",
-                "BucketGiftSquare",
-                "ScienceCandyProjectile"
-            };
-
-            string[] fullTrailNames = new string[]
-            {
-                "SlingshotProjectileTrail",
-                "HornsSlingshotProjectileTrail_PrefabV",
-                "CloudSlingshot_ProjectileTrailFX",
-                "CupidArrow_ProjectileTrailFX",
-                "IceSlingshotProjectileTrail Variant",
-                "ElfBow_ProjectileTrail",
-                "MoltenRockSlingshotProjectileTrail",
-                "SpiderBowProjectileTrail Variant",
-                "none"
-            };
-
             int projIndex = projmode;
             if (GetIndex("Random Projectile").enabled)
             {
-                projIndex = UnityEngine.Random.Range(0, 15);
+                projIndex = UnityEngine.Random.Range(0, 4);
             }
             string projectilename = fullProjectileNames[projIndex];
 
@@ -2042,7 +1986,7 @@ namespace iiMenu.Mods.Spammers
                     Vector3 startpos = whoCopy.transform.position + new Vector3(0f, -0.4f, 0f) + (whoCopy.transform.forward * 0.2f);
                     Vector3 charvel = whoCopy.transform.forward * 8.33f;
 
-                    BetaFireProjectile("SlingshotProjectile", startpos, charvel, new Color32(255, 255, 0, 255));
+                    BetaFireProjectile("Snowball", startpos, charvel, new Color32(255, 255, 0, 255));
                 }
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
@@ -2088,7 +2032,7 @@ namespace iiMenu.Mods.Spammers
                     Vector3 startpos = whoCopy.transform.position + new Vector3(0f, -0.65f, 0f);
                     Vector3 charvel = Vector3.zero;
 
-                    BetaFireProjectile("SnowballProjectile", startpos, charvel, new Color32(99, 43, 0, 255));
+                    BetaFireProjectile("Snowball", startpos, charvel, new Color32(99, 43, 0, 255));
                 }
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
@@ -2134,7 +2078,7 @@ namespace iiMenu.Mods.Spammers
                     Vector3 startpos = whoCopy.transform.position + new Vector3(0f, -0.4f, 0f) + (whoCopy.transform.forward * 0.2f);
                     Vector3 charvel = whoCopy.transform.forward * 8.33f;
 
-                    BetaFireProjectile("SlingshotProjectile", startpos, charvel, new Color32(255, 255, 255, 255));
+                    BetaFireProjectile("Snowball", startpos, charvel, new Color32(255, 255, 255, 255));
                 }
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
@@ -2180,7 +2124,7 @@ namespace iiMenu.Mods.Spammers
                     Vector3 startpos = whoCopy.headMesh.transform.position + (whoCopy.headMesh.transform.forward * 0.4f) + (whoCopy.headMesh.transform.up * -0.05f);
                     Vector3 charvel = whoCopy.headMesh.transform.forward * 8.33f;
 
-                    BetaFireProjectile("SnowballProjectile", startpos, charvel, new Color32(0, 255, 0, 255));
+                    BetaFireProjectile("Snowball", startpos, charvel, new Color32(0, 255, 0, 255));
                 }
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
