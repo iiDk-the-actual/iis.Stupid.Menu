@@ -86,22 +86,25 @@ namespace iiMenu.Menu
                     {
                         if (dropOnRemove)
                         {
-                            Rigidbody comp = menu.AddComponent(typeof(Rigidbody)) as Rigidbody;
-                            if (rightHand || (bothHands && ControllerInputPoller.instance.rightControllerSecondaryButton))
+                            try
                             {
-                                comp.velocity = GorillaLocomotion.Player.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0);
-                                comp.angularVelocity = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").GetComponent<GorillaVelocityEstimator>().angularVelocity;
-                            }
-                            else
-                            {
-                                comp.velocity = GorillaLocomotion.Player.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0);
-                                comp.angularVelocity = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").GetComponent<GorillaVelocityEstimator>().angularVelocity;
-                            }
-                            if (annoyingMode)
-                            {
-                                comp.velocity = new Vector3(UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33));
-                                comp.angularVelocity = new Vector3(UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33));
-                            }
+                                Rigidbody comp = menu.AddComponent(typeof(Rigidbody)) as Rigidbody;
+                                if (rightHand || (bothHands && ControllerInputPoller.instance.rightControllerSecondaryButton))
+                                {
+                                    comp.velocity = GorillaLocomotion.Player.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0);
+                                    comp.angularVelocity = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").GetComponent<GorillaVelocityEstimator>().angularVelocity;
+                                }
+                                else
+                                {
+                                    comp.velocity = GorillaLocomotion.Player.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0);
+                                    comp.angularVelocity = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").GetComponent<GorillaVelocityEstimator>().angularVelocity;
+                                }
+                                if (annoyingMode)
+                                {
+                                    comp.velocity = new Vector3(UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33));
+                                    comp.angularVelocity = new Vector3(UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33));
+                                }
+                            } catch { UnityEngine.Debug.Log("Rigidbody broken part A"); }
 
                             UnityEngine.Object.Destroy(menu, 2);
                             menu = null;
@@ -180,7 +183,7 @@ namespace iiMenu.Menu
                             }
                         }
                         motdTextB.text = @"
-You are using version 3.0b1. This menu was created by iiDk (@goldentrophy) on
+You are using version 3.0b2. This menu was created by iiDk (@goldentrophy) on
 discord. This menu is completely free and open sourced, if you paid for this
 menu you have been scammed. There are a total of <b> " + fullModAmount + @" </b> mods on this
 menu. <color=red>I, iiDk, am not responsible for any bans using this menu.</color> If you get
@@ -255,6 +258,11 @@ banned while using this, please report it to the discord server.";
                     } catch
                     {
 
+                    }
+
+                    if (!PhotonNetwork.InRoom)
+                    {
+                        hasAntiBanned = false;
                     }
 
                     try
@@ -1800,6 +1808,7 @@ banned while using this, please report it to the discord server.";
         public static bool longmenu = false;
         public static bool isCopying = false;
         public static bool disorganized = false;
+        public static bool hasAntiBanned = false;
 
         public static bool shouldBePC = false;
         public static bool rightPrimary = false;
