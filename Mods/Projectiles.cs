@@ -1,22 +1,12 @@
 ﻿using ExitGames.Client.Photon;
-using GorillaExtensions;
 using GorillaTag;
-using iiMenu.Classes;
-using iiMenu.Notifications;
-using Mono.Cecil.Cil;
 using Photon.Pun;
 using Photon.Realtime;
-using POpusCodec.Enums;
-using Steamworks;
 using System;
-using System.Runtime.InteropServices;
-using System.Xml.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UIElements;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
-using static Pathfinding.Util.RetainedGizmos;
 
 namespace iiMenu.Mods.Spammers
 {
@@ -1569,6 +1559,18 @@ namespace iiMenu.Mods.Spammers
                 yay.itemState = TransferrableObject.ItemStates.State2;
             }
         }
+        /*
+        public static void RapidFireSlingshot()
+        {
+            GameObject slingy = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/palm.01.L/TransferrableItemLeftHand/Slingshot Anchor/Slingshot");
+            if (slingy != null)
+            {
+                Slingshot yay = slingy.GetComponent<Slingshot>();
+                Type yayt = typeof(Slingshot);
+                MethodInfo Launch = yayt.GetMethod("LaunchProjectile", BindingFlags.NonPublic | BindingFlags.Instance);
+                Launch.Invoke(yay, null);
+            }
+        }*/
 
         public static void DisableProjectileBomb()
         {
