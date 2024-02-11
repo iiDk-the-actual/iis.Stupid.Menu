@@ -1,7 +1,9 @@
 ﻿using GorillaNetworking;
+using GorillaTag;
 using iiMenu.Notifications;
 using Photon.Pun;
 using PlayFab;
+using System.Reflection;
 using UnityEngine;
 using static iiMenu.Menu.Main;
 
@@ -28,13 +30,53 @@ namespace iiMenu.Mods
 
             NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI BAN</color><color=grey>]</color> <color=white>The anti ban has been enabled! I take ZERO responsibility for bans using this.</color>");
         }*/
+
+        public static void AntiRPCBan()
+        {
+            GorillaGameManager.instance.OnPlayerLeftRoom(PhotonNetwork.LocalPlayer);
+            PhotonNetworkController.Instance.OnPlayerLeftRoom(PhotonNetwork.LocalPlayer);
+            GameMode.ActiveGameMode.OnPlayerLeftRoom(PhotonNetwork.LocalPlayer);
+
+            PhotonNetworkController.Instance.OnLeftRoom();
+            PhotonNetworkController.Instance.OnPreLeavingRoom();
+            PhotonNetworkController.Instance.OnLeftLobby();
+
+            PhotonNetworkController.Instance.OnMasterClientSwitched(PhotonNetwork.LocalPlayer);
+            ScienceExperimentManager.instance.OnMasterClientSwitched(PhotonNetwork.LocalPlayer);
+            GorillaGameManager.instance.OnMasterClientSwitched(PhotonNetwork.LocalPlayer);
+            GameMode.ActiveGameMode.OnMasterClientSwitched(PhotonNetwork.LocalPlayer);
+
+            try
+            {
+                GorillaNot.instance.OnPlayerLeftRoom(PhotonNetwork.LocalPlayer);
+                GorillaNot.instance.OnMasterClientSwitched(PhotonNetwork.LocalPlayer);
+                GorillaNot.instance.OnLeftRoom();
+                GorillaNot.instance.OnPreLeavingRoom();
+                if (GorillaNot.instance != null)
+                {
+                    FieldInfo report = typeof(GorillaNot).GetField("sendReport", BindingFlags.NonPublic);
+                    if (report != null)
+                    {
+                        report.SetValue(GorillaNot.instance, false);
+                    }
+                    report = typeof(GorillaNot).GetField("_sendReport", BindingFlags.NonPublic);
+                    if (report != null)
+                    {
+                        report.SetValue(GorillaNot.instance, false);
+                    }
+                }
+            }
+            catch { }
+            RPCProtection();
+            GorillaNot.instance.OnLeftRoom();
+        }
         
         public static void SetMaster()
         {
-            if (PhotonNetwork.InRoom && PhotonNetwork.CurrentRoom.CustomProperties["gameMode"].ToString().ToLower().Contains("modded"))
+            if ((PhotonNetwork.InRoom && PhotonNetwork.CurrentRoom.CustomProperties["gameMode"].ToString().ToLower().Contains("modded")) || hasAntiBanned)
             {
                 PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
-                NotifiLib.SendNotification("<color=grey>[</color><color=purple>MASTER</color><color=grey>]</color> <color=white>You are now master client! This should ONLY be enabled in modded lobbies.</color>");
+                NotifiLib.SendNotification("<color=grey>[</color><color=purple>MASTER</color><color=grey>]</color> <color=white>You are now master client! This should ONLY be enabled in modded lobbies or when using the anti ban.</color>");
             } else
             {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are either not in a lobby, or your lobby is not modded.</color>");

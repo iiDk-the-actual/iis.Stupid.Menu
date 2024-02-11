@@ -22,7 +22,7 @@ namespace iiMenu.Mods
 {
     internal class Overpowered
     {
-        public static void AntiBan() // patched ?
+        /*public static void AntiBan() // patched ?
         {
             object obj;
             PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue("gameMode", out obj);
@@ -48,6 +48,41 @@ namespace iiMenu.Mods
                     { "gameMode", gamemode }
                 };
                 PhotonNetwork.CurrentRoom.SetCustomProperties(hash);
+            }
+        }*/
+
+        public static void AntiBan()
+        {
+            if (!PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED"))
+            {
+                PlayFabClientAPI.ExecuteCloudScript(new PlayFab.ClientModels.ExecuteCloudScriptRequest
+                {
+                    FunctionName = "RoomClosed",
+                    FunctionParameter = new
+                    {
+                        GameId = PhotonNetwork.CurrentRoom.Name,
+                        Region = Regex.Replace(PhotonNetwork.CloudRegion, "[^a-zA-Z0-9]", "").ToUpper(),
+                        UserId = PhotonNetwork.PlayerList[UnityEngine.Random.Range(0, PhotonNetwork.PlayerList.Length + 1)].UserId,
+                        ActorNr = PhotonNetwork.PlayerList[UnityEngine.Random.Range(0, PhotonNetwork.PlayerList.Length + 1)],
+                        ActorCount = PhotonNetwork.ViewCount,
+                        AppVersion = PhotonNetwork.AppVersion
+                    },
+                }, result =>
+                {
+                    hasAntiBanned = true;
+                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTIBAN</color><color=grey>]</color> <color=white>The anti ban has been enabled successfully. All detected mods are undetected.</color>");
+                }, null);
+                string gamemode = PhotonNetwork.CurrentRoom.CustomProperties["gameMode"].ToString().Replace(GorillaComputer.instance.currentQueue, GorillaComputer.instance.currentQueue + "MODDEDMODDED");
+                ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable
+                {
+                    { "gameMode", gamemode }
+                };
+                PhotonNetwork.CurrentRoom.SetCustomProperties(hash);
+            }
+
+            if (PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED") && !PhotonNetwork.IsMasterClient)
+            {
+                PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
             }
         }
 
@@ -112,9 +147,9 @@ namespace iiMenu.Mods
                     {
                         ScienceExperimentManager.instance.photonView.RPC("SpawnSodaBubbleRPC", GetPlayerFromVRRig(whoCopy), new object[]
                         {
-                            new Vector2(0f, 0f),
-                            float.MinValue,
-                            9999f,
+                            new Vector2(0.3f, 0.3f),
+                            2f,
+                            10f,
                             PhotonNetwork.InRoom ? PhotonNetwork.Time : ((double)Time.time)
                         });
                         RPCProtection();
@@ -148,11 +183,12 @@ namespace iiMenu.Mods
             {
                 ScienceExperimentManager.instance.photonView.RPC("SpawnSodaBubbleRPC", RpcTarget.Others, new object[]
                 {
-                    new Vector2(0f, 0f),
-                    float.MinValue,
-                    9999f,
+                    new Vector2(0.3f, 0.3f),
+                    2f,
+                    10f,
                     PhotonNetwork.InRoom ? PhotonNetwork.Time : ((double)Time.time)
                 });
+                RPCProtection();
             }
             else
             {

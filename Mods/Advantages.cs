@@ -159,6 +159,24 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void GripTagAura()
+        {
+            if (rightGrab)
+            {
+                foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                {
+                    Vector3 they = vrrig.transform.position;
+                    Vector3 notthem = GorillaTagger.Instance.offlineVRRig.head.rigTarget.position;
+                    float distance = Vector3.Distance(they, notthem);
+
+                    if (GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected") && !vrrig.mainSkin.material.name.Contains("fected") && GorillaLocomotion.Player.Instance.disableMovement == false && distance < GorillaGameManager.instance.tagDistanceThreshold)
+                    {
+                        if (rightHand == true) { GorillaLocomotion.Player.Instance.rightControllerTransform.position = they; } else { GorillaLocomotion.Player.Instance.leftControllerTransform.position = they; }
+                    }
+                }
+            }
+        }
+
         /*public static void RPCTagAura()
         {
             if (GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected"))
