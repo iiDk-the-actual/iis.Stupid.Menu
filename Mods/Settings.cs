@@ -139,6 +139,12 @@ namespace iiMenu.Mods
             pageNumber = 0;
         }
 
+        public static void EnableAdvantageSettings()
+        {
+            buttonsType = 21;
+            pageNumber = 0;
+        }
+
         public static void RightHand()
         {
             rightHand = true;

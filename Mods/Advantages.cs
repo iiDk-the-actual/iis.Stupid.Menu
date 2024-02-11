@@ -128,31 +128,54 @@ namespace iiMenu.Mods
 
         public static void AntiTag()
         {
-            if (GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected"))
+            if (GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected") && PhotonNetwork.LocalPlayer.IsMasterClient)
             {
                 foreach (GorillaTagManager tagman in GameObject.FindObjectsOfType<GorillaTagManager>())
                 {
                     if (tagman.currentInfected.Contains(PhotonNetwork.LocalPlayer))
                     {
                         tagman.currentInfected.Remove(PhotonNetwork.LocalPlayer);
-                    }
-                    else
-                    {
-                        tagman.currentInfected.Add(PhotonNetwork.LocalPlayer);
+                        GorillaLocomotion.Player.Instance.disableMovement = false;
                     }
                 }
             }
+        }
+
+        public static void ChangeTagAuraRange()
+        {
+            tagAuraIndex++;
+            if (tagAuraIndex > 4)
+            {
+                tagAuraIndex = 0;
+            }
+            string[] names = new string[]
+            {
+                "Short",
+                "Normal",
+                "Far",
+                "Maximum"
+            };
+            float[] distances = new float[]
+            {
+                0.777f,
+                1.666f,
+                3f,
+                GorillaGameManager.instance.tagDistanceThreshold
+            };
+
+            tagAuraDistance = distances[tagAuraIndex];
+            GetIndex("ctaRange").overlapText = "Change Tag Aura Distance <color=green>[</color><color=red>"+names[tagAuraIndex]+"</color><color=grey>]</color>";
         }
 
         public static void PhysicalTagAura()
         {
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                Vector3 they = vrrig.transform.position;
+                Vector3 they = vrrig.headMesh.transform.position;
                 Vector3 notthem = GorillaTagger.Instance.offlineVRRig.head.rigTarget.position;
                 float distance = Vector3.Distance(they, notthem);
 
-                if (GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected") && !vrrig.mainSkin.material.name.Contains("fected") && GorillaLocomotion.Player.Instance.disableMovement == false && distance < GorillaGameManager.instance.tagDistanceThreshold)
+                if (GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected") && !vrrig.mainSkin.material.name.Contains("fected") && GorillaLocomotion.Player.Instance.disableMovement == false && distance < tagAuraDistance)
                 {
                     if (rightHand == true) { GorillaLocomotion.Player.Instance.rightControllerTransform.position = they; } else { GorillaLocomotion.Player.Instance.leftControllerTransform.position = they; }
                 }
@@ -165,11 +188,11 @@ namespace iiMenu.Mods
             {
                 foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                 {
-                    Vector3 they = vrrig.transform.position;
+                    Vector3 they = vrrig.headMesh.transform.position;
                     Vector3 notthem = GorillaTagger.Instance.offlineVRRig.head.rigTarget.position;
                     float distance = Vector3.Distance(they, notthem);
 
-                    if (GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected") && !vrrig.mainSkin.material.name.Contains("fected") && GorillaLocomotion.Player.Instance.disableMovement == false && distance < GorillaGameManager.instance.tagDistanceThreshold)
+                    if (GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected") && !vrrig.mainSkin.material.name.Contains("fected") && GorillaLocomotion.Player.Instance.disableMovement == false && distance < tagAuraDistance)
                     {
                         if (rightHand == true) { GorillaLocomotion.Player.Instance.rightControllerTransform.position = they; } else { GorillaLocomotion.Player.Instance.leftControllerTransform.position = they; }
                     }

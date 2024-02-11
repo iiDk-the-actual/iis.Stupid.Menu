@@ -86,6 +86,42 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void ForceEruptLava()
+        {
+            InfectionLavaController controller = InfectionLavaController.Instance;
+            System.Type type = controller.GetType();
+
+            FieldInfo fieldInfo = type.GetField("reliableState", BindingFlags.NonPublic | BindingFlags.Instance);
+
+            object reliableState = fieldInfo.GetValue(controller);
+
+            FieldInfo stateFieldInfo = reliableState.GetType().GetField("state");
+            stateFieldInfo.SetValue(reliableState, InfectionLavaController.RisingLavaState.Erupting);
+
+            FieldInfo stateFieldInfo2 = reliableState.GetType().GetField("stateStartTime");
+            stateFieldInfo2.SetValue(reliableState, PhotonNetwork.Time);
+
+            fieldInfo.SetValue(controller, reliableState);
+        }
+
+        public static void ForceUneruptLava()
+        {
+            InfectionLavaController controller = InfectionLavaController.Instance;
+            System.Type type = controller.GetType();
+
+            FieldInfo fieldInfo = type.GetField("reliableState", BindingFlags.NonPublic | BindingFlags.Instance);
+
+            object reliableState = fieldInfo.GetValue(controller);
+
+            FieldInfo stateFieldInfo = reliableState.GetType().GetField("state");
+            stateFieldInfo.SetValue(reliableState, InfectionLavaController.RisingLavaState.Draining);
+
+            FieldInfo stateFieldInfo2 = reliableState.GetType().GetField("stateStartTime");
+            stateFieldInfo2.SetValue(reliableState, PhotonNetwork.Time);
+
+            fieldInfo.SetValue(controller, reliableState);
+        }
+
         public static void ForceRiseLava()
         {
             InfectionLavaController controller = InfectionLavaController.Instance;
@@ -118,6 +154,32 @@ namespace iiMenu.Mods
 
             FieldInfo stateFieldInfo2 = reliableState.GetType().GetField("stateStartTime");
             stateFieldInfo2.SetValue(reliableState, PhotonNetwork.Time);
+
+            fieldInfo.SetValue(controller, reliableState);
+        }
+
+        public static void SpazLava()
+        {
+            InfectionLavaController controller = InfectionLavaController.Instance;
+            System.Type type = controller.GetType();
+
+            FieldInfo fieldInfo = type.GetField("reliableState", BindingFlags.NonPublic | BindingFlags.Instance);
+
+            object reliableState = fieldInfo.GetValue(controller);
+
+            FieldInfo stateFieldInfo = reliableState.GetType().GetField("state");
+            if (spazLavaType)
+            {
+                stateFieldInfo.SetValue(reliableState, InfectionLavaController.RisingLavaState.Full);
+            }
+            else
+            {
+                stateFieldInfo.SetValue(reliableState, InfectionLavaController.RisingLavaState.Drained);
+            }
+            spazLavaType = !spazLavaType;
+
+            FieldInfo stateFieldInfo2 = reliableState.GetType().GetField("stateStartTime");
+            stateFieldInfo2.SetValue(reliableState, PhotonNetwork.Time + UnityEngine.Random.Range(0f,20f));
 
             fieldInfo.SetValue(controller, reliableState);
         }

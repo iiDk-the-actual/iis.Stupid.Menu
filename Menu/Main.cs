@@ -5,7 +5,6 @@ using HarmonyLib;
 using iiMenu.Classes;
 using iiMenu.Mods;
 using iiMenu.Notifications;
-using Oculus.Platform;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -259,6 +258,18 @@ banned while using this, please report it to the discord server.";
                     {
 
                     }
+
+                    try
+                    {
+                        if (PhotonNetwork.InRoom)
+                        {
+                            if (PhotonNetwork.LocalPlayer.IsMasterClient && !lastMasterClient)
+                            {
+                                NotifiLib.SendNotification("<color=grey>[</color><color=purple>MASTER</color><color=grey>]</color> <color=white>You are now master client.</color>");
+                            }
+                            lastMasterClient = PhotonNetwork.LocalPlayer.IsMasterClient;
+                        }
+                    } catch { }
 
                     if (!PhotonNetwork.InRoom)
                     {
@@ -1955,8 +1966,11 @@ banned while using this, please report it to the discord server.";
         public static int pointerIndex = 0;
 
         public static bool noclip = false;
+        public static float tagAuraDistance = GorillaGameManager.instance.tagDistanceThreshold;
+        public static int tagAuraIndex = 3;
 
         public static bool lastInRoom = false;
+        public static bool lastMasterClient = false;
         public static string lastRoom = "";
 
         public static int platformMode = 0;
@@ -2054,6 +2068,7 @@ banned while using this, please report it to the discord server.";
 
         public static bool plastLeftGrip = false;
         public static bool plastRightGrip = false;
+        public static bool spazLavaType = false;
 
         public static bool EverythingSlippery = false;
         public static bool EverythingGrippy = false;
