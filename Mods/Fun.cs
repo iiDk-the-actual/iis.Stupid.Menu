@@ -327,7 +327,22 @@ namespace iiMenu.Mods
         {
             GameObject.Find("BeachBall").transform.position = new Vector3(99999f, 99999f, 99999f);
         }
-        
+
+        public static void SpazBug()
+        {
+            GameObject.Find("Floating Bug Holdable").transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+        }
+
+        public static void SpazBat()
+        {
+            GameObject.Find("Cave Bat Holdable").transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+        }
+
+        public static void SpazBeachBall()
+        {
+            GameObject.Find("BeachBall").transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+        }
+
         public static void PopAllBalloons()
         {
             foreach (BalloonHoldable balloon in GameObject.FindObjectsOfType<BalloonHoldable>())

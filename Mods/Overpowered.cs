@@ -1,22 +1,19 @@
 ﻿using ExitGames.Client.Photon;
 using GorillaNetworking;
+using GorillaTag;
+using HarmonyLib;
 using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
-using PlayFab.ClientModels;
 using PlayFab;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Windows;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 using static iiMenu.Mods.Spammers.Projectiles;
-using GorillaTag;
-using HarmonyLib;
-using System.Reflection;
-using UnityEngine.InputSystem.LowLevel;
 
 namespace iiMenu.Mods
 {
@@ -184,6 +181,16 @@ namespace iiMenu.Mods
             fieldInfo.SetValue(controller, reliableState);
         }
 
+        public static void SpazTargets()
+        {
+            System.Type targ = typeof(HitTargetScoreDisplay);
+            MethodInfo StartEruptionMethod = targ.GetMethod("OnScoreChanged", BindingFlags.NonPublic | BindingFlags.Instance);
+            HitTargetScoreDisplay[] vs = GameObject.FindObjectsOfType<HitTargetScoreDisplay>();
+            HitTargetScoreDisplay v = vs[UnityEngine.Random.Range(0, vs.Length - 1)];
+            v.rotateSpeed = 9999;
+            StartEruptionMethod?.Invoke(v, new object[] { Random.Range(0,999) });
+        }
+
         public static void BubbleGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
@@ -255,6 +262,72 @@ namespace iiMenu.Mods
             else
             {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master.</color>");
+            }
+        }
+
+        public static void LagGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray);
+                if (shouldBePC)
+                {
+                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
+                    Physics.Raycast(ray, out Ray, 100);
+                }
+
+                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                NewPointer.GetComponent<Renderer>().material.color = bgColorA;
+                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+                NewPointer.transform.position = Ray.point;
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
+                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+                if (isCopying && whoCopy != null)
+                {
+                    int num = GetPhotonViewFromVRRig(whoCopy).ViewID;
+                    Hashtable ServerCleanDestroyEvent = new Hashtable();
+                    RaiseEventOptions ServerCleanOptions = new RaiseEventOptions
+                    {
+                        CachingOption = EventCaching.RemoveFromRoomCache
+                    };
+                    ServerCleanDestroyEvent[0] = num;
+                    ServerCleanOptions.CachingOption = EventCaching.DoNotCache;
+                    PhotonNetwork.NetworkingClient.OpRaiseEvent(204, ServerCleanDestroyEvent, ServerCleanOptions, SendOptions.SendUnreliable);
+                }
+                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        isCopying = true;
+                        whoCopy = possibly;
+                    }
+                }
+            }
+            else
+            {
+                if (isCopying)
+                {
+                    isCopying = false;
+                }
+            }
+        }
+
+        public static void LagAll()
+        {
+            if (rightTrigger > 0.5f)
+            {
+                int num = GetPhotonViewFromVRRig(GetVRRigFromPlayer(PhotonNetwork.PlayerListOthers[UnityEngine.Random.Range(0, PhotonNetwork.PlayerListOthers.Length - 1)])).ViewID;
+                Hashtable ServerCleanDestroyEvent = new Hashtable();
+                RaiseEventOptions ServerCleanOptions = new RaiseEventOptions
+                {
+                    CachingOption = EventCaching.RemoveFromRoomCache
+                };
+                ServerCleanDestroyEvent[0] = num;
+                ServerCleanOptions.CachingOption = EventCaching.DoNotCache;
+                PhotonNetwork.NetworkingClient.OpRaiseEvent(204, ServerCleanDestroyEvent, ServerCleanOptions, SendOptions.SendUnreliable);
             }
         }
 

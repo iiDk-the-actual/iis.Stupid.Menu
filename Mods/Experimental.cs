@@ -82,5 +82,13 @@ namespace iiMenu.Mods
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are either not in a lobby, or your lobby is not modded.</color>");
             }
         }
+
+        public static void AutoSetMaster()
+        {
+            if ((PhotonNetwork.InRoom && PhotonNetwork.CurrentRoom.CustomProperties["gameMode"].ToString().ToLower().Contains("modded")) || hasAntiBanned)
+            {
+                PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
+            }
+        }
     }
 }

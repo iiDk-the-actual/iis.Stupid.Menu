@@ -3,6 +3,7 @@ using GorillaTag;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static iiMenu.Classes.RigManager;
@@ -1559,18 +1560,24 @@ namespace iiMenu.Mods.Spammers
                 yay.itemState = TransferrableObject.ItemStates.State2;
             }
         }
-        /*
+        
         public static void RapidFireSlingshot()
         {
-            GameObject slingy = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/palm.01.L/TransferrableItemLeftHand/Slingshot Anchor/Slingshot");
-            if (slingy != null)
+            if (rightPrimary)
             {
-                Slingshot yay = slingy.GetComponent<Slingshot>();
-                Type yayt = typeof(Slingshot);
-                MethodInfo Launch = yayt.GetMethod("LaunchProjectile", BindingFlags.NonPublic | BindingFlags.Instance);
-                Launch.Invoke(yay, null);
+                GameObject slingy = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/palm.01.L/TransferrableItemLeftHand/Slingshot Anchor/Slingshot");
+                if (slingy != null)
+                {
+                    Slingshot yay = slingy.GetComponent<Slingshot>();
+                    yay.itemState = TransferrableObject.ItemStates.State2;
+                    System.Type type = yay.GetType();
+                    FieldInfo fieldInfo = type.GetField("minTimeToLaunch", BindingFlags.NonPublic | BindingFlags.Instance);
+                    fieldInfo.SetValue(yay, -1f);
+                    ControllerInputPoller.instance.rightControllerIndexFloat = lastSlingThing ? 1f : 0f;
+                    lastSlingThing = !lastSlingThing;
+                }
             }
-        }*/
+        }
 
         public static void DisableProjectileBomb()
         {

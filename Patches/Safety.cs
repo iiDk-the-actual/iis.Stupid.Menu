@@ -174,6 +174,19 @@ namespace iiMenu.Patches
             return true;
         }
     }
+
+    [HarmonyPatch(typeof(VRRig), "PlayHandTapLocal")]
+    public class AntiSoundPatch
+    {
+        public static bool Prefix(int soundIndex, bool isLeftHand, float tapVolume)
+        {
+            if (AntiSoundToggle)
+            {
+                return false;
+            }
+            return true;
+        }
+    }
     /*
     [HarmonyPatch(typeof(GorillaGameManager), "LaunchSlingshotProjectile")]
     public class AntiCrash

@@ -18,23 +18,38 @@ namespace iiMenu.Mods
                 PhotonView.Get(GorillaGameManager.instance).RPC("ReportContactWithLavaRPC", RpcTarget.MasterClient, Array.Empty<object>());
                 delaythinggg = Time.time + 0.5f;
             }*/
-            foreach (GorillaTagManager gorillaTagManager in GameObject.FindObjectsOfType<GorillaTagManager>())
+            if (PhotonNetwork.LocalPlayer.IsMasterClient)
             {
-                if (gorillaTagManager.currentInfected.Contains(PhotonNetwork.LocalPlayer))
+                foreach (GorillaTagManager gorillaTagManager in GameObject.FindObjectsOfType<GorillaTagManager>())
                 {
-                    NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>You have been tagged!</color>");
-                    GorillaTagger.Instance.offlineVRRig.enabled = true;
-                    GetIndex("Tag Self").enabled = false;
-                }
-                else
-                {
-                    foreach (VRRig rig in GorillaParent.instance.vrrigs)
+                    if (!gorillaTagManager.currentInfected.Contains(PhotonNetwork.LocalPlayer))
                     {
-                        if (rig.mainSkin.material.name.Contains("fected"))
+                        gorillaTagManager.currentInfected.Add(PhotonNetwork.LocalPlayer);
+                        NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>You have been tagged!</color>");
+                        GetIndex("Tag Self").enabled = false;
+                    }
+                }
+            }
+            else
+            {
+                foreach (GorillaTagManager gorillaTagManager in GameObject.FindObjectsOfType<GorillaTagManager>())
+                {
+                    if (gorillaTagManager.currentInfected.Contains(PhotonNetwork.LocalPlayer))
+                    {
+                        NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>You have been tagged!</color>");
+                        GorillaTagger.Instance.offlineVRRig.enabled = true;
+                        GetIndex("Tag Self").enabled = false;
+                    }
+                    else
+                    {
+                        foreach (VRRig rig in GorillaParent.instance.vrrigs)
                         {
-                            GorillaTagger.Instance.offlineVRRig.enabled = false;
-                            GorillaTagger.Instance.offlineVRRig.transform.position = rig.rightHandTransform.position;
-                            GorillaTagger.Instance.myVRRig.transform.position = rig.rightHandTransform.position;
+                            if (rig.mainSkin.material.name.Contains("fected"))
+                            {
+                                GorillaTagger.Instance.offlineVRRig.enabled = false;
+                                GorillaTagger.Instance.offlineVRRig.transform.position = rig.rightHandTransform.position;
+                                GorillaTagger.Instance.myVRRig.transform.position = rig.rightHandTransform.position;
+                            }
                         }
                     }
                 }
@@ -144,7 +159,7 @@ namespace iiMenu.Mods
         public static void ChangeTagAuraRange()
         {
             tagAuraIndex++;
-            if (tagAuraIndex > 4)
+            if (tagAuraIndex > 3)
             {
                 tagAuraIndex = 0;
             }
@@ -160,11 +175,11 @@ namespace iiMenu.Mods
                 0.777f,
                 1.666f,
                 3f,
-                GorillaGameManager.instance.tagDistanceThreshold
+                5f
             };
 
             tagAuraDistance = distances[tagAuraIndex];
-            GetIndex("ctaRange").overlapText = "Change Tag Aura Distance <color=green>[</color><color=red>"+names[tagAuraIndex]+"</color><color=grey>]</color>";
+            GetIndex("ctaRange").overlapText = "Change Tag Aura Distance <color=grey>[</color><color=green>"+names[tagAuraIndex]+"</color><color=grey>]</color>";
         }
 
         public static void PhysicalTagAura()
@@ -291,8 +306,21 @@ namespace iiMenu.Mods
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig && !possibly.mainSkin.material.name.Contains("fected"))
                     {
-                        isCopying = true;
-                        whoCopy = possibly;
+                        if (PhotonNetwork.LocalPlayer.IsMasterClient)
+                        {
+                            foreach (GorillaTagManager gorillaTagManager in GameObject.FindObjectsOfType<GorillaTagManager>())
+                            {
+                                if (!gorillaTagManager.currentInfected.Contains(RigManager.GetPlayerFromVRRig(possibly)))
+                                {
+                                    gorillaTagManager.currentInfected.Add(RigManager.GetPlayerFromVRRig(possibly));
+                                }
+                            }
+                        }
+                        else
+                        {
+                            isCopying = true;
+                            whoCopy = possibly;
+                        }
                     }
                 }
             }
@@ -334,49 +362,66 @@ namespace iiMenu.Mods
 
         public static void TagAll()
         {
-            if (!GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected"))
+            if (PhotonNetwork.IsMasterClient)
             {
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be tagged.</color>");
+                foreach (GorillaTagManager tagman in GameObject.FindObjectsOfType<GorillaTagManager>())
+                {
+                    foreach (Photon.Realtime.Player v in PhotonNetwork.PlayerList)
+                    {
+                        if (!tagman.currentInfected.Contains(v))
+                        {
+                            tagman.currentInfected.Add(v);
+                        }
+                    }
+                }
                 GetIndex("Tag All").enabled = false;
             }
             else
             {
-                bool isInfectedPlayers = false;
-                foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                if (!GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected"))
                 {
-                    if (!vrrig.mainSkin.material.name.Contains("fected"))
-                    {
-                        isInfectedPlayers = true;
-                        break;
-                    }
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be tagged.</color>");
+                    GetIndex("Tag All").enabled = false;
                 }
-                if (isInfectedPlayers == true)
+                else
                 {
+                    bool isInfectedPlayers = false;
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
                         if (!vrrig.mainSkin.material.name.Contains("fected"))
                         {
-                            if (GorillaTagger.Instance.offlineVRRig.enabled == true)
-                                GorillaTagger.Instance.offlineVRRig.enabled = false;
-                            GorillaTagger.Instance.offlineVRRig.transform.position = vrrig.transform.position;
-                            GorillaTagger.Instance.myVRRig.transform.position = vrrig.transform.position;
-
-                            Vector3 they = vrrig.transform.position;
-                            Vector3 notthem = GorillaTagger.Instance.offlineVRRig.head.rigTarget.position;
-                            float distance = Vector3.Distance(they, notthem);
-
-                            if (GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected") && !vrrig.mainSkin.material.name.Contains("fected") && distance < 1.667)
+                            isInfectedPlayers = true;
+                            break;
+                        }
+                    }
+                    if (isInfectedPlayers == true)
+                    {
+                        foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                        {
+                            if (!vrrig.mainSkin.material.name.Contains("fected"))
                             {
-                                if (rightHand == true) { GorillaLocomotion.Player.Instance.rightControllerTransform.position = they; } else { GorillaLocomotion.Player.Instance.leftControllerTransform.position = they; }
+                                if (GorillaTagger.Instance.offlineVRRig.enabled == true)
+                                    GorillaTagger.Instance.offlineVRRig.enabled = false;
+                                GorillaTagger.Instance.offlineVRRig.transform.position = vrrig.transform.position;
+                                GorillaTagger.Instance.myVRRig.transform.position = vrrig.transform.position;
+
+                                Vector3 they = vrrig.transform.position;
+                                Vector3 notthem = GorillaTagger.Instance.offlineVRRig.head.rigTarget.position;
+                                float distance = Vector3.Distance(they, notthem);
+
+                                if (GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected") && !vrrig.mainSkin.material.name.Contains("fected") && distance < 1.667)
+                                {
+                                    if (rightHand == true) { GorillaLocomotion.Player.Instance.rightControllerTransform.position = they; } else { GorillaLocomotion.Player.Instance.leftControllerTransform.position = they; }
+                                }
                             }
                         }
                     }
-                }
-                else
-                {
-                    NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Everyone is tagged!</color>");
-                    GorillaTagger.Instance.offlineVRRig.enabled = true;
-                    GetIndex("Tag All").enabled = false;
+                    else
+                    {
+                        NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Everyone is tagged!</color>");
+                        GorillaTagger.Instance.offlineVRRig.enabled = true;
+                        GetIndex("Tag All").enabled = false;
+                    }
                 }
             }
         }
