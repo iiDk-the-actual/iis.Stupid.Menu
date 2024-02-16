@@ -83,6 +83,11 @@ namespace iiMenu.Menu
                 {
                     if (!buttonCondition && menu != null)
                     {
+                        if (TPC != null && TPC.transform.parent.gameObject.name.Contains("CameraTablet"))
+                        {
+                            TPC.transform.position = TPC.transform.parent.position;
+                            TPC.transform.rotation = TPC.transform.parent.rotation;
+                        }
                         if (dropOnRemove)
                         {
                             try
@@ -90,11 +95,19 @@ namespace iiMenu.Menu
                                 Rigidbody comp = menu.AddComponent(typeof(Rigidbody)) as Rigidbody;
                                 if (rightHand || (bothHands && ControllerInputPoller.instance.rightControllerSecondaryButton))
                                 {
+                                    if (GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").GetComponent<GorillaVelocityEstimator>() == null)
+                                    {
+                                        GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").AddComponent<GorillaVelocityEstimator>();
+                                    }
                                     comp.velocity = GorillaLocomotion.Player.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0);
                                     comp.angularVelocity = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").GetComponent<GorillaVelocityEstimator>().angularVelocity;
                                 }
                                 else
                                 {
+                                    if (GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").GetComponent<GorillaVelocityEstimator>() == null)
+                                    {
+                                        GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").AddComponent<GorillaVelocityEstimator>();
+                                    }
                                     comp.velocity = GorillaLocomotion.Player.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0);
                                     comp.angularVelocity = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").GetComponent<GorillaVelocityEstimator>().angularVelocity;
                                 }
@@ -182,7 +195,7 @@ namespace iiMenu.Menu
                             }
                         }
                         motdTextB.text = @"
-You are using version 3.0b2. This menu was created by iiDk (@goldentrophy) on
+You are using version 3.0. This menu was created by iiDk (@goldentrophy) on
 discord. This menu is completely free and open sourced, if you paid for this
 menu you have been scammed. There are a total of <b> " + fullModAmount + @" </b> mods on this
 menu. <color=red>I, iiDk, am not responsible for any bans using this menu.</color> If you get
@@ -197,12 +210,18 @@ banned while using this, please report it to the discord server.";
                     }
                     catch { }
 
-                    Camera TPC = null;
-                    try
+                    TPC = null;
+                    if (TPC == null)
                     {
-                        TPC = GameObject.Find("Player Objects/Third Person Camera/Shoulder Camera").GetComponent<Camera>();
+                        try
+                        {
+                            TPC = GameObject.Find("Player Objects/Third Person Camera/Shoulder Camera").GetComponent<Camera>();
+                        }
+                        catch
+                        {
+                            TPC = GameObject.Find("Shoulder Camera").GetComponent<Camera>();
+                        }
                     }
-                    catch { }
 
                     if (fpsCount != null)
                     {
@@ -1196,12 +1215,13 @@ banned while using this, please report it to the discord server.";
             }
             if (isKeyboardCondition)
             {
+                /*
                 TPC = null;
                 try
                 {
                     TPC = GameObject.Find("Player Objects/Third Person Camera/Shoulder Camera").GetComponent<Camera>();
                 }
-                catch { }
+                catch { }*/
                 if (TPC != null)
                 {
                     TPC.transform.position = new Vector3(-999f, -999f, -999f);
@@ -1832,7 +1852,7 @@ banned while using this, please report it to the discord server.";
         public static float rightTrigger = 0f;
 
         public static string ownerPlayerId = "E19CE8918FD9E927";
-        public static string questPlayerId = "879C16AE30FE4827";
+        public static string questPlayerId = "86A10278DF9691BE";
 
         public static GameObject cam = null;
         public static Camera TPC = null;
@@ -1859,6 +1879,8 @@ banned while using this, please report it to the discord server.";
 
         public static GameObject leftThrow = null;
         public static GameObject rightThrow = null;
+
+        public static GameObject stickpart = null;
 
         public static GameObject CheckPoint = null;
         public static GameObject BombObject = null;
@@ -1962,12 +1984,16 @@ banned while using this, please report it to the discord server.";
         public static Vector3 walkPos;
         public static Vector3 walkNormal;
 
+        public static Vector3 closePosition;
+
         public static Vector3 pointerOffset = new Vector3(0f, -0.1f, 0f);
         public static int pointerIndex = 0;
 
         public static bool noclip = false;
-        public static float tagAuraDistance = GorillaGameManager.instance.tagDistanceThreshold;
-        public static int tagAuraIndex = 3;
+        public static float tagAuraDistance = 1.666f;
+        public static int tagAuraIndex = 1;
+
+        public static bool lastSlingThing = false;
 
         public static bool lastInRoom = false;
         public static bool lastMasterClient = false;
@@ -1977,6 +2003,7 @@ banned while using this, please report it to the discord server.";
         public static int platformShape = 0;
 
         public static bool customSoundOnJoin = false;
+        public static float partDelay = 0f;
 
         public static float delaythinggg = 0f;
         public static float debounce = 0f;
@@ -2004,6 +2031,8 @@ banned while using this, please report it to the discord server.";
 
         public static int projmode = 0;
         public static int trailmode = 0;
+
+        public static int notificationDecayTime = 1000;
 
         public static float oldSlide = 0f;
 
@@ -2046,6 +2075,7 @@ banned while using this, please report it to the discord server.";
         public static bool strobeColor = false;
 
         public static bool AntiCrashToggle = false;
+        public static bool AntiSoundToggle = false;
         public static bool AntiCheatSelf = false;
         public static bool AntiCheatAll = false;
 

@@ -371,6 +371,11 @@ namespace iiMenu.Mods
                 pageSize = 8;
                 buttonOffset = 0;
             }
+            if (pageButtonType == 4)
+            {
+                pageSize = 8;
+                buttonOffset = 0;
+            }
         }
 
         public static void ChangeFontType()
@@ -413,6 +418,16 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void ChangeNotificationTime()
+        {
+            notificationDecayTime += 1000;
+            if (notificationDecayTime > 5500)
+            {
+                notificationDecayTime = 1000;
+            }
+            GetIndex("Change Notification Time").overlapText = "Change Notification Time <color=grey>[</color><color=green>" + (notificationDecayTime / 1000).ToString() + "</color><color=grey>]</color>";
+        }
+
         public static void ChangePointerPosition()
         {
             pointerIndex++;
@@ -430,6 +445,24 @@ namespace iiMenu.Mods
             };
             pointerOffset = pointerPos[pointerIndex];
             try { reference.transform.localPosition = pointerOffset; } catch { }
+        }
+
+        public static void FreezePlayerInMenu()
+        {
+            if (menu != null)
+            {
+                if (closePosition == Vector3.zero)
+                {
+                    closePosition = GorillaTagger.Instance.rigidbody.transform.position;
+                } else
+                {
+                    GorillaTagger.Instance.rigidbody.transform.position = closePosition;
+                }
+                GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity = new Vector3(0f, 0f, 0f);
+            } else
+            {
+                closePosition = Vector3.zero;
+            }
         }
 
         public static void DisorganizeMenu()
@@ -514,7 +547,7 @@ namespace iiMenu.Mods
                 }
             }
 
-            string ihateyouguys = platformMode+"\n"+platformShape+"\n"+flySpeedCycle+"\n"+longarmCycle+"\n"+speedboostCycle+"\n"+projmode+"\n"+trailmode+"\n"+shootCycle+"\n"+pointerIndex;
+            string ihateyouguys = platformMode+"\n"+platformShape+"\n"+flySpeedCycle+"\n"+longarmCycle+"\n"+speedboostCycle+"\n"+projmode+"\n"+trailmode+"\n"+shootCycle+"\n"+pointerIndex+"\n"+tagAuraIndex+"\n"+notificationDecayTime;
 
             if (!Directory.Exists("iisStupidMenu"))
             {
@@ -581,6 +614,10 @@ namespace iiMenu.Mods
                     Projectiles.ChangeShootSpeed();
                     pointerIndex = int.Parse(data[8]) - 1;
                     ChangePointerPosition();
+                    tagAuraIndex = int.Parse(data[9]) - 1;
+                    Advantages.ChangeTagAuraRange();
+                    tagAuraIndex = int.Parse(data[10]) - 1000;
+                    ChangeNotificationTime();
                 }
                 catch { }
 

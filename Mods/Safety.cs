@@ -36,6 +36,18 @@ namespace iiMenu.Mods
             AntiCrashToggle = false;
         }
 
+        public static void EnableAntiHandTap()
+        {
+            //GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools").SetActive(false);
+            AntiSoundToggle = true;
+        }
+
+        public static void DisableAntiHandTap()
+        {
+            //GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools").SetActive(true);
+            AntiSoundToggle = false;
+        }
+
         public static void AntiReportDisconnect()
         {
             try
@@ -45,7 +57,7 @@ namespace iiMenu.Mods
                 for (int i = 0; i < boardsTransform.childCount; i++)
                 {
                     Transform v = boardsTransform.GetChild(i);
-                    if (v.gameObject.name.Contains("Anchor") && v.gameObject.activeSelf)
+                    if (v.gameObject.name.Contains("Report") && v.gameObject.activeSelf)
                     {
                         string Name = v.gameObject.name;
                         v = v.Find("GorillaScoreBoard/LineParent");
@@ -93,7 +105,7 @@ namespace iiMenu.Mods
                 for (int i = 0; i < boardsTransform.childCount; i++)
                 {
                     Transform v = boardsTransform.GetChild(i);
-                    if (v.gameObject.name.Contains("Anchor") && v.gameObject.activeSelf)
+                    if (v.gameObject.name.Contains("Report") && v.gameObject.activeSelf)
                     {
                         string Name = v.gameObject.name;
                         v = v.Find("GorillaScoreBoard/LineParent");
@@ -143,7 +155,7 @@ namespace iiMenu.Mods
                 for (int i = 0; i < boardsTransform.childCount; i++)
                 {
                     Transform v = boardsTransform.GetChild(i);
-                    if (v.gameObject.name.Contains("Anchor") && v.gameObject.activeSelf)
+                    if (v.gameObject.name.Contains("Report") && v.gameObject.activeSelf)
                     {
                         string Name = v.gameObject.name;
                         v = v.Find("GorillaScoreBoard/LineParent");

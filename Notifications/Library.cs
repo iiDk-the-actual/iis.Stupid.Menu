@@ -91,8 +91,12 @@ namespace iiMenu.Notifications
             //}
         }
 
-        public static void SendNotification(string NotificationText, int clearTime = 1000)
+        public static void SendNotification(string NotificationText, int clearTime = -1)
         {
+            if (clearTime < 0)
+            {
+                clearTime = notificationDecayTime;
+            }
             if (!disableNotifications)
             {
                 try
