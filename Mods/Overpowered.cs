@@ -284,7 +284,7 @@ namespace iiMenu.Mods
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
                 UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
-                if (isCopying && whoCopy != null)
+                if ((isCopying && whoCopy != null) && Time.time > kgDebounce)
                 {
                     int num = GetPhotonViewFromVRRig(whoCopy).ViewID;
                     Hashtable ServerCleanDestroyEvent = new Hashtable();
@@ -295,6 +295,7 @@ namespace iiMenu.Mods
                     ServerCleanDestroyEvent[0] = num;
                     ServerCleanOptions.CachingOption = EventCaching.DoNotCache;
                     PhotonNetwork.NetworkingClient.OpRaiseEvent(204, ServerCleanDestroyEvent, ServerCleanOptions, SendOptions.SendUnreliable);
+                    kgDebounce = Time.time + 0.2f;
                 }
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
@@ -317,7 +318,7 @@ namespace iiMenu.Mods
 
         public static void LagAll()
         {
-            if (rightTrigger > 0.5f)
+            if ((rightTrigger > 0.5f) && Time.time > kgDebounce)
             {
                 int num = GetPhotonViewFromVRRig(GetVRRigFromPlayer(PhotonNetwork.PlayerListOthers[UnityEngine.Random.Range(0, PhotonNetwork.PlayerListOthers.Length - 1)])).ViewID;
                 Hashtable ServerCleanDestroyEvent = new Hashtable();
@@ -328,6 +329,7 @@ namespace iiMenu.Mods
                 ServerCleanDestroyEvent[0] = num;
                 ServerCleanOptions.CachingOption = EventCaching.DoNotCache;
                 PhotonNetwork.NetworkingClient.OpRaiseEvent(204, ServerCleanDestroyEvent, ServerCleanOptions, SendOptions.SendUnreliable);
+                kgDebounce = Time.time + 0.2f;
             }
         }
 
