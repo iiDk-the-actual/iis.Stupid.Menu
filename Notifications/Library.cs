@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Threading.Tasks;
 using BepInEx;
+using iiMenu.Classes;
+using iiMenu.Menu;
 using UnityEngine;
 using UnityEngine.UI;
 using static iiMenu.Menu.Main;
@@ -54,6 +56,23 @@ namespace iiMenu.Notifications
             Testtext.rectTransform.localPosition = new Vector3(-1f, -1f, -0.5f);
             Testtext.material = AlertText;
             NotifiLib.NotifiText = Testtext;
+
+            Text Text2 = new GameObject
+            {
+                transform =
+                {
+                    parent = HUDObj.transform
+                }
+            }.AddComponent<Text>();
+            Text2.text = "";
+            Text2.fontSize = 20;
+            Text2.font = agency;
+            Text2.rectTransform.sizeDelta = new Vector2(450f, 1000f);
+            Text2.alignment = TextAnchor.UpperLeft;
+            Text2.rectTransform.localScale = new Vector3(0.00333333333f, 0.00333333333f, 0.33333333f);
+            Text2.rectTransform.localPosition = new Vector3(-1f, -0.7f, -0.5f);
+            Text2.material = AlertText;
+            NotifiLib.ModText = Text2;
         }
 
         private void FixedUpdate()
@@ -65,8 +84,28 @@ namespace iiMenu.Notifications
             }
             HUDObj2.transform.position = new Vector3(MainCamera.transform.position.x, MainCamera.transform.position.y, MainCamera.transform.position.z);
             HUDObj2.transform.rotation = MainCamera.transform.rotation;
-            if (Testtext.text != "")
+            if (showEnabledModsVR)
             {
+                string lol = "";
+                foreach (ButtonInfo[] buttonlist in Buttons.buttons)
+                {
+                    foreach (ButtonInfo v in buttonlist)
+                    {
+                        if (v.enabled)
+                        {
+                            lol += v.buttonText + "\n";
+                        }
+                    }
+                }
+                ModText.text = lol;
+                ModText.color = UIColorHelper.bgc;
+            }
+            else
+            {
+                ModText.text = "";
+            }
+            //if (Testtext.text != "")
+            //{
                 /*NotificationDecayTimeCounter++;
                 if (NotificationDecayTimeCounter > NotificationDecayTime)
                 {
@@ -84,7 +123,7 @@ namespace iiMenu.Notifications
                     Testtext.text = newtext;*
                     ClearLast();
                 }*/
-            }
+            //}
             //else
             //{
             //    NotificationDecayTimeCounter = 0;
@@ -172,6 +211,7 @@ namespace iiMenu.Notifications
         private bool HasInit;
 
         private static Text NotifiText;
+        private static Text ModText;
 
         public static bool IsEnabled = true;
     }

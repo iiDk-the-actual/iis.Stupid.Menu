@@ -268,17 +268,10 @@ namespace iiMenu.Mods
                     {
                         GorillaTagger.Instance.offlineVRRig.enabled = false;
 
-                        GorillaTagger.Instance.offlineVRRig.transform.position = whoCopy.transform.position;
-                        GorillaTagger.Instance.myVRRig.transform.position = whoCopy.transform.position;
+                        GorillaTagger.Instance.offlineVRRig.transform.position = whoCopy.transform.position - new Vector3(0f, 3f, 0f);
+                        GorillaTagger.Instance.myVRRig.transform.position = whoCopy.transform.position - new Vector3(0f, 3f, 0f);
 
-                        Vector3 they = whoCopy.transform.position;
-                        Vector3 notthem = GorillaTagger.Instance.offlineVRRig.head.rigTarget.position;
-                        float distance = Vector3.Distance(they, notthem);
-
-                        if (GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected") && !whoCopy.mainSkin.material.name.Contains("fected") && distance < 1.667)
-                        {
-                            if (rightHand == true) { GorillaLocomotion.Player.Instance.rightControllerTransform.position = they; } else { GorillaLocomotion.Player.Instance.leftControllerTransform.position = they; }
-                        }
+                        GorillaLocomotion.Player.Instance.rightControllerTransform.position = whoCopy.transform.position;
 
                         GameObject l = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                         UnityEngine.Object.Destroy(l.GetComponent<Rigidbody>());
@@ -299,6 +292,11 @@ namespace iiMenu.Mods
 
                         UnityEngine.Object.Destroy(l, Time.deltaTime);
                         UnityEngine.Object.Destroy(r, Time.deltaTime);
+                    }
+                    else
+                    {
+                        isCopying = false;
+                        GorillaTagger.Instance.offlineVRRig.enabled = true;
                     }
                 }
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
@@ -402,17 +400,10 @@ namespace iiMenu.Mods
                             {
                                 if (GorillaTagger.Instance.offlineVRRig.enabled == true)
                                     GorillaTagger.Instance.offlineVRRig.enabled = false;
-                                GorillaTagger.Instance.offlineVRRig.transform.position = vrrig.transform.position;
-                                GorillaTagger.Instance.myVRRig.transform.position = vrrig.transform.position;
 
-                                Vector3 they = vrrig.transform.position;
-                                Vector3 notthem = GorillaTagger.Instance.offlineVRRig.head.rigTarget.position;
-                                float distance = Vector3.Distance(they, notthem);
-
-                                if (GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected") && !vrrig.mainSkin.material.name.Contains("fected") && distance < 1.667)
-                                {
-                                    if (rightHand == true) { GorillaLocomotion.Player.Instance.rightControllerTransform.position = they; } else { GorillaLocomotion.Player.Instance.leftControllerTransform.position = they; }
-                                }
+                                GorillaTagger.Instance.offlineVRRig.transform.position = vrrig.transform.position - new Vector3(0f, -3f, 0f);
+                                GorillaTagger.Instance.myVRRig.transform.position = vrrig.transform.position - new Vector3(0f, -3f, 0f);
+                                GorillaLocomotion.Player.Instance.rightControllerTransform.position = vrrig.transform.position;
                             }
                         }
                     }
@@ -433,10 +424,9 @@ namespace iiMenu.Mods
             if (!GorillaLocomotion.Player.Instance.disableMovement)
             {
                 VRRig vrrig = RigManager.GetVRRigFromPlayer(target);
-                GorillaTagger.Instance.offlineVRRig.enabled = false;
-                GorillaTagger.Instance.offlineVRRig.transform.position = vrrig.transform.position;
-                GorillaTagger.Instance.myVRRig.transform.position = vrrig.transform.position;
-                if (rightHand == true) { GorillaLocomotion.Player.Instance.rightControllerTransform.position = vrrig.transform.position; } else { GorillaLocomotion.Player.Instance.leftControllerTransform.position = vrrig.transform.position; }
+                GorillaTagger.Instance.offlineVRRig.transform.position = vrrig.transform.position - new Vector3(0f, -3f, 0f);
+                GorillaTagger.Instance.myVRRig.transform.position = vrrig.transform.position - new Vector3(0f, -3f, 0f);
+                GorillaLocomotion.Player.Instance.rightControllerTransform.position = vrrig.transform.position;
             }
             else
             {

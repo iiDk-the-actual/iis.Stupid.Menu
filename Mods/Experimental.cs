@@ -85,7 +85,7 @@ namespace iiMenu.Mods
 
         public static void AutoSetMaster()
         {
-            if ((PhotonNetwork.InRoom && PhotonNetwork.CurrentRoom.CustomProperties["gameMode"].ToString().ToLower().Contains("modded")) || hasAntiBanned)
+            if (PhotonNetwork.InRoom && PhotonNetwork.CurrentRoom.CustomProperties["gameMode"].ToString().ToLower().Contains("modded"))
             {
                 PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
             }

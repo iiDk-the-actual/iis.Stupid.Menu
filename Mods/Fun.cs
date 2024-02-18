@@ -1,9 +1,13 @@
-﻿using GorillaLocomotion.Gameplay;
+﻿using ExitGames.Client.Photon;
+using GorillaLocomotion.Gameplay;
 using GorillaTag;
 using HarmonyLib;
 using iiMenu.Notifications;
 using Photon.Pun;
+using Photon.Realtime;
 using System.ComponentModel;
+using System.IO;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static iiMenu.Classes.RigManager;
@@ -211,6 +215,131 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void LavaSplashHands()
+        {
+            GorillaLocomotion.Player.Instance.OnEnterWaterVolume(GorillaLocomotion.Player.Instance.bodyCollider, GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/ILavaYou_PrefabV/Lava/ForestLavaWaterVolume").GetComponent<GorillaLocomotion.Swimming.WaterVolume>());
+            if (rightGrab)
+            {
+                if (Time.time > splashDel)
+                {
+                    GorillaTagger.Instance.myVRRig.RPC("PlaySplashEffect", RpcTarget.All, new object[]
+                    {
+                        GorillaTagger.Instance.rightHandTransform.position,
+                        GorillaTagger.Instance.rightHandTransform.rotation,
+                        4f,
+                        100f,
+                        true,
+                        false
+                    });
+                    RPCProtection();
+                    splashDel = Time.time + 0.1f;
+                }
+            }
+            if (leftGrab)
+            {
+                if (Time.time > splashDel)
+                {
+                    GorillaTagger.Instance.myVRRig.RPC("PlaySplashEffect", RpcTarget.All, new object[]
+                    {
+                        GorillaTagger.Instance.leftHandTransform.position,
+                        GorillaTagger.Instance.leftHandTransform.rotation,
+                        4f,
+                        100f,
+                        true,
+                        false
+                    });
+                    RPCProtection();
+                    splashDel = Time.time + 0.1f;
+                }
+            }
+        }
+
+        public static void LavaSplashAura()
+        {
+            GorillaLocomotion.Player.Instance.OnEnterWaterVolume(GorillaLocomotion.Player.Instance.bodyCollider, GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/ILavaYou_PrefabV/Lava/ForestLavaWaterVolume").GetComponent<GorillaLocomotion.Swimming.WaterVolume>());
+            if (Time.time > splashDel)
+            {
+                GorillaTagger.Instance.myVRRig.RPC("PlaySplashEffect", RpcTarget.All, new object[]
+                {
+                    GorillaTagger.Instance.offlineVRRig.transform.position + new Vector3(UnityEngine.Random.Range(-0.5f,0.5f),UnityEngine.Random.Range(-0.5f,0.5f),UnityEngine.Random.Range(-0.5f,0.5f)),
+                    GorillaTagger.Instance.offlineVRRig.transform.rotation,
+                    4f,
+                    100f,
+                    true,
+                    false
+                });
+                RPCProtection();
+                splashDel = Time.time + 0.1f;
+            }
+        }
+
+        public static void LavaSplashGun()
+        {
+            GorillaLocomotion.Player.Instance.OnEnterWaterVolume(GorillaLocomotion.Player.Instance.bodyCollider, GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/ILavaYou_PrefabV/Lava/ForestLavaWaterVolume").GetComponent<GorillaLocomotion.Swimming.WaterVolume>());
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray);
+                if (shouldBePC)
+                {
+                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
+                    Physics.Raycast(ray, out Ray, 100);
+                }
+
+                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                NewPointer.GetComponent<Renderer>().material.color = bgColorA;
+                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+                NewPointer.transform.position = Ray.point;
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
+                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                {
+                    GorillaTagger.Instance.offlineVRRig.enabled = false;
+                    GorillaTagger.Instance.offlineVRRig.transform.position = NewPointer.transform.position - new Vector3(0, 1, 0);
+                    GorillaTagger.Instance.myVRRig.transform.position = NewPointer.transform.position - new Vector3(0, 1, 0);
+                    if (Time.time > splashDel)
+                    {
+                        GorillaTagger.Instance.myVRRig.RPC("PlaySplashEffect", RpcTarget.All, new object[]
+                        {
+                            NewPointer.transform.position,
+                            Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0,360), UnityEngine.Random.Range(0,360), UnityEngine.Random.Range(0,360))),
+                            4f,
+                            100f,
+                            true,
+                            false
+                        });
+                        RPCProtection();
+                        splashDel = Time.time + 0.1f;
+                    }
+
+                    GameObject l = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                    UnityEngine.Object.Destroy(l.GetComponent<Rigidbody>());
+                    UnityEngine.Object.Destroy(l.GetComponent<SphereCollider>());
+
+                    l.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                    l.transform.position = GorillaTagger.Instance.leftHandTransform.position;
+
+                    GameObject r = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                    UnityEngine.Object.Destroy(r.GetComponent<Rigidbody>());
+                    UnityEngine.Object.Destroy(r.GetComponent<SphereCollider>());
+
+                    r.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                    r.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+
+                    l.GetComponent<Renderer>().material.color = bgColorA;
+                    r.GetComponent<Renderer>().material.color = bgColorA;
+
+                    UnityEngine.Object.Destroy(l, Time.deltaTime);
+                    UnityEngine.Object.Destroy(r, Time.deltaTime);
+                }
+                else
+                {
+                    GorillaTagger.Instance.offlineVRRig.enabled = true;
+                }
+            }
+        }
+
         public static void BugGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
@@ -341,6 +470,58 @@ namespace iiMenu.Mods
         public static void SpazBeachBall()
         {
             GameObject.Find("BeachBall").transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+        }
+
+        public static void BreakBug()
+        {
+            int num = GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().photonView.ViewID;
+            Hashtable ServerCleanDestroyEvent = new Hashtable();
+            RaiseEventOptions ServerCleanOptions = new RaiseEventOptions
+            {
+                CachingOption = EventCaching.RemoveFromRoomCache
+            };
+            ServerCleanDestroyEvent[0] = num;
+            ServerCleanOptions.CachingOption = EventCaching.AddToRoomCache;
+            PhotonNetwork.NetworkingClient.OpRaiseEvent(204, ServerCleanDestroyEvent, ServerCleanOptions, SendOptions.SendUnreliable);
+        }
+
+        public static void BreakBat()
+        {
+            int num = GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().photonView.ViewID;
+            Hashtable ServerCleanDestroyEvent = new Hashtable();
+            RaiseEventOptions ServerCleanOptions = new RaiseEventOptions
+            {
+                CachingOption = EventCaching.RemoveFromRoomCache
+            };
+            ServerCleanDestroyEvent[0] = num;
+            ServerCleanOptions.CachingOption = EventCaching.AddToRoomCache;
+            PhotonNetwork.NetworkingClient.OpRaiseEvent(204, ServerCleanDestroyEvent, ServerCleanOptions, SendOptions.SendUnreliable);
+        }
+
+        public static void StealBug()
+        {
+            if (rightGrab)
+            {
+                ThrowableBug bug = GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>();
+                bug.currentState = TransferrableObject.PositionState.Dropped;
+                System.Type type = bug.GetType();
+                FieldInfo fieldInfo = type.GetField("locked", BindingFlags.NonPublic | BindingFlags.Instance);
+                fieldInfo.SetValue(bug, false);
+                GameObject.Find("Floating Bug Holdable").transform.position = GorillaTagger.Instance.rightHandTransform.position;
+            }
+        }
+
+        public static void StealBat()
+        {
+            if (rightGrab)
+            {
+                ThrowableBug bug = GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>();
+                bug.currentState = TransferrableObject.PositionState.Dropped;
+                System.Type type = bug.GetType();
+                FieldInfo fieldInfo = type.GetField("locked", BindingFlags.NonPublic | BindingFlags.Instance);
+                fieldInfo.SetValue(bug, false);
+                GameObject.Find("Cave Bat Holdable").transform.position = GorillaTagger.Instance.rightHandTransform.position;
+            }
         }
 
         public static void PopAllBalloons()
@@ -637,6 +818,35 @@ namespace iiMenu.Mods
                     random += letters[UnityEngine.Random.Range(0,letters.Length - 1)];
                 }
                 ChangeName(random);
+
+                nameCycleDelay = Time.time + 1f;
+            }
+        }
+
+        public static string[] names = new string[] { };
+        public static void EnableCustomNameCycle()
+        {
+            if (File.Exists("iisStupidMenu/iiMenu_CustomNameCycle.txt"))
+            {
+                names = File.ReadAllText("iisStupidMenu/iiMenu_CustomNameCycle.txt").Split('\n');
+            }
+            else
+            {
+                File.WriteAllText("iisStupidMenu/iiMenu_CustomNameCycle.txt","YOUR\nTEXT\nHERE");
+            }
+        }
+
+        public static void CustomNameCycle()
+        {
+            if (Time.time > nameCycleDelay)
+            {
+                nameCycleIndex++;
+                if (nameCycleIndex > names.Length)
+                {
+                    nameCycleIndex = 1;
+                }
+
+                ChangeName(names[nameCycleIndex-1]);
 
                 nameCycleDelay = Time.time + 1f;
             }
