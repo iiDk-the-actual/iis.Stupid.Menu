@@ -83,8 +83,9 @@ namespace iiMenu.Menu
                 {
                     if (!buttonCondition && menu != null)
                     {
-                        if (TPC != null && TPC.transform.parent.gameObject.name.Contains("CameraTablet"))
+                        if (TPC != null && TPC.transform.parent.gameObject.name.Contains("CameraTablet") && isOnPC)
                         {
+                            isOnPC = false;
                             TPC.transform.position = TPC.transform.parent.position;
                             TPC.transform.rotation = TPC.transform.parent.rotation;
                         }
@@ -195,7 +196,7 @@ namespace iiMenu.Menu
                             }
                         }
                         motdTextB.text = @"
-You are using version 3.0p1. This menu was created by iiDk (@goldentrophy) on
+You are using version 3.0p2. This menu was created by iiDk (@goldentrophy) on
 discord. This menu is completely free and open sourced, if you paid for this
 menu you have been scammed. There are a total of <b> " + fullModAmount + @" </b> mods on this
 menu. <color=red>I, iiDk, am not responsible for any bans using this menu.</color> If you get
@@ -940,6 +941,10 @@ banned while using this, please report it to the discord server.";
             text2.supportRichText = true;
             text2.fontSize = 1;
             text2.color = textColor;
+            if (method.enabled && !favorites.Contains(method.buttonText))
+            {
+                text2.color = textClicked;
+            }
             if (favorites.Contains(method.buttonText))
             {
                 text2.color = Color.black;
@@ -1054,7 +1059,7 @@ banned while using this, please report it to the discord server.";
                 }
             }
             text.fontSize = 1;
-            text.color = textColor;
+            text.color = titleColor;
             title = text;
             text.supportRichText = true;
             text.fontStyle = FontStyle.Italic;
@@ -1067,82 +1072,88 @@ banned while using this, please report it to the discord server.";
             component.position = new Vector3(0.06f, 0f, 0.165f);
             component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
-            Text fps = new GameObject
+            if (!disableFpsCounter)
             {
-                transform =
+                Text fps = new GameObject
+                {
+                    transform =
                 {
                     parent = canvasObj.transform
                 }
-            }.AddComponent<Text>();
-            fps.font = activeFont;
-            fps.text = "FPS: " + Mathf.Ceil(1f / Time.unscaledDeltaTime).ToString();
-            fps.color = textColor;
-            fpsCount = fps;
-            fps.fontSize = 1;
-            fps.supportRichText = true;
-            fps.fontStyle = FontStyle.Italic;
-            fps.alignment = TextAnchor.MiddleCenter;
-            fps.horizontalOverflow = UnityEngine.HorizontalWrapMode.Overflow;
-            fps.resizeTextForBestFit = true;
-            fps.resizeTextMinSize = 0;
-            RectTransform component2 = fps.GetComponent<RectTransform>();
-            component2.localPosition = Vector3.zero;
-            component2.sizeDelta = new Vector2(0.28f, 0.02f);
-            component2.position = new Vector3(0.06f, 0f, 0.135f);
-            component2.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+                }.AddComponent<Text>();
+                fps.font = activeFont;
+                fps.text = "FPS: " + Mathf.Ceil(1f / Time.unscaledDeltaTime).ToString();
+                fps.color = titleColor;
+                fpsCount = fps;
+                fps.fontSize = 1;
+                fps.supportRichText = true;
+                fps.fontStyle = FontStyle.Italic;
+                fps.alignment = TextAnchor.MiddleCenter;
+                fps.horizontalOverflow = UnityEngine.HorizontalWrapMode.Overflow;
+                fps.resizeTextForBestFit = true;
+                fps.resizeTextMinSize = 0;
+                RectTransform component2 = fps.GetComponent<RectTransform>();
+                component2.localPosition = Vector3.zero;
+                component2.sizeDelta = new Vector2(0.28f, 0.02f);
+                component2.position = new Vector3(0.06f, 0f, 0.135f);
+                component2.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+            }
 
-            GameObject disconnectbutton = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            if (!UnityInput.Current.GetKey(KeyCode.Q))
+            if (!disableDisconnectButton)
             {
-                disconnectbutton.layer = 2;
-            }
-            UnityEngine.Object.Destroy(disconnectbutton.GetComponent<Rigidbody>());
-            disconnectbutton.GetComponent<BoxCollider>().isTrigger = true;
-            disconnectbutton.transform.parent = menu.transform;
-            disconnectbutton.transform.rotation = Quaternion.identity;
-            if (FATMENU == true)
-            {
-                disconnectbutton.transform.localScale = new Vector3(0.09f, 0.9f, 0.08f);
-            }
-            else
-            {
-                disconnectbutton.transform.localScale = new Vector3(0.09f, 1.3f, 0.08f);
-            }
-            disconnectbutton.transform.localPosition = new Vector3(0.56f, 0f, 0.6f);
-            disconnectbutton.AddComponent<Classes.Button>().relatedText = "Disconnect";
-            GradientColorKey[] array3 = new GradientColorKey[3];
-            array3[0].color = buttonDefaultA;
-            array3[0].time = 0f;
-            array3[1].color = buttonDefaultB;
-            array3[1].time = 0.5f;
-            array3[2].color = buttonDefaultA;
-            array3[2].time = 1f;
-            ColorChanger colorChanger2 = disconnectbutton.AddComponent<ColorChanger>();
-            colorChanger2.colors = new Gradient
-            {
-                colorKeys = array3
-            };
-            colorChanger2.Start();
-            disconnectbutton.GetComponent<Renderer>().material.color = buttonDefaultA;
-            Text discontext = new GameObject
-            {
-                transform =
+                GameObject disconnectbutton = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                if (!UnityInput.Current.GetKey(KeyCode.Q))
+                {
+                    disconnectbutton.layer = 2;
+                }
+                UnityEngine.Object.Destroy(disconnectbutton.GetComponent<Rigidbody>());
+                disconnectbutton.GetComponent<BoxCollider>().isTrigger = true;
+                disconnectbutton.transform.parent = menu.transform;
+                disconnectbutton.transform.rotation = Quaternion.identity;
+                if (FATMENU == true)
+                {
+                    disconnectbutton.transform.localScale = new Vector3(0.09f, 0.9f, 0.08f);
+                }
+                else
+                {
+                    disconnectbutton.transform.localScale = new Vector3(0.09f, 1.3f, 0.08f);
+                }
+                disconnectbutton.transform.localPosition = new Vector3(0.56f, 0f, 0.6f);
+                disconnectbutton.AddComponent<Classes.Button>().relatedText = "Disconnect";
+                GradientColorKey[] array3 = new GradientColorKey[3];
+                array3[0].color = buttonDefaultA;
+                array3[0].time = 0f;
+                array3[1].color = buttonDefaultB;
+                array3[1].time = 0.5f;
+                array3[2].color = buttonDefaultA;
+                array3[2].time = 1f;
+                ColorChanger colorChanger2 = disconnectbutton.AddComponent<ColorChanger>();
+                colorChanger2.colors = new Gradient
+                {
+                    colorKeys = array3
+                };
+                colorChanger2.Start();
+                disconnectbutton.GetComponent<Renderer>().material.color = buttonDefaultA;
+                Text discontext = new GameObject
+                {
+                    transform =
                 {
                     parent = canvasObj.transform
                 }
-            }.AddComponent<Text>();
-            discontext.font = activeFont;
-            discontext.text = "Disconnect";
-            discontext.fontSize = 1;
-            discontext.color = textColor;
-            discontext.alignment = TextAnchor.MiddleCenter;
-            discontext.resizeTextForBestFit = true;
-            discontext.resizeTextMinSize = 0;
-            RectTransform rectt = discontext.GetComponent<RectTransform>();
-            rectt.localPosition = Vector3.zero;
-            rectt.sizeDelta = new Vector2(0.2f, 0.03f);
-            rectt.localPosition = new Vector3(0.064f, 0f, 0.23f);
-            rectt.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+                }.AddComponent<Text>();
+                discontext.font = activeFont;
+                discontext.text = "Disconnect";
+                discontext.fontSize = 1;
+                discontext.color = textColor;
+                discontext.alignment = TextAnchor.MiddleCenter;
+                discontext.resizeTextForBestFit = true;
+                discontext.resizeTextMinSize = 0;
+                RectTransform rectt = discontext.GetComponent<RectTransform>();
+                rectt.localPosition = Vector3.zero;
+                rectt.sizeDelta = new Vector2(0.2f, 0.03f);
+                rectt.localPosition = new Vector3(0.064f, 0f, 0.23f);
+                rectt.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+            }
 
             AddPageButtons();
 
@@ -1224,6 +1235,7 @@ banned while using this, please report it to the discord server.";
                 catch { }*/
                 if (TPC != null)
                 {
+                    isOnPC = true;
                     TPC.transform.position = new Vector3(-999f, -999f, -999f);
                     TPC.transform.rotation = Quaternion.identity;
                     GameObject bg = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -1700,8 +1712,8 @@ banned while using this, please report it to the discord server.";
                 GorillaTagger.Instance.UpdateColor(color.r, color.g, color.b);
                 PlayerPrefs.Save();
 
-                GorillaTagger.Instance.myVRRig.RPC("InitializeNoobMaterial", RpcTarget.All, new object[] { color.r, color.g, color.b, false });
-                RPCProtection();
+                //GorillaTagger.Instance.myVRRig.RPC("InitializeNoobMaterial", RpcTarget.All, new object[] { color.r, color.g, color.b, false });
+                //RPCProtection();
             }
         }
 
@@ -1814,6 +1826,7 @@ banned while using this, please report it to the discord server.";
         }
 
         // the variable warehouse
+        public static bool isOnPC = false;
         public static bool lockdown = false;
         public static bool HasLoaded = false;
         public static float internetFloat = 3f;
@@ -1823,6 +1836,9 @@ banned while using this, please report it to the discord server.";
         public static float buttonCooldown = 0f;
         public static bool noti = true;
         public static bool disableNotifications = false;
+        public static bool showEnabledModsVR = true;
+        public static bool disableDisconnectButton = false;
+        public static bool disableFpsCounter = false;
         public static int pageSize = 6;
         public static int pageNumber = 0;
         public static int pageButtonType = 1;
@@ -1979,6 +1995,8 @@ banned while using this, please report it to the discord server.";
         public static Color buttonClickedB = new Color32(85, 42, 0, 255);
 
         public static Color textColor = new Color32(255, 190, 125, 255);
+        public static Color titleColor = new Color32(255, 190, 125, 255);
+        public static Color textClicked = new Color32(255, 190, 125, 255);
         public static Color colorChange = Color.black;
 
         public static Vector3 walkPos;

@@ -189,7 +189,7 @@ namespace iiMenu.Mods
         public static void ChangeMenuTheme()
         {
             themeType++;
-            if (themeType > 15)
+            if (themeType > 16)
             {
                 themeType = 1;
             }
@@ -202,7 +202,9 @@ namespace iiMenu.Mods
                 buttonDefaultB = new Color32(170, 85, 0, 255);
                 buttonClickedA = new Color32(85, 42, 0, 255);
                 buttonClickedB = new Color32(85, 42, 0, 255);
+                titleColor = new Color32(255, 190, 125, 255);
                 textColor = new Color32(255, 190, 125, 255);
+                textClicked = new Color32(255, 190, 125, 255);
             }
             if (themeType == 2)
             {
@@ -212,7 +214,9 @@ namespace iiMenu.Mods
                 buttonDefaultB = Color.black;
                 buttonClickedA = Color.blue;
                 buttonClickedB = Color.blue;
+                titleColor = Color.white;
                 textColor = Color.white;
+                textClicked = Color.white;
             }
             if (themeType == 3)
             {
@@ -222,7 +226,9 @@ namespace iiMenu.Mods
                 buttonDefaultB = new Color32(50, 50, 50, 255);
                 buttonClickedA = new Color32(20, 20, 20, 255);
                 buttonClickedB = new Color32(20, 20, 20, 255);
+                titleColor = Color.white;
                 textColor = Color.white;
+                textClicked = Color.white;
             }
             if (themeType == 4)
             {
@@ -232,7 +238,9 @@ namespace iiMenu.Mods
                 buttonDefaultB = Color.white;
                 buttonClickedA = Color.white;
                 buttonClickedB = Color.white;
+                titleColor = Color.black;
                 textColor = Color.black;
+                textClicked = Color.black;
             }
             if (themeType == 5)
             {
@@ -242,7 +250,9 @@ namespace iiMenu.Mods
                 buttonDefaultB = new Color32(110, 0, 0, 255);
                 buttonClickedA = new Color32(110, 0, 0, 255);
                 buttonClickedB = new Color32(110, 0, 0, 255);
+                titleColor = Color.white;
                 textColor = Color.white;
+                textClicked = Color.white;
             }
             if (themeType == 6)
             {
@@ -252,7 +262,9 @@ namespace iiMenu.Mods
                 buttonDefaultB = Color.black;
                 buttonClickedA = Color.black;
                 buttonClickedB = Color.black;
+                titleColor = Color.white;
                 textColor = Color.white;
+                textClicked = Color.white;
             }
             if (themeType == 7)
             {
@@ -262,7 +274,9 @@ namespace iiMenu.Mods
                 buttonDefaultB = new Color32(170, 85, 0, 255);
                 buttonClickedA = new Color32(85, 42, 0, 255);
                 buttonClickedB = new Color32(85, 42, 0, 255);
+                titleColor = new Color32(255, 190, 125, 255);
                 textColor = new Color32(255, 190, 125, 255);
+                textClicked = new Color32(255, 190, 125, 255);
                 GetIndex("Thin Menu").enabled = true;
                 FATMENU = true;
             }
@@ -274,7 +288,9 @@ namespace iiMenu.Mods
                 buttonDefaultB = Color.black;
                 buttonClickedA = Color.black;
                 buttonClickedB = Color.black;
+                titleColor = Color.white;
                 textColor = Color.white;
+                textClicked = Color.white;
             }
             if (themeType == 9)
             {
@@ -284,7 +300,9 @@ namespace iiMenu.Mods
                 buttonDefaultB = Color.black;
                 buttonClickedA = new Color32(255, 111, 0, 255);
                 buttonClickedB = Color.black;
+                titleColor = Color.white;
                 textColor = Color.white;
+                textClicked = Color.white;
             }
             if (themeType == 10)
             {
@@ -294,7 +312,9 @@ namespace iiMenu.Mods
                 buttonDefaultB = Color.black;
                 buttonClickedA = Color.red;
                 buttonClickedB = Color.black;
+                titleColor = Color.white;
                 textColor = Color.white;
+                textClicked = Color.white;
             }
             if (themeType == 11)
             {
@@ -304,7 +324,9 @@ namespace iiMenu.Mods
                 buttonDefaultB = Color.black;
                 buttonClickedA = new Color32(0, 174, 255, 255);
                 buttonClickedB = Color.black;
+                titleColor = Color.white;
                 textColor = Color.white;
+                textClicked = Color.white;
             }
             if (themeType == 12)
             {
@@ -314,7 +336,9 @@ namespace iiMenu.Mods
                 buttonDefaultB = new Color32(0, 100, 188, 255);
                 buttonClickedA = new Color32(0, 174, 255, 255);
                 buttonClickedB = new Color32(0, 136, 255, 255);
+                titleColor = Color.black;
                 textColor = Color.black;
+                textClicked = Color.black;
             }
             if (themeType == 13)
             {
@@ -324,7 +348,9 @@ namespace iiMenu.Mods
                 buttonDefaultB = new Color32(0, 255, 144, 255);
                 buttonClickedA = new Color32(0, 255, 246, 255);
                 buttonClickedB = new Color32(0, 255, 246, 255);
+                titleColor = Color.black;
                 textColor = Color.black;
+                textClicked = Color.black;
             }
             if (themeType == 14)
             {
@@ -334,7 +360,9 @@ namespace iiMenu.Mods
                 buttonDefaultB = new Color32(255, 130, 255, 255);
                 buttonClickedA = Color.white;
                 buttonClickedB = Color.white;
+                titleColor = Color.black;
                 textColor = Color.black;
+                textClicked = Color.black;
             }
             if (themeType == 15)
             {
@@ -344,7 +372,21 @@ namespace iiMenu.Mods
                 buttonDefaultB = new Color32(60, 26, 89, 255);
                 buttonClickedA = new Color32(122, 35, 159, 255);
                 buttonClickedB = new Color32(122, 35, 159, 255);
+                titleColor = Color.white;
                 textColor = Color.white;
+                textClicked = Color.white;
+            }
+            if (themeType == 16)
+            {
+                bgColorA = Color.magenta;
+                bgColorB = Color.cyan;
+                buttonDefaultA = Color.black;
+                buttonDefaultB = Color.black;
+                buttonClickedA = Color.magenta;
+                buttonClickedB = Color.cyan;
+                titleColor = Color.white;
+                textColor = Color.white;
+                textClicked = Color.black;
             }
         }
 
@@ -465,6 +507,27 @@ namespace iiMenu.Mods
             }
         }
 
+        public static bool currentmentalstate = false;
+        public static void FreezeRigInMenu()
+        {
+            if (menu != null)
+            {
+                if (!currentmentalstate)
+                {
+                    currentmentalstate = true;
+                    GorillaTagger.Instance.offlineVRRig.enabled = false;
+                }
+            }
+            else
+            {
+                if (currentmentalstate)
+                {
+                    currentmentalstate = false;
+                    GorillaTagger.Instance.offlineVRRig.enabled = true;
+                }
+            }
+        }
+
         public static void DisorganizeMenu()
         {
             if (!disorganized)
@@ -511,6 +574,36 @@ namespace iiMenu.Mods
         public static void EnableNotifications()
         {
             disableNotifications = false;
+        }
+
+        public static void DisableEnabledGUI()
+        {
+            showEnabledModsVR = false;
+        }
+
+        public static void EnableEnabledGUI()
+        {
+            showEnabledModsVR = true;
+        }
+
+        public static void DisableDisconnectButton()
+        {
+            disableDisconnectButton = true;
+        }
+
+        public static void EnableDisconnectButton()
+        {
+            disableDisconnectButton = false;
+        }
+
+        public static void DisableFPSCounter()
+        {
+            disableFpsCounter = true;
+        }
+
+        public static void EnableFPSCounter()
+        {
+            disableFpsCounter = false;
         }
 
         public static void SavePreferences()
@@ -616,7 +709,7 @@ namespace iiMenu.Mods
                     ChangePointerPosition();
                     tagAuraIndex = int.Parse(data[9]) - 1;
                     Advantages.ChangeTagAuraRange();
-                    tagAuraIndex = int.Parse(data[10]) - 1000;
+                    notificationDecayTime = int.Parse(data[10]) - 1000;
                     ChangeNotificationTime();
                 }
                 catch { }

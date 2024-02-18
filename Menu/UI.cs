@@ -53,6 +53,16 @@ namespace iiMenu.UI
 
                 GUI.Box(new Rect(Screen.width - 250, 10, 240, 120), "", GUI.skin.box);
 
+                string roomText = "Not connected to room";
+                try
+                {
+                    if (PhotonNetwork.InRoom)
+                    {
+                        roomText = "Connected to room "+PhotonNetwork.CurrentRoom.Name;
+                    }
+                } catch { } // shitty ass code
+                GUI.Label(new Rect(0, Screen.height - 25, Screen.width, 40), roomText);
+
                 inputText = GUI.TextField(new Rect(Screen.width - 200, 20, 180, 20), inputText);
                 // inputText = inputText.ToUpper(); i dont need this
 

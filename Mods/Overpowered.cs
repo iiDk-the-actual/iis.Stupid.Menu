@@ -293,9 +293,9 @@ namespace iiMenu.Mods
                         CachingOption = EventCaching.RemoveFromRoomCache
                     };
                     ServerCleanDestroyEvent[0] = num;
-                    ServerCleanOptions.CachingOption = EventCaching.DoNotCache;
+                    ServerCleanOptions.CachingOption = EventCaching.AddToRoomCache;
                     PhotonNetwork.NetworkingClient.OpRaiseEvent(204, ServerCleanDestroyEvent, ServerCleanOptions, SendOptions.SendUnreliable);
-                    kgDebounce = Time.time + 0.2f;
+                   // kgDebounce = Time.time + 0.2f;
                 }
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
@@ -327,12 +327,69 @@ namespace iiMenu.Mods
                     CachingOption = EventCaching.RemoveFromRoomCache
                 };
                 ServerCleanDestroyEvent[0] = num;
-                ServerCleanOptions.CachingOption = EventCaching.DoNotCache;
+                ServerCleanOptions.CachingOption = EventCaching.AddToRoomCache;
                 PhotonNetwork.NetworkingClient.OpRaiseEvent(204, ServerCleanDestroyEvent, ServerCleanOptions, SendOptions.SendUnreliable);
-                kgDebounce = Time.time + 0.2f;
+                //kgDebounce = Time.time + 0.2f;
             }
         }
 
+        public static void CrashGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray);
+                if (shouldBePC)
+                {
+                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
+                    Physics.Raycast(ray, out Ray, 100);
+                }
+
+                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                NewPointer.GetComponent<Renderer>().material.color = bgColorA;
+                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+                NewPointer.transform.position = Ray.point;
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
+                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+                if ((isCopying && whoCopy != null) && Time.time > kgDebounce)
+                {
+                    int num = GetPlayerFromVRRig(whoCopy).ActorNumber;
+                    Hashtable hashtable = new Hashtable();
+                    hashtable[0] = num;
+                    PhotonNetwork.NetworkingClient.OpRaiseEvent(207, hashtable, null, SendOptions.SendUnreliable);
+                    // kgDebounce = Time.time + 0.2f;
+                }
+                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        isCopying = true;
+                        whoCopy = possibly;
+                    }
+                }
+            }
+            else
+            {
+                if (isCopying)
+                {
+                    isCopying = false;
+                }
+            }
+        }
+
+        public static void CrashAll()
+        {
+            if ((rightTrigger > 0.5f) && Time.time > kgDebounce)
+            {
+                Hashtable hashtable = new Hashtable();
+                hashtable[0] = -1;
+                PhotonNetwork.NetworkingClient.OpRaiseEvent(207, hashtable, null, SendOptions.SendUnreliable);
+                //kgDebounce = Time.time + 0.2f;
+            }
+        }
+        /*
         public static void CrashGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
@@ -405,7 +462,7 @@ namespace iiMenu.Mods
             {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master.</color>");
             }
-        }
+        }*/
 
         public static void AcidSelf()
         {
