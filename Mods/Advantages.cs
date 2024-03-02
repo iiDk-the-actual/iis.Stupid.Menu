@@ -58,7 +58,14 @@ namespace iiMenu.Mods
 
         public static void UntagSelf()
         {
-            if (PhotonNetwork.LocalPlayer == PhotonNetwork.MasterClient)
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                if (!GetIndex("Disable Auto Anti Ban").enabled)
+                {
+                    Overpowered.FastMaster();
+                }
+            }
+            else
             {
                 foreach (GorillaTagManager tagman in GameObject.FindObjectsOfType<GorillaTagManager>())
                 {
@@ -68,15 +75,18 @@ namespace iiMenu.Mods
                     }
                 }
             }
-            else
-            {
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master.</color>");
-            }
         }
 
         public static void UntagAll()
         {
-            if (PhotonNetwork.LocalPlayer == PhotonNetwork.MasterClient)
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                if (!GetIndex("Disable Auto Anti Ban").enabled)
+                {
+                    Overpowered.FastMaster();
+                }
+            }
+            else
             {
                 foreach (GorillaTagManager tagman in GameObject.FindObjectsOfType<GorillaTagManager>())
                 {
@@ -89,15 +99,18 @@ namespace iiMenu.Mods
                     }
                 }
             }
-            else
-            {
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master.</color>");
-            }
         }
 
         public static void SpamTagSelf()
         {
-            if (PhotonNetwork.LocalPlayer == PhotonNetwork.MasterClient)
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                if (!GetIndex("Disable Auto Anti Ban").enabled)
+                {
+                    Overpowered.FastMaster();
+                }
+            }
+            else
             {
                 foreach (GorillaTagManager tagman in GameObject.FindObjectsOfType<GorillaTagManager>())
                 {
@@ -110,15 +123,18 @@ namespace iiMenu.Mods
                     }
                 }
             }
-            else
-            {
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master.</color>");
-            }
         }
 
         public static void SpamTagAll()
         {
-            if (PhotonNetwork.LocalPlayer == PhotonNetwork.MasterClient)
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                if (!GetIndex("Disable Auto Anti Ban").enabled)
+                {
+                    Overpowered.FastMaster();
+                }
+            }
+            else
             {
                 foreach (GorillaTagManager tagman in GameObject.FindObjectsOfType<GorillaTagManager>())
                 {
@@ -135,22 +151,28 @@ namespace iiMenu.Mods
                     }
                 }
             }
-            else
-            {
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master.</color>");
-            }
         }
 
         public static void AntiTag()
         {
-            if (GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected") && PhotonNetwork.LocalPlayer.IsMasterClient)
+            if (!PhotonNetwork.IsMasterClient)
             {
-                foreach (GorillaTagManager tagman in GameObject.FindObjectsOfType<GorillaTagManager>())
+                if (!GetIndex("Disable Auto Anti Ban").enabled)
                 {
-                    if (tagman.currentInfected.Contains(PhotonNetwork.LocalPlayer))
+                    Overpowered.FastMaster();
+                }
+            }
+            else
+            {
+                if (GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected") && PhotonNetwork.LocalPlayer.IsMasterClient)
+                {
+                    foreach (GorillaTagManager tagman in GameObject.FindObjectsOfType<GorillaTagManager>())
                     {
-                        tagman.currentInfected.Remove(PhotonNetwork.LocalPlayer);
-                        GorillaLocomotion.Player.Instance.disableMovement = false;
+                        if (tagman.currentInfected.Contains(PhotonNetwork.LocalPlayer))
+                        {
+                            tagman.currentInfected.Remove(PhotonNetwork.LocalPlayer);
+                            GorillaLocomotion.Player.Instance.disableMovement = false;
+                        }
                     }
                 }
             }
@@ -255,13 +277,28 @@ namespace iiMenu.Mods
                 }
 
                 GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.color = bgColorA;
+                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
                 NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = Ray.point;
+                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
                 UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+
+                GameObject line = new GameObject("Line");
+                LineRenderer liner = line.AddComponent<LineRenderer>();
+                liner.material.shader = Shader.Find("GUI/Text Shader");
+                liner.startColor = GetBGColor(0f);
+                liner.endColor = GetBGColor(0.5f);
+                liner.startWidth = 0.025f;
+                liner.endWidth = 0.025f;
+                liner.positionCount = 2;
+                liner.useWorldSpace = true;
+                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
+                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
+                UnityEngine.Object.Destroy(line, Time.deltaTime);
+
                 if (isCopying && whoCopy != null)
                 {
                     if (!whoCopy.mainSkin.material.name.Contains("fected"))
@@ -344,13 +381,28 @@ namespace iiMenu.Mods
                 }
 
                 GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.color = bgColorA;
+                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
                 NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = Ray.point;
+                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
                 UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+
+                GameObject line = new GameObject("Line");
+                LineRenderer liner = line.AddComponent<LineRenderer>();
+                liner.material.shader = Shader.Find("GUI/Text Shader");
+                liner.startColor = GetBGColor(0f);
+                liner.endColor = GetBGColor(0.5f);
+                liner.startWidth = 0.025f;
+                liner.endWidth = 0.025f;
+                liner.positionCount = 2;
+                liner.useWorldSpace = true;
+                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
+                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
+                UnityEngine.Object.Destroy(line, Time.deltaTime);
+
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
                     GorillaLocomotion.Player.Instance.rightControllerTransform.position = Ray.point + new Vector3(0f, 0.3f, 0f);
@@ -398,8 +450,7 @@ namespace iiMenu.Mods
                         {
                             if (!vrrig.mainSkin.material.name.Contains("fected"))
                             {
-                                if (GorillaTagger.Instance.offlineVRRig.enabled == true)
-                                    GorillaTagger.Instance.offlineVRRig.enabled = false;
+                                GorillaTagger.Instance.offlineVRRig.enabled = false;
 
                                 GorillaTagger.Instance.offlineVRRig.transform.position = vrrig.transform.position - new Vector3(0f, -3f, 0f);
                                 GorillaTagger.Instance.myVRRig.transform.position = vrrig.transform.position - new Vector3(0f, -3f, 0f);
@@ -424,6 +475,8 @@ namespace iiMenu.Mods
             if (!GorillaLocomotion.Player.Instance.disableMovement)
             {
                 VRRig vrrig = RigManager.GetVRRigFromPlayer(target);
+                GorillaTagger.Instance.offlineVRRig.enabled = false;
+
                 GorillaTagger.Instance.offlineVRRig.transform.position = vrrig.transform.position - new Vector3(0f, -3f, 0f);
                 GorillaTagger.Instance.myVRRig.transform.position = vrrig.transform.position - new Vector3(0f, -3f, 0f);
                 GorillaLocomotion.Player.Instance.rightControllerTransform.position = vrrig.transform.position;

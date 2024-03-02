@@ -48,36 +48,66 @@ namespace iiMenu.Mods
             }
         }*/
 
+        public static float lastTime = -1f;
+        public static bool antibanworked = false;
+
         public static void AntiBan()
         {
-            if (!PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED"))
+            if (Time.time > lastTime + 2f)
             {
-                PlayFabClientAPI.ExecuteCloudScript(new PlayFab.ClientModels.ExecuteCloudScriptRequest
+                if (antibanworked)
                 {
-                    FunctionName = "RoomClosed",
-                    FunctionParameter = new
+                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTIBAN</color><color=grey>]</color> <color=white>The anti ban has been enabled successfully.</color>");
+                    antibanworked = false;
+                    string gamemode = PhotonNetwork.CurrentRoom.CustomProperties["gameMode"].ToString().Replace(GorillaComputer.instance.currentQueue, GorillaComputer.instance.currentQueue + "MODDEDMODDED");
+                    ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable
                     {
-                        GameId = PhotonNetwork.CurrentRoom.Name,
-                        Region = Regex.Replace(PhotonNetwork.CloudRegion, "[^a-zA-Z0-9]", "").ToUpper(),
-                        UserId = PhotonNetwork.PlayerList[UnityEngine.Random.Range(0, PhotonNetwork.PlayerList.Length + 1)].UserId,
-                        ActorNr = PhotonNetwork.PlayerList[UnityEngine.Random.Range(0, PhotonNetwork.PlayerList.Length + 1)],
-                        ActorCount = PhotonNetwork.ViewCount,
-                        AppVersion = PhotonNetwork.AppVersion
-                    },
-                }, result =>
-                {
-                    hasAntiBanned = true;
-                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTIBAN</color><color=grey>]</color> <color=white>The anti ban has been enabled successfully. All detected mods are undetected.</color>");
-                }, null);
-                string gamemode = PhotonNetwork.CurrentRoom.CustomProperties["gameMode"].ToString().Replace(GorillaComputer.instance.currentQueue, GorillaComputer.instance.currentQueue + "MODDEDMODDED");
-                ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable
-                {
-                    { "gameMode", gamemode }
-                };
-                PhotonNetwork.CurrentRoom.SetCustomProperties(hash);
+                        { "gameMode", gamemode }
+                    };
+                    PhotonNetwork.CurrentRoom.SetCustomProperties(hash);
+                    GetIndex("Anti Ban").enabled = false;
+                } else {
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>The anti ban failed to load. This could be a result of bad internet.</color>");
+                }
             }
+            if (Time.time > lastTime + 5f)
+            {
+                lastTime = Time.time;
+                NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTIBAN</color><color=grey>]</color> <color=white>Enabling anti ban...</color>");
+                if (!PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED"))
+                {
+                    PlayFabClientAPI.ExecuteCloudScript(new PlayFab.ClientModels.ExecuteCloudScriptRequest
+                    {
+                        FunctionName = "RoomClosed",
+                        FunctionParameter = new
+                        {
+                            GameId = PhotonNetwork.CurrentRoom.Name,
+                            Region = Regex.Replace(PhotonNetwork.CloudRegion, "[^a-zA-Z0-9]", "").ToUpper(),
+                            UserId = PhotonNetwork.PlayerList[UnityEngine.Random.Range(0, PhotonNetwork.PlayerList.Length + 1)].UserId,
+                            ActorNr = PhotonNetwork.PlayerList[UnityEngine.Random.Range(0, PhotonNetwork.PlayerList.Length + 1)],
+                            ActorCount = PhotonNetwork.ViewCount,
+                            AppVersion = PhotonNetwork.AppVersion
+                        },
+                    }, result =>
+                    {
+                        antibanworked = true;
+                    }, null);
+                }
+            }
+        }
 
-            if (PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED") && !PhotonNetwork.IsMasterClient)
+        public static bool IsModded()
+        {
+            return PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED");
+        }
+
+        public static void FastMaster()
+        {
+            if (!IsModded() || !PhotonNetwork.InRoom)
+            {
+                AntiBan();
+            }
+            else
             {
                 PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
             }
@@ -85,183 +115,169 @@ namespace iiMenu.Mods
 
         public static void ForceEruptLava()
         {
-            InfectionLavaController controller = InfectionLavaController.Instance;
-            System.Type type = controller.GetType();
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                if (!GetIndex("Disable Auto Anti Ban").enabled)
+                {
+                    FastMaster();
+                }
+            }
+            else
+            {
+                InfectionLavaController controller = InfectionLavaController.Instance;
+                System.Type type = controller.GetType();
 
-            FieldInfo fieldInfo = type.GetField("reliableState", BindingFlags.NonPublic | BindingFlags.Instance);
+                FieldInfo fieldInfo = type.GetField("reliableState", BindingFlags.NonPublic | BindingFlags.Instance);
 
-            object reliableState = fieldInfo.GetValue(controller);
+                object reliableState = fieldInfo.GetValue(controller);
 
-            FieldInfo stateFieldInfo = reliableState.GetType().GetField("state");
-            stateFieldInfo.SetValue(reliableState, InfectionLavaController.RisingLavaState.Erupting);
+                FieldInfo stateFieldInfo = reliableState.GetType().GetField("state");
+                stateFieldInfo.SetValue(reliableState, InfectionLavaController.RisingLavaState.Erupting);
 
-            FieldInfo stateFieldInfo2 = reliableState.GetType().GetField("stateStartTime");
-            stateFieldInfo2.SetValue(reliableState, PhotonNetwork.Time);
+                FieldInfo stateFieldInfo2 = reliableState.GetType().GetField("stateStartTime");
+                stateFieldInfo2.SetValue(reliableState, PhotonNetwork.Time);
 
-            fieldInfo.SetValue(controller, reliableState);
+                fieldInfo.SetValue(controller, reliableState);
+            }
         }
 
         public static void ForceUneruptLava()
         {
-            InfectionLavaController controller = InfectionLavaController.Instance;
-            System.Type type = controller.GetType();
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                if (!GetIndex("Disable Auto Anti Ban").enabled)
+                {
+                    FastMaster();
+                }
+            }
+            else
+            {
+                InfectionLavaController controller = InfectionLavaController.Instance;
+                System.Type type = controller.GetType();
 
-            FieldInfo fieldInfo = type.GetField("reliableState", BindingFlags.NonPublic | BindingFlags.Instance);
+                FieldInfo fieldInfo = type.GetField("reliableState", BindingFlags.NonPublic | BindingFlags.Instance);
 
-            object reliableState = fieldInfo.GetValue(controller);
+                object reliableState = fieldInfo.GetValue(controller);
 
-            FieldInfo stateFieldInfo = reliableState.GetType().GetField("state");
-            stateFieldInfo.SetValue(reliableState, InfectionLavaController.RisingLavaState.Draining);
+                FieldInfo stateFieldInfo = reliableState.GetType().GetField("state");
+                stateFieldInfo.SetValue(reliableState, InfectionLavaController.RisingLavaState.Draining);
 
-            FieldInfo stateFieldInfo2 = reliableState.GetType().GetField("stateStartTime");
-            stateFieldInfo2.SetValue(reliableState, PhotonNetwork.Time);
+                FieldInfo stateFieldInfo2 = reliableState.GetType().GetField("stateStartTime");
+                stateFieldInfo2.SetValue(reliableState, PhotonNetwork.Time);
 
-            fieldInfo.SetValue(controller, reliableState);
+                fieldInfo.SetValue(controller, reliableState);
+            }
         }
 
         public static void ForceRiseLava()
         {
-            InfectionLavaController controller = InfectionLavaController.Instance;
-            System.Type type = controller.GetType();
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                if (!GetIndex("Disable Auto Anti Ban").enabled)
+                {
+                    FastMaster();
+                }
+            }
+            else
+            {
+                InfectionLavaController controller = InfectionLavaController.Instance;
+                System.Type type = controller.GetType();
 
-            FieldInfo fieldInfo = type.GetField("reliableState", BindingFlags.NonPublic | BindingFlags.Instance);
+                FieldInfo fieldInfo = type.GetField("reliableState", BindingFlags.NonPublic | BindingFlags.Instance);
 
-            object reliableState = fieldInfo.GetValue(controller);
+                object reliableState = fieldInfo.GetValue(controller);
 
-            FieldInfo stateFieldInfo = reliableState.GetType().GetField("state");
-            stateFieldInfo.SetValue(reliableState, InfectionLavaController.RisingLavaState.Full);
+                FieldInfo stateFieldInfo = reliableState.GetType().GetField("state");
+                stateFieldInfo.SetValue(reliableState, InfectionLavaController.RisingLavaState.Full);
 
-            FieldInfo stateFieldInfo2 = reliableState.GetType().GetField("stateStartTime");
-            stateFieldInfo2.SetValue(reliableState, PhotonNetwork.Time);
+                FieldInfo stateFieldInfo2 = reliableState.GetType().GetField("stateStartTime");
+                stateFieldInfo2.SetValue(reliableState, PhotonNetwork.Time);
 
-            fieldInfo.SetValue(controller, reliableState);
+                fieldInfo.SetValue(controller, reliableState);
+            }
         }
 
         public static void ForceDrainLava()
         {
-            InfectionLavaController controller = InfectionLavaController.Instance;
-            System.Type type = controller.GetType();
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                if (!GetIndex("Disable Auto Anti Ban").enabled)
+                {
+                    FastMaster();
+                }
+            }
+            else
+            {
+                InfectionLavaController controller = InfectionLavaController.Instance;
+                System.Type type = controller.GetType();
 
-            FieldInfo fieldInfo = type.GetField("reliableState", BindingFlags.NonPublic | BindingFlags.Instance);
+                FieldInfo fieldInfo = type.GetField("reliableState", BindingFlags.NonPublic | BindingFlags.Instance);
 
-            object reliableState = fieldInfo.GetValue(controller);
+                object reliableState = fieldInfo.GetValue(controller);
 
-            FieldInfo stateFieldInfo = reliableState.GetType().GetField("state");
-            stateFieldInfo.SetValue(reliableState, InfectionLavaController.RisingLavaState.Drained);
+                FieldInfo stateFieldInfo = reliableState.GetType().GetField("state");
+                stateFieldInfo.SetValue(reliableState, InfectionLavaController.RisingLavaState.Drained);
 
-            FieldInfo stateFieldInfo2 = reliableState.GetType().GetField("stateStartTime");
-            stateFieldInfo2.SetValue(reliableState, PhotonNetwork.Time);
+                FieldInfo stateFieldInfo2 = reliableState.GetType().GetField("stateStartTime");
+                stateFieldInfo2.SetValue(reliableState, PhotonNetwork.Time);
 
-            fieldInfo.SetValue(controller, reliableState);
+                fieldInfo.SetValue(controller, reliableState);
+            }
         }
 
         public static void SpazLava()
         {
-            InfectionLavaController controller = InfectionLavaController.Instance;
-            System.Type type = controller.GetType();
-
-            FieldInfo fieldInfo = type.GetField("reliableState", BindingFlags.NonPublic | BindingFlags.Instance);
-
-            object reliableState = fieldInfo.GetValue(controller);
-
-            FieldInfo stateFieldInfo = reliableState.GetType().GetField("state");
-            if (spazLavaType)
+            if (!PhotonNetwork.IsMasterClient)
             {
-                stateFieldInfo.SetValue(reliableState, InfectionLavaController.RisingLavaState.Full);
+                if (!GetIndex("Disable Auto Anti Ban").enabled)
+                {
+                    FastMaster();
+                }
             }
             else
             {
-                stateFieldInfo.SetValue(reliableState, InfectionLavaController.RisingLavaState.Drained);
+                InfectionLavaController controller = InfectionLavaController.Instance;
+                System.Type type = controller.GetType();
+
+                FieldInfo fieldInfo = type.GetField("reliableState", BindingFlags.NonPublic | BindingFlags.Instance);
+
+                object reliableState = fieldInfo.GetValue(controller);
+
+                FieldInfo stateFieldInfo = reliableState.GetType().GetField("state");
+                if (spazLavaType)
+                {
+                    stateFieldInfo.SetValue(reliableState, InfectionLavaController.RisingLavaState.Full);
+                }
+                else
+                {
+                    stateFieldInfo.SetValue(reliableState, InfectionLavaController.RisingLavaState.Drained);
+                }
+                spazLavaType = !spazLavaType;
+
+                FieldInfo stateFieldInfo2 = reliableState.GetType().GetField("stateStartTime");
+                stateFieldInfo2.SetValue(reliableState, PhotonNetwork.Time + UnityEngine.Random.Range(0f, 20f));
+
+                fieldInfo.SetValue(controller, reliableState);
             }
-            spazLavaType = !spazLavaType;
-
-            FieldInfo stateFieldInfo2 = reliableState.GetType().GetField("stateStartTime");
-            stateFieldInfo2.SetValue(reliableState, PhotonNetwork.Time + UnityEngine.Random.Range(0f,20f));
-
-            fieldInfo.SetValue(controller, reliableState);
         }
 
         public static void SpazTargets()
         {
-            System.Type targ = typeof(HitTargetScoreDisplay);
-            MethodInfo StartEruptionMethod = targ.GetMethod("OnScoreChanged", BindingFlags.NonPublic | BindingFlags.Instance);
-            HitTargetScoreDisplay[] vs = GameObject.FindObjectsOfType<HitTargetScoreDisplay>();
-            HitTargetScoreDisplay v = vs[UnityEngine.Random.Range(0, vs.Length - 1)];
-            v.rotateSpeed = 9999;
-            StartEruptionMethod?.Invoke(v, new object[] { Random.Range(0,999) });
-        }
-
-        public static void BubbleGun()
-        {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (!PhotonNetwork.IsMasterClient)
             {
-                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray);
-                if (shouldBePC)
+                if (!GetIndex("Disable Auto Anti Ban").enabled)
                 {
-                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
-                    Physics.Raycast(ray, out Ray, 100);
-                }
-
-                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.color = bgColorA;
-                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = Ray.point;
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
-                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
-                if (isCopying && whoCopy != null)
-                {
-                    if (PhotonNetwork.LocalPlayer.IsMasterClient)
-                    {
-                        ScienceExperimentManager.instance.photonView.RPC("SpawnSodaBubbleRPC", GetPlayerFromVRRig(whoCopy), new object[]
-                        {
-                            new Vector2(0.3f, 0.3f),
-                            2f,
-                            10f,
-                            PhotonNetwork.InRoom ? PhotonNetwork.Time : ((double)Time.time)
-                        });
-                        RPCProtection();
-                    } else
-                    {
-                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master.</color>");
-                    }
-                }
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
-                {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
-                    {
-                        isCopying = true;
-                        whoCopy = possibly;
-                    }
+                    FastMaster();
                 }
             }
             else
             {
-                if (isCopying)
-                {
-                    isCopying = false;
-                }
-            }
-        }
-
-        public static void BubbleAll()
-        {
-            if (PhotonNetwork.LocalPlayer.IsMasterClient)
-            {
-                ScienceExperimentManager.instance.photonView.RPC("SpawnSodaBubbleRPC", RpcTarget.Others, new object[]
-                {
-                    new Vector2(0.3f, 0.3f),
-                    2f,
-                    10f,
-                    PhotonNetwork.InRoom ? PhotonNetwork.Time : ((double)Time.time)
-                });
-                RPCProtection();
-            }
-            else
-            {
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master.</color>");
+                System.Type targ = typeof(HitTargetScoreDisplay);
+                MethodInfo StartEruptionMethod = targ.GetMethod("OnScoreChanged", BindingFlags.NonPublic | BindingFlags.Instance);
+                HitTargetScoreDisplay[] vs = GameObject.FindObjectsOfType<HitTargetScoreDisplay>();
+                HitTargetScoreDisplay v = vs[UnityEngine.Random.Range(0, vs.Length - 1)];
+                v.rotateSpeed = 9999;
+                StartEruptionMethod?.Invoke(v, new object[] { Random.Range(0, 999) });
             }
         }
 
@@ -277,25 +293,50 @@ namespace iiMenu.Mods
                 }
 
                 GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.color = bgColorA;
+                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
                 NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = Ray.point;
+                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
                 UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+
+                GameObject line = new GameObject("Line");
+                LineRenderer liner = line.AddComponent<LineRenderer>();
+                liner.material.shader = Shader.Find("GUI/Text Shader");
+                liner.startColor = GetBGColor(0f);
+                liner.endColor = GetBGColor(0.5f);
+                liner.startWidth = 0.025f;
+                liner.endWidth = 0.025f;
+                liner.positionCount = 2;
+                liner.useWorldSpace = true;
+                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
+                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
+                UnityEngine.Object.Destroy(line, Time.deltaTime);
+
                 if ((isCopying && whoCopy != null) && Time.time > kgDebounce)
                 {
-                    int num = GetPhotonViewFromVRRig(whoCopy).ViewID;
-                    Hashtable ServerCleanDestroyEvent = new Hashtable();
-                    RaiseEventOptions ServerCleanOptions = new RaiseEventOptions
+                    if (!IsModded())
                     {
-                        CachingOption = EventCaching.RemoveFromRoomCache
-                    };
-                    ServerCleanDestroyEvent[0] = num;
-                    ServerCleanOptions.CachingOption = EventCaching.AddToRoomCache;
-                    PhotonNetwork.NetworkingClient.OpRaiseEvent(204, ServerCleanDestroyEvent, ServerCleanOptions, SendOptions.SendUnreliable);
-                   // kgDebounce = Time.time + 0.2f;
+                        if (!GetIndex("Disable Auto Anti Ban").enabled)
+                        {
+                            AntiBan();
+                        }
+                    }
+                    else
+                    {
+                        int num = GetPhotonViewFromVRRig(whoCopy).ViewID;
+                        Hashtable ServerCleanDestroyEvent = new Hashtable();
+                        RaiseEventOptions ServerCleanOptions = new RaiseEventOptions
+                        {
+                            CachingOption = EventCaching.RemoveFromRoomCache
+                        };
+                        ServerCleanDestroyEvent[0] = num;
+                        ServerCleanOptions.CachingOption = EventCaching.AddToRoomCache;
+                        PhotonNetwork.NetworkingClient.OpRaiseEvent(204, ServerCleanDestroyEvent, ServerCleanOptions, SendOptions.SendUnreliable);
+                        RPCProtection();
+                    }
                 }
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
@@ -320,16 +361,26 @@ namespace iiMenu.Mods
         {
             if ((rightTrigger > 0.5f) && Time.time > kgDebounce)
             {
-                int num = GetPhotonViewFromVRRig(GetVRRigFromPlayer(PhotonNetwork.PlayerListOthers[UnityEngine.Random.Range(0, PhotonNetwork.PlayerListOthers.Length - 1)])).ViewID;
-                Hashtable ServerCleanDestroyEvent = new Hashtable();
-                RaiseEventOptions ServerCleanOptions = new RaiseEventOptions
+                if (!IsModded())
                 {
-                    CachingOption = EventCaching.RemoveFromRoomCache
-                };
-                ServerCleanDestroyEvent[0] = num;
-                ServerCleanOptions.CachingOption = EventCaching.AddToRoomCache;
-                PhotonNetwork.NetworkingClient.OpRaiseEvent(204, ServerCleanDestroyEvent, ServerCleanOptions, SendOptions.SendUnreliable);
-                //kgDebounce = Time.time + 0.2f;
+                    if (!GetIndex("Disable Auto Anti Ban").enabled)
+                    {
+                        AntiBan();
+                    }
+                }
+                else
+                {
+                    int num = GetPhotonViewFromVRRig(GetVRRigFromPlayer(PhotonNetwork.PlayerListOthers[UnityEngine.Random.Range(0, PhotonNetwork.PlayerListOthers.Length - 1)])).ViewID;
+                    Hashtable ServerCleanDestroyEvent = new Hashtable();
+                    RaiseEventOptions ServerCleanOptions = new RaiseEventOptions
+                    {
+                        CachingOption = EventCaching.RemoveFromRoomCache
+                    };
+                    ServerCleanDestroyEvent[0] = num;
+                    ServerCleanOptions.CachingOption = EventCaching.AddToRoomCache;
+                    PhotonNetwork.NetworkingClient.OpRaiseEvent(204, ServerCleanDestroyEvent, ServerCleanOptions, SendOptions.SendUnreliable);
+                    RPCProtection();
+                }
             }
         }
 
@@ -345,20 +396,44 @@ namespace iiMenu.Mods
                 }
 
                 GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.color = bgColorA;
+                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
                 NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = Ray.point;
+                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
                 UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+
+                GameObject line = new GameObject("Line");
+                LineRenderer liner = line.AddComponent<LineRenderer>();
+                liner.material.shader = Shader.Find("GUI/Text Shader");
+                liner.startColor = GetBGColor(0f);
+                liner.endColor = GetBGColor(0.5f);
+                liner.startWidth = 0.025f;
+                liner.endWidth = 0.025f;
+                liner.positionCount = 2;
+                liner.useWorldSpace = true;
+                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
+                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
+                UnityEngine.Object.Destroy(line, Time.deltaTime);
+
                 if ((isCopying && whoCopy != null) && Time.time > kgDebounce)
                 {
-                    int num = GetPlayerFromVRRig(whoCopy).ActorNumber;
-                    Hashtable hashtable = new Hashtable();
-                    hashtable[0] = num;
-                    PhotonNetwork.NetworkingClient.OpRaiseEvent(207, hashtable, null, SendOptions.SendUnreliable);
-                    // kgDebounce = Time.time + 0.2f;
+                    if (!IsModded())
+                    {
+                        if (!GetIndex("Disable Auto Anti Ban").enabled)
+                        {
+                            AntiBan();
+                        }
+                    }
+                    else
+                    {
+                        Hashtable hashtable = new Hashtable();
+                        hashtable[(byte)0] = GetPlayerFromVRRig(whoCopy).ActorNumber;
+                        PhotonNetwork.NetworkingClient.OpRaiseEvent(207, hashtable, null, SendOptions.SendReliable);
+                        RPCProtection();
+                    }
                 }
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
@@ -383,95 +458,71 @@ namespace iiMenu.Mods
         {
             if ((rightTrigger > 0.5f) && Time.time > kgDebounce)
             {
-                Hashtable hashtable = new Hashtable();
-                hashtable[0] = -1;
-                PhotonNetwork.NetworkingClient.OpRaiseEvent(207, hashtable, null, SendOptions.SendUnreliable);
-                //kgDebounce = Time.time + 0.2f;
-            }
-        }
-        /*
-        public static void CrashGun()
-        {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
-            {
-                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray);
-                if (shouldBePC)
+                if (!IsModded())
                 {
-                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
-                    Physics.Raycast(ray, out Ray, 100);
-                }
-
-                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.color = bgColorA;
-                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = Ray.point;
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
-                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
-                if (isCopying && whoCopy != null)
-                {
-                    if (PhotonNetwork.LocalPlayer.IsMasterClient)
+                    if (!GetIndex("Disable Auto Anti Ban").enabled)
                     {
-                        ScienceExperimentManager.instance.photonView.RPC("SpawnSodaBubbleRPC", GetPlayerFromVRRig(whoCopy), new object[]
-                        {
-                            Random.insideUnitCircle.normalized + new Vector2(0.5f, 2f),
-                            float.MaxValue,
-                            float.MaxValue,
-                            PhotonNetwork.InRoom ? PhotonNetwork.Time : ((double)Time.time)
-                        });
-                        RPCProtection();
-                    }
-                    else
-                    {
-                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master.</color>");
+                        AntiBan();
                     }
                 }
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                else
                 {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
-                    {
-                        isCopying = true;
-                        whoCopy = possibly;
-                    }
-                }
-            }
-            else
-            {
-                if (isCopying)
-                {
-                    isCopying = false;
+                    Hashtable hashtable = new Hashtable();
+                    hashtable[(byte)0] = -1;
+                    PhotonNetwork.NetworkingClient.OpRaiseEvent(207, hashtable, null, SendOptions.SendReliable);
+                    RPCProtection();
                 }
             }
         }
 
-        public static void CrashAll()
+        public static void RigSpamTest()
         {
-            if (PhotonNetwork.LocalPlayer.IsMasterClient)
+            if (rightTrigger > 0.5f)
             {
-                ScienceExperimentManager.instance.photonView.RPC("SpawnSodaBubbleRPC", RpcTarget.Others, new object[]
+                if (!IsModded())
                 {
-                    Random.insideUnitCircle.normalized + new Vector2(0.5f, 2f),
-                    float.MaxValue,
-                    float.MaxValue,
-                    PhotonNetwork.InRoom ? PhotonNetwork.Time : ((double)Time.time)
-                });
+                    if (!GetIndex("Disable Auto Anti Ban").enabled)
+                    {
+                        AntiBan();
+                    }
+                }
+                else
+                {
+                    Hashtable SendInstantiateEvHashtable = new Hashtable();
+                    SendInstantiateEvHashtable[(byte)0] = "Player Objects/Local VRRig/Local Gorilla Player";
+                    SendInstantiateEvHashtable[(byte)1] = GorillaTagger.Instance.bodyCollider.transform.position;
+                    SendInstantiateEvHashtable[(byte)2] = GorillaTagger.Instance.bodyCollider.transform.rotation;
+                    SendInstantiateEvHashtable[(byte)3] = (byte)0;
+                    SendInstantiateEvHashtable[(byte)4] = null;
+                    SendInstantiateEvHashtable[(byte)5] = null;
+                    SendInstantiateEvHashtable[(byte)6] = PhotonNetwork.ServerTimestamp;
+                    SendInstantiateEvHashtable[(byte)7] = PhotonNetwork.AllocateViewID(PhotonNetwork.LocalPlayer.ActorNumber);
+                    SendInstantiateEvHashtable[(byte)8] = (byte)0;
+                    RaiseEventOptions SendInstantiateRaiseEventOptions = new RaiseEventOptions();
+                    SendInstantiateRaiseEventOptions.CachingOption = (true ? EventCaching.AddToRoomCacheGlobal : EventCaching.AddToRoomCache);
+                    PhotonNetwork.NetworkingClient.OpRaiseEvent(202, SendInstantiateEvHashtable, SendInstantiateRaiseEventOptions, SendOptions.SendReliable);
+                }
             }
-            else
-            {
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master.</color>");
-            }
-        }*/
+        }
 
         public static void AcidSelf()
         {
-            Traverse.Create(ScienceExperimentManager.instance).Field("inGamePlayerCount").SetValue(1);
-            ScienceExperimentManager.PlayerGameState[] states = new ScienceExperimentManager.PlayerGameState[1];
-            int ownerIndex = states.Length > PhotonNetwork.LocalPlayer.ActorNumber ? PhotonNetwork.LocalPlayer.ActorNumber : 0;
-            states[ownerIndex].touchedLiquid = true;
-            states[ownerIndex].playerId = PhotonNetwork.LocalPlayer.ActorNumber;
-            Traverse.Create(ScienceExperimentManager.instance).Field("inGamePlayerStates").SetValue(states);
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                if (!GetIndex("Disable Auto Anti Ban").enabled)
+                {
+                    FastMaster();
+                }
+            }
+            else
+            {
+                Traverse.Create(ScienceExperimentManager.instance).Field("inGamePlayerCount").SetValue(1);
+                ScienceExperimentManager.PlayerGameState[] states = new ScienceExperimentManager.PlayerGameState[1];
+                int ownerIndex = states.Length > PhotonNetwork.LocalPlayer.ActorNumber ? PhotonNetwork.LocalPlayer.ActorNumber : 0;
+                states[ownerIndex].touchedLiquid = true;
+                states[ownerIndex].playerId = PhotonNetwork.LocalPlayer.ActorNumber;
+                Traverse.Create(ScienceExperimentManager.instance).Field("inGamePlayerStates").SetValue(states);
+            }
         }
 
         public static void AcidGun()
@@ -486,13 +537,28 @@ namespace iiMenu.Mods
                 }
 
                 GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.color = bgColorA;
+                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
                 NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = Ray.point;
+                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
                 UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+
+                GameObject line = new GameObject("Line");
+                LineRenderer liner = line.AddComponent<LineRenderer>();
+                liner.material.shader = Shader.Find("GUI/Text Shader");
+                liner.startColor = GetBGColor(0f);
+                liner.endColor = GetBGColor(0.5f);
+                liner.startWidth = 0.025f;
+                liner.endWidth = 0.025f;
+                liner.positionCount = 2;
+                liner.useWorldSpace = true;
+                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
+                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
+                UnityEngine.Object.Destroy(line, Time.deltaTime);
+
                 if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > kgDebounce)
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
@@ -500,14 +566,24 @@ namespace iiMenu.Mods
                     {
                         Photon.Realtime.Player player = GetPlayerFromVRRig(possibly);
                         // Not created by me, leaked by REV
-                        Traverse.Create(ScienceExperimentManager.instance).Field("inGamePlayerCount").SetValue(1);
-                        ScienceExperimentManager.PlayerGameState[] states = new ScienceExperimentManager.PlayerGameState[1];
-                        int ownerIndex = states.Length > player.ActorNumber ? player.ActorNumber : 0;
-                        states[ownerIndex].touchedLiquid = true;
-                        states[ownerIndex].playerId = player.ActorNumber;
-                        Traverse.Create(ScienceExperimentManager.instance).Field("inGamePlayerStates").SetValue(states);
-                        RPCProtection();
-                        kgDebounce = Time.time + 1f;
+                        if (!PhotonNetwork.IsMasterClient)
+                        {
+                            if (!GetIndex("Disable Auto Anti Ban").enabled)
+                            {
+                                FastMaster();
+                            }
+                        }
+                        else
+                        {
+                            Traverse.Create(ScienceExperimentManager.instance).Field("inGamePlayerCount").SetValue(1);
+                            ScienceExperimentManager.PlayerGameState[] states = new ScienceExperimentManager.PlayerGameState[1];
+                            int ownerIndex = states.Length > player.ActorNumber ? player.ActorNumber : 0;
+                            states[ownerIndex].touchedLiquid = true;
+                            states[ownerIndex].playerId = player.ActorNumber;
+                            Traverse.Create(ScienceExperimentManager.instance).Field("inGamePlayerStates").SetValue(states);
+                            RPCProtection();
+                            kgDebounce = Time.time + 0.2f;
+                        }
                     }
                 }
             }
@@ -518,15 +594,25 @@ namespace iiMenu.Mods
             if (PhotonNetwork.LocalPlayer.IsMasterClient)
             {
                 // Not created by me, leaked by REV
-                Traverse.Create(ScienceExperimentManager.instance).Field("inGamePlayerCount").SetValue(10);
-                ScienceExperimentManager.PlayerGameState[] states = new ScienceExperimentManager.PlayerGameState[10];
-                for (int i = 0; i < 10; i++)
+                if (!PhotonNetwork.IsMasterClient)
                 {
-                    states[i].touchedLiquid = true;
-                    states[i].playerId = PhotonNetwork.PlayerList[i] == null ? 0 : PhotonNetwork.PlayerList[i].ActorNumber;
+                    if (!GetIndex("Disable Auto Anti Ban").enabled)
+                    {
+                        FastMaster();
+                    }
                 }
-                Traverse.Create(ScienceExperimentManager.instance).Field("inGamePlayerStates").SetValue(states);
-                RPCProtection();
+                else
+                {
+                    Traverse.Create(ScienceExperimentManager.instance).Field("inGamePlayerCount").SetValue(10);
+                    ScienceExperimentManager.PlayerGameState[] states = new ScienceExperimentManager.PlayerGameState[10];
+                    for (int i = 0; i < 10; i++)
+                    {
+                        states[i].touchedLiquid = true;
+                        states[i].playerId = PhotonNetwork.PlayerList[i] == null ? 0 : PhotonNetwork.PlayerList[i].ActorNumber;
+                    }
+                    Traverse.Create(ScienceExperimentManager.instance).Field("inGamePlayerStates").SetValue(states);
+                    RPCProtection();
+                }
             }
             else
             {
@@ -536,7 +622,14 @@ namespace iiMenu.Mods
 
         public static void BetaSetStatus(int state, RaiseEventOptions balls)
         {
-            if (PhotonNetwork.LocalPlayer == PhotonNetwork.MasterClient)
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                if (!GetIndex("Disable Auto Anti Ban").enabled)
+                {
+                    FastMaster();
+                }
+            }
+            else
             {
                 object[] statusSendData = new object[1];
                 statusSendData[0] = state;
@@ -546,84 +639,103 @@ namespace iiMenu.Mods
                 sendEventData[2] = statusSendData;
                 PhotonNetwork.RaiseEvent(3, sendEventData, balls, SendOptions.SendUnreliable);
             }
-            else
-            {
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master.</color>");
-            }
         }
 
         public static void InfectionGamemode()
         {
-            if (PhotonNetwork.LocalPlayer == PhotonNetwork.MasterClient)
+            if (!IsModded())
+            {
+                if (!GetIndex("Disable Auto Anti Ban").enabled)
+                {
+                    AntiBan();
+                }
+            }
+            else
             {
                 Hashtable hashtable = new Hashtable();
                 hashtable.Add("gameMode", "forestDEFAULTMODDED_MODDED_INFECTION");
                 PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable, null, null);
-            } else
-            {
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master.</color>");
             }
         }
 
         public static void CasualGamemode()
         {
-            if (PhotonNetwork.LocalPlayer == PhotonNetwork.MasterClient)
+            if (!IsModded())
+            {
+                if (!GetIndex("Disable Auto Anti Ban").enabled)
+                {
+                    AntiBan();
+                }
+            }
+            else
             {
                 Hashtable hashtable = new Hashtable();
                 hashtable.Add("gameMode", "forestDEFAULTMODDED_MODDED_CASUALCASUAL");
                 PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable, null, null);
             }
-            else
-            {
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master.</color>");
-            }
         }
 
         public static void HuntGamemode()
         {
-            if (PhotonNetwork.LocalPlayer == PhotonNetwork.MasterClient)
+            if (!IsModded())
+            {
+                if (!GetIndex("Disable Auto Anti Ban").enabled)
+                {
+                    AntiBan();
+                }
+            }
+            else
             {
                 Hashtable hashtable = new Hashtable();
                 hashtable.Add("gameMode", "forestDEFAULTMODDED_MODDED_HUNTHUNT");
                 PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable, null, null);
             }
-            else
-            {
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master.</color>");
-            }
         }
 
         public static void BattleGamemode()
         {
-            if (PhotonNetwork.LocalPlayer == PhotonNetwork.MasterClient)
+            if (!IsModded())
+            {
+                if (!GetIndex("Disable Auto Anti Ban").enabled)
+                {
+                    AntiBan();
+                }
+            }
+            else
             {
                 Hashtable hashtable = new Hashtable();
                 hashtable.Add("gameMode", "forestDEFAULTMODDED_MODDED_BATTLEPAINTBRAWL");
                 PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable, null, null);
             }
-            else
-            {
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master.</color>");
-            }
         }
 
         public static void SSDisableNetworkTriggers()
         {
-            if (PhotonNetwork.LocalPlayer == PhotonNetwork.MasterClient)
+            if (!IsModded())
+            {
+                if (!GetIndex("Disable Auto Anti Ban").enabled)
+                {
+                    AntiBan();
+                }
+            }
+            else
             {
                 Hashtable hashtable = new Hashtable();
                 hashtable.Add("gameMode", "forestcitybasementcanyonsmountainsbeachskycaves" + PhotonNetwork.CurrentRoom.CustomProperties["gameMode"].ToString());
                 PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable, null, null);
             }
-            else
-            {
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master.</color>");
-            }
         }
 
         public static void TrapStump()
         {
-            if (PhotonNetwork.LocalPlayer == PhotonNetwork.MasterClient)
+            if (!IsModded())
+            {
+                if (!GetIndex("Disable Auto Anti Ban").enabled)
+                {
+                    AntiBan();
+                }
+            }
+            else
             {
                 Hashtable hashtable = new Hashtable();
                 string name = "";
@@ -636,10 +748,6 @@ namespace iiMenu.Mods
                 }
                 hashtable.Add("gameMode", name);
                 PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable, null, null);
-            }
-            else
-            {
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master.</color>");
             }
         }
 
@@ -655,13 +763,28 @@ namespace iiMenu.Mods
                 }
 
                 GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.color = bgColorA;
+                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
                 NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = Ray.point;
+                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
                 UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+
+                GameObject line = new GameObject("Line");
+                LineRenderer liner = line.AddComponent<LineRenderer>();
+                liner.material.shader = Shader.Find("GUI/Text Shader");
+                liner.startColor = GetBGColor(0f);
+                liner.endColor = GetBGColor(0.5f);
+                liner.startWidth = 0.025f;
+                liner.endWidth = 0.025f;
+                liner.positionCount = 2;
+                liner.useWorldSpace = true;
+                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
+                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
+                UnityEngine.Object.Destroy(line, Time.deltaTime);
+
                 if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > kgDebounce)
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
@@ -703,13 +826,28 @@ namespace iiMenu.Mods
                 }
 
                 GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.color = bgColorA;
+                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
                 NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = Ray.point;
+                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
                 UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+
+                GameObject line = new GameObject("Line");
+                LineRenderer liner = line.AddComponent<LineRenderer>();
+                liner.material.shader = Shader.Find("GUI/Text Shader");
+                liner.startColor = GetBGColor(0f);
+                liner.endColor = GetBGColor(0.5f);
+                liner.startWidth = 0.025f;
+                liner.endWidth = 0.025f;
+                liner.positionCount = 2;
+                liner.useWorldSpace = true;
+                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
+                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
+                UnityEngine.Object.Destroy(line, Time.deltaTime);
+
                 if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > kgDebounce)
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
@@ -751,13 +889,28 @@ namespace iiMenu.Mods
                 }
 
                 GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.color = bgColorA;
+                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
                 NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = Ray.point;
+                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
                 UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+
+                GameObject line = new GameObject("Line");
+                LineRenderer liner = line.AddComponent<LineRenderer>();
+                liner.material.shader = Shader.Find("GUI/Text Shader");
+                liner.startColor = GetBGColor(0f);
+                liner.endColor = GetBGColor(0.5f);
+                liner.startWidth = 0.025f;
+                liner.endWidth = 0.025f;
+                liner.positionCount = 2;
+                liner.useWorldSpace = true;
+                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
+                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
+                UnityEngine.Object.Destroy(line, Time.deltaTime);
+
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
@@ -773,7 +926,7 @@ namespace iiMenu.Mods
                     Vector3 startpos = whoCopy.headMesh.transform.position + (whoCopy.headMesh.transform.forward * 0.5f);
                     Vector3 charvel = Vector3.zero;
 
-                    BetaFireProjectile("WaterBalloonProjectile", startpos, charvel, new Color32(0, 0, 0, 255));
+                    BetaFireProjectile("WaterBalloon", startpos, charvel, new Color32(0, 0, 0, 255));
                 }
             }
             else
@@ -793,7 +946,7 @@ namespace iiMenu.Mods
             Vector3 startpos = randomRig.headMesh.transform.position + (randomRig.headMesh.transform.forward * 0.5f);
             Vector3 charvel = Vector3.zero;
 
-            BetaFireProjectile("WaterBalloonProjectile", startpos, charvel, new Color32(0, 0, 0, 255));
+            BetaFireProjectile("WaterBalloon", startpos, charvel, new Color32(0, 0, 0, 255));
         }
         
         public static void KickGun()
@@ -808,13 +961,28 @@ namespace iiMenu.Mods
                 }
 
                 GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.color = bgColorA;
+                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
                 NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = Ray.point;
+                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
                 UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+
+                GameObject line = new GameObject("Line");
+                LineRenderer liner = line.AddComponent<LineRenderer>();
+                liner.material.shader = Shader.Find("GUI/Text Shader");
+                liner.startColor = GetBGColor(0f);
+                liner.endColor = GetBGColor(0.5f);
+                liner.startWidth = 0.025f;
+                liner.endWidth = 0.025f;
+                liner.positionCount = 2;
+                liner.useWorldSpace = true;
+                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
+                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
+                UnityEngine.Object.Destroy(line, Time.deltaTime);
+
                 if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > kgDebounce)
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
@@ -881,250 +1049,7 @@ namespace iiMenu.Mods
                 RPCProtection();
             }
         }
-        /*
-        public static void CrashGun()
-        {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
-            {
-                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray);
-                if (shouldBePC)
-                {
-                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
-                    Physics.Raycast(ray, out Ray, 100);
-                }
-
-                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.color = bgColorA;
-                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = Ray.point;
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
-                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
-                {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
-                    {
-                        isCopying = true;
-                        whoCopy = possibly;
-                    }
-                }
-
-                if (isCopying)
-                {
-                    Vector3 lagPosition = new Vector3(0f, 0f, 0f);
-
-                    GorillaTagger.Instance.offlineVRRig.enabled = false;
-                    GorillaTagger.Instance.offlineVRRig.transform.position = lagPosition;
-                    GorillaTagger.Instance.myVRRig.transform.position = lagPosition;
-
-                    GameObject l = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                    UnityEngine.Object.Destroy(l.GetComponent<Rigidbody>());
-                    UnityEngine.Object.Destroy(l.GetComponent<SphereCollider>());
-
-                    l.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-                    l.transform.position = GorillaTagger.Instance.leftHandTransform.position;
-
-                    GameObject r = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                    UnityEngine.Object.Destroy(r.GetComponent<Rigidbody>());
-                    UnityEngine.Object.Destroy(r.GetComponent<SphereCollider>());
-
-                    r.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-                    r.transform.position = GorillaTagger.Instance.rightHandTransform.position;
-
-                    l.GetComponent<Renderer>().material.color = bgColorA;
-                    r.GetComponent<Renderer>().material.color = bgColorA;
-
-                    UnityEngine.Object.Destroy(l, Time.deltaTime);
-                    UnityEngine.Object.Destroy(r, Time.deltaTime);
-
-                    string[] fullProjectileNames = new string[]
-                    {
-                        "SlingshotProjectile",
-                        "SnowballProjectile",
-                        "WaterBalloonProjectile",
-                        "LavaRockProjectile",
-                        "HornsSlingshotProjectile_PrefabV",
-                        "CloudSlingshot_Projectile",
-                        "CupidArrow_Projectile",
-                        "IceSlingshotProjectile_PrefabV Variant",
-                        "ElfBow_Projectile",
-                        "MoltenRockSlingshot_Projectile",
-                        "SpiderBowProjectile Variant",
-                        "BucketGift_Cane_Projectile Variant",
-                        "BucketGift_Coal_Projectile Variant",
-                        "BucketGift_Roll_Projectile Variant",
-                        "BucketGift_Round_Projectile Variant",
-                        "BucketGift_Square_Projectile Variant"
-                    };
-
-                    string[] fullTrailNames = new string[]
-                    {
-                        "SlingshotProjectileTrail",
-                        "HornsSlingshotProjectileTrail_PrefabV",
-                        "CloudSlingshot_ProjectileTrailFX",
-                        "CupidArrow_ProjectileTrailFX",
-                        "IceSlingshotProjectileTrail Variant",
-                        "ElfBow_ProjectileTrail",
-                        "MoltenRockSlingshotProjectileTrail",
-                        "SpiderBowProjectileTrail Variant"
-                    };
-
-                    //string projname = fullProjectileNames[UnityEngine.Random.Range(0, 15)];
-                    string projname = fullProjectileNames[2];
-                    string trailname = fullTrailNames[UnityEngine.Random.Range(0, 7)];
-
-                    for (var i = 0; i < crashAmount; i++)
-                    {
-                        GameObject projectile = GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools/" + projname + "(Clone)");
-
-                        GameObject trail = GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools/" + trailname + "(Clone)");
-
-                        int hasha = PoolUtils.GameObjHashCode(projectile);
-                        int hashb = PoolUtils.GameObjHashCode(trail);
-                        int hashc = GorillaGameManager.instance.IncrementLocalPlayerProjectileCount();
-
-                        Vector3 startpos = lagPosition - new Vector3(0f, 0.5f, 0f);
-                        Vector3 charvel = Vector3.zero;
-
-                        float randa = UnityEngine.Random.Range(0, 255);
-                        float randb = UnityEngine.Random.Range(0, 255);
-                        float randc = UnityEngine.Random.Range(0, 255);
-
-                        GorillaGameManager.instance.photonView.RPC("LaunchSlingshotProjectile", GetPlayerFromVRRig(whoCopy), new object[]
-                        {
-                            startpos,
-                            charvel,
-                            hasha,
-                            hashb,
-                            false,
-                            hashc,
-                            true,
-                            randa / 255f,
-                            randb / 255f,
-                            randc / 255f,
-                            1f
-                        });
-                        RPCProtection();
-                    }
-                }
-            }
-            else
-            {
-                if (isCopying)
-                {
-                    isCopying = false;
-                    GorillaTagger.Instance.offlineVRRig.enabled = true;
-                }
-            }
-        }
-
-        public static void CrashAll()
-        {
-            if (rightTrigger > 0.5f)
-            {
-                Vector3 lagPosition = new Vector3(0f, 0f, 0f);
-
-                GorillaTagger.Instance.offlineVRRig.enabled = false;
-                GorillaTagger.Instance.offlineVRRig.transform.position = lagPosition;
-                GorillaTagger.Instance.myVRRig.transform.position = lagPosition;
-
-                GameObject l = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                UnityEngine.Object.Destroy(l.GetComponent<Rigidbody>());
-                UnityEngine.Object.Destroy(l.GetComponent<SphereCollider>());
-
-                l.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-                l.transform.position = GorillaTagger.Instance.leftHandTransform.position;
-
-                GameObject r = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                UnityEngine.Object.Destroy(r.GetComponent<Rigidbody>());
-                UnityEngine.Object.Destroy(r.GetComponent<SphereCollider>());
-
-                r.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-                r.transform.position = GorillaTagger.Instance.rightHandTransform.position;
-
-                l.GetComponent<Renderer>().material.color = bgColorA;
-                r.GetComponent<Renderer>().material.color = bgColorA;
-
-                UnityEngine.Object.Destroy(l, Time.deltaTime);
-                UnityEngine.Object.Destroy(r, Time.deltaTime);
-
-                string[] fullProjectileNames = new string[]
-                {
-                    "SlingshotProjectile",
-                    "SnowballProjectile",
-                    "WaterBalloonProjectile",
-                    "LavaRockProjectile",
-                    "HornsSlingshotProjectile_PrefabV",
-                    "CloudSlingshot_Projectile",
-                    "CupidArrow_Projectile",
-                    "IceSlingshotProjectile_PrefabV Variant",
-                    "ElfBow_Projectile",
-                    "MoltenRockSlingshot_Projectile",
-                    "SpiderBowProjectile Variant",
-                    "BucketGift_Cane_Projectile Variant",
-                    "BucketGift_Coal_Projectile Variant",
-                    "BucketGift_Roll_Projectile Variant",
-                    "BucketGift_Round_Projectile Variant",
-                    "BucketGift_Square_Projectile Variant"
-                };
-
-                string[] fullTrailNames = new string[]
-                {
-                    "SlingshotProjectileTrail",
-                    "HornsSlingshotProjectileTrail_PrefabV",
-                    "CloudSlingshot_ProjectileTrailFX",
-                    "CupidArrow_ProjectileTrailFX",
-                    "IceSlingshotProjectileTrail Variant",
-                    "ElfBow_ProjectileTrail",
-                    "MoltenRockSlingshotProjectileTrail",
-                    "SpiderBowProjectileTrail Variant"
-                };
-
-                //string projname = fullProjectileNames[UnityEngine.Random.Range(0, 15)];
-                string projname = fullProjectileNames[2];
-                string trailname = fullTrailNames[UnityEngine.Random.Range(0, 7)];
-
-                for (var i = 0; i < crashAmount; i++)
-                {
-                    GameObject projectile = GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools/" + projname + "(Clone)");
-
-                    GameObject trail = GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools/" + trailname + "(Clone)");
-
-                    int hasha = PoolUtils.GameObjHashCode(projectile);
-                    int hashb = PoolUtils.GameObjHashCode(trail);
-                    int hashc = GorillaGameManager.instance.IncrementLocalPlayerProjectileCount();
-
-                    Vector3 startpos = lagPosition - new Vector3(0f, 0.5f, 0f);
-                    Vector3 charvel = Vector3.zero;
-
-                    float randa = UnityEngine.Random.Range(0, 255);
-                    float randb = UnityEngine.Random.Range(0, 255);
-                    float randc = UnityEngine.Random.Range(0, 255);
-
-                    GorillaGameManager.instance.photonView.RPC("LaunchSlingshotProjectile", RpcTarget.Others, new object[]
-                    {
-                        startpos,
-                        charvel,
-                        hasha,
-                        hashb,
-                        false,
-                        hashc,
-                        true,
-                        randa / 255f,
-                        randb / 255f,
-                        randc / 255f,
-                        1f
-                    });
-                    RPCProtection();
-                }
-            } else
-            {
-                GorillaTagger.Instance.offlineVRRig.enabled = true;
-            }
-        }
-        */
+        
         public static void DestroyGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
@@ -1137,23 +1062,48 @@ namespace iiMenu.Mods
                 }
 
                 GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.color = bgColorA;
+                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
                 NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = Ray.point;
+                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
                 UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+
+                GameObject line = new GameObject("Line");
+                LineRenderer liner = line.AddComponent<LineRenderer>();
+                liner.material.shader = Shader.Find("GUI/Text Shader");
+                liner.startColor = GetBGColor(0f);
+                liner.endColor = GetBGColor(0.5f);
+                liner.startWidth = 0.025f;
+                liner.endWidth = 0.025f;
+                liner.positionCount = 2;
+                liner.useWorldSpace = true;
+                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
+                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
+                UnityEngine.Object.Destroy(line, Time.deltaTime);
+
                 if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > kgDebounce)
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        Photon.Realtime.Player player = GetPlayerFromVRRig(possibly);
-                        PhotonNetwork.CurrentRoom.StorePlayer(player);
-                        PhotonNetwork.CurrentRoom.Players.Remove(player.ActorNumber);
-                        PhotonNetwork.OpRemoveCompleteCacheOfPlayer(player.ActorNumber);
-                        kgDebounce = Time.time + 0.5f;
+                        if (!IsModded())
+                        {
+                            if (!GetIndex("Disable Auto Anti Ban").enabled)
+                            {
+                                AntiBan();
+                            }
+                        }
+                        else
+                        {
+                            Photon.Realtime.Player player = GetPlayerFromVRRig(possibly);
+                            PhotonNetwork.CurrentRoom.StorePlayer(player);
+                            PhotonNetwork.CurrentRoom.Players.Remove(player.ActorNumber);
+                            PhotonNetwork.OpRemoveCompleteCacheOfPlayer(player.ActorNumber);
+                            kgDebounce = Time.time + 0.5f;
+                        }
                     }
                 }
             }
@@ -1161,11 +1111,21 @@ namespace iiMenu.Mods
 
         public static void DestroyAll()
         {
-            foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerListOthers)
+            if (!IsModded())
             {
-                PhotonNetwork.CurrentRoom.StorePlayer(player);
-                PhotonNetwork.CurrentRoom.Players.Remove(player.ActorNumber);
-                PhotonNetwork.OpRemoveCompleteCacheOfPlayer(player.ActorNumber);
+                if (!GetIndex("Disable Auto Anti Ban").enabled)
+                {
+                    AntiBan();
+                }
+            }
+            else
+            {
+                foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerListOthers)
+                {
+                    PhotonNetwork.CurrentRoom.StorePlayer(player);
+                    PhotonNetwork.CurrentRoom.Players.Remove(player.ActorNumber);
+                    PhotonNetwork.OpRemoveCompleteCacheOfPlayer(player.ActorNumber);
+                }
             }
         }
 
@@ -1181,13 +1141,28 @@ namespace iiMenu.Mods
                 }
 
                 GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.color = bgColorA;
+                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
                 NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = Ray.point;
+                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
                 UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+
+                GameObject line = new GameObject("Line");
+                LineRenderer liner = line.AddComponent<LineRenderer>();
+                liner.material.shader = Shader.Find("GUI/Text Shader");
+                liner.startColor = GetBGColor(0f);
+                liner.endColor = GetBGColor(0.5f);
+                liner.startWidth = 0.025f;
+                liner.endWidth = 0.025f;
+                liner.positionCount = 2;
+                liner.useWorldSpace = true;
+                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
+                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
+                UnityEngine.Object.Destroy(line, Time.deltaTime);
+
                 if (isCopying && whoCopy != null)
                 {
                     GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", GetPlayerFromVRRig(whoCopy), new object[]{

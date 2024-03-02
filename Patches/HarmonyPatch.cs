@@ -1,5 +1,7 @@
+using System;
 using System.ComponentModel;
 using BepInEx;
+using UnityEngine;
 
 namespace iiMenu.Patches
 {
@@ -11,11 +13,16 @@ namespace iiMenu.Patches
 		private void OnEnable()
 		{
 			Menu.ApplyHarmonyPatches();
-		}
+        }
 
 		private void OnDisable()
 		{
 			Menu.RemoveHarmonyPatches();
 		}
+
+		private void Start()
+		{
+			Console.Title = "ii's Stupid Menu // Build "+PluginInfo.Version;
+        }
 	}
 }

@@ -161,13 +161,28 @@ namespace iiMenu.Mods
                 }
 
                 GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.color = bgColorA;
+                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
                 NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = Ray.point;
+                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
                 UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+
+                GameObject line = new GameObject("Line");
+                LineRenderer liner = line.AddComponent<LineRenderer>();
+                liner.material.shader = Shader.Find("GUI/Text Shader");
+                liner.startColor = GetBGColor(0f);
+                liner.endColor = GetBGColor(0.5f);
+                liner.startWidth = 0.025f;
+                liner.endWidth = 0.025f;
+                liner.positionCount = 2;
+                liner.useWorldSpace = true;
+                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
+                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
+                UnityEngine.Object.Destroy(line, Time.deltaTime);
+
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
                     GorillaTagger.Instance.offlineVRRig.enabled = false;
@@ -213,6 +228,19 @@ namespace iiMenu.Mods
                     GorillaTagger.Instance.offlineVRRig.enabled = true;
                 }
             }
+        }
+
+        public static void MonkeySpeak()
+        {
+            /*GorillaTagger.Instance.offlineVRRig.localUseReplacementVoice = leftPrimary;
+            GorillaTagger.Instance.offlineVRRig.remoteUseReplacementVoice = leftPrimary;
+            if (leftPrimary)
+            {
+                VRRig yay = GorillaTagger.Instance.offlineVRRig;
+                System.Type type = yay.GetType();
+                FieldInfo fieldInfo = type.GetField("speakingLoudness", BindingFlags.NonPublic | BindingFlags.Instance);
+                fieldInfo.SetValue(yay, 1f);
+            }*/
         }
 
         public static void LavaSplashHands()
@@ -286,13 +314,28 @@ namespace iiMenu.Mods
                 }
 
                 GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.color = bgColorA;
+                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
                 NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = Ray.point;
+                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
                 UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+
+                GameObject line = new GameObject("Line");
+                LineRenderer liner = line.AddComponent<LineRenderer>();
+                liner.material.shader = Shader.Find("GUI/Text Shader");
+                liner.startColor = GetBGColor(0f);
+                liner.endColor = GetBGColor(0.5f);
+                liner.startWidth = 0.025f;
+                liner.endWidth = 0.025f;
+                liner.positionCount = 2;
+                liner.useWorldSpace = true;
+                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
+                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
+                UnityEngine.Object.Destroy(line, Time.deltaTime);
+
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
                     GorillaTagger.Instance.offlineVRRig.enabled = false;
@@ -352,13 +395,28 @@ namespace iiMenu.Mods
                 }
 
                 GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.color = bgColorA;
+                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
                 NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = Ray.point;
+                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
                 UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+
+                GameObject line = new GameObject("Line");
+                LineRenderer liner = line.AddComponent<LineRenderer>();
+                liner.material.shader = Shader.Find("GUI/Text Shader");
+                liner.startColor = GetBGColor(0f);
+                liner.endColor = GetBGColor(0.5f);
+                liner.startWidth = 0.025f;
+                liner.endWidth = 0.025f;
+                liner.positionCount = 2;
+                liner.useWorldSpace = true;
+                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
+                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
+                UnityEngine.Object.Destroy(line, Time.deltaTime);
+
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
                     GameObject.Find("Floating Bug Holdable").transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
@@ -378,13 +436,28 @@ namespace iiMenu.Mods
                 }
 
                 GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.color = bgColorA;
+                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
                 NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = Ray.point;
+                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
                 UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+
+                GameObject line = new GameObject("Line");
+                LineRenderer liner = line.AddComponent<LineRenderer>();
+                liner.material.shader = Shader.Find("GUI/Text Shader");
+                liner.startColor = GetBGColor(0f);
+                liner.endColor = GetBGColor(0.5f);
+                liner.startWidth = 0.025f;
+                liner.endWidth = 0.025f;
+                liner.positionCount = 2;
+                liner.useWorldSpace = true;
+                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
+                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
+                UnityEngine.Object.Destroy(line, Time.deltaTime);
+
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
                     GameObject.Find("Cave Bat Holdable").transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
@@ -404,13 +477,28 @@ namespace iiMenu.Mods
                 }
 
                 GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.color = bgColorA;
+                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
                 NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = Ray.point;
+                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
                 UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+
+                GameObject line = new GameObject("Line");
+                LineRenderer liner = line.AddComponent<LineRenderer>();
+                liner.material.shader = Shader.Find("GUI/Text Shader");
+                liner.startColor = GetBGColor(0f);
+                liner.endColor = GetBGColor(0.5f);
+                liner.startWidth = 0.025f;
+                liner.endWidth = 0.025f;
+                liner.positionCount = 2;
+                liner.useWorldSpace = true;
+                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
+                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
+                UnityEngine.Object.Destroy(line, Time.deltaTime);
+
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
                     GameObject.Find("BeachBall").transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
@@ -558,13 +646,28 @@ namespace iiMenu.Mods
                 }
 
                 GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.color = bgColorA;
+                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
                 NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = Ray.point;
+                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
                 UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+
+                GameObject line = new GameObject("Line");
+                LineRenderer liner = line.AddComponent<LineRenderer>();
+                liner.material.shader = Shader.Find("GUI/Text Shader");
+                liner.startColor = GetBGColor(0f);
+                liner.endColor = GetBGColor(0.5f);
+                liner.startWidth = 0.025f;
+                liner.endWidth = 0.025f;
+                liner.positionCount = 2;
+                liner.useWorldSpace = true;
+                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
+                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
+                UnityEngine.Object.Destroy(line, Time.deltaTime);
+
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
                     foreach (BalloonHoldable balloon in GameObject.FindObjectsOfType<BalloonHoldable>())
@@ -603,13 +706,28 @@ namespace iiMenu.Mods
                 }
 
                 GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.color = bgColorA;
+                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
                 NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = Ray.point;
+                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
                 UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+
+                GameObject line = new GameObject("Line");
+                LineRenderer liner = line.AddComponent<LineRenderer>();
+                liner.material.shader = Shader.Find("GUI/Text Shader");
+                liner.startColor = GetBGColor(0f);
+                liner.endColor = GetBGColor(0.5f);
+                liner.startWidth = 0.025f;
+                liner.endWidth = 0.025f;
+                liner.positionCount = 2;
+                liner.useWorldSpace = true;
+                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
+                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
+                UnityEngine.Object.Destroy(line, Time.deltaTime);
+
                 if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > kgDebounce)
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
@@ -639,6 +757,24 @@ namespace iiMenu.Mods
             };
         }
 
+        public static void SpazVoice()
+        {
+            GorillaTagger.Instance.offlineVRRig.shouldSendSpeakingLoudness = true;
+            GorillaTagger.Instance.offlineVRRig.replacementVoiceLoudnessThreshold = 0f;
+            GorillaTagger.Instance.offlineVRRig.replacementVoiceDetectionDelay = 0;
+
+            System.Type type = GorillaTagger.Instance.offlineVRRig.GetType();
+            FieldInfo fieldInfo = type.GetField("speakingLoudness", BindingFlags.NonPublic | BindingFlags.Instance);
+            fieldInfo.SetValue(GorillaTagger.Instance.offlineVRRig, UnityEngine.Random.Range(0f,1000f)/1000f);
+        }
+
+        public static void UnspazVoice()
+        {
+            GorillaTagger.Instance.offlineVRRig.shouldSendSpeakingLoudness = false;
+            GorillaTagger.Instance.offlineVRRig.replacementVoiceLoudnessThreshold = 0.05f;
+            GorillaTagger.Instance.offlineVRRig.replacementVoiceDetectionDelay = 128;
+        }
+
         public static void GrabTrain()
         {
             if (rightGrab)
@@ -659,13 +795,28 @@ namespace iiMenu.Mods
                 }
 
                 GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.color = bgColorA;
+                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
                 NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = Ray.point;
+                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
                 UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+
+                GameObject line = new GameObject("Line");
+                LineRenderer liner = line.AddComponent<LineRenderer>();
+                liner.material.shader = Shader.Find("GUI/Text Shader");
+                liner.startColor = GetBGColor(0f);
+                liner.endColor = GetBGColor(0.5f);
+                liner.startWidth = 0.025f;
+                liner.endWidth = 0.025f;
+                liner.positionCount = 2;
+                liner.useWorldSpace = true;
+                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
+                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
+                UnityEngine.Object.Destroy(line, Time.deltaTime);
+
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
                     GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/Holiday2023Forest/Holiday2023Forest_Gameplay/NCTrain_Kit_Prefab").transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
@@ -953,13 +1104,28 @@ namespace iiMenu.Mods
                 }
 
                 GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.color = bgColorA;
+                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
                 NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = Ray.point;
+                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
                 UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+
+                GameObject line = new GameObject("Line");
+                LineRenderer liner = line.AddComponent<LineRenderer>();
+                liner.material.shader = Shader.Find("GUI/Text Shader");
+                liner.startColor = GetBGColor(0f);
+                liner.endColor = GetBGColor(0.5f);
+                liner.startWidth = 0.025f;
+                liner.endWidth = 0.025f;
+                liner.positionCount = 2;
+                liner.useWorldSpace = true;
+                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
+                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
+                UnityEngine.Object.Destroy(line, Time.deltaTime);
+
                 if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > stealIdentityDelay)
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();

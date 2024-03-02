@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using static iiMenu.Menu.Main;
 using System;
 using iiMenu.Mods.Spammers;
+using System.Runtime.CompilerServices;
 
 namespace iiMenu.Mods
 {
@@ -145,6 +146,12 @@ namespace iiMenu.Mods
             pageNumber = 0;
         }
 
+        public static void EnableVisualSettings()
+        {
+            buttonsType = 22;
+            pageNumber = 0;
+        }
+
         public static void RightHand()
         {
             rightHand = true;
@@ -189,7 +196,7 @@ namespace iiMenu.Mods
         public static void ChangeMenuTheme()
         {
             themeType++;
-            if (themeType > 16)
+            if (themeType > 29)
             {
                 themeType = 1;
             }
@@ -387,6 +394,162 @@ namespace iiMenu.Mods
                 titleColor = Color.white;
                 textColor = Color.white;
                 textClicked = Color.black;
+            }
+            if (themeType == 17)
+            {
+                bgColorA = Color.red;
+                bgColorB = Color.black;
+                buttonDefaultA = Color.black;
+                buttonDefaultB = Color.black;
+                buttonClickedA = Color.red;
+                buttonClickedB = Color.red;
+                titleColor = Color.red;
+                textColor = Color.red;
+                textClicked = Color.black;
+            }
+            if (themeType == 18)
+            {
+                bgColorA = new Color32(255, 128, 0, 255);
+                bgColorB = Color.black;
+                buttonDefaultA = Color.black;
+                buttonDefaultB = Color.black;
+                buttonClickedA = new Color32(255, 128, 0, 255);
+                buttonClickedB = new Color32(255, 128, 0, 255);
+                titleColor = new Color32(255, 128, 0, 255);
+                textColor = new Color32(255, 128, 0, 255);
+                textClicked = Color.black;
+            }
+            if (themeType == 19)
+            {
+                bgColorA = Color.yellow;
+                bgColorB = Color.black;
+                buttonDefaultA = Color.black;
+                buttonDefaultB = Color.black;
+                buttonClickedA = Color.yellow;
+                buttonClickedB = Color.yellow;
+                titleColor = Color.yellow;
+                textColor = Color.yellow;
+                textClicked = Color.black;
+            }
+            if (themeType == 20)
+            {
+                bgColorA = Color.green;
+                bgColorB = Color.black;
+                buttonDefaultA = Color.black;
+                buttonDefaultB = Color.black;
+                buttonClickedA = Color.green;
+                buttonClickedB = Color.green;
+                titleColor = Color.green;
+                textColor = Color.green;
+                textClicked = Color.black;
+            }
+            if (themeType == 21)
+            {
+                bgColorA = Color.blue;
+                bgColorB = Color.black;
+                buttonDefaultA = Color.black;
+                buttonDefaultB = Color.black;
+                buttonClickedA = Color.blue;
+                buttonClickedB = Color.blue;
+                titleColor = Color.blue;
+                textColor = Color.blue;
+                textClicked = Color.black;
+            }
+            if (themeType == 22)
+            {
+                bgColorA = new Color32(119, 0, 255, 255);
+                bgColorB = Color.black;
+                buttonDefaultA = Color.black;
+                buttonDefaultB = Color.black;
+                buttonClickedA = new Color32(119, 0, 255, 255);
+                buttonClickedB = new Color32(119, 0, 255, 255);
+                titleColor = new Color32(119, 0, 255, 255);
+                textColor = new Color32(119, 0, 255, 255);
+                textClicked = Color.black;
+            }
+            if (themeType == 23)
+            {
+                bgColorA = Color.magenta;
+                bgColorB = Color.black;
+                buttonDefaultA = Color.black;
+                buttonDefaultB = Color.black;
+                buttonClickedA = Color.magenta;
+                buttonClickedB = Color.magenta;
+                titleColor = Color.magenta;
+                textColor = Color.magenta;
+                textClicked = Color.black;
+            }
+            if (themeType == 24)
+            {
+                bgColorA = new Color32(255, 255, 130, 255);
+                bgColorB = Color.white;
+                buttonDefaultA = Color.white;
+                buttonDefaultB = Color.white;
+                buttonClickedA = new Color32(255, 255, 130, 255);
+                buttonClickedB = new Color32(255, 255, 130, 255);
+                titleColor = Color.black;
+                textColor = Color.black;
+                textClicked = Color.black;
+            }
+            if (themeType == 25)
+            {
+                bgColorA = Color.red;
+                bgColorB = Color.green;
+                buttonDefaultA = Color.black;
+                buttonDefaultB = Color.black;
+                buttonClickedA = Color.white;
+                buttonClickedB = Color.white;
+                titleColor = Color.black;
+                textColor = Color.white;
+                textClicked = Color.black;
+            }
+            if (themeType == 26)
+            {
+                bgColorA = new Color32(245, 169, 184, 255);
+                bgColorB = new Color32(91, 206, 250, 255);
+                buttonDefaultA = new Color32(245, 169, 184, 255);
+                buttonDefaultB = new Color32(245, 169, 184, 255);
+                buttonClickedA = new Color32(91, 206, 250, 255);
+                buttonClickedB = new Color32(91, 206, 250, 255);
+                titleColor = new Color32(91, 206, 250, 255);
+                textColor = new Color32(91, 206, 250, 255);
+                textClicked = new Color32(245, 169, 184, 255);
+            }
+            if (themeType == 27)
+            {
+                bgColorA = new Color32(7, 141, 112, 255);
+                bgColorB = new Color32(61, 26, 220, 255);
+                buttonDefaultA = new Color32(7, 141, 112, 255);
+                buttonDefaultB = new Color32(7, 141, 112, 255);
+                buttonClickedA = new Color32(61, 26, 220, 255);
+                buttonClickedB = new Color32(61, 26, 220, 255);
+                titleColor = new Color32(61, 26, 220, 255);
+                textColor = new Color32(61, 26, 220, 255);
+                textClicked = new Color32(7, 141, 112, 255);
+            }
+            if (themeType == 28)
+            {
+                bgColorA = new Color32(50, 50, 50, 255);
+                bgColorB = new Color32(50, 50, 50, 255);
+                buttonDefaultA = new Color32(50, 50, 50, 255);
+                buttonDefaultB = new Color32(50, 50, 50, 255);
+                buttonClickedA = new Color32(75, 75, 75, 255);
+                buttonClickedB = new Color32(75, 75, 75, 255);
+                titleColor = Color.white;
+                textColor = Color.white;
+                textClicked = Color.white;
+            }
+            if (themeType == 29)
+            {
+                bgColorA = Color.black;
+                bgColorB = new Color32(80, 0, 80, 255);
+                buttonDefaultA = Color.black;
+                buttonDefaultB = Color.black;
+                buttonClickedA = Color.black;
+                buttonClickedB = Color.black;
+                titleColor = Color.white;
+                textColor = Color.white;
+                textClicked = Color.green;
             }
         }
 

@@ -1,10 +1,13 @@
 ﻿using GorillaNetworking;
 using GorillaTag;
+using iiMenu.Classes;
 using iiMenu.Notifications;
 using Photon.Pun;
 using PlayFab;
+using System.IO;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods
@@ -73,14 +76,7 @@ namespace iiMenu.Mods
         
         public static void SetMaster()
         {
-            if ((PhotonNetwork.InRoom && PhotonNetwork.CurrentRoom.CustomProperties["gameMode"].ToString().ToLower().Contains("modded")) || hasAntiBanned)
-            {
-                PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
-                NotifiLib.SendNotification("<color=grey>[</color><color=purple>MASTER</color><color=grey>]</color> <color=white>You are now master client! This should ONLY be enabled in modded lobbies or when using the anti ban.</color>");
-            } else
-            {
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are either not in a lobby, or your lobby is not modded.</color>");
-            }
+            Overpowered.FastMaster();
         }
 
         public static void AutoSetMaster()
@@ -90,5 +86,219 @@ namespace iiMenu.Mods
                 PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
             }
         }
+
+        /// <summary>
+        /// Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+        /// </summary>
+        public static float pookiebear = -1f;
+        public static void ChangeNameGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray);
+                if (shouldBePC)
+                {
+                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
+                    Physics.Raycast(ray, out Ray, 100);
+                }
+
+                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
+                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
+                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+
+                GameObject line = new GameObject("Line");
+                LineRenderer liner = line.AddComponent<LineRenderer>();
+                liner.material.shader = Shader.Find("GUI/Text Shader");
+                liner.startColor = GetBGColor(0f);
+                liner.endColor = GetBGColor(0.5f);
+                liner.startWidth = 0.025f;
+                liner.endWidth = 0.025f;
+                liner.positionCount = 2;
+                liner.useWorldSpace = true;
+                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
+                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
+                UnityEngine.Object.Destroy(line, Time.deltaTime);
+
+                if (isCopying && whoCopy != null)
+                    if (!Overpowered.IsModded())
+                    {
+                        if (!GetIndex("Disable Auto Anti Ban").enabled)
+                        {
+                            Overpowered.AntiBan();
+                        }
+                    }
+                    else
+                    {
+                        { //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                            if (Time.time > pookiebear) //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                            { //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                                pookiebear = Time.time + 0.2f; //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                                Photon.Realtime.Player plr = RigManager.GetPlayerFromVRRig(whoCopy); //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                                plr.NickName = PhotonNetwork.LocalPlayer.NickName; //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                                System.Type targ = typeof(Photon.Realtime.Player); //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                                MethodInfo StartEruptionMethod = targ.GetMethod("SetPlayerNameProperty", BindingFlags.NonPublic | BindingFlags.Instance); //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                                StartEruptionMethod?.Invoke(plr, new object[] { }); //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                                RPCProtection(); //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                            } //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                        } //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                    }
+                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        isCopying = true;
+                        whoCopy = possibly;
+                    }
+                }
+            }
+            else
+            {
+                if (isCopying)
+                {
+                    isCopying = false;
+                    GorillaTagger.Instance.offlineVRRig.enabled = true;
+                }
+            }
+        }
+
+        public static void ChangeNameAll()
+        {
+            if (Time.time > pookiebear && rightTrigger > 0.5f)
+            { //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                if (!Overpowered.IsModded())
+                {
+                    if (!GetIndex("Disable Auto Anti Ban").enabled)
+                    {
+                        Overpowered.AntiBan();
+                    }
+                }
+                else
+                {
+                    { //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                        pookiebear = Time.time + 0.2f; //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                        foreach (Photon.Realtime.Player plr in PhotonNetwork.PlayerListOthers) //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                        { //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                            plr.NickName = PhotonNetwork.LocalPlayer.NickName; //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                            System.Type targ = typeof(Photon.Realtime.Player); //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                            MethodInfo StartEruptionMethod = targ.GetMethod("SetPlayerNameProperty", BindingFlags.NonPublic | BindingFlags.Instance); //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                            StartEruptionMethod?.Invoke(plr, new object[] { }); //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                            RPCProtection(); //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void BanGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray);
+                if (shouldBePC)
+                {
+                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
+                    Physics.Raycast(ray, out Ray, 100);
+                }
+
+                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
+                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
+                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+
+                GameObject line = new GameObject("Line");
+                LineRenderer liner = line.AddComponent<LineRenderer>();
+                liner.material.shader = Shader.Find("GUI/Text Shader");
+                liner.startColor = GetBGColor(0f);
+                liner.endColor = GetBGColor(0.5f);
+                liner.startWidth = 0.025f;
+                liner.endWidth = 0.025f;
+                liner.positionCount = 2;
+                liner.useWorldSpace = true;
+                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
+                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
+                UnityEngine.Object.Destroy(line, Time.deltaTime);
+
+                if (isCopying && whoCopy != null)
+                {
+                    if (!Overpowered.IsModded())
+                    {
+                        if (!GetIndex("Disable Auto Anti Ban").enabled)
+                        {
+                            Overpowered.AntiBan();
+                        }
+                    }
+                    else
+                    {
+                        if (Time.time > pookiebear) //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                        { //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                            pookiebear = Time.time + 0.2f; //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                            Photon.Realtime.Player plr = RigManager.GetPlayerFromVRRig(whoCopy); //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                            plr.NickName = bannableNames[UnityEngine.Random.Range(0, bannableNames.Length - 1)]; //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                            System.Type targ = typeof(Photon.Realtime.Player); //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                            MethodInfo StartEruptionMethod = targ.GetMethod("SetPlayerNameProperty", BindingFlags.NonPublic | BindingFlags.Instance); //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                            StartEruptionMethod?.Invoke(plr, new object[] { }); //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                            RPCProtection(); //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                        } //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                    }
+                } //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        isCopying = true;
+                        whoCopy = possibly;
+                    }
+                }
+            }
+            else
+            {
+                if (isCopying)
+                {
+                    isCopying = false;
+                    GorillaTagger.Instance.offlineVRRig.enabled = true;
+                }
+            }
+        }
+
+        public static void BanAll()
+        {
+            if (Time.time > pookiebear && rightTrigger > 0.5f) //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+            { //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                if (!Overpowered.IsModded())
+                {
+                    if (!GetIndex("Disable Auto Anti Ban").enabled)
+                    {
+                        Overpowered.AntiBan();
+                    }
+                }
+                else
+                {
+                    pookiebear = Time.time + 0.2f; //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                    foreach (Photon.Realtime.Player plr in PhotonNetwork.PlayerListOthers) //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                    { //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                        plr.NickName = bannableNames[UnityEngine.Random.Range(0, bannableNames.Length - 1)]; //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                        System.Type targ = typeof(Photon.Realtime.Player); //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                        MethodInfo StartEruptionMethod = targ.GetMethod("SetPlayerNameProperty", BindingFlags.NonPublic | BindingFlags.Instance); //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                        StartEruptionMethod?.Invoke(plr, new object[] { }); //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                        RPCProtection(); //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                    } //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                } //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+            }
+        }
+
+        public static string[] bannableNames = new string[] { "fag", "nigga", "nignig", "nigzilla", "nigg", "nigaballs", "nigmon","nignog", "nigsy", "nigre", "gorillanig", "nigkey", "gorniga", "daddyniga", "nigmon", "hitler", "niig", "n1gga", "n1ga", "nigr", "n1gga", "n1ga", "n199a", "kkklord", "kkkmember", "kkkman", "kkkmaster", "kkkleader", "stinkyjew", "nigab", "nigamo", "nibba", "niglet", "nigwerd", "niguh", "nigk", "nigward", "niqqa", "nigdirt", "ni99", "monkeniga", "nigab", "nigha", "h1tler", "hitl3r", "h1tl3r", "kkkofficial", "nigba11s", "spidernig", "nigslave", "nigila", "nigball", "nigilla", "spidaniga", "blackniga", "nig2monke", "nigman", "nigatoes", "nigman", "nigwad", "myniga", "nigtard", "nigturd", "nigword", "niglit", "nigman", "nigler", "nigsball", "sandnig", "snownig", "nigqa", "dirtynig", "nigafuck", "hittler", "nigfart", "nigba", "n1gward", "nighka", "littlenig", "nigah", "nigbob", "masternig", "nigbot", "nigvr", "warnig", "nig6a", "nigalodian", "nigass", "nigia", "nigaman", "nigbigga", "nigcracker", "nigachu", "nigpig", "nigasaur", "giganiga", "fag", "nigga", "nignig", "nigzilla", "nigg", "nigaballs", "nigmon", "nignog", "nigsy", "nigre", "gorillanig", "nigkey", "gorniga", "daddyniga", "nigmon", "hitler", "niig", "n1gga", "n1ga", "nigr", "n1gga", "n1ga", "n199a", "kkklord", "kkkmember", "kkkman", "kkkmaster", "kkkleader", "stinkyjew", "nigab", "nigamo", "nibba", "niglet", "nigwerd", "niguh", "nigk", "nigward", "niqqa", "nigdirt", "ni99", "monkeniga", "nigab", "nigha", "h1tler", "hitl3r", "h1tl3r", "kkkofficial", "nigba11s", "spidernig", "nigslave", "nigila", "nigball", "nigilla", "spidaniga", "blackniga", "nig2monke", "nigman", "nigatoes", "nigman", "nigwad", "myniga", "nigtard", "nigturd", "nigword", "niglit", "nigman", "nigler", "nigsball", "sandnig", "snownig", "nigqa", "dirtynig", "nigafuck", "hittler", "nigfart", "nigba", "n1gward", "nighka", "littlenig", "nigah", "nigbob", "masternig", "nigbot", "nigvr", "warnig", "nig6a", "nigalodian", "nigass", "nigia", "nigaman", "nigbigga", "nigcracker", "nigachu", "nigpig", "nigasaur", "giganiga", };
     }
 }

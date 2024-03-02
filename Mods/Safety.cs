@@ -3,6 +3,7 @@ using Photon.Pun;
 using System.Diagnostics;
 using System.IO;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
@@ -48,6 +49,10 @@ namespace iiMenu.Mods
             AntiSoundToggle = false;
         }
 
+        public static void SceneLoaded(Scene arg0, LoadSceneMode arg1)
+        {
+            boards = null;
+        }
         public static GorillaScoreBoard[] boards = null;
         public static void AntiReportDisconnect()
         {

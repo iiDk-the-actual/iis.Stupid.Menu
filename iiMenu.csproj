@@ -11,11 +11,20 @@
   <PropertyGroup />
   <ItemGroup>
     <None Remove="Resources\font" />
+    <None Remove="Resources\icon.png" />
     <None Remove="Resources\iimenu" />
+    <None Remove="Resources\mlm.png" />
+    <None Remove="Resources\pride.jpg" />
+    <None Remove="Resources\pride.png" />
+    <None Remove="Resources\trans.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\font" />
+    <EmbeddedResource Include="Resources\icon.png" />
     <EmbeddedResource Include="Resources\iimenu" />
+    <EmbeddedResource Include="Resources\mlm.png" />
+    <EmbeddedResource Include="Resources\pride.png" />
+    <EmbeddedResource Include="Resources\trans.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="0Harmony">

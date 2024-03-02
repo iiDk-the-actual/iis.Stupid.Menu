@@ -12,7 +12,14 @@ namespace iiMenu.Mods.Spammers
     {
         public static void BetaPlayTag(int id, float volume)
         {
-            if (PhotonNetwork.LocalPlayer == PhotonNetwork.MasterClient)
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                if (!GetIndex("Disable Auto Anti Ban").enabled)
+                {
+                    Overpowered.FastMaster();
+                }
+            }
+            else
             {
                 if (Time.time > soundDebounce)
                 {
@@ -33,10 +40,6 @@ namespace iiMenu.Mods.Spammers
 
                     soundDebounce = Time.time + 0.2f;
                 }
-            }
-            else
-            {
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master.</color>");
             }
         }
 
