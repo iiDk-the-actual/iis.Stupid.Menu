@@ -4,8 +4,10 @@ using iiMenu.Classes;
 using iiMenu.Menu;
 using Photon.Pun;
 using System;
-using System.Drawing;
+using System.IO;
+using System.Reflection;
 using UnityEngine;
+using UnityEngine.UIElements;
 using static iiMenu.Mods.Reconnect;
 
 namespace iiMenu.UI
@@ -26,6 +28,27 @@ namespace iiMenu.UI
         public static bool isOpen = true;
 
         public static bool lastCondition = false;
+
+        public static Texture2D icon;
+
+        private Texture2D LoadTextureFromResource(string resourcePath)
+        {
+            Texture2D texture = new Texture2D(2, 2);
+
+            Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourcePath);
+            if (stream != null)
+            {
+                byte[] fileData = new byte[stream.Length];
+                stream.Read(fileData, 0, (int)stream.Length);
+                texture.LoadImage(fileData);
+                stream.Close();
+            }
+            else
+            {
+                Debug.LogError("Failed to load texture from resource: " + resourcePath);
+            }
+            return texture;
+        }
 
         private void OnGUI()
         {
@@ -51,8 +74,6 @@ namespace iiMenu.UI
                 GUI.color = Menu.UIColorHelper.bgc;
                 GUI.backgroundColor = Menu.UIColorHelper.bgc;
 
-                GUI.Box(new Rect(Screen.width - 250, 10, 240, 120), "", GUI.skin.box);
-
                 string roomText = "Not connected to room";
                 try
                 {
@@ -61,7 +82,52 @@ namespace iiMenu.UI
                         roomText = "Connected to room "+PhotonNetwork.CurrentRoom.Name;
                     }
                 } catch { } // shitty ass code
-                GUI.Label(new Rect(0, Screen.height - 25, Screen.width, 40), roomText);
+                GUI.Label(new Rect(10, Screen.height - 35, Screen.width, 40), roomText);
+
+                try
+                {
+                    if (icon == null)
+                    {
+                        icon = LoadTextureFromResource("iiMenu.Resources.icon.png");
+                    }
+                }
+                catch { }
+
+                try
+                {
+                    if (icon != null)
+                    {
+                        Color[] pixels = icon.GetPixels();
+                        for (int i = 0; i < pixels.Length; i++)
+                        {
+                            float alpha = pixels[i].a;
+                            pixels[i] = new Color(Menu.UIColorHelper.bgc.r, Menu.UIColorHelper.bgc.g, Menu.UIColorHelper.bgc.b, alpha);
+                        }
+
+                        icon.SetPixels(pixels);
+                        icon.Apply();
+                    }
+                } catch { }
+
+                try
+                {
+                    if (icon != null)
+                    {
+                        Rect pos = new Rect(Screen.width - 70, Screen.height - 70, 64, 64);
+                        Matrix4x4 matrix = GUI.matrix;
+
+                        GUIUtility.RotateAroundPivot(Mathf.Sin(Time.time * 2f) * 10f, pos.center);
+                        GUI.DrawTexture(pos, icon);
+                        GUI.matrix = matrix;
+
+                        GUIStyle style = new GUIStyle(GUI.skin.label);
+                        style.alignment = TextAnchor.LowerRight;
+                        GUI.Label(new Rect(Screen.width - 590, Screen.height - 75, 512, 64), "Build "+PluginInfo.Version+"\ndiscord.gg/iidk", style);
+                    }
+                }
+                catch { }
+
+                GUI.Box(new Rect(Screen.width - 250, 10, 240, 120), "", GUI.skin.box);
 
                 inputText = GUI.TextField(new Rect(Screen.width - 200, 20, 180, 20), inputText);
                 // inputText = inputText.ToUpper(); i dont need this

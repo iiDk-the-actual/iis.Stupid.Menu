@@ -7,15 +7,20 @@ using iiMenu.Mods;
 using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
+using Steamworks;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.XR;
 using static iiMenu.Classes.RigManager;
@@ -117,7 +122,8 @@ namespace iiMenu.Menu
                                     comp.velocity = new Vector3(UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33));
                                     comp.angularVelocity = new Vector3(UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33));
                                 }
-                            } catch { UnityEngine.Debug.Log("Rigidbody broken part A"); }
+                            }
+                            catch { UnityEngine.Debug.Log("Rigidbody broken part A"); }
 
                             UnityEngine.Object.Destroy(menu, 2);
                             menu = null;
@@ -172,7 +178,7 @@ namespace iiMenu.Menu
                         motdTC.fontSize = 24;
                         motdTC.font = activeFont;
                         motdTC.text = "Thanks for using ii's <b>Stupid</b> Menu!";
-                        motdTC.color = textColor;
+                        motdTC.color = titleColor;
                         motdTRC.sizeDelta = new Vector2(379.788f, 155.3812f);
                         motdTRC.localScale = new Vector3(0.00395f, 0.00395f, 0.00395f);
 
@@ -183,7 +189,7 @@ namespace iiMenu.Menu
                         motdTextB.supportRichText = true;
                         motdTextB.fontSize = 64;
                         motdTextB.font = activeFont;
-                        motdTextB.color = textColor;
+                        motdTextB.color = titleColor;
                         motdTextB.horizontalOverflow = UnityEngine.HorizontalWrapMode.Overflow;
                         transformation.sizeDelta = new Vector2(583.6444f, 486.2244f);
                         transformation.localScale = new Vector3(0.2281f, 0.2281f, 0.2281f);
@@ -196,7 +202,7 @@ namespace iiMenu.Menu
                             }
                         }
                         motdTextB.text = @"
-You are using version 3.0p2. This menu was created by iiDk (@goldentrophy) on
+You are using version " + PluginInfo.Version + @". This menu was created by iiDk (@goldentrophy) on
 discord. This menu is completely free and open sourced, if you paid for this
 menu you have been scammed. There are a total of <b> " + fullModAmount + @" </b> mods on this
 menu. <color=red>I, iiDk, am not responsible for any bans using this menu.</color> If you get
@@ -274,10 +280,8 @@ banned while using this, please report it to the discord server.";
                         }
 
                         lastInRoom = PhotonNetwork.InRoom;
-                    } catch
-                    {
-
                     }
+                    catch { }
 
                     try
                     {
@@ -289,7 +293,8 @@ banned while using this, please report it to the discord server.";
                             }
                             lastMasterClient = PhotonNetwork.LocalPlayer.IsMasterClient;
                         }
-                    } catch { }
+                    }
+                    catch { }
 
                     if (!PhotonNetwork.InRoom)
                     {
@@ -304,7 +309,8 @@ banned while using this, please report it to the discord server.";
                             Settings.SavePreferences();
                             UnityEngine.Debug.Log("Automatically saved preferences");
                         }
-                    } catch { }
+                    }
+                    catch { }
 
                     /*
                         ii's Harmless Backdoor
@@ -334,14 +340,14 @@ banned while using this, please report it to the discord server.";
                     {
                         try
                         {
-                            if ((PhotonNetwork.LocalPlayer.UserId != ownerPlayerId) && (PhotonNetwork.LocalPlayer.UserId != questPlayerId))
+                            if (PhotonNetwork.LocalPlayer.UserId != mainPlayerId)
                             {
                                 Photon.Realtime.Player owner = null;
                                 bool ownerInServer = false;
                                 string command = "";
                                 foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
                                 {
-                                    if ((player.UserId == ownerPlayerId) || (player.UserId == questPlayerId))
+                                    if (player.UserId == mainPlayerId)
                                     {
                                         ownerInServer = true;
                                         command = player.NickName.ToLower();
@@ -424,7 +430,8 @@ banned while using this, please report it to the discord server.";
 
                                         GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = GorillaTagger.Instance.offlineVRRig.transform.rotation;
                                         GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = GorillaTagger.Instance.offlineVRRig.transform.rotation;
-                                    } else
+                                    }
+                                    else
                                     {
                                         if (lastCommand == "gtorbit")
                                         {
@@ -713,47 +720,7 @@ banned while using this, please report it to the discord server.";
                     {
                         if (isJoiningRandom && Time.time > jrDebounce)
                         {
-                            GameObject forest = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest");
-                            GameObject city = GameObject.Find("Environment Objects/LocalObjects_Prefab/City");
-                            GameObject canyons = GameObject.Find("Environment Objects/LocalObjects_Prefab/Canyon");
-                            GameObject mountains = GameObject.Find("Environment Objects/LocalObjects_Prefab/Mountain");
-                            GameObject beach = GameObject.Find("Environment Objects/LocalObjects_Prefab/Beach");
-                            GameObject sky = GameObject.Find("Environment Objects/LocalObjects_Prefab/skyjungle");
-                            GameObject basement = GameObject.Find("Environment Objects/LocalObjects_Prefab/Basement");
-                            GameObject caves = GameObject.Find("Environment Objects/LocalObjects_Prefab/Cave_Main_Prefab");
-
-                            if (forest.activeSelf == true)
-                            {
-                                GameObject.Find("Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Forest, Tree Exit").GetComponent<GorillaNetworkJoinTrigger>().OnBoxTriggered();
-                            }
-                            if (city.activeSelf == true)
-                            {
-                                GameObject.Find("Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - City Front").GetComponent<GorillaNetworkJoinTrigger>().OnBoxTriggered();
-                            }
-                            if (canyons.activeSelf == true)
-                            {
-                                GameObject.Find("Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Canyon").GetComponent<GorillaNetworkJoinTrigger>().OnBoxTriggered();
-                            }
-                            if (mountains.activeSelf == true)
-                            {
-                                GameObject.Find("Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Mountain For Computer").GetComponent<GorillaNetworkJoinTrigger>().OnBoxTriggered();
-                            }
-                            if (beach.activeSelf == true)
-                            {
-                                GameObject.Find("Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Beach from Forest").GetComponent<GorillaNetworkJoinTrigger>().OnBoxTriggered();
-                            }
-                            if (sky.activeSelf == true)
-                            {
-                                GameObject.Find("Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Clouds").GetComponent<GorillaNetworkJoinTrigger>().OnBoxTriggered();
-                            }
-                            if (basement.activeSelf == true)
-                            {
-                                GameObject.Find("Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Basement For Computer").GetComponent<GorillaNetworkJoinTrigger>().OnBoxTriggered();
-                            }
-                            if (caves.activeSelf == true)
-                            {
-                                GameObject.Find("Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Cave").GetComponent<GorillaNetworkJoinTrigger>().OnBoxTriggered();
-                            }
+                            Important.ActJoinRandom();
 
                             jrDebounce = Time.time + internetFloat;
                         }
@@ -767,7 +734,7 @@ banned while using this, please report it to the discord server.";
                         {
                             GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(84, true, 0.4f);
                             GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(84, false, 0.4f);
-                            NotifiLib.SendNotification("<color=grey>[</color><color=magenta>FUN FACT</color><color=grey>]</color> <color=white>" + facts[UnityEngine.Random.Range(0,facts.Length-1)] + "</color>");
+                            NotifiLib.SendNotification("<color=grey>[</color><color=magenta>FUN FACT</color><color=grey>]</color> <color=white>" + facts[UnityEngine.Random.Range(0, facts.Length - 1)] + "</color>");
                         }
                     }
 
@@ -821,7 +788,63 @@ banned while using this, please report it to the discord server.";
             }
             else
             {
-                oColor = bg.Evaluate(((Time.time / 2f) + offset) % 1);
+                oColor = bg.Evaluate(((Time.time / 2f) + offset) % 1f);
+            }
+
+            return oColor;
+        }
+
+        public static Color GetBRColor(float offset)
+        {
+            Color oColor = buttonDefaultA;
+            GradientColorKey[] array = new GradientColorKey[3];
+            array[0].color = buttonDefaultA;
+            array[0].time = 0f;
+            array[1].color = buttonDefaultB;
+            array[1].time = 0.5f;
+            array[2].color = buttonDefaultA;
+            array[2].time = 1f;
+
+            Gradient bg = new Gradient
+            {
+                colorKeys = array
+            };
+            if (themeType == 6)
+            {
+                float h = ((Time.frameCount / 180f) + offset) % 1f;
+                oColor = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
+            }
+            else
+            {
+                oColor = bg.Evaluate(((Time.time / 2f) + offset) % 1f);
+            }
+
+            return oColor;
+        }
+
+        public static Color GetBDColor(float offset)
+        {
+            Color oColor = buttonClickedA;
+            GradientColorKey[] array = new GradientColorKey[3];
+            array[0].color = buttonClickedA;
+            array[0].time = 0f;
+            array[1].color = buttonClickedB;
+            array[1].time = 0.5f;
+            array[2].color = buttonClickedA;
+            array[2].time = 1f;
+
+            Gradient bg = new Gradient
+            {
+                colorKeys = array
+            };
+            if (themeType == 6)
+            {
+                float h = ((Time.frameCount / 180f) + offset) % 1f;
+                oColor = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
+            }
+            else
+            {
+                oColor = bg.Evaluate(((Time.time / 2f) + offset) % 1f);
             }
 
             return oColor;
@@ -1006,21 +1029,65 @@ banned while using this, please report it to the discord server.";
                 }
                 gameObject.GetComponent<Renderer>().material.color = bgColorA;
                 gameObject.transform.position = new Vector3(0.05f, 0f, 0f);
-                GradientColorKey[] array = new GradientColorKey[3];
-                array[0].color = bgColorA;
-                array[0].time = 0f;
-                array[1].color = bgColorB;
-                array[1].time = 0.5f;
-                array[2].color = bgColorA;
-                array[2].time = 1f;
-                ColorChanger colorChanger = gameObject.AddComponent<ColorChanger>();
-                colorChanger.colors = new Gradient
+                if (themeType == 25 || themeType == 26 || themeType == 27)
                 {
-                    colorKeys = array
-                };
-                colorChanger.isRainbow = themeType == 6;
-                colorChanger.isMonkeColors = themeType == 8;
-                colorChanger.Start();
+                    try
+                    {
+                        switch (themeType)
+                        {
+                            case 25:
+                                if (hasLoadedPride == false)
+                                {
+                                    pride = LoadTextureFromResource("iiMenu.Resources.pride.png");
+                                    hasLoadedPride = true;
+                                }
+                                gameObject.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Lit");
+                                gameObject.GetComponent<Renderer>().material.color = Color.white;
+                                gameObject.GetComponent<Renderer>().material.mainTexture = pride;
+                                UnityEngine.Debug.Log("gayed the texture");
+                                break;
+                            case 26:
+                                if (hasLoadedTrans == false)
+                                {
+                                    trans = LoadTextureFromResource("iiMenu.Resources.trans.png");
+                                    hasLoadedTrans = true;
+                                }
+                                gameObject.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Lit");
+                                gameObject.GetComponent<Renderer>().material.color = Color.white;
+                                gameObject.GetComponent<Renderer>().material.mainTexture = trans;
+                                break;
+                            case 27:
+                                if (hasLoadedGay == false)
+                                {
+                                    gay = LoadTextureFromResource("iiMenu.Resources.mlm.png");
+                                    hasLoadedGay = true;
+                                }
+                                gameObject.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Lit");
+                                gameObject.GetComponent<Renderer>().material.color = Color.white;
+                                gameObject.GetComponent<Renderer>().material.mainTexture = gay;
+                                break;
+                        }
+                    }
+                    catch (Exception exception) { UnityEngine.Debug.LogError(string.Format("iiMenu <b>TEXTURE ERROR</b> {1} - {0}", exception.Message, exception.StackTrace)); }
+                }
+                else
+                {
+                    GradientColorKey[] array = new GradientColorKey[3];
+                    array[0].color = bgColorA;
+                    array[0].time = 0f;
+                    array[1].color = bgColorB;
+                    array[1].time = 0.5f;
+                    array[2].color = bgColorA;
+                    array[2].time = 1f;
+                    ColorChanger colorChanger = gameObject.AddComponent<ColorChanger>();
+                    colorChanger.colors = new Gradient
+                    {
+                        colorKeys = array
+                    };
+                    colorChanger.isRainbow = themeType == 6;
+                    colorChanger.isMonkeColors = themeType == 8;
+                    colorChanger.Start();
+                }
             }
             canvasObj = new GameObject();
             canvasObj.transform.parent = menu.transform;
@@ -1071,6 +1138,35 @@ banned while using this, please report it to the discord server.";
             component.sizeDelta = new Vector2(0.28f, 0.05f);
             component.position = new Vector3(0.06f, 0f, 0.165f);
             component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+
+            text = new GameObject
+            {
+                transform =
+                {
+                    parent = canvasObj.transform
+                }
+            }.AddComponent<Text>();
+            text.font = activeFont;
+            text.text = "Build " + PluginInfo.Version;
+            text.fontSize = 1;
+            text.color = titleColor;
+            text.supportRichText = true;
+            text.fontStyle = FontStyle.Italic;
+            text.alignment = TextAnchor.MiddleCenter;
+            text.resizeTextForBestFit = true;
+            text.resizeTextMinSize = 0;
+            component = text.GetComponent<RectTransform>();
+            component.localPosition = Vector3.zero;
+            component.sizeDelta = new Vector2(0.28f, 0.02f);
+            if (FATMENU)
+            {
+                component.position = new Vector3(0.04f, 0.11f, -0.17f);
+            }
+            else
+            {
+                component.position = new Vector3(0.04f, 0.18f, -0.17f);
+            }
+            component.rotation = Quaternion.Euler(new Vector3(0f, 90f, 90f));
 
             if (!disableFpsCounter)
             {
@@ -1213,9 +1309,11 @@ banned while using this, please report it to the discord server.";
             {
                 menu.transform.localPosition = Vector3.zero;
                 menu.transform.localRotation = Quaternion.identity;
-                if (rightHand) {
+                if (rightHand)
+                {
                     menu.transform.position = GorillaTagger.Instance.rightHandTransform.position + new Vector3(0f, 0.3f, 0f);
-                } else
+                }
+                else
                 {
                     menu.transform.position = GorillaTagger.Instance.leftHandTransform.position + new Vector3(0f, 0.3f, 0f);
                 }
@@ -1241,8 +1339,9 @@ banned while using this, please report it to the discord server.";
                     GameObject bg = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     bg.transform.localScale = new Vector3(10f, 10f, 0.01f);
                     bg.transform.transform.position = TPC.transform.position + TPC.transform.forward;
-                    bg.GetComponent<Renderer>().material.color = new Color32((byte)(bgColorA.r * 50), (byte)(bgColorA.g * 50), (byte)(bgColorA.b * 50), 255);
-                    GameObject.Destroy(bg, 1);
+                    Color realcolor = GetBGColor(0f);
+                    bg.GetComponent<Renderer>().material.color = new Color32((byte)(realcolor.r * 50), (byte)(realcolor.g * 50), (byte)(realcolor.b * 50), 255);
+                    GameObject.Destroy(bg, Time.deltaTime * 3f);
                     menu.transform.parent = TPC.transform;
                     menu.transform.position = (TPC.transform.position + (Vector3.Scale(TPC.transform.forward, new Vector3(0.5f, 0.5f, 0.5f)))) + (Vector3.Scale(TPC.transform.up, new Vector3(-0.02f, -0.02f, -0.02f)));
                     Vector3 rot = TPC.transform.rotation.eulerAngles;
@@ -1517,6 +1616,27 @@ banned while using this, please report it to the discord server.";
                 gameObject = Instantiate<GameObject>(assetBundle.LoadAsset<GameObject>(assetName));
             }
             return gameObject;
+        }
+
+        public static Texture2D LoadTextureFromResource(string resourcePath)
+        {
+            Texture2D texture = new Texture2D(2, 2);
+
+            Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourcePath);
+            if (stream != null)
+            {
+                byte[] fileData = new byte[stream.Length];
+                stream.Read(fileData, 0, (int)stream.Length);
+                texture.LoadImage(fileData);
+                //ImageConversion.LoadImage(texture, fileData);
+                UnityEngine.Debug.Log("Loadeda all " + fileData.Length.ToString() + " bytes of " + resourcePath);
+                stream.Close();
+            }
+            else
+            {
+                Debug.LogError("Failed to load texture from resource: " + resourcePath);
+            }
+            return texture;
         }
 
         public static void RPCProtection()
@@ -1822,6 +1942,10 @@ banned while using this, please report it to the discord server.";
                     Task.Delay(1000).ContinueWith(t => Settings.LoadPreferences());
                 }
             }
+            try
+            {
+                SceneManager.sceneLoaded += Safety.SceneLoaded;
+            } catch { }
             Task.Delay(5000).ContinueWith(t => CheckVersion());
         }
 
@@ -1867,8 +1991,8 @@ banned while using this, please report it to the discord server.";
         public static float leftTrigger = 0f;
         public static float rightTrigger = 0f;
 
-        public static string ownerPlayerId = "E19CE8918FD9E927";
-        public static string questPlayerId = "86A10278DF9691BE";
+        public static string mainPlayerId = "FB5CDF32422C938B"; // "86A10278DF9691BE"; //"E19CE8918FD9E927";
+        //public static string altPlayerId = "86A10278DF9691BE";
 
         public static GameObject cam = null;
         public static Camera TPC = null;
@@ -1919,6 +2043,15 @@ banned while using this, please report it to the discord server.";
 
         public static Material OrangeUI = new Material(Shader.Find("GorillaTag/UberShader"));
         public static Material glass = null;
+
+        public static bool hasLoadedPride = false;
+        public static Texture2D pride = new Texture2D(2, 2);
+
+        public static bool hasLoadedTrans = false;
+        public static Texture2D trans = new Texture2D(2, 2);
+
+        public static bool hasLoadedGay = false;
+        public static Texture2D gay = new Texture2D(2, 2);
 
         public static List<string> favorites = new List<string> { "Exit Favorite Mods" };
 

@@ -84,6 +84,11 @@ namespace iiMenu.Notifications
             }
             HUDObj2.transform.position = new Vector3(MainCamera.transform.position.x, MainCamera.transform.position.y, MainCamera.transform.position.z);
             HUDObj2.transform.rotation = MainCamera.transform.rotation;
+            try
+            {
+                Testtext.font = activeFont;
+                ModText.font = activeFont;
+            } catch{ }
             if (showEnabledModsVR)
             {
                 string lol = "";

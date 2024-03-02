@@ -73,6 +73,7 @@ namespace iiMenu.Mods
                     GameObject line = new GameObject("Line");
                     LineRenderer liner = line.AddComponent<LineRenderer>();
                     UnityEngine.Color thecolor = vrrig.playerColor;
+                    if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                     liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = 0.025f; liner.endWidth = 0.025f; liner.positionCount = 2; liner.useWorldSpace = true;
                     liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
                     liner.SetPosition(1, vrrig.transform.position);
@@ -104,6 +105,7 @@ namespace iiMenu.Mods
                             GameObject line = new GameObject("Line");
                             LineRenderer liner = line.AddComponent<LineRenderer>();
                             UnityEngine.Color thecolor = new Color32(255, 111, 0, 255);
+                            if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                             liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = 0.025f; liner.endWidth = 0.025f; liner.positionCount = 2; liner.useWorldSpace = true;
                             liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
                             liner.SetPosition(1, vrrig.transform.position);
@@ -121,6 +123,7 @@ namespace iiMenu.Mods
                             GameObject line = new GameObject("Line");
                             LineRenderer liner = line.AddComponent<LineRenderer>();
                             UnityEngine.Color thecolor = vrrig.playerColor;
+                            if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                             liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = 0.025f; liner.endWidth = 0.025f; liner.positionCount = 2; liner.useWorldSpace = true;
                             liner.SetPosition(0, GorillaLocomotion.Player.Instance.rightControllerTransform.position);
                             liner.SetPosition(1, vrrig.transform.position);
@@ -139,6 +142,7 @@ namespace iiMenu.Mods
                         GameObject line = new GameObject("Line");
                         LineRenderer liner = line.AddComponent<LineRenderer>();
                         UnityEngine.Color thecolor = vrrig.playerColor;
+                        if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                         liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = 0.025f; liner.endWidth = 0.025f; liner.positionCount = 2; liner.useWorldSpace = true;
                         liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
                         liner.SetPosition(1, vrrig.transform.position);
@@ -161,6 +165,7 @@ namespace iiMenu.Mods
                     GameObject line = new GameObject("Line");
                     LineRenderer liner = line.AddComponent<LineRenderer>();
                     UnityEngine.Color thecolor = vrrig.playerColor;
+                    if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                     liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = 0.025f; liner.endWidth = 0.025f; liner.positionCount = 2; liner.useWorldSpace = true;
                     liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
                     liner.SetPosition(1, vrrig.transform.position);
@@ -186,6 +191,7 @@ namespace iiMenu.Mods
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
                 UnityEngine.Color thecolor = vrrig.playerColor;
+                if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                 if (vrrig != GorillaTagger.Instance.offlineVRRig)
                 {
                     LineRenderer liner = vrrig.head.rigTarget.gameObject.AddComponent<LineRenderer>();
@@ -240,6 +246,7 @@ namespace iiMenu.Mods
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
                         UnityEngine.Color thecolor = new Color32(255, 111, 0, 255);
+                        if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                         if (vrrig.mainSkin.material.name.Contains("fected") && vrrig != GorillaTagger.Instance.offlineVRRig)
                         {
                             LineRenderer liner = vrrig.head.rigTarget.gameObject.AddComponent<LineRenderer>();
@@ -280,6 +287,7 @@ namespace iiMenu.Mods
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
                         UnityEngine.Color thecolor = vrrig.playerColor;
+                        if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                         if (!vrrig.mainSkin.material.name.Contains("fected") && vrrig != GorillaTagger.Instance.offlineVRRig)
                         {
                             LineRenderer liner = vrrig.head.rigTarget.gameObject.AddComponent<LineRenderer>();
@@ -321,6 +329,7 @@ namespace iiMenu.Mods
                 foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                 {
                     UnityEngine.Color thecolor = vrrig.playerColor;
+                    if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                     if (vrrig != GorillaTagger.Instance.offlineVRRig)
                     {
                         LineRenderer liner = vrrig.head.rigTarget.gameObject.AddComponent<LineRenderer>();
@@ -368,6 +377,7 @@ namespace iiMenu.Mods
                 if (player == target)
                 {
                     UnityEngine.Color thecolor = vrrig.playerColor;
+                    if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                     LineRenderer liner = vrrig.head.rigTarget.gameObject.AddComponent<LineRenderer>();
                     liner.startWidth = 0.025f;
                     liner.endWidth = 0.025f;
@@ -444,6 +454,7 @@ namespace iiMenu.Mods
                 {
                     vrrig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
                     vrrig.mainSkin.material.color = vrrig.playerColor;
+                    if (GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = GetBGColor(0f); }
                 }
             }
         }
@@ -469,6 +480,7 @@ namespace iiMenu.Mods
                         {
                             vrrig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
                             vrrig.mainSkin.material.color = new Color32(255, 111, 0, 255);
+                            if (GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = GetBGColor(0f); }
                         }
                         else
                         {
@@ -484,6 +496,7 @@ namespace iiMenu.Mods
                         {
                             vrrig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
                             vrrig.mainSkin.material.color = vrrig.playerColor;
+                            if (GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = GetBGColor(0f); }
                         }
                     }
                 }
@@ -512,11 +525,12 @@ namespace iiMenu.Mods
                 {
                     vrrig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
                     vrrig.mainSkin.material.color = vrrig.playerColor;
+                    if (GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = GetBGColor(0f); }
                 } else {
                     if (sillyComputer.GetTargetOf(player) == PhotonNetwork.LocalPlayer)
                     {
                         vrrig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
-                        vrrig.mainSkin.material.color = vrrig.playerColor;
+                        vrrig.mainSkin.material.color = Color.red;
                     }
                     else
                     {
@@ -546,6 +560,7 @@ namespace iiMenu.Mods
                     GameObject line = new GameObject("Line");
                     LineRenderer liner = line.AddComponent<LineRenderer>();
                     UnityEngine.Color thecolor = vrrig.playerColor;
+                    if (GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = GetBGColor(0f); }
                     liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = 0.025f; liner.endWidth = 0.025f; liner.positionCount = 2; liner.useWorldSpace = true;
                     liner.SetPosition(0, vrrig.transform.position + new Vector3(0f, 9999f, 0f));
                     liner.SetPosition(1, vrrig.transform.position - new Vector3(0f, 9999f, 0f));
@@ -577,6 +592,7 @@ namespace iiMenu.Mods
                             GameObject line = new GameObject("Line");
                             LineRenderer liner = line.AddComponent<LineRenderer>();
                             UnityEngine.Color thecolor = new Color32(255, 111, 0, 255);
+                            if (GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = GetBGColor(0f); }
                             liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = 0.025f; liner.endWidth = 0.025f; liner.positionCount = 2; liner.useWorldSpace = true;
                             liner.SetPosition(0, vrrig.transform.position + new Vector3(0f, 9999f, 0f));
                             liner.SetPosition(1, vrrig.transform.position - new Vector3(0f, 9999f, 0f));
@@ -594,6 +610,7 @@ namespace iiMenu.Mods
                             GameObject line = new GameObject("Line");
                             LineRenderer liner = line.AddComponent<LineRenderer>();
                             UnityEngine.Color thecolor = vrrig.playerColor;
+                            if (GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = GetBGColor(0f); }
                             liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = 0.025f; liner.endWidth = 0.025f; liner.positionCount = 2; liner.useWorldSpace = true;
                             liner.SetPosition(0, vrrig.transform.position + new Vector3(0f, 9999f, 0f));
                             liner.SetPosition(1, vrrig.transform.position - new Vector3(0f, 9999f, 0f));
@@ -612,6 +629,7 @@ namespace iiMenu.Mods
                         GameObject line = new GameObject("Line");
                         LineRenderer liner = line.AddComponent<LineRenderer>();
                         UnityEngine.Color thecolor = vrrig.playerColor;
+                        if (GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = GetBGColor(0f); }
                         liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = 0.025f; liner.endWidth = 0.025f; liner.positionCount = 2; liner.useWorldSpace = true;
                         liner.SetPosition(0, vrrig.transform.position + new Vector3(0f, 9999f, 0f));
                         liner.SetPosition(1, vrrig.transform.position - new Vector3(0f, 9999f, 0f));
@@ -634,6 +652,7 @@ namespace iiMenu.Mods
                     GameObject line = new GameObject("Line");
                     LineRenderer liner = line.AddComponent<LineRenderer>();
                     UnityEngine.Color thecolor = vrrig.playerColor;
+                    if (GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = GetBGColor(0f); }
                     liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = 0.025f; liner.endWidth = 0.025f; liner.positionCount = 2; liner.useWorldSpace = true;
                     liner.SetPosition(0, vrrig.transform.position + new Vector3(0f, 9999f, 0f));
                     liner.SetPosition(1, vrrig.transform.position - new Vector3(0f, 9999f, 0f));
@@ -661,6 +680,7 @@ namespace iiMenu.Mods
                 if (vrrig != GorillaTagger.Instance.offlineVRRig)
                 {
                     UnityEngine.Color thecolor = vrrig.playerColor;
+                    if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                     GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     box.transform.position = vrrig.transform.position;
                     UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
@@ -693,6 +713,7 @@ namespace iiMenu.Mods
                         if (vrrig.mainSkin.material.name.Contains("fected") && vrrig != GorillaTagger.Instance.offlineVRRig)
                         {
                             UnityEngine.Color thecolor = new Color32(255, 111, 0, 255);
+                            if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                             GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
                             box.transform.position = vrrig.transform.position;
                             UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
@@ -711,6 +732,7 @@ namespace iiMenu.Mods
                         if (!vrrig.mainSkin.material.name.Contains("fected") && vrrig != GorillaTagger.Instance.offlineVRRig)
                         {
                             UnityEngine.Color thecolor = vrrig.playerColor;
+                            if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                             GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
                             box.transform.position = vrrig.transform.position;
                             UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
@@ -730,6 +752,7 @@ namespace iiMenu.Mods
                     if (vrrig != GorillaTagger.Instance.offlineVRRig)
                     {
                         UnityEngine.Color thecolor = vrrig.playerColor;
+                        if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                         GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         box.transform.position = vrrig.transform.position;
                         UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
@@ -753,6 +776,7 @@ namespace iiMenu.Mods
                 if (player == target)
                 {
                     UnityEngine.Color thecolor = vrrig.playerColor;
+                    if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                     GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     box.transform.position = vrrig.transform.position;
                     UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
