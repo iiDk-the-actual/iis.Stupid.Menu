@@ -1,10 +1,9 @@
 ﻿using iiMenu.Notifications;
 using Photon.Pun;
-using System.Diagnostics;
 using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
+using Valve.VR;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 using static iiMenu.Mods.Reconnect;
@@ -23,6 +22,29 @@ namespace iiMenu.Mods
             ControllerInputPoller.instance.leftControllerSecondaryButton = false;
             ControllerInputPoller.instance.rightControllerPrimaryButton = false;
             ControllerInputPoller.instance.rightControllerSecondaryButton = false;
+        }
+
+        public static bool lastjsi = false;
+        public static bool isActive = true;
+        public static void ToggleIgloo()
+        {
+            bool fuck = SteamVR_Actions.gorillaTag_RightJoystickClick.state;
+            if (fuck && !lastjsi)
+            {
+                isActive = !isActive;
+                GameObject.Find("Mountain/Geometry/goodigloo").SetActive(isActive);
+            }
+            lastjsi = fuck;
+        }
+
+        public static void DisableGamemodeButtons()
+        {
+            GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Selector Buttons/anchor/ENABLE FOR BETA").SetActive(false);
+        }
+
+        public static void EnableGamemodeButtons()
+        {
+            GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Selector Buttons/anchor/ENABLE FOR BETA").SetActive(true);
         }
 
         public static void AntiCrashEnabled()
@@ -53,6 +75,10 @@ namespace iiMenu.Mods
         {
             boards = null;
         }
+        public static void DisableAntiReport()
+        {
+            boards = null;
+        }
         public static GorillaScoreBoard[] boards = null;
         public static void AntiReportDisconnect()
         {
@@ -66,7 +92,7 @@ namespace iiMenu.Mods
                 {
                     foreach (GorillaPlayerScoreboardLine line in board.lines)
                     {
-                        if (line.linePlayer == PhotonNetwork.LocalPlayer)
+                        if (GetPlayerFromNetPlayer(line.linePlayer) == PhotonNetwork.LocalPlayer)
                         {
                             Transform report = line.reportButton.gameObject.transform;
                             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
@@ -105,7 +131,7 @@ namespace iiMenu.Mods
                 {
                     foreach (GorillaPlayerScoreboardLine line in board.lines)
                     {
-                        if (line.linePlayer == PhotonNetwork.LocalPlayer)
+                        if (GetPlayerFromNetPlayer(line.linePlayer) == PhotonNetwork.LocalPlayer)
                         {
                             Transform report = line.reportButton.gameObject.transform;
                             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
@@ -146,7 +172,7 @@ namespace iiMenu.Mods
                 {
                     foreach (GorillaPlayerScoreboardLine line in board.lines)
                     {
-                        if (line.linePlayer == PhotonNetwork.LocalPlayer)
+                        if (GetPlayerFromNetPlayer(line.linePlayer) == PhotonNetwork.LocalPlayer)
                         {
                             Transform report = line.reportButton.gameObject.transform;
                             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)

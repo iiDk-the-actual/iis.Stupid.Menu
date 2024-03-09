@@ -183,6 +183,17 @@ namespace iiMenu.Mods
             wristOpen = false;
         }
 
+        public static void JoystickMenuOn()
+        {
+            joystickMenu = true;
+        }
+
+        public static void JoystickMenuOff()
+        {
+            joystickMenu = false;
+            joystickOpen = false;
+        }
+
         public static void LongMenuOn()
         {
             longmenu = true;
@@ -196,7 +207,7 @@ namespace iiMenu.Mods
         public static void ChangeMenuTheme()
         {
             themeType++;
-            if (themeType > 29)
+            if (themeType > 33)
             {
                 themeType = 1;
             }
@@ -551,6 +562,54 @@ namespace iiMenu.Mods
                 textColor = Color.white;
                 textClicked = Color.green;
             }
+            if (themeType == 30)
+            {
+                bgColorA = Color.black;
+                bgColorB = Color.black;
+                buttonDefaultA = Color.white;
+                buttonDefaultB = Color.white;
+                buttonClickedA = Color.green;
+                buttonClickedB = Color.green;
+                titleColor = Color.white;
+                textColor = Color.white;
+                textClicked = Color.green;
+            }
+            if (themeType == 31)
+            {
+                bgColorA = new Color32(100, 60, 170, 255);
+                bgColorB = new Color32(100, 60, 170, 255);
+                buttonDefaultA = new Color32(150, 100, 240, 255);
+                buttonDefaultB = new Color32(150, 100, 240, 255);
+                buttonClickedA = new Color32(150, 100, 240, 255);
+                buttonClickedB = new Color32(150, 100, 240, 255);
+                titleColor = Color.white;
+                textColor = Color.white;
+                textClicked = Color.cyan;
+            }
+            if (themeType == 32)
+            {
+                bgColorA = new Color32(0, 53, 2, 255);
+                bgColorB = new Color32(0, 53, 2, 255);
+                buttonDefaultA = new Color32(192, 190, 171, 255);
+                buttonDefaultB = new Color32(192, 190, 171, 255);
+                buttonClickedA = Color.red;
+                buttonClickedB = Color.red;
+                titleColor = Color.white;
+                textColor = Color.black;
+                textClicked = Color.black;
+            }
+            if (themeType == 33)
+            {
+                bgColorA = new Color32(225, 73, 43, 255);
+                bgColorB = new Color32(225, 73, 43, 255);
+                buttonDefaultA = new Color32(192, 190, 171, 255);
+                buttonDefaultB = new Color32(192, 190, 171, 255);
+                buttonClickedA = Color.red;
+                buttonClickedB = Color.red;
+                titleColor = Color.white;
+                textColor = Color.black;
+                textClicked = Color.black;
+            }
         }
 
         public static void ChangePageType()
@@ -757,6 +816,16 @@ namespace iiMenu.Mods
         public static void EnableDisconnectButton()
         {
             disableDisconnectButton = false;
+        }
+
+        public static void DisablePageButtons()
+        {
+            disablePageButtons = true;
+        }
+
+        public static void EnablePageButtons()
+        {
+            disablePageButtons = false;
         }
 
         public static void DisableFPSCounter()

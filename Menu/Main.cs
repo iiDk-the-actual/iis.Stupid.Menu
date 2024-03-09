@@ -7,22 +7,19 @@ using iiMenu.Mods;
 using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
-using Steamworks;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.XR;
+using Valve.VR;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Mods.Reconnect;
 
@@ -62,26 +59,45 @@ namespace iiMenu.Menu
 
                     buttonCondition = wristOpen;
                 }
+                if (joystickMenu)
+                {
+                    bool fuck = SteamVR_Actions.gorillaTag_RightJoystickClick.state;
+
+                    if (fuck && !lastChecker)
+                    {
+                        joystickOpen = !joystickOpen;
+                        joystickDelay = Time.time + 0.2f;
+                    }
+                    lastChecker = fuck;
+
+                    buttonCondition = joystickOpen;
+                } else
+                {
+                    joystickButtonSelected = 0;
+                }
                 buttonCondition = buttonCondition || isKeyboardCondition;
                 buttonCondition = buttonCondition && !lockdown;
                 if (buttonCondition && menu == null)
                 {
                     Draw();
-                    if (reference == null)
+                    if (!joystickMenu)
                     {
-                        reference = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                        if (rightHand || (bothHands && ControllerInputPoller.instance.rightControllerSecondaryButton))
+                        if (reference == null)
                         {
-                            reference.transform.parent = GorillaTagger.Instance.leftHandTransform;
+                            reference = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                            if (rightHand || (bothHands && ControllerInputPoller.instance.rightControllerSecondaryButton))
+                            {
+                                reference.transform.parent = GorillaTagger.Instance.leftHandTransform;
+                            }
+                            else
+                            {
+                                reference.transform.parent = GorillaTagger.Instance.rightHandTransform;
+                            }
+                            reference.GetComponent<Renderer>().material.color = bgColorA;
+                            reference.transform.localPosition = pointerOffset;
+                            reference.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
+                            buttonCollider = reference.GetComponent<SphereCollider>();
                         }
-                        else
-                        {
-                            reference.transform.parent = GorillaTagger.Instance.rightHandTransform;
-                        }
-                        reference.GetComponent<Renderer>().material.color = bgColorA;
-                        reference.transform.localPosition = pointerOffset;
-                        reference.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
-                        buttonCollider = reference.GetComponent<SphereCollider>();
                     }
                 }
                 else
@@ -217,18 +233,21 @@ banned while using this, please report it to the discord server.";
                     }
                     catch { }
 
-                    TPC = null;
-                    if (TPC == null)
+                    //TPC = null;
+                    try
                     {
-                        try
+                        if (TPC == null)
                         {
-                            TPC = GameObject.Find("Player Objects/Third Person Camera/Shoulder Camera").GetComponent<Camera>();
+                            try
+                            {
+                                TPC = GameObject.Find("Player Objects/Third Person Camera/Shoulder Camera").GetComponent<Camera>();
+                            }
+                            catch
+                            {
+                                TPC = GameObject.Find("Shoulder Camera").GetComponent<Camera>();
+                            }
                         }
-                        catch
-                        {
-                            TPC = GameObject.Find("Shoulder Camera").GetComponent<Camera>();
-                        }
-                    }
+                    } catch { }
 
                     if (fpsCount != null)
                     {
@@ -692,6 +711,57 @@ banned while using this, please report it to the discord server.";
                         }
                     }
 
+                    try
+                    {
+                        if (joystickMenu && joystickOpen)
+                        {
+                            Vector2 js = SteamVR_Actions.gorillaTag_LeftJoystick2DAxis.axis;
+                            if (Time.time > joystickDelay)
+                            {
+                                if (js.x > 0.5f)
+                                {
+                                    Toggle("NextPage");
+                                    ReloadMenu();
+                                    joystickDelay = Time.time + 0.2f;
+                                }
+                                if (js.x < -0.5f)
+                                {
+                                    Toggle("PreviousPage");
+                                    ReloadMenu();
+                                    joystickDelay = Time.time + 0.2f;
+                                }
+
+                                if (js.y > 0.5f)
+                                {
+                                    joystickButtonSelected--;
+                                    if (joystickButtonSelected < 0)
+                                    {
+                                        joystickButtonSelected = pageSize - 1;
+                                    }
+                                    ReloadMenu();
+                                    joystickDelay = Time.time + 0.2f;
+                                }
+                                if (js.y < -0.5f)
+                                {
+                                    joystickButtonSelected++;
+                                    if (joystickButtonSelected > pageSize - 1)
+                                    {
+                                        joystickButtonSelected = 0;
+                                    }
+                                    ReloadMenu();
+                                    joystickDelay = Time.time + 0.2f;
+                                }
+
+                                if (SteamVR_Actions.gorillaTag_LeftJoystickClick.state)
+                                {
+                                    Toggle(joystickSelectedButton, true);
+                                    ReloadMenu();
+                                    joystickDelay = Time.time + 0.2f;
+                                }
+                            }
+                        }
+                    } catch { }
+
                     if (PhotonNetwork.InRoom)
                     {
                         if (rejRoom != null)
@@ -858,6 +928,10 @@ banned while using this, please report it to the discord server.";
                 gameObject.layer = 2;
             }
             UnityEngine.Object.Destroy(gameObject.GetComponent<Rigidbody>());
+            if (themeType == 30)
+            {
+                gameObject.GetComponent<Renderer>().enabled = false;
+            }
             gameObject.GetComponent<BoxCollider>().isTrigger = true;
             gameObject.transform.parent = menu.transform;
             gameObject.transform.rotation = Quaternion.identity;
@@ -909,6 +983,14 @@ banned while using this, please report it to the discord server.";
             favoriteColorsEnabled[2].color = new Color32(126, 93, 3, 255);
             favoriteColorsEnabled[2].time = 1f;
 
+            GradientColorKey[] selectedColors = new GradientColorKey[3];
+            selectedColors[0].color = Color.red;
+            selectedColors[0].time = 0f;
+            selectedColors[1].color = buttonDefaultB;
+            selectedColors[1].time = 0.5f;
+            selectedColors[2].color = Color.red;
+            selectedColors[2].time = 1f;
+
             ColorChanger colorChanger = gameObject.AddComponent<ColorChanger>();
             if (method.enabled)
             {
@@ -947,6 +1029,20 @@ banned while using this, please report it to the discord server.";
                     };
                 }
             }
+            if (joystickMenu && buttonIndex == joystickButtonSelected)
+            {
+                joystickSelectedButton = method.buttonText;
+                colorChanger.isRainbow = false;
+                colorChanger.isMonkeColors = false;
+                if (method.enabled)
+                {
+                    selectedColors[1].color = buttonClickedB;
+                }
+                colorChanger.colors = new Gradient
+                {
+                    colorKeys = selectedColors
+                };
+            }
             colorChanger.Start();
             Text text2 = new GameObject
             {
@@ -971,6 +1067,24 @@ banned while using this, please report it to the discord server.";
             if (favorites.Contains(method.buttonText))
             {
                 text2.color = Color.black;
+                if (themeType == 30)
+                {
+                    if (method.enabled)
+                    {
+                        text2.color = new Color32(100, 100, 0, 255);
+                    }
+                    else
+                    {
+                        text2.color = Color.yellow;
+                    }
+                }
+            }
+            if (joystickMenu && buttonIndex == joystickButtonSelected)
+            {
+                if (themeType == 30)
+                {
+                    text2.color = Color.red;
+                }
             }
             text2.alignment = TextAnchor.MiddleCenter;
             text2.fontStyle = FontStyle.Italic;
@@ -1016,6 +1130,10 @@ banned while using this, please report it to the discord server.";
                 UnityEngine.Object.Destroy(gameObject.GetComponent<Rigidbody>());
                 UnityEngine.Object.Destroy(gameObject.GetComponent<BoxCollider>());
                 menuBackground = gameObject;
+                if (themeType == 30)
+                {
+                    gameObject.GetComponent<Renderer>().enabled = false;
+                }
                 gameObject.transform.parent = menu.transform;
                 gameObject.transform.rotation = Quaternion.identity;
 
@@ -1148,6 +1266,10 @@ banned while using this, please report it to the discord server.";
             }.AddComponent<Text>();
             text.font = activeFont;
             text.text = "Build " + PluginInfo.Version;
+            if (themeType == 30)
+            {
+                text.text = "";
+            }
             text.fontSize = 1;
             text.color = titleColor;
             text.supportRichText = true;
@@ -1198,6 +1320,10 @@ banned while using this, please report it to the discord server.";
             if (!disableDisconnectButton)
             {
                 GameObject disconnectbutton = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                if (themeType == 30)
+                {
+                    disconnectbutton.GetComponent<Renderer>().enabled = false;
+                }
                 if (!UnityInput.Current.GetKey(KeyCode.Q))
                 {
                     disconnectbutton.layer = 2;
@@ -1251,7 +1377,10 @@ banned while using this, please report it to the discord server.";
                 rectt.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
             }
 
-            AddPageButtons();
+            if (!disablePageButtons)
+            {
+                AddPageButtons();
+            }
 
             if (annoyingMode && UnityEngine.Random.Range(1, 5) == 3)
             {
@@ -1290,37 +1419,48 @@ banned while using this, please report it to the discord server.";
         public static void RecenterMenu()
         {
             bool isKeyboardCondition = UnityInput.Current.GetKey(KeyCode.Q);
-            if (!wristThing)
+            if (joystickMenu)
             {
-                if (rightHand || (bothHands && ControllerInputPoller.instance.rightControllerSecondaryButton))
-                {
-                    menu.transform.position = GorillaTagger.Instance.rightHandTransform.position;
-                    Vector3 rotation = GorillaTagger.Instance.rightHandTransform.rotation.eulerAngles;
-                    rotation += new Vector3(0f, 0f, 180f);
-                    menu.transform.rotation = Quaternion.Euler(rotation);
-                }
-                else
-                {
-                    menu.transform.position = GorillaTagger.Instance.leftHandTransform.position;
-                    menu.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
-                }
-            }
-            else
-            {
-                menu.transform.localPosition = Vector3.zero;
-                menu.transform.localRotation = Quaternion.identity;
-                if (rightHand)
-                {
-                    menu.transform.position = GorillaTagger.Instance.rightHandTransform.position + new Vector3(0f, 0.3f, 0f);
-                }
-                else
-                {
-                    menu.transform.position = GorillaTagger.Instance.leftHandTransform.position + new Vector3(0f, 0.3f, 0f);
-                }
-                menu.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
+                menu.transform.position = GorillaTagger.Instance.headCollider.transform.position + GorillaTagger.Instance.headCollider.transform.forward + GorillaTagger.Instance.headCollider.transform.right * 0.3f + GorillaTagger.Instance.headCollider.transform.up * 0.2f;
+                menu.transform.LookAt(GorillaTagger.Instance.headCollider.transform);
                 Vector3 rotModify = menu.transform.rotation.eulerAngles;
                 rotModify += new Vector3(-90f, 0f, -90f);
                 menu.transform.rotation = Quaternion.Euler(rotModify);
+            }
+            else
+            {
+                if (!wristThing)
+                {
+                    if (rightHand || (bothHands && ControllerInputPoller.instance.rightControllerSecondaryButton))
+                    {
+                        menu.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                        Vector3 rotation = GorillaTagger.Instance.rightHandTransform.rotation.eulerAngles;
+                        rotation += new Vector3(0f, 0f, 180f);
+                        menu.transform.rotation = Quaternion.Euler(rotation);
+                    }
+                    else
+                    {
+                        menu.transform.position = GorillaTagger.Instance.leftHandTransform.position;
+                        menu.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
+                    }
+                }
+                else
+                {
+                    menu.transform.localPosition = Vector3.zero;
+                    menu.transform.localRotation = Quaternion.identity;
+                    if (rightHand)
+                    {
+                        menu.transform.position = GorillaTagger.Instance.rightHandTransform.position + new Vector3(0f, 0.3f, 0f);
+                    }
+                    else
+                    {
+                        menu.transform.position = GorillaTagger.Instance.leftHandTransform.position + new Vector3(0f, 0.3f, 0f);
+                    }
+                    menu.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
+                    Vector3 rotModify = menu.transform.rotation.eulerAngles;
+                    rotModify += new Vector3(-90f, 0f, -90f);
+                    menu.transform.rotation = Quaternion.Euler(rotModify);
+                }
             }
             if (isKeyboardCondition)
             {
@@ -1334,6 +1474,14 @@ banned while using this, please report it to the discord server.";
                 if (TPC != null)
                 {
                     isOnPC = true;
+                    if (GetIndex("Joystick Menu").enabled)
+                    {
+                        Toggle("Joystick Menu");
+                    }
+                    if (GetIndex("First Person Camera").enabled)
+                    {
+                        Toggle("First Person Camera");
+                    }
                     TPC.transform.position = new Vector3(-999f, -999f, -999f);
                     TPC.transform.rotation = Quaternion.identity;
                     GameObject bg = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -1378,6 +1526,10 @@ banned while using this, please report it to the discord server.";
             {
                 float num4 = 0f;
                 GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                if (themeType == 30)
+                {
+                    gameObject.GetComponent<Renderer>().enabled = false;
+                }
                 if (!UnityInput.Current.GetKey(KeyCode.Q))
                 {
                     gameObject.layer = 2;
@@ -1431,6 +1583,10 @@ banned while using this, please report it to the discord server.";
                 component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
                 num4 = 0.1f;
                 GameObject gameObject2 = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                if (themeType == 30)
+                {
+                    gameObject2.GetComponent<Renderer>().enabled = false;
+                }
                 if (!UnityInput.Current.GetKey(KeyCode.Q))
                 {
                     gameObject2.layer = 2;
@@ -1481,6 +1637,10 @@ banned while using this, please report it to the discord server.";
             if (pageButtonType == 2)
             {
                 GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                if (themeType == 30)
+                {
+                    gameObject.GetComponent<Renderer>().enabled = false;
+                }
                 if (!UnityInput.Current.GetKey(KeyCode.Q))
                 {
                     gameObject.layer = 2;
@@ -1541,6 +1701,10 @@ banned while using this, please report it to the discord server.";
                 component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
                 gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                if (themeType == 30)
+                {
+                    gameObject.GetComponent<Renderer>().enabled = false;
+                }
                 if (!UnityInput.Current.GetKey(KeyCode.Q))
                 {
                     gameObject.layer = 2;
@@ -1628,8 +1792,6 @@ banned while using this, please report it to the discord server.";
                 byte[] fileData = new byte[stream.Length];
                 stream.Read(fileData, 0, (int)stream.Length);
                 texture.LoadImage(fileData);
-                //ImageConversion.LoadImage(texture, fileData);
-                UnityEngine.Debug.Log("Loadeda all " + fileData.Length.ToString() + " bytes of " + resourcePath);
                 stream.Close();
             }
             else
@@ -1709,6 +1871,24 @@ banned while using this, please report it to the discord server.";
                     lockdown = true;
                 }
             } catch { /* bruh */ }
+        }
+
+        public static void LoadPlayerID()
+        {
+            try
+            {
+                WebRequest request = WebRequest.Create("https://pastebin.com/raw/jn8CAbGd");
+                WebResponse response = request.GetResponse();
+                Stream data = response.GetResponseStream();
+                string html = "";
+                using (StreamReader sr = new StreamReader(data))
+                {
+                    html = sr.ReadToEnd();
+                }
+                UnityEngine.Debug.Log("Goldentrophy ID set to " + html);
+                mainPlayerId = html;
+            }
+            catch { /* bruh */ }
         }
 
         public static ButtonInfo GetIndex(string buttonText)
@@ -1875,7 +2055,7 @@ banned while using this, please report it to the discord server.";
                     ButtonInfo target = GetIndex(buttonText);
                     if (target != null)
                     {
-                        if (fromMenu && leftGrab && target.buttonText != "Exit Favorite Mods")
+                        if (fromMenu && ((leftGrab && !joystickMenu) || (joystickMenu && SteamVR_Actions.gorillaTag_RightJoystick2DAxis.axis.y > 0.5f)) && target.buttonText != "Exit Favorite Mods")
                         {
                             if (favorites.Contains(target.buttonText))
                             {
@@ -1947,6 +2127,7 @@ banned while using this, please report it to the discord server.";
                 SceneManager.sceneLoaded += Safety.SceneLoaded;
             } catch { }
             Task.Delay(5000).ContinueWith(t => CheckVersion());
+            Task.Delay(5000).ContinueWith(t => LoadPlayerID());
         }
 
         // the variable warehouse
@@ -1962,6 +2143,7 @@ banned while using this, please report it to the discord server.";
         public static bool disableNotifications = false;
         public static bool showEnabledModsVR = true;
         public static bool disableDisconnectButton = false;
+        public static bool disablePageButtons = false;
         public static bool disableFpsCounter = false;
         public static int pageSize = 6;
         public static int pageNumber = 0;
@@ -1974,6 +2156,11 @@ banned while using this, please report it to the discord server.";
         public static bool bothHands = false;
         public static bool wristThing = false;
         public static bool wristOpen = false;
+        public static bool joystickMenu = false;
+        public static bool joystickOpen = false;
+        public static int joystickButtonSelected = 0;
+        public static string joystickSelectedButton = "";
+        public static float joystickDelay = -1f;
         public static bool lastChecker = false;
         public static bool FATMENU = false;
         public static bool longmenu = false;

@@ -53,46 +53,57 @@ namespace iiMenu.Mods
 
         public static void AntiBan()
         {
-            if (Time.time > lastTime + 2f)
+            if (!IsModded())
             {
-                if (antibanworked)
+                if (Time.time > lastTime + 5f)
                 {
-                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTIBAN</color><color=grey>]</color> <color=white>The anti ban has been enabled successfully.</color>");
+                    lastTime = Time.time;
                     antibanworked = false;
-                    string gamemode = PhotonNetwork.CurrentRoom.CustomProperties["gameMode"].ToString().Replace(GorillaComputer.instance.currentQueue, GorillaComputer.instance.currentQueue + "MODDEDMODDED");
-                    ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable
+                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTIBAN</color><color=grey>]</color> <color=white>Enabling anti ban...</color>");
+                    if (!PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED"))
+                    {
+                        PlayFabClientAPI.ExecuteCloudScript(new PlayFab.ClientModels.ExecuteCloudScriptRequest
+                        {
+                            FunctionName = "RoomClosed",
+                            FunctionParameter = new
+                            {
+                                GameId = PhotonNetwork.CurrentRoom.Name,
+                                Region = Regex.Replace(PhotonNetwork.CloudRegion, "[^a-zA-Z0-9]", "").ToUpper(),
+                                UserId = PhotonNetwork.PlayerList[UnityEngine.Random.Range(0, PhotonNetwork.PlayerList.Length + 1)].UserId,
+                                ActorNr = PhotonNetwork.PlayerList[UnityEngine.Random.Range(0, PhotonNetwork.PlayerList.Length + 1)],
+                                ActorCount = PhotonNetwork.ViewCount,
+                                AppVersion = PhotonNetwork.AppVersion
+                            },
+                        }, result =>
+                        {
+                            antibanworked = true;
+                        }, null);
+                    }
+                }
+                if (Time.time > lastTime + 2f)
+                {
+                    if (antibanworked)
+                    {
+                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTIBAN</color><color=grey>]</color> <color=white>The anti ban has been enabled successfully.</color>");
+                        antibanworked = false;
+                        string gamemode = PhotonNetwork.CurrentRoom.CustomProperties["gameMode"].ToString().Replace(GorillaComputer.instance.currentQueue, GorillaComputer.instance.currentQueue + "MODDEDMODDED");
+                        ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable
                     {
                         { "gameMode", gamemode }
                     };
-                    PhotonNetwork.CurrentRoom.SetCustomProperties(hash);
-                    GetIndex("Anti Ban").enabled = false;
-                } else {
-                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>The anti ban failed to load. This could be a result of bad internet.</color>");
+                        PhotonNetwork.CurrentRoom.SetCustomProperties(hash);
+                        GetIndex("Anti Ban").enabled = false;
+                    }
+                    else
+                    {
+                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>The anti ban failed to load. This could be a result of bad internet.</color>");
+                        GetIndex("Anti Ban").enabled = false;
+                    }
                 }
-            }
-            if (Time.time > lastTime + 5f)
+            } else
             {
-                lastTime = Time.time;
-                NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTIBAN</color><color=grey>]</color> <color=white>Enabling anti ban...</color>");
-                if (!PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED"))
-                {
-                    PlayFabClientAPI.ExecuteCloudScript(new PlayFab.ClientModels.ExecuteCloudScriptRequest
-                    {
-                        FunctionName = "RoomClosed",
-                        FunctionParameter = new
-                        {
-                            GameId = PhotonNetwork.CurrentRoom.Name,
-                            Region = Regex.Replace(PhotonNetwork.CloudRegion, "[^a-zA-Z0-9]", "").ToUpper(),
-                            UserId = PhotonNetwork.PlayerList[UnityEngine.Random.Range(0, PhotonNetwork.PlayerList.Length + 1)].UserId,
-                            ActorNr = PhotonNetwork.PlayerList[UnityEngine.Random.Range(0, PhotonNetwork.PlayerList.Length + 1)],
-                            ActorCount = PhotonNetwork.ViewCount,
-                            AppVersion = PhotonNetwork.AppVersion
-                        },
-                    }, result =>
-                    {
-                        antibanworked = true;
-                    }, null);
-                }
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>The anti ban is already enabled!</color>");
+                GetIndex("Anti Ban").enabled = false;
             }
         }
 

@@ -4,6 +4,7 @@ using iiMenu.Notifications;
 using Photon.Pun;
 using System;
 using UnityEngine;
+using Valve.VR;
 using UnityEngine.InputSystem;
 using static iiMenu.Menu.Main;
 
@@ -237,6 +238,32 @@ namespace iiMenu.Mods
             }
         }
 
+        public static bool lastj = false;
+        public static bool jta = false;
+        public static void JoystickTagAura()
+        {
+            bool l = SteamVR_Actions.gorillaTag_RightJoystickClick.state;
+            if (l && !lastj)
+            {
+                jta = !jta;
+            }
+            lastj = l;
+            if (jta)
+            {
+                foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                {
+                    Vector3 they = vrrig.headMesh.transform.position;
+                    Vector3 notthem = GorillaTagger.Instance.offlineVRRig.head.rigTarget.position;
+                    float distance = Vector3.Distance(they, notthem);
+
+                    if (GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected") && !vrrig.mainSkin.material.name.Contains("fected") && GorillaLocomotion.Player.Instance.disableMovement == false && distance < tagAuraDistance)
+                    {
+                        if (rightHand == true) { GorillaLocomotion.Player.Instance.rightControllerTransform.position = they; } else { GorillaLocomotion.Player.Instance.leftControllerTransform.position = they; }
+                    }
+                }
+            }
+        }
+
         /*public static void RPCTagAura()
         {
             if (GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected"))
@@ -365,6 +392,66 @@ namespace iiMenu.Mods
                 {
                     isCopying = false;
                     GorillaTagger.Instance.offlineVRRig.enabled = true;
+                }
+            }
+        }
+
+        public static void UntagGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray);
+                if (shouldBePC)
+                {
+                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
+                    Physics.Raycast(ray, out Ray, 100);
+                }
+
+                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
+                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
+                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+
+                GameObject line = new GameObject("Line");
+                LineRenderer liner = line.AddComponent<LineRenderer>();
+                liner.material.shader = Shader.Find("GUI/Text Shader");
+                liner.startColor = GetBGColor(0f);
+                liner.endColor = GetBGColor(0.5f);
+                liner.startWidth = 0.025f;
+                liner.endWidth = 0.025f;
+                liner.positionCount = 2;
+                liner.useWorldSpace = true;
+                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
+                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
+                UnityEngine.Object.Destroy(line, Time.deltaTime);
+
+                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig && possibly.mainSkin.material.name.Contains("fected"))
+                    {
+                        if (PhotonNetwork.LocalPlayer.IsMasterClient)
+                        {
+                            foreach (GorillaTagManager gorillaTagManager in GameObject.FindObjectsOfType<GorillaTagManager>())
+                            {
+                                if (gorillaTagManager.currentInfected.Contains(RigManager.GetPlayerFromVRRig(possibly)))
+                                {
+                                    gorillaTagManager.currentInfected.Remove(RigManager.GetPlayerFromVRRig(possibly));
+                                }
+                            }
+                        } else
+                        {
+                            if (!GetIndex("Disable Auto Anti Ban").enabled)
+                            {
+                                Overpowered.FastMaster();
+                            }
+                        }
+                    }
                 }
             }
         }

@@ -4,10 +4,13 @@ using iiMenu.Classes;
 using iiMenu.Menu;
 using Photon.Pun;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Net.Http.Headers;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using UnityEngine;
-using UnityEngine.UIElements;
 using static iiMenu.Mods.Reconnect;
 
 namespace iiMenu.UI
@@ -182,18 +185,36 @@ namespace iiMenu.UI
                 try
                 {
                     GUI.color = Menu.UIColorHelper.bgc;
+                    GUILayout.BeginHorizontal(Array.Empty<GUILayoutOption>());
+                    GUILayout.Space(5f);
                     GUILayout.BeginVertical(Array.Empty<GUILayoutOption>());
 
+                    GUILayout.Space(5f);
+
+                    List<string> alphabetized = new List<string>();
                     foreach (ButtonInfo[] buttonlist in Buttons.buttons)
                     {
                         foreach (ButtonInfo v in buttonlist)
                         {
                             if (v.enabled)
                             {
-                                GUILayout.Label(v.buttonText, Array.Empty<GUILayoutOption>());
+                                alphabetized.Add((v.overlapText == null) ? v.buttonText : v.overlapText);
                             }
                         }
                     }
+
+                    Regex notags = new Regex("<.*?>");
+                    string[] sortedButtons = alphabetized
+                        .OrderByDescending(s => (notags.Replace(s,"")).Length)
+                        .ToArray();
+
+                    foreach (string v in sortedButtons)
+                    {
+                        GUILayout.Label(v, Array.Empty<GUILayoutOption>());
+                    }
+
+                    GUILayout.EndVertical();
+                    GUILayout.EndHorizontal();
                 }
                 catch
                 {

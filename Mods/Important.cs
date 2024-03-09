@@ -202,6 +202,12 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void ForceEnableHands()
+        {
+            GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").SetActive(true);
+            GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").SetActive(true);
+        }
+
         public static void OculusReportMenu()
         {
             if (leftPrimary)
@@ -288,7 +294,7 @@ namespace iiMenu.Mods
             string text = "";
             for (int i = 0; i < 4; i++)
             {
-                text += PhotonNetworkController.Instance.roomCharacters.Substring(Random.Range(0, PhotonNetworkController.Instance.roomCharacters.Length), 1);
+                text += NetworkSystem.roomCharacters.Substring(Random.Range(0, NetworkSystem.roomCharacters.Length), 1);
             }
             if (GorillaComputer.instance.CheckAutoBanListForName(text))
             {

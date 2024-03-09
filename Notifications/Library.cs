@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using BepInEx;
 using iiMenu.Classes;
@@ -92,15 +94,26 @@ namespace iiMenu.Notifications
             if (showEnabledModsVR)
             {
                 string lol = "";
+                List<string> alphabetized = new List<string>();
                 foreach (ButtonInfo[] buttonlist in Buttons.buttons)
                 {
                     foreach (ButtonInfo v in buttonlist)
                     {
                         if (v.enabled)
                         {
-                            lol += v.buttonText + "\n";
+                            alphabetized.Add((v.overlapText == null) ? v.buttonText : v.overlapText);
                         }
                     }
+                }
+
+                Regex notags = new Regex("<.*?>");
+                string[] sortedButtons = alphabetized
+                    .OrderByDescending(s => (notags.Replace(s, "")).Length)
+                    .ToArray();
+
+                foreach (string v in sortedButtons)
+                {
+                    lol += v + "\n";
                 }
                 ModText.text = lol;
                 ModText.color = UIColorHelper.bgc;
