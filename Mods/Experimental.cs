@@ -1,10 +1,9 @@
-﻿using GorillaNetworking;
+﻿using ExitGames.Client.Photon;
+using GorillaNetworking;
 using GorillaTag;
 using iiMenu.Classes;
-using iiMenu.Notifications;
 using Photon.Pun;
-using PlayFab;
-using System.IO;
+using Photon.Realtime;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -14,40 +13,22 @@ namespace iiMenu.Mods
 {
     internal class Experimental
     {
-        /*public static void AntiBan()
-        { this shit was skidded and wont come back
-            antiBanEnabled = true;
-            ExecuteCloudScriptRequest executeCloudScriptRequest = new ExecuteCloudScriptRequest();
-            executeCloudScriptRequest.FunctionName = "RoomClosed";
-            executeCloudScriptRequest.FunctionParameter = new
-            {
-                GameId = PhotonNetwork.CurrentRoom.Name,
-                Region = Regex.Replace(PhotonNetwork.CloudRegion, "[^a-zA-Z0-9]", "").ToUpper()
-            };
-            PlayFabClientAPI.ExecuteCloudScript(executeCloudScriptRequest, delegate (ExecuteCloudScriptResult result)
-            {
-            }, null, null, null);
-            Hashtable hashtable = new Hashtable();
-            hashtable.Add("gameMode", "forestDEFAULTMODDED_MODDED_INFECTION");
-            PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable, null, null);
-
-            NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI BAN</color><color=grey>]</color> <color=white>The anti ban has been enabled! I take ZERO responsibility for bans using this.</color>");
-        }*/
-
         public static void AntiRPCBan()
         {
             GorillaGameManager.instance.OnPlayerLeftRoom(PhotonNetwork.LocalPlayer);
-            PhotonNetworkController.Instance.OnPlayerLeftRoom(PhotonNetwork.LocalPlayer);
-            GameMode.ActiveGameMode.OnPlayerLeftRoom(PhotonNetwork.LocalPlayer);
+            GorillaGameManager.instance.OnPlayerLeftRoom(PhotonNetwork.LocalPlayer);
+            GorillaGameManager.instance.OnPlayerLeftRoom(PhotonNetwork.LocalPlayer);
 
-            PhotonNetworkController.Instance.OnLeftRoom();
-            PhotonNetworkController.Instance.OnPreLeavingRoom();
-            PhotonNetworkController.Instance.OnLeftLobby();
+            
+            /*NetworkSystem.OnLeftRoom();
+            NetworkSystem.OnPreLeavingRoom();
+            NetworkSystem.OnLeftLobby();*/
+            
 
-            PhotonNetworkController.Instance.OnMasterClientSwitched(PhotonNetwork.LocalPlayer);
+            GorillaGameManager.instance.OnMasterClientSwitched(PhotonNetwork.LocalPlayer);
             ScienceExperimentManager.instance.OnMasterClientSwitched(PhotonNetwork.LocalPlayer);
             GorillaGameManager.instance.OnMasterClientSwitched(PhotonNetwork.LocalPlayer);
-            GameMode.ActiveGameMode.OnMasterClientSwitched(PhotonNetwork.LocalPlayer);
+            GorillaGameManager.instance.OnMasterClientSwitched(PhotonNetwork.LocalPlayer);
 
             try
             {
@@ -84,6 +65,78 @@ namespace iiMenu.Mods
             if (PhotonNetwork.InRoom && PhotonNetwork.CurrentRoom.CustomProperties["gameMode"].ToString().ToLower().Contains("modded"))
             {
                 PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
+            }
+        }
+
+        public static void InfiniteRangeTagGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray);
+                if (shouldBePC)
+                {
+                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
+                    Physics.Raycast(ray, out Ray, 100);
+                }
+
+                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
+                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
+                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+
+                GameObject line = new GameObject("Line");
+                LineRenderer liner = line.AddComponent<LineRenderer>();
+                liner.material.shader = Shader.Find("GUI/Text Shader");
+                liner.startColor = GetBGColor(0f);
+                liner.endColor = GetBGColor(0.5f);
+                liner.startWidth = 0.025f;
+                liner.endWidth = 0.025f;
+                liner.positionCount = 2;
+                liner.useWorldSpace = true;
+                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
+                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
+                UnityEngine.Object.Destroy(line, Time.deltaTime);
+
+                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > teleDebounce)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        RaiseEventOptions raiseEventOptions = new RaiseEventOptions();
+                        raiseEventOptions.Flags = new WebFlags(1);
+
+                        object[] eventContent = new object[]
+                        {
+                            PhotonNetwork.LocalPlayer.UserId,
+                            RigManager.GetPlayerFromVRRig(possibly).UserId,
+                            GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>().currentInfected.Count
+                        };
+                        PhotonNetwork.RaiseEvent(2, eventContent, raiseEventOptions, SendOptions.SendReliable);
+                        teleDebounce = Time.time + 0.2f;
+                    }
+                }
+            }
+        }
+
+        public static void BetterFPSBoost()
+        {
+            foreach (Renderer v in Resources.FindObjectsOfTypeAll<Renderer>())
+            {
+                try
+                {
+                    if (v.material.shader.name == "GorillaTag/UberShader")
+                    {
+                        Material replacement = new Material(Shader.Find("GorillaTag/UberShader"));
+                        replacement.color = v.material.color;
+                        v.material = replacement;
+                    }
+                } catch (System.Exception exception) { UnityEngine.Debug.LogError(string.Format("mat error {1} - {0}", exception.Message, exception.StackTrace)); }
             }
         }
 

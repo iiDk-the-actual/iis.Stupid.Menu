@@ -15,22 +15,16 @@ namespace iiMenu.Classes
 
         public static VRRig GetRandomVRRig(bool includeSelf)
         {
-            VRRig random = GorillaParent.instance.vrrigs[UnityEngine.Random.Range(0, GorillaParent.instance.vrrigs.Count - 1)];
+            Photon.Realtime.Player randomPlayer;
             if (includeSelf)
             {
-                return random;
+                randomPlayer = PhotonNetwork.PlayerList[UnityEngine.Random.Range(0, PhotonNetwork.PlayerList.Length -1)];
             }
             else
             {
-                if (random != GorillaTagger.Instance.offlineVRRig)
-                {
-                    return random;
-                }
-                else
-                {
-                    return GetRandomVRRig(includeSelf);
-                }
+                randomPlayer = PhotonNetwork.PlayerListOthers[UnityEngine.Random.Range(0, PhotonNetwork.PlayerListOthers.Length - 1)];
             }
+            return GetVRRigFromPlayer(randomPlayer);
         }
 
         public static VRRig GetClosestVRRig()
@@ -75,6 +69,20 @@ namespace iiMenu.Classes
             foreach (Photon.Realtime.Player target in PhotonNetwork.PlayerList)
             {
                 if (target.UserId == id)
+                {
+                    found = target;
+                    break;
+                }
+            }
+            return found;
+        }
+
+        public static Photon.Realtime.Player GetPlayerFromNetPlayer(NetPlayer p)
+        {
+            Photon.Realtime.Player found = null;
+            foreach (Photon.Realtime.Player target in PhotonNetwork.PlayerList)
+            {
+                if (target.UserId == p.UserId)
                 {
                     found = target;
                     break;

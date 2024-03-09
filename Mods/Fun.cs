@@ -5,6 +5,8 @@ using HarmonyLib;
 using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
+using Photon.Voice.Unity.UtilityScripts;
+using POpusCodec.Enums;
 using System.ComponentModel;
 using System.IO;
 using System.Reflection;
@@ -37,6 +39,11 @@ namespace iiMenu.Mods
         public static void UpsideDownHead()
         {
             GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.z = 180f;
+        }
+
+        public static void BackwardsHead()
+        {
+            GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.y = 180f;
         }
 
         public static void SpinHeadX()
@@ -381,6 +388,59 @@ namespace iiMenu.Mods
                     GorillaTagger.Instance.offlineVRRig.enabled = true;
                 }
             }
+        }
+
+        public static void LowQualityMicrophone()
+        {
+            Photon.Voice.Unity.Recorder mic = GameObject.Find("Photon Manager").GetComponent<Photon.Voice.Unity.Recorder>();
+            mic.SamplingRate = SamplingRate.Sampling08000;
+            //oldBitrate = mic.Bitrate;
+            mic.Bitrate = 5;
+
+            mic.RestartRecording(true);
+        }
+
+        public static void HighQualityMicrophone()
+        {
+            Photon.Voice.Unity.Recorder mic = GameObject.Find("Photon Manager").GetComponent<Photon.Voice.Unity.Recorder>();
+            mic.SamplingRate = SamplingRate.Sampling16000;
+            mic.Bitrate = 30000;
+
+            mic.RestartRecording(true);
+        }
+
+        public static void LoudMicrophone()
+        {
+            Photon.Voice.Unity.Recorder mic = GameObject.Find("Photon Manager").GetComponent<Photon.Voice.Unity.Recorder>();
+
+            if (!mic.gameObject.GetComponent<MicAmplifier>())
+            {
+                mic.gameObject.AddComponent<MicAmplifier>();
+            }
+
+            MicAmplifier loudman = mic.gameObject.GetComponent<MicAmplifier>();
+            loudman.AmplificationFactor = 16;
+            loudman.BoostValue = 16;
+
+            mic.RestartRecording(true);
+        }
+
+        public static void NotLoudMicrophone()
+        {
+            Photon.Voice.Unity.Recorder mic = GameObject.Find("Photon Manager").GetComponent<Photon.Voice.Unity.Recorder>();
+
+            if (mic.gameObject.GetComponent<MicAmplifier>())
+            {
+                UnityEngine.Object.Destroy(mic.gameObject.GetComponent<MicAmplifier>());
+            }
+
+            mic.RestartRecording(true);
+        }
+
+        public static void ReloadMicrophone()
+        {
+            Photon.Voice.Unity.Recorder mic = GameObject.Find("Photon Manager").GetComponent<Photon.Voice.Unity.Recorder>();
+            mic.RestartRecording(true);
         }
 
         public static void BugGun()
