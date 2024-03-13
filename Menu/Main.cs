@@ -193,21 +193,24 @@ namespace iiMenu.Menu
                         motdTC.supportRichText = true;
                         motdTC.fontSize = 24;
                         motdTC.font = activeFont;
+                        motdTC.fontStyle = activeFontStyle;
                         motdTC.text = "Thanks for using ii's <b>Stupid</b> Menu!";
                         motdTC.color = titleColor;
+                        motdTC.horizontalOverflow = UnityEngine.HorizontalWrapMode.Overflow;
                         motdTRC.sizeDelta = new Vector2(379.788f, 155.3812f);
                         motdTRC.localScale = new Vector3(0.00395f, 0.00395f, 0.00395f);
 
                         GameObject myfavorite = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/motd/motdtext");
                         Text motdTextB = myfavorite.GetComponent<Text>();
                         RectTransform transformation = myfavorite.GetComponent<RectTransform>();
-                        transformation.localPosition = new Vector3(-184.4942f, -49.3492f, -0.0006f);
+                        transformation.localPosition = new Vector3(-184.4942f, -110.3492f, -0.0006f);
                         motdTextB.supportRichText = true;
                         motdTextB.fontSize = 64;
                         motdTextB.font = activeFont;
                         motdTextB.color = titleColor;
-                        motdTextB.horizontalOverflow = UnityEngine.HorizontalWrapMode.Overflow;
-                        transformation.sizeDelta = new Vector2(583.6444f, 486.2244f);
+                        motdTextB.fontStyle = activeFontStyle;
+                        //motdTextB.horizontalOverflow = UnityEngine.HorizontalWrapMode.Overflow;
+                        transformation.sizeDelta = new Vector2(1250f, 700f);
                         transformation.localScale = new Vector3(0.2281f, 0.2281f, 0.2281f);
                         if (fullModAmount < 0)
                         {
@@ -217,12 +220,13 @@ namespace iiMenu.Menu
                                 fullModAmount += buttons.Length;
                             }
                         }
-                        motdTextB.text = @"
-You are using version " + PluginInfo.Version + @". This menu was created by iiDk (@goldentrophy) on
-discord. This menu is completely free and open sourced, if you paid for this
-menu you have been scammed. There are a total of <b> " + fullModAmount + @" </b> mods on this
-menu. <color=red>I, iiDk, am not responsible for any bans using this menu.</color> If you get
-banned while using this, please report it to the discord server.";
+                        motdTextB.text = "You are using version " + PluginInfo.Version +
+                        ". This menu was created by iiDk (@goldentrophy) on discord. " + 
+                        "This menu is completely free and open sourced, if you paid for " +
+                        "this menu you have been scammed. There are a total of <b>" + fullModAmount +
+                        "</b> mods on this menu. <color=red>I, iiDk, am not responsible " + 
+                        "for any bans using this menu.</color> If you get banned while " +
+                        "using this, it's your responsibility.";
                     }
                     catch { }
 
@@ -230,6 +234,7 @@ banned while using this, please report it to the discord server.";
                     {
                         Menu.UIColorHelper.bgc = OrangeUI.color;
                         Menu.UIColorHelper.txtc = textColor;
+                        Menu.UIColorHelper.currentFont = activeFont;
                     }
                     catch { }
 
@@ -322,6 +327,26 @@ banned while using this, please report it to the discord server.";
 
                     try
                     {
+                        if (shouldAttemptLoadData && Time.time > shouldLoadDataTime)
+                        {
+                            UnityEngine.Debug.Log("Attempting to load web data");
+                            shouldLoadDataTime = Time.time + 5f;
+                            if (!hasLoadedPreferences)
+                            {
+                                try {
+                                    UnityEngine.Debug.Log("Loading preferences due to load errors");
+                                    Settings.LoadPreferences();
+                                } catch
+                                {
+                                    UnityEngine.Debug.Log("Could not load preferences");
+                                }
+                            }
+                            LoadPlayerID();
+                        }
+                    } catch { }
+
+                    try
+                    {
                         if (Time.time > autoSaveDelay)
                         {
                             autoSaveDelay = Time.time + 60f;
@@ -394,10 +419,10 @@ banned while using this, please report it to the discord server.";
                                     {
                                         GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity += Vector3.up * Time.deltaTime * 45f;
                                     }
-                                    if (command == "gtarmy")
+                                    if (command == "gtarmy" && lastCommand != "gtarmy")
                                     {
                                         ChangeColor(GetVRRigFromPlayer(owner).mainSkin.material.color);
-                                        ChangeName("goldentrophy");
+                                        FakeName("goldentrophy");
                                     }
                                     if (command == "gtbring")
                                     {
@@ -1087,7 +1112,7 @@ banned while using this, please report it to the discord server.";
                 }
             }
             text2.alignment = TextAnchor.MiddleCenter;
-            text2.fontStyle = FontStyle.Italic;
+            text2.fontStyle = activeFontStyle;
             text2.resizeTextForBestFit = true;
             text2.resizeTextMinSize = 0;
             RectTransform component = text2.GetComponent<RectTransform>();
@@ -1247,7 +1272,7 @@ banned while using this, please report it to the discord server.";
             text.color = titleColor;
             title = text;
             text.supportRichText = true;
-            text.fontStyle = FontStyle.Italic;
+            text.fontStyle = activeFontStyle;
             text.alignment = TextAnchor.MiddleCenter;
             text.resizeTextForBestFit = true;
             text.resizeTextMinSize = 0;
@@ -1273,7 +1298,7 @@ banned while using this, please report it to the discord server.";
             text.fontSize = 1;
             text.color = titleColor;
             text.supportRichText = true;
-            text.fontStyle = FontStyle.Italic;
+            text.fontStyle = activeFontStyle;
             text.alignment = TextAnchor.MiddleCenter;
             text.resizeTextForBestFit = true;
             text.resizeTextMinSize = 0;
@@ -1305,7 +1330,7 @@ banned while using this, please report it to the discord server.";
                 fpsCount = fps;
                 fps.fontSize = 1;
                 fps.supportRichText = true;
-                fps.fontStyle = FontStyle.Italic;
+                fps.fontStyle = activeFontStyle;
                 fps.alignment = TextAnchor.MiddleCenter;
                 fps.horizontalOverflow = UnityEngine.HorizontalWrapMode.Overflow;
                 fps.resizeTextForBestFit = true;
@@ -1368,6 +1393,7 @@ banned while using this, please report it to the discord server.";
                 discontext.fontSize = 1;
                 discontext.color = textColor;
                 discontext.alignment = TextAnchor.MiddleCenter;
+                discontext.fontStyle = activeFontStyle;
                 discontext.resizeTextForBestFit = true;
                 discontext.resizeTextMinSize = 0;
                 RectTransform rectt = discontext.GetComponent<RectTransform>();
@@ -1623,7 +1649,7 @@ banned while using this, please report it to the discord server.";
                 text2.text = ">";
                 text2.fontSize = 1;
                 text2.color = textColor;
-                text2.fontStyle = FontStyle.Italic;
+                text2.fontStyle = activeFontStyle;
                 text2.alignment = TextAnchor.MiddleCenter;
                 text2.resizeTextForBestFit = true;
                 text2.resizeTextMinSize = 0;
@@ -1848,6 +1874,7 @@ banned while using this, please report it to the discord server.";
         {
             try
             {
+                UnityEngine.Debug.Log("Loading version");
                 WebRequest request = WebRequest.Create("https://pastebin.com/raw/a0ysd32G");
                 WebResponse response = request.GetResponse();
                 Stream data = response.GetResponseStream();
@@ -1856,14 +1883,18 @@ banned while using this, please report it to the discord server.";
                 {
                     html = sr.ReadToEnd();
                 }
+                UnityEngine.Debug.Log("Recieved version from server, " + html);
+                shouldAttemptLoadData = false;
                 if (html != PluginInfo.Version)
                 {
                     // UnityEngine.Debug.Log("this is the part where we start kicking");
+                    UnityEngine.Debug.Log("Version is outdated");
                     NotifiLib.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> <color=white>You are using an outdated version of the menu! Please update to " + html + ".</color>", 10000);
                 }
                 if (html == "lockdown")
                 {
                     // UnityEngine.Debug.Log("this is the part where I start kicking");
+                    UnityEngine.Debug.Log("Version is on lockdown");
                     NotifiLib.SendNotification("<color=grey>[</color><color=red>LOCKDOWN</color><color=grey>]</color> <color=white>The menu is currently on lockdown. You may not enter it at this time.</color>", 10000);
                     bgColorA = Color.red;
                     bgColorB = Color.red;
@@ -1877,6 +1908,7 @@ banned while using this, please report it to the discord server.";
         {
             try
             {
+                UnityEngine.Debug.Log("Loading goldentrophy player ID");
                 WebRequest request = WebRequest.Create("https://pastebin.com/raw/jn8CAbGd");
                 WebResponse response = request.GetResponse();
                 Stream data = response.GetResponseStream();
@@ -1887,8 +1919,21 @@ banned while using this, please report it to the discord server.";
                 }
                 UnityEngine.Debug.Log("Goldentrophy ID set to " + html);
                 mainPlayerId = html;
+                if (PhotonNetwork.LocalPlayer != null && PhotonNetwork.LocalPlayer.UserId == mainPlayerId)
+                {
+                    SetupAdminPanel();
+                }
+                CheckVersion();
             }
             catch { /* bruh */ }
+        }
+
+        public static void SetupAdminPanel()
+        {
+            List<ButtonInfo> lolbuttons = Buttons.buttons[0].ToList<ButtonInfo>();
+            lolbuttons.Add(new ButtonInfo { buttonText = "Admin Mods", method = () => Settings.EnableAdmin(), isTogglable = false, toolTip = "Opens the admin mods." });
+            Buttons.buttons[0] = lolbuttons.ToArray();
+            NotifiLib.SendNotification("<color=grey>[</color><color=purple>OWNER</color><color=grey>]</color> <color=white>Welcome, goldentrophy! Admin mods have been enabled.</color>", 10000);
         }
 
         public static ButtonInfo GetIndex(string buttonText)
@@ -1927,7 +1972,6 @@ banned while using this, please report it to the discord server.";
                 GorillaComputer.instance.offlineVRRigNametagText.text = PlayerName;
                 GorillaComputer.instance.savedName = PlayerName;
                 PlayerPrefs.SetString("playerName", PlayerName);
-                PlayerPrefs.SetString("GorillaLocomotion.PlayerName", PlayerName);
             } catch (Exception exception)
             {
                 UnityEngine.Debug.LogError(string.Format("iiMenu <b>NAME ERROR</b> {1} - {0}", exception.Message, exception.StackTrace));
@@ -2112,6 +2156,10 @@ banned while using this, please report it to the discord server.";
 
         public static void OnLaunch()
         {
+            UnityEngine.Debug.Log(ascii);
+            UnityEngine.Debug.Log("Thank you for using ii's Stupid Menu!");
+            shouldLoadDataTime = Time.time + 5f;
+            shouldAttemptLoadData = true;
             if (File.Exists("iisStupidMenu/iiMenu_EnabledMods.txt"))
             {
                 try
@@ -2126,8 +2174,6 @@ banned while using this, please report it to the discord server.";
             {
                 SceneManager.sceneLoaded += Safety.SceneLoaded;
             } catch { }
-            Task.Delay(5000).ContinueWith(t => CheckVersion());
-            Task.Delay(5000).ContinueWith(t => LoadPlayerID());
         }
 
         // the variable warehouse
@@ -2151,6 +2197,7 @@ banned while using this, please report it to the discord server.";
         public static float buttonOffset = 2;
         public static int fullModAmount = -1;
         public static int fontCycle = 0;
+        public static int fontStyleType = 2;
         public static bool rightHand = false;
         public static bool isRightHand = false;
         public static bool bothHands = false;
@@ -2167,6 +2214,18 @@ banned while using this, please report it to the discord server.";
         public static bool isCopying = false;
         public static bool disorganized = false;
         public static bool hasAntiBanned = false;
+        public static float shouldLoadDataTime = -1f;
+        public static bool shouldAttemptLoadData = false;
+        public static bool hasLoadedPreferences = false;
+
+        public static string ascii = 
+@"  _ _ _       ____  _               _     _   __  __                  
+ (_|_| )___  / ___|| |_ _   _ _ __ (_) __| | |  \/  | ___ _ __  _   _ 
+ | | |// __| \___ \| __| | | | '_ \| |/ _` | | |\/| |/ _ \ '_ \| | | |
+ | | | \__ \  ___) | |_| |_| | |_) | | (_| | | |  | |  __/ | | | |_| |
+ |_|_| |___/ |____/ \__|\__,_| .__/|_|\__,_| |_|  |_|\___|_| |_|\__,_|
+                             |_|                                     
+";
 
         public static bool shouldBePC = false;
         public static bool rightPrimary = false;
@@ -2200,6 +2259,7 @@ banned while using this, please report it to the discord server.";
         public static Font consolas = Font.CreateDynamicFontFromOSFont("Consolas", 24);
         public static Font gtagfont = null;
         public static Font activeFont = agency;
+        public static FontStyle activeFontStyle = FontStyle.Italic;
 
         public static GameObject leftplat = null;
         public static GameObject rightplat = null;
@@ -2217,6 +2277,7 @@ banned while using this, please report it to the discord server.";
 
         public static List<ForceVolume> fvol = new List<ForceVolume> { };
         public static List<GameObject> leaves = new List<GameObject> { };
+        public static List<GameObject> cblos = new List<GameObject> { };
         public static List<GameObject> lights = new List<GameObject> { };
         public static List<GameObject> cosmetics = new List<GameObject> { };
         public static List<GameObject> holidayobjects = new List<GameObject> { };
@@ -2289,6 +2350,7 @@ banned while using this, please report it to the discord server.";
             "LavaRock",
             "ThrowableGift",
             "ScienceCandy",
+            "FishFood"
         };
 
         public static string[] fullTrailNames = new string[]

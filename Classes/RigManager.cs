@@ -1,7 +1,7 @@
-﻿using Photon.Realtime;
-using Photon.Pun;
-using BepInEx;
+﻿using BepInEx;
 using HarmonyLib;
+using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine;
 
 namespace iiMenu.Classes
@@ -69,20 +69,6 @@ namespace iiMenu.Classes
             foreach (Photon.Realtime.Player target in PhotonNetwork.PlayerList)
             {
                 if (target.UserId == id)
-                {
-                    found = target;
-                    break;
-                }
-            }
-            return found;
-        }
-
-        public static Photon.Realtime.Player GetPlayerFromNetPlayer(NetPlayer p)
-        {
-            Photon.Realtime.Player found = null;
-            foreach (Photon.Realtime.Player target in PhotonNetwork.PlayerList)
-            {
-                if (target.UserId == p.UserId)
                 {
                     found = target;
                     break;

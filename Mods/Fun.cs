@@ -1,6 +1,7 @@
 ﻿using ExitGames.Client.Photon;
 using GorillaLocomotion.Gameplay;
 using GorillaTag;
+using GorillaTag.Cosmetics;
 using HarmonyLib;
 using iiMenu.Notifications;
 using Photon.Pun;
@@ -237,17 +238,222 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void MonkeySpeak()
+        public static void GetHoneyComb()
         {
-            /*GorillaTagger.Instance.offlineVRRig.localUseReplacementVoice = leftPrimary;
-            GorillaTagger.Instance.offlineVRRig.remoteUseReplacementVoice = leftPrimary;
-            if (leftPrimary)
+            if (leftGrab)
             {
-                VRRig yay = GorillaTagger.Instance.offlineVRRig;
-                System.Type type = yay.GetType();
-                FieldInfo fieldInfo = type.GetField("speakingLoudness", BindingFlags.NonPublic | BindingFlags.Instance);
-                fieldInfo.SetValue(yay, 1f);
-            }*/
+                GorillaGameManager.instance.FindVRRigForPlayer(PhotonNetwork.LocalPlayer).RPC("EnableNonCosmeticHandItemRPC", RpcTarget.All, new object[]
+                {
+                    true,
+                    true
+                });
+                RPCProtection();
+            }
+            if (rightGrab)
+            {
+                GorillaGameManager.instance.FindVRRigForPlayer(PhotonNetwork.LocalPlayer).RPC("EnableNonCosmeticHandItemRPC", RpcTarget.All, new object[]
+                {
+                    true,
+                    false
+                });
+                RPCProtection();
+            }
+        }
+
+        public static void HoneycombSpam()
+        {
+            if (rightGrab)
+            {
+                GorillaGameManager.instance.FindVRRigForPlayer(PhotonNetwork.LocalPlayer).RPC("EnableNonCosmeticHandItemRPC", RpcTarget.All, new object[]
+                {
+                    true,
+                    false
+                });
+                RPCProtection();
+                EdibleWearable goldentrophy = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/EdibleHoney_right/HoneyComb").GetComponent<EdibleWearable>();
+                goldentrophy.biteCooldown = 0f;
+                goldentrophy.biteDistance = 2f;
+
+            }
+        }
+
+        public static void KillBees()
+        {
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                if (!GetIndex("Disable Auto Anti Ban").enabled)
+                {
+                    Overpowered.FastMaster();
+                }
+            }
+            else
+            {
+                AngryBeeSwarm goldentrophy = GameObject.Find("Environment Objects/PersistentObjects_Prefab/Nowruz2024_PersistentObjects/AngryBeeSwarm/FloatingChaseBeeSwarm").GetComponent<AngryBeeSwarm>();
+                goldentrophy.photonView.OwnerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
+                Vector3 goldentrophyy = new Vector3(99999f, 99999f, 99999f);
+                goldentrophy.Emerge(goldentrophyy, new Vector3(999f, 999f, 999f));
+            }
+        }
+
+        public static void AngerBees()
+        {
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                if (!GetIndex("Disable Auto Anti Ban").enabled)
+                {
+                    Overpowered.FastMaster();
+                }
+            }
+            else
+            {
+                AngryBeeSwarm goldentrophy = GameObject.Find("Environment Objects/PersistentObjects_Prefab/Nowruz2024_PersistentObjects/AngryBeeSwarm/FloatingChaseBeeSwarm").GetComponent<AngryBeeSwarm>();
+                goldentrophy.photonView.OwnerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
+                Vector3 goldentrophyy = GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 3f, 0f);
+                goldentrophy.Emerge(goldentrophyy, goldentrophyy);
+            }
+        }
+
+        public static void AngerBeesGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray);
+                if (shouldBePC)
+                {
+                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
+                    Physics.Raycast(ray, out Ray, 100);
+                }
+
+                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
+                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
+                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+
+                GameObject line = new GameObject("Line");
+                LineRenderer liner = line.AddComponent<LineRenderer>();
+                liner.material.shader = Shader.Find("GUI/Text Shader");
+                liner.startColor = GetBGColor(0f);
+                liner.endColor = GetBGColor(0.5f);
+                liner.startWidth = 0.025f;
+                liner.endWidth = 0.025f;
+                liner.positionCount = 2;
+                liner.useWorldSpace = true;
+                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
+                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
+                UnityEngine.Object.Destroy(line, Time.deltaTime);
+
+                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                {
+                    if (!PhotonNetwork.IsMasterClient)
+                    {
+                        if (!GetIndex("Disable Auto Anti Ban").enabled)
+                        {
+                            Overpowered.FastMaster();
+                        }
+                    }
+                    else
+                    {
+                        AngryBeeSwarm goldentrophy = GameObject.Find("Environment Objects/PersistentObjects_Prefab/Nowruz2024_PersistentObjects/AngryBeeSwarm/FloatingChaseBeeSwarm").GetComponent<AngryBeeSwarm>();
+                        goldentrophy.photonView.OwnerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
+                        Vector3 goldentrophyy = Ray.point;
+                        goldentrophy.Emerge(goldentrophyy, goldentrophyy);
+                    }
+                }
+            }
+        }
+
+        public static void StingSelf()
+        {
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                if (!GetIndex("Disable Auto Anti Ban").enabled)
+                {
+                    Overpowered.FastMaster();
+                }
+            }
+            else
+            {
+                AngryBeeSwarm goldentrophy = GameObject.Find("Environment Objects/PersistentObjects_Prefab/Nowruz2024_PersistentObjects/AngryBeeSwarm/FloatingChaseBeeSwarm").GetComponent<AngryBeeSwarm>();
+                goldentrophy.photonView.OwnerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
+                goldentrophy.Emerge(GorillaTagger.Instance.headCollider.transform.position, GorillaTagger.Instance.headCollider.transform.position);
+                goldentrophy.currentState = AngryBeeSwarm.ChaseState.Grabbing;
+                goldentrophy.grabbedPlayer = PhotonNetwork.LocalPlayer;
+                System.Type goldentrophyy = goldentrophy.GetType();
+                FieldInfo goldentrophyyy = goldentrophyy.GetField("grabTimestamp", BindingFlags.NonPublic | BindingFlags.Instance);
+                goldentrophyyy.SetValue(goldentrophy, Time.time);
+            }
+        }
+
+        public static void StingGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray);
+                if (shouldBePC)
+                {
+                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
+                    Physics.Raycast(ray, out Ray, 100);
+                }
+
+                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
+                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
+                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+
+                GameObject line = new GameObject("Line");
+                LineRenderer liner = line.AddComponent<LineRenderer>();
+                liner.material.shader = Shader.Find("GUI/Text Shader");
+                liner.startColor = GetBGColor(0f);
+                liner.endColor = GetBGColor(0.5f);
+                liner.startWidth = 0.025f;
+                liner.endWidth = 0.025f;
+                liner.positionCount = 2;
+                liner.useWorldSpace = true;
+                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
+                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
+                UnityEngine.Object.Destroy(line, Time.deltaTime);
+
+                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > kgDebounce)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        Photon.Realtime.Player player = GetPlayerFromVRRig(possibly);
+                        if (!PhotonNetwork.IsMasterClient)
+                        {
+                            if (!GetIndex("Disable Auto Anti Ban").enabled)
+                            {
+                                Overpowered.FastMaster();
+                            }
+                        }
+                        else
+                        {
+                            AngryBeeSwarm goldentrophy = GameObject.Find("Environment Objects/PersistentObjects_Prefab/Nowruz2024_PersistentObjects/AngryBeeSwarm/FloatingChaseBeeSwarm").GetComponent<AngryBeeSwarm>();
+                            goldentrophy.photonView.OwnerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
+                            goldentrophy.currentState = AngryBeeSwarm.ChaseState.Grabbing;
+                            goldentrophy.grabbedPlayer = player;
+                            System.Type goldentrophyy = goldentrophy.GetType();
+                            FieldInfo goldentrophyyy = goldentrophyy.GetField("grabTimestamp", BindingFlags.NonPublic | BindingFlags.Instance);
+                            goldentrophyyy.SetValue(goldentrophy, Time.time);
+                        }
+                    } else
+                    {
+                        AngryBeeSwarm goldentrophy = GameObject.Find("Environment Objects/PersistentObjects_Prefab/Nowruz2024_PersistentObjects/AngryBeeSwarm/FloatingChaseBeeSwarm").GetComponent<AngryBeeSwarm>();
+                        goldentrophy.photonView.OwnerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
+                        goldentrophy.Emerge(Ray.point, Ray.point);
+                    }
+                }
+            }
         }
 
         public static void LavaSplashHands()
@@ -570,6 +776,7 @@ namespace iiMenu.Mods
         {
             if (rightGrab)
             {
+                GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
                 GameObject.Find("Floating Bug Holdable").transform.position = GorillaTagger.Instance.rightHandTransform.position;
             }
         }
@@ -578,6 +785,7 @@ namespace iiMenu.Mods
         {
             if (rightGrab)
             {
+                GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
                 GameObject.Find("Cave Bat Holdable").transform.position = GorillaTagger.Instance.rightHandTransform.position;
             }
         }
@@ -592,11 +800,13 @@ namespace iiMenu.Mods
 
         public static void DestroyBug()
         {
+            GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
             GameObject.Find("Floating Bug Holdable").transform.position = new Vector3(99999f, 99999f, 99999f);
         }
 
         public static void DestroyBat()
         {
+            GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
             GameObject.Find("Cave Bat Holdable").transform.position = new Vector3(99999f, 99999f, 99999f);
         }
 
@@ -607,11 +817,13 @@ namespace iiMenu.Mods
 
         public static void SpazBug()
         {
+            GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
             GameObject.Find("Floating Bug Holdable").transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
         }
 
         public static void SpazBat()
         {
+            GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
             GameObject.Find("Cave Bat Holdable").transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
         }
 
@@ -622,6 +834,7 @@ namespace iiMenu.Mods
 
         public static void BreakBug()
         {
+            GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
             int num = GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().photonView.ViewID;
             Hashtable ServerCleanDestroyEvent = new Hashtable();
             RaiseEventOptions ServerCleanOptions = new RaiseEventOptions
@@ -635,6 +848,7 @@ namespace iiMenu.Mods
 
         public static void BreakBat()
         {
+            GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
             int num = GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().photonView.ViewID;
             Hashtable ServerCleanDestroyEvent = new Hashtable();
             RaiseEventOptions ServerCleanOptions = new RaiseEventOptions
@@ -650,6 +864,7 @@ namespace iiMenu.Mods
         {
             if (rightGrab)
             {
+                GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
                 ThrowableBug bug = GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>();
                 bug.currentState = TransferrableObject.PositionState.Dropped;
                 System.Type type = bug.GetType();
@@ -663,6 +878,7 @@ namespace iiMenu.Mods
         {
             if (rightGrab)
             {
+                GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
                 ThrowableBug bug = GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>();
                 bug.currentState = TransferrableObject.PositionState.Dropped;
                 System.Type type = bug.GetType();
@@ -689,6 +905,7 @@ namespace iiMenu.Mods
             {
                 foreach (BalloonHoldable balloon in GameObject.FindObjectsOfType<BalloonHoldable>())
                 {
+                    balloon.WorldShareableRequestOwnership();
                     balloon.gameObject.transform.position = GorillaTagger.Instance.rightHandTransform.position;
                 }
             }
@@ -732,6 +949,7 @@ namespace iiMenu.Mods
                 {
                     foreach (BalloonHoldable balloon in GameObject.FindObjectsOfType<BalloonHoldable>())
                     {
+                        balloon.WorldShareableRequestOwnership();
                         balloon.gameObject.transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
                     }
                 }
@@ -742,6 +960,7 @@ namespace iiMenu.Mods
         {
             foreach (BalloonHoldable balloon in GameObject.FindObjectsOfType<BalloonHoldable>())
             {
+                balloon.WorldShareableRequestOwnership();
                 balloon.gameObject.transform.position = new Vector3(99999f, 99999f, 99999f);
             }
         }

@@ -1,4 +1,5 @@
-﻿using iiMenu.Notifications;
+﻿using ExitGames.Client.Photon;
+using iiMenu.Notifications;
 using Photon.Pun;
 using System.IO;
 using UnityEngine;
@@ -79,6 +80,7 @@ namespace iiMenu.Mods
         {
             boards = null;
         }
+
         public static GorillaScoreBoard[] boards = null;
         public static void AntiReportDisconnect()
         {
@@ -92,7 +94,7 @@ namespace iiMenu.Mods
                 {
                     foreach (GorillaPlayerScoreboardLine line in board.lines)
                     {
-                        if (GetPlayerFromNetPlayer(line.linePlayer) == PhotonNetwork.LocalPlayer)
+                        if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
                         {
                             Transform report = line.reportButton.gameObject.transform;
                             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
@@ -131,7 +133,7 @@ namespace iiMenu.Mods
                 {
                     foreach (GorillaPlayerScoreboardLine line in board.lines)
                     {
-                        if (GetPlayerFromNetPlayer(line.linePlayer) == PhotonNetwork.LocalPlayer)
+                        if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
                         {
                             Transform report = line.reportButton.gameObject.transform;
                             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
@@ -172,7 +174,7 @@ namespace iiMenu.Mods
                 {
                     foreach (GorillaPlayerScoreboardLine line in board.lines)
                     {
-                        if (GetPlayerFromNetPlayer(line.linePlayer) == PhotonNetwork.LocalPlayer)
+                        if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
                         {
                             Transform report = line.reportButton.gameObject.transform;
                             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
@@ -201,14 +203,68 @@ namespace iiMenu.Mods
             catch { } // Not connected
         }
 
+        public static void AntiReportCrash()
+        {
+            try
+            {
+                if (boards == null)
+                {
+                    boards = GameObject.FindObjectsOfType<GorillaScoreBoard>();
+                }
+                foreach (GorillaScoreBoard board in boards)
+                {
+                    foreach (GorillaPlayerScoreboardLine line in board.lines)
+                    {
+                        if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
+                        {
+                            Transform report = line.reportButton.gameObject.transform;
+                            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                            {
+                                if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                                {
+                                    float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
+                                    float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
+
+                                    float threshold = 0.35f;
+
+                                    if (D1 < threshold || D2 < threshold)
+                                    {
+                                        if (!Overpowered.IsModded())
+                                        {
+                                            if (!GetIndex("Disable Auto Anti Ban").enabled)
+                                            {
+                                                Overpowered.AntiBan();
+                                            }
+                                        }
+                                        else
+                                        {
+                                            Hashtable hashtable = new Hashtable();
+                                            hashtable[(byte)0] = GetPlayerFromVRRig(vrrig).ActorNumber;
+                                            PhotonNetwork.NetworkingClient.OpRaiseEvent(207, hashtable, null, SendOptions.SendReliable);
+                                            RPCProtection();
+                                        }
+                                        vrrig.leftHandTransform.position = Vector3.zero;
+                                        vrrig.rightHandTransform.position = Vector3.zero;
+                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>Someone attempted to report you, they have been crashed.</color>");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch { } // Not connected
+        }
+
         public static void AntiModerator()
         {
-            foreach(VRRig vrrig in GorillaParent.instance.vrrigs)
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
                 if (!vrrig.isOfflineVRRig && vrrig.concatStringOfCosmeticsAllowed.Contains("LBAAK"))
                 {
                     try
                     {
+
                         VRRig plr = vrrig;
                         Photon.Realtime.Player player = GetPlayerFromVRRig(plr);
                         if (player != null)
