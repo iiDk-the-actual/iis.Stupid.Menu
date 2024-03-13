@@ -26,8 +26,6 @@ namespace iiMenu.UI
 
         private string b = "0";
 
-        public static Font agency = Font.CreateDynamicFontFromOSFont("Agency FB", 24);
-
         public static bool isOpen = true;
 
         public static bool lastCondition = false;
@@ -67,9 +65,9 @@ namespace iiMenu.UI
             {
                 GUI.skin.textField.fontSize = 13;
                 GUI.skin.button.fontSize = 20;
-                GUI.skin.textField.font = agency;
-                GUI.skin.button.font = agency;
-                GUI.skin.label.font = agency;
+                GUI.skin.textField.font = UIColorHelper.currentFont;
+                GUI.skin.button.font = UIColorHelper.currentFont;
+                GUI.skin.label.font = UIColorHelper.currentFont;
                 GUI.skin.textField.fontStyle = FontStyle.Italic;
                 GUI.skin.button.fontStyle = FontStyle.Italic;
                 GUI.skin.label.fontStyle = FontStyle.Italic;

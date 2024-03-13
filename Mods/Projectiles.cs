@@ -27,7 +27,8 @@ namespace iiMenu.Mods.Spammers
                 204,
                 231,
                 240,
-                249
+                249,
+                252
             };
             lhelp.AddComponent<GorillaSurfaceOverride>().overrideIndex = overrides[Array.IndexOf(fullProjectileNames, projectileName)];
             lhelp.GetComponent<Renderer>().enabled = false;
@@ -46,7 +47,8 @@ namespace iiMenu.Mods.Spammers
                         "LMAEX.",
                         "LMAGD.",
                         "LMAHQ.",
-                        "LMAIE."
+                        "LMAIE.",
+                        "LMAIO."
                     };
                     SnowballThrowable fart = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/palm.01.L/TransferrableItemLeftHand/" + fullProjectileNames[System.Array.IndexOf(fullProjectileNames, projectileName)] + "LeftAnchor").transform.Find(name2[System.Array.IndexOf(fullProjectileNames, projectileName)]).GetComponent<SnowballThrowable>();
                     Vector3 oldPos = fart.transform.position;
@@ -198,7 +200,8 @@ namespace iiMenu.Mods.Spammers
                 //"Round Present",
                 //"Square Present",
                 "Present",
-                "Mentos"
+                "Mentos",
+                "Fish Food"
             };
 
             projmode++;

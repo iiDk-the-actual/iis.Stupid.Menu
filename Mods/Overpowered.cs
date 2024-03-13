@@ -59,6 +59,7 @@ namespace iiMenu.Mods
                 {
                     lastTime = Time.time;
                     antibanworked = false;
+                    GetIndex("Anti Ban").enabled = true;
                     NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTIBAN</color><color=grey>]</color> <color=white>Enabling anti ban...</color>");
                     if (!PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED"))
                     {
@@ -116,11 +117,23 @@ namespace iiMenu.Mods
         {
             if (!IsModded() || !PhotonNetwork.InRoom)
             {
-                AntiBan();
+                GetIndex("Anti Ban").enabled = true;
+                //AntiBan();
             }
             else
             {
                 PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
+            }
+        }
+
+        public static void AntiBanCheck()
+        {
+            if (IsModded())
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>The anti ban is enabled!</color>");
+            } else
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>The anti ban is disabled!</color>");
             }
         }
 

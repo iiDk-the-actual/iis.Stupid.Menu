@@ -90,6 +90,9 @@ namespace iiMenu.Notifications
             {
                 Testtext.font = activeFont;
                 ModText.font = activeFont;
+
+                Testtext.fontStyle = activeFontStyle;
+                ModText.fontStyle = activeFontStyle;
             } catch{ }
             if (showEnabledModsVR)
             {

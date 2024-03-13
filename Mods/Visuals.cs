@@ -1,6 +1,5 @@
 ﻿using iiMenu.Classes;
 using Photon.Pun;
-using PlayFab.AuthenticationModels;
 using System.Linq;
 using UnityEngine;
 using static iiMenu.Menu.Main;
@@ -39,6 +38,27 @@ namespace iiMenu.Mods
                 l.SetActive(true);
             }
             leaves.Clear();
+        }
+
+        public static void EnableRemoveCherryBlossoms()
+        {
+            foreach (GameObject g in Resources.FindObjectsOfTypeAll<GameObject>())
+            {
+                if (g.activeSelf && g.name.Contains("Cherry Blossoms"))
+                {
+                    g.SetActive(false);
+                    cblos.Add(g);
+                }
+            }
+        }
+
+        public static void DisableRemoveCherryBlossoms()
+        {
+            foreach (GameObject l in cblos)
+            {
+                l.SetActive(true);
+            }
+            cblos.Clear();
         }
 
         public static void DisableCosmetics()

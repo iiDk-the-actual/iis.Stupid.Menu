@@ -9,5 +9,6 @@ namespace iiMenu.Menu
     {
         public static Color bgc = new Color(1f, 0.5f, 0f, 1f);
         public static Color txtc = Color.white;
+        public static Font currentFont = Font.CreateDynamicFontFromOSFont("Agency FB", 24);
     }
 }

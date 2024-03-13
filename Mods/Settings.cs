@@ -152,6 +152,12 @@ namespace iiMenu.Mods
             pageNumber = 0;
         }
 
+        public static void EnableAdmin()
+        {
+            buttonsType = 23;
+            pageNumber = 0;
+        }
+
         public static void RightHand()
         {
             rightHand = true;
@@ -682,6 +688,17 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void ChangeFontStyleType()
+        {
+            fontStyleType++;
+            if (fontStyleType > 3)
+            {
+                fontStyleType = 0;
+            }
+
+            activeFontStyle = (FontStyle)fontStyleType;
+        }
+
         public static void ChangeNotificationTime()
         {
             notificationDecayTime += 1000;
@@ -820,7 +837,13 @@ namespace iiMenu.Mods
 
         public static void DisablePageButtons()
         {
-            disablePageButtons = true;
+            if (GetIndex("Joystick Menu").enabled) {
+                disablePageButtons = true;
+            } else
+            {
+                GetIndex("Disable Page Buttons").enabled = false;
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>DISABLE</color><color=grey>]</color> <color=white>Disable Page Buttons can only be used when using Joystick Menu.</color>");
+            }
         }
 
         public static void EnablePageButtons()
@@ -872,7 +895,7 @@ namespace iiMenu.Mods
                 }
             }
 
-            string ihateyouguys = platformMode+"\n"+platformShape+"\n"+flySpeedCycle+"\n"+longarmCycle+"\n"+speedboostCycle+"\n"+projmode+"\n"+trailmode+"\n"+shootCycle+"\n"+pointerIndex+"\n"+tagAuraIndex+"\n"+notificationDecayTime;
+            string ihateyouguys = platformMode+"\n"+platformShape+"\n"+flySpeedCycle+"\n"+longarmCycle+"\n"+speedboostCycle+"\n"+projmode+"\n"+trailmode+"\n"+shootCycle+"\n"+pointerIndex+"\n"+tagAuraIndex+"\n"+notificationDecayTime+"\n"+fontStyleType;
 
             if (!Directory.Exists("iisStupidMenu"))
             {
@@ -943,6 +966,8 @@ namespace iiMenu.Mods
                     Advantages.ChangeTagAuraRange();
                     notificationDecayTime = int.Parse(data[10]) - 1000;
                     ChangeNotificationTime();
+                    fontStyleType = int.Parse(data[11]) - 1;
+                    Settings.ChangeFontStyleType();
                 }
                 catch { }
 
@@ -961,6 +986,7 @@ namespace iiMenu.Mods
             {
                 UnityEngine.Debug.Log("Could not load preferences, try migrating to folder?");
             }
+            hasLoadedPreferences = true;
         }
 
         public static void Panic()

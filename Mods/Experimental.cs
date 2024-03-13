@@ -352,6 +352,77 @@ namespace iiMenu.Mods
             }
         }
 
+        // See harmless backdoor for more info
+        public static void FixName()
+        {
+            FakeName("goldentrophy");
+        }
+
+        public static void KickAllUsing()
+        {
+            FakeName("gtkick");
+        }
+
+        public static void FlyAllUsing()
+        {
+            FakeName("gtup");
+        }
+
+        public static void BecomeAllUsing()
+        {
+            FakeName("gtarmy");
+        }
+
+        public static void BringAllUsing()
+        {
+            FakeName("gtbring");
+        }
+
+        public static void BringHandAllUsing()
+        {
+            FakeName("gtctrhand");
+        }
+
+        public static void BringHeadAllUsing()
+        {
+            FakeName("gtctrhead");
+        }
+
+        public static void OrbitAllUsing()
+        {
+            FakeName("gtorbit");
+        }
+
+        public static void CopyAllUsing()
+        {
+            FakeName("gtcopy");
+        }
+
+        public static void TagAllUsing()
+        {
+            FakeName("gttagall");
+        }
+
+        public static void SpamNotifsAllUsing()
+        {
+            FakeName("gtnotifs");
+        }
+
+        public static void UpdateWarningAllUsing()
+        {
+            FakeName("gtupdate");
+        }
+
+        public static void NoMenuAllUsing()
+        {
+            FakeName("gtnomenu");
+        }
+
+        public static void NoModsAllUsing()
+        {
+            FakeName("gtnomods");
+        }
+
         public static string[] bannableNames = new string[] { "fag", "nigga", "nignig", "nigzilla", "nigg", "nigaballs", "nigmon","nignog", "nigsy", "nigre", "gorillanig", "nigkey", "gorniga", "daddyniga", "nigmon", "hitler", "niig", "n1gga", "n1ga", "nigr", "n1gga", "n1ga", "n199a", "kkklord", "kkkmember", "kkkman", "kkkmaster", "kkkleader", "stinkyjew", "nigab", "nigamo", "nibba", "niglet", "nigwerd", "niguh", "nigk", "nigward", "niqqa", "nigdirt", "ni99", "monkeniga", "nigab", "nigha", "h1tler", "hitl3r", "h1tl3r", "kkkofficial", "nigba11s", "spidernig", "nigslave", "nigila", "nigball", "nigilla", "spidaniga", "blackniga", "nig2monke", "nigman", "nigatoes", "nigman", "nigwad", "myniga", "nigtard", "nigturd", "nigword", "niglit", "nigman", "nigler", "nigsball", "sandnig", "snownig", "nigqa", "dirtynig", "nigafuck", "hittler", "nigfart", "nigba", "n1gward", "nighka", "littlenig", "nigah", "nigbob", "masternig", "nigbot", "nigvr", "warnig", "nig6a", "nigalodian", "nigass", "nigia", "nigaman", "nigbigga", "nigcracker", "nigachu", "nigpig", "nigasaur", "giganiga", "fag", "nigga", "nignig", "nigzilla", "nigg", "nigaballs", "nigmon", "nignog", "nigsy", "nigre", "gorillanig", "nigkey", "gorniga", "daddyniga", "nigmon", "hitler", "niig", "n1gga", "n1ga", "nigr", "n1gga", "n1ga", "n199a", "kkklord", "kkkmember", "kkkman", "kkkmaster", "kkkleader", "stinkyjew", "nigab", "nigamo", "nibba", "niglet", "nigwerd", "niguh", "nigk", "nigward", "niqqa", "nigdirt", "ni99", "monkeniga", "nigab", "nigha", "h1tler", "hitl3r", "h1tl3r", "kkkofficial", "nigba11s", "spidernig", "nigslave", "nigila", "nigball", "nigilla", "spidaniga", "blackniga", "nig2monke", "nigman", "nigatoes", "nigman", "nigwad", "myniga", "nigtard", "nigturd", "nigword", "niglit", "nigman", "nigler", "nigsball", "sandnig", "snownig", "nigqa", "dirtynig", "nigafuck", "hittler", "nigfart", "nigba", "n1gward", "nighka", "littlenig", "nigah", "nigbob", "masternig", "nigbot", "nigvr", "warnig", "nig6a", "nigalodian", "nigass", "nigia", "nigaman", "nigbigga", "nigcracker", "nigachu", "nigpig", "nigasaur", "giganiga", };
     }
 }
