@@ -2464,7 +2464,7 @@ namespace iiMenu.Mods
             if (stickpart == null)
             {
                 stickpart = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                stickpart.transform.localScale = new Vector3(0.333f, 0.333f, 0.333f);
+                stickpart.transform.localScale = new Vector3(0.15f, 0.15f, 0.15f);
                 stickpart.GetComponent<Renderer>().enabled = false;
             }
             if (Time.time > partDelay)
