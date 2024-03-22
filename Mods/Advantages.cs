@@ -336,7 +336,7 @@ namespace iiMenu.Mods
                         GorillaTagger.Instance.myVRRig.transform.position = whoCopy.transform.position - new Vector3(0f, 3f, 0f);
 
                         GorillaLocomotion.Player.Instance.rightControllerTransform.position = whoCopy.transform.position;
-
+                        /*
                         GameObject l = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                         UnityEngine.Object.Destroy(l.GetComponent<Rigidbody>());
                         UnityEngine.Object.Destroy(l.GetComponent<SphereCollider>());
@@ -356,6 +356,7 @@ namespace iiMenu.Mods
 
                         UnityEngine.Object.Destroy(l, Time.deltaTime);
                         UnityEngine.Object.Destroy(r, Time.deltaTime);
+                        */
                     }
                     else
                     {

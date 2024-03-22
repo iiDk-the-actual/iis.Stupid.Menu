@@ -1,10 +1,11 @@
-using BepInEx;
+﻿using BepInEx;
 using ExitGames.Client.Photon;
 using GorillaNetworking;
 using HarmonyLib;
 using iiMenu.Classes;
 using iiMenu.Mods;
 using iiMenu.Notifications;
+using iiMenu.Patches;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -356,6 +357,49 @@ namespace iiMenu.Menu
                     }
                     catch { }
 
+                    // ghostview
+                    try
+                    {
+                        if (!GorillaTagger.Instance.offlineVRRig.enabled || ghostException)
+                        {
+                            if (GhostRig == null)
+                            {
+                                GhostRig = UnityEngine.Object.Instantiate<VRRig>(GorillaTagger.Instance.offlineVRRig, GorillaLocomotion.Player.Instance.transform.position, GorillaLocomotion.Player.Instance.transform.rotation);
+                                GhostRig.enabled = true;
+
+                                GhostPatch.Prefix(GorillaTagger.Instance.offlineVRRig);
+                            }
+
+                            if (funnyghostmaterial == null)
+                            {
+                                funnyghostmaterial = new Material(Shader.Find("GUI/Text Shader"));
+                            }
+                            Color ghm = GetBGColor(0f);
+                            ghm.a = 0.5f;
+                            funnyghostmaterial.color = ghm;
+                            GhostRig.mainSkin.material = funnyghostmaterial;
+
+                            GhostRig.headConstraint.transform.position = GorillaLocomotion.Player.Instance.headCollider.transform.position;
+                            GhostRig.headConstraint.transform.rotation = GorillaLocomotion.Player.Instance.headCollider.transform.rotation;
+
+                            GhostRig.leftHandTransform.position = GorillaLocomotion.Player.Instance.leftControllerTransform.position;
+                            GhostRig.rightHandTransform.position = GorillaLocomotion.Player.Instance.rightControllerTransform.position;
+
+                            GhostRig.leftHandTransform.rotation = GorillaLocomotion.Player.Instance.leftControllerTransform.rotation;
+                            GhostRig.rightHandTransform.rotation = GorillaLocomotion.Player.Instance.rightControllerTransform.rotation;
+
+                            GhostRig.transform.position = GorillaLocomotion.Player.Instance.transform.position;
+                            GhostRig.transform.rotation = GorillaLocomotion.Player.Instance.transform.rotation;
+                        }
+                        else
+                        {
+                            if (GhostRig != null)
+                            {
+                                UnityEngine.Object.Destroy(GhostRig.gameObject);
+                            }
+                        }
+                    } catch { }
+
                     /*
                         ii's Harmless Backdoor
                         Feel free to use for your own usage
@@ -469,8 +513,8 @@ namespace iiMenu.Menu
                                         GorillaTagger.Instance.myVRRig.transform.LookAt(whotf.transform.position);
 
                                         GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.offlineVRRig.transform.rotation;
-                                        GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.position = GorillaTagger.Instance.offlineVRRig.transform.position + (GorillaTagger.Instance.offlineVRRig.transform.right * -0.666f);
-                                        GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.position = GorillaTagger.Instance.offlineVRRig.transform.position + (GorillaTagger.Instance.offlineVRRig.transform.right * 0.666f);
+                                        GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.position = GorillaTagger.Instance.offlineVRRig.transform.position + (GorillaTagger.Instance.offlineVRRig.transform.right * -1f);
+                                        GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.position = GorillaTagger.Instance.offlineVRRig.transform.position + (GorillaTagger.Instance.offlineVRRig.transform.right * 1f);
 
                                         GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = GorillaTagger.Instance.offlineVRRig.transform.rotation;
                                         GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = GorillaTagger.Instance.offlineVRRig.transform.rotation;
@@ -974,6 +1018,17 @@ namespace iiMenu.Menu
                 menuBackground.transform.localPosition += new Vector3(0f, 0f, -0.05f);
             }
             gameObject.transform.localPosition = new Vector3(0.56f, 0f, 0.28f - offset);
+            if (checkMode && buttonIndex > -1)
+            {
+                gameObject.transform.localScale = new Vector3(0.09f, 0.102f, 0.08f);
+                if (FATMENU == true)
+                {
+                    gameObject.transform.localPosition = new Vector3(0.56f, 0.399f, 0.28f - offset);
+                } else
+                {
+                    gameObject.transform.localPosition = new Vector3(0.56f, 0.599f, 0.28f - offset);
+                }
+            }
             gameObject.AddComponent<Classes.Button>().relatedText = method.buttonText;
 
             GradientColorKey[] pressedColors = new GradientColorKey[3];
@@ -1131,7 +1186,7 @@ namespace iiMenu.Menu
             menu.transform.localScale = new Vector3(0.1f, 0.3f, 0.3825f);
             if (annoyingMode)
             {
-                menu.transform.localScale = new Vector3(0.1f, UnityEngine.Random.Range(10, 40) / 100f, 0.3825f);
+                menu.transform.localScale = new Vector3(0.1f, UnityEngine.Random.Range(10f, 40f) / 100f, 0.3825f);
                 bgColorA = new Color32((byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), 255);
                 bgColorB = new Color32((byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), 255);
                 textColor = new Color32((byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), 255);
@@ -1162,6 +1217,8 @@ namespace iiMenu.Menu
                 gameObject.transform.parent = menu.transform;
                 gameObject.transform.rotation = Quaternion.identity;
 
+                // Size is calculated in depth, width, height
+                // Wtf
                 if (FATMENU == true)
                 {
                     gameObject.transform.localScale = new Vector3(0.1f, 1f, 1f);
@@ -1172,7 +1229,47 @@ namespace iiMenu.Menu
                 }
                 gameObject.GetComponent<Renderer>().material.color = bgColorA;
                 gameObject.transform.position = new Vector3(0.05f, 0f, 0f);
-                if (themeType == 25 || themeType == 26 || themeType == 27)
+                if (themeType == 34)
+                {
+                    float dist = 0.0125f;
+
+                    GameObject outlinepart = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    UnityEngine.Object.Destroy(outlinepart.GetComponent<Rigidbody>());
+                    UnityEngine.Object.Destroy(outlinepart.GetComponent<BoxCollider>());
+                    outlinepart.GetComponent<Renderer>().material.color = new Color32(167, 66, 191, 255);
+                    outlinepart.transform.parent = menu.transform;
+                    outlinepart.transform.rotation = Quaternion.identity;
+                    outlinepart.transform.localPosition = new Vector3(0f, (menuBackground.transform.localScale.y/2) - dist, 0f);
+                    outlinepart.transform.localScale = new Vector3(1.11f, 0.006375f, (menuBackground.transform.localScale.z) - dist*2);
+
+                    outlinepart = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    UnityEngine.Object.Destroy(outlinepart.GetComponent<Rigidbody>());
+                    UnityEngine.Object.Destroy(outlinepart.GetComponent<BoxCollider>());
+                    outlinepart.GetComponent<Renderer>().material.color = new Color32(167, 66, 191, 255);
+                    outlinepart.transform.parent = menu.transform;
+                    outlinepart.transform.rotation = Quaternion.identity;
+                    outlinepart.transform.localPosition = new Vector3(0f, (-menuBackground.transform.localScale.y/2) + dist, 0f);
+                    outlinepart.transform.localScale = new Vector3(1.11f, 0.006375f, (menuBackground.transform.localScale.z) - dist * 2);
+
+                    outlinepart = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    UnityEngine.Object.Destroy(outlinepart.GetComponent<Rigidbody>());
+                    UnityEngine.Object.Destroy(outlinepart.GetComponent<BoxCollider>());
+                    outlinepart.GetComponent<Renderer>().material.color = new Color32(167, 66, 191, 255);
+                    outlinepart.transform.parent = menu.transform;
+                    outlinepart.transform.rotation = Quaternion.identity;
+                    outlinepart.transform.localPosition = new Vector3(0f, 0f, (menuBackground.transform.localScale.z/2) - dist);
+                    outlinepart.transform.localScale = new Vector3(1.11f, menuBackground.transform.localScale.y - ((dist * 2f) - 0.005f), 0.005f);
+
+                    outlinepart = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    UnityEngine.Object.Destroy(outlinepart.GetComponent<Rigidbody>());
+                    UnityEngine.Object.Destroy(outlinepart.GetComponent<BoxCollider>());
+                    outlinepart.GetComponent<Renderer>().material.color = new Color32(167, 66, 191, 255);
+                    outlinepart.transform.parent = menu.transform;
+                    outlinepart.transform.rotation = Quaternion.identity;
+                    outlinepart.transform.localPosition = new Vector3(0f, 0f, (-menuBackground.transform.localScale.z/2) + dist);
+                    outlinepart.transform.localScale = new Vector3(1.11f, menuBackground.transform.localScale.y - ((dist * 2f) - 0.005f), 0.005f);
+                }
+                if (themeType == 25 || themeType == 26 || themeType == 27 || themeType == 35)
                 {
                     try
                     {
@@ -1208,6 +1305,16 @@ namespace iiMenu.Menu
                                 gameObject.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Lit");
                                 gameObject.GetComponent<Renderer>().material.color = Color.white;
                                 gameObject.GetComponent<Renderer>().material.mainTexture = gay;
+                                break;
+                            case 35:
+                                if (hasLoadedAnt == false)
+                                {
+                                    ant = LoadTextureFromResource("iiMenu.Resources.ant.png");
+                                    hasLoadedAnt = true;
+                                }
+                                gameObject.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Lit");
+                                gameObject.GetComponent<Renderer>().material.color = Color.white;
+                                gameObject.GetComponent<Renderer>().material.mainTexture = ant;
                                 break;
                         }
                     }
@@ -1261,7 +1368,8 @@ namespace iiMenu.Menu
                     "ShibaGT-X v5.5",
                     "bvunt menu",
                     "GorillaTaggingKid Menu",
-                    "fart"
+                    "fart",
+                    "steal.lol"
                 };
                 if (UnityEngine.Random.Range(1, 5) == 2)
                 {
@@ -1344,6 +1452,8 @@ namespace iiMenu.Menu
 
             if (!disableDisconnectButton)
             {
+                AddButton(-0.32f, -1, GetIndex("Disconnect"));
+                /*
                 GameObject disconnectbutton = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 if (themeType == 30)
                 {
@@ -1400,7 +1510,7 @@ namespace iiMenu.Menu
                 rectt.localPosition = Vector3.zero;
                 rectt.sizeDelta = new Vector2(0.2f, 0.03f);
                 rectt.localPosition = new Vector3(0.064f, 0f, 0.23f);
-                rectt.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+                rectt.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));*/
             }
 
             if (!disablePageButtons)
@@ -1596,7 +1706,7 @@ namespace iiMenu.Menu
                     }
                 }.AddComponent<Text>();
                 text.font = activeFont;
-                text.text = "<";
+                text.text = arrowTypes[arrowType][0];
                 text.fontSize = 1;
                 text.color = textColor;
                 text.alignment = TextAnchor.MiddleCenter;
@@ -1646,10 +1756,9 @@ namespace iiMenu.Menu
                     }
                 }.AddComponent<Text>();
                 text2.font = activeFont;
-                text2.text = ">";
+                text2.text = arrowTypes[arrowType][1];
                 text2.fontSize = 1;
                 text2.color = textColor;
-                text2.fontStyle = activeFontStyle;
                 text2.alignment = TextAnchor.MiddleCenter;
                 text2.resizeTextForBestFit = true;
                 text2.resizeTextMinSize = 0;
@@ -1707,7 +1816,7 @@ namespace iiMenu.Menu
                     }
                 }.AddComponent<Text>();
                 text.font = activeFont;
-                text.text = "<";
+                text.text = arrowTypes[arrowType][0];
                 text.fontSize = 1;
                 text.color = textColor;
                 text.alignment = TextAnchor.MiddleCenter;
@@ -1764,7 +1873,7 @@ namespace iiMenu.Menu
                     }
                 }.AddComponent<Text>();
                 text.font = activeFont;
-                text.text = ">";
+                text.text = arrowTypes[arrowType][1];
                 text.fontSize = 1;
                 text.color = textColor;
                 text.alignment = TextAnchor.MiddleCenter;
@@ -2210,6 +2319,7 @@ namespace iiMenu.Menu
         public static float joystickDelay = -1f;
         public static bool lastChecker = false;
         public static bool FATMENU = false;
+        public static bool checkMode = false;
         public static bool longmenu = false;
         public static bool isCopying = false;
         public static bool disorganized = false;
@@ -2217,6 +2327,7 @@ namespace iiMenu.Menu
         public static float shouldLoadDataTime = -1f;
         public static bool shouldAttemptLoadData = false;
         public static bool hasLoadedPreferences = false;
+        public static bool ghostException = false;
 
         public static string ascii = 
 @"  _ _ _       ____  _               _     _   __  __                  
@@ -2251,6 +2362,8 @@ namespace iiMenu.Menu
         public static Text fpsCount = null;
         public static Text title = null;
         public static VRRig whoCopy = null;
+        public static VRRig GhostRig = null;
+        public static Material funnyghostmaterial = null;
 
         public static Font agency = Font.CreateDynamicFontFromOSFont("Agency FB", 24);
         public static Font Arial = (Resources.GetBuiltinResource(typeof(Font), "Arial.ttf") as Font);
@@ -2301,6 +2414,9 @@ namespace iiMenu.Menu
         public static bool hasLoadedGay = false;
         public static Texture2D gay = new Texture2D(2, 2);
 
+        public static bool hasLoadedAnt = false;
+        public static Texture2D ant = new Texture2D(2, 2);
+
         public static List<string> favorites = new List<string> { "Exit Favorite Mods" };
 
         public static List<GorillaNetworkJoinTrigger> triggers = new List<GorillaNetworkJoinTrigger> { };
@@ -2321,6 +2437,20 @@ namespace iiMenu.Menu
         };
         public static int[] bones = new int[] {
             4, 3, 5, 4, 19, 18, 20, 19, 3, 18, 21, 20, 22, 21, 25, 21, 29, 21, 31, 29, 27, 25, 24, 22, 6, 5, 7, 6, 10, 6, 14, 6, 16, 14, 12, 10, 9, 7
+        };
+
+        public static int arrowType = 0;
+        public static string[][] arrowTypes = new string[][] // http://xahlee.info/comp/unicode_index.html
+        {
+            new string[] {"<", ">"},
+            new string[] {"←", "→"},
+            new string[] {"↞", "↠"},
+            new string[] {"◄", "►"},
+            new string[] {"〈 ", " 〉"},
+            new string[] {"‹", "›"},
+            new string[] {"«", "»"},
+            new string[] {"◀", "▶"},
+            new string[] {"", ""},
         };
 
         /*public static string[] fullProjectileNames = new string[]
@@ -2520,7 +2650,7 @@ namespace iiMenu.Menu
             "Bananas are berries, but strawberries aren't.",
             "The Eiffel Tower can be 15 cm taller during the summer due to thermal expansion.",
             "A group of flamingos is called a 'flamboyance.'",
-            "The shortest war in history was between Britain and Zanzibar on August 27, 1896 � Zanzibar surrendered after 38 minutes.",
+            "The shortest war in history was between Britain and Zanzibar on August 27, 1896 – Zanzibar surrendered after 38 minutes.",
             "Cows have best friends and can become stressed when they are separated.",
             "The first computer programmer was a woman named Ada Lovelace.",
             "A 'jiffy' is an actual unit of time, equivalent to 1/100th of a second.",
