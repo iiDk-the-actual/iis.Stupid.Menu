@@ -254,6 +254,16 @@ namespace iiMenu.Mods
             GameObject.Find("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/QuitBox").SetActive(true);
         }
 
+        public static void DisableMouthMovement()
+        {
+            GorillaTagger.Instance.offlineVRRig.GetComponent<GorillaMouthFlap>().enabled = false;
+        }
+
+        public static void EnableMouthMovement()
+        {
+            GorillaTagger.Instance.offlineVRRig.GetComponent<GorillaMouthFlap>().enabled = true;
+        }
+
         public static void EnableFPSBoost()
         {
             QualitySettings.globalTextureMipmapLimit = 99999;
@@ -272,6 +282,11 @@ namespace iiMenu.Mods
         public static void UncapFPS()
         {
             Application.targetFrameRate = 9999;
+        }
+
+        public static void UnlockCompetitiveQueue()
+        {
+            GorillaComputer.instance.CompQueueUnlockButtonPress();
         }
 
         public static void EUServers()

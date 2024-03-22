@@ -211,6 +211,7 @@ namespace iiMenu.Mods
                         splashDel = Time.time + 0.1f;
                     }
 
+                    /*
                     GameObject l = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                     UnityEngine.Object.Destroy(l.GetComponent<Rigidbody>());
                     UnityEngine.Object.Destroy(l.GetComponent<SphereCollider>());
@@ -230,12 +231,19 @@ namespace iiMenu.Mods
 
                     UnityEngine.Object.Destroy(l, Time.deltaTime);
                     UnityEngine.Object.Destroy(r, Time.deltaTime);
+                    */
                 }
                 else
                 {
                     GorillaTagger.Instance.offlineVRRig.enabled = true;
                 }
             }
+        }
+
+        public static void GorillaVoice()
+        {
+            GorillaTagger.Instance.offlineVRRig.remoteUseReplacementVoice = rightPrimary;
+            GorillaTagger.Instance.offlineVRRig.localUseReplacementVoice = rightPrimary;
         }
 
         public static void GetHoneyComb()
@@ -569,6 +577,7 @@ namespace iiMenu.Mods
                         splashDel = Time.time + 0.1f;
                     }
 
+                    /*
                     GameObject l = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                     UnityEngine.Object.Destroy(l.GetComponent<Rigidbody>());
                     UnityEngine.Object.Destroy(l.GetComponent<SphereCollider>());
@@ -588,6 +597,7 @@ namespace iiMenu.Mods
 
                     UnityEngine.Object.Destroy(l, Time.deltaTime);
                     UnityEngine.Object.Destroy(r, Time.deltaTime);
+                    */
                 }
                 else
                 {

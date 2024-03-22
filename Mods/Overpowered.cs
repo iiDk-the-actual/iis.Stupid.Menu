@@ -775,6 +775,36 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void MakeRoomPrivate()
+        {
+            if (!IsModded())
+            {
+                if (!GetIndex("Disable Auto Anti Ban").enabled)
+                {
+                    AntiBan();
+                }
+            }
+            else
+            {
+                PhotonNetwork.CurrentRoom.IsVisible = false;
+            }
+        }
+
+        public static void MakeRoomPublic()
+        {
+            if (!IsModded())
+            {
+                if (!GetIndex("Disable Auto Anti Ban").enabled)
+                {
+                    AntiBan();
+                }
+            }
+            else
+            {
+                PhotonNetwork.CurrentRoom.IsVisible = true;
+            }
+        }
+
         public static void SlowGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)

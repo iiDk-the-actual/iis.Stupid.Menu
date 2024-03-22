@@ -213,7 +213,7 @@ namespace iiMenu.Mods
         public static void ChangeMenuTheme()
         {
             themeType++;
-            if (themeType > 33)
+            if (themeType > 34)
             {
                 themeType = 1;
             }
@@ -616,6 +616,18 @@ namespace iiMenu.Mods
                 textColor = Color.black;
                 textClicked = Color.black;
             }
+            if (themeType == 34)
+            {
+                bgColorA = new Color32(25, 25, 25, 255);
+                bgColorB = new Color32(25, 25, 25, 255);
+                buttonDefaultA = new Color32(40, 40, 40, 255);
+                buttonDefaultB = new Color32(40, 40, 40, 255);
+                buttonClickedA = new Color32(167, 66, 191, 255);
+                buttonClickedB = new Color32(167, 66, 191, 255);
+                titleColor = new Color32(144, 144, 144, 255);
+                textColor = new Color32(144, 144, 144, 255);
+                textClicked = Color.white;
+            }
         }
 
         public static void ChangePageType()
@@ -648,7 +660,16 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void ChangeFontType()
+        public static void ChangeArrowType()
+        {
+            arrowType++;
+            if (arrowType > arrowTypes.Length - 1)
+            {
+                arrowType = 0;
+            }
+        }
+
+            public static void ChangeFontType()
         {
             fontCycle++;
             if (fontCycle > 5)
@@ -895,7 +916,7 @@ namespace iiMenu.Mods
                 }
             }
 
-            string ihateyouguys = platformMode+"\n"+platformShape+"\n"+flySpeedCycle+"\n"+longarmCycle+"\n"+speedboostCycle+"\n"+projmode+"\n"+trailmode+"\n"+shootCycle+"\n"+pointerIndex+"\n"+tagAuraIndex+"\n"+notificationDecayTime+"\n"+fontStyleType;
+            string ihateyouguys = platformMode+"\n"+platformShape+"\n"+flySpeedCycle+"\n"+longarmCycle+"\n"+speedboostCycle+"\n"+projmode+"\n"+trailmode+"\n"+shootCycle+"\n"+pointerIndex+"\n"+tagAuraIndex+"\n"+notificationDecayTime+"\n"+fontStyleType+"\n"+arrowType;
 
             if (!Directory.Exists("iisStupidMenu"))
             {
@@ -968,6 +989,8 @@ namespace iiMenu.Mods
                     ChangeNotificationTime();
                     fontStyleType = int.Parse(data[11]) - 1;
                     Settings.ChangeFontStyleType();
+                    arrowType = int.Parse(data[12]) - 1;
+                    Settings.ChangeArrowType();
                 }
                 catch { }
 
@@ -1012,6 +1035,16 @@ namespace iiMenu.Mods
         public static void ThinMenuOff()
         {
             FATMENU = false;
+        }
+
+        public static void CheckboxButtons()
+        {
+            checkMode = true;
+        }
+
+        public static void CheckboxButtonsOff()
+        {
+            checkMode = false;
         }
 
         public static void CrashAmount()

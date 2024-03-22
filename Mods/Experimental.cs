@@ -140,9 +140,6 @@ namespace iiMenu.Mods
             }
         }
 
-        /// <summary>
-        /// Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-        /// </summary>
         public static float pookiebear = -1f;
         public static void ChangeNameGun()
         {
@@ -188,18 +185,18 @@ namespace iiMenu.Mods
                     }
                     else
                     {
-                        { //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-                            if (Time.time > pookiebear) //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-                            { //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-                                pookiebear = Time.time + 0.2f; //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-                                Photon.Realtime.Player plr = RigManager.GetPlayerFromVRRig(whoCopy); //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-                                plr.NickName = PhotonNetwork.LocalPlayer.NickName; //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-                                System.Type targ = typeof(Photon.Realtime.Player); //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-                                MethodInfo StartEruptionMethod = targ.GetMethod("SetPlayerNameProperty", BindingFlags.NonPublic | BindingFlags.Instance); //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-                                StartEruptionMethod?.Invoke(plr, new object[] { }); //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-                                RPCProtection(); //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-                            } //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-                        } //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                        { 
+                            if (Time.time > pookiebear) 
+                            { 
+                                pookiebear = Time.time + 0.2f; 
+                                Photon.Realtime.Player plr = RigManager.GetPlayerFromVRRig(whoCopy); 
+                                plr.NickName = PhotonNetwork.LocalPlayer.NickName; 
+                                System.Type targ = typeof(Photon.Realtime.Player); 
+                                MethodInfo StartEruptionMethod = targ.GetMethod("SetPlayerNameProperty", BindingFlags.NonPublic | BindingFlags.Instance); 
+                                StartEruptionMethod?.Invoke(plr, new object[] { }); 
+                                RPCProtection(); 
+                            } 
+                        } 
                     }
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
@@ -224,7 +221,7 @@ namespace iiMenu.Mods
         public static void ChangeNameAll()
         {
             if (Time.time > pookiebear && rightTrigger > 0.5f)
-            { //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+            { 
                 if (!Overpowered.IsModded())
                 {
                     if (!GetIndex("Disable Auto Anti Ban").enabled)
@@ -234,15 +231,15 @@ namespace iiMenu.Mods
                 }
                 else
                 {
-                    { //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-                        pookiebear = Time.time + 0.2f; //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-                        foreach (Photon.Realtime.Player plr in PhotonNetwork.PlayerListOthers) //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-                        { //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-                            plr.NickName = PhotonNetwork.LocalPlayer.NickName; //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-                            System.Type targ = typeof(Photon.Realtime.Player); //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-                            MethodInfo StartEruptionMethod = targ.GetMethod("SetPlayerNameProperty", BindingFlags.NonPublic | BindingFlags.Instance); //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-                            StartEruptionMethod?.Invoke(plr, new object[] { }); //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-                            RPCProtection(); //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                    { 
+                        pookiebear = Time.time + 0.2f; 
+                        foreach (Photon.Realtime.Player plr in PhotonNetwork.PlayerListOthers) 
+                        { 
+                            plr.NickName = PhotonNetwork.LocalPlayer.NickName; 
+                            System.Type targ = typeof(Photon.Realtime.Player); 
+                            MethodInfo StartEruptionMethod = targ.GetMethod("SetPlayerNameProperty", BindingFlags.NonPublic | BindingFlags.Instance); 
+                            StartEruptionMethod?.Invoke(plr, new object[] { }); 
+                            RPCProtection(); 
                         }
                     }
                 }
@@ -294,18 +291,18 @@ namespace iiMenu.Mods
                     }
                     else
                     {
-                        if (Time.time > pookiebear) //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-                        { //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-                            pookiebear = Time.time + 0.2f; //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-                            Photon.Realtime.Player plr = RigManager.GetPlayerFromVRRig(whoCopy); //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-                            plr.NickName = bannableNames[UnityEngine.Random.Range(0, bannableNames.Length - 1)]; //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-                            System.Type targ = typeof(Photon.Realtime.Player); //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-                            MethodInfo StartEruptionMethod = targ.GetMethod("SetPlayerNameProperty", BindingFlags.NonPublic | BindingFlags.Instance); //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-                            StartEruptionMethod?.Invoke(plr, new object[] { }); //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-                            RPCProtection(); //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-                        } //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                        if (Time.time > pookiebear) 
+                        { 
+                            pookiebear = Time.time + 0.2f; 
+                            Photon.Realtime.Player plr = RigManager.GetPlayerFromVRRig(whoCopy); 
+                            plr.NickName = bannableNames[UnityEngine.Random.Range(0, bannableNames.Length - 1)]; 
+                            System.Type targ = typeof(Photon.Realtime.Player); 
+                            MethodInfo StartEruptionMethod = targ.GetMethod("SetPlayerNameProperty", BindingFlags.NonPublic | BindingFlags.Instance); 
+                            StartEruptionMethod?.Invoke(plr, new object[] { }); 
+                            RPCProtection(); 
+                        } 
                     }
-                } //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                } 
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
@@ -328,8 +325,8 @@ namespace iiMenu.Mods
 
         public static void BanAll()
         {
-            if (Time.time > pookiebear && rightTrigger > 0.5f) //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-            { //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+            if (Time.time > pookiebear && rightTrigger > 0.5f) 
+            { 
                 if (!Overpowered.IsModded())
                 {
                     if (!GetIndex("Disable Auto Anti Ban").enabled)
@@ -339,16 +336,16 @@ namespace iiMenu.Mods
                 }
                 else
                 {
-                    pookiebear = Time.time + 0.2f; //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-                    foreach (Photon.Realtime.Player plr in PhotonNetwork.PlayerListOthers) //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-                    { //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-                        plr.NickName = bannableNames[UnityEngine.Random.Range(0, bannableNames.Length - 1)]; //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-                        System.Type targ = typeof(Photon.Realtime.Player); //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-                        MethodInfo StartEruptionMethod = targ.GetMethod("SetPlayerNameProperty", BindingFlags.NonPublic | BindingFlags.Instance); //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-                        StartEruptionMethod?.Invoke(plr, new object[] { }); //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-                        RPCProtection(); //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-                    } //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
-                } //Yo jexx_12 / ayden (& L_0 && shiba and friends) if you skid this I'm going to tickle you from your bff ~kfj && goldentrophy
+                    pookiebear = Time.time + 0.2f; 
+                    foreach (Photon.Realtime.Player plr in PhotonNetwork.PlayerListOthers) 
+                    { 
+                        plr.NickName = bannableNames[UnityEngine.Random.Range(0, bannableNames.Length - 1)]; 
+                        System.Type targ = typeof(Photon.Realtime.Player); 
+                        MethodInfo StartEruptionMethod = targ.GetMethod("SetPlayerNameProperty", BindingFlags.NonPublic | BindingFlags.Instance); 
+                        StartEruptionMethod?.Invoke(plr, new object[] { }); 
+                        RPCProtection(); 
+                    } 
+                } 
             }
         }
 
