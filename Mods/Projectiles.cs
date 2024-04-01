@@ -322,7 +322,7 @@ namespace iiMenu.Mods.Spammers
                 }
                 string projectilename = fullProjectileNames[projIndex];
 
-                if (GetIndex("Random Trail").enabled)
+                if (true)
                 {
                     trailIndex = UnityEngine.Random.Range(0, 8);
                 }
@@ -448,7 +448,7 @@ namespace iiMenu.Mods.Spammers
                 }
                 string projectilename = fullProjectileNames[projIndex];
 
-                if (GetIndex("Random Trail").enabled)
+                if (true)
                 {
                     trailIndex = UnityEngine.Random.Range(0, 8);
                 }
@@ -610,7 +610,7 @@ namespace iiMenu.Mods.Spammers
                 }
                 string projectilename = fullProjectileNames[projIndex];
 
-                if (false /*GetIndex("Random Trail").enabled)
+                if (false /*true)
                 {
                     trailIndex = UnityEngine.Random.Range(0, 8);
                 }
@@ -783,7 +783,7 @@ namespace iiMenu.Mods.Spammers
                 }
                 string projectilename = fullProjectileNames[projIndex];
 
-                if (false /*GetIndex("Random Trail").enabled)
+                if (false /*true)
                 {
                     trailIndex = UnityEngine.Random.Range(0, 8);
                 }
@@ -988,7 +988,7 @@ namespace iiMenu.Mods.Spammers
                         }
                         string projectilename = fullProjectileNames[projIndex];
 
-                        if (GetIndex("Random Trail").enabled)
+                        if (true)
                         {
                             trailIndex = UnityEngine.Random.Range(0, 8);
                         }
@@ -1098,7 +1098,7 @@ namespace iiMenu.Mods.Spammers
                         }
                         string projectilename = fullProjectileNames[projIndex];
 
-                        if (GetIndex("Random Trail").enabled)
+                        if (true)
                         {
                             trailIndex = UnityEngine.Random.Range(0, 8);
                         }
@@ -1301,7 +1301,7 @@ namespace iiMenu.Mods.Spammers
                         }
                         string projectilename = fullProjectileNames[projIndex];
 
-                        if (false /*GetIndex("Random Trail").enabled)
+                        if (false /*true)
                         {
                             trailIndex = UnityEngine.Random.Range(0, 8);
                         }
@@ -1313,7 +1313,7 @@ namespace iiMenu.Mods.Spammers
                         }
                         projectilename = fullProjectileNames[projIndex];
 
-                        if (false /*GetIndex("Random Trail").enabled)
+                        if (false /*true)
                         {
                             trailIndex = UnityEngine.Random.Range(0, 8);
                         }
@@ -1511,7 +1511,7 @@ namespace iiMenu.Mods.Spammers
                         string projectilename = fullProjectileNames[projIndex];
 
                         int trailIndex = trailmode;
-                        if (true /*GetIndex("Random Trail").enabled*/)
+                        if (true /*true*/)
                         {
                             trailIndex = UnityEngine.Random.Range(0, 8);
                         }
@@ -1909,7 +1909,7 @@ namespace iiMenu.Mods.Spammers
                 Vector3 startpos = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, -0.3f, 0f);
                 Vector3 charvel = Vector3.zero;
 
-                SysFireProjectile("Snowball", "none", startpos, charvel, 99f/255f, 43f/255f, 0f, false, false);
+                SysFireProjectile("FishFood", "none", startpos, charvel, 99f/255f, 43f/255f, 0f, false, false);
             }
         }
 
@@ -1945,7 +1945,7 @@ namespace iiMenu.Mods.Spammers
             string projectilename = fullProjectileNames[projIndex];
 
             int trailIndex = trailmode;
-            if (true /*GetIndex("Random Trail").enabled*/)
+            if (true /*true*/)
             {
                 trailIndex = UnityEngine.Random.Range(0, 8);
             }
@@ -2104,7 +2104,7 @@ namespace iiMenu.Mods.Spammers
                     Vector3 startpos = whoCopy.transform.position + new Vector3(0f, -0.65f, 0f);
                     Vector3 charvel = Vector3.zero;
 
-                    BetaFireProjectile("Snowball", startpos, charvel, new Color32(99, 43, 0, 255));
+                    BetaFireProjectile("FishFood", startpos, charvel, new Color32(99, 43, 0, 255));
                 }
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {

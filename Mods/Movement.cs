@@ -35,7 +35,7 @@ namespace iiMenu.Mods
         public static void ChangePlatformType()
         {
             platformMode++;
-            if (platformMode > 10)
+            if (platformMode > 11)
             {
                 platformMode = 0;
             }
@@ -51,7 +51,8 @@ namespace iiMenu.Mods
                 "Water Balloon",
                 "Rock",
                 "Present",
-                "Mentos"
+                "Mentos",
+                "Fish Food"
             };
 
             GetIndex("Change Platform Type").overlapText = "Change Platform Type <color=grey>[</color><color=green>" + platformNames[platformMode] + "</color><color=grey>]</color>";
@@ -203,6 +204,11 @@ namespace iiMenu.Mods
                     if (platformMode == 10)
                     {
                         leftplat.AddComponent<GorillaSurfaceOverride>().overrideIndex = 249;
+                        leftplat.GetComponent<Renderer>().enabled = false;
+                    }
+                    if (platformMode == 11)
+                    {
+                        leftplat.AddComponent<GorillaSurfaceOverride>().overrideIndex = 252;
                         leftplat.GetComponent<Renderer>().enabled = false;
                     }
                 }
@@ -383,6 +389,11 @@ namespace iiMenu.Mods
                     if (platformMode == 10)
                     {
                         rightplat.AddComponent<GorillaSurfaceOverride>().overrideIndex = 249;
+                        rightplat.GetComponent<Renderer>().enabled = false;
+                    }
+                    if (platformMode == 11)
+                    {
+                        rightplat.AddComponent<GorillaSurfaceOverride>().overrideIndex = 252;
                         rightplat.GetComponent<Renderer>().enabled = false;
                     }
                 }
@@ -568,6 +579,11 @@ namespace iiMenu.Mods
                         leftplat.AddComponent<GorillaSurfaceOverride>().overrideIndex = 249;
                         leftplat.GetComponent<Renderer>().enabled = false;
                     }
+                    if (platformMode == 11)
+                    {
+                        leftplat.AddComponent<GorillaSurfaceOverride>().overrideIndex = 252;
+                        leftplat.GetComponent<Renderer>().enabled = false;
+                    }
                 }
                 else
                 {
@@ -746,6 +762,11 @@ namespace iiMenu.Mods
                     if (platformMode == 10)
                     {
                         rightplat.AddComponent<GorillaSurfaceOverride>().overrideIndex = 249;
+                        rightplat.GetComponent<Renderer>().enabled = false;
+                    }
+                    if (platformMode == 11)
+                    {
+                        rightplat.AddComponent<GorillaSurfaceOverride>().overrideIndex = 252;
                         rightplat.GetComponent<Renderer>().enabled = false;
                     }
                 }
@@ -1294,7 +1315,7 @@ namespace iiMenu.Mods
 
         public static void HighGravity()
         {
-            GorillaLocomotion.Player.Instance.bodyCollider.attachedRigidbody.AddForce(Vector3.down * (Time.deltaTime * (6.66f / Time.deltaTime)), ForceMode.Acceleration);
+            GorillaLocomotion.Player.Instance.bodyCollider.attachedRigidbody.AddForce(Vector3.down * (Time.deltaTime * (7.77f / Time.deltaTime)), ForceMode.Acceleration);
         }
 
         public static void ReverseGravity()
@@ -1404,7 +1425,10 @@ namespace iiMenu.Mods
             {
                 coll.enabled = false;
             }
-            GorillaTagger.Instance.rigidbody.transform.position = GetRandomVRRig(false).transform.position;
+            try
+            {
+                GorillaTagger.Instance.rigidbody.transform.position = GetRandomVRRig(false).transform.position;
+            } catch { }
             frameFixColliders = true;
         }
 
@@ -2079,8 +2103,15 @@ namespace iiMenu.Mods
             {
                 Safety.NoFinger();
             }
-            GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").SetActive(!leftPrimary);
-            GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").SetActive(!leftPrimary);
+            System.Type type = GorillaLocomotion.Player.Instance.GetType();
+            FieldInfo fieldInfo = type.GetField("leftHandHolding", BindingFlags.NonPublic | BindingFlags.Instance);
+            fieldInfo.SetValue(GorillaLocomotion.Player.Instance, leftPrimary);
+            type = GorillaLocomotion.Player.Instance.GetType();
+            fieldInfo = type.GetField("rightHandHolding", BindingFlags.NonPublic | BindingFlags.Instance);
+            fieldInfo.SetValue(GorillaLocomotion.Player.Instance, leftPrimary);
+            GorillaLocomotion.Player.Instance.InReportMenu = leftPrimary;
+            //GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").SetActive(!leftPrimary);
+            //GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").SetActive(!leftPrimary);
         }
 
         public static Vector3 deadPosition = Vector3.zero;

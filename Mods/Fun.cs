@@ -42,6 +42,11 @@ namespace iiMenu.Mods
             GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.z = 180f;
         }
 
+        public static void BrokenNeck()
+        {
+            GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.z = 90f;
+        }
+
         public static void BackwardsHead()
         {
             GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.y = 180f;
@@ -388,12 +393,18 @@ namespace iiMenu.Mods
             {
                 AngryBeeSwarm goldentrophy = GameObject.Find("Environment Objects/PersistentObjects_Prefab/Nowruz2024_PersistentObjects/AngryBeeSwarm/FloatingChaseBeeSwarm").GetComponent<AngryBeeSwarm>();
                 goldentrophy.photonView.OwnerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
-                goldentrophy.Emerge(GorillaTagger.Instance.headCollider.transform.position, GorillaTagger.Instance.headCollider.transform.position);
-                goldentrophy.currentState = AngryBeeSwarm.ChaseState.Grabbing;
-                goldentrophy.grabbedPlayer = PhotonNetwork.LocalPlayer;
+
                 System.Type goldentrophyy = goldentrophy.GetType();
                 FieldInfo goldentrophyyy = goldentrophyy.GetField("grabTimestamp", BindingFlags.NonPublic | BindingFlags.Instance);
                 goldentrophyyy.SetValue(goldentrophy, Time.time);
+                goldentrophyyy = goldentrophyy.GetField("emergeStartedTimestamp", BindingFlags.NonPublic | BindingFlags.Instance);
+                goldentrophyyy.SetValue(goldentrophy, Time.time);
+
+                goldentrophy.targetPlayer = PhotonNetwork.LocalPlayer;
+                goldentrophy.grabbedPlayer = PhotonNetwork.LocalPlayer;
+
+                goldentrophy.lastState = AngryBeeSwarm.ChaseState.Chasing;
+                goldentrophy.currentState = AngryBeeSwarm.ChaseState.Grabbing;
             }
         }
 
@@ -448,17 +459,18 @@ namespace iiMenu.Mods
                         {
                             AngryBeeSwarm goldentrophy = GameObject.Find("Environment Objects/PersistentObjects_Prefab/Nowruz2024_PersistentObjects/AngryBeeSwarm/FloatingChaseBeeSwarm").GetComponent<AngryBeeSwarm>();
                             goldentrophy.photonView.OwnerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
-                            goldentrophy.currentState = AngryBeeSwarm.ChaseState.Grabbing;
-                            goldentrophy.grabbedPlayer = player;
+
                             System.Type goldentrophyy = goldentrophy.GetType();
                             FieldInfo goldentrophyyy = goldentrophyy.GetField("grabTimestamp", BindingFlags.NonPublic | BindingFlags.Instance);
                             goldentrophyyy.SetValue(goldentrophy, Time.time);
+                            goldentrophyyy = goldentrophyy.GetField("emergeStartedTimestamp", BindingFlags.NonPublic | BindingFlags.Instance);
+                            goldentrophyyy.SetValue(goldentrophy, Time.time);
+
+                            goldentrophy.targetPlayer = player;
+                            goldentrophy.grabbedPlayer = player;
+
+                            goldentrophy.currentState = AngryBeeSwarm.ChaseState.Grabbing;
                         }
-                    } else
-                    {
-                        AngryBeeSwarm goldentrophy = GameObject.Find("Environment Objects/PersistentObjects_Prefab/Nowruz2024_PersistentObjects/AngryBeeSwarm/FloatingChaseBeeSwarm").GetComponent<AngryBeeSwarm>();
-                        goldentrophy.photonView.OwnerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
-                        goldentrophy.Emerge(Ray.point, Ray.point);
                     }
                 }
             }

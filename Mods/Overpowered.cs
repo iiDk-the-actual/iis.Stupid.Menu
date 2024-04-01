@@ -19,48 +19,20 @@ namespace iiMenu.Mods
 {
     internal class Overpowered
     {
-        /*public static void AntiBan() // patched ?
-        {
-            object obj;
-            PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue("gameMode", out obj);
-            if (!obj.ToString().Contains("MODDED") && PhotonNetwork.InRoom && PhotonNetwork.IsConnectedAndReady && PhotonNetwork.IsConnected)
-            {
-                ExecuteCloudScriptRequest executeCloudScriptRequest = new ExecuteCloudScriptRequest();
-                executeCloudScriptRequest.FunctionName = "RoomClosed";
-                executeCloudScriptRequest.FunctionParameter = new
-                {
-                    GameId = PhotonNetwork.CurrentRoom.Name,
-                    Region = Regex.Replace(PhotonNetwork.CloudRegion, "[^a-zA-Z0-9]", "").ToUpper(),
-                    UserId = PhotonNetwork.MasterClient.UserId,
-                    ActorNr = 1,
-                    ActorCount = 1,
-                    AppVersion = PhotonNetwork.AppVersion
-                };
-                PlayFabClientAPI.ExecuteCloudScript(executeCloudScriptRequest, delegate (ExecuteCloudScriptResult result)
-                {
-                }, null, null, null);
-                string gamemode = PhotonNetwork.CurrentRoom.CustomProperties["gameMode"].ToString().Replace(GorillaComputer.instance.currentQueue, GorillaComputer.instance.currentQueue + "MODDED_MODDED_");
-                ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable
-                {
-                    { "gameMode", gamemode }
-                };
-                PhotonNetwork.CurrentRoom.SetCustomProperties(hash);
-            }
-        }*/
-
         public static float lastTime = -1f;
+        public static float gamemodeSetTimeAt = -1f;
         public static bool antibanworked = false;
 
         public static void AntiBan()
         {
             if (!IsModded())
             {
-                if (Time.time > lastTime + 5f)
+                if (Time.time > lastTime + 15f)
                 {
                     lastTime = Time.time;
                     antibanworked = false;
                     GetIndex("Anti Ban").enabled = true;
-                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTIBAN</color><color=grey>]</color> <color=white>Enabling anti ban...</color>");
+                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTIBAN</color><color=grey>]</color> <color=white>Enabling anti ban, this could take a while...</color>", 5000);
                     if (!PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED"))
                     {
                         PlayFabClientAPI.ExecuteCloudScript(new PlayFab.ClientModels.ExecuteCloudScriptRequest
@@ -81,25 +53,29 @@ namespace iiMenu.Mods
                         }, null);
                     }
                 }
-                if (Time.time > lastTime + 2f)
+                if (Time.time > lastTime + 5f)
                 {
                     if (antibanworked)
                     {
-                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTIBAN</color><color=grey>]</color> <color=white>The anti ban has been enabled successfully.</color>");
                         antibanworked = false;
+                        gamemodeSetTimeAt = Time.time + 5f;
                         string gamemode = PhotonNetwork.CurrentRoom.CustomProperties["gameMode"].ToString().Replace(GorillaComputer.instance.currentQueue, GorillaComputer.instance.currentQueue + "MODDEDMODDED");
                         ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable
-                    {
-                        { "gameMode", gamemode }
-                    };
+                        {
+                            { "gameMode", gamemode }
+                        };
                         PhotonNetwork.CurrentRoom.SetCustomProperties(hash);
-                        GetIndex("Anti Ban").enabled = false;
                     }
                     else
                     {
                         NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>The anti ban failed to load. This could be a result of bad internet.</color>");
                         GetIndex("Anti Ban").enabled = false;
                     }
+                }
+                if (Time.time > lastTime + 10f)
+                {
+                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTIBAN</color><color=grey>]</color> <color=white>The anti ban has been enabled successfully.</color>");
+                    GetIndex("Anti Ban").enabled = false;
                 }
             } else
             {
@@ -110,7 +86,7 @@ namespace iiMenu.Mods
 
         public static bool IsModded()
         {
-            return PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED");
+            return (PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED") && Time.time > gamemodeSetTimeAt);
         }
 
         public static void FastMaster()
@@ -134,6 +110,63 @@ namespace iiMenu.Mods
             } else
             {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>The anti ban is disabled!</color>");
+            }
+        }
+
+        public static void SetMasterGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray);
+                if (shouldBePC)
+                {
+                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
+                    Physics.Raycast(ray, out Ray, 100);
+                }
+
+                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
+                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
+                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+
+                GameObject line = new GameObject("Line");
+                LineRenderer liner = line.AddComponent<LineRenderer>();
+                liner.material.shader = Shader.Find("GUI/Text Shader");
+                liner.startColor = GetBGColor(0f);
+                liner.endColor = GetBGColor(0.5f);
+                liner.startWidth = 0.025f;
+                liner.endWidth = 0.025f;
+                liner.positionCount = 2;
+                liner.useWorldSpace = true;
+                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
+                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
+                UnityEngine.Object.Destroy(line, Time.deltaTime);
+
+                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > kgDebounce)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        Photon.Realtime.Player owner = GetPlayerFromVRRig(possibly);
+                        if (!IsModded())
+                        {
+                            if (!GetIndex("Disable Auto Anti Ban").enabled)
+                            {
+                                AntiBan();
+                            }
+                        }
+                        else
+                        {
+                            PhotonNetwork.CurrentRoom.SetMasterClient(owner);
+                        }
+                        kgDebounce = Time.time + 0.5f;
+                    }
+                }
             }
         }
 

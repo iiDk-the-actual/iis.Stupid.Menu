@@ -158,6 +158,12 @@ namespace iiMenu.Mods
             pageNumber = 0;
         }
 
+        public static void EnableEnabled()
+        {
+            buttonsType = 24;
+            pageNumber = 0;
+        }
+
         public static void RightHand()
         {
             rightHand = true;
@@ -720,6 +726,15 @@ namespace iiMenu.Mods
             activeFontStyle = (FontStyle)fontStyleType;
         }
 
+        public static void ChangePCUI()
+        {
+            pcbg++;
+            if (pcbg > 3)
+            {
+                pcbg = 0;
+            }
+        }
+
         public static void ChangeNotificationTime()
         {
             notificationDecayTime += 1000;
@@ -916,7 +931,7 @@ namespace iiMenu.Mods
                 }
             }
 
-            string ihateyouguys = platformMode+"\n"+platformShape+"\n"+flySpeedCycle+"\n"+longarmCycle+"\n"+speedboostCycle+"\n"+projmode+"\n"+trailmode+"\n"+shootCycle+"\n"+pointerIndex+"\n"+tagAuraIndex+"\n"+notificationDecayTime+"\n"+fontStyleType+"\n"+arrowType;
+            string ihateyouguys = platformMode+"\n"+platformShape+"\n"+flySpeedCycle+"\n"+longarmCycle+"\n"+speedboostCycle+"\n"+projmode+"\n"+trailmode+"\n"+shootCycle+"\n"+pointerIndex+"\n"+tagAuraIndex+"\n"+notificationDecayTime+"\n"+fontStyleType+"\n"+arrowType+"\n"+pcbg+"\n"+internetTime;
 
             if (!Directory.Exists("iisStupidMenu"))
             {
@@ -991,6 +1006,10 @@ namespace iiMenu.Mods
                     Settings.ChangeFontStyleType();
                     arrowType = int.Parse(data[12]) - 1;
                     Settings.ChangeArrowType();
+                    pcbg = int.Parse(data[13]) - 1;
+                    Settings.ChangePCUI();
+                    internetTime = int.Parse(data[14]) - 1;
+                    Settings.ChangeReconnectTime();
                 }
                 catch { }
 
@@ -1025,6 +1044,16 @@ namespace iiMenu.Mods
                 }
             }
             NotifiLib.ClearAllNotifications();
+        }
+
+        public static void ChangeReconnectTime()
+        {
+            internetTime++;
+            if (internetTime > 5)
+            {
+                internetTime = 2;
+            }
+            GetIndex("crTime").overlapText = "Change Reconnect Time <color=grey>[</color><color=green>" + internetTime.ToString() + "</color><color=grey>]</color>";
         }
 
         public static void ThinMenuOn()
