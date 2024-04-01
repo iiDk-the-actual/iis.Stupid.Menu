@@ -191,7 +191,7 @@ namespace iiMenu.Mods
                                         PhotonNetwork.Disconnect();
                                         RPCProtection();
                                         isJoiningRandom = true;
-                                        jrDebounce = Time.time + internetFloat;
+                                        jrDebounce = Time.time + (float)internetTime;
                                         NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>Someone attempted to report you, you have been disconnected and will be connected to a random lobby shortly.</color>");
                                     }
                                 }

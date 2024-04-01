@@ -54,11 +54,6 @@ namespace iiMenu.Mods
             RPCProtection();
             GorillaNot.instance.OnLeftRoom();
         }
-        
-        public static void SetMaster()
-        {
-            Overpowered.FastMaster();
-        }
 
         public static void AutoSetMaster()
         {

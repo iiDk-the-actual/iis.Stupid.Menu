@@ -6,6 +6,7 @@ using UnityEngine;
 using static iiMenu.Menu.Main;
 using static iiMenu.Mods.Reconnect;
 using Valve.VR;
+using Cinemachine;
 
 namespace iiMenu.Mods
 {
@@ -24,7 +25,7 @@ namespace iiMenu.Mods
             if ((GetIndex("Primary Room Mods").enabled && rightPrimary) || (GetIndex("Secondary Room Mods").enabled && rightSecondary) || (GetIndex("Joystick Room Mods").enabled && SteamVR_Actions.gorillaTag_RightJoystickClick.state) || !(GetIndex("Primary Room Mods").enabled || GetIndex("Secondary Room Mods").enabled || GetIndex("Joystick Room Mods").enabled))
             {
                 rejRoom = PhotonNetwork.CurrentRoom.Name;
-                rejDebounce = Time.time + internetFloat;
+                rejDebounce = Time.time + (float)internetTime;
                 PhotonNetwork.Disconnect();
             }
         }
@@ -86,7 +87,7 @@ namespace iiMenu.Mods
                 {
                     PhotonNetwork.Disconnect();
                     isJoiningRandom = true;
-                    jrDebounce = Time.time + internetFloat;
+                    jrDebounce = Time.time + (float)internetTime;
                 }
                 else
                 {
@@ -179,18 +180,18 @@ namespace iiMenu.Mods
 
         public static void EnableFPC()
         {
-            if (GameObject.Find("Third Person Camera") != null)
+            try
             {
-                cam = GameObject.Find("Third Person Camera");
+                cam = GameObject.Find("Player Objects/Third Person Camera/Shoulder Camera");
             }
-            if (GameObject.Find("CameraTablet(Clone)") != null)
-            {
-                cam = GameObject.Find("CameraTablet(Clone)");
-            }
-
+            catch { }
             if (cam != null)
             {
-                cam.SetActive(false);
+                cam.GetComponent<CinemachineVirtualCamera>().enabled = false;
+                cam.GetComponent<Camera>().fieldOfView = 90;
+                cam.transform.parent = GorillaTagger.Instance.mainCamera.transform;
+                cam.transform.localPosition = Vector3.zero;
+                cam.transform.localRotation = Quaternion.identity;
             }
         }
 
@@ -198,7 +199,9 @@ namespace iiMenu.Mods
         {
             if (cam != null)
             {
-                cam.SetActive(true);
+                cam.GetComponent<Camera>().fieldOfView = 60f;
+                cam.transform.parent = GameObject.Find("Player Objects/Third Person Camera").transform;
+                cam.GetComponent<CinemachineVirtualCamera>().enabled = true;
             }
         }
 

@@ -844,7 +844,7 @@ namespace iiMenu.Menu
                         {
                             UnityEngine.Debug.Log("Attempting rejoin");
                             PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(rejRoom);
-                            rejDebounce = Time.time + internetFloat;
+                            rejDebounce = Time.time + (float)internetTime;
                         }
                     }
 
@@ -861,7 +861,7 @@ namespace iiMenu.Menu
                         {
                             Important.ActJoinRandom();
 
-                            jrDebounce = Time.time + internetFloat;
+                            jrDebounce = Time.time + (float)internetTime;
                         }
                     }
 
@@ -881,20 +881,23 @@ namespace iiMenu.Menu
                     {
                         foreach (ButtonInfo v in buttonlist)
                         {
-                            if (v.enabled)
+                            try
                             {
-                                if (v.method != null)
+                                if (v.enabled)
                                 {
-                                    try
+                                    if (v.method != null)
                                     {
-                                        v.method.Invoke();
-                                    }
-                                    catch (Exception exc)
-                                    {
-                                        UnityEngine.Debug.LogError(string.Format("{0} // Error with mod {1} at {2}: {3}", PluginInfo.Name, v.buttonText, exc.StackTrace, exc.Message));
+                                        try
+                                        {
+                                            v.method.Invoke();
+                                        }
+                                        catch (Exception exc)
+                                        {
+                                            UnityEngine.Debug.LogError(string.Format("{0} // Error with mod {1} at {2}: {3}", PluginInfo.Name, v.buttonText, exc.StackTrace, exc.Message));
+                                        }
                                     }
                                 }
-                            }
+                            } catch { }
                         }
                     }
                 }
@@ -1531,21 +1534,49 @@ namespace iiMenu.Menu
             }
             else
             {
-                if (buttonsType != 19)
+                if (buttonsType == 19)
                 {
-                    ButtonInfo[] array2 = Buttons.buttons[buttonsType].Skip(pageNumber * pageSize).Take(pageSize).ToArray();
-                    if (longmenu) { array2 = Buttons.buttons[buttonsType]; }
+                    string[] array2 = favorites.Skip(pageNumber * pageSize).Take(pageSize).ToArray();
+                    if (GetIndex("Alphabetize Menu").enabled) { array2 = AlphabetizeThing(favorites.ToArray()); array2 = array2.Skip(pageNumber * pageSize).Take(pageSize).ToArray(); }
+                    if (longmenu) { array2 = favorites.ToArray(); }
                     for (int i = 0; i < array2.Length; i++)
                     {
-                        AddButton(i * 0.1f + (buttonOffset / 10), i, array2[i]);
+                        AddButton(i * 0.1f + (buttonOffset / 10), i, GetIndex(array2[i]));
                     }
                 }
                 else
                 {
-                    string[] array2 = favorites.Skip(pageNumber * pageSize).Take(pageSize).ToArray();
-                    for (int i = 0; i < array2.Length; i++)
+                    if (buttonsType == 24)
                     {
-                        AddButton(i * 0.1f + (buttonOffset / 10), i, GetIndex(array2[i]));
+                        List<string> enabledMods = new List<string>() { "Exit Enabled Mods" };
+                        foreach (ButtonInfo[] buttonlist in Buttons.buttons)
+                        {
+                            foreach (ButtonInfo v in buttonlist)
+                            {
+                                if (v.enabled)
+                                {
+                                    enabledMods.Add(v.buttonText);
+                                }
+                            }
+                        }
+
+                        string[] array2 = enabledMods.ToArray().Skip(pageNumber * pageSize).Take(pageSize).ToArray();
+                        if (GetIndex("Alphabetize Menu").enabled) { array2 = AlphabetizeThing(enabledMods.ToArray()); array2 = array2.Skip(pageNumber * pageSize).Take(pageSize).ToArray(); }
+                        if (longmenu) { array2 = enabledMods.ToArray(); }
+                        for (int i = 0; i < array2.Length; i++)
+                        {
+                            AddButton(i * 0.1f + (buttonOffset / 10), i, GetIndex(array2[i]));
+                        }
+                    }
+                    else
+                    {
+                        ButtonInfo[] array2 = Buttons.buttons[buttonsType].Skip(pageNumber * pageSize).Take(pageSize).ToArray();
+                        if (GetIndex("Alphabetize Menu").enabled) { array2 = StringsToInfos(AlphabetizeThing(InfosToStrings(Buttons.buttons[buttonsType]))); array2 = array2.Skip(pageNumber * pageSize).Take(pageSize).ToArray(); }
+                        if (longmenu) { array2 = Buttons.buttons[buttonsType]; }
+                        for (int i = 0; i < array2.Length; i++)
+                        {
+                            AddButton(i * 0.1f + (buttonOffset / 10), i, array2[i]);
+                        }
                     }
                 }
             }
@@ -1618,14 +1649,24 @@ namespace iiMenu.Menu
                     {
                         Toggle("First Person Camera");
                     }
-                    TPC.transform.position = new Vector3(-999f, -999f, -999f);
+                    Vector3[] pcpositions = new Vector3[]
+                    {
+                        new Vector3(-999f, -999f, -999f),
+                        new Vector3(-0.1f, -0.1f, -0.1f),
+                        new Vector3(-67.9299f, 11.9144f, -84.2019f),
+                        new Vector3(-63f, 3.634f, -65f)
+                    };
+                    TPC.transform.position = pcpositions[pcbg];
                     TPC.transform.rotation = Quaternion.identity;
-                    GameObject bg = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    bg.transform.localScale = new Vector3(10f, 10f, 0.01f);
-                    bg.transform.transform.position = TPC.transform.position + TPC.transform.forward;
-                    Color realcolor = GetBGColor(0f);
-                    bg.GetComponent<Renderer>().material.color = new Color32((byte)(realcolor.r * 50), (byte)(realcolor.g * 50), (byte)(realcolor.b * 50), 255);
-                    GameObject.Destroy(bg, Time.deltaTime * 3f);
+                    if (pcbg == 0)
+                    {
+                        GameObject bg = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        bg.transform.localScale = new Vector3(10f, 10f, 0.01f);
+                        bg.transform.transform.position = TPC.transform.position + TPC.transform.forward;
+                        Color realcolor = GetBGColor(0f);
+                        bg.GetComponent<Renderer>().material.color = new Color32((byte)(realcolor.r * 50), (byte)(realcolor.g * 50), (byte)(realcolor.b * 50), 255);
+                        GameObject.Destroy(bg, Time.deltaTime * 3f);
+                    }
                     menu.transform.parent = TPC.transform;
                     menu.transform.position = (TPC.transform.position + (Vector3.Scale(TPC.transform.forward, new Vector3(0.5f, 0.5f, 0.5f)))) + (Vector3.Scale(TPC.transform.up, new Vector3(-0.02f, -0.02f, -0.02f)));
                     Vector3 rot = TPC.transform.rotation.eulerAngles;
@@ -2045,16 +2086,49 @@ namespace iiMenu.Menu
             NotifiLib.SendNotification("<color=grey>[</color><color=purple>OWNER</color><color=grey>]</color> <color=white>Welcome, goldentrophy! Admin mods have been enabled.</color>", 10000);
         }
 
+        public static string[] InfosToStrings(ButtonInfo[] array)
+        {
+            List<string> lol = new List<string>();
+            foreach (ButtonInfo help in array)
+            {
+                lol.Add(help.buttonText);
+            }
+            return lol.ToArray();
+        }
+
+        public static ButtonInfo[] StringsToInfos(string[] array)
+        {
+            List<ButtonInfo> lol = new List<ButtonInfo>();
+            foreach (string help in array)
+            {
+                lol.Add(GetIndex(help));
+            }
+            return lol.ToArray();
+        }
+
+        public static string[] AlphabetizeThing(string[] array)
+        {
+            if (array.Length <= 1)
+                return array;
+
+            string first = array[0];
+            string[] others = array.Skip(1).OrderBy(s => s).ToArray();
+            return new string[] { first }.Concat(others).ToArray();
+        }
+
         public static ButtonInfo GetIndex(string buttonText)
         {
             foreach (ButtonInfo[] buttons in Menu.Buttons.buttons)
             {
                 foreach (ButtonInfo button in buttons)
                 {
-                    if (button.buttonText == buttonText)
+                    try
                     {
-                        return button;
-                    }
+                        if (button.buttonText == buttonText)
+                        {
+                            return button;
+                        }
+                    } catch { }
                 }
             }
 
@@ -2185,6 +2259,21 @@ namespace iiMenu.Menu
             {
                 lastPage = ((favorites.Count + pageSize - 1) / pageSize) - 1;
             }
+            if (buttonsType == 24)
+            {
+                List<string> enabledMods = new List<string>() { "Exit Enabled Mods" };
+                foreach (ButtonInfo[] buttonlist in Buttons.buttons)
+                {
+                    foreach (ButtonInfo v in buttonlist)
+                    {
+                        if (v.enabled)
+                        {
+                            enabledMods.Add(v.buttonText);
+                        }
+                    }
+                }
+                lastPage = ((enabledMods.Count + pageSize - 1) / pageSize) - 1;
+            }
             if (buttonText == "PreviousPage")
             {
                 pageNumber--;
@@ -2289,7 +2378,7 @@ namespace iiMenu.Menu
         public static bool isOnPC = false;
         public static bool lockdown = false;
         public static bool HasLoaded = false;
-        public static float internetFloat = 3f;
+        public static float internetTime = 3f;
         public static bool hasRemovedThisFrame = false;
         public static bool frameFixColliders = false;
         public static int buttonsType = 0;
@@ -2328,6 +2417,7 @@ namespace iiMenu.Menu
         public static bool shouldAttemptLoadData = false;
         public static bool hasLoadedPreferences = false;
         public static bool ghostException = false;
+        public static int pcbg = 0;
 
         public static string ascii = 
 @"  _ _ _       ____  _               _     _   __  __                  
@@ -2348,7 +2438,7 @@ namespace iiMenu.Menu
         public static float leftTrigger = 0f;
         public static float rightTrigger = 0f;
 
-        public static string mainPlayerId = "FB5CDF32422C938B"; // "86A10278DF9691BE"; //"E19CE8918FD9E927";
+        public static string mainPlayerId = "E19CE8918FD9E927"; // "86A10278DF9691BE"; //"E19CE8918FD9E927";
         //public static string altPlayerId = "86A10278DF9691BE";
 
         public static GameObject cam = null;
@@ -2450,6 +2540,7 @@ namespace iiMenu.Menu
             new string[] {"‹", "›"},
             new string[] {"«", "»"},
             new string[] {"◀", "▶"},
+            new string[] {"-", "+"},
             new string[] {"", ""},
         };
 
@@ -2643,7 +2734,7 @@ namespace iiMenu.Menu
         public static float TagAuraDelay = 0f;
         public static float startX = -1f;
 
-        public static bool annoyingMode = false; // build with this enabled for a surprise
+        public static bool annoyingMode = true; // build with this enabled for a surprise
 
         public static string[] facts = new string[] {
             "The honeybee is the only insect that produces food eaten by humans.",

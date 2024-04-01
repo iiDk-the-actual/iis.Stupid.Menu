@@ -1,13 +1,28 @@
-﻿using iiMenu.Classes;
+﻿using GorillaNetworking;
+using GorillaTag;
+using iiMenu.Classes;
 using Photon.Pun;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
+using UnityEngine.UIElements;
 using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods
 {
     internal class Visuals
     {
+        public static void FakeUnbanSelf()
+        {
+            foreach (GorillaLevelScreen gorillaLevelScreen in GorillaComputer.instance.levelScreens)
+            {
+                gorillaLevelScreen.UpdateText(gorillaLevelScreen.startingText, true);
+            }
+            GorillaScoreboardTotalUpdater.instance.ClearOfflineFailureText();
+            GorillaComputer.instance.screenText.DisableFailedState();
+            GorillaComputer.instance.functionSelectText.DisableFailedState();
+        }
+
         public static void FixRigColors()
         {
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
@@ -225,6 +240,7 @@ namespace iiMenu.Mods
                     GameObject line = new GameObject("Line");
                     LineRenderer liner = line.AddComponent<LineRenderer>();
                     UnityEngine.Color thecolor = Color.red;
+                    if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                     liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = 0.025f; liner.endWidth = 0.025f; liner.positionCount = 2; liner.useWorldSpace = true;
                     liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
                     liner.SetPosition(1, vrrig.transform.position);
@@ -465,6 +481,7 @@ namespace iiMenu.Mods
                 if (sillyComputer.GetTargetOf(player) == PhotonNetwork.LocalPlayer)
                 {
                     UnityEngine.Color thecolor = Color.red;
+                    if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                     LineRenderer liner = vrrig.head.rigTarget.gameObject.AddComponent<LineRenderer>();
                     liner.startWidth = 0.025f;
                     liner.endWidth = 0.025f;
@@ -588,6 +605,7 @@ namespace iiMenu.Mods
                     {
                         vrrig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
                         vrrig.mainSkin.material.color = Color.red;
+                        if (GetIndex("Transparent Theme").enabled) { vrrig.mainSkin.material.color = new Color(vrrig.mainSkin.material.color.r, vrrig.mainSkin.material.color.g, vrrig.mainSkin.material.color.b, 0.5f); }
                     }
                     else
                     {
@@ -726,6 +744,7 @@ namespace iiMenu.Mods
                     GameObject line = new GameObject("Line");
                     LineRenderer liner = line.AddComponent<LineRenderer>();
                     UnityEngine.Color thecolor = Color.red;
+                    if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                     liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = 0.025f; liner.endWidth = 0.025f; liner.positionCount = 2; liner.useWorldSpace = true;
                     liner.SetPosition(0, vrrig.transform.position + new Vector3(0f, 9999f, 0f));
                     liner.SetPosition(1, vrrig.transform.position - new Vector3(0f, 9999f, 0f));
@@ -856,6 +875,7 @@ namespace iiMenu.Mods
                 if (sillyComputer.GetTargetOf(player) == PhotonNetwork.LocalPlayer)
                 {
                     UnityEngine.Color thecolor = Color.red;
+                    if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                     GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     box.transform.position = vrrig.transform.position;
                     UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
@@ -864,6 +884,129 @@ namespace iiMenu.Mods
                     box.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                     box.GetComponent<Renderer>().material.color = thecolor;
                     UnityEngine.Object.Destroy(box, Time.deltaTime);
+                }
+            }
+        }
+
+        public static void CasualBreadcrumbs()
+        {
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                {
+                    UnityEngine.Color thecolor = vrrig.playerColor;
+                    if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
+                    if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
+                    GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                    UnityEngine.Object.Destroy(sphere.GetComponent<SphereCollider>());
+                    sphere.GetComponent<Renderer>().material.color = thecolor;
+                    sphere.transform.position = vrrig.transform.position;
+                    sphere.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+                    UnityEngine.Object.Destroy(sphere, 10f);
+                }
+            }
+        }
+
+        public static void InfectionBreadcrumbs()
+        {
+            bool isInfectedPlayers = false;
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (vrrig.mainSkin.material.name.Contains("fected"))
+                {
+                    isInfectedPlayers = true;
+                    break;
+                }
+            }
+            if (isInfectedPlayers)
+            {
+                if (!GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected"))
+                {
+                    foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                    {
+                        if (vrrig.mainSkin.material.name.Contains("fected") && vrrig != GorillaTagger.Instance.offlineVRRig)
+                        {
+                            UnityEngine.Color thecolor = new Color32(255, 111, 0, 255);
+                            if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
+                            if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
+                            GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                            UnityEngine.Object.Destroy(sphere.GetComponent<SphereCollider>());
+                            sphere.GetComponent<Renderer>().material.color = thecolor;
+                            sphere.transform.position = vrrig.transform.position;
+                            sphere.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+                            UnityEngine.Object.Destroy(sphere, 10f);
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                    {
+                        if (!vrrig.mainSkin.material.name.Contains("fected") && vrrig != GorillaTagger.Instance.offlineVRRig)
+                        {
+                            UnityEngine.Color thecolor = vrrig.playerColor;
+                            if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
+                            if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
+                            GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                            UnityEngine.Object.Destroy(sphere.GetComponent<SphereCollider>());
+                            sphere.GetComponent<Renderer>().material.color = thecolor;
+                            sphere.transform.position = vrrig.transform.position;
+                            sphere.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+                            UnityEngine.Object.Destroy(sphere, 10f);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                {
+                    if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        UnityEngine.Color thecolor = vrrig.playerColor;
+                        if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
+                        if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
+                        GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                        UnityEngine.Object.Destroy(sphere.GetComponent<SphereCollider>());
+                        sphere.GetComponent<Renderer>().material.color = thecolor;
+                        sphere.transform.position = vrrig.transform.position;
+                        sphere.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+                        UnityEngine.Object.Destroy(sphere, 10f);
+                    }
+                }
+            }
+        }
+
+        public static void HuntBreadcrumbs()
+        {
+            GorillaHuntManager sillyComputer = GorillaGameManager.instance.gameObject.GetComponent<GorillaHuntManager>();
+            Photon.Realtime.Player target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
+            foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
+            {
+                VRRig vrrig = RigManager.GetVRRigFromPlayer(player);
+                if (player == target)
+                {
+                    UnityEngine.Color thecolor = vrrig.playerColor;
+                    if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
+                    if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
+                    GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                    UnityEngine.Object.Destroy(sphere.GetComponent<SphereCollider>());
+                    sphere.GetComponent<Renderer>().material.color = thecolor;
+                    sphere.transform.position = vrrig.transform.position;
+                    sphere.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+                    UnityEngine.Object.Destroy(sphere, 10f);
+                }
+                if (sillyComputer.GetTargetOf(player) == PhotonNetwork.LocalPlayer)
+                {
+                    UnityEngine.Color thecolor = Color.red;
+                    if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
+                    GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                    UnityEngine.Object.Destroy(sphere.GetComponent<SphereCollider>());
+                    sphere.GetComponent<Renderer>().material.color = thecolor;
+                    sphere.transform.position = vrrig.transform.position;
+                    sphere.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+                    UnityEngine.Object.Destroy(sphere, 10f);
                 }
             }
         }

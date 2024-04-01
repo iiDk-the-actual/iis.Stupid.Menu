@@ -102,10 +102,13 @@ namespace iiMenu.Notifications
                 {
                     foreach (ButtonInfo v in buttonlist)
                     {
-                        if (v.enabled)
+                        try
                         {
-                            alphabetized.Add((v.overlapText == null) ? v.buttonText : v.overlapText);
-                        }
+                            if (v.enabled)
+                            {
+                                alphabetized.Add((v.overlapText == null) ? v.buttonText : v.overlapText);
+                            }
+                        } catch { }
                     }
                 }
 
