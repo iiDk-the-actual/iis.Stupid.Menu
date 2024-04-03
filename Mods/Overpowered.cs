@@ -25,7 +25,7 @@ namespace iiMenu.Mods
 
         public static void AntiBan()
         {
-            if (!IsModded())
+            /*if (!IsModded())
             {
                 if (Time.time > lastTime + 15f)
                 {
@@ -81,7 +81,9 @@ namespace iiMenu.Mods
             {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>The anti ban is already enabled!</color>");
                 GetIndex("Anti Ban").enabled = false;
-            }
+            }*/
+            GetIndex("Anti Ban").enabled = false;
+            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to security.</color>");
         }
 
         public static bool IsModded()

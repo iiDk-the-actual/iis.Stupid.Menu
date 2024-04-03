@@ -9,6 +9,7 @@ using static iiMenu.Menu.Main;
 using System;
 using iiMenu.Mods.Spammers;
 using System.Runtime.CompilerServices;
+using PlayFab.ClientModels;
 
 namespace iiMenu.Mods
 {
@@ -821,6 +822,18 @@ namespace iiMenu.Mods
                     }
                 }
             }
+        }
+
+        public static void AnnoyingModeOn()
+        {
+            annoyingMode = true;
+        }
+
+        public static void AnnoyingModeOff()
+        {
+            annoyingMode = false;
+            themeType--;
+            ChangeMenuTheme();
         }
 
         public static void EnablePrimaryRoomMods()

@@ -2734,7 +2734,7 @@ namespace iiMenu.Menu
         public static float TagAuraDelay = 0f;
         public static float startX = -1f;
 
-        public static bool annoyingMode = true; // build with this enabled for a surprise
+        public static bool annoyingMode = false; // build with this enabled for a surprise
 
         public static string[] facts = new string[] {
             "The honeybee is the only insect that produces food eaten by humans.",
