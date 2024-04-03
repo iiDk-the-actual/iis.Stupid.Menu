@@ -102,6 +102,7 @@ namespace iiMenu.Mods
             }
         }
 
+        public static float spamtagdelay = -1f;
         public static void SpamTagSelf()
         {
             if (!PhotonNetwork.IsMasterClient)
@@ -113,14 +114,19 @@ namespace iiMenu.Mods
             }
             else
             {
-                foreach (GorillaTagManager tagman in GameObject.FindObjectsOfType<GorillaTagManager>())
+                if (Time.time > spamtagdelay)
                 {
-                    if (tagman.currentInfected.Contains(PhotonNetwork.LocalPlayer))
+                    spamtagdelay = Time.time + 0.1f;
+                    foreach (GorillaTagManager tagman in GameObject.FindObjectsOfType<GorillaTagManager>())
                     {
-                        tagman.currentInfected.Remove(PhotonNetwork.LocalPlayer);
-                    } else
-                    {
-                        tagman.currentInfected.Add(PhotonNetwork.LocalPlayer);
+                        if (tagman.currentInfected.Contains(PhotonNetwork.LocalPlayer))
+                        {
+                            tagman.currentInfected.Remove(PhotonNetwork.LocalPlayer);
+                        }
+                        else
+                        {
+                            tagman.currentInfected.Add(PhotonNetwork.LocalPlayer);
+                        }
                     }
                 }
             }
@@ -137,17 +143,21 @@ namespace iiMenu.Mods
             }
             else
             {
-                foreach (GorillaTagManager tagman in GameObject.FindObjectsOfType<GorillaTagManager>())
+                if (Time.time > spamtagdelay)
                 {
-                    foreach (Photon.Realtime.Player v in PhotonNetwork.PlayerList)
+                    spamtagdelay = Time.time + 0.1f;
+                    foreach (GorillaTagManager tagman in GameObject.FindObjectsOfType<GorillaTagManager>())
                     {
-                        if (tagman.currentInfected.Contains(v))
+                        foreach (Photon.Realtime.Player v in PhotonNetwork.PlayerList)
                         {
-                            tagman.currentInfected.Remove(v);
-                        }
-                        else
-                        {
-                            tagman.currentInfected.Add(v);
+                            if (tagman.currentInfected.Contains(v))
+                            {
+                                tagman.currentInfected.Remove(v);
+                            }
+                            else
+                            {
+                                tagman.currentInfected.Add(v);
+                            }
                         }
                     }
                 }

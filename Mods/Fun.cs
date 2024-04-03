@@ -380,6 +380,29 @@ namespace iiMenu.Mods
             }
         }
 
+        public static float beedelay = -1f;
+        public static void AngerBeesAll()
+        {
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                if (!GetIndex("Disable Auto Anti Ban").enabled)
+                {
+                    Overpowered.FastMaster();
+                }
+            }
+            else
+            {
+                if (Time.time > beedelay)
+                {
+                    beedelay = Time.time + 0.1f;
+                    AngryBeeSwarm goldentrophy = GameObject.Find("Environment Objects/PersistentObjects_Prefab/Nowruz2024_PersistentObjects/AngryBeeSwarm/FloatingChaseBeeSwarm").GetComponent<AngryBeeSwarm>();
+                    goldentrophy.photonView.OwnerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
+                    Vector3 goldentrophyy = GetRandomVRRig(true).headConstraint.transform.position;
+                    goldentrophy.Emerge(goldentrophyy, goldentrophyy);
+                }
+            }
+        }
+
         public static void StingSelf()
         {
             if (!PhotonNetwork.IsMasterClient)
@@ -472,6 +495,38 @@ namespace iiMenu.Mods
                             goldentrophy.currentState = AngryBeeSwarm.ChaseState.Grabbing;
                         }
                     }
+                }
+            }
+        }
+
+        public static void StingAll()
+        {
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                if (!GetIndex("Disable Auto Anti Ban").enabled)
+                {
+                    Overpowered.FastMaster();
+                }
+            }
+            else
+            {
+                if (Time.time > beedelay)
+                {
+                    beedelay = Time.time + 0.1f;
+                    Photon.Realtime.Player player = GetRandomPlayer(true);
+                    AngryBeeSwarm goldentrophy = GameObject.Find("Environment Objects/PersistentObjects_Prefab/Nowruz2024_PersistentObjects/AngryBeeSwarm/FloatingChaseBeeSwarm").GetComponent<AngryBeeSwarm>();
+                    goldentrophy.photonView.OwnerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
+
+                    System.Type goldentrophyy = goldentrophy.GetType();
+                    FieldInfo goldentrophyyy = goldentrophyy.GetField("grabTimestamp", BindingFlags.NonPublic | BindingFlags.Instance);
+                    goldentrophyyy.SetValue(goldentrophy, Time.time);
+                    goldentrophyyy = goldentrophyy.GetField("emergeStartedTimestamp", BindingFlags.NonPublic | BindingFlags.Instance);
+                    goldentrophyyy.SetValue(goldentrophy, Time.time);
+
+                    goldentrophy.targetPlayer = player;
+                    goldentrophy.grabbedPlayer = player;
+
+                    goldentrophy.currentState = AngryBeeSwarm.ChaseState.Grabbing;
                 }
             }
         }
