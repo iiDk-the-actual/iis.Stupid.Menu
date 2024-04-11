@@ -222,6 +222,18 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void AcceptTOS()
+        {
+            GameObject.Find("Miscellaneous Scripts/LegalAgreementCheck/Legal Agreements").SetActive(false);
+            GameObject.Find("Miscellaneous Scripts/LegalAgreementCheck/UIParent").SetActive(false);
+        }
+
+        public static void DeclineTOS()
+        {
+            GameObject.Find("Miscellaneous Scripts/LegalAgreementCheck/Legal Agreements").SetActive(true);
+            GameObject.Find("Miscellaneous Scripts/LegalAgreementCheck/UIParent").SetActive(true);
+        }
+
         public static void JoinDiscord()
         {
             Process.Start("https://discord.gg/iidk");

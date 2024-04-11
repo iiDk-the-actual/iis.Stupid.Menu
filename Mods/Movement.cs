@@ -1064,9 +1064,9 @@ namespace iiMenu.Mods
                 if (startX < 0)
                 {
                     startX = Euler.y;
-                    subThingy = Mouse.current.position.ReadValue().x / UnityEngine.Screen.width;
+                    subThingy = Mouse.current.position.value.x / UnityEngine.Screen.width;
                 }
-                Euler = new Vector3(Euler.x, startX + ((((Mouse.current.position.ReadValue().x / UnityEngine.Screen.width) - subThingy) * 360) * 1.33f), Euler.z);
+                Euler = new Vector3(Euler.x, startX + ((((Mouse.current.position.value.x / UnityEngine.Screen.width) - subThingy) * 360) * 1.33f), Euler.z);
                 GorillaTagger.Instance.rigidbody.transform.rotation = Quaternion.Euler(Euler);
             }
             else

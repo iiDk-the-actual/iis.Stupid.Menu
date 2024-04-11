@@ -16,6 +16,7 @@ namespace iiMenu.Patches
             if (newPlayer != oldnewplayer)
             {
                 NotifiLib.SendNotification("<color=grey>[</color><color=green>JOIN</color><color=grey>] </color><color=white>Name: " + newPlayer.NickName + "</color>");
+                iiMenu.Menu.Main.hasPlayersUpdated = true;
                 if (customSoundOnJoin)
                 {
                     if (!Directory.Exists("iisStupidMenu"))

@@ -1455,7 +1455,14 @@ namespace iiMenu.Menu
 
             if (!disableDisconnectButton)
             {
-                AddButton(-0.32f, -1, GetIndex("Disconnect"));
+                if (hotkeyButton == "none")
+                {
+                    AddButton(-0.32f, -1, GetIndex("Disconnect"));
+                } else
+                {
+                    AddButton(-0.37f, -1, GetIndex("Disconnect"));
+                    AddButton(-0.27f, -1, GetIndex(hotkeyButton));
+                }
                 /*
                 GameObject disconnectbutton = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 if (themeType == 30)
@@ -2116,6 +2123,16 @@ namespace iiMenu.Menu
             return new string[] { first }.Concat(others).ToArray();
         }
 
+        public static GliderHoldable[] archiveholdables = null;
+        public static GliderHoldable[] GetGliders()
+        {
+            if (archiveholdables == null)
+            {
+                archiveholdables = UnityEngine.Object.FindObjectsOfType<GliderHoldable>();
+            }
+            return archiveholdables;
+        }
+
         public static ButtonInfo GetIndex(string buttonText)
         {
             foreach (ButtonInfo[] buttons in Menu.Buttons.buttons)
@@ -2313,32 +2330,49 @@ namespace iiMenu.Menu
                         }
                         else
                         {
-                            if (target.isTogglable)
+                            if (fromMenu && (leftTrigger > 0.5f) && !joystickMenu)
                             {
-                                target.enabled = !target.enabled;
-                                if (target.enabled)
+                                if (hotkeyButton != target.buttonText)
                                 {
-                                    NotifiLib.SendNotification("<color=grey>[</color><color=green>ENABLE</color><color=grey>]</color> " + target.toolTip);
-                                    if (target.enableMethod != null)
-                                    {
-                                        try { target.enableMethod.Invoke(); } catch { }
-                                    }
-                                }
-                                else
+                                    hotkeyButton = target.buttonText;
+                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>HOTKEY</color><color=grey>]</color> Set hotkey button.");
+                                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(50, GetIndex("Right Hand").enabled, 0.4f);
+                                } else
                                 {
-                                    NotifiLib.SendNotification("<color=grey>[</color><color=red>DISABLE</color><color=grey>]</color> " + target.toolTip);
-                                    if (target.disableMethod != null)
-                                    {
-                                        try { target.disableMethod.Invoke(); } catch { }
-                                    }
+                                    hotkeyButton = "none";
+                                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(48, GetIndex("Right Hand").enabled, 0.4f);
+                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>HOTKEY</color><color=grey>]</color> Reset hotkey button.");
                                 }
                             }
                             else
                             {
-                                NotifiLib.SendNotification("<color=grey>[</color><color=green>ENABLE</color><color=grey>]</color> " + target.toolTip);
-                                if (target.method != null)
+                                if (target.isTogglable)
                                 {
-                                    try { target.method.Invoke(); } catch { }
+                                    target.enabled = !target.enabled;
+                                    if (target.enabled)
+                                    {
+                                        NotifiLib.SendNotification("<color=grey>[</color><color=green>ENABLE</color><color=grey>]</color> " + target.toolTip);
+                                        if (target.enableMethod != null)
+                                        {
+                                            try { target.enableMethod.Invoke(); } catch { }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        NotifiLib.SendNotification("<color=grey>[</color><color=red>DISABLE</color><color=grey>]</color> " + target.toolTip);
+                                        if (target.disableMethod != null)
+                                        {
+                                            try { target.disableMethod.Invoke(); } catch { }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    NotifiLib.SendNotification("<color=grey>[</color><color=green>ENABLE</color><color=grey>]</color> " + target.toolTip);
+                                    if (target.method != null)
+                                    {
+                                        try { target.method.Invoke(); } catch { }
+                                    }
                                 }
                             }
                         }
@@ -2417,6 +2451,7 @@ namespace iiMenu.Menu
         public static bool shouldAttemptLoadData = false;
         public static bool hasLoadedPreferences = false;
         public static bool ghostException = false;
+        public static bool hasPlayersUpdated = false;
         public static int pcbg = 0;
 
         public static string ascii = 
@@ -2440,6 +2475,8 @@ namespace iiMenu.Menu
 
         public static string mainPlayerId = "E19CE8918FD9E927"; // "86A10278DF9691BE"; //"E19CE8918FD9E927";
         //public static string altPlayerId = "86A10278DF9691BE";
+
+        public static string hotkeyButton = "none";
 
         public static GameObject cam = null;
         public static Camera TPC = null;
@@ -2699,6 +2736,7 @@ namespace iiMenu.Menu
         public static bool AntiSoundToggle = false;
         public static bool AntiCheatSelf = false;
         public static bool AntiCheatAll = false;
+        public static bool NoGliderRespawn = false;
 
         public static bool lastHit = false;
         public static bool lastHit2 = false;
