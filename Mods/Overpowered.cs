@@ -7,6 +7,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using PlayFab;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using UnityEngine;
@@ -35,36 +36,59 @@ namespace iiMenu.Mods
                     NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTIBAN</color><color=grey>]</color> <color=white>Enabling anti ban, this could take a while...</color>", 5000);
                     if (!PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED"))
                     {
-                        PlayFabClientAPI.ExecuteCloudScript(new PlayFab.ClientModels.ExecuteCloudScriptRequest
+                        hasPlayersUpdated = false;
+                        Photon.Realtime.Player thatfuckignbirdthatihate = PhotonNetwork.PlayerList[UnityEngine.Random.Range(0, PhotonNetwork.PlayerList.Length - 1)];
+                        if (thatfuckignbirdthatihate != null)
                         {
-                            FunctionName = "RoomClosed",
-                            FunctionParameter = new
+                            PlayFabClientAPI.ExecuteCloudScript(new PlayFab.ClientModels.ExecuteCloudScriptRequest
                             {
-                                GameId = PhotonNetwork.CurrentRoom.Name,
-                                Region = Regex.Replace(PhotonNetwork.CloudRegion, "[^a-zA-Z0-9]", "").ToUpper(),
-                                UserId = PhotonNetwork.PlayerList[UnityEngine.Random.Range(0, PhotonNetwork.PlayerList.Length + 1)].UserId,
-                                ActorNr = PhotonNetwork.PlayerList[UnityEngine.Random.Range(0, PhotonNetwork.PlayerList.Length + 1)],
-                                ActorCount = PhotonNetwork.ViewCount,
-                                AppVersion = PhotonNetwork.AppVersion
-                            },
-                        }, result =>
+                                FunctionName = "RoomClosed",
+                                FunctionParameter = new
+                                {
+                                    GameId = PhotonNetwork.CurrentRoom.Name,
+                                    Region = Regex.Replace(PhotonNetwork.CloudRegion, "[^a-zA-Z0-9]", "").ToUpper(),
+                                    UserId = thatfuckignbirdthatihate.UserId,
+                                    ActorNr = thatfuckignbirdthatihate.ActorNumber,
+                                    ActorCount = PhotonNetwork.ViewCount,
+                                    AppVersion = PhotonNetwork.AppVersion
+                                },
+                            }, result =>
+                            {
+                                if (result.Error != null)
+                                {
+                                    antibanworked = true;
+                                } else
+                                {
+                                    UnityEngine.Debug.Log("Error: " + result.Error.Error);
+                                }
+                            }, null);
+                            UnityEngine.Debug.Log("Script was ran");
+                        } else
                         {
-                            antibanworked = true;
-                        }, null);
+                            UnityEngine.Debug.Log("Player not found");
+                        }
                     }
                 }
                 if (Time.time > lastTime + 5f)
                 {
                     if (antibanworked)
                     {
-                        antibanworked = false;
-                        gamemodeSetTimeAt = Time.time + 5f;
-                        string gamemode = PhotonNetwork.CurrentRoom.CustomProperties["gameMode"].ToString().Replace(GorillaComputer.instance.currentQueue, GorillaComputer.instance.currentQueue + "MODDEDMODDED");
-                        ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable
+                        if (!hasPlayersUpdated)
                         {
-                            { "gameMode", gamemode }
-                        };
-                        PhotonNetwork.CurrentRoom.SetCustomProperties(hash);
+                            antibanworked = false;
+                            gamemodeSetTimeAt = Time.time + 5f;
+                            string gamemode = PhotonNetwork.CurrentRoom.CustomProperties["gameMode"].ToString().Replace(GorillaComputer.instance.currentQueue, GorillaComputer.instance.currentQueue + "MODDEDMODDED");
+                            ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable
+                            {
+                                { "gameMode", gamemode }
+                            };
+                            PhotonNetwork.CurrentRoom.SetCustomProperties(hash);
+                        } else
+                        {
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>The anti ban failed to load. This was because of a player joining or leaving.</color>");
+                            GetIndex("Anti Ban").enabled = false;
+                        }
+                        
                     }
                     else
                     {
@@ -74,8 +98,15 @@ namespace iiMenu.Mods
                 }
                 if (Time.time > lastTime + 10f)
                 {
-                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTIBAN</color><color=grey>]</color> <color=white>The anti ban has been enabled successfully.</color>");
-                    GetIndex("Anti Ban").enabled = false;
+                    if (PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED"))
+                    {
+                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTIBAN</color><color=grey>]</color> <color=white>The anti ban has been enabled successfully.</color>");
+                        GetIndex("Anti Ban").enabled = false;
+                    } else
+                    {
+                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>The anti ban failed to load. This could be a result of bad internet.</color>");
+                        GetIndex("Anti Ban").enabled = false;
+                    }
                 }
             } else
             {
@@ -1037,7 +1068,89 @@ namespace iiMenu.Mods
 
             BetaFireProjectile("WaterBalloon", startpos, charvel, new Color32(0, 0, 0, 255));
         }
-        
+
+        public static void GliderBlindGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray);
+                if (shouldBePC)
+                {
+                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
+                    Physics.Raycast(ray, out Ray, 100);
+                }
+
+                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
+                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
+                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+
+                GameObject line = new GameObject("Line");
+                LineRenderer liner = line.AddComponent<LineRenderer>();
+                liner.material.shader = Shader.Find("GUI/Text Shader");
+                liner.startColor = GetBGColor(0f);
+                liner.endColor = GetBGColor(0.5f);
+                liner.startWidth = 0.025f;
+                liner.endWidth = 0.025f;
+                liner.positionCount = 2;
+                liner.useWorldSpace = true;
+                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
+                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
+                UnityEngine.Object.Destroy(line, Time.deltaTime);
+
+                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        isCopying = true;
+                        whoCopy = possibly;
+                    }
+                }
+
+                if (isCopying)
+                {
+                    foreach (GliderHoldable glider in GetGliders())
+                    {
+                        glider.gameObject.transform.position = whoCopy.headMesh.transform.position;
+                        glider.gameObject.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+                    }
+                }
+            }
+            else
+            {
+                if (isCopying)
+                {
+                    isCopying = false;
+                    GorillaTagger.Instance.offlineVRRig.enabled = true;
+                }
+            }
+        }
+
+        public static void GliderBlindAll()
+        {
+            GliderHoldable[] those = GetGliders();
+            int index = 0;
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                {
+                    try
+                    {
+                        GliderHoldable glider = those[index];
+                        glider.gameObject.transform.position = vrrig.headMesh.transform.position;
+                        glider.gameObject.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+                    } catch { }
+                    index++;
+                }
+            }
+        }
+
         public static void KickGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
@@ -1136,6 +1249,68 @@ namespace iiMenu.Mods
                 }
                 PhotonNetwork.SendAllOutgoingCommands();
                 RPCProtection();
+            }
+        }
+
+        public static void FlingGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray);
+                if (shouldBePC)
+                {
+                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
+                    Physics.Raycast(ray, out Ray, 100);
+                }
+
+                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
+                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
+                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+
+                GameObject line = new GameObject("Line");
+                LineRenderer liner = line.AddComponent<LineRenderer>();
+                liner.material.shader = Shader.Find("GUI/Text Shader");
+                liner.startColor = GetBGColor(0f);
+                liner.endColor = GetBGColor(0.5f);
+                liner.startWidth = 0.025f;
+                liner.endWidth = 0.025f;
+                liner.positionCount = 2;
+                liner.useWorldSpace = true;
+                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
+                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
+                UnityEngine.Object.Destroy(line, Time.deltaTime);
+
+                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        foreach (GliderHoldable glider in GetGliders())
+                        {
+                            FieldInfo SyncedStateField = typeof(GliderHoldable).GetField("syncedState", BindingFlags.NonPublic | BindingFlags.Instance);
+                            object SyncedStateValue = SyncedStateField.GetValue(glider);
+
+                            FieldInfo RiderIdField = SyncedStateValue.GetType().GetField("riderId", BindingFlags.Public | BindingFlags.Instance);
+                            RiderIdField.SetValue(SyncedStateValue, GetPlayerFromVRRig(possibly).ActorNumber);
+
+                            SyncedStateField.SetValue(glider, SyncedStateValue);
+
+                            FieldInfo RigidField = typeof(GliderHoldable).GetField("rb", BindingFlags.NonPublic | BindingFlags.Instance);
+                            Rigidbody rb = (Rigidbody)RigidField.GetValue(glider);
+
+                            rb.isKinematic = false;
+                            rb.velocity = new Vector3(0f, 100f, 0f);
+
+                            RPCProtection();
+                        }
+                    }
+                }
             }
         }
         

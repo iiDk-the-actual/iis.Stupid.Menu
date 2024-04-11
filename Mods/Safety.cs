@@ -1,7 +1,9 @@
 ﻿using ExitGames.Client.Photon;
 using iiMenu.Notifications;
 using Photon.Pun;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Valve.VR;
@@ -81,6 +83,7 @@ namespace iiMenu.Mods
             boards = null;
         }
 
+        public static GorillaScoreBoard[] currentboards = null;
         public static GorillaScoreBoard[] boards = null;
         public static void AntiReportDisconnect()
         {
@@ -89,8 +92,17 @@ namespace iiMenu.Mods
                 if (boards == null)
                 {
                     boards = GameObject.FindObjectsOfType<GorillaScoreBoard>();
+                    foreach (GorillaScoreBoard fix in boards)
+                    {
+                        if (!currentboards.Contains(fix))
+                        {
+                            List<GorillaScoreBoard> abc = currentboards.ToList<GorillaScoreBoard>();
+                            abc.Add(fix);
+                            currentboards = abc.ToArray();
+                        }
+                    }
                 }
-                foreach (GorillaScoreBoard board in boards)
+                foreach (GorillaScoreBoard board in currentboards)
                 {
                     foreach (GorillaPlayerScoreboardLine line in board.lines)
                     {
@@ -128,8 +140,17 @@ namespace iiMenu.Mods
                 if (boards == null)
                 {
                     boards = GameObject.FindObjectsOfType<GorillaScoreBoard>();
+                    foreach (GorillaScoreBoard fix in boards)
+                    {
+                        if (!currentboards.Contains(fix))
+                        {
+                            List<GorillaScoreBoard> abc = currentboards.ToList<GorillaScoreBoard>();
+                            abc.Add(fix);
+                            currentboards = abc.ToArray();
+                        }
+                    }
                 }
-                foreach (GorillaScoreBoard board in boards)
+                foreach (GorillaScoreBoard board in currentboards)
                 {
                     foreach (GorillaPlayerScoreboardLine line in board.lines)
                     {
@@ -169,8 +190,17 @@ namespace iiMenu.Mods
                 if (boards == null)
                 {
                     boards = GameObject.FindObjectsOfType<GorillaScoreBoard>();
+                    foreach (GorillaScoreBoard fix in boards)
+                    {
+                        if (!currentboards.Contains(fix))
+                        {
+                            List<GorillaScoreBoard> abc = currentboards.ToList<GorillaScoreBoard>();
+                            abc.Add(fix);
+                            currentboards = abc.ToArray();
+                        }
+                    }
                 }
-                foreach (GorillaScoreBoard board in boards)
+                foreach (GorillaScoreBoard board in currentboards)
                 {
                     foreach (GorillaPlayerScoreboardLine line in board.lines)
                     {
@@ -210,8 +240,17 @@ namespace iiMenu.Mods
                 if (boards == null)
                 {
                     boards = GameObject.FindObjectsOfType<GorillaScoreBoard>();
+                    foreach (GorillaScoreBoard fix in boards)
+                    {
+                        if (!currentboards.Contains(fix))
+                        {
+                            List<GorillaScoreBoard> abc = currentboards.ToList<GorillaScoreBoard>();
+                            abc.Add(fix);
+                            currentboards = abc.ToArray();
+                        }
+                    }
                 }
-                foreach (GorillaScoreBoard board in boards)
+                foreach (GorillaScoreBoard board in currentboards)
                 {
                     foreach (GorillaPlayerScoreboardLine line in board.lines)
                     {

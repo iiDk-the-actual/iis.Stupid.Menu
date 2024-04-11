@@ -190,6 +190,19 @@ namespace iiMenu.Patches
             return true;
         }
     }
+
+    [HarmonyPatch(typeof(GliderHoldable), "Respawn")]
+    public class AntiGliderRespawn
+    {
+        public static bool Prefix()
+        {
+            if (NoGliderRespawn)
+            {
+                return false;
+            }
+            return true;
+        }
+    }
     /*
     [HarmonyPatch(typeof(GorillaGameManager), "LaunchSlingshotProjectile")]
     public class AntiCrash

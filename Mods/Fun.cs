@@ -8,6 +8,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using Photon.Voice.Unity.UtilityScripts;
 using POpusCodec.Enums;
+using System;
 using System.ComponentModel;
 using System.IO;
 using System.Reflection;
@@ -762,6 +763,7 @@ namespace iiMenu.Mods
 
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
+                    GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
                     GameObject.Find("Floating Bug Holdable").transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
                 }
             }
@@ -803,6 +805,7 @@ namespace iiMenu.Mods
 
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
+                    GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
                     GameObject.Find("Cave Bat Holdable").transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
                 }
             }
@@ -849,6 +852,106 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void GliderGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray);
+                if (shouldBePC)
+                {
+                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
+                    Physics.Raycast(ray, out Ray, 100);
+                }
+
+                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
+                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
+                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+
+                GameObject line = new GameObject("Line");
+                LineRenderer liner = line.AddComponent<LineRenderer>();
+                liner.material.shader = Shader.Find("GUI/Text Shader");
+                liner.startColor = GetBGColor(0f);
+                liner.endColor = GetBGColor(0.5f);
+                liner.startWidth = 0.025f;
+                liner.endWidth = 0.025f;
+                liner.positionCount = 2;
+                liner.useWorldSpace = true;
+                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
+                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
+                UnityEngine.Object.Destroy(line, Time.deltaTime);
+
+                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                {
+                    foreach (GliderHoldable glider in GetGliders())
+                    {
+                        glider.gameObject.transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
+                    }
+                }
+            }
+        }
+
+        public static void NoRespawnGliders()
+        {
+            NoGliderRespawn = true;
+        }
+
+        public static void PleaseRespawnGliders()
+        {
+            NoGliderRespawn = false;
+        }
+
+        public static void FastGliders()
+        {
+            foreach (GliderHoldable glider in GetGliders())
+            {
+                glider.pullUpLiftBonus = 0.5f;
+                glider.dragVsSpeedDragFactor = 0.5f;
+            }
+        }
+
+        public static void SlowGliders()
+        {
+            foreach (GliderHoldable glider in GetGliders())
+            {
+                glider.pullUpLiftBonus = 0.05f;
+                glider.dragVsSpeedDragFactor = 0.05f;
+            }
+        }
+
+        public static void FixGliderSpeed()
+        {
+            foreach (GliderHoldable glider in GetGliders())
+            {
+                glider.pullUpLiftBonus = 0.1f;
+                glider.dragVsSpeedDragFactor = 0.2f;
+            }
+        }
+
+        public static float lastTime = 0f;
+        public static void SpazGliderMaterial()
+        {
+            if (Time.time > lastTime)
+            {
+                lastTime = Time.time + 0.1f;
+                foreach (GliderHoldable glider in GetGliders())
+                {
+                    FieldInfo SyncedStateField = typeof(GliderHoldable).GetField("syncedState", BindingFlags.NonPublic | BindingFlags.Instance);
+                    object SyncedStateValue = SyncedStateField.GetValue(glider);
+
+                    FieldInfo RiderIdField = SyncedStateValue.GetType().GetField("materialIndex", BindingFlags.Public | BindingFlags.Instance);
+                    RiderIdField.SetValue(SyncedStateValue, (byte)UnityEngine.Random.Range(0, 3));
+
+                    SyncedStateField.SetValue(glider, SyncedStateValue);
+                }
+            }
+        }
+
         public static void GrabBug()
         {
             if (rightGrab)
@@ -875,6 +978,17 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void GrabGliders()
+        {
+            if (rightGrab)
+            {
+                foreach (GliderHoldable glider in GetGliders())
+                {
+                    glider.gameObject.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                }
+            }
+        }
+
         public static void DestroyBug()
         {
             GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
@@ -892,6 +1006,14 @@ namespace iiMenu.Mods
             GameObject.Find("BeachBall").transform.position = new Vector3(99999f, 99999f, 99999f);
         }
 
+        public static void RespawnGliders()
+        {
+            foreach (GliderHoldable glider in GetGliders())
+            {
+                glider.Respawn();
+            }
+        }
+
         public static void SpazBug()
         {
             GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
@@ -907,6 +1029,64 @@ namespace iiMenu.Mods
         public static void SpazBeachBall()
         {
             GameObject.Find("BeachBall").transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+        }
+
+        public static void SpazGliders()
+        {
+            foreach (GliderHoldable glider in GetGliders())
+            {
+                glider.gameObject.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+            }
+        }
+
+        public static void BugHalo()
+        {
+            float offset = 0;
+            GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
+            GameObject.Find("Floating Bug Holdable").transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)), 2, MathF.Sin(offset + ((float)Time.frameCount / 30)));
+        }
+
+        public static void BatHalo()
+        {
+            float offset = 360f / 3f;
+            GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
+            GameObject.Find("Cave Bat Holdable").transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)), 2, MathF.Sin(offset + ((float)Time.frameCount / 30)));
+        }
+
+        public static void BeachBallHalo()
+        {
+            float offset = (360f / 3f) * 2f;
+            GameObject.Find("BeachBall").transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)), 2, MathF.Sin(offset + ((float)Time.frameCount / 30)));
+        }
+
+        public static void OrbitGliders()
+        {
+            GliderHoldable[] them = GetGliders();
+            int index = 0;
+            foreach (GliderHoldable glider in them)
+            {
+                float offset = (360f / (float)them.Length) * index;
+                glider.gameObject.transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)) * 5f, 2, MathF.Sin(offset + ((float)Time.frameCount / 30)) * 5f);
+                index++;
+            }
+        }
+
+        public static void RideBug()
+        {
+            GorillaTagger.Instance.rigidbody.transform.position = GameObject.Find("Floating Bug Holdable").transform.position;
+            GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
+        }
+
+        public static void RideBat()
+        {
+            GorillaTagger.Instance.rigidbody.transform.position = GameObject.Find("Cave Bat Holdable").transform.position;
+            GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
+        }
+
+        public static void RideBeachBall()
+        {
+            GorillaTagger.Instance.rigidbody.transform.position = GameObject.Find("BeachBall").transform.position;
+            GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
         }
 
         public static void BreakBug()

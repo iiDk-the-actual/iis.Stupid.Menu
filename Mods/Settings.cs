@@ -944,7 +944,7 @@ namespace iiMenu.Mods
                 }
             }
 
-            string ihateyouguys = platformMode+"\n"+platformShape+"\n"+flySpeedCycle+"\n"+longarmCycle+"\n"+speedboostCycle+"\n"+projmode+"\n"+trailmode+"\n"+shootCycle+"\n"+pointerIndex+"\n"+tagAuraIndex+"\n"+notificationDecayTime+"\n"+fontStyleType+"\n"+arrowType+"\n"+pcbg+"\n"+internetTime;
+            string ihateyouguys = platformMode+"\n"+platformShape+"\n"+flySpeedCycle+"\n"+longarmCycle+"\n"+speedboostCycle+"\n"+projmode+"\n"+trailmode+"\n"+shootCycle+"\n"+pointerIndex+"\n"+tagAuraIndex+"\n"+notificationDecayTime+"\n"+fontStyleType+"\n"+arrowType+"\n"+pcbg+"\n"+internetTime+"\n"+hotkeyButton;
 
             if (!Directory.Exists("iisStupidMenu"))
             {
@@ -1023,6 +1023,7 @@ namespace iiMenu.Mods
                     Settings.ChangePCUI();
                     internetTime = int.Parse(data[14]) - 1;
                     Settings.ChangeReconnectTime();
+                    hotkeyButton = data[15];
                 }
                 catch { }
 
