@@ -83,8 +83,9 @@ namespace iiMenu.Mods
             boards = null;
         }
 
-        public static GorillaScoreBoard[] currentboards = null;
+        public static List<GorillaScoreBoard> currentboards = new List<GorillaScoreBoard>() { };
         public static GorillaScoreBoard[] boards = null;
+
         public static void AntiReportDisconnect()
         {
             try
@@ -94,11 +95,22 @@ namespace iiMenu.Mods
                     boards = GameObject.FindObjectsOfType<GorillaScoreBoard>();
                     foreach (GorillaScoreBoard fix in boards)
                     {
-                        if (!currentboards.Contains(fix))
+                        try
                         {
-                            List<GorillaScoreBoard> abc = currentboards.ToList<GorillaScoreBoard>();
-                            abc.Add(fix);
-                            currentboards = abc.ToArray();
+                            Debug.Log("Found board");
+                            if (!currentboards.Contains(fix) || currentboards.Count <= 0)
+                            {
+                                currentboards.Add(fix);
+                                Debug.Log("Added to list");
+                            } else
+                            {
+                                Debug.Log("Board is already on list");
+                            }
+                        } catch
+                        {
+                            Debug.Log("Somethin failed");
+                            currentboards.Add(fix);
+                            Debug.Log("Added dat shit anyway");
                         }
                     }
                 }
@@ -142,11 +154,24 @@ namespace iiMenu.Mods
                     boards = GameObject.FindObjectsOfType<GorillaScoreBoard>();
                     foreach (GorillaScoreBoard fix in boards)
                     {
-                        if (!currentboards.Contains(fix))
+                        try
                         {
-                            List<GorillaScoreBoard> abc = currentboards.ToList<GorillaScoreBoard>();
-                            abc.Add(fix);
-                            currentboards = abc.ToArray();
+                            Debug.Log("Found board");
+                            if (!currentboards.Contains(fix) || currentboards.Count <= 0)
+                            {
+                                currentboards.Add(fix);
+                                Debug.Log("Added to list");
+                            }
+                            else
+                            {
+                                Debug.Log("Board is already on list");
+                            }
+                        }
+                        catch
+                        {
+                            Debug.Log("Somethin failed");
+                            currentboards.Add(fix);
+                            Debug.Log("Added dat shit anyway");
                         }
                     }
                 }
@@ -192,11 +217,24 @@ namespace iiMenu.Mods
                     boards = GameObject.FindObjectsOfType<GorillaScoreBoard>();
                     foreach (GorillaScoreBoard fix in boards)
                     {
-                        if (!currentboards.Contains(fix))
+                        try
                         {
-                            List<GorillaScoreBoard> abc = currentboards.ToList<GorillaScoreBoard>();
-                            abc.Add(fix);
-                            currentboards = abc.ToArray();
+                            Debug.Log("Found board");
+                            if (!currentboards.Contains(fix) || currentboards.Count <= 0)
+                            {
+                                currentboards.Add(fix);
+                                Debug.Log("Added to list");
+                            }
+                            else
+                            {
+                                Debug.Log("Board is already on list");
+                            }
+                        }
+                        catch
+                        {
+                            Debug.Log("Somethin failed");
+                            currentboards.Add(fix);
+                            Debug.Log("Added dat shit anyway");
                         }
                     }
                 }
@@ -242,11 +280,24 @@ namespace iiMenu.Mods
                     boards = GameObject.FindObjectsOfType<GorillaScoreBoard>();
                     foreach (GorillaScoreBoard fix in boards)
                     {
-                        if (!currentboards.Contains(fix))
+                        try
                         {
-                            List<GorillaScoreBoard> abc = currentboards.ToList<GorillaScoreBoard>();
-                            abc.Add(fix);
-                            currentboards = abc.ToArray();
+                            Debug.Log("Found board");
+                            if (!currentboards.Contains(fix) || currentboards.Count <= 0)
+                            {
+                                currentboards.Add(fix);
+                                Debug.Log("Added to list");
+                            }
+                            else
+                            {
+                                Debug.Log("Board is already on list");
+                            }
+                        }
+                        catch
+                        {
+                            Debug.Log("Somethin failed");
+                            currentboards.Add(fix);
+                            Debug.Log("Added dat shit anyway");
                         }
                     }
                 }

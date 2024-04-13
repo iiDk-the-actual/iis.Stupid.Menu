@@ -26,9 +26,35 @@ namespace iiMenu.Mods
 
         public static void AntiBan()
         {
-            /*if (!IsModded())
+            if (!IsModded())
             {
-                if (Time.time > lastTime + 15f)
+                Photon.Realtime.Player thatfuckignbirdthatihate = PhotonNetwork.LocalPlayer/*PlayerList[UnityEngine.Random.Range(0, PhotonNetwork.PlayerList.Length - 1)]*/;
+                ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable
+                {
+                    { "gameMode", PhotonNetwork.CurrentRoom.CustomProperties["gameMode"].ToString().Replace(GorillaComputer.instance.currentQueue, GorillaComputer.instance.currentQueue + "MODDEDMODDED") }
+                };
+                PhotonNetwork.CurrentRoom.IsOpen = false;
+                PhotonNetwork.CurrentRoom.IsVisible = false;
+                PhotonNetwork.CurrentRoom.SetCustomProperties(hash);
+                PlayFabClientAPI.ExecuteCloudScript(new PlayFab.ClientModels.ExecuteCloudScriptRequest
+                {
+                    FunctionName = "RoomClosed",
+                    FunctionParameter = new
+                    {
+                        GameId = PhotonNetwork.CurrentRoom.Name,
+                        Region = Regex.Replace(PhotonNetwork.CloudRegion, "[^a-zA-Z0-9]", "").ToUpper(),
+                        UserId = thatfuckignbirdthatihate.UserId,
+                        ActorNr = thatfuckignbirdthatihate.ActorNumber,
+                        ActorCount = PhotonNetwork.ViewCount,
+                        AppVersion = PhotonNetwork.AppVersion
+                    },
+                }, result =>
+                {
+                    antibanworked = true;
+                }, null);
+
+                NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTIBAN</color><color=grey>]</color> <color=white>The anti ban has been enabled successfully.</color>");
+                /*if (Time.time > lastTime + 15f)
                 {
                     lastTime = Time.time;
                     antibanworked = false;
@@ -54,13 +80,7 @@ namespace iiMenu.Mods
                                 },
                             }, result =>
                             {
-                                if (result.Error != null)
-                                {
                                     antibanworked = true;
-                                } else
-                                {
-                                    UnityEngine.Debug.Log("Error: " + result.Error.Error);
-                                }
                             }, null);
                             UnityEngine.Debug.Log("Script was ran");
                         } else
@@ -107,19 +127,20 @@ namespace iiMenu.Mods
                         NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>The anti ban failed to load. This could be a result of bad internet.</color>");
                         GetIndex("Anti Ban").enabled = false;
                     }
-                }
-            } else
+                }*/
+            }
+            else
             {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>The anti ban is already enabled!</color>");
                 GetIndex("Anti Ban").enabled = false;
-            }*/
+            }/*
             GetIndex("Anti Ban").enabled = false;
-            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to security.</color>");
+            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to security.</color>");*/
         }
 
         public static bool IsModded()
         {
-            return (PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED") && Time.time > gamemodeSetTimeAt);
+            return (PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED")/* && Time.time > gamemodeSetTimeAt*/);
         }
 
         public static void FastMaster()
