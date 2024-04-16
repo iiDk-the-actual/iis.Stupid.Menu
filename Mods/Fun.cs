@@ -890,7 +890,13 @@ namespace iiMenu.Mods
                 {
                     foreach (GliderHoldable glider in GetGliders())
                     {
-                        glider.gameObject.transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
+                        if (glider.photonView.Owner == PhotonNetwork.LocalPlayer)
+                        {
+                            glider.gameObject.transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
+                        } else
+                        {
+                            glider.OnHover(null, null);
+                        }
                     }
                 }
             }
@@ -941,13 +947,20 @@ namespace iiMenu.Mods
                 lastTime = Time.time + 0.1f;
                 foreach (GliderHoldable glider in GetGliders())
                 {
-                    FieldInfo SyncedStateField = typeof(GliderHoldable).GetField("syncedState", BindingFlags.NonPublic | BindingFlags.Instance);
-                    object SyncedStateValue = SyncedStateField.GetValue(glider);
+                    if (glider.photonView.Owner == PhotonNetwork.LocalPlayer)
+                    {
+                        FieldInfo SyncedStateField = typeof(GliderHoldable).GetField("syncedState", BindingFlags.NonPublic | BindingFlags.Instance);
+                        object SyncedStateValue = SyncedStateField.GetValue(glider);
 
-                    FieldInfo RiderIdField = SyncedStateValue.GetType().GetField("materialIndex", BindingFlags.Public | BindingFlags.Instance);
-                    RiderIdField.SetValue(SyncedStateValue, (byte)UnityEngine.Random.Range(0, 3));
+                        FieldInfo RiderIdField = SyncedStateValue.GetType().GetField("materialIndex", BindingFlags.Public | BindingFlags.Instance);
+                        RiderIdField.SetValue(SyncedStateValue, (byte)UnityEngine.Random.Range(0, 3));
 
-                    SyncedStateField.SetValue(glider, SyncedStateValue);
+                        SyncedStateField.SetValue(glider, SyncedStateValue);
+                    }
+                    else
+                    {
+                        glider.OnHover(null, null);
+                    }
                 }
             }
         }
@@ -956,8 +969,14 @@ namespace iiMenu.Mods
         {
             if (rightGrab)
             {
-                GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
-                GameObject.Find("Floating Bug Holdable").transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                if (GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().photonView.Owner == PhotonNetwork.LocalPlayer)
+                {
+                    GameObject.Find("Floating Bug Holdable").transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                }
+                else
+                {
+                    GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
+                }
             }
         }
 
@@ -965,8 +984,14 @@ namespace iiMenu.Mods
         {
             if (rightGrab)
             {
-                GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
-                GameObject.Find("Cave Bat Holdable").transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                if (GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().photonView.Owner == PhotonNetwork.LocalPlayer)
+                {
+                    GameObject.Find("Cave Bat Holdable").transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                }
+                else
+                {
+                    GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
+                }
             }
         }
 
@@ -984,21 +1009,40 @@ namespace iiMenu.Mods
             {
                 foreach (GliderHoldable glider in GetGliders())
                 {
-                    glider.gameObject.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                    if (glider.photonView.Owner == PhotonNetwork.LocalPlayer)
+                    {
+                        glider.gameObject.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                    }
+                    else
+                    {
+                        glider.OnHover(null, null);
+                    }
                 }
             }
         }
 
         public static void DestroyBug()
         {
-            GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
-            GameObject.Find("Floating Bug Holdable").transform.position = new Vector3(99999f, 99999f, 99999f);
+            if (GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().photonView.Owner == PhotonNetwork.LocalPlayer)
+            {
+                GameObject.Find("Floating Bug Holdable").transform.position = new Vector3(99999f, 99999f, 99999f);
+            }
+            else
+            {
+                GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
+            }
         }
 
         public static void DestroyBat()
         {
-            GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
-            GameObject.Find("Cave Bat Holdable").transform.position = new Vector3(99999f, 99999f, 99999f);
+            if (GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().photonView.Owner == PhotonNetwork.LocalPlayer)
+            {
+                GameObject.Find("Cave Bat Holdable").transform.position = new Vector3(99999f, 99999f, 99999f);
+            }
+            else
+            {
+                GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
+            }
         }
 
         public static void DestroyBeachBall()
@@ -1010,20 +1054,39 @@ namespace iiMenu.Mods
         {
             foreach (GliderHoldable glider in GetGliders())
             {
-                glider.Respawn();
+                if (glider.photonView.Owner == PhotonNetwork.LocalPlayer)
+                {
+                    glider.Respawn();
+                }
+                else
+                {
+                    glider.OnHover(null, null);
+                }
             }
         }
 
         public static void SpazBug()
         {
-            GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
-            GameObject.Find("Floating Bug Holdable").transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+            if (GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().photonView.Owner == PhotonNetwork.LocalPlayer)
+            {
+                GameObject.Find("Floating Bug Holdable").transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+            }
+            else
+            {
+                GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
+            }
         }
 
         public static void SpazBat()
         {
-            GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
-            GameObject.Find("Cave Bat Holdable").transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+            if (GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().photonView.Owner == PhotonNetwork.LocalPlayer)
+            {
+                GameObject.Find("Cave Bat Holdable").transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+            }
+            else
+            {
+                GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
+            }
         }
 
         public static void SpazBeachBall()
@@ -1035,22 +1098,39 @@ namespace iiMenu.Mods
         {
             foreach (GliderHoldable glider in GetGliders())
             {
-                glider.gameObject.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+                if (glider.photonView.Owner == PhotonNetwork.LocalPlayer)
+                {
+                    glider.gameObject.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+                }
+                else
+                {
+                    glider.OnHover(null, null);
+                }
             }
         }
 
         public static void BugHalo()
         {
-            float offset = 0;
-            GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
-            GameObject.Find("Floating Bug Holdable").transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)), 2, MathF.Sin(offset + ((float)Time.frameCount / 30)));
+            if (GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().photonView.Owner == PhotonNetwork.LocalPlayer)
+            {
+                float offset = 0;
+                GameObject.Find("Floating Bug Holdable").transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)), 2, MathF.Sin(offset + ((float)Time.frameCount / 30)));
+            } else
+            {
+                GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
+            }
         }
 
         public static void BatHalo()
         {
-            float offset = 360f / 3f;
-            GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
-            GameObject.Find("Cave Bat Holdable").transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)), 2, MathF.Sin(offset + ((float)Time.frameCount / 30)));
+            if (GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().photonView.Owner == PhotonNetwork.LocalPlayer)
+            {
+                float offset = 360f / 3f;
+                GameObject.Find("Cave Bat Holdable").transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)), 2, MathF.Sin(offset + ((float)Time.frameCount / 30)));
+            } else
+            {
+                GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
+            }
         }
 
         public static void BeachBallHalo()
@@ -1065,8 +1145,15 @@ namespace iiMenu.Mods
             int index = 0;
             foreach (GliderHoldable glider in them)
             {
-                float offset = (360f / (float)them.Length) * index;
-                glider.gameObject.transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)) * 5f, 2, MathF.Sin(offset + ((float)Time.frameCount / 30)) * 5f);
+                if (glider.photonView.Owner == PhotonNetwork.LocalPlayer)
+                {
+                    float offset = (360f / (float)them.Length) * index;
+                    glider.gameObject.transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)) * 5f, 2, MathF.Sin(offset + ((float)Time.frameCount / 30)) * 5f);
+                }
+                else
+                {
+                    glider.OnHover(null, null);
+                }
                 index++;
             }
         }
@@ -1162,9 +1249,49 @@ namespace iiMenu.Mods
             {
                 foreach (BalloonHoldable balloon in GameObject.FindObjectsOfType<BalloonHoldable>())
                 {
-                    balloon.WorldShareableRequestOwnership();
-                    balloon.gameObject.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                    if (balloon.photonView.Owner == PhotonNetwork.LocalPlayer)
+                    {
+                        balloon.gameObject.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                    }
+                    else
+                    {
+                        balloon.WorldShareableRequestOwnership();
+                    }
                 }
+            }
+        }
+
+        public static void SpazBalloons()
+        {
+            foreach (BalloonHoldable balloon in GameObject.FindObjectsOfType<BalloonHoldable>())
+            {
+                if (balloon.photonView.Owner == PhotonNetwork.LocalPlayer)
+                {
+                    balloon.gameObject.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360))); ;
+                }
+                else
+                {
+                    balloon.WorldShareableRequestOwnership();
+                }
+            }
+        }
+
+        public static void OrbitBalloons()
+        {
+            BalloonHoldable[] them = GameObject.FindObjectsOfType<BalloonHoldable>();
+            int index = 0;
+            foreach (BalloonHoldable balloon in them)
+            {
+                if (balloon.photonView.Owner == PhotonNetwork.LocalPlayer)
+                {
+                    float offset = (360f / (float)them.Length) * index;
+                    balloon.gameObject.transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)) * 5f, 2, MathF.Sin(offset + ((float)Time.frameCount / 30)) * 5f);
+                }
+                else
+                {
+                    balloon.WorldShareableRequestOwnership();
+                }
+                index++;
             }
         }
 
@@ -1206,8 +1333,13 @@ namespace iiMenu.Mods
                 {
                     foreach (BalloonHoldable balloon in GameObject.FindObjectsOfType<BalloonHoldable>())
                     {
-                        balloon.WorldShareableRequestOwnership();
-                        balloon.gameObject.transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
+                        if (balloon.photonView.Owner == PhotonNetwork.LocalPlayer)
+                        {
+                            balloon.gameObject.transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
+                        } else
+                        {
+                            balloon.WorldShareableRequestOwnership();
+                        }
                     }
                 }
             }
@@ -1217,8 +1349,29 @@ namespace iiMenu.Mods
         {
             foreach (BalloonHoldable balloon in GameObject.FindObjectsOfType<BalloonHoldable>())
             {
-                balloon.WorldShareableRequestOwnership();
-                balloon.gameObject.transform.position = new Vector3(99999f, 99999f, 99999f);
+                if (balloon.photonView.Owner == PhotonNetwork.LocalPlayer)
+                {
+                    balloon.gameObject.transform.position = new Vector3(99999f, 99999f, 99999f);
+                }
+                else
+                {
+                    balloon.WorldShareableRequestOwnership();
+                }
+            }
+        }
+
+        public static void DestroyGliders()
+        {
+            foreach (GliderHoldable glider in GetGliders())
+            {
+                if (glider.photonView.Owner == PhotonNetwork.LocalPlayer)
+                {
+                    glider.gameObject.transform.position = new Vector3(99999f, 99999f, 99999f);
+                }
+                else
+                {
+                    glider.OnHover(null, null);
+                }
             }
         }
 

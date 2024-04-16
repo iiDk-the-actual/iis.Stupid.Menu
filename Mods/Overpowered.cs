@@ -11,6 +11,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 using UnityEngine.InputSystem;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
@@ -392,7 +393,7 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void LagGun()
+        /*public static void LagGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
             {
@@ -466,9 +467,68 @@ namespace iiMenu.Mods
                     isCopying = false;
                 }
             }
+        }*/
+
+        public static void LagGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray);
+                if (shouldBePC)
+                {
+                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
+                    Physics.Raycast(ray, out Ray, 100);
+                }
+
+                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
+                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
+                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+
+                GameObject line = new GameObject("Line");
+                LineRenderer liner = line.AddComponent<LineRenderer>();
+                liner.material.shader = Shader.Find("GUI/Text Shader");
+                liner.startColor = GetBGColor(0f);
+                liner.endColor = GetBGColor(0.5f);
+                liner.startWidth = 0.025f;
+                liner.endWidth = 0.025f;
+                liner.positionCount = 2;
+                liner.useWorldSpace = true;
+                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
+                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
+                UnityEngine.Object.Destroy(line, Time.deltaTime);
+
+                if ((isCopying && whoCopy != null) && Time.time > kgDebounce)
+                {
+                    kgDebounce = Time.time + 0.25f;
+                    GorillaTagger.Instance.myVRRig.RPC("InitializeNoobMaterial", GetPlayerFromVRRig(whoCopy), new object[] { UnityEngine.Random.Range(0f, 255f) / 255f, UnityEngine.Random.Range(0f, 255f) / 255f, UnityEngine.Random.Range(0f, 255f) / 255f });
+                    RPCProtection();
+                }
+                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        isCopying = true;
+                        whoCopy = possibly;
+                    }
+                }
+            }
+            else
+            {
+                if (isCopying)
+                {
+                    isCopying = false;
+                }
+            }
         }
 
-        public static void LagAll()
+        /*public static void LagAll()
         {
             if ((rightTrigger > 0.5f) && Time.time > kgDebounce)
             {
@@ -493,8 +553,19 @@ namespace iiMenu.Mods
                     RPCProtection();
                 }
             }
+        }*/
+
+        public static void LagAll()
+        {
+            if ((rightTrigger > 0.5f) && Time.time > kgDebounce)
+            {
+                kgDebounce = Time.time + 0.25f;
+                GorillaTagger.Instance.myVRRig.RPC("InitializeNoobMaterial", RpcTarget.Others, new object[] { UnityEngine.Random.Range(0f, 255f) / 255f, UnityEngine.Random.Range(0f, 255f) / 255f, UnityEngine.Random.Range(0f, 255f) / 255f });
+                RPCProtection();
+            }
         }
 
+        /*
         public static void CrashGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
@@ -563,9 +634,67 @@ namespace iiMenu.Mods
                     isCopying = false;
                 }
             }
+        }*/
+
+        public static void CrashGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray);
+                if (shouldBePC)
+                {
+                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
+                    Physics.Raycast(ray, out Ray, 100);
+                }
+
+                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
+                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
+                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
+                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+
+                GameObject line = new GameObject("Line");
+                LineRenderer liner = line.AddComponent<LineRenderer>();
+                liner.material.shader = Shader.Find("GUI/Text Shader");
+                liner.startColor = GetBGColor(0f);
+                liner.endColor = GetBGColor(0.5f);
+                liner.startWidth = 0.025f;
+                liner.endWidth = 0.025f;
+                liner.positionCount = 2;
+                liner.useWorldSpace = true;
+                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
+                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
+                UnityEngine.Object.Destroy(line, Time.deltaTime);
+
+                if ((isCopying && whoCopy != null) && Time.time > kgDebounce)
+                {
+                    GorillaTagger.Instance.myVRRig.RPC("InitializeNoobMaterial", GetPlayerFromVRRig(whoCopy), new object[] { UnityEngine.Random.Range(0f,255f)/255f, UnityEngine.Random.Range(0f, 255f) / 255f, UnityEngine.Random.Range(0f, 255f) / 255f });
+                    RPCProtection();
+                }
+                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        isCopying = true;
+                        whoCopy = possibly;
+                    }
+                }
+            }
+            else
+            {
+                if (isCopying)
+                {
+                    isCopying = false;
+                }
+            }
         }
 
-        public static void CrashAll()
+        /*public static void CrashAll()
         {
             if ((rightTrigger > 0.5f) && Time.time > kgDebounce)
             {
@@ -583,6 +712,15 @@ namespace iiMenu.Mods
                     PhotonNetwork.NetworkingClient.OpRaiseEvent(207, hashtable, null, SendOptions.SendReliable);
                     RPCProtection();
                 }
+            }
+        }*/
+
+        public static void CrashAll()
+        {
+            if ((rightTrigger > 0.5f) && Time.time > kgDebounce)
+            {
+                GorillaTagger.Instance.myVRRig.RPC("InitializeNoobMaterial", RpcTarget.Others, new object[] { UnityEngine.Random.Range(0f, 255f) / 255f, UnityEngine.Random.Range(0f, 255f) / 255f, UnityEngine.Random.Range(0f, 255f) / 255f });
+                RPCProtection();
             }
         }
 
@@ -1138,8 +1276,15 @@ namespace iiMenu.Mods
                 {
                     foreach (GliderHoldable glider in GetGliders())
                     {
-                        glider.gameObject.transform.position = whoCopy.headMesh.transform.position;
-                        glider.gameObject.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+                        if (glider.photonView.Owner == PhotonNetwork.LocalPlayer)
+                        {
+                            glider.gameObject.transform.position = whoCopy.headMesh.transform.position;
+                            glider.gameObject.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+                        }
+                        else
+                        {
+                            glider.OnHover(null, null);
+                        }
                     }
                 }
             }
@@ -1164,8 +1309,15 @@ namespace iiMenu.Mods
                     try
                     {
                         GliderHoldable glider = those[index];
-                        glider.gameObject.transform.position = vrrig.headMesh.transform.position;
-                        glider.gameObject.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+                        if (glider.photonView.Owner == PhotonNetwork.LocalPlayer)
+                        {
+                            glider.gameObject.transform.position = vrrig.headMesh.transform.position;
+                            glider.gameObject.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+                        }
+                        else
+                        {
+                            glider.OnHover(null, null);
+                        }
                     } catch { }
                     index++;
                 }

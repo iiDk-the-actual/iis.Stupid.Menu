@@ -271,6 +271,72 @@ namespace iiMenu.Mods
             catch { } // Not connected
         }
 
+        public static void AntiReportLag()
+        {
+            try
+            {
+                if (boards == null)
+                {
+                    boards = GameObject.FindObjectsOfType<GorillaScoreBoard>();
+                    foreach (GorillaScoreBoard fix in boards)
+                    {
+                        try
+                        {
+                            Debug.Log("Found board");
+                            if (!currentboards.Contains(fix) || currentboards.Count <= 0)
+                            {
+                                currentboards.Add(fix);
+                                Debug.Log("Added to list");
+                            }
+                            else
+                            {
+                                Debug.Log("Board is already on list");
+                            }
+                        }
+                        catch
+                        {
+                            Debug.Log("Somethin failed");
+                            currentboards.Add(fix);
+                            Debug.Log("Added dat shit anyway");
+                        }
+                    }
+                }
+                foreach (GorillaScoreBoard board in currentboards)
+                {
+                    foreach (GorillaPlayerScoreboardLine line in board.lines)
+                    {
+                        if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
+                        {
+                            Transform report = line.reportButton.gameObject.transform;
+                            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                            {
+                                if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                                {
+                                    float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
+                                    float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
+
+                                    float threshold = 0.35f;
+
+                                    if ((D1 < threshold || D2 < threshold) && Time.time > kgDebounce)
+                                    {
+                                        kgDebounce = Time.time + 0.25f;
+                                        GorillaTagger.Instance.myVRRig.RPC("InitializeNoobMaterial", GetPlayerFromVRRig(vrrig), new object[] { UnityEngine.Random.Range(0f, 255f) / 255f, UnityEngine.Random.Range(0f, 255f) / 255f, UnityEngine.Random.Range(0f, 255f) / 255f });
+                                        RPCProtection();
+
+                                        vrrig.leftHandTransform.position = Vector3.zero;
+                                        vrrig.rightHandTransform.position = Vector3.zero;
+
+                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>Someone attempted to report you, they are being lagged.</color>");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch { } // Not connected
+        }
+
         public static void AntiReportCrash()
         {
             try
@@ -319,23 +385,13 @@ namespace iiMenu.Mods
 
                                     if (D1 < threshold || D2 < threshold)
                                     {
-                                        if (!Overpowered.IsModded())
-                                        {
-                                            if (!GetIndex("Disable Auto Anti Ban").enabled)
-                                            {
-                                                Overpowered.AntiBan();
-                                            }
-                                        }
-                                        else
-                                        {
-                                            Hashtable hashtable = new Hashtable();
-                                            hashtable[(byte)0] = GetPlayerFromVRRig(vrrig).ActorNumber;
-                                            PhotonNetwork.NetworkingClient.OpRaiseEvent(207, hashtable, null, SendOptions.SendReliable);
-                                            RPCProtection();
-                                        }
+                                        GorillaTagger.Instance.myVRRig.RPC("InitializeNoobMaterial", GetPlayerFromVRRig(vrrig), new object[] { UnityEngine.Random.Range(0f, 255f) / 255f, UnityEngine.Random.Range(0f, 255f) / 255f, UnityEngine.Random.Range(0f, 255f) / 255f });
+                                        RPCProtection();
+
                                         vrrig.leftHandTransform.position = Vector3.zero;
                                         vrrig.rightHandTransform.position = Vector3.zero;
-                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>Someone attempted to report you, they have been crashed.</color>");
+
+                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>Someone attempted to report you, they are being crashed.</color>");
                                     }
                                 }
                             }
