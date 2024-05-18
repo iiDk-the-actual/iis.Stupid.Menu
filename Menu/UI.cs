@@ -12,11 +12,11 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using static iiMenu.Mods.Reconnect;
+using static iiMenu.Menu.Main;
 
 namespace iiMenu.UI
 {
-    [BepInPlugin("org.iidk.roomjoiner", "Room joiner @ ii's Stupid Menu", "1.0.0")]
-    public class Main : BaseUnityPlugin
+    public class Main : MonoBehaviour
     {
         private string inputText = "goldentrophy";
 
@@ -29,6 +29,8 @@ namespace iiMenu.UI
         public static bool isOpen = true;
 
         public static bool lastCondition = false;
+
+        public static float lasttimeiconupdated = -1f;
 
         public static Texture2D icon;
 
@@ -65,15 +67,15 @@ namespace iiMenu.UI
             {
                 GUI.skin.textField.fontSize = 13;
                 GUI.skin.button.fontSize = 20;
-                GUI.skin.textField.font = UIColorHelper.currentFont;
-                GUI.skin.button.font = UIColorHelper.currentFont;
-                GUI.skin.label.font = UIColorHelper.currentFont;
-                GUI.skin.textField.fontStyle = FontStyle.Italic;
-                GUI.skin.button.fontStyle = FontStyle.Italic;
-                GUI.skin.label.fontStyle = FontStyle.Italic;
+                GUI.skin.textField.font = activeFont;
+                GUI.skin.button.font = activeFont;
+                GUI.skin.label.font = activeFont;
+                GUI.skin.textField.fontStyle = activeFontStyle;
+                GUI.skin.button.fontStyle = activeFontStyle;
+                GUI.skin.label.fontStyle = activeFontStyle;
 
-                GUI.color = Menu.UIColorHelper.bgc;
-                GUI.backgroundColor = Menu.UIColorHelper.bgc;
+                GUI.color = GetBGColor(0f);
+                GUI.backgroundColor = GetBGColor(0f);
 
                 string roomText = "Not connected to room";
                 try
@@ -84,7 +86,7 @@ namespace iiMenu.UI
                     }
                 } catch { } // shitty ass code
                 GUI.Label(new Rect(10, Screen.height - 35, Screen.width, 40), roomText);
-
+                
                 try
                 {
                     if (icon == null)
@@ -93,7 +95,7 @@ namespace iiMenu.UI
                     }
                 }
                 catch { }
-
+                /* pointless unoptimized shitstack
                 try
                 {
                     if (icon != null)
@@ -102,14 +104,15 @@ namespace iiMenu.UI
                         for (int i = 0; i < pixels.Length; i++)
                         {
                             float alpha = pixels[i].a;
-                            pixels[i] = new Color(Menu.UIColorHelper.bgc.r, Menu.UIColorHelper.bgc.g, Menu.UIColorHelper.bgc.b, alpha);
+                            Color bgc = GetBGColor(0f);
+                            pixels[i] = new Color(bgc.r, bgc.g, bgc.b, alpha);
                         }
 
                         icon.SetPixels(pixels);
                         icon.Apply();
                     }
                 } catch { }
-
+                */
                 try
                 {
                     if (icon != null)
@@ -182,7 +185,7 @@ namespace iiMenu.UI
 
                 try
                 {
-                    GUI.color = Menu.UIColorHelper.bgc;
+                    GUI.color = GetBGColor(0f);
                     GUILayout.BeginHorizontal(Array.Empty<GUILayoutOption>());
                     GUILayout.Space(5f);
                     GUILayout.BeginVertical(Array.Empty<GUILayoutOption>());

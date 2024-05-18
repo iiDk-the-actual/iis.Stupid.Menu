@@ -23,6 +23,11 @@ namespace iiMenu.Patches
 		private void Start()
 		{
 			Console.Title = "ii's Stupid Menu // Build "+PluginInfo.Version;
+
+            GameObject Loading = new GameObject();
+            Loading.AddComponent<iiMenu.UI.Main>();
+            Loading.AddComponent<iiMenu.Notifications.NotifiLib>();
+            UnityEngine.Object.DontDestroyOnLoad(Loading);
         }
 	}
 }
