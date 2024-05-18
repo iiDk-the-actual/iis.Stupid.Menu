@@ -220,7 +220,7 @@ namespace iiMenu.Mods
         public static void ChangeMenuTheme()
         {
             themeType++;
-            if (themeType > 34)
+            if (themeType > 35)
             {
                 themeType = 1;
             }
@@ -635,6 +635,18 @@ namespace iiMenu.Mods
                 textColor = new Color32(144, 144, 144, 255);
                 textClicked = Color.white;
             }
+            if (themeType == 35)
+            {
+                bgColorA = new Color32(26, 26, 61, 255);
+                bgColorB = new Color32(26, 26, 61, 255);
+                buttonDefaultA = new Color32(26, 26, 61, 255);
+                buttonDefaultB = new Color32(26, 26, 61, 255);
+                buttonClickedA = new Color32(43, 17, 84, 255);
+                buttonClickedB = new Color32(43, 17, 84, 255);
+                titleColor = Color.white;
+                textColor = Color.white;
+                textClicked = Color.white;
+            }
         }
 
         public static void ChangePageType()
@@ -783,6 +795,11 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void FreezePlayerInMenuEnabled()
+        {
+            closePosition = GorillaTagger.Instance.rigidbody.transform.position;
+        }
+
         public static bool currentmentalstate = false;
         public static void FreezeRigInMenu()
         {
@@ -834,6 +851,16 @@ namespace iiMenu.Mods
             annoyingMode = false;
             themeType--;
             ChangeMenuTheme();
+        }
+
+        public static void LowercaseMode()
+        {
+            lowercaseMode = true;
+        }
+
+        public static void NoLowercaseMode()
+        {
+            lowercaseMode = false;
         }
 
         public static void EnablePrimaryRoomMods()
@@ -1099,6 +1126,26 @@ namespace iiMenu.Mods
             }
             
             GetIndex("Crash Amount").overlapText = "Crash Amount <color=grey>[</color><color=green>" + crashAmount.ToString() + "</color><color=grey>]</color>";
+        }
+
+        public static void DisableGhostview()
+        {
+            disableGhostview = true;
+        }
+
+        public static void EnableGhostview()
+        {
+            disableGhostview = false;
+        }
+
+        public static void DisableBoardColors()
+        {
+            disableBoardColor = true;
+        }
+
+        public static void EnableBoardColors()
+        {
+            disableBoardColor = false;
         }
     }
 }

@@ -13,5 +13,7 @@ plus antoca banned me from their discord
 plus im banned from bark discord
 plus im banned from monke dimensions discord
 plus im banned from gtag official modding discord
+plus im banned from interstellar mods discord
+plus im banned from shiba gold discord server
 
 > This product is not affiliated with Gorilla Tag or Another Axiom LLC and is not endorsed or otherwise sponsored by Another Axiom LLC. Portions of the materials contained herein are property of Another Axiom LLC. © 2021 Another Axiom LLC.

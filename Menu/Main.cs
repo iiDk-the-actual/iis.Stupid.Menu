@@ -163,30 +163,94 @@ namespace iiMenu.Menu
                 {
                     hasRemovedThisFrame = false;
 
+                    if (!hasFoundAllBoards)
+                    {
+                        try
+                        {
+                            UnityEngine.Debug.Log("Looking for boards");
+                            bool found = false;
+                            int indexOfThatThing = 0;
+                            for (int i = 0; i < GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.childCount; i++)
+                            {
+                                GameObject v = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.GetChild(i).gameObject;
+                                if (v.name.Contains("forestatlas"))
+                                {
+                                    indexOfThatThing++;
+                                    if (indexOfThatThing == 1)
+                                    {
+                                        found = true;
+                                        v.GetComponent<Renderer>().material = OrangeUI;
+                                    }
+                                }
+                            }
+
+                            bool found2 = false;
+                            indexOfThatThing = 0;
+                            for (int i = 0; i < GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest").transform.childCount; i++)
+                            {
+                                GameObject v = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest").transform.GetChild(i).gameObject;
+                                if (v.name.Contains("forestatlas"))
+                                {
+                                    indexOfThatThing++;
+                                    if (indexOfThatThing == 8)
+                                    {
+                                        UnityEngine.Debug.Log("Board found");
+                                        found2 = true;
+                                        v.GetComponent<Renderer>().material = OrangeUI;
+                                    }
+                                }
+                            }
+                            if (found && found2)
+                            {
+                                string[] boards = new string[] {
+                                    "canyon",
+                                    "cosmetics",
+                                    "cave",
+                                    "forest",
+                                    "skyjungle"
+                                };
+                                foreach (string name in boards)
+                                {
+                                    GameObject board = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/Wall Monitors Screens/wallmonitor" + name);
+                                    if (board != null)
+                                    {
+                                        board.GetComponent<Renderer>().material = OrangeUI;
+                                        try
+                                        {
+                                            board.GetComponent<GorillaLevelScreen>().goodMaterial = OrangeUI;
+                                            board.GetComponent<GorillaLevelScreen>().badMaterial = OrangeUI;
+                                        } catch { }
+                                    }
+                                }
+                                hasFoundAllBoards = true;
+                                UnityEngine.Debug.Log("Found all boards");
+                            }
+                        }
+                        catch (Exception exception)
+                        {
+                            UnityEngine.Debug.LogError(string.Format("iiMenu <b>COLOR ERROR</b> {1} - {0}", exception.Message, exception.StackTrace));
+                            hasFoundAllBoards = false;
+                        }
+                    }
+
                     try
                     {
-                        GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/StaticUnlit/motdscreen").GetComponent<MeshRenderer>().material = OrangeUI;
-                        GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/StaticUnlit/screen").GetComponent<Renderer>().material = OrangeUI;
-                        GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/Wall Monitors Screens/wallmonitorcanyon").GetComponent<Renderer>().material = OrangeUI;
-                        GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/Wall Monitors Screens/wallmonitorcosmetics").GetComponent<Renderer>().material = OrangeUI;
-                        GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/Wall Monitors Screens/wallmonitorcave").GetComponent<Renderer>().material = OrangeUI;
-                        GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/Wall Monitors Screens/wallmonitorforest").GetComponent<Renderer>().material = OrangeUI;
-                        GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/Wall Monitors Screens/wallmonitorskyjungle").GetComponent<Renderer>().material = OrangeUI;
-                        GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/Terrain/campgroundstructure/scoreboard/REMOVE board").GetComponent<Renderer>().material = OrangeUI;
-
-                        //GameObject.Find("Mountain/UI/Text/monitor").GetComponent<Renderer>().material = OrangeUI;
-                        //GameObject.Find("skyjungle/UI/-- Clouds PhysicalComputer UI --/monitor (1)").GetComponent<Renderer>().material = OrangeUI;
-                        //GameObject.Find("TreeRoom/TreeRoomInteractables/UI/-- PhysicalComputer UI --/monitor").GetComponent<Renderer>().material = OrangeUI;
-                        //GameObject.Find("Beach/BeachComputer/UI FOR BEACH COMPUTER/Text/monitor").GetComponent<Renderer>().material = OrangeUI;
-                    }
-                    catch (Exception exception)
-                    {
-                        UnityEngine.Debug.LogError(string.Format("iiMenu <b>COLOR ERROR</b> {1} - {0}", exception.Message, exception.StackTrace));
-                    }
+                        GameObject computerMonitor = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/GorillaComputerObject/ComputerUI/monitor/monitorScreen");
+                        if (computerMonitor != null)
+                        {
+                            computerMonitor.GetComponent<Renderer>().material = OrangeUI;
+                        }
+                    } catch { }
 
                     try
                     {
-                        OrangeUI.color = GetBGColor(0f);
+                        if (!disableBoardColor)
+                        {
+                            OrangeUI.color = GetBGColor(0f);
+                        } else
+                        {
+                            OrangeUI.color = new Color32(0, 53, 2, 255);
+                        }
 
                         GameObject motdText = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/motd");
                         Text motdTC = motdText.GetComponent<Text>();
@@ -196,6 +260,10 @@ namespace iiMenu.Menu
                         motdTC.font = activeFont;
                         motdTC.fontStyle = activeFontStyle;
                         motdTC.text = "Thanks for using ii's <b>Stupid</b> Menu!";
+                        if (lowercaseMode)
+                        {
+                            motdTC.text = motdTC.text.ToLower();
+                        }
                         motdTC.color = titleColor;
                         motdTC.horizontalOverflow = UnityEngine.HorizontalWrapMode.Overflow;
                         motdTRC.sizeDelta = new Vector2(379.788f, 155.3812f);
@@ -228,14 +296,10 @@ namespace iiMenu.Menu
                         "</b> mods on this menu. <color=red>I, iiDk, am not responsible " + 
                         "for any bans using this menu.</color> If you get banned while " +
                         "using this, it's your responsibility.";
-                    }
-                    catch { }
-
-                    try
-                    {
-                        Menu.UIColorHelper.bgc = OrangeUI.color;
-                        Menu.UIColorHelper.txtc = textColor;
-                        Menu.UIColorHelper.currentFont = activeFont;
+                        if (lowercaseMode)
+                        {
+                            motdTextB.text = motdTextB.text.ToLower();
+                        }
                     }
                     catch { }
 
@@ -258,6 +322,10 @@ namespace iiMenu.Menu
                     if (fpsCount != null)
                     {
                         fpsCount.text = "FPS: " + Mathf.Ceil(1f / Time.unscaledDeltaTime).ToString();
+                        if (lowercaseMode)
+                        {
+                            fpsCount.text = fpsCount.text.ToLower();
+                        }
                     }
 
                     if (menuBackground != null && reference != null)
@@ -321,11 +389,6 @@ namespace iiMenu.Menu
                     }
                     catch { }
 
-                    if (!PhotonNetwork.InRoom)
-                    {
-                        hasAntiBanned = false;
-                    }
-
                     try
                     {
                         if (shouldAttemptLoadData && Time.time > shouldLoadDataTime)
@@ -360,14 +423,18 @@ namespace iiMenu.Menu
                     // ghostview
                     try
                     {
-                        if (!GorillaTagger.Instance.offlineVRRig.enabled || ghostException)
+                        if ((!GorillaTagger.Instance.offlineVRRig.enabled || ghostException) && !disableGhostview)
                         {
                             if (GhostRig == null)
                             {
                                 GhostRig = UnityEngine.Object.Instantiate<VRRig>(GorillaTagger.Instance.offlineVRRig, GorillaLocomotion.Player.Instance.transform.position, GorillaLocomotion.Player.Instance.transform.rotation);
+                                GhostRig.headBodyOffset = Vector3.zero;
                                 GhostRig.enabled = true;
 
-                                GhostPatch.Prefix(GorillaTagger.Instance.offlineVRRig);
+                                GhostRig.transform.Find("VR Constraints/LeftArm/Left Arm IK/SlideAudio").gameObject.SetActive(false);
+                                GhostRig.transform.Find("VR Constraints/RightArm/Right Arm IK/SlideAudio").gameObject.SetActive(false);
+
+                                //GhostPatch.Prefix(GorillaTagger.Instance.offlineVRRig);
                             }
 
                             if (funnyghostmaterial == null)
@@ -1140,6 +1207,10 @@ namespace iiMenu.Menu
             {
                 text2.text = method.overlapText;
             }
+            if (lowercaseMode)
+            {
+                text2.text = text2.text.ToLower();
+            }
             text2.supportRichText = true;
             text2.fontSize = 1;
             text2.color = textColor;
@@ -1272,7 +1343,7 @@ namespace iiMenu.Menu
                     outlinepart.transform.localPosition = new Vector3(0f, 0f, (-menuBackground.transform.localScale.z/2) + dist);
                     outlinepart.transform.localScale = new Vector3(1.11f, menuBackground.transform.localScale.y - ((dist * 2f) - 0.005f), 0.005f);
                 }
-                if (themeType == 25 || themeType == 26 || themeType == 27 || themeType == 35)
+                if (themeType == 25 || themeType == 26 || themeType == 27)
                 {
                     try
                     {
@@ -1308,16 +1379,6 @@ namespace iiMenu.Menu
                                 gameObject.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Lit");
                                 gameObject.GetComponent<Renderer>().material.color = Color.white;
                                 gameObject.GetComponent<Renderer>().material.mainTexture = gay;
-                                break;
-                            case 35:
-                                if (hasLoadedAnt == false)
-                                {
-                                    ant = LoadTextureFromResource("iiMenu.Resources.ant.png");
-                                    hasLoadedAnt = true;
-                                }
-                                gameObject.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Lit");
-                                gameObject.GetComponent<Renderer>().material.color = Color.white;
-                                gameObject.GetComponent<Renderer>().material.mainTexture = ant;
                                 break;
                         }
                     }
@@ -1379,6 +1440,10 @@ namespace iiMenu.Menu
                     text.text = randomMenuNames[UnityEngine.Random.Range(0, randomMenuNames.Length - 1)] + " v" + UnityEngine.Random.Range(8, 159);
                 }
             }
+            if (lowercaseMode)
+            {
+                text.text = text.text.ToLower();
+            }
             text.fontSize = 1;
             text.color = titleColor;
             title = text;
@@ -1405,6 +1470,10 @@ namespace iiMenu.Menu
             if (themeType == 30)
             {
                 text.text = "";
+            }
+            if (lowercaseMode)
+            {
+                text.text = text.text.ToLower();
             }
             text.fontSize = 1;
             text.color = titleColor;
@@ -1437,6 +1506,10 @@ namespace iiMenu.Menu
                 }.AddComponent<Text>();
                 fps.font = activeFont;
                 fps.text = "FPS: " + Mathf.Ceil(1f / Time.unscaledDeltaTime).ToString();
+                if (lowercaseMode)
+                {
+                    fps.text = fps.text.ToLower();
+                }
                 fps.color = titleColor;
                 fpsCount = fps;
                 fps.fontSize = 1;
@@ -2391,6 +2464,7 @@ namespace iiMenu.Menu
             UnityEngine.Debug.Log(ascii);
             UnityEngine.Debug.Log("Thank you for using ii's Stupid Menu!");
             shouldLoadDataTime = Time.time + 5f;
+            timeMenuStarted = Time.time;
             shouldAttemptLoadData = true;
             if (File.Exists("iisStupidMenu/iiMenu_EnabledMods.txt"))
             {
@@ -2402,10 +2476,6 @@ namespace iiMenu.Menu
                     Task.Delay(1000).ContinueWith(t => Settings.LoadPreferences());
                 }
             }
-            try
-            {
-                SceneManager.sceneLoaded += Safety.SceneLoaded;
-            } catch { }
         }
 
         // the variable warehouse
@@ -2452,6 +2522,9 @@ namespace iiMenu.Menu
         public static bool hasLoadedPreferences = false;
         public static bool ghostException = false;
         public static bool hasPlayersUpdated = false;
+        public static bool disableGhostview = false;
+        public static bool disableBoardColor = false;
+        public static float timeMenuStarted = -1f;
         public static int pcbg = 0;
 
         public static string ascii = 
@@ -2540,9 +2613,6 @@ namespace iiMenu.Menu
 
         public static bool hasLoadedGay = false;
         public static Texture2D gay = new Texture2D(2, 2);
-
-        public static bool hasLoadedAnt = false;
-        public static Texture2D ant = new Texture2D(2, 2);
 
         public static List<string> favorites = new List<string> { "Exit Favorite Mods" };
 
@@ -2764,6 +2834,10 @@ namespace iiMenu.Menu
 
         public static bool headspazType = false;
 
+        public static bool hasFoundAllBoards = false;
+
+        public static float lastBangTime = 0f;
+
         public static float subThingy = 0f;
 
         public static float sizeScale = 1f;
@@ -2771,6 +2845,8 @@ namespace iiMenu.Menu
         public static float turnAmnt = 0f;
         public static float TagAuraDelay = 0f;
         public static float startX = -1f;
+
+        public static bool lowercaseMode = false;
 
         public static bool annoyingMode = false; // build with this enabled for a surprise
 

@@ -25,6 +25,10 @@ namespace iiMenu.Mods
             ControllerInputPoller.instance.leftControllerSecondaryButton = false;
             ControllerInputPoller.instance.rightControllerPrimaryButton = false;
             ControllerInputPoller.instance.rightControllerSecondaryButton = false;
+            ControllerInputPoller.instance.leftControllerPrimaryButtonTouch = false;
+            ControllerInputPoller.instance.leftControllerSecondaryButtonTouch = false;
+            ControllerInputPoller.instance.rightControllerPrimaryButtonTouch = false;
+            ControllerInputPoller.instance.rightControllerSecondaryButtonTouch = false;
         }
 
         public static bool lastjsi = false;
@@ -74,19 +78,7 @@ namespace iiMenu.Mods
             AntiSoundToggle = false;
         }
 
-        public static void SceneLoaded(Scene arg0, LoadSceneMode arg1)
-        {
-            boards = null;
-        }
-        public static void DisableAntiReport()
-        {
-            boards = null;
-        }
-
-        public static List<GorillaScoreBoard> currentboards = new List<GorillaScoreBoard>() { };
-        public static GorillaScoreBoard[] boards = null;
-
-        public static void AntiReportDisconnect()
+        /*public static void AntiReportDisconnect()
         {
             try
             {
@@ -143,62 +135,65 @@ namespace iiMenu.Mods
                 }
             }
             catch { } // Not connected
+        }*/
+
+        public static void AntiReportDisconnect()
+        {
+            try
+            {
+                foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+                {
+                    if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
+                    {
+                        Transform report = line.reportButton.gameObject.transform;
+                        foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                        {
+                            if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                            {
+                                float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
+                                float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
+
+                                float threshold = 0.35f;
+
+                                if (D1 < threshold || D2 < threshold)
+                                {
+                                    PhotonNetwork.Disconnect();
+                                    RPCProtection();
+                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>Someone attempted to report you, you have been disconnected.</color>");
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch { } // Not connected
         }
 
         public static void AntiReportReconnect()
         {
             try
             {
-                if (boards == null)
+                foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
                 {
-                    boards = GameObject.FindObjectsOfType<GorillaScoreBoard>();
-                    foreach (GorillaScoreBoard fix in boards)
+                    if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
                     {
-                        try
+                        Transform report = line.reportButton.gameObject.transform;
+                        foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                         {
-                            Debug.Log("Found board");
-                            if (!currentboards.Contains(fix) || currentboards.Count <= 0)
+                            if (vrrig != GorillaTagger.Instance.offlineVRRig)
                             {
-                                currentboards.Add(fix);
-                                Debug.Log("Added to list");
-                            }
-                            else
-                            {
-                                Debug.Log("Board is already on list");
-                            }
-                        }
-                        catch
-                        {
-                            Debug.Log("Somethin failed");
-                            currentboards.Add(fix);
-                            Debug.Log("Added dat shit anyway");
-                        }
-                    }
-                }
-                foreach (GorillaScoreBoard board in currentboards)
-                {
-                    foreach (GorillaPlayerScoreboardLine line in board.lines)
-                    {
-                        if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
-                        {
-                            Transform report = line.reportButton.gameObject.transform;
-                            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-                            {
-                                if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                                float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
+                                float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
+
+                                float threshold = 0.35f;
+
+                                if (D1 < threshold || D2 < threshold)
                                 {
-                                    float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
-                                    float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
-
-                                    float threshold = 0.35f;
-
-                                    if (D1 < threshold || D2 < threshold)
-                                    {
-                                        rejRoom = PhotonNetwork.CurrentRoom.Name;
-                                        rejDebounce = Time.time + 2f;
-                                        PhotonNetwork.Disconnect();
-                                        RPCProtection();
-                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>Someone attempted to report you, you have been disconnected and will be reconnected shortly.</color>");
-                                    }
+                                    rejRoom = PhotonNetwork.CurrentRoom.Name;
+                                    rejDebounce = Time.time + 2f;
+                                    PhotonNetwork.Disconnect();
+                                    RPCProtection();
+                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>Someone attempted to report you, you have been disconnected and will be reconnected shortly.</color>");
                                 }
                             }
                         }
@@ -212,56 +207,27 @@ namespace iiMenu.Mods
         {
             try
             {
-                if (boards == null)
+                foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
                 {
-                    boards = GameObject.FindObjectsOfType<GorillaScoreBoard>();
-                    foreach (GorillaScoreBoard fix in boards)
+                    if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
                     {
-                        try
+                        Transform report = line.reportButton.gameObject.transform;
+                        foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                         {
-                            Debug.Log("Found board");
-                            if (!currentboards.Contains(fix) || currentboards.Count <= 0)
+                            if (vrrig != GorillaTagger.Instance.offlineVRRig)
                             {
-                                currentboards.Add(fix);
-                                Debug.Log("Added to list");
-                            }
-                            else
-                            {
-                                Debug.Log("Board is already on list");
-                            }
-                        }
-                        catch
-                        {
-                            Debug.Log("Somethin failed");
-                            currentboards.Add(fix);
-                            Debug.Log("Added dat shit anyway");
-                        }
-                    }
-                }
-                foreach (GorillaScoreBoard board in currentboards)
-                {
-                    foreach (GorillaPlayerScoreboardLine line in board.lines)
-                    {
-                        if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
-                        {
-                            Transform report = line.reportButton.gameObject.transform;
-                            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-                            {
-                                if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                                float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
+                                float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
+
+                                float threshold = 0.35f;
+
+                                if (D1 < threshold || D2 < threshold)
                                 {
-                                    float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
-                                    float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
-
-                                    float threshold = 0.35f;
-
-                                    if (D1 < threshold || D2 < threshold)
-                                    {
-                                        PhotonNetwork.Disconnect();
-                                        RPCProtection();
-                                        isJoiningRandom = true;
-                                        jrDebounce = Time.time + (float)internetTime;
-                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>Someone attempted to report you, you have been disconnected and will be connected to a random lobby shortly.</color>");
-                                    }
+                                    PhotonNetwork.Disconnect();
+                                    RPCProtection();
+                                    isJoiningRandom = true;
+                                    jrDebounce = Time.time + (float)internetTime;
+                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>Someone attempted to report you, you have been disconnected and will be connected to a random lobby shortly.</color>");
                                 }
                             }
                         }
@@ -275,59 +241,30 @@ namespace iiMenu.Mods
         {
             try
             {
-                if (boards == null)
+                foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
                 {
-                    boards = GameObject.FindObjectsOfType<GorillaScoreBoard>();
-                    foreach (GorillaScoreBoard fix in boards)
+                    if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
                     {
-                        try
+                        Transform report = line.reportButton.gameObject.transform;
+                        foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                         {
-                            Debug.Log("Found board");
-                            if (!currentboards.Contains(fix) || currentboards.Count <= 0)
+                            if (vrrig != GorillaTagger.Instance.offlineVRRig)
                             {
-                                currentboards.Add(fix);
-                                Debug.Log("Added to list");
-                            }
-                            else
-                            {
-                                Debug.Log("Board is already on list");
-                            }
-                        }
-                        catch
-                        {
-                            Debug.Log("Somethin failed");
-                            currentboards.Add(fix);
-                            Debug.Log("Added dat shit anyway");
-                        }
-                    }
-                }
-                foreach (GorillaScoreBoard board in currentboards)
-                {
-                    foreach (GorillaPlayerScoreboardLine line in board.lines)
-                    {
-                        if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
-                        {
-                            Transform report = line.reportButton.gameObject.transform;
-                            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-                            {
-                                if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                                float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
+                                float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
+
+                                float threshold = 0.35f;
+
+                                if ((D1 < threshold || D2 < threshold) && Time.time > kgDebounce)
                                 {
-                                    float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
-                                    float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
+                                    kgDebounce = Time.time + 0.25f;
+                                    GorillaTagger.Instance.myVRRig.RPC("RequestMaterialColor", GetPlayerFromVRRig(vrrig), new object[] { -1 });
+                                    RPCProtection();
 
-                                    float threshold = 0.35f;
+                                    vrrig.leftHandTransform.position = Vector3.zero;
+                                    vrrig.rightHandTransform.position = Vector3.zero;
 
-                                    if ((D1 < threshold || D2 < threshold) && Time.time > kgDebounce)
-                                    {
-                                        kgDebounce = Time.time + 0.25f;
-                                        GorillaTagger.Instance.myVRRig.RPC("InitializeNoobMaterial", GetPlayerFromVRRig(vrrig), new object[] { UnityEngine.Random.Range(0f, 255f) / 255f, UnityEngine.Random.Range(0f, 255f) / 255f, UnityEngine.Random.Range(0f, 255f) / 255f });
-                                        RPCProtection();
-
-                                        vrrig.leftHandTransform.position = Vector3.zero;
-                                        vrrig.rightHandTransform.position = Vector3.zero;
-
-                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>Someone attempted to report you, they are being lagged.</color>");
-                                    }
+                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>Someone attempted to report you, they are being lagged.</color>");
                                 }
                             }
                         }
@@ -341,58 +278,29 @@ namespace iiMenu.Mods
         {
             try
             {
-                if (boards == null)
+                foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
                 {
-                    boards = GameObject.FindObjectsOfType<GorillaScoreBoard>();
-                    foreach (GorillaScoreBoard fix in boards)
+                    if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
                     {
-                        try
+                        Transform report = line.reportButton.gameObject.transform;
+                        foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                         {
-                            Debug.Log("Found board");
-                            if (!currentboards.Contains(fix) || currentboards.Count <= 0)
+                            if (vrrig != GorillaTagger.Instance.offlineVRRig)
                             {
-                                currentboards.Add(fix);
-                                Debug.Log("Added to list");
-                            }
-                            else
-                            {
-                                Debug.Log("Board is already on list");
-                            }
-                        }
-                        catch
-                        {
-                            Debug.Log("Somethin failed");
-                            currentboards.Add(fix);
-                            Debug.Log("Added dat shit anyway");
-                        }
-                    }
-                }
-                foreach (GorillaScoreBoard board in currentboards)
-                {
-                    foreach (GorillaPlayerScoreboardLine line in board.lines)
-                    {
-                        if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
-                        {
-                            Transform report = line.reportButton.gameObject.transform;
-                            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-                            {
-                                if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                                float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
+                                float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
+
+                                float threshold = 0.35f;
+
+                                if (D1 < threshold || D2 < threshold)
                                 {
-                                    float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
-                                    float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
+                                    GorillaTagger.Instance.myVRRig.RPC("RequestMaterialColor", GetPlayerFromVRRig(vrrig), new object[] { -1 });
+                                    RPCProtection();
 
-                                    float threshold = 0.35f;
+                                    vrrig.leftHandTransform.position = Vector3.zero;
+                                    vrrig.rightHandTransform.position = Vector3.zero;
 
-                                    if (D1 < threshold || D2 < threshold)
-                                    {
-                                        GorillaTagger.Instance.myVRRig.RPC("InitializeNoobMaterial", GetPlayerFromVRRig(vrrig), new object[] { UnityEngine.Random.Range(0f, 255f) / 255f, UnityEngine.Random.Range(0f, 255f) / 255f, UnityEngine.Random.Range(0f, 255f) / 255f });
-                                        RPCProtection();
-
-                                        vrrig.leftHandTransform.position = Vector3.zero;
-                                        vrrig.rightHandTransform.position = Vector3.zero;
-
-                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>Someone attempted to report you, they are being crashed.</color>");
-                                    }
+                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>Someone attempted to report you, they are being crashed.</color>");
                                 }
                             }
                         }

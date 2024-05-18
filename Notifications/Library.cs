@@ -12,12 +12,13 @@ using static iiMenu.Menu.Main;
 
 namespace iiMenu.Notifications
 {
-    [BepInPlugin("org.gorillatag.lars.notifications2", "NotificationLibrary", "1.0.5")]
-    public class NotifiLib : BaseUnityPlugin
+    // Originally created by lars thx bros
+    //[BepInPlugin("org.gorillatag.lars.notifications2", "NotificationLibrary", "1.0.5")]
+    public class NotifiLib : MonoBehaviour
     {
-        private void Awake()
+        private void Start()
         {
-            base.Logger.LogInfo("Plugin NotificationLibrary is loaded!");
+            UnityEngine.Debug.Log("Notifications loaded");
         }
 
         private void Init()
@@ -122,31 +123,36 @@ namespace iiMenu.Notifications
                     lol += v + "\n";
                 }
                 ModText.text = lol;
-                ModText.color = UIColorHelper.bgc;
+                ModText.color = GetBGColor(0f);
             }
             else
             {
                 ModText.text = "";
             }
+            if (lowercaseMode)
+            {
+                ModText.text = ModText.text.ToLower();
+                NotifiText.text = NotifiText.text.ToLower();
+            }
             //if (Testtext.text != "")
             //{
-                /*NotificationDecayTimeCounter++;
-                if (NotificationDecayTimeCounter > NotificationDecayTime)
+            /*NotificationDecayTimeCounter++;
+            if (NotificationDecayTimeCounter > NotificationDecayTime)
+            {
+                /*Notifilines = null;
+                newtext = "";!this.HasInit && GameObject.Find("Main Camera") != null
+                NotificationDecayTimeCounter = 0;
+                Notifilines = Enumerable.ToArray<string>(Enumerable.Skip<string>(Testtext.text.Split(Environment.NewLine.ToCharArray()), 1));
+                foreach (string text in Notifilines)
                 {
-                    /*Notifilines = null;
-                    newtext = "";!this.HasInit && GameObject.Find("Main Camera") != null
-                    NotificationDecayTimeCounter = 0;
-                    Notifilines = Enumerable.ToArray<string>(Enumerable.Skip<string>(Testtext.text.Split(Environment.NewLine.ToCharArray()), 1));
-                    foreach (string text in Notifilines)
+                    if (text != "")
                     {
-                        if (text != "")
-                        {
-                            newtext = newtext + text + "\n";
-                        }
+                        newtext = newtext + text + "\n";
                     }
-                    Testtext.text = newtext;*
-                    ClearLast();
-                }*/
+                }
+                Testtext.text = newtext;*
+                ClearLast();
+            }*/
             //}
             //else
             //{
@@ -171,6 +177,10 @@ namespace iiMenu.Notifications
                             NotificationText += Environment.NewLine;
                         }
                         NotifiLib.NotifiText.text = NotifiLib.NotifiText.text + NotificationText;
+                        if (lowercaseMode)
+                        {
+                            NotifiText.text = NotifiText.text.ToLower();
+                        }
                         NotifiLib.NotifiText.supportRichText = true;
                         NotifiLib.PreviousNotifi = NotificationText;
                         try

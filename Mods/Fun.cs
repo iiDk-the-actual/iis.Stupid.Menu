@@ -53,6 +53,19 @@ namespace iiMenu.Mods
             GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.y = 180f;
         }
 
+        public static int BPM = 159;
+        public static void HeadBang()
+        {
+            if (Time.time > lastBangTime)
+            {
+                GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.x = 50f;
+                lastBangTime = Time.time + (60f/(float)BPM);
+            } else
+            {
+                GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.x = Mathf.Lerp(GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.x,0f,0.1f);
+            }
+        }
+
         public static void SpinHeadX()
         {
             GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.x += 10f;
@@ -763,8 +776,14 @@ namespace iiMenu.Mods
 
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
-                    GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
-                    GameObject.Find("Floating Bug Holdable").transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
+                    if (GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().photonView.Owner == PhotonNetwork.LocalPlayer)
+                    {
+                        GameObject.Find("Floating Bug Holdable").transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
+                    }
+                    else
+                    {
+                        GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
+                    }
                 }
             }
         }
@@ -805,8 +824,14 @@ namespace iiMenu.Mods
 
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
-                    GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
-                    GameObject.Find("Cave Bat Holdable").transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
+                    if (GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().photonView.Owner == PhotonNetwork.LocalPlayer)
+                    {
+                        GameObject.Find("Cave Bat Holdable").transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
+                    }
+                    else
+                    {
+                        GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
+                    }
                 }
             }
         }
@@ -900,6 +925,30 @@ namespace iiMenu.Mods
                     }
                 }
             }
+        }
+
+        public static void NoRespawnBug()
+        {
+            GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().maxDistanceFromOriginBeforeRespawn = float.MaxValue;
+            GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().maxDistanceFromTargetPlayerBeforeRespawn = float.MaxValue;
+        }
+
+        public static void PleaseRespawnBug()
+        {
+            GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().maxDistanceFromOriginBeforeRespawn = 50f;
+            GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().maxDistanceFromTargetPlayerBeforeRespawn = 50f;
+        }
+
+        public static void NoRespawnBat()
+        {
+            GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().maxDistanceFromOriginBeforeRespawn = float.MaxValue;
+            GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().maxDistanceFromTargetPlayerBeforeRespawn = float.MaxValue;
+        }
+
+        public static void PleaseRespawnBat()
+        {
+            GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().maxDistanceFromOriginBeforeRespawn = 50f;
+            GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().maxDistanceFromTargetPlayerBeforeRespawn = 50f;
         }
 
         public static void NoRespawnGliders()
@@ -1178,30 +1227,22 @@ namespace iiMenu.Mods
 
         public static void BreakBug()
         {
-            GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
-            int num = GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().photonView.ViewID;
-            Hashtable ServerCleanDestroyEvent = new Hashtable();
-            RaiseEventOptions ServerCleanOptions = new RaiseEventOptions
-            {
-                CachingOption = EventCaching.RemoveFromRoomCache
-            };
-            ServerCleanDestroyEvent[0] = num;
-            ServerCleanOptions.CachingOption = EventCaching.AddToRoomCache;
-            PhotonNetwork.NetworkingClient.OpRaiseEvent(204, ServerCleanDestroyEvent, ServerCleanOptions, SendOptions.SendUnreliable);
+            GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().allowPlayerStealing = false;
         }
 
         public static void BreakBat()
         {
-            GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
-            int num = GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().photonView.ViewID;
-            Hashtable ServerCleanDestroyEvent = new Hashtable();
-            RaiseEventOptions ServerCleanOptions = new RaiseEventOptions
-            {
-                CachingOption = EventCaching.RemoveFromRoomCache
-            };
-            ServerCleanDestroyEvent[0] = num;
-            ServerCleanOptions.CachingOption = EventCaching.AddToRoomCache;
-            PhotonNetwork.NetworkingClient.OpRaiseEvent(204, ServerCleanDestroyEvent, ServerCleanOptions, SendOptions.SendUnreliable);
+            GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().allowPlayerStealing = false;
+        }
+
+        public static void FixBug()
+        {
+            GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().allowPlayerStealing = false;
+        }
+
+        public static void FixBat()
+        {
+            GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().allowPlayerStealing = false;
         }
 
         public static void StealBug()

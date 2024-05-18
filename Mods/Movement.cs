@@ -1679,31 +1679,11 @@ namespace iiMenu.Mods
             {
                 ghostException = true;
                 GorillaTagger.Instance.offlineVRRig.headBodyOffset = new Vector3(99999f, 99999f, 99999f);
-
-                /*GameObject l = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                UnityEngine.Object.Destroy(l.GetComponent<Rigidbody>());
-                UnityEngine.Object.Destroy(l.GetComponent<SphereCollider>());
-
-                l.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-                l.transform.position = GorillaTagger.Instance.leftHandTransform.position;
-
-                GameObject r = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                UnityEngine.Object.Destroy(r.GetComponent<Rigidbody>());
-                UnityEngine.Object.Destroy(r.GetComponent<SphereCollider>());
-
-                r.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-                r.transform.position = GorillaTagger.Instance.rightHandTransform.position;
-
-                l.GetComponent<Renderer>().material.color = bgColorA;
-                r.GetComponent<Renderer>().material.color = bgColorA;
-
-                UnityEngine.Object.Destroy(l, Time.deltaTime);
-                UnityEngine.Object.Destroy(r, Time.deltaTime);*/
             }
             else
             {
                 ghostException = false;
-                GorillaTagger.Instance.offlineVRRig.headBodyOffset = GorillaTagger.Instance.offlineVRRig.headBodyOffset = Vector3.zero;
+                GorillaTagger.Instance.offlineVRRig.headBodyOffset = Vector3.zero;
             }
             if (hit == true && lastHit2 == false)
             {
@@ -1722,28 +1702,6 @@ namespace iiMenu.Mods
         {
             bool hit = rightPrimary || Mouse.current.leftButton.isPressed;
             GorillaTagger.Instance.offlineVRRig.enabled = !ghostMonke;
-            if (ghostMonke)
-            {
-                /*GameObject l = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                UnityEngine.Object.Destroy(l.GetComponent<Rigidbody>());
-                UnityEngine.Object.Destroy(l.GetComponent<SphereCollider>());
-
-                l.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-                l.transform.position = GorillaTagger.Instance.leftHandTransform.position;
-
-                GameObject r = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                UnityEngine.Object.Destroy(r.GetComponent<Rigidbody>());
-                UnityEngine.Object.Destroy(r.GetComponent<SphereCollider>());
-
-                r.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-                r.transform.position = GorillaTagger.Instance.rightHandTransform.position;
-
-                l.GetComponent<Renderer>().material.color = bgColorA;
-                r.GetComponent<Renderer>().material.color = bgColorA;
-
-                UnityEngine.Object.Destroy(l, Time.deltaTime);
-                UnityEngine.Object.Destroy(r, Time.deltaTime);*/
-            }
             if (hit == true && lastHit == false)
             {
                 ghostMonke = !ghostMonke;
@@ -2098,6 +2056,25 @@ namespace iiMenu.Mods
         }
 
         public static void FakeOculusMenu()
+        {
+            if (leftPrimary)
+            {
+                Safety.NoFinger();
+            }
+            GorillaLocomotion.Player.Instance.inOverlay = leftPrimary;
+            /*
+            System.Type type = GorillaLocomotion.Player.Instance.GetType();
+            FieldInfo fieldInfo = type.GetField("leftHandHolding", BindingFlags.NonPublic | BindingFlags.Instance);
+            fieldInfo.SetValue(GorillaLocomotion.Player.Instance, leftPrimary);
+            type = GorillaLocomotion.Player.Instance.GetType();
+            fieldInfo = type.GetField("rightHandHolding", BindingFlags.NonPublic | BindingFlags.Instance);
+            fieldInfo.SetValue(GorillaLocomotion.Player.Instance, leftPrimary);
+            GorillaLocomotion.Player.Instance.InReportMenu = leftPrimary;*/
+            //GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").SetActive(!leftPrimary);
+            //GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").SetActive(!leftPrimary);
+        }
+
+        public static void FakeReportMenu()
         {
             if (leftPrimary)
             {
@@ -2750,6 +2727,16 @@ namespace iiMenu.Mods
             else
             {
                 longJumpPower = Vector3.zero;
+            }
+        }
+
+        public static void BunnyHop()
+        {
+            Physics.Raycast(GorillaTagger.Instance.bodyCollider.transform.position - new Vector3(0f, 0.2f, 0f), Vector3.down, out var Ray, 512);
+
+            if (Ray.distance < 0.15f)
+            {
+                GorillaTagger.Instance.bodyCollider.attachedRigidbody.velocity = (GorillaTagger.Instance.bodyCollider.transform.forward * 5.5f) + (Vector3.up * 3f);
             }
         }
 
