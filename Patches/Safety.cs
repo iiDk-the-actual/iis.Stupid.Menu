@@ -1,4 +1,5 @@
-﻿using GorillaTag;
+﻿using GorillaNetworking;
+using GorillaTag;
 using HarmonyLib;
 using iiMenu.Notifications;
 using Photon.Pun;
@@ -177,6 +178,19 @@ namespace iiMenu.Patches
             return true;
         }
     }
+
+    /*[HarmonyPatch(typeof(CosmeticsController.CosmeticSet), "MergeSets")]
+    public class CosmeticsPatch
+    {
+        public static bool Prefix(CosmeticsController.CosmeticSet tryOn, CosmeticsController.CosmeticSet current)
+        {
+            if (AntiCrashToggle)
+            {
+                return false;
+            }
+            return true;
+        }
+    }*/
 
     [HarmonyPatch(typeof(VRRig), "PlayHandTapLocal")]
     public class AntiSoundPatch

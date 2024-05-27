@@ -1,5 +1,6 @@
 ﻿using ExitGames.Client.Photon;
 using GorillaLocomotion.Gameplay;
+using GorillaNetworking;
 using GorillaTag;
 using GorillaTag.Cosmetics;
 using HarmonyLib;
@@ -14,6 +15,7 @@ using System.IO;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static GorillaNetworking.CosmeticsController;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -26,9 +28,35 @@ namespace iiMenu.Mods
             BetterDayNightManager.instance.SetTimeOfDay(0);
         }
 
-        public static void DayTime()
+        public static void EveningTime()
+        {
+            BetterDayNightManager.instance.SetTimeOfDay(7);
+        }
+
+        public static void MorningTime()
         {
             BetterDayNightManager.instance.SetTimeOfDay(1);
+        }
+
+        public static void DayTime()
+        {
+            BetterDayNightManager.instance.SetTimeOfDay(3);
+        }
+
+        public static void Rain()
+        {
+            for (int i = 1; i < BetterDayNightManager.instance.weatherCycle.Length; i++)
+            {
+                BetterDayNightManager.instance.weatherCycle[i] = BetterDayNightManager.WeatherType.Raining;
+            }
+        }
+
+        public static void NoRain()
+        {
+            for (int i = 1; i < BetterDayNightManager.instance.weatherCycle.Length; i++)
+            {
+                BetterDayNightManager.instance.weatherCycle[i] = BetterDayNightManager.WeatherType.None;
+            }
         }
 
         public static void FixHead()
@@ -180,35 +208,9 @@ namespace iiMenu.Mods
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
             {
-                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray);
-                if (shouldBePC)
-                {
-                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
-                    Physics.Raycast(ray, out Ray, 100);
-                }
-
-                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
-                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
-                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
-
-                GameObject line = new GameObject("Line");
-                LineRenderer liner = line.AddComponent<LineRenderer>();
-                liner.material.shader = Shader.Find("GUI/Text Shader");
-                liner.startColor = GetBGColor(0f);
-                liner.endColor = GetBGColor(0.5f);
-                liner.startWidth = 0.025f;
-                liner.endWidth = 0.025f;
-                liner.positionCount = 2;
-                liner.useWorldSpace = true;
-                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
-                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
-                UnityEngine.Object.Destroy(line, Time.deltaTime);
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
 
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
@@ -344,35 +346,9 @@ namespace iiMenu.Mods
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
             {
-                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray);
-                if (shouldBePC)
-                {
-                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
-                    Physics.Raycast(ray, out Ray, 100);
-                }
-
-                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
-                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
-                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
-
-                GameObject line = new GameObject("Line");
-                LineRenderer liner = line.AddComponent<LineRenderer>();
-                liner.material.shader = Shader.Find("GUI/Text Shader");
-                liner.startColor = GetBGColor(0f);
-                liner.endColor = GetBGColor(0.5f);
-                liner.startWidth = 0.025f;
-                liner.endWidth = 0.025f;
-                liner.positionCount = 2;
-                liner.useWorldSpace = true;
-                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
-                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
-                UnityEngine.Object.Destroy(line, Time.deltaTime);
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
 
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
@@ -449,35 +425,9 @@ namespace iiMenu.Mods
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
             {
-                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray);
-                if (shouldBePC)
-                {
-                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
-                    Physics.Raycast(ray, out Ray, 100);
-                }
-
-                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
-                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
-                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
-
-                GameObject line = new GameObject("Line");
-                LineRenderer liner = line.AddComponent<LineRenderer>();
-                liner.material.shader = Shader.Find("GUI/Text Shader");
-                liner.startColor = GetBGColor(0f);
-                liner.endColor = GetBGColor(0.5f);
-                liner.startWidth = 0.025f;
-                liner.endWidth = 0.025f;
-                liner.positionCount = 2;
-                liner.useWorldSpace = true;
-                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
-                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
-                UnityEngine.Object.Destroy(line, Time.deltaTime);
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
 
                 if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > kgDebounce)
                 {
@@ -608,35 +558,9 @@ namespace iiMenu.Mods
             GorillaLocomotion.Player.Instance.OnEnterWaterVolume(GorillaLocomotion.Player.Instance.bodyCollider, GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/ILavaYou_PrefabV/Lava/ForestLavaWaterVolume").GetComponent<GorillaLocomotion.Swimming.WaterVolume>());
             if (rightGrab || Mouse.current.rightButton.isPressed)
             {
-                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray);
-                if (shouldBePC)
-                {
-                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
-                    Physics.Raycast(ray, out Ray, 100);
-                }
-
-                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
-                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
-                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
-
-                GameObject line = new GameObject("Line");
-                LineRenderer liner = line.AddComponent<LineRenderer>();
-                liner.material.shader = Shader.Find("GUI/Text Shader");
-                liner.startColor = GetBGColor(0f);
-                liner.endColor = GetBGColor(0.5f);
-                liner.startWidth = 0.025f;
-                liner.endWidth = 0.025f;
-                liner.positionCount = 2;
-                liner.useWorldSpace = true;
-                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
-                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
-                UnityEngine.Object.Destroy(line, Time.deltaTime);
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
 
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
@@ -744,46 +668,13 @@ namespace iiMenu.Mods
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
             {
-                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray);
-                if (shouldBePC)
-                {
-                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
-                    Physics.Raycast(ray, out Ray, 100);
-                }
-
-                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
-                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
-                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
-
-                GameObject line = new GameObject("Line");
-                LineRenderer liner = line.AddComponent<LineRenderer>();
-                liner.material.shader = Shader.Find("GUI/Text Shader");
-                liner.startColor = GetBGColor(0f);
-                liner.endColor = GetBGColor(0.5f);
-                liner.startWidth = 0.025f;
-                liner.endWidth = 0.025f;
-                liner.positionCount = 2;
-                liner.useWorldSpace = true;
-                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
-                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
-                UnityEngine.Object.Destroy(line, Time.deltaTime);
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
 
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
-                    if (GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().photonView.Owner == PhotonNetwork.LocalPlayer)
-                    {
                         GameObject.Find("Floating Bug Holdable").transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
-                    }
-                    else
-                    {
-                        GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
-                    }
                 }
             }
         }
@@ -792,46 +683,13 @@ namespace iiMenu.Mods
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
             {
-                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray);
-                if (shouldBePC)
-                {
-                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
-                    Physics.Raycast(ray, out Ray, 100);
-                }
-
-                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
-                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
-                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
-
-                GameObject line = new GameObject("Line");
-                LineRenderer liner = line.AddComponent<LineRenderer>();
-                liner.material.shader = Shader.Find("GUI/Text Shader");
-                liner.startColor = GetBGColor(0f);
-                liner.endColor = GetBGColor(0.5f);
-                liner.startWidth = 0.025f;
-                liner.endWidth = 0.025f;
-                liner.positionCount = 2;
-                liner.useWorldSpace = true;
-                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
-                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
-                UnityEngine.Object.Destroy(line, Time.deltaTime);
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
 
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
-                    if (GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().photonView.Owner == PhotonNetwork.LocalPlayer)
-                    {
-                        GameObject.Find("Cave Bat Holdable").transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
-                    }
-                    else
-                    {
-                        GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
-                    }
+                    GameObject.Find("Cave Bat Holdable").transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
                 }
             }
         }
@@ -840,35 +698,9 @@ namespace iiMenu.Mods
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
             {
-                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray);
-                if (shouldBePC)
-                {
-                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
-                    Physics.Raycast(ray, out Ray, 100);
-                }
-
-                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
-                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
-                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
-
-                GameObject line = new GameObject("Line");
-                LineRenderer liner = line.AddComponent<LineRenderer>();
-                liner.material.shader = Shader.Find("GUI/Text Shader");
-                liner.startColor = GetBGColor(0f);
-                liner.endColor = GetBGColor(0.5f);
-                liner.startWidth = 0.025f;
-                liner.endWidth = 0.025f;
-                liner.positionCount = 2;
-                liner.useWorldSpace = true;
-                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
-                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
-                UnityEngine.Object.Destroy(line, Time.deltaTime);
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
 
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
@@ -881,35 +713,9 @@ namespace iiMenu.Mods
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
             {
-                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray);
-                if (shouldBePC)
-                {
-                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
-                    Physics.Raycast(ray, out Ray, 100);
-                }
-
-                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
-                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
-                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
-
-                GameObject line = new GameObject("Line");
-                LineRenderer liner = line.AddComponent<LineRenderer>();
-                liner.material.shader = Shader.Find("GUI/Text Shader");
-                liner.startColor = GetBGColor(0f);
-                liner.endColor = GetBGColor(0.5f);
-                liner.startWidth = 0.025f;
-                liner.endWidth = 0.025f;
-                liner.positionCount = 2;
-                liner.useWorldSpace = true;
-                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
-                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
-                UnityEngine.Object.Destroy(line, Time.deltaTime);
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
 
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
@@ -1018,14 +824,7 @@ namespace iiMenu.Mods
         {
             if (rightGrab)
             {
-                if (GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().photonView.Owner == PhotonNetwork.LocalPlayer)
-                {
-                    GameObject.Find("Floating Bug Holdable").transform.position = GorillaTagger.Instance.rightHandTransform.position;
-                }
-                else
-                {
-                    GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
-                }
+                GameObject.Find("Floating Bug Holdable").transform.position = GorillaTagger.Instance.rightHandTransform.position;
             }
         }
 
@@ -1033,14 +832,7 @@ namespace iiMenu.Mods
         {
             if (rightGrab)
             {
-                if (GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().photonView.Owner == PhotonNetwork.LocalPlayer)
-                {
-                    GameObject.Find("Cave Bat Holdable").transform.position = GorillaTagger.Instance.rightHandTransform.position;
-                }
-                else
-                {
-                    GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
-                }
+                GameObject.Find("Cave Bat Holdable").transform.position = GorillaTagger.Instance.rightHandTransform.position;
             }
         }
 
@@ -1072,26 +864,12 @@ namespace iiMenu.Mods
 
         public static void DestroyBug()
         {
-            if (GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().photonView.Owner == PhotonNetwork.LocalPlayer)
-            {
-                GameObject.Find("Floating Bug Holdable").transform.position = new Vector3(99999f, 99999f, 99999f);
-            }
-            else
-            {
-                GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
-            }
+            GameObject.Find("Floating Bug Holdable").transform.position = new Vector3(99999f, 99999f, 99999f);
         }
 
         public static void DestroyBat()
         {
-            if (GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().photonView.Owner == PhotonNetwork.LocalPlayer)
-            {
-                GameObject.Find("Cave Bat Holdable").transform.position = new Vector3(99999f, 99999f, 99999f);
-            }
-            else
-            {
-                GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
-            }
+            GameObject.Find("Cave Bat Holdable").transform.position = new Vector3(99999f, 99999f, 99999f);
         }
 
         public static void DestroyBeachBall()
@@ -1116,26 +894,12 @@ namespace iiMenu.Mods
 
         public static void SpazBug()
         {
-            if (GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().photonView.Owner == PhotonNetwork.LocalPlayer)
-            {
-                GameObject.Find("Floating Bug Holdable").transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
-            }
-            else
-            {
-                GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
-            }
+             GameObject.Find("Floating Bug Holdable").transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
         }
 
         public static void SpazBat()
         {
-            if (GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().photonView.Owner == PhotonNetwork.LocalPlayer)
-            {
-                GameObject.Find("Cave Bat Holdable").transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
-            }
-            else
-            {
-                GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
-            }
+            GameObject.Find("Cave Bat Holdable").transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
         }
 
         public static void SpazBeachBall()
@@ -1160,26 +924,14 @@ namespace iiMenu.Mods
 
         public static void BugHalo()
         {
-            if (GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().photonView.Owner == PhotonNetwork.LocalPlayer)
-            {
-                float offset = 0;
-                GameObject.Find("Floating Bug Holdable").transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)), 2, MathF.Sin(offset + ((float)Time.frameCount / 30)));
-            } else
-            {
-                GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
-            }
+            float offset = 0;
+            GameObject.Find("Floating Bug Holdable").transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)), 2, MathF.Sin(offset + ((float)Time.frameCount / 30)));
         }
 
         public static void BatHalo()
         {
-            if (GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().photonView.Owner == PhotonNetwork.LocalPlayer)
-            {
-                float offset = 360f / 3f;
-                GameObject.Find("Cave Bat Holdable").transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)), 2, MathF.Sin(offset + ((float)Time.frameCount / 30)));
-            } else
-            {
-                GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
-            }
+            float offset = 360f / 3f;
+            GameObject.Find("Cave Bat Holdable").transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)), 2, MathF.Sin(offset + ((float)Time.frameCount / 30)));
         }
 
         public static void BeachBallHalo()
@@ -1340,35 +1092,9 @@ namespace iiMenu.Mods
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
             {
-                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray);
-                if (shouldBePC)
-                {
-                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
-                    Physics.Raycast(ray, out Ray, 100);
-                }
-
-                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
-                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
-                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
-
-                GameObject line = new GameObject("Line");
-                LineRenderer liner = line.AddComponent<LineRenderer>();
-                liner.material.shader = Shader.Find("GUI/Text Shader");
-                liner.startColor = GetBGColor(0f);
-                liner.endColor = GetBGColor(0.5f);
-                liner.startWidth = 0.025f;
-                liner.endWidth = 0.025f;
-                liner.positionCount = 2;
-                liner.useWorldSpace = true;
-                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
-                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
-                UnityEngine.Object.Destroy(line, Time.deltaTime);
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
 
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
@@ -1428,35 +1154,9 @@ namespace iiMenu.Mods
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
             {
-                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray);
-                if (shouldBePC)
-                {
-                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
-                    Physics.Raycast(ray, out Ray, 100);
-                }
-
-                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
-                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
-                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
-
-                GameObject line = new GameObject("Line");
-                LineRenderer liner = line.AddComponent<LineRenderer>();
-                liner.material.shader = Shader.Find("GUI/Text Shader");
-                liner.startColor = GetBGColor(0f);
-                liner.endColor = GetBGColor(0.5f);
-                liner.startWidth = 0.025f;
-                liner.endWidth = 0.025f;
-                liner.positionCount = 2;
-                liner.useWorldSpace = true;
-                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
-                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
-                UnityEngine.Object.Destroy(line, Time.deltaTime);
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
 
                 if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > kgDebounce)
                 {
@@ -1517,35 +1217,9 @@ namespace iiMenu.Mods
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
             {
-                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray);
-                if (shouldBePC)
-                {
-                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
-                    Physics.Raycast(ray, out Ray, 100);
-                }
-
-                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
-                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
-                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
-
-                GameObject line = new GameObject("Line");
-                LineRenderer liner = line.AddComponent<LineRenderer>();
-                liner.material.shader = Shader.Find("GUI/Text Shader");
-                liner.startColor = GetBGColor(0f);
-                liner.endColor = GetBGColor(0.5f);
-                liner.startWidth = 0.025f;
-                liner.endWidth = 0.025f;
-                liner.positionCount = 2;
-                liner.useWorldSpace = true;
-                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
-                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
-                UnityEngine.Object.Destroy(line, Time.deltaTime);
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
 
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
@@ -1826,35 +1500,9 @@ namespace iiMenu.Mods
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
             {
-                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray);
-                if (shouldBePC)
-                {
-                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
-                    Physics.Raycast(ray, out Ray, 100);
-                }
-
-                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
-                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
-                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
-
-                GameObject line = new GameObject("Line");
-                LineRenderer liner = line.AddComponent<LineRenderer>();
-                liner.material.shader = Shader.Find("GUI/Text Shader");
-                liner.startColor = GetBGColor(0f);
-                liner.endColor = GetBGColor(0.5f);
-                liner.startWidth = 0.025f;
-                liner.endWidth = 0.025f;
-                liner.positionCount = 2;
-                liner.useWorldSpace = true;
-                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
-                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
-                UnityEngine.Object.Destroy(line, Time.deltaTime);
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
 
                 if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > stealIdentityDelay)
                 {

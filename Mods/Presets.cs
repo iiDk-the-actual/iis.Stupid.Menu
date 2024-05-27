@@ -17,8 +17,6 @@ namespace iiMenu.Mods
                 "Thin Menu",
                 "Force Enable Hands",
                 "Show Anti Cheat Reports <color=grey>[</color><color=green>Self</color><color=grey>]</color>",
-                "Follow Menu Theme",
-                "Infection Tracers",
                 "Disable Enabled GUI",
                 "Disable Board Colors",
                 "Disable Disconnect Button",
@@ -84,7 +82,8 @@ namespace iiMenu.Mods
                 "Anti Crash",
                 "Show Anti Cheat Reports <color=grey>[</color><color=green>Self</color><color=grey>]</color>",
                 "Follow Menu Theme",
-                "Transparent Theme"
+                "Transparent Theme",
+                "First Person Camera"
             };
 
             themeType = 15;
@@ -132,6 +131,38 @@ namespace iiMenu.Mods
 
             NotifiLib.ClearAllNotifications();
             NotifiLib.SendNotification("<color=grey>[</color><color=purple>PRESET</color><color=grey>]</color> Performance preset enabled successfully.");
+        }
+
+        public static void SafetyPreset()
+        {
+            string[] presetMods = new string[]
+            {
+                "Thin Menu",
+                "No Finger Movement",
+                "Fake Oculus Menu <color=grey>[</color><color=green>X</color><color=grey>]</color>",
+                "Disable Gamemode Buttons",
+                "Anti Crash",
+                "Anti Moderator",
+                "Anti Report <color=grey>[</color><color=green>Disconnect</color><color=grey>]</color>",
+                "Show Anti Cheat Reports <color=grey>[</color><color=green>Self</color><color=grey>]</color>"
+            };
+
+            themeType = 34;
+            pageButtonType = 1;
+            fontCycle = 0;
+
+            Settings.ChangeMenuTheme();
+            Settings.ChangePageType();
+            Settings.ChangeFontType();
+
+            Settings.Panic();
+            foreach (string mod in presetMods)
+            {
+                Main.Toggle(mod);
+            }
+
+            NotifiLib.ClearAllNotifications();
+            NotifiLib.SendNotification("<color=grey>[</color><color=purple>PRESET</color><color=grey>]</color> Safety preset enabled successfully.");
         }
     }
 }

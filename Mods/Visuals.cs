@@ -2,9 +2,13 @@
 using GorillaTag;
 using iiMenu.Classes;
 using Photon.Pun;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.LookDev;
 using UnityEngine.UIElements;
 using static iiMenu.Menu.Main;
 
@@ -12,6 +16,73 @@ namespace iiMenu.Mods
 {
     internal class Visuals
     {
+        public static void WatchOn()
+        {
+            GameObject mainwatch = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/huntcomputer (1)");
+            regwatchobject = UnityEngine.Object.Instantiate(mainwatch, rightHand ? GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R").transform : GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L").transform, false);
+            UnityEngine.Object.Destroy(regwatchobject.GetComponent<GorillaHuntComputer>());
+            regwatchobject.SetActive(true);
+
+            Transform thething = regwatchobject.transform.Find("HuntWatch_ScreenLocal/Canvas/Anchor");
+            thething.Find("Hat").gameObject.SetActive(false);
+            thething.Find("Face").gameObject.SetActive(false);
+            thething.Find("Badge").gameObject.SetActive(false);
+            thething.Find("Material").gameObject.SetActive(false);
+            thething.Find("Left Hand").gameObject.SetActive(false);
+            thething.Find("Right Hand").gameObject.SetActive(false);
+
+            regwatchText = thething.Find("Text").gameObject;
+            regwatchShell = regwatchobject.transform.Find("HuntWatch_ScreenLocal").gameObject;
+
+            regwatchShell.GetComponent<Renderer>().material = OrangeUI;
+
+            if (rightHand)
+            {
+                regwatchShell.transform.localRotation = Quaternion.Euler(0f, 140f, 0f);
+                regwatchShell.transform.parent.localPosition += new Vector3(0.025f, 0f, 0f);
+                regwatchShell.transform.localPosition += new Vector3(0.025f, 0f, -0.035f);
+            }
+        }
+
+        public static void WatchStep()
+        {
+            regwatchText.GetComponent<UnityEngine.UI.Text>().text = "ii's Stupid Menu";
+            if (doCustomName)
+            {
+                regwatchText.GetComponent<UnityEngine.UI.Text>().text = customMenuName;
+            }
+            regwatchText.GetComponent<UnityEngine.UI.Text>().text += "\n<color=grey>" + Mathf.Ceil(1f / Time.unscaledDeltaTime).ToString() + " FPS\n" + DateTime.Now.ToString("hh:mm tt") + "</color>";
+            regwatchText.GetComponent<UnityEngine.UI.Text>().color = titleColor;
+
+            if (lowercaseMode)
+            {
+                regwatchText.GetComponent<UnityEngine.UI.Text>().text = regwatchText.GetComponent<UnityEngine.UI.Text>().text.ToLower();
+            }
+        }
+
+        public static void WatchOff()
+        {
+            UnityEngine.Object.Destroy(regwatchobject);
+        }
+
+        public static Material oldSkyMat = null;
+        public static void DoCustomSkyboxColor()
+        {
+            GameObject sky = GameObject.Find("Environment Objects/LocalObjects_Prefab/Standard Sky");
+            oldSkyMat = sky.GetComponent<Renderer>().material;
+        }
+
+        public static void CustomSkyboxColor()
+        {
+            GameObject.Find("Environment Objects/LocalObjects_Prefab/Standard Sky").GetComponent<Renderer>().material = OrangeUI;
+        }
+
+        public static void UnCustomSkyboxColor()
+        {
+            GameObject sky = GameObject.Find("Environment Objects/LocalObjects_Prefab/Standard Sky");
+            sky.GetComponent<Renderer>().material = oldSkyMat;
+        }
+
         public static void GreenScreen()
         {
             Color bgcolor = Color.green;
@@ -141,14 +212,14 @@ namespace iiMenu.Mods
         {
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (vrrig.mainSkin.material.name.Contains("fur"))
+                if (vrrig.mainSkin.material.name.Contains("gorilla_body"))
                 {
                     vrrig.mainSkin.material.color = vrrig.playerColor;
                 }
             }
         }
 
-        public static void EnableRemoveLeaves()
+        /*public static void EnableRemoveLeaves()
         {
             foreach (GameObject g in Resources.FindObjectsOfTypeAll<GameObject>())
             {
@@ -167,6 +238,66 @@ namespace iiMenu.Mods
                 l.SetActive(true);
             }
             leaves.Clear();
+        }*/
+        public static Material oldmat = null;
+        public static Material noleafmat = null;
+        public static Texture2D forestTexture = null;
+        public static List<GameObject> atlases = new List<GameObject> { };
+        public static void EnableRemoveLeaves()
+        {
+            foreach (GameObject g in Resources.FindObjectsOfTypeAll<GameObject>())
+            {
+                if (g.activeSelf && g.name.Contains("forestatlas (combined") && g.GetComponent<Renderer>() != null && g.GetComponent<Renderer>().material.name.Contains("forest"))
+                {
+                    if (oldmat == null)
+                    {
+                        oldmat = g.GetComponent<Renderer>().material;
+                    }
+                    if (noleafmat == null)
+                    {
+                        noleafmat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+
+                        noleafmat.SetFloat("_Surface", 1);
+                        noleafmat.SetFloat("_Blend", 0);
+                        noleafmat.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
+                        noleafmat.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
+                        noleafmat.SetFloat("_ZWrite", 0);
+                        noleafmat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+                        noleafmat.renderQueue = (int)RenderQueue.Transparent;
+
+                        noleafmat.SetFloat("_Glossiness", 0.0f);
+                        noleafmat.SetFloat("_Metallic", 0.0f);
+
+                        if (forestTexture == null)
+                        {
+                            forestTexture = LoadTextureFromURL("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/main/forestatlasv2.png", "noLeavesTexture.png");
+                            forestTexture.filterMode = FilterMode.Point;
+                            forestTexture.wrapMode = TextureWrapMode.Clamp;
+                        }
+
+                        noleafmat.color = new Color(1, 1, 1, 1);
+                        noleafmat.mainTexture = forestTexture;
+                    }
+                    g.GetComponent<Renderer>().material = noleafmat;
+                    g.GetComponent<Renderer>().sortingOrder = UnityEngine.Random.Range(0, 255);
+
+                    atlases.Add(g);
+                }
+            }
+            hasFoundAllBoards = false;
+        }
+
+        public static void DisableRemoveLeaves()
+        {
+            foreach (GameObject l in atlases)
+            {
+                //Material share = l.GetComponent<Renderer>().sharedMaterial;
+                //Material reg = l.GetComponent<Renderer>().material;
+                //l.GetComponent<Renderer>().material.shader = share.shader;
+                l.GetComponent<Renderer>().material = oldmat;//.CopyPropertiesFromMaterial(share);
+            }
+            atlases.Clear();
+            hasFoundAllBoards = false;
         }
 
         public static void EnableRemoveCherryBlossoms()

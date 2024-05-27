@@ -5,7 +5,6 @@ using HarmonyLib;
 using iiMenu.Classes;
 using iiMenu.Mods;
 using iiMenu.Notifications;
-using iiMenu.Patches;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -17,7 +16,6 @@ using System.Reflection;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.XR;
 using Valve.VR;
@@ -78,6 +76,10 @@ namespace iiMenu.Menu
                 }
                 buttonCondition = buttonCondition || isKeyboardCondition;
                 buttonCondition = buttonCondition && !lockdown;
+                if (wristThingV2)
+                {
+                    buttonCondition = false;
+                }
                 if (buttonCondition && menu == null)
                 {
                     Draw();
@@ -260,6 +262,10 @@ namespace iiMenu.Menu
                         motdTC.font = activeFont;
                         motdTC.fontStyle = activeFontStyle;
                         motdTC.text = "Thanks for using ii's <b>Stupid</b> Menu!";
+                        if (doCustomName)
+                        {
+                            motdTC.text = "Thanks for using "+customMenuName+"!";
+                        }
                         if (lowercaseMode)
                         {
                             motdTC.text = motdTC.text.ToLower();
@@ -393,6 +399,12 @@ namespace iiMenu.Menu
                     {
                         if (shouldAttemptLoadData && Time.time > shouldLoadDataTime)
                         {
+                            attemptsToLoad++;
+                            if(attemptsToLoad >= 3)
+                            {
+                                UnityEngine.Debug.Log("Giving up on loading web data due to errors");
+                                shouldAttemptLoadData = false;
+                            }
                             UnityEngine.Debug.Log("Attempting to load web data");
                             shouldLoadDataTime = Time.time + 5f;
                             if (!hasLoadedPreferences)
@@ -776,14 +788,17 @@ namespace iiMenu.Menu
                         {
                             if (leftGrab == true && plastLeftGrip == false)
                             {
-                                GorillaTagger.Instance.StartVibration(true, GorillaTagger.Instance.tagHapticStrength / 2f, GorillaTagger.Instance.tagHapticDuration / 2f);
-                                GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(8, true, 0.4f);
+                                if (doButtonsVibrate)
+                                {
+                                    GorillaTagger.Instance.StartVibration(true, GorillaTagger.Instance.tagHapticStrength / 2f, GorillaTagger.Instance.tagHapticDuration / 2f);
+                                }
+                                GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(buttonClickSound, true, buttonClickVolume / 10f);
                                 if (GetIndex("Serversided Button Sounds").enabled && PhotonNetwork.InRoom)
                                 {
                                     GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.Others, new object[]{
-                                        8,
-                                        GetIndex("Right Hand").enabled,
-                                        0.4f
+                                        buttonClickSound,
+                                        true,
+                                        buttonClickVolume/10f
                                     });
                                     RPCProtection();
                                 }
@@ -793,14 +808,17 @@ namespace iiMenu.Menu
 
                             if (rightGrab == true && plastRightGrip == false)
                             {
-                                GorillaTagger.Instance.StartVibration(false, GorillaTagger.Instance.tagHapticStrength / 2f, GorillaTagger.Instance.tagHapticDuration / 2f);
-                                GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(8, false, 0.4f);
+                                if (doButtonsVibrate)
+                                {
+                                    GorillaTagger.Instance.StartVibration(false, GorillaTagger.Instance.tagHapticStrength / 2f, GorillaTagger.Instance.tagHapticDuration / 2f);
+                                }
+                                GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(buttonClickSound, false, buttonClickVolume / 10f);
                                 if (GetIndex("Serversided Button Sounds").enabled && PhotonNetwork.InRoom)
                                 {
                                     GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.Others, new object[]{
-                                        8,
-                                        GetIndex("Right Hand").enabled,
-                                        0.4f
+                                        buttonClickSound,
+                                        false,
+                                        buttonClickVolume/10f
                                     });
                                     RPCProtection();
                                 }
@@ -813,14 +831,17 @@ namespace iiMenu.Menu
                         {
                             if (leftTrigger > 0.5f && plastLeftGrip == false)
                             {
-                                GorillaTagger.Instance.StartVibration(true, GorillaTagger.Instance.tagHapticStrength / 2f, GorillaTagger.Instance.tagHapticDuration / 2f);
-                                GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(8, true, 0.4f);
+                                if (doButtonsVibrate)
+                                {
+                                    GorillaTagger.Instance.StartVibration(true, GorillaTagger.Instance.tagHapticStrength / 2f, GorillaTagger.Instance.tagHapticDuration / 2f);
+                                }
+                                GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(buttonClickSound, true, buttonClickVolume / 10f);
                                 if (GetIndex("Serversided Button Sounds").enabled && PhotonNetwork.InRoom)
                                 {
                                     GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.Others, new object[]{
-                                        8,
-                                        GetIndex("Right Hand").enabled,
-                                        0.4f
+                                        buttonClickSound,
+                                        true,
+                                        buttonClickVolume/10f
                                     });
                                     RPCProtection();
                                 }
@@ -830,14 +851,17 @@ namespace iiMenu.Menu
 
                             if (rightTrigger > 0.5f && plastRightGrip == false)
                             {
-                                GorillaTagger.Instance.StartVibration(false, GorillaTagger.Instance.tagHapticStrength / 2f, GorillaTagger.Instance.tagHapticDuration / 2f);
-                                GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(8, false, 0.4f);
+                                if (doButtonsVibrate)
+                                {
+                                    GorillaTagger.Instance.StartVibration(false, GorillaTagger.Instance.tagHapticStrength / 2f, GorillaTagger.Instance.tagHapticDuration / 2f);
+                                }
+                                GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(buttonClickSound, false, buttonClickVolume / 10f);
                                 if (GetIndex("Serversided Button Sounds").enabled && PhotonNetwork.InRoom)
                                 {
                                     GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.Others, new object[]{
-                                        8,
-                                        GetIndex("Right Hand").enabled,
-                                        0.4f
+                                        buttonClickSound,
+                                        false,
+                                        buttonClickVolume/10f
                                     });
                                     RPCProtection();
                                 }
@@ -893,6 +917,86 @@ namespace iiMenu.Menu
                                     Toggle(joystickSelectedButton, true);
                                     ReloadMenu();
                                     joystickDelay = Time.time + 0.2f;
+                                }
+                            }
+                        }
+                    } catch { }
+
+                    try
+                    {
+                        if (wristThingV2)
+                        {
+                            watchShell.GetComponent<Renderer>().material = OrangeUI;
+                            ButtonInfo[] toSortOf = Buttons.buttons[buttonsType];
+                            if (buttonsType == 19)
+                            {
+                                toSortOf = StringsToInfos(favorites.ToArray());
+                            }
+                            if (buttonsType == 24)
+                            {
+                                List<string> enabledMods = new List<string>() { "Exit Enabled Mods" };
+                                foreach (ButtonInfo[] buttonlist in Buttons.buttons)
+                                {
+                                    foreach (ButtonInfo v in buttonlist)
+                                    {
+                                        if (v.enabled)
+                                        {
+                                            enabledMods.Add(v.buttonText);
+                                        }
+                                    }
+                                }
+                                toSortOf = StringsToInfos(enabledMods.ToArray());
+                            }
+                            watchText.GetComponent<Text>().text = toSortOf[currentSelectedModThing].buttonText;
+                            if (toSortOf[currentSelectedModThing].overlapText != null)
+                            {
+                                watchText.GetComponent<Text>().text = toSortOf[currentSelectedModThing].overlapText;
+                            }
+                            watchText.GetComponent<Text>().text += "\n<color=grey>[" + (currentSelectedModThing + 1).ToString() + "/" + toSortOf.Length.ToString() + "]\n" + DateTime.Now.ToString("hh:mm tt") + "</color>";
+                            watchText.GetComponent<Text>().color = titleColor;
+
+                            if (lowercaseMode)
+                            {
+                                watchText.GetComponent<Text>().text = watchText.GetComponent<Text>().text.ToLower();
+                            }
+
+                            if (watchIndicatorMat == null)
+                            {
+                                watchIndicatorMat = new Material(Shader.Find("GorillaTag/UberShader"));
+                            }
+                            watchIndicatorMat.color = toSortOf[currentSelectedModThing].enabled ? GetBDColor(0f) : GetBRColor(0f);
+                            watchEnabledIndicator.GetComponent<Image>().material = watchIndicatorMat;
+
+                            Vector2 js = rightHand ? SteamVR_Actions.gorillaTag_RightJoystick2DAxis.axis : SteamVR_Actions.gorillaTag_LeftJoystick2DAxis.axis;
+                            if (Time.time > wristMenuDelay)
+                            {
+                                if (js.x > 0.5f || (rightHand ? (js.y < -0.5f) : (js.y > 0.5f)))
+                                {
+                                    currentSelectedModThing++;
+                                    if (currentSelectedModThing > toSortOf.Length - 1)
+                                    {
+                                        currentSelectedModThing = 0;
+                                    }
+                                    wristMenuDelay = Time.time + 0.2f;
+                                }
+                                if (js.x < -0.5f || (rightHand ? (js.y > 0.5f) : (js.y < -0.5f)))
+                                {
+                                    currentSelectedModThing--;
+                                    if (currentSelectedModThing < 0)
+                                    {
+                                        currentSelectedModThing = toSortOf.Length - 1;
+                                    }
+                                    wristMenuDelay = Time.time + 0.2f;
+                                }
+                                if (rightHand ? SteamVR_Actions.gorillaTag_RightJoystickClick.state : SteamVR_Actions.gorillaTag_LeftJoystickClick.state)
+                                {
+                                    int archive = buttonsType;
+                                    Toggle(toSortOf[currentSelectedModThing].buttonText, true);
+                                    if (buttonsType != archive)
+                                    {
+                                        currentSelectedModThing = 0;
+                                    }
+                                    wristMenuDelay = Time.time + 0.2f;
                                 }
                             }
                         }
@@ -1247,6 +1351,10 @@ namespace iiMenu.Menu
             RectTransform component = text2.GetComponent<RectTransform>();
             component.localPosition = Vector3.zero;
             component.sizeDelta = new Vector2(.2f, .03f);
+            if (NoAutoSizeText)
+            {
+                component.sizeDelta = new Vector2(9f, 0.025f);
+            }
             component.localPosition = new Vector3(.064f, 0, .111f - offset / 2.6f);
             component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
         }
@@ -1419,7 +1527,11 @@ namespace iiMenu.Menu
                 }
             }.AddComponent<Text>();
             text.font = activeFont;
-            text.text = "ii's <b>Stupid</b> Menu <color=grey>[</color><color=white>" + (pageNumber + 1).ToString() + "</color><color=grey>]</color>";
+            text.text = "ii's <b>Stupid</b> Menu";
+            if (doCustomName)
+            {
+                text.text = customMenuName;
+            }
             if (annoyingMode)
             {
                 string[] randomMenuNames = new string[]
@@ -1444,6 +1556,10 @@ namespace iiMenu.Menu
             {
                 text.text = text.text.ToLower();
             }
+            if (!noPageNumber)
+            {
+                text.text += " <color=grey>[</color><color=white>" + (pageNumber + 1).ToString() + "</color><color=grey>]</color>";
+            }
             text.fontSize = 1;
             text.color = titleColor;
             title = text;
@@ -1455,6 +1571,10 @@ namespace iiMenu.Menu
             RectTransform component = text.GetComponent<RectTransform>();
             component.localPosition = Vector3.zero;
             component.sizeDelta = new Vector2(0.28f, 0.05f);
+            if (NoAutoSizeText)
+            {
+                component.sizeDelta = new Vector2(9f, 0.025f);
+            }
             component.position = new Vector3(0.06f, 0f, 0.165f);
             component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
@@ -1483,6 +1603,10 @@ namespace iiMenu.Menu
             text.resizeTextForBestFit = true;
             text.resizeTextMinSize = 0;
             component = text.GetComponent<RectTransform>();
+            if (NoAutoSizeText)
+            {
+                component.sizeDelta = new Vector2(9f, 0.025f);
+            }
             component.localPosition = Vector3.zero;
             component.sizeDelta = new Vector2(0.28f, 0.02f);
             if (FATMENU)
@@ -1523,6 +1647,10 @@ namespace iiMenu.Menu
                 component2.localPosition = Vector3.zero;
                 component2.sizeDelta = new Vector2(0.28f, 0.02f);
                 component2.position = new Vector3(0.06f, 0f, 0.135f);
+                if (NoAutoSizeText)
+                {
+                    component2.sizeDelta = new Vector2(9f, 0.025f);
+                }
                 component2.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
             }
 
@@ -1690,6 +1818,12 @@ namespace iiMenu.Menu
                         menu.transform.position = GorillaTagger.Instance.leftHandTransform.position;
                         menu.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
                     }
+                    if (flipMenu)
+                    {
+                        Vector3 rotation = menu.transform.rotation.eulerAngles;
+                        rotation += new Vector3(0f, 0f, 180f);
+                        menu.transform.rotation = Quaternion.Euler(rotation);
+                    }
                 }
                 else
                 {
@@ -1836,6 +1970,10 @@ namespace iiMenu.Menu
                 RectTransform component = text.GetComponent<RectTransform>();
                 component.localPosition = Vector3.zero;
                 component.sizeDelta = new Vector2(0.2f, 0.03f);
+                if (NoAutoSizeText)
+                {
+                    component.sizeDelta = new Vector2(9f, 0.025f);
+                }
                 component.localPosition = new Vector3(0.064f, 0f, 0.109f - num4 / 2.55f);
                 component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
                 num4 = 0.1f;
@@ -1886,6 +2024,10 @@ namespace iiMenu.Menu
                 RectTransform component2 = text2.GetComponent<RectTransform>();
                 component2.localPosition = Vector3.zero;
                 component2.sizeDelta = new Vector2(0.2f, 0.03f);
+                if (NoAutoSizeText)
+                {
+                    component2.sizeDelta = new Vector2(9f, 0.025f);
+                }
                 component2.localPosition = new Vector3(0.064f, 0f, 0.109f - num4 / 2.55f);
                 component2.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
             }
@@ -1946,6 +2088,10 @@ namespace iiMenu.Menu
                 RectTransform component = text.GetComponent<RectTransform>();
                 component.localPosition = Vector3.zero;
                 component.sizeDelta = new Vector2(0.2f, 0.03f);
+                if (NoAutoSizeText)
+                {
+                    component.sizeDelta = new Vector2(9f, 0.025f);
+                }
                 if (FATMENU == true)
                 {
                     component.localPosition = new Vector3(0.064f, 0.195f, 0f);
@@ -2003,6 +2149,10 @@ namespace iiMenu.Menu
                 component = text.GetComponent<RectTransform>();
                 component.localPosition = Vector3.zero;
                 component.sizeDelta = new Vector2(0.2f, 0.03f);
+                if (NoAutoSizeText)
+                {
+                    component.sizeDelta = new Vector2(9f, 0.025f);
+                }
                 if (FATMENU == true)
                 {
                     component.localPosition = new Vector3(0.064f, -0.195f, 0f);
@@ -2010,6 +2160,138 @@ namespace iiMenu.Menu
                 else
                 {
                     component.localPosition = new Vector3(0.064f, -0.267f, 0f);
+                }
+                component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+            }
+
+            if (pageButtonType == 5)
+            {
+                GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                if (themeType == 30)
+                {
+                    gameObject.GetComponent<Renderer>().enabled = false;
+                }
+                if (!UnityInput.Current.GetKey(KeyCode.Q))
+                {
+                    gameObject.layer = 2;
+                }
+                UnityEngine.Object.Destroy(gameObject.GetComponent<Rigidbody>());
+                gameObject.GetComponent<BoxCollider>().isTrigger = true;
+                gameObject.transform.parent = menu.transform;
+                gameObject.transform.rotation = Quaternion.identity;
+                gameObject.transform.localScale = new Vector3(0.09f, 0.3f, 0.05f);
+                if (FATMENU == true)
+                {
+                    gameObject.transform.localPosition = new Vector3(0.56f, 0.299f, 0.355f);
+                }
+                else
+                {
+                    gameObject.transform.localPosition = new Vector3(0.56f, 0.499f, 0.355f);
+                }
+                gameObject.AddComponent<Classes.Button>().relatedText = "PreviousPage";
+                GradientColorKey[] array = new GradientColorKey[3];
+                array[0].color = buttonDefaultA;
+                array[0].time = 0f;
+                array[1].color = buttonDefaultB;
+                array[1].time = 0.5f;
+                array[2].color = buttonDefaultA;
+                array[2].time = 1f;
+                ColorChanger colorChanger = gameObject.AddComponent<ColorChanger>();
+                colorChanger.colors = new Gradient
+                {
+                    colorKeys = array
+                };
+                colorChanger.Start();
+                gameObject.GetComponent<Renderer>().material.color = buttonDefaultA;
+                Text text = new GameObject
+                {
+                    transform =
+                    {
+                        parent = canvasObj.transform
+                    }
+                }.AddComponent<Text>();
+                text.font = activeFont;
+                text.text = arrowTypes[arrowType][0];
+                text.fontSize = 1;
+                text.color = textColor;
+                text.alignment = TextAnchor.MiddleCenter;
+                text.resizeTextForBestFit = true;
+                text.resizeTextMinSize = 0;
+                RectTransform component = text.GetComponent<RectTransform>();
+                component.localPosition = Vector3.zero;
+                component.sizeDelta = new Vector2(0.2f, 0.03f);
+                if (NoAutoSizeText)
+                {
+                    component.sizeDelta = new Vector2(9f, 0.025f);
+                }
+                if (FATMENU == true)
+                {
+                    component.localPosition = new Vector3(0.064f, 0.09f, 0.135f);
+                }
+                else
+                {
+                    component.localPosition = new Vector3(0.064f, 0.15f, 0.135f);
+                }
+                component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+
+                gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                if (themeType == 30)
+                {
+                    gameObject.GetComponent<Renderer>().enabled = false;
+                }
+                if (!UnityInput.Current.GetKey(KeyCode.Q))
+                {
+                    gameObject.layer = 2;
+                }
+                UnityEngine.Object.Destroy(gameObject.GetComponent<Rigidbody>());
+                gameObject.GetComponent<BoxCollider>().isTrigger = true;
+                gameObject.transform.parent = menu.transform;
+                gameObject.transform.rotation = Quaternion.identity;
+                gameObject.transform.localScale = new Vector3(0.09f, 0.3f, 0.05f);
+                if (FATMENU == true)
+                {
+                    gameObject.transform.localPosition = new Vector3(0.56f, -0.299f, 0.355f);
+                }
+                else
+                {
+                    gameObject.transform.localPosition = new Vector3(0.56f, -0.499f, 0.355f);
+                }
+                gameObject.AddComponent<Classes.Button>().relatedText = "NextPage";
+                ColorChanger colorChanger2 = gameObject.AddComponent<ColorChanger>();
+                colorChanger2.colors = new Gradient
+                {
+                    colorKeys = array
+                };
+                colorChanger2.Start();
+                gameObject.GetComponent<Renderer>().material.color = buttonDefaultA;
+                text = new GameObject
+                {
+                    transform =
+                    {
+                        parent = canvasObj.transform
+                    }
+                }.AddComponent<Text>();
+                text.font = activeFont;
+                text.text = arrowTypes[arrowType][1];
+                text.fontSize = 1;
+                text.color = textColor;
+                text.alignment = TextAnchor.MiddleCenter;
+                text.resizeTextForBestFit = true;
+                text.resizeTextMinSize = 0;
+                component = text.GetComponent<RectTransform>();
+                component.localPosition = Vector3.zero;
+                component.sizeDelta = new Vector2(0.2f, 0.03f);
+                if (NoAutoSizeText)
+                {
+                    component.sizeDelta = new Vector2(9f, 0.025f);
+                }
+                if (FATMENU == true)
+                {
+                    component.localPosition = new Vector3(0.064f, -0.09f, 0.135f);
+                }
+                else
+                {
+                    component.localPosition = new Vector3(0.064f, -0.15f, 0.135f);
                 }
                 component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
             }
@@ -2057,6 +2339,27 @@ namespace iiMenu.Menu
             return texture;
         }
 
+        public static Texture2D LoadTextureFromURL(string resourcePath, string fileName)
+        {
+            Texture2D texture = new Texture2D(2, 2);
+            
+            if (!Directory.Exists("iisStupidMenu"))
+            {
+                Directory.CreateDirectory("iisStupidMenu");
+            }
+            if (!File.Exists("iisStupidMenu/" + fileName))
+            {
+                UnityEngine.Debug.Log("Downloading " + fileName);
+                WebClient stream = new WebClient();
+                stream.DownloadFile(resourcePath, "iisStupidMenu/" + fileName);
+            }
+
+            byte[] bytes = File.ReadAllBytes("iisStupidMenu/" + fileName);
+            texture.LoadImage(bytes);
+
+            return texture;
+        }
+
         public static void RPCProtection()
         {
             if (hasRemovedThisFrame == false)
@@ -2100,6 +2403,41 @@ namespace iiMenu.Menu
             return html;
         }
 
+        public static (RaycastHit Ray, GameObject NewPointer) RenderGun()
+        {
+            Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray);
+            if (shouldBePC)
+            {
+                Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
+                Physics.Raycast(ray, out Ray, 100);
+            }
+
+            GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+            NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
+            NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+            NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
+            UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
+            UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
+            UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
+            UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+
+            GameObject line = new GameObject("Line");
+            LineRenderer liner = line.AddComponent<LineRenderer>();
+            liner.material.shader = Shader.Find("GUI/Text Shader");
+            liner.startColor = GetBGColor(0f);
+            liner.endColor = GetBGColor(0.5f);
+            liner.startWidth = 0.025f;
+            liner.endWidth = 0.025f;
+            liner.positionCount = 2;
+            liner.useWorldSpace = true;
+            liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
+            liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
+            UnityEngine.Object.Destroy(line, Time.deltaTime);
+
+            return (Ray, NewPointer);
+        }
+
         public static void CheckVersion()
         {
             try
@@ -2117,8 +2455,8 @@ namespace iiMenu.Menu
                 shouldAttemptLoadData = false;
                 if (html != PluginInfo.Version)
                 {
-                    // UnityEngine.Debug.Log("this is the part where we start kicking");
                     UnityEngine.Debug.Log("Version is outdated");
+                    Important.JoinDiscord();
                     NotifiLib.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> <color=white>You are using an outdated version of the menu! Please update to " + html + ".</color>", 10000);
                 }
                 if (html == "lockdown")
@@ -2526,6 +2864,19 @@ namespace iiMenu.Menu
         public static bool disableBoardColor = false;
         public static float timeMenuStarted = -1f;
         public static int pcbg = 0;
+        public static int buttonClickSound = 8;
+        public static int buttonClickIndex = 0;
+        public static int buttonClickVolume = 4;
+        public static bool doButtonsVibrate = true;
+        public static bool doCustomName = false;
+        public static string customMenuName = "your text here";
+        public static bool noPageNumber = false;
+        public static bool wristThingV2 = false;
+        public static float wristMenuDelay = -1f;
+        public static bool NoAutoSizeText = false;
+        public static int attemptsToLoad = 0;
+        public static bool flipMenu = false;
+        public static bool shinymenu = false;
 
         public static string ascii = 
 @"  _ _ _       ____  _               _     _   __  __                  
@@ -2570,9 +2921,21 @@ namespace iiMenu.Menu
         public static Font Verdana = Font.CreateDynamicFontFromOSFont("Verdana", 24);
         public static Font sans = Font.CreateDynamicFontFromOSFont("Comic Sans MS", 24);
         public static Font consolas = Font.CreateDynamicFontFromOSFont("Consolas", 24);
+        public static Font ubuntu = Font.CreateDynamicFontFromOSFont("Candara", 24);
         public static Font gtagfont = null;
         public static Font activeFont = agency;
         public static FontStyle activeFontStyle = FontStyle.Italic;
+
+        public static GameObject watchobject = null;
+        public static GameObject watchText = null;
+        public static GameObject watchShell = null;
+        public static GameObject watchEnabledIndicator = null;
+        public static Material watchIndicatorMat = null;
+        public static int currentSelectedModThing = 0;
+
+        public static GameObject regwatchobject = null;
+        public static GameObject regwatchText = null;
+        public static GameObject regwatchShell = null;
 
         public static GameObject leftplat = null;
         public static GameObject rightplat = null;
