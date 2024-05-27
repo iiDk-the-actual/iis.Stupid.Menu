@@ -178,30 +178,23 @@ namespace iiMenu.Mods
             Application.Quit();
         }
 
-        public static void EnableFPC()
+        public static void DisableFPC()
         {
-            try
+            if (TPC != null)
             {
-                cam = GameObject.Find("Player Objects/Third Person Camera/Shoulder Camera");
-            }
-            catch { }
-            if (cam != null)
-            {
-                cam.GetComponent<CinemachineVirtualCamera>().enabled = false;
-                cam.GetComponent<Camera>().fieldOfView = 90;
-                cam.transform.parent = GorillaTagger.Instance.mainCamera.transform;
-                cam.transform.localPosition = Vector3.zero;
-                cam.transform.localRotation = Quaternion.identity;
+                TPC.GetComponent<Camera>().fieldOfView = 60f;
+                TPC.gameObject.transform.Find("CM vcam1").GetComponent<CinemachineVirtualCamera>().enabled = true;
             }
         }
 
-        public static void DisableFPC()
+        public static void MoveFPC()
         {
-            if (cam != null)
+            if (TPC != null)
             {
-                cam.GetComponent<Camera>().fieldOfView = 60f;
-                cam.transform.parent = GameObject.Find("Player Objects/Third Person Camera").transform;
-                cam.GetComponent<CinemachineVirtualCamera>().enabled = true;
+                TPC.fieldOfView = 90f;
+                TPC.gameObject.transform.Find("CM vcam1").GetComponent<CinemachineVirtualCamera>().enabled = false;
+                TPC.gameObject.transform.position = GorillaTagger.Instance.headCollider.transform.position;
+                TPC.gameObject.transform.rotation = Quaternion.Lerp(TPC.transform.rotation, GorillaTagger.Instance.headCollider.transform.rotation, 0.075f);
             }
         }
 
@@ -232,6 +225,32 @@ namespace iiMenu.Mods
             Process.Start("https://discord.gg/iidk");
         }
 
+        public static void CopyPlayerPosition()
+        {
+            string text = "Body\n";
+            Transform p = GorillaTagger.Instance.bodyCollider.transform;
+            text += "new Vector3(" + p.position.x.ToString() + ", " + p.position.y.ToString() + ", " + p.position.z.ToString() + ");";
+            text += "new Quaternion(" + p.rotation.x.ToString() + ", " + p.rotation.y.ToString() + ", " + p.rotation.z.ToString() + ", " + p.rotation.w.ToString() + ");\n\n";
+
+            text += "Head\n";
+            p = GorillaTagger.Instance.headCollider.transform;
+            text += "new Vector3(" + p.position.x.ToString() + ", " + p.position.y.ToString() + ", " + p.position.z.ToString() + ");";
+            text += "new Quaternion(" + p.rotation.x.ToString() + ", " + p.rotation.y.ToString() + ", " + p.rotation.z.ToString() + ", " + p.rotation.w.ToString() + ");\n\n";
+
+            text += "Left Hand\n";
+            p = GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform;
+            text += "new Vector3(" + p.position.x.ToString() + ", " + p.position.y.ToString() + ", " + p.position.z.ToString() + ");";
+            text += "new Quaternion(" + p.rotation.x.ToString() + ", " + p.rotation.y.ToString() + ", " + p.rotation.z.ToString() + ", " + p.rotation.w.ToString() + ");\n\n";
+
+            text += "Right Hand\n";
+            p = GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform;
+            text += "new Vector3(" + p.position.x.ToString() + ", " + p.position.y.ToString() + ", " + p.position.z.ToString() + ");";
+            text += "new Quaternion(" + p.rotation.x.ToString() + ", " + p.rotation.y.ToString() + ", " + p.rotation.z.ToString() + ", " + p.rotation.w.ToString() + ");";
+
+            GUIUtility.systemCopyBuffer = text;
+        }
+
+
         public static void EnableAntiAFK()
         {
             PhotonNetworkController.Instance.disableAFKKick = false;
@@ -259,6 +278,25 @@ namespace iiMenu.Mods
 
         public static void EnableQuitBox()
         {
+            GameObject.Find("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/QuitBox").SetActive(true);
+        }
+
+        public static GameObject theboxlol = null;
+        public static void PhysicalQuitbox()
+        {
+            GameObject thequitbox = GameObject.Find("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/QuitBox");
+            theboxlol = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            UnityEngine.Object.Destroy(theboxlol.GetComponent<Rigidbody>());
+            theboxlol.transform.position = thequitbox.transform.position;
+            theboxlol.transform.rotation = thequitbox.transform.rotation;
+            theboxlol.transform.localScale = thequitbox.transform.localScale;
+            theboxlol.GetComponent<Renderer>().material = OrangeUI;
+            GameObject.Find("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/QuitBox").SetActive(false);
+        }
+
+        public static void NotPhysicalQuitbox()
+        {
+            UnityEngine.Object.Destroy(theboxlol);
             GameObject.Find("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/QuitBox").SetActive(true);
         }
 

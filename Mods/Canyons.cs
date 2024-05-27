@@ -1,5 +1,4 @@
 ﻿using GorillaLocomotion.Gameplay;
-using Photon.Pun;
 using UnityEngine;
 using static iiMenu.Menu.Main;
 
@@ -17,6 +16,28 @@ namespace iiMenu.Mods
                 {
                     RopeSwingManager.instance.SendSetVelocity_RPC(rope.ropeId, 1, new Vector3(joy.x * 50f, joy.y * 50f, 0f), true);
                     RPCProtection();
+                }
+            }
+        }
+
+        public static void FastRopes()
+        {
+            foreach (GorillaRopeSwingSettings settings in GameObject.FindObjectsOfType(typeof(GorillaRopeSwingSettings)))
+            {
+                if (settings.name.Contains("Default"))
+                {
+                    settings.inheritVelocityMultiplier = 4f;
+                }
+            }
+        }
+
+        public static void RegularRopes()
+        {
+            foreach (GorillaRopeSwingSettings settings in GameObject.FindObjectsOfType(typeof(GorillaRopeSwingSettings)))
+            {
+                if (settings.name.Contains("Default"))
+                {
+                    settings.inheritVelocityMultiplier = 0.9f;
                 }
             }
         }

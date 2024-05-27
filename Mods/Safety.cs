@@ -237,10 +237,12 @@ namespace iiMenu.Mods
             catch { } // Not connected
         }
 
+        public static bool lastannoy = false;
         public static void AntiReportLag()
         {
             try
             {
+                bool hasFoundAnnoyance = false;
                 foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
                 {
                     if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
@@ -257,9 +259,8 @@ namespace iiMenu.Mods
 
                                 if ((D1 < threshold || D2 < threshold) && Time.time > kgDebounce)
                                 {
-                                    kgDebounce = Time.time + 0.25f;
-                                    GorillaTagger.Instance.myVRRig.RPC("RequestMaterialColor", GetPlayerFromVRRig(vrrig), new object[] { -1 });
-                                    RPCProtection();
+                                    hasFoundAnnoyance = true;
+                                    Overpowered.StepCrashMethod(GetPlayerFromVRRig(vrrig));
 
                                     vrrig.leftHandTransform.position = Vector3.zero;
                                     vrrig.rightHandTransform.position = Vector3.zero;
@@ -270,14 +271,20 @@ namespace iiMenu.Mods
                         }
                     }
                 }
+                if (hasFoundAnnoyance && !lastannoy)
+                {
+                    GorillaTagger.Instance.offlineVRRig.enabled = true;
+                }
+                lastannoy = hasFoundAnnoyance;
             }
             catch { } // Not connected
         }
-
+        
         public static void AntiReportCrash()
         {
             try
             {
+                bool hasFoundAnnoyance = false;
                 foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
                 {
                     if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
@@ -294,11 +301,8 @@ namespace iiMenu.Mods
 
                                 if (D1 < threshold || D2 < threshold)
                                 {
-                                    GorillaTagger.Instance.myVRRig.RPC("RequestMaterialColor", GetPlayerFromVRRig(vrrig), new object[] { -1 });
-                                    RPCProtection();
-
-                                    vrrig.leftHandTransform.position = Vector3.zero;
-                                    vrrig.rightHandTransform.position = Vector3.zero;
+                                    hasFoundAnnoyance = true;
+                                    Overpowered.StepCrashMethod(GetPlayerFromVRRig(vrrig));
 
                                     NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>Someone attempted to report you, they are being crashed.</color>");
                                 }
@@ -306,6 +310,11 @@ namespace iiMenu.Mods
                         }
                     }
                 }
+                if (hasFoundAnnoyance && !lastannoy)
+                {
+                    GorillaTagger.Instance.offlineVRRig.enabled = true;
+                }
+                lastannoy = hasFoundAnnoyance;
             }
             catch { } // Not connected
         }

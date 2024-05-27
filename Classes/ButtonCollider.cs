@@ -13,18 +13,21 @@ namespace iiMenu.Classes
 			if (Time.time > buttonCooldown && collider == buttonCollider && menu != null)
 			{
                 buttonCooldown = Time.time + 0.2f;
-                GorillaTagger.Instance.StartVibration(GetIndex("Right Hand").enabled, GorillaTagger.Instance.tagHapticStrength / 2f, GorillaTagger.Instance.tagHapticDuration / 2f);
-                GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(8, GetIndex("Right Hand").enabled, 0.4f);
+				if (doButtonsVibrate)
+				{
+					GorillaTagger.Instance.StartVibration(GetIndex("Right Hand").enabled, GorillaTagger.Instance.tagHapticStrength / 2f, GorillaTagger.Instance.tagHapticDuration / 2f);
+				}
+                GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(buttonClickSound, GetIndex("Right Hand").enabled, buttonClickVolume/10f);
 				if (GetIndex("Serversided Button Sounds").enabled && PhotonNetwork.InRoom)
 				{
-                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.Others, new object[]{
-						8,
+                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.Others, new object[] {
+                        buttonClickSound,
                         GetIndex("Right Hand").enabled,
-						0.4f
-					});
+                        buttonClickVolume/10f
+                    });
                     RPCProtection();
                 }
-				Toggle(this.relatedText, true);
+				Toggle(relatedText, true);
             }
 		}
 	}

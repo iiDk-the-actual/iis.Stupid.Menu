@@ -1,15 +1,13 @@
 ﻿using iiMenu.Classes;
 using iiMenu.Menu;
+using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
+using System;
 using System.IO;
-using UnityEngine;
 using System.Linq;
+using UnityEngine;
 using UnityEngine.UI;
 using static iiMenu.Menu.Main;
-using System;
-using iiMenu.Mods.Spammers;
-using System.Runtime.CompilerServices;
-using PlayFab.ClientModels;
 
 namespace iiMenu.Mods
 {
@@ -168,11 +166,35 @@ namespace iiMenu.Mods
         public static void RightHand()
         {
             rightHand = true;
+            if (wristThingV2)
+            {
+                Toggle("Watch Menu");
+                Toggle("Watch Menu");
+                NotifiLib.ClearAllNotifications();
+            }
+            if (GetIndex("Info Watch").enabled)
+            {
+                Toggle("Info Watch");
+                Toggle("Info Watch");
+                NotifiLib.ClearAllNotifications();
+            }
         }
 
         public static void LeftHand()
         {
             rightHand = false;
+            if (wristThingV2)
+            {
+                Toggle("Watch Menu");
+                Toggle("Watch Menu");
+                NotifiLib.ClearAllNotifications();
+            }
+            if (GetIndex("Info Watch").enabled)
+            {
+                Toggle("Info Watch");
+                Toggle("Info Watch");
+                NotifiLib.ClearAllNotifications();
+            }
         }
 
         public static void BothHandsOn()
@@ -207,6 +229,52 @@ namespace iiMenu.Mods
             joystickOpen = false;
         }
 
+        public static void WatchMenuOn()
+        {
+            wristThingV2 = true;
+            GameObject mainwatch = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/huntcomputer (1)");
+            watchobject = UnityEngine.Object.Instantiate(mainwatch,rightHand ? GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R").transform : GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L").transform, false);
+            UnityEngine.Object.Destroy(watchobject.GetComponent<GorillaHuntComputer>());
+            watchobject.SetActive(true);
+
+            Transform thething = watchobject.transform.Find("HuntWatch_ScreenLocal/Canvas/Anchor");
+            thething.Find("Hat").gameObject.SetActive(false);
+            thething.Find("Face").gameObject.SetActive(false);
+            thething.Find("Badge").gameObject.SetActive(false);
+            thething.Find("Material").gameObject.SetActive(false);
+            thething.Find("Right Hand").gameObject.SetActive(false);
+
+            watchText = thething.Find("Text").gameObject;
+            //watchText.GetComponent<Text>().horizontalOverflow = UnityEngine.HorizontalWrapMode.Overflow;
+            watchEnabledIndicator = thething.Find("Left Hand").gameObject;
+            watchShell = watchobject.transform.Find("HuntWatch_ScreenLocal").gameObject;
+
+            watchShell.GetComponent<Renderer>().material = OrangeUI;
+
+            if (rightHand)
+            {
+                watchShell.transform.localRotation = Quaternion.Euler(0f, 140f, 0f);
+                watchShell.transform.parent.localPosition += new Vector3(0.025f, 0f, 0f);
+                watchShell.transform.localPosition += new Vector3(0.025f, 0f, -0.035f);
+            }
+        }
+
+        public static void WatchMenuOff()
+        {
+            wristThingV2 = false;
+            UnityEngine.Object.Destroy(watchobject);
+        }
+
+        public static void ShinyMenu()
+        {
+            shinymenu = true;
+        }
+
+        public static void NoShinyMenu()
+        {
+            shinymenu = false;
+        }
+
         public static void LongMenuOn()
         {
             longmenu = true;
@@ -217,10 +285,20 @@ namespace iiMenu.Mods
             longmenu = false;
         }
 
-        public static void ChangeMenuTheme()
+        public static void FlipMenu()
+        {
+            flipMenu = true;
+        }
+
+        public static void NonFlippedMenu()
+        {
+            flipMenu = false;
+        }
+
+        public static void ChangeMenuTheme() // i made this function b4 i knew switch case existed cuz i was new to c# don't blame the if spam
         {
             themeType++;
-            if (themeType > 35)
+            if (themeType > 45)
             {
                 themeType = 1;
             }
@@ -647,12 +725,186 @@ namespace iiMenu.Mods
                 textColor = Color.white;
                 textClicked = Color.white;
             }
+            if (themeType == 36)
+            {
+                bgColorA = Color.black;
+                bgColorB = Color.gray;
+                buttonDefaultA = Color.yellow;
+                buttonDefaultB = Color.yellow;
+                buttonClickedA = Color.magenta;
+                buttonClickedB = Color.magenta;
+                titleColor = Color.white;
+                textColor = Color.black;
+                textClicked = Color.black;
+            }
+            if (themeType == 37)
+            {
+                bgColorA = Color.black;
+                bgColorB = Color.black;
+                buttonDefaultA = new Color32(32, 32, 32, 255);
+                buttonDefaultB = new Color32(32, 32, 32, 255);
+                buttonClickedA = new Color32(32, 32, 32, 255);
+                buttonClickedB = new Color32(32, 32, 32, 255);
+                titleColor = Color.white;
+                textColor = Color.black;
+                textClicked = Color.white;
+            }
+            if (themeType == 38)
+            {
+                bgColorA = new Color32(199, 115, 173, 255);
+                bgColorB = new Color32(165, 233, 185, 255);
+                buttonDefaultA = new Color32(99, 58, 86, 255);
+                buttonDefaultB = new Color32(83, 116, 92, 255);
+                buttonClickedA = new Color32(99, 58, 86, 255);
+                buttonClickedB = new Color32(83, 116, 92, 255);
+                titleColor = Color.white;
+                textColor = Color.white;
+                textClicked = Color.green;
+            }
+            if (themeType == 39)
+            {
+                bgColorA = new Color32(27, 27, 27, 255);
+                bgColorB = new Color32(27, 27, 27, 255);
+                buttonDefaultA = new Color32(50, 50, 50, 255);
+                buttonDefaultB = new Color32(50, 50, 50, 255);
+                buttonClickedA = new Color32(66, 66, 66, 255);
+                buttonClickedB = new Color32(66, 66, 66, 255);
+                titleColor = Color.white;
+                textColor = Color.white;
+                textClicked = Color.white;
+            }
+            if (themeType == 40)
+            {
+                bgColorA = Color.black;
+                bgColorB = new Color32(100, 25, 125, 255);
+                buttonDefaultA = new Color32(25, 25, 25, 255);
+                buttonDefaultB = new Color32(25, 25, 25, 255);
+                buttonClickedA = Color.green;
+                buttonClickedB = Color.green;
+                titleColor = Color.white;
+                textColor = Color.white;
+                textClicked = Color.white;
+            }
+            if (themeType == 41)
+            {
+                bgColorA = new Color32(27, 27, 27, 255);
+                bgColorB = new Color32(27, 27, 27, 255);
+                buttonDefaultA = Color.red;
+                buttonDefaultB = Color.red;
+                buttonClickedA = Color.green;
+                buttonClickedB = Color.green;
+                titleColor = Color.white;
+                textColor = Color.white;
+                textClicked = Color.white;
+            }
+            if (themeType == 42)
+            {
+                bgColorA = Color.black;
+                bgColorB = new Color32(100, 0, 0, 255);
+                buttonDefaultA = Color.black;
+                buttonDefaultB = Color.black;
+                buttonClickedA = new Color32(100, 0, 0, 255);
+                buttonClickedB = new Color32(100, 0, 0, 255);
+                titleColor = Color.white;
+                textColor = Color.white;
+                textClicked = Color.white;
+            }
+            if (themeType == 43)
+            {
+                bgColorA = new Color32(21, 22, 23, 255);
+                bgColorB = new Color32(21, 22, 23, 255);
+                buttonDefaultA = new Color32(32, 50, 77, 255);
+                buttonDefaultB = new Color32(32, 50, 77, 255);
+                buttonClickedA = new Color32(60, 127, 206, 255);
+                buttonClickedB = new Color32(60, 127, 206, 255);
+                titleColor = Color.white;
+                textColor = Color.white;
+                textClicked = Color.white;
+            }
+            if (themeType == 44)
+            {
+                bgColorA = Color.black;
+                bgColorB = Color.black;
+                buttonDefaultA = Color.black;
+                buttonDefaultB = Color.black;
+                buttonClickedA = new Color32(10, 10, 10, 255);
+                buttonClickedB = new Color32(10, 10, 10, 255);
+                titleColor = Color.white;
+                textColor = Color.white;
+                textClicked = Color.white;
+            }
+            if (themeType == 45)
+            {
+                bgColorA = Color.white;
+                bgColorB = Color.white;
+                buttonDefaultA = Color.white;
+                buttonDefaultB = Color.white;
+                buttonClickedA = new Color32(245, 245, 245, 255);
+                buttonClickedB = new Color32(245, 245, 245, 255);
+                titleColor = Color.black;
+                textColor = Color.black;
+                textClicked = Color.black;
+            }
+        }
+
+        public static string fileData = null;
+        public static void CustomMenuTheme()
+        {
+            bool loadedThisTime = false;
+            if (fileData == null)
+            {
+                if (!Directory.Exists("iisStupidMenu"))
+                {
+                    Directory.CreateDirectory("iisStupidMenu");
+                }
+                if (!File.Exists("iisStupidMenu/iiMenu_CustomThemeColor.txt"))
+                {
+                    File.WriteAllText("iisStupidMenu/iiMenu_CustomThemeColor.txt", "255,128,0\n0,0,0\n255,0,0\n255,0,0\n0,255,0\n0,255,0\n255,255,255\n0,0,255\n255,0,255");
+                }
+
+                fileData = File.ReadAllText("iisStupidMenu/iiMenu_CustomThemeColor.txt");
+                loadedThisTime = true;
+            }
+            string[] linesplit = fileData.Split("\n");
+
+            string[] a = linesplit[0].Split(",");
+            bgColorA = new Color32(byte.Parse(a[0]), byte.Parse(a[1]), byte.Parse(a[2]), 255);
+            a = linesplit[1].Split(",");
+            bgColorB = new Color32(byte.Parse(a[0]), byte.Parse(a[1]), byte.Parse(a[2]), 255);
+
+            a = linesplit[2].Split(",");
+            buttonDefaultA = new Color32(byte.Parse(a[0]), byte.Parse(a[1]), byte.Parse(a[2]), 255);
+            a = linesplit[3].Split(",");
+            buttonDefaultB = new Color32(byte.Parse(a[0]), byte.Parse(a[1]), byte.Parse(a[2]), 255);
+
+            a = linesplit[4].Split(",");
+            buttonClickedA = new Color32(byte.Parse(a[0]), byte.Parse(a[1]), byte.Parse(a[2]), 255);
+            a = linesplit[5].Split(",");
+            buttonClickedB = new Color32(byte.Parse(a[0]), byte.Parse(a[1]), byte.Parse(a[2]), 255);
+
+            a = linesplit[6].Split(",");
+            titleColor = new Color32(byte.Parse(a[0]), byte.Parse(a[1]), byte.Parse(a[2]), 255);
+            a = linesplit[7].Split(",");
+            textColor = new Color32(byte.Parse(a[0]), byte.Parse(a[1]), byte.Parse(a[2]), 255);
+            a = linesplit[8].Split(",");
+            textClicked = new Color32(byte.Parse(a[0]), byte.Parse(a[1]), byte.Parse(a[2]), 255);
+            if (loadedThisTime)
+            {
+                ReloadMenu();
+            }
+        }
+
+        public static void FixTheme()
+        {
+            themeType--;
+            ChangeMenuTheme();
+            fileData = null;
         }
 
         public static void ChangePageType()
         {
             pageButtonType++;
-            if (pageButtonType > 4)
+            if (pageButtonType > 5)
             {
                 pageButtonType = 1;
             }
@@ -677,6 +929,11 @@ namespace iiMenu.Mods
                 pageSize = 8;
                 buttonOffset = 0;
             }
+            if (pageButtonType == 5)
+            {
+                pageSize = 8;
+                buttonOffset = 0;
+            }
         }
 
         public static void ChangeArrowType()
@@ -688,10 +945,10 @@ namespace iiMenu.Mods
             }
         }
 
-            public static void ChangeFontType()
+        public static void ChangeFontType()
         {
             fontCycle++;
-            if (fontCycle > 5)
+            if (fontCycle > 6)
             {
                 fontCycle = 0;
             }
@@ -725,6 +982,10 @@ namespace iiMenu.Mods
             if (fontCycle == 5)
             {
                 activeFont = consolas;
+            }
+            if (fontCycle == 6)
+            {
+                activeFont = ubuntu;
             }
         }
 
@@ -863,6 +1124,16 @@ namespace iiMenu.Mods
             lowercaseMode = false;
         }
 
+        public static void OverflowMode()
+        {
+            NoAutoSizeText = true;
+        }
+
+        public static void NoOverflowMode()
+        {
+            NoAutoSizeText = false;
+        }
+
         public static void EnablePrimaryRoomMods()
         {
             GetIndex("Disconnect").isTogglable = true;
@@ -927,6 +1198,35 @@ namespace iiMenu.Mods
             disablePageButtons = false;
         }
 
+        public static void DisablePageText()
+        {
+            noPageNumber = true;
+        }
+
+        public static void EnablePageText()
+        {
+            noPageNumber = false;
+        }
+
+        public static void CustomMenuName()
+        {
+            doCustomName = true;
+            if (!Directory.Exists("iisStupidMenu"))
+            {
+                Directory.CreateDirectory("iisStupidMenu");
+            }
+            if (!File.Exists("iisStupidMenu/iiMenu_CustomMenuName.txt"))
+            {
+                File.WriteAllText("iisStupidMenu/iiMenu_CustomMenuName.txt", "Your Text Here");
+            }
+            customMenuName = File.ReadAllText("iisStupidMenu/iiMenu_CustomMenuName.txt");
+        }
+
+        public static void NoCustomMenuName()
+        {
+            doCustomName = false;
+        }
+
         public static void DisableFPSCounter()
         {
             disableFpsCounter = true;
@@ -971,7 +1271,7 @@ namespace iiMenu.Mods
                 }
             }
 
-            string ihateyouguys = platformMode+"\n"+platformShape+"\n"+flySpeedCycle+"\n"+longarmCycle+"\n"+speedboostCycle+"\n"+projmode+"\n"+trailmode+"\n"+shootCycle+"\n"+pointerIndex+"\n"+tagAuraIndex+"\n"+notificationDecayTime+"\n"+fontStyleType+"\n"+arrowType+"\n"+pcbg+"\n"+internetTime+"\n"+hotkeyButton;
+            string ihateyouguys = platformMode+"\n"+platformShape+"\n"+flySpeedCycle+"\n"+longarmCycle+"\n"+speedboostCycle+"\n"+projmode+"\n"+trailmode+"\n"+shootCycle+"\n"+pointerIndex+"\n"+tagAuraIndex+"\n"+notificationDecayTime+"\n"+fontStyleType+"\n"+arrowType+"\n"+pcbg+"\n"+internetTime+"\n"+hotkeyButton+"\n"+buttonClickIndex+"\n"+buttonClickVolume;
 
             if (!Directory.Exists("iisStupidMenu"))
             {
@@ -1051,6 +1351,10 @@ namespace iiMenu.Mods
                     internetTime = int.Parse(data[14]) - 1;
                     Settings.ChangeReconnectTime();
                     hotkeyButton = data[15];
+                    buttonClickIndex = int.Parse(data[16]) - 1;
+                    Settings.ChangeButtonSound();
+                    buttonClickVolume = int.Parse(data[17]) - 1;
+                    Settings.ChangeButtonVolume();
                 }
                 catch { }
 
@@ -1115,6 +1419,52 @@ namespace iiMenu.Mods
         public static void CheckboxButtonsOff()
         {
             checkMode = false;
+        }
+
+        public static void ChangeButtonSound()
+        {
+            int[] sounds = new int[]
+            {
+                8,
+                66,
+                67,
+                84
+            };
+            string[] buttonSoundNames = new string[]
+            {
+                "Wood",
+                "Keyboard",
+                "Default",
+                "Bubble"
+            };
+
+            buttonClickIndex++;
+            if (buttonClickIndex > sounds.Length - 1)
+            {
+                buttonClickIndex = 0;
+            }
+            buttonClickSound = sounds[buttonClickIndex];
+            GetIndex("cbsound").overlapText = "Change Button Sound <color=grey>[</color><color=green>" + buttonSoundNames[buttonClickIndex] + "</color><color=grey>]</color>";
+        }
+
+        public static void ChangeButtonVolume()
+        {
+            buttonClickVolume++;
+            if (buttonClickVolume > 10)
+            {
+                buttonClickVolume = 0;
+            }
+            GetIndex("cbvol").overlapText = "Change Button Volume <color=grey>[</color><color=green>" + buttonClickVolume.ToString() + "</color><color=grey>]</color>";
+        }
+
+        public static void DisableButtonVibration()
+        {
+            doButtonsVibrate = false;
+        }
+
+        public static void EnableButtonVibration()
+        {
+            doButtonsVibrate = true;
         }
 
         public static void CrashAmount()

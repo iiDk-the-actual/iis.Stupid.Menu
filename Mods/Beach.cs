@@ -8,7 +8,7 @@ namespace iiMenu.Mods
     {
         public static void DisableWater()
         {
-            GameObject water = GameObject.Find("Environment Objects/LocalObjects_Prefab/Beach/B_WaterVolumes");
+            GameObject water = GameObject.Find("Beach/B_WaterVolumes");
             Transform waterTransform = water.transform;
             for (int i = 0; i < waterTransform.childCount; i++)
             {
@@ -19,7 +19,7 @@ namespace iiMenu.Mods
 
         public static void SolidWater()
         {
-            GameObject water = GameObject.Find("Environment Objects/LocalObjects_Prefab/Beach/B_WaterVolumes");
+            GameObject water = GameObject.Find("Beach/B_WaterVolumes");
             Transform waterTransform = water.transform;
             for (int i = 0; i < waterTransform.childCount; i++)
             {
@@ -30,7 +30,7 @@ namespace iiMenu.Mods
 
         public static void FixWater()
         {
-            GameObject water = GameObject.Find("Environment Objects/LocalObjects_Prefab/Beach/B_WaterVolumes");
+            GameObject water = GameObject.Find("Beach/B_WaterVolumes");
             Transform waterTransform = water.transform;
             for (int i = 0; i < waterTransform.childCount; i++)
             {
