@@ -487,7 +487,7 @@ namespace iiMenu.Mods.Spammers
                     int projIndex = projmode;
                     int trailIndex = trailmode;
                     
-                    if (whoCopy.rightMiddle.calcT > 0.5f && Time.time > projDebounce)
+                    if (whoCopy.rightMiddle.calcT > 0.5f)
                     {
                         if (GetIndex("Random Projectile").enabled)
                         {
@@ -597,7 +597,7 @@ namespace iiMenu.Mods.Spammers
                         SysFireProjectile(projectilename, trailname, startpos, charvel, randa / 255f, randb / 255f, randc / 255f, GetIndex("Blue Team Projectiles").enabled, GetIndex("Orange Team Projectiles").enabled);
                     }
 
-                    if (whoCopy.leftMiddle.calcT > 0.5f && Time.time > projDebounce)
+                    if (whoCopy.leftMiddle.calcT > 0.5f)
                     {
                         if (GetIndex("Random Projectile").enabled)
                         {

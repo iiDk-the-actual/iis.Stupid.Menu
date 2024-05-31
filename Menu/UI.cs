@@ -174,7 +174,7 @@ namespace iiMenu.UI
                 }
                 if (GUI.Button(new Rect(Screen.width - 200, 90, 85, 30), "Join"))
                 {
-                    PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(inputText);
+                    PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(inputText, JoinType.Solo);
                 }
                 if (GUI.Button(new Rect(Screen.width - 105, 90, 85, 30), "Queue"))
                 {

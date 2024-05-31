@@ -38,7 +38,7 @@ namespace iiMenu.Mods
 
         public static void JoinLastRoom()
         {
-            PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(lastRoom);
+            PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(lastRoom, JoinType.Solo);
         }
 
         public static void ActJoinRandom()

@@ -5,6 +5,7 @@ using HarmonyLib;
 using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
@@ -488,7 +489,7 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if ((isCopying && whoCopy != null) && Time.time > kgDebounce)
+                if (isCopying && whoCopy != null)
                 {
                     StepCrashMethod(GetPlayerFromVRRig(whoCopy));
                 }
@@ -514,7 +515,7 @@ namespace iiMenu.Mods
 
         public static void CrashAll()
         {
-            if ((rightTrigger > 0.5f) && Time.time > kgDebounce)
+            if (rightTrigger > 0.5f)
             {
                 StepCrashMethod(RpcTarget.Others);
             } else
@@ -999,6 +1000,7 @@ namespace iiMenu.Mods
             }
         }
 
+        // Revert kick mods to 3.4.2
         public static void KickGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
@@ -1013,12 +1015,26 @@ namespace iiMenu.Mods
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
                         Photon.Realtime.Player owner = GetPlayerFromVRRig(possibly);
-                        // I was over thinking the code thx hamster 4 optimizing
-                        if (PhotonNetwork.InRoom && !PhotonNetwork.CurrentRoom.IsVisible && GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(owner.UserId) && GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(PhotonNetwork.LocalPlayer.UserId))
+                        if (GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(owner.UserId) && GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(PhotonNetwork.LocalPlayer.UserId))
                         {
-                            GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Clear();
-                            GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Add(owner.UserId);
-                            GorillaComputer.instance.OnGroupJoinButtonPress(0, GorillaComputer.instance.friendJoinCollider);
+                            PhotonNetworkController.Instance.friendIDList = new List<string>(GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching);
+                            PhotonNetworkController.Instance.shuffler = UnityEngine.Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+                            PhotonNetworkController.Instance.keyStr = UnityEngine.Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+
+                            object[] groupJoinSendData = new object[2];
+                            groupJoinSendData[0] = PhotonNetworkController.Instance.shuffler;
+                            groupJoinSendData[1] = PhotonNetworkController.Instance.keyStr;
+                            RaiseEventOptions raiseEventOptions = new RaiseEventOptions
+                            {
+                                TargetActors = new int[1] { owner.ActorNumber }
+                            };
+
+                            object obj = groupJoinSendData;
+                            object[] sendEventData = new object[3];
+                            sendEventData[0] = PhotonNetwork.ServerTimestamp;
+                            sendEventData[1] = (byte)4;
+                            sendEventData[2] = groupJoinSendData;
+                            PhotonNetwork.RaiseEvent(3, sendEventData, raiseEventOptions, SendOptions.SendUnreliable);
                             RPCProtection();
                         }
                         kgDebounce = Time.time + 0.5f;
@@ -1029,15 +1045,34 @@ namespace iiMenu.Mods
 
         public static void KickAll()
         {
-            // I was over thinking the code thx hamster 4 optimizing
             if (PhotonNetwork.InRoom && !PhotonNetwork.CurrentRoom.IsVisible)
             {
-                if (GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(PhotonNetwork.LocalPlayer.UserId))
+                PhotonNetworkController.Instance.friendIDList = new List<string>(GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching);
+                PhotonNetworkController.Instance.shuffler = UnityEngine.Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+                PhotonNetworkController.Instance.keyStr = UnityEngine.Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+                foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
                 {
-                    GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Remove(PhotonNetwork.LocalPlayer.UserId);
-                    GorillaComputer.instance.OnGroupJoinButtonPress(0, GorillaComputer.instance.friendJoinCollider);
-                    RPCProtection();
+                    if (GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(player.UserId) && player != PhotonNetwork.LocalPlayer)
+                    {
+                        object[] groupJoinSendData = new object[2];
+                        groupJoinSendData[0] = PhotonNetworkController.Instance.shuffler;
+                        groupJoinSendData[1] = PhotonNetworkController.Instance.keyStr;
+                        RaiseEventOptions raiseEventOptions = new RaiseEventOptions
+                        {
+                            TargetActors = new int[1] { player.ActorNumber }
+                        };
+
+                        object obj = groupJoinSendData;
+                        object[] sendEventData = new object[3];
+                        sendEventData[0] = PhotonNetwork.ServerTimestamp;
+                        sendEventData[1] = (byte)4;
+                        sendEventData[2] = groupJoinSendData;
+                        PhotonNetwork.RaiseEvent(3, sendEventData, raiseEventOptions, SendOptions.SendUnreliable);
+                        RPCProtection();
+                    }
                 }
+                PhotonNetwork.SendAllOutgoingCommands();
+                RPCProtection();
             }
         }
 

@@ -199,10 +199,7 @@ namespace iiMenu.Mods
 
         public static void FakeUnbanSelf()
         {
-            foreach (GorillaLevelScreen gorillaLevelScreen in GorillaComputer.instance.levelScreens)
-            {
-                gorillaLevelScreen.UpdateText(gorillaLevelScreen.startingText, true);
-            }
+            PhotonNetworkController.Instance.UpdateTriggerScreens();
             GorillaScoreboardTotalUpdater.instance.ClearOfflineFailureText();
             GorillaComputer.instance.screenText.DisableFailedState();
             GorillaComputer.instance.functionSelectText.DisableFailedState();

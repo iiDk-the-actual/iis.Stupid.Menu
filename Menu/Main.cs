@@ -32,7 +32,6 @@ namespace iiMenu.Menu
         {
             try
             {
-                bool dropOnRemove = true;
                 bool isKeyboardCondition = UnityInput.Current.GetKey(KeyCode.Q);
                 bool buttonCondition = ControllerInputPoller.instance.leftControllerSecondaryButton;
                 if (rightHand)
@@ -118,6 +117,10 @@ namespace iiMenu.Menu
                             try
                             {
                                 Rigidbody comp = menu.AddComponent(typeof(Rigidbody)) as Rigidbody;
+                                if (GetIndex("Zero Gravity Menu").enabled)
+                                {
+                                    comp.useGravity = false;
+                                }
                                 if (rightHand || (bothHands && ControllerInputPoller.instance.rightControllerSecondaryButton))
                                 {
                                     if (GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").GetComponent<GorillaVelocityEstimator>() == null)
@@ -295,7 +298,7 @@ namespace iiMenu.Menu
                                 fullModAmount += buttons.Length;
                             }
                         }
-                        motdTextB.text = "You are using version " + PluginInfo.Version +
+                        motdTextB.text = "You are using build " + PluginInfo.Version +
                         ". This menu was created by iiDk (@goldentrophy) on discord. " + 
                         "This menu is completely free and open sourced, if you paid for " +
                         "this menu you have been scammed. There are a total of <b>" + fullModAmount +
@@ -1014,7 +1017,7 @@ namespace iiMenu.Menu
                         if (rejRoom != null && Time.time > rejDebounce)
                         {
                             UnityEngine.Debug.Log("Attempting rejoin");
-                            PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(rejRoom);
+                            PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(rejRoom, JoinType.Solo);
                             rejDebounce = Time.time + (float)internetTime;
                         }
                     }
@@ -1204,6 +1207,11 @@ namespace iiMenu.Menu
                 }
             }
             gameObject.AddComponent<Classes.Button>().relatedText = method.buttonText;
+
+            if (shouldOutline)
+            {
+                OutlineObj(gameObject, !method.enabled);
+            }
 
             GradientColorKey[] pressedColors = new GradientColorKey[3];
             pressedColors[0].color = buttonClickedA;
@@ -1450,6 +1458,10 @@ namespace iiMenu.Menu
                     outlinepart.transform.rotation = Quaternion.identity;
                     outlinepart.transform.localPosition = new Vector3(0f, 0f, (-menuBackground.transform.localScale.z/2) + dist);
                     outlinepart.transform.localScale = new Vector3(1.11f, menuBackground.transform.localScale.y - ((dist * 2f) - 0.005f), 0.005f);
+                }
+                if (shouldOutline)
+                {
+                    OutlineObj(menuBackground, false);
                 }
                 if (themeType == 25 || themeType == 26 || themeType == 27)
                 {
@@ -2030,6 +2042,12 @@ namespace iiMenu.Menu
                 }
                 component2.localPosition = new Vector3(0.064f, 0f, 0.109f - num4 / 2.55f);
                 component2.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+
+                if (shouldOutline)
+                {
+                    OutlineObj(gameObject, true);
+                    OutlineObj(gameObject2, true);
+                }
             }
 
             if (pageButtonType == 2)
@@ -2101,7 +2119,10 @@ namespace iiMenu.Menu
                     component.localPosition = new Vector3(0.064f, 0.267f, 0f);
                 }
                 component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
-
+                if (shouldOutline)
+                {
+                    OutlineObj(gameObject, true);
+                }
                 gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 if (themeType == 30)
                 {
@@ -2162,6 +2183,10 @@ namespace iiMenu.Menu
                     component.localPosition = new Vector3(0.064f, -0.267f, 0f);
                 }
                 component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+                if (shouldOutline)
+                {
+                    OutlineObj(gameObject, true);
+                }
             }
 
             if (pageButtonType == 5)
@@ -2233,6 +2258,10 @@ namespace iiMenu.Menu
                     component.localPosition = new Vector3(0.064f, 0.15f, 0.135f);
                 }
                 component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+                if (shouldOutline)
+                {
+                    OutlineObj(gameObject, true);
+                }
 
                 gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 if (themeType == 30)
@@ -2294,7 +2323,39 @@ namespace iiMenu.Menu
                     component.localPosition = new Vector3(0.064f, -0.15f, 0.135f);
                 }
                 component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+                if (shouldOutline)
+                {
+                    OutlineObj(gameObject, true);
+                }
             }
+        }
+
+        public static void OutlineObj(GameObject toOut, bool shouldBeEnabled)
+        {
+            GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            if (themeType == 30)
+            {
+                gameObject.GetComponent<Renderer>().enabled = false;
+            }
+            UnityEngine.Object.Destroy(gameObject.GetComponent<Rigidbody>());
+            UnityEngine.Object.Destroy(gameObject.GetComponent<BoxCollider>());
+            gameObject.transform.parent = menu.transform;
+            gameObject.transform.rotation = Quaternion.identity;
+            gameObject.transform.localPosition = toOut.transform.localPosition;
+            gameObject.transform.localScale = toOut.transform.localScale + new Vector3(-0.025f, 0.01f, 0.0075f);
+            GradientColorKey[] array = new GradientColorKey[3];
+            array[0].color = shouldBeEnabled ? buttonClickedA : buttonDefaultA;
+            array[0].time = 0f;
+            array[1].color = shouldBeEnabled ? buttonClickedB : buttonDefaultB;
+            array[1].time = 0.5f;
+            array[2].color = shouldBeEnabled ? buttonClickedA : buttonDefaultA;
+            array[2].time = 1f;
+            ColorChanger colorChanger = gameObject.AddComponent<ColorChanger>();
+            colorChanger.colors = new Gradient
+            {
+                colorKeys = array
+            };
+            colorChanger.Start();
         }
 
         public static GameObject LoadAsset(string assetName, string bundle = "iimenu")
@@ -2877,6 +2938,8 @@ namespace iiMenu.Menu
         public static int attemptsToLoad = 0;
         public static bool flipMenu = false;
         public static bool shinymenu = false;
+        public static bool dropOnRemove = true;
+        public static bool shouldOutline = false;
 
         public static string ascii = 
 @"  _ _ _       ____  _               _     _   __  __                  
