@@ -13,6 +13,118 @@ namespace iiMenu.Mods
 {
     internal class Experimental
     {
+        public static void LagGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (isCopying && whoCopy != null)
+                {
+                    int num = RigManager.GetPhotonViewFromVRRig(whoCopy).ViewID;
+                    Hashtable ServerCleanDestroyEvent = new Hashtable();
+                    RaiseEventOptions ServerCleanOptions = new RaiseEventOptions
+                    {
+                        CachingOption = EventCaching.RemoveFromRoomCache
+                    };
+                    ServerCleanDestroyEvent[0] = num;
+                    ServerCleanOptions.CachingOption = EventCaching.AddToRoomCache;
+                    PhotonNetwork.NetworkingClient.OpRaiseEvent(204, ServerCleanDestroyEvent, ServerCleanOptions, SendOptions.SendUnreliable);
+                    RPCProtection();
+                }
+                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        isCopying = true;
+                        whoCopy = possibly;
+                    }
+                }
+            }
+            else
+            {
+                if (isCopying)
+                {
+                    isCopying = false;
+                    GorillaTagger.Instance.offlineVRRig.enabled = true;
+                }
+            }
+        }
+
+        public static void LagAll()
+        {
+            if (rightTrigger > 0.5f)
+            {
+                int num = RigManager.GetPhotonViewFromVRRig(RigManager.GetRandomVRRig(false)).ViewID;
+                Hashtable ServerCleanDestroyEvent = new Hashtable();
+                RaiseEventOptions ServerCleanOptions = new RaiseEventOptions
+                {
+                    CachingOption = EventCaching.RemoveFromRoomCache
+                };
+                ServerCleanDestroyEvent[0] = num;
+                ServerCleanOptions.CachingOption = EventCaching.AddToRoomCache;
+                PhotonNetwork.NetworkingClient.OpRaiseEvent(204, ServerCleanDestroyEvent, ServerCleanOptions, SendOptions.SendUnreliable);
+                RPCProtection();
+            }
+            else
+            {
+                GorillaTagger.Instance.offlineVRRig.enabled = true;
+            }
+        }
+
+        public static void CrashGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (isCopying && whoCopy != null)
+                {
+                    Hashtable hashtable = new Hashtable();
+                    hashtable[(byte)0] = RigManager.GetPlayerFromVRRig(whoCopy).ActorNumber;
+                    PhotonNetwork.NetworkingClient.OpRaiseEvent(207, hashtable, null, SendOptions.SendReliable);
+                    RPCProtection();
+                }
+                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        isCopying = true;
+                        whoCopy = possibly;
+                    }
+                }
+            }
+            else
+            {
+                if (isCopying)
+                {
+                    isCopying = false;
+                    GorillaTagger.Instance.offlineVRRig.enabled = true;
+                }
+            }
+        }
+
+        public static void CrashAll()
+        {
+            if (rightTrigger > 0.5f)
+            {
+                Hashtable hashtable = new Hashtable();
+                hashtable[(byte)0] = -1;
+                PhotonNetwork.NetworkingClient.OpRaiseEvent(207, hashtable, null, SendOptions.SendReliable);
+                RPCProtection();
+            }
+            else
+            {
+                GorillaTagger.Instance.offlineVRRig.enabled = true;
+            }
+        }
+
         public static void AntiRPCBan()
         {
             GorillaGameManager.instance.OnPlayerLeftRoom(PhotonNetwork.LocalPlayer);
@@ -189,83 +301,6 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void BanGun()
-        {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (isCopying && whoCopy != null)
-                {
-                    if (!Overpowered.IsModded())
-                    {
-                        if (!GetIndex("Disable Auto Anti Ban").enabled)
-                        {
-                            Overpowered.AntiBan();
-                        }
-                    }
-                    else
-                    {
-                        if (Time.time > pookiebear) 
-                        { 
-                            pookiebear = Time.time + 0.2f; 
-                            Photon.Realtime.Player plr = RigManager.GetPlayerFromVRRig(whoCopy); 
-                            plr.NickName = bannableNames[UnityEngine.Random.Range(0, bannableNames.Length - 1)]; 
-                            System.Type targ = typeof(Photon.Realtime.Player); 
-                            MethodInfo StartEruptionMethod = targ.GetMethod("SetPlayerNameProperty", BindingFlags.NonPublic | BindingFlags.Instance); 
-                            StartEruptionMethod?.Invoke(plr, new object[] { }); 
-                            RPCProtection(); 
-                        } 
-                    }
-                } 
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
-                {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
-                    {
-                        isCopying = true;
-                        whoCopy = possibly;
-                    }
-                }
-            }
-            else
-            {
-                if (isCopying)
-                {
-                    isCopying = false;
-                    GorillaTagger.Instance.offlineVRRig.enabled = true;
-                }
-            }
-        }
-
-        public static void BanAll()
-        {
-            if (Time.time > pookiebear && rightTrigger > 0.5f) 
-            { 
-                if (!Overpowered.IsModded())
-                {
-                    if (!GetIndex("Disable Auto Anti Ban").enabled)
-                    {
-                        Overpowered.AntiBan();
-                    }
-                }
-                else
-                {
-                    pookiebear = Time.time + 0.2f; 
-                    foreach (Photon.Realtime.Player plr in PhotonNetwork.PlayerListOthers) 
-                    { 
-                        plr.NickName = bannableNames[UnityEngine.Random.Range(0, bannableNames.Length - 1)]; 
-                        System.Type targ = typeof(Photon.Realtime.Player); 
-                        MethodInfo StartEruptionMethod = targ.GetMethod("SetPlayerNameProperty", BindingFlags.NonPublic | BindingFlags.Instance); 
-                        StartEruptionMethod?.Invoke(plr, new object[] { }); 
-                        RPCProtection(); 
-                    } 
-                } 
-            }
-        }
-
         // See harmless backdoor for more info
         public static void FixName()
         {
@@ -336,7 +371,5 @@ namespace iiMenu.Mods
         {
             FakeName("gtnomods");
         }
-
-        public static string[] bannableNames = new string[] { "fag", "nigga", "nignig", "nigzilla", "nigg", "nigaballs", "nigmon","nignog", "nigsy", "nigre", "gorillanig", "nigkey", "gorniga", "daddyniga", "nigmon", "hitler", "niig", "n1gga", "n1ga", "nigr", "n1gga", "n1ga", "n199a", "kkklord", "kkkmember", "kkkman", "kkkmaster", "kkkleader", "stinkyjew", "nigab", "nigamo", "nibba", "niglet", "nigwerd", "niguh", "nigk", "nigward", "niqqa", "nigdirt", "ni99", "monkeniga", "nigab", "nigha", "h1tler", "hitl3r", "h1tl3r", "kkkofficial", "nigba11s", "spidernig", "nigslave", "nigila", "nigball", "nigilla", "spidaniga", "blackniga", "nig2monke", "nigman", "nigatoes", "nigman", "nigwad", "myniga", "nigtard", "nigturd", "nigword", "niglit", "nigman", "nigler", "nigsball", "sandnig", "snownig", "nigqa", "dirtynig", "nigafuck", "hittler", "nigfart", "nigba", "n1gward", "nighka", "littlenig", "nigah", "nigbob", "masternig", "nigbot", "nigvr", "warnig", "nig6a", "nigalodian", "nigass", "nigia", "nigaman", "nigbigga", "nigcracker", "nigachu", "nigpig", "nigasaur", "giganiga", "fag", "nigga", "nignig", "nigzilla", "nigg", "nigaballs", "nigmon", "nignog", "nigsy", "nigre", "gorillanig", "nigkey", "gorniga", "daddyniga", "nigmon", "hitler", "niig", "n1gga", "n1ga", "nigr", "n1gga", "n1ga", "n199a", "kkklord", "kkkmember", "kkkman", "kkkmaster", "kkkleader", "stinkyjew", "nigab", "nigamo", "nibba", "niglet", "nigwerd", "niguh", "nigk", "nigward", "niqqa", "nigdirt", "ni99", "monkeniga", "nigab", "nigha", "h1tler", "hitl3r", "h1tl3r", "kkkofficial", "nigba11s", "spidernig", "nigslave", "nigila", "nigball", "nigilla", "spidaniga", "blackniga", "nig2monke", "nigman", "nigatoes", "nigman", "nigwad", "myniga", "nigtard", "nigturd", "nigword", "niglit", "nigman", "nigler", "nigsball", "sandnig", "snownig", "nigqa", "dirtynig", "nigafuck", "hittler", "nigfart", "nigba", "n1gward", "nighka", "littlenig", "nigah", "nigbob", "masternig", "nigbot", "nigvr", "warnig", "nig6a", "nigalodian", "nigass", "nigia", "nigaman", "nigbigga", "nigcracker", "nigachu", "nigpig", "nigasaur", "giganiga", };
     }
 }

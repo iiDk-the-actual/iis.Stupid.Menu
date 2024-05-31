@@ -229,6 +229,16 @@ namespace iiMenu.Mods
             joystickOpen = false;
         }
 
+        public static void OutlineMenuOn()
+        {
+            shouldOutline = true;
+        }
+
+        public static void OutlineMenuOff()
+        {
+            shouldOutline = false;
+        }
+
         public static void WatchMenuOn()
         {
             wristThingV2 = true;
@@ -283,6 +293,16 @@ namespace iiMenu.Mods
         public static void LongMenuOff()
         {
             longmenu = false;
+        }
+
+        public static void DropMenu()
+        {
+            dropOnRemove = false;
+        }
+
+        public static void DropMenuOff()
+        {
+            dropOnRemove = true;
         }
 
         public static void FlipMenu()
