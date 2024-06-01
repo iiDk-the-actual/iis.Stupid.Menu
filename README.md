@@ -1,20 +1,34 @@
+
+  
+<p align="center">
+  <a href="#"><img src="https://i.imgur.com/aOzcbjM.png"></a>
+  <a href="#"><img src="https://i.imgur.com/W2ZjSPs.png"></a>
+</p>
+
+---
+
+<p align="center">
+	<a href="https://github.com/iiDk-the-actual/iis.Stupid.Menu/releases"><img src="https://img.shields.io/github/v/release/iiDk-the-actual/iis.Stupid.Menu?label=version&style=for-the-badge"></a>
+	<a href="https://github.com/iiDk-the-actual/iis.Stupid.Menu/releases/latest"><img src="https://img.shields.io/github/downloads/iiDk-the-actual/iis.Stupid.Menu/latest/iis_Stupid_Menu.dll?style=for-the-badge"></a>
+	<a href="https://discord.gg/iidk"><img src="https://img.shields.io/badge/discord-10203%20online-blueviolet?style=for-the-badge"></a>
+</p>
+
+---
+
 # ii's Stupid Menu
-A menu for Gorilla tag
+ii's Stupid Menu is a mod menu for Gorilla Tag, created by me, iiDk. This menu is designed to be as useful as possible by providing any variety of features and options you would ever need. With ii's Stupid Menu, you can explore new functionalities, experiment with different settings, and enjoy a more personalized modding experience.
 
-# Why make your menu open-sourced?
-I made my menu open sourced as a resource to learn how to create your own modifications for this game. 
+## Why make your menu open-sourced?
+I made my menu open-sourced as a resource for anyone interested in learning how to create their own mods for this game. By sharing my work, I want to give a valuable educational tool for the community, enabling developers of all skill levels to explore, understand, and contribute to the game's modding community.
 
-# Can I take code from this?
-No, there are conditions. Ask me PERMISSION before you steal from me. (list of stealers: R Gold, Saturn - X, Switched Free [old], Switched Free, Visualize Menu, Steal.lol, ShibaGT Gold)
+## Can I take code from this?
+No, you can't just take code from this without permission. You can ask me [here](https://discord.gg/iidk) in the Discord server for permission to use my code.
+> list of people who have stolen my code: R Gold, Saturn - X, Switched Free, [Steal.lol](https://github.com/bbc123f/steal2), [ShibaGT Gold](https://github.com/7zennos/Gorilla-Tag-ShibaGT-Gold-Mod-Menu)
 
-# Why do you make illegal mods?
-I'm tired of legal modding, it's the same 10 mods over and over
-plus antoca banned me from their discord
-plus im banned from bark discord
-plus im banned from monke dimensions discord
-plus im banned from gtag official modding discord
-plus im banned from interstellar mods discord
-plus im banned from shiba gold discord server
-plus im banned from gtag official discord
+# Installation
+
+- Download the release from [here](https://github.com/iiDk-the-actual/iis.Stupid.Menu/releases/latest)
+- Drag the file `iis_Stupid_Menu.dll` to your plugins folder
+- Start Gorilla Tag if needed
 
 > This product is not affiliated with Gorilla Tag or Another Axiom LLC and is not endorsed or otherwise sponsored by Another Axiom LLC. Portions of the materials contained herein are property of Another Axiom LLC. © 2024 Another Axiom LLC.
