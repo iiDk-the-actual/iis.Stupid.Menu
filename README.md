@@ -25,6 +25,8 @@ I made my menu open-sourced as a resource for anyone interested in learning how 
 No, you can't just take code from this without permission. You can ask me [here](https://discord.gg/iidk) in the Discord server for permission to use my code.
 > list of people who have stolen my code: R Gold, Saturn - X, Switched Free, [Steal.lol](https://github.com/bbc123f/steal2), [ShibaGT Gold](https://github.com/7zennos/Gorilla-Tag-ShibaGT-Gold-Mod-Menu)
 
+---
+
 # Installation
 
 - Download the release from [here](https://github.com/iiDk-the-actual/iis.Stupid.Menu/releases/latest)
