@@ -1,4 +1,5 @@
 ﻿using ExitGames.Client.Photon;
+using GorillaNetworking;
 using iiMenu.Notifications;
 using Photon.Pun;
 using System.Collections.Generic;
@@ -54,6 +55,11 @@ namespace iiMenu.Mods
             GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Selector Buttons/anchor/ENABLE FOR BETA").SetActive(true);
         }
 
+        public static void SpoofSupportPage()
+        {
+            GorillaComputer.instance.screenText.Text = GorillaComputer.instance.screenText.Text.Replace("STEAM", "QUEST").Replace(GorillaComputer.instance.buildDate, "05/30/2024 16:50:12\nBUILD CODE 4893\nMANAGED ACCOUNT: NO");
+        }
+
         public static void AntiCrashEnabled()
         {
             //GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools").SetActive(false);
@@ -77,65 +83,6 @@ namespace iiMenu.Mods
             //GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools").SetActive(true);
             AntiSoundToggle = false;
         }
-
-        /*public static void AntiReportDisconnect()
-        {
-            try
-            {
-                if (boards == null)
-                {
-                    boards = GameObject.FindObjectsOfType<GorillaScoreBoard>();
-                    foreach (GorillaScoreBoard fix in boards)
-                    {
-                        try
-                        {
-                            Debug.Log("Found board");
-                            if (!currentboards.Contains(fix) || currentboards.Count <= 0)
-                            {
-                                currentboards.Add(fix);
-                                Debug.Log("Added to list");
-                            } else
-                            {
-                                Debug.Log("Board is already on list");
-                            }
-                        } catch
-                        {
-                            Debug.Log("Somethin failed");
-                            currentboards.Add(fix);
-                            Debug.Log("Added dat shit anyway");
-                        }
-                    }
-                }
-                foreach (GorillaScoreBoard board in currentboards)
-                {
-                    foreach (GorillaPlayerScoreboardLine line in board.lines)
-                    {
-                        if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
-                        {
-                            Transform report = line.reportButton.gameObject.transform;
-                            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-                            {
-                                if (vrrig != GorillaTagger.Instance.offlineVRRig)
-                                {
-                                    float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
-                                    float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
-
-                                    float threshold = 0.35f;
-
-                                    if (D1 < threshold || D2 < threshold)
-                                    {
-                                        PhotonNetwork.Disconnect();
-                                        RPCProtection();
-                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>Someone attempted to report you, you have been disconnected.</color>");
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            catch { } // Not connected
-        }*/
 
         public static void AntiReportDisconnect()
         {
@@ -190,10 +137,10 @@ namespace iiMenu.Mods
                                 if (D1 < threshold || D2 < threshold)
                                 {
                                     rejRoom = PhotonNetwork.CurrentRoom.Name;
-                                    rejDebounce = Time.time + 2f;
+                                    // rejDebounce = Time.time + 2f;
                                     PhotonNetwork.Disconnect();
                                     RPCProtection();
-                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>Someone attempted to report you, you have been disconnected and will be reconnected shortly.</color>");
+                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>" + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected and will be reconnected shortly.</color>");
                                 }
                             }
                         }
@@ -226,8 +173,8 @@ namespace iiMenu.Mods
                                     PhotonNetwork.Disconnect();
                                     RPCProtection();
                                     isJoiningRandom = true;
-                                    jrDebounce = Time.time + (float)internetTime;
-                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>Someone attempted to report you, you have been disconnected and will be connected to a random lobby shortly.</color>");
+                                    //jrDebounce = Time.time + (float)internetTime;
+                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>" + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected and will be connected to a random lobby shortly.</color>");
                                 }
                             }
                         }
@@ -265,7 +212,7 @@ namespace iiMenu.Mods
                                     vrrig.leftHandTransform.position = Vector3.zero;
                                     vrrig.rightHandTransform.position = Vector3.zero;
 
-                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>Someone attempted to report you, they are being lagged.</color>");
+                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>" + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they are being lagged.</color>");
                                 }
                             }
                         }
@@ -304,7 +251,7 @@ namespace iiMenu.Mods
                                     hasFoundAnnoyance = true;
                                     Overpowered.StepCrashMethod(GetPlayerFromVRRig(vrrig));
 
-                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>Someone attempted to report you, they are being crashed.</color>");
+                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>" + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they are being crashed.</color>");
                                 }
                             }
                         }

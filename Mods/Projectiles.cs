@@ -1,12 +1,15 @@
 ﻿using ExitGames.Client.Photon;
+using GorillaNetworking;
 using GorillaTag;
 using iiMenu.Classes;
 using Photon.Pun;
 using Photon.Realtime;
+using Photon.Voice;
 using System;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static GorillaNetworking.CosmeticsController;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -213,7 +216,7 @@ namespace iiMenu.Mods.Spammers
             projDebounceType += 0.1f;
             if (projDebounceType > 1.05f)
             {
-                projDebounceType = 0f;
+                projDebounceType = 0.1f; // Was 0 but that was bannable so uhh
             }
 
             GetIndex("Projectile Delay").overlapText = "Projectile Delay <color=grey>[</color><color=green>" + (Mathf.Floor(projDebounceType * 10f) / 10f).ToString() + "</color><color=grey>]</color>";
@@ -1176,26 +1179,55 @@ namespace iiMenu.Mods.Spammers
 
         public static void PaperPlaneSpam()
         {
-            //if (rightGrab && !lastRG)
-            //{
-                //funnyplanes = GameObject.FindObjectsOfType<PaperPlaneThrowable>();
-            //}
-            //lastRG = rightGrab;
-
             if (rightGrab)
             {
-                /* foreach (PaperPlaneThrowable funnyplane in funnyplanes)
-                 {*/
                 PaperPlaneThrowable funnyplane = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.L/upper_arm.L/forearm.L/TransferrableItemLeftArm/DropZoneAnchor/PaperAirplaneAnchor/LMAHY.").GetComponent<PaperPlaneThrowable>();
                 if (Time.time > projDebounce)
                 {
-                    Vector3 oldPos = funnyplane.gameObject.transform.position;
-                    funnyplane.gameObject.transform.position = GorillaTagger.Instance.rightHandTransform.position;
-                    try { funnyplane.OnRelease(null, EquipmentInteractor.instance.rightHand); } catch { }
-                    funnyplane.gameObject.transform.position = oldPos;
-                    projDebounce = Time.time + 0.1f;
+                    projDebounce = Time.time + projDebounceType;
+                    Vector3 position = GorillaTagger.Instance.rightHandTransform.position;
+                    Quaternion rotation = GorillaTagger.Instance.rightHandTransform.rotation;
+                    Vector3 velocity = GorillaTagger.Instance.rightHandTransform.forward * (ShootStrength * 2f);
+
+                    typeof(PaperPlaneThrowable).GetMethod("LaunchProjectile", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(funnyplane, new object[] { position, rotation, velocity });
+                    int viewid = UnityEngine.Random.Range(-2147483647, 2147483647);
+                    FieldInfo lol = typeof(PaperPlaneThrowable).GetField("gLaunchRPC", BindingFlags.NonPublic | BindingFlags.Static);
+                    PhotonEvent lol2 = (PhotonEvent)lol.GetValue(funnyplane);
+                    lol2.RaiseOthers(new object[]
+                    {
+                        viewid,
+                        position,
+                        rotation,
+                        velocity
+                    });
                 }
-                //}
+            }
+        }
+
+        public static void FireballSpam()
+        {
+            if (rightGrab)
+            {
+                PaperPlaneThrowable funnyplane = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.L/upper_arm.L/forearm.L/TransferrableItemLeftArm/DropZoneAnchor/FireballAnchor/LMAJM.").GetComponent<PaperPlaneThrowable>();
+                if (Time.time > projDebounce)
+                {
+                    projDebounce = Time.time + projDebounceType;
+                    Vector3 position = GorillaTagger.Instance.rightHandTransform.position;
+                    Quaternion rotation = GorillaTagger.Instance.rightHandTransform.rotation;
+                    Vector3 velocity = GorillaTagger.Instance.rightHandTransform.forward * (ShootStrength * 2f);
+
+                    typeof(PaperPlaneThrowable).GetMethod("LaunchProjectile", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(funnyplane, new object[] { position, rotation, velocity });
+                    int viewid = UnityEngine.Random.Range(-2147483647,2147483647);
+                    FieldInfo lol = typeof(PaperPlaneThrowable).GetField("gLaunchRPC", BindingFlags.NonPublic | BindingFlags.Static);
+                    PhotonEvent lol2 = (PhotonEvent)lol.GetValue(funnyplane);
+                    lol2.RaiseOthers(new object[]
+                    {
+                        viewid,
+                        position,
+                        rotation,
+                        velocity
+                    });
+                }
             }
         }
 

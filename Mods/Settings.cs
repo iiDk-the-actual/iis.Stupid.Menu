@@ -3,6 +3,7 @@ using iiMenu.Menu;
 using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
@@ -13,6 +14,175 @@ namespace iiMenu.Mods
 {
     internal class Settings
     {
+        public static void Search()
+        {
+            isSearching = !isSearching;
+            isPcWhenSearching = isOnPC;
+            pageNumber = 0;
+            searchText = "";
+            lastPressedKeys.Add(KeyCode.Q);
+            if (isSearching)
+            {
+                if (!isPcWhenSearching)
+                {
+                    if (VRKeyboard == null)
+                    {
+                        List<GameObject> archiveObjects = new List<GameObject> { };
+                        GameObject background = null;
+                        VRKeyboard = LoadAsset("keyboard");
+                        VRKeyboard.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
+                        VRKeyboard.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
+                        for (int i = 0; i < VRKeyboard.transform.childCount; i++)
+                        {
+                            GameObject v = VRKeyboard.transform.GetChild(i).gameObject;
+                            if (v.name == "Canvas")
+                            {
+                                for (int j = 0; j < v.transform.childCount; j++)
+                                {
+                                    Text lol = v.transform.GetChild(j).gameObject.GetComponent<Text>();
+                                    lol.color = textColor;
+                                }
+                            } else
+                            {
+                                if (v.name == "MenuSpawnPosition")
+                                {
+                                    menuSpawnPosition = v;
+                                } else
+                                {
+                                    if (v.name == "Background")
+                                    {
+
+                                        GradientColorKey[] array = new GradientColorKey[3];
+                                        array[0].color = bgColorA;
+                                        array[0].time = 0f;
+                                        array[1].color = bgColorB;
+                                        array[1].time = 0.5f;
+                                        array[2].color = bgColorA;
+                                        array[2].time = 1f;
+                                        ColorChanger colorChanger = v.AddComponent<ColorChanger>();
+                                        colorChanger.colors = new Gradient
+                                        {
+                                            colorKeys = array
+                                        };
+                                        colorChanger.isRainbow = themeType == 6;
+                                        colorChanger.isEpileptic = themeType == 47;
+                                        colorChanger.isMonkeColors = themeType == 8;
+                                        colorChanger.Start();
+                                        background = v;
+                                    }
+                                    else
+                                    {
+                                        GradientColorKey[] array = new GradientColorKey[3];
+                                        array[0].color = buttonDefaultA;
+                                        array[0].time = 0f;
+                                        array[1].color = buttonDefaultB;
+                                        array[1].time = 0.5f;
+                                        array[2].color = buttonDefaultA;
+                                        array[2].time = 1f;
+                                        ColorChanger colorChanger = v.AddComponent<ColorChanger>();
+                                        colorChanger.colors = new Gradient
+                                        {
+                                            colorKeys = array
+                                        };
+                                        colorChanger.isRainbow = false;
+                                        colorChanger.isEpileptic = false;
+                                        colorChanger.isMonkeColors = false;
+                                        colorChanger.Start();
+                                        v.AddComponent<KeyboardKey>().key = v.name;
+                                        v.layer = 2;
+                                        archiveObjects.Add(v);
+                                    }
+                                }
+                            }
+                        }
+                        if (shouldOutline)
+                        {
+                            foreach (GameObject key in archiveObjects)
+                            {
+                                OutlineObjNonMenu(key, true);
+                            }
+                            OutlineObjNonMenu(background, false);
+                        }
+                    }
+                }
+                if (lKeyReference == null)
+                {
+                    lKeyReference = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                    lKeyReference.transform.parent = GorillaTagger.Instance.leftHandTransform;
+                    lKeyReference.GetComponent<Renderer>().material.color = bgColorA;
+                    lKeyReference.transform.localPosition = pointerOffset;
+                    lKeyReference.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
+                    lKeyCollider = lKeyReference.GetComponent<SphereCollider>();
+
+                    GradientColorKey[] array = new GradientColorKey[3];
+                    array[0].color = bgColorA;
+                    array[0].time = 0f;
+                    array[1].color = bgColorB;
+                    array[1].time = 0.5f;
+                    array[2].color = bgColorA;
+                    array[2].time = 1f;
+                    ColorChanger colorChanger = lKeyReference.AddComponent<ColorChanger>();
+                    colorChanger.colors = new Gradient
+                    {
+                        colorKeys = array
+                    };
+                    colorChanger.isRainbow = themeType == 6;
+                    colorChanger.isEpileptic = themeType == 47;
+                    colorChanger.isMonkeColors = themeType == 8;
+                    colorChanger.Start();
+                }
+                if (rKeyReference == null)
+                {
+                    rKeyReference = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                    rKeyReference.transform.parent = GorillaTagger.Instance.rightHandTransform;
+                    rKeyReference.GetComponent<Renderer>().material.color = bgColorA;
+                    rKeyReference.transform.localPosition = pointerOffset;
+                    rKeyReference.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
+                    rKeyCollider = rKeyReference.GetComponent<SphereCollider>();
+
+                    GradientColorKey[] array = new GradientColorKey[3];
+                    array[0].color = bgColorA;
+                    array[0].time = 0f;
+                    array[1].color = bgColorB;
+                    array[1].time = 0.5f;
+                    array[2].color = bgColorA;
+                    array[2].time = 1f;
+                    ColorChanger colorChanger = rKeyReference.AddComponent<ColorChanger>();
+                    colorChanger.colors = new Gradient
+                    {
+                        colorKeys = array
+                    };
+                    colorChanger.isRainbow = themeType == 6;
+                    colorChanger.isEpileptic = themeType == 47;
+                    colorChanger.isMonkeColors = themeType == 8;
+                    colorChanger.Start();
+                }
+            } else
+            {
+                if (lKeyReference != null)
+                {
+                    UnityEngine.Object.Destroy(lKeyReference);
+                    lKeyReference = null;
+                }
+                if (rKeyReference != null)
+                {
+                    UnityEngine.Object.Destroy(rKeyReference);
+                    rKeyReference = null;
+                }
+                if (VRKeyboard != null)
+                {
+                    UnityEngine.Object.Destroy(VRKeyboard);
+                    VRKeyboard = null;
+                }
+            }
+        }
+        
+        public static void GlobalReturn()
+        {
+            NotifiLib.ClearAllNotifications();
+            Toggle(Buttons.buttons[buttonsType][0].buttonText);
+        }
+
         public static void EnableSettings()
         {
             buttonsType = 1;
@@ -318,552 +488,531 @@ namespace iiMenu.Mods
         public static void ChangeMenuTheme() // i made this function b4 i knew switch case existed cuz i was new to c# don't blame the if spam
         {
             themeType++;
-            if (themeType > 45)
+            if (themeType > 47)
             {
                 themeType = 1;
             }
 
-            if (themeType == 1)
-            {
-                bgColorA = new Color32(255, 128, 0, 128);
-                bgColorB = new Color32(255, 102, 0, 128);
-                buttonDefaultA = new Color32(170, 85, 0, 255);
-                buttonDefaultB = new Color32(170, 85, 0, 255);
-                buttonClickedA = new Color32(85, 42, 0, 255);
-                buttonClickedB = new Color32(85, 42, 0, 255);
-                titleColor = new Color32(255, 190, 125, 255);
-                textColor = new Color32(255, 190, 125, 255);
-                textClicked = new Color32(255, 190, 125, 255);
-            }
-            if (themeType == 2)
-            {
-                bgColorA = Color.blue;
-                bgColorB = Color.magenta;
-                buttonDefaultA = Color.black;
-                buttonDefaultB = Color.black;
-                buttonClickedA = Color.blue;
-                buttonClickedB = Color.blue;
-                titleColor = Color.white;
-                textColor = Color.white;
-                textClicked = Color.white;
-            }
-            if (themeType == 3)
-            {
-                bgColorA = Color.black;
-                bgColorB = Color.black;
-                buttonDefaultA = new Color32(50, 50, 50, 255);
-                buttonDefaultB = new Color32(50, 50, 50, 255);
-                buttonClickedA = new Color32(20, 20, 20, 255);
-                buttonClickedB = new Color32(20, 20, 20, 255);
-                titleColor = Color.white;
-                textColor = Color.white;
-                textClicked = Color.white;
-            }
-            if (themeType == 4)
-            {
-                bgColorA = Color.white;
-                bgColorB = Color.black;
-                buttonDefaultA = Color.black;
-                buttonDefaultB = Color.white;
-                buttonClickedA = Color.white;
-                buttonClickedB = Color.white;
-                titleColor = Color.black;
-                textColor = Color.black;
-                textClicked = Color.black;
-            }
-            if (themeType == 5)
-            {
-                bgColorA = Color.black;
-                bgColorB = new Color32(110, 0, 0, 255);
-                buttonDefaultA = Color.black;
-                buttonDefaultB = new Color32(110, 0, 0, 255);
-                buttonClickedA = new Color32(110, 0, 0, 255);
-                buttonClickedB = new Color32(110, 0, 0, 255);
-                titleColor = Color.white;
-                textColor = Color.white;
-                textClicked = Color.white;
-            }
-            if (themeType == 6)
-            {
-                bgColorA = Color.black;
-                bgColorB = Color.black;
-                buttonDefaultA = Color.black;
-                buttonDefaultB = Color.black;
-                buttonClickedA = Color.black;
-                buttonClickedB = Color.black;
-                titleColor = Color.white;
-                textColor = Color.white;
-                textClicked = Color.white;
-            }
-            if (themeType == 7)
-            {
-                bgColorA = new Color32(255, 128, 0, 128);
-                bgColorB = new Color32(255, 128, 0, 128);
-                buttonDefaultA = new Color32(170, 85, 0, 255);
-                buttonDefaultB = new Color32(170, 85, 0, 255);
-                buttonClickedA = new Color32(85, 42, 0, 255);
-                buttonClickedB = new Color32(85, 42, 0, 255);
-                titleColor = new Color32(255, 190, 125, 255);
-                textColor = new Color32(255, 190, 125, 255);
-                textClicked = new Color32(255, 190, 125, 255);
-                GetIndex("Thin Menu").enabled = true;
-                FATMENU = true;
-            }
-            if (themeType == 8)
-            {
-                bgColorA = Color.black;
-                bgColorB = Color.black;
-                buttonDefaultA = Color.black;
-                buttonDefaultB = Color.black;
-                buttonClickedA = Color.black;
-                buttonClickedB = Color.black;
-                titleColor = Color.white;
-                textColor = Color.white;
-                textClicked = Color.white;
-            }
-            if (themeType == 9)
-            {
-                bgColorA = Color.black;
-                bgColorB = new Color32(255, 111, 0, 255);
-                buttonDefaultA = Color.black;
-                buttonDefaultB = Color.black;
-                buttonClickedA = new Color32(255, 111, 0, 255);
-                buttonClickedB = Color.black;
-                titleColor = Color.white;
-                textColor = Color.white;
-                textClicked = Color.white;
-            }
-            if (themeType == 10)
-            {
-                bgColorA = Color.black;
-                bgColorB = Color.red;
-                buttonDefaultA = Color.black;
-                buttonDefaultB = Color.black;
-                buttonClickedA = Color.red;
-                buttonClickedB = Color.black;
-                titleColor = Color.white;
-                textColor = Color.white;
-                textClicked = Color.white;
-            }
-            if (themeType == 11)
-            {
-                bgColorA = Color.black;
-                bgColorB = new Color32(0, 174, 255, 255);
-                buttonDefaultA = Color.black;
-                buttonDefaultB = Color.black;
-                buttonClickedA = new Color32(0, 174, 255, 255);
-                buttonClickedB = Color.black;
-                titleColor = Color.white;
-                textColor = Color.white;
-                textClicked = Color.white;
-            }
-            if (themeType == 12)
-            {
-                bgColorA = new Color32(0, 136, 255, 255);
-                bgColorB = new Color32(0, 174, 255, 255);
-                buttonDefaultA = new Color32(0, 100, 188, 255);
-                buttonDefaultB = new Color32(0, 100, 188, 255);
-                buttonClickedA = new Color32(0, 174, 255, 255);
-                buttonClickedB = new Color32(0, 136, 255, 255);
-                titleColor = Color.black;
-                textColor = Color.black;
-                textClicked = Color.black;
-            }
-            if (themeType == 13)
-            {
-                bgColorA = new Color32(0, 255, 246, 255);
-                bgColorB = new Color32(0, 255, 144, 255);
-                buttonDefaultA = new Color32(0, 255, 144, 255);
-                buttonDefaultB = new Color32(0, 255, 144, 255);
-                buttonClickedA = new Color32(0, 255, 246, 255);
-                buttonClickedB = new Color32(0, 255, 246, 255);
-                titleColor = Color.black;
-                textColor = Color.black;
-                textClicked = Color.black;
-            }
-            if (themeType == 14)
-            {
-                bgColorA = new Color32(255, 130, 255, 255);
-                bgColorB = Color.white;
-                buttonDefaultA = new Color32(255, 130, 255, 255);
-                buttonDefaultB = new Color32(255, 130, 255, 255);
-                buttonClickedA = Color.white;
-                buttonClickedB = Color.white;
-                titleColor = Color.black;
-                textColor = Color.black;
-                textClicked = Color.black;
-            }
-            if (themeType == 15)
-            {
-                bgColorA = new Color32(122, 35, 159, 255);
-                bgColorB = new Color32(60, 26, 89, 255);
-                buttonDefaultA = new Color32(60, 26, 89, 255);
-                buttonDefaultB = new Color32(60, 26, 89, 255);
-                buttonClickedA = new Color32(122, 35, 159, 255);
-                buttonClickedB = new Color32(122, 35, 159, 255);
-                titleColor = Color.white;
-                textColor = Color.white;
-                textClicked = Color.white;
-            }
-            if (themeType == 16)
-            {
-                bgColorA = Color.magenta;
-                bgColorB = Color.cyan;
-                buttonDefaultA = Color.black;
-                buttonDefaultB = Color.black;
-                buttonClickedA = Color.magenta;
-                buttonClickedB = Color.cyan;
-                titleColor = Color.white;
-                textColor = Color.white;
-                textClicked = Color.black;
-            }
-            if (themeType == 17)
-            {
-                bgColorA = Color.red;
-                bgColorB = Color.black;
-                buttonDefaultA = Color.black;
-                buttonDefaultB = Color.black;
-                buttonClickedA = Color.red;
-                buttonClickedB = Color.red;
-                titleColor = Color.red;
-                textColor = Color.red;
-                textClicked = Color.black;
-            }
-            if (themeType == 18)
-            {
-                bgColorA = new Color32(255, 128, 0, 255);
-                bgColorB = Color.black;
-                buttonDefaultA = Color.black;
-                buttonDefaultB = Color.black;
-                buttonClickedA = new Color32(255, 128, 0, 255);
-                buttonClickedB = new Color32(255, 128, 0, 255);
-                titleColor = new Color32(255, 128, 0, 255);
-                textColor = new Color32(255, 128, 0, 255);
-                textClicked = Color.black;
-            }
-            if (themeType == 19)
-            {
-                bgColorA = Color.yellow;
-                bgColorB = Color.black;
-                buttonDefaultA = Color.black;
-                buttonDefaultB = Color.black;
-                buttonClickedA = Color.yellow;
-                buttonClickedB = Color.yellow;
-                titleColor = Color.yellow;
-                textColor = Color.yellow;
-                textClicked = Color.black;
-            }
-            if (themeType == 20)
-            {
-                bgColorA = Color.green;
-                bgColorB = Color.black;
-                buttonDefaultA = Color.black;
-                buttonDefaultB = Color.black;
-                buttonClickedA = Color.green;
-                buttonClickedB = Color.green;
-                titleColor = Color.green;
-                textColor = Color.green;
-                textClicked = Color.black;
-            }
-            if (themeType == 21)
-            {
-                bgColorA = Color.blue;
-                bgColorB = Color.black;
-                buttonDefaultA = Color.black;
-                buttonDefaultB = Color.black;
-                buttonClickedA = Color.blue;
-                buttonClickedB = Color.blue;
-                titleColor = Color.blue;
-                textColor = Color.blue;
-                textClicked = Color.black;
-            }
-            if (themeType == 22)
-            {
-                bgColorA = new Color32(119, 0, 255, 255);
-                bgColorB = Color.black;
-                buttonDefaultA = Color.black;
-                buttonDefaultB = Color.black;
-                buttonClickedA = new Color32(119, 0, 255, 255);
-                buttonClickedB = new Color32(119, 0, 255, 255);
-                titleColor = new Color32(119, 0, 255, 255);
-                textColor = new Color32(119, 0, 255, 255);
-                textClicked = Color.black;
-            }
-            if (themeType == 23)
-            {
-                bgColorA = Color.magenta;
-                bgColorB = Color.black;
-                buttonDefaultA = Color.black;
-                buttonDefaultB = Color.black;
-                buttonClickedA = Color.magenta;
-                buttonClickedB = Color.magenta;
-                titleColor = Color.magenta;
-                textColor = Color.magenta;
-                textClicked = Color.black;
-            }
-            if (themeType == 24)
-            {
-                bgColorA = new Color32(255, 255, 130, 255);
-                bgColorB = Color.white;
-                buttonDefaultA = Color.white;
-                buttonDefaultB = Color.white;
-                buttonClickedA = new Color32(255, 255, 130, 255);
-                buttonClickedB = new Color32(255, 255, 130, 255);
-                titleColor = Color.black;
-                textColor = Color.black;
-                textClicked = Color.black;
-            }
-            if (themeType == 25)
-            {
-                bgColorA = Color.red;
-                bgColorB = Color.green;
-                buttonDefaultA = Color.black;
-                buttonDefaultB = Color.black;
-                buttonClickedA = Color.white;
-                buttonClickedB = Color.white;
-                titleColor = Color.black;
-                textColor = Color.white;
-                textClicked = Color.black;
-            }
-            if (themeType == 26)
-            {
-                bgColorA = new Color32(245, 169, 184, 255);
-                bgColorB = new Color32(91, 206, 250, 255);
-                buttonDefaultA = new Color32(245, 169, 184, 255);
-                buttonDefaultB = new Color32(245, 169, 184, 255);
-                buttonClickedA = new Color32(91, 206, 250, 255);
-                buttonClickedB = new Color32(91, 206, 250, 255);
-                titleColor = new Color32(91, 206, 250, 255);
-                textColor = new Color32(91, 206, 250, 255);
-                textClicked = new Color32(245, 169, 184, 255);
-            }
-            if (themeType == 27)
-            {
-                bgColorA = new Color32(7, 141, 112, 255);
-                bgColorB = new Color32(61, 26, 220, 255);
-                buttonDefaultA = new Color32(7, 141, 112, 255);
-                buttonDefaultB = new Color32(7, 141, 112, 255);
-                buttonClickedA = new Color32(61, 26, 220, 255);
-                buttonClickedB = new Color32(61, 26, 220, 255);
-                titleColor = new Color32(61, 26, 220, 255);
-                textColor = new Color32(61, 26, 220, 255);
-                textClicked = new Color32(7, 141, 112, 255);
-            }
-            if (themeType == 28)
-            {
-                bgColorA = new Color32(50, 50, 50, 255);
-                bgColorB = new Color32(50, 50, 50, 255);
-                buttonDefaultA = new Color32(50, 50, 50, 255);
-                buttonDefaultB = new Color32(50, 50, 50, 255);
-                buttonClickedA = new Color32(75, 75, 75, 255);
-                buttonClickedB = new Color32(75, 75, 75, 255);
-                titleColor = Color.white;
-                textColor = Color.white;
-                textClicked = Color.white;
-            }
-            if (themeType == 29)
-            {
-                bgColorA = Color.black;
-                bgColorB = new Color32(80, 0, 80, 255);
-                buttonDefaultA = Color.black;
-                buttonDefaultB = Color.black;
-                buttonClickedA = Color.black;
-                buttonClickedB = Color.black;
-                titleColor = Color.white;
-                textColor = Color.white;
-                textClicked = Color.green;
-            }
-            if (themeType == 30)
-            {
-                bgColorA = Color.black;
-                bgColorB = Color.black;
-                buttonDefaultA = Color.white;
-                buttonDefaultB = Color.white;
-                buttonClickedA = Color.green;
-                buttonClickedB = Color.green;
-                titleColor = Color.white;
-                textColor = Color.white;
-                textClicked = Color.green;
-            }
-            if (themeType == 31)
-            {
-                bgColorA = new Color32(100, 60, 170, 255);
-                bgColorB = new Color32(100, 60, 170, 255);
-                buttonDefaultA = new Color32(150, 100, 240, 255);
-                buttonDefaultB = new Color32(150, 100, 240, 255);
-                buttonClickedA = new Color32(150, 100, 240, 255);
-                buttonClickedB = new Color32(150, 100, 240, 255);
-                titleColor = Color.white;
-                textColor = Color.white;
-                textClicked = Color.cyan;
-            }
-            if (themeType == 32)
-            {
-                bgColorA = new Color32(0, 53, 2, 255);
-                bgColorB = new Color32(0, 53, 2, 255);
-                buttonDefaultA = new Color32(192, 190, 171, 255);
-                buttonDefaultB = new Color32(192, 190, 171, 255);
-                buttonClickedA = Color.red;
-                buttonClickedB = Color.red;
-                titleColor = Color.white;
-                textColor = Color.black;
-                textClicked = Color.black;
-            }
-            if (themeType == 33)
-            {
-                bgColorA = new Color32(225, 73, 43, 255);
-                bgColorB = new Color32(225, 73, 43, 255);
-                buttonDefaultA = new Color32(192, 190, 171, 255);
-                buttonDefaultB = new Color32(192, 190, 171, 255);
-                buttonClickedA = Color.red;
-                buttonClickedB = Color.red;
-                titleColor = Color.white;
-                textColor = Color.black;
-                textClicked = Color.black;
-            }
-            if (themeType == 34)
-            {
-                bgColorA = new Color32(25, 25, 25, 255);
-                bgColorB = new Color32(25, 25, 25, 255);
-                buttonDefaultA = new Color32(40, 40, 40, 255);
-                buttonDefaultB = new Color32(40, 40, 40, 255);
-                buttonClickedA = new Color32(167, 66, 191, 255);
-                buttonClickedB = new Color32(167, 66, 191, 255);
-                titleColor = new Color32(144, 144, 144, 255);
-                textColor = new Color32(144, 144, 144, 255);
-                textClicked = Color.white;
-            }
-            if (themeType == 35)
-            {
-                bgColorA = new Color32(26, 26, 61, 255);
-                bgColorB = new Color32(26, 26, 61, 255);
-                buttonDefaultA = new Color32(26, 26, 61, 255);
-                buttonDefaultB = new Color32(26, 26, 61, 255);
-                buttonClickedA = new Color32(43, 17, 84, 255);
-                buttonClickedB = new Color32(43, 17, 84, 255);
-                titleColor = Color.white;
-                textColor = Color.white;
-                textClicked = Color.white;
-            }
-            if (themeType == 36)
-            {
-                bgColorA = Color.black;
-                bgColorB = Color.gray;
-                buttonDefaultA = Color.yellow;
-                buttonDefaultB = Color.yellow;
-                buttonClickedA = Color.magenta;
-                buttonClickedB = Color.magenta;
-                titleColor = Color.white;
-                textColor = Color.black;
-                textClicked = Color.black;
-            }
-            if (themeType == 37)
-            {
-                bgColorA = Color.black;
-                bgColorB = Color.black;
-                buttonDefaultA = new Color32(32, 32, 32, 255);
-                buttonDefaultB = new Color32(32, 32, 32, 255);
-                buttonClickedA = new Color32(32, 32, 32, 255);
-                buttonClickedB = new Color32(32, 32, 32, 255);
-                titleColor = Color.white;
-                textColor = Color.black;
-                textClicked = Color.white;
-            }
-            if (themeType == 38)
-            {
-                bgColorA = new Color32(199, 115, 173, 255);
-                bgColorB = new Color32(165, 233, 185, 255);
-                buttonDefaultA = new Color32(99, 58, 86, 255);
-                buttonDefaultB = new Color32(83, 116, 92, 255);
-                buttonClickedA = new Color32(99, 58, 86, 255);
-                buttonClickedB = new Color32(83, 116, 92, 255);
-                titleColor = Color.white;
-                textColor = Color.white;
-                textClicked = Color.green;
-            }
-            if (themeType == 39)
-            {
-                bgColorA = new Color32(27, 27, 27, 255);
-                bgColorB = new Color32(27, 27, 27, 255);
-                buttonDefaultA = new Color32(50, 50, 50, 255);
-                buttonDefaultB = new Color32(50, 50, 50, 255);
-                buttonClickedA = new Color32(66, 66, 66, 255);
-                buttonClickedB = new Color32(66, 66, 66, 255);
-                titleColor = Color.white;
-                textColor = Color.white;
-                textClicked = Color.white;
-            }
-            if (themeType == 40)
-            {
-                bgColorA = Color.black;
-                bgColorB = new Color32(100, 25, 125, 255);
-                buttonDefaultA = new Color32(25, 25, 25, 255);
-                buttonDefaultB = new Color32(25, 25, 25, 255);
-                buttonClickedA = Color.green;
-                buttonClickedB = Color.green;
-                titleColor = Color.white;
-                textColor = Color.white;
-                textClicked = Color.white;
-            }
-            if (themeType == 41)
-            {
-                bgColorA = new Color32(27, 27, 27, 255);
-                bgColorB = new Color32(27, 27, 27, 255);
-                buttonDefaultA = Color.red;
-                buttonDefaultB = Color.red;
-                buttonClickedA = Color.green;
-                buttonClickedB = Color.green;
-                titleColor = Color.white;
-                textColor = Color.white;
-                textClicked = Color.white;
-            }
-            if (themeType == 42)
-            {
-                bgColorA = Color.black;
-                bgColorB = new Color32(100, 0, 0, 255);
-                buttonDefaultA = Color.black;
-                buttonDefaultB = Color.black;
-                buttonClickedA = new Color32(100, 0, 0, 255);
-                buttonClickedB = new Color32(100, 0, 0, 255);
-                titleColor = Color.white;
-                textColor = Color.white;
-                textClicked = Color.white;
-            }
-            if (themeType == 43)
-            {
-                bgColorA = new Color32(21, 22, 23, 255);
-                bgColorB = new Color32(21, 22, 23, 255);
-                buttonDefaultA = new Color32(32, 50, 77, 255);
-                buttonDefaultB = new Color32(32, 50, 77, 255);
-                buttonClickedA = new Color32(60, 127, 206, 255);
-                buttonClickedB = new Color32(60, 127, 206, 255);
-                titleColor = Color.white;
-                textColor = Color.white;
-                textClicked = Color.white;
-            }
-            if (themeType == 44)
-            {
-                bgColorA = Color.black;
-                bgColorB = Color.black;
-                buttonDefaultA = Color.black;
-                buttonDefaultB = Color.black;
-                buttonClickedA = new Color32(10, 10, 10, 255);
-                buttonClickedB = new Color32(10, 10, 10, 255);
-                titleColor = Color.white;
-                textColor = Color.white;
-                textClicked = Color.white;
-            }
-            if (themeType == 45)
-            {
-                bgColorA = Color.white;
-                bgColorB = Color.white;
-                buttonDefaultA = Color.white;
-                buttonDefaultB = Color.white;
-                buttonClickedA = new Color32(245, 245, 245, 255);
-                buttonClickedB = new Color32(245, 245, 245, 255);
-                titleColor = Color.black;
-                textColor = Color.black;
-                textClicked = Color.black;
+            switch (themeType) {
+                case 1: // Orange
+                    bgColorA = new Color32(255, 128, 0, 128);
+                    bgColorB = new Color32(255, 102, 0, 128);
+                    buttonDefaultA = new Color32(170, 85, 0, 255);
+                    buttonDefaultB = new Color32(170, 85, 0, 255);
+                    buttonClickedA = new Color32(85, 42, 0, 255);
+                    buttonClickedB = new Color32(85, 42, 0, 255);
+                    titleColor = new Color32(255, 190, 125, 255);
+                    textColor = new Color32(255, 190, 125, 255);
+                    textClicked = new Color32(255, 190, 125, 255);
+                    break;
+                case 2: // Blue Magenta
+                    bgColorA = Color.blue;
+                    bgColorB = Color.magenta;
+                    buttonDefaultA = Color.black;
+                    buttonDefaultB = Color.black;
+                    buttonClickedA = Color.blue;
+                    buttonClickedB = Color.blue;
+                    titleColor = Color.white;
+                    textColor = Color.white;
+                    textClicked = Color.white;
+                    break;
+                case 3: // Dark Mode
+                    bgColorA = Color.black;
+                    bgColorB = Color.black;
+                    buttonDefaultA = new Color32(50, 50, 50, 255);
+                    buttonDefaultB = new Color32(50, 50, 50, 255);
+                    buttonClickedA = new Color32(20, 20, 20, 255);
+                    buttonClickedB = new Color32(20, 20, 20, 255);
+                    titleColor = Color.white;
+                    textColor = Color.white;
+                    textClicked = Color.white;
+                    break;
+                case 4: // Strobe
+                    bgColorA = Color.white;
+                    bgColorB = Color.black;
+                    buttonDefaultA = Color.black;
+                    buttonDefaultB = Color.white;
+                    buttonClickedA = Color.white;
+                    buttonClickedB = Color.white;
+                    titleColor = Color.black;
+                    textColor = Color.black;
+                    textClicked = Color.black;
+                    break;
+                case 5: // Kman
+                    bgColorA = Color.black;
+                    bgColorB = new Color32(110, 0, 0, 255);
+                    buttonDefaultA = Color.black;
+                    buttonDefaultB = new Color32(110, 0, 0, 255);
+                    buttonClickedA = new Color32(110, 0, 0, 255);
+                    buttonClickedB = new Color32(110, 0, 0, 255);
+                    titleColor = Color.white;
+                    textColor = Color.white;
+                    textClicked = Color.white;
+                    break;
+                case 6: // Rainbow
+                    bgColorA = Color.black;
+                    bgColorB = Color.black;
+                    buttonDefaultA = Color.black;
+                    buttonDefaultB = Color.black;
+                    buttonClickedA = Color.black;
+                    buttonClickedB = Color.black;
+                    titleColor = Color.white;
+                    textColor = Color.white;
+                    textClicked = Color.white;
+                    break;
+                case 7: // Cone
+                    bgColorA = new Color32(255, 128, 0, 128);
+                    bgColorB = new Color32(255, 128, 0, 128);
+                    buttonDefaultA = new Color32(170, 85, 0, 255);
+                    buttonDefaultB = new Color32(170, 85, 0, 255);
+                    buttonClickedA = new Color32(85, 42, 0, 255);
+                    buttonClickedB = new Color32(85, 42, 0, 255);
+                    titleColor = new Color32(255, 190, 125, 255);
+                    textColor = new Color32(255, 190, 125, 255);
+                    textClicked = new Color32(255, 190, 125, 255);
+                    GetIndex("Thin Menu").enabled = true;
+                    FATMENU = true;
+                    break;
+                case 8: // Player Material
+                    bgColorA = Color.black;
+                    bgColorB = Color.black;
+                    buttonDefaultA = Color.black;
+                    buttonDefaultB = Color.black;
+                    buttonClickedA = Color.black;
+                    buttonClickedB = Color.black;
+                    titleColor = Color.white;
+                    textColor = Color.white;
+                    textClicked = Color.white;
+                    break;
+                case 9: // Lava
+                    bgColorA = Color.black;
+                    bgColorB = new Color32(255, 111, 0, 255);
+                    buttonDefaultA = Color.black;
+                    buttonDefaultB = Color.black;
+                    buttonClickedA = new Color32(255, 111, 0, 255);
+                    buttonClickedB = Color.black;
+                    titleColor = Color.white;
+                    textColor = Color.white;
+                    textClicked = Color.white;
+                    break;
+                case 10: // Rock
+                    bgColorA = Color.black;
+                    bgColorB = Color.red;
+                    buttonDefaultA = Color.black;
+                    buttonDefaultB = Color.black;
+                    buttonClickedA = Color.red;
+                    buttonClickedB = Color.black;
+                    titleColor = Color.white;
+                    textColor = Color.white;
+                    textClicked = Color.white;
+                    break;
+                case 11: // Ice
+                    bgColorA = Color.black;
+                    bgColorB = new Color32(0, 174, 255, 255);
+                    buttonDefaultA = Color.black;
+                    buttonDefaultB = Color.black;
+                    buttonClickedA = new Color32(0, 174, 255, 255);
+                    buttonClickedB = Color.black;
+                    titleColor = Color.white;
+                    textColor = Color.white;
+                    textClicked = Color.white;
+                    break;
+                case 12: // Water
+                    bgColorA = new Color32(0, 136, 255, 255);
+                    bgColorB = new Color32(0, 174, 255, 255);
+                    buttonDefaultA = new Color32(0, 100, 188, 255);
+                    buttonDefaultB = new Color32(0, 100, 188, 255);
+                    buttonClickedA = new Color32(0, 174, 255, 255);
+                    buttonClickedB = new Color32(0, 136, 255, 255);
+                    titleColor = Color.black;
+                    textColor = Color.black;
+                    textClicked = Color.black;
+                    break;
+                case 13: // Minty
+                    bgColorA = new Color32(0, 255, 246, 255);
+                    bgColorB = new Color32(0, 255, 144, 255);
+                    buttonDefaultA = Color.white;
+                    buttonDefaultB = Color.white;
+                    buttonClickedA = new Color32(0, 255, 144, 255);
+                    buttonClickedB = new Color32(0, 255, 246, 255);
+                    titleColor = Color.black;
+                    textColor = Color.black;
+                    textClicked = Color.black;
+                    break;
+                case 14: // Pink
+                    bgColorA = new Color32(255, 130, 255, 255);
+                    bgColorB = Color.white;
+                    buttonDefaultA = new Color32(255, 130, 255, 255);
+                    buttonDefaultB = new Color32(255, 130, 255, 255);
+                    buttonClickedA = Color.white;
+                    buttonClickedB = Color.white;
+                    titleColor = Color.black;
+                    textColor = Color.black;
+                    textClicked = Color.black;
+                    break;
+                case 15: // Purple
+                    bgColorA = new Color32(122, 35, 159, 255);
+                    bgColorB = new Color32(60, 26, 89, 255);
+                    buttonDefaultA = new Color32(60, 26, 89, 255);
+                    buttonDefaultB = new Color32(60, 26, 89, 255);
+                    buttonClickedA = new Color32(122, 35, 159, 255);
+                    buttonClickedB = new Color32(122, 35, 159, 255);
+                    titleColor = Color.white;
+                    textColor = Color.white;
+                    textClicked = Color.white;
+                    break;
+                case 16: // Magenta Cyan
+                    bgColorA = Color.magenta;
+                    bgColorB = Color.cyan;
+                    buttonDefaultA = Color.black;
+                    buttonDefaultB = Color.black;
+                    buttonClickedA = Color.magenta;
+                    buttonClickedB = Color.cyan;
+                    titleColor = Color.white;
+                    textColor = Color.white;
+                    textClicked = Color.black;
+                    break;
+                case 17: // Red Fade
+                    bgColorA = Color.red;
+                    bgColorB = Color.black;
+                    buttonDefaultA = Color.black;
+                    buttonDefaultB = Color.black;
+                    buttonClickedA = Color.red;
+                    buttonClickedB = Color.red;
+                    titleColor = Color.red;
+                    textColor = Color.red;
+                    textClicked = Color.black;
+                    break;
+                case 18: // Orange Fade
+                    bgColorA = new Color32(255, 128, 0, 255);
+                    bgColorB = Color.black;
+                    buttonDefaultA = Color.black;
+                    buttonDefaultB = Color.black;
+                    buttonClickedA = new Color32(255, 128, 0, 255);
+                    buttonClickedB = new Color32(255, 128, 0, 255);
+                    titleColor = new Color32(255, 128, 0, 255);
+                    textColor = new Color32(255, 128, 0, 255);
+                    textClicked = Color.black;
+                    break;
+                case 19: // Yellow Fade
+                    bgColorA = Color.yellow;
+                    bgColorB = Color.black;
+                    buttonDefaultA = Color.black;
+                    buttonDefaultB = Color.black;
+                    buttonClickedA = Color.yellow;
+                    buttonClickedB = Color.yellow;
+                    titleColor = Color.yellow;
+                    textColor = Color.yellow;
+                    textClicked = Color.black;
+                    break;
+                case 20: // Green Fade
+                    bgColorA = Color.green;
+                    bgColorB = Color.black;
+                    buttonDefaultA = Color.black;
+                    buttonDefaultB = Color.black;
+                    buttonClickedA = Color.green;
+                    buttonClickedB = Color.green;
+                    titleColor = Color.green;
+                    textColor = Color.green;
+                    textClicked = Color.black;
+                    break;
+                case 21: // Blue Fade
+                    bgColorA = Color.blue;
+                    bgColorB = Color.black;
+                    buttonDefaultA = Color.black;
+                    buttonDefaultB = Color.black;
+                    buttonClickedA = Color.blue;
+                    buttonClickedB = Color.blue;
+                    titleColor = Color.blue;
+                    textColor = Color.blue;
+                    textClicked = Color.black;
+                    break;
+                case 22: // Blurple Fade
+                    bgColorA = new Color32(119, 0, 255, 255);
+                    bgColorB = Color.black;
+                    buttonDefaultA = Color.black;
+                    buttonDefaultB = Color.black;
+                    buttonClickedA = new Color32(119, 0, 255, 255);
+                    buttonClickedB = new Color32(119, 0, 255, 255);
+                    titleColor = new Color32(119, 0, 255, 255);
+                    textColor = new Color32(119, 0, 255, 255);
+                    textClicked = Color.black;
+                    break;
+                case 23: // Magenta Fade
+                    bgColorA = Color.magenta;
+                    bgColorB = Color.black;
+                    buttonDefaultA = Color.black;
+                    buttonDefaultB = Color.black;
+                    buttonClickedA = Color.magenta;
+                    buttonClickedB = Color.magenta;
+                    titleColor = Color.magenta;
+                    textColor = Color.magenta;
+                    textClicked = Color.black;
+                    break;
+                case 24: // Banana
+                    bgColorA = new Color32(255, 255, 130, 255);
+                    bgColorB = Color.white;
+                    buttonDefaultA = Color.white;
+                    buttonDefaultB = Color.white;
+                    buttonClickedA = new Color32(255, 255, 130, 255);
+                    buttonClickedB = new Color32(255, 255, 130, 255);
+                    titleColor = Color.black;
+                    textColor = Color.black;
+                    textClicked = Color.black;
+                    break;
+                case 25: // Pride
+                    bgColorA = Color.red;
+                    bgColorB = Color.green;
+                    buttonDefaultA = Color.black;
+                    buttonDefaultB = Color.black;
+                    buttonClickedA = Color.white;
+                    buttonClickedB = Color.white;
+                    titleColor = Color.black;
+                    textColor = Color.white;
+                    textClicked = Color.black;
+                    break;
+                case 26: // Trans
+                    bgColorA = new Color32(245, 169, 184, 255);
+                    bgColorB = new Color32(91, 206, 250, 255);
+                    buttonDefaultA = new Color32(245, 169, 184, 255);
+                    buttonDefaultB = new Color32(245, 169, 184, 255);
+                    buttonClickedA = new Color32(91, 206, 250, 255);
+                    buttonClickedB = new Color32(91, 206, 250, 255);
+                    titleColor = new Color32(91, 206, 250, 255);
+                    textColor = new Color32(91, 206, 250, 255);
+                    textClicked = new Color32(245, 169, 184, 255);
+                    break;
+                case 27: // MLM or Gay
+                    bgColorA = new Color32(7, 141, 112, 255);
+                    bgColorB = new Color32(61, 26, 220, 255);
+                    buttonDefaultA = new Color32(7, 141, 112, 255);
+                    buttonDefaultB = new Color32(7, 141, 112, 255);
+                    buttonClickedA = new Color32(61, 26, 220, 255);
+                    buttonClickedB = new Color32(61, 26, 220, 255);
+                    titleColor = new Color32(61, 26, 220, 255);
+                    textColor = new Color32(61, 26, 220, 255);
+                    textClicked = new Color32(7, 141, 112, 255);
+                    break;
+                case 28: // Steal (old)
+                    bgColorA = new Color32(50, 50, 50, 255);
+                    bgColorB = new Color32(50, 50, 50, 255);
+                    buttonDefaultA = new Color32(50, 50, 50, 255);
+                    buttonDefaultB = new Color32(50, 50, 50, 255);
+                    buttonClickedA = new Color32(75, 75, 75, 255);
+                    buttonClickedB = new Color32(75, 75, 75, 255);
+                    titleColor = Color.white;
+                    textColor = Color.white;
+                    textClicked = Color.white;
+                    break;
+                case 29: // Silence
+                    bgColorA = Color.black;
+                    bgColorB = new Color32(80, 0, 80, 255);
+                    buttonDefaultA = Color.black;
+                    buttonDefaultB = Color.black;
+                    buttonClickedA = Color.black;
+                    buttonClickedB = Color.black;
+                    titleColor = Color.white;
+                    textColor = Color.white;
+                    textClicked = Color.green;
+                    break;
+                case 30: // Transparent
+                    bgColorA = Color.black;
+                    bgColorB = Color.black;
+                    buttonDefaultA = Color.white;
+                    buttonDefaultB = Color.white;
+                    buttonClickedA = Color.green;
+                    buttonClickedB = Color.green;
+                    titleColor = Color.white;
+                    textColor = Color.white;
+                    textClicked = Color.green;
+                    break;
+                case 31: // King
+                    bgColorA = new Color32(100, 60, 170, 255);
+                    bgColorB = new Color32(100, 60, 170, 255);
+                    buttonDefaultA = new Color32(150, 100, 240, 255);
+                    buttonDefaultB = new Color32(150, 100, 240, 255);
+                    buttonClickedA = new Color32(150, 100, 240, 255);
+                    buttonClickedB = new Color32(150, 100, 240, 255);
+                    titleColor = Color.white;
+                    textColor = Color.white;
+                    textClicked = Color.cyan;
+                    break;
+                case 32: // Scoreboard
+                    bgColorA = new Color32(0, 53, 2, 255);
+                    bgColorB = new Color32(0, 53, 2, 255);
+                    buttonDefaultA = new Color32(192, 190, 171, 255);
+                    buttonDefaultB = new Color32(192, 190, 171, 255);
+                    buttonClickedA = Color.red;
+                    buttonClickedB = Color.red;
+                    titleColor = Color.white;
+                    textColor = Color.black;
+                    textClicked = Color.black;
+                    break;
+                case 33: // Scoreboard (banned)
+                    bgColorA = new Color32(225, 73, 43, 255);
+                    bgColorB = new Color32(225, 73, 43, 255);
+                    buttonDefaultA = new Color32(192, 190, 171, 255);
+                    buttonDefaultB = new Color32(192, 190, 171, 255);
+                    buttonClickedA = Color.red;
+                    buttonClickedB = Color.red;
+                    titleColor = Color.white;
+                    textColor = Color.black;
+                    textClicked = Color.black;
+                    break;
+                case 34: // Rift
+                    bgColorA = new Color32(25, 25, 25, 255);
+                    bgColorB = new Color32(25, 25, 25, 255);
+                    buttonDefaultA = new Color32(40, 40, 40, 255);
+                    buttonDefaultB = new Color32(40, 40, 40, 255);
+                    buttonClickedA = new Color32(167, 66, 191, 255);
+                    buttonClickedB = new Color32(167, 66, 191, 255);
+                    titleColor = new Color32(144, 144, 144, 255);
+                    textColor = new Color32(144, 144, 144, 255);
+                    textClicked = Color.white;
+                    break;
+                case 35: // Blurple Dark
+                    bgColorA = new Color32(26, 26, 61, 255);
+                    bgColorB = new Color32(26, 26, 61, 255);
+                    buttonDefaultA = new Color32(26, 26, 61, 255);
+                    buttonDefaultB = new Color32(26, 26, 61, 255);
+                    buttonClickedA = new Color32(43, 17, 84, 255);
+                    buttonClickedB = new Color32(43, 17, 84, 255);
+                    titleColor = Color.white;
+                    textColor = Color.white;
+                    textClicked = Color.white;
+                    break;
+                case 36: // ShibaGT Gold
+                    bgColorA = Color.black;
+                    bgColorB = Color.gray;
+                    buttonDefaultA = Color.yellow;
+                    buttonDefaultB = Color.yellow;
+                    buttonClickedA = Color.magenta;
+                    buttonClickedB = Color.magenta;
+                    titleColor = Color.white;
+                    textColor = Color.black;
+                    textClicked = Color.black;
+                    break;
+                case 37: // ShibaGT Genesis
+                    bgColorA = Color.black;
+                    bgColorB = Color.black;
+                    buttonDefaultA = new Color32(32, 32, 32, 255);
+                    buttonDefaultB = new Color32(32, 32, 32, 255);
+                    buttonClickedA = new Color32(32, 32, 32, 255);
+                    buttonClickedB = new Color32(32, 32, 32, 255);
+                    titleColor = Color.white;
+                    textColor = Color.black;
+                    textClicked = Color.white;
+                    break;
+                case 38: // wyvern
+                    bgColorA = new Color32(199, 115, 173, 255);
+                    bgColorB = new Color32(165, 233, 185, 255);
+                    buttonDefaultA = new Color32(99, 58, 86, 255);
+                    buttonDefaultB = new Color32(83, 116, 92, 255);
+                    buttonClickedA = new Color32(99, 58, 86, 255);
+                    buttonClickedB = new Color32(83, 116, 92, 255);
+                    titleColor = Color.white;
+                    textColor = Color.white;
+                    textClicked = Color.green;
+                    break;
+                case 39: // Steal (new)
+                    bgColorA = new Color32(27, 27, 27, 255);
+                    bgColorB = new Color32(27, 27, 27, 255);
+                    buttonDefaultA = new Color32(50, 50, 50, 255);
+                    buttonDefaultB = new Color32(50, 50, 50, 255);
+                    buttonClickedA = new Color32(66, 66, 66, 255);
+                    buttonClickedB = new Color32(66, 66, 66, 255);
+                    titleColor = Color.white;
+                    textColor = Color.white;
+                    textClicked = Color.white;
+                    break;
+                case 40: // USA Menu (lol)
+                    bgColorA = Color.black;
+                    bgColorB = new Color32(100, 25, 125, 255);
+                    buttonDefaultA = new Color32(25, 25, 25, 255);
+                    buttonDefaultB = new Color32(25, 25, 25, 255);
+                    buttonClickedA = Color.green;
+                    buttonClickedB = Color.green;
+                    titleColor = Color.white;
+                    textColor = Color.white;
+                    textClicked = Color.white;
+                    break;
+                case 41: // Watch
+                    bgColorA = new Color32(27, 27, 27, 255);
+                    bgColorB = new Color32(27, 27, 27, 255);
+                    buttonDefaultA = Color.red;
+                    buttonDefaultB = Color.red;
+                    buttonClickedA = Color.green;
+                    buttonClickedB = Color.green;
+                    titleColor = Color.white;
+                    textColor = Color.white;
+                    textClicked = Color.white;
+                    break;
+                case 42: // AZ Menu
+                    bgColorA = Color.black;
+                    bgColorB = new Color32(100, 0, 0, 255);
+                    buttonDefaultA = Color.black;
+                    buttonDefaultB = Color.black;
+                    buttonClickedA = new Color32(100, 0, 0, 255);
+                    buttonClickedB = new Color32(100, 0, 0, 255);
+                    titleColor = Color.white;
+                    textColor = Color.white;
+                    textClicked = Color.white;
+                    break;
+                case 43: // ImGUI
+                    bgColorA = new Color32(21, 22, 23, 255);
+                    bgColorB = new Color32(21, 22, 23, 255);
+                    buttonDefaultA = new Color32(32, 50, 77, 255);
+                    buttonDefaultB = new Color32(32, 50, 77, 255);
+                    buttonClickedA = new Color32(60, 127, 206, 255);
+                    buttonClickedB = new Color32(60, 127, 206, 255);
+                    titleColor = Color.white;
+                    textColor = Color.white;
+                    textClicked = Color.white;
+                    break;
+                case 44: // Clean Dark
+                    bgColorA = Color.black;
+                    bgColorB = Color.black;
+                    buttonDefaultA = Color.black;
+                    buttonDefaultB = Color.black;
+                    buttonClickedA = new Color32(10, 10, 10, 255);
+                    buttonClickedB = new Color32(10, 10, 10, 255);
+                    titleColor = Color.white;
+                    textColor = Color.white;
+                    textClicked = Color.white;
+                    break;
+                case 45: // Discord Light Mode (lmfao)
+                    bgColorA = Color.white;
+                    bgColorB = Color.white;
+                    buttonDefaultA = Color.white;
+                    buttonDefaultB = Color.white;
+                    buttonClickedA = new Color32(245, 245, 245, 255);
+                    buttonClickedB = new Color32(245, 245, 245, 255);
+                    titleColor = Color.black;
+                    textColor = Color.black;
+                    textClicked = Color.black;
+                    break;
+                case 46: // The Hub
+                    bgColorA = Color.black;
+                    bgColorB = Color.black;
+                    buttonDefaultA = new Color32(255, 163, 26, 255);
+                    buttonDefaultB = new Color32(255, 163, 26, 255);
+                    buttonClickedA = Color.black;
+                    buttonClickedB = Color.black;
+                    titleColor = Color.white;
+                    textColor = Color.black;
+                    textClicked = Color.white;
+                    break;
+                case 47: // EPILEPTIC
+                    bgColorA = Color.black;
+                    bgColorB = Color.black;
+                    buttonDefaultA = Color.black;
+                    buttonDefaultB = Color.black;
+                    buttonClickedA = Color.black;
+                    buttonClickedB = Color.black;
+                    titleColor = Color.white;
+                    textColor = Color.white;
+                    textClicked = Color.white;
+                    break;
             }
         }
 
@@ -989,7 +1138,7 @@ namespace iiMenu.Mods
             {
                 if (gtagfont == null)
                 {
-                    GameObject fart = LoadAsset("font", "font");
+                    GameObject fart = LoadAsset("gtag");
                     gtagfont = fart.transform.Find("text").gameObject.GetComponent<Text>().font;
                     UnityEngine.Object.Destroy(fart);
                 }
@@ -1200,6 +1349,26 @@ namespace iiMenu.Mods
         public static void EnableDisconnectButton()
         {
             disableDisconnectButton = false;
+        }
+
+        public static void DisableSearchButton()
+        {
+            disableSearchButton = true;
+        }
+
+        public static void EnableSearchButton()
+        {
+            disableSearchButton = false;
+        }
+
+        public static void DisableReturnButton()
+        {
+            disableReturnButton = true;
+        }
+
+        public static void EnableReturnButton()
+        {
+            disableReturnButton = false;
         }
 
         public static void DisablePageButtons()
@@ -1416,7 +1585,7 @@ namespace iiMenu.Mods
             internetTime++;
             if (internetTime > 5)
             {
-                internetTime = 2;
+                internetTime = 1;
             }
             GetIndex("crTime").overlapText = "Change Reconnect Time <color=grey>[</color><color=green>" + internetTime.ToString() + "</color><color=grey>]</color>";
         }
@@ -1429,6 +1598,16 @@ namespace iiMenu.Mods
         public static void ThinMenuOff()
         {
             FATMENU = false;
+        }
+
+        public static void BarkMenuOn()
+        {
+            likebark = true;
+        }
+
+        public static void BarkMenuOff()
+        {
+            likebark = false;
         }
 
         public static void CheckboxButtons()
@@ -1448,18 +1627,32 @@ namespace iiMenu.Mods
                 8,
                 66,
                 67,
-                84
+                84,
+                66,
+                66,
+                66,
+                66,
+                66,
+                66,
+                66
             };
             string[] buttonSoundNames = new string[]
             {
                 "Wood",
                 "Keyboard",
                 "Default",
-                "Bubble"
+                "Bubble",
+                "Steal",
+                "Anthrax",
+                "Lever",
+                "Minecraft",
+                "Rec Room",
+                "Watch",
+                "Membrane"
             };
 
             buttonClickIndex++;
-            if (buttonClickIndex > sounds.Length - 1)
+            if (buttonClickIndex > buttonSoundNames.Length - 1)
             {
                 buttonClickIndex = 0;
             }
@@ -1508,14 +1701,28 @@ namespace iiMenu.Mods
             disableGhostview = false;
         }
 
+        public static void LegacyGhostview()
+        {
+            legacyGhostview = true;
+        }
+
+        public static void NewGhostview()
+        {
+            legacyGhostview = false;
+        }
+
         public static void DisableBoardColors()
         {
             disableBoardColor = true;
+            motd.SetActive(false);
+            GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/motd").SetActive(true);
         }
 
         public static void EnableBoardColors()
         {
             disableBoardColor = false;
+            motd.SetActive(true);
+            GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/motd").SetActive(false);
         }
     }
 }

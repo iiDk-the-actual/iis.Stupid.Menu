@@ -3,6 +3,7 @@ using iiMenu.Notifications;
 using OVR;
 using Photon.Pun;
 using Photon.Realtime;
+using PlayFab.ClientModels;
 using UnityEngine;
 using static iiMenu.Menu.Main;
 
@@ -47,12 +48,20 @@ namespace iiMenu.Mods.Spammers
         {
             if (rightGrab)
             {
-                GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
-                    UnityEngine.Random.Range(3, 215),
-                    false,
-                    999999f
-                });
-                RPCProtection();
+                int soundId = UnityEngine.Random.Range(0, 259);
+                if (PhotonNetwork.InRoom)
+                {
+                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                        soundId,
+                        false,
+                        999999f
+                    });
+                    RPCProtection();
+                }
+                else
+                {
+                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(soundId, false, 999999f);
+                }
             }
         }
 
@@ -60,12 +69,19 @@ namespace iiMenu.Mods.Spammers
         {
             if (rightGrab)
             {
-                GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
-                    68,
-                    false,
-                    999999f
-                });
-                RPCProtection();
+                if (PhotonNetwork.InRoom)
+                {
+                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                        68,
+                        false,
+                        999999f
+                    });
+                    RPCProtection();
+                }
+                else
+                {
+                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(68, false, 999999f);
+                }
             }
         }
 
@@ -73,12 +89,19 @@ namespace iiMenu.Mods.Spammers
         {
             if (rightGrab)
             {
-                GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
-                    18,
-                    false,
-                    999999f
-                });
-                RPCProtection();
+                if (PhotonNetwork.InRoom)
+                {
+                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                        18,
+                        false,
+                        999999f
+                    });
+                    RPCProtection();
+                }
+                else
+                {
+                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(18, false, 999999f);
+                }
             }
         }
 
@@ -86,12 +109,19 @@ namespace iiMenu.Mods.Spammers
         {
             if (rightGrab)
             {
-                GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
-                    195,
-                    false,
-                    999999f
-                });
-                RPCProtection();
+                if (PhotonNetwork.InRoom)
+                {
+                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                        195,
+                        false,
+                        999999f
+                    });
+                    RPCProtection();
+                }
+                else
+                {
+                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(195, false, 999999f);
+                }
             }
         }
 
@@ -99,12 +129,19 @@ namespace iiMenu.Mods.Spammers
         {
             if (rightGrab)
             {
-                GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
-                    236,
-                    false,
-                    999999f
-                });
-                RPCProtection();
+                if (PhotonNetwork.InRoom)
+                {
+                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                        236,
+                        false,
+                        999999f
+                    });
+                    RPCProtection();
+                }
+                else
+                {
+                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(236, false, 999999f);
+                }
             }
         }
 
@@ -112,12 +149,19 @@ namespace iiMenu.Mods.Spammers
         {
             if (rightGrab)
             {
-                GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
-                    83,
-                    false,
-                    999999f
-                });
-                RPCProtection();
+                if (PhotonNetwork.InRoom)
+                {
+                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                        83,
+                        false,
+                        999999f
+                    });
+                    RPCProtection();
+                }
+                else
+                {
+                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(83, false, 999999f);
+                }
             }
         }
 
@@ -125,12 +169,19 @@ namespace iiMenu.Mods.Spammers
         {
             if (rightGrab)
             {
-                GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
-                    91,
-                    false,
-                    999999f
-                });
-                RPCProtection();
+                if (PhotonNetwork.InRoom)
+                {
+                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                        91,
+                        false,
+                        999999f
+                    });
+                    RPCProtection();
+                }
+                else
+                {
+                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(91, false, 999999f);
+                }
             }
         }
 
@@ -138,12 +189,19 @@ namespace iiMenu.Mods.Spammers
         {
             if (rightGrab)
             {
-                GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
-                    191,
-                    false,
-                    999999f
-                });
-                RPCProtection();
+                if (PhotonNetwork.InRoom)
+                {
+                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                        191,
+                        false,
+                        999999f
+                    });
+                    RPCProtection();
+                }
+                else
+                {
+                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(191, false, 999999f);
+                }
             }
         }
 
@@ -151,12 +209,19 @@ namespace iiMenu.Mods.Spammers
         {
             if (rightGrab)
             {
-                GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
-                    215,
-                    false,
-                    999999f
-                });
-                RPCProtection();
+                if (PhotonNetwork.InRoom)
+                {
+                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                        215,
+                        false,
+                        999999f
+                    });
+                    RPCProtection();
+                }
+                else
+                {
+                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(215, false, 999999f);
+                }
             }
         }
 
@@ -164,12 +229,19 @@ namespace iiMenu.Mods.Spammers
         {
             if (rightGrab)
             {
-                GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
-                    244,
-                    false,
-                    999999f
-                });
-                RPCProtection();
+                if (PhotonNetwork.InRoom)
+                {
+                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                        244,
+                        false,
+                        999999f
+                    });
+                    RPCProtection();
+                }
+                else
+                {
+                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(244, false, 999999f);
+                }
             }
         }
 
@@ -182,11 +254,20 @@ namespace iiMenu.Mods.Spammers
                     UnityEngine.Random.Range(40,54),
                     UnityEngine.Random.Range(214,221)
                 };
-                GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
-                    sounds[UnityEngine.Random.Range(0,1)],
-                    false,
-                    999999f
-                });
+                int soundId = sounds[UnityEngine.Random.Range(0, 1)];
+                if (PhotonNetwork.InRoom)
+                {
+                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                        soundId,
+                        false,
+                        999999f
+                    });
+                    RPCProtection();
+                }
+                else
+                {
+                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(soundId, false, 999999f);
+                }
                 RPCProtection();
             }
         }
@@ -195,12 +276,19 @@ namespace iiMenu.Mods.Spammers
         {
             if (rightGrab)
             {
-                GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
-                    213,
-                    false,
-                    999999f
-                });
-                RPCProtection();
+                if (PhotonNetwork.InRoom)
+                {
+                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                        213,
+                        false,
+                        999999f
+                    });
+                    RPCProtection();
+                }
+                else
+                {
+                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(213, false, 999999f);
+                }
             }
         }
 
@@ -208,12 +296,19 @@ namespace iiMenu.Mods.Spammers
         {
             if (rightGrab)
             {
-                GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
-                    248,
-                    false,
-                    999999f
-                });
-                RPCProtection();
+                if (PhotonNetwork.InRoom)
+                {
+                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                        248,
+                        false,
+                        999999f
+                    });
+                    RPCProtection();
+                }
+                else
+                {
+                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(248, false, 999999f);
+                }
             }
         }
 
@@ -221,12 +316,19 @@ namespace iiMenu.Mods.Spammers
         {
             if (rightGrab)
             {
-                GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
-                    203,
-                    false,
-                    999999f
-                });
-                RPCProtection();
+                if (PhotonNetwork.InRoom)
+                {
+                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                        203,
+                        false,
+                        999999f
+                    });
+                    RPCProtection();
+                }
+                else
+                {
+                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(203, false, 999999f);
+                }
             }
         }
 
@@ -234,12 +336,19 @@ namespace iiMenu.Mods.Spammers
         {
             if (rightGrab)
             {
-                GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
-                    75 + (Time.frameCount % 2),
-                    false,
-                    999999f
-                });
-                RPCProtection();
+                if (PhotonNetwork.InRoom)
+                {
+                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                        75 + (Time.frameCount % 2),
+                        false,
+                        999999f
+                    });
+                    RPCProtection();
+                }
+                else
+                {
+                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(75 + (Time.frameCount % 2), false, 999999f);
+                }
             }
         }
 
@@ -247,12 +356,19 @@ namespace iiMenu.Mods.Spammers
         {
             if (rightGrab)
             {
-                GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
-                    48 + ((Time.frameCount / 30) % 2) * 2,
-                    false,
-                    999999f
-                });
-                RPCProtection();
+                if (PhotonNetwork.InRoom)
+                {
+                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                        48 + ((Time.frameCount / 15) % 2) * 2,
+                        false,
+                        999999f
+                    });
+                    RPCProtection();
+                }
+                else
+                {
+                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(48 + ((Time.frameCount / 15) % 2) * 2, false, 999999f);
+                }
             }
         }
 
@@ -276,12 +392,19 @@ namespace iiMenu.Mods.Spammers
         {
             if (rightGrab)
             {
-                GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
-                    soundId,
-                    false,
-                    999999f
-                });
-                RPCProtection();
+                if (PhotonNetwork.InRoom)
+                {
+                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                        soundId,
+                        false,
+                        999999f
+                    });
+                    RPCProtection();
+                }
+                else
+                {
+                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(soundId, false, 999999f);
+                }
             }
         }
 

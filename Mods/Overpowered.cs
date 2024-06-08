@@ -1,19 +1,24 @@
 ﻿using ExitGames.Client.Photon;
 using GorillaNetworking;
 using GorillaTag;
+using GorillaTagScripts;
 using HarmonyLib;
 using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
+using PlayFab.ClientModels;
+using PlayFab;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static GorillaNetworking.CosmeticsController;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 using static iiMenu.Mods.Spammers.Projectiles;
+using GorillaGameModes;
 
 namespace iiMenu.Mods
 {
@@ -25,26 +30,84 @@ namespace iiMenu.Mods
 
         public static void AntiBan()
         {
+            /*if (PhotonNetwork.InRoom)
+            {
+                if (!IsModded())
+                {
+                    if (!PhotonNetwork.CurrentRoom.IsOpen)
+                    {
+                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ANTIBAN</color><color=grey>]</color> <color=white>Anti ban has already been used in this code.</color>");
+                        return;
+                    }
+                    string gamemode = PhotonNetwork.CurrentRoom.CustomProperties["gameMode"].ToString().Replace(GorillaComputer.instance.currentGameMode.Value, "MODDED_MODDED" + GorillaComputer.instance.currentGameMode.Value);
+                    ExitGames.Client.Photon.Hashtable gamehash = new ExitGames.Client.Photon.Hashtable
+                {
+                    { "gameMode", gamemode }
+                };
+                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTIBAN</color><color=grey>]</color> <color=white>Setting master client...</color>");
+                    PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
+                    PhotonNetwork.CurrentRoom.IsOpen = false;
+                    PhotonNetwork.CurrentRoom.IsVisible = false;
+
+                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTIBAN</color><color=grey>]</color> <color=white>Setting gamemode...</color>");
+                    PhotonNetwork.CurrentRoom.SetCustomProperties(gamehash, null, null);
+
+                    PlayFabClientAPI.ExecuteCloudScript(new ExecuteCloudScriptRequest
+                    {
+                        FunctionName = "RoomClosed",
+                        FunctionParameter = new
+                        {
+                            GameId = PhotonNetwork.CurrentRoom.Name,
+                            Region = Regex.Replace(PhotonNetwork.CloudRegion, "[^a-zA-Z0-9]", "").ToUpper(),
+                            ActorNr = PhotonNetwork.LocalPlayer.ActorNumber,
+                            ActorCount = 0,
+                            UserId = PhotonNetwork.LocalPlayer.UserId,
+                            AppVersion = PhotonNetwork.AppVersion,
+                            AppId = PhotonNetwork.PhotonServerSettings.AppSettings.AppIdRealtime,
+                            Type = "Close"
+                        }
+                    },
+                    delegate (ExecuteCloudScriptResult result)
+                    {
+                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTIBAN</color><color=grey>]</color> <color=white>Anti ban has been executed successfully. I take no responsibility for any bans using this mod.</color>");
+                    }, error => { NotifiLib.SendNotification("<color=grey>[</color><color=red>ANTIBAN</color><color=grey>]</color> <color=white>Anti ban has failed to execute, you have been disconnected to prevent any bans."); PhotonNetwork.Disconnect(); }, null, null);
+
+                }
+                else
+                {
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ANTIBAN</color><color=grey>]</color> <color=white>Anti ban has already been used in this lobby.</color>");
+                }
+                GetIndex("Anti Ban").enabled = false;
+                ReloadMenu();
+            } else
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ANTIBAN</color><color=grey>]</color> <color=white>You are not in a lobby.</color>");
+            }*/
             GetIndex("Anti Ban").enabled = false;
+            ReloadMenu();
             NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to security.</color>"); 
         }
 
         public static bool IsModded()
         {
-            return (PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED")/* && Time.time > gamemodeSetTimeAt*/);
+            return false;// (PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED")/* && Time.time > gamemodeSetTimeAt*/);
         }
 
         public static void FastMaster()
         {
-            if (!IsModded() || !PhotonNetwork.InRoom)
+            /*if (!IsModded() || !PhotonNetwork.InRoom)
             {
                 GetIndex("Anti Ban").enabled = true;
                 //AntiBan();
             }
             else
             {
-                PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
-            }
+                GetIndex("Set Master").enabled = false;
+                ReloadMenu();
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to security.</color>");
+                //PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
+            }*/
+            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
         }
 
         public static void AntiBanCheck()
@@ -55,6 +118,18 @@ namespace iiMenu.Mods
             } else
             {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>The anti ban is disabled!</color>");
+            }
+        }
+
+        public static void MasterCheck()
+        {
+            if (PhotonNetwork.IsMasterClient)
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>You are master client!</color>");
+            }
+            else
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client!</color>");
             }
         }
 
@@ -81,7 +156,10 @@ namespace iiMenu.Mods
                         }
                         else
                         {
-                            PhotonNetwork.CurrentRoom.SetMasterClient(owner);
+                            GetIndex("Set Master Gum").enabled = false;
+                            ReloadMenu();
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to security.</color>");
+                            //PhotonNetwork.CurrentRoom.SetMasterClient(owner);
                         }
                         kgDebounce = Time.time + 0.5f;
                     }
@@ -565,8 +643,8 @@ namespace iiMenu.Mods
             }
             else
             {
-                Traverse.Create(ScienceExperimentManager.instance).Field("inGamePlayerCount").SetValue(1);
-                ScienceExperimentManager.PlayerGameState[] states = new ScienceExperimentManager.PlayerGameState[1];
+                Traverse.Create(ScienceExperimentManager.instance).Field("inGamePlayerCount").SetValue(PhotonNetwork.CurrentRoom.PlayerCount);
+                ScienceExperimentManager.PlayerGameState[] states = new ScienceExperimentManager.PlayerGameState[10];
                 int ownerIndex = states.Length > PhotonNetwork.LocalPlayer.ActorNumber ? PhotonNetwork.LocalPlayer.ActorNumber : 0;
                 states[ownerIndex].touchedLiquid = true;
                 states[ownerIndex].playerId = PhotonNetwork.LocalPlayer.ActorNumber;
@@ -588,24 +666,33 @@ namespace iiMenu.Mods
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
                         Photon.Realtime.Player player = GetPlayerFromVRRig(possibly);
-                        // Not created by me, leaked by REV
-                        if (!PhotonNetwork.IsMasterClient)
+                        if (!IsModded())
                         {
                             if (!GetIndex("Disable Auto Anti Ban").enabled)
                             {
-                                FastMaster();
+                                AntiBan();
                             }
                         }
                         else
                         {
-                            Traverse.Create(ScienceExperimentManager.instance).Field("inGamePlayerCount").SetValue(1);
-                            ScienceExperimentManager.PlayerGameState[] states = new ScienceExperimentManager.PlayerGameState[1];
-                            int ownerIndex = states.Length > player.ActorNumber ? player.ActorNumber : 0;
-                            states[ownerIndex].touchedLiquid = true;
-                            states[ownerIndex].playerId = player.ActorNumber;
-                            Traverse.Create(ScienceExperimentManager.instance).Field("inGamePlayerStates").SetValue(states);
-                            RPCProtection();
-                            kgDebounce = Time.time + 0.2f;
+                            if (!PhotonNetwork.IsMasterClient)
+                            {
+                                if (!GetIndex("Disable Auto Anti Ban").enabled)
+                                {
+                                    FastMaster();
+                                }
+                            }
+                            else
+                            {
+                                Traverse.Create(ScienceExperimentManager.instance).Field("inGamePlayerCount").SetValue(PhotonNetwork.CurrentRoom.PlayerCount);
+                                ScienceExperimentManager.PlayerGameState[] states = new ScienceExperimentManager.PlayerGameState[10];
+                                int ownerIndex = states.Length > player.ActorNumber ? player.ActorNumber : 0;
+                                states[ownerIndex].touchedLiquid = true;
+                                states[ownerIndex].playerId = player.ActorNumber;
+                                Traverse.Create(ScienceExperimentManager.instance).Field("inGamePlayerStates").SetValue(states);
+                                RPCProtection();
+                                kgDebounce = Time.time + 0.2f;
+                            }
                         }
                     }
                 }
@@ -614,9 +701,15 @@ namespace iiMenu.Mods
 
         public static void AcidAll()
         {
-            if (PhotonNetwork.LocalPlayer.IsMasterClient)
+            if (!IsModded())
             {
-                // Not created by me, leaked by REV
+                if (!GetIndex("Disable Auto Anti Ban").enabled)
+                {
+                    AntiBan();
+                }
+            }
+            else
+            {
                 if (!PhotonNetwork.IsMasterClient)
                 {
                     if (!GetIndex("Disable Auto Anti Ban").enabled)
@@ -626,9 +719,9 @@ namespace iiMenu.Mods
                 }
                 else
                 {
-                    Traverse.Create(ScienceExperimentManager.instance).Field("inGamePlayerCount").SetValue(10);
+                    Traverse.Create(ScienceExperimentManager.instance).Field("inGamePlayerCount").SetValue(PhotonNetwork.CurrentRoom.PlayerCount);
                     ScienceExperimentManager.PlayerGameState[] states = new ScienceExperimentManager.PlayerGameState[10];
-                    for (int i = 0; i < 10; i++)
+                    for (int i = 0; i < PhotonNetwork.CurrentRoom.PlayerCount; i++)
                     {
                         states[i].touchedLiquid = true;
                         states[i].playerId = PhotonNetwork.PlayerList[i] == null ? 0 : PhotonNetwork.PlayerList[i].ActorNumber;
@@ -637,9 +730,43 @@ namespace iiMenu.Mods
                     RPCProtection();
                 }
             }
+        }
+
+        public static void InfectionToTag()
+        {
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                if (!GetIndex("Disable Auto Anti Ban").enabled)
+                {
+                    FastMaster();
+                }
+            }
             else
             {
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master.</color>");
+                GorillaTagManager gorillaTagManager = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
+                gorillaTagManager.SetisCurrentlyTag(true);
+                gorillaTagManager.ClearInfectionState();
+                gorillaTagManager.ChangeCurrentIt(GameMode.ParticipatingPlayers[UnityEngine.Random.Range(0, GameMode.ParticipatingPlayers.Count)]);
+            }
+        }
+
+        public static void TagToInfection()
+        {
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                if (!GetIndex("Disable Auto Anti Ban").enabled)
+                {
+                    FastMaster();
+                }
+            }
+            else
+            {
+                GorillaTagManager gorillaTagManager = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
+                gorillaTagManager.SetisCurrentlyTag(false);
+                gorillaTagManager.ClearInfectionState();
+                Player victim = GameMode.ParticipatingPlayers[UnityEngine.Random.Range(0, GameMode.ParticipatingPlayers.Count)];
+                gorillaTagManager.AddInfectedPlayer(victim);
+                gorillaTagManager.lastInfectedPlayer = victim;
             }
         }
 
@@ -678,7 +805,7 @@ namespace iiMenu.Mods
                 Hashtable hashtable = new Hashtable();
                 hashtable.Add("gameMode", "forestDEFAULTMODDED_MODDED_INFECTION");
                 PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable, null, null);
-                GorillaGameManager.instance.lastCheck = -1f;
+                PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetCustomPropertiesOfRoom(hashtable);
             }
         }
 
@@ -696,7 +823,7 @@ namespace iiMenu.Mods
                 Hashtable hashtable = new Hashtable();
                 hashtable.Add("gameMode", "forestDEFAULTMODDED_MODDED_CASUALCASUAL");
                 PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable, null, null);
-                GorillaGameManager.instance.lastCheck = -1f;
+                PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetCustomPropertiesOfRoom(hashtable);
             }
         }
 
@@ -714,7 +841,7 @@ namespace iiMenu.Mods
                 Hashtable hashtable = new Hashtable();
                 hashtable.Add("gameMode", "forestDEFAULTMODDED_MODDED_HUNTHUNT");
                 PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable, null, null);
-                GorillaGameManager.instance.lastCheck = -1f;
+                PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetCustomPropertiesOfRoom(hashtable);
             }
         }
 
@@ -732,7 +859,7 @@ namespace iiMenu.Mods
                 Hashtable hashtable = new Hashtable();
                 hashtable.Add("gameMode", "forestDEFAULTMODDED_MODDED_BATTLEPAINTBRAWL");
                 PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable, null, null);
-                GorillaGameManager.instance.lastCheck = -1f;
+                PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetCustomPropertiesOfRoom(hashtable);
             }
         }
 
@@ -750,7 +877,7 @@ namespace iiMenu.Mods
                 Hashtable hashtable = new Hashtable();
                 hashtable.Add("gameMode", "forestcitybasementcanyonsmountainsbeachskycavesrotational" + PhotonNetwork.CurrentRoom.CustomProperties["gameMode"].ToString());
                 PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable, null, null);
-                GorillaGameManager.instance.lastCheck = -1f;
+                PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetCustomPropertiesOfRoom(hashtable);
             }
         }
 
@@ -776,7 +903,7 @@ namespace iiMenu.Mods
                 }
                 hashtable.Add("gameMode", name);
                 PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable, null, null);
-                GorillaGameManager.instance.lastCheck = -1f;
+                PhotonNetwork.CurrentRoom.LoadBalancingClient.OpSetCustomPropertiesOfRoom(hashtable);
             }
         }
 

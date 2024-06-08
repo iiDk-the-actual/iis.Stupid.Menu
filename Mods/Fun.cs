@@ -3,13 +3,17 @@ using GorillaLocomotion.Gameplay;
 using GorillaNetworking;
 using GorillaTag;
 using GorillaTag.Cosmetics;
+using GorillaTagScripts;
 using HarmonyLib;
 using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
 using Photon.Voice.Unity.UtilityScripts;
+using PlayFab.ClientModels;
+using PlayFab;
 using POpusCodec.Enums;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Reflection;
@@ -18,6 +22,7 @@ using UnityEngine.InputSystem;
 using static GorillaNetworking.CosmeticsController;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
+using static UnityEngine.UI.GridLayoutGroup;
 
 namespace iiMenu.Mods
 {
@@ -148,6 +153,87 @@ namespace iiMenu.Mods
             GorillaTagger.Instance.tapCoolDown = 0.33f;
         }
 
+        public static void InstantParty()
+        {
+            typeof(FriendshipGroupDetection).GetField("groupTime", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(FriendshipGroupDetection.Instance, 0f);
+            typeof(FriendshipGroupDetection).GetField("groupCreateAfterTimestamp", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(FriendshipGroupDetection.Instance, -1f);
+            typeof(FriendshipGroupDetection).GetField("amFirstProvisionalPlayer", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(FriendshipGroupDetection.Instance, true);
+        }
+
+        public static void PartyAll()
+        {
+            List<string> people = new List<string> { };
+            foreach (Photon.Realtime.Player plr in PhotonNetwork.PlayerListOthers)
+            {
+                people.Add(plr.UserId);
+            }
+            FriendshipGroupDetection.Instance.photonView.RPC("AddPartyMembers", RpcTarget.Others, new object[]
+            {
+                FriendshipGroupDetection.PackColor(new Color(0f, 0f, 0f)),
+                people.ToArray()
+            });
+        }
+
+        public static void LeaveParty()
+        {
+            FriendshipGroupDetection.Instance.LeaveParty();
+        }
+
+        public static void KickAllInParty()
+        {
+            if (FriendshipGroupDetection.Instance.IsInParty)
+            {
+                partyLastCode = PhotonNetwork.CurrentRoom.Name;
+                waitForPlayerJoin = false;
+                PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(Important.RandomRoomName(), JoinType.ForceJoinWithParty);
+                partyTime = Time.time + 0.25f;
+                phaseTwo = false;
+                amountPartying = ((List<string>)typeof(FriendshipGroupDetection).GetField("myPartyMemberIDs", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(FriendshipGroupDetection.Instance)).Count - 1;
+                NotifiLib.SendNotification("<color=grey>[</color><color=purple>PARTY</color><color=grey>]</color> <color=white>Kicking " + amountPartying.ToString() + " party members, this may take a second...</color>");
+            }
+            else
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not in a party!</color>");
+            }
+        }
+
+        public static void BanAllInParty()
+        {
+            if (FriendshipGroupDetection.Instance.IsInParty)
+            {
+                partyLastCode = PhotonNetwork.CurrentRoom.Name;
+                waitForPlayerJoin = true;
+                PhotonNetworkController.Instance.AttemptToJoinSpecificRoom("KKK", JoinType.ForceJoinWithParty);
+                partyTime = Time.time + 0.25f;
+                phaseTwo = false;
+                amountPartying = ((List<string>)typeof(FriendshipGroupDetection).GetField("myPartyMemberIDs", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(FriendshipGroupDetection.Instance)).Count - 1;
+                NotifiLib.SendNotification("<color=grey>[</color><color=purple>PARTY</color><color=grey>]</color> <color=white>Banning " + amountPartying.ToString() + " party members, this may take a second...</color>");
+            }
+            else
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not in a party!</color>");
+            }
+        }
+
+        public static bool lastPartyKickThingy = false;
+        public static void AutoPartyKick()
+        {
+            if (FriendshipGroupDetection.Instance.IsInParty && !lastPartyKickThingy)
+            {
+                KickAllInParty();
+            }
+            lastPartyKickThingy = FriendshipGroupDetection.Instance.IsInParty;
+        }
+
+        public static void AutoPartyBan()
+        {
+            if (FriendshipGroupDetection.Instance.IsInParty && !lastPartyKickThingy)
+            {
+                BanAllInParty();
+            }
+            lastPartyKickThingy = FriendshipGroupDetection.Instance.IsInParty;
+        }
+
         public static void WaterSplashHands()
         {
             if (rightGrab)
@@ -194,6 +280,24 @@ namespace iiMenu.Mods
                 {
                     GorillaTagger.Instance.offlineVRRig.transform.position + new Vector3(UnityEngine.Random.Range(-0.5f,0.5f),UnityEngine.Random.Range(-0.5f,0.5f),UnityEngine.Random.Range(-0.5f,0.5f)),
                     GorillaTagger.Instance.offlineVRRig.transform.rotation,
+                    4f,
+                    100f,
+                    true,
+                    false
+                });
+                RPCProtection();
+                splashDel = Time.time + 0.1f;
+            }
+        }
+
+        public static void OrbitWaterSplash()
+        {
+            if (Time.time > splashDel)
+            {
+                GorillaTagger.Instance.myVRRig.RPC("PlaySplashEffect", RpcTarget.All, new object[]
+                {
+                    GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos((float)Time.frameCount / 30), 1f, MathF.Sin((float)Time.frameCount / 30)),
+                    Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0,360), UnityEngine.Random.Range(0,360), UnityEngine.Random.Range(0,360))),
                     4f,
                     100f,
                     true,
@@ -260,6 +364,67 @@ namespace iiMenu.Mods
                 }
             }
         }
+        
+        private static bool lastlhboop = false;
+        private static bool lastrhboop = false;
+        public static void Boop()
+        {
+            bool isBoopLeft = false;
+            bool isBoopRight = false;
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                {
+                    float D1 = Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position, vrrig.headMesh.transform.position);
+                    float D2 = Vector3.Distance(GorillaTagger.Instance.rightHandTransform.position, vrrig.headMesh.transform.position);
+
+                    float threshold = 0.275f;
+
+                    if (!isBoopLeft)
+                    {
+                        isBoopLeft = D1 < threshold;
+                    }
+                    if (!isBoopRight)
+                    {
+                        isBoopRight = D2 < threshold;
+                    }
+                }
+            }
+            if (isBoopLeft && !lastlhboop)
+            {
+                if (PhotonNetwork.InRoom)
+                {
+                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                        84,
+                        true,
+                        999999f
+                    });
+                    RPCProtection();
+                }
+                else
+                {
+                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(84, true, 999999f);
+                }
+            }
+            if (isBoopRight && !lastrhboop)
+            {
+                if (PhotonNetwork.InRoom)
+                {
+                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                        84,
+                        false,
+                        999999f
+                    });
+                    RPCProtection();
+                }
+                else
+                {
+                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(84, false, 999999f);
+                }
+            }
+            lastlhboop = isBoopLeft;
+            lastrhboop = isBoopRight;
+        }
 
         public static void GorillaVoice()
         {
@@ -273,6 +438,11 @@ namespace iiMenu.Mods
             {
                 GorillaGameManager.instance.FindVRRigForPlayer(PhotonNetwork.LocalPlayer).RPC("EnableNonCosmeticHandItemRPC", RpcTarget.All, new object[]
                 {
+                    false,
+                    false
+                });
+                GorillaGameManager.instance.FindVRRigForPlayer(PhotonNetwork.LocalPlayer).RPC("EnableNonCosmeticHandItemRPC", RpcTarget.All, new object[]
+                {
                     true,
                     true
                 });
@@ -282,6 +452,11 @@ namespace iiMenu.Mods
             {
                 GorillaGameManager.instance.FindVRRigForPlayer(PhotonNetwork.LocalPlayer).RPC("EnableNonCosmeticHandItemRPC", RpcTarget.All, new object[]
                 {
+                    false,
+                    true
+                });
+                GorillaGameManager.instance.FindVRRigForPlayer(PhotonNetwork.LocalPlayer).RPC("EnableNonCosmeticHandItemRPC", RpcTarget.All, new object[]
+                {
                     true,
                     false
                 });
@@ -289,21 +464,34 @@ namespace iiMenu.Mods
             }
         }
 
+        private static bool shouldThingIdk = true;
         public static void HoneycombSpam()
         {
             if (rightGrab)
             {
                 GorillaGameManager.instance.FindVRRigForPlayer(PhotonNetwork.LocalPlayer).RPC("EnableNonCosmeticHandItemRPC", RpcTarget.All, new object[]
                 {
-                    true,
+                    shouldThingIdk,
                     false
                 });
                 RPCProtection();
-                EdibleWearable goldentrophy = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/EdibleHoney_right/HoneyComb").GetComponent<EdibleWearable>();
-                goldentrophy.biteCooldown = 0f;
-                goldentrophy.biteDistance = 2f;
-
+                shouldThingIdk = !shouldThingIdk;
             }
+        }
+
+        public static void RemoveBracelet()
+        {
+            GorillaGameManager.instance.FindVRRigForPlayer(PhotonNetwork.LocalPlayer).RPC("EnableNonCosmeticHandItemRPC", RpcTarget.All, new object[]
+            {
+                false,
+                true
+            });
+            GorillaGameManager.instance.FindVRRigForPlayer(PhotonNetwork.LocalPlayer).RPC("EnableNonCosmeticHandItemRPC", RpcTarget.All, new object[]
+            {
+                false,
+                false
+            });
+            RPCProtection();
         }
 
         public static void KillBees()
@@ -1027,7 +1215,7 @@ namespace iiMenu.Mods
 
         public static void PopAllBalloons()
         {
-            foreach (BalloonHoldable balloon in GameObject.FindObjectsOfType<BalloonHoldable>())
+            foreach (BalloonHoldable balloon in GetBalloons())
             {
                 Vector3 startpos = balloon.gameObject.transform.position;
                 Vector3 charvel = Vector3.zero;
@@ -1040,7 +1228,7 @@ namespace iiMenu.Mods
         {
             if (rightGrab)
             {
-                foreach (BalloonHoldable balloon in GameObject.FindObjectsOfType<BalloonHoldable>())
+                foreach (BalloonHoldable balloon in GetBalloons())
                 {
                     if (balloon.photonView.Owner == PhotonNetwork.LocalPlayer)
                     {
@@ -1056,7 +1244,7 @@ namespace iiMenu.Mods
 
         public static void SpazBalloons()
         {
-            foreach (BalloonHoldable balloon in GameObject.FindObjectsOfType<BalloonHoldable>())
+            foreach (BalloonHoldable balloon in GetBalloons())
             {
                 if (balloon.photonView.Owner == PhotonNetwork.LocalPlayer)
                 {
@@ -1071,7 +1259,7 @@ namespace iiMenu.Mods
 
         public static void OrbitBalloons()
         {
-            BalloonHoldable[] them = GameObject.FindObjectsOfType<BalloonHoldable>();
+            BalloonHoldable[] them = GetBalloons();
             int index = 0;
             foreach (BalloonHoldable balloon in them)
             {
@@ -1098,7 +1286,7 @@ namespace iiMenu.Mods
 
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
-                    foreach (BalloonHoldable balloon in GameObject.FindObjectsOfType<BalloonHoldable>())
+                    foreach (BalloonHoldable balloon in GetBalloons())
                     {
                         if (balloon.photonView.Owner == PhotonNetwork.LocalPlayer)
                         {
@@ -1114,7 +1302,7 @@ namespace iiMenu.Mods
 
         public static void DestroyBalloons()
         {
-            foreach (BalloonHoldable balloon in GameObject.FindObjectsOfType<BalloonHoldable>())
+            foreach (BalloonHoldable balloon in GetBalloons())
             {
                 if (balloon.photonView.Owner == PhotonNetwork.LocalPlayer)
                 {
