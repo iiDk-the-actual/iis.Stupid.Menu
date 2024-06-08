@@ -21,36 +21,32 @@ namespace iiMenu.Mods
             }*/
             if (PhotonNetwork.LocalPlayer.IsMasterClient)
             {
-                foreach (GorillaTagManager gorillaTagManager in GameObject.FindObjectsOfType<GorillaTagManager>())
+                GorillaTagManager gorillaTagManager = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
+                if (!gorillaTagManager.currentInfected.Contains(PhotonNetwork.LocalPlayer))
                 {
-                    if (!gorillaTagManager.currentInfected.Contains(PhotonNetwork.LocalPlayer))
-                    {
-                        gorillaTagManager.currentInfected.Add(PhotonNetwork.LocalPlayer);
-                        NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>You have been tagged!</color>");
-                        GetIndex("Tag Self").enabled = false;
-                    }
+                    gorillaTagManager.AddInfectedPlayer(PhotonNetwork.LocalPlayer);
+                    NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>You have been tagged!</color>");
+                    GetIndex("Tag Self").enabled = false;
                 }
             }
             else
             {
-                foreach (GorillaTagManager gorillaTagManager in GameObject.FindObjectsOfType<GorillaTagManager>())
+                GorillaTagManager gorillaTagManager = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
+                if (gorillaTagManager.currentInfected.Contains(PhotonNetwork.LocalPlayer))
                 {
-                    if (gorillaTagManager.currentInfected.Contains(PhotonNetwork.LocalPlayer))
+                    NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>You have been tagged!</color>");
+                    GorillaTagger.Instance.offlineVRRig.enabled = true;
+                    GetIndex("Tag Self").enabled = false;
+                }
+                else
+                {
+                    foreach (VRRig rig in GorillaParent.instance.vrrigs)
                     {
-                        NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>You have been tagged!</color>");
-                        GorillaTagger.Instance.offlineVRRig.enabled = true;
-                        GetIndex("Tag Self").enabled = false;
-                    }
-                    else
-                    {
-                        foreach (VRRig rig in GorillaParent.instance.vrrigs)
+                        if (rig.mainSkin.material.name.Contains("fected"))
                         {
-                            if (rig.mainSkin.material.name.Contains("fected"))
-                            {
-                                GorillaTagger.Instance.offlineVRRig.enabled = false;
-                                GorillaTagger.Instance.offlineVRRig.transform.position = rig.rightHandTransform.position;
-                                GorillaTagger.Instance.myVRRig.transform.position = rig.rightHandTransform.position;
-                            }
+                            GorillaTagger.Instance.offlineVRRig.enabled = false;
+                            GorillaTagger.Instance.offlineVRRig.transform.position = rig.rightHandTransform.position;
+                            GorillaTagger.Instance.myVRRig.transform.position = rig.rightHandTransform.position;
                         }
                     }
                 }
@@ -68,12 +64,10 @@ namespace iiMenu.Mods
             }
             else
             {
-                foreach (GorillaTagManager tagman in GameObject.FindObjectsOfType<GorillaTagManager>())
+                GorillaTagManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
+                if (tagman.currentInfected.Contains(PhotonNetwork.LocalPlayer))
                 {
-                    if (tagman.currentInfected.Contains(PhotonNetwork.LocalPlayer))
-                    {
-                        tagman.currentInfected.Remove(PhotonNetwork.LocalPlayer);
-                    }
+                    tagman.currentInfected.Remove(PhotonNetwork.LocalPlayer);
                 }
             }
         }
@@ -89,14 +83,12 @@ namespace iiMenu.Mods
             }
             else
             {
-                foreach (GorillaTagManager tagman in GameObject.FindObjectsOfType<GorillaTagManager>())
+                GorillaTagManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
+                foreach (Photon.Realtime.Player v in PhotonNetwork.PlayerList)
                 {
-                    foreach (Photon.Realtime.Player v in PhotonNetwork.PlayerList)
+                    if (tagman.currentInfected.Contains(v))
                     {
-                        if (tagman.currentInfected.Contains(v))
-                        {
-                            tagman.currentInfected.Remove(v);
-                        }
+                        tagman.currentInfected.Remove(v);
                     }
                 }
             }
@@ -117,17 +109,80 @@ namespace iiMenu.Mods
                 if (Time.time > spamtagdelay)
                 {
                     spamtagdelay = Time.time + 0.1f;
-                    foreach (GorillaTagManager tagman in GameObject.FindObjectsOfType<GorillaTagManager>())
+                    GorillaTagManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
+                    if (tagman.currentInfected.Contains(PhotonNetwork.LocalPlayer))
                     {
-                        if (tagman.currentInfected.Contains(PhotonNetwork.LocalPlayer))
+                        tagman.currentInfected.Remove(PhotonNetwork.LocalPlayer);
+                    }
+                    else
+                    {
+                        tagman.AddInfectedPlayer(PhotonNetwork.LocalPlayer);
+                    }
+                }
+            }
+        }
+
+        public static void SpamTagGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (isCopying && whoCopy != null)
+                {
+                    if (!PhotonNetwork.IsMasterClient)
+                    {
+                        if (!GetIndex("Disable Auto Anti Ban").enabled)
                         {
-                            tagman.currentInfected.Remove(PhotonNetwork.LocalPlayer);
+                            Overpowered.FastMaster();
+                        }
+                    }
+                    else
+                    {
+                        if (Time.time > spamtagdelay)
+                        {
+                            spamtagdelay = Time.time + 0.1f;
+                            GorillaTagManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
+                            if (tagman.currentInfected.Contains(RigManager.GetPlayerFromVRRig(whoCopy)))
+                            {
+                                tagman.currentInfected.Remove(RigManager.GetPlayerFromVRRig(whoCopy));
+                            }
+                            else
+                            {
+                                tagman.AddInfectedPlayer(RigManager.GetPlayerFromVRRig(whoCopy));
+                            }
+                        }
+                    }
+                }
+                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig && !possibly.mainSkin.material.name.Contains("fected"))
+                    {
+                        if (PhotonNetwork.LocalPlayer.IsMasterClient)
+                        {
+                            GorillaTagManager gorillaTagManager = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
+                            if (!gorillaTagManager.currentInfected.Contains(RigManager.GetPlayerFromVRRig(possibly)))
+                            {
+                                gorillaTagManager.AddInfectedPlayer(RigManager.GetPlayerFromVRRig(possibly));
+                            }
                         }
                         else
                         {
-                            tagman.currentInfected.Add(PhotonNetwork.LocalPlayer);
+                            isCopying = true;
+                            whoCopy = possibly;
                         }
                     }
+                }
+            }
+            else
+            {
+                if (isCopying)
+                {
+                    isCopying = false;
+                    GorillaTagger.Instance.offlineVRRig.enabled = true;
                 }
             }
         }
@@ -146,22 +201,40 @@ namespace iiMenu.Mods
                 if (Time.time > spamtagdelay)
                 {
                     spamtagdelay = Time.time + 0.1f;
-                    foreach (GorillaTagManager tagman in GameObject.FindObjectsOfType<GorillaTagManager>())
+                    GorillaTagManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
+                    foreach (Photon.Realtime.Player v in PhotonNetwork.PlayerList)
                     {
-                        foreach (Photon.Realtime.Player v in PhotonNetwork.PlayerList)
+                        if (tagman.currentInfected.Contains(v))
                         {
-                            if (tagman.currentInfected.Contains(v))
-                            {
-                                tagman.currentInfected.Remove(v);
-                            }
-                            else
-                            {
-                                tagman.currentInfected.Add(v);
-                            }
+                            tagman.currentInfected.Remove(v);
+                        }
+                        else
+                        {
+                            tagman.AddInfectedPlayer(v);
                         }
                     }
                 }
             }
+        }
+
+        public static void TagLag()
+        {
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                if (!GetIndex("Disable Auto Anti Ban").enabled)
+                {
+                    Overpowered.FastMaster();
+                }
+            }
+            else
+            {
+                GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>().tagCoolDown = 2147483647f; // lol
+            }
+        }
+
+        public static void NahTagLag()
+        {
+            GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>().tagCoolDown = 5f;
         }
 
         public static void AntiTag()
@@ -177,13 +250,11 @@ namespace iiMenu.Mods
             {
                 if (GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected") && PhotonNetwork.LocalPlayer.IsMasterClient)
                 {
-                    foreach (GorillaTagManager tagman in GameObject.FindObjectsOfType<GorillaTagManager>())
+                    GorillaTagManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
+                    if (tagman.currentInfected.Contains(PhotonNetwork.LocalPlayer))
                     {
-                        if (tagman.currentInfected.Contains(PhotonNetwork.LocalPlayer))
-                        {
-                            tagman.currentInfected.Remove(PhotonNetwork.LocalPlayer);
-                            GorillaLocomotion.Player.Instance.disableMovement = false;
-                        }
+                        tagman.currentInfected.Remove(PhotonNetwork.LocalPlayer);
+                        GorillaLocomotion.Player.Instance.disableMovement = false;
                     }
                 }
             }
@@ -355,12 +426,10 @@ namespace iiMenu.Mods
                     {
                         if (PhotonNetwork.LocalPlayer.IsMasterClient)
                         {
-                            foreach (GorillaTagManager gorillaTagManager in GameObject.FindObjectsOfType<GorillaTagManager>())
+                            GorillaTagManager gorillaTagManager = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
+                            if (!gorillaTagManager.currentInfected.Contains(RigManager.GetPlayerFromVRRig(possibly)))
                             {
-                                if (!gorillaTagManager.currentInfected.Contains(RigManager.GetPlayerFromVRRig(possibly)))
-                                {
-                                    gorillaTagManager.currentInfected.Add(RigManager.GetPlayerFromVRRig(possibly));
-                                }
+                                gorillaTagManager.AddInfectedPlayer(RigManager.GetPlayerFromVRRig(possibly));
                             }
                         }
                         else
@@ -396,12 +465,10 @@ namespace iiMenu.Mods
                     {
                         if (PhotonNetwork.LocalPlayer.IsMasterClient)
                         {
-                            foreach (GorillaTagManager gorillaTagManager in GameObject.FindObjectsOfType<GorillaTagManager>())
+                            GorillaTagManager gorillaTagManager = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
+                            if (gorillaTagManager.currentInfected.Contains(RigManager.GetPlayerFromVRRig(possibly)))
                             {
-                                if (gorillaTagManager.currentInfected.Contains(RigManager.GetPlayerFromVRRig(possibly)))
-                                {
-                                    gorillaTagManager.currentInfected.Remove(RigManager.GetPlayerFromVRRig(possibly));
-                                }
+                                gorillaTagManager.currentInfected.Remove(RigManager.GetPlayerFromVRRig(possibly));
                             }
                         } else
                         {
@@ -434,14 +501,12 @@ namespace iiMenu.Mods
         {
             if (PhotonNetwork.IsMasterClient)
             {
-                foreach (GorillaTagManager tagman in GameObject.FindObjectsOfType<GorillaTagManager>())
+                GorillaTagManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
+                foreach (Photon.Realtime.Player v in PhotonNetwork.PlayerList)
                 {
-                    foreach (Photon.Realtime.Player v in PhotonNetwork.PlayerList)
+                    if (!tagman.currentInfected.Contains(v))
                     {
-                        if (!tagman.currentInfected.Contains(v))
-                        {
-                            tagman.currentInfected.Add(v);
-                        }
+                        tagman.AddInfectedPlayer(v);
                     }
                 }
                 GetIndex("Tag All").enabled = false;

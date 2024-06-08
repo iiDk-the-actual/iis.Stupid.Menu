@@ -10,32 +10,36 @@ namespace iiMenu.Classes
         public override void Start()
         {
             base.Start();
-            this.gameObjectRenderer = base.GetComponent<Renderer>();
-            this.Update();
+            gameObjectRenderer = base.GetComponent<Renderer>();
+            Update();
         }
 
         public override void Update()
         {
             base.Update();
-            if (this.colors != null)
+            if (colors != null)
             {
-                if (!this.isMonkeColors)
+                if (!isMonkeColors)
                 {
-                    if (this.timeBased)
+                    if (timeBased)
                     {
-                        //this.color = this.colors.Evaluate(this.progress);
-                        this.color = this.colors.Evaluate((Time.time / 2f) % 1);
+                        //color = colors.Evaluate(progress);
+                        color = colors.Evaluate((Time.time / 2f) % 1);
                     }
-                    if (this.isRainbow)
+                    if (isRainbow)
                     {
                         float h = (Time.frameCount / 180f) % 1f;
-                        this.color = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
+                        color = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
                     }
-                    this.gameObjectRenderer.material.color = this.color;
+                    if (isEpileptic)
+                    {
+                        color = new Color32((byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), 255);
+                    }
+                    gameObjectRenderer.material.color = color;
                 }
                 else
                 {
-                    this.gameObjectRenderer.material = GorillaTagger.Instance.offlineVRRig.mainSkin.material;
+                    gameObjectRenderer.material = GorillaTagger.Instance.offlineVRRig.mainSkin.material;
                 }
             }
         }
@@ -45,6 +49,7 @@ namespace iiMenu.Classes
         public Color32 color;
         public bool timeBased = true;
         public bool isRainbow = false;
+        public bool isEpileptic = false;
         public bool isMonkeColors = false;
     }
 }

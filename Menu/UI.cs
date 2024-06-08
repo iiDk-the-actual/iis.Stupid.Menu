@@ -44,7 +44,6 @@ namespace iiMenu.UI
                 byte[] fileData = new byte[stream.Length];
                 stream.Read(fileData, 0, (int)stream.Length);
                 texture.LoadImage(fileData);
-                stream.Close();
             }
             else
             {
@@ -180,7 +179,7 @@ namespace iiMenu.UI
                 {
                     PhotonNetwork.Disconnect();
                     rejRoom = inputText;
-                    rejDebounce = Time.time + 2f;
+                    //rejDebounce = Time.time + 0.25f;
                 }
 
                 try

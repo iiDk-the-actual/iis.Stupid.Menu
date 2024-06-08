@@ -22,8 +22,8 @@ ii's Stupid Menu is a mod menu for Gorilla Tag, created by me, iiDk. This menu i
 I made my menu open-sourced as a resource for anyone interested in learning how to create their own mods for this game. By sharing my work, I want to provide a valuable educational tool for the community, enabling developers of all skill levels to explore, understand, and contribute to the game's modding community. I want modding to go back to how it used to be, with everything free and open-sourced, unlike today, where everything is obfuscated and locked behind paywalls. By making my menu open-sourced, I hope to inspire a return to a more collaborative and accessible modding culture.
 
 ## Can I take code from this?
-No, you can't just take code from this without permission. If you're interested in using any part of my code, please ask me first. You can reach out to me directly [here](https://discord.gg/iidk) in the Discord server to request permission. This helps me and you make sure that proper credit is given and helps keep this project alive. I'm happy to discuss any potential uses or collaborations, so don’t hesitate to get in touch if you have any questions or ideas regarding the code.
-> list of people who have stolen my code: R Gold, Saturn - X, Switched Free, [Steal.lol](https://github.com/bbc123f/steal2), [ShibaGT Gold](https://github.com/7zennos/Gorilla-Tag-ShibaGT-Gold-Mod-Menu)
+No, you can't just take code from this without permission. If you're interested in using any part of my code, please ask me first. You can reach out to me directly [here](https://discord.gg/iidk) in the Discord server to request permission. This helps me and you make sure that proper credit is given and helps keep this project alive. I'm happy to discuss any potential uses or collaborations, so don't hesitate to get in touch if you have any questions or ideas regarding the code.
+> list of people who have stolen my code: R Gold, Saturn - X, Space Menu, Switched, [Steal.lol](https://github.com/bbc123f/steal2), [ShibaGT Gold](https://github.com/7zennos/Gorilla-Tag-ShibaGT-Gold-Mod-Menu)
 
 ---
 

@@ -320,7 +320,7 @@ namespace iiMenu.Mods
 
         public static void DisableCosmetics()
         {
-            Transform transform = GorillaTagger.Instance.offlineVRRig.mainCamera.transform.Find("Cosmetics");
+            Transform transform = GorillaTagger.Instance.offlineVRRig.mainCamera.transform.Find("FirstPersonCosmeticsOverrides");
             for (int i = 0; i < transform.childCount; i++)
             {
                 GameObject v = transform.GetChild(i).gameObject;

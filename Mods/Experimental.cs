@@ -2,6 +2,7 @@
 using GorillaNetworking;
 using GorillaTag;
 using iiMenu.Classes;
+using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Reflection;
@@ -169,9 +170,12 @@ namespace iiMenu.Mods
 
         public static void AutoSetMaster()
         {
-            if (PhotonNetwork.InRoom && PhotonNetwork.CurrentRoom.CustomProperties["gameMode"].ToString().ToLower().Contains("modded"))
+            if (PhotonNetwork.InRoom && Overpowered.IsModded())
             {
-                PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
+                GetIndex("Auto Set Master").enabled = false;
+                ReloadMenu();
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to security.</color>");
+                //PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
             }
         }
 

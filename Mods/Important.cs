@@ -7,6 +7,7 @@ using static iiMenu.Menu.Main;
 using static iiMenu.Mods.Reconnect;
 using Valve.VR;
 using Cinemachine;
+using iiMenu.Notifications;
 
 namespace iiMenu.Mods
 {
@@ -25,7 +26,7 @@ namespace iiMenu.Mods
             if ((GetIndex("Primary Room Mods").enabled && rightPrimary) || (GetIndex("Secondary Room Mods").enabled && rightSecondary) || (GetIndex("Joystick Room Mods").enabled && SteamVR_Actions.gorillaTag_RightJoystickClick.state) || !(GetIndex("Primary Room Mods").enabled || GetIndex("Secondary Room Mods").enabled || GetIndex("Joystick Room Mods").enabled))
             {
                 rejRoom = PhotonNetwork.CurrentRoom.Name;
-                rejDebounce = Time.time + (float)internetTime;
+                //rejDebounce = Time.time + (float)internetTime;
                 PhotonNetwork.Disconnect();
             }
         }
@@ -34,6 +35,8 @@ namespace iiMenu.Mods
         {
             rejRoom = null;
             isJoiningRandom = false;
+            partyLastCode = null;
+            phaseTwo = false;
         }
 
         public static void JoinLastRoom()
@@ -87,7 +90,7 @@ namespace iiMenu.Mods
                 {
                     PhotonNetwork.Disconnect();
                     isJoiningRandom = true;
-                    jrDebounce = Time.time + (float)internetTime;
+                    //jrDebounce = Time.time + (float)internetTime;
                 }
                 else
                 {
@@ -169,7 +172,9 @@ namespace iiMenu.Mods
             {
                 "gameMode"
             };
-            PhotonNetwork.CreateRoom(RandomRoomName(), roomOptions, null, null);
+            string name = RandomRoomName();
+            PhotonNetwork.CreateRoom(name, roomOptions, null, null);
+            PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(name, JoinType.Solo);
         }
 
         public static void RestartGame()
@@ -302,7 +307,7 @@ namespace iiMenu.Mods
 
         public static void DisableMouthMovement()
         {
-            GorillaTagger.Instance.offlineVRRig.GetComponent<GorillaMouthFlap>().enabled = false;
+            GorillaTagger.Instance.offlineVRRig.remoteUseReplacementVoice = false;
         }
 
         public static void EnableMouthMovement()
@@ -333,6 +338,49 @@ namespace iiMenu.Mods
         public static void UnlockCompetitiveQueue()
         {
             GorillaComputer.instance.CompQueueUnlockButtonPress();
+        }
+
+        public static Quaternion lastHeadQuat = Quaternion.identity;
+        public static Quaternion lastLHQuat = Quaternion.identity;
+        public static Quaternion lastRHQuat = Quaternion.identity;
+
+        public static bool lastTagLag = false;
+        public static int tagLagFrames = 0;
+
+        public static void TagLagDetector()
+        {
+            if (PhotonNetwork.InRoom && !PhotonNetwork.IsMasterClient)
+            {
+                if (Quaternion.Angle(Classes.RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).headMesh.transform.rotation, lastHeadQuat) <= 0.01f && Quaternion.Angle(Classes.RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).leftHandTransform.rotation, lastLHQuat) <= 0.01f && Quaternion.Angle(Classes.RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).rightHandTransform.rotation, lastRHQuat) <= 0.01f)
+                {
+                    tagLagFrames++;
+                } else
+                {
+                    tagLagFrames = 0;
+                }
+
+                lastLHQuat = Classes.RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).leftHandTransform.rotation;
+                lastRHQuat = Classes.RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).rightHandTransform.rotation;
+                lastHeadQuat = Classes.RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).headMesh.transform.rotation;
+
+                bool thereIsTagLag = tagLagFrames > 512;
+                if (thereIsTagLag && !lastTagLag)
+                {
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>TAG LAG</color><color=grey>]</color> <color=white>There is currently tag lag.</color>");
+                }
+                if (!thereIsTagLag && lastTagLag)
+                {
+                    NotifiLib.SendNotification("<color=grey>[</color><color=green>TAG LAG</color><color=grey>]</color> <color=white>There is no longer tag lag.</color>");
+                }
+                lastTagLag = thereIsTagLag;
+            } else
+            {
+                if (lastTagLag)
+                {
+                    NotifiLib.SendNotification("<color=grey>[</color><color=green>TAG LAG</color><color=grey>]</color> <color=white>There is no longer tag lag.</color>");
+                }
+                lastTagLag = false;
+            }
         }
 
         public static void EUServers()
