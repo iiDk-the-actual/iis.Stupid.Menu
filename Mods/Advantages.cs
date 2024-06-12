@@ -14,11 +14,6 @@ namespace iiMenu.Mods
     {
         public static void TagSelf()
         {
-            /*if (!GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected") && Time.time > delaythinggg)
-            {
-                PhotonView.Get(GorillaGameManager.instance).RPC("ReportContactWithLavaRPC", RpcTarget.MasterClient, Array.Empty<object>());
-                delaythinggg = Time.time + 0.5f;
-            }*/
             if (PhotonNetwork.LocalPlayer.IsMasterClient)
             {
                 GorillaTagManager gorillaTagManager = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
@@ -651,6 +646,7 @@ namespace iiMenu.Mods
             PlayerPrefs.Save();
         }
 
+        /*
         public static void EnableRemoveChristmasLights()
         {
             foreach (GameObject g in Resources.FindObjectsOfTypeAll<GameObject>())
@@ -692,5 +688,6 @@ namespace iiMenu.Mods
             }
             holidayobjects.Clear();
         }
+        */
     }
 }

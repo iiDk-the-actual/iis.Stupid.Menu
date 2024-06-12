@@ -167,6 +167,7 @@ namespace iiMenu.Mods
             }
         }
 
+        /*
         public static void ForceEruptLava()
         {
             if (!PhotonNetwork.IsMasterClient)
@@ -313,7 +314,7 @@ namespace iiMenu.Mods
 
                 fieldInfo.SetValue(controller, reliableState);
             }
-        }
+        }*/
 
         public static void SpazTargets()
         {
@@ -387,6 +388,7 @@ namespace iiMenu.Mods
             }
         }
 
+        /*
         public static void GrabSecondLookGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
@@ -409,10 +411,11 @@ namespace iiMenu.Mods
                     }
                 }
             }
-        }
+        }*/
 
         public static void StepCrashMethod(RpcTarget who)
         {
+            /*
             GorillaTagger.Instance.offlineVRRig.enabled = false;
             Vector3 crashPos = GameObject.Find("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Cosmetics Room Triggers/TryOnRoom").transform.position;
             GorillaTagger.Instance.offlineVRRig.transform.position = crashPos;
@@ -460,10 +463,15 @@ namespace iiMenu.Mods
             CosmeticsController.instance.UpdateShoppingCart();
             GorillaTagger.Instance.offlineVRRig.inTryOnRoom = true;
             GorillaTagger.Instance.myVRRig.RPC("UpdateCosmeticsWithTryon", who, CosmeticsController.instance.currentWornSet.ToDisplayNameArray(), CosmeticsController.instance.tryOnSet.ToDisplayNameArray());
-            RPCProtection();
+            RPCProtection();*/
+            ReloadMenu();
+            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to security.</color>");
         }
         public static void StepCrashMethod(Player who)
         {
+            ReloadMenu();
+            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to security.</color>");
+            /*
             GorillaTagger.Instance.offlineVRRig.enabled = false;
             Vector3 crashPos = GameObject.Find("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Cosmetics Room Triggers/TryOnRoom").transform.position;
             GorillaTagger.Instance.offlineVRRig.transform.position = crashPos;
@@ -512,6 +520,7 @@ namespace iiMenu.Mods
             GorillaTagger.Instance.offlineVRRig.inTryOnRoom = true;
             GorillaTagger.Instance.myVRRig.RPC("UpdateCosmeticsWithTryon", who, CosmeticsController.instance.currentWornSet.ToDisplayNameArray(), CosmeticsController.instance.tryOnSet.ToDisplayNameArray());
             RPCProtection();
+            */
         }
 
         public static void LagGun()
@@ -602,6 +611,7 @@ namespace iiMenu.Mods
             }
         }
 
+        /*
         public static void RigSpamTest() // This doesnt work
         {
             if (rightTrigger > 0.5f)
@@ -630,11 +640,11 @@ namespace iiMenu.Mods
                     PhotonNetwork.NetworkingClient.OpRaiseEvent(202, SendInstantiateEvHashtable, SendInstantiateRaiseEventOptions, SendOptions.SendReliable);
                 }
             }
-        }
+        }*/
 
         public static void AcidSelf()
         {
-            if (!PhotonNetwork.IsMasterClient)
+            if (!IsModded())
             {
                 if (!GetIndex("Disable Auto Anti Ban").enabled)
                 {
@@ -675,24 +685,14 @@ namespace iiMenu.Mods
                         }
                         else
                         {
-                            if (!PhotonNetwork.IsMasterClient)
-                            {
-                                if (!GetIndex("Disable Auto Anti Ban").enabled)
-                                {
-                                    FastMaster();
-                                }
-                            }
-                            else
-                            {
-                                Traverse.Create(ScienceExperimentManager.instance).Field("inGamePlayerCount").SetValue(PhotonNetwork.CurrentRoom.PlayerCount);
-                                ScienceExperimentManager.PlayerGameState[] states = new ScienceExperimentManager.PlayerGameState[10];
-                                int ownerIndex = states.Length > player.ActorNumber ? player.ActorNumber : 0;
-                                states[ownerIndex].touchedLiquid = true;
-                                states[ownerIndex].playerId = player.ActorNumber;
-                                Traverse.Create(ScienceExperimentManager.instance).Field("inGamePlayerStates").SetValue(states);
-                                RPCProtection();
-                                kgDebounce = Time.time + 0.2f;
-                            }
+                            Traverse.Create(ScienceExperimentManager.instance).Field("inGamePlayerCount").SetValue(PhotonNetwork.CurrentRoom.PlayerCount);
+                            ScienceExperimentManager.PlayerGameState[] states = new ScienceExperimentManager.PlayerGameState[10];
+                            int ownerIndex = states.Length > player.ActorNumber ? player.ActorNumber : 0;
+                            states[ownerIndex].touchedLiquid = true;
+                            states[ownerIndex].playerId = player.ActorNumber;
+                            Traverse.Create(ScienceExperimentManager.instance).Field("inGamePlayerStates").SetValue(states);
+                            RPCProtection();
+                            kgDebounce = Time.time + 0.2f;
                         }
                     }
                 }
@@ -710,25 +710,15 @@ namespace iiMenu.Mods
             }
             else
             {
-                if (!PhotonNetwork.IsMasterClient)
+                Traverse.Create(ScienceExperimentManager.instance).Field("inGamePlayerCount").SetValue(PhotonNetwork.CurrentRoom.PlayerCount);
+                ScienceExperimentManager.PlayerGameState[] states = new ScienceExperimentManager.PlayerGameState[10];
+                for (int i = 0; i < PhotonNetwork.CurrentRoom.PlayerCount; i++)
                 {
-                    if (!GetIndex("Disable Auto Anti Ban").enabled)
-                    {
-                        FastMaster();
-                    }
+                    states[i].touchedLiquid = true;
+                    states[i].playerId = PhotonNetwork.PlayerList[i] == null ? 0 : PhotonNetwork.PlayerList[i].ActorNumber;
                 }
-                else
-                {
-                    Traverse.Create(ScienceExperimentManager.instance).Field("inGamePlayerCount").SetValue(PhotonNetwork.CurrentRoom.PlayerCount);
-                    ScienceExperimentManager.PlayerGameState[] states = new ScienceExperimentManager.PlayerGameState[10];
-                    for (int i = 0; i < PhotonNetwork.CurrentRoom.PlayerCount; i++)
-                    {
-                        states[i].touchedLiquid = true;
-                        states[i].playerId = PhotonNetwork.PlayerList[i] == null ? 0 : PhotonNetwork.PlayerList[i].ActorNumber;
-                    }
-                    Traverse.Create(ScienceExperimentManager.instance).Field("inGamePlayerStates").SetValue(states);
-                    RPCProtection();
-                }
+                Traverse.Create(ScienceExperimentManager.instance).Field("inGamePlayerStates").SetValue(states);
+                RPCProtection();
             }
         }
 
@@ -1203,6 +1193,7 @@ namespace iiMenu.Mods
             }
         }
 
+        /*
         public static void FlingGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
@@ -1238,7 +1229,8 @@ namespace iiMenu.Mods
                 }
             }
         }
-        
+        */
+
         public static void DestroyGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)

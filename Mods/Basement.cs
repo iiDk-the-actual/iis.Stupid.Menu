@@ -11,7 +11,7 @@ namespace iiMenu.Mods
 {
     internal class Basement
     {
-        public static void SodaSelf()
+        /*public static void SodaSelf()
         {
             ScienceExperimentManager.instance.photonView.RPC("PlayerEnteredGameAreaRPC", RpcTarget.MasterClient, Array.Empty<object>());
             ScienceExperimentManager.instance.photonView.RPC("PlayerTouchedLavaRPC", RpcTarget.MasterClient, Array.Empty<object>());
@@ -22,7 +22,7 @@ namespace iiMenu.Mods
             ScienceExperimentManager.instance.photonView.RPC("PlayerTouchedRefreshWaterRPC", RpcTarget.All, Array.Empty<object>());
             ScienceExperimentManager.instance.photonView.RPC("PlayerExitedGameAreaRPC", RpcTarget.All, Array.Empty<object>());
             RPCProtection();
-        }
+        }*/
 
         public static void SlowMonsters()
         {

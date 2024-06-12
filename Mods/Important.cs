@@ -1,13 +1,12 @@
-﻿using GorillaNetworking;
+﻿using Cinemachine;
 using ExitGames.Client.Photon;
+using GorillaNetworking;
+using iiMenu.Notifications;
 using Photon.Pun;
 using System.Diagnostics;
 using UnityEngine;
-using static iiMenu.Menu.Main;
-using static iiMenu.Mods.Reconnect;
 using Valve.VR;
-using Cinemachine;
-using iiMenu.Notifications;
+using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods
 {
@@ -177,6 +176,36 @@ namespace iiMenu.Mods
             PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(name, JoinType.Solo);
         }
 
+        public static void AutoJoinRoomRUN()
+        {
+            rejRoom = "RUN";
+            // rejDebounce = Time.time + 2f;
+        }
+
+        public static void AutoJoinRoomDAISY()
+        {
+            rejRoom = "DAISY";
+            // rejDebounce = Time.time + 2f;
+        }
+
+        public static void AutoJoinRoomDAISY09()
+        {
+            rejRoom = "DAISY09";
+            // rejDebounce = Time.time + 2f;
+        }
+
+        public static void AutoJoinRoomPBBV()
+        {
+            rejRoom = "PBBV";
+            // rejDebounce = Time.time + 2f;
+        }
+
+        public static void AutoJoinRoomBOT()
+        {
+            rejRoom = "BOT";
+            // rejDebounce = Time.time + 2f;
+        }
+
         public static void RestartGame()
         {
             Process.Start("steam://rungameid/1533390");
@@ -307,12 +336,19 @@ namespace iiMenu.Mods
 
         public static void DisableMouthMovement()
         {
-            GorillaTagger.Instance.offlineVRRig.remoteUseReplacementVoice = false;
+            /*GorillaMouthFlap victim = GorillaTagger.Instance.offlineVRRig.GetComponent<GorillaMouthFlap>();
+            GorillaSpeakerLoudness victimm = (GorillaSpeakerLoudness)typeof(GorillaMouthFlap).GetField("speaker", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(victim);
+            typeof(GorillaSpeakerLoudness).GetField("micConnected", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(victimm, false);*/
+            Patches.MicPatch.returnAsNone = true;
         }
 
         public static void EnableMouthMovement()
         {
-            GorillaTagger.Instance.offlineVRRig.GetComponent<GorillaMouthFlap>().enabled = true;
+            /*GorillaTagger.Instance.offlineVRRig.GetComponent<GorillaMouthFlap>().enabled = true;
+            GorillaMouthFlap victim = GorillaTagger.Instance.offlineVRRig.GetComponent<GorillaMouthFlap>();
+            GorillaSpeakerLoudness victimm = (GorillaSpeakerLoudness)typeof(GorillaMouthFlap).GetField("speaker", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(victim);
+            typeof(GorillaSpeakerLoudness).GetField("micConnected", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(victimm, true);*/
+            Patches.MicPatch.returnAsNone = false;
         }
 
         public static void EnableFPSBoost()
@@ -328,6 +364,14 @@ namespace iiMenu.Mods
         public static void ForceLagGame()
         {
             foreach (GameObject g in Object.FindObjectsByType<GameObject>(0)) { }
+        }
+
+        public static void GripForceLagGame()
+        {
+            if (rightGrab)
+            {
+                foreach (GameObject g in Object.FindObjectsByType<GameObject>(0)) { }
+            }
         }
 
         public static void UncapFPS()

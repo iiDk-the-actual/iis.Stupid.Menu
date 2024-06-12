@@ -153,6 +153,7 @@ namespace iiMenu.Mods
             GorillaTagger.Instance.tapCoolDown = 0.33f;
         }
 
+        /*
         public static void InstantParty()
         {
             typeof(FriendshipGroupDetection).GetField("groupTime", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(FriendshipGroupDetection.Instance, 0f);
@@ -172,7 +173,7 @@ namespace iiMenu.Mods
                 FriendshipGroupDetection.PackColor(new Color(0f, 0f, 0f)),
                 people.ToArray()
             });
-        }
+        }*/
 
         public static void LeaveParty()
         {
@@ -335,28 +336,6 @@ namespace iiMenu.Mods
                         RPCProtection();
                         splashDel = Time.time + 0.1f;
                     }
-
-                    /*
-                    GameObject l = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                    UnityEngine.Object.Destroy(l.GetComponent<Rigidbody>());
-                    UnityEngine.Object.Destroy(l.GetComponent<SphereCollider>());
-
-                    l.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-                    l.transform.position = GorillaTagger.Instance.leftHandTransform.position;
-
-                    GameObject r = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                    UnityEngine.Object.Destroy(r.GetComponent<Rigidbody>());
-                    UnityEngine.Object.Destroy(r.GetComponent<SphereCollider>());
-
-                    r.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-                    r.transform.position = GorillaTagger.Instance.rightHandTransform.position;
-
-                    l.GetComponent<Renderer>().material.color = bgColorA;
-                    r.GetComponent<Renderer>().material.color = bgColorA;
-
-                    UnityEngine.Object.Destroy(l, Time.deltaTime);
-                    UnityEngine.Object.Destroy(r, Time.deltaTime);
-                    */
                 }
                 else
                 {
@@ -426,11 +405,71 @@ namespace iiMenu.Mods
             lastrhboop = isBoopRight;
         }
 
+        public static void Slap()
+        {
+            bool isBoopLeft = false;
+            bool isBoopRight = false;
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                {
+                    float D1 = Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position, vrrig.headMesh.transform.position);
+                    float D2 = Vector3.Distance(GorillaTagger.Instance.rightHandTransform.position, vrrig.headMesh.transform.position);
+
+                    float threshold = 0.275f;
+
+                    if (!isBoopLeft)
+                    {
+                        isBoopLeft = D1 < threshold;
+                    }
+                    if (!isBoopRight)
+                    {
+                        isBoopRight = D2 < threshold;
+                    }
+                }
+            }
+            if (isBoopLeft && !lastlhboop)
+            {
+                if (PhotonNetwork.InRoom)
+                {
+                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                        248,
+                        true,
+                        999999f
+                    });
+                    RPCProtection();
+                }
+                else
+                {
+                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(248, true, 999999f);
+                }
+            }
+            if (isBoopRight && !lastrhboop)
+            {
+                if (PhotonNetwork.InRoom)
+                {
+                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                        248,
+                        false,
+                        999999f
+                    });
+                    RPCProtection();
+                }
+                else
+                {
+                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(248, false, 999999f);
+                }
+            }
+            lastlhboop = isBoopLeft;
+            lastrhboop = isBoopRight;
+        }
+
+        /*
         public static void GorillaVoice()
         {
             GorillaTagger.Instance.offlineVRRig.remoteUseReplacementVoice = rightPrimary;
             GorillaTagger.Instance.offlineVRRig.localUseReplacementVoice = rightPrimary;
-        }
+        }*/
 
         public static void GetHoneyComb()
         {
@@ -494,6 +533,7 @@ namespace iiMenu.Mods
             RPCProtection();
         }
 
+        /*
         public static void KillBees()
         {
             if (!PhotonNetwork.IsMasterClient)
@@ -769,35 +809,13 @@ namespace iiMenu.Mods
                         RPCProtection();
                         splashDel = Time.time + 0.1f;
                     }
-
-                    /*
-                    GameObject l = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                    UnityEngine.Object.Destroy(l.GetComponent<Rigidbody>());
-                    UnityEngine.Object.Destroy(l.GetComponent<SphereCollider>());
-
-                    l.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-                    l.transform.position = GorillaTagger.Instance.leftHandTransform.position;
-
-                    GameObject r = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                    UnityEngine.Object.Destroy(r.GetComponent<Rigidbody>());
-                    UnityEngine.Object.Destroy(r.GetComponent<SphereCollider>());
-
-                    r.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-                    r.transform.position = GorillaTagger.Instance.rightHandTransform.position;
-
-                    l.GetComponent<Renderer>().material.color = bgColorA;
-                    r.GetComponent<Renderer>().material.color = bgColorA;
-
-                    UnityEngine.Object.Destroy(l, Time.deltaTime);
-                    UnityEngine.Object.Destroy(r, Time.deltaTime);
-                    */
                 }
                 else
                 {
                     GorillaTagger.Instance.offlineVRRig.enabled = true;
                 }
             }
-        }
+        }*/
 
         public static void LowQualityMicrophone()
         {
@@ -1383,7 +1401,7 @@ namespace iiMenu.Mods
 
             System.Type type = GorillaTagger.Instance.offlineVRRig.GetType();
             FieldInfo fieldInfo = type.GetField("speakingLoudness", BindingFlags.NonPublic | BindingFlags.Instance);
-            fieldInfo.SetValue(GorillaTagger.Instance.offlineVRRig, UnityEngine.Random.Range(0f,1000f)/1000f);
+            fieldInfo.SetValue(GorillaTagger.Instance.offlineVRRig, (float)UnityEngine.Random.Range(0, 1));
         }
 
         public static void UnspazVoice()
@@ -1393,6 +1411,7 @@ namespace iiMenu.Mods
             GorillaTagger.Instance.offlineVRRig.replacementVoiceDetectionDelay = 128;
         }
 
+        /*
         public static void GrabTrain()
         {
             if (rightGrab)
@@ -1443,7 +1462,7 @@ namespace iiMenu.Mods
             train.GetComponent<PhotonView>().ControllerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
             train.GetComponent<PhotonView>().OwnerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
             train.GetComponent<TraverseSpline>().duration = 30f;
-        }
+        }*/
 
         public static void RemoveName()
         {
@@ -1636,6 +1655,7 @@ namespace iiMenu.Mods
                 ChangeColor(colors[colorChangeType]);
             }
         }
+
 
         public static void NegativeColor()
         {
