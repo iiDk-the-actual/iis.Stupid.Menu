@@ -9,6 +9,7 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static iiMenu.Menu.Main;
+using static iiMenu.Mods.Overpowered;
 
 namespace iiMenu.Mods
 {
@@ -24,16 +25,26 @@ namespace iiMenu.Mods
 
                 if (isCopying && whoCopy != null)
                 {
-                    int num = RigManager.GetPhotonViewFromVRRig(whoCopy).ViewID;
-                    Hashtable ServerCleanDestroyEvent = new Hashtable();
-                    RaiseEventOptions ServerCleanOptions = new RaiseEventOptions
+                    if (!IsModded())
                     {
-                        CachingOption = EventCaching.RemoveFromRoomCache
-                    };
-                    ServerCleanDestroyEvent[0] = num;
-                    ServerCleanOptions.CachingOption = EventCaching.AddToRoomCache;
-                    PhotonNetwork.NetworkingClient.OpRaiseEvent(204, ServerCleanDestroyEvent, ServerCleanOptions, SendOptions.SendUnreliable);
-                    RPCProtection();
+                        if (!GetIndex("Disable Auto Anti Ban").enabled)
+                        {
+                            AntiBan();
+                        }
+                    }
+                    else
+                    {
+                        int num = RigManager.GetPhotonViewFromVRRig(whoCopy).ViewID;
+                        Hashtable ServerCleanDestroyEvent = new Hashtable();
+                        RaiseEventOptions ServerCleanOptions = new RaiseEventOptions
+                        {
+                            CachingOption = EventCaching.RemoveFromRoomCache
+                        };
+                        ServerCleanDestroyEvent[0] = num;
+                        ServerCleanOptions.CachingOption = EventCaching.AddToRoomCache;
+                        PhotonNetwork.NetworkingClient.OpRaiseEvent(204, ServerCleanDestroyEvent, ServerCleanOptions, SendOptions.SendUnreliable);
+                        RPCProtection();
+                    }
                 }
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
@@ -59,16 +70,26 @@ namespace iiMenu.Mods
         {
             if (rightTrigger > 0.5f)
             {
-                int num = RigManager.GetPhotonViewFromVRRig(RigManager.GetRandomVRRig(false)).ViewID;
-                Hashtable ServerCleanDestroyEvent = new Hashtable();
-                RaiseEventOptions ServerCleanOptions = new RaiseEventOptions
+                if (!IsModded())
                 {
-                    CachingOption = EventCaching.RemoveFromRoomCache
-                };
-                ServerCleanDestroyEvent[0] = num;
-                ServerCleanOptions.CachingOption = EventCaching.AddToRoomCache;
-                PhotonNetwork.NetworkingClient.OpRaiseEvent(204, ServerCleanDestroyEvent, ServerCleanOptions, SendOptions.SendUnreliable);
-                RPCProtection();
+                    if (!GetIndex("Disable Auto Anti Ban").enabled)
+                    {
+                        AntiBan();
+                    }
+                }
+                else
+                {
+                    int num = RigManager.GetPhotonViewFromVRRig(RigManager.GetRandomVRRig(false)).ViewID;
+                    Hashtable ServerCleanDestroyEvent = new Hashtable();
+                    RaiseEventOptions ServerCleanOptions = new RaiseEventOptions
+                    {
+                        CachingOption = EventCaching.RemoveFromRoomCache
+                    };
+                    ServerCleanDestroyEvent[0] = num;
+                    ServerCleanOptions.CachingOption = EventCaching.AddToRoomCache;
+                    PhotonNetwork.NetworkingClient.OpRaiseEvent(204, ServerCleanDestroyEvent, ServerCleanOptions, SendOptions.SendUnreliable);
+                    RPCProtection();
+                }
             }
             else
             {
@@ -86,10 +107,20 @@ namespace iiMenu.Mods
 
                 if (isCopying && whoCopy != null)
                 {
-                    Hashtable hashtable = new Hashtable();
-                    hashtable[(byte)0] = RigManager.GetPlayerFromVRRig(whoCopy).ActorNumber;
-                    PhotonNetwork.NetworkingClient.OpRaiseEvent(207, hashtable, null, SendOptions.SendReliable);
-                    RPCProtection();
+                    if (!IsModded())
+                    {
+                        if (!GetIndex("Disable Auto Anti Ban").enabled)
+                        {
+                            AntiBan();
+                        }
+                    }
+                    else
+                    {
+                        Hashtable hashtable = new Hashtable();
+                        hashtable[(byte)0] = RigManager.GetPlayerFromVRRig(whoCopy).ActorNumber;
+                        PhotonNetwork.NetworkingClient.OpRaiseEvent(207, hashtable, null, SendOptions.SendReliable);
+                        RPCProtection();
+                    }
                 }
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
@@ -115,10 +146,20 @@ namespace iiMenu.Mods
         {
             if (rightTrigger > 0.5f)
             {
-                Hashtable hashtable = new Hashtable();
-                hashtable[(byte)0] = -1;
-                PhotonNetwork.NetworkingClient.OpRaiseEvent(207, hashtable, null, SendOptions.SendReliable);
-                RPCProtection();
+                if (!IsModded())
+                {
+                    if (!GetIndex("Disable Auto Anti Ban").enabled)
+                    {
+                        AntiBan();
+                    }
+                }
+                else
+                {
+                    Hashtable hashtable = new Hashtable();
+                    hashtable[(byte)0] = -1;
+                    PhotonNetwork.NetworkingClient.OpRaiseEvent(207, hashtable, null, SendOptions.SendReliable);
+                    RPCProtection();
+                }
             }
             else
             {
@@ -179,6 +220,7 @@ namespace iiMenu.Mods
             }
         }
 
+        /*
         public static void InfiniteRangeTagGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
@@ -207,7 +249,7 @@ namespace iiMenu.Mods
                     }
                 }
             }
-        }
+        }*/
 
         public static void BetterFPSBoost()
         {

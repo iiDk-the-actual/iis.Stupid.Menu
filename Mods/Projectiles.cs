@@ -730,6 +730,7 @@ namespace iiMenu.Mods.Spammers
             }
         }
 
+        /*
         public static void ProjectileBomb()
         {
             if (rightGrab)
@@ -761,7 +762,7 @@ namespace iiMenu.Mods.Spammers
                         string projectilename = fullProjectileNames[projIndex];
 
                         int trailIndex = trailmode;
-                        if (true /*true*/)
+                        if (true /*true)
                         {
                             trailIndex = UnityEngine.Random.Range(0, 8);
                         }
@@ -833,7 +834,7 @@ namespace iiMenu.Mods.Spammers
                 }
             }
         }
-
+        */
         public static void SlingshotHelper()
         {
             GameObject slingy = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/palm.01.L/TransferrableItemLeftHand/Slingshot Anchor/Slingshot");
@@ -877,6 +878,7 @@ namespace iiMenu.Mods.Spammers
             }
         }
 
+        /*
         public static void DisableProjectileBomb()
         {
             if (ProjBombObject != null)
@@ -884,8 +886,9 @@ namespace iiMenu.Mods.Spammers
                 UnityEngine.Object.Destroy(ProjBombObject);
                 ProjBombObject = null;
             }
-        }
+        }*/
 
+        /*
         public static void RandomColorSnowballs()
         {
             GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballRightAnchor").transform.Find("LMACF.").GetComponent<SnowballThrowable>().randomizeColor = true;
@@ -915,6 +918,7 @@ namespace iiMenu.Mods.Spammers
             GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballLeftAnchor").transform.Find("LMACE.").GetComponent<SnowballThrowable>().randomizeColor = true;
             GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballLeftAnchor").transform.Find("LMACE.").GetComponent<SnowballThrowable>().randomColorHSVRanges = new GTColor.HSVRanges(0f, 1f, 0.7f, 1f, 1f, 1f);
         }
+        */
 
         public static void ImpactSpam()
         {

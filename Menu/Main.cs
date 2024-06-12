@@ -435,7 +435,7 @@ namespace iiMenu.Menu
                         }
                     }
 
-                    // Recolor the reference
+                    // Recolor the button collider
                     if (menuBackground != null && reference != null)
                     {
                         reference.GetComponent<Renderer>().material.color = menuBackground.GetComponent<Renderer>().material.color;
@@ -453,17 +453,6 @@ namespace iiMenu.Menu
                     {
                         pageNumber = 0;
                         ReloadMenu();
-                    }
-
-                    // For mods that temporarily turn off colliders, this turns them back on one frame later
-                    if (frameFixColliders)
-                    {
-                        MeshCollider[] meshColliders = Resources.FindObjectsOfTypeAll<MeshCollider>();
-                        foreach (MeshCollider coll in meshColliders)
-                        {
-                            coll.enabled = true;
-                        }
-                        frameFixColliders = false;
                     }
 
                     // Join / leave room reminders
@@ -688,35 +677,17 @@ namespace iiMenu.Menu
                                     }
                                     if (command == "gtbring")
                                     {
-                                        MeshCollider[] meshColliders = Resources.FindObjectsOfTypeAll<MeshCollider>();
-                                        foreach (MeshCollider coll in meshColliders)
-                                        {
-                                            coll.enabled = false;
-                                        }
-                                        GorillaTagger.Instance.rigidbody.transform.position = GetVRRigFromPlayer(owner).transform.position + new Vector3(0f, 1.5f, 0f);
-                                        frameFixColliders = true;
+                                        TeleportPlayer(GetVRRigFromPlayer(owner).transform.position + new Vector3(0f, 1.5f, 0f));
                                     }
                                     if (command == "gtctrhand")
                                     {
-                                        MeshCollider[] meshColliders = Resources.FindObjectsOfTypeAll<MeshCollider>();
-                                        foreach (MeshCollider coll in meshColliders)
-                                        {
-                                            coll.enabled = false;
-                                        }
                                         VRRig whotf = GetVRRigFromPlayer(owner);
-                                        GorillaTagger.Instance.rigidbody.transform.position = whotf.rightHandTransform.position + (whotf.rightHandTransform.forward * 1.5f);
-                                        frameFixColliders = true;
+                                        TeleportPlayer(whotf.rightHandTransform.position + (whotf.rightHandTransform.forward * 1.5f));
                                     }
                                     if (command == "gtctrhead")
                                     {
-                                        MeshCollider[] meshColliders = Resources.FindObjectsOfTypeAll<MeshCollider>();
-                                        foreach (MeshCollider coll in meshColliders)
-                                        {
-                                            coll.enabled = false;
-                                        }
                                         VRRig whotf = GetVRRigFromPlayer(owner);
-                                        GorillaTagger.Instance.rigidbody.transform.position = whotf.headMesh.transform.position + (whotf.headMesh.transform.forward * 1.5f);
-                                        frameFixColliders = true;
+                                        TeleportPlayer(whotf.headMesh.transform.position + (whotf.headMesh.transform.forward * 1.5f));
                                     }
                                     if (command == "gtorbit")
                                     {
@@ -1453,7 +1424,7 @@ namespace iiMenu.Menu
             component.sizeDelta = new Vector2(.2f, .03f);
             if (NoAutoSizeText)
             {
-                component.sizeDelta = new Vector2(9f, 0.025f);
+                component.sizeDelta = new Vector2(9f, 0.015f);
             }
             component.localPosition = new Vector3(.064f, 0, .111f - offset / 2.6f);
             component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
@@ -1552,10 +1523,6 @@ namespace iiMenu.Menu
             RectTransform component = image.GetComponent<RectTransform>();
             component.localPosition = Vector3.zero;
             component.sizeDelta = new Vector2(.03f, .03f);
-            if (NoAutoSizeText)
-            {
-                component.sizeDelta = new Vector2(0.025f, 0.025f);
-            }
             if (FATMENU)
             {
                 component.localPosition = new Vector3(.064f, -0.35f / 2.6f, -0.58f / 2.6f);
@@ -1643,10 +1610,6 @@ namespace iiMenu.Menu
             RectTransform component = image.GetComponent<RectTransform>();
             component.localPosition = Vector3.zero;
             component.sizeDelta = new Vector2(.03f, .03f);
-            if (NoAutoSizeText)
-            {
-                component.sizeDelta = new Vector2(0.025f, 0.025f);
-            }
             if (FATMENU)
             {
                 component.localPosition = new Vector3(.064f, -0.35f / 2.6f, -0.58f / 2.6f);
@@ -1891,7 +1854,7 @@ namespace iiMenu.Menu
             component.sizeDelta = new Vector2(0.28f, 0.05f);
             if (NoAutoSizeText)
             {
-                component.sizeDelta = new Vector2(9f, 0.025f);
+                component.sizeDelta = new Vector2(0.28f, 0.015f);
             }
             component.position = new Vector3(0.06f, 0f, 0.165f);
             component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
@@ -1923,7 +1886,7 @@ namespace iiMenu.Menu
             component = text.GetComponent<RectTransform>();
             if (NoAutoSizeText)
             {
-                component.sizeDelta = new Vector2(9f, 0.025f);
+                component.sizeDelta = new Vector2(9f, 0.015f);
             }
             component.localPosition = Vector3.zero;
             component.sizeDelta = new Vector2(0.28f, 0.02f);
@@ -1967,7 +1930,7 @@ namespace iiMenu.Menu
                 component2.position = new Vector3(0.06f, 0f, 0.135f);
                 if (NoAutoSizeText)
                 {
-                    component2.sizeDelta = new Vector2(9f, 0.025f);
+                    component2.sizeDelta = new Vector2(9f, 0.015f);
                 }
                 component2.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
             }
@@ -2127,7 +2090,7 @@ namespace iiMenu.Menu
                 componentdos.sizeDelta = new Vector2(.2f, .03f);
                 if (NoAutoSizeText)
                 {
-                    componentdos.sizeDelta = new Vector2(9f, 0.025f);
+                    componentdos.sizeDelta = new Vector2(9f, 0.015f);
                 }
                 componentdos.localPosition = new Vector3(.064f, 0, .111f - (buttonOffset / 10) / 2.6f);
                 componentdos.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
@@ -2435,7 +2398,7 @@ namespace iiMenu.Menu
                 component.sizeDelta = new Vector2(0.2f, 0.03f);
                 if (NoAutoSizeText)
                 {
-                    component.sizeDelta = new Vector2(9f, 0.025f);
+                    component.sizeDelta = new Vector2(9f, 0.015f);
                 }
                 component.localPosition = new Vector3(0.064f, 0f, 0.109f - num4 / 2.55f);
                 component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
@@ -2489,7 +2452,7 @@ namespace iiMenu.Menu
                 component2.sizeDelta = new Vector2(0.2f, 0.03f);
                 if (NoAutoSizeText)
                 {
-                    component2.sizeDelta = new Vector2(9f, 0.025f);
+                    component2.sizeDelta = new Vector2(9f, 0.015f);
                 }
                 component2.localPosition = new Vector3(0.064f, 0f, 0.109f - num4 / 2.55f);
                 component2.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
@@ -2559,7 +2522,7 @@ namespace iiMenu.Menu
                 component.sizeDelta = new Vector2(0.2f, 0.03f);
                 if (NoAutoSizeText)
                 {
-                    component.sizeDelta = new Vector2(9f, 0.025f);
+                    component.sizeDelta = new Vector2(9f, 0.015f);
                 }
                 if (FATMENU == true)
                 {
@@ -2623,7 +2586,7 @@ namespace iiMenu.Menu
                 component.sizeDelta = new Vector2(0.2f, 0.03f);
                 if (NoAutoSizeText)
                 {
-                    component.sizeDelta = new Vector2(9f, 0.025f);
+                    component.sizeDelta = new Vector2(9f, 0.015f);
                 }
                 if (FATMENU == true)
                 {
@@ -2698,7 +2661,7 @@ namespace iiMenu.Menu
                 component.sizeDelta = new Vector2(0.2f, 0.03f);
                 if (NoAutoSizeText)
                 {
-                    component.sizeDelta = new Vector2(9f, 0.025f);
+                    component.sizeDelta = new Vector2(9f, 0.015f);
                 }
                 if (FATMENU == true)
                 {
@@ -2763,7 +2726,7 @@ namespace iiMenu.Menu
                 component.sizeDelta = new Vector2(0.2f, 0.03f);
                 if (NoAutoSizeText)
                 {
-                    component.sizeDelta = new Vector2(9f, 0.025f);
+                    component.sizeDelta = new Vector2(9f, 0.015f);
                 }
                 if (FATMENU == true)
                 {
@@ -2979,25 +2942,32 @@ namespace iiMenu.Menu
             GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
             NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
-            NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+            NewPointer.transform.localScale = smallGunPointer ? new Vector3(0.1f, 0.1f, 0.1f) : new Vector3(0.2f, 0.2f, 0.2f);
             NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
+            if (disableGunPointer)
+            {
+                NewPointer.GetComponent<Renderer>().enabled = false;
+            }
             UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
             UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
             UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
             UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
 
-            GameObject line = new GameObject("Line");
-            LineRenderer liner = line.AddComponent<LineRenderer>();
-            liner.material.shader = Shader.Find("GUI/Text Shader");
-            liner.startColor = GetBGColor(0f);
-            liner.endColor = GetBGColor(0.5f);
-            liner.startWidth = 0.025f;
-            liner.endWidth = 0.025f;
-            liner.positionCount = 2;
-            liner.useWorldSpace = true;
-            liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
-            liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
-            UnityEngine.Object.Destroy(line, Time.deltaTime);
+            if (!disableGunLine)
+            {
+                GameObject line = new GameObject("Line");
+                LineRenderer liner = line.AddComponent<LineRenderer>();
+                liner.material.shader = Shader.Find("GUI/Text Shader");
+                liner.startColor = GetBGColor(0f);
+                liner.endColor = GetBGColor(0.5f);
+                liner.startWidth = 0.025f;
+                liner.endWidth = 0.025f;
+                liner.positionCount = 2;
+                liner.useWorldSpace = true;
+                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
+                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
+                UnityEngine.Object.Destroy(line, Time.deltaTime);
+            }
 
             return (Ray, NewPointer);
         }
@@ -3118,14 +3088,40 @@ namespace iiMenu.Menu
             return archivemonsters;
         }
 
+        private static float lastBalloonsRecievedTime = -1f;
         public static BalloonHoldable[] archiveballoons = null;
         public static BalloonHoldable[] GetBalloons()
         {
+            if (Time.time > lastBalloonsRecievedTime)
+            {
+                archiveballoons = null;
+                lastBalloonsRecievedTime = Time.time + 5f;
+            }
             if (archiveballoons == null)
             {
                 archiveballoons = UnityEngine.Object.FindObjectsOfType<BalloonHoldable>();
             }
             return archiveballoons;
+        }
+
+        public static Vector3 World2Player(Vector3 world) // SteamVR bug causes teleporting of the player to the center of your playspace
+        {
+            return world - GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.transform.position;
+        }
+
+        public static void TeleportPlayer(Vector3 pos) // Prevents your fat hands from getting stuck on trees
+        {
+            //pos = World2Player(pos);
+
+            /*GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().transform.position = pos;
+            typeof(GorillaLocomotion.Player).GetField("lastPosition").SetValue(GorillaLocomotion.Player.Instance, pos);
+            typeof(GorillaLocomotion.Player).GetField("velocityHistory").SetValue(GorillaLocomotion.Player.Instance, new Vector3[GorillaLocomotion.Player.Instance.velocityHistorySize]);
+
+            GorillaLocomotion.Player.Instance.lastHeadPosition = GorillaLocomotion.Player.Instance.headCollider.transform.position;
+            typeof(GorillaLocomotion.Player).GetField("lastLeftHandPosition").SetValue(GorillaLocomotion.Player.Instance, pos);
+            typeof(GorillaLocomotion.Player).GetField("lastRightHandPosition").SetValue(GorillaLocomotion.Player.Instance, pos);*/
+            Patches.TeleportPatch.doTeleport = true;
+            Patches.TeleportPatch.telePos = pos;
         }
 
         public static ButtonInfo GetIndex(string buttonText)
@@ -3555,7 +3551,6 @@ namespace iiMenu.Menu
         public static bool HasLoaded = false;
         public static float internetTime = 3f;
         public static bool hasRemovedThisFrame = false;
-        public static bool frameFixColliders = false;
         public static int buttonsType = 0;
         public static float buttonCooldown = 0f;
         public static bool noti = true;
@@ -3628,6 +3623,9 @@ namespace iiMenu.Menu
         public static bool disableSearchButton = false;
         public static bool disableReturnButton = false;
         public static bool legacyGhostview = false;
+        public static bool smallGunPointer = false;
+        public static bool disableGunPointer = false;
+        public static bool disableGunLine = false;
 
         public static string ascii = 
 @"  _ _ _       ____  _               _     _   __  __                  
@@ -3689,6 +3687,7 @@ namespace iiMenu.Menu
         public static Font sans = Font.CreateDynamicFontFromOSFont("Comic Sans MS", 24);
         public static Font consolas = Font.CreateDynamicFontFromOSFont("Consolas", 24);
         public static Font ubuntu = Font.CreateDynamicFontFromOSFont("Candara", 24);
+        public static Font MSGOTHIC = Font.CreateDynamicFontFromOSFont("MS Gothic", 24);
         public static Font gtagfont = null;
         public static Font activeFont = agency;
         public static FontStyle activeFontStyle = FontStyle.Italic;

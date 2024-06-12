@@ -1130,6 +1130,362 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void CasualHollowBoxESP()
+        {
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                {
+                    UnityEngine.Color thecolor = vrrig.playerColor;
+                    if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
+                    if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
+
+                    GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    box.transform.position = vrrig.transform.position;
+                    UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
+                    box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
+                    box.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
+                    box.GetComponent<Renderer>().enabled = false;
+
+                    GameObject outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    outl.transform.position = vrrig.transform.position + (box.transform.up * 0.25f);
+                    UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                    outl.transform.localScale = new Vector3(0.5f, 0.05f, 0f);
+                    outl.transform.rotation = box.transform.rotation;
+                    outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                    outl.GetComponent<Renderer>().material.color = thecolor;
+                    UnityEngine.Object.Destroy(outl, Time.deltaTime);
+
+                    outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    outl.transform.position = vrrig.transform.position + (box.transform.up * -0.25f);
+                    UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                    outl.transform.localScale = new Vector3(0.55f, 0.05f, 0f);
+                    outl.transform.rotation = box.transform.rotation;
+                    outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                    outl.GetComponent<Renderer>().material.color = thecolor;
+                    UnityEngine.Object.Destroy(outl, Time.deltaTime);
+
+                    outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    outl.transform.position = vrrig.transform.position + (box.transform.right * 0.25f);
+                    UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                    outl.transform.localScale = new Vector3(0.05f, 0.55f, 0f);
+                    outl.transform.rotation = box.transform.rotation;
+                    outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                    outl.GetComponent<Renderer>().material.color = thecolor;
+                    UnityEngine.Object.Destroy(outl, Time.deltaTime);
+
+                    outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    outl.transform.position = vrrig.transform.position + (box.transform.right * -0.25f);
+                    UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                    outl.transform.localScale = new Vector3(0.05f, 0.55f, 0f);
+                    outl.transform.rotation = box.transform.rotation;
+                    outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                    outl.GetComponent<Renderer>().material.color = thecolor;
+                    UnityEngine.Object.Destroy(outl, Time.deltaTime);
+
+                    UnityEngine.Object.Destroy(box);
+                }
+            }
+        }
+
+        public static void HollowInfectionBoxESP()
+        {
+            bool isInfectedPlayers = false;
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (vrrig.mainSkin.material.name.Contains("fected"))
+                {
+                    isInfectedPlayers = true;
+                    break;
+                }
+            }
+            if (isInfectedPlayers)
+            {
+                if (!GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected"))
+                {
+                    foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                    {
+                        if (vrrig.mainSkin.material.name.Contains("fected") && vrrig != GorillaTagger.Instance.offlineVRRig)
+                        {
+                            UnityEngine.Color thecolor = new Color32(255, 111, 0, 255);
+                            if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
+                            if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
+
+                            GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                            box.transform.position = vrrig.transform.position;
+                            UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
+                            box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
+                            box.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
+                            box.GetComponent<Renderer>().enabled = false;
+
+                            GameObject outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                            outl.transform.position = vrrig.transform.position + (box.transform.up * 0.25f);
+                            UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                            outl.transform.localScale = new Vector3(0.5f, 0.05f, 0f);
+                            outl.transform.rotation = box.transform.rotation;
+                            outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                            outl.GetComponent<Renderer>().material.color = thecolor;
+                            UnityEngine.Object.Destroy(outl, Time.deltaTime);
+
+                            outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                            outl.transform.position = vrrig.transform.position + (box.transform.up * -0.25f);
+                            UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                            outl.transform.localScale = new Vector3(0.55f, 0.05f, 0f);
+                            outl.transform.rotation = box.transform.rotation;
+                            outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                            outl.GetComponent<Renderer>().material.color = thecolor;
+                            UnityEngine.Object.Destroy(outl, Time.deltaTime);
+
+                            outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                            outl.transform.position = vrrig.transform.position + (box.transform.right * 0.25f);
+                            UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                            outl.transform.localScale = new Vector3(0.05f, 0.55f, 0f);
+                            outl.transform.rotation = box.transform.rotation;
+                            outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                            outl.GetComponent<Renderer>().material.color = thecolor;
+                            UnityEngine.Object.Destroy(outl, Time.deltaTime);
+
+                            outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                            outl.transform.position = vrrig.transform.position + (box.transform.right * -0.25f);
+                            UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                            outl.transform.localScale = new Vector3(0.05f, 0.55f, 0f);
+                            outl.transform.rotation = box.transform.rotation;
+                            outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                            outl.GetComponent<Renderer>().material.color = thecolor;
+                            UnityEngine.Object.Destroy(outl, Time.deltaTime);
+
+                            UnityEngine.Object.Destroy(box);
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                    {
+                        if (!vrrig.mainSkin.material.name.Contains("fected") && vrrig != GorillaTagger.Instance.offlineVRRig)
+                        {
+                            UnityEngine.Color thecolor = vrrig.playerColor;
+                            if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
+                            if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
+
+                            GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                            box.transform.position = vrrig.transform.position;
+                            UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
+                            box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
+                            box.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
+                            box.GetComponent<Renderer>().enabled = false;
+
+                            GameObject outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                            outl.transform.position = vrrig.transform.position + (box.transform.up * 0.25f);
+                            UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                            outl.transform.localScale = new Vector3(0.5f, 0.05f, 0f);
+                            outl.transform.rotation = box.transform.rotation;
+                            outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                            outl.GetComponent<Renderer>().material.color = thecolor;
+                            UnityEngine.Object.Destroy(outl, Time.deltaTime);
+
+                            outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                            outl.transform.position = vrrig.transform.position + (box.transform.up * -0.25f);
+                            UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                            outl.transform.localScale = new Vector3(0.55f, 0.05f, 0f);
+                            outl.transform.rotation = box.transform.rotation;
+                            outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                            outl.GetComponent<Renderer>().material.color = thecolor;
+                            UnityEngine.Object.Destroy(outl, Time.deltaTime);
+
+                            outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                            outl.transform.position = vrrig.transform.position + (box.transform.right * 0.25f);
+                            UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                            outl.transform.localScale = new Vector3(0.05f, 0.55f, 0f);
+                            outl.transform.rotation = box.transform.rotation;
+                            outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                            outl.GetComponent<Renderer>().material.color = thecolor;
+                            UnityEngine.Object.Destroy(outl, Time.deltaTime);
+
+                            outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                            outl.transform.position = vrrig.transform.position + (box.transform.right * -0.25f);
+                            UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                            outl.transform.localScale = new Vector3(0.05f, 0.55f, 0f);
+                            outl.transform.rotation = box.transform.rotation;
+                            outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                            outl.GetComponent<Renderer>().material.color = thecolor;
+                            UnityEngine.Object.Destroy(outl, Time.deltaTime);
+
+                            UnityEngine.Object.Destroy(box);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                {
+                    if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        UnityEngine.Color thecolor = vrrig.playerColor;
+                        if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
+                        if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
+
+                        GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        box.transform.position = vrrig.transform.position;
+                        UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
+                        box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
+                        box.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
+                        box.GetComponent<Renderer>().enabled = false;
+
+                        GameObject outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        outl.transform.position = vrrig.transform.position + (box.transform.up * 0.25f);
+                        UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                        outl.transform.localScale = new Vector3(0.5f, 0.05f, 0f);
+                        outl.transform.rotation = box.transform.rotation;
+                        outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                        outl.GetComponent<Renderer>().material.color = thecolor;
+                        UnityEngine.Object.Destroy(outl, Time.deltaTime);
+
+                        outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        outl.transform.position = vrrig.transform.position + (box.transform.up * -0.25f);
+                        UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                        outl.transform.localScale = new Vector3(0.55f, 0.05f, 0f);
+                        outl.transform.rotation = box.transform.rotation;
+                        outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                        outl.GetComponent<Renderer>().material.color = thecolor;
+                        UnityEngine.Object.Destroy(outl, Time.deltaTime);
+
+                        outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        outl.transform.position = vrrig.transform.position + (box.transform.right * 0.25f);
+                        UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                        outl.transform.localScale = new Vector3(0.05f, 0.55f, 0f);
+                        outl.transform.rotation = box.transform.rotation;
+                        outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                        outl.GetComponent<Renderer>().material.color = thecolor;
+                        UnityEngine.Object.Destroy(outl, Time.deltaTime);
+
+                        outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        outl.transform.position = vrrig.transform.position + (box.transform.right * -0.25f);
+                        UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                        outl.transform.localScale = new Vector3(0.05f, 0.55f, 0f);
+                        outl.transform.rotation = box.transform.rotation;
+                        outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                        outl.GetComponent<Renderer>().material.color = thecolor;
+                        UnityEngine.Object.Destroy(outl, Time.deltaTime);
+
+                        UnityEngine.Object.Destroy(box);
+                    }
+                }
+            }
+        }
+
+        public static void HollowHuntBoxESP()
+        {
+            GorillaHuntManager sillyComputer = GorillaGameManager.instance.gameObject.GetComponent<GorillaHuntManager>();
+            Photon.Realtime.Player target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
+            foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
+            {
+                VRRig vrrig = RigManager.GetVRRigFromPlayer(player);
+                if (player == target)
+                {
+                    UnityEngine.Color thecolor = vrrig.playerColor;
+                    if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
+                    if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
+
+                    GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    box.transform.position = vrrig.transform.position;
+                    UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
+                    box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
+                    box.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
+                    box.GetComponent<Renderer>().enabled = false;
+
+                    GameObject outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    outl.transform.position = vrrig.transform.position + (box.transform.up * 0.25f);
+                    UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                    outl.transform.localScale = new Vector3(0.5f, 0.05f, 0f);
+                    outl.transform.rotation = box.transform.rotation;
+                    outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                    outl.GetComponent<Renderer>().material.color = thecolor;
+                    UnityEngine.Object.Destroy(outl, Time.deltaTime);
+
+                    outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    outl.transform.position = vrrig.transform.position + (box.transform.up * -0.25f);
+                    UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                    outl.transform.localScale = new Vector3(0.55f, 0.05f, 0f);
+                    outl.transform.rotation = box.transform.rotation;
+                    outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                    outl.GetComponent<Renderer>().material.color = thecolor;
+                    UnityEngine.Object.Destroy(outl, Time.deltaTime);
+
+                    outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    outl.transform.position = vrrig.transform.position + (box.transform.right * 0.25f);
+                    UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                    outl.transform.localScale = new Vector3(0.05f, 0.55f, 0f);
+                    outl.transform.rotation = box.transform.rotation;
+                    outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                    outl.GetComponent<Renderer>().material.color = thecolor;
+                    UnityEngine.Object.Destroy(outl, Time.deltaTime);
+
+                    outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    outl.transform.position = vrrig.transform.position + (box.transform.right * -0.25f);
+                    UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                    outl.transform.localScale = new Vector3(0.05f, 0.55f, 0f);
+                    outl.transform.rotation = box.transform.rotation;
+                    outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                    outl.GetComponent<Renderer>().material.color = thecolor;
+                    UnityEngine.Object.Destroy(outl, Time.deltaTime);
+
+                    UnityEngine.Object.Destroy(box);
+                }
+                if (sillyComputer.GetTargetOf(player) == PhotonNetwork.LocalPlayer)
+                {
+                    UnityEngine.Color thecolor = Color.red;
+                    if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
+
+                    GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    box.transform.position = vrrig.transform.position;
+                    UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
+                    box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
+                    box.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
+                    box.GetComponent<Renderer>().enabled = false;
+
+                    GameObject outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    outl.transform.position = vrrig.transform.position + (box.transform.up * 0.25f);
+                    UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                    outl.transform.localScale = new Vector3(0.5f, 0.05f, 0f);
+                    outl.transform.rotation = box.transform.rotation;
+                    outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                    outl.GetComponent<Renderer>().material.color = thecolor;
+                    UnityEngine.Object.Destroy(outl, Time.deltaTime);
+
+                    outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    outl.transform.position = vrrig.transform.position + (box.transform.up * -0.25f);
+                    UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                    outl.transform.localScale = new Vector3(0.55f, 0.05f, 0f);
+                    outl.transform.rotation = box.transform.rotation;
+                    outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                    outl.GetComponent<Renderer>().material.color = thecolor;
+                    UnityEngine.Object.Destroy(outl, Time.deltaTime);
+
+                    outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    outl.transform.position = vrrig.transform.position + (box.transform.right * 0.25f);
+                    UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                    outl.transform.localScale = new Vector3(0.05f, 0.55f, 0f);
+                    outl.transform.rotation = box.transform.rotation;
+                    outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                    outl.GetComponent<Renderer>().material.color = thecolor;
+                    UnityEngine.Object.Destroy(outl, Time.deltaTime);
+
+                    outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    outl.transform.position = vrrig.transform.position + (box.transform.right * -0.25f);
+                    UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                    outl.transform.localScale = new Vector3(0.05f, 0.55f, 0f);
+                    outl.transform.rotation = box.transform.rotation;
+                    outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                    outl.GetComponent<Renderer>().material.color = thecolor;
+                    UnityEngine.Object.Destroy(outl, Time.deltaTime);
+
+                    UnityEngine.Object.Destroy(box);
+                }
+            }
+        }
+
         public static void CasualBreadcrumbs()
         {
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)

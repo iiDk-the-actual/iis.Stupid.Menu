@@ -14,7 +14,7 @@ namespace iiMenu.Mods
 {
     internal class Settings
     {
-        public static void Search()
+        public static void Search() // This took me like 4 hours
         {
             isSearching = !isSearching;
             isPcWhenSearching = isOnPC;
@@ -413,7 +413,7 @@ namespace iiMenu.Mods
         {
             wristThingV2 = true;
             GameObject mainwatch = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/huntcomputer (1)");
-            watchobject = UnityEngine.Object.Instantiate(mainwatch,rightHand ? GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R").transform : GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L").transform, false);
+            watchobject = UnityEngine.Object.Instantiate(mainwatch,rightHand ? GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R").transform : GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L").transform, false); // See cause unlike skid.lol I actually clone the watch
             UnityEngine.Object.Destroy(watchobject.GetComponent<GorillaHuntComputer>());
             watchobject.SetActive(true);
 
@@ -485,7 +485,7 @@ namespace iiMenu.Mods
             flipMenu = false;
         }
 
-        public static void ChangeMenuTheme() // i made this function b4 i knew switch case existed cuz i was new to c# don't blame the if spam
+        public static void ChangeMenuTheme()
         {
             themeType++;
             if (themeType > 47)
@@ -1036,6 +1036,7 @@ namespace iiMenu.Mods
             }
             string[] linesplit = fileData.Split("\n");
 
+            // God DAMN
             string[] a = linesplit[0].Split(",");
             bgColorA = new Color32(byte.Parse(a[0]), byte.Parse(a[1]), byte.Parse(a[2]), 255);
             a = linesplit[1].Split(",");
@@ -1070,7 +1071,7 @@ namespace iiMenu.Mods
             fileData = null;
         }
 
-        public static void ChangePageType()
+        public static void ChangePageType() // Say goodbye to daily lagspikes and dirty if spam with new else
         {
             pageButtonType++;
             if (pageButtonType > 5)
@@ -1083,22 +1084,7 @@ namespace iiMenu.Mods
                 pageSize = 6;
                 buttonOffset = 2;
             }
-            if (pageButtonType == 2)
-            {
-                pageSize = 8;
-                buttonOffset = 0;
-            }
-            if (pageButtonType == 3)
-            {
-                pageSize = 8;
-                buttonOffset = 0;
-            }
-            if (pageButtonType == 4)
-            {
-                pageSize = 8;
-                buttonOffset = 0;
-            }
-            if (pageButtonType == 5)
+            else
             {
                 pageSize = 8;
                 buttonOffset = 0;
@@ -1114,47 +1100,45 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void ChangeFontType()
+        public static void ChangeFontType() // Say goodbye to daily lagspikes and dirty if spam with new switch (x) { }
         {
             fontCycle++;
-            if (fontCycle > 6)
+            if (fontCycle > 7)
             {
                 fontCycle = 0;
             }
 
-            if (fontCycle == 0)
-            {
-                activeFont = agency;
-            }
-            if (fontCycle == 1)
-            {
-                activeFont = Arial;
-            }
-            if (fontCycle == 2)
-            {
-                activeFont = Verdana;
-            }
-            if (fontCycle == 3)
-            {
-                if (gtagfont == null)
-                {
-                    GameObject fart = LoadAsset("gtag");
-                    gtagfont = fart.transform.Find("text").gameObject.GetComponent<Text>().font;
-                    UnityEngine.Object.Destroy(fart);
-                }
-                activeFont = gtagfont;
-            }
-            if (fontCycle == 4)
-            {
-                activeFont = sans;
-            }
-            if (fontCycle == 5)
-            {
-                activeFont = consolas;
-            }
-            if (fontCycle == 6)
-            {
-                activeFont = ubuntu;
+            switch (fontCycle) {
+                case 0:
+                    activeFont = agency;
+                    return;
+                case 1:
+                    activeFont = Arial;
+                    return;
+                case 2:
+                    activeFont = Verdana;
+                    return;
+                case 3:
+                    if (gtagfont == null)
+                    {
+                        GameObject fart = LoadAsset("gtag");
+                        gtagfont = fart.transform.Find("text").gameObject.GetComponent<Text>().font;
+                        UnityEngine.Object.Destroy(fart);
+                    }
+                    activeFont = gtagfont;
+                    return;
+                case 4:
+                    activeFont = sans;
+                    return;
+                case 5:
+                    activeFont = consolas;
+                    return;
+                case 6:
+                    activeFont = ubuntu;
+                    return;
+                case 7:
+                    activeFont = MSGOTHIC;
+                    return;
             }
         }
 
@@ -1205,6 +1189,36 @@ namespace iiMenu.Mods
             };
             pointerOffset = pointerPos[pointerIndex];
             try { reference.transform.localPosition = pointerOffset; } catch { }
+        }
+
+        public static void SmallGunPointer()
+        {
+            smallGunPointer = true;
+        }
+
+        public static void BigGunPointer()
+        {
+            smallGunPointer = false;
+        }
+
+        public static void NoGunPointer()
+        {
+            disableGunPointer = true;
+        }
+
+        public static void YesGunPointer()
+        {
+            disableGunPointer = false;
+        }
+
+        public static void NoGunLine()
+        {
+            disableGunLine = true;
+        }
+
+        public static void YesGunLine()
+        {
+            disableGunLine = false;
         }
 
         public static void FreezePlayerInMenu()

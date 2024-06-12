@@ -1,16 +1,11 @@
-﻿using ExitGames.Client.Photon;
-using GorillaNetworking;
+﻿using GorillaNetworking;
 using iiMenu.Notifications;
 using Photon.Pun;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using Valve.VR;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
-using static iiMenu.Mods.Reconnect;
 
 namespace iiMenu.Mods
 {

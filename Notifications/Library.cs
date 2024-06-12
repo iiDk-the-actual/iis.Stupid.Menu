@@ -12,7 +12,8 @@ using static iiMenu.Menu.Main;
 
 namespace iiMenu.Notifications
 {
-    // Originally created by lars thx bros
+    // Originally created by lars, he gave me perms+
+    // Modified by ii, not much though
     //[BepInPlugin("org.gorillatag.lars.notifications2", "NotificationLibrary", "1.0.5")]
     public class NotifiLib : MonoBehaviour
     {
