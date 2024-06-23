@@ -42,8 +42,8 @@ namespace iiMenu.Mods
                 {
                     VRRig plr = GorillaGameManager.instance.FindPlayerVRRig(player);
                     r = plr.playerColor.r * 255;
-                    g = plr.playerColor.r * 255;
-                    b = plr.playerColor.r * 255;
+                    g = plr.playerColor.g * 255;
+                    b = plr.playerColor.b * 255;
                 }
                 catch { UnityEngine.Debug.Log("Failed to log colors, rig most likely nonexistent"); }
                 try

@@ -15,6 +15,16 @@ namespace iiMenu.Mods
 {
     internal class Experimental
     {
+        public static void EnableRiskyMods()
+        {
+            riskyModsEnabled = true;
+        }
+
+        public static void DisableRiskyMods()
+        {
+            riskyModsEnabled = false;
+        }
+
         public static void LagGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
@@ -25,12 +35,93 @@ namespace iiMenu.Mods
 
                 if (isCopying && whoCopy != null)
                 {
-                    if (!IsModded())
+                    if (!riskyModsEnabled)
                     {
-                        if (!GetIndex("Disable Auto Anti Ban").enabled)
+                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to security.</color>");
+                    }
+                    else
+                    {
+                        if (Time.time > kgDebounce)
                         {
-                            AntiBan();
+                            kgDebounce = Time.time + 0.2f;
+                            int num = RigManager.GetPhotonViewFromVRRig(whoCopy).ViewID;
+                            Hashtable ServerCleanDestroyEvent = new Hashtable();
+                            RaiseEventOptions ServerCleanOptions = new RaiseEventOptions
+                            {
+                                CachingOption = EventCaching.RemoveFromRoomCache
+                            };
+                            ServerCleanDestroyEvent[0] = num;
+                            ServerCleanOptions.CachingOption = EventCaching.AddToRoomCache;
+                            PhotonNetwork.NetworkingClient.OpRaiseEvent(204, ServerCleanDestroyEvent, ServerCleanOptions, SendOptions.SendUnreliable);
+                            RPCProtection();
                         }
+                    }
+                }
+                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        isCopying = true;
+                        whoCopy = possibly;
+                    }
+                }
+            }
+            else
+            {
+                if (isCopying)
+                {
+                    isCopying = false;
+                    GorillaTagger.Instance.offlineVRRig.enabled = true;
+                }
+            }
+        }
+
+        public static void LagAll()
+        {
+            if (rightTrigger > 0.5f)
+            {
+                if (!riskyModsEnabled)
+                {
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to security.</color>");
+                }
+                else
+                {
+                    if (Time.time > kgDebounce)
+                    {
+                        kgDebounce = Time.time + 0.2f;
+                        int num = RigManager.GetPhotonViewFromVRRig(RigManager.GetRandomVRRig(false)).ViewID;
+                        Hashtable ServerCleanDestroyEvent = new Hashtable();
+                        RaiseEventOptions ServerCleanOptions = new RaiseEventOptions
+                        {
+                            CachingOption = EventCaching.RemoveFromRoomCache
+                        };
+                        ServerCleanDestroyEvent[0] = num;
+                        ServerCleanOptions.CachingOption = EventCaching.AddToRoomCache;
+                        PhotonNetwork.NetworkingClient.OpRaiseEvent(204, ServerCleanDestroyEvent, ServerCleanOptions, SendOptions.SendUnreliable);
+                        RPCProtection();
+                    }
+                }
+            }
+            else
+            {
+                GorillaTagger.Instance.offlineVRRig.enabled = true;
+            }
+        }
+
+        public static void CrashGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (isCopying && whoCopy != null)
+                {
+                    if (!riskyModsEnabled)
+                    {
+                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to security.</color>");
                     }
                     else
                     {
@@ -66,16 +157,13 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void LagAll()
+        public static void CrashAll()
         {
             if (rightTrigger > 0.5f)
             {
-                if (!IsModded())
+                if (!riskyModsEnabled)
                 {
-                    if (!GetIndex("Disable Auto Anti Ban").enabled)
-                    {
-                        AntiBan();
-                    }
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to security.</color>");
                 }
                 else
                 {
@@ -88,76 +176,6 @@ namespace iiMenu.Mods
                     ServerCleanDestroyEvent[0] = num;
                     ServerCleanOptions.CachingOption = EventCaching.AddToRoomCache;
                     PhotonNetwork.NetworkingClient.OpRaiseEvent(204, ServerCleanDestroyEvent, ServerCleanOptions, SendOptions.SendUnreliable);
-                    RPCProtection();
-                }
-            }
-            else
-            {
-                GorillaTagger.Instance.offlineVRRig.enabled = true;
-            }
-        }
-
-        public static void CrashGun()
-        {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (isCopying && whoCopy != null)
-                {
-                    if (!IsModded())
-                    {
-                        if (!GetIndex("Disable Auto Anti Ban").enabled)
-                        {
-                            AntiBan();
-                        }
-                    }
-                    else
-                    {
-                        Hashtable hashtable = new Hashtable();
-                        hashtable[(byte)0] = RigManager.GetPlayerFromVRRig(whoCopy).ActorNumber;
-                        PhotonNetwork.NetworkingClient.OpRaiseEvent(207, hashtable, null, SendOptions.SendReliable);
-                        RPCProtection();
-                    }
-                }
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
-                {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
-                    {
-                        isCopying = true;
-                        whoCopy = possibly;
-                    }
-                }
-            }
-            else
-            {
-                if (isCopying)
-                {
-                    isCopying = false;
-                    GorillaTagger.Instance.offlineVRRig.enabled = true;
-                }
-            }
-        }
-
-        public static void CrashAll()
-        {
-            if (rightTrigger > 0.5f)
-            {
-                if (!IsModded())
-                {
-                    if (!GetIndex("Disable Auto Anti Ban").enabled)
-                    {
-                        AntiBan();
-                    }
-                }
-                else
-                {
-                    Hashtable hashtable = new Hashtable();
-                    hashtable[(byte)0] = -1;
-                    PhotonNetwork.NetworkingClient.OpRaiseEvent(207, hashtable, null, SendOptions.SendReliable);
                     RPCProtection();
                 }
             }
@@ -213,10 +231,15 @@ namespace iiMenu.Mods
         {
             if (PhotonNetwork.InRoom && Overpowered.IsModded())
             {
-                GetIndex("Auto Set Master").enabled = false;
-                ReloadMenu();
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to security.</color>");
-                //PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
+                if (!riskyModsEnabled)
+                {
+                    GetIndex("Auto Set Master").enabled = false;
+                    ReloadMenu();
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to security.</color>");
+                } else
+                {
+                    PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
+                }
             }
         }
 

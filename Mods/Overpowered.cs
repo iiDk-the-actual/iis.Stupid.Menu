@@ -30,84 +30,90 @@ namespace iiMenu.Mods
 
         public static void AntiBan()
         {
-            /*if (PhotonNetwork.InRoom)
+            if (riskyModsEnabled)
             {
-                if (!IsModded())
+                if (PhotonNetwork.InRoom)
                 {
-                    if (!PhotonNetwork.CurrentRoom.IsOpen)
+                    if (!IsModded())
                     {
-                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ANTIBAN</color><color=grey>]</color> <color=white>Anti ban has already been used in this code.</color>");
-                        return;
-                    }
-                    string gamemode = PhotonNetwork.CurrentRoom.CustomProperties["gameMode"].ToString().Replace(GorillaComputer.instance.currentGameMode.Value, "MODDED_MODDED" + GorillaComputer.instance.currentGameMode.Value);
-                    ExitGames.Client.Photon.Hashtable gamehash = new ExitGames.Client.Photon.Hashtable
-                {
-                    { "gameMode", gamemode }
-                };
-                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTIBAN</color><color=grey>]</color> <color=white>Setting master client...</color>");
-                    PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
-                    PhotonNetwork.CurrentRoom.IsOpen = false;
-                    PhotonNetwork.CurrentRoom.IsVisible = false;
-
-                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTIBAN</color><color=grey>]</color> <color=white>Setting gamemode...</color>");
-                    PhotonNetwork.CurrentRoom.SetCustomProperties(gamehash, null, null);
-
-                    PlayFabClientAPI.ExecuteCloudScript(new ExecuteCloudScriptRequest
-                    {
-                        FunctionName = "RoomClosed",
-                        FunctionParameter = new
+                        if (!PhotonNetwork.CurrentRoom.IsOpen)
                         {
-                            GameId = PhotonNetwork.CurrentRoom.Name,
-                            Region = Regex.Replace(PhotonNetwork.CloudRegion, "[^a-zA-Z0-9]", "").ToUpper(),
-                            ActorNr = PhotonNetwork.LocalPlayer.ActorNumber,
-                            ActorCount = 0,
-                            UserId = PhotonNetwork.LocalPlayer.UserId,
-                            AppVersion = PhotonNetwork.AppVersion,
-                            AppId = PhotonNetwork.PhotonServerSettings.AppSettings.AppIdRealtime,
-                            Type = "Close"
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ANTIBAN</color><color=grey>]</color> <color=white>Anti ban has already been used in this code.</color>");
+                            return;
                         }
-                    },
-                    delegate (ExecuteCloudScriptResult result)
-                    {
-                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTIBAN</color><color=grey>]</color> <color=white>Anti ban has been executed successfully. I take no responsibility for any bans using this mod.</color>");
-                    }, error => { NotifiLib.SendNotification("<color=grey>[</color><color=red>ANTIBAN</color><color=grey>]</color> <color=white>Anti ban has failed to execute, you have been disconnected to prevent any bans."); PhotonNetwork.Disconnect(); }, null, null);
+                        string gamemode = PhotonNetwork.CurrentRoom.CustomProperties["gameMode"].ToString().Replace(GorillaComputer.instance.currentGameMode.Value, "MODDED_MODDED" + GorillaComputer.instance.currentGameMode.Value);
+                        ExitGames.Client.Photon.Hashtable gamehash = new ExitGames.Client.Photon.Hashtable
+                        {
+                            { "gameMode", gamemode }
+                        };
+                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTIBAN</color><color=grey>]</color> <color=white>Setting master client...</color>");
+                        PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
+                        PhotonNetwork.CurrentRoom.IsOpen = false;
+                        PhotonNetwork.CurrentRoom.IsVisible = false;
 
+                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTIBAN</color><color=grey>]</color> <color=white>Setting gamemode...</color>");
+                        PhotonNetwork.CurrentRoom.SetCustomProperties(gamehash, null, null);
+
+                        PlayFabClientAPI.ExecuteCloudScript(new ExecuteCloudScriptRequest
+                        {
+                            FunctionName = "RoomClosed",
+                            FunctionParameter = new
+                            {
+                                GameId = PhotonNetwork.CurrentRoom.Name,
+                                Region = Regex.Replace(PhotonNetwork.CloudRegion, "[^a-zA-Z0-9]", "").ToUpper(),
+                                ActorNr = PhotonNetwork.LocalPlayer.ActorNumber,
+                                ActorCount = 0,
+                                UserId = PhotonNetwork.LocalPlayer.UserId,
+                                AppVersion = PhotonNetwork.AppVersion,
+                                AppId = PhotonNetwork.PhotonServerSettings.AppSettings.AppIdRealtime,
+                                Type = "Close"
+                            }
+                        },
+                        delegate (ExecuteCloudScriptResult result)
+                        {
+                            NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTIBAN</color><color=grey>]</color> <color=white>Anti ban has been executed successfully. I take no responsibility for any bans using this mod.</color>");
+                        }, error => { NotifiLib.SendNotification("<color=grey>[</color><color=red>ANTIBAN</color><color=grey>]</color> <color=white>Anti ban has failed to execute, you have been disconnected to prevent any bans."); PhotonNetwork.Disconnect(); }, null, null);
+
+                    }
+                    else
+                    {
+                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ANTIBAN</color><color=grey>]</color> <color=white>Anti ban has already been used in this lobby.</color>");
+                    }
                 }
                 else
                 {
-                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ANTIBAN</color><color=grey>]</color> <color=white>Anti ban has already been used in this lobby.</color>");
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ANTIBAN</color><color=grey>]</color> <color=white>You are not in a lobby.</color>");
                 }
-                GetIndex("Anti Ban").enabled = false;
-                ReloadMenu();
-            } else
+            }
+            else
             {
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ANTIBAN</color><color=grey>]</color> <color=white>You are not in a lobby.</color>");
-            }*/
-            GetIndex("Anti Ban").enabled = false;
-            ReloadMenu();
-            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to security.</color>"); 
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to security.</color>");
+            }
         }
 
         public static bool IsModded()
         {
-            return false;// (PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED")/* && Time.time > gamemodeSetTimeAt*/);
+            return riskyModsEnabled ? PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED") : false;
         }
 
         public static void FastMaster()
         {
-            /*if (!IsModded() || !PhotonNetwork.InRoom)
+            if (riskyModsEnabled)
             {
-                GetIndex("Anti Ban").enabled = true;
-                //AntiBan();
-            }
-            else
+                if (!IsModded() || !PhotonNetwork.InRoom)
+                {
+                    AntiBan();
+                }
+                else
+                {
+                    PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
+                }
+            } else
             {
                 GetIndex("Set Master").enabled = false;
                 ReloadMenu();
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to security.</color>");
-                //PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
-            }*/
-            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+            }
         }
 
         public static void AntiBanCheck()
@@ -156,10 +162,10 @@ namespace iiMenu.Mods
                         }
                         else
                         {
-                            GetIndex("Set Master Gum").enabled = false;
-                            ReloadMenu();
-                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to security.</color>");
-                            //PhotonNetwork.CurrentRoom.SetMasterClient(owner);
+                            //GetIndex("Set Master Gum").enabled = false;
+                            //ReloadMenu();
+                            //NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to security.</color>");
+                            PhotonNetwork.CurrentRoom.SetMasterClient(owner);
                         }
                         kgDebounce = Time.time + 0.5f;
                     }
@@ -388,90 +394,8 @@ namespace iiMenu.Mods
             }
         }
 
-        /*
-        public static void GrabSecondLookGun()
-        {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
-                {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
-                    {
-                        GameObject secondlook = GameObject.Find("Environment Objects/05Maze_PersistentObjects/MinesSecondLookSkeleton");
-                        secondlook.GetComponent<SecondLookSkeleton>().tapped = true;
-                        secondlook.GetComponent<SecondLookSkeletonSynchValues>().photonView.ControllerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
-                        secondlook.GetComponent<SecondLookSkeletonSynchValues>().photonView.OwnerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
-                        secondlook.GetComponent<SecondLookSkeleton>().currentState = SecondLookSkeleton.GhostState.CaughtPlayer;
-                        secondlook.GetComponent<SecondLookSkeleton>().spookyGhost.transform.position = possibly.transform.position;
-                    }
-                }
-            }
-        }*/
-
         public static void StepCrashMethod(RpcTarget who)
         {
-            /*
-            GorillaTagger.Instance.offlineVRRig.enabled = false;
-            Vector3 crashPos = GameObject.Find("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Cosmetics Room Triggers/TryOnRoom").transform.position;
-            GorillaTagger.Instance.offlineVRRig.transform.position = crashPos;
-            try
-            {
-                GorillaTagger.Instance.myVRRig.transform.position = crashPos;
-            }
-            catch { }
-
-            string[] items = new string[]
-            {
-                "HEADPHONES1",
-                "CHEFS HAT",
-                "NECK SCARF",
-                "FEZ",
-                "COWBOY HAT",
-                "SUNHAT",
-                "BASIC BEANIE"
-            };
-            CosmeticItem flowers = GameObject.Find("Environment Objects/LocalObjects_Prefab/City/CosmeticsRoomAnchor/ShoppingCenterAnchor/Stuff/Stand1Anchor/" + items[UnityEngine.Random.Range(0, items.Length - 1)]).GetComponent<CosmeticStand>().thisCosmeticItem;
-            CosmeticsController.instance.ApplyCosmeticItemToSet(CosmeticsController.instance.tryOnSet, flowers, false, false);
-
-            items = new string[]
-            {
-                "PARTY HAT",
-                "BASIC SCARF",
-                "SWEATBAND",
-                "BASEBALL CAP",
-                "USHANKA"
-            };
-            flowers = GameObject.Find("Environment Objects/LocalObjects_Prefab/City/CosmeticsRoomAnchor/ShoppingCenterAnchor/Stuff/Stand2Anchor/" + items[UnityEngine.Random.Range(0, items.Length - 1)]).GetComponent<CosmeticStand>().thisCosmeticItem;
-            CosmeticsController.instance.ApplyCosmeticItemToSet(CosmeticsController.instance.tryOnSet, flowers, false, false);
-
-            items = new string[]
-            {
-                "BOWTIE",
-                "TOP HAT",
-                "FLOWER CROWN",
-                "WHITE FEDORA",
-                "CLOCHE"
-            };
-            flowers = GameObject.Find("Environment Objects/LocalObjects_Prefab/City/CosmeticsRoomAnchor/ShoppingCenterAnchor/Stuff/Stand3Anchor/" + items[UnityEngine.Random.Range(0, items.Length - 1)]).GetComponent<CosmeticStand>().thisCosmeticItem;
-            CosmeticsController.instance.ApplyCosmeticItemToSet(CosmeticsController.instance.tryOnSet, flowers, false, false);
-
-            CosmeticsController.instance.UpdateShoppingCart();
-            GorillaTagger.Instance.offlineVRRig.inTryOnRoom = true;
-            GorillaTagger.Instance.myVRRig.RPC("UpdateCosmeticsWithTryon", who, CosmeticsController.instance.currentWornSet.ToDisplayNameArray(), CosmeticsController.instance.tryOnSet.ToDisplayNameArray());
-            RPCProtection();*/
-            ReloadMenu();
-            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to security.</color>");
-        }
-        public static void StepCrashMethod(Player who)
-        {
-            ReloadMenu();
-            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to security.</color>");
-            /*
             GorillaTagger.Instance.offlineVRRig.enabled = false;
             Vector3 crashPos = GameObject.Find("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Cosmetics Room Triggers/TryOnRoom").transform.position;
             GorillaTagger.Instance.offlineVRRig.transform.position = crashPos;
@@ -520,7 +444,57 @@ namespace iiMenu.Mods
             GorillaTagger.Instance.offlineVRRig.inTryOnRoom = true;
             GorillaTagger.Instance.myVRRig.RPC("UpdateCosmeticsWithTryon", who, CosmeticsController.instance.currentWornSet.ToDisplayNameArray(), CosmeticsController.instance.tryOnSet.ToDisplayNameArray());
             RPCProtection();
-            */
+        }
+        public static void StepCrashMethod(Player who)
+        {
+            GorillaTagger.Instance.offlineVRRig.enabled = false;
+            Vector3 crashPos = GameObject.Find("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Cosmetics Room Triggers/TryOnRoom").transform.position;
+            GorillaTagger.Instance.offlineVRRig.transform.position = crashPos;
+            try
+            {
+                GorillaTagger.Instance.myVRRig.transform.position = crashPos;
+            }
+            catch { }
+
+            string[] items = new string[]
+            {
+                "HEADPHONES1",
+                "CHEFS HAT",
+                "NECK SCARF",
+                "FEZ",
+                "COWBOY HAT",
+                "SUNHAT",
+                "BASIC BEANIE"
+            };
+            CosmeticItem flowers = GameObject.Find("Environment Objects/LocalObjects_Prefab/City/CosmeticsRoomAnchor/ShoppingCenterAnchor/Stuff/Stand1Anchor/" + items[UnityEngine.Random.Range(0, items.Length - 1)]).GetComponent<CosmeticStand>().thisCosmeticItem;
+            CosmeticsController.instance.ApplyCosmeticItemToSet(CosmeticsController.instance.tryOnSet, flowers, false, false);
+
+            items = new string[]
+            {
+                "PARTY HAT",
+                "BASIC SCARF",
+                "SWEATBAND",
+                "BASEBALL CAP",
+                "USHANKA"
+            };
+            flowers = GameObject.Find("Environment Objects/LocalObjects_Prefab/City/CosmeticsRoomAnchor/ShoppingCenterAnchor/Stuff/Stand2Anchor/" + items[UnityEngine.Random.Range(0, items.Length - 1)]).GetComponent<CosmeticStand>().thisCosmeticItem;
+            CosmeticsController.instance.ApplyCosmeticItemToSet(CosmeticsController.instance.tryOnSet, flowers, false, false);
+
+            items = new string[]
+            {
+                "BOWTIE",
+                "TOP HAT",
+                "FLOWER CROWN",
+                "WHITE FEDORA",
+                "CLOCHE"
+            };
+            flowers = GameObject.Find("Environment Objects/LocalObjects_Prefab/City/CosmeticsRoomAnchor/ShoppingCenterAnchor/Stuff/Stand3Anchor/" + items[UnityEngine.Random.Range(0, items.Length - 1)]).GetComponent<CosmeticStand>().thisCosmeticItem;
+            CosmeticsController.instance.ApplyCosmeticItemToSet(CosmeticsController.instance.tryOnSet, flowers, false, false);
+
+            CosmeticsController.instance.UpdateShoppingCart();
+            GorillaTagger.Instance.offlineVRRig.inTryOnRoom = true;
+            GorillaTagger.Instance.myVRRig.RPC("UpdateCosmeticsWithTryon", who, CosmeticsController.instance.currentWornSet.ToDisplayNameArray(), CosmeticsController.instance.tryOnSet.ToDisplayNameArray());
+            RPCProtection();
         }
 
         public static void LagGun()

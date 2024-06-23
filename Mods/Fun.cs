@@ -23,6 +23,7 @@ using static GorillaNetworking.CosmeticsController;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 using static UnityEngine.UI.GridLayoutGroup;
+using GorillaTagScripts.ObstacleCourse;
 
 namespace iiMenu.Mods
 {
@@ -62,6 +63,18 @@ namespace iiMenu.Mods
             {
                 BetterDayNightManager.instance.weatherCycle[i] = BetterDayNightManager.WeatherType.None;
             }
+        }
+
+        private static LightmapData[] hell = null;
+        public static void Fullbright()
+        {
+            hell = LightmapSettings.lightmaps;
+            LightmapSettings.lightmaps = null;
+        }
+
+        public static void Fullshade()
+        {
+            LightmapSettings.lightmaps = hell;
         }
 
         public static void FixHead()
@@ -471,6 +484,55 @@ namespace iiMenu.Mods
             GorillaTagger.Instance.offlineVRRig.localUseReplacementVoice = rightPrimary;
         }*/
 
+        private static float stupiddelay = 0f;
+        public static void TapAllBells()
+        {
+            if (rightGrab)
+            {
+                if (Time.time > stupiddelay)
+                {
+                    foreach (TappableBell stupid in GetBells())
+                    {
+                        stupid.OnTap(1f, Time.time);
+                        RPCProtection();
+                    }
+                    stupiddelay = Time.time + 0.1f;
+                }
+            }
+        }
+
+        public static void TapAllCrystals()
+        {
+            if (rightGrab)
+            {
+                if (Time.time > stupiddelay)
+                {
+                    foreach (GorillaCaveCrystal stupid in GetCrystals())
+                    {
+                        stupid.OnTap(1f, Time.time);
+                        RPCProtection();
+                    }
+                    stupiddelay = Time.time + 0.1f;
+                }
+            }
+        }
+
+        public static void ActivateAllDoors()
+        {
+            if (rightGrab)
+            {
+                if (Time.time > stupiddelay)
+                {
+                    foreach (GhostLabButton stupid in GetLabButtons())
+                    {
+                        stupid.ButtonActivation();
+                        RPCProtection();
+                    }
+                    stupiddelay = Time.time + 0.1f;
+                }
+            }
+        }
+
         public static void GetHoneyComb()
         {
             if (leftGrab)
@@ -531,6 +593,14 @@ namespace iiMenu.Mods
                 false
             });
             RPCProtection();
+        }
+
+        public static void GrabIDCard()
+        {
+            if (rightGrab)
+            {
+                GameObject.Find("Environment Objects/05Maze_PersistentObjects/HiddenIDCard/ID Card Anchor/ID Card Holdable").transform.position = GorillaTagger.Instance.rightHandTransform.position; ;
+            }
         }
 
         /*
@@ -1167,19 +1237,19 @@ namespace iiMenu.Mods
 
         public static void RideBug()
         {
-            GorillaTagger.Instance.rigidbody.transform.position = GameObject.Find("Floating Bug Holdable").transform.position;
+            TeleportPlayer(GameObject.Find("Floating Bug Holdable").transform.position);
             GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
         }
 
         public static void RideBat()
         {
-            GorillaTagger.Instance.rigidbody.transform.position = GameObject.Find("Cave Bat Holdable").transform.position;
+            TeleportPlayer(GameObject.Find("Cave Bat Holdable").transform.position);
             GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
         }
 
         public static void RideBeachBall()
         {
-            GorillaTagger.Instance.rigidbody.transform.position = GameObject.Find("BeachBall").transform.position;
+            TeleportPlayer(GameObject.Find("BeachBall").transform.position);
             GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
         }
 
@@ -1203,6 +1273,7 @@ namespace iiMenu.Mods
             GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().allowPlayerStealing = false;
         }
 
+        /*
         public static void StealBug()
         {
             if (rightGrab)
@@ -1230,6 +1301,7 @@ namespace iiMenu.Mods
                 GameObject.Find("Cave Bat Holdable").transform.position = GorillaTagger.Instance.rightHandTransform.position;
             }
         }
+        */
 
         public static void PopAllBalloons()
         {
