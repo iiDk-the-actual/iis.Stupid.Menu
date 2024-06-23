@@ -250,7 +250,7 @@ namespace iiMenu.Mods.Spammers
                     if (Mouse.current.leftButton.isPressed)
                     {
                         Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
-                        Physics.Raycast(ray, out var hit, 100);
+                        Physics.Raycast(ray, out var hit, 512f, NoInvisLayerMask());
                         charvel = hit.point - GorillaTagger.Instance.rightHandTransform.transform.position;
                         charvel.Normalize();
                         charvel *= (ShootStrength * 2);
@@ -928,18 +928,18 @@ namespace iiMenu.Mods.Spammers
 
                 if (GetIndex("Shoot Projectiles").enabled)
                 {
-                    Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray);
+                    Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray, 512f, NoInvisLayerMask());
                     if (Mouse.current.leftButton.isPressed)
                     {
                         Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
-                        Physics.Raycast(ray, out Ray, 100);
+                        Physics.Raycast(ray, out Ray, 512f, NoInvisLayerMask());
                     }
                     startpos = Ray.point;
                 }
 
                 if (GetIndex("Finger Gun Projectiles").enabled)
                 {
-                    Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.offlineVRRig.transform.Find("rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R").up, out var Ray);
+                    Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.offlineVRRig.transform.Find("rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R").up, out var Ray, 512f, NoInvisLayerMask());
                     startpos = Ray.point;
                 }
 
@@ -1039,13 +1039,13 @@ namespace iiMenu.Mods.Spammers
 
                 if (GetIndex("Shoot Projectiles").enabled)
                 {
-                    Physics.Raycast(GorillaTagger.Instance.leftHandTransform.position, GorillaTagger.Instance.leftHandTransform.forward, out var Ray);
+                    Physics.Raycast(GorillaTagger.Instance.leftHandTransform.position, GorillaTagger.Instance.leftHandTransform.forward, out var Ray, 512f, NoInvisLayerMask());
                     startpos = Ray.point;
                 }
 
                 if (GetIndex("Finger Gun Projectiles").enabled)
                 {
-                    Physics.Raycast(GorillaTagger.Instance.leftHandTransform.position, GorillaTagger.Instance.offlineVRRig.transform.Find("rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L").up, out var Ray);
+                    Physics.Raycast(GorillaTagger.Instance.leftHandTransform.position, GorillaTagger.Instance.offlineVRRig.transform.Find("rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L").up, out var Ray, 512f, NoInvisLayerMask());
                     startpos = Ray.point;
                 }
 

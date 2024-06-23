@@ -3,27 +3,18 @@ using System.ComponentModel;
 using BepInEx;
 using UnityEngine;
 
-namespace iiMenu.Patches
+namespace iiMenu
 {
 	[Description(PluginInfo.Description)]
 	[BepInPlugin(PluginInfo.GUID, PluginInfo.Name, PluginInfo.Version)]
-    public class HarmonyPatches : BaseUnityPlugin
+    public class Plugin : BaseUnityPlugin
 	{
-		private void OnEnable()
-		{
-			Menu.ApplyHarmonyPatches();
-        }
-
-		private void OnDisable()
-		{
-			Menu.RemoveHarmonyPatches();
-		}
-
 		private void Start()
 		{
 			Console.Title = "ii's Stupid Menu // Build "+PluginInfo.Version;
 
-            GameObject Loading = new GameObject();
+            iiMenu.Patches.Menu.ApplyHarmonyPatches();
+            GameObject Loading = new GameObject(); // To that one dude that uses SMI to inject my menu, it's this method
             Loading.AddComponent<iiMenu.UI.Main>();
             Loading.AddComponent<iiMenu.Notifications.NotifiLib>();
             UnityEngine.Object.DontDestroyOnLoad(Loading);

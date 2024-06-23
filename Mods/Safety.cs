@@ -42,12 +42,12 @@ namespace iiMenu.Mods
 
         public static void DisableGamemodeButtons()
         {
-            GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Selector Buttons/anchor/ENABLE FOR BETA").SetActive(false);
+            GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/ModeSelector_Group").SetActive(false);
         }
 
         public static void EnableGamemodeButtons()
         {
-            GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Selector Buttons/anchor/ENABLE FOR BETA").SetActive(true);
+            GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/ModeSelector_Group").SetActive(true);
         }
 
         public static void SpoofSupportPage()

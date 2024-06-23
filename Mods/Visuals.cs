@@ -2,6 +2,7 @@
 using GorillaTag;
 using iiMenu.Classes;
 using Photon.Pun;
+using Photon.Voice.Unity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -205,7 +206,68 @@ namespace iiMenu.Mods
             GorillaComputer.instance.functionSelectText.DisableFailedState();
         }
 
-        public static void FixRigColors()
+        private static GameObject visualizerObject = null;
+        private static GameObject visualizerOutline = null;
+        public static void CreateAudioVisualizer()
+        {
+            visualizerObject = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            visualizerOutline = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            UnityEngine.Object.Destroy(visualizerObject.GetComponent<Collider>());
+            UnityEngine.Object.Destroy(visualizerOutline.GetComponent<Collider>());
+            UnityEngine.Object.Destroy(visualizerObject.GetComponent<Rigidbody>());
+            UnityEngine.Object.Destroy(visualizerOutline.GetComponent<Rigidbody>());
+        }
+
+        public static void AudioVisualizer()
+        {
+            visualizerObject.GetComponent<Renderer>().material.color = GetBGColor(0f);
+            visualizerOutline.GetComponent<Renderer>().material.color = GetBRColor(0f);
+
+            Physics.Raycast(GorillaTagger.Instance.bodyCollider.transform.position - new Vector3(0f, 0.2f, 0f), Vector3.down, out var Ray, 512f, NoInvisLayerMask());
+            visualizerObject.transform.position = Ray.point;
+            visualizerObject.transform.rotation = Quaternion.LookRotation(Ray.normal) * Quaternion.Euler(90f, 0f, 0f);
+
+            float size = 0f;
+            GameObject recorder = GameObject.Find("P_NetworkWrapper(Clone)/VoiceNetworkObject");
+            if (recorder != null)
+            {
+                size = recorder.GetComponent<Recorder>().LevelMeter.CurrentAvgAmp;
+            }
+
+            size *= 16f;
+            visualizerObject.transform.localScale = new Vector3(size, 0.05f, size);
+
+            visualizerObject.GetComponent<Renderer>().enabled = size > 0.05f;
+            visualizerOutline.GetComponent<Renderer>().enabled = size > 0.05f;
+
+            visualizerOutline.transform.position = visualizerObject.transform.position;
+            visualizerOutline.transform.rotation = visualizerObject.transform.rotation;
+            visualizerOutline.transform.localScale = new Vector3(size + 0.1f, 0.025f, size + 0.1f);
+        }
+
+        public static void DestroyAudioVisualizer()
+        {
+            UnityEngine.Object.Destroy(visualizerObject);
+            UnityEngine.Object.Destroy(visualizerOutline);
+        }
+
+        public static void ShowPlayspaceCenter()
+        {
+            GameObject playspaceCenter = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            UnityEngine.Object.Destroy(playspaceCenter.GetComponent<Collider>());
+            UnityEngine.Object.Destroy(playspaceCenter.GetComponent<Renderer>());
+
+            playspaceCenter.GetComponent<Renderer>().material.color = GetBGColor(0f);
+            playspaceCenter.transform.localScale = new Vector3(0.1f, 0.1f, 0.15f);
+
+            Physics.Raycast(new Vector3(GorillaTagger.Instance.transform.position.x, GorillaTagger.Instance.headCollider.transform.position.y, GorillaTagger.Instance.transform.position.x), Vector3.down, out var Ray, 512f, NoInvisLayerMask());
+            playspaceCenter.transform.position = Ray.point;
+            playspaceCenter.transform.rotation = GorillaTagger.Instance.transform.rotation;
+
+            UnityEngine.Object.Destroy(playspaceCenter, Time.deltaTime);
+        }
+
+            public static void FixRigColors()
         {
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
@@ -1605,6 +1667,237 @@ namespace iiMenu.Mods
                     sphere.transform.position = vrrig.transform.position;
                     sphere.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
                     UnityEngine.Object.Destroy(sphere, 10f);
+                }
+            }
+        }
+
+        public static void CasualDistanceESP()
+        {
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                {
+                    UnityEngine.Color thecolor = vrrig.playerColor;
+                    if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
+                    if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
+                    UnityEngine.Color thecolor2 = Color.white;
+                    if (GetIndex("Follow Menu Theme").enabled) { thecolor2 = titleColor; }
+                    if (GetIndex("Transparent Theme").enabled) { thecolor2.a = 0.5f; }
+                    GameObject go = new GameObject("Dist");
+                    TextMesh textMesh = go.AddComponent<TextMesh>();
+                    textMesh.fontSize = 18;
+                    textMesh.fontStyle = activeFontStyle;
+                    textMesh.characterSize = 0.1f;
+                    textMesh.anchor = TextAnchor.MiddleCenter;
+                    textMesh.alignment = TextAlignment.Center;
+                    textMesh.color = thecolor2;
+                    go.transform.position = vrrig.transform.position + new Vector3(0f, -0.2f, 0f);
+                    textMesh.text = string.Format("{0:F1}m", Vector3.Distance(Camera.main.transform.position, vrrig.transform.position));
+                    GameObject bg = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    UnityEngine.Object.Destroy(bg.GetComponent<Collider>());
+                    bg.transform.parent = go.transform;
+                    bg.transform.localPosition = Vector3.zero;
+                    bg.transform.localScale = new Vector3(textMesh.GetComponent<Renderer>().bounds.size.x + 0.2f, 0.2f, 0.01f);
+                    bg.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                    bg.GetComponent<Renderer>().material.color = thecolor;
+                    textMesh.GetComponent<Renderer>().material.renderQueue = bg.GetComponent<Renderer>().material.renderQueue + 1;
+                    go.transform.LookAt(Camera.main.transform.position);
+                    go.transform.Rotate(0f, 180f, 0f);
+                    UnityEngine.Object.Destroy(go, Time.deltaTime);
+                }
+            }
+        }
+
+        public static void InfectionDistanceESP()
+        {
+            bool isInfectedPlayers = false;
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (vrrig.mainSkin.material.name.Contains("fected"))
+                {
+                    isInfectedPlayers = true;
+                    break;
+                }
+            }
+            if (isInfectedPlayers)
+            {
+                if (!GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected"))
+                {
+                    foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                    {
+                        if (vrrig.mainSkin.material.name.Contains("fected") && vrrig != GorillaTagger.Instance.offlineVRRig)
+                        {
+                            UnityEngine.Color thecolor = new Color32(255, 111, 0, 255);
+                            if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
+                            if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
+                            UnityEngine.Color thecolor2 = Color.white;
+                            if (GetIndex("Follow Menu Theme").enabled) { thecolor2 = titleColor; }
+                            if (GetIndex("Transparent Theme").enabled) { thecolor2.a = 0.5f; }
+                            GameObject go = new GameObject("Dist");
+                            TextMesh textMesh = go.AddComponent<TextMesh>();
+                            textMesh.fontSize = 18;
+                            textMesh.fontStyle = activeFontStyle;
+                            textMesh.characterSize = 0.1f;
+                            textMesh.anchor = TextAnchor.MiddleCenter;
+                            textMesh.alignment = TextAlignment.Center;
+                            textMesh.color = thecolor2;
+                            go.transform.position = vrrig.transform.position + new Vector3(0f, -0.2f, 0f);
+                            textMesh.text = string.Format("{0:F1}m", Vector3.Distance(Camera.main.transform.position, vrrig.transform.position));
+                            GameObject bg = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                            UnityEngine.Object.Destroy(bg.GetComponent<Collider>());
+                            bg.transform.parent = go.transform;
+                            bg.transform.localPosition = Vector3.zero;
+                            bg.transform.localScale = new Vector3(textMesh.GetComponent<Renderer>().bounds.size.x + 0.2f, 0.2f, 0.01f);
+                            bg.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                            bg.GetComponent<Renderer>().material.color = thecolor;
+                            textMesh.GetComponent<Renderer>().material.renderQueue = bg.GetComponent<Renderer>().material.renderQueue + 1;
+                            go.transform.LookAt(Camera.main.transform.position);
+                            go.transform.Rotate(0f, 180f, 0f);
+                            UnityEngine.Object.Destroy(go, Time.deltaTime);
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                    {
+                        if (!vrrig.mainSkin.material.name.Contains("fected") && vrrig != GorillaTagger.Instance.offlineVRRig)
+                        {
+                            UnityEngine.Color thecolor = vrrig.playerColor;
+                            if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
+                            if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
+                            UnityEngine.Color thecolor2 = Color.white;
+                            if (GetIndex("Follow Menu Theme").enabled) { thecolor2 = titleColor; }
+                            if (GetIndex("Transparent Theme").enabled) { thecolor2.a = 0.5f; }
+                            GameObject go = new GameObject("Dist");
+                            TextMesh textMesh = go.AddComponent<TextMesh>();
+                            textMesh.fontSize = 18;
+                            textMesh.fontStyle = activeFontStyle;
+                            textMesh.characterSize = 0.1f;
+                            textMesh.anchor = TextAnchor.MiddleCenter;
+                            textMesh.alignment = TextAlignment.Center;
+                            textMesh.color = thecolor2;
+                            go.transform.position = vrrig.transform.position + new Vector3(0f, -0.2f, 0f);
+                            textMesh.text = string.Format("{0:F1}m", Vector3.Distance(Camera.main.transform.position, vrrig.transform.position));
+                            GameObject bg = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                            UnityEngine.Object.Destroy(bg.GetComponent<Collider>());
+                            bg.transform.parent = go.transform;
+                            bg.transform.localPosition = Vector3.zero;
+                            bg.transform.localScale = new Vector3(textMesh.GetComponent<Renderer>().bounds.size.x + 0.2f, 0.2f, 0.01f);
+                            bg.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                            bg.GetComponent<Renderer>().material.color = thecolor;
+                            textMesh.GetComponent<Renderer>().material.renderQueue = bg.GetComponent<Renderer>().material.renderQueue + 1;
+                            go.transform.LookAt(Camera.main.transform.position);
+                            go.transform.Rotate(0f, 180f, 0f);
+                            UnityEngine.Object.Destroy(go, Time.deltaTime);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                {
+                    if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        UnityEngine.Color thecolor = vrrig.playerColor;
+                        if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
+                        if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
+                        UnityEngine.Color thecolor2 = Color.white;
+                        if (GetIndex("Follow Menu Theme").enabled) { thecolor2 = titleColor; }
+                        if (GetIndex("Transparent Theme").enabled) { thecolor2.a = 0.5f; }
+                        GameObject go = new GameObject("Dist");
+                        TextMesh textMesh = go.AddComponent<TextMesh>();
+                        textMesh.fontSize = 18;
+                        textMesh.fontStyle = activeFontStyle;
+                        textMesh.characterSize = 0.1f;
+                        textMesh.anchor = TextAnchor.MiddleCenter;
+                        textMesh.alignment = TextAlignment.Center;
+                        textMesh.color = thecolor2;
+                        go.transform.position = vrrig.transform.position + new Vector3(0f, -0.2f, 0f);
+                        textMesh.text = string.Format("{0:F1}m", Vector3.Distance(Camera.main.transform.position, vrrig.transform.position));
+                        GameObject bg = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        UnityEngine.Object.Destroy(bg.GetComponent<Collider>());
+                        bg.transform.parent = go.transform;
+                        bg.transform.localPosition = Vector3.zero;
+                        bg.transform.localScale = new Vector3(textMesh.GetComponent<Renderer>().bounds.size.x + 0.2f, 0.2f, 0.01f);
+                        bg.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                        bg.GetComponent<Renderer>().material.color = thecolor;
+                        textMesh.GetComponent<Renderer>().material.renderQueue = bg.GetComponent<Renderer>().material.renderQueue + 1;
+                        go.transform.LookAt(Camera.main.transform.position);
+                        go.transform.Rotate(0f, 180f, 0f);
+                        UnityEngine.Object.Destroy(go, Time.deltaTime);
+                    }
+                }
+            }
+        }
+
+        public static void HuntDistanceESP()
+        {
+            GorillaHuntManager sillyComputer = GorillaGameManager.instance.gameObject.GetComponent<GorillaHuntManager>();
+            Photon.Realtime.Player target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
+            foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
+            {
+                VRRig vrrig = RigManager.GetVRRigFromPlayer(player);
+                if (player == target)
+                {
+                    UnityEngine.Color thecolor = vrrig.playerColor;
+                    if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
+                    if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
+                    UnityEngine.Color thecolor2 = Color.white;
+                    if (GetIndex("Follow Menu Theme").enabled) { thecolor2 = titleColor; }
+                    if (GetIndex("Transparent Theme").enabled) { thecolor2.a = 0.5f; }
+                    GameObject go = new GameObject("Dist");
+                    TextMesh textMesh = go.AddComponent<TextMesh>();
+                    textMesh.fontSize = 18;
+                    textMesh.fontStyle = activeFontStyle;
+                    textMesh.characterSize = 0.1f;
+                    textMesh.anchor = TextAnchor.MiddleCenter;
+                    textMesh.alignment = TextAlignment.Center;
+                    textMesh.color = thecolor2;
+                    go.transform.position = vrrig.transform.position + new Vector3(0f, -0.2f, 0f);
+                    textMesh.text = string.Format("{0:F1}m", Vector3.Distance(Camera.main.transform.position, vrrig.transform.position));
+                    GameObject bg = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    UnityEngine.Object.Destroy(bg.GetComponent<Collider>());
+                    bg.transform.parent = go.transform;
+                    bg.transform.localPosition = Vector3.zero;
+                    bg.transform.localScale = new Vector3(textMesh.GetComponent<Renderer>().bounds.size.x + 0.2f, 0.2f, 0.01f);
+                    bg.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                    bg.GetComponent<Renderer>().material.color = thecolor;
+                    textMesh.GetComponent<Renderer>().material.renderQueue = bg.GetComponent<Renderer>().material.renderQueue + 1;
+                    go.transform.LookAt(Camera.main.transform.position);
+                    go.transform.Rotate(0f, 180f, 0f);
+                    UnityEngine.Object.Destroy(go, Time.deltaTime);
+                }
+                if (sillyComputer.GetTargetOf(player) == PhotonNetwork.LocalPlayer)
+                {
+                    UnityEngine.Color thecolor = Color.red;
+                    if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
+                    if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
+                    UnityEngine.Color thecolor2 = Color.white;
+                    if (GetIndex("Follow Menu Theme").enabled) { thecolor2 = titleColor; }
+                    if (GetIndex("Transparent Theme").enabled) { thecolor2.a = 0.5f; }
+                    GameObject go = new GameObject("Dist");
+                    TextMesh textMesh = go.AddComponent<TextMesh>();
+                    textMesh.fontSize = 18;
+                    textMesh.fontStyle = activeFontStyle;
+                    textMesh.characterSize = 0.1f;
+                    textMesh.anchor = TextAnchor.MiddleCenter;
+                    textMesh.alignment = TextAlignment.Center;
+                    textMesh.color = thecolor2;
+                    go.transform.position = vrrig.transform.position + new Vector3(0f, -0.2f, 0f);
+                    textMesh.text = string.Format("{0:F1}m", Vector3.Distance(Camera.main.transform.position, vrrig.transform.position));
+                    GameObject bg = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    UnityEngine.Object.Destroy(bg.GetComponent<Collider>());
+                    bg.transform.parent = go.transform;
+                    bg.transform.localPosition = Vector3.zero;
+                    bg.transform.localScale = new Vector3(textMesh.GetComponent<Renderer>().bounds.size.x + 0.2f, 0.2f, 0.01f);
+                    bg.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                    bg.GetComponent<Renderer>().material.color = thecolor;
+                    textMesh.GetComponent<Renderer>().material.renderQueue = bg.GetComponent<Renderer>().material.renderQueue + 1;
+                    go.transform.LookAt(Camera.main.transform.position);
+                    go.transform.Rotate(0f, 180f, 0f);
+                    UnityEngine.Object.Destroy(go, Time.deltaTime);
                 }
             }
         }

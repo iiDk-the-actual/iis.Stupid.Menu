@@ -1064,6 +1064,30 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void CustomMenuBackground()
+        {
+            if (!Directory.Exists("iisStupidMenu"))
+            {
+                Directory.CreateDirectory("iisStupidMenu");
+            }
+            if (!File.Exists("iisStupidMenu/iiMenu_CustomMenuBackground.txt"))
+            {
+                File.WriteAllText("iisStupidMenu/iiMenu_CustomMenuBackground.txt", "255,128,0\n0,0,0\n255,0,0\n255,0,0\n0,255,0\n0,255,0\n255,255,255\n0,0,255\n255,0,255");
+            }
+
+            if (File.Exists("iisStupidMenu/MenuBG.png"))
+            {
+                File.Delete("iisStupidMenu/MenuBG.png");
+            }
+            doCustomMenuBackground = true;
+            customMenuBackgroundImage = LoadTextureFromURL(File.ReadAllText("iisStupidMenu/iiMenu_CustomMenuBackground.txt"), "MenuBG.png");
+        }
+
+        public static void FixMenuBackground()
+        {
+            doCustomMenuBackground = false;
+        }
+
         public static void FixTheme()
         {
             themeType--;

@@ -657,7 +657,7 @@ namespace iiMenu.Mods
             lerpygerpy = Vector2.Lerp(lerpygerpy, joy, 0.05f);
 
             Vector3 addition = GorillaTagger.Instance.bodyCollider.transform.forward * lerpygerpy.y + GorillaTagger.Instance.bodyCollider.transform.right * lerpygerpy.x;// + new Vector3(0f, -1f, 0f);
-            Physics.Raycast(GorillaTagger.Instance.bodyCollider.transform.position - new Vector3(0f, 0.2f, 0f), Vector3.down, out var Ray, 512f);
+            Physics.Raycast(GorillaTagger.Instance.bodyCollider.transform.position - new Vector3(0f, 0.2f, 0f), Vector3.down, out var Ray, 512f, NoInvisLayerMask());
 
             if (Ray.distance < 0.2f && (Mathf.Abs(lerpygerpy.x) > 0.05f || Mathf.Abs(lerpygerpy.y) > 0.05f))
             {
@@ -669,12 +669,12 @@ namespace iiMenu.Mods
         {
             if (leftPrimary)
             {
-                GorillaLocomotion.Player.Instance.bodyCollider.attachedRigidbody.AddForce(flySpeed * GorillaTagger.Instance.offlineVRRig.transform.Find("rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L").right, ForceMode.Acceleration);
+                GorillaLocomotion.Player.Instance.bodyCollider.attachedRigidbody.AddForce(flySpeed * -GorillaTagger.Instance.leftHandTransform.right, ForceMode.Acceleration);
                 GorillaTagger.Instance.StartVibration(true, GorillaTagger.Instance.tapHapticStrength / 50f * GorillaLocomotion.Player.Instance.bodyCollider.attachedRigidbody.velocity.magnitude, GorillaTagger.Instance.tapHapticDuration);
             }
             if (rightPrimary)
             {
-                GorillaLocomotion.Player.Instance.bodyCollider.attachedRigidbody.AddForce(flySpeed * -GorillaTagger.Instance.offlineVRRig.transform.Find("rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R").right, ForceMode.Acceleration);
+                GorillaLocomotion.Player.Instance.bodyCollider.attachedRigidbody.AddForce(flySpeed * GorillaTagger.Instance.rightHandTransform.right, ForceMode.Acceleration);
                 GorillaTagger.Instance.StartVibration(false, GorillaTagger.Instance.tapHapticStrength / 50f * GorillaLocomotion.Player.Instance.bodyCollider.attachedRigidbody.velocity.magnitude, GorillaTagger.Instance.tapHapticDuration);
             }
         }
@@ -700,7 +700,7 @@ namespace iiMenu.Mods
                     }
                     RPCProtection();
                     RaycastHit lefthit;
-                    if (Physics.Raycast(GorillaTagger.Instance.leftHandTransform.position, GorillaTagger.Instance.leftHandTransform.forward, out lefthit, 512f))
+                    if (Physics.Raycast(GorillaTagger.Instance.leftHandTransform.position, GorillaTagger.Instance.leftHandTransform.forward, out lefthit, 512f, NoInvisLayerMask()))
                     {
                         leftgrapplePoint = lefthit.point;
 
@@ -730,7 +730,7 @@ namespace iiMenu.Mods
             }
             else
             {
-                Physics.Raycast(GorillaTagger.Instance.leftHandTransform.position, GorillaTagger.Instance.leftHandTransform.forward, out var Ray, 512f);
+                Physics.Raycast(GorillaTagger.Instance.leftHandTransform.position, GorillaTagger.Instance.leftHandTransform.forward, out var Ray, 512f, NoInvisLayerMask());
                 GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                 NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                 NewPointer.GetComponent<Renderer>().material.color = buttonDefaultA - new Color32(0, 0, 0, 128);
@@ -778,7 +778,7 @@ namespace iiMenu.Mods
                         GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(89, false, 999999f);
                     }
                     RaycastHit righthit;
-                    if (Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out righthit, 512f))
+                    if (Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out righthit, 512f, NoInvisLayerMask()))
                     {
                         rightgrapplePoint = righthit.point;
 
@@ -808,7 +808,7 @@ namespace iiMenu.Mods
             }
             else
             {
-                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray, 512f);
+                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray, 512f, NoInvisLayerMask());
                 GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                 NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                 NewPointer.GetComponent<Renderer>().material.color = buttonDefaultA - new Color32(0, 0, 0, 128);
@@ -858,7 +858,7 @@ namespace iiMenu.Mods
                     }
                     RPCProtection();
                     RaycastHit lefthit;
-                    if (Physics.Raycast(GorillaTagger.Instance.leftHandTransform.position, GorillaTagger.Instance.leftHandTransform.forward, out lefthit, 512f))
+                    if (Physics.Raycast(GorillaTagger.Instance.leftHandTransform.position, GorillaTagger.Instance.leftHandTransform.forward, out lefthit, 512f, NoInvisLayerMask()))
                     {
                         leftgrapplePoint = lefthit.point;
                     }
@@ -877,7 +877,7 @@ namespace iiMenu.Mods
             }
             else
             {
-                Physics.Raycast(GorillaTagger.Instance.leftHandTransform.position, GorillaTagger.Instance.leftHandTransform.forward, out var Ray, 512f);
+                Physics.Raycast(GorillaTagger.Instance.leftHandTransform.position, GorillaTagger.Instance.leftHandTransform.forward, out var Ray, 512f, NoInvisLayerMask());
                 GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                 NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                 NewPointer.GetComponent<Renderer>().material.color = buttonDefaultA - new Color32(0, 0, 0, 128);
@@ -924,7 +924,7 @@ namespace iiMenu.Mods
                         GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(89, false, 999999f);
                     }
                     RaycastHit righthit;
-                    if (Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out righthit, 512f))
+                    if (Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out righthit, 512f, NoInvisLayerMask()))
                     {
                         rightgrapplePoint = righthit.point;
                     }
@@ -943,7 +943,7 @@ namespace iiMenu.Mods
             }
             else
             {
-                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray, 512f);
+                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray, 512f, NoInvisLayerMask());
                 GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                 NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                 NewPointer.GetComponent<Renderer>().material.color = buttonDefaultA - new Color32(0, 0, 0, 128);
@@ -1130,7 +1130,7 @@ namespace iiMenu.Mods
 
         public static void WallWalk()
         {
-            if ((GorillaLocomotion.Player.Instance.wasLeftHandTouching || GorillaLocomotion.Player.Instance.wasRightHandTouching) && rightGrab)
+            if (GorillaLocomotion.Player.Instance.wasLeftHandTouching || GorillaLocomotion.Player.Instance.wasRightHandTouching)
             {
                 FieldInfo fieldInfo = typeof(GorillaLocomotion.Player).GetField("lastHitInfoHand", BindingFlags.NonPublic | BindingFlags.Instance);
                 RaycastHit ray = (RaycastHit)fieldInfo.GetValue(GorillaLocomotion.Player.Instance);
@@ -1138,12 +1138,7 @@ namespace iiMenu.Mods
                 walkNormal = ray.normal;
             }
 
-            if (!rightGrab)
-            {
-                walkPos = Vector3.zero;
-            }
-
-            if (walkPos != Vector3.zero)
+            if (walkPos != Vector3.zero && rightGrab)
             {
                 //GorillaLocomotion.Player.Instance.bodyCollider.attachedRigidbody.AddForce(walkNormal * -10, ForceMode.Acceleration);
                 GorillaLocomotion.Player.Instance.bodyCollider.attachedRigidbody.AddForce(walkNormal * -9.81f, ForceMode.Acceleration);
@@ -1153,7 +1148,7 @@ namespace iiMenu.Mods
 
         public static void WeakWallWalk()
         {
-            if ((GorillaLocomotion.Player.Instance.wasLeftHandTouching || GorillaLocomotion.Player.Instance.wasRightHandTouching) && rightGrab)
+            if (GorillaLocomotion.Player.Instance.wasLeftHandTouching || GorillaLocomotion.Player.Instance.wasRightHandTouching)
             {
                 FieldInfo fieldInfo = typeof(GorillaLocomotion.Player).GetField("lastHitInfoHand", BindingFlags.NonPublic | BindingFlags.Instance);
                 RaycastHit ray = (RaycastHit)fieldInfo.GetValue(GorillaLocomotion.Player.Instance);
@@ -1161,21 +1156,17 @@ namespace iiMenu.Mods
                 walkNormal = ray.normal;
             }
 
-            if (!rightGrab)
+            if (walkPos != Vector3.zero && rightGrab)
             {
-                walkPos = Vector3.zero;
-            }
-
-            if (walkPos != Vector3.zero)
-            {
-                GorillaLocomotion.Player.Instance.bodyCollider.attachedRigidbody.AddForce(walkNormal * -5, ForceMode.Acceleration);
+                //GorillaLocomotion.Player.Instance.bodyCollider.attachedRigidbody.AddForce(walkNormal * -10, ForceMode.Acceleration);
+                GorillaLocomotion.Player.Instance.bodyCollider.attachedRigidbody.AddForce(walkNormal * -5f, ForceMode.Acceleration);
                 ZeroGravity();
             }
         }
 
         public static void StrongWallWalk()
         {
-            if ((GorillaLocomotion.Player.Instance.wasLeftHandTouching || GorillaLocomotion.Player.Instance.wasRightHandTouching) && rightGrab)
+            if (GorillaLocomotion.Player.Instance.wasLeftHandTouching || GorillaLocomotion.Player.Instance.wasRightHandTouching)
             {
                 FieldInfo fieldInfo = typeof(GorillaLocomotion.Player).GetField("lastHitInfoHand", BindingFlags.NonPublic | BindingFlags.Instance);
                 RaycastHit ray = (RaycastHit)fieldInfo.GetValue(GorillaLocomotion.Player.Instance);
@@ -1183,14 +1174,10 @@ namespace iiMenu.Mods
                 walkNormal = ray.normal;
             }
 
-            if (!rightGrab)
+            if (walkPos != Vector3.zero && rightGrab)
             {
-                walkPos = Vector3.zero;
-            }
-
-            if (walkPos != Vector3.zero)
-            {
-                GorillaLocomotion.Player.Instance.bodyCollider.attachedRigidbody.AddForce(walkNormal * -50, ForceMode.Acceleration);
+                //GorillaLocomotion.Player.Instance.bodyCollider.attachedRigidbody.AddForce(walkNormal * -10, ForceMode.Acceleration);
+                GorillaLocomotion.Player.Instance.bodyCollider.attachedRigidbody.AddForce(walkNormal * -50f, ForceMode.Acceleration);
                 ZeroGravity();
             }
         }
@@ -1208,7 +1195,7 @@ namespace iiMenu.Mods
             if (walkPos != Vector3.zero)
             {
                 GorillaLocomotion.Player.Instance.bodyCollider.attachedRigidbody.AddForce(walkNormal * -9.81f, ForceMode.Acceleration);
-                GorillaLocomotion.Player.Instance.rightControllerTransform.parent.rotation = Quaternion.Lerp(GorillaLocomotion.Player.Instance.transform.rotation, Quaternion.LookRotation(walkNormal) * Quaternion.Euler(90f, 0f, 0f), Time.deltaTime);
+                GorillaLocomotion.Player.Instance.rightControllerTransform.parent.rotation = Quaternion.Lerp(GorillaLocomotion.Player.Instance.rightControllerTransform.parent.rotation, Quaternion.LookRotation(walkNormal) * Quaternion.Euler(90f, 0f, 0f), Time.deltaTime);
                 ZeroGravity();
             }
         }
@@ -1216,6 +1203,7 @@ namespace iiMenu.Mods
         public static void TeleportToRandom()
         {
             TeleportPlayer(GetRandomVRRig(false).transform.position);
+            GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity = Vector3.zero;
         }
 
         public static void TeleportGun()
@@ -1595,7 +1583,13 @@ namespace iiMenu.Mods
                 GorillaTagger.Instance.offlineVRRig.enabled = true;
             }
         }
-        
+
+        public static void FixRigHandRotation()
+        {
+            GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation *= Quaternion.Euler(GorillaTagger.Instance.offlineVRRig.leftHand.trackingRotationOffset);
+            GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation *= Quaternion.Euler(GorillaTagger.Instance.offlineVRRig.rightHand.trackingRotationOffset);
+        }
+
         public static void FreezeRigBody()
         {
             if (rightPrimary)
@@ -1607,6 +1601,8 @@ namespace iiMenu.Mods
 
                 GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
                 GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
+
+                FixRigHandRotation();
 
                 GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
             }
@@ -1689,6 +1685,8 @@ namespace iiMenu.Mods
 
                 GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = GorillaTagger.Instance.offlineVRRig.transform.rotation;
                 GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = GorillaTagger.Instance.offlineVRRig.transform.rotation;
+
+                FixRigHandRotation();
             }
             else
             {
@@ -1716,6 +1714,8 @@ namespace iiMenu.Mods
 
                 GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = GorillaTagger.Instance.offlineVRRig.transform.rotation;
                 GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = GorillaTagger.Instance.offlineVRRig.transform.rotation;
+
+                FixRigHandRotation();
             }
             else
             {
@@ -1750,6 +1750,8 @@ namespace iiMenu.Mods
 
                 GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = GorillaTagger.Instance.offlineVRRig.transform.rotation;
                 GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = GorillaTagger.Instance.offlineVRRig.transform.rotation;
+
+                FixRigHandRotation();
             }
             else
             {
@@ -1782,6 +1784,8 @@ namespace iiMenu.Mods
 
                 GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = GorillaTagger.Instance.offlineVRRig.transform.rotation;
                 GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = GorillaTagger.Instance.offlineVRRig.transform.rotation;
+
+                FixRigHandRotation();
             }
             else
             {
@@ -1816,6 +1820,8 @@ namespace iiMenu.Mods
 
                 GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = GorillaTagger.Instance.offlineVRRig.transform.rotation;
                 GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = GorillaTagger.Instance.offlineVRRig.transform.rotation;
+
+                FixRigHandRotation();
             }
             else
             {
@@ -1845,6 +1851,8 @@ namespace iiMenu.Mods
 
                 GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = GorillaTagger.Instance.offlineVRRig.transform.rotation;
                 GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = GorillaTagger.Instance.offlineVRRig.transform.rotation;
+
+                FixRigHandRotation();
             }
             else
             {
@@ -1888,6 +1896,8 @@ namespace iiMenu.Mods
                 GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + (GorillaTagger.Instance.bodyCollider.transform.right * 0.25f) + Vector3.Lerp(GorillaTagger.Instance.rightHandTransform.forward, - GorillaTagger.Instance.rightHandTransform.up, 0.5f) * 2f;
                 GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
             }
+
+            FixRigHandRotation();
         }
 
         public static void StareAtNearby()
@@ -2304,7 +2314,7 @@ namespace iiMenu.Mods
 
         public static void BunnyHop()
         {
-            Physics.Raycast(GorillaTagger.Instance.bodyCollider.transform.position - new Vector3(0f, 0.2f, 0f), Vector3.down, out var Ray, 512);
+            Physics.Raycast(GorillaTagger.Instance.bodyCollider.transform.position - new Vector3(0f, 0.2f, 0f), Vector3.down, out var Ray, 512f, NoInvisLayerMask());
 
             if (Ray.distance < 0.15f)
             {
@@ -2315,6 +2325,13 @@ namespace iiMenu.Mods
         public static void Strafe()
         {
             Vector3 funnyDir = GorillaTagger.Instance.bodyCollider.transform.forward * GorillaLocomotion.Player.Instance.maxJumpSpeed;
+            GorillaTagger.Instance.bodyCollider.attachedRigidbody.velocity = new Vector3(funnyDir.x, GorillaTagger.Instance.bodyCollider.attachedRigidbody.velocity.y, funnyDir.z);
+        }
+
+        public static void DynamicStrafe()
+        {
+            float power = new Vector3(GorillaTagger.Instance.bodyCollider.attachedRigidbody.velocity.x, 0, GorillaTagger.Instance.bodyCollider.attachedRigidbody.velocity.z).magnitude;
+            Vector3 funnyDir = GorillaTagger.Instance.bodyCollider.transform.forward * power;
             GorillaTagger.Instance.bodyCollider.attachedRigidbody.velocity = new Vector3(funnyDir.x, GorillaTagger.Instance.bodyCollider.attachedRigidbody.velocity.y, funnyDir.z);
         }
 
@@ -2331,6 +2348,14 @@ namespace iiMenu.Mods
             if (rightGrab)
             {
                 Strafe();
+            }
+        }
+
+        public static void GripDynamicStrafe()
+        {
+            if (rightGrab)
+            {
+                DynamicStrafe();
             }
         }
 
@@ -2441,6 +2466,22 @@ namespace iiMenu.Mods
                     GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = whoCopy.leftHandTransform.rotation;
                     GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = whoCopy.rightHandTransform.rotation;
 
+                    GorillaTagger.Instance.offlineVRRig.leftIndex.calcT = whoCopy.leftIndex.calcT;
+                    GorillaTagger.Instance.offlineVRRig.leftMiddle.calcT = whoCopy.leftMiddle.calcT;
+                    GorillaTagger.Instance.offlineVRRig.leftThumb.calcT = whoCopy.leftThumb.calcT;
+
+                    GorillaTagger.Instance.offlineVRRig.leftIndex.LerpFinger(1f, false);
+                    GorillaTagger.Instance.offlineVRRig.leftMiddle.LerpFinger(1f, false);
+                    GorillaTagger.Instance.offlineVRRig.leftThumb.LerpFinger(1f, false);
+
+                    GorillaTagger.Instance.offlineVRRig.rightIndex.calcT = whoCopy.rightIndex.calcT;
+                    GorillaTagger.Instance.offlineVRRig.rightMiddle.calcT = whoCopy.rightMiddle.calcT;
+                    GorillaTagger.Instance.offlineVRRig.rightThumb.calcT = whoCopy.rightThumb.calcT;
+
+                    GorillaTagger.Instance.offlineVRRig.rightIndex.LerpFinger(1f, false);
+                    GorillaTagger.Instance.offlineVRRig.rightMiddle.LerpFinger(1f, false);
+                    GorillaTagger.Instance.offlineVRRig.rightThumb.LerpFinger(1f, false);
+
                     GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = whoCopy.headMesh.transform.rotation;
                 }
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
@@ -2498,6 +2539,24 @@ namespace iiMenu.Mods
 
                     GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = GorillaTagger.Instance.offlineVRRig.transform.rotation;
                     GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = GorillaTagger.Instance.offlineVRRig.transform.rotation;
+
+                    FixRigHandRotation();
+
+                    GorillaTagger.Instance.offlineVRRig.leftIndex.calcT = 0f;
+                    GorillaTagger.Instance.offlineVRRig.leftMiddle.calcT = 0f;
+                    GorillaTagger.Instance.offlineVRRig.leftThumb.calcT = 0f;
+
+                    GorillaTagger.Instance.offlineVRRig.leftIndex.LerpFinger(1f, false);
+                    GorillaTagger.Instance.offlineVRRig.leftMiddle.LerpFinger(1f, false);
+                    GorillaTagger.Instance.offlineVRRig.leftThumb.LerpFinger(1f, false);
+
+                    GorillaTagger.Instance.offlineVRRig.rightIndex.calcT = 0f;
+                    GorillaTagger.Instance.offlineVRRig.rightMiddle.calcT = 0f;
+                    GorillaTagger.Instance.offlineVRRig.rightThumb.calcT = 0f;
+
+                    GorillaTagger.Instance.offlineVRRig.rightIndex.LerpFinger(1f, false);
+                    GorillaTagger.Instance.offlineVRRig.rightMiddle.LerpFinger(1f, false);
+                    GorillaTagger.Instance.offlineVRRig.rightThumb.LerpFinger(1f, false);
                 }
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
@@ -2548,6 +2607,24 @@ namespace iiMenu.Mods
 
                     GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = GorillaTagger.Instance.offlineVRRig.transform.rotation;
                     GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = GorillaTagger.Instance.offlineVRRig.transform.rotation;
+
+                    FixRigHandRotation();
+
+                    GorillaTagger.Instance.offlineVRRig.leftIndex.calcT = 0f;
+                    GorillaTagger.Instance.offlineVRRig.leftMiddle.calcT = 0f;
+                    GorillaTagger.Instance.offlineVRRig.leftThumb.calcT = 0f;
+
+                    GorillaTagger.Instance.offlineVRRig.leftIndex.LerpFinger(1f, false);
+                    GorillaTagger.Instance.offlineVRRig.leftMiddle.LerpFinger(1f, false);
+                    GorillaTagger.Instance.offlineVRRig.leftThumb.LerpFinger(1f, false);
+
+                    GorillaTagger.Instance.offlineVRRig.rightIndex.calcT = 0f;
+                    GorillaTagger.Instance.offlineVRRig.rightMiddle.calcT = 0f;
+                    GorillaTagger.Instance.offlineVRRig.rightThumb.calcT = 0f;
+
+                    GorillaTagger.Instance.offlineVRRig.rightIndex.LerpFinger(1f, false);
+                    GorillaTagger.Instance.offlineVRRig.rightMiddle.LerpFinger(1f, false);
+                    GorillaTagger.Instance.offlineVRRig.rightThumb.LerpFinger(1f, false);
                 }
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
@@ -2601,8 +2678,26 @@ namespace iiMenu.Mods
 
                     GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = dirLook;
 
-                    GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = GorillaTagger.Instance.offlineVRRig.transform.rotation;
-                    GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = GorillaTagger.Instance.offlineVRRig.transform.rotation;
+                    GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(GorillaTagger.Instance.offlineVRRig.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
+                    GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(GorillaTagger.Instance.offlineVRRig.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
+
+                    FixRigHandRotation();
+
+                    GorillaTagger.Instance.offlineVRRig.leftIndex.calcT = 0f;
+                    GorillaTagger.Instance.offlineVRRig.leftMiddle.calcT = 0f;
+                    GorillaTagger.Instance.offlineVRRig.leftThumb.calcT = 0f;
+
+                    GorillaTagger.Instance.offlineVRRig.leftIndex.LerpFinger(1f, false);
+                    GorillaTagger.Instance.offlineVRRig.leftMiddle.LerpFinger(1f, false);
+                    GorillaTagger.Instance.offlineVRRig.leftThumb.LerpFinger(1f, false);
+
+                    GorillaTagger.Instance.offlineVRRig.rightIndex.calcT = 0f;
+                    GorillaTagger.Instance.offlineVRRig.rightMiddle.calcT = 0f;
+                    GorillaTagger.Instance.offlineVRRig.rightThumb.calcT = 0f;
+
+                    GorillaTagger.Instance.offlineVRRig.rightIndex.LerpFinger(1f, false);
+                    GorillaTagger.Instance.offlineVRRig.rightMiddle.LerpFinger(1f, false);
+                    GorillaTagger.Instance.offlineVRRig.rightThumb.LerpFinger(1f, false);
                 }
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
@@ -2656,6 +2751,22 @@ namespace iiMenu.Mods
 
                     GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
                     GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+
+                    GorillaTagger.Instance.offlineVRRig.leftIndex.calcT = 0f;
+                    GorillaTagger.Instance.offlineVRRig.leftMiddle.calcT = 0f;
+                    GorillaTagger.Instance.offlineVRRig.leftThumb.calcT = 0f;
+
+                    GorillaTagger.Instance.offlineVRRig.leftIndex.LerpFinger(1f, false);
+                    GorillaTagger.Instance.offlineVRRig.leftMiddle.LerpFinger(1f, false);
+                    GorillaTagger.Instance.offlineVRRig.leftThumb.LerpFinger(1f, false);
+
+                    GorillaTagger.Instance.offlineVRRig.rightIndex.calcT = 0f;
+                    GorillaTagger.Instance.offlineVRRig.rightMiddle.calcT = 0f;
+                    GorillaTagger.Instance.offlineVRRig.rightThumb.calcT = 0f;
+
+                    GorillaTagger.Instance.offlineVRRig.rightIndex.LerpFinger(1f, false);
+                    GorillaTagger.Instance.offlineVRRig.rightMiddle.LerpFinger(1f, false);
+                    GorillaTagger.Instance.offlineVRRig.rightThumb.LerpFinger(1f, false);
 
                     if (PhotonNetwork.InRoom)
                     {
@@ -2739,11 +2850,29 @@ namespace iiMenu.Mods
                         GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.position = (whoCopy.transform.position + whoCopy.transform.right * -0.2f) + whoCopy.transform.up * -0.4f;
                         GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.position = (whoCopy.transform.position + whoCopy.transform.right * 0.2f) + whoCopy.transform.up * -0.4f;
 
-                        GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = whoCopy.transform.rotation;
-                        GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = whoCopy.transform.rotation;
+                        GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(whoCopy.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
+                        GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(whoCopy.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
 
                         GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = whoCopy.transform.rotation;
                     }
+
+                    FixRigHandRotation();
+
+                    GorillaTagger.Instance.offlineVRRig.leftIndex.calcT = 0f;
+                    GorillaTagger.Instance.offlineVRRig.leftMiddle.calcT = 0f;
+                    GorillaTagger.Instance.offlineVRRig.leftThumb.calcT = 0f;
+
+                    GorillaTagger.Instance.offlineVRRig.leftIndex.LerpFinger(1f, false);
+                    GorillaTagger.Instance.offlineVRRig.leftMiddle.LerpFinger(1f, false);
+                    GorillaTagger.Instance.offlineVRRig.leftThumb.LerpFinger(1f, false);
+
+                    GorillaTagger.Instance.offlineVRRig.rightIndex.calcT = 0f;
+                    GorillaTagger.Instance.offlineVRRig.rightMiddle.calcT = 0f;
+                    GorillaTagger.Instance.offlineVRRig.rightThumb.calcT = 0f;
+
+                    GorillaTagger.Instance.offlineVRRig.rightIndex.LerpFinger(1f, false);
+                    GorillaTagger.Instance.offlineVRRig.rightMiddle.LerpFinger(1f, false);
+                    GorillaTagger.Instance.offlineVRRig.rightThumb.LerpFinger(1f, false);
 
                     GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = whoCopy.transform.rotation;
 
@@ -2811,10 +2940,28 @@ namespace iiMenu.Mods
                     GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.position = (whoCopy.transform.position + whoCopy.transform.right * 0.2f) + whoCopy.transform.up * -0.4f;
                     GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.position = (whoCopy.transform.position + whoCopy.transform.right * -0.2f) + whoCopy.transform.up * -0.4f;
 
-                    GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = whoCopy.transform.rotation;
-                    GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = whoCopy.transform.rotation;
+                    GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(whoCopy.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
+                    GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(whoCopy.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
 
                     GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = Quaternion.Euler(whoCopy.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
+
+                    GorillaTagger.Instance.offlineVRRig.leftIndex.calcT = 0f;
+                    GorillaTagger.Instance.offlineVRRig.leftMiddle.calcT = 0f;
+                    GorillaTagger.Instance.offlineVRRig.leftThumb.calcT = 0f;
+
+                    GorillaTagger.Instance.offlineVRRig.leftIndex.LerpFinger(1f, false);
+                    GorillaTagger.Instance.offlineVRRig.leftMiddle.LerpFinger(1f, false);
+                    GorillaTagger.Instance.offlineVRRig.leftThumb.LerpFinger(1f, false);
+
+                    GorillaTagger.Instance.offlineVRRig.rightIndex.calcT = 0f;
+                    GorillaTagger.Instance.offlineVRRig.rightMiddle.calcT = 0f;
+                    GorillaTagger.Instance.offlineVRRig.rightThumb.calcT = 0f;
+
+                    GorillaTagger.Instance.offlineVRRig.rightIndex.LerpFinger(1f, false);
+                    GorillaTagger.Instance.offlineVRRig.rightMiddle.LerpFinger(1f, false);
+                    GorillaTagger.Instance.offlineVRRig.rightThumb.LerpFinger(1f, false);
+
+                    FixRigHandRotation();
 
                     if ((Time.frameCount % 45) == 0)
                     {
@@ -2867,6 +3014,66 @@ namespace iiMenu.Mods
             GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.z = UnityEngine.Random.Range(0f, 360f);
         }
 
+        public static void RandomSpazHead()
+        {
+            if (headspazType)
+            {
+                SpazHead();
+                if (Time.time > headspazDelay)
+                {
+                    headspazType = false;
+                    headspazDelay = Time.time + UnityEngine.Random.Range(1000f, 4000f) / 1000f;
+                }
+            }
+            else
+            {
+                Fun.FixHead();
+                if (Time.time > headspazDelay)
+                {
+                    headspazType = true;
+                    headspazDelay = Time.time + UnityEngine.Random.Range(200f, 1000f) / 1000f;
+                }
+            }
+        }
+
+        private static Vector3 headoffs = Vector3.zero;
+        public static void EnableSpazHead()
+        {
+            headoffs = GorillaTagger.Instance.offlineVRRig.head.trackingPositionOffset;
+        }
+
+        public static void SpazHeadPosition()
+        {
+            GorillaTagger.Instance.offlineVRRig.head.trackingPositionOffset = headoffs + new Vector3(UnityEngine.Random.Range(-0.1f, 0.1f), UnityEngine.Random.Range(-0.1f, 0.1f), UnityEngine.Random.Range(-0.1f, 0.1f));
+        }
+
+        public static void FixHeadPosition()
+        {
+            GorillaTagger.Instance.offlineVRRig.head.trackingPositionOffset = headoffs;
+        }
+
+        public static void RandomSpazHeadPosition()
+        {
+            if (headspazType)
+            {
+                SpazHeadPosition();
+                if (Time.time > headspazDelay)
+                {
+                    headspazType = false;
+                    headspazDelay = Time.time + UnityEngine.Random.Range(1000f, 4000f) / 1000f;
+                }
+            }
+            else
+            {
+                FixHeadPosition();
+                if (Time.time > headspazDelay)
+                {
+                    headspazType = true;
+                    headspazDelay = Time.time + UnityEngine.Random.Range(200f, 1000f) / 1000f;
+                }
+            }
+        }
+
         public static void LaggyRig()
         {
             ghostException = true;
@@ -2908,27 +3115,6 @@ namespace iiMenu.Mods
                 
             }
             lastprimaryhit = rightPrimary;
-        }
-
-        public static void RandomSpazHead()
-        {
-            if (headspazType)
-            {
-                SpazHead();
-                if (Time.time > headspazDelay)
-                {
-                    headspazType = false;
-                    headspazDelay = Time.time + UnityEngine.Random.Range(1000f,4000f)/1000f;
-                }
-            } else
-            {
-                Fun.FixHead();
-                if (Time.time > headspazDelay)
-                {
-                    headspazType = true;
-                    headspazDelay = Time.time + UnityEngine.Random.Range(200f, 1000f) / 1000f;
-                }
-            }
         }
     }
 }

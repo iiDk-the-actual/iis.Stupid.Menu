@@ -2,6 +2,7 @@
 using ExitGames.Client.Photon;
 using GorillaNetworking;
 using GorillaTagScripts;
+using GorillaTagScripts.ObstacleCourse;
 using HarmonyLib;
 using iiMenu.Classes;
 using iiMenu.Mods;
@@ -188,7 +189,7 @@ namespace iiMenu.Menu
                                 if (v.name.Contains("forestatlas"))
                                 {
                                     indexOfThatThing++;
-                                    if (indexOfThatThing == 1)
+                                    if (indexOfThatThing == 2)
                                     {
                                         found = true;
                                         v.GetComponent<Renderer>().material = OrangeUI;
@@ -1774,22 +1775,31 @@ namespace iiMenu.Menu
                 }
                 else
                 {
-                    GradientColorKey[] array = new GradientColorKey[3];
-                    array[0].color = bgColorA;
-                    array[0].time = 0f;
-                    array[1].color = bgColorB;
-                    array[1].time = 0.5f;
-                    array[2].color = bgColorA;
-                    array[2].time = 1f;
-                    ColorChanger colorChanger = gameObject.AddComponent<ColorChanger>();
-                    colorChanger.colors = new Gradient
+                    if (doCustomMenuBackground)
                     {
-                        colorKeys = array
-                    };
-                    colorChanger.isRainbow = themeType == 6;
-                    colorChanger.isEpileptic = themeType == 47;
-                    colorChanger.isMonkeColors = themeType == 8;
-                    colorChanger.Start();
+                        gameObject.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Lit");
+                        gameObject.GetComponent<Renderer>().material.color = Color.white;
+                        gameObject.GetComponent<Renderer>().material.mainTexture = customMenuBackgroundImage;
+                    }
+                    else
+                    {
+                        GradientColorKey[] array = new GradientColorKey[3];
+                        array[0].color = bgColorA;
+                        array[0].time = 0f;
+                        array[1].color = bgColorB;
+                        array[1].time = 0.5f;
+                        array[2].color = bgColorA;
+                        array[2].time = 1f;
+                        ColorChanger colorChanger = gameObject.AddComponent<ColorChanger>();
+                        colorChanger.colors = new Gradient
+                        {
+                            colorKeys = array
+                        };
+                        colorChanger.isRainbow = themeType == 6;
+                        colorChanger.isEpileptic = themeType == 47;
+                        colorChanger.isMonkeColors = themeType == 8;
+                        colorChanger.Start();
+                    }
                 }
             }
             canvasObj = new GameObject();
@@ -2279,9 +2289,13 @@ namespace iiMenu.Menu
                 if (TPC != null)
                 {
                     isOnPC = true;
-                    if (GetIndex("Joystick Menu").enabled)
+                    if (joystickMenu)
                     {
                         Toggle("Joystick Menu");
+                    }
+                    if (wristThingV2)
+                    {
+                        Toggle("Watch Menu");
                     }
                     if (GetIndex("First Person Camera").enabled)
                     {
@@ -2316,7 +2330,7 @@ namespace iiMenu.Menu
                         if (Mouse.current.leftButton.isPressed && !lastclicking)
                         {
                             Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
-                            bool worked = Physics.Raycast(ray, out RaycastHit hit, 100);
+                            bool worked = Physics.Raycast(ray, out RaycastHit hit, 512f);
                             if (worked)
                             {
                                 Classes.Button collide = hit.transform.gameObject.GetComponent<Classes.Button>();
@@ -2897,14 +2911,17 @@ namespace iiMenu.Menu
                     RaiseEventOptions options = new RaiseEventOptions();
                     options.CachingOption = EventCaching.RemoveFromRoomCache;
                     options.TargetActors = new int[1] { PhotonNetwork.LocalPlayer.ActorNumber };
-                    RaiseEventOptions optionsdos = options;
-                    PhotonNetwork.NetworkingClient.OpRaiseEvent(200, null, optionsdos, SendOptions.SendReliable);
+                    PhotonNetwork.NetworkingClient.OpRaiseEvent(200, null, options, SendOptions.SendReliable);
                 }
                 else
                 {
                     GorillaNot.instance.rpcErrorMax = int.MaxValue;
                     GorillaNot.instance.rpcCallLimit = int.MaxValue;
                     GorillaNot.instance.logErrorMax = int.MaxValue;
+
+                    PhotonNetwork.MaxResendsBeforeDisconnect = int.MaxValue;
+                    PhotonNetwork.QuickResends = int.MaxValue;
+                    // PhotonNetwork.SendRate = int.MaxValue;
                     // GorillaGameManager.instance.maxProjectilesToKeepTrackOfPerPlayer = int.MaxValue;
 
                     PhotonNetwork.RemoveRPCs(PhotonNetwork.LocalPlayer);
@@ -2932,11 +2949,11 @@ namespace iiMenu.Menu
 
         public static (RaycastHit Ray, GameObject NewPointer) RenderGun()
         {
-            Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray, 512f);
+            Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray, 512f, NoInvisLayerMask());
             if (shouldBePC)
             {
                 Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
-                Physics.Raycast(ray, out Ray, 100);
+                Physics.Raycast(ray, out Ray, 512f, NoInvisLayerMask());
             }
 
             GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
@@ -3068,9 +3085,16 @@ namespace iiMenu.Menu
             return new string[] { first }.Concat(others).ToArray();
         }
 
+        private static float lastRecievedTime = -1f;
+
         public static GliderHoldable[] archiveholdables = null;
         public static GliderHoldable[] GetGliders()
         {
+            if (Time.time > lastRecievedTime)
+            {
+                archivemonsters = null;
+                lastRecievedTime = Time.time + 5f;
+            }
             if (archiveholdables == null)
             {
                 archiveholdables = UnityEngine.Object.FindObjectsOfType<GliderHoldable>();
@@ -3081,6 +3105,11 @@ namespace iiMenu.Menu
         public static MonkeyeAI[] archivemonsters = null;
         public static MonkeyeAI[] GetMonsters()
         {
+            if (Time.time > lastRecievedTime)
+            {
+                archivemonsters = null;
+                lastRecievedTime = Time.time + 5f;
+            }
             if (archivemonsters == null)
             {
                 archivemonsters = UnityEngine.Object.FindObjectsOfType<MonkeyeAI>();
@@ -3088,20 +3117,64 @@ namespace iiMenu.Menu
             return archivemonsters;
         }
 
-        private static float lastBalloonsRecievedTime = -1f;
         public static BalloonHoldable[] archiveballoons = null;
         public static BalloonHoldable[] GetBalloons()
         {
-            if (Time.time > lastBalloonsRecievedTime)
+            if (Time.time > lastRecievedTime)
             {
                 archiveballoons = null;
-                lastBalloonsRecievedTime = Time.time + 5f;
+                lastRecievedTime = Time.time + 5f;
             }
             if (archiveballoons == null)
             {
                 archiveballoons = UnityEngine.Object.FindObjectsOfType<BalloonHoldable>();
             }
             return archiveballoons;
+        }
+
+        public static TappableBell[] archivebells = null;
+        public static TappableBell[] GetBells()
+        {
+            if (Time.time > lastRecievedTime)
+            {
+                archivebells = null;
+                lastRecievedTime = Time.time + 5f;
+            }
+            if (archivebells == null)
+            {
+                archivebells = UnityEngine.Object.FindObjectsOfType<TappableBell>();
+            }
+            return archivebells;
+        }
+
+        public static GhostLabButton[] archivelabbuttons = null;
+        public static GhostLabButton[] GetLabButtons()
+        {
+            if (Time.time > lastRecievedTime)
+            {
+                archivelabbuttons = null;
+                lastRecievedTime = Time.time + 5f;
+            }
+            if (archivelabbuttons == null)
+            {
+                archivelabbuttons = UnityEngine.Object.FindObjectsOfType<GhostLabButton>();
+            }
+            return archivelabbuttons;
+        }
+
+        public static GorillaCaveCrystal[] archivecrystals = null;
+        public static GorillaCaveCrystal[] GetCrystals() // JESSE
+        {
+            if (Time.time > lastRecievedTime)
+            {
+                archivecrystals = null;
+                lastRecievedTime = Time.time + 5f;
+            }
+            if (archivecrystals == null)
+            {
+                archivecrystals = UnityEngine.Object.FindObjectsOfType<GorillaCaveCrystal>();
+            }
+            return archivecrystals;
         }
 
         public static Vector3 World2Player(Vector3 world) // SteamVR bug causes teleporting of the player to the center of your playspace
@@ -3264,11 +3337,11 @@ namespace iiMenu.Menu
         {
             if (doButtonsVibrate)
             {
-                GorillaTagger.Instance.StartVibration(GetIndex("Right Hand").enabled, GorillaTagger.Instance.tagHapticStrength / 2f, GorillaTagger.Instance.tagHapticDuration / 2f);
+                GorillaTagger.Instance.StartVibration(rightHand, GorillaTagger.Instance.tagHapticStrength / 2f, GorillaTagger.Instance.tagHapticDuration / 2f);
             }
             if (buttonClickIndex == 4)
             {
-                AudioSource audioSource = GetIndex("Right Hand").enabled ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
+                AudioSource audioSource = rightHand ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
                 audioSource.volume = buttonClickVolume / 10f;
                 audioSource.PlayOneShot(LoadSoundFromResource("creamy"));
             }
@@ -3276,7 +3349,7 @@ namespace iiMenu.Menu
             {
                 if (buttonClickIndex == 5)
                 {
-                    AudioSource audioSource = GetIndex("Right Hand").enabled ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
+                    AudioSource audioSource = rightHand ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
                     audioSource.volume = buttonClickVolume / 10f;
                     audioSource.PlayOneShot(LoadSoundFromResource("anthrax"));
                 }
@@ -3287,14 +3360,14 @@ namespace iiMenu.Menu
                         ButtonInfo lol = GetIndex(buttonText);
                         if (GetIndex(buttonText) == null)
                         {
-                            AudioSource audioSource = GetIndex("Right Hand").enabled ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
+                            AudioSource audioSource = rightHand ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
                             audioSource.volume = buttonClickVolume / 10f;
                             audioSource.PlayOneShot(LoadSoundFromResource("leverup"));
                         }
                         else
                         {
 
-                            AudioSource audioSource = GetIndex("Right Hand").enabled ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
+                            AudioSource audioSource = rightHand ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
                             audioSource.volume = buttonClickVolume / 10f;
                             audioSource.PlayOneShot(LoadSoundFromResource(lol.isTogglable ? (!lol.enabled ? "leverdown" : "leverup") : "leverup"));
                         }
@@ -3303,7 +3376,7 @@ namespace iiMenu.Menu
                     {
                         if (buttonClickIndex == 7)
                         {
-                            AudioSource audioSource = GetIndex("Right Hand").enabled ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
+                            AudioSource audioSource = rightHand ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
                             audioSource.volume = buttonClickVolume / 10f;
                             audioSource.PlayOneShot(LoadSoundFromResource("click"));
                         }
@@ -3311,7 +3384,7 @@ namespace iiMenu.Menu
                         {
                             if (buttonClickIndex == 8)
                             {
-                                AudioSource audioSource = GetIndex("Right Hand").enabled ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
+                                AudioSource audioSource = rightHand ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
                                 audioSource.volume = buttonClickVolume / 10f;
                                 audioSource.PlayOneShot(LoadSoundFromResource("rr"));
                             }
@@ -3319,7 +3392,7 @@ namespace iiMenu.Menu
                             {
                                 if (buttonClickIndex == 9)
                                 {
-                                    AudioSource audioSource = GetIndex("Right Hand").enabled ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
+                                    AudioSource audioSource = rightHand ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
                                     audioSource.volume = buttonClickVolume / 10f;
                                     audioSource.PlayOneShot(LoadSoundFromResource("watch"));
                                 }
@@ -3327,18 +3400,18 @@ namespace iiMenu.Menu
                                 {
                                     if (buttonClickIndex == 10)
                                     {
-                                        AudioSource audioSource = GetIndex("Right Hand").enabled ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
+                                        AudioSource audioSource = rightHand ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
                                         audioSource.volume = buttonClickVolume / 10f;
                                         audioSource.PlayOneShot(LoadSoundFromResource("membrane"));
                                     }
                                     else
                                     {
-                                        GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(buttonClickSound, GetIndex("Right Hand").enabled, buttonClickVolume / 10f);
+                                        GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(buttonClickSound, rightHand, buttonClickVolume / 10f);
                                         if (GetIndex("Serversided Button Sounds").enabled && PhotonNetwork.InRoom)
                                         {
                                             GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.Others, new object[] {
                                                 buttonClickSound,
-                                                GetIndex("Right Hand").enabled,
+                                                rightHand,
                                                 buttonClickVolume / 10f
                                             });
                                             RPCProtection();
@@ -3372,6 +3445,11 @@ namespace iiMenu.Menu
             GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(66, false, buttonClickVolume / 10f);
             pageNumber = 0;
             ReloadMenu();
+        }
+
+        public static int NoInvisLayerMask()
+        {
+            return ~(1 << TransparentFX | 1 << IgnoreRaycast | 1 << Zone | 1 << GorillaTrigger | 1 << GorillaBoundary | 1 << GorillaCosmetics | 1 << GorillaParticle);
         }
 
         public static void Toggle(string buttonText, bool fromMenu = false)
@@ -3460,12 +3538,12 @@ namespace iiMenu.Menu
                             {
                                 favorites.Remove(target.buttonText);
                                 NotifiLib.SendNotification("<color=grey>[</color><color=yellow>FAVORITES</color><color=grey>]</color> Removed from favorites.");
-                                GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(48, GetIndex("Right Hand").enabled, 0.4f);
+                                GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(48, rightHand, 0.4f);
                             } else
                             {
                                 favorites.Add(target.buttonText);
                                 NotifiLib.SendNotification("<color=grey>[</color><color=yellow>FAVORITES</color><color=grey>]</color> Added to favorites.");
-                                GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(50, GetIndex("Right Hand").enabled, 0.4f);
+                                GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(50, rightHand, 0.4f);
                             }
                         }
                         else
@@ -3476,11 +3554,11 @@ namespace iiMenu.Menu
                                 {
                                     hotkeyButton = target.buttonText;
                                     NotifiLib.SendNotification("<color=grey>[</color><color=purple>HOTKEY</color><color=grey>]</color> Set hotkey button.");
-                                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(50, GetIndex("Right Hand").enabled, 0.4f);
+                                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(50, rightHand, 0.4f);
                                 } else
                                 {
                                     hotkeyButton = "none";
-                                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(48, GetIndex("Right Hand").enabled, 0.4f);
+                                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(48, rightHand, 0.4f);
                                     NotifiLib.SendNotification("<color=grey>[</color><color=purple>HOTKEY</color><color=grey>]</color> Reset hotkey button.");
                                 }
                             }
@@ -3626,6 +3704,9 @@ namespace iiMenu.Menu
         public static bool smallGunPointer = false;
         public static bool disableGunPointer = false;
         public static bool disableGunLine = false;
+        public static bool riskyModsEnabled = false;
+        public static bool doCustomMenuBackground = false;
+        public static Texture2D customMenuBackgroundImage = null;
 
         public static string ascii = 
 @"  _ _ _       ____  _               _     _   __  __                  
@@ -3659,6 +3740,14 @@ namespace iiMenu.Menu
         public static string mainPlayerId = "E19CE8918FD9E927";
 
         public static string hotkeyButton = "none";
+
+        public static int TransparentFX = LayerMask.NameToLayer("TransparentFX");
+        public static int IgnoreRaycast = LayerMask.NameToLayer("Ignore Raycast");
+        public static int Zone = LayerMask.NameToLayer("Zone");
+        public static int GorillaTrigger = LayerMask.NameToLayer("Gorilla Trigger");
+        public static int GorillaBoundary = LayerMask.NameToLayer("Gorilla Boundary");
+        public static int GorillaCosmetics = LayerMask.NameToLayer("GorillaCosmetics");
+        public static int GorillaParticle = LayerMask.NameToLayer("GorillaParticle");
 
         public static GameObject cam = null;
         public static Camera TPC = null;
@@ -3987,7 +4076,7 @@ namespace iiMenu.Menu
         public static float startX = -1f;
 
         public static bool lowercaseMode = false;
-
+        
         public static bool annoyingMode = false; // build with this enabled for a surprise
 
         public static string[] facts = new string[] {

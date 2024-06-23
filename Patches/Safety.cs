@@ -74,6 +74,15 @@ namespace iiMenu.Patches
         }
     }
 
+    [HarmonyPatch(typeof(GorillaGameManager), "ForceStopGame_DisconnectAndDestroy")]
+    public class NoQuitOnBan : MonoBehaviour
+    {
+        private static bool Prefix()
+        {
+            return false;
+        }
+    }
+
     /*[HarmonyPatch(typeof(GorillaNot), "IncrementRPCTracker", new Type[] { typeof(string), typeof(string), typeof(int) })]
     public class NoIncrementRPCTracker : MonoBehaviour
     {
