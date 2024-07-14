@@ -2,6 +2,7 @@
 using Oculus.Platform.Models;
 using Photon.Pun;
 using System;
+using System.ComponentModel.Design;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -26,76 +27,28 @@ namespace iiMenu.Mods
 
         public static void SlowMonsters()
         {
-            if (!PhotonNetwork.IsMasterClient)
+            foreach (MonkeyeAI monkeyeAI in GetMonsters())
             {
-                if (!GetIndex("Disable Auto Anti Ban").enabled)
-                {
-                    Overpowered.FastMaster();
-                }
-            }
-            else
-            {
-                foreach (MonkeyeAI monkeyeAI in GetMonsters())
-                {
-                    if (monkeyeAI.gameObject.GetComponent<PhotonView>().Owner == PhotonNetwork.LocalPlayer)
-                    {
-                        monkeyeAI.speed = 0.02f;
-                    }
-                    else
-                    {
-                        monkeyeAI.gameObject.GetComponent<PhotonView>().RequestOwnership();
-                    }
-                }
+                //GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                monkeyeAI.speed = 0.02f;
             }
         }
 
         public static void FastMonsters()
         {
-            if (!PhotonNetwork.IsMasterClient)
+            foreach (MonkeyeAI monkeyeAI in GetMonsters())
             {
-                if (!GetIndex("Disable Auto Anti Ban").enabled)
-                {
-                    Overpowered.FastMaster();
-                }
-            }
-            else
-            {
-                foreach (MonkeyeAI monkeyeAI in GetMonsters())
-                {
-                    if (monkeyeAI.gameObject.GetComponent<PhotonView>().Owner == PhotonNetwork.LocalPlayer)
-                    {
-                        monkeyeAI.speed = 0.5f;
-                    }
-                    else
-                    {
-                        monkeyeAI.gameObject.GetComponent<PhotonView>().RequestOwnership();
-                    }
-                }
+                //GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                monkeyeAI.speed = 0.5f;
             }
         }
 
         public static void FixMonsters()
         {
-            if (!PhotonNetwork.IsMasterClient)
+            foreach (MonkeyeAI monkeyeAI in GetMonsters())
             {
-                if (!GetIndex("Disable Auto Anti Ban").enabled)
-                {
-                    Overpowered.FastMaster();
-                }
-            }
-            else
-            {
-                foreach (MonkeyeAI monkeyeAI in GetMonsters())
-                {
-                    if (monkeyeAI.gameObject.GetComponent<PhotonView>().Owner == PhotonNetwork.LocalPlayer)
-                    {
-                        monkeyeAI.speed = 0.1f;
-                    }
-                    else
-                    {
-                        monkeyeAI.gameObject.GetComponent<PhotonView>().RequestOwnership();
-                    }
-                }
+                //GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                monkeyeAI.speed = 0.1f;
             }
         }
 
@@ -103,26 +56,10 @@ namespace iiMenu.Mods
         {
             if (rightGrab)
             {
-                if (!PhotonNetwork.IsMasterClient)
+                foreach (MonkeyeAI monkeyeAI in GetMonsters())
                 {
-                    if (!GetIndex("Disable Auto Anti Ban").enabled)
-                    {
-                        Overpowered.FastMaster();
-                    }
-                }
-                else
-                {
-                    foreach (MonkeyeAI monkeyeAI in GetMonsters())
-                    {
-                        if (monkeyeAI.gameObject.GetComponent<PhotonView>().Owner == PhotonNetwork.LocalPlayer)
-                        {
-                            monkeyeAI.gameObject.transform.position = GorillaTagger.Instance.rightHandTransform.position;
-                        }
-                        else
-                        {
-                            monkeyeAI.gameObject.GetComponent<PhotonView>().RequestOwnership();
-                        }
-                    }
+                    //GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                    monkeyeAI.gameObject.transform.position = GorillaTagger.Instance.rightHandTransform.position;
                 }
             }
         }
@@ -137,26 +74,10 @@ namespace iiMenu.Mods
 
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
-                    if (!PhotonNetwork.IsMasterClient)
+                    foreach (MonkeyeAI monkeyeAI in GetMonsters())
                     {
-                        if (!GetIndex("Disable Auto Anti Ban").enabled)
-                        {
-                            Overpowered.FastMaster();
-                        }
-                    }
-                    else
-                    {
-                        foreach (MonkeyeAI monkeyeAI in GetMonsters())
-                        {
-                            if (monkeyeAI.gameObject.GetComponent<PhotonView>().Owner == PhotonNetwork.LocalPlayer)
-                            {
-                                monkeyeAI.gameObject.transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
-                            }
-                            else
-                            {
-                                monkeyeAI.gameObject.GetComponent<PhotonView>().RequestOwnership();
-                            }
-                        }
+                        //GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                        monkeyeAI.gameObject.transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
                     }
                 }
             }
@@ -164,120 +85,56 @@ namespace iiMenu.Mods
 
         public static void SpazMonsters()
         {
-            if (!PhotonNetwork.IsMasterClient)
+            foreach (MonkeyeAI monkeyeAI in GetMonsters())
             {
-                if (!GetIndex("Disable Auto Anti Ban").enabled)
-                {
-                    Overpowered.FastMaster();
-                }
-            }
-            else
-            {
-                foreach (MonkeyeAI monkeyeAI in GetMonsters())
-                {
-                    if (monkeyeAI.gameObject.GetComponent<PhotonView>().Owner == PhotonNetwork.LocalPlayer)
-                    {
-                        monkeyeAI.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
-                    }
-                    else
-                    {
-                        monkeyeAI.gameObject.GetComponent<PhotonView>().RequestOwnership();
-                    }
-                }
+                //GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                monkeyeAI.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
             }
         }
 
         public static void OrbitMonsters()
         {
-            if (!PhotonNetwork.IsMasterClient)
+            MonkeyeAI[] them = GetMonsters();
+            int index = 0;
+            foreach (MonkeyeAI monkeyeAI in GetMonsters())
             {
-                if (!GetIndex("Disable Auto Anti Ban").enabled)
-                {
-                    Overpowered.FastMaster();
-                }
-            }
-            else
-            {
-                MonkeyeAI[] them = GetMonsters();
-                int index = 0;
-                foreach (MonkeyeAI monkeyeAI in them)
-                {
-                    if (monkeyeAI.gameObject.GetComponent<PhotonView>().Owner == PhotonNetwork.LocalPlayer)
-                    {
-                        float offset = (360f / (float)them.Length) * index;
-                        monkeyeAI.transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)) * 2f, 1f, MathF.Sin(offset + ((float)Time.frameCount / 30)) * 2f);
-                        index++;
-                    }
-                    else
-                    {
-                        monkeyeAI.gameObject.GetComponent<PhotonView>().RequestOwnership();
-                    }
-                }
+                //GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                float offset = (360f / (float)them.Length) * index;
+                monkeyeAI.transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)) * 2f, 1f, MathF.Sin(offset + ((float)Time.frameCount / 30)) * 2f);
+                index++;
             }
         }
 
         public static void DestroyMonsters()
         {
-            if (!PhotonNetwork.IsMasterClient)
+            foreach (MonkeyeAI monkeyeAI in GetMonsters())
             {
-                if (!GetIndex("Disable Auto Anti Ban").enabled)
-                {
-                    Overpowered.FastMaster();
-                }
-            }
-            else
-            {
-                foreach (MonkeyeAI monkeyeAI in GetMonsters())
-                {
-                    if (monkeyeAI.gameObject.GetComponent<PhotonView>().Owner == PhotonNetwork.LocalPlayer)
-                    {
-                        monkeyeAI.gameObject.transform.position = new Vector3(99999f, 99999f, 99999f);
-                    }
-                    else
-                    {
-                        monkeyeAI.gameObject.GetComponent<PhotonView>().RequestOwnership();
-                    }
-                }
+                //GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                monkeyeAI.gameObject.transform.position = new Vector3(99999f, 99999f, 99999f);
             }
         }
 
         public static void FloatSelf()
         {
-            if (!PhotonNetwork.IsMasterClient)
+            float monsDist = 0.065f;
+            Vector3 anchor = GorillaTagger.Instance.offlineVRRig.transform.position + new Vector3(0f, -0.375f, 0f);
+            Vector3[] lol = new Vector3[]
             {
-                if (!GetIndex("Disable Auto Anti Ban").enabled)
-                {
-                    Overpowered.FastMaster();
-                }
-            }
-            else
+                anchor + new Vector3(0f, 0f, monsDist),
+                anchor - new Vector3(0f, 0f, monsDist),
+                anchor + new Vector3(monsDist, 0f, 0f),
+                anchor - new Vector3(monsDist, 0f, 0f),
+                /*anchor + GorillaTagger.Instance.offlineVRRig.transform.forward * monsDist,
+                anchor - GorillaTagger.Instance.offlineVRRig.transform.forward * monsDist,
+                anchor + GorillaTagger.Instance.offlineVRRig.transform.right * monsDist,
+                anchor - GorillaTagger.Instance.offlineVRRig.transform.right * monsDist,*/
+            };
+            int i = 0;
+            foreach (MonkeyeAI monkeyeAI in GetMonsters())
             {
-                float monsDist = 0.065f;
-                Vector3 anchor = GorillaTagger.Instance.offlineVRRig.transform.position + new Vector3(0f, -0.375f, 0f);
-                Vector3[] lol = new Vector3[]
-                {
-                    anchor + new Vector3(0f, 0f, monsDist),
-                    anchor - new Vector3(0f, 0f, monsDist),
-                    anchor + new Vector3(monsDist, 0f, 0f),
-                    anchor - new Vector3(monsDist, 0f, 0f),
-                    /*anchor + GorillaTagger.Instance.offlineVRRig.transform.forward * monsDist,
-                    anchor - GorillaTagger.Instance.offlineVRRig.transform.forward * monsDist,
-                    anchor + GorillaTagger.Instance.offlineVRRig.transform.right * monsDist,
-                    anchor - GorillaTagger.Instance.offlineVRRig.transform.right * monsDist,*/
-                };
-                int i = 0;
-                foreach (MonkeyeAI monkeyeAI in GetMonsters())
-                {
-                    if (monkeyeAI.gameObject.GetComponent<PhotonView>().Owner == PhotonNetwork.LocalPlayer)
-                    {
-                        i++;
-                        monkeyeAI.gameObject.transform.position = lol[i];
-                    }
-                    else
-                    {
-                        monkeyeAI.gameObject.GetComponent<PhotonView>().RequestOwnership();
-                    }
-                }
+                i++;
+                //GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                monkeyeAI.gameObject.transform.position = lol[i];
             }
         }
 
@@ -291,41 +148,25 @@ namespace iiMenu.Mods
 
                 if (isCopying && whoCopy != null)
                 {
-                    if (!PhotonNetwork.IsMasterClient)
+                    float monsDist = 0.065f;
+                    Vector3 anchor = whoCopy.transform.position + new Vector3(0f, -0.375f, 0f);
+                    Vector3[] lol = new Vector3[] // Editors note, if this doesn't work try doing the other values
                     {
-                        if (!GetIndex("Disable Auto Anti Ban").enabled)
-                        {
-                            Overpowered.FastMaster();
-                        }
-                    }
-                    else
+                        anchor + new Vector3(0f, 0f, monsDist),
+                        anchor - new Vector3(0f, 0f, monsDist),
+                        anchor + new Vector3(monsDist, 0f, 0f),
+                        anchor - new Vector3(monsDist, 0f, 0f),
+                        /*anchor + whoCopy.transform.forward * monsDist,
+                        anchor - whoCopy.transform.forward * monsDist,
+                        anchor + whoCopy.transform.right * monsDist,
+                        anchor - whoCopy.transform.right * monsDist,*/
+                    };
+                    int i = 0;
+                    foreach (MonkeyeAI monkeyeAI in GetMonsters())
                     {
-                        float monsDist = 0.065f;
-                        Vector3 anchor = whoCopy.transform.position + new Vector3(0f, -0.375f, 0f);
-                        Vector3[] lol = new Vector3[] // Editors note, if this doesn't work try doing the other values
-                        {
-                            anchor + new Vector3(0f, 0f, monsDist),
-                            anchor - new Vector3(0f, 0f, monsDist),
-                            anchor + new Vector3(monsDist, 0f, 0f),
-                            anchor - new Vector3(monsDist, 0f, 0f),
-                            /*anchor + whoCopy.transform.forward * monsDist,
-                            anchor - whoCopy.transform.forward * monsDist,
-                            anchor + whoCopy.transform.right * monsDist,
-                            anchor - whoCopy.transform.right * monsDist,*/
-                        };
-                        int i = 0;
-                        foreach (MonkeyeAI monkeyeAI in GetMonsters())
-                        {
-                            if (monkeyeAI.gameObject.GetComponent<PhotonView>().Owner == PhotonNetwork.LocalPlayer)
-                            {
-                                i++;
-                                monkeyeAI.gameObject.transform.position = lol[i];
-                            }
-                            else
-                            {
-                                monkeyeAI.gameObject.GetComponent<PhotonView>().RequestOwnership();
-                            }
-                        }
+                        i++;
+                        //GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                        monkeyeAI.gameObject.transform.position = lol[i];
                     }
                 }
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
@@ -349,37 +190,21 @@ namespace iiMenu.Mods
 
         public static void FreezeSelf()
         {
-            if (!PhotonNetwork.IsMasterClient)
+            float monsDist = 0.09f;
+            Vector3 anchor = GorillaTagger.Instance.offlineVRRig.transform.position;
+            Vector3[] lol = new Vector3[]
             {
-                if (!GetIndex("Disable Auto Anti Ban").enabled)
-                {
-                    Overpowered.FastMaster();
-                }
-            }
-            else
+                anchor + GorillaTagger.Instance.offlineVRRig.transform.forward * monsDist,
+                anchor - GorillaTagger.Instance.offlineVRRig.transform.forward * monsDist,
+                anchor + GorillaTagger.Instance.offlineVRRig.transform.right * monsDist,
+                anchor - GorillaTagger.Instance.offlineVRRig.transform.right * monsDist,
+            };
+            int i = 0;
+            foreach (MonkeyeAI monkeyeAI in GetMonsters())
             {
-                float monsDist = 0.09f;
-                Vector3 anchor = GorillaTagger.Instance.offlineVRRig.transform.position;
-                Vector3[] lol = new Vector3[]
-                {
-                    anchor + GorillaTagger.Instance.offlineVRRig.transform.forward * monsDist,
-                    anchor - GorillaTagger.Instance.offlineVRRig.transform.forward * monsDist,
-                    anchor + GorillaTagger.Instance.offlineVRRig.transform.right * monsDist,
-                    anchor - GorillaTagger.Instance.offlineVRRig.transform.right * monsDist,
-                };
-                int i = 0;
-                foreach (MonkeyeAI monkeyeAI in GetMonsters())
-                {
-                    if (monkeyeAI.gameObject.GetComponent<PhotonView>().Owner == PhotonNetwork.LocalPlayer)
-                    {
-                        i++;
-                        monkeyeAI.gameObject.transform.position = lol[i];
-                    }
-                    else
-                    {
-                        monkeyeAI.gameObject.GetComponent<PhotonView>().RequestOwnership();
-                    }
-                }
+                i++;
+                //GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                monkeyeAI.gameObject.transform.position = lol[i];
             }
         }
 
@@ -393,37 +218,21 @@ namespace iiMenu.Mods
 
                 if (isCopying && whoCopy != null)
                 {
-                    if (!PhotonNetwork.IsMasterClient)
+                    float monsDist = 0.09f;
+                    Vector3 anchor = whoCopy.transform.position;
+                    Vector3[] lol = new Vector3[]
                     {
-                        if (!GetIndex("Disable Auto Anti Ban").enabled)
-                        {
-                            Overpowered.FastMaster();
-                        }
-                    }
-                    else
+                        anchor + GorillaTagger.Instance.offlineVRRig.transform.forward * monsDist,
+                        anchor - GorillaTagger.Instance.offlineVRRig.transform.forward * monsDist,
+                        anchor + GorillaTagger.Instance.offlineVRRig.transform.right * monsDist,
+                        anchor - GorillaTagger.Instance.offlineVRRig.transform.right * monsDist,
+                    };
+                    int i = 0;
+                    foreach (MonkeyeAI monkeyeAI in GetMonsters())
                     {
-                        float monsDist = 0.09f;
-                        Vector3 anchor = whoCopy.transform.position;
-                        Vector3[] lol = new Vector3[]
-                        {
-                            anchor + GorillaTagger.Instance.offlineVRRig.transform.forward * monsDist,
-                            anchor - GorillaTagger.Instance.offlineVRRig.transform.forward * monsDist,
-                            anchor + GorillaTagger.Instance.offlineVRRig.transform.right * monsDist,
-                            anchor - GorillaTagger.Instance.offlineVRRig.transform.right * monsDist,
-                        };
-                        int i = 0;
-                        foreach (MonkeyeAI monkeyeAI in GetMonsters())
-                        {
-                            if (monkeyeAI.gameObject.GetComponent<PhotonView>().Owner == PhotonNetwork.LocalPlayer)
-                            {
-                                i++;
-                                monkeyeAI.gameObject.transform.position = lol[i];
-                            }
-                            else
-                            {
-                                monkeyeAI.gameObject.GetComponent<PhotonView>().RequestOwnership();
-                            }
-                        }
+                        i++;
+                        //GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                        monkeyeAI.gameObject.transform.position = lol[i];
                     }
                 }
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
@@ -443,6 +252,30 @@ namespace iiMenu.Mods
                     isCopying = false;
                 }
             }
+        }
+
+        private static bool lasttriggerthing = false;
+        public static void FreezeAll()
+        {
+            if (rightTrigger > 0.5f)
+            {
+                foreach (MonkeyeAI monkeyeAI in GetMonsters())
+                {
+                    //GetOwnership(monkeyeAI.gameObject.GetComponent<PhotonView>());
+                    monkeyeAI.gameObject.transform.position = new Vector3(1e11f, 1e11f, 1e11f); // e is scientific notation to the skids
+                }
+            } else
+            {
+                if (lasttriggerthing)
+                {
+                    foreach (MonkeyeAI monkeyeAI in GetMonsters())
+                    {
+                        //GetOwnership(monkeyeAI.gameObject.GetComponent<PhotonView>());
+                        monkeyeAI.gameObject.transform.position = Vector3.zero;
+                    }
+                }
+            }
+            lasttriggerthing = rightTrigger > 0.5;
         }
     }
 }

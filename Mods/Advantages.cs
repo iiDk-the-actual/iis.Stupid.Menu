@@ -52,10 +52,8 @@ namespace iiMenu.Mods
         {
             if (!PhotonNetwork.IsMasterClient)
             {
-                if (!GetIndex("Disable Auto Anti Ban").enabled)
-                {
-                    Overpowered.FastMaster();
-                }
+                Important.Reconnect();
+                NoTagOnJoin();
             }
             else
             {
@@ -64,6 +62,21 @@ namespace iiMenu.Mods
                 {
                     tagman.currentInfected.Remove(PhotonNetwork.LocalPlayer);
                 }
+            }
+            GorillaLocomotion.Player.Instance.disableMovement = false;
+        }
+
+        public static void AntiTag()
+        {
+            if (PhotonNetwork.InRoom)
+            {
+                if (GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected"))
+                {
+                    UntagSelf();
+                }
+            } else
+            {
+                NoTagOnJoin();
             }
         }
 
@@ -230,29 +243,6 @@ namespace iiMenu.Mods
         public static void NahTagLag()
         {
             GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>().tagCoolDown = 5f;
-        }
-
-        public static void AntiTag()
-        {
-            if (!PhotonNetwork.IsMasterClient)
-            {
-                if (!GetIndex("Disable Auto Anti Ban").enabled)
-                {
-                    Overpowered.FastMaster();
-                }
-            }
-            else
-            {
-                if (GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected") && PhotonNetwork.LocalPlayer.IsMasterClient)
-                {
-                    GorillaTagManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
-                    if (tagman.currentInfected.Contains(PhotonNetwork.LocalPlayer))
-                    {
-                        tagman.currentInfected.Remove(PhotonNetwork.LocalPlayer);
-                        GorillaLocomotion.Player.Instance.disableMovement = false;
-                    }
-                }
-            }
         }
 
         public static void ChangeTagAuraRange()
@@ -630,18 +620,20 @@ namespace iiMenu.Mods
 
         public static void NoTagOnJoin()
         {
-            PlayerPrefs.SetString("tutorial", "true");
+            PlayerPrefs.SetString("tutorial", "nope");
+            PlayerPrefs.SetString("didTutorial", "nope");
             Hashtable h = new Hashtable();
-            h.Add("didTutorial", true);
+            h.Add("didTutorial", false);
             PhotonNetwork.LocalPlayer.SetCustomProperties(h, null, null);
             PlayerPrefs.Save();
         }
 
         public static void TagOnJoin()
         {
-            PlayerPrefs.SetString("tutorial", "false");
+            PlayerPrefs.SetString("tutorial", "done");
+            PlayerPrefs.SetString("didTutorial", "done");
             Hashtable h = new Hashtable();
-            h.Add("didTutorial", false);
+            h.Add("didTutorial", true);
             PhotonNetwork.LocalPlayer.SetCustomProperties(h, null, null);
             PlayerPrefs.Save();
         }

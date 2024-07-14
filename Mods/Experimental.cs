@@ -185,6 +185,55 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void DelayBanGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (isCopying && whoCopy != null)
+                {
+                    PhotonView lmfao = RigManager.GetPhotonViewFromVRRig(whoCopy);
+                    GetOwnership(lmfao);
+                    if (lmfao.AmOwner)
+                    {
+                        lmfao.RPC("UpdateCosmeticsWithTryon", RpcTarget.All, CosmeticsController.instance.currentWornSet.ToDisplayNameArray(), CosmeticsController.instance.tryOnSet.ToDisplayNameArray());
+                    }
+                    RPCProtection();
+                }
+                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        isCopying = true;
+                        whoCopy = possibly;
+                    }
+                }
+            }
+            else
+            {
+                if (isCopying)
+                {
+                    isCopying = false;
+                    GorillaTagger.Instance.offlineVRRig.enabled = true;
+                }
+            }
+        }
+
+        public static void DelayBanAll()
+        {
+            if (rightTrigger > 0.5f)
+            {
+                PhotonView lmfao = RigManager.GetPhotonViewFromVRRig(RigManager.GetRandomVRRig(false));
+                GetOwnership(lmfao);
+                lmfao.RPC("UpdateCosmeticsWithTryon", RpcTarget.All, CosmeticsController.instance.currentWornSet.ToDisplayNameArray(), CosmeticsController.instance.tryOnSet.ToDisplayNameArray());
+                RPCProtection();
+            }
+        }
+
         public static void AntiRPCBan()
         {
             GorillaGameManager.instance.OnPlayerLeftRoom(PhotonNetwork.LocalPlayer);

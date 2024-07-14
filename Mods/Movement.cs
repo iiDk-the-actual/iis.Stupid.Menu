@@ -1,6 +1,9 @@
 ﻿using BepInEx;
 using ExitGames.Client.Photon;
 using GorillaLocomotion.Climbing;
+using HarmonyLib;
+using iiMenu.Classes;
+using Oculus.Interaction;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -148,7 +151,11 @@ namespace iiMenu.Mods
                     {
                         foreach (MeshCollider v in Resources.FindObjectsOfTypeAll<MeshCollider>())
                         {
-                            v.enabled = false;
+                            if (v.enabled)
+                            {
+                                v.enabled = false;
+                                NoclipMeshColliders.Add(v);
+                            }
                         }
                     }
                     if (platformMode == 5)
@@ -191,6 +198,45 @@ namespace iiMenu.Mods
                         leftplat.AddComponent<GorillaSurfaceOverride>().overrideIndex = 252;
                         leftplat.GetComponent<Renderer>().enabled = false;
                     }
+                    if (GetIndex("Platform Outlines").enabled)
+                    {
+                        GameObject gameObject = null;
+                        if (platformShape == 2)
+                        {
+                            gameObject = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                        }
+                        if (platformShape == 1)
+                        {
+                            gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        }
+                        if (platformShape == 0)
+                        {
+                            gameObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                        }
+                        if (gameObject == null)
+                        {
+                            gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        }
+                        UnityEngine.Object.Destroy(gameObject.GetComponent<Rigidbody>());
+                        UnityEngine.Object.Destroy(gameObject.GetComponent<BoxCollider>());
+                        gameObject.transform.parent = leftplat.transform;
+                        gameObject.transform.localPosition = Vector3.zero;
+                        gameObject.transform.localRotation = Quaternion.identity;
+                        gameObject.transform.localScale = new Vector3(0.95f, 1.05f, 1.05f);
+                        GradientColorKey[] array = new GradientColorKey[3];
+                        array[0].color = buttonDefaultA;
+                        array[0].time = 0f;
+                        array[1].color = buttonDefaultB;
+                        array[1].time = 0.5f;
+                        array[2].color = buttonDefaultA;
+                        array[2].time = 1f;
+                        ColorChanger colorChanger = gameObject.AddComponent<ColorChanger>();
+                        colorChanger.colors = new Gradient
+                        {
+                            colorKeys = array
+                        };
+                        colorChanger.Start();
+                    }
                 }
                 else
                 {
@@ -213,11 +259,20 @@ namespace iiMenu.Mods
             {
                 if (leftplat != null)
                 {
-                    Destroy(leftplat);
+                    if (GetIndex("Platform Gravity").enabled)
+                    {
+                        leftplat.AddComponent(typeof(Rigidbody));
+                        UnityEngine.Object.Destroy(leftplat.GetComponent<Collider>());
+                        UnityEngine.Object.Destroy(leftplat, 2f);
+                    }
+                    else
+                    {
+                        UnityEngine.Object.Destroy(leftplat);
+                    }
                     leftplat = null;
                     if (platformMode == 4 && rightplat == null)
                     {
-                        foreach (MeshCollider v in Resources.FindObjectsOfTypeAll<MeshCollider>())
+                        foreach (MeshCollider v in NoclipMeshColliders)
                         {
                             v.enabled = true;
                         }
@@ -291,7 +346,11 @@ namespace iiMenu.Mods
                     {
                         foreach (MeshCollider v in Resources.FindObjectsOfTypeAll<MeshCollider>())
                         {
-                            v.enabled = false;
+                            if (v.enabled)
+                            {
+                                v.enabled = false;
+                                NoclipMeshColliders.Add(v);
+                            }
                         }
                     }
                     if (platformMode == 5)
@@ -334,6 +393,45 @@ namespace iiMenu.Mods
                         rightplat.AddComponent<GorillaSurfaceOverride>().overrideIndex = 252;
                         rightplat.GetComponent<Renderer>().enabled = false;
                     }
+                    if (GetIndex("Platform Outlines").enabled)
+                    {
+                        GameObject gameObject = null;
+                        if (platformShape == 2)
+                        {
+                            gameObject = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                        }
+                        if (platformShape == 1)
+                        {
+                            gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        }
+                        if (platformShape == 0)
+                        {
+                            gameObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                        }
+                        if (gameObject == null)
+                        {
+                            gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        }
+                        UnityEngine.Object.Destroy(gameObject.GetComponent<Rigidbody>());
+                        UnityEngine.Object.Destroy(gameObject.GetComponent<BoxCollider>());
+                        gameObject.transform.parent = rightplat.transform;
+                        gameObject.transform.localPosition = Vector3.zero;
+                        gameObject.transform.localRotation = Quaternion.identity;
+                        gameObject.transform.localScale = new Vector3(0.95f, 1.05f, 1.05f);
+                        GradientColorKey[] array = new GradientColorKey[3];
+                        array[0].color = buttonDefaultA;
+                        array[0].time = 0f;
+                        array[1].color = buttonDefaultB;
+                        array[1].time = 0.5f;
+                        array[2].color = buttonDefaultA;
+                        array[2].time = 1f;
+                        ColorChanger colorChanger = gameObject.AddComponent<ColorChanger>();
+                        colorChanger.colors = new Gradient
+                        {
+                            colorKeys = array
+                        };
+                        colorChanger.Start();
+                    }
                 }
                 else
                 {
@@ -356,11 +454,20 @@ namespace iiMenu.Mods
             {
                 if (rightplat != null)
                 {
-                    Destroy(rightplat);
+                    if (GetIndex("Platform Gravity").enabled)
+                    {
+                        rightplat.AddComponent(typeof(Rigidbody));
+                        UnityEngine.Object.Destroy(rightplat.GetComponent<Collider>());
+                        UnityEngine.Object.Destroy(rightplat, 2f);
+                    }
+                    else
+                    {
+                        UnityEngine.Object.Destroy(rightplat);
+                    }
                     rightplat = null;
                     if (platformMode == 4 && leftplat == null)
                     {
-                        foreach (MeshCollider v in Resources.FindObjectsOfTypeAll<MeshCollider>())
+                        foreach (MeshCollider v in NoclipMeshColliders)
                         {
                             v.enabled = true;
                         }
@@ -521,7 +628,11 @@ namespace iiMenu.Mods
                     noclip = true;
                     foreach (MeshCollider v in Resources.FindObjectsOfTypeAll<MeshCollider>())
                     {
-                        v.enabled = false;
+                        if (v.enabled)
+                        {
+                            v.enabled = false;
+                            NoclipMeshColliders.Add(v);
+                        }
                     }
                 }
             } else
@@ -529,7 +640,7 @@ namespace iiMenu.Mods
                 if (noclip == true)
                 {
                     noclip = false;
-                    foreach (MeshCollider v in Resources.FindObjectsOfTypeAll<MeshCollider>())
+                    foreach (MeshCollider v in NoclipMeshColliders)
                     {
                         v.enabled = true;
                     }
@@ -1372,7 +1483,11 @@ namespace iiMenu.Mods
                     noclip = true;
                     foreach (MeshCollider v in Resources.FindObjectsOfTypeAll<MeshCollider>())
                     {
-                        v.enabled = false;
+                        if (v.enabled)
+                        {
+                            v.enabled = false;
+                            NoclipMeshColliders.Add(v);
+                        }
                     }
                 }
             }
@@ -1381,7 +1496,7 @@ namespace iiMenu.Mods
                 if (noclip == true)
                 {
                     noclip = false;
-                    foreach (MeshCollider v in Resources.FindObjectsOfTypeAll<MeshCollider>())
+                    foreach (MeshCollider v in NoclipMeshColliders)
                     {
                         v.enabled = true;
                     }
@@ -1971,8 +2086,14 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void SizeChanger()
+        public static SizeChanger newSC = null;
+        private static Traverse lol = null;
+        private static Traverse maxs = null;
+        private static Traverse mins = null;
+        public static bool schanging = false;
+        public static void SizeChangerr()
         {
+            schanging = true;
             if (rightPrimary)
             {
                 sizeScale = 1f;
@@ -1990,12 +2111,37 @@ namespace iiMenu.Mods
                 sizeScale = 0.05f;
             }
             GorillaLocomotion.Player.Instance.scale = sizeScale;
+            GorillaTagger.Instance.offlineVRRig.targetScale = sizeScale;
+            GorillaTagger.Instance.offlineVRRig.scaleFactor = sizeScale;
+            mins.SetValue(sizeScale);
+            maxs.SetValue(sizeScale);
         }
 
         public static void EnableSizeChanger()
         {
+            schanging = true;
             sizeScale = 1f;
-            GorillaLocomotion.Player.Instance.scale = 1f;
+            GorillaLocomotion.Player.Instance.scale = sizeScale;
+            GorillaTagger.Instance.offlineVRRig.targetScale = sizeScale;
+            GorillaTagger.Instance.offlineVRRig.scaleFactor = sizeScale;
+            newSC = new GameObject("WHY DOES THIS WORK").AddComponent<SizeChanger>();
+            lol = Traverse.Create(newSC);
+            mins = lol.Field("minScale");
+            maxs = lol.Field("maxScale");
+            lol.Field("myType").SetValue(SizeChanger.ChangerType.Static);
+            lol.Field("staticEasing").SetValue(0.5f);
+        }
+
+        public static void DisableSizeChanger()
+        {
+            schanging = false;
+            sizeScale = 1f;
+            GorillaLocomotion.Player.Instance.scale = sizeScale;
+            GorillaTagger.Instance.offlineVRRig.targetScale = sizeScale;
+            GorillaTagger.Instance.offlineVRRig.scaleFactor = sizeScale;
+            mins.SetValue(sizeScale);
+            maxs.SetValue(sizeScale);
+            UnityEngine.Object.Destroy(newSC);
         }
 
         public static void EnableSlipperyHands()
@@ -2415,7 +2561,7 @@ namespace iiMenu.Mods
 
                 if (isCopying && whoCopy != null)
                 {
-                    GorillaTagger.Instance.rigidbody.transform.position = whoCopy.transform.position + new Vector3(0f, 0.5f, 0f);
+                    TeleportPlayer(whoCopy.transform.position + new Vector3(0f, 0.5f, 0f));
                     GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity = Vector3.zero;
                 }
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)

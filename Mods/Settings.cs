@@ -207,6 +207,12 @@ namespace iiMenu.Mods
             pageNumber = 0;
         }
 
+        public static void EnableSafetySettings()
+        {
+            buttonsType = 28;
+            pageNumber = 0;
+        }
+
         public static void EnableMovementSettings()
         {
             buttonsType = 4;
@@ -294,6 +300,18 @@ namespace iiMenu.Mods
         public static void EnableExperimental()
         {
             buttonsType = 18;
+            pageNumber = 0;
+        }
+
+        public static void EnableRisky()
+        {
+            buttonsType = 26;
+            pageNumber = 0;
+        }
+
+        public static void EnableBuggy()
+        {
+            buttonsType = 27;
             pageNumber = 0;
         }
 
@@ -488,7 +506,7 @@ namespace iiMenu.Mods
         public static void ChangeMenuTheme()
         {
             themeType++;
-            if (themeType > 47)
+            if (themeType > 49)
             {
                 themeType = 1;
             }
@@ -1013,6 +1031,28 @@ namespace iiMenu.Mods
                     textColor = Color.white;
                     textClicked = Color.white;
                     break;
+                case 48: // Discord Blurple
+                    bgColorA = new Color32(111, 143, 255, 255);
+                    bgColorB = new Color32(163, 184, 255, 255);
+                    buttonDefaultA = new Color32(96, 125, 219, 255);
+                    buttonDefaultB = new Color32(96, 125, 219, 255);
+                    buttonClickedA = new Color32(147, 167, 226, 255);
+                    buttonClickedB = new Color32(147, 167, 226, 255);
+                    titleColor = new Color32(33, 33, 101, 255);
+                    textColor = new Color32(33, 33, 101, 255);
+                    textClicked = new Color32(33, 33, 101, 255);
+                    break;
+                case 49: // VS Zero
+                    bgColorA = new Color32(19, 22, 27, 255);
+                    bgColorB = new Color32(19, 22, 27, 255);
+                    buttonDefaultA = new Color32(19, 22, 27, 255);
+                    buttonDefaultB = new Color32(19, 22, 27, 255);
+                    buttonClickedA = new Color32(16, 18, 22, 255);
+                    buttonClickedB = new Color32(16, 18, 22, 255);
+                    titleColor = new Color32(82, 96, 122, 255);
+                    textColor = new Color32(82, 96, 122, 255);
+                    textClicked = new Color32(82, 96, 122, 255);
+                    break;
             }
         }
 
@@ -1454,6 +1494,16 @@ namespace iiMenu.Mods
             doCustomName = false;
         }
 
+        public static void NoGlobalSearch()
+        {
+            nonGlobalSearch = true;
+        }
+
+        public static void PleaseGlobalSearch()
+        {
+            nonGlobalSearch = false;
+        }
+
         public static void DisableFPSCounter()
         {
             disableFpsCounter = true;
@@ -1498,7 +1548,7 @@ namespace iiMenu.Mods
                 }
             }
 
-            string ihateyouguys = platformMode+"\n"+platformShape+"\n"+flySpeedCycle+"\n"+longarmCycle+"\n"+speedboostCycle+"\n"+projmode+"\n"+trailmode+"\n"+shootCycle+"\n"+pointerIndex+"\n"+tagAuraIndex+"\n"+notificationDecayTime+"\n"+fontStyleType+"\n"+arrowType+"\n"+pcbg+"\n"+internetTime+"\n"+hotkeyButton+"\n"+buttonClickIndex+"\n"+buttonClickVolume;
+            string ihateyouguys = platformMode+"\n"+platformShape+"\n"+flySpeedCycle+"\n"+longarmCycle+"\n"+speedboostCycle+"\n"+projmode+"\n"+trailmode+"\n"+shootCycle+"\n"+pointerIndex+"\n"+tagAuraIndex+"\n"+notificationDecayTime+"\n"+fontStyleType+"\n"+arrowType+"\n"+pcbg+"\n"+internetTime+"\n"+hotkeyButton+"\n"+buttonClickIndex+"\n"+buttonClickVolume+"\n"+Safety.antireportrangeindex;
 
             if (!Directory.Exists("iisStupidMenu"))
             {
@@ -1582,6 +1632,8 @@ namespace iiMenu.Mods
                     Settings.ChangeButtonSound();
                     buttonClickVolume = int.Parse(data[17]) - 1;
                     Settings.ChangeButtonVolume();
+                    Safety.antireportrangeindex = int.Parse(data[18]) - 1;
+                    Safety.ChangeAntiReportRange();
                 }
                 catch { }
 
@@ -1602,6 +1654,12 @@ namespace iiMenu.Mods
             }
             hasLoadedPreferences = true;
         }
+
+        public static void NoAutoSave()
+        {
+            autoSaveDelay = Time.time + 1f;
+        }
+
 
         public static void Panic()
         {
