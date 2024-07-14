@@ -14,19 +14,29 @@ namespace iiMenu.Mods
     {
         public static void Disconnect()
         {
-            if ((GetIndex("Primary Room Mods").enabled && rightPrimary) || (GetIndex("Secondary Room Mods").enabled && rightSecondary) || (GetIndex("Joystick Room Mods").enabled && SteamVR_Actions.gorillaTag_RightJoystickClick.state) || !(GetIndex("Primary Room Mods").enabled || GetIndex("Secondary Room Mods").enabled || GetIndex("Joystick Room Mods").enabled))
-            {
-                PhotonNetwork.Disconnect();
-            }
+            PhotonNetwork.Disconnect(); // bruh
         }
 
         public static void Reconnect()
         {
+            rejRoom = PhotonNetwork.CurrentRoom.Name;
+            //rejDebounce = Time.time + (float)internetTime;
+            PhotonNetwork.Disconnect();
+        }
+
+        public static void DisconnectR()
+        {
             if ((GetIndex("Primary Room Mods").enabled && rightPrimary) || (GetIndex("Secondary Room Mods").enabled && rightSecondary) || (GetIndex("Joystick Room Mods").enabled && SteamVR_Actions.gorillaTag_RightJoystickClick.state) || !(GetIndex("Primary Room Mods").enabled || GetIndex("Secondary Room Mods").enabled || GetIndex("Joystick Room Mods").enabled))
             {
-                rejRoom = PhotonNetwork.CurrentRoom.Name;
-                //rejDebounce = Time.time + (float)internetTime;
-                PhotonNetwork.Disconnect();
+                Disconnect();
+            }
+        }
+
+        public static void ReconnectR()
+        {
+            if ((GetIndex("Primary Room Mods").enabled && rightPrimary) || (GetIndex("Secondary Room Mods").enabled && rightSecondary) || (GetIndex("Joystick Room Mods").enabled && SteamVR_Actions.gorillaTag_RightJoystickClick.state) || !(GetIndex("Primary Room Mods").enabled || GetIndex("Secondary Room Mods").enabled || GetIndex("Joystick Room Mods").enabled))
+            {
+                Reconnect();
             }
         }
 
@@ -85,18 +95,22 @@ namespace iiMenu.Mods
 
         public static void JoinRandom()
         {
+            if (PhotonNetwork.InRoom)
+            {
+                PhotonNetwork.Disconnect();
+                isJoiningRandom = true;
+            }
+            else
+            {
+                ActJoinRandom();
+            }
+        }
+
+        public static void JoinRandomR()
+        {
             if ((GetIndex("Primary Room Mods").enabled && rightPrimary) || (GetIndex("Secondary Room Mods").enabled && rightSecondary) || (GetIndex("Joystick Room Mods").enabled && SteamVR_Actions.gorillaTag_RightJoystickClick.state) || !(GetIndex("Primary Room Mods").enabled || GetIndex("Secondary Room Mods").enabled || GetIndex("Joystick Room Mods").enabled))
             {
-                if (PhotonNetwork.InRoom)
-                {
-                    PhotonNetwork.Disconnect();
-                    isJoiningRandom = true;
-                    //jrDebounce = Time.time + (float)internetTime;
-                }
-                else
-                {
-                    ActJoinRandom();
-                }
+                JoinRandom();
             }
         }
 

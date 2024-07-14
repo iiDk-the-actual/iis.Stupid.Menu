@@ -39,7 +39,14 @@ namespace iiMenu.Classes
                 }
                 else
                 {
-                    gameObjectRenderer.material = GorillaTagger.Instance.offlineVRRig.mainSkin.material;
+                    if (!GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected"))
+                    {
+                        gameObjectRenderer.material.color = GorillaTagger.Instance.offlineVRRig.mainSkin.material.color;
+                    } else
+                    {
+                        gameObjectRenderer.material.color = new Color32(255, 111, 0, 255);
+                    }
+                    
                 }
             }
         }

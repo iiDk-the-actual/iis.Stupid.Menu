@@ -1,6 +1,9 @@
-﻿using GorillaNetworking;
+﻿using ExitGames.Client.Photon;
+using GorillaNetworking;
+using iiMenu.Classes;
 using iiMenu.Notifications;
 using Photon.Pun;
+using Photon.Realtime;
 using System.IO;
 using UnityEngine;
 using Valve.VR;
@@ -79,6 +82,33 @@ namespace iiMenu.Mods
             AntiSoundToggle = false;
         }
 
+        public static int antireportrangeindex = 0;
+        private static float threshold = 0.35f;
+
+        public static void ChangeAntiReportRange()
+        {
+            string[] names = new string[]
+            {
+                "Default", // The report button
+                "Large", // The report button within the range of 5 people
+                "Massive" // The entire fucking board
+            };
+            float[] distances = new float[]
+            {
+                0.35f,
+                0.7f,
+                1.5f
+            };
+            antireportrangeindex++;
+            if (antireportrangeindex > names.Length - 1)
+            {
+                antireportrangeindex = 0;
+            }
+
+            threshold = distances[antireportrangeindex];
+            GetIndex("carrg").overlapText = "Change Anti Report Distance <color=grey>[</color><color=green>" + names[antireportrangeindex] + "</color><color=grey>]</color>";
+        }
+
         public static void AntiReportDisconnect()
         {
             try
@@ -95,13 +125,11 @@ namespace iiMenu.Mods
                                 float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
                                 float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
 
-                                float threshold = 0.35f;
-
                                 if (D1 < threshold || D2 < threshold)
                                 {
                                     PhotonNetwork.Disconnect();
                                     RPCProtection();
-                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>Someone attempted to report you, you have been disconnected.</color>");
+                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> Someone attempted to report you, you have been disconnected.");
                                 }
                             }
                         }
@@ -127,15 +155,13 @@ namespace iiMenu.Mods
                                 float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
                                 float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
 
-                                float threshold = 0.35f;
-
                                 if (D1 < threshold || D2 < threshold)
                                 {
                                     rejRoom = PhotonNetwork.CurrentRoom.Name;
                                     // rejDebounce = Time.time + 2f;
                                     PhotonNetwork.Disconnect();
                                     RPCProtection();
-                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>" + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected and will be reconnected shortly.</color>");
+                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected and will be reconnected shortly.");
                                 }
                             }
                         }
@@ -161,15 +187,13 @@ namespace iiMenu.Mods
                                 float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
                                 float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
 
-                                float threshold = 0.35f;
-
                                 if (D1 < threshold || D2 < threshold)
                                 {
                                     PhotonNetwork.Disconnect();
                                     RPCProtection();
                                     isJoiningRandom = true;
                                     //jrDebounce = Time.time + (float)internetTime;
-                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>" + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected and will be connected to a random lobby shortly.</color>");
+                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected and will be connected to a random lobby shortly.");
                                 }
                             }
                         }
@@ -197,17 +221,31 @@ namespace iiMenu.Mods
                                 float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
                                 float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
 
-                                float threshold = 0.35f;
-
                                 if ((D1 < threshold || D2 < threshold) && Time.time > kgDebounce)
                                 {
                                     hasFoundAnnoyance = true;
-                                    Overpowered.StepCrashMethod(GetPlayerFromVRRig(vrrig));
+                                    if (!riskyModsEnabled)
+                                    {
+                                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> This mod has been disabled due to security.");
+                                    }
+                                    else
+                                    {
+                                        int num = RigManager.GetPhotonViewFromVRRig(vrrig).ViewID;
+                                        Hashtable ServerCleanDestroyEvent = new Hashtable();
+                                        RaiseEventOptions ServerCleanOptions = new RaiseEventOptions
+                                        {
+                                            CachingOption = EventCaching.RemoveFromRoomCache
+                                        };
+                                        ServerCleanDestroyEvent[0] = num;
+                                        ServerCleanOptions.CachingOption = EventCaching.AddToRoomCache;
+                                        PhotonNetwork.NetworkingClient.OpRaiseEvent(204, ServerCleanDestroyEvent, ServerCleanOptions, SendOptions.SendUnreliable);
+                                        RPCProtection();
+                                    }
 
                                     vrrig.leftHandTransform.position = Vector3.zero;
                                     vrrig.rightHandTransform.position = Vector3.zero;
 
-                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>" + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they are being lagged.</color>");
+                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they are being lagged.");
                                 }
                             }
                         }
@@ -239,14 +277,28 @@ namespace iiMenu.Mods
                                 float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
                                 float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
 
-                                float threshold = 0.35f;
-
                                 if (D1 < threshold || D2 < threshold)
                                 {
                                     hasFoundAnnoyance = true;
-                                    Overpowered.StepCrashMethod(GetPlayerFromVRRig(vrrig));
+                                    if (!riskyModsEnabled)
+                                    {
+                                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> This mod has been disabled due to security.");
+                                    }
+                                    else
+                                    {
+                                        int num = RigManager.GetPhotonViewFromVRRig(vrrig).ViewID;
+                                        Hashtable ServerCleanDestroyEvent = new Hashtable();
+                                        RaiseEventOptions ServerCleanOptions = new RaiseEventOptions
+                                        {
+                                            CachingOption = EventCaching.RemoveFromRoomCache
+                                        };
+                                        ServerCleanDestroyEvent[0] = num;
+                                        ServerCleanOptions.CachingOption = EventCaching.AddToRoomCache;
+                                        PhotonNetwork.NetworkingClient.OpRaiseEvent(204, ServerCleanDestroyEvent, ServerCleanOptions, SendOptions.SendUnreliable);
+                                        RPCProtection();
+                                    }
 
-                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>" + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they are being crashed.</color>");
+                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they are being crashed.");
                                 }
                             }
                         }
@@ -319,7 +371,7 @@ namespace iiMenu.Mods
                     }
                     catch { }
                     PhotonNetwork.Disconnect();
-                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>There was a moderator in your lobby, you have been disconnected. Their Player ID and Room Code have been saved to a file.</color>");
+                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-MODERATOR</color><color=grey>]</color> There was a moderator in your lobby, you have been disconnected. Their Player ID and Room Code have been saved to a file.");
                 }
             }
         }
@@ -332,6 +384,26 @@ namespace iiMenu.Mods
         public static void DisableACReportSelf()
         {
             AntiCheatSelf = false;
+        }
+
+        public static void AntiOculusReportOn()
+        {
+            AntiOculusReport = true;
+        }
+
+        public static void AntiOculusReportOff()
+        {
+            AntiOculusReport = false;
+        }
+
+        public static void AntiACReportOn()
+        {
+            AntiACReport = true;
+        }
+
+        public static void AntiACReportOff()
+        {
+            AntiACReport = false;
         }
 
         public static void EnableACReportAll()

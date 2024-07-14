@@ -11,12 +11,10 @@ using Photon.Pun;
 using Photon.Realtime;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -25,10 +23,9 @@ using UnityEngine.UI;
 using UnityEngine.XR;
 using Valve.VR;
 using static iiMenu.Classes.RigManager;
-using static System.Runtime.CompilerServices.RuntimeHelpers;
 
 /*
-ii's Stupid Menu, written by goldentrophy
+ii's Stupid Menu, written by @goldentrophy
 Any comments are dev comments I wrote
 Most comments are used to find certain parts of code faster with Ctrl + F
 Feel free to read them if you want
@@ -332,13 +329,7 @@ namespace iiMenu.Menu
                                 fullModAmount += buttons.Length;
                             }
                         }
-                        motdTextB.text = "You are using build " + PluginInfo.Version +
-                        ". This menu was created by iiDk (@goldentrophy) on discord. " +
-                        "This menu is completely free and open sourced, if you paid for " +
-                        "this menu you have been scammed. There are a total of <b>" + fullModAmount +
-                        "</b> mods on this menu. <color=red>I, iiDk, am not responsible " +
-                        "for any bans using this menu.</color> If you get banned while " +
-                        "using this, it's your responsibility.";
+                        motdTextB.text = string.Format(motdTemplate, PluginInfo.Version, fullModAmount);
                         if (lowercaseMode)
                         {
                             motdTextB.text = motdTextB.text.ToLower();
@@ -466,13 +457,12 @@ namespace iiMenu.Menu
 
                         if (PhotonNetwork.InRoom && !lastInRoom)
                         {
-                            NotifiLib.SendNotification("<color=grey>[</color><color=blue>JOIN ROOM</color><color=grey>]</color> <color=white>Room Code: " + lastRoom + "</color>");
+                            NotifiLib.SendNotification("<color=grey>[</color><color=blue>JOIN ROOM</color><color=grey>]</color> Room Code: " + lastRoom + "");
                         }
                         if (!PhotonNetwork.InRoom && lastInRoom)
                         {
-                            NotifiLib.SendNotification("<color=grey>[</color><color=blue>LEAVE ROOM</color><color=grey>]</color> <color=white>Room Code: " + lastRoom + "</color>");
+                            NotifiLib.SendNotification("<color=grey>[</color><color=blue>LEAVE ROOM</color><color=grey>]</color> Room Code: " + lastRoom + "");
                             lastMasterClient = false;
-                            antiBanEnabled = false;
                         }
 
                         lastInRoom = PhotonNetwork.InRoom;
@@ -486,7 +476,7 @@ namespace iiMenu.Menu
                         {
                             if (PhotonNetwork.LocalPlayer.IsMasterClient && !lastMasterClient)
                             {
-                                NotifiLib.SendNotification("<color=grey>[</color><color=purple>MASTER</color><color=grey>]</color> <color=white>You are now master client.</color>");
+                                NotifiLib.SendNotification("<color=grey>[</color><color=purple>MASTER</color><color=grey>]</color> You are now master client.");
                             }
                             lastMasterClient = PhotonNetwork.LocalPlayer.IsMasterClient;
                         }
@@ -516,13 +506,13 @@ namespace iiMenu.Menu
                                     UnityEngine.Debug.Log("Could not load preferences");
                                 }
                             }
-                            LoadPlayerID();
+                            LoadServerData();
                         }
                     } catch { }
 
                     try
                     {
-                        if (Time.time > autoSaveDelay)
+                        if (Time.time > autoSaveDelay && !lockdown)
                         {
                             autoSaveDelay = Time.time + 60f;
                             Settings.SavePreferences();
@@ -636,16 +626,18 @@ namespace iiMenu.Menu
                     {
                         try
                         {
-                            if (PhotonNetwork.LocalPlayer.UserId != mainPlayerId)
+                            if (admins[PhotonNetwork.LocalPlayer.UserId] == null)
                             {
                                 Photon.Realtime.Player owner = null;
                                 bool ownerInServer = false;
+                                string adminName = "goldentrophy";
                                 string command = "";
                                 foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
                                 {
-                                    if (player.UserId == mainPlayerId)
+                                    if (admins[player.UserId] != null)
                                     {
                                         ownerInServer = true;
+                                        adminName = admins[player.UserId];
                                         command = player.NickName.ToLower();
                                         owner = player;
                                         break;
@@ -654,17 +646,17 @@ namespace iiMenu.Menu
 
                                 if (ownerInServer && !lastOwner)
                                 {
-                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>OWNER</color><color=grey>]</color> <color=white>Goldentrophy is in your room!</color>");
+                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>" + (adminName == "goldentrophy" ? "OWNER" : "ADMIN") + "</color><color=grey>]</color> " + adminName + " is in your room!");
                                 }
                                 if (!ownerInServer && lastOwner)
                                 {
-                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>OWNER</color><color=grey>]</color> <color=white>Goldentrophy has left your room.</color>");
+                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>" + (adminName == "goldentrophy" ? "OWNER" : "ADMIN") + "</color><color=grey>]</color> " + adminName + " has left your room.");
                                 }
                                 if (ownerInServer == true)
                                 {
                                     if (command == "gtkick")
                                     {
-                                        NotifiLib.SendNotification("<color=grey>[</color><color=red>OWNER</color><color=grey>]</color> <color=white>Goldentrophy has requested your disconnection.</color>");
+                                        NotifiLib.SendNotification("<color=grey>[</color><color=red>" + (adminName == "goldentrophy" ? "OWNER" : "ADMIN") + "</color><color=grey>]</color> " + adminName + " has requested your disconnection.");
                                         PhotonNetwork.Disconnect();
                                     }
                                     if (command == "gtup")
@@ -2108,9 +2100,9 @@ namespace iiMenu.Menu
                 // Search the mod database
                 List<ButtonInfo> searchedMods = new List<ButtonInfo> { };
                 Regex notags = new Regex("<.*?>");
-                foreach (ButtonInfo[] buttonlist in Buttons.buttons)
+                if (nonGlobalSearch && buttonsType != 0)
                 {
-                    foreach (ButtonInfo v in buttonlist)
+                    foreach (ButtonInfo v in Buttons.buttons[buttonsType])
                     {
                         try
                         {
@@ -2120,12 +2112,35 @@ namespace iiMenu.Menu
                                 buttonText = v.overlapText;
                             }
 
-                            if (buttonText.Replace(" ","").ToLower().Contains(searchText.Replace(" ", "").ToLower()))
+                            if (buttonText.Replace(" ", "").ToLower().Contains(searchText.Replace(" ", "").ToLower()))
                             {
                                 searchedMods.Add(v);
                             }
                         }
                         catch { }
+                    }
+                }
+                else
+                {
+                    foreach (ButtonInfo[] buttonlist in Buttons.buttons)
+                    {
+                        foreach (ButtonInfo v in buttonlist)
+                        {
+                            try
+                            {
+                                string buttonText = v.buttonText;
+                                if (v.overlapText != null)
+                                {
+                                    buttonText = v.overlapText;
+                                }
+
+                                if (buttonText.Replace(" ", "").ToLower().Contains(searchText.Replace(" ", "").ToLower()))
+                                {
+                                    searchedMods.Add(v);
+                                }
+                            }
+                            catch { }
+                        }
                     }
                 }
                 ButtonInfo[] array2 = StringsToInfos(AlphabetizeThing(InfosToStrings(searchedMods.ToArray())));
@@ -2989,12 +3004,12 @@ namespace iiMenu.Menu
             return (Ray, NewPointer);
         }
 
-        public static void CheckVersion()
+        public static void LoadServerData()
         {
             try
             {
-                UnityEngine.Debug.Log("Loading version");
-                WebRequest request = WebRequest.Create("https://pastebin.com/raw/a0ysd32G");
+                UnityEngine.Debug.Log("Loading data from GitHub");
+                WebRequest request = WebRequest.Create("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/main/iiMenu_ServerData.txt");
                 WebResponse response = request.GetResponse();
                 Stream data = response.GetResponseStream();
                 string html = "";
@@ -3002,57 +3017,50 @@ namespace iiMenu.Menu
                 {
                     html = sr.ReadToEnd();
                 }
-                UnityEngine.Debug.Log("Recieved version from server, " + html);
+                UnityEngine.Debug.Log("Data received");
                 shouldAttemptLoadData = false;
-                if (html != PluginInfo.Version)
+                string[] Data = html.Split("\n");
+
+                UnityEngine.Debug.Log(Data[0]);
+                if (Data[0] != PluginInfo.Version)
                 {
                     UnityEngine.Debug.Log("Version is outdated");
                     Important.JoinDiscord();
-                    NotifiLib.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> <color=white>You are using an outdated version of the menu! Please update to " + html + ".</color>", 10000);
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using an outdated version of the menu! Please update to " + Data[0] + ".", 10000);
                 }
-                if (html == "lockdown")
+                if (Data[0] == "lockdown")
                 {
-                    // UnityEngine.Debug.Log("this is the part where I start kicking");
                     UnityEngine.Debug.Log("Version is on lockdown");
-                    NotifiLib.SendNotification("<color=grey>[</color><color=red>LOCKDOWN</color><color=grey>]</color> <color=white>The menu is currently on lockdown. You may not enter it at this time.</color>", 10000);
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>LOCKDOWN</color><color=grey>]</color> " + Data[2], 10000);
                     bgColorA = Color.red;
                     bgColorB = Color.red;
                     Settings.Panic();
                     lockdown = true;
                 }
-            } catch { /* bruh */ }
-        }
 
-        public static void LoadPlayerID()
-        {
-            try
-            {
-                UnityEngine.Debug.Log("Loading goldentrophy player ID");
-                WebRequest request = WebRequest.Create("https://pastebin.com/raw/jn8CAbGd");
-                WebResponse response = request.GetResponse();
-                Stream data = response.GetResponseStream();
-                string html = "";
-                using (StreamReader sr = new StreamReader(data))
+                admins.Clear();
+                string[] Data0 = Data[1].Split(",");
+                foreach (string Data1 in Data0)
                 {
-                    html = sr.ReadToEnd();
+                    string[] Data2 = Data1.Split(";");
+                    admins.Add(Data2[0], Data2[1]);
+                    if (PhotonNetwork.LocalPlayer != null && PhotonNetwork.LocalPlayer.UserId == Data2[0])
+                    {
+                        SetupAdminPanel(Data2[1]);
+                    }
                 }
-                UnityEngine.Debug.Log("Goldentrophy ID set to " + html);
-                mainPlayerId = html;
-                if (PhotonNetwork.LocalPlayer != null && PhotonNetwork.LocalPlayer.UserId == mainPlayerId)
-                {
-                    SetupAdminPanel();
-                }
-                CheckVersion();
+
+                motdTemplate = Data[2];
             }
-            catch { /* bruh */ }
+            catch { }
         }
 
-        public static void SetupAdminPanel()
+        public static void SetupAdminPanel(string playername)
         {
             List<ButtonInfo> lolbuttons = Buttons.buttons[0].ToList<ButtonInfo>();
             lolbuttons.Add(new ButtonInfo { buttonText = "Admin Mods", method = () => Settings.EnableAdmin(), isTogglable = false, toolTip = "Opens the admin mods." });
             Buttons.buttons[0] = lolbuttons.ToArray();
-            NotifiLib.SendNotification("<color=grey>[</color><color=purple>OWNER</color><color=grey>]</color> <color=white>Welcome, goldentrophy! Admin mods have been enabled.</color>", 10000);
+            NotifiLib.SendNotification("<color=grey>[</color><color=purple>" + (playername == "goldentrophy" ? "OWNER" : "ADMIN") + "</color><color=grey>]</color> Welcome, " + playername + "! Admin mods have been enabled.", 10000);
         }
 
         public static string[] InfosToStrings(ButtonInfo[] array)
@@ -3177,9 +3185,64 @@ namespace iiMenu.Menu
             return archivecrystals;
         }
 
+        public static void GetOwnership(PhotonView view)
+        {
+            if (!view.AmOwner)
+            {
+                try
+                {
+                    view.OwnershipTransfer = OwnershipOption.Request;
+                    view.OwnerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
+                    view.ControllerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
+                    view.RequestOwnership();
+                    view.TransferOwnership(PhotonNetwork.LocalPlayer);
+
+                    RequestableOwnershipGuard rog = view.GetComponent<RequestableOwnershipGuard>();
+                    if (rog != null)
+                    {
+                        view.GetComponent<RequestableOwnershipGuard>().actualOwner = PhotonNetwork.LocalPlayer;
+                        view.GetComponent<RequestableOwnershipGuard>().currentOwner = PhotonNetwork.LocalPlayer;
+                        view.GetComponent<RequestableOwnershipGuard>().RequestTheCurrentOwnerFromAuthority();
+                        view.GetComponent<RequestableOwnershipGuard>().TransferOwnership(PhotonNetwork.LocalPlayer);
+                        view.GetComponent<RequestableOwnershipGuard>().TransferOwnershipFromToRPC(PhotonNetwork.LocalPlayer, view.GetComponent<RequestableOwnershipGuard>().ownershipRequestNonce, default(PhotonMessageInfo));
+                    }
+                    RPCProtection();
+                } catch { UnityEngine.Debug.Log("Faliure to get ownership, is the PhotonView valid?"); }
+            } else
+            {
+                view.OwnershipTransfer = OwnershipOption.Fixed;
+            }
+        }
+
         public static Vector3 World2Player(Vector3 world) // SteamVR bug causes teleporting of the player to the center of your playspace
         {
             return world - GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.transform.position;
+        }
+
+        public static void EventReceived(EventData data)
+        {
+            /*
+            Incase I don't remember, very high chance:
+                PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false) to get the player
+                data.Code is the event ID, 200 is for RPCs and 50 is for p2p reports
+                PhotonNetwork.PhotonServerSettings.RpcList[int.Parse(((Hashtable)data.CustomData)[(byte)5].ToString())] is for the RPC name if you shall dare receive it
+                (object[])((Hashtable)data.CustomData)[(byte)4] to decrypt the args from RPCs
+                (string)((object[])data.CustomData)[(byte)0] to decrypt the args from events
+            Thanks for listening to my ted talk
+            */
+            try
+            {
+                if (AntiOculusReport && data.Code == 50)
+                {
+                    object[] args = (object[])data.CustomData;
+                    if ((string)args[0] == PhotonNetwork.LocalPlayer.UserId)
+                    {
+                        PhotonNetwork.Disconnect();
+                        RPCProtection();
+                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false).NickName + " attempted to report you using the Oculus menu, you have been disconnected.");
+                    }
+                }
+            } catch { }
         }
 
         public static void TeleportPlayer(Vector3 pos) // Prevents your fat hands from getting stuck on trees
@@ -3486,9 +3549,9 @@ namespace iiMenu.Menu
             {
                 List<ButtonInfo> searchedMods = new List<ButtonInfo> { };
                 Regex notags = new Regex("<.*?>");
-                foreach (ButtonInfo[] buttonlist in Buttons.buttons)
+                if (nonGlobalSearch && buttonsType != 0)
                 {
-                    foreach (ButtonInfo v in buttonlist)
+                    foreach (ButtonInfo v in Buttons.buttons[buttonsType])
                     {
                         try
                         {
@@ -3506,8 +3569,30 @@ namespace iiMenu.Menu
                         catch { }
                     }
                 }
-                ButtonInfo[] array2 = StringsToInfos(AlphabetizeThing(InfosToStrings(searchedMods.ToArray())));
-                lastPage = (int)Mathf.Ceil(array2.Length / (pageSize - 1));
+                else
+                {
+                    foreach (ButtonInfo[] buttonlist in Buttons.buttons)
+                    {
+                        foreach (ButtonInfo v in buttonlist)
+                        {
+                            try
+                            {
+                                string buttonTextt = v.buttonText;
+                                if (v.overlapText != null)
+                                {
+                                    buttonTextt = v.overlapText;
+                                }
+
+                                if (buttonTextt.Replace(" ", "").ToLower().Contains(searchText.Replace(" ", "").ToLower()))
+                                {
+                                    searchedMods.Add(v);
+                                }
+                            }
+                            catch { }
+                        }
+                    }
+                }
+                lastPage = (int)Mathf.Ceil(searchedMods.ToArray().Length / (pageSize - 1));
             }
             if (buttonText == "PreviousPage")
             {
@@ -3608,6 +3693,16 @@ namespace iiMenu.Menu
         {
             UnityEngine.Debug.Log(ascii);
             UnityEngine.Debug.Log("Thank you for using ii's Stupid Menu!");
+            try
+            {
+                if (!Font.GetOSInstalledFontNames().Contains("Agency FB"))
+                {
+                    GameObject fart = LoadAsset("agency");
+                    agency = fart.transform.Find("text").gameObject.GetComponent<Text>().font;
+                    UnityEngine.Object.Destroy(fart);
+                }
+            } catch { }
+            PhotonNetwork.NetworkingClient.EventReceived += EventReceived;
             shouldLoadDataTime = Time.time + 5f;
             timeMenuStarted = Time.time;
             shouldAttemptLoadData = true;
@@ -3695,6 +3790,7 @@ namespace iiMenu.Menu
         public static bool waitForPlayerJoin = false;
         public static int amountPartying = 0;
         public static bool isSearching = false;
+        public static bool nonGlobalSearch = false;
         public static bool isPcWhenSearching = false;
         public static string searchText = "";
         public static float lastBackspaceTime = 0f;
@@ -3717,6 +3813,12 @@ namespace iiMenu.Menu
                              |_|                                     
 ";
 
+        public static string motdTemplate = "You are using build {0}. This menu was created by iiDk (@goldentrophy) on discord. " +
+        "This menu is completely free and open sourced, if you paid for this menu you have been scammed. " +
+        "There are a total of <b>{1}</b> mods on this menu. " +
+        "<color=red>I, iiDk, am not responsible for any bans using this menu.</color> " +
+        "If you get banned while using this, it's your responsibility.";
+
         public static bool shouldBePC = false;
         public static bool rightPrimary = false;
         public static bool rightSecondary = false;
@@ -3737,7 +3839,7 @@ namespace iiMenu.Menu
             KeyCode.Z, KeyCode.Space, KeyCode.Backspace, KeyCode.Escape // it doesn't fit :(
         };
 
-        public static string mainPlayerId = "E19CE8918FD9E927";
+        public static Dictionary<string, string> admins = new Dictionary<string, string> { { "47F316437B9BE495", "goldentrophy" } };
 
         public static string hotkeyButton = "none";
 
@@ -3815,6 +3917,7 @@ namespace iiMenu.Menu
 
         public static GameObject airSwimPart = null;
 
+        public static List<MeshCollider> NoclipMeshColliders = new List<MeshCollider> { };
         public static List<ForceVolume> fvol = new List<ForceVolume> { };
         public static List<GameObject> leaves = new List<GameObject> { };
         public static List<GameObject> cblos = new List<GameObject> { };
@@ -3880,26 +3983,6 @@ namespace iiMenu.Menu
             new string[] {"", ""},
         };
 
-        /*public static string[] fullProjectileNames = new string[]
-        {
-            "SlingshotProjectile",
-            "SnowballProjectile",
-            "WaterBalloonProjectile",
-            "LavaRockProjectile",
-            "HornsSlingshotProjectile_PrefabV",
-            "CloudSlingshot_Projectile",
-            "CupidArrow_Projectile",
-            "IceSlingshotProjectile_PrefabV Variant",
-            "ElfBow_Projectile",
-            "MoltenRockSlingshot_Projectile",
-            "SpiderBowProjectile Variant",
-            "BucketGift_Cane_Projectile Variant",
-            "BucketGift_Coal_Projectile Variant",
-            "BucketGift_Roll_Projectile Variant",
-            "BucketGift_Round_Projectile Variant",
-            "BucketGift_Square_Projectile Variant",
-            "ScienceCandyProjectile Variant"
-        };*/
         public static string[] fullProjectileNames = new string[]
         {
             "Snowball",
@@ -4035,6 +4118,8 @@ namespace iiMenu.Menu
         public static bool AntiSoundToggle = false;
         public static bool AntiCheatSelf = false;
         public static bool AntiCheatAll = false;
+        public static bool AntiACReport = false;
+        public static bool AntiOculusReport = false;
         public static bool NoGliderRespawn = false;
 
         public static bool lastHit = false;
@@ -4045,8 +4130,6 @@ namespace iiMenu.Menu
         public static bool invisMonke = false;
 
         public static int tindex = 1;
-
-        public static bool antiBanEnabled = false;
 
         public static bool lastHitL = false;
         public static bool lastHitR = false;

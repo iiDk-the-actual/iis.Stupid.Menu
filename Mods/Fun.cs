@@ -356,7 +356,47 @@ namespace iiMenu.Mods
                 }
             }
         }
-        
+
+        public static void WaterSplashWalk()
+        {
+            if (Time.time > splashDel)
+            {
+                if (GorillaLocomotion.Player.Instance.wasLeftHandTouching)
+                {
+                    FieldInfo fieldInfo = typeof(GorillaLocomotion.Player).GetField("lastHitInfoHand", BindingFlags.NonPublic | BindingFlags.Instance);
+                    RaycastHit ray = (RaycastHit)fieldInfo.GetValue(GorillaLocomotion.Player.Instance);
+                    GorillaTagger.Instance.myVRRig.RPC("PlaySplashEffect", RpcTarget.All, new object[]
+                    {
+                        GorillaTagger.Instance.leftHandTransform.position,
+                        Quaternion.Euler(ray.normal),
+                        4f,
+                        100f,
+                        true,
+                        false
+                    });
+                    RPCProtection();
+                    splashDel = Time.time + 0.1f;
+                }
+                if (GorillaLocomotion.Player.Instance.wasRightHandTouching)
+                {
+                    FieldInfo fieldInfo = typeof(GorillaLocomotion.Player).GetField("lastHitInfoHand", BindingFlags.NonPublic | BindingFlags.Instance);
+                    RaycastHit ray = (RaycastHit)fieldInfo.GetValue(GorillaLocomotion.Player.Instance);
+                    GorillaTagger.Instance.myVRRig.RPC("PlaySplashEffect", RpcTarget.All, new object[]
+                    {
+                        GorillaTagger.Instance.rightHandTransform.position,
+                        Quaternion.Euler(ray.normal),
+                        4f,
+                        100f,
+                        true,
+                        false
+                    });
+                    RPCProtection();
+                    splashDel = Time.time + 0.1f;
+                }
+            }
+        }
+
+
         private static bool lastlhboop = false;
         private static bool lastrhboop = false;
         public static void Boop()
@@ -599,6 +639,7 @@ namespace iiMenu.Mods
         {
             if (rightGrab)
             {
+                GameObject.Find("Environment Objects/05Maze_PersistentObjects/HiddenIDCard/ID Card Anchor/ID Card Holdable").GetComponent<ScannableIDCard>().enabled = true;
                 GameObject.Find("Environment Objects/05Maze_PersistentObjects/HiddenIDCard/ID Card Anchor/ID Card Holdable").transform.position = GorillaTagger.Instance.rightHandTransform.position; ;
             }
         }

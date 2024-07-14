@@ -21,7 +21,7 @@ namespace iiMenu.Patches
             {
                 if (susId == PhotonNetwork.LocalPlayer.UserId)
                 {
-                    NotifiLib.SendNotification("<color=grey>[</color><color=green>ANTICHEAT</color><color=grey>] </color><color=white>You have been reported for " + susReason + ".</color>");
+                    NotifiLib.SendNotification("<color=grey>[</color><color=green>ANTI-CHEAT</color><color=grey>] </color><color=white>You have been reported for " + susReason + ".</color>");
                     susNick.Remove(PhotonNetwork.LocalPlayer.NickName.Length);
                     susId.Remove(PhotonNetwork.LocalPlayer.UserId.Length);
                     RPCProtection();
@@ -30,9 +30,15 @@ namespace iiMenu.Patches
                 {
                     if (AntiCheatAll)
                     {
-                        NotifiLib.SendNotification("<color=grey>[</color><color=green>ANTICHEAT</color><color=grey>] </color><color=white>" + susNick + " was reported for " + susReason + ".</color>");
+                        NotifiLib.SendNotification("<color=grey>[</color><color=green>ANTI-CHEAT</color><color=grey>] </color><color=white>" + susNick + " was reported for " + susReason + ".</color>");
                     }
                 }
+            }
+            if (AntiACReport)
+            {
+                PhotonNetwork.Disconnect();
+                RPCProtection();
+                NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>The anti cheat attempted to report you, you have been disconnected.</color>");
             }
             return false;
         }
