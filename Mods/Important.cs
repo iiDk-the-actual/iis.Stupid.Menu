@@ -351,7 +351,12 @@ namespace iiMenu.Mods
 
         public static void UncapFPS()
         {
-            Application.targetFrameRate = 9999;
+            Application.targetFrameRate = 1024;
+        }
+
+        public static void CapFPS()
+        {
+            Application.targetFrameRate = 144;
         }
 
         public static void UnlockCompetitiveQueue()

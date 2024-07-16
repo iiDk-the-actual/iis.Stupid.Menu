@@ -1968,6 +1968,7 @@ namespace iiMenu.Menu
 
             /*
             // Unity bug where all Image objects have their material property shared, manual buggy fix
+            // It was not a Unity bug I was just being retarded
             Image image = new GameObject
             {
                 transform =
@@ -2918,35 +2919,38 @@ namespace iiMenu.Menu
 
         public static void RPCProtection()
         {
-            if (hasRemovedThisFrame == false)
+            try
             {
-                hasRemovedThisFrame = true;
-                if (GetIndex("Experimental RPC Protection").enabled)
+                if (hasRemovedThisFrame == false)
                 {
-                    RaiseEventOptions options = new RaiseEventOptions();
-                    options.CachingOption = EventCaching.RemoveFromRoomCache;
-                    options.TargetActors = new int[1] { PhotonNetwork.LocalPlayer.ActorNumber };
-                    PhotonNetwork.NetworkingClient.OpRaiseEvent(200, null, options, SendOptions.SendReliable);
-                }
-                else
-                {
-                    GorillaNot.instance.rpcErrorMax = int.MaxValue;
-                    GorillaNot.instance.rpcCallLimit = int.MaxValue;
-                    GorillaNot.instance.logErrorMax = int.MaxValue;
+                    hasRemovedThisFrame = true;
+                    if (GetIndex("Experimental RPC Protection").enabled)
+                    {
+                        RaiseEventOptions options = new RaiseEventOptions();
+                        options.CachingOption = EventCaching.RemoveFromRoomCache;
+                        options.TargetActors = new int[1] { PhotonNetwork.LocalPlayer.ActorNumber };
+                        PhotonNetwork.NetworkingClient.OpRaiseEvent(200, null, options, SendOptions.SendReliable);
+                    }
+                    else
+                    {
+                        GorillaNot.instance.rpcErrorMax = int.MaxValue;
+                        GorillaNot.instance.rpcCallLimit = int.MaxValue;
+                        GorillaNot.instance.logErrorMax = int.MaxValue;
 
-                    PhotonNetwork.MaxResendsBeforeDisconnect = int.MaxValue;
-                    PhotonNetwork.QuickResends = int.MaxValue;
-                    // PhotonNetwork.SendRate = int.MaxValue;
-                    // GorillaGameManager.instance.maxProjectilesToKeepTrackOfPerPlayer = int.MaxValue;
+                        PhotonNetwork.MaxResendsBeforeDisconnect = int.MaxValue;
+                        PhotonNetwork.QuickResends = int.MaxValue;
+                        // PhotonNetwork.SendRate = int.MaxValue;
+                        // GorillaGameManager.instance.maxProjectilesToKeepTrackOfPerPlayer = int.MaxValue;
 
-                    PhotonNetwork.RemoveRPCs(PhotonNetwork.LocalPlayer);
-                    PhotonNetwork.OpCleanRpcBuffer(GorillaTagger.Instance.myVRRig);
-                    PhotonNetwork.RemoveBufferedRPCs(GorillaTagger.Instance.myVRRig.ViewID, null, null);
-                    PhotonNetwork.RemoveRPCsInGroup(int.MaxValue);
-                    PhotonNetwork.SendAllOutgoingCommands();
-                    GorillaNot.instance.OnPlayerLeftRoom(PhotonNetwork.LocalPlayer);
+                        PhotonNetwork.RemoveRPCs(PhotonNetwork.LocalPlayer);
+                        PhotonNetwork.OpCleanRpcBuffer(GorillaTagger.Instance.myVRRig);
+                        PhotonNetwork.RemoveBufferedRPCs(GorillaTagger.Instance.myVRRig.ViewID, null, null);
+                        PhotonNetwork.RemoveRPCsInGroup(int.MaxValue);
+                        PhotonNetwork.SendAllOutgoingCommands();
+                        GorillaNot.instance.OnPlayerLeftRoom(PhotonNetwork.LocalPlayer);
+                    }
                 }
-            }
+            } catch { UnityEngine.Debug.Log("RPC protection failed, are you in a lobby?"); }
         }
 
         public static string GetHttp(string url)
@@ -2964,7 +2968,7 @@ namespace iiMenu.Menu
 
         public static (RaycastHit Ray, GameObject NewPointer) RenderGun()
         {
-            Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray, 512f, NoInvisLayerMask());
+            Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position - (legacyGunDirection ? GorillaTagger.Instance.rightHandTransform.up : Vector3.zero), legacyGunDirection ? -GorillaTagger.Instance.rightHandTransform.up : GorillaTagger.Instance.rightHandTransform.forward, out var Ray, 512f, NoInvisLayerMask());
             if (shouldBePC)
             {
                 Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
@@ -3108,6 +3112,21 @@ namespace iiMenu.Menu
                 archiveholdables = UnityEngine.Object.FindObjectsOfType<GliderHoldable>();
             }
             return archiveholdables;
+        }
+
+        public static BuilderPiece[] archivepieces = null;
+        public static BuilderPiece[] GetPieces()
+        {
+            if (Time.time > lastRecievedTime)
+            {
+                archivepieces = null;
+                lastRecievedTime = Time.time + 5f;
+            }
+            if (archivepieces == null)
+            {
+                archivepieces = UnityEngine.Object.FindObjectsOfType<BuilderPiece>();
+            }
+            return archivepieces;
         }
 
         public static MonkeyeAI[] archivemonsters = null;
@@ -3800,6 +3819,7 @@ namespace iiMenu.Menu
         public static bool smallGunPointer = false;
         public static bool disableGunPointer = false;
         public static bool disableGunLine = false;
+        public static bool legacyGunDirection = false;
         public static bool riskyModsEnabled = false;
         public static bool doCustomMenuBackground = false;
         public static Texture2D customMenuBackgroundImage = null;
@@ -3985,12 +4005,12 @@ namespace iiMenu.Menu
 
         public static string[] fullProjectileNames = new string[]
         {
-            "Snowball",
-            "WaterBalloon",
-            "LavaRock",
-            "ThrowableGift",
-            "ScienceCandy",
-            "FishFood"
+            "SnowballLeft",
+            "WaterBalloonLeft",
+            "LavaRockLeft",
+            "BucketGiftFunctional",
+            "ScienceCandyLeft",
+            "FishFoodLeft"
         };
 
         public static string[] fullTrailNames = new string[]

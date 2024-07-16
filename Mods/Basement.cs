@@ -29,7 +29,7 @@ namespace iiMenu.Mods
         {
             foreach (MonkeyeAI monkeyeAI in GetMonsters())
             {
-                //GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                GetOwnership(monkeyeAI.GetComponent<PhotonView>());
                 monkeyeAI.speed = 0.02f;
             }
         }
@@ -38,7 +38,7 @@ namespace iiMenu.Mods
         {
             foreach (MonkeyeAI monkeyeAI in GetMonsters())
             {
-                //GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                GetOwnership(monkeyeAI.GetComponent<PhotonView>());
                 monkeyeAI.speed = 0.5f;
             }
         }
@@ -47,7 +47,7 @@ namespace iiMenu.Mods
         {
             foreach (MonkeyeAI monkeyeAI in GetMonsters())
             {
-                //GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                GetOwnership(monkeyeAI.GetComponent<PhotonView>());
                 monkeyeAI.speed = 0.1f;
             }
         }
@@ -58,7 +58,7 @@ namespace iiMenu.Mods
             {
                 foreach (MonkeyeAI monkeyeAI in GetMonsters())
                 {
-                    //GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                    GetOwnership(monkeyeAI.GetComponent<PhotonView>());
                     monkeyeAI.gameObject.transform.position = GorillaTagger.Instance.rightHandTransform.position;
                 }
             }
@@ -76,7 +76,7 @@ namespace iiMenu.Mods
                 {
                     foreach (MonkeyeAI monkeyeAI in GetMonsters())
                     {
-                        //GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                        GetOwnership(monkeyeAI.GetComponent<PhotonView>());
                         monkeyeAI.gameObject.transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
                     }
                 }
@@ -87,7 +87,7 @@ namespace iiMenu.Mods
         {
             foreach (MonkeyeAI monkeyeAI in GetMonsters())
             {
-                //GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                GetOwnership(monkeyeAI.GetComponent<PhotonView>());
                 monkeyeAI.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
             }
         }
@@ -98,7 +98,7 @@ namespace iiMenu.Mods
             int index = 0;
             foreach (MonkeyeAI monkeyeAI in GetMonsters())
             {
-                //GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                GetOwnership(monkeyeAI.GetComponent<PhotonView>());
                 float offset = (360f / (float)them.Length) * index;
                 monkeyeAI.transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)) * 2f, 1f, MathF.Sin(offset + ((float)Time.frameCount / 30)) * 2f);
                 index++;
@@ -109,7 +109,7 @@ namespace iiMenu.Mods
         {
             foreach (MonkeyeAI monkeyeAI in GetMonsters())
             {
-                //GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                GetOwnership(monkeyeAI.GetComponent<PhotonView>());
                 monkeyeAI.gameObject.transform.position = new Vector3(99999f, 99999f, 99999f);
             }
         }
@@ -133,7 +133,7 @@ namespace iiMenu.Mods
             foreach (MonkeyeAI monkeyeAI in GetMonsters())
             {
                 i++;
-                //GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                GetOwnership(monkeyeAI.GetComponent<PhotonView>());
                 monkeyeAI.gameObject.transform.position = lol[i];
             }
         }
@@ -165,7 +165,7 @@ namespace iiMenu.Mods
                     foreach (MonkeyeAI monkeyeAI in GetMonsters())
                     {
                         i++;
-                        //GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                        GetOwnership(monkeyeAI.GetComponent<PhotonView>());
                         monkeyeAI.gameObject.transform.position = lol[i];
                     }
                 }
@@ -203,7 +203,7 @@ namespace iiMenu.Mods
             foreach (MonkeyeAI monkeyeAI in GetMonsters())
             {
                 i++;
-                //GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                GetOwnership(monkeyeAI.GetComponent<PhotonView>());
                 monkeyeAI.gameObject.transform.position = lol[i];
             }
         }
@@ -231,7 +231,7 @@ namespace iiMenu.Mods
                     foreach (MonkeyeAI monkeyeAI in GetMonsters())
                     {
                         i++;
-                        //GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                        GetOwnership(monkeyeAI.GetComponent<PhotonView>());
                         monkeyeAI.gameObject.transform.position = lol[i];
                     }
                 }
@@ -261,7 +261,7 @@ namespace iiMenu.Mods
             {
                 foreach (MonkeyeAI monkeyeAI in GetMonsters())
                 {
-                    //GetOwnership(monkeyeAI.gameObject.GetComponent<PhotonView>());
+                    GetOwnership(monkeyeAI.gameObject.GetComponent<PhotonView>());
                     monkeyeAI.gameObject.transform.position = new Vector3(1e11f, 1e11f, 1e11f); // e is scientific notation to the skids
                 }
             } else
@@ -270,7 +270,7 @@ namespace iiMenu.Mods
                 {
                     foreach (MonkeyeAI monkeyeAI in GetMonsters())
                     {
-                        //GetOwnership(monkeyeAI.gameObject.GetComponent<PhotonView>());
+                        GetOwnership(monkeyeAI.gameObject.GetComponent<PhotonView>());
                         monkeyeAI.gameObject.transform.position = Vector3.zero;
                     }
                 }

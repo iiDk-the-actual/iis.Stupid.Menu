@@ -9,6 +9,7 @@ using System;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static Cinemachine.DocumentationSortingAttribute;
 using static GorillaNetworking.CosmeticsController;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
@@ -21,10 +22,11 @@ namespace iiMenu.Mods.Spammers
         {
             ControllerInputPoller.instance.leftControllerGripFloat = 1f;
             GameObject lhelp = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            UnityEngine.Object.Destroy(lhelp, 0.1f);
-            lhelp.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-            lhelp.transform.position = GorillaTagger.Instance.leftHandTransform.position;
-            lhelp.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
+            UnityEngine.Object.Destroy(lhelp, 0.2f);
+            lhelp.transform.localScale = new Vector3(0.25f, 0.05f, 0.25f);
+            lhelp.transform.position = GorillaTagger.Instance.leftHandTransform.position - new Vector3(0f, UnityEngine.Random.Range(0f, 0.1f), 0f);
+            GorillaTagger.Instance.leftHandTransform.position += new Vector3(0f, UnityEngine.Random.Range(-0.01f, 0.01f), 0f);
+            //lhelp.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
             int[] overrides = new int[]
             {
                 32,
@@ -47,14 +49,14 @@ namespace iiMenu.Mods.Spammers
                     
                     string[] name2 = new string[]
                     {
-                        "LMACE.",
-                        "LMAEX.",
-                        "LMAGD.",
-                        "LMAHQ.",
-                        "LMAIE.",
-                        "LMAIO."
+                        "LMACE. LEFT.",
+                        "LMAEX. LEFT.",
+                        "LMAGD. LEFT.",
+                        "LMAHQ. LEFT.",
+                        "LMAIE. RIGHT.",
+                        "LMAIO. LEFT."
                     };
-                    SnowballThrowable fart = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/palm.01.L/TransferrableItemLeftHand/" + fullProjectileNames[System.Array.IndexOf(fullProjectileNames, projectileName)] + "LeftAnchor").transform.Find(name2[System.Array.IndexOf(fullProjectileNames, projectileName)]).GetComponent<SnowballThrowable>();
+                    SnowballThrowable fart = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/palm.01.L/TransferrableItemLeftHand/" + fullProjectileNames[System.Array.IndexOf(fullProjectileNames, projectileName)] + "Anchor(Clone)").transform.Find(name2[System.Array.IndexOf(fullProjectileNames, projectileName)]).GetComponent<SnowballThrowable>();
                     Vector3 oldPos = fart.transform.position;
                     fart.randomizeColor = true;
                     fart.transform.position = startpos;
@@ -62,16 +64,20 @@ namespace iiMenu.Mods.Spammers
                     GorillaTagger.Instance.GetComponent<Rigidbody>().velocity = charvel;
                     GorillaTagger.Instance.offlineVRRig.SetThrowableProjectileColor(true, color);
                     GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/EquipmentInteractor").GetComponent<EquipmentInteractor>().ReleaseLeftHand();
-
-                    RPCProtection();
+                    UnityEngine.Debug.Log("Setting velo");
                     GorillaTagger.Instance.GetComponent<Rigidbody>().velocity = oldVel;
+                    RPCProtection();
+
                     fart.transform.position = oldPos;
                     fart.randomizeColor = false;
-                } catch { }
+                } catch (Exception e) { UnityEngine.Debug.Log(e.Message); }
                 if (projDebounceType > 0f && !noDelay)
                 {
                     projDebounce = Time.time + projDebounceType;
                 }
+            } else
+            {
+                GorillaTagger.Instance.GetComponent<Rigidbody>().velocity = Vector3.zero;
             }
         }
 
@@ -351,129 +357,6 @@ namespace iiMenu.Mods.Spammers
 
                 SysFireProjectile(projectilename, trailname, startpos, charvel, randa / 255f, randb / 255f, randc / 255f, GetIndex("Blue Team Projectiles").enabled, GetIndex("Orange Team Projectiles").enabled);
                 //UnityEngine.Debug.Log("fried proj");
-            }
-
-            if (leftGrab)
-            {
-                if (GetIndex("Random Projectile").enabled)
-                {
-                    projIndex = UnityEngine.Random.Range(0, 4);
-                }
-                string projectilename = fullProjectileNames[projIndex];
-
-                if (true)
-                {
-                    trailIndex = UnityEngine.Random.Range(0, 8);
-                }
-                string trailname = fullTrailNames[trailIndex];
-
-                /*GameObject projectile = GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools/" + projectilename + "(Clone)");
-                GameObject originalprojectile = projectile;
-                projectile = ObjectPools.instance.Instantiate(projectile);
-
-                GameObject trail = GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools/" + trailname + "(Clone)");
-
-                SlingshotProjectile GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPoolsGameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPoolsGameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools = projectile.GetComponent<SlingshotProjectile>();*/
-
-                Vector3 startpos = GorillaTagger.Instance.leftHandTransform.position;
-                Vector3 charvel = GorillaLocomotion.Player.Instance.currentVelocity;
-
-                if (GetIndex("Shoot Projectiles").enabled)
-                {
-                    charvel = GorillaLocomotion.Player.Instance.currentVelocity + (GorillaTagger.Instance.leftHandTransform.transform.forward * ShootStrength);
-                }
-
-                if (GetIndex("Finger Gun Projectiles").enabled)
-                {
-                    charvel = GorillaLocomotion.Player.Instance.currentVelocity + (GorillaTagger.Instance.offlineVRRig.transform.Find("rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L").up * ShootStrength);
-                }
-
-                if (GetIndex("Random Direction").enabled)
-                {
-                    charvel = new Vector3(UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33));
-                }
-
-                if (GetIndex("Above Players").enabled)
-                {
-                    charvel = Vector3.zero;
-                    //List<VRRig> rigs = GorillaParent.instance.vrrigs;
-                    startpos = GetRandomVRRig(false).transform.position + new Vector3(0f, 1f, 0f);//rigs[UnityEngine.Random.Range(0, rigs.Count)].transform.position + new Vector3(0, 1, 0);
-                }
-
-                if (GetIndex("Rain Projectiles").enabled)
-                {
-                    startpos = GorillaTagger.Instance.headCollider.transform.position + new Vector3(UnityEngine.Random.Range(-5f, 5f), 5f, UnityEngine.Random.Range(-5f, 5f));
-                    charvel = Vector3.zero;
-                }
-
-                if (GetIndex("Projectile Aura").enabled)
-                {
-                    float time = Time.frameCount;
-                    startpos = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(time / 20), 2, MathF.Sin(time / 20));
-                }
-
-                if (GetIndex("Projectile Fountain").enabled)
-                {
-                    startpos = GorillaTagger.Instance.headCollider.transform.position + new Vector3(0, 1, 0);
-                    charvel = new Vector3(UnityEngine.Random.Range(-10, 10), 15, UnityEngine.Random.Range(-10, 10));
-                }
-
-                if (GetIndex("Include Hand Velocity").enabled)
-                {
-                    charvel = GorillaLocomotion.Player.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0);
-                }
-
-                float randa = 255f;
-                float randb = 255f;
-                float randc = 255f;
-
-                if (GetIndex("Random Color").enabled)
-                {
-                    randa = UnityEngine.Random.Range(0, 255);
-                    randb = UnityEngine.Random.Range(0, 255);
-                    randc = UnityEngine.Random.Range(0, 255);
-                }
-
-                if (GetIndex("Rainbow Projectiles").enabled)
-                {
-                    float h = (Time.frameCount / 180f) % 1f;
-                    UnityEngine.Color rgbcolor = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
-                    randa = rgbcolor.r * 255;
-                    randb = rgbcolor.g * 255;
-                    randc = rgbcolor.b * 255;
-                }
-
-                if (GetIndex("Hard Rainbow Projectiles").enabled)
-                {
-                    float h = (Time.frameCount / 180f) % 1f;
-                    UnityEngine.Color rgbcolor = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
-                    randa = (Mathf.Floor(rgbcolor.r * 2f) / 2f * 255f) * 100f;
-                    randb = (Mathf.Floor(rgbcolor.g * 2f) / 2f * 255f) * 100f;
-                    randc = (Mathf.Floor(rgbcolor.b * 2f) / 2f * 255f) * 100f;
-                }
-
-                if (GetIndex("Black Projectiles").enabled)
-                {
-                    randa = 0f;
-                    randb = 0f;
-                    randc = 0f;
-                }
-
-                if (GetIndex("No Texture Projectiles").enabled)
-                {
-                    randa = 25500f;
-                    randb = 0f;
-                    randc = 25500f;
-                }
-
-                if (GetIndex("Custom Colored Projectiles").enabled)
-                {
-                    randa = red * 255;
-                    randb = green * 255;
-                    randc = blue * 255;
-                }
-
-                SysFireProjectile(projectilename, trailname, startpos, charvel, randa / 255f, randb / 255f, randc / 255f, GetIndex("Blue Team Projectiles").enabled, GetIndex("Orange Team Projectiles").enabled);
             }
         }
 
@@ -1159,24 +1042,40 @@ namespace iiMenu.Mods.Spammers
                 ControllerInputPoller.instance.leftControllerGripFloat = 1f;
                 GameObject lhelp = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 UnityEngine.Object.Destroy(lhelp, 0.1f);
-                lhelp.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-                lhelp.transform.position = GorillaTagger.Instance.leftHandTransform.position;
-                lhelp.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
+                lhelp.transform.localScale = new Vector3(0.25f, 0.05f, 0.25f);
+                lhelp.transform.position = GorillaTagger.Instance.leftHandTransform.position + new Vector3(0f, 0.1f, 0f);
                 lhelp.AddComponent<GorillaSurfaceOverride>().overrideIndex = overrides[projIndex];
                 lhelp.GetComponent<Renderer>().enabled = false;
+
+                lhelp = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                UnityEngine.Object.Destroy(lhelp, 0.1f);
+                lhelp.transform.localScale = new Vector3(0.25f, 0.05f, 0.25f);
+                lhelp.transform.position = GorillaTagger.Instance.leftHandTransform.position - new Vector3(0f, 0.1f, 0f);
+                lhelp.AddComponent<GorillaSurfaceOverride>().overrideIndex = overrides[projIndex];
+                lhelp.GetComponent<Renderer>().enabled = false;
+
+                GorillaTagger.Instance.leftHandTransform.position += new Vector3(0f, 0.1f, 0f);
             }
             lastLeftGrab = leftGrab;
 
             if (rightGrab && !lastRightGrab)
             {
-                ControllerInputPoller.instance.leftControllerGripFloat = 1f;
+                ControllerInputPoller.instance.rightControllerGripFloat = 1f;
                 GameObject lhelp = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 UnityEngine.Object.Destroy(lhelp, 0.1f);
-                lhelp.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-                lhelp.transform.position = GorillaTagger.Instance.rightHandTransform.position;
-                lhelp.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
+                lhelp.transform.localScale = new Vector3(0.25f, 0.05f, 0.25f);
+                lhelp.transform.position = GorillaTagger.Instance.rightHandTransform.position + new Vector3(0f, 0.1f, 0f);
                 lhelp.AddComponent<GorillaSurfaceOverride>().overrideIndex = overrides[projIndex];
                 lhelp.GetComponent<Renderer>().enabled = false;
+
+                lhelp = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                UnityEngine.Object.Destroy(lhelp, 0.1f);
+                lhelp.transform.localScale = new Vector3(0.25f, 0.05f, 0.25f);
+                lhelp.transform.position = GorillaTagger.Instance.rightHandTransform.position - new Vector3(0f, 0.1f, 0f);
+                lhelp.AddComponent<GorillaSurfaceOverride>().overrideIndex = overrides[projIndex];
+                lhelp.GetComponent<Renderer>().enabled = false;
+
+                GorillaTagger.Instance.rightHandTransform.position += new Vector3(0f, 0.1f, 0f);
             }
             lastRightGrab = rightGrab;
         }

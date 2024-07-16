@@ -19,6 +19,7 @@ using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 using static iiMenu.Mods.Spammers.Projectiles;
 using GorillaGameModes;
+using System.Collections.Specialized;
 
 namespace iiMenu.Mods
 {
@@ -582,6 +583,109 @@ namespace iiMenu.Mods
             } else
             {
                 GorillaTagger.Instance.offlineVRRig.enabled = true;
+            }
+        }
+
+        public static void AtticFlingGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (isCopying && whoCopy != null)
+                {
+                    BuilderPiece[] them = GetPieces();
+                    BuilderPiece that = GetPieces()[UnityEngine.Random.Range(0, GetPieces().Length - 1)];
+                    BuilderTableNetworking.instance.photonView.RPC("PieceForceDroppedRPC", RpcTarget.All, new object[] { that.pieceId, whoCopy.transform.position - new Vector3(0f, 0.1f, 0f), Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360))), new Vector3(0f, 10f, 0f), Vector3.zero, PhotonNetwork.LocalPlayer });
+                    RPCProtection();
+                }
+                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        isCopying = true;
+                        whoCopy = possibly;
+                    }
+                }
+            }
+            else
+            {
+                if (isCopying)
+                {
+                    isCopying = false;
+                    GorillaTagger.Instance.offlineVRRig.enabled = true;
+                }
+            }
+        }
+
+        public static void AtticFlingAll()
+        {
+            if (rightTrigger > 0.5f)
+            {
+                BuilderPiece[] them = GetPieces();
+                BuilderPiece that = GetPieces()[UnityEngine.Random.Range(0, GetPieces().Length - 1)];
+                BuilderTableNetworking.instance.photonView.RPC("PieceForceDroppedRPC", RpcTarget.All, new object[] { that.pieceId, GetRandomVRRig(false).transform.position - new Vector3(0f, 0.1f, 0f), Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360))), new Vector3(0f, 10f, 0f), Vector3.zero, PhotonNetwork.LocalPlayer });
+                RPCProtection();
+            }
+        }
+
+        private static float caDebounce = 0f;
+        public static void AtticCrashGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (isCopying && whoCopy != null)
+                {
+                    if (Time.time > caDebounce)
+                    {
+                        caDebounce = Time.time + 1f;
+                        foreach (BuilderPiece that in GetPieces())
+                        {
+                            BuilderTableNetworking.instance.photonView.RPC("PieceForceDroppedRPC", GetPlayerFromVRRig(whoCopy), new object[] { that.pieceId, GorillaTagger.Instance.offlineVRRig.transform.position, GorillaTagger.Instance.offlineVRRig.transform.rotation, new Vector3(0f, 0f, 0f), Vector3.zero, PhotonNetwork.LocalPlayer });
+                            RPCProtection();
+                        }
+                    }
+                }
+                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        isCopying = true;
+                        whoCopy = possibly;
+                    }
+                }
+            }
+            else
+            {
+                if (isCopying)
+                {
+                    isCopying = false;
+                    GorillaTagger.Instance.offlineVRRig.enabled = true;
+                }
+            }
+        }
+
+        public static void AtticCrashAll()
+        {
+            if (rightTrigger > 0.5f)
+            {
+                if (Time.time > caDebounce)
+                {
+                    caDebounce = Time.time + 1f;
+                    foreach (BuilderPiece that in GetPieces())
+                    {
+                        BuilderTableNetworking.instance.photonView.RPC("PieceForceDroppedRPC", RpcTarget.Others, new object[] { that.pieceId, GorillaTagger.Instance.offlineVRRig.transform.position, GorillaTagger.Instance.offlineVRRig.transform.rotation, new Vector3(0f, 0f, 0f), Vector3.zero, PhotonNetwork.LocalPlayer });
+                        RPCProtection();
+                    }
+                }
             }
         }
 
