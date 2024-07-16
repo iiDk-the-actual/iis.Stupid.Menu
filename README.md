@@ -9,7 +9,7 @@
 
 <p align="center">
 	<a href="https://github.com/iiDk-the-actual/iis.Stupid.Menu/releases"><img src="https://img.shields.io/github/v/release/iiDk-the-actual/iis.Stupid.Menu?label=version&style=for-the-badge"></a>
-	<a href="https://github.com/iiDk-the-actual/iis.Stupid.Menu/releases/latest"><img src="https://img.shields.io/github/downloads/iiDk-the-actual/iis.Stupid.Menu/latest/iis_Stupid_Menu.dll?style=for-the-badge"></a>
+	<a href="https://github.com/iiDk-the-actual/iis.Stupid.Menu/releases/latest"><img src="https://img.shields.io/github/downloads/iiDk-the-actual/iis.Stupid.Menu/latest/ii's Stupid Menu.dll?style=for-the-badge"></a>
 	<a href="https://discord.gg/iidk"><img src="https://img.shields.io/badge/discord-10203%20online-blueviolet?style=for-the-badge"></a>
 </p>
 
@@ -33,4 +33,4 @@ No, you can't just take code from this without permission. If you're interested 
 - Drag the file `iis_Stupid_Menu.dll` to your plugins folder
 - Start Gorilla Tag if needed
 
-> This product is not affiliated with Gorilla Tag or Another Axiom LLC and is not endorsed or otherwise sponsored by Another Axiom LLC. Portions of the materials contained herein are property of Another Axiom LLC. © 2024 Another Axiom LLC.
+> This product is not affiliated with Gorilla Tag or Another Axiom LLC and is not endorsed or otherwise sponsored by Another Axiom LLC. Portions of the materials contained herein are property of Another Axiom LLC. Â© 2024 Another Axiom LLC.
