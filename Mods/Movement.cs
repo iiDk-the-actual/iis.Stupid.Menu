@@ -83,159 +83,197 @@ namespace iiMenu.Mods
             GetIndex("Change Platform Shape").overlapText = "Change Platform Shape <color=grey>[</color><color=green>" + platformShapes[platformShape] + "</color><color=grey>]</color>";
         }
 
+        public static GameObject CreatePlatform()
+        {
+            GameObject platform = null;
+            if (platformShape == 0)
+            {
+                platform = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                platform.transform.localScale = new Vector3(0.333f, 0.333f, 0.333f);
+            }
+            if (platformShape == 1)
+            {
+                platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                platform.transform.localScale = new Vector3(0.333f, 0.333f, 0.333f);
+            }
+            if (platformShape == 2)
+            {
+                platform = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                platform.transform.localScale = new Vector3(0.333f, 0.333f, 0.333f);
+            }
+            if (platformShape == 3)
+            {
+                platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                platform.transform.localScale = new Vector3(0.025f, 0.3f, 0.4f);
+            }
+            if (platformShape == 4)
+            {
+                platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                platform.transform.localScale = new Vector3(0.025f, 0.15f, 0.2f);
+            }
+            if (platformShape == 5)
+            {
+                platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                platform.transform.localScale = new Vector3(0.025f, 0.3f, 0.8f);
+            }
+            if (platformShape == 6)
+            {
+                platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                platform.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+            }
+
+            // We love Gorilla Tag and their pointless collision fixes
+            Vector3[] localPositions = new Vector3[]
+            {
+                new Vector3(0, 0.5f, 0),
+                new Vector3(0, -0.5f, 0),
+                new Vector3(0.5f, 0, 0),
+                new Vector3(-0.5f, 0, 0),
+                new Vector3(0, 0, 0.5f),
+                new Vector3(0, 0, -0.5f)
+            };
+
+            Quaternion[] localRotations = new Quaternion[]
+            {
+                Quaternion.Euler(90, 0, 0),
+                Quaternion.Euler(-90, 0, 0),
+                Quaternion.Euler(0, -90, 0),
+                Quaternion.Euler(0, 90, 0),
+                Quaternion.identity,
+                Quaternion.Euler(0, 180, 0)
+            };
+            for (int i = 0; i < localPositions.Length; i++)
+            {
+                GameObject side = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                side.transform.SetParent(platform.transform);
+                side.transform.localPosition = localPositions[i];
+                side.transform.localRotation = localRotations[i];
+                side.transform.localScale = new Vector3(1f, 1f, 0.01f);
+                side.GetComponent<Renderer>().enabled = false;
+            }
+
+            if (platformMode != 5)
+            {
+                platform.GetComponent<Renderer>().material.color = GetBGColor(0f);
+            }
+            if (platformMode == 1)
+            {
+                platform.GetComponent<Renderer>().enabled = false;
+            }
+            if (platformMode == 2)
+            {
+                float h = (Time.frameCount / 180f) % 1f;
+                platform.GetComponent<Renderer>().material.color = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
+            }
+            if (platformMode == 3)
+            {
+                platform.GetComponent<Renderer>().material.color = new Color32((byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), 128);
+            }
+            if (platformMode == 4)
+            {
+                foreach (MeshCollider v in Resources.FindObjectsOfTypeAll<MeshCollider>())
+                {
+                    if (v.enabled)
+                    {
+                        v.enabled = false;
+                        NoclipMeshColliders.Add(v);
+                    }
+                }
+            }
+            if (platformMode == 5)
+            {
+                platform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 29;
+                if (glass == null)
+                {
+                    glass = new Material(Shader.Find("GUI/Text Shader"));
+                    glass.color = new Color32(145, 187, 255, 100);
+                }
+                platform.GetComponent<Renderer>().material = glass;
+            }
+            if (platformMode == 6)
+            {
+                platform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 32;
+                platform.GetComponent<Renderer>().enabled = false;
+            }
+            if (platformMode == 7)
+            {
+                platform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 204;
+                platform.GetComponent<Renderer>().enabled = false;
+            }
+            if (platformMode == 8)
+            {
+                platform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 231;
+                platform.GetComponent<Renderer>().enabled = false;
+            }
+            if (platformMode == 9)
+            {
+                platform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 240;
+                platform.GetComponent<Renderer>().enabled = false;
+            }
+            if (platformMode == 10)
+            {
+                platform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 249;
+                platform.GetComponent<Renderer>().enabled = false;
+            }
+            if (platformMode == 11)
+            {
+                platform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 252;
+                platform.GetComponent<Renderer>().enabled = false;
+            }
+            if (GetIndex("Platform Outlines").enabled)
+            {
+                GameObject gameObject = null;
+                if (platformShape == 2)
+                {
+                    gameObject = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                }
+                if (platformShape == 1)
+                {
+                    gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                }
+                if (platformShape == 0)
+                {
+                    gameObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                }
+                if (gameObject == null)
+                {
+                    gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                }
+                UnityEngine.Object.Destroy(gameObject.GetComponent<Rigidbody>());
+                UnityEngine.Object.Destroy(gameObject.GetComponent<BoxCollider>());
+                gameObject.transform.parent = platform.transform;
+                gameObject.transform.localPosition = Vector3.zero;
+                gameObject.transform.localRotation = Quaternion.identity;
+                gameObject.transform.localScale = new Vector3(0.95f, 1.05f, 1.05f);
+                GradientColorKey[] array = new GradientColorKey[3];
+                array[0].color = buttonDefaultA;
+                array[0].time = 0f;
+                array[1].color = buttonDefaultB;
+                array[1].time = 0.5f;
+                array[2].color = buttonDefaultA;
+                array[2].time = 1f;
+                ColorChanger colorChanger = gameObject.AddComponent<ColorChanger>();
+                colorChanger.colors = new Gradient
+                {
+                    colorKeys = array
+                };
+                colorChanger.Start();
+            }
+            return platform;
+        }
+
         public static void Platforms()
         {
             if (leftGrab)
             {
                 if (leftplat == null)
                 {
-                    if (platformShape == 0)
-                    {
-                        leftplat = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                        leftplat.transform.localScale = new Vector3(0.333f, 0.333f, 0.333f);
-                    }
-                    if (platformShape == 1)
-                    {
-                        leftplat = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        leftplat.transform.localScale = new Vector3(0.333f, 0.333f, 0.333f);
-                    }
-                    if (platformShape == 2)
-                    {
-                        leftplat = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-                        leftplat.transform.localScale = new Vector3(0.333f, 0.333f, 0.333f);
-                    }
-                    if (platformShape == 3)
-                    {
-                        leftplat = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        leftplat.transform.localScale = new Vector3(0.025f, 0.3f, 0.4f);
-                    }
-                    if (platformShape == 4)
-                    {
-                        leftplat = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        leftplat.transform.localScale = new Vector3(0.025f, 0.15f, 0.2f);
-                    }
-                    if (platformShape == 5)
-                    {
-                        leftplat = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        leftplat.transform.localScale = new Vector3(0.025f, 0.3f, 0.8f);
-                    }
-                    if (platformShape == 6)
-                    {
-                        leftplat = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        leftplat.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-                    }
-                    leftplat.transform.position = GorillaTagger.Instance.leftHandTransform.position;
+                    leftplat = CreatePlatform();
+                    leftplat.transform.position = GorillaTagger.Instance.leftHandTransform.position + (GorillaTagger.Instance.leftHandTransform.right * GorillaTagger.Instance.offlineVRRig.leftHand.trackingPositionOffset.x) + (GorillaTagger.Instance.leftHandTransform.up * GorillaTagger.Instance.offlineVRRig.leftHand.trackingPositionOffset.y) + (GorillaTagger.Instance.leftHandTransform.forward * GorillaTagger.Instance.offlineVRRig.leftHand.trackingPositionOffset.z);
                     leftplat.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
-                    if (platformMode != 5)
-                    {
-                        leftplat.GetComponent<Renderer>().material.color = GetBGColor(0f);
-                    }
                     if (GetIndex("Stick Long Arms").enabled)
                     {
-                        leftplat.transform.position = GorillaTagger.Instance.leftHandTransform.position + GorillaTagger.Instance.leftHandTransform.forward * (armlength - 0.917f);
-                    }
-                    if (platformMode == 1)
-                    {
-                        leftplat.GetComponent<Renderer>().enabled = false;
-                    }
-                    if (platformMode == 2)
-                    {
-                        float h = (Time.frameCount / 180f) % 1f;
-                        leftplat.GetComponent<Renderer>().material.color = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
-                    }
-                    if (platformMode == 3)
-                    {
-                        leftplat.GetComponent<Renderer>().material.color = new Color32((byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), 128);
-                    }
-                    if (platformMode == 4)
-                    {
-                        foreach (MeshCollider v in Resources.FindObjectsOfTypeAll<MeshCollider>())
-                        {
-                            if (v.enabled)
-                            {
-                                v.enabled = false;
-                                NoclipMeshColliders.Add(v);
-                            }
-                        }
-                    }
-                    if (platformMode == 5)
-                    {
-                        leftplat.AddComponent<GorillaSurfaceOverride>().overrideIndex = 29;
-                        if (glass == null)
-                        {
-                            glass = new Material(Shader.Find("GUI/Text Shader"));
-                            glass.color = new Color32(145, 187, 255, 100);
-                        }
-                        leftplat.GetComponent<Renderer>().material = glass;
-                    }
-                    if (platformMode == 6)
-                    {
-                        leftplat.AddComponent<GorillaSurfaceOverride>().overrideIndex = 32;
-                        leftplat.GetComponent<Renderer>().enabled = false;
-                    }
-                    if (platformMode == 7)
-                    {
-                        leftplat.AddComponent<GorillaSurfaceOverride>().overrideIndex = 204;
-                        leftplat.GetComponent<Renderer>().enabled = false;
-                    }
-                    if (platformMode == 8)
-                    {
-                        leftplat.AddComponent<GorillaSurfaceOverride>().overrideIndex = 231;
-                        leftplat.GetComponent<Renderer>().enabled = false;
-                    }
-                    if (platformMode == 9)
-                    {
-                        leftplat.AddComponent<GorillaSurfaceOverride>().overrideIndex = 240;
-                        leftplat.GetComponent<Renderer>().enabled = false;
-                    }
-                    if (platformMode == 10)
-                    {
-                        leftplat.AddComponent<GorillaSurfaceOverride>().overrideIndex = 249;
-                        leftplat.GetComponent<Renderer>().enabled = false;
-                    }
-                    if (platformMode == 11)
-                    {
-                        leftplat.AddComponent<GorillaSurfaceOverride>().overrideIndex = 252;
-                        leftplat.GetComponent<Renderer>().enabled = false;
-                    }
-                    if (GetIndex("Platform Outlines").enabled)
-                    {
-                        GameObject gameObject = null;
-                        if (platformShape == 2)
-                        {
-                            gameObject = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-                        }
-                        if (platformShape == 1)
-                        {
-                            gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        }
-                        if (platformShape == 0)
-                        {
-                            gameObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                        }
-                        if (gameObject == null)
-                        {
-                            gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        }
-                        UnityEngine.Object.Destroy(gameObject.GetComponent<Rigidbody>());
-                        UnityEngine.Object.Destroy(gameObject.GetComponent<BoxCollider>());
-                        gameObject.transform.parent = leftplat.transform;
-                        gameObject.transform.localPosition = Vector3.zero;
-                        gameObject.transform.localRotation = Quaternion.identity;
-                        gameObject.transform.localScale = new Vector3(0.95f, 1.05f, 1.05f);
-                        GradientColorKey[] array = new GradientColorKey[3];
-                        array[0].color = buttonDefaultA;
-                        array[0].time = 0f;
-                        array[1].color = buttonDefaultB;
-                        array[1].time = 0.5f;
-                        array[2].color = buttonDefaultA;
-                        array[2].time = 1f;
-                        ColorChanger colorChanger = gameObject.AddComponent<ColorChanger>();
-                        colorChanger.colors = new Gradient
-                        {
-                            colorKeys = array
-                        };
-                        colorChanger.Start();
+                        leftplat.transform.position += GorillaTagger.Instance.leftHandTransform.forward * (armlength - 0.917f);
                     }
                 }
                 else
@@ -284,153 +322,12 @@ namespace iiMenu.Mods
             {
                 if (rightplat == null)
                 {
-                    if (platformShape == 0)
-                    {
-                        rightplat = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                        rightplat.transform.localScale = new Vector3(0.333f, 0.333f, 0.333f);
-                    }
-                    if (platformShape == 1)
-                    {
-                        rightplat = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        rightplat.transform.localScale = new Vector3(0.333f, 0.333f, 0.333f);
-                    }
-                    if (platformShape == 2)
-                    {
-                        rightplat = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-                        rightplat.transform.localScale = new Vector3(0.333f, 0.333f, 0.333f);
-                    }
-                    if (platformShape == 3)
-                    {
-                        rightplat = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        rightplat.transform.localScale = new Vector3(0.025f, 0.3f, 0.4f);
-                    }
-                    if (platformShape == 4)
-                    {
-                        rightplat = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        rightplat.transform.localScale = new Vector3(0.025f, 0.15f, 0.2f);
-                    }
-                    if (platformShape == 5)
-                    {
-                        rightplat = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        rightplat.transform.localScale = new Vector3(0.025f, 0.3f, 0.8f);
-                    }
-                    if (platformShape == 6)
-                    {
-                        rightplat = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        rightplat.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-                    }
-                    rightplat.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                    rightplat = CreatePlatform();
+                    rightplat.transform.position = GorillaTagger.Instance.rightHandTransform.position + (GorillaTagger.Instance.rightHandTransform.right * GorillaTagger.Instance.offlineVRRig.rightHand.trackingPositionOffset.x) + (GorillaTagger.Instance.rightHandTransform.up * GorillaTagger.Instance.offlineVRRig.rightHand.trackingPositionOffset.y) + (GorillaTagger.Instance.rightHandTransform.forward * GorillaTagger.Instance.offlineVRRig.rightHand.trackingPositionOffset.z);
                     rightplat.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
-                    if (platformMode != 5)
-                    {
-                        rightplat.GetComponent<Renderer>().material.color = GetBGColor(0f);
-                    }
                     if (GetIndex("Stick Long Arms").enabled)
                     {
-                        rightplat.transform.position = GorillaTagger.Instance.rightHandTransform.position + GorillaTagger.Instance.rightHandTransform.forward * (armlength - 0.917f);
-                    }
-                    if (platformMode == 1)
-                    {
-                        rightplat.GetComponent<Renderer>().enabled = false;
-                    }
-                    if (platformMode == 2)
-                    {
-                        float h = (Time.frameCount / 180f) % 1f;
-                        rightplat.GetComponent<Renderer>().material.color = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
-                    }
-                    if (platformMode == 3)
-                    {
-                        rightplat.GetComponent<Renderer>().material.color = new Color32((byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), 128);
-                    }
-                    if (platformMode == 4)
-                    {
-                        foreach (MeshCollider v in Resources.FindObjectsOfTypeAll<MeshCollider>())
-                        {
-                            if (v.enabled)
-                            {
-                                v.enabled = false;
-                                NoclipMeshColliders.Add(v);
-                            }
-                        }
-                    }
-                    if (platformMode == 5)
-                    {
-                        rightplat.AddComponent<GorillaSurfaceOverride>().overrideIndex = 29;
-                        if (glass == null)
-                        {
-                            glass = new Material(Shader.Find("GUI/Text Shader"));
-                            glass.color = new Color32(145, 187, 255, 100);
-                        }
-                        rightplat.GetComponent<Renderer>().material = glass;
-                    }
-                    if (platformMode == 6)
-                    {
-                        rightplat.AddComponent<GorillaSurfaceOverride>().overrideIndex = 32;
-                        rightplat.GetComponent<Renderer>().enabled = false;
-                    }
-                    if (platformMode == 7)
-                    {
-                        rightplat.AddComponent<GorillaSurfaceOverride>().overrideIndex = 204;
-                        rightplat.GetComponent<Renderer>().enabled = false;
-                    }
-                    if (platformMode == 8)
-                    {
-                        rightplat.AddComponent<GorillaSurfaceOverride>().overrideIndex = 231;
-                        rightplat.GetComponent<Renderer>().enabled = false;
-                    }
-                    if (platformMode == 9)
-                    {
-                        rightplat.AddComponent<GorillaSurfaceOverride>().overrideIndex = 240;
-                        rightplat.GetComponent<Renderer>().enabled = false;
-                    }
-                    if (platformMode == 10)
-                    {
-                        rightplat.AddComponent<GorillaSurfaceOverride>().overrideIndex = 249;
-                        rightplat.GetComponent<Renderer>().enabled = false;
-                    }
-                    if (platformMode == 11)
-                    {
-                        rightplat.AddComponent<GorillaSurfaceOverride>().overrideIndex = 252;
-                        rightplat.GetComponent<Renderer>().enabled = false;
-                    }
-                    if (GetIndex("Platform Outlines").enabled)
-                    {
-                        GameObject gameObject = null;
-                        if (platformShape == 2)
-                        {
-                            gameObject = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-                        }
-                        if (platformShape == 1)
-                        {
-                            gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        }
-                        if (platformShape == 0)
-                        {
-                            gameObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                        }
-                        if (gameObject == null)
-                        {
-                            gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        }
-                        UnityEngine.Object.Destroy(gameObject.GetComponent<Rigidbody>());
-                        UnityEngine.Object.Destroy(gameObject.GetComponent<BoxCollider>());
-                        gameObject.transform.parent = rightplat.transform;
-                        gameObject.transform.localPosition = Vector3.zero;
-                        gameObject.transform.localRotation = Quaternion.identity;
-                        gameObject.transform.localScale = new Vector3(0.95f, 1.05f, 1.05f);
-                        GradientColorKey[] array = new GradientColorKey[3];
-                        array[0].color = buttonDefaultA;
-                        array[0].time = 0f;
-                        array[1].color = buttonDefaultB;
-                        array[1].time = 0.5f;
-                        array[2].color = buttonDefaultA;
-                        array[2].time = 1f;
-                        ColorChanger colorChanger = gameObject.AddComponent<ColorChanger>();
-                        colorChanger.colors = new Gradient
-                        {
-                            colorKeys = array
-                        };
-                        colorChanger.Start();
+                        rightplat.transform.position += GorillaTagger.Instance.rightHandTransform.forward * (armlength - 0.917f);
                     }
                 }
                 else
@@ -2087,6 +1984,7 @@ namespace iiMenu.Mods
         }
 
         public static SizeChanger newSC = null;
+        private static bool lastjoined = false;
         private static Traverse lol = null;
         private static Traverse maxs = null;
         private static Traverse mins = null;
@@ -2094,19 +1992,42 @@ namespace iiMenu.Mods
         public static void SizeChangerr()
         {
             schanging = true;
+            if (PhotonNetwork.InRoom && !lastjoined)
+            {
+                foreach (SizeChangerTrigger sct in UnityEngine.Object.FindObjectsOfType<SizeChangerTrigger>()) // Thank you hamsterman for the patch
+                {
+                    sct.OnTriggerEnter(GorillaTagger.Instance.bodyCollider);
+                }
+            }
+            if (!PhotonNetwork.InRoom && lastjoined)
+            {
+                foreach (SizeChangerTrigger sct in UnityEngine.Object.FindObjectsOfType<SizeChangerTrigger>()) // Thank you hamsterman for the patch
+                {
+                    sct.OnTriggerExit(GorillaTagger.Instance.bodyCollider);
+                }
+            }
+            float increment = 0.05f;
+            if (leftTrigger > 0.5f)
+            {
+                increment = 0.2f;
+            }
+            if (leftGrab)
+            {
+                increment = 0.01f;
+            }
+            if (rightTrigger > 0.5f)
+            {
+                sizeScale += increment;
+            }
+            if (rightGrab)
+            {
+                sizeScale -= increment;
+            }
             if (rightPrimary)
             {
                 sizeScale = 1f;
             }
-            if (rightTrigger > 0.5f)
-            {
-                sizeScale += 0.05f;
-            }
-            if (rightGrab)
-            {
-                sizeScale -= 0.05f;
-            }
-            if (sizeScale <= 0)
+            if (sizeScale < 0.05f)
             {
                 sizeScale = 0.05f;
             }
@@ -2130,6 +2051,10 @@ namespace iiMenu.Mods
             maxs = lol.Field("maxScale");
             lol.Field("myType").SetValue(SizeChanger.ChangerType.Static);
             lol.Field("staticEasing").SetValue(0.5f);
+            foreach (SizeChangerTrigger sct in UnityEngine.Object.FindObjectsOfType<SizeChangerTrigger>()) // Thank you hamsterman for the patch
+            {
+                sct.OnTriggerEnter(GorillaTagger.Instance.bodyCollider);
+            }
         }
 
         public static void DisableSizeChanger()
@@ -2142,6 +2067,10 @@ namespace iiMenu.Mods
             mins.SetValue(sizeScale);
             maxs.SetValue(sizeScale);
             UnityEngine.Object.Destroy(newSC);
+            foreach (SizeChangerTrigger sct in UnityEngine.Object.FindObjectsOfType<SizeChangerTrigger>()) // Thank you hamsterman for the patch
+            {
+                sct.OnTriggerExit(GorillaTagger.Instance.bodyCollider);
+            }
         }
 
         public static void EnableSlipperyHands()

@@ -44,15 +44,12 @@ namespace iiMenu.Mods
                         if (Time.time > kgDebounce)
                         {
                             kgDebounce = Time.time + 0.2f;
-                            int num = RigManager.GetPhotonViewFromVRRig(whoCopy).ViewID;
-                            Hashtable ServerCleanDestroyEvent = new Hashtable();
-                            RaiseEventOptions ServerCleanOptions = new RaiseEventOptions
+                            PhotonView thy = RigManager.GetPhotonViewFromVRRig(whoCopy);
+                            GetOwnership(thy);
+                            if (thy.AmOwner)
                             {
-                                CachingOption = EventCaching.RemoveFromRoomCache
-                            };
-                            ServerCleanDestroyEvent[0] = num;
-                            ServerCleanOptions.CachingOption = EventCaching.AddToRoomCache;
-                            PhotonNetwork.NetworkingClient.OpRaiseEvent(204, ServerCleanDestroyEvent, ServerCleanOptions, SendOptions.SendUnreliable);
+                                PhotonNetwork.Destroy(thy);
+                            }
                             RPCProtection();
                         }
                     }
@@ -90,15 +87,12 @@ namespace iiMenu.Mods
                     if (Time.time > kgDebounce)
                     {
                         kgDebounce = Time.time + 0.2f;
-                        int num = RigManager.GetPhotonViewFromVRRig(RigManager.GetRandomVRRig(false)).ViewID;
-                        Hashtable ServerCleanDestroyEvent = new Hashtable();
-                        RaiseEventOptions ServerCleanOptions = new RaiseEventOptions
+                        PhotonView thy = RigManager.GetPhotonViewFromVRRig(RigManager.GetRandomVRRig(false));
+                        GetOwnership(thy);
+                        if (thy.AmOwner)
                         {
-                            CachingOption = EventCaching.RemoveFromRoomCache
-                        };
-                        ServerCleanDestroyEvent[0] = num;
-                        ServerCleanOptions.CachingOption = EventCaching.AddToRoomCache;
-                        PhotonNetwork.NetworkingClient.OpRaiseEvent(204, ServerCleanDestroyEvent, ServerCleanOptions, SendOptions.SendUnreliable);
+                            PhotonNetwork.Destroy(thy);
+                        }
                         RPCProtection();
                     }
                 }
@@ -125,15 +119,12 @@ namespace iiMenu.Mods
                     }
                     else
                     {
-                        int num = RigManager.GetPhotonViewFromVRRig(whoCopy).ViewID;
-                        Hashtable ServerCleanDestroyEvent = new Hashtable();
-                        RaiseEventOptions ServerCleanOptions = new RaiseEventOptions
+                        PhotonView thy = RigManager.GetPhotonViewFromVRRig(whoCopy);
+                        GetOwnership(thy);
+                        if (thy.AmOwner)
                         {
-                            CachingOption = EventCaching.RemoveFromRoomCache
-                        };
-                        ServerCleanDestroyEvent[0] = num;
-                        ServerCleanOptions.CachingOption = EventCaching.AddToRoomCache;
-                        PhotonNetwork.NetworkingClient.OpRaiseEvent(204, ServerCleanDestroyEvent, ServerCleanOptions, SendOptions.SendUnreliable);
+                            PhotonNetwork.Destroy(thy);
+                        }
                         RPCProtection();
                     }
                 }
@@ -167,15 +158,12 @@ namespace iiMenu.Mods
                 }
                 else
                 {
-                    int num = RigManager.GetPhotonViewFromVRRig(RigManager.GetRandomVRRig(false)).ViewID;
-                    Hashtable ServerCleanDestroyEvent = new Hashtable();
-                    RaiseEventOptions ServerCleanOptions = new RaiseEventOptions
+                    PhotonView thy = RigManager.GetPhotonViewFromVRRig(RigManager.GetRandomVRRig(false));
+                    GetOwnership(thy);
+                    if (thy.AmOwner)
                     {
-                        CachingOption = EventCaching.RemoveFromRoomCache
-                    };
-                    ServerCleanDestroyEvent[0] = num;
-                    ServerCleanOptions.CachingOption = EventCaching.AddToRoomCache;
-                    PhotonNetwork.NetworkingClient.OpRaiseEvent(204, ServerCleanDestroyEvent, ServerCleanOptions, SendOptions.SendUnreliable);
+                        PhotonNetwork.Destroy(thy);
+                    }
                     RPCProtection();
                 }
             }

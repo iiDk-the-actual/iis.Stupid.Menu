@@ -1,17 +1,17 @@
+using BepInEx;
 using System;
 using System.ComponentModel;
-using BepInEx;
 using UnityEngine;
 
 namespace iiMenu
 {
-	[Description(PluginInfo.Description)]
-	[BepInPlugin(PluginInfo.GUID, PluginInfo.Name, PluginInfo.Version)]
+    [Description(PluginInfo.Description)]
+    [BepInPlugin(PluginInfo.GUID, PluginInfo.Name, PluginInfo.Version)]
     public class Plugin : BaseUnityPlugin
-	{
-		private void Start()
-		{
-			Console.Title = "ii's Stupid Menu // Build "+PluginInfo.Version;
+    {
+        private void Start()
+        {
+            Console.Title = "ii's Stupid Menu // Build " + PluginInfo.Version;
 
             iiMenu.Patches.Menu.ApplyHarmonyPatches();
             GameObject Loading = new GameObject(); // To that one dude that uses SMI to inject my menu, it's this method
@@ -19,5 +19,5 @@ namespace iiMenu
             Loading.AddComponent<iiMenu.Notifications.NotifiLib>();
             UnityEngine.Object.DontDestroyOnLoad(Loading);
         }
-	}
+    }
 }

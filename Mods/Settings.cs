@@ -1285,6 +1285,16 @@ namespace iiMenu.Mods
             disableGunLine = false;
         }
 
+        public static void LegacyGunDirection()
+        {
+            legacyGunDirection = true;
+        }
+
+        public static void NewGunDirection()
+        {
+            legacyGunDirection = false;
+        }
+
         public static void FreezePlayerInMenu()
         {
             if (menu != null)
