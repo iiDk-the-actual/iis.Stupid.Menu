@@ -2006,6 +2006,7 @@ namespace iiMenu.Mods
                     sct.OnTriggerExit(GorillaTagger.Instance.bodyCollider);
                 }
             }
+            lastjoined = PhotonNetwork.InRoom;
             float increment = 0.05f;
             if (leftTrigger > 0.5f)
             {
