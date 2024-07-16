@@ -436,5 +436,27 @@ namespace iiMenu.Mods
                 Fun.SpazAccessories();
             }
         }
+
+        private static float stupidannoyingthing = 0f;
+        public static void NameSpoof()
+        {
+            string randomName = "GORILLA";
+            for (var i = 0; i < 4; i++)
+            {
+                randomName = randomName + UnityEngine.Random.Range(0, 9).ToString();
+            }
+
+            if (PhotonNetwork.InRoom)
+            {
+                if (Time.time > stupidannoyingthing && stupidannoyingthing != -1)
+                {
+                    FakeName(randomName);
+                    stupidannoyingthing = -1f;
+                }
+            } else
+            {
+                stupidannoyingthing = Time.time + 2f;
+            }
+        }
     }
 }

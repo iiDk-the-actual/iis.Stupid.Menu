@@ -243,7 +243,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Show Anti Cheat Reports <color=grey>[</color><color=green>Self</color><color=grey>]</color>", enableMethod =() => Safety.EnableACReportSelf(), disableMethod =() => Safety.DisableACReportSelf(), toolTip = "Gives you a notification every time you have been reported by the anti cheat."},
                 new ButtonInfo { buttonText = "Show Anti Cheat Reports <color=grey>[</color><color=green>All</color><color=grey>]</color>", enableMethod =() => Safety.EnableACReportAll(), disableMethod =() => Safety.DisableACReportAll(), toolTip = "Gives you a notification every time anyone has been reported by the anti cheat."},
 
-                new ButtonInfo { buttonText = "Change Identity", method =() => Safety.ChangeIdentity(), isTogglable = false, toolTip = "Changes your name on the leaderboard to a random string, but not on your rig."},
+                new ButtonInfo { buttonText = "Change Identity", method =() => Safety.ChangeIdentity(), isTogglable = false, toolTip = "Changes your name, color, and cosmetics to something random."},
+                new ButtonInfo { buttonText = "Name Spoof", method =() => Safety.NameSpoof(), toolTip = "Changes your name on the leaderboard to something random, but not on your rig."},
             },
 
             new ButtonInfo[] { // Movement Mods [9]
