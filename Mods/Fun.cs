@@ -1051,6 +1051,7 @@ namespace iiMenu.Mods
             }
         }
 
+        /*
         public static void BlocksGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
@@ -1067,7 +1068,7 @@ namespace iiMenu.Mods
                     RPCProtection();
                 }
             }
-        }
+        }*/
 
         public static void NoRespawnBug()
         {
@@ -1198,7 +1199,7 @@ namespace iiMenu.Mods
             }
         }
 
-        private static bool imkillingmyself = false;
+        /*private static bool imkillingmyself = false;
         private static List<int> last = new List<int> { };
         public static void FreezeBlocks()
         {
@@ -1245,7 +1246,7 @@ namespace iiMenu.Mods
                 BuilderTableNetworking.instance.photonView.RPC("RequestDropPieceRPC", RpcTarget.MasterClient, new object[] { that.pieceId, GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), PhotonNetwork.LocalPlayer });
                 RPCProtection();
             }
-        }
+        }*/
 
         public static void DestroyBug()
         {
@@ -1276,7 +1277,7 @@ namespace iiMenu.Mods
                 }
             }
         }
-
+        /*
         public static void DestroyBlocks()
         {
             BuilderPiece[] them = GetPieces();
@@ -1310,7 +1311,7 @@ namespace iiMenu.Mods
             BuilderPiece that = GetPieces()[UnityEngine.Random.Range(0, GetPieces().Length - 1)];
             BuilderTableNetworking.instance.photonView.RPC("RequestDropPieceRPC", RpcTarget.MasterClient, new object[] { that.pieceId, GorillaTagger.Instance.offlineVRRig.transform.position + new Vector3(UnityEngine.Random.Range(-3f, 3f), 4f, UnityEngine.Random.Range(-3f, 3f)), Quaternion.identity, Vector3.zero, new Vector3(UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f)), PhotonNetwork.LocalPlayer });
             RPCProtection();
-        }
+        }*/
 
         public static void SpazBug()
         {
@@ -1342,13 +1343,14 @@ namespace iiMenu.Mods
             }
         }
 
+        /*
         public static void SpazBuildingBlocks()
         {
             BuilderPiece[] them = GetPieces();
             BuilderPiece that = GetPieces()[UnityEngine.Random.Range(0, GetPieces().Length - 1)];
             BuilderTableNetworking.instance.photonView.RPC("RequestDropPieceRPC", RpcTarget.MasterClient, new object[] { that.pieceId, that.transform.position, Quaternion.Euler(new Vector3(UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f))), Vector3.zero, new Vector3(UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f)), PhotonNetwork.LocalPlayer });
             RPCProtection();
-        }
+        }*/
 
         public static void BugHalo()
         {
@@ -1387,13 +1389,14 @@ namespace iiMenu.Mods
             }
         }
 
+        /*
         public static void OrbitBlocks()
         {
             BuilderPiece[] them = GetPieces();
             BuilderPiece that = GetPieces()[UnityEngine.Random.Range(0, GetPieces().Length - 1)];
             BuilderTableNetworking.instance.photonView.RPC("RequestDropPieceRPC", RpcTarget.MasterClient, new object[] { that.pieceId, GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos((float)Time.frameCount / 30), 0f, MathF.Sin((float)Time.frameCount / 30)), Quaternion.identity, Vector3.zero, new Vector3(UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f)), PhotonNetwork.LocalPlayer });
             RPCProtection();
-        }
+        }*/
 
         public static void RideBug()
         {
