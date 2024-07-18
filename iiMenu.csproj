@@ -13,6 +13,7 @@
     <None Remove="Resources\icon.png" />
     <None Remove="Resources\iimenu" />
     <None Remove="Resources\mlm.png" />
+    <None Remove="Resources\pearl.png" />
     <None Remove="Resources\pride.jpg" />
     <None Remove="Resources\pride.png" />
     <None Remove="Resources\return.png" />
@@ -467,5 +468,8 @@
     <Reference Include="websocket-sharp">
       <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\websocket-sharp.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\pearl.png" />
   </ItemGroup>
 </Project>

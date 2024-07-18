@@ -598,7 +598,7 @@ namespace iiMenu.Mods
                 {
                     BuilderPiece[] them = GetPieces();
                     BuilderPiece that = GetPieces()[UnityEngine.Random.Range(0, GetPieces().Length - 1)];
-                    BuilderTableNetworking.instance.photonView.RPC("PieceForceDroppedRPC", RpcTarget.All, new object[] { that.pieceId, whoCopy.transform.position - new Vector3(0f, 0.1f, 0f), Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360))), new Vector3(0f, 10f, 0f), Vector3.zero, PhotonNetwork.LocalPlayer });
+                    BuilderTableNetworking.instance.photonView.RPC("RequestDropPieceRPC", RpcTarget.MasterClient, new object[] { that.pieceId, whoCopy.transform.position - new Vector3(0f, 0.1f, 0f), Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360))), new Vector3(0f, 10f, 0f), Vector3.zero, PhotonNetwork.LocalPlayer });
                     RPCProtection();
                 }
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
@@ -627,7 +627,7 @@ namespace iiMenu.Mods
             {
                 BuilderPiece[] them = GetPieces();
                 BuilderPiece that = GetPieces()[UnityEngine.Random.Range(0, GetPieces().Length - 1)];
-                BuilderTableNetworking.instance.photonView.RPC("PieceForceDroppedRPC", RpcTarget.All, new object[] { that.pieceId, GetRandomVRRig(false).transform.position - new Vector3(0f, 0.1f, 0f), Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360))), new Vector3(0f, 10f, 0f), Vector3.zero, PhotonNetwork.LocalPlayer });
+                BuilderTableNetworking.instance.photonView.RPC("RequestDropPieceRPC", RpcTarget.MasterClient, new object[] { that.pieceId, GetRandomVRRig(false).transform.position - new Vector3(0f, 0.1f, 0f), Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360))), new Vector3(0f, 10f, 0f), Vector3.zero, PhotonNetwork.LocalPlayer });
                 RPCProtection();
             }
         }
@@ -648,7 +648,7 @@ namespace iiMenu.Mods
                         caDebounce = Time.time + 1f;
                         foreach (BuilderPiece that in GetPieces())
                         {
-                            BuilderTableNetworking.instance.photonView.RPC("PieceForceDroppedRPC", GetPlayerFromVRRig(whoCopy), new object[] { that.pieceId, GorillaTagger.Instance.offlineVRRig.transform.position, GorillaTagger.Instance.offlineVRRig.transform.rotation, new Vector3(0f, 0f, 0f), Vector3.zero, PhotonNetwork.LocalPlayer });
+                            BuilderTableNetworking.instance.photonView.RPC("RequestDropPieceRPC", RpcTarget.MasterClient, new object[] { that.pieceId, GorillaTagger.Instance.offlineVRRig.transform.position, GorillaTagger.Instance.offlineVRRig.transform.rotation, new Vector3(0f, 0f, 0f), Vector3.zero, PhotonNetwork.LocalPlayer });
                             RPCProtection();
                         }
                     }
@@ -682,7 +682,7 @@ namespace iiMenu.Mods
                     caDebounce = Time.time + 1f;
                     foreach (BuilderPiece that in GetPieces())
                     {
-                        BuilderTableNetworking.instance.photonView.RPC("PieceForceDroppedRPC", RpcTarget.Others, new object[] { that.pieceId, GorillaTagger.Instance.offlineVRRig.transform.position, GorillaTagger.Instance.offlineVRRig.transform.rotation, new Vector3(0f, 0f, 0f), Vector3.zero, PhotonNetwork.LocalPlayer });
+                        BuilderTableNetworking.instance.photonView.RPC("RequestDropPieceRPC", RpcTarget.MasterClient, new object[] { that.pieceId, GorillaTagger.Instance.offlineVRRig.transform.position, GorillaTagger.Instance.offlineVRRig.transform.rotation, new Vector3(0f, 0f, 0f), Vector3.zero, PhotonNetwork.LocalPlayer });
                         RPCProtection();
                     }
                 }
