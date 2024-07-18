@@ -3253,7 +3253,7 @@ namespace iiMenu.Menu
             }
             return archiveholdables;
         }
-
+        /*
         public static BuilderPiece[] archivepieces = null;
         public static BuilderPiece[] GetPieces()
         {
@@ -3267,7 +3267,7 @@ namespace iiMenu.Menu
                 archivepieces = UnityEngine.Object.FindObjectsOfType<BuilderPiece>();
             }
             return archivepieces;
-        }
+        }*/
 
         public static MonkeyeAI[] archivemonsters = null;
         public static MonkeyeAI[] GetMonsters()

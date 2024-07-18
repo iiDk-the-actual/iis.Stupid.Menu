@@ -255,6 +255,7 @@ namespace iiMenu.Mods
             }
         }
 
+        /*
         private static bool lasttriggerthing = false;
         public static void FreezeAll()
         {
@@ -277,6 +278,6 @@ namespace iiMenu.Mods
                 }
             }
             lasttriggerthing = rightTrigger > 0.5;
-        }
+        }*/
     }
 }

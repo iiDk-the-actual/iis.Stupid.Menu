@@ -585,7 +585,7 @@ namespace iiMenu.Mods
                 GorillaTagger.Instance.offlineVRRig.enabled = true;
             }
         }
-
+        /*
         public static void AtticFlingGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
@@ -687,7 +687,7 @@ namespace iiMenu.Mods
                     }
                 }
             }
-        }
+        }*/
 
         /*
         public static void RigSpamTest() // This doesnt work
