@@ -430,14 +430,115 @@ namespace iiMenu.Mods
             byte randB = (byte)UnityEngine.Random.Range(0, 255);
             byte randC = (byte)UnityEngine.Random.Range(0, 255);
             ChangeColor(new Color32(randA, randB, randC, 255));
+        }
 
-            for (var i = 0; i < 50; i++)
+        public static void ChangeIdentityRegular()
+        {
+            string[] names = new string[]
             {
-                Fun.SpazAccessories();
+                "0",
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9",
+                "SHIBAGT",
+                "PBBV",
+                "J3VU",
+                "BEES",
+                "NAMO",
+                "MANGO",
+                "FROSTY",
+                "FRISH",
+                "LITTLETIMMY",
+                "SILLYBILLY",
+                "TIMMY",
+                "MINIGAMES",
+                "MINIGAMESKID",
+                "JMANCURLY",
+                "VMT",
+                "ELLIOT",
+                "DEEP",
+                "BTC",
+                "KMAN",
+                "YOSEF",
+                "POLAR",
+                "3CLIPCE",
+                "GORILLAVR",
+                "GORILLAVRGT",
+                "GORILLAGTVR",
+                "GORILLAGT",
+                "SHARKPUPPET",
+                "DUCKY",
+                "EDDIE",
+                "EDDY",
+                "CASEOH",
+                "SKETCH",
+                "WATERMELON",
+                "CRAZY",
+                "MONK",
+                "MONKE",
+                "MONKI",
+                "MONKEY",
+                "MONKIY",
+                "GORILL",
+                "GOORILA",
+                "GORILLA",
+                "REDBERRY",
+                "FOX"
+            };
+
+            ChangeName(names[UnityEngine.Random.Range(0, names.Length - 1)]);
+
+            Color[] colors = new Color[]
+            {
+                Color.cyan,
+                Color.yellow,
+                Color.blue,
+                Color.gray,
+                Color.black,
+                Color.white,
+                Color.magenta,
+                Color.yellow,
+                Color.green,
+                new Color(1f, 0.5f, 1f, 255f),
+                new Color(0f, 0.5f, 0f, 255f)
+            };
+            ChangeColor(colors[UnityEngine.Random.Range(0, colors.Length - 1)]);
+        }
+
+        private static bool lastinlobbyagain = false;
+        public static void ChangeIdentityOnDisconnect()
+        {
+            if (!PhotonNetwork.InRoom && lastinlobbyagain)
+            {
+                ChangeIdentity();
             }
+            lastinlobbyagain = PhotonNetwork.InRoom;
+        }
+        public static void ChangeIdentityRegularOnDisconnect()
+        {
+            if (!PhotonNetwork.InRoom && lastinlobbyagain)
+            {
+                ChangeIdentityRegular();
+            }
+            lastinlobbyagain = PhotonNetwork.InRoom;
+        }
+        public static void ChangeIdentityMinigamesOnDisconnect()
+        {
+            if (!PhotonNetwork.InRoom && lastinlobbyagain)
+            {
+                Fun.BecomeMinigamesKid();
+            }
+            lastinlobbyagain = PhotonNetwork.InRoom;
         }
 
         private static float stupidannoyingthing = 0f;
+        private static int lastPlayerCount = -1;
         public static void NameSpoof()
         {
             string randomName = "GORILLA";
@@ -448,6 +549,14 @@ namespace iiMenu.Mods
 
             if (PhotonNetwork.InRoom)
             {
+                if (lastPlayerCount != -1)
+                {
+                    if (PhotonNetwork.PlayerList.Length != lastPlayerCount)
+                    {
+                        stupidannoyingthing = Time.time + 1f;
+                    }
+                }
+                lastPlayerCount = PhotonNetwork.PlayerList.Length;
                 if (Time.time > stupidannoyingthing && stupidannoyingthing != -1)
                 {
                     FakeName(randomName);
@@ -455,7 +564,8 @@ namespace iiMenu.Mods
                 }
             } else
             {
-                stupidannoyingthing = Time.time + 2f;
+                lastPlayerCount = -1;
+                stupidannoyingthing = Time.time + 1f;
             }
         }
     }

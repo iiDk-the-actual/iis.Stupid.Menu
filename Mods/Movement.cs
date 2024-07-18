@@ -10,8 +10,10 @@ using System;
 using System.ComponentModel.Design;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 using UnityEngine.XR.Interaction.Toolkit;
 using Valve.VR;
 using static iiMenu.Classes.RigManager;
@@ -171,14 +173,7 @@ namespace iiMenu.Mods
             }
             if (platformMode == 4)
             {
-                foreach (MeshCollider v in Resources.FindObjectsOfTypeAll<MeshCollider>())
-                {
-                    if (v.enabled)
-                    {
-                        v.enabled = false;
-                        NoclipMeshColliders.Add(v);
-                    }
-                }
+                UpdateClipColliders(false);
             }
             if (platformMode == 5)
             {
@@ -310,10 +305,7 @@ namespace iiMenu.Mods
                     leftplat = null;
                     if (platformMode == 4 && rightplat == null)
                     {
-                        foreach (MeshCollider v in NoclipMeshColliders)
-                        {
-                            v.enabled = true;
-                        }
+                        UpdateClipColliders(true);
                     }
                 }
             }
@@ -364,10 +356,7 @@ namespace iiMenu.Mods
                     rightplat = null;
                     if (platformMode == 4 && leftplat == null)
                     {
-                        foreach (MeshCollider v in NoclipMeshColliders)
-                        {
-                            v.enabled = true;
-                        }
+                        UpdateClipColliders(true);
                     }
                 }
             }
@@ -523,24 +512,14 @@ namespace iiMenu.Mods
                 if (noclip == false)
                 {
                     noclip = true;
-                    foreach (MeshCollider v in Resources.FindObjectsOfTypeAll<MeshCollider>())
-                    {
-                        if (v.enabled)
-                        {
-                            v.enabled = false;
-                            NoclipMeshColliders.Add(v);
-                        }
-                    }
+                    UpdateClipColliders(false);
                 }
             } else
             {
                 if (noclip == true)
                 {
                     noclip = false;
-                    foreach (MeshCollider v in NoclipMeshColliders)
-                    {
-                        v.enabled = true;
-                    }
+                    UpdateClipColliders(true);
                 }
             }
         }
@@ -1050,7 +1029,7 @@ namespace iiMenu.Mods
             {
                 animSpeed *= 1.5f;
             }
-            
+
             if (Mathf.Abs(joy.y) > 0.05f || Mathf.Abs(joy.x) > 0.05f)
             {
                 GorillaTagger.Instance.leftHandTransform.position = GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.bodyCollider.transform.forward * (Mathf.Sin(Time.time * animSpeed) * (joy.y * armLength)) + GorillaTagger.Instance.bodyCollider.transform.right * ((Mathf.Sin(Time.time * animSpeed) * (joy.x * armLength)) - 0.2f) + new Vector3(0f, -0.3f + (Mathf.Cos(Time.time * animSpeed) * 0.2f), 0f);
@@ -1086,8 +1065,8 @@ namespace iiMenu.Mods
             if (rightGrab)
             {
                 float time = Time.frameCount / 3f;
-                GorillaTagger.Instance.rightHandTransform.position = GorillaTagger.Instance.headCollider.transform.position + (GorillaTagger.Instance.headCollider.transform.right * (0.4f+(MathF.Cos(time) * 0.4f))) + (GorillaTagger.Instance.headCollider.transform.up * (MathF.Sin(time) * 0.6f)) + (GorillaTagger.Instance.headCollider.transform.forward * 0.75f);
-                GorillaTagger.Instance.leftHandTransform.position = GorillaTagger.Instance.headCollider.transform.position + (GorillaTagger.Instance.headCollider.transform.right * -(0.4f+(MathF.Cos(time) * 0.4f))) + (GorillaTagger.Instance.headCollider.transform.up * (MathF.Sin(time) * 0.6f)) + (GorillaTagger.Instance.headCollider.transform.forward * 0.75f);
+                GorillaTagger.Instance.rightHandTransform.position = GorillaTagger.Instance.headCollider.transform.position + (GorillaTagger.Instance.headCollider.transform.right * (0.4f + (MathF.Cos(time) * 0.4f))) + (GorillaTagger.Instance.headCollider.transform.up * (MathF.Sin(time) * 0.6f)) + (GorillaTagger.Instance.headCollider.transform.forward * 0.75f);
+                GorillaTagger.Instance.leftHandTransform.position = GorillaTagger.Instance.headCollider.transform.position + (GorillaTagger.Instance.headCollider.transform.right * -(0.4f + (MathF.Cos(time) * 0.4f))) + (GorillaTagger.Instance.headCollider.transform.up * (MathF.Sin(time) * 0.6f)) + (GorillaTagger.Instance.headCollider.transform.forward * 0.75f);
             }
         }
 
@@ -1117,7 +1096,7 @@ namespace iiMenu.Mods
 
         public static void ZeroGravity()
         {
-            GorillaLocomotion.Player.Instance.bodyCollider.attachedRigidbody.AddForce(Vector3.up * (Time.deltaTime * (9.81f/Time.deltaTime)), ForceMode.Acceleration);
+            GorillaLocomotion.Player.Instance.bodyCollider.attachedRigidbody.AddForce(Vector3.up * (Time.deltaTime * (9.81f / Time.deltaTime)), ForceMode.Acceleration);
         }
 
         public static void HighGravity()
@@ -1224,13 +1203,6 @@ namespace iiMenu.Mods
 
                 if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > teleDebounce)
                 {
-                    /*MeshCollider[] meshColliders = Resources.FindObjectsOfTypeAll<MeshCollider>();
-                    foreach (MeshCollider coll in meshColliders)
-                    {
-                        coll.enabled = false;
-                    }
-                    GorillaTagger.Instance.rigidbody.transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
-                    frameFixColliders = true;*/
                     TeleportPlayer(NewPointer.transform.position + new Vector3(0f, 1f, 0f));
                     GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity = Vector3.zero;
                     teleDebounce = Time.time + 0.5f;
@@ -1331,6 +1303,99 @@ namespace iiMenu.Mods
             }
         }
 
+        private static GameObject pearl = null;
+        private static Texture2D pearltxt = null;
+        private static Material pearlmat = null;
+        private static bool isrighthandedpearl = false;
+        public static void EnderPearl()
+        {
+            if (rightGrab || leftGrab)
+            {
+                if (pearl == null)
+                {
+                    pearl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    UnityEngine.Object.Destroy(pearl.GetComponent<Collider>());
+                    pearl.transform.localScale = new Vector3(0.1f, 0.1f, 0.01f);
+                    if (pearlmat == null)
+                    {
+                        pearlmat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+
+                        pearlmat.color = Color.white;
+                        if (pearltxt == null)
+                        {
+                            pearltxt = LoadTextureFromResource("iiMenu.Resources.pearl.png");
+                            pearltxt.filterMode = FilterMode.Point;
+                            pearltxt.wrapMode = TextureWrapMode.Clamp;
+                        }
+                        pearlmat.mainTexture = pearltxt;
+
+                        pearlmat.SetFloat("_Surface", 1);
+                        pearlmat.SetFloat("_Blend", 0);
+                        pearlmat.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
+                        pearlmat.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
+                        pearlmat.SetFloat("_ZWrite", 0);
+                        pearlmat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+                        pearlmat.renderQueue = (int)RenderQueue.Transparent;
+
+                        pearlmat.SetFloat("_Glossiness", 0.0f);
+                        pearlmat.SetFloat("_Metallic", 0.0f);
+                    }
+                    pearl.GetComponent<Renderer>().material = pearlmat;
+                }
+                if (pearl.GetComponent<Rigidbody>() != null)
+                {
+                    UnityEngine.Object.Destroy(pearl.GetComponent<Rigidbody>());
+                }
+                isrighthandedpearl = rightGrab;
+                pearl.transform.position = rightGrab ? GorillaTagger.Instance.rightHandTransform.position : GorillaTagger.Instance.leftHandTransform.position;
+            } else
+            {
+                if (pearl != null)
+                {
+                    if (pearl.GetComponent<Rigidbody>() == null)
+                    {
+                        Rigidbody comp = pearl.AddComponent(typeof(Rigidbody)) as Rigidbody;
+                        comp.velocity = isrighthandedpearl ? GorillaLocomotion.Player.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0) : GorillaLocomotion.Player.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0);
+                    }
+                    Physics.Raycast(pearl.transform.position, pearl.GetComponent<Rigidbody>().velocity, out var Ray, 0.25f, GorillaLocomotion.Player.Instance.locomotionEnabledLayers);
+                    if (Ray.collider != null)
+                    {
+                        TeleportPlayer(pearl.transform.position);
+                        if (PhotonNetwork.InRoom)
+                        {
+                            GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                            84,
+                            true,
+                            999999f
+                        });
+                        }
+                        else
+                        {
+                            GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(84, true, 999999f);
+                        }
+                        RPCProtection();
+                        UnityEngine.Object.Destroy(pearl);
+                    }
+                }
+            }
+            if (pearl != null)
+            {
+                pearl.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
+                if (pearl.GetComponent<Rigidbody>() != null)
+                {
+                    pearl.GetComponent<Rigidbody>().AddForce(Vector3.up * (Time.deltaTime * (6.66f / Time.deltaTime)), ForceMode.Acceleration);
+                }
+            }
+        }
+
+        public static void DestroyEnderPearl()
+        {
+            if (pearl != null)
+            {
+                UnityEngine.Object.Destroy(pearl);
+            }
+        }
+
         public static void SpeedBoost()
         {
             GorillaLocomotion.Player.Instance.maxJumpSpeed = jspeed;
@@ -1371,6 +1436,14 @@ namespace iiMenu.Mods
             GorillaLocomotion.Player.Instance.jumpMultiplier = 99999f;
         }
 
+        public static void UpdateClipColliders(bool enabledd)
+        {
+            foreach (MeshCollider v in Resources.FindObjectsOfTypeAll<MeshCollider>())
+            {
+                v.enabled = enabledd;
+            }
+        }
+
         public static void Noclip()
         {
             if (rightTrigger > 0.5f || UnityInput.Current.GetKey(KeyCode.E))
@@ -1378,14 +1451,7 @@ namespace iiMenu.Mods
                 if (noclip == false)
                 {
                     noclip = true;
-                    foreach (MeshCollider v in Resources.FindObjectsOfTypeAll<MeshCollider>())
-                    {
-                        if (v.enabled)
-                        {
-                            v.enabled = false;
-                            NoclipMeshColliders.Add(v);
-                        }
-                    }
+                    UpdateClipColliders(false);
                 }
             }
             else
@@ -1393,10 +1459,7 @@ namespace iiMenu.Mods
                 if (noclip == true)
                 {
                     noclip = false;
-                    foreach (MeshCollider v in NoclipMeshColliders)
-                    {
-                        v.enabled = true;
-                    }
+                    UpdateClipColliders(true);
                 }
             }
         }
@@ -1915,6 +1978,7 @@ namespace iiMenu.Mods
         public static void StareAtNearby()
         {
             GorillaTagger.Instance.offlineVRRig.headConstraint.LookAt(GetClosestVRRig().headMesh.transform.position);
+            GorillaTagger.Instance.offlineVRRig.head.rigTarget.LookAt(GetClosestVRRig().headMesh.transform.position);
         }
 
         public static void StareAtGun()
@@ -1928,6 +1992,7 @@ namespace iiMenu.Mods
                 if (isCopying && whoCopy != null)
                 {
                     GorillaTagger.Instance.offlineVRRig.headConstraint.LookAt(whoCopy.headMesh.transform.position);
+                    GorillaTagger.Instance.offlineVRRig.head.rigTarget.LookAt(whoCopy.headMesh.transform.position);
                 }
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
@@ -2008,32 +2073,35 @@ namespace iiMenu.Mods
             }
             lastjoined = PhotonNetwork.InRoom;
             float increment = 0.05f;
-            if (leftTrigger > 0.5f)
+            if (!GetIndex("Disable Size Changer Buttons").enabled)
             {
-                increment = 0.2f;
-            }
-            if (leftGrab)
-            {
-                increment = 0.01f;
-            }
-            if (rightTrigger > 0.5f)
-            {
-                sizeScale += increment;
-            }
-            if (rightGrab)
-            {
-                sizeScale -= increment;
-            }
-            if (rightPrimary)
-            {
-                sizeScale = 1f;
+                if (leftTrigger > 0.5f)
+                {
+                    increment = 0.2f;
+                }
+                if (leftGrab)
+                {
+                    increment = 0.01f;
+                }
+                if (rightTrigger > 0.5f)
+                {
+                    sizeScale += increment;
+                }
+                if (rightGrab)
+                {
+                    sizeScale -= increment;
+                }
+                if (rightPrimary)
+                {
+                    sizeScale = 1f;
+                }
             }
             if (sizeScale < 0.05f)
             {
                 sizeScale = 0.05f;
             }
             GorillaLocomotion.Player.Instance.scale = sizeScale;
-            GorillaTagger.Instance.offlineVRRig.targetScale = sizeScale;
+            // GorillaTagger.Instance.offlineVRRig.targetScale = sizeScale; Removed by lemming ty <3
             GorillaTagger.Instance.offlineVRRig.scaleFactor = sizeScale;
             mins.SetValue(sizeScale);
             maxs.SetValue(sizeScale);
@@ -2044,7 +2112,7 @@ namespace iiMenu.Mods
             schanging = true;
             sizeScale = 1f;
             GorillaLocomotion.Player.Instance.scale = sizeScale;
-            GorillaTagger.Instance.offlineVRRig.targetScale = sizeScale;
+            // GorillaTagger.Instance.offlineVRRig.targetScale = sizeScale; Removed by lemming ty <3
             GorillaTagger.Instance.offlineVRRig.scaleFactor = sizeScale;
             newSC = new GameObject("WHY DOES THIS WORK").AddComponent<SizeChanger>();
             lol = Traverse.Create(newSC);
@@ -2063,7 +2131,7 @@ namespace iiMenu.Mods
             schanging = false;
             sizeScale = 1f;
             GorillaLocomotion.Player.Instance.scale = sizeScale;
-            GorillaTagger.Instance.offlineVRRig.targetScale = sizeScale;
+            // GorillaTagger.Instance.offlineVRRig.targetScale = sizeScale; Removed by lemming ty <3
             GorillaTagger.Instance.offlineVRRig.scaleFactor = sizeScale;
             mins.SetValue(sizeScale);
             maxs.SetValue(sizeScale);
@@ -2844,7 +2912,7 @@ namespace iiMenu.Mods
                     GorillaTagger.Instance.offlineVRRig.rightMiddle.LerpFinger(1f, false);
                     GorillaTagger.Instance.offlineVRRig.rightThumb.LerpFinger(1f, false);
 
-                    if (PhotonNetwork.InRoom)
+                    /*if (PhotonNetwork.InRoom)
                     {
                         GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
                             91,
@@ -2856,7 +2924,7 @@ namespace iiMenu.Mods
                     else
                     {
                         GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(91, false, 999999f);
-                    }
+                    }*/
                 }
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {

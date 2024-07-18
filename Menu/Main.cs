@@ -1278,7 +1278,7 @@ namespace iiMenu.Menu
             gameObject.GetComponent<BoxCollider>().isTrigger = true;
             gameObject.transform.parent = menu.transform;
             gameObject.transform.rotation = Quaternion.identity;
-            if (FATMENU == true)
+            if (FATMENU)
             {
                 gameObject.transform.localScale = new Vector3(0.09f, 0.9f, 0.08f);
             }
@@ -1298,7 +1298,7 @@ namespace iiMenu.Menu
                 // Variable calculations: (menu scale y)0.3825 / (menu scale z)0.3 = 1.275 = Y
                 // 0.08 x Y = 0.102
                 gameObject.transform.localScale = new Vector3(0.09f, 0.102f, 0.08f);
-                if (FATMENU == true)
+                if (FATMENU)
                 {
                     gameObject.transform.localPosition = new Vector3(0.56f, 0.399f, 0.28f - offset);
                 } else
@@ -1670,7 +1670,7 @@ namespace iiMenu.Menu
 
                 // Size is calculated in depth, width, height
                 // Wtf
-                if (FATMENU == true)
+                if (FATMENU)
                 {
                     gameObject.transform.localScale = new Vector3(0.1f, 1f, 1f);
                 }
@@ -1734,6 +1734,8 @@ namespace iiMenu.Menu
                                 if (hasLoadedPride == false)
                                 {
                                     pride = LoadTextureFromResource("iiMenu.Resources.pride.png");
+                                    pride.filterMode = FilterMode.Point;
+                                    pride.wrapMode = TextureWrapMode.Clamp;
                                     hasLoadedPride = true;
                                 }
                                 gameObject.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Lit");
@@ -1745,6 +1747,8 @@ namespace iiMenu.Menu
                                 if (hasLoadedTrans == false)
                                 {
                                     trans = LoadTextureFromResource("iiMenu.Resources.trans.png");
+                                    trans.filterMode = FilterMode.Point;
+                                    trans.wrapMode = TextureWrapMode.Clamp;
                                     hasLoadedTrans = true;
                                 }
                                 gameObject.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Lit");
@@ -1755,6 +1759,8 @@ namespace iiMenu.Menu
                                 if (hasLoadedGay == false)
                                 {
                                     gay = LoadTextureFromResource("iiMenu.Resources.mlm.png");
+                                    gay.filterMode = FilterMode.Point;
+                                    gay.wrapMode = TextureWrapMode.Clamp;
                                     hasLoadedGay = true;
                                 }
                                 gameObject.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Lit");
@@ -2010,7 +2016,7 @@ namespace iiMenu.Menu
                 gameObject.GetComponent<BoxCollider>().isTrigger = true;
                 gameObject.transform.parent = menu.transform;
                 gameObject.transform.rotation = Quaternion.identity;
-                if (FATMENU == true)
+                if (FATMENU)
                 {
                     gameObject.transform.localScale = new Vector3(0.09f, 0.9f, 0.08f);
                 }
@@ -2385,7 +2391,7 @@ namespace iiMenu.Menu
                 gameObject.GetComponent<BoxCollider>().isTrigger = true;
                 gameObject.transform.parent = menu.transform;
                 gameObject.transform.rotation = Quaternion.identity;
-                if (FATMENU == true)
+                if (FATMENU)
                 {
                     gameObject.transform.localScale = new Vector3(0.09f, 0.9f, 0.08f);
                 }
@@ -2446,7 +2452,7 @@ namespace iiMenu.Menu
                 gameObject2.GetComponent<BoxCollider>().isTrigger = true;
                 gameObject2.transform.parent = menu.transform;
                 gameObject2.transform.rotation = Quaternion.identity;
-                if (FATMENU == true)
+                if (FATMENU)
                 {
                     gameObject2.transform.localScale = new Vector3(0.09f, 0.9f, 0.08f);
                 }
@@ -2510,7 +2516,7 @@ namespace iiMenu.Menu
                 gameObject.transform.parent = menu.transform;
                 gameObject.transform.rotation = Quaternion.identity;
                 gameObject.transform.localScale = new Vector3(0.09f, 0.2f, 0.9f);
-                if (FATMENU == true)
+                if (FATMENU)
                 {
                     gameObject.transform.localPosition = new Vector3(0.56f, 0.65f, 0);
                 }
@@ -2554,7 +2560,7 @@ namespace iiMenu.Menu
                 {
                     component.sizeDelta = new Vector2(9f, 0.015f);
                 }
-                if (FATMENU == true)
+                if (FATMENU)
                 {
                     component.localPosition = new Vector3(0.064f, 0.195f, 0f);
                 }
@@ -2581,7 +2587,7 @@ namespace iiMenu.Menu
                 gameObject.transform.parent = menu.transform;
                 gameObject.transform.rotation = Quaternion.identity;
                 gameObject.transform.localScale = new Vector3(0.09f, 0.2f, 0.9f);
-                if (FATMENU == true)
+                if (FATMENU)
                 {
                     gameObject.transform.localPosition = new Vector3(0.56f, -0.65f, 0);
                 }
@@ -2618,7 +2624,7 @@ namespace iiMenu.Menu
                 {
                     component.sizeDelta = new Vector2(9f, 0.015f);
                 }
-                if (FATMENU == true)
+                if (FATMENU)
                 {
                     component.localPosition = new Vector3(0.064f, -0.195f, 0f);
                 }
@@ -2649,7 +2655,7 @@ namespace iiMenu.Menu
                 gameObject.transform.parent = menu.transform;
                 gameObject.transform.rotation = Quaternion.identity;
                 gameObject.transform.localScale = new Vector3(0.09f, 0.3f, 0.05f);
-                if (FATMENU == true)
+                if (FATMENU)
                 {
                     gameObject.transform.localPosition = new Vector3(0.56f, 0.299f, 0.355f);
                 }
@@ -2693,7 +2699,7 @@ namespace iiMenu.Menu
                 {
                     component.sizeDelta = new Vector2(9f, 0.015f);
                 }
-                if (FATMENU == true)
+                if (FATMENU)
                 {
                     component.localPosition = new Vector3(0.064f, 0.09f, 0.135f);
                 }
@@ -2721,7 +2727,7 @@ namespace iiMenu.Menu
                 gameObject.transform.parent = menu.transform;
                 gameObject.transform.rotation = Quaternion.identity;
                 gameObject.transform.localScale = new Vector3(0.09f, 0.3f, 0.05f);
-                if (FATMENU == true)
+                if (FATMENU)
                 {
                     gameObject.transform.localPosition = new Vector3(0.56f, -0.299f, 0.355f);
                 }
@@ -2758,7 +2764,7 @@ namespace iiMenu.Menu
                 {
                     component.sizeDelta = new Vector2(9f, 0.015f);
                 }
-                if (FATMENU == true)
+                if (FATMENU)
                 {
                     component.localPosition = new Vector3(0.064f, -0.09f, 0.135f);
                 }
@@ -2766,6 +2772,140 @@ namespace iiMenu.Menu
                 {
                     component.localPosition = new Vector3(0.064f, -0.15f, 0.135f);
                 }
+                component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+                if (shouldOutline)
+                {
+                    OutlineObj(gameObject, true);
+                }
+            }
+
+            if (pageButtonType == 6)
+            { // Inverse of the search button
+                GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                if (themeType == 30)
+                {
+                    gameObject.GetComponent<Renderer>().enabled = false;
+                }
+                if (!UnityInput.Current.GetKey(KeyCode.Q) && !(isSearching && isPcWhenSearching))
+                {
+                    gameObject.layer = 2;
+                }
+                UnityEngine.Object.Destroy(gameObject.GetComponent<Rigidbody>());
+                gameObject.GetComponent<BoxCollider>().isTrigger = true;
+                gameObject.transform.parent = menu.transform;
+                gameObject.transform.rotation = Quaternion.identity;
+                gameObject.transform.localScale = new Vector3(0.09f, 0.102f, 0.08f);
+                if (FATMENU)
+                {
+                    gameObject.transform.localPosition = new Vector3(0.56f, 0.450f, -0.58f);
+                }
+                else
+                {
+                    gameObject.transform.localPosition = new Vector3(0.56f, 0.7f, -0.58f);
+                }
+                gameObject.AddComponent<Classes.Button>().relatedText = "PreviousPage";
+                GradientColorKey[] array = new GradientColorKey[3];
+                array[0].color = buttonDefaultA;
+                array[0].time = 0f;
+                array[1].color = buttonDefaultB;
+                array[1].time = 0.5f;
+                array[2].color = buttonDefaultA;
+                array[2].time = 1f;
+                ColorChanger colorChanger = gameObject.AddComponent<ColorChanger>();
+                colorChanger.colors = new Gradient
+                {
+                    colorKeys = array
+                };
+                colorChanger.Start();
+                gameObject.GetComponent<Renderer>().material.color = buttonDefaultA;
+                Text text = new GameObject
+                {
+                    transform =
+                    {
+                        parent = canvasObj.transform
+                    }
+                }.AddComponent<Text>();
+                text.font = activeFont;
+                text.text = arrowTypes[arrowType][0];
+                text.fontSize = 1;
+                text.color = textColor;
+                text.alignment = TextAnchor.MiddleCenter;
+                text.resizeTextForBestFit = true;
+                text.resizeTextMinSize = 0;
+                RectTransform component = text.GetComponent<RectTransform>();
+                component.localPosition = Vector3.zero;
+                component.sizeDelta = new Vector2(.03f, .03f);
+                if (FATMENU)
+                {
+                    component.localPosition = new Vector3(.064f, 0.35f / 2.6f, -0.58f / 2.7f);
+                }
+                else
+                {
+                    component.localPosition = new Vector3(.064f, 0.54444444444f / 2.6f, -0.58f / 2.7f);
+                }
+                component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+                if (shouldOutline)
+                {
+                    OutlineObj(gameObject, true);
+                }
+
+                gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                if (themeType == 30)
+                {
+                    gameObject.GetComponent<Renderer>().enabled = false;
+                }
+                if (!UnityInput.Current.GetKey(KeyCode.Q) && !(isSearching && isPcWhenSearching))
+                {
+                    gameObject.layer = 2;
+                }
+                UnityEngine.Object.Destroy(gameObject.GetComponent<Rigidbody>());
+                gameObject.GetComponent<BoxCollider>().isTrigger = true;
+                gameObject.transform.parent = menu.transform;
+                gameObject.transform.rotation = Quaternion.identity;
+                gameObject.transform.localScale = new Vector3(0.09f, 0.102f, 0.08f);
+                if (FATMENU)
+                {
+                    gameObject.transform.localPosition = new Vector3(0.56f, 0.450f, -0.58f);
+                }
+                else
+                {
+                    gameObject.transform.localPosition = new Vector3(0.56f, 0.7f, -0.58f);
+                }
+                gameObject.transform.localPosition -= new Vector3(0f, 0.16f, 0f);
+                gameObject.AddComponent<Classes.Button>().relatedText = "NextPage";
+                ColorChanger colorChanger2 = gameObject.AddComponent<ColorChanger>();
+                colorChanger2.colors = new Gradient
+                {
+                    colorKeys = array
+                };
+                colorChanger2.Start();
+                gameObject.GetComponent<Renderer>().material.color = buttonDefaultA;
+                text = new GameObject
+                {
+                    transform =
+                    {
+                        parent = canvasObj.transform
+                    }
+                }.AddComponent<Text>();
+                text.font = activeFont;
+                text.text = arrowTypes[arrowType][1];
+                text.fontSize = 1;
+                text.color = textColor;
+                text.alignment = TextAnchor.MiddleCenter;
+                text.resizeTextForBestFit = true;
+                text.resizeTextMinSize = 0;
+                component = text.GetComponent<RectTransform>();
+                component.localPosition = Vector3.zero;
+                component.sizeDelta = new Vector2(.03f, .03f);
+                if (FATMENU)
+                {
+                    component.localPosition = new Vector3(.064f, 0.35f / 2.6f, -0.58f / 2.7f);
+                }
+                else
+                {
+                    component.localPosition = new Vector3(.064f, 0.54444444444f / 2.6f, -0.58f / 2.7f);
+                }
+                component.localPosition -= new Vector3(0f, 0.0475f, 0f);
                 component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
                 if (shouldOutline)
                 {
@@ -3937,7 +4077,6 @@ namespace iiMenu.Menu
 
         public static GameObject airSwimPart = null;
 
-        public static List<MeshCollider> NoclipMeshColliders = new List<MeshCollider> { };
         public static List<ForceVolume> fvol = new List<ForceVolume> { };
         public static List<GameObject> leaves = new List<GameObject> { };
         public static List<GameObject> cblos = new List<GameObject> { };
