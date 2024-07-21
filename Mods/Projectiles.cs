@@ -265,7 +265,7 @@ namespace iiMenu.Mods.Spammers
 
                 if (GetIndex("Finger Gun Projectiles").enabled)
                 {
-                    charvel = GorillaLocomotion.Player.Instance.currentVelocity + (GorillaTagger.Instance.offlineVRRig.transform.Find("rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R").up * ShootStrength);
+                    charvel = GorillaLocomotion.Player.Instance.currentVelocity + (TrueRightHand().forward * ShootStrength);
                     //charvel = GorillaLocomotion.Player.Instance.currentVelocity + GorillaTagger.Instance.rightHandTransform.forward - GorillaTagger.Instance.offlineVRRig.rightHand.trackingRotationOffset;
                 }
 
@@ -397,7 +397,7 @@ namespace iiMenu.Mods.Spammers
 
                         if (GetIndex("Finger Gun Projectiles").enabled)
                         {
-                            charvel = (whoCopy.transform.Find("rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R").up * ShootStrength);
+                            charvel = (TrueRightHand().forward * ShootStrength);
                         }
 
                         if (GetIndex("Random Direction").enabled)
@@ -507,7 +507,7 @@ namespace iiMenu.Mods.Spammers
 
                         if (GetIndex("Finger Gun Projectiles").enabled)
                         {
-                            charvel = (whoCopy.transform.Find("rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L").up * ShootStrength);
+                            charvel = (TrueRightHand().forward * ShootStrength);
                         }
 
                         if (GetIndex("Random Direction").enabled)
@@ -822,7 +822,7 @@ namespace iiMenu.Mods.Spammers
 
                 if (GetIndex("Finger Gun Projectiles").enabled)
                 {
-                    Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.offlineVRRig.transform.Find("rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R").up, out var Ray, 512f, NoInvisLayerMask());
+                    Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, TrueRightHand().forward, out var Ray, 512f, NoInvisLayerMask());
                     startpos = Ray.point;
                 }
 
@@ -928,7 +928,7 @@ namespace iiMenu.Mods.Spammers
 
                 if (GetIndex("Finger Gun Projectiles").enabled)
                 {
-                    Physics.Raycast(GorillaTagger.Instance.leftHandTransform.position, GorillaTagger.Instance.offlineVRRig.transform.Find("rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L").up, out var Ray, 512f, NoInvisLayerMask());
+                    Physics.Raycast(GorillaTagger.Instance.leftHandTransform.position, TrueRightHand().forward, out var Ray, 512f, NoInvisLayerMask());
                     startpos = Ray.point;
                 }
 
@@ -1141,7 +1141,7 @@ namespace iiMenu.Mods.Spammers
                 Vector3 startpos = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, -0.15f, 0f);
                 Vector3 charvel = GorillaTagger.Instance.bodyCollider.transform.forward * 8.33f;
 
-                SysFireProjectile("Snowball", "none", startpos, charvel, 255f, 255f, 0f, false, false);
+                SysFireProjectile("SnowballLeft", "none", startpos, charvel, 255f, 255f, 0f, false, false);
             }
         }
 
@@ -1152,7 +1152,7 @@ namespace iiMenu.Mods.Spammers
                 Vector3 startpos = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, -0.3f, 0f);
                 Vector3 charvel = Vector3.zero;
 
-                SysFireProjectile("FishFood", "none", startpos, charvel, 99f/255f, 43f/255f, 0f, false, false);
+                SysFireProjectile("SnowballLeft", "none", startpos, charvel, 99f/255f, 43f/255f, 0f, false, false);
             }
         }
 
@@ -1163,7 +1163,7 @@ namespace iiMenu.Mods.Spammers
                 Vector3 startpos = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, -0.15f, 0f);
                 Vector3 charvel = GorillaTagger.Instance.bodyCollider.transform.forward * 8.33f;
 
-                SysFireProjectile("Snowball", "none", startpos, charvel, 255f, 255f, 255f, false, false);
+                SysFireProjectile("SnowballLeft", "none", startpos, charvel, 255f, 255f, 255f, false, false);
             }
         }
 
@@ -1174,7 +1174,7 @@ namespace iiMenu.Mods.Spammers
                 Vector3 startpos = GorillaTagger.Instance.headCollider.transform.position + (GorillaTagger.Instance.headCollider.transform.forward * 0.1f) + (GorillaTagger.Instance.headCollider.transform.up * -0.15f);
                 Vector3 charvel = GorillaTagger.Instance.headCollider.transform.forward * 8.33f;
 
-                SysFireProjectile("Snowball", "none", startpos, charvel, 0f, 255f, 0f, false, false);
+                SysFireProjectile("SnowballLeft", "none", startpos, charvel, 0f, 255f, 0f, false, false);
             }
         }
 
@@ -1185,7 +1185,7 @@ namespace iiMenu.Mods.Spammers
                 Vector3 startpos = GorillaTagger.Instance.headCollider.transform.position + (GorillaTagger.Instance.headCollider.transform.forward * 0.1f) + (GorillaTagger.Instance.headCollider.transform.up * -0.15f);
                 Vector3 charvel = GorillaTagger.Instance.headCollider.transform.forward * 8.33f;
 
-                SysFireProjectile("Snowball", "none", startpos, charvel, 0f, 255f, 255f, false, false);
+                SysFireProjectile("SnowballLeft", "none", startpos, charvel, 0f, 255f, 255f, false, false);
             }
         }
 
@@ -1271,7 +1271,7 @@ namespace iiMenu.Mods.Spammers
                     Vector3 startpos = whoCopy.transform.position + new Vector3(0f, -0.4f, 0f) + (whoCopy.transform.forward * 0.2f);
                     Vector3 charvel = whoCopy.transform.forward * 8.33f;
 
-                    BetaFireProjectile("Snowball", startpos, charvel, new Color(255f, 255f, 0f, 1f));
+                    BetaFireProjectile("SnowballLeft", startpos, charvel, new Color(255f, 255f, 0f, 1f));
                 }
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
@@ -1306,7 +1306,7 @@ namespace iiMenu.Mods.Spammers
                     Vector3 startpos = whoCopy.transform.position + new Vector3(0f, -0.65f, 0f);
                     Vector3 charvel = Vector3.zero;
 
-                    BetaFireProjectile("FishFood", startpos, charvel, new Color32(99, 43, 0, 255));
+                    BetaFireProjectile("SnowballLeft", startpos, charvel, new Color32(99, 43, 0, 255));
                 }
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
@@ -1341,7 +1341,7 @@ namespace iiMenu.Mods.Spammers
                     Vector3 startpos = whoCopy.transform.position + new Vector3(0f, -0.4f, 0f) + (whoCopy.transform.forward * 0.2f);
                     Vector3 charvel = whoCopy.transform.forward * 8.33f;
 
-                    BetaFireProjectile("Snowball", startpos, charvel, new Color(255f, 255f, 255f, 1f));
+                    BetaFireProjectile("SnowballLeft", startpos, charvel, new Color(255f, 255f, 255f, 1f));
                 }
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
@@ -1376,7 +1376,7 @@ namespace iiMenu.Mods.Spammers
                     Vector3 startpos = whoCopy.headMesh.transform.position + (whoCopy.headMesh.transform.forward * 0.4f) + (whoCopy.headMesh.transform.up * -0.05f);
                     Vector3 charvel = whoCopy.headMesh.transform.forward * 8.33f;
 
-                    BetaFireProjectile("Snowball", startpos, charvel, new Color(0f, 255f, 0f, 1f));
+                    BetaFireProjectile("SnowballLeft", startpos, charvel, new Color(0f, 255f, 0f, 1f));
                 }
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
@@ -1411,7 +1411,7 @@ namespace iiMenu.Mods.Spammers
                     Vector3 startpos = whoCopy.headMesh.transform.position + (whoCopy.headMesh.transform.forward * 0.4f) + (whoCopy.headMesh.transform.up * -0.05f);
                     Vector3 charvel = whoCopy.headMesh.transform.forward * 8.33f;
 
-                    BetaFireProjectile("Snowball", startpos, charvel, new Color(0f, 255f, 255f, 1f));
+                    BetaFireProjectile("SnowballLeft", startpos, charvel, new Color(0f, 255f, 255f, 1f));
                 }
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {

@@ -13,12 +13,12 @@ namespace iiMenu.Patches
             try
             {
                 if (EverythingSlippery == true)
-                    __result =  1;
+                    __result = 1;
 
                 if (EverythingGrippy == true)
                     __result = 0;
             }
-            catch {}
+            catch { }
         }
     }
 }

@@ -280,6 +280,16 @@ namespace iiMenu.Mods
             GameObject.Find("Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab").SetActive(true);
         }
 
+        public static void DisableMapTriggers()
+        {
+            GameObject.Find("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab").SetActive(false);
+        }
+
+        public static void EnableMapTriggers()
+        {
+            GameObject.Find("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab").SetActive(true);
+        }
+
         public static void DisableQuitBox()
         {
             GameObject.Find("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/QuitBox").SetActive(false);
