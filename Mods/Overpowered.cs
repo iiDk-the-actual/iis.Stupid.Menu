@@ -689,36 +689,47 @@ namespace iiMenu.Mods
             }
         }*/
 
-        /*
-        public static void RigSpamTest() // This doesnt work
+        private static float lmfao = 0f;
+        private static bool didit = false;
+        public static void DuplicateRig() // Credits to <@1166467350485282968> on Discord @youtubetaught for the rig duplicator
         {
-            if (rightTrigger > 0.5f)
+            if (Time.time > lmfao && didit)
             {
-                if (!IsModded())
-                {
-                    if (!GetIndex("Disable Auto Anti Ban").enabled)
-                    {
-                        AntiBan();
-                    }
-                }
-                else
-                {
-                    Hashtable SendInstantiateEvHashtable = new Hashtable();
-                    SendInstantiateEvHashtable[(byte)0] = "Player Objects/Local VRRig/Local Gorilla Player";
-                    SendInstantiateEvHashtable[(byte)1] = GorillaTagger.Instance.bodyCollider.transform.position;
-                    SendInstantiateEvHashtable[(byte)2] = GorillaTagger.Instance.bodyCollider.transform.rotation;
-                    SendInstantiateEvHashtable[(byte)3] = (byte)0;
-                    SendInstantiateEvHashtable[(byte)4] = null;
-                    SendInstantiateEvHashtable[(byte)5] = null;
-                    SendInstantiateEvHashtable[(byte)6] = PhotonNetwork.ServerTimestamp;
-                    SendInstantiateEvHashtable[(byte)7] = PhotonNetwork.AllocateViewID(PhotonNetwork.LocalPlayer.ActorNumber);
-                    SendInstantiateEvHashtable[(byte)8] = (byte)0;
-                    RaiseEventOptions SendInstantiateRaiseEventOptions = new RaiseEventOptions();
-                    SendInstantiateRaiseEventOptions.CachingOption = (true ? EventCaching.AddToRoomCacheGlobal : EventCaching.AddToRoomCache);
-                    PhotonNetwork.NetworkingClient.OpRaiseEvent(202, SendInstantiateEvHashtable, SendInstantiateRaiseEventOptions, SendOptions.SendReliable);
-                }
+                rejRoom = PhotonNetwork.CurrentRoom.Name;
+                NotifiLib.SendNotification("<color=grey>[</color><color=purple>DUPLICATOR</color><color=grey>]</color> <color=white>Your rig has been duplicated. Others can see it, but not you.</color>");
+                PhotonNetwork.Disconnect();
+                didit = false;
             }
-        }*/
+            if (rightTrigger > 0.5f && Time.time > lmfao && PhotonNetwork.InRoom)
+            {
+                GorillaNot.IncrementRPCCall(default(PhotonMessageInfo), "UpdatePlayerCosmetic");
+                string[] array = new string[]
+                {
+                    "LBADE."
+                };
+                GorillaTagger.Instance.offlineVRRig.LocalUpdateCosmeticsWithTryon(CosmeticsController.instance.currentWornSet, CosmeticsController.instance.tryOnSet);
+                GorillaTagger.Instance.myVRRig.RpcSecure("UpdateCosmeticsWithTryon", RpcTarget.Others, true, new object[]
+                {
+                    array,
+                    array
+                });
+                GorillaTagger.Instance.myVRRig.RpcSecure("UpdateCosmeticsWithTryon", RpcTarget.Others, true, new object[]
+                {
+                    array,
+                    array
+                });
+                GorillaTagger.Instance.myVRRig.RpcSecure("UpdateCosmeticsWithTryon", RpcTarget.Others, true, new object[]
+                {
+                    array,
+                    array
+                });
+                RPCProtection();
+                GorillaServer.Instance.UpdateUserCosmetics();
+                NotifiLib.SendNotification("<color=grey>[</color><color=purple>DUPLICATOR</color><color=grey>]</color> <color=white>Your rig is being duplicated, please wait...</color>");
+                didit = true;
+                lmfao = Time.time + 2.5f;
+            }
+        }
 
         public static void AcidSelf()
         {
@@ -1102,7 +1113,7 @@ namespace iiMenu.Mods
                     Vector3 startpos = whoCopy.headMesh.transform.position + (whoCopy.headMesh.transform.forward * 0.5f);
                     Vector3 charvel = Vector3.zero;
 
-                    BetaFireProjectile("WaterBalloon", startpos, charvel, new Color32(0, 0, 0, 255));
+                    BetaFireProjectile("WaterBalloonLeft", startpos, charvel, new Color32(0, 0, 0, 255));
                 }
             }
             else
@@ -1122,7 +1133,7 @@ namespace iiMenu.Mods
             Vector3 startpos = randomRig.headMesh.transform.position + (randomRig.headMesh.transform.forward * 0.5f);
             Vector3 charvel = Vector3.zero;
 
-            BetaFireProjectile("WaterBalloon", startpos, charvel, new Color32(0, 0, 0, 255));
+            BetaFireProjectile("WaterBalloonLeft", startpos, charvel, new Color32(0, 0, 0, 255));
         }
 
         public static void GliderBlindGun()

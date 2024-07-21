@@ -1,9 +1,22 @@
-﻿using iiMenu.Menu;
+﻿using ExitGames.Client.Photon;
+using GorillaTag.CosmeticSystem;
+using GorillaTag.GuidedRefs;
+using iiMenu.Menu;
+using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
 using System;
 using System.Collections.Generic;
+using System.Runtime.ConstrainedExecution;
 using System.Text;
+using UnityEngine.Animations.Rigging;
+using UnityEngine.Rendering;
+using UnityEngine.UI;
+using UnityEngine.UIElements;
+using UnityEngine;
 using static iiMenu.Menu.Main;
+using static Photon.Pun.UtilityScripts.TabViewManager;
+using static Technie.PhysicsCreator.SphereUtils;
+using static UnityEngine.Rendering.DebugUI;
 
 namespace iiMenu.Mods
 {
@@ -72,21 +85,32 @@ namespace iiMenu.Mods
         {
             string[] presetMods = new string[]
             {
+                "Outline Menu",
                 "Thin Menu",
                 "Freeze Player in Menu",
+                "Clear Notifications on Disconnect",
+                "Disable Enabled GUI",
+                "Legacy Ghostview",
                 "Finger Gun Projectiles",
                 "Rainbow Projectiles",
                 "Force Enable Hands",
                 "Anti AFK",
-                "Disable Quit Box",
-                "Anti Crash",
-                "Show Anti Cheat Reports <color=grey>[</color><color=green>Self</color><color=grey>]</color>",
-                "Follow Menu Theme",
-                "Transparent Theme",
-                "First Person Camera"
+                "Physical Quit Box",
+                "Tag Lag Detector",
+                "Spoof Support Page",
+                "Hand Fly <color=grey>[</color><color=green>A</color><color=grey>]</color>",
+                "Uncap Max Velocity",
+                "Weak Slide Control",
+                "Clear Weather",
+                "Info Watch",
+                "Fix Rig Colors",
+                "Cosmetic ESP",
+                "Infection Tracers",
+                "Infection Distance ESP",
+                "Obnoxious Tag"
             };
 
-            themeType = 15;
+            themeType = 33;
             pageButtonType = 1;
             fontCycle = -1;
 

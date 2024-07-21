@@ -1473,7 +1473,7 @@ namespace iiMenu.Mods
                 Vector3 startpos = balloon.gameObject.transform.position;
                 Vector3 charvel = Vector3.zero;
 
-                Mods.Spammers.Projectiles.BetaFireProjectile("SlingshotProjectile", startpos, charvel, Color.white, true);
+                Mods.Spammers.Projectiles.BetaFireProjectile("SnowballLeft", startpos, charvel, Color.white, true);
             }
         }
 

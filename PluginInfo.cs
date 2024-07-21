@@ -5,6 +5,6 @@
         public const string GUID = "org.iidk.gorillatag.iimenu";
         public const string Name = "ii's Stupid Menu";
         public const string Description = "Created by @goldentrophy with love <3";
-        public const string Version = "4.0.0";
+        public const string Version = "4.1.0";
     }
 }

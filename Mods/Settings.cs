@@ -1740,7 +1740,8 @@ namespace iiMenu.Mods
                 66,
                 66,
                 66,
-                66
+                66,
+                106
             };
             string[] buttonSoundNames = new string[]
             {
@@ -1754,7 +1755,8 @@ namespace iiMenu.Mods
                 "Minecraft",
                 "Rec Room",
                 "Watch",
-                "Membrane"
+                "Membrane",
+                "Jar"
             };
 
             buttonClickIndex++;

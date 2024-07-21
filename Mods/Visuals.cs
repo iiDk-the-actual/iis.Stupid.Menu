@@ -471,6 +471,52 @@ namespace iiMenu.Mods
             }
         }
 
+        private static GameObject l = null;
+        private static GameObject r = null;
+
+        private static void UpdateLimbColor()
+        {
+            Color limbcolor = GorillaTagger.Instance.offlineVRRig.playerColor;
+            if (GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected"))
+            {
+                limbcolor = new Color32(255, 111, 0, 255);
+            }
+
+            l.GetComponent<Renderer>().material.color = limbcolor;
+            r.GetComponent<Renderer>().material.color = limbcolor;
+        }
+
+        public static void StartNoLimb()
+        {
+            l = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            UnityEngine.Object.Destroy(l.GetComponent<Rigidbody>());
+            UnityEngine.Object.Destroy(l.GetComponent<SphereCollider>());
+
+            l.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+
+            r = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            UnityEngine.Object.Destroy(r.GetComponent<Rigidbody>());
+            UnityEngine.Object.Destroy(r.GetComponent<SphereCollider>());
+
+            r.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+            GorillaTagger.Instance.offlineVRRig.mainSkin.enabled = false;
+            UpdateLimbColor();
+        }
+
+        public static void NoLimbMode()
+        {
+            l.transform.position = TrueLeftHand().position;
+            r.transform.position = TrueRightHand().position;
+            GorillaTagger.Instance.offlineVRRig.mainSkin.enabled = true;
+            UpdateLimbColor();
+        }
+
+        public static void EndNoLimb()
+        {
+            UnityEngine.Object.Destroy(l);
+            UnityEngine.Object.Destroy(r);
+        }
+
         public static void CasualTracers()
         {
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)

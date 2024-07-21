@@ -36,7 +36,7 @@ namespace iiMenu.Mods.Spammers
                     {
                         PhotonNetwork.RaiseEvent(3, sendEventData, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendUnreliable);
                     }
-                    catch { /* wtf */ }
+                    catch { }
                     RPCProtection();
 
                     soundDebounce = Time.time + 0.2f;

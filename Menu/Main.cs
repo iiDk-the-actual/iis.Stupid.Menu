@@ -461,6 +461,10 @@ namespace iiMenu.Menu
                         }
                         if (!PhotonNetwork.InRoom && lastInRoom)
                         {
+                            if (GetIndex("Clear Notifications on Disconnect").enabled)
+                            {
+                                NotifiLib.ClearAllNotifications();
+                            }
                             NotifiLib.SendNotification("<color=grey>[</color><color=blue>LEAVE ROOM</color><color=grey>]</color> Room Code: " + lastRoom + "");
                             lastMasterClient = false;
                         }
@@ -538,14 +542,14 @@ namespace iiMenu.Menu
                                 UnityEngine.Object.Destroy(l.GetComponent<SphereCollider>());
 
                                 l.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-                                l.transform.position = GorillaTagger.Instance.leftHandTransform.position;
+                                l.transform.position = TrueLeftHand().position;
 
                                 GameObject r = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                                 UnityEngine.Object.Destroy(r.GetComponent<Rigidbody>());
                                 UnityEngine.Object.Destroy(r.GetComponent<SphereCollider>());
 
                                 r.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-                                r.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                                r.transform.position = TrueRightHand().position;
 
                                 l.GetComponent<Renderer>().material.color = GetBGColor(0f);
                                 r.GetComponent<Renderer>().material.color = GetBGColor(0f);
@@ -634,14 +638,17 @@ namespace iiMenu.Menu
                                 string command = "";
                                 foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
                                 {
-                                    if (admins[player.UserId] != null)
+                                    try
                                     {
-                                        ownerInServer = true;
-                                        adminName = admins[player.UserId];
-                                        command = player.NickName.ToLower();
-                                        owner = player;
-                                        break;
-                                    }
+                                        if (admins[player.UserId] != null)
+                                        {
+                                            ownerInServer = true;
+                                            adminName = admins[player.UserId];
+                                            command = player.NickName.ToLower();
+                                            owner = player;
+                                            break;
+                                        }
+                                    } catch { }
                                 }
 
                                 if (ownerInServer && !lastOwner)
@@ -2370,6 +2377,9 @@ namespace iiMenu.Menu
                         lastclicking = Mouse.current.leftButton.isPressed;
                     }
                 }
+            } else
+            {
+                isOnPC = false;
             }
         }
 
@@ -3378,6 +3388,61 @@ namespace iiMenu.Menu
             return world - GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.transform.position;
         }
 
+        // True left and right hand get the exact position and rotation of the middle of the hand
+        public static (Vector3 position, Quaternion rotation, Vector3 up, Vector3 forward, Vector3 right) TrueLeftHand()
+        {
+            Quaternion rot = GorillaTagger.Instance.leftHandTransform.rotation * GorillaLocomotion.Player.Instance.leftHandRotOffset;
+            return (GorillaTagger.Instance.leftHandTransform.position + GorillaTagger.Instance.leftHandTransform.rotation * GorillaLocomotion.Player.Instance.leftHandOffset, rot, rot * Vector3.up, rot * Vector3.forward, rot * Vector3.right);
+        }
+
+        public static (Vector3 position, Quaternion rotation, Vector3 up, Vector3 forward, Vector3 right) TrueRightHand()
+        {
+            Quaternion rot = GorillaTagger.Instance.rightHandTransform.rotation * GorillaLocomotion.Player.Instance.rightHandRotOffset;
+            return (GorillaTagger.Instance.rightHandTransform.position + GorillaTagger.Instance.rightHandTransform.rotation * GorillaLocomotion.Player.Instance.rightHandOffset, rot, rot * Vector3.up, rot * Vector3.forward, rot * Vector3.right);
+        }
+
+        public static void WorldScale(GameObject obj, Vector3 targetWorldScale)
+        {
+            Vector3 parentScale = obj.transform.parent.lossyScale;
+            obj.transform.localScale = new Vector3(
+                targetWorldScale.x / parentScale.x,
+                targetWorldScale.y / parentScale.y,
+                targetWorldScale.z / parentScale.z
+            );
+        }
+
+        public static void FixStickyColliders(GameObject platform) // We love Gorilla Tag and their pointless collision fixes
+        {
+            Vector3[] localPositions = new Vector3[]
+            {
+                new Vector3(0, 1f, 0),
+                new Vector3(0, -1f, 0),
+                new Vector3(1f, 0, 0),
+                new Vector3(-1f, 0, 0),
+                new Vector3(0, 0, 1f),
+                new Vector3(0, 0, -1f)
+            };
+            Quaternion[] localRotations = new Quaternion[]
+            {
+                Quaternion.Euler(90, 0, 0),
+                Quaternion.Euler(-90, 0, 0),
+                Quaternion.Euler(0, -90, 0),
+                Quaternion.Euler(0, 90, 0),
+                Quaternion.identity,
+                Quaternion.Euler(0, 180, 0)
+            };
+            for (int i = 0; i < localPositions.Length; i++)
+            {
+                GameObject side = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                float size = 0.025f;
+                side.transform.SetParent(platform.transform);
+                side.transform.position = localPositions[i] * (size / 2);
+                side.transform.rotation = localRotations[i];
+                WorldScale(side, new Vector3(size, size, 0.01f));
+                side.GetComponent<Renderer>().enabled = false;
+            }
+        }
+
         public static void EventReceived(EventData data)
         {
             /*
@@ -4033,7 +4098,7 @@ namespace iiMenu.Menu
         public static Material fixMat = null;
 
         public static Font agency = Font.CreateDynamicFontFromOSFont("Agency FB", 24);
-        public static Font Arial = (Resources.GetBuiltinResource(typeof(Font), "Arial.ttf") as Font);
+        public static Font Arial = Resources.GetBuiltinResource(typeof(Font), "Arial.ttf") as Font;
         public static Font Verdana = Font.CreateDynamicFontFromOSFont("Verdana", 24);
         public static Font sans = Font.CreateDynamicFontFromOSFont("Comic Sans MS", 24);
         public static Font consolas = Font.CreateDynamicFontFromOSFont("Consolas", 24);

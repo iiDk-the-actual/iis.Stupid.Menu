@@ -4,9 +4,12 @@ using HarmonyLib;
 using iiMenu.Notifications;
 using Photon.Pun;
 using PlayFab;
+using PlayFab.ClientModels;
 using PlayFab.Internal;
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Unity.Mathematics;
 using UnityEngine;
 using static iiMenu.Menu.Main;
 
@@ -191,6 +194,20 @@ namespace iiMenu.Patches
                 return false;
             }
             return true;
+        }
+    }
+
+    [HarmonyPatch(typeof(PlayFabClientAPI), "UpdateUserTitleDisplayName")] // Credits to Shiny for letting me use this
+    internal class NamePatch
+    {
+        public static void Prefix(UpdateUserTitleDisplayNameRequest request, Action<UpdateUserTitleDisplayNameResult> resultCallback, Action<PlayFabError> errorCallback, object customData = null, Dictionary<string, string> extraHeaders = null)
+        {
+            string random = "";
+            for (int i = 0; i < 8; i++)
+            {
+                random += letters[UnityEngine.Random.Range(0, letters.Length - 1)];
+            }
+            new UpdateUserTitleDisplayNameRequest().DisplayName = random;
         }
     }
 
