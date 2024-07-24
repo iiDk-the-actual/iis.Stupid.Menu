@@ -628,6 +628,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Fast Ropes", enableMethod =() => Canyons.FastRopes(), disableMethod =() => Canyons.RegularRopes(), toolTip = "Makes the ropes really fast." },
 
                 new ButtonInfo { buttonText = "Copy ID Gun", method =() => Miscellaneous.CopyIDGun(), toolTip = "Copies the player ID of whoever your hand desires to the clipboard." },
+                new ButtonInfo { buttonText = "Copy Self ID", method =() => Miscellaneous.CopySelfID(), isTogglable = false, toolTip = "Copies your player ID to the clipboard."},
                 new ButtonInfo { buttonText = "Grab Player Info", method =() => Miscellaneous.GrabPlayerInfo(), isTogglable = false, toolTip = "Saves every player's name, color, and player ID as a text file and opens it." },
             },
 

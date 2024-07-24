@@ -30,6 +30,11 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void CopySelfID()
+        {
+            GUIUtility.systemCopyBuffer = PhotonNetwork.LocalPlayer.UserId;
+        }
+
         public static void GrabPlayerInfo()
         {
             string text = "Room: " + PhotonNetwork.CurrentRoom.Name;
