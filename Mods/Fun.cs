@@ -1,30 +1,19 @@
-﻿using ExitGames.Client.Photon;
-using GorillaLocomotion.Gameplay;
-using GorillaNetworking;
+﻿using GorillaNetworking;
 using GorillaTag;
-using GorillaTag.Cosmetics;
 using GorillaTagScripts;
-using HarmonyLib;
+using GorillaTagScripts.ObstacleCourse;
 using iiMenu.Notifications;
 using Photon.Pun;
-using Photon.Realtime;
 using Photon.Voice.Unity.UtilityScripts;
-using PlayFab.ClientModels;
-using PlayFab;
 using POpusCodec.Enums;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static GorillaNetworking.CosmeticsController;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
-using static UnityEngine.UI.GridLayoutGroup;
-using GorillaTagScripts.ObstacleCourse;
-using System.Runtime.InteropServices;
 
 namespace iiMenu.Mods
 {
@@ -1051,7 +1040,45 @@ namespace iiMenu.Mods
             }
         }
 
-        /*
+        private static float blockDelay = 0f;
+        public static void BetaDropBlock(BuilderPiece piece, Vector3 pos, Quaternion rot, Vector3 vel, Vector3 angvel)
+        {
+            if (Time.time > blockDelay)
+            {
+                BuilderTable.instance.DropPiece(piece.pieceId, pos, rot, vel, angvel, PhotonNetwork.LocalPlayer, true);
+                BuilderTableNetworking.instance.photonView.RPC("RequestDropPieceRPC", RpcTarget.MasterClient, new object[] { piece.pieceId, pos, rot, vel, angvel, PhotonNetwork.LocalPlayer });
+                RPCProtection();
+                blockDelay = Time.time + 0.1f;
+            }
+        }
+        public static void BetaDropBlock(int pieceId, Vector3 pos, Quaternion rot, Vector3 vel, Vector3 angvel)
+        {
+            if (Time.time > blockDelay)
+            {
+                BuilderTable.instance.DropPiece(pieceId, pos, rot, vel, angvel, PhotonNetwork.LocalPlayer, true);
+                BuilderTableNetworking.instance.photonView.RPC("RequestDropPieceRPC", RpcTarget.MasterClient, new object[] { pieceId, pieceId, pos, rot, vel, angvel, PhotonNetwork.LocalPlayer });
+                RPCProtection();
+                blockDelay = Time.time + 0.1f;
+            }
+        }
+        public static void BetaDropBlock(object[] args)
+        {
+            if (Time.time > blockDelay)
+            {
+                int pieceId = (int)args[0];
+                Vector3 pos = (Vector3)args[1];
+                Quaternion rot = (Quaternion)args[2];
+                Vector3 vel = (Vector3)args[3];
+                Vector3 angvel = (Vector3)args[4];
+
+                BuilderTable.instance.DropPiece(pieceId, pos, rot, vel, angvel, PhotonNetwork.LocalPlayer, true);
+                BuilderTableNetworking.instance.photonView.RPC("RequestDropPieceRPC", RpcTarget.MasterClient, new object[] { pieceId, pos, rot, vel, angvel, PhotonNetwork.LocalPlayer });
+                RPCProtection();
+                blockDelay = Time.time + 0.1f;
+            }
+        }
+
+        
         public static void BlocksGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
@@ -1064,11 +1091,11 @@ namespace iiMenu.Mods
                 {
                     BuilderPiece[] them = GetPieces();
                     BuilderPiece that = GetPieces()[UnityEngine.Random.Range(0, GetPieces().Length - 1)];
-                    BuilderTableNetworking.instance.photonView.RPC("RequestDropPieceRPC", RpcTarget.MasterClient, new object[] { that.pieceId, NewPointer.transform.position + new Vector3(0f, 1f, 0f), Quaternion.identity, Vector3.zero, new Vector3(UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f)), PhotonNetwork.LocalPlayer });
+                    BetaDropBlock(new object[] { that.pieceId, NewPointer.transform.position + new Vector3(0f, 1f, 0f), Quaternion.identity, Vector3.zero, new Vector3(UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f)), PhotonNetwork.LocalPlayer });
                     RPCProtection();
                 }
             }
-        }*/
+        }
 
         public static void NoRespawnBug()
         {
@@ -1199,7 +1226,7 @@ namespace iiMenu.Mods
             }
         }
 
-        /*private static bool imkillingmyself = false;
+        private static bool imkillingmyself = false;
         private static List<int> last = new List<int> { };
         public static void FreezeBlocks()
         {
@@ -1224,8 +1251,9 @@ namespace iiMenu.Mods
                         }
                         else
                         {
-                            if (index2 == index)
+                            if (index2 == index && Time.time > blockDelay)
                             {
+                                blockDelay = Time.time + 0.1f;
                                 last.Add(index2);
                                 block.transform.position = GorillaTagger.Instance.rightHandTransform.position;
                             }
@@ -1243,10 +1271,10 @@ namespace iiMenu.Mods
             {
                 BuilderPiece[] them = GetPieces();
                 BuilderPiece that = GetPieces()[UnityEngine.Random.Range(0, GetPieces().Length - 1)];
-                BuilderTableNetworking.instance.photonView.RPC("RequestDropPieceRPC", RpcTarget.MasterClient, new object[] { that.pieceId, GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), PhotonNetwork.LocalPlayer });
+                BetaDropBlock(new object[] { that.pieceId, GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), PhotonNetwork.LocalPlayer });
                 RPCProtection();
             }
-        }*/
+        }
 
         public static void DestroyBug()
         {
@@ -1277,12 +1305,12 @@ namespace iiMenu.Mods
                 }
             }
         }
-        /*
+        
         public static void DestroyBlocks()
         {
             BuilderPiece[] them = GetPieces();
             BuilderPiece that = GetPieces()[UnityEngine.Random.Range(0, GetPieces().Length - 1)];
-            BuilderTableNetworking.instance.photonView.RPC("RequestDropPieceRPC", RpcTarget.MasterClient, new object[] { that.pieceId, new Vector3(99999f, 99999f, 99999f), Quaternion.identity, new Vector3(99999f, 99999f, 99999f), new Vector3(0f, 0f, 0f), PhotonNetwork.LocalPlayer });
+            BetaDropBlock(new object[] { that.pieceId, new Vector3(99999f, 99999f, 99999f), Quaternion.identity, new Vector3(99999f, 99999f, 99999f), new Vector3(0f, 0f, 0f), PhotonNetwork.LocalPlayer });
             RPCProtection();
         }
 
@@ -1292,7 +1320,7 @@ namespace iiMenu.Mods
             {
                 BuilderPiece[] them = GetPieces();
                 BuilderPiece that = GetPieces()[UnityEngine.Random.Range(0, GetPieces().Length - 1)];
-                BuilderTableNetworking.instance.photonView.RPC("RequestDropPieceRPC", RpcTarget.MasterClient, new object[] { that.pieceId, GorillaTagger.Instance.rightHandTransform.position, Quaternion.identity, GorillaTagger.Instance.rightHandTransform.forward * ShootStrength, new Vector3(UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f)), PhotonNetwork.LocalPlayer });
+                BetaDropBlock(new object[] { that.pieceId, GorillaTagger.Instance.rightHandTransform.position, Quaternion.identity, GorillaTagger.Instance.rightHandTransform.forward * ShootStrength, new Vector3(UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f)), PhotonNetwork.LocalPlayer });
                 RPCProtection();
             }
         }
@@ -1301,7 +1329,7 @@ namespace iiMenu.Mods
         {
             BuilderPiece[] them = GetPieces();
             BuilderPiece that = GetPieces()[UnityEngine.Random.Range(0, GetPieces().Length - 1)];
-            BuilderTableNetworking.instance.photonView.RPC("RequestDropPieceRPC", RpcTarget.MasterClient, new object[] { that.pieceId, GorillaTagger.Instance.offlineVRRig.transform.position + new Vector3(UnityEngine.Random.Range(-1.5f, 1.5f), UnityEngine.Random.Range(-0.5f, 1.5f), UnityEngine.Random.Range(-1.5f, 1.5f)), Quaternion.identity, Vector3.zero, new Vector3(UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f)), PhotonNetwork.LocalPlayer });
+            BetaDropBlock(new object[] { that.pieceId, GorillaTagger.Instance.offlineVRRig.transform.position + new Vector3(UnityEngine.Random.Range(-1.5f, 1.5f), UnityEngine.Random.Range(-0.5f, 1.5f), UnityEngine.Random.Range(-1.5f, 1.5f)), Quaternion.identity, Vector3.zero, new Vector3(UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f)), PhotonNetwork.LocalPlayer });
             RPCProtection();
         }
 
@@ -1309,9 +1337,9 @@ namespace iiMenu.Mods
         {
             BuilderPiece[] them = GetPieces();
             BuilderPiece that = GetPieces()[UnityEngine.Random.Range(0, GetPieces().Length - 1)];
-            BuilderTableNetworking.instance.photonView.RPC("RequestDropPieceRPC", RpcTarget.MasterClient, new object[] { that.pieceId, GorillaTagger.Instance.offlineVRRig.transform.position + new Vector3(UnityEngine.Random.Range(-3f, 3f), 4f, UnityEngine.Random.Range(-3f, 3f)), Quaternion.identity, Vector3.zero, new Vector3(UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f)), PhotonNetwork.LocalPlayer });
+            BetaDropBlock(new object[] { that.pieceId, GorillaTagger.Instance.offlineVRRig.transform.position + new Vector3(UnityEngine.Random.Range(-3f, 3f), 4f, UnityEngine.Random.Range(-3f, 3f)), Quaternion.identity, Vector3.zero, new Vector3(UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f)), PhotonNetwork.LocalPlayer });
             RPCProtection();
-        }*/
+        }
 
         public static void SpazBug()
         {
@@ -1343,14 +1371,13 @@ namespace iiMenu.Mods
             }
         }
 
-        /*
         public static void SpazBuildingBlocks()
         {
             BuilderPiece[] them = GetPieces();
             BuilderPiece that = GetPieces()[UnityEngine.Random.Range(0, GetPieces().Length - 1)];
-            BuilderTableNetworking.instance.photonView.RPC("RequestDropPieceRPC", RpcTarget.MasterClient, new object[] { that.pieceId, that.transform.position, Quaternion.Euler(new Vector3(UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f))), Vector3.zero, new Vector3(UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f)), PhotonNetwork.LocalPlayer });
+            BetaDropBlock(new object[] { that.pieceId, that.transform.position, Quaternion.Euler(new Vector3(UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f))), Vector3.zero, new Vector3(UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f)), PhotonNetwork.LocalPlayer });
             RPCProtection();
-        }*/
+        }
 
         public static void BugHalo()
         {
@@ -1389,14 +1416,13 @@ namespace iiMenu.Mods
             }
         }
 
-        /*
         public static void OrbitBlocks()
         {
             BuilderPiece[] them = GetPieces();
             BuilderPiece that = GetPieces()[UnityEngine.Random.Range(0, GetPieces().Length - 1)];
-            BuilderTableNetworking.instance.photonView.RPC("RequestDropPieceRPC", RpcTarget.MasterClient, new object[] { that.pieceId, GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos((float)Time.frameCount / 30), 0f, MathF.Sin((float)Time.frameCount / 30)), Quaternion.identity, Vector3.zero, new Vector3(UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f)), PhotonNetwork.LocalPlayer });
+            BetaDropBlock(new object[] { that.pieceId, GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos((float)Time.frameCount / 30), 0f, MathF.Sin((float)Time.frameCount / 30)), Quaternion.identity, Vector3.zero, new Vector3(UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f)), PhotonNetwork.LocalPlayer });
             RPCProtection();
-        }*/
+        }
 
         public static void RideBug()
         {

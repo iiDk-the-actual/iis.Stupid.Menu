@@ -1,15 +1,14 @@
 ﻿using ExitGames.Client.Photon;
+using GorillaGameModes;
 using GorillaNetworking;
 using GorillaTag;
-using GorillaTagScripts;
 using HarmonyLib;
 using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
-using PlayFab.ClientModels;
 using PlayFab;
+using PlayFab.ClientModels;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using UnityEngine;
@@ -18,8 +17,6 @@ using static GorillaNetworking.CosmeticsController;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 using static iiMenu.Mods.Spammers.Projectiles;
-using GorillaGameModes;
-using System.Collections.Specialized;
 
 namespace iiMenu.Mods
 {
@@ -585,7 +582,7 @@ namespace iiMenu.Mods
                 GorillaTagger.Instance.offlineVRRig.enabled = true;
             }
         }
-        /*
+        
         public static void AtticFlingGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
@@ -598,7 +595,7 @@ namespace iiMenu.Mods
                 {
                     BuilderPiece[] them = GetPieces();
                     BuilderPiece that = GetPieces()[UnityEngine.Random.Range(0, GetPieces().Length - 1)];
-                    BuilderTableNetworking.instance.photonView.RPC("RequestDropPieceRPC", RpcTarget.MasterClient, new object[] { that.pieceId, whoCopy.transform.position - new Vector3(0f, 0.1f, 0f), Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360))), new Vector3(0f, 10f, 0f), Vector3.zero, PhotonNetwork.LocalPlayer });
+                    Fun.BetaDropBlock(that, whoCopy.transform.position - new Vector3(0f, 0.1f, 0f), Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360))), new Vector3(0f, 10f, 0f), Vector3.zero);
                     RPCProtection();
                 }
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
@@ -627,67 +624,10 @@ namespace iiMenu.Mods
             {
                 BuilderPiece[] them = GetPieces();
                 BuilderPiece that = GetPieces()[UnityEngine.Random.Range(0, GetPieces().Length - 1)];
-                BuilderTableNetworking.instance.photonView.RPC("RequestDropPieceRPC", RpcTarget.MasterClient, new object[] { that.pieceId, GetRandomVRRig(false).transform.position - new Vector3(0f, 0.1f, 0f), Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360))), new Vector3(0f, 10f, 0f), Vector3.zero, PhotonNetwork.LocalPlayer });
+                Fun.BetaDropBlock(new object[] { that.pieceId, GetRandomVRRig(false).transform.position - new Vector3(0f, 0.1f, 0f), Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360))), new Vector3(0f, 10f, 0f), Vector3.zero, PhotonNetwork.LocalPlayer });
                 RPCProtection();
             }
         }
-
-        private static float caDebounce = 0f;
-        public static void AtticCrashGun()
-        {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (isCopying && whoCopy != null)
-                {
-                    if (Time.time > caDebounce)
-                    {
-                        caDebounce = Time.time + 1f;
-                        foreach (BuilderPiece that in GetPieces())
-                        {
-                            BuilderTableNetworking.instance.photonView.RPC("RequestDropPieceRPC", RpcTarget.MasterClient, new object[] { that.pieceId, GorillaTagger.Instance.offlineVRRig.transform.position, GorillaTagger.Instance.offlineVRRig.transform.rotation, new Vector3(0f, 0f, 0f), Vector3.zero, PhotonNetwork.LocalPlayer });
-                            RPCProtection();
-                        }
-                    }
-                }
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
-                {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
-                    {
-                        isCopying = true;
-                        whoCopy = possibly;
-                    }
-                }
-            }
-            else
-            {
-                if (isCopying)
-                {
-                    isCopying = false;
-                    GorillaTagger.Instance.offlineVRRig.enabled = true;
-                }
-            }
-        }
-
-        public static void AtticCrashAll()
-        {
-            if (rightTrigger > 0.5f)
-            {
-                if (Time.time > caDebounce)
-                {
-                    caDebounce = Time.time + 1f;
-                    foreach (BuilderPiece that in GetPieces())
-                    {
-                        BuilderTableNetworking.instance.photonView.RPC("RequestDropPieceRPC", RpcTarget.MasterClient, new object[] { that.pieceId, GorillaTagger.Instance.offlineVRRig.transform.position, GorillaTagger.Instance.offlineVRRig.transform.rotation, new Vector3(0f, 0f, 0f), Vector3.zero, PhotonNetwork.LocalPlayer });
-                        RPCProtection();
-                    }
-                }
-            }
-        }*/
 
         private static float lmfao = 0f;
         private static bool didit = false;
@@ -695,9 +635,8 @@ namespace iiMenu.Mods
         {
             if (Time.time > lmfao && didit)
             {
-                rejRoom = PhotonNetwork.CurrentRoom.Name;
                 NotifiLib.SendNotification("<color=grey>[</color><color=purple>DUPLICATOR</color><color=grey>]</color> <color=white>Your rig has been duplicated. Others can see it, but not you.</color>");
-                PhotonNetwork.Disconnect();
+                Important.Reconnect();
                 didit = false;
             }
             if (rightTrigger > 0.5f && Time.time > lmfao && PhotonNetwork.InRoom)

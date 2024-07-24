@@ -5,6 +5,7 @@ using iiMenu.Notifications;
 using Photon.Pun;
 using System.Diagnostics;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Valve.VR;
 using static iiMenu.Menu.Main;
 
@@ -149,6 +150,11 @@ namespace iiMenu.Mods
             };
             string name = RandomRoomName();
             PhotonNetwork.CreateRoom(name, roomOptions, null, null);
+        }
+
+        public static void iisStupidMenuRoom()
+        {
+            PhotonNetworkController.Instance.AttemptToJoinSpecificRoom("<$II_"+PluginInfo.Version+">", JoinType.Solo);
         }
 
         public static void AutoJoinRoomRUN()
@@ -362,6 +368,22 @@ namespace iiMenu.Mods
         public static void UncapFPS()
         {
             Application.targetFrameRate = 1024;
+        }
+
+        private static float anotherdelay = 0f;
+        public static void PCButtonClick()
+        {
+            if (Mouse.current.leftButton.isPressed && Time.time > anotherdelay)
+            {
+                Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
+                Physics.Raycast(ray, out var Ray, 512f, NoInvisLayerMask());
+                GorillaPressableButton possibly = Ray.collider.GetComponentInParent<GorillaPressableButton>();
+                if (possibly)
+                {
+                    possibly.ButtonActivation();
+                    anotherdelay = Time.time + 0.2f;
+                }
+            }
         }
 
         public static void CapFPS()

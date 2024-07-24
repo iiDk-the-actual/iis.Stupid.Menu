@@ -1,16 +1,11 @@
 ﻿using ExitGames.Client.Photon;
-using GorillaNetworking;
-using GorillaTag;
 using iiMenu.Classes;
 using Photon.Pun;
 using Photon.Realtime;
-using Photon.Voice;
 using System;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static Cinemachine.DocumentationSortingAttribute;
-using static GorillaNetworking.CosmeticsController;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
