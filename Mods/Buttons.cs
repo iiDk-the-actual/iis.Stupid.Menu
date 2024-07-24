@@ -1,6 +1,7 @@
 ﻿using iiMenu.Classes;
 using iiMenu.Mods;
 using iiMenu.Mods.Spammers;
+using iiMenu.Notifications;
 using UnityEngine;
 using static iiMenu.Menu.Main;
 
@@ -199,6 +200,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Accept TOS", enableMethod =() => Important.AcceptTOS(), toolTip = "Accepts the Terms of Service for you."},
 
                 new ButtonInfo { buttonText = "Copy Player Position", method =() => Important.CopyPlayerPosition(), isTogglable = false, toolTip = "Copies the current player position to the clipboard." },
+
+                new ButtonInfo { buttonText = "Clear Notifications", method =() => NotifiLib.ClearAllNotifications(), isTogglable = false, toolTip = "Clears your notifications. Good for when they get stuck."},
 
                 new ButtonInfo { buttonText = "Anti AFK", enableMethod =() => Important.EnableAntiAFK(), disableMethod =() => Important.DisableAntiAFK(), toolTip = "Doesn't let you get kicked for being AFK."},
                 new ButtonInfo { buttonText = "Disable Network Triggers", enableMethod =() => Important.DisableNetworkTriggers(), disableMethod =() => Important.EnableNetworkTriggers(), toolTip = "Disables the network triggers, so you can change maps without disconnecting."},
