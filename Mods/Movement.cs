@@ -3,14 +3,11 @@ using ExitGames.Client.Photon;
 using GorillaLocomotion.Climbing;
 using HarmonyLib;
 using iiMenu.Classes;
-using Oculus.Interaction;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
-using System.ComponentModel.Design;
 using System.Linq;
 using System.Reflection;
-using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
@@ -18,7 +15,6 @@ using UnityEngine.XR.Interaction.Toolkit;
 using Valve.VR;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
-using static UnityEngine.Object;
 
 
 namespace iiMenu.Mods
@@ -2095,7 +2091,7 @@ namespace iiMenu.Mods
             lol = Traverse.Create(newSC);
             mins = lol.Field("minScale");
             maxs = lol.Field("maxScale");
-            lol.Field("myType").SetValue(SizeChanger.ChangerType.Static);
+            lol.Field("myType").SetValue(SizeChanger.ChangerType.Continuous);
             lol.Field("staticEasing").SetValue(0.5f);
             foreach (SizeChangerTrigger sct in UnityEngine.Object.FindObjectsOfType<SizeChangerTrigger>()) // Thank you hamsterman for the patch
             {

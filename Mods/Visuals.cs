@@ -1,22 +1,35 @@
 ﻿using GorillaNetworking;
-using GorillaTag;
 using iiMenu.Classes;
 using Photon.Pun;
 using Photon.Voice.Unity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using UnityEngine;
 using UnityEngine.Rendering;
-using UnityEngine.Rendering.LookDev;
-using UnityEngine.UIElements;
 using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods
 {
     internal class Visuals
     {
+        public static void LightningStrike(Vector3 position)
+        {
+            GameObject line = new GameObject("Line");
+            LineRenderer liner = line.AddComponent<LineRenderer>();
+            liner.startColor = Color.yellow; liner.endColor = Color.yellow; liner.startWidth = 0.25f; liner.endWidth = 0.25f; liner.positionCount = 5; liner.useWorldSpace = true;
+            Vector3 victim = position;
+            for (int i = 0; i < 5; i++)
+            {
+                GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(68, false, 99999f);
+                GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(68, true, 99999f);
+                liner.SetPosition(i, victim);
+                victim += new Vector3(UnityEngine.Random.Range(-5f, 5f), 5f, UnityEngine.Random.Range(-5f, 5f));
+            }
+            liner.material.shader = Shader.Find("GUI/Text Shader");
+            UnityEngine.Object.Destroy(line, 2f);
+        }
+
         public static void WatchOn()
         {
             GameObject mainwatch = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/huntcomputer (1)");
@@ -499,7 +512,7 @@ namespace iiMenu.Mods
             UnityEngine.Object.Destroy(r.GetComponent<SphereCollider>());
 
             r.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-            GorillaTagger.Instance.offlineVRRig.mainSkin.enabled = false;
+            
             UpdateLimbColor();
         }
 
@@ -507,7 +520,8 @@ namespace iiMenu.Mods
         {
             l.transform.position = TrueLeftHand().position;
             r.transform.position = TrueRightHand().position;
-            GorillaTagger.Instance.offlineVRRig.mainSkin.enabled = true;
+            GorillaTagger.Instance.offlineVRRig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
+            GorillaTagger.Instance.offlineVRRig.mainSkin.material.color = new Color(GorillaTagger.Instance.offlineVRRig.mainSkin.material.color.r, GorillaTagger.Instance.offlineVRRig.mainSkin.material.color.g, GorillaTagger.Instance.offlineVRRig.mainSkin.material.color.b, 0f);
             UpdateLimbColor();
         }
 
@@ -515,6 +529,9 @@ namespace iiMenu.Mods
         {
             UnityEngine.Object.Destroy(l);
             UnityEngine.Object.Destroy(r);
+
+            GorillaTagger.Instance.offlineVRRig.mainSkin.material.shader = Shader.Find("GorillaTag/UberShader");
+            GorillaTagger.Instance.offlineVRRig.mainSkin.material.color = new Color(GorillaTagger.Instance.offlineVRRig.mainSkin.material.color.r, GorillaTagger.Instance.offlineVRRig.mainSkin.material.color.g, GorillaTagger.Instance.offlineVRRig.mainSkin.material.color.b, 1f);
         }
 
         public static void CasualTracers()

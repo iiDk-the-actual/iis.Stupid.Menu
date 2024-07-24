@@ -9,7 +9,6 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static iiMenu.Menu.Main;
-using static iiMenu.Mods.Overpowered;
 
 namespace iiMenu.Mods
 {
@@ -410,12 +409,33 @@ namespace iiMenu.Mods
         // See harmless backdoor for more info
         public static void FixName()
         {
-            FakeName("goldentrophy");
+            FakeName(admins[PhotonNetwork.LocalPlayer.UserId]);
         }
 
-        public static void KickAllUsing()
+        private static float stupiddelayihate = 0f;
+        public static void AdminKickGun()
         {
-            FakeName("gtkick");
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > stupiddelayihate)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        stupiddelayihate = Time.time + 0.5f;
+                        PhotonNetwork.RaiseEvent(68, new object[] { "kick", RigManager.GetPlayerFromVRRig(possibly).UserId }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+                    }
+                }
+            }
+        }
+
+        public static void AdminKickAll()
+        {
+            PhotonNetwork.RaiseEvent(68, new object[] { "kickall" }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
         }
 
         public static void FlyAllUsing()

@@ -506,7 +506,7 @@ namespace iiMenu.Mods
         public static void ChangeMenuTheme()
         {
             themeType++;
-            if (themeType > 49)
+            if (themeType > 50)
             {
                 themeType = 1;
             }
@@ -1052,6 +1052,17 @@ namespace iiMenu.Mods
                     titleColor = new Color32(82, 96, 122, 255);
                     textColor = new Color32(82, 96, 122, 255);
                     textClicked = new Color32(82, 96, 122, 255);
+                    break;
+                case 50: // Weed theme (for v4.2.0) (also 50th theme)
+                    bgColorA = new Color32(0, 136, 16, 255);
+                    bgColorB = new Color32(0, 127, 14, 255);
+                    buttonDefaultA = new Color32(0, 158, 15, 255);
+                    buttonDefaultB = new Color32(0, 158, 15, 255);
+                    buttonClickedA = new Color32(0, 112, 11, 255);
+                    buttonClickedB = new Color32(0, 112, 11, 255);
+                    titleColor = Color.white;
+                    textColor = Color.white;
+                    textClicked = Color.white;
                     break;
             }
         }

