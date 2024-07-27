@@ -58,7 +58,7 @@ namespace iiMenu.Mods
         {
             //PhotonNetworkController.Instance.currentJoinTrigger.OnBoxTriggered();
 
-            string gamemode = PhotonNetworkController.Instance.currentJoinTrigger.gameModeName;
+            string gamemode = PhotonNetworkController.Instance.currentJoinTrigger.networkZone;
 
             if (gamemode == "forest")
             {
@@ -124,7 +124,7 @@ namespace iiMenu.Mods
             {
                 {
                     "gameMode",
-                    PhotonNetworkController.Instance.currentJoinTrigger.gameModeName + GorillaComputer.instance.currentQueue + GorillaComputer.instance.currentGameMode.Value
+                    PhotonNetworkController.Instance.currentJoinTrigger.networkZone + GorillaComputer.instance.currentQueue + GorillaComputer.instance.currentGameMode.Value
                 }
             };
             /*}
@@ -141,7 +141,7 @@ namespace iiMenu.Mods
             Photon.Realtime.RoomOptions roomOptions = new Photon.Realtime.RoomOptions();
             roomOptions.IsVisible = true;
             roomOptions.IsOpen = true;
-            roomOptions.MaxPlayers = PhotonNetworkController.Instance.GetRoomSize(PhotonNetworkController.Instance.currentJoinTrigger.gameModeName);
+            roomOptions.MaxPlayers = PhotonNetworkController.Instance.GetRoomSize(PhotonNetworkController.Instance.currentJoinTrigger.networkZone);
             roomOptions.CustomRoomProperties = customRoomProperties;
             roomOptions.PublishUserId = true;
             roomOptions.CustomRoomPropertiesForLobby = new string[]

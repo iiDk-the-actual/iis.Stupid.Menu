@@ -1203,7 +1203,7 @@ namespace iiMenu.Mods.Spammers
             bool isInfectedPlayers = false;
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (vrrig.mainSkin.material.name.Contains("fected"))
+                if (PlayerIsTagged(vrrig))
                 {
                     isInfectedPlayers = true;
                     break;
@@ -1211,10 +1211,10 @@ namespace iiMenu.Mods.Spammers
             }
             if (isInfectedPlayers)
             {
-                if (!GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected"))
+                if (!PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
                 {
                     VRRig vrrig = GetRandomVRRig(false);//GorillaParent.instance.vrrigs[UnityEngine.Random.Range(0, GorillaParent.instance.vrrigs.Count - 1)];
-                    if (vrrig.mainSkin.material.name.Contains("fected") && vrrig != GorillaTagger.Instance.offlineVRRig)
+                    if (PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
                     {
                         Vector3 startpos = GorillaTagger.Instance.rightHandTransform.position;
                         Vector3 charvel = vrrig.transform.position - GorillaTagger.Instance.rightHandTransform.position;
@@ -1227,7 +1227,7 @@ namespace iiMenu.Mods.Spammers
                 else
                 {
                     VRRig vrrig = GetRandomVRRig(false);// GorillaParent.instance.vrrigs[UnityEngine.Random.Range(0, GorillaParent.instance.vrrigs.Count - 1)];
-                    if (!vrrig.mainSkin.material.name.Contains("fected") && vrrig != GorillaTagger.Instance.offlineVRRig)
+                    if (!PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
                     {
                         Vector3 startpos = GorillaTagger.Instance.rightHandTransform.position;
                         Vector3 charvel = vrrig.transform.position - GorillaTagger.Instance.rightHandTransform.position;

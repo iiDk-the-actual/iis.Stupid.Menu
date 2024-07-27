@@ -96,7 +96,6 @@ namespace iiMenu.Mods.Spammers
                         false,
                         999999f
                     });
-                    RPCProtection();
                 }
                 else
                 {

@@ -129,7 +129,7 @@ namespace iiMenu.Mods
                                 {
                                     PhotonNetwork.Disconnect();
                                     RPCProtection();
-                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> Someone attempted to report you, you have been disconnected.");
+                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected.");
                                 }
                             }
                         }
@@ -317,7 +317,7 @@ namespace iiMenu.Mods
         {
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (!vrrig.isOfflineVRRig && vrrig.concatStringOfCosmeticsAllowed.Contains("LBAAK"))
+                if (!vrrig.isOfflineVRRig && vrrig.concatStringOfCosmeticsAllowed.Contains("LBAAK") || vrrig.concatStringOfCosmeticsAllowed.Contains("LBAAD"))
                 {
                     try
                     {
@@ -418,7 +418,7 @@ namespace iiMenu.Mods
 
         public static void ChangeIdentity()
         {
-            string randomName = "GORILLA";
+            string randomName = "gorilla";
             for (var i = 0; i < 4; i++)
             {
                 randomName = randomName + UnityEngine.Random.Range(0, 9).ToString();
@@ -489,7 +489,8 @@ namespace iiMenu.Mods
                 "GOORILA",
                 "GORILLA",
                 "REDBERRY",
-                "FOX"
+                "FOX",
+                "RUFUS"
             };
 
             ChangeName(names[UnityEngine.Random.Range(0, names.Length - 1)]);
@@ -541,10 +542,10 @@ namespace iiMenu.Mods
         private static int lastPlayerCount = -1;
         public static void NameSpoof()
         {
-            string randomName = "GORILLA";
-            for (var i = 0; i < 4; i++)
+            string randomName = "";
+            for (int i = 0; i < 12; i++)
             {
-                randomName = randomName + UnityEngine.Random.Range(0, 9).ToString();
+                randomName += letters[UnityEngine.Random.Range(0, letters.Length - 1)];
             }
 
             if (PhotonNetwork.InRoom)

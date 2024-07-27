@@ -11,6 +11,8 @@ namespace iiMenu.Mods
 {
     internal class Miscellaneous
     {
+        public static float indicatorDelay = 0f;
+
         public static void CopyIDGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)

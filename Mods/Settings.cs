@@ -174,6 +174,12 @@ namespace iiMenu.Mods
                     UnityEngine.Object.Destroy(VRKeyboard);
                     VRKeyboard = null;
                 }
+                if (TPC != null && TPC.transform.parent.gameObject.name.Contains("CameraTablet") && isOnPC)
+                {
+                    isOnPC = false;
+                    TPC.transform.position = TPC.transform.parent.position;
+                    TPC.transform.rotation = TPC.transform.parent.rotation;
+                }
             }
         }
         
@@ -1136,6 +1142,7 @@ namespace iiMenu.Mods
 
         public static void FixMenuBackground()
         {
+            customMenuBackgroundImage = null;
             doCustomMenuBackground = false;
         }
 
@@ -1535,8 +1542,9 @@ namespace iiMenu.Mods
             disableFpsCounter = false;
         }
 
-        public static void SavePreferences()
+        public static string SavePreferencesToText()
         {
+            string seperator = ";;";
             string text = "";
             foreach (ButtonInfo[] buttonlist in Buttons.buttons)
             {
@@ -1550,7 +1558,7 @@ namespace iiMenu.Mods
                         }
                         else
                         {
-                            text += "\n" + v.buttonText;
+                            text += seperator + v.buttonText;
                         }
                     }
                 }
@@ -1565,115 +1573,209 @@ namespace iiMenu.Mods
                 }
                 else
                 {
-                    favz += "\n" + fav;
+                    favz += seperator + fav;
                 }
             }
 
-            string ihateyouguys = platformMode+"\n"+platformShape+"\n"+flySpeedCycle+"\n"+longarmCycle+"\n"+speedboostCycle+"\n"+projmode+"\n"+trailmode+"\n"+shootCycle+"\n"+pointerIndex+"\n"+tagAuraIndex+"\n"+notificationDecayTime+"\n"+fontStyleType+"\n"+arrowType+"\n"+pcbg+"\n"+internetTime+"\n"+hotkeyButton+"\n"+buttonClickIndex+"\n"+buttonClickVolume+"\n"+Safety.antireportrangeindex;
+            string ihateyouguys = platformMode + seperator + platformShape + seperator + flySpeedCycle + seperator + longarmCycle + seperator + speedboostCycle + seperator + projmode + seperator + trailmode + seperator + shootCycle + seperator + pointerIndex + seperator + tagAuraIndex + seperator + notificationDecayTime + seperator + fontStyleType + seperator + arrowType + seperator + pcbg + seperator + internetTime + seperator + hotkeyButton + seperator + buttonClickIndex + seperator + buttonClickVolume + seperator + Safety.antireportrangeindex;
 
+            string finaltext =
+                text + "\n" +
+                favz + "\n" +
+                ihateyouguys + "\n" +
+                pageButtonType.ToString() + "\n" +
+                themeType.ToString() + "\n" +
+                fontCycle.ToString();
+
+            return finaltext;
+        }
+
+        public static void SavePreferences()
+        {
             if (!Directory.Exists("iisStupidMenu"))
             {
                 Directory.CreateDirectory("iisStupidMenu");
             }
-            File.WriteAllText("iisStupidMenu/iiMenu_EnabledMods.txt", text);
-            File.WriteAllText("iisStupidMenu/iiMenu_FavoriteMods.txt", favz);
-            File.WriteAllText("iisStupidMenu/iiMenu_ModData.txt", ihateyouguys.ToString());
-            File.WriteAllText("iisStupidMenu/iiMenu_PageType.txt", pageButtonType.ToString());
-            File.WriteAllText("iisStupidMenu/iiMenu_Theme.txt", themeType.ToString());
-            File.WriteAllText("iisStupidMenu/iiMenu_Font.txt", fontCycle.ToString());
+            File.WriteAllText("iisStupidMenu/iiMenu_Preferences.txt", SavePreferencesToText());
+        }
+
+        public static void LegacyLoadPreferences()
+        {
+            Panic();
+            try
+            {
+                string config = File.ReadAllText("iisStupidMenu/iiMenu_EnabledMods.txt");
+                string[] activebuttons = config.Split("\n");
+                for (int index = 0; index < activebuttons.Length; index++)
+                {
+                    Toggle(activebuttons[index]);
+                }
+            }
+            catch { }
+
+            try
+            {
+                string favez = File.ReadAllText("iisStupidMenu/iiMenu_FavoriteMods.txt");
+                string[] favz = favez.Split("\n");
+
+                favorites.Clear();
+                foreach (string fav in favz)
+                {
+                    favorites.Add(fav);
+                }
+            }
+            catch { }
+
+            try
+            {
+                string MODDER = File.ReadAllText("iisStupidMenu/iiMenu_ModData.txt");
+                string[] data = MODDER.Split("\n");
+
+                platformMode = int.Parse(data[0]) - 1;
+                Movement.ChangePlatformType();
+                platformShape = int.Parse(data[1]) - 1;
+                Movement.ChangePlatformShape();
+                flySpeedCycle = int.Parse(data[2]) - 1;
+                Movement.ChangeFlySpeed();
+                longarmCycle = int.Parse(data[3]) - 1;
+                Movement.ChangeArmLength();
+                speedboostCycle = int.Parse(data[4]) - 1;
+                Movement.ChangeSpeedBoostAmount();
+                projmode = int.Parse(data[5]) - 1;
+                Projectiles.ChangeProjectile();
+                trailmode = int.Parse(data[6]) - 1;
+                Projectiles.ChangeTrail();
+                shootCycle = int.Parse(data[7]) - 1;
+                Projectiles.ChangeShootSpeed();
+                pointerIndex = int.Parse(data[8]) - 1;
+                ChangePointerPosition();
+                tagAuraIndex = int.Parse(data[9]) - 1;
+                Advantages.ChangeTagAuraRange();
+                notificationDecayTime = int.Parse(data[10]) - 1000;
+                ChangeNotificationTime();
+                fontStyleType = int.Parse(data[11]) - 1;
+                Settings.ChangeFontStyleType();
+                arrowType = int.Parse(data[12]) - 1;
+                Settings.ChangeArrowType();
+                pcbg = int.Parse(data[13]) - 1;
+                Settings.ChangePCUI();
+                internetTime = int.Parse(data[14]) - 1;
+                Settings.ChangeReconnectTime();
+                hotkeyButton = data[15];
+                buttonClickIndex = int.Parse(data[16]) - 1;
+                Settings.ChangeButtonSound();
+                buttonClickVolume = int.Parse(data[17]) - 1;
+                Settings.ChangeButtonVolume();
+                Safety.antireportrangeindex = int.Parse(data[18]) - 1;
+                Safety.ChangeAntiReportRange();
+            }
+            catch { }
+
+            string pager = File.ReadAllText("iisStupidMenu/iiMenu_PageType.txt");
+            string themer = File.ReadAllText("iisStupidMenu/iiMenu_Theme.txt");
+            string fonter = File.ReadAllText("iisStupidMenu/iiMenu_Font.txt");
+
+            pageButtonType = int.Parse(pager) - 1;
+            Toggle("Change Page Type");
+            themeType = int.Parse(themer) - 1;
+            Toggle("Change Menu Theme");
+            fontCycle = int.Parse(fonter) - 1;
+            Toggle("Change Font Type");
+            NotifiLib.ClearAllNotifications();
+        }
+
+        public static void LoadPreferencesFromText(string text)
+        {
+            Panic();
+            string[] textData = text.Split("\n");
+
+            string[] activebuttons = textData[0].Split(";;");
+            for (int index = 0; index < activebuttons.Length; index++)
+            {
+                Toggle(activebuttons[index]);
+            }
+
+            string[] favz = textData[1].Split(";;");
+            favorites.Clear();
+            foreach (string fav in favz)
+            {
+                favorites.Add(fav);
+            }
+
+            string[] data = textData[2].Split(";;");
+            platformMode = int.Parse(data[0]) - 1;
+            Movement.ChangePlatformType();
+            platformShape = int.Parse(data[1]) - 1;
+            Movement.ChangePlatformShape();
+            flySpeedCycle = int.Parse(data[2]) - 1;
+            Movement.ChangeFlySpeed();
+            longarmCycle = int.Parse(data[3]) - 1;
+            Movement.ChangeArmLength();
+            speedboostCycle = int.Parse(data[4]) - 1;
+            Movement.ChangeSpeedBoostAmount();
+            projmode = int.Parse(data[5]) - 1;
+            Projectiles.ChangeProjectile();
+            trailmode = int.Parse(data[6]) - 1;
+            Projectiles.ChangeTrail();
+            shootCycle = int.Parse(data[7]) - 1;
+            Projectiles.ChangeShootSpeed();
+            pointerIndex = int.Parse(data[8]) - 1;
+            ChangePointerPosition();
+            tagAuraIndex = int.Parse(data[9]) - 1;
+            Advantages.ChangeTagAuraRange();
+            notificationDecayTime = int.Parse(data[10]) - 1000;
+            ChangeNotificationTime();
+            fontStyleType = int.Parse(data[11]) - 1;
+            Settings.ChangeFontStyleType();
+            arrowType = int.Parse(data[12]) - 1;
+            Settings.ChangeArrowType();
+            pcbg = int.Parse(data[13]) - 1;
+            Settings.ChangePCUI();
+            internetTime = int.Parse(data[14]) - 1;
+            Settings.ChangeReconnectTime();
+            hotkeyButton = data[15];
+            buttonClickIndex = int.Parse(data[16]) - 1;
+            Settings.ChangeButtonSound();
+            buttonClickVolume = int.Parse(data[17]) - 1;
+            Settings.ChangeButtonVolume();
+            Safety.antireportrangeindex = int.Parse(data[18]) - 1;
+            Safety.ChangeAntiReportRange();
+
+            pageButtonType = int.Parse(textData[3]) - 1;
+            Toggle("Change Page Type");
+            themeType = int.Parse(textData[4]) - 1;
+            Toggle("Change Menu Theme");
+            fontCycle = int.Parse(textData[5]) - 1;
+            Toggle("Change Font Type");
+
+            NotifiLib.ClearAllNotifications();
+            hasLoadedPreferences = true;
         }
 
         public static void LoadPreferences()
         {
-            if (Directory.Exists("iisStupidMenu"))
+            try
             {
-                Panic();
-
-                try
+                if (Directory.Exists("iisStupidMenu"))
                 {
-                    string config = File.ReadAllText("iisStupidMenu/iiMenu_EnabledMods.txt");
-                    string[] activebuttons = config.Split("\n");
-                    for (int index = 0; index < activebuttons.Length; index++)
+                    if (File.Exists("iisStupidMenu/iiMenu_EnabledMods.txt"))
                     {
-                        Toggle(activebuttons[index]);
+                        LegacyLoadPreferences();
+                        File.Delete("iisStupidMenu/iiMenu_EnabledMods.txt");
+                        File.Delete("iisStupidMenu/iiMenu_FavoriteMods.txt");
+                        File.Delete("iisStupidMenu/iiMenu_ModData.txt");
+                        File.Delete("iisStupidMenu/iiMenu_PageType.txt");
+                        File.Delete("iisStupidMenu/iiMenu_Theme.txt");
+                        File.Delete("iisStupidMenu/iiMenu_Font.txt");
+                        SavePreferences();
+                    }
+                    else
+                    {
+                        string text = File.ReadAllText("iisStupidMenu/iiMenu_Preferences.txt");
+                        LoadPreferencesFromText(text);
                     }
                 }
-                catch { }
-
-                try
-                {
-                    string favez = File.ReadAllText("iisStupidMenu/iiMenu_FavoriteMods.txt");
-                    string[] favz = favez.Split("\n");
-
-                    favorites.Clear();
-                    foreach (string fav in favz)
-                    {
-                        favorites.Add(fav);
-                    }
-                }
-                catch { }
-
-                try
-                {
-                    string MODDER = File.ReadAllText("iisStupidMenu/iiMenu_ModData.txt");
-                    string[] data = MODDER.Split("\n");
-
-                    platformMode = int.Parse(data[0]) - 1;
-                    Movement.ChangePlatformType();
-                    platformShape = int.Parse(data[1]) - 1;
-                    Movement.ChangePlatformShape();
-                    flySpeedCycle = int.Parse(data[2]) - 1;
-                    Movement.ChangeFlySpeed();
-                    longarmCycle = int.Parse(data[3]) - 1;
-                    Movement.ChangeArmLength();
-                    speedboostCycle = int.Parse(data[4]) - 1;
-                    Movement.ChangeSpeedBoostAmount();
-                    projmode = int.Parse(data[5]) - 1;
-                    Projectiles.ChangeProjectile();
-                    trailmode = int.Parse(data[6]) - 1;
-                    Projectiles.ChangeTrail();
-                    shootCycle = int.Parse(data[7]) - 1;
-                    Projectiles.ChangeShootSpeed();
-                    pointerIndex = int.Parse(data[8]) - 1;
-                    ChangePointerPosition();
-                    tagAuraIndex = int.Parse(data[9]) - 1;
-                    Advantages.ChangeTagAuraRange();
-                    notificationDecayTime = int.Parse(data[10]) - 1000;
-                    ChangeNotificationTime();
-                    fontStyleType = int.Parse(data[11]) - 1;
-                    Settings.ChangeFontStyleType();
-                    arrowType = int.Parse(data[12]) - 1;
-                    Settings.ChangeArrowType();
-                    pcbg = int.Parse(data[13]) - 1;
-                    Settings.ChangePCUI();
-                    internetTime = int.Parse(data[14]) - 1;
-                    Settings.ChangeReconnectTime();
-                    hotkeyButton = data[15];
-                    buttonClickIndex = int.Parse(data[16]) - 1;
-                    Settings.ChangeButtonSound();
-                    buttonClickVolume = int.Parse(data[17]) - 1;
-                    Settings.ChangeButtonVolume();
-                    Safety.antireportrangeindex = int.Parse(data[18]) - 1;
-                    Safety.ChangeAntiReportRange();
-                }
-                catch { }
-
-                string pager = File.ReadAllText("iisStupidMenu/iiMenu_PageType.txt");
-                string themer = File.ReadAllText("iisStupidMenu/iiMenu_Theme.txt");
-                string fonter = File.ReadAllText("iisStupidMenu/iiMenu_Font.txt");
-
-                pageButtonType = int.Parse(pager) - 1;
-                Toggle("Change Page Type");
-                themeType = int.Parse(themer) - 1;
-                Toggle("Change Menu Theme");
-                fontCycle = int.Parse(fonter) - 1;
-                Toggle("Change Font Type");
-                NotifiLib.ClearAllNotifications();
-            } else
-            {
-                UnityEngine.Debug.Log("Could not load preferences, try migrating to folder?");
-            }
-            hasLoadedPreferences = true;
+            } catch (Exception e) { UnityEngine.Debug.Log("Error loading preferences: " + e.Message); }
         }
 
         public static void NoAutoSave()
@@ -1709,12 +1811,12 @@ namespace iiMenu.Mods
 
         public static void ThinMenuOn()
         {
-            FATMENU = true;
+            FATMENU = false;
         }
 
         public static void ThinMenuOff()
         {
-            FATMENU = false;
+            FATMENU = true;
         }
 
         public static void BarkMenuOn()
