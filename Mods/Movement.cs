@@ -428,15 +428,15 @@ namespace iiMenu.Mods
         public static void ChangeFlySpeed()
         {
             flySpeedCycle++;
-            if (flySpeedCycle > 3)
+            if (flySpeedCycle > 4)
             {
                 flySpeedCycle = 0;
             }
 
-            float[] speedamounts = new float[] { 5f, 10f, 30f, 60f };
+            float[] speedamounts = new float[] { 5f, 10f, 30f, 60f, 0.5f };
             flySpeed = speedamounts[flySpeedCycle];
 
-            string[] speedNames = new string[] { "Slow", "Normal", "Fast", "Extra Fast" };
+            string[] speedNames = new string[] { "Slow", "Normal", "Fast", "Extra Fast", "Extra Slow" };
             GetIndex("Change Fly Speed").overlapText = "Change Fly Speed <color=grey>[</color><color=green>" + speedNames[flySpeedCycle] + "</color><color=grey>]</color>";
         }
 

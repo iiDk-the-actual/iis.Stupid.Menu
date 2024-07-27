@@ -26,7 +26,7 @@ namespace iiMenu.Mods
             }
             else
             {
-                GorillaBattleManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaBattleManager>();
+                GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
                 lol.StartBattle();
             }
         }
@@ -42,7 +42,7 @@ namespace iiMenu.Mods
             }
             else
             {
-                GorillaBattleManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaBattleManager>();
+                GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
                 lol.BattleEnd();
             }
         }
@@ -58,7 +58,7 @@ namespace iiMenu.Mods
             }
             else
             {
-                GorillaBattleManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaBattleManager>();
+                GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
                 lol.BattleEnd();
                 lol.StartBattle();
             }
@@ -75,7 +75,7 @@ namespace iiMenu.Mods
             }
             else
             {
-                GorillaBattleManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaBattleManager>();
+                GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
                 lol.playerLives[PhotonNetwork.LocalPlayer.ActorNumber] = UnityEngine.Random.Range(0, 4);
             }
         }
@@ -91,7 +91,7 @@ namespace iiMenu.Mods
             }
             else
             {
-                GorillaBattleManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaBattleManager>();
+                GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
                 foreach (Photon.Realtime.Player loln in PhotonNetwork.PlayerList)
                 {
                     lol.playerLives[loln.ActorNumber] = UnityEngine.Random.Range(0, 4);
@@ -122,7 +122,7 @@ namespace iiMenu.Mods
                         }
                         else
                         {
-                            GorillaBattleManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaBattleManager>();
+                            GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
                             lol.playerLives[owner.ActorNumber] = 0;
                         }
                     }
@@ -141,7 +141,7 @@ namespace iiMenu.Mods
             }
             else
             {
-                GorillaBattleManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaBattleManager>();
+                GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
                 lol.playerLives[PhotonNetwork.LocalPlayer.ActorNumber] = 0;
             }
         }
@@ -157,7 +157,7 @@ namespace iiMenu.Mods
             }
             else
             {
-                GorillaBattleManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaBattleManager>();
+                GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
                 foreach (Photon.Realtime.Player loln in PhotonNetwork.PlayerList)
                 {
                     lol.playerLives[loln.ActorNumber] = 0;
@@ -188,7 +188,7 @@ namespace iiMenu.Mods
                         }
                         else
                         {
-                            GorillaBattleManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaBattleManager>();
+                            GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
                             lol.playerLives[owner.ActorNumber] = 4;
                         }
                     }
@@ -207,7 +207,7 @@ namespace iiMenu.Mods
             }
             else
             {
-                GorillaBattleManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaBattleManager>();
+                GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
                 lol.playerLives[PhotonNetwork.LocalPlayer.ActorNumber] = 4;
             }
         }
@@ -223,7 +223,7 @@ namespace iiMenu.Mods
             }
             else
             {
-                GorillaBattleManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaBattleManager>();
+                GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
                 foreach (Photon.Realtime.Player loln in PhotonNetwork.PlayerList)
                 {
                     lol.playerLives[loln.ActorNumber] = 4;
@@ -242,7 +242,7 @@ namespace iiMenu.Mods
             }
             else
             {
-                GorillaBattleManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaBattleManager>();
+                GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
                 lol.playerLives[PhotonNetwork.LocalPlayer.ActorNumber] = 4;
                 GorillaLocomotion.Player.Instance.disableMovement = false;
             }

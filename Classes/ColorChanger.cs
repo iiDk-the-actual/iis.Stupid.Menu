@@ -39,7 +39,7 @@ namespace iiMenu.Classes
                 }
                 else
                 {
-                    if (!GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected"))
+                    if (!Menu.Main.PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
                     {
                         gameObjectRenderer.material.color = GorillaTagger.Instance.offlineVRRig.mainSkin.material.color;
                     } else

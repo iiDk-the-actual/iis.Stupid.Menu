@@ -490,7 +490,7 @@ namespace iiMenu.Mods
         private static void UpdateLimbColor()
         {
             Color limbcolor = GorillaTagger.Instance.offlineVRRig.playerColor;
-            if (GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected"))
+            if (PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
             {
                 limbcolor = new Color32(255, 111, 0, 255);
             }
@@ -558,7 +558,7 @@ namespace iiMenu.Mods
             bool isInfectedPlayers = false;
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (vrrig.mainSkin.material.name.Contains("fected"))
+                if (PlayerIsTagged(vrrig))
                 {
                     isInfectedPlayers = true;
                     break;
@@ -566,11 +566,11 @@ namespace iiMenu.Mods
             }
             if (isInfectedPlayers)
             {
-                if (!GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected"))
+                if (!PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
                 {
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
-                        if (vrrig.mainSkin.material.name.Contains("fected") && vrrig != GorillaTagger.Instance.offlineVRRig)
+                        if (PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
                         {
                             GameObject line = new GameObject("Line");
                             LineRenderer liner = line.AddComponent<LineRenderer>();
@@ -589,7 +589,7 @@ namespace iiMenu.Mods
                 {
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
-                        if (!vrrig.mainSkin.material.name.Contains("fected") && vrrig != GorillaTagger.Instance.offlineVRRig)
+                        if (!PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
                         {
                             GameObject line = new GameObject("Line");
                             LineRenderer liner = line.AddComponent<LineRenderer>();
@@ -709,7 +709,7 @@ namespace iiMenu.Mods
             bool isInfectedPlayers = false;
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (vrrig.mainSkin.material.name.Contains("fected"))
+                if (PlayerIsTagged(vrrig))
                 {
                     isInfectedPlayers = true;
                     break;
@@ -717,14 +717,14 @@ namespace iiMenu.Mods
             }
             if (isInfectedPlayers)
             {
-                if (!GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected"))
+                if (!PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
                 {
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
                         UnityEngine.Color thecolor = new Color32(255, 111, 0, 255);
                         if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                         if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
-                        if (vrrig.mainSkin.material.name.Contains("fected") && vrrig != GorillaTagger.Instance.offlineVRRig)
+                        if (PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
                         {
                             LineRenderer liner = vrrig.head.rigTarget.gameObject.AddComponent<LineRenderer>();
                             liner.startWidth = 0.025f;
@@ -766,7 +766,7 @@ namespace iiMenu.Mods
                         UnityEngine.Color thecolor = vrrig.playerColor;
                         if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                         if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
-                        if (!vrrig.mainSkin.material.name.Contains("fected") && vrrig != GorillaTagger.Instance.offlineVRRig)
+                        if (!PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
                         {
                             LineRenderer liner = vrrig.head.rigTarget.gameObject.AddComponent<LineRenderer>();
                             liner.startWidth = 0.025f;
@@ -946,7 +946,7 @@ namespace iiMenu.Mods
             bool isInfectedPlayers = false;
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (vrrig.mainSkin.material.name.Contains("fected"))
+                if (PlayerIsTagged(vrrig))
                 {
                     isInfectedPlayers = true;
                     break;
@@ -954,11 +954,11 @@ namespace iiMenu.Mods
             }
             if (isInfectedPlayers)
             {
-                if (!GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected"))
+                if (!PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
                 {
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
-                        if (vrrig.mainSkin.material.name.Contains("fected") && vrrig != GorillaTagger.Instance.offlineVRRig)
+                        if (PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
                         {
                             vrrig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
                             vrrig.mainSkin.material.color = new Color32(255, 111, 0, 255);
@@ -975,7 +975,7 @@ namespace iiMenu.Mods
                 {
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
-                        if (!vrrig.mainSkin.material.name.Contains("fected") && vrrig != GorillaTagger.Instance.offlineVRRig)
+                        if (!PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
                         {
                             vrrig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
                             vrrig.mainSkin.material.color = vrrig.playerColor;
@@ -1062,7 +1062,7 @@ namespace iiMenu.Mods
             bool isInfectedPlayers = false;
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (vrrig.mainSkin.material.name.Contains("fected"))
+                if (PlayerIsTagged(vrrig))
                 {
                     isInfectedPlayers = true;
                     break;
@@ -1070,11 +1070,11 @@ namespace iiMenu.Mods
             }
             if (isInfectedPlayers)
             {
-                if (!GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected"))
+                if (!PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
                 {
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
-                        if (vrrig.mainSkin.material.name.Contains("fected") && vrrig != GorillaTagger.Instance.offlineVRRig)
+                        if (PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
                         {
                             GameObject line = new GameObject("Line");
                             LineRenderer liner = line.AddComponent<LineRenderer>();
@@ -1093,7 +1093,7 @@ namespace iiMenu.Mods
                 {
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
-                        if (!vrrig.mainSkin.material.name.Contains("fected") && vrrig != GorillaTagger.Instance.offlineVRRig)
+                        if (!PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
                         {
                             GameObject line = new GameObject("Line");
                             LineRenderer liner = line.AddComponent<LineRenderer>();
@@ -1191,7 +1191,7 @@ namespace iiMenu.Mods
             bool isInfectedPlayers = false;
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (vrrig.mainSkin.material.name.Contains("fected"))
+                if (PlayerIsTagged(vrrig))
                 {
                     isInfectedPlayers = true;
                     break;
@@ -1199,11 +1199,11 @@ namespace iiMenu.Mods
             }
             if (isInfectedPlayers)
             {
-                if (!GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected"))
+                if (!PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
                 {
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
-                        if (vrrig.mainSkin.material.name.Contains("fected") && vrrig != GorillaTagger.Instance.offlineVRRig)
+                        if (PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
                         {
                             UnityEngine.Color thecolor = new Color32(255, 111, 0, 255);
                             if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
@@ -1223,7 +1223,7 @@ namespace iiMenu.Mods
                 {
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
-                        if (!vrrig.mainSkin.material.name.Contains("fected") && vrrig != GorillaTagger.Instance.offlineVRRig)
+                        if (!PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
                         {
                             UnityEngine.Color thecolor = vrrig.playerColor;
                             if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
@@ -1362,7 +1362,7 @@ namespace iiMenu.Mods
             bool isInfectedPlayers = false;
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (vrrig.mainSkin.material.name.Contains("fected"))
+                if (PlayerIsTagged(vrrig))
                 {
                     isInfectedPlayers = true;
                     break;
@@ -1370,11 +1370,11 @@ namespace iiMenu.Mods
             }
             if (isInfectedPlayers)
             {
-                if (!GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected"))
+                if (!PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
                 {
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
-                        if (vrrig.mainSkin.material.name.Contains("fected") && vrrig != GorillaTagger.Instance.offlineVRRig)
+                        if (PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
                         {
                             UnityEngine.Color thecolor = new Color32(255, 111, 0, 255);
                             if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
@@ -1431,7 +1431,7 @@ namespace iiMenu.Mods
                 {
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
-                        if (!vrrig.mainSkin.material.name.Contains("fected") && vrrig != GorillaTagger.Instance.offlineVRRig)
+                        if (!PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
                         {
                             UnityEngine.Color thecolor = vrrig.playerColor;
                             if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
@@ -1679,7 +1679,7 @@ namespace iiMenu.Mods
             bool isInfectedPlayers = false;
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (vrrig.mainSkin.material.name.Contains("fected"))
+                if (PlayerIsTagged(vrrig))
                 {
                     isInfectedPlayers = true;
                     break;
@@ -1687,11 +1687,11 @@ namespace iiMenu.Mods
             }
             if (isInfectedPlayers)
             {
-                if (!GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected"))
+                if (!PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
                 {
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
-                        if (vrrig.mainSkin.material.name.Contains("fected") && vrrig != GorillaTagger.Instance.offlineVRRig)
+                        if (PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
                         {
                             UnityEngine.Color thecolor = new Color32(255, 111, 0, 255);
                             if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
@@ -1709,7 +1709,7 @@ namespace iiMenu.Mods
                 {
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
-                        if (!vrrig.mainSkin.material.name.Contains("fected") && vrrig != GorillaTagger.Instance.offlineVRRig)
+                        if (!PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
                         {
                             UnityEngine.Color thecolor = vrrig.playerColor;
                             if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
@@ -1820,7 +1820,7 @@ namespace iiMenu.Mods
             bool isInfectedPlayers = false;
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (vrrig.mainSkin.material.name.Contains("fected"))
+                if (PlayerIsTagged(vrrig))
                 {
                     isInfectedPlayers = true;
                     break;
@@ -1828,11 +1828,11 @@ namespace iiMenu.Mods
             }
             if (isInfectedPlayers)
             {
-                if (!GorillaTagger.Instance.offlineVRRig.mainSkin.material.name.Contains("fected"))
+                if (!PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
                 {
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
-                        if (vrrig.mainSkin.material.name.Contains("fected") && vrrig != GorillaTagger.Instance.offlineVRRig)
+                        if (PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
                         {
                             UnityEngine.Color thecolor = new Color32(255, 111, 0, 255);
                             if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
@@ -1868,7 +1868,7 @@ namespace iiMenu.Mods
                 {
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
-                        if (!vrrig.mainSkin.material.name.Contains("fected") && vrrig != GorillaTagger.Instance.offlineVRRig)
+                        if (!PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
                         {
                             UnityEngine.Color thecolor = vrrig.playerColor;
                             if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }

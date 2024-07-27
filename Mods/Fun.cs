@@ -12,6 +12,7 @@ using System.IO;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static BuilderPieceInteractor;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -338,6 +339,62 @@ namespace iiMenu.Mods
                         });
                         RPCProtection();
                         splashDel = Time.time + 0.1f;
+                    }
+                }
+                else
+                {
+                    GorillaTagger.Instance.offlineVRRig.enabled = true;
+                }
+            }
+        }
+
+        private static float ParticleDelay = 0f;
+        public static void ParticleSpam()
+        {
+            if (rightGrab)
+            {
+                if (Time.time > ParticleDelay)
+                {
+                    if (PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
+                    {
+                        GorillaTagger.Instance.myVRRig.RPC("OnHandTapRPC", RpcTarget.All, new object[]
+                        {
+                            18,
+                            false,
+                            999999f,
+                            Utils.PackVector3ToLong(new Vector3(99999f, 99999f, 99999f))
+                        });
+                        RPCProtection();
+                    }
+                    ParticleDelay = Time.time + 0.1f;
+                }
+            }
+        }
+
+        public static void ParticleSpamGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                {
+                    GorillaTagger.Instance.offlineVRRig.enabled = false;
+                    GorillaTagger.Instance.offlineVRRig.transform.position = NewPointer.transform.position - new Vector3(0, 1, 0);
+                    GorillaTagger.Instance.myVRRig.transform.position = NewPointer.transform.position - new Vector3(0, 1, 0);
+                    if (Time.time > ParticleDelay)
+                    {
+                        GorillaTagger.Instance.myVRRig.RPC("OnHandTapRPC", RpcTarget.All, new object[]
+                        {
+                            18,
+                            false,
+                            999999f,
+                            Utils.PackVector3ToLong(new Vector3(99999f, 99999f, 99999f))
+                        });
+                        RPCProtection();
+                        ParticleDelay = Time.time + 0.1f;
                     }
                 }
                 else
@@ -1462,6 +1519,44 @@ namespace iiMenu.Mods
             GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().allowPlayerStealing = false;
         }
 
+        public static void SmallBuilding()
+        {
+            Patches.BuildPatch.isEnabled = true;
+        }
+
+        public static void BigBuilding()
+        {
+            Patches.BuildPatch.isEnabled = false;
+        }
+
+        public static void MultiGrab()
+        {
+            BuilderPieceInteractor.instance.handState[1] = BuilderPieceInteractor.HandState.Empty;
+            BuilderPieceInteractor.instance.heldPiece[1] = null;
+        }
+
+        private static List<BuilderPiece> treees = new List<BuilderPiece> { };
+        public static void GetTrees()
+        {
+            treees.Clear();
+            foreach (BuilderPiece lol in GetPieces())
+            {
+                if (lol.name.ToLower().Contains("tree"))
+                {
+                    treees.Add(lol);
+                }
+            }
+        }
+
+        public static void GrabTree()
+        {
+            if (rightGrab && Time.time > blockDelay)
+            {
+                blockDelay = Time.time + 0.1f;
+                BuilderTable.instance.RequestGrabPiece(treees[UnityEngine.Random.Range(0, treees.Count - 1)], false, Vector3.zero, Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360))));
+            }
+        }
+
         /*
         public static void StealBug()
         {
@@ -1818,7 +1913,7 @@ namespace iiMenu.Mods
             if (Time.time > nameCycleDelay)
             {
                 string random = "";
-                for (int i = 0; i < 8; i++)
+                for (int i = 0; i < 12; i++)
                 {
                     random += letters[UnityEngine.Random.Range(0,letters.Length - 1)];
                 }
@@ -2099,47 +2194,38 @@ namespace iiMenu.Mods
             lastHitRS = rightSecondary;
         }
 
+        private static List<string> ownedarchive = null;
+        private static string[] GetCosmetics()
+        {
+            if (ownedarchive == null)
+            {
+                ownedarchive = new List<string> { };
+                foreach (CosmeticsController.CosmeticItem dearlord in CosmeticsController.instance.allCosmetics)
+                {
+                    if (GorillaTagger.Instance.offlineVRRig.concatStringOfCosmeticsAllowed.Contains(dearlord.itemName))
+                    {
+                        ownedarchive.Add(dearlord.itemName);
+                    }
+                }
+            }
+            return ownedarchive.ToArray();
+        }
         public static void SpazAccessories()
         {
-            int rando = UnityEngine.Random.Range(1,9);
-
-            if (rando == 1)
+            if (rightTrigger > 0.5f)
             {
-                GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeItemButton").GetComponent<GorillaPressableButton>().ButtonActivationWithHand(false);
-            }
-            if (rando == 2)
-            {
-                GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeItemButton (1)").GetComponent<GorillaPressableButton>().ButtonActivationWithHand(false);
-            }
-            if (rando == 3)
-            {
-                GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeItemButton (2)").GetComponent<GorillaPressableButton>().ButtonActivationWithHand(false);
-            }
-
-            if (rando == 4)
-            {
-                GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeLeftButton").GetComponent<WardrobeFunctionButton>().ButtonActivation();
-            }
-            if (rando == 5)
-            {
-                GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeRightItem").GetComponent<WardrobeFunctionButton>().ButtonActivation();
-            }
-
-            if (rando == 6)
-            {
-                GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardobeHatButton").GetComponent<WardrobeFunctionButton>().ButtonActivation();
-            }
-            if (rando == 7)
-            {
-                GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeFaceButton").GetComponent<WardrobeFunctionButton>().ButtonActivation();
-            }
-            if (rando == 8)
-            {
-                GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeBadgeButton").GetComponent<WardrobeFunctionButton>().ButtonActivation();
-            }
-            if (rando == 9)
-            {
-                GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeHoldableButton").GetComponent<WardrobeFunctionButton>().ButtonActivation();
+                string[] owned = GetCosmetics();
+                int amnt = Math.Clamp(owned.Length, 0, 15);
+                if (amnt > 0)
+                {
+                    List<string> holyshit = new List<string> { };
+                    for (int i = 0; i <= amnt; i++)
+                    {
+                        holyshit.Add(owned[UnityEngine.Random.Range(0, owned.Length - 1)]);
+                    }
+                    GorillaTagger.Instance.myVRRig.RPC("UpdateCosmeticsWithTryon", RpcTarget.All, new object[] { holyshit.ToArray(), holyshit.ToArray() });
+                    RPCProtection();
+                }
             }
         }
 

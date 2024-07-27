@@ -17,6 +17,8 @@ using static iiMenu.Menu.Main;
 using static Photon.Pun.UtilityScripts.TabViewManager;
 using static Technie.PhysicsCreator.SphereUtils;
 using static UnityEngine.Rendering.DebugUI;
+using iiMenu.Classes;
+using System.IO;
 
 namespace iiMenu.Mods
 {
@@ -81,12 +83,38 @@ namespace iiMenu.Mods
             NotifiLib.SendNotification("<color=grey>[</color><color=purple>PRESET</color><color=grey>]</color> Ghost preset enabled successfully.");
         }
 
+        public static void SaveCustomPreset(int id)
+        {
+            if (!Directory.Exists("iisStupidMenu"))
+            {
+                Directory.CreateDirectory("iisStupidMenu");
+            }
+            if (!Directory.Exists("iisStupidMenu/SavedPresets"))
+            {
+                Directory.CreateDirectory("iisStupidMenu/SavedPresets");
+            }
+            File.WriteAllText("iisStupidMenu/SavedPresets/Preset_" + id.ToString() + ".txt", Settings.SavePreferencesToText());
+        }
+
+        public static void LoadCustomPreset(int id)
+        {
+            if (Directory.Exists("iisStupidMenu"))
+            {
+                if (Directory.Exists("iisStupidMenu/SavedPresets"))
+                {
+                    string text = File.ReadAllText("iisStupidMenu/SavedPresets/Preset_" + id.ToString() + ".txt");
+                    UnityEngine.Debug.Log(text);
+                    Settings.LoadPreferencesFromText(text);
+                }
+            }
+        }
+
         public static void GoldentrophyPreset()
         {
             string[] presetMods = new string[]
             {
+                "Inner Outline Menu",
                 "Outline Menu",
-                "Thin Menu",
                 "Freeze Player in Menu",
                 "Clear Notifications on Disconnect",
                 "Disable Enabled GUI",
@@ -97,13 +125,15 @@ namespace iiMenu.Mods
                 "Anti AFK",
                 "Physical Quit Box",
                 "Tag Lag Detector",
-                "Spoof Support Page",
+                "Day Time",
                 "Clear Weather",
                 "Info Watch",
                 "Fix Rig Colors",
                 "Cosmetic ESP",
                 "Infection Tracers",
                 "Infection Distance ESP",
+                "Auto Party Kick",
+                "Small Building",
                 "Obnoxious Tag"
             };
 

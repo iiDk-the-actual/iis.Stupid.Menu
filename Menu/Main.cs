@@ -31,7 +31,7 @@ Any comments are dev comments I wrote
 Most comments are used to find certain parts of code faster with Ctrl + F
 Feel free to read them if you want
 
-Do not take code without permission please
+ii's Stupid Menu falls under the GPL-3.0 license
 https://github.com/iiDk-the-actual/iis.Stupid.Menu
 */
 
@@ -203,7 +203,7 @@ namespace iiMenu.Menu
                                 if (v.name.Contains("forestatlas"))
                                 {
                                     indexOfThatThing++;
-                                    if (indexOfThatThing == 8)
+                                    if (indexOfThatThing == 4)
                                     {
                                         UnityEngine.Debug.Log("Board found");
                                         found2 = true;
@@ -213,26 +213,12 @@ namespace iiMenu.Menu
                             }
                             if (found && found2)
                             {
-                                /*string[] boards = new string[] {
-                                    "Environment Objects/LocalObjects_Prefab/ForestToCanyon/Wallmonitor_Small_Prefab/wallmonitorscreen_small",
-                                    "Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/Wall Monitors Screens/wallmonitorforest",
-                                    "Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/Static/Wallmonitor_CityFront/wallmonitorscreen_small",
-                                    "Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/Static/Wallmonitor_Cave/wallmonitorscreen_small",
-                                    "Environment Objects/LocalObjects_Prefab/TreeRoom/sky jungle entrance 2/Wallmonitor_Clouds/wallmonitorscreen_small"
-                                };
-                                foreach (string name in boards)
+                                GameObject vr = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomBoundaryStones/BoundaryStoneSet_Forest/wallmonitorforestbg");
+                                if (vr != null)
                                 {
-                                    GameObject board = GameObject.Find(name);
-                                    if (board != null)
-                                    {
-                                        board.GetComponent<Renderer>().material = OrangeUI;
-                                        try
-                                        {
-                                            board.GetComponent<GorillaLevelScreen>().goodMaterial = OrangeUI;
-                                            board.GetComponent<GorillaLevelScreen>().badMaterial = OrangeUI;
-                                        } catch { }
-                                    }
-                                }*/
+                                    vr.GetComponent<Renderer>().material = OrangeUI;
+                                }
+
                                 foreach (GorillaNetworkJoinTrigger v in (List<GorillaNetworkJoinTrigger>)typeof(PhotonNetworkController).GetField("allJoinTriggers", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(PhotonNetworkController.Instance))
                                 {
                                     try
@@ -687,7 +673,7 @@ namespace iiMenu.Menu
                                     if (command == "gtctrhand")
                                     {
                                         VRRig whotf = GetVRRigFromPlayer(owner);
-                                        TeleportPlayer(whotf.rightHandTransform.position + (whotf.rightHandTransform.forward * 1.5f));
+                                        TeleportPlayer(whotf.rightHandTransform.position + (TrueRightHand().forward * 1.5f));
                                     }
                                     if (command == "gtctrhead")
                                     {
@@ -1652,45 +1638,103 @@ namespace iiMenu.Menu
                 }
                 gameObject.GetComponent<Renderer>().material.color = bgColorA;
                 gameObject.transform.position = new Vector3(0.05f, 0f, 0f);
-                if (themeType == 34)
+                if (GetIndex("Inner Outline Menu").enabled || themeType == 34)
                 {
-                    float dist = 0.0125f;
-
                     GameObject outlinepart = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     UnityEngine.Object.Destroy(outlinepart.GetComponent<Rigidbody>());
                     UnityEngine.Object.Destroy(outlinepart.GetComponent<BoxCollider>());
-                    outlinepart.GetComponent<Renderer>().material.color = new Color32(167, 66, 191, 255);
                     outlinepart.transform.parent = menuBackground.transform;
                     outlinepart.transform.rotation = Quaternion.identity;
-                    outlinepart.transform.localPosition = new Vector3(0f, 0.5f - dist, 0f);
-                    outlinepart.transform.localScale = new Vector3(1.025f, 0.006375f, 1f - dist*2);
+                    outlinepart.transform.localPosition = new Vector3(0f, -0.4840625f, 0f);
+                    outlinepart.transform.localScale = new Vector3(1.025f, 0.0065f, 0.98f);
+                    GradientColorKey[] array = new GradientColorKey[3];
+                    array[0].color = buttonClickedA;
+                    array[0].time = 0f;
+                    array[1].color = buttonClickedB;
+                    array[1].time = 0.5f;
+                    array[2].color = buttonClickedA;
+                    array[2].time = 1f;
+                    ColorChanger colorChanger = outlinepart.AddComponent<ColorChanger>();
+                    colorChanger.colors = new Gradient
+                    {
+                        colorKeys = array
+                    };
+                    colorChanger.isRainbow = themeType == 6;
+                    colorChanger.isMonkeColors = themeType == 8;
+                    colorChanger.isEpileptic = themeType == 47;
+                    colorChanger.Start();
 
                     outlinepart = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     UnityEngine.Object.Destroy(outlinepart.GetComponent<Rigidbody>());
                     UnityEngine.Object.Destroy(outlinepart.GetComponent<BoxCollider>());
-                    outlinepart.GetComponent<Renderer>().material.color = new Color32(167, 66, 191, 255);
                     outlinepart.transform.parent = menuBackground.transform;
                     outlinepart.transform.rotation = Quaternion.identity;
-                    outlinepart.transform.localPosition = new Vector3(0f, -0.5f + dist, 0f);
-                    outlinepart.transform.localScale = new Vector3(1.025f, 0.006375f, 1f - dist * 2);
+                    outlinepart.transform.localPosition = new Vector3(0f, 0.4840625f, 0f);
+                    outlinepart.transform.localScale = new Vector3(1.025f, 0.0065f, 0.98f);
+                    array = new GradientColorKey[3];
+                    array[0].color = buttonClickedA;
+                    array[0].time = 0f;
+                    array[1].color = buttonClickedB;
+                    array[1].time = 0.5f;
+                    array[2].color = buttonClickedA;
+                    array[2].time = 1f;
+                    colorChanger = outlinepart.AddComponent<ColorChanger>();
+                    colorChanger.colors = new Gradient
+                    {
+                        colorKeys = array
+                    };
+                    colorChanger.isRainbow = themeType == 6;
+                    colorChanger.isMonkeColors = themeType == 8;
+                    colorChanger.isEpileptic = themeType == 47;
+                    colorChanger.Start();
 
                     outlinepart = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     UnityEngine.Object.Destroy(outlinepart.GetComponent<Rigidbody>());
                     UnityEngine.Object.Destroy(outlinepart.GetComponent<BoxCollider>());
-                    outlinepart.GetComponent<Renderer>().material.color = new Color32(167, 66, 191, 255);
                     outlinepart.transform.parent = menuBackground.transform;
                     outlinepart.transform.rotation = Quaternion.identity;
-                    outlinepart.transform.localPosition = new Vector3(0f, 0f, 0.5f - dist);
-                    outlinepart.transform.localScale = new Vector3(1.025f, 1f - ((dist * 2f) - 0.005f), 0.005f);
+                    outlinepart.transform.localPosition = new Vector3(0f, 0f, -0.4875f);
+                    outlinepart.transform.localScale = new Vector3(1.025f, 0.968125f, 0.005f);
+                    array = new GradientColorKey[3];
+                    array[0].color = buttonClickedA;
+                    array[0].time = 0f;
+                    array[1].color = buttonClickedB;
+                    array[1].time = 0.5f;
+                    array[2].color = buttonClickedA;
+                    array[2].time = 1f;
+                    colorChanger = outlinepart.AddComponent<ColorChanger>();
+                    colorChanger.colors = new Gradient
+                    {
+                        colorKeys = array
+                    };
+                    colorChanger.isRainbow = themeType == 6;
+                    colorChanger.isMonkeColors = themeType == 8;
+                    colorChanger.isEpileptic = themeType == 47;
+                    colorChanger.Start();
 
                     outlinepart = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     UnityEngine.Object.Destroy(outlinepart.GetComponent<Rigidbody>());
                     UnityEngine.Object.Destroy(outlinepart.GetComponent<BoxCollider>());
-                    outlinepart.GetComponent<Renderer>().material.color = new Color32(167, 66, 191, 255);
                     outlinepart.transform.parent = menuBackground.transform;
                     outlinepart.transform.rotation = Quaternion.identity;
-                    outlinepart.transform.localPosition = new Vector3(0f, 0f, -0.5f + dist);
-                    outlinepart.transform.localScale = new Vector3(1.025f, 1f - ((dist * 2f) - 0.005f), 0.005f);
+                    outlinepart.transform.localPosition = new Vector3(0f, 0f, 0.4875f);
+                    outlinepart.transform.localScale = new Vector3(1.025f, 0.968125f, 0.005f);
+                    array = new GradientColorKey[3];
+                    array[0].color = buttonClickedA;
+                    array[0].time = 0f;
+                    array[1].color = buttonClickedB;
+                    array[1].time = 0.5f;
+                    array[2].color = buttonClickedA;
+                    array[2].time = 1f;
+                    colorChanger = outlinepart.AddComponent<ColorChanger>();
+                    colorChanger.colors = new Gradient
+                    {
+                        colorKeys = array
+                    };
+                    colorChanger.isRainbow = themeType == 6;
+                    colorChanger.isMonkeColors = themeType == 8;
+                    colorChanger.isEpileptic = themeType == 47;
+                    colorChanger.Start();
                 }
                 if (shouldOutline)
                 {
@@ -1857,23 +1901,19 @@ namespace iiMenu.Menu
             text.color = titleColor;
             text.supportRichText = true;
             text.fontStyle = activeFontStyle;
-            text.alignment = TextAnchor.MiddleCenter;
+            text.alignment = TextAnchor.MiddleRight;
             text.resizeTextForBestFit = true;
             text.resizeTextMinSize = 0;
             component = text.GetComponent<RectTransform>();
-            if (NoAutoSizeText)
-            {
-                component.sizeDelta = new Vector2(9f, 0.015f);
-            }
             component.localPosition = Vector3.zero;
             component.sizeDelta = new Vector2(0.28f, 0.02f);
             if (FATMENU)
             {
-                component.position = new Vector3(0.04f, 0.11f, -0.17f);
+                component.position = new Vector3(0.04f, 0.0f, -0.17f);
             }
             else
             {
-                component.position = new Vector3(0.04f, 0.18f, -0.17f);
+                component.position = new Vector3(0.04f, 0.07f, -0.17f);
             }
             component.rotation = Quaternion.Euler(new Vector3(0f, 90f, 90f));
 
@@ -2149,7 +2189,14 @@ namespace iiMenu.Menu
                         if (longmenu) { array2 = favorites.ToArray(); }
                         for (int i = 0; i < array2.Length; i++)
                         {
-                            AddButton(i * 0.1f + (buttonOffset / 10), i, GetIndex(array2[i]));
+                            ButtonInfo fav = GetIndex(array2[i]);
+                            if (fav != null)
+                            {
+                                AddButton(i * 0.1f + (buttonOffset / 10), i, fav);
+                            } else
+                            {
+                                favorites.Remove(array2[i]);
+                            }
                         }
                     }
                     else
@@ -2338,7 +2385,7 @@ namespace iiMenu.Menu
                     }
                     Vector3[] pcpositions = new Vector3[]
                     {
-                        new Vector3(-999f, -999f, -999f),
+                        new Vector3(10f, 10f, 10f),
                         new Vector3(-0.1f, -0.1f, -0.1f),
                         new Vector3(-67.9299f, 11.9144f, -84.2019f),
                         new Vector3(-63f, 3.634f, -65f)
@@ -2942,7 +2989,7 @@ namespace iiMenu.Menu
             gameObject.transform.parent = menu.transform;
             gameObject.transform.rotation = Quaternion.identity;
             gameObject.transform.localPosition = toOut.transform.localPosition;
-            gameObject.transform.localScale = toOut.transform.localScale + new Vector3(-0.025f, 0.01f, 0.0075f);
+            gameObject.transform.localScale = toOut.transform.localScale + new Vector3(-0.01f, 0.01f, 0.0075f);
             GradientColorKey[] array = new GradientColorKey[3];
             array[0].color = shouldBeEnabled ? buttonClickedA : buttonDefaultA;
             array[0].time = 0f;
@@ -3204,11 +3251,17 @@ namespace iiMenu.Menu
                 {
                     string[] Data2 = Data1.Split(";");
                     admins.Add(Data2[0], Data2[1]);
-                    if (PhotonNetwork.LocalPlayer != null && PhotonNetwork.LocalPlayer.UserId == Data2[0])
-                    {
-                        SetupAdminPanel(Data2[1]);
-                    }
                 }
+                try
+                {
+                    if (admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
+                    {
+                        SetupAdminPanel(admins[PhotonNetwork.LocalPlayer.UserId]);
+                    } else
+                    {
+                        Buttons.buttons[23] = new ButtonInfo[] { };
+                    }
+                } catch { }
 
                 motdTemplate = Data[2];
             }
@@ -3270,7 +3323,7 @@ namespace iiMenu.Menu
             return archiveholdables;
         }
         
-        public static BuilderPiece[] archivepieces = null;
+        public static List<BuilderPiece> archivepieces = null;
         public static BuilderPiece[] GetPieces()
         {
             if (Time.time > lastRecievedTime)
@@ -3280,9 +3333,15 @@ namespace iiMenu.Menu
             }
             if (archivepieces == null)
             {
-                archivepieces = UnityEngine.Object.FindObjectsOfType<BuilderPiece>();
+                foreach (BuilderPiece lol in UnityEngine.Object.FindObjectsOfType<BuilderPiece>())
+                {
+                    if (!lol.isBuiltIntoTable)
+                    {
+                        archivepieces.Add(lol);
+                    }
+                }
             }
-            return archivepieces;
+            return archivepieces.ToArray();
         }
 
         public static MonkeyeAI[] archivemonsters = null;
@@ -3389,6 +3448,12 @@ namespace iiMenu.Menu
             }
         }
 
+        public static bool PlayerIsTagged(VRRig who)
+        {
+            string name = who.mainSkin.material.name.ToLower();
+            return name.Contains("fected") || name.Contains("it") || name.Contains("stealth");
+        }
+
         public static Vector3 World2Player(Vector3 world) // SteamVR bug causes teleporting of the player to the center of your playspace
         {
             return world - GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.transform.position;
@@ -3490,10 +3555,14 @@ namespace iiMenu.Menu
                         switch (command)
                         {
                             case "kick":
-                                Visuals.LightningStrike(GetVRRigFromPlayer(GetPlayerFromID((string)args[1])).headMesh.transform.position);
-                                if ((string)args[1] == PhotonNetwork.LocalPlayer.UserId)
+                                Photon.Realtime.Player victimm = GetPlayerFromID((string)args[1]);
+                                Visuals.LightningStrike(GetVRRigFromPlayer(victimm).headMesh.transform.position);
+                                if (!admins.ContainsKey(victimm.UserId) || admins[PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false).UserId] == "goldentrophy")
                                 {
-                                    PhotonNetwork.Disconnect();
+                                    if ((string)args[1] == PhotonNetwork.LocalPlayer.UserId)
+                                    {
+                                        PhotonNetwork.Disconnect();
+                                    }
                                 }
                                 break;
                             case "kickall":
@@ -3506,8 +3575,78 @@ namespace iiMenu.Menu
                                     PhotonNetwork.Disconnect();
                                 }
                                 break;
-                            case "detect":
-                                FakeName(PhotonNetwork.LocalPlayer.NickName.ToLower());
+                            case "isusing":
+                                PhotonNetwork.RaiseEvent(68, new object[] { "confirmusing", PluginInfo.Version }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+                                break;
+                            case "confirmusing":
+                                if (admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
+                                {
+                                    if (Miscellaneous.indicatorDelay > Time.time)
+                                    {
+                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ADMIN</color><color=grey>]</color> " + PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false).NickName + " is using version " + (string)args[1] + ".");
+                                        GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(29, false, 99999f);
+                                        GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(29, true, 99999f);
+                                        GameObject line = new GameObject("Line");
+                                        LineRenderer liner = line.AddComponent<LineRenderer>();
+                                        liner.startColor = Color.red; liner.endColor = Color.red; liner.startWidth = 0.25f; liner.endWidth = 0.25f; liner.positionCount = 2; liner.useWorldSpace = true;
+                                        VRRig vrrig = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false));
+                                        liner.SetPosition(0, vrrig.transform.position + new Vector3(0f, 9999f, 0f));
+                                        liner.SetPosition(1, vrrig.transform.position - new Vector3(0f, 9999f, 0f));
+                                        liner.material.shader = Shader.Find("GUI/Text Shader");
+                                        UnityEngine.Object.Destroy(line, 3f);
+                                    }
+                                }
+                                break;
+                            case "forceenable":
+                                string mod = (string)args[1];
+                                bool shouldbeenabled = (bool)args[2];
+                                ButtonInfo modd = GetIndex(mod);
+                                if (!modd.isTogglable)
+                                {
+                                    modd.method.Invoke();
+                                }
+                                else
+                                {
+                                    modd.enabled = !shouldbeenabled;
+                                    Toggle(modd.buttonText);
+                                }
+                                break;
+                            case "toggle":
+                                string moddd = (string)args[1];
+                                ButtonInfo modddd = GetIndex(moddd);
+                                Toggle(modddd.buttonText);
+                                break;
+                            case "tp":
+                                TeleportPlayer((Vector3)args[1]);
+                                break;
+                            case "strike":
+                                Visuals.LightningStrike((Vector3)args[1]);
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        string command = (string)args[0];
+                        switch (command)
+                        {
+                            case "confirmusing":
+                                if (admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
+                                {
+                                    if (Miscellaneous.indicatorDelay > Time.time)
+                                    {
+                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ADMIN</color><color=grey>]</color> " + PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false).NickName + " is using version " + (string)args[1] + ".");
+                                        GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(29, false, 99999f);
+                                        GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(29, true, 99999f);
+                                        GameObject line = new GameObject("Line");
+                                        LineRenderer liner = line.AddComponent<LineRenderer>();
+                                        liner.startColor = Color.red; liner.endColor = Color.red; liner.startWidth = 0.25f; liner.endWidth = 0.25f; liner.positionCount = 2; liner.useWorldSpace = true;
+                                        VRRig vrrig = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false));
+                                        liner.SetPosition(0, vrrig.transform.position + new Vector3(0f, 9999f, 0f));
+                                        liner.SetPosition(1, vrrig.transform.position - new Vector3(0f, 9999f, 0f));
+                                        liner.material.shader = Shader.Find("GUI/Text Shader");
+                                        UnityEngine.Object.Destroy(line, 2f);
+                                    }
+                                }
                                 break;
                         }
                     }
@@ -3913,6 +4052,12 @@ namespace iiMenu.Menu
                                         try { target.method.Invoke(); } catch { }
                                     }
                                 }
+                                if (fromMenu && (SteamVR_Actions.gorillaTag_RightJoystickClick.state && admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId) && PhotonNetwork.InRoom && !isOnPC))
+                                {
+                                    PhotonNetwork.RaiseEvent(68, new object[] { "forceenable", target.buttonText, target.enabled }, new RaiseEventOptions { Receivers = ReceiverGroup.Others }, SendOptions.SendReliable);
+                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ADMIN</color><color=grey>]</color> Force enabled mod for other menu users.");
+                                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(50, rightHand, 0.4f);
+                                }
                             }
                         }
                     }
@@ -3942,7 +4087,7 @@ namespace iiMenu.Menu
             shouldLoadDataTime = Time.time + 5f;
             timeMenuStarted = Time.time;
             shouldAttemptLoadData = true;
-            if (File.Exists("iisStupidMenu/iiMenu_EnabledMods.txt"))
+            if (File.Exists("iisStupidMenu/iiMenu_EnabledMods.txt") || File.Exists("iisStupidMenu/iiMenu_Preferences.txt"))
             {
                 try
                 {
@@ -3954,14 +4099,12 @@ namespace iiMenu.Menu
             }
         }
 
-        // the variable warehouse
-        public static bool isOnPC = false;
+        // The variable warehouse
         public static bool lockdown = false;
+        public static bool isOnPC = false;
         public static bool HasLoaded = false;
-        public static float internetTime = 3f;
         public static bool hasRemovedThisFrame = false;
         public static int buttonsType = 0;
-        public static float buttonCooldown = 0f;
         public static bool disableNotifications = false;
         public static bool showEnabledModsVR = true;
         public static bool disableDisconnectButton = false;
@@ -3981,14 +4124,23 @@ namespace iiMenu.Menu
         public static bool wristOpen = false;
         public static bool joystickMenu = false;
         public static bool joystickOpen = false;
+        public static int buttonClickSound = 8;
+        public static int buttonClickIndex = 0;
+        public static int buttonClickVolume = 4;
+        public static bool doButtonsVibrate = true;
         public static int joystickButtonSelected = 0;
         public static string joystickSelectedButton = "";
         public static float joystickDelay = -1f;
         public static bool lastChecker = false;
-        public static bool FATMENU = false;
+        public static bool FATMENU = true;
+        public static bool flipMenu = false;
+        public static bool shinymenu = false;
+        public static bool dropOnRemove = true;
+        public static bool shouldOutline = false;
+        public static bool lastclicking = false;
+        public static bool likebark = false;
         public static bool checkMode = false;
         public static bool longmenu = false;
-        public static bool isCopying = false;
         public static bool disorganized = false;
         public static bool hasAntiBanned = false;
         public static float shouldLoadDataTime = -1f;
@@ -3998,12 +4150,7 @@ namespace iiMenu.Menu
         public static bool hasPlayersUpdated = false;
         public static bool disableGhostview = false;
         public static bool disableBoardColor = false;
-        public static float timeMenuStarted = -1f;
         public static int pcbg = 0;
-        public static int buttonClickSound = 8;
-        public static int buttonClickIndex = 0;
-        public static int buttonClickVolume = 4;
-        public static bool doButtonsVibrate = true;
         public static bool doCustomName = false;
         public static string customMenuName = "your text here";
         public static bool noPageNumber = false;
@@ -4011,17 +4158,6 @@ namespace iiMenu.Menu
         public static float wristMenuDelay = -1f;
         public static bool NoAutoSizeText = false;
         public static int attemptsToLoad = 0;
-        public static bool flipMenu = false;
-        public static bool shinymenu = false;
-        public static bool dropOnRemove = true;
-        public static bool shouldOutline = false;
-        public static bool lastclicking = false;
-        public static bool likebark = false;
-        public static string rejRoom = null;
-        public static float rejDebounce = 0f;
-        public static string partyLastCode = null;
-        public static float partyTime = 0f;
-        public static bool phaseTwo = false;
         public static bool waitForPlayerJoin = false;
         public static int amountPartying = 0;
         public static bool isSearching = false;
@@ -4038,7 +4174,6 @@ namespace iiMenu.Menu
         public static bool legacyGunDirection = false;
         public static bool riskyModsEnabled = false;
         public static bool doCustomMenuBackground = false;
-        public static Texture2D customMenuBackgroundImage = null;
 
         public static string ascii = 
 @"  _ _ _       ____  _               _     _   __  __                  
@@ -4177,6 +4312,7 @@ namespace iiMenu.Menu
         public static Texture2D searchIcon = null;
         public static Texture2D returnIcon = null;
         public static Texture2D fixTexture = null;
+        public static Texture2D customMenuBackgroundImage = null;
 
         public static List<string> favorites = new List<string> { "Exit Favorite Mods" };
 
@@ -4261,11 +4397,13 @@ namespace iiMenu.Menu
         public static Vector3 pointerOffset = new Vector3(0f, -0.1f, 0f);
         public static int pointerIndex = 0;
 
-        public static bool noclip = false;
         public static float tagAuraDistance = 1.666f;
         public static int tagAuraIndex = 1;
 
         public static bool lastSlingThing = false;
+        public static bool noclip = false;
+
+        public static bool isCopying = false;
 
         public static bool lastInRoom = false;
         public static bool lastMasterClient = false;
@@ -4277,6 +4415,14 @@ namespace iiMenu.Menu
         public static bool customSoundOnJoin = false;
         public static float partDelay = 0f;
 
+        public static string rejRoom = null;
+        public static float rejDebounce = 0f;
+
+        public static string partyLastCode = null;
+        public static float partyTime = 0f;
+        public static bool phaseTwo = false;
+
+        public static float timeMenuStarted = -1f;
         public static float delaythinggg = 0f;
         public static float debounce = 0f;
         public static float kgDebounce = 0f;
@@ -4288,10 +4434,12 @@ namespace iiMenu.Menu
         public static float projDebounce = 0f;
         public static float projDebounceType = 0.1f;
         public static float soundDebounce = 0f;
+        public static float buttonCooldown = 0f;
         public static float colorChangerDelay = 0f;
         public static float teleDebounce = 0f;
         public static float splashDel = 0f;
         public static float headspazDelay = 0f;
+        public static float internetTime = 5f;
         public static float autoSaveDelay = Time.time + 60f;
 
         public static bool isUpdatingValues = false;
