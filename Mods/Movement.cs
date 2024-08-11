@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using ExitGames.Client.Photon;
 using GorillaLocomotion.Climbing;
+using GorillaLocomotion.Swimming;
 using HarmonyLib;
 using iiMenu.Classes;
 using Photon.Pun;
@@ -15,7 +16,6 @@ using UnityEngine.XR.Interaction.Toolkit;
 using Valve.VR;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
-
 
 namespace iiMenu.Mods
 {
@@ -348,9 +348,10 @@ namespace iiMenu.Mods
             if (leftGrab)
             {
                 GameObject lol = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                lol.GetComponent<Renderer>().material.color = GetBGColor(0f);
                 lol.transform.localScale = new Vector3(0.025f, 0.3f, 0.4f);
-                lol.transform.localPosition = GorillaTagger.Instance.leftHandTransform.position + new Vector3(0f, -0.05f, 0f);
-                lol.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
+                lol.transform.localPosition = TrueLeftHand().position + (TrueLeftHand().right * 0.05f);
+                lol.transform.rotation = TrueLeftHand().rotation;
 
                 lol.AddComponent<GorillaSurfaceOverride>().overrideIndex = 61;
                 UnityEngine.Object.Destroy(lol, 1);
@@ -359,9 +360,10 @@ namespace iiMenu.Mods
             if (rightGrab)
             {
                 GameObject lol = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                lol.GetComponent<Renderer>().material.color = GetBGColor(0f);
                 lol.transform.localScale = new Vector3(0.025f, 0.3f, 0.4f);
-                lol.transform.localPosition = GorillaTagger.Instance.rightHandTransform.position + new Vector3(0f, -0.05f, 0f);
-                lol.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
+                lol.transform.localPosition = TrueRightHand().position + (TrueRightHand().right * -0.05f);
+                lol.transform.rotation = TrueRightHand().rotation;
 
                 lol.AddComponent<GorillaSurfaceOverride>().overrideIndex = 61;
                 UnityEngine.Object.Destroy(lol, 1);
@@ -1159,6 +1161,7 @@ namespace iiMenu.Mods
 
         public static void TeleportToRandom()
         {
+            closePosition = Vector3.zero;
             TeleportPlayer(GetRandomVRRig(false).transform.position);
             GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity = Vector3.zero;
         }
@@ -1173,6 +1176,7 @@ namespace iiMenu.Mods
 
                 if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > teleDebounce)
                 {
+                    closePosition = Vector3.zero;
                     TeleportPlayer(NewPointer.transform.position + new Vector3(0f, 1f, 0f));
                     GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity = Vector3.zero;
                     teleDebounce = Time.time + 0.5f;
@@ -1434,30 +1438,32 @@ namespace iiMenu.Mods
             }
         }
 
+        private static bool wasDisabledAlready = false;
         public static void Invisible()
         {
             bool hit = rightSecondary || Mouse.current.rightButton.isPressed;
-            if (invisMonke)
-            {
-                ghostException = true;
-                GorillaTagger.Instance.offlineVRRig.headBodyOffset = new Vector3(99999f, 99999f, 99999f);
-            }
-            else
-            {
-                ghostException = false;
-                GorillaTagger.Instance.offlineVRRig.headBodyOffset = Vector3.zero;
-            }
             if (hit == true && lastHit2 == false)
             {
                 invisMonke = !invisMonke;
+                if (invisMonke)
+                {
+                    wasDisabledAlready = GorillaTagger.Instance.offlineVRRig.enabled;
+                } else
+                {
+                    GorillaTagger.Instance.offlineVRRig.enabled = wasDisabledAlready;
+                }
+            }
+            if (invisMonke)
+            {
+                GorillaTagger.Instance.offlineVRRig.enabled = false;
+                GorillaTagger.Instance.offlineVRRig.transform.position = new Vector3(99999f, 99999f, 99999f);
+                try
+                {
+                    GorillaTagger.Instance.myVRRig.transform.position = new Vector3(99999f, 99999f, 99999f);
+                }
+                catch { }
             }
             lastHit2 = hit;
-        }
-
-        public static void DisableInvisible()
-        {
-            GorillaTagger.Instance.offlineVRRig.headBodyOffset = Vector3.zero;
-            ghostException = false;
         }
 
         public static void Ghost()
@@ -2523,6 +2529,64 @@ namespace iiMenu.Mods
             fvol.Clear();
         }
 
+        public static void DisableWater()
+        {
+            foreach (WaterVolume lol in UnityEngine.Object.FindObjectsOfType<WaterVolume>())
+            {
+                GameObject v = lol.gameObject;
+                v.layer = LayerMask.NameToLayer("TransparentFX");
+            }
+        }
+
+        public static void SolidWater()
+        {
+            foreach (WaterVolume lol in UnityEngine.Object.FindObjectsOfType<WaterVolume>())
+            {
+                GameObject v = lol.gameObject;
+                v.layer = LayerMask.NameToLayer("Default");
+            }
+        }
+
+        public static void FixWater()
+        {
+            foreach (WaterVolume lol in UnityEngine.Object.FindObjectsOfType<WaterVolume>())
+            {
+                GameObject v = lol.gameObject;
+                v.layer = LayerMask.NameToLayer("Water");
+            }
+        }
+
+        public static void AirSwim()
+        {
+            if (airSwimPart == null)
+            {
+                airSwimPart = UnityEngine.Object.Instantiate<GameObject>(GameObject.Find("Environment Objects/LocalObjects_Prefab/ForestToBeach/ForestToBeach_Prefab_V4/CaveWaterVolume"));
+                airSwimPart.transform.localScale = new Vector3(5f, 5f, 5f);
+                airSwimPart.GetComponent<Renderer>().enabled = false;
+            }
+            else
+            {
+                GorillaLocomotion.Player.Instance.audioManager.UnsetMixerSnapshot(0.1f);
+                airSwimPart.transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 2.5f, 0f);
+            }
+        }
+
+        public static void DisableAirSwim()
+        {
+            if (airSwimPart != null)
+            {
+                UnityEngine.Object.Destroy(airSwimPart);
+            }
+        }
+
+        public static void FastSwim()
+        {
+            if (GorillaLocomotion.Player.Instance.InWater)
+            {
+                GorillaLocomotion.Player.Instance.gameObject.GetComponent<Rigidbody>().velocity *= 1.069f;
+            }
+        }
+
         public static void PiggybackGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
@@ -2899,6 +2963,60 @@ namespace iiMenu.Mods
                     {
                         GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(91, false, 999999f);
                     }*/
+                }
+                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        isCopying = true;
+                        whoCopy = possibly;
+                    }
+                }
+            }
+            else
+            {
+                if (isCopying)
+                {
+                    isCopying = false;
+                    GorillaTagger.Instance.offlineVRRig.enabled = true;
+                }
+            }
+        }
+
+        public static void ConfusePlayerGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (isCopying && whoCopy != null)
+                {
+                    GorillaTagger.Instance.offlineVRRig.enabled = false;
+
+                    GorillaTagger.Instance.offlineVRRig.transform.position = whoCopy.transform.position - new Vector3(0f, 2f, 0f);
+                    try
+                    {
+                        GorillaTagger.Instance.myVRRig.transform.position = whoCopy.transform.position - new Vector3(0f, 2f, 0f);
+                    }
+                    catch { }
+
+                    if (Time.time > splashDel)
+                    {
+                        GorillaTagger.Instance.myVRRig.RPC("PlaySplashEffect", GetPlayerFromVRRig(whoCopy), new object[]
+                        {
+                            whoCopy.transform.position + new Vector3(UnityEngine.Random.Range(-0.5f, 0.5f),UnityEngine.Random.Range(-0.5f, 0.5f),UnityEngine.Random.Range(-0.5f, 0.5f)),
+                            Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0,360), UnityEngine.Random.Range(0,360), UnityEngine.Random.Range(0,360))),
+                            4f,
+                            100f,
+                            true,
+                            false
+                        });
+                        RPCProtection();
+                        splashDel = Time.time + 0.1f;
+                    }
                 }
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {

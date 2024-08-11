@@ -3,10 +3,8 @@ using iiMenu.Classes;
 using Photon.Pun;
 using Photon.Voice.Unity;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Rendering;
 using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods
@@ -255,7 +253,7 @@ namespace iiMenu.Mods
 
             visualizerOutline.transform.position = visualizerObject.transform.position;
             visualizerOutline.transform.rotation = visualizerObject.transform.rotation;
-            visualizerOutline.transform.localScale = new Vector3(size + 0.1f, 0.025f, size + 0.1f);
+            visualizerOutline.transform.localScale = new Vector3(size + 0.05f, 0.095f, size + 0.05f);
         }
 
         public static void DestroyAudioVisualizer()
@@ -280,7 +278,7 @@ namespace iiMenu.Mods
             UnityEngine.Object.Destroy(playspaceCenter, Time.deltaTime);
         }
 
-            public static void FixRigColors()
+        public static void FixRigColors()
         {
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
@@ -311,67 +309,28 @@ namespace iiMenu.Mods
             }
             leaves.Clear();
         }*/
-        public static Material oldmat = null;
-        public static Material noleafmat = null;
-        public static Texture2D forestTexture = null;
-        public static List<GameObject> atlases = new List<GameObject> { };
         public static void EnableRemoveLeaves()
         {
             foreach (GameObject g in Resources.FindObjectsOfTypeAll<GameObject>())
             {
-                if (g.activeSelf && g.name.Contains("forestatlas (combined") && g.GetComponent<Renderer>() != null && g.GetComponent<Renderer>().material.name.Contains("forest"))
+                if (g.activeSelf && g.name.Contains("leaves_green"))
                 {
-                    if (oldmat == null)
-                    {
-                        oldmat = g.GetComponent<Renderer>().material;
-                    }
-                    if (noleafmat == null)
-                    {
-                        noleafmat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
-
-                        noleafmat.SetFloat("_Surface", 1);
-                        noleafmat.SetFloat("_Blend", 0);
-                        noleafmat.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
-                        noleafmat.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
-                        noleafmat.SetFloat("_ZWrite", 0);
-                        noleafmat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
-                        noleafmat.renderQueue = (int)RenderQueue.Transparent;
-
-                        noleafmat.SetFloat("_Glossiness", 0.0f);
-                        noleafmat.SetFloat("_Metallic", 0.0f);
-
-                        if (forestTexture == null)
-                        {
-                            forestTexture = LoadTextureFromURL("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/main/forestatlasv2.png", "noLeavesTexture.png");
-                            forestTexture.filterMode = FilterMode.Point;
-                            forestTexture.wrapMode = TextureWrapMode.Clamp;
-                        }
-
-                        noleafmat.color = new Color(1, 1, 1, 1);
-                        noleafmat.mainTexture = forestTexture;
-                    }
-                    g.GetComponent<Renderer>().material = noleafmat;
-                    g.GetComponent<Renderer>().sortingOrder = UnityEngine.Random.Range(0, 255);
-
-                    atlases.Add(g);
+                    g.SetActive(false);
+                    leaves.Add(g);
                 }
             }
-            hasFoundAllBoards = false;
         }
 
         public static void DisableRemoveLeaves()
         {
-            foreach (GameObject l in atlases)
+            foreach (GameObject l in leaves)
             {
-                //Material share = l.GetComponent<Renderer>().sharedMaterial;
-                //Material reg = l.GetComponent<Renderer>().material;
-                //l.GetComponent<Renderer>().material.shader = share.shader;
-                l.GetComponent<Renderer>().material = oldmat;//.CopyPropertiesFromMaterial(share);
+                l.SetActive(true);
             }
-            atlases.Clear();
-            hasFoundAllBoards = false;
+            leaves.Clear();
         }
 
+        /*
         public static void EnableRemoveCherryBlossoms()
         {
             foreach (GameObject g in Resources.FindObjectsOfTypeAll<GameObject>())
@@ -391,7 +350,7 @@ namespace iiMenu.Mods
                 l.SetActive(true);
             }
             cblos.Clear();
-        }
+        }*/
 
         public static void DisableCosmetics()
         {
@@ -1792,6 +1751,7 @@ namespace iiMenu.Mods
                     if (GetIndex("Transparent Theme").enabled) { thecolor2.a = 0.5f; }
                     GameObject go = new GameObject("Dist");
                     TextMesh textMesh = go.AddComponent<TextMesh>();
+                    textMesh.font = activeFont;
                     textMesh.fontSize = 18;
                     textMesh.fontStyle = activeFontStyle;
                     textMesh.characterSize = 0.1f;
@@ -1842,6 +1802,7 @@ namespace iiMenu.Mods
                             if (GetIndex("Transparent Theme").enabled) { thecolor2.a = 0.5f; }
                             GameObject go = new GameObject("Dist");
                             TextMesh textMesh = go.AddComponent<TextMesh>();
+                            textMesh.font = activeFont;
                             textMesh.fontSize = 18;
                             textMesh.fontStyle = activeFontStyle;
                             textMesh.characterSize = 0.1f;
@@ -1878,6 +1839,7 @@ namespace iiMenu.Mods
                             if (GetIndex("Transparent Theme").enabled) { thecolor2.a = 0.5f; }
                             GameObject go = new GameObject("Dist");
                             TextMesh textMesh = go.AddComponent<TextMesh>();
+                            textMesh.font = activeFont;
                             textMesh.fontSize = 18;
                             textMesh.fontStyle = activeFontStyle;
                             textMesh.characterSize = 0.1f;
@@ -1915,6 +1877,7 @@ namespace iiMenu.Mods
                         if (GetIndex("Transparent Theme").enabled) { thecolor2.a = 0.5f; }
                         GameObject go = new GameObject("Dist");
                         TextMesh textMesh = go.AddComponent<TextMesh>();
+                        textMesh.font = activeFont;
                         textMesh.fontSize = 18;
                         textMesh.fontStyle = activeFontStyle;
                         textMesh.characterSize = 0.1f;
@@ -1956,6 +1919,7 @@ namespace iiMenu.Mods
                     if (GetIndex("Transparent Theme").enabled) { thecolor2.a = 0.5f; }
                     GameObject go = new GameObject("Dist");
                     TextMesh textMesh = go.AddComponent<TextMesh>();
+                    textMesh.font = activeFont;
                     textMesh.fontSize = 18;
                     textMesh.fontStyle = activeFontStyle;
                     textMesh.characterSize = 0.1f;
@@ -1986,6 +1950,7 @@ namespace iiMenu.Mods
                     if (GetIndex("Transparent Theme").enabled) { thecolor2.a = 0.5f; }
                     GameObject go = new GameObject("Dist");
                     TextMesh textMesh = go.AddComponent<TextMesh>();
+                    textMesh.font = activeFont;
                     textMesh.fontSize = 18;
                     textMesh.fontStyle = activeFontStyle;
                     textMesh.characterSize = 0.1f;

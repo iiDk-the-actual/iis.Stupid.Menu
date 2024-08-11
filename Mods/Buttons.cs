@@ -51,6 +51,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Joystick Menu", enableMethod =() => Settings.JoystickMenuOn(), disableMethod =() => Settings.JoystickMenuOff(), toolTip = "Makes the menu like Colossal, click your joysticks to open, joysticks to move between mods and pages, and click your left joystick to toggle a mod."},
                 new ButtonInfo { buttonText = "Inner Outline Menu", toolTip = "Gives the menu an outline on the inside."},
                 new ButtonInfo { buttonText = "Outline Menu", enableMethod =() => Settings.OutlineMenuOn(), disableMethod =() => Settings.OutlineMenuOff(), toolTip = "Gives the menu objects an outline."},
+                new ButtonInfo { buttonText = "Wrist Menu", enableMethod =() => Settings.WristThingOn(), disableMethod =() => Settings.WristThingOff(), toolTip = "Makes the menu like a weird wrist watch, click your hand to open it."},
                 new ButtonInfo { buttonText = "Watch Menu", enableMethod =() => Settings.WatchMenuOn(), disableMethod =() => Settings.WatchMenuOff(), toolTip = "Makes the menu like pocket watch, click your joystick to toggle, and move your joystick to select a mod."},
                 new ButtonInfo { buttonText = "Shiny Menu", enableMethod =() => Settings.ShinyMenu(), disableMethod =() => Settings.NoShinyMenu(), toolTip = "Makes the menu's textures use the old shader."},
                 new ButtonInfo { buttonText = "Thick Menu", enableMethod =() => Settings.ThinMenuOn(), disableMethod =() => Settings.ThinMenuOff(), toolTip = "Makes the menu thin."},
@@ -157,13 +158,10 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Hard Rainbow Projectiles", toolTip = "Makes projectiles be rainbow but ye rainbow tis very harsh (real RGB)." },
                 new ButtonInfo { buttonText = "Black Projectiles", toolTip = "Makes projectiles black." },
                 new ButtonInfo { buttonText = "No Texture Projectiles", toolTip = "Makes projectiles look like they have no texture." },
-                new ButtonInfo { buttonText = "Blue Team Projectiles", toolTip = "Makes projectiles colored towards the blue team." },
-                new ButtonInfo { buttonText = "Orange Team Projectiles", toolTip = "Makes projectiles colored towards the orange team." },
                 new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>1</color><color=grey>]</color>", method =() => Projectiles.IncreaseRed(), isTogglable = false, toolTip = "Makes projectiles more red." },
                 new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>0.5</color><color=grey>]</color>", method =() => Projectiles.IncreaseGreen(), isTogglable = false, toolTip = "Makes projectiles more green." },
                 new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>0</color><color=grey>]</color>", method =() => Projectiles.IncreaseBlue(), isTogglable = false, toolTip = "Makes projectiles more blue." },
                 new ButtonInfo { buttonText = "Custom Colored Projectiles", toolTip = "Makes the projectile color the custom color (buttons above)." },
-                new ButtonInfo { buttonText = "Client Sided Projectiles", toolTip = "Only fires the bullets for you. Impacts are still server sided." },
                 //new ButtonInfo { buttonText = "Legacy Projectiles", toolTip = "Uses the old method of firing projectiles. Grab a snowball.", enabled = true },
                 new ButtonInfo { buttonText = "Projectile Delay", overlapText = "Projectile Delay <color=grey>[</color><color=green>0.1</color><color=grey>]</color>", method =() => Projectiles.ProjectileDelay(), isTogglable = false, toolTip = "Gives the projectiles a delay before spawning another." },
             },
@@ -194,7 +192,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Restart Gorilla Tag", method =() => Important.RestartGame(), isTogglable = false, toolTip = "Restarts Gorilla Tag."},
 
                 new ButtonInfo { buttonText = "Anti Hand Tap", enableMethod =() => Safety.EnableAntiHandTap(), disableMethod =() => Safety.DisableAntiHandTap(), toolTip = "Stops all hand tap sounds from being played."},
-                new ButtonInfo { buttonText = "First Person Camera", method =() => Important.MoveFPC(), disableMethod =() => Important.DisableFPC(), toolTip = "Makes your camera output what you see in VR."},
+                new ButtonInfo { buttonText = "First Person Camera", enableMethod =() => Important.EnableFPC(), method =() => Important.MoveFPC(), disableMethod =() => Important.DisableFPC(), toolTip = "Makes your camera output what you see in VR."},
                 new ButtonInfo { buttonText = "Force Enable Hands", method =() => Important.ForceEnableHands(), toolTip = "Prevents your hands from disconnecting."},
 
                 new ButtonInfo { buttonText = "Oculus Report Menu <color=grey>[</color><color=green>X</color><color=grey>]</color>", method =() => Important.OculusReportMenu(), toolTip = "Opens the Oculus report menu when holding <color=green>X</color>."},
@@ -211,7 +209,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Disable Quit Box", enableMethod =() => Important.DisableQuitBox(), disableMethod =() => Important.EnableQuitBox(), toolTip = "Disables the box under the map that closes your game."},
                 new ButtonInfo { buttonText = "Physical Quit Box", enableMethod =() => Important.PhysicalQuitbox(), disableMethod =() => Important.NotPhysicalQuitbox(), toolTip = "Makes the quitbox physical, letting you see and walk on it."},
 
-                new ButtonInfo { buttonText = "Disable Mouth Movement", enableMethod =() => Important.DisableMouthMovement(), disableMethod =() => Important.EnableMouthMovement(), toolTip = "Disables your mouth from moving. To be serversided, you might have to rejoin."},
+                new ButtonInfo { buttonText = "Disable Mouth Movement", enableMethod =() => Important.DisableMouthMovement(), disableMethod =() => Important.EnableMouthMovement(), toolTip = "Disables your mouth from moving."},
 
                 new ButtonInfo { buttonText = "60 FPS", method =() => Important.ForceLagGame(), toolTip = "Caps your FPS at 60 frames per second."},
                 new ButtonInfo { buttonText = "Grip 60 FPS <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Important.GripForceLagGame(), toolTip = "Caps your FPS at 60 frames per second when holding <color=green>grip</color>."},
@@ -261,7 +259,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Change Identity on Disconnect <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method =() => Safety.ChangeIdentityRegularOnDisconnect(), toolTip = "When you leave, your name and color will be set to something a regular player would have."},
                 new ButtonInfo { buttonText = "Change Identity on Disconnect <color=grey>[</color><color=green>Child</color><color=grey>]</color>", method =() => Safety.ChangeIdentityMinigamesOnDisconnect(), toolTip = "When you leave, your name and color will be set to something a kid would have."},
 
-                new ButtonInfo { buttonText = "Name Spoof", method =() => Safety.NameSpoof(), toolTip = "Changes your name on the leaderboard to something random, but not on your rig."},
+                new ButtonInfo { buttonText = "Name Spoof", enableMethod =() => Safety.NameSpoofEnabled(), disableMethod =() => Safety.NameSpoofDisabled(), toolTip = "Changes your name on the leaderboard to something random, but not on your rig."},
+                new ButtonInfo { buttonText = "Color Spoof", enableMethod =() => Safety.ColorSpoof(), disableMethod =() => Safety.NoColorSpoof(), toolTip = "Makes your color appear different to every player."},
             },
 
             new ButtonInfo[] { // Movement Mods [9]
@@ -356,14 +355,14 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Grip Dynamic Strafe <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Movement.GripDynamicStrafe(), toolTip = "Makes you dynamically strafe strafe when in the air when holding <color=green>grip</color>."},
 
                 new ButtonInfo { buttonText = "Bouncy", enableMethod =() => Movement.PreBouncy(), method =() => Movement.Bouncy(), disableMethod =() => Movement.PostBouncy(), toolTip = "Makes you really bouncy when on the ground."},
-                new ButtonInfo { buttonText = "Solid Water", enableMethod =() => Beach.SolidWater(), disableMethod =() => Beach.FixWater(), toolTip = "Makes the water solid in the beach map." },
-                new ButtonInfo { buttonText = "Disable Water", enableMethod =() => Beach.DisableWater(), disableMethod =() => Beach.FixWater(), toolTip = "Disables the water in the beach map." },
-                new ButtonInfo { buttonText = "Air Swim", method =() => Beach.AirSwim(), disableMethod =() => Beach.DisableAirSwim(), toolTip = "Puts you in a block of water, letting you swim in the air." },
-                new ButtonInfo { buttonText = "Fast Swim", method =() => Beach.FastSwim(), toolTip = "Whenever you are in water, your velocity is slowly multiplied." },
+                new ButtonInfo { buttonText = "Solid Water", enableMethod =() => Movement.SolidWater(), disableMethod =() => Movement.FixWater(), toolTip = "Makes the water solid in the beach map." },
+                new ButtonInfo { buttonText = "Disable Water", enableMethod =() => Movement.DisableWater(), disableMethod =() => Movement.FixWater(), toolTip = "Disables the water in the beach map." },
+                new ButtonInfo { buttonText = "Air Swim", method =() => Movement.AirSwim(), disableMethod =() => Movement.DisableAirSwim(), toolTip = "Puts you in a block of water, letting you swim in the air." },
+                new ButtonInfo { buttonText = "Fast Swim", method =() => Movement.FastSwim(), toolTip = "Whenever you are in water, your velocity is slowly multiplied." },
                 new ButtonInfo { buttonText = "Disable Air", overlapText = "Disable Wind Barriers", enableMethod =() => Movement.DisableAir(), disableMethod =() => Movement.EnableAir(), toolTip = "Disables air in every map." },
 
                 new ButtonInfo { buttonText = "Ghost <color=grey>[</color><color=green>A</color><color=grey>]</color>", method =() => Movement.Ghost(), disableMethod =() => Movement.EnableRig(), toolTip = "Keeps your rig still when holding <color=green>A</color>."},
-                new ButtonInfo { buttonText = "Invisible <color=grey>[</color><color=green>B</color><color=grey>]</color>", method =() => Movement.Invisible(), disableMethod =() => Movement.DisableInvisible(), toolTip = "Makes you go invisible when holding <color=green>B</color>."},
+                new ButtonInfo { buttonText = "Invisible <color=grey>[</color><color=green>B</color><color=grey>]</color>", method =() => Movement.Invisible(), disableMethod =() => Movement.EnableRig(), toolTip = "Makes you go invisible when holding <color=green>B</color>."},
 
                 new ButtonInfo { buttonText = "Rig Gun", method =() => Movement.RigGun(), toolTip = "Moves your rig to wherever your hand desires."},
                 new ButtonInfo { buttonText = "Grab Rig <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Movement.GrabRig(), toolTip = "Lets you grab your rig when holding <color=green>grip</color>."},
@@ -512,12 +511,14 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Loud Hand Taps", method =() => Fun.LoudHandTaps(), disableMethod =() => Fun.FixHandTaps(), toolTip = "Makes your hand taps really loud."},
                 new ButtonInfo { buttonText = "Silent Hand Taps", method =() => Fun.SilentHandTaps(), disableMethod =() => Fun.FixHandTaps(), toolTip = "Makes your hand taps really quiet."},
                 new ButtonInfo { buttonText = "Instant Hand Taps", method =() => Fun.EnableInstantHandTaps(), disableMethod =() => Fun.DisableInstantHandTaps(), toolTip = "Removes the hand tap cooldown."},
+                new ButtonInfo { buttonText = "Silent Hand Taps on Tag", method =() => Fun.SilentHandTapsOnTag(), disableMethod =() => Fun.FixHandTaps(), toolTip = "Makes your hand taps really quiet when you're tagged, good for ambush."},
 
                 new ButtonInfo { buttonText = "Water Splash Hands <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.WaterSplashHands(), toolTip = "Splashes water when holding <color=green>grip</color>."},
                 new ButtonInfo { buttonText = "Water Splash Walk", method =() => Fun.WaterSplashWalk(), toolTip = "Splashes water whenever you take a step."},
                 new ButtonInfo { buttonText = "Water Splash Aura", method =() => Fun.WaterSplashAura(), toolTip = "Splashes water around you at random positions."},
                 new ButtonInfo { buttonText = "Orbit Water Splash", method =() => Fun.OrbitWaterSplash(), toolTip = "Splashes water orbitally around you."},
                 new ButtonInfo { buttonText = "Water Splash Gun", method =() => Fun.WaterSplashGun(), toolTip = "Splashes water wherever your hand desires."},
+                new ButtonInfo { buttonText = "Confuse Player Gun", method =() => Movement.ConfusePlayerGun(), toolTip = "Makes whoever your hand desires look like they're going crazy by splashing water on their screen."},
 
                 new ButtonInfo { buttonText = "Particle Spam Hands <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.ParticleSpam(), toolTip = "Spams projectiles at your hand when holding <color=green>grip</color>."},
                 new ButtonInfo { buttonText = "Particle Spam Gun", method =() => Fun.ParticleSpamGun(), toolTip = "Spams projectiles in wherever your hand desires."},
@@ -602,6 +603,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Unacid Gun", method =() => Fun.UnacidGun(), toolTip = "Unturns whoever your hand desires into acid." },
                 new ButtonInfo { buttonText = "Unacid All", method =() => Fun.UnacidAll(), isTogglable = false, toolTip = "Unturns everyone into acid." },
 
+                new ButtonInfo { buttonText = "Lowercase Name", method =() => Fun.LowercaseName(), isTogglable = false, toolTip = "Makes your name lowercase." },
+                new ButtonInfo { buttonText = "Long Name", method =() => Fun.LongName(), isTogglable = false, toolTip = "Makes your name really long." },
                 new ButtonInfo { buttonText = "Remove Name", method =() => Fun.RemoveName(), isTogglable = false, toolTip = "Sets your name to nothing." },
                 new ButtonInfo { buttonText = "Set Name to \"STATUE\"", method =() => Fun.SetNameToSTATUE(), isTogglable = false, toolTip = "Sets your name to \"STATUE\"." },
                 new ButtonInfo { buttonText = "Set Name to \"RUN\"", method =() => Fun.SetNameToRUN(), isTogglable = false, toolTip = "Sets your name to \"RUN\"." },
@@ -617,7 +620,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Strobe Color", method =() => Fun.StrobeColor(), toolTip = "Makes your character flash." },
                 new ButtonInfo { buttonText = "Rainbow Color", method =() => Fun.RainbowColor(), toolTip = "Makes your character rainbow." },
                 new ButtonInfo { buttonText = "Hard Rainbow Color", method =() => Fun.HardRainbowColor(), toolTip = "Makes your character flash from red, green, blue, and magenta." },
-                new ButtonInfo { buttonText = "Impossible Color <color=grey>[</color><color=red>Stump</color><color=grey>]</color>", method =() => Fun.NegativeColor(), isTogglable = false, toolTip = "Sets your colors to above the integer limit." },
 
                 new ButtonInfo { buttonText = "Become \"goldentrophy\"", method =() => Fun.BecomeGoldentrophy(), isTogglable = false, toolTip = "Sets your name to \"goldentrophy\" and color to orange." },
                 new ButtonInfo { buttonText = "Become \"PBBV\"", method =() => Fun.BecomePBBV(), isTogglable = false, toolTip = "Sets your name to \"PBBV\" and color to sky blue." },
@@ -629,11 +631,15 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Become Hidden on Leaderboard", method =() => Fun.BecomeHiddenOnLeaderboard(), isTogglable = false, toolTip = "Sets your name to nothing and your color to a dark red, matching the leaderboard." },
                 new ButtonInfo { buttonText = "Copy Identity Gun", method =() => Fun.CopyIdentityGun(), toolTip = "Steals the identity of whoever your hand desires." },
 
-                new ButtonInfo { buttonText = "Change Accessories", method =() => Fun.ChangeAccessories(), toolTip = "Use your grips to change what hat you're wearing." },
-                new ButtonInfo { buttonText = "Spaz Accessories", method =() => Fun.SpazAccessories(), toolTip = "Spazzes your accessories out." },
+                new ButtonInfo { buttonText = "Change Accessories", overlapText = "Change Cosmetics", method =() => Fun.ChangeAccessories(), toolTip = "Use your grips to change what hat you're wearing." },
+                new ButtonInfo { buttonText = "Spaz Accessories", overlapText = "Spaz Cosmetics <color=grey>[</color><color=green>All</color><color=grey>]</color>", method =() => Fun.SpazAccessories(), toolTip = "Spazzes your hats out for everyone when holding <color=green>trigger</color>." },
+                new ButtonInfo { buttonText = "Spaz Cosmetics <color=grey>[</color><color=green>Others</color><color=grey>]</color>", method =() => Fun.SpazAccessoriesOthers(), toolTip = "Spazzes your hats out for everyone except you when holding <color=green>trigger</color>." },
+                new ButtonInfo { buttonText = "Cosmetic Spoof", enableMethod =() => Fun.TryOnAnywhere(), disableMethod =() => Fun.TryOffAnywhere(), toolTip = "Lets you try on cosmetics from anywhere. Enable this mod after wearing the cosmetics." },
+                new ButtonInfo { buttonText = "Cosmetic Browser", method =() => Fun.CosmeticBrowser(), isTogglable = false, toolTip = "Browse through every cosmetic that you can try on and add it to your cart." },
+                new ButtonInfo { buttonText = "Disable Cosmetics on Tag", method =() => Fun.DisableCosmeticsOnTag(), toolTip = "Disables your cosmetics when you get tagged, good for ambush." },
                 new ButtonInfo { buttonText = "Custom Sound on Join", enableMethod =() => Fun.EnableCustomSoundOnJoin(), disableMethod =() => Fun.DisableCustomSoundOnJoin(), toolTip = "Writes to a file when someone joins or leaves. You must use the python script in the Discord for this to work." },
 
-                new ButtonInfo { buttonText = "Fast Ropes", enableMethod =() => Canyons.FastRopes(), disableMethod =() => Canyons.RegularRopes(), toolTip = "Makes the ropes really fast." },
+                new ButtonInfo { buttonText = "Fast Ropes", enableMethod =() => Fun.FastRopes(), disableMethod =() => Fun.RegularRopes(), toolTip = "Makes the ropes really fast." },
 
                 new ButtonInfo { buttonText = "Copy ID Gun", method =() => Miscellaneous.CopyIDGun(), toolTip = "Copies the player ID of whoever your hand desires to the clipboard." },
                 new ButtonInfo { buttonText = "Copy Self ID", method =() => Miscellaneous.CopySelfID(), isTogglable = false, toolTip = "Copies your player ID to the clipboard."},
@@ -709,21 +715,14 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Master Check", method =() => Overpowered.MasterCheck(), isTogglable = false, toolTip = "Checks if you are master client."},
 
-                new ButtonInfo { buttonText = "Float Self", method =() => Basement.FloatSelf(), toolTip = "Makes you float in the air." },
-                new ButtonInfo { buttonText = "Float Gun", method =() => Basement.FloatGun(), toolTip = "Makes whoever your hand desires float in the air." },
+                new ButtonInfo { buttonText = "Slow Monsters", enableMethod =() => Fun.SlowMonsters(), disableMethod =() => Fun.FixMonsters(), toolTip = "Slows down the basement monsters." },
+                new ButtonInfo { buttonText = "Fast Monsters", enableMethod =() => Fun.FastMonsters(), disableMethod =() => Fun.FixMonsters(), toolTip = "Speeds up the basement monsters." },
 
-                new ButtonInfo { buttonText = "Freeze Self", method =() => Basement.FreezeSelf(), toolTip = "Makes you stop moving." },
-                new ButtonInfo { buttonText = "Freeze Gun", method =() => Basement.FreezeGun(), toolTip = "Makes whoever your hand desires stop moving." },
-                //new ButtonInfo { buttonText = "Freeze All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Basement.FreezeAll(), toolTip = "Makes everyone in the lobby stop moving." },
-
-                new ButtonInfo { buttonText = "Slow Monsters", enableMethod =() => Basement.SlowMonsters(), disableMethod =() => Basement.FixMonsters(), toolTip = "Slows down the basement monsters." },
-                new ButtonInfo { buttonText = "Fast Monsters", enableMethod =() => Basement.FastMonsters(), disableMethod =() => Basement.FixMonsters(), toolTip = "Speeds up the basement monsters." },
-
-                new ButtonInfo { buttonText = "Grab Monsters <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Basement.GrabMonsters(), toolTip = "Puts the basement monsters in your hand." },
-                new ButtonInfo { buttonText = "Monster Gun", method =() => Basement.MonsterGun(), toolTip = "Moves the basement monsters to wherever your hand desires." },
-                new ButtonInfo { buttonText = "Spaz Monsters", method =() => Basement.SpazMonsters(), toolTip = "Gives the basement monsters a seizure." },
-                new ButtonInfo { buttonText = "Orbit Monsters", method =() => Basement.OrbitMonsters(), toolTip = "Orbits the basement monsters around you." },
-                new ButtonInfo { buttonText = "Destroy Monsters", method =() => Basement.DestroyMonsters(), isTogglable = false, toolTip = "Sends the basement monsters to hell." },
+                new ButtonInfo { buttonText = "Grab Monsters <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.GrabMonsters(), toolTip = "Puts the basement monsters in your hand." },
+                new ButtonInfo { buttonText = "Monster Gun", method =() => Fun.MonsterGun(), toolTip = "Moves the basement monsters to wherever your hand desires." },
+                new ButtonInfo { buttonText = "Spaz Monsters", method =() => Fun.SpazMonsters(), toolTip = "Gives the basement monsters a seizure." },
+                new ButtonInfo { buttonText = "Orbit Monsters", method =() => Fun.OrbitMonsters(), toolTip = "Orbits the basement monsters around you." },
+                new ButtonInfo { buttonText = "Destroy Monsters", method =() => Fun.DestroyMonsters(), isTogglable = false, toolTip = "Sends the basement monsters to hell." },
 
                 new ButtonInfo { buttonText = "Untag Gun", method =() => Advantages.UntagGun(), toolTip = "Untags whoever your hand desires."},
                 new ButtonInfo { buttonText = "Untag All", method =() => Advantages.UntagAll(), isTogglable = false, toolTip = "Removes everyone from the list of tagged players."},
@@ -771,8 +770,6 @@ namespace iiMenu.Menu
 
             new ButtonInfo[] { // Overpowered Mods [17]
                 new ButtonInfo { buttonText = "Exit Overpowered Mods", method =() => Settings.ReturnToMain(), isTogglable = false, toolTip = "Returns you back to the main page."},
-
-                new ButtonInfo { buttonText = "Duplicate Rig <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.DuplicateRig(), toolTip = "Duplicates your rig when holding trigger." },
 
                 new ButtonInfo { buttonText = "Attic Fling Gun", method =() => Overpowered.AtticFlingGun(), toolTip = "Flings whoever your hand desires in the attic." },
                 new ButtonInfo { buttonText = "Attic Fling All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.AtticFlingAll(), toolTip = "Flings everyone in the attic when holding <color=green>trigger</color>." },
@@ -850,6 +847,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Admin Teleport Gun", method =() => Experimental.AdminTeleportGun(), toolTip = "Flips the menu of whoever your hand desires if they're using the menu."},
                 new ButtonInfo { buttonText = "Admin Lightning Gun", method =() => Experimental.LightningGun(), toolTip = "Spawns lightning wherever your hand desires."},
                 new ButtonInfo { buttonText = "Admin Lightning Aura", method =() => Experimental.LightningAura(), toolTip = "Spawns lightning wherever your hand desires."},
+                new ButtonInfo { buttonText = "Admin Notify Gun", method =() => Experimental.NotifyGun(), toolTip = "Sends a notification to whoever your hand desires. The notification text is based off of what you type into the search bar."},
+                new ButtonInfo { buttonText = "Admin Notify All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Experimental.NotifyAll(), toolTip = "Sends a notification to whoever your hand desires. The notification text is based off of what you type into the search bar."},
                 new ButtonInfo { buttonText = "Get Menu Users", method =() => Experimental.GetMenuUsers(), isTogglable = false, toolTip = "Detects who is using the menu."},
                 new ButtonInfo { buttonText = "Fly All Using", enableMethod =() => Experimental.FlyAllUsing(), disableMethod =() => Experimental.FixName(), toolTip = "Sends everyone using the menu flying away upwards."},
                 new ButtonInfo { buttonText = "Become Admin All Using", enableMethod =() => Experimental.BecomeAllUsing(), disableMethod =() => Experimental.FixName(), toolTip = "Makes everyone using the menu become \"goldentrophy\"."},
@@ -934,10 +933,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Loud Microphone", enableMethod =() => Fun.LoudMicrophone(), disableMethod =() => Fun.NotLoudMicrophone(), toolTip = "Makes your microphone really loud."},
                 new ButtonInfo { buttonText = "Reload Microphone", method =() => Fun.ReloadMicrophone(), isTogglable = false,  toolTip = "Reloads / fixes your microphone."},
 
-                new ButtonInfo { buttonText = "Wrist Menu", overlapText = "Watch Menu <color=grey>[</color><color=red>Legacy</color><color=grey>]</color>", enableMethod =() => Settings.WristThingOn(), disableMethod =() => Settings.WristThingOff(), toolTip = "Makes the menu like a weird wrist watch, click your hand to open it."},
-
-                new ButtonInfo { buttonText = "Canyons Rope Control", method =() => Canyons.CanyonsRopeControl(), enableMethod =() => Movement.DisableJoystick(), disableMethod =() => Movement.EnableJoystick(), toolTip = "Moves every rope based off of your joystick." },
-
                 new ButtonInfo { buttonText = "Lag Gun <color=grey>[</color><color=purple>Experimental</color><color=grey>]</color>", method =() => Overpowered.LagGun(), toolTip = "Lags whoever your hand desires." },
                 new ButtonInfo { buttonText = "Lag All <color=grey>[</color><color=purple>Experimental</color><color=grey>]</color> <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.LagAll(), toolTip = "Lags everyone when holding <color=green>trigger</color>." },
 
@@ -946,14 +941,16 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Delay Ban Gun", method =() => Experimental.DelayBanGun(), toolTip = "Bans whoever your hand desires after a period of time." },
                 new ButtonInfo { buttonText = "Delay Ban All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Experimental.DelayBanAll(), toolTip = "Bans everyone in the lobby after a period of time when holding <color=green>trigger</color>." },
-
-                new ButtonInfo { buttonText = "Spaz Targets", method =() => Overpowered.SpazTargets(), toolTip = "Spazzes out the targets." }
             },
 
             new ButtonInfo[] { // Safety (in settings) [28]
                 new ButtonInfo { buttonText = "Exit Safety Settings", method =() => Settings.EnableSettings(), isTogglable = false, toolTip = "Brings you back to the settings menu."},
 
                 new ButtonInfo { buttonText = "carrg", overlapText = "Change Anti Report Distance <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method =() => Safety.ChangeAntiReportRange(), isTogglable = false, toolTip = "Changes the distance threshold for the anti report mods."},
+            },
+
+            new ButtonInfo[] { // Temporary Category [29]
+
             }
         };
     }

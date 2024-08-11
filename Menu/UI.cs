@@ -159,19 +159,26 @@ namespace iiMenu.UI
                 {
                     UnityEngine.Color color = new Color32(byte.Parse(r), byte.Parse(g), byte.Parse(b), 255);
 
-                    PlayerPrefs.SetFloat("redValue", Mathf.Clamp(color.r, 0f, 1f));
-                    PlayerPrefs.SetFloat("greenValue", Mathf.Clamp(color.g, 0f, 1f));
-                    PlayerPrefs.SetFloat("blueValue", Mathf.Clamp(color.b, 0f, 1f));
-
-                    //GorillaTagger.Instance.offlineVRRig.mainSkin.material.color = color;
-                    GorillaTagger.Instance.UpdateColor(color.r, color.g, color.b);
-                    PlayerPrefs.Save();
-
-                    GorillaTagger.Instance.myVRRig.RPC("InitializeNoobMaterial", RpcTarget.All, new object[] { color.r, color.g, color.b, false });
+                    ChangeColor(color);
                 }
-                if (GUI.Button(new Rect(Screen.width - 200, 90, 85, 30), "Join"))
+                bool Create = false;
+                try
                 {
-                    PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(inputText, JoinType.Solo);
+                    Create = UnityInput.Current.GetKey(KeyCode.LeftControl);
+                } catch { }
+                if (GUI.Button(new Rect(Screen.width - 200, 90, 85, 30), Create ? "Create" : "Join"))
+                {
+                    if (Create)
+                    {
+                        string toJoin = inputText.Replace("\\n", "\n");
+                        iiMenu.Mods.Important.CreateRoom(toJoin, true);
+                    } else
+                    {
+                        string toJoin = inputText.Replace("\\n", "\n");
+                        iiMenu.Mods.Important.CreateRoom(toJoin, true);
+                        PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(toJoin, JoinType.Solo);
+                    }
+                    
                 }
                 if (GUI.Button(new Rect(Screen.width - 105, 90, 85, 30), "Queue"))
                 {

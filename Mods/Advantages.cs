@@ -18,31 +18,15 @@ namespace iiMenu.Mods
         {
             if (PhotonNetwork.LocalPlayer.IsMasterClient)
             {
-                GorillaTagManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
-                GorillaAmbushManager ambman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Stealth Manager").GetComponent<GorillaAmbushManager>();
-                bool isAmbush = GorillaGameManager.instance.GameModeName().ToLower().Contains("ambush") || GorillaGameManager.instance.GameModeName().ToLower().Contains("stealth");
-                if (!(isAmbush ? tagman.currentInfected.Contains(PhotonNetwork.LocalPlayer) : ambman.currentInfected.Contains(PhotonNetwork.LocalPlayer)))
-                {
-                    if (isAmbush)
-                    {
-                        ambman.AddInfectedPlayer(PhotonNetwork.LocalPlayer);
-                    }
-                    else
-                    {
-                        tagman.AddInfectedPlayer(PhotonNetwork.LocalPlayer);
-                    }
-                    NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>You have been tagged!</color>");
-                    GetIndex("Tag Self").enabled = false;
-                }
+                AddInfected(PhotonNetwork.LocalPlayer);
+                NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>You have been tagged.</color>");
+                GetIndex("Tag Self").enabled = false;
             }
             else
             {
-                GorillaTagManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
-                GorillaAmbushManager ambman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Stealth Manager").GetComponent<GorillaAmbushManager>();
-                bool isAmbush = GorillaGameManager.instance.GameModeName().ToLower().Contains("ambush") || GorillaGameManager.instance.GameModeName().ToLower().Contains("stealth");
-                if ((isAmbush ? tagman.currentInfected.Contains(PhotonNetwork.LocalPlayer) : ambman.currentInfected.Contains(PhotonNetwork.LocalPlayer)))
+                if (InfectedList().Contains(PhotonNetwork.LocalPlayer))
                 {
-                    NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>You have been tagged!</color>");
+                    NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>You have been tagged.</color>");
                     GorillaTagger.Instance.offlineVRRig.enabled = true;
                     GetIndex("Tag Self").enabled = false;
                 }
@@ -100,20 +84,7 @@ namespace iiMenu.Mods
             }
             else
             {
-                GorillaTagManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
-                GorillaAmbushManager ambman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Stealth Manager").GetComponent<GorillaAmbushManager>();
-                bool isAmbush = GorillaGameManager.instance.GameModeName().ToLower().Contains("ambush") || GorillaGameManager.instance.GameModeName().ToLower().Contains("stealth");
-                if ((isAmbush ? tagman.currentInfected.Contains(PhotonNetwork.LocalPlayer) : ambman.currentInfected.Contains(PhotonNetwork.LocalPlayer)))
-                {
-                    if (isAmbush)
-                    {
-                        ambman.currentInfected.Remove(PhotonNetwork.LocalPlayer);
-                    }
-                    else
-                    {
-                        tagman.currentInfected.Remove(PhotonNetwork.LocalPlayer);
-                    }
-                }
+                RemoveInfected(PhotonNetwork.LocalPlayer);
             }
             GorillaLocomotion.Player.Instance.disableMovement = false;
         }
@@ -143,22 +114,9 @@ namespace iiMenu.Mods
             }
             else
             {
-                GorillaTagManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
-                GorillaAmbushManager ambman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Stealth Manager").GetComponent<GorillaAmbushManager>();
-                bool isAmbush = GorillaGameManager.instance.GameModeName().ToLower().Contains("ambush") || GorillaGameManager.instance.GameModeName().ToLower().Contains("stealth");
                 foreach (Photon.Realtime.Player v in PhotonNetwork.PlayerList)
                 {
-                    if ((isAmbush ? tagman.currentInfected.Contains(v) : ambman.currentInfected.Contains(v)))
-                    {
-                        if (isAmbush)
-                        {
-                            ambman.currentInfected.Remove(v);
-                        }
-                        else
-                        {
-                            tagman.currentInfected.Remove(v);
-                        }
-                    }
+                    RemoveInfected(v);
                 }
             }
         }
@@ -178,30 +136,12 @@ namespace iiMenu.Mods
                 if (Time.time > spamtagdelay)
                 {
                     spamtagdelay = Time.time + 0.1f;
-                    GorillaTagManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
-                    GorillaAmbushManager ambman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Stealth Manager").GetComponent<GorillaAmbushManager>();
-                    bool isAmbush = GorillaGameManager.instance.GameModeName().ToLower().Contains("ambush") || GorillaGameManager.instance.GameModeName().ToLower().Contains("stealth");
-                    if (!(isAmbush ? tagman.currentInfected.Contains(PhotonNetwork.LocalPlayer) : ambman.currentInfected.Contains(PhotonNetwork.LocalPlayer)))
+                    if (InfectedList().Contains(PhotonNetwork.LocalPlayer))
                     {
-                        if (isAmbush)
-                        {
-                            ambman.AddInfectedPlayer(PhotonNetwork.LocalPlayer);
-                        }
-                        else
-                        {
-                            tagman.AddInfectedPlayer(PhotonNetwork.LocalPlayer);
-                        }
-                    }
-                    else
+                        RemoveInfected(PhotonNetwork.LocalPlayer);
+                    } else
                     {
-                        if (isAmbush)
-                        {
-                            ambman.currentInfected.Remove(PhotonNetwork.LocalPlayer);
-                        }
-                        else
-                        {
-                            tagman.currentInfected.Remove(PhotonNetwork.LocalPlayer);
-                        }
+                        AddInfected(PhotonNetwork.LocalPlayer);
                     }
                 }
             }
@@ -229,30 +169,13 @@ namespace iiMenu.Mods
                         if (Time.time > spamtagdelay)
                         {
                             spamtagdelay = Time.time + 0.1f;
-                            GorillaTagManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
-                            GorillaAmbushManager ambman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Stealth Manager").GetComponent<GorillaAmbushManager>();
-                            bool isAmbush = GorillaGameManager.instance.GameModeName().ToLower().Contains("ambush") || GorillaGameManager.instance.GameModeName().ToLower().Contains("stealth");
-                            if (!(isAmbush ? tagman.currentInfected.Contains(RigManager.GetPlayerFromVRRig(whoCopy)) : ambman.currentInfected.Contains(RigManager.GetPlayerFromVRRig(whoCopy))))
+                            if (InfectedList().Contains(RigManager.GetPlayerFromVRRig(whoCopy)))
                             {
-                                if (isAmbush)
-                                {
-                                    ambman.AddInfectedPlayer(RigManager.GetPlayerFromVRRig(whoCopy));
-                                }
-                                else
-                                {
-                                    tagman.AddInfectedPlayer(RigManager.GetPlayerFromVRRig(whoCopy));
-                                }
+                                RemoveInfected(RigManager.GetPlayerFromVRRig(whoCopy));
                             }
                             else
                             {
-                                if (isAmbush)
-                                {
-                                    ambman.currentInfected.Remove(RigManager.GetPlayerFromVRRig(whoCopy));
-                                }
-                                else
-                                {
-                                    tagman.currentInfected.Remove(RigManager.GetPlayerFromVRRig(whoCopy));
-                                }
+                                AddInfected(RigManager.GetPlayerFromVRRig(whoCopy));
                             }
                         }
                     }
@@ -263,14 +186,6 @@ namespace iiMenu.Mods
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig && !PlayerIsTagged(possibly))
                     {
                         if (PhotonNetwork.LocalPlayer.IsMasterClient)
-                        {
-                            GorillaTagManager gorillaTagManager = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
-                            if (!gorillaTagManager.currentInfected.Contains(RigManager.GetPlayerFromVRRig(possibly)))
-                            {
-                                gorillaTagManager.AddInfectedPlayer(RigManager.GetPlayerFromVRRig(possibly));
-                            }
-                        }
-                        else
                         {
                             isCopying = true;
                             whoCopy = possibly;
@@ -302,31 +217,14 @@ namespace iiMenu.Mods
                 if (Time.time > spamtagdelay)
                 {
                     spamtagdelay = Time.time + 0.1f;
-                    GorillaTagManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
-                    GorillaAmbushManager ambman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Stealth Manager").GetComponent<GorillaAmbushManager>();
-                    bool isAmbush = GorillaGameManager.instance.GameModeName().ToLower().Contains("ambush") || GorillaGameManager.instance.GameModeName().ToLower().Contains("stealth");
                     foreach (Photon.Realtime.Player v in PhotonNetwork.PlayerList)
                     {
-                        if (!(isAmbush ? tagman.currentInfected.Contains(v) : ambman.currentInfected.Contains(v)))
+                        if (InfectedList().Contains(v))
                         {
-                            if (isAmbush)
-                            {
-                                ambman.AddInfectedPlayer(v);
-                            }
-                            else
-                            {
-                                tagman.AddInfectedPlayer(v);
-                            }
+                            AddInfected(v);
                         } else
                         {
-                            if (!isAmbush)
-                            {
-                                ambman.AddInfectedPlayer(v);
-                            }
-                            else
-                            {
-                                tagman.AddInfectedPlayer(v);
-                            }
+                            RemoveInfected(v);
                         }
                     }
                 }
@@ -346,14 +244,13 @@ namespace iiMenu.Mods
             {
                 GorillaTagManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
                 GorillaAmbushManager ambman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Stealth Manager").GetComponent<GorillaAmbushManager>();
-                bool isAmbush = GorillaGameManager.instance.GameModeName().ToLower().Contains("ambush") || GorillaGameManager.instance.GameModeName().ToLower().Contains("stealth");
-                if (isAmbush)
+                if (GorillaGameManager.instance.GameModeName().ToLower().Contains("ambush") || GorillaGameManager.instance.GameModeName().ToLower().Contains("stealth"))
                 {
                     ambman.tagCoolDown = 2147483647f;
                 }
                 else
                 {
-                    tagman.tagCoolDown = 2147483647f; // lol
+                    tagman.tagCoolDown = 2147483647f;
                 }
             }
         }
@@ -362,14 +259,13 @@ namespace iiMenu.Mods
         {
             GorillaTagManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
             GorillaAmbushManager ambman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Stealth Manager").GetComponent<GorillaAmbushManager>();
-            bool isAmbush = GorillaGameManager.instance.GameModeName().ToLower().Contains("ambush") || GorillaGameManager.instance.GameModeName().ToLower().Contains("stealth");
-            if (isAmbush)
+            if (GorillaGameManager.instance.GameModeName().ToLower().Contains("ambush") || GorillaGameManager.instance.GameModeName().ToLower().Contains("stealth"))
             {
                 ambman.tagCoolDown = 5f;
             }
             else
             {
-                tagman.tagCoolDown = 5f; // lol
+                tagman.tagCoolDown = 5f;
             }
         }
 
@@ -567,29 +463,19 @@ namespace iiMenu.Mods
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig && !PlayerIsTagged(possibly) && PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig && !PlayerIsTagged(possibly))
                     {
                         if (PhotonNetwork.LocalPlayer.IsMasterClient)
                         {
-                            GorillaTagManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
-                            GorillaAmbushManager ambman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Stealth Manager").GetComponent<GorillaAmbushManager>();
-                            bool isAmbush = GorillaGameManager.instance.GameModeName().ToLower().Contains("ambush") || GorillaGameManager.instance.GameModeName().ToLower().Contains("stealth");
-                            if (!(isAmbush ? tagman.currentInfected.Contains(RigManager.GetPlayerFromVRRig(possibly)) : ambman.currentInfected.Contains(RigManager.GetPlayerFromVRRig(possibly))))
-                            {
-                                if (isAmbush)
-                                {
-                                    ambman.currentInfected.Add(RigManager.GetPlayerFromVRRig(possibly));
-                                }
-                                else
-                                {
-                                    tagman.currentInfected.Add(RigManager.GetPlayerFromVRRig(possibly));
-                                }
-                            }
+                            AddInfected(RigManager.GetPlayerFromVRRig(possibly));
                         }
                         else
                         {
-                            isCopying = true;
-                            whoCopy = possibly;
+                            if (PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
+                            {
+                                isCopying = true;
+                                whoCopy = possibly;
+                            }
                         }
                     }
                 }
@@ -619,20 +505,7 @@ namespace iiMenu.Mods
                     {
                         if (PhotonNetwork.LocalPlayer.IsMasterClient)
                         {
-                            GorillaTagManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
-                            GorillaAmbushManager ambman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Stealth Manager").GetComponent<GorillaAmbushManager>();
-                            bool isAmbush = GorillaGameManager.instance.GameModeName().ToLower().Contains("ambush") || GorillaGameManager.instance.GameModeName().ToLower().Contains("stealth");
-                            if ((isAmbush ? tagman.currentInfected.Contains(RigManager.GetPlayerFromVRRig(possibly)) : ambman.currentInfected.Contains(RigManager.GetPlayerFromVRRig(possibly))))
-                            {
-                                if (isAmbush)
-                                {
-                                    ambman.currentInfected.Remove(RigManager.GetPlayerFromVRRig(possibly));
-                                }
-                                else
-                                {
-                                    tagman.currentInfected.Remove(RigManager.GetPlayerFromVRRig(possibly));
-                                }
-                            }
+                            RemoveInfected(RigManager.GetPlayerFromVRRig(possibly));
                         } else
                         {
                             if (!GetIndex("Disable Auto Anti Ban").enabled)
@@ -664,22 +537,9 @@ namespace iiMenu.Mods
         {
             if (PhotonNetwork.IsMasterClient)
             {
-                GorillaTagManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
-                GorillaAmbushManager ambman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Stealth Manager").GetComponent<GorillaAmbushManager>();
-                bool isAmbush = GorillaGameManager.instance.GameModeName().ToLower().Contains("ambush") || GorillaGameManager.instance.GameModeName().ToLower().Contains("stealth");
                 foreach (Photon.Realtime.Player v in PhotonNetwork.PlayerList)
                 {
-                    if (!(isAmbush ? tagman.currentInfected.Contains(v) : ambman.currentInfected.Contains(v)))
-                    {
-                        if (isAmbush)
-                        {
-                            ambman.AddInfectedPlayer(v);
-                        }
-                        else
-                        {
-                            tagman.AddInfectedPlayer(v);
-                        }
-                    }
+                    AddInfected(v);
                 }
                 GetIndex("Tag All").enabled = false;
             }

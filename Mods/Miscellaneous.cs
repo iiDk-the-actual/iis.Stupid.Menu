@@ -1,5 +1,4 @@
 ﻿using Photon.Pun;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using UnityEngine;
@@ -45,12 +44,14 @@ namespace iiMenu.Mods
                 float r = 0f;
                 float g = 0f;
                 float b = 0f;
+                string cosmetics = "";
                 try
                 {
-                    VRRig plr = GorillaGameManager.instance.FindPlayerVRRig(player);
+                    VRRig plr = GetVRRigFromPlayer(player);
                     r = plr.playerColor.r * 255;
                     g = plr.playerColor.g * 255;
                     b = plr.playerColor.b * 255;
+                    cosmetics = plr.concatStringOfCosmeticsAllowed;
                 }
                 catch { UnityEngine.Debug.Log("Failed to log colors, rig most likely nonexistent"); }
                 try
@@ -68,17 +69,22 @@ namespace iiMenu.Mods
                         g.ToString(),
                         ", B: ",
                         b.ToString(),
-                        ")"
-                });
+                        "), Cosmetics: ",
+                        cosmetics
+                    });
                 }
                 catch { UnityEngine.Debug.Log("Failed to log player"); }
             }
             text += "\n====================================\n";
             text += "Text file generated with ii's Stupid Menu";
-            string fileName = "iisStupidMenu/" + PhotonNetwork.CurrentRoom.Name + " - Player Info.txt";
+            string fileName = "iisStupidMenu/PlayerInfo/" + PhotonNetwork.CurrentRoom.Name + ".txt";
             if (!Directory.Exists("iisStupidMenu"))
             {
                 Directory.CreateDirectory("iisStupidMenu");
+            }
+            if (!Directory.Exists("iisStupidMenu/PlayerInfo"))
+            {
+                Directory.CreateDirectory("iisStupidMenu/PlayerInfo");
             }
             File.WriteAllText(fileName, text);
 

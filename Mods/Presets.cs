@@ -1,24 +1,7 @@
-﻿using ExitGames.Client.Photon;
-using GorillaTag.CosmeticSystem;
-using GorillaTag.GuidedRefs;
-using iiMenu.Menu;
-using iiMenu.Mods.Spammers;
+﻿using iiMenu.Menu;
 using iiMenu.Notifications;
-using System;
-using System.Collections.Generic;
-using System.Runtime.ConstrainedExecution;
-using System.Text;
-using UnityEngine.Animations.Rigging;
-using UnityEngine.Rendering;
-using UnityEngine.UI;
-using UnityEngine.UIElements;
-using UnityEngine;
-using static iiMenu.Menu.Main;
-using static Photon.Pun.UtilityScripts.TabViewManager;
-using static Technie.PhysicsCreator.SphereUtils;
-using static UnityEngine.Rendering.DebugUI;
-using iiMenu.Classes;
 using System.IO;
+using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods
 {

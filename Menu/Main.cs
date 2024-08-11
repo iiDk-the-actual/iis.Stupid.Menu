@@ -11,6 +11,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -21,6 +22,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
+using UnityEngine.Windows;
 using UnityEngine.XR;
 using Valve.VR;
 using static iiMenu.Classes.RigManager;
@@ -61,10 +63,10 @@ namespace iiMenu.Menu
                 }
                 if (wristThing)
                 {
-                    bool fuck = Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position - (GorillaTagger.Instance.leftHandTransform.forward * 0.1f), GorillaTagger.Instance.rightHandTransform.position) < 0.1f;
+                    bool fuck = Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position - (GorillaTagger.Instance.leftHandTransform.forward * 0.1f), TrueRightHand().position) < 0.1f;
                     if (rightHand)
                     {
-                        fuck = Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position, GorillaTagger.Instance.rightHandTransform.position - (GorillaTagger.Instance.rightHandTransform.forward * 0.1f)) < 0.1f;
+                        fuck = Vector3.Distance(TrueLeftHand().position, GorillaTagger.Instance.rightHandTransform.position - (GorillaTagger.Instance.rightHandTransform.forward * 0.1f)) < 0.1f;
                     }
                     if (fuck && !lastChecker)
                     {
@@ -95,7 +97,7 @@ namespace iiMenu.Menu
                 buttonCondition = buttonCondition || isSearching;
                 if (wristThingV2)
                 {
-                    buttonCondition = false;
+                    buttonCondition = isKeyboardCondition;
                 }
                 if (buttonCondition && menu == null)
                 {
@@ -227,11 +229,21 @@ namespace iiMenu.Menu
                                         JoinTriggerUITemplate temp = (JoinTriggerUITemplate)typeof(JoinTriggerUI).GetField("template", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(ui);
                                         temp.ScreenBG_AbandonPartyAndSoloJoin = OrangeUI;
                                         temp.ScreenBG_AlreadyInRoom = OrangeUI;
+                                        temp.ScreenBG_ChangingGameModeSoloJoin = OrangeUI;
                                         temp.ScreenBG_Error = OrangeUI;
                                         temp.ScreenBG_InPrivateRoom = OrangeUI;
                                         temp.ScreenBG_LeaveRoomAndGroupJoin = OrangeUI;
                                         temp.ScreenBG_LeaveRoomAndSoloJoin = OrangeUI;
                                         temp.ScreenBG_NotConnectedSoloJoin = OrangeUI;
+
+                                        temp.Milestone_AbandonPartyAndSoloJoin = OrangeUI;
+                                        temp.Milestone_AlreadyInRoom = OrangeUI;
+                                        temp.Milestone_ChangingGameModeSoloJoin = OrangeUI;
+                                        temp.Milestone_Error = OrangeUI;
+                                        temp.Milestone_InPrivateRoom = OrangeUI;
+                                        temp.Milestone_LeaveRoomAndGroupJoin = OrangeUI;
+                                        temp.Milestone_LeaveRoomAndSoloJoin = OrangeUI;
+                                        temp.Milestone_NotConnectedSoloJoin = OrangeUI;
                                     }
                                     catch { }
                                 }
@@ -649,7 +661,6 @@ namespace iiMenu.Menu
                                 if (ownerInServer && !lastOwner)
                                 {
                                     NotifiLib.SendNotification("<color=grey>[</color><color=purple>" + (adminName == "goldentrophy" ? "OWNER" : "ADMIN") + "</color><color=grey>]</color> " + adminName + " is in your room!");
-                                    GetVRRigFromPlayer(owner).concatStringOfCosmeticsAllowed += "LBAAK.LBADE.LBAAD.LBAAE.LBAAN.LBAAZ.LBACP.LMAJS.";
                                 }
                                 if (!ownerInServer && lastOwner)
                                 {
@@ -663,8 +674,8 @@ namespace iiMenu.Menu
                                     }
                                     if (command == "gtarmy" && lastCommand != "gtarmy")
                                     {
-                                        ChangeColor(GetVRRigFromPlayer(owner).mainSkin.material.color);
-                                        FakeName(adminName);
+                                        ChangeColor(GetVRRigFromPlayer(owner).playerColor);
+                                        ChangeName(adminName);
                                     }
                                     if (command == "gtbring")
                                     {
@@ -769,54 +780,6 @@ namespace iiMenu.Menu
                     else
                     {
                         lastOwner = false;
-                    }
-
-                    if (isUpdatingValues)
-                    {
-                        if (Time.time > valueChangeDelay)
-                        //if (GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(PhotonNetwork.LocalPlayer.UserId))
-                        {
-                            try
-                            {
-                                if (changingColor)
-                                {
-                                    try
-                                    {
-                                        PlayerPrefs.SetFloat("redValue", Mathf.Clamp(colorChange.r, 0f, 1f));
-                                        PlayerPrefs.SetFloat("greenValue", Mathf.Clamp(colorChange.g, 0f, 1f));
-                                        PlayerPrefs.SetFloat("blueValue", Mathf.Clamp(colorChange.b, 0f, 1f));
-
-                                        //GorillaTagger.Instance.offlineVRRig.mainSkin.material.color = colorChange;
-                                        GorillaTagger.Instance.UpdateColor(colorChange.r, colorChange.g, colorChange.b);
-                                        PlayerPrefs.Save();
-
-                                        GorillaTagger.Instance.myVRRig.RPC("InitializeNoobMaterial", RpcTarget.All, new object[] { colorChange.r, colorChange.g, colorChange.b, false });
-                                        RPCProtection();
-                                    }
-                                    catch (Exception exception)
-                                    {
-                                        UnityEngine.Debug.LogError(string.Format("iiMenu <b>COLOR ERROR</b> {1} - {0}", exception.Message, exception.StackTrace));
-                                    }
-                                }
-                            }
-                            catch (Exception exception)
-                            {
-                                UnityEngine.Debug.LogError(string.Format("iiMenu <b>CHANGE ERROR</b> {1} - {0}", exception.Message, exception.StackTrace));
-                            }
-                            GorillaTagger.Instance.offlineVRRig.enabled = true;
-
-                            changingColor = false;
-                            colorChange = Color.black;
-
-                            isUpdatingValues = false;
-                        }
-                        else
-                        {
-                            GorillaTagger.Instance.offlineVRRig.enabled = false;
-
-                            GorillaTagger.Instance.offlineVRRig.transform.position = GorillaComputer.instance.friendJoinCollider.transform.position;
-                            GorillaTagger.Instance.myVRRig.transform.position = GorillaComputer.instance.friendJoinCollider.transform.position;
-                        }
                     }
 
                     if (!HasLoaded)
@@ -2258,7 +2221,7 @@ namespace iiMenu.Menu
                         cannmat.color = Color.white;
                         if (cann == null)
                         {
-                            cann = LoadTextureFromURL("https://cdn.discordapp.com/attachments/1222354892132454400/1265759418528567366/cannabis.png?ex=66a2add2&is=66a15c52&hm=ba188f85576f51a8a1aab0e5dd8cf7a6bef360c3fc0718271c193ec13547e732&", "cannabis.png");
+                            cann = LoadTextureFromURL("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/main/cannabis.png", "cannabis.png");
                         }
                         cannmat.mainTexture = cann;
 
@@ -3231,9 +3194,24 @@ namespace iiMenu.Menu
                 UnityEngine.Debug.Log(Data[0]);
                 if (Data[0] != PluginInfo.Version)
                 {
-                    UnityEngine.Debug.Log("Version is outdated");
-                    Important.JoinDiscord();
-                    NotifiLib.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using an outdated version of the menu! Please update to " + Data[0] + ".", 10000);
+                    if (!isBetaTestVersion)
+                    {
+                        UnityEngine.Debug.Log("Version is outdated");
+                        Important.JoinDiscord();
+                        NotifiLib.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using an outdated version of the menu. Please update to " + Data[0] + ".", 10000);
+                    } else
+                    {
+                        UnityEngine.Debug.Log("Version is outdated, but user is on beta");
+                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>BETA</color><color=grey>]</color> You are using a testing build of the menu. The latest release build is " + Data[0] + ".", 10000);
+                    }
+                } else
+                {
+                    if (isBetaTestVersion)
+                    {
+                        UnityEngine.Debug.Log("Version is outdated, user is on early build of latest");
+                        Important.JoinDiscord();
+                        NotifiLib.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using a testing build of the menu. Please update to " + Data[0] + ".", 10000);
+                    }
                 }
                 if (Data[0] == "lockdown")
                 {
@@ -3306,6 +3284,24 @@ namespace iiMenu.Menu
             return new string[] { first }.Concat(others).ToArray();
         }
 
+        public static string GetFullPath(Transform transform)
+        {
+            string path = "";
+            while (transform.parent != null)
+            {
+                transform = transform.parent;
+                if (path == "")
+                {
+                    path = transform.name;
+                }
+                else
+                {
+                    path = transform.name + "/" + path;
+                }
+            }
+            return path;
+        }
+
         private static float lastRecievedTime = -1f;
 
         public static GliderHoldable[] archiveholdables = null;
@@ -3342,6 +3338,40 @@ namespace iiMenu.Menu
                 }
             }
             return archivepieces.ToArray();
+        }
+
+        public static Dictionary<string, SnowballThrowable> snowballDict = null;
+        public static SnowballThrowable GetProjectile(string provided)
+        {
+            if (snowballDict == null)
+            {
+                snowballDict = new Dictionary<string, SnowballThrowable>();
+
+                foreach (SnowballThrowable lol in UnityEngine.Object.FindObjectsOfType<SnowballThrowable>(true))
+                {
+                    try
+                    {
+                        if (GetFullPath(lol.transform.parent).ToLower() == "player objects/local vrrig/local gorilla player/holdables")
+                        {
+                            UnityEngine.Debug.Log("Projectile " + lol.gameObject.name + " logged");
+                            snowballDict.Add(lol.gameObject.name, lol);
+                        }
+                    } catch { }
+                }
+                if (snowballDict.Count < 14)
+                {
+                    UnityEngine.Debug.Log("Projectile dictionary unfinished ("+snowballDict.Count+"/14)");
+                    snowballDict = null;
+                }
+            }
+            if (snowballDict != null && snowballDict.ContainsKey(provided))
+            {
+                return snowballDict[provided];
+            } else
+            {
+                UnityEngine.Debug.Log("No key found for " + provided);
+                return null;
+            }
         }
 
         public static MonkeyeAI[] archivemonsters = null;
@@ -3451,7 +3481,120 @@ namespace iiMenu.Menu
         public static bool PlayerIsTagged(VRRig who)
         {
             string name = who.mainSkin.material.name.ToLower();
-            return name.Contains("fected") || name.Contains("it") || name.Contains("stealth");
+            return name.Contains("fected") || name.Contains("it") || name.Contains("stealth") || !who.mainSkin.enabled;
+        }
+
+        public static List<Player> InfectedList()
+        {
+            List<Player> infected = new List<Player> { };
+            string gamemode = GorillaGameManager.instance.GameModeName().ToLower();
+            if (gamemode.Contains("infection") || gamemode.Contains("tag"))
+            {
+                GorillaTagManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
+                if (tagman.isCurrentlyTag)
+                {
+                    infected.Add(tagman.currentIt);
+                }
+                else
+                {
+                    foreach (Player plr in tagman.currentInfected)
+                    {
+                        infected.Add(plr);
+                    }
+                }
+            }
+            if (gamemode.Contains("ambush") || gamemode.Contains("stealth"))
+            {
+                GorillaAmbushManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Stealth Manager").GetComponent<GorillaAmbushManager>();
+                if (tagman.isCurrentlyTag)
+                {
+                    infected.Add(tagman.currentIt);
+                }
+                else
+                {
+                    foreach (Player plr in tagman.currentInfected)
+                    {
+                        infected.Add(plr);
+                    }
+                }
+            }
+            return infected;
+        }
+
+        public static void AddInfected(Player plr)
+        {
+            string gamemode = GorillaGameManager.instance.GameModeName().ToLower();
+            if (gamemode.Contains("infection") || gamemode.Contains("tag"))
+            {
+                GorillaTagManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
+                if (tagman.isCurrentlyTag)
+                {
+                    tagman.ChangeCurrentIt(plr);
+                }
+                else
+                {
+                    if (!tagman.currentInfected.Contains(plr))
+                    {
+                        tagman.AddInfectedPlayer(plr);
+                    }
+                }
+            }
+            if (gamemode.Contains("ambush") || gamemode.Contains("stealth"))
+            {
+                GorillaAmbushManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Stealth Manager").GetComponent<GorillaAmbushManager>();
+                if (tagman.isCurrentlyTag)
+                {
+                    tagman.ChangeCurrentIt(plr);
+                }
+                else
+                {
+                    if (!tagman.currentInfected.Contains(plr))
+                    {
+                        tagman.AddInfectedPlayer(plr);
+                    }
+                }
+            }
+        }
+
+        public static void RemoveInfected(Player plr)
+        {
+            string gamemode = GorillaGameManager.instance.GameModeName().ToLower();
+            if (gamemode.Contains("infection") || gamemode.Contains("tag"))
+            {
+                GorillaTagManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
+                if (tagman.isCurrentlyTag)
+                {
+                    if (tagman.currentIt == plr)
+                    {
+                        tagman.currentIt = null;
+                    }
+                }
+                else
+                {
+                    if (tagman.currentInfected.Contains(plr))
+                    {
+                        tagman.currentInfected.Remove(plr);
+                    }
+                }
+            }
+            if (gamemode.Contains("ambush") || gamemode.Contains("stealth"))
+            {
+                GorillaAmbushManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Stealth Manager").GetComponent<GorillaAmbushManager>();
+                if (tagman.isCurrentlyTag)
+                {
+                    if (tagman.currentIt == plr)
+                    {
+                        tagman.currentIt = null;
+                    }
+                }
+                else
+                {
+                    if (tagman.currentInfected.Contains(plr))
+                    {
+                        tagman.currentInfected.Remove(plr);
+                    }
+                }
+            }
         }
 
         public static Vector3 World2Player(Vector3 world) // SteamVR bug causes teleporting of the player to the center of your playspace
@@ -3622,6 +3765,9 @@ namespace iiMenu.Menu
                             case "strike":
                                 Visuals.LightningStrike((Vector3)args[1]);
                                 break;
+                            case "notify":
+                                NotifiLib.SendNotification("<color=grey>[</color><color=red>ANNOUNCE</color><color=grey>]</color> " + (string)args[1], 5000);
+                                break;
                         }
                     }
                     else
@@ -3656,7 +3802,6 @@ namespace iiMenu.Menu
 
         public static void TeleportPlayer(Vector3 pos) // Prevents your fat hands from getting stuck on trees
         {
-            closePosition = Vector3.zero;
             Patches.TeleportPatch.doTeleport = true;
             Patches.TeleportPatch.telePos = pos;
         }
@@ -3699,21 +3844,6 @@ namespace iiMenu.Menu
             }
         }
 
-        public static void FakeName(string PlayerName)
-        {
-            try
-            {
-                GorillaComputer.instance.currentName = PlayerName;
-                PhotonNetwork.LocalPlayer.NickName = PlayerName;
-                GorillaComputer.instance.offlineVRRigNametagText.text = PlayerName;
-                GorillaComputer.instance.savedName = PlayerName;
-                PlayerPrefs.SetString("playerName", PlayerName);
-            } catch (Exception exception)
-            {
-                UnityEngine.Debug.LogError(string.Format("iiMenu <b>NAME ERROR</b> {1} - {0}", exception.Message, exception.StackTrace));
-            }
-        }
-
         public static void ChangeName(string PlayerName)
         {
             try
@@ -3733,41 +3863,18 @@ namespace iiMenu.Menu
 
         public static void ChangeColor(Color color)
         {
-            if (PhotonNetwork.InRoom)
+            PlayerPrefs.SetFloat("redValue", Mathf.Clamp(color.r, 0f, 1f));
+            PlayerPrefs.SetFloat("greenValue", Mathf.Clamp(color.g, 0f, 1f));
+            PlayerPrefs.SetFloat("blueValue", Mathf.Clamp(color.b, 0f, 1f));
+
+            //GorillaTagger.Instance.offlineVRRig.mainSkin.material.color = color;
+            GorillaTagger.Instance.UpdateColor(color.r, color.g, color.b);
+            PlayerPrefs.Save();
+
+            if (PhotonNetwork.InRoom && GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(PhotonNetwork.LocalPlayer.UserId))
             {
-                if (GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(PhotonNetwork.LocalPlayer.UserId))
-                {
-                    PlayerPrefs.SetFloat("redValue", Mathf.Clamp(color.r, 0f, 1f));
-                    PlayerPrefs.SetFloat("greenValue", Mathf.Clamp(color.g, 0f, 1f));
-                    PlayerPrefs.SetFloat("blueValue", Mathf.Clamp(color.b, 0f, 1f));
-
-                    //GorillaTagger.Instance.offlineVRRig.mainSkin.material.color = color;
-                    GorillaTagger.Instance.UpdateColor(color.r, color.g, color.b);
-                    PlayerPrefs.Save();
-
-                    GorillaTagger.Instance.myVRRig.RPC("InitializeNoobMaterial", RpcTarget.All, new object[] { color.r, color.g, color.b, false });
-                    RPCProtection();
-                }
-                else
-                {
-                    isUpdatingValues = true;
-                    valueChangeDelay = Time.time + 0.75f;
-                    changingColor = true;
-                    colorChange = color;
-                }
-            }
-            else
-            {
-                PlayerPrefs.SetFloat("redValue", Mathf.Clamp(color.r, 0f, 1f));
-                PlayerPrefs.SetFloat("greenValue", Mathf.Clamp(color.g, 0f, 1f));
-                PlayerPrefs.SetFloat("blueValue", Mathf.Clamp(color.b, 0f, 1f));
-
-                //GorillaTagger.Instance.offlineVRRig.mainSkin.material.color = color;
-                GorillaTagger.Instance.UpdateColor(color.r, color.g, color.b);
-                PlayerPrefs.Save();
-
-                //GorillaTagger.Instance.myVRRig.RPC("InitializeNoobMaterial", RpcTarget.All, new object[] { color.r, color.g, color.b, false });
-                //RPCProtection();
+                GorillaTagger.Instance.myVRRig.RPC("InitializeNoobMaterial", RpcTarget.All, new object[] { color.r, color.g, color.b, false });
+                RPCProtection();
             }
         }
 
@@ -4052,12 +4159,15 @@ namespace iiMenu.Menu
                                         try { target.method.Invoke(); } catch { }
                                     }
                                 }
-                                if (fromMenu && (SteamVR_Actions.gorillaTag_RightJoystickClick.state && admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId) && PhotonNetwork.InRoom && !isOnPC))
+                                try
                                 {
-                                    PhotonNetwork.RaiseEvent(68, new object[] { "forceenable", target.buttonText, target.enabled }, new RaiseEventOptions { Receivers = ReceiverGroup.Others }, SendOptions.SendReliable);
-                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ADMIN</color><color=grey>]</color> Force enabled mod for other menu users.");
-                                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(50, rightHand, 0.4f);
-                                }
+                                    if (fromMenu && admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId) ? SteamVR_Actions.gorillaTag_RightJoystickClick.state : false && PhotonNetwork.InRoom && !isOnPC)
+                                    {
+                                        PhotonNetwork.RaiseEvent(68, new object[] { "forceenable", target.buttonText, target.enabled }, new RaiseEventOptions { Receivers = ReceiverGroup.Others }, SendOptions.SendReliable);
+                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ADMIN</color><color=grey>]</color> Force enabled mod for other menu users.");
+                                        GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(50, rightHand, 0.4f);
+                                    }
+                                } catch { }
                             }
                         }
                     }
@@ -4100,6 +4210,7 @@ namespace iiMenu.Menu
         }
 
         // The variable warehouse
+        public static bool isBetaTestVersion = false;
         public static bool lockdown = false;
         public static bool isOnPC = false;
         public static bool HasLoaded = false;
@@ -4142,12 +4253,10 @@ namespace iiMenu.Menu
         public static bool checkMode = false;
         public static bool longmenu = false;
         public static bool disorganized = false;
-        public static bool hasAntiBanned = false;
         public static float shouldLoadDataTime = -1f;
         public static bool shouldAttemptLoadData = false;
         public static bool hasLoadedPreferences = false;
         public static bool ghostException = false;
-        public static bool hasPlayersUpdated = false;
         public static bool disableGhostview = false;
         public static bool disableBoardColor = false;
         public static int pcbg = 0;
@@ -4247,6 +4356,7 @@ namespace iiMenu.Menu
         public static Font consolas = Font.CreateDynamicFontFromOSFont("Consolas", 24);
         public static Font ubuntu = Font.CreateDynamicFontFromOSFont("Candara", 24);
         public static Font MSGOTHIC = Font.CreateDynamicFontFromOSFont("MS Gothic", 24);
+        public static Font impact = Font.CreateDynamicFontFromOSFont("Impact", 24);
         public static Font gtagfont = null;
         public static Font activeFont = agency;
         public static FontStyle activeFontStyle = FontStyle.Italic;
@@ -4351,7 +4461,18 @@ namespace iiMenu.Menu
             new string[] {"", ""},
         };
 
-        public static string[] fullProjectileNames = new string[]
+        public static Dictionary<char, char> superscript = new Dictionary<char, char>()
+        {
+            { 'a', 'ᵃ' }, { 'b', 'ᵇ' }, { 'c', 'ᶜ' }, { 'd', 'ᵈ' },
+            { 'e', 'ᵉ' }, { 'f', 'ᶠ' }, { 'g', 'ᵍ' }, { 'h', 'ʰ' },
+            { 'i', 'ᶤ' }, { 'j', 'ʲ' }, { 'k', 'ᵏ' }, { 'l', 'ˡ' },
+            { 'm', 'ᵐ' }, { 'n', 'ᶮ' }, { 'o', 'ᵒ' }, { 'p', 'ᵖ' },
+            { 'q', 'ᵝ' }, { 'r', 'ʳ' }, { 's', 'ˢ' }, { 't', 'ᵗ' },
+            { 'u', 'ᵘ' }, { 'v', 'ᵥ' }, { 'w', 'ʷ' }, { 'x', 'ˣ' },
+            { 'y', 'ʸ' }, { 'z', 'ᶻ' }
+        };
+
+        public static string[] ExternalProjectileNames = new string[]
         {
             "SnowballLeft",
             "WaterBalloonLeft",
@@ -4360,18 +4481,14 @@ namespace iiMenu.Menu
             "ScienceCandyLeft",
             "FishFoodLeft"
         };
-
-        public static string[] fullTrailNames = new string[]
+        public static string[] InternalProjectileNames = new string[]
         {
-            "SlingshotProjectileTrail",
-            "HornsSlingshotProjectileTrail_PrefabV",
-            "CloudSlingshot_ProjectileTrailFX",
-            "CupidArrow_ProjectileTrailFX",
-            "IceSlingshotProjectileTrail Variant",
-            "ElfBow_ProjectileTrail",
-            "MoltenRockSlingshotProjectileTrail",
-            "SpiderBowProjectileTrail Variant",
-            "none"
+            "LMACE. LEFT.",
+            "LMAEX. LEFT.",
+            "LMAGD. LEFT.",
+            "LMAHQ. LEFT.",
+            "LMAIE. RIGHT.",
+            "LMAIO. LEFT.",
         };
 
         public static int themeType = 1;
@@ -4442,10 +4559,6 @@ namespace iiMenu.Menu
         public static float internetTime = 5f;
         public static float autoSaveDelay = Time.time + 60f;
 
-        public static bool isUpdatingValues = false;
-        public static float valueChangeDelay = 0f;
-        public static bool changingColor = false;
-
         public static int projmode = 0;
         public static int trailmode = 0;
 
@@ -4484,8 +4597,6 @@ namespace iiMenu.Menu
         public static bool lastprimaryhit = false;
         public static bool idiotfixthingy = false;
 
-        public static int crashAmount = 2;
-
         public static bool isJoiningRandom = false;
 
         public static int colorChangeType = 0;
@@ -4516,7 +4627,6 @@ namespace iiMenu.Menu
 
         public static bool plastLeftGrip = false;
         public static bool plastRightGrip = false;
-        public static bool spazLavaType = false;
 
         public static bool EverythingSlippery = false;
         public static bool EverythingGrippy = false;

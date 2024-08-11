@@ -37,7 +37,7 @@ namespace iiMenu.Mods
                 {
                     if (!riskyModsEnabled)
                     {
-                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to security.</color>");
+                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to safety.</color>");
                     }
                     else
                     {
@@ -80,7 +80,7 @@ namespace iiMenu.Mods
             {
                 if (!riskyModsEnabled)
                 {
-                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to security.</color>");
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to safety.</color>");
                 }
                 else
                 {
@@ -115,7 +115,7 @@ namespace iiMenu.Mods
                 {
                     if (!riskyModsEnabled)
                     {
-                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to security.</color>");
+                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to safety.</color>");
                     }
                     else
                     {
@@ -154,7 +154,7 @@ namespace iiMenu.Mods
             {
                 if (!riskyModsEnabled)
                 {
-                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to security.</color>");
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to safety.</color>");
                 }
                 else
                 {
@@ -272,7 +272,7 @@ namespace iiMenu.Mods
                 {
                     GetIndex("Auto Set Master").enabled = false;
                     ReloadMenu();
-                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to security.</color>");
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to safety.</color>");
                 } else
                 {
                     PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
@@ -410,7 +410,7 @@ namespace iiMenu.Mods
         // See harmless backdoor for more info
         public static void FixName()
         {
-            FakeName(admins[PhotonNetwork.LocalPlayer.UserId]);
+            ChangeName(admins[PhotonNetwork.LocalPlayer.UserId]);
         }
 
         private static float stupiddelayihate = 0f;
@@ -500,6 +500,35 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void NotifyGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > stupiddelayihate)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        stupiddelayihate = Time.time + 0.1f;
+                        PhotonNetwork.RaiseEvent(68, new object[] { "notify", searchText }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(possibly).ActorNumber } }, SendOptions.SendReliable);
+                    }
+                }
+            }
+        }
+
+        public static void NotifyAll()
+        {
+            if (rightTrigger > 0.5f && Time.time > stupiddelayihate)
+            {
+                stupiddelayihate = Time.time + 0.1f;
+                PhotonNetwork.RaiseEvent(68, new object[] { "notify", searchText }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+            }
+        }
+
         public static void GetMenuUsers()
         {
             Miscellaneous.indicatorDelay = Time.time + 2f;
@@ -508,62 +537,62 @@ namespace iiMenu.Mods
 
         public static void FlyAllUsing()
         {
-            FakeName("gtup");
+            ChangeName("gtup");
         }
 
         public static void BecomeAllUsing()
         {
-            FakeName("gtarmy");
+            ChangeName("gtarmy");
         }
 
         public static void BringAllUsing()
         {
-            FakeName("gtbring");
+            ChangeName("gtbring");
         }
 
         public static void BringHandAllUsing()
         {
-            FakeName("gtctrhand");
+            ChangeName("gtctrhand");
         }
 
         public static void BringHeadAllUsing()
         {
-            FakeName("gtctrhead");
+            ChangeName("gtctrhead");
         }
 
         public static void OrbitAllUsing()
         {
-            FakeName("gtorbit");
+            ChangeName("gtorbit");
         }
 
         public static void CopyAllUsing()
         {
-            FakeName("gtcopy");
+            ChangeName("gtcopy");
         }
 
         public static void TagAllUsing()
         {
-            FakeName("gttagall");
+            ChangeName("gttagall");
         }
 
         public static void SpamNotifsAllUsing()
         {
-            FakeName("gtnotifs");
+            ChangeName("gtnotifs");
         }
 
         public static void UpdateWarningAllUsing()
         {
-            FakeName("gtupdate");
+            ChangeName("gtupdate");
         }
 
         public static void NoMenuAllUsing()
         {
-            FakeName("gtnomenu");
+            ChangeName("gtnomenu");
         }
 
         public static void NoModsAllUsing()
         {
-            FakeName("gtnomods");
+            ChangeName("gtnomods");
         }
     }
 }

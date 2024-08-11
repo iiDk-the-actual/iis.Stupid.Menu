@@ -9,7 +9,6 @@ using Photon.Realtime;
 using PlayFab;
 using PlayFab.ClientModels;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -85,7 +84,7 @@ namespace iiMenu.Mods
             }
             else
             {
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to security.</color>");
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to safety.</color>");
             }
         }
 
@@ -162,7 +161,7 @@ namespace iiMenu.Mods
                         {
                             //GetIndex("Set Master Gum").enabled = false;
                             //ReloadMenu();
-                            //NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to security.</color>");
+                            //NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to safety.</color>");
                             PhotonNetwork.CurrentRoom.SetMasterClient(owner);
                         }
                         kgDebounce = Time.time + 0.5f;
@@ -319,26 +318,6 @@ namespace iiMenu.Mods
                 fieldInfo.SetValue(controller, reliableState);
             }
         }*/
-
-        public static void SpazTargets()
-        {
-            if (!PhotonNetwork.IsMasterClient)
-            {
-                if (!GetIndex("Disable Auto Anti Ban").enabled)
-                {
-                    FastMaster();
-                }
-            }
-            else
-            {
-                System.Type targ = typeof(HitTargetScoreDisplay);
-                MethodInfo StartEruptionMethod = targ.GetMethod("OnScoreChanged", BindingFlags.NonPublic | BindingFlags.Instance);
-                HitTargetScoreDisplay[] vs = GameObject.FindObjectsOfType<HitTargetScoreDisplay>();
-                HitTargetScoreDisplay v = vs[UnityEngine.Random.Range(0, vs.Length - 1)];
-                v.rotateSpeed = 9999;
-                StartEruptionMethod?.Invoke(v, new object[] { Random.Range(0, 999) });
-            }
-        }
 
         public static void SpawnSecondLook()
         {
@@ -582,7 +561,7 @@ namespace iiMenu.Mods
                 GorillaTagger.Instance.offlineVRRig.enabled = true;
             }
         }
-        
+
         public static void AtticFlingGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
@@ -629,6 +608,7 @@ namespace iiMenu.Mods
             }
         }
 
+        /*
         private static float lmfao = 0f;
         private static bool didit = false;
         public static void DuplicateRig() // Credits to <@1166467350485282968> on Discord @youtubetaught for the rig duplicator
@@ -669,6 +649,7 @@ namespace iiMenu.Mods
                 lmfao = Time.time + 2.5f;
             }
         }
+        */
 
         public static void AcidSelf()
         {
