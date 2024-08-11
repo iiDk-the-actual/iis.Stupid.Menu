@@ -1,9 +1,9 @@
 ﻿using Cinemachine;
-using ExitGames.Client.Photon;
 using GorillaNetworking;
 using iiMenu.Notifications;
 using Photon.Pun;
 using System.Diagnostics;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Valve.VR;
@@ -115,41 +115,27 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void CreatePublic()
+        public static void CreateRoom(string roomName, bool isPublic) // Once again thanks to Shiny for discovering a thing that doesn't work anymore
         {
-            Hashtable customRoomProperties;
-            /*if (PhotonNetworkController.Instance.currentJoinTrigger.gameModeName != "city" && PhotonNetworkController.Instance.currentJoinTrigger.gameModeName != "basement")
-            {*/
-            customRoomProperties = new Hashtable
+            PhotonNetworkController.Instance.currentJoinTrigger = GorillaComputer.instance.GetJoinTriggerForZone("forest");
+            RoomConfig roomConfig = new RoomConfig()
             {
+                createIfMissing = true,
+                isJoinable = true,
+                isPublic = isPublic,
+                MaxPlayers = PhotonNetworkController.Instance.GetRoomSize(PhotonNetworkController.Instance.currentJoinTrigger.networkZone),
+                customProps = new ExitGames.Client.Photon.Hashtable()
                 {
-                    "gameMode",
-                    PhotonNetworkController.Instance.currentJoinTrigger.networkZone + GorillaComputer.instance.currentQueue + GorillaComputer.instance.currentGameMode.Value
+                    { "gameMode", PhotonNetworkController.Instance.currentJoinTrigger.GetFullDesiredGameModeString() },
+                    { "platform", (string)typeof(PhotonNetworkController).GetField("platformTag", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(PhotonNetworkController.Instance) }
                 }
             };
-            /*}
-            else
-            {
-                customRoomProperties = new Hashtable
-                {
-                    {
-                        "gameMode",
-                        PhotonNetworkController.Instance.currentJoinTrigger.gameModeName + GorillaComputer.instance.currentQueue + "INFECTION"
-                    }
-                };
-            }*/
-            Photon.Realtime.RoomOptions roomOptions = new Photon.Realtime.RoomOptions();
-            roomOptions.IsVisible = true;
-            roomOptions.IsOpen = true;
-            roomOptions.MaxPlayers = PhotonNetworkController.Instance.GetRoomSize(PhotonNetworkController.Instance.currentJoinTrigger.networkZone);
-            roomOptions.CustomRoomProperties = customRoomProperties;
-            roomOptions.PublishUserId = true;
-            roomOptions.CustomRoomPropertiesForLobby = new string[]
-            {
-                "gameMode"
-            };
-            string name = RandomRoomName();
-            PhotonNetwork.CreateRoom(name, roomOptions, null, null);
+            NetworkSystem.Instance.ConnectToRoom(roomName, roomConfig);
+        }
+
+        public static void CreatePublic() 
+        {
+            CreateRoom(RandomRoomName(), true);
         }
 
         public static void iisStupidMenuRoom()
@@ -193,12 +179,13 @@ namespace iiMenu.Mods
             Application.Quit();
         }
 
-        public static void DisableFPC()
+        private static bool wasenabled = true;
+
+        public static void EnableFPC()
         {
             if (TPC != null)
             {
-                TPC.GetComponent<Camera>().fieldOfView = 60f;
-                TPC.gameObject.transform.Find("CM vcam1").GetComponent<CinemachineVirtualCamera>().enabled = true;
+                TPC.gameObject.transform.Find("CM vcam1").GetComponent<CinemachineVirtualCamera>().enabled = wasenabled;
             }
         }
 
@@ -210,6 +197,15 @@ namespace iiMenu.Mods
                 TPC.gameObject.transform.Find("CM vcam1").GetComponent<CinemachineVirtualCamera>().enabled = false;
                 TPC.gameObject.transform.position = GorillaTagger.Instance.headCollider.transform.position;
                 TPC.gameObject.transform.rotation = Quaternion.Lerp(TPC.transform.rotation, GorillaTagger.Instance.headCollider.transform.rotation, 0.075f);
+            }
+        }
+
+        public static void DisableFPC()
+        {
+            if (TPC != null)
+            {
+                TPC.GetComponent<Camera>().fieldOfView = 60f;
+                TPC.gameObject.transform.Find("CM vcam1").GetComponent<CinemachineVirtualCamera>().enabled = wasenabled;
             }
         }
 
@@ -330,6 +326,8 @@ namespace iiMenu.Mods
             /*GorillaMouthFlap victim = GorillaTagger.Instance.offlineVRRig.GetComponent<GorillaMouthFlap>();
             GorillaSpeakerLoudness victimm = (GorillaSpeakerLoudness)typeof(GorillaMouthFlap).GetField("speaker", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(victim);
             typeof(GorillaSpeakerLoudness).GetField("micConnected", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(victimm, false);*/
+            GorillaTagger.Instance.offlineVRRig.shouldSendSpeakingLoudness = false;
+            typeof(VRRig).GetField("speakingLoudness", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(GorillaTagger.Instance.offlineVRRig, 0f);
             Patches.MicPatch.returnAsNone = true;
         }
 
@@ -339,6 +337,7 @@ namespace iiMenu.Mods
             GorillaMouthFlap victim = GorillaTagger.Instance.offlineVRRig.GetComponent<GorillaMouthFlap>();
             GorillaSpeakerLoudness victimm = (GorillaSpeakerLoudness)typeof(GorillaMouthFlap).GetField("speaker", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(victim);
             typeof(GorillaSpeakerLoudness).GetField("micConnected", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(victimm, true);*/
+            GorillaTagger.Instance.offlineVRRig.shouldSendSpeakingLoudness = true;
             Patches.MicPatch.returnAsNone = false;
         }
 

@@ -1,7 +1,10 @@
-﻿using GorillaNetworking;
+﻿using GorillaLocomotion.Gameplay;
+using GorillaNetworking;
 using GorillaTag;
 using GorillaTagScripts;
 using GorillaTagScripts.ObstacleCourse;
+using iiMenu.Classes;
+using iiMenu.Menu;
 using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Voice.Unity.UtilityScripts;
@@ -12,7 +15,6 @@ using System.IO;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static BuilderPieceInteractor;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -135,16 +137,40 @@ namespace iiMenu.Mods
         public static void FixHandTaps()
         {
             GorillaTagger.Instance.handTapVolume = 0.1f;
+            Patches.HandTapPatch.doPatch = false;
+            Patches.HandTapPatch.tapsEnabled = true;
+            Patches.HandTapPatch.doOverride = false;
+            Patches.HandTapPatch.overrideVolume = 0.1f;
         }
 
         public static void LoudHandTaps()
         {
-            GorillaTagger.Instance.handTapVolume = int.MaxValue;
+            GorillaTagger.Instance.handTapVolume = 99999f;
+            Patches.HandTapPatch.doPatch = true;
+            Patches.HandTapPatch.tapsEnabled = true;
+            Patches.HandTapPatch.doOverride = true;
+            Patches.HandTapPatch.overrideVolume = 99999f;
         }
 
         public static void SilentHandTaps()
         {
             GorillaTagger.Instance.handTapVolume = 0;
+            Patches.HandTapPatch.doPatch = true;
+            Patches.HandTapPatch.tapsEnabled = false;
+            Patches.HandTapPatch.doOverride = false;
+            Patches.HandTapPatch.overrideVolume = 0f;
+        }
+
+        public static void SilentHandTapsOnTag()
+        {
+            if (PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
+            {
+                SilentHandTaps();
+            } else
+            {
+                FixHandTaps();
+            }
+            
         }
 
         public static void EnableInstantHandTaps()
@@ -155,6 +181,28 @@ namespace iiMenu.Mods
         public static void DisableInstantHandTaps()
         {
             GorillaTagger.Instance.tapCoolDown = 0.33f;
+        }
+
+        public static void FastRopes()
+        {
+            foreach (GorillaRopeSwingSettings settings in GameObject.FindObjectsOfType(typeof(GorillaRopeSwingSettings)))
+            {
+                if (settings.name.Contains("Default"))
+                {
+                    settings.inheritVelocityMultiplier = 4f;
+                }
+            }
+        }
+
+        public static void RegularRopes()
+        {
+            foreach (GorillaRopeSwingSettings settings in GameObject.FindObjectsOfType(typeof(GorillaRopeSwingSettings)))
+            {
+                if (settings.name.Contains("Default"))
+                {
+                    settings.inheritVelocityMultiplier = 0.9f;
+                }
+            }
         }
 
         /*
@@ -283,8 +331,8 @@ namespace iiMenu.Mods
             {
                 GorillaTagger.Instance.myVRRig.RPC("PlaySplashEffect", RpcTarget.All, new object[]
                 {
-                    GorillaTagger.Instance.offlineVRRig.transform.position + new Vector3(UnityEngine.Random.Range(-0.5f,0.5f),UnityEngine.Random.Range(-0.5f,0.5f),UnityEngine.Random.Range(-0.5f,0.5f)),
-                    GorillaTagger.Instance.offlineVRRig.transform.rotation,
+                    GorillaTagger.Instance.offlineVRRig.transform.position + new Vector3(UnityEngine.Random.Range(-0.5f, 0.5f),UnityEngine.Random.Range(-0.5f, 0.5f),UnityEngine.Random.Range(-0.5f, 0.5f)),
+                    Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0,360), UnityEngine.Random.Range(0,360), UnityEngine.Random.Range(0,360))),
                     4f,
                     100f,
                     true,
@@ -366,6 +414,10 @@ namespace iiMenu.Mods
                         });
                         RPCProtection();
                     }
+                    else
+                    {
+                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not tagged.</color>");
+                    }
                     ParticleDelay = Time.time + 0.1f;
                 }
             }
@@ -381,20 +433,30 @@ namespace iiMenu.Mods
 
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
-                    GorillaTagger.Instance.offlineVRRig.enabled = false;
-                    GorillaTagger.Instance.offlineVRRig.transform.position = NewPointer.transform.position - new Vector3(0, 1, 0);
-                    GorillaTagger.Instance.myVRRig.transform.position = NewPointer.transform.position - new Vector3(0, 1, 0);
-                    if (Time.time > ParticleDelay)
+                    if (PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
                     {
-                        GorillaTagger.Instance.myVRRig.RPC("OnHandTapRPC", RpcTarget.All, new object[]
+                        GorillaTagger.Instance.offlineVRRig.enabled = false;
+                        GorillaTagger.Instance.offlineVRRig.transform.position = NewPointer.transform.position - new Vector3(0, 1, 0);
+                        GorillaTagger.Instance.myVRRig.transform.position = NewPointer.transform.position - new Vector3(0, 1, 0);
+                        GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.position = NewPointer.transform.position;
+                        GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.position = NewPointer.transform.position;
+                        if (Time.time > ParticleDelay)
                         {
-                            18,
-                            false,
-                            999999f,
-                            Utils.PackVector3ToLong(new Vector3(99999f, 99999f, 99999f))
-                        });
-                        RPCProtection();
-                        ParticleDelay = Time.time + 0.1f;
+                            GorillaTagger.Instance.myVRRig.RPC("OnHandTapRPC", RpcTarget.All, new object[]
+                            {
+                                18,
+                                false,
+                                999999f,
+                                Utils.PackVector3ToLong(new Vector3(99999f, 99999f, 99999f))
+                            });
+                            RPCProtection();
+                            ParticleDelay = Time.time + 0.1f;
+                        }
+                    }
+                    else
+                    {
+                        GorillaTagger.Instance.offlineVRRig.enabled = true;
+                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not tagged.</color>");
                     }
                 }
                 else
@@ -989,7 +1051,7 @@ namespace iiMenu.Mods
         {
             Photon.Voice.Unity.Recorder mic = GameObject.Find("Photon Manager").GetComponent<Photon.Voice.Unity.Recorder>();
             mic.SamplingRate = SamplingRate.Sampling16000;
-            mic.Bitrate = 30000;
+            mic.Bitrate = 20000;
 
             mic.RestartRecording(true);
         }
@@ -1535,6 +1597,95 @@ namespace iiMenu.Mods
             BuilderPieceInteractor.instance.heldPiece[1] = null;
         }
 
+        public static void SlowMonsters()
+        {
+            foreach (MonkeyeAI monkeyeAI in GetMonsters())
+            {
+                if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; } // GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                monkeyeAI.speed = 0.02f;
+            }
+        }
+
+        public static void FastMonsters()
+        {
+            foreach (MonkeyeAI monkeyeAI in GetMonsters())
+            {
+                if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; } // GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                monkeyeAI.speed = 0.5f;
+            }
+        }
+
+        public static void FixMonsters()
+        {
+            foreach (MonkeyeAI monkeyeAI in GetMonsters())
+            {
+                if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; } // GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                monkeyeAI.speed = 0.1f;
+            }
+        }
+
+        public static void GrabMonsters()
+        {
+            if (rightGrab)
+            {
+                foreach (MonkeyeAI monkeyeAI in GetMonsters())
+                {
+                    if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; } // GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                    monkeyeAI.gameObject.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                }
+            }
+        }
+
+        public static void MonsterGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                {
+                    foreach (MonkeyeAI monkeyeAI in GetMonsters())
+                    {
+                        if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; } // GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                        monkeyeAI.gameObject.transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
+                    }
+                }
+            }
+        }
+
+        public static void SpazMonsters()
+        {
+            foreach (MonkeyeAI monkeyeAI in GetMonsters())
+            {
+                if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; } // GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                monkeyeAI.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+            }
+        }
+
+        public static void OrbitMonsters()
+        {
+            MonkeyeAI[] them = GetMonsters();
+            int index = 0;
+            foreach (MonkeyeAI monkeyeAI in GetMonsters())
+            {
+                if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; } // GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                float offset = (360f / (float)them.Length) * index;
+                monkeyeAI.transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)) * 2f, 1f, MathF.Sin(offset + ((float)Time.frameCount / 30)) * 2f);
+                index++;
+            }
+        }
+
+        public static void DestroyMonsters()
+        {
+            foreach (MonkeyeAI monkeyeAI in GetMonsters())
+            {
+                if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; } // GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                monkeyeAI.gameObject.transform.position = new Vector3(99999f, 99999f, 99999f);
+            }
+        }
+
         private static List<BuilderPiece> treees = new List<BuilderPiece> { };
         public static void GetTrees()
         {
@@ -1802,6 +1953,28 @@ namespace iiMenu.Mods
             train.GetComponent<TraverseSpline>().duration = 30f;
         }*/
 
+        public static void LowercaseName()
+        {
+            string name = PhotonNetwork.NickName.ToLower();
+            string outputname = "";
+            foreach (char ch in name)
+            {
+                if (superscript.ContainsKey(ch))
+                {
+                    outputname += superscript[ch];
+                } else
+                {
+                    outputname += ch;
+                }
+            }
+            ChangeName(outputname);
+        }
+
+        public static void LongName()
+        {
+            ChangeName("ǄǄǄǄǄǄǄǄǄǄǄǄ");
+        }
+
         public static void RemoveName()
         {
             ChangeName("________");
@@ -1994,19 +2167,6 @@ namespace iiMenu.Mods
             }
         }
 
-
-        public static void NegativeColor()
-        {
-            PlayerPrefs.SetFloat("redValue", -2147483648);
-            PlayerPrefs.SetFloat("greenValue", -2147483648);
-            PlayerPrefs.SetFloat("blueValue", -2147483648);
-
-            GorillaTagger.Instance.UpdateColor(-2147483648, -2147483648, -2147483648);
-            PlayerPrefs.Save();
-            GorillaTagger.Instance.myVRRig.RPC("InitializeNoobMaterial", RpcTarget.All, new object[] { -2147483648, -2147483648, -2147483648, false });
-            RPCProtection();
-        }
-
         public static void BecomeGoldentrophy()
         {
             ChangeName("goldentrophy");
@@ -2195,7 +2355,7 @@ namespace iiMenu.Mods
         }
 
         private static List<string> ownedarchive = null;
-        private static string[] GetCosmetics()
+        private static string[] GetOwnedCosmetics()
         {
             if (ownedarchive == null)
             {
@@ -2210,11 +2370,28 @@ namespace iiMenu.Mods
             }
             return ownedarchive.ToArray();
         }
+        private static List<string> tryonarchive = null;
+        private static string[] GetTryOnCosmetics()
+        {
+            if (tryonarchive == null)
+            {
+                tryonarchive = new List<string> { };
+                foreach (CosmeticsController.CosmeticItem dearlord in CosmeticsController.instance.allCosmetics)
+                {
+                    if (dearlord.canTryOn)
+                    {
+                        tryonarchive.Add(dearlord.itemName);
+                    }
+                }
+            }
+            return tryonarchive.ToArray();
+        }
+
         public static void SpazAccessories()
         {
             if (rightTrigger > 0.5f)
             {
-                string[] owned = GetCosmetics();
+                string[] owned = GorillaTagger.Instance.offlineVRRig.inTryOnRoom ? GetTryOnCosmetics() : GetOwnedCosmetics();
                 int amnt = Math.Clamp(owned.Length, 0, 15);
                 if (amnt > 0)
                 {
@@ -2223,10 +2400,110 @@ namespace iiMenu.Mods
                     {
                         holyshit.Add(owned[UnityEngine.Random.Range(0, owned.Length - 1)]);
                     }
+                    if (GorillaTagger.Instance.offlineVRRig.inTryOnRoom)
+                    {
+                        CosmeticsController.instance.tryOnSet = new CosmeticsController.CosmeticSet(holyshit.ToArray(), CosmeticsController.instance);
+                        GorillaTagger.Instance.offlineVRRig.tryOnSet = new CosmeticsController.CosmeticSet(holyshit.ToArray(), CosmeticsController.instance);
+                    }
+                    else
+                    {
+                        CosmeticsController.instance.currentWornSet = new CosmeticsController.CosmeticSet(holyshit.ToArray(), CosmeticsController.instance);
+                        GorillaTagger.Instance.offlineVRRig.cosmeticSet = new CosmeticsController.CosmeticSet(holyshit.ToArray(), CosmeticsController.instance);
+                    }
                     GorillaTagger.Instance.myVRRig.RPC("UpdateCosmeticsWithTryon", RpcTarget.All, new object[] { holyshit.ToArray(), holyshit.ToArray() });
                     RPCProtection();
                 }
             }
+        }
+
+        public static void SpazAccessoriesOthers()
+        {
+            if (rightTrigger > 0.5f)
+            {
+                string[] owned = GorillaTagger.Instance.offlineVRRig.inTryOnRoom ? GetTryOnCosmetics() : GetOwnedCosmetics();
+                int amnt = Math.Clamp(owned.Length, 0, 15);
+                if (amnt > 0)
+                {
+                    List<string> holyshit = new List<string> { };
+                    for (int i = 0; i <= amnt; i++)
+                    {
+                        holyshit.Add(owned[UnityEngine.Random.Range(0, owned.Length - 1)]);
+                    }
+                    if (GorillaTagger.Instance.offlineVRRig.inTryOnRoom)
+                    {
+                        CosmeticsController.instance.tryOnSet = new CosmeticsController.CosmeticSet(holyshit.ToArray(), CosmeticsController.instance);
+                        GorillaTagger.Instance.offlineVRRig.tryOnSet = new CosmeticsController.CosmeticSet(holyshit.ToArray(), CosmeticsController.instance);
+                    }
+                    else
+                    {
+                        CosmeticsController.instance.currentWornSet = new CosmeticsController.CosmeticSet(holyshit.ToArray(), CosmeticsController.instance);
+                        GorillaTagger.Instance.offlineVRRig.cosmeticSet = new CosmeticsController.CosmeticSet(holyshit.ToArray(), CosmeticsController.instance);
+                    }
+                    GorillaTagger.Instance.myVRRig.RPC("UpdateCosmeticsWithTryon", RpcTarget.Others, new object[] { holyshit.ToArray(), holyshit.ToArray() });
+                    RPCProtection();
+                }
+            }
+        }
+
+        private static string[] archiveCosmetics = null;
+        public static void TryOnAnywhere()
+        {
+            archiveCosmetics = CosmeticsController.instance.currentWornSet.ToDisplayNameArray();
+            CosmeticsController.instance.currentWornSet = new CosmeticsController.CosmeticSet(new string[] { }, CosmeticsController.instance);
+            GorillaTagger.Instance.offlineVRRig.cosmeticSet = new CosmeticsController.CosmeticSet(new string[] { }, CosmeticsController.instance);
+            GorillaTagger.Instance.myVRRig.RPC("UpdateCosmeticsWithTryon", RpcTarget.All, new object[] { new string[] { }, CosmeticsController.instance.tryOnSet.ToDisplayNameArray() });
+            RPCProtection();
+        }
+
+        public static void TryOffAnywhere()
+        {
+            CosmeticsController.instance.currentWornSet = new CosmeticsController.CosmeticSet(archiveCosmetics, CosmeticsController.instance);
+            GorillaTagger.Instance.offlineVRRig.cosmeticSet = new CosmeticsController.CosmeticSet(archiveCosmetics, CosmeticsController.instance);
+            GorillaTagger.Instance.myVRRig.RPC("UpdateCosmeticsWithTryon", RpcTarget.All, new object[] { archiveCosmetics, CosmeticsController.instance.tryOnSet.ToDisplayNameArray() });
+            RPCProtection();
+        }
+
+        public static void AddCosmeticToCart(string cosmetic)
+        {
+            CosmeticsController.instance.currentCart.Insert(0, CosmeticsController.instance.GetItemFromDict(cosmetic));
+            CosmeticsController.instance.UpdateShoppingCart();
+        }
+
+        public static void CosmeticBrowser()
+        {
+            buttonsType = 29;
+            pageNumber = 0;
+            List<ButtonInfo> cosmeticbuttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Cosmetic Browser", method = () => Settings.EnableFun(), isTogglable = false, toolTip = "Brings you back to the fun mods." } };
+            foreach (GorillaNetworking.CosmeticsController.CosmeticItem hat in GorillaNetworking.CosmeticsController.instance.allCosmetics)
+            {
+                if (hat.canTryOn)
+                {
+                    cosmeticbuttons.Add(new ButtonInfo { buttonText = hat.overrideDisplayName, method = () => Fun.AddCosmeticToCart(hat.itemName), isTogglable = false, toolTip = "Adds the " + hat.overrideDisplayName.ToLower() + "to your cart." });
+                }
+            }
+            Buttons.buttons[29] = cosmeticbuttons.ToArray();
+        }
+
+        public static void RemoveCosmeticBrowser()
+        {
+            Buttons.buttons[29] = new ButtonInfo[] { };
+            Settings.EnableFun();
+        }
+
+        private static bool lasttagged = false;
+        public static void DisableCosmeticsOnTag()
+        {
+            if (!lasttagged && PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
+            {
+                GorillaTagger.Instance.myVRRig.RPC("UpdateCosmeticsWithTryon", RpcTarget.Others, new object[] { new string[] { "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null" }, new string[] { "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null", "null" } });
+                RPCProtection();
+            }
+            if (lasttagged && !PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
+            {
+                GorillaTagger.Instance.myVRRig.RPC("UpdateCosmeticsWithTryon", RpcTarget.Others, new object[] { CosmeticsController.instance.currentWornSet.ToDisplayNameArray(), CosmeticsController.instance.tryOnSet.ToDisplayNameArray() });
+                RPCProtection();
+            }
+            lasttagged = PlayerIsTagged(GorillaTagger.Instance.offlineVRRig);
         }
 
         public static void EnableCustomSoundOnJoin()

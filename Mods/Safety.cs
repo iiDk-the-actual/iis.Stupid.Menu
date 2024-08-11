@@ -203,12 +203,10 @@ namespace iiMenu.Mods
             catch { } // Not connected
         }
 
-        public static bool lastannoy = false;
         public static void AntiReportLag()
         {
             try
             {
-                bool hasFoundAnnoyance = false;
                 foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
                 {
                     if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
@@ -223,10 +221,9 @@ namespace iiMenu.Mods
 
                                 if ((D1 < threshold || D2 < threshold) && Time.time > kgDebounce)
                                 {
-                                    hasFoundAnnoyance = true;
                                     if (!riskyModsEnabled)
                                     {
-                                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> This mod has been disabled due to security.");
+                                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> This mod has been disabled due to safety.");
                                     }
                                     else
                                     {
@@ -251,11 +248,6 @@ namespace iiMenu.Mods
                         }
                     }
                 }
-                if (hasFoundAnnoyance && !lastannoy)
-                {
-                    GorillaTagger.Instance.offlineVRRig.enabled = true;
-                }
-                lastannoy = hasFoundAnnoyance;
             }
             catch { } // Not connected
         }
@@ -264,7 +256,6 @@ namespace iiMenu.Mods
         {
             try
             {
-                bool hasFoundAnnoyance = false;
                 foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
                 {
                     if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
@@ -279,10 +270,9 @@ namespace iiMenu.Mods
 
                                 if (D1 < threshold || D2 < threshold)
                                 {
-                                    hasFoundAnnoyance = true;
                                     if (!riskyModsEnabled)
                                     {
-                                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> This mod has been disabled due to security.");
+                                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> This mod has been disabled due to safety.");
                                     }
                                     else
                                     {
@@ -304,11 +294,6 @@ namespace iiMenu.Mods
                         }
                     }
                 }
-                if (hasFoundAnnoyance && !lastannoy)
-                {
-                    GorillaTagger.Instance.offlineVRRig.enabled = true;
-                }
-                lastannoy = hasFoundAnnoyance;
             }
             catch { } // Not connected
         }
@@ -538,36 +523,88 @@ namespace iiMenu.Mods
             lastinlobbyagain = PhotonNetwork.InRoom;
         }
 
-        private static float stupidannoyingthing = 0f;
-        private static int lastPlayerCount = -1;
-        public static void NameSpoof()
+        public static void NameSpoofEnabled()
         {
-            string randomName = "";
-            for (int i = 0; i < 12; i++)
-            {
-                randomName += letters[UnityEngine.Random.Range(0, letters.Length - 1)];
-            }
+            iiMenu.Patches.ColorPatch.nameSpoofEnabled = true;
+        }
 
-            if (PhotonNetwork.InRoom)
+        public static void NameSpoofDisabled()
+        {
+            iiMenu.Patches.ColorPatch.nameSpoofEnabled = false;
+        }
+
+        public static void SpoofName()
+        {
+            string[] names = new string[]
             {
-                if (lastPlayerCount != -1)
-                {
-                    if (PhotonNetwork.PlayerList.Length != lastPlayerCount)
-                    {
-                        stupidannoyingthing = Time.time + 1f;
-                    }
-                }
-                lastPlayerCount = PhotonNetwork.PlayerList.Length;
-                if (Time.time > stupidannoyingthing && stupidannoyingthing != -1)
-                {
-                    FakeName(randomName);
-                    stupidannoyingthing = -1f;
-                }
-            } else
-            {
-                lastPlayerCount = -1;
-                stupidannoyingthing = Time.time + 1f;
-            }
+                "0",
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9",
+                "SHIBAGT",
+                "PBBV",
+                "J3VU",
+                "BEES",
+                "NAMO",
+                "MANGO",
+                "FROSTY",
+                "FRISH",
+                "LITTLETIMMY",
+                "SILLYBILLY",
+                "TIMMY",
+                "MINIGAMES",
+                "MINIGAMESKID",
+                "JMANCURLY",
+                "VMT",
+                "ELLIOT",
+                "DEEP",
+                "BTC",
+                "KMAN",
+                "YOSEF",
+                "POLAR",
+                "3CLIPCE",
+                "GORILLAVR",
+                "GORILLAVRGT",
+                "GORILLAGTVR",
+                "GORILLAGT",
+                "SHARKPUPPET",
+                "DUCKY",
+                "EDDIE",
+                "EDDY",
+                "CASEOH",
+                "SKETCH",
+                "WATERMELON",
+                "CRAZY",
+                "MONK",
+                "MONKE",
+                "MONKI",
+                "MONKEY",
+                "MONKIY",
+                "GORILL",
+                "GOORILA",
+                "GORILLA",
+                "REDBERRY",
+                "FOX",
+                "RUFUS"
+            };
+
+            ChangeName(names[UnityEngine.Random.Range(0, names.Length - 1)]);
+        }
+
+        public static void ColorSpoof()
+        {
+            iiMenu.Patches.ColorPatch.patchEnabled = true;
+        }
+
+        public static void NoColorSpoof()
+        {
+            iiMenu.Patches.ColorPatch.patchEnabled = false;
         }
     }
 }

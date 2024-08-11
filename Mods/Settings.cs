@@ -1129,7 +1129,7 @@ namespace iiMenu.Mods
             }
             if (!File.Exists("iisStupidMenu/iiMenu_CustomMenuBackground.txt"))
             {
-                File.WriteAllText("iisStupidMenu/iiMenu_CustomMenuBackground.txt", "https://cdn.discordapp.com/attachments/1222354892132454400/1263261051240316969/image.png?ex=66999708&is=66984588&hm=cd426c44ad7870894e6d68a335a541497fef5c4732fbfdc7319f6f9f59a498b1&");
+                File.WriteAllText("iisStupidMenu/iiMenu_CustomMenuBackground.txt", "");
             }
 
             if (File.Exists("iisStupidMenu/MenuBG.png"))
@@ -1138,6 +1138,7 @@ namespace iiMenu.Mods
             }
             doCustomMenuBackground = true;
             customMenuBackgroundImage = LoadTextureFromURL(File.ReadAllText("iisStupidMenu/iiMenu_CustomMenuBackground.txt"), "MenuBG.png");
+            ReloadMenu();
         }
 
         public static void FixMenuBackground()
@@ -1185,7 +1186,7 @@ namespace iiMenu.Mods
         public static void ChangeFontType() // Say goodbye to daily lagspikes and dirty if spam with new switch (x) { }
         {
             fontCycle++;
-            if (fontCycle > 7)
+            if (fontCycle > 8)
             {
                 fontCycle = 0;
             }
@@ -1220,6 +1221,9 @@ namespace iiMenu.Mods
                     return;
                 case 7:
                     activeFont = MSGOTHIC;
+                    return;
+                case 8:
+                    activeFont = impact;
                     return;
             }
         }
@@ -1899,17 +1903,6 @@ namespace iiMenu.Mods
         public static void EnableButtonVibration()
         {
             doButtonsVibrate = true;
-        }
-
-        public static void CrashAmount()
-        {
-            crashAmount++;
-            if (crashAmount > 10)
-            {
-                crashAmount = 1;
-            }
-            
-            GetIndex("Crash Amount").overlapText = "Crash Amount <color=grey>[</color><color=green>" + crashAmount.ToString() + "</color><color=grey>]</color>";
         }
 
         public static void DisableGhostview()

@@ -13,26 +13,25 @@ namespace iiMenu.Mods.Spammers
 {
     internal class Projectiles
     {
-        public static void BetaFireProjectile(string projectileName, Vector3 position, Vector3 velocity, Color color, bool noDelay = false)
+        public static GorillaVelocityEstimator jackshit = null;
+
+        public static void BetaFireProjectile(string projectileName, Vector3 position, Vector3 velocity, Color color, bool nodelay = false)
         {
-            ControllerInputPoller.instance.leftControllerGripFloat = 1f;
-            GameObject lhelp = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            UnityEngine.Object.Destroy(lhelp, 0.2f);
-            lhelp.transform.localScale = new Vector3(0.25f, 0.05f, 0.25f);
-            lhelp.transform.position = GorillaTagger.Instance.leftHandTransform.position - new Vector3(0f, UnityEngine.Random.Range(0f, 0.1f), 0f);
-            GorillaTagger.Instance.leftHandTransform.position += new Vector3(0f, UnityEngine.Random.Range(-0.01f, 0.01f), 0f);
-            //lhelp.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
-            int[] overrides = new int[]
+            if (jackshit == null)
             {
-                32,
-                204,
-                231,
-                240,
-                249,
-                252
-            };
-            lhelp.AddComponent<GorillaSurfaceOverride>().overrideIndex = overrides[Array.IndexOf(fullProjectileNames, projectileName)];
-            lhelp.GetComponent<Renderer>().enabled = false;
+                GameObject thepointless = new GameObject("Blank GVE");
+                jackshit = thepointless.AddComponent<GorillaVelocityEstimator>() as GorillaVelocityEstimator;
+            }
+            jackshit.enabled = false;
+
+            SnowballThrowable fart = GetProjectile(InternalProjectileNames[Array.IndexOf(ExternalProjectileNames, projectileName)]);
+            if (!fart.gameObject.activeSelf)
+            {
+                fart.EnableSnowballLocal(true);
+                fart.velocityEstimator = jackshit;
+                fart.transform.position = GorillaTagger.Instance.leftHandTransform.position;
+                fart.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
+            }
             if (Time.time > projDebounce)
             {
                 try
@@ -41,44 +40,26 @@ namespace iiMenu.Mods.Spammers
                     Vector3 charvel = velocity;
 
                     Vector3 oldVel = GorillaTagger.Instance.GetComponent<Rigidbody>().velocity;
-                    
-                    string[] name2 = new string[]
-                    {
-                        "LMACE. LEFT.",
-                        "LMAEX. LEFT.",
-                        "LMAGD. LEFT.",
-                        "LMAHQ. LEFT.",
-                        "LMAIE. RIGHT.",
-                        "LMAIO. LEFT."
-                    };
-                    SnowballThrowable fart = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/palm.01.L/TransferrableItemLeftHand/" + fullProjectileNames[System.Array.IndexOf(fullProjectileNames, projectileName)] + "Anchor(Clone)").transform.Find(name2[System.Array.IndexOf(fullProjectileNames, projectileName)]).GetComponent<SnowballThrowable>();
+
                     Vector3 oldPos = fart.transform.position;
                     fart.randomizeColor = true;
                     fart.transform.position = startpos;
 
                     GorillaTagger.Instance.GetComponent<Rigidbody>().velocity = charvel;
                     GorillaTagger.Instance.offlineVRRig.SetThrowableProjectileColor(true, color);
-                    GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/EquipmentInteractor").GetComponent<EquipmentInteractor>().ReleaseLeftHand();
-                    UnityEngine.Debug.Log("Setting velo");
+                    MethodInfo lsm = typeof(SnowballThrowable).GetMethod("LaunchSnowball", BindingFlags.NonPublic | BindingFlags.Instance);
+                    lsm.Invoke(fart, new object[] { });
                     GorillaTagger.Instance.GetComponent<Rigidbody>().velocity = oldVel;
                     RPCProtection();
 
                     fart.transform.position = oldPos;
                     fart.randomizeColor = false;
                 } catch (Exception e) { UnityEngine.Debug.Log(e.Message); }
-                if (projDebounceType > 0f && !noDelay)
+                if (projDebounceType > 0f && !nodelay)
                 {
                     projDebounce = Time.time + projDebounceType;
                 }
-            } else
-            {
-                GorillaTagger.Instance.GetComponent<Rigidbody>().velocity = Vector3.zero;
             }
-        }
-
-        public static void SysFireProjectile(string projectilename, string trailname, Vector3 position, Vector3 velocity, float r, float g, float b, bool bluet, bool oranget, bool noDelay = false)
-        {
-            BetaFireProjectile(projectilename, position, velocity, new Color(r, g, b, 1f), noDelay);
         }
 
         public static void BetaFireImpact(Vector3 position, float r, float g, float b, bool noDelay = false)
@@ -232,15 +213,9 @@ namespace iiMenu.Mods.Spammers
             {
                 if (GetIndex("Random Projectile").enabled)
                 {
-                    projIndex = UnityEngine.Random.Range(0, 4);
+                    projIndex = UnityEngine.Random.Range(0, ExternalProjectileNames.Length - 1);
                 }
-                string projectilename = fullProjectileNames[projIndex];
-
-                if (true)
-                {
-                    trailIndex = UnityEngine.Random.Range(0, 8);
-                }
-                string trailname = fullTrailNames[trailIndex];
+                string projectilename = ExternalProjectileNames[projIndex];
 
                 Vector3 startpos = GorillaTagger.Instance.rightHandTransform.position;
                 Vector3 charvel = GorillaLocomotion.Player.Instance.currentVelocity;
@@ -350,7 +325,7 @@ namespace iiMenu.Mods.Spammers
                 }
                 //UnityEngine.Debug.Log("updated stuff");
 
-                SysFireProjectile(projectilename, trailname, startpos, charvel, randa / 255f, randb / 255f, randc / 255f, GetIndex("Blue Team Projectiles").enabled, GetIndex("Orange Team Projectiles").enabled);
+                BetaFireProjectile(projectilename, startpos, charvel, new Color(randa / 255f, randb / 255f, randc / 255f));
                 //UnityEngine.Debug.Log("fried proj");
             }
         }
@@ -368,225 +343,106 @@ namespace iiMenu.Mods.Spammers
                     int projIndex = projmode;
                     int trailIndex = trailmode;
                     
-                    if (whoCopy.rightMiddle.calcT > 0.5f)
+                    if (GetIndex("Random Projectile").enabled)
                     {
-                        if (GetIndex("Random Projectile").enabled)
-                        {
-                            projIndex = UnityEngine.Random.Range(0, 4);
-                        }
-                        string projectilename = fullProjectileNames[projIndex];
+                        projIndex = UnityEngine.Random.Range(0, 4);
+                    }
+                    string projectilename = ExternalProjectileNames[projIndex];
 
-                        if (true)
-                        {
-                            trailIndex = UnityEngine.Random.Range(0, 8);
-                        }
-                        string trailname = fullTrailNames[trailIndex];
+                    Vector3 startpos = whoCopy.rightHandTransform.position;
+                    Vector3 charvel = Vector3.zero;
 
-                        Vector3 startpos = whoCopy.rightHandTransform.position;
-                        Vector3 charvel = Vector3.zero;
-
-                        if (GetIndex("Shoot Projectiles").enabled)
-                        {
-                            charvel = (whoCopy.rightHandTransform.transform.forward * ShootStrength);
-                        }
-
-                        if (GetIndex("Finger Gun Projectiles").enabled)
-                        {
-                            charvel = (TrueRightHand().forward * ShootStrength);
-                        }
-
-                        if (GetIndex("Random Direction").enabled)
-                        {
-                            charvel = new Vector3(UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33));
-                        }
-
-                        if (GetIndex("Above Players").enabled)
-                        {
-                            charvel = Vector3.zero;
-                            //List<VRRig> rigs = GorillaParent.instance.vrrigs;
-                            startpos = GetRandomVRRig(false).transform.position + new Vector3(0f, 1f, 0f);//rigs[UnityEngine.Random.Range(0, rigs.Count)].transform.position + new Vector3(0, 1, 0);
-                        }
-
-                        if (GetIndex("Rain Projectiles").enabled)
-                        {
-                            startpos = whoCopy.headMesh.transform.position + new Vector3(UnityEngine.Random.Range(-5f, 5f), 5f, UnityEngine.Random.Range(-5f, 5f));
-                            charvel = Vector3.zero;
-                        }
-
-                        if (GetIndex("Projectile Aura").enabled)
-                        {
-                            float time = Time.frameCount;
-                            startpos = whoCopy.headMesh.transform.position + new Vector3(MathF.Cos(time / 20), 2, MathF.Sin(time / 20));
-                        }
-
-                        if (GetIndex("Projectile Fountain").enabled)
-                        {
-                            startpos = whoCopy.headMesh.transform.position + new Vector3(0, 1, 0);
-                            charvel = new Vector3(UnityEngine.Random.Range(-10, 10), 15, UnityEngine.Random.Range(-10, 10));
-                        }
-
-                        float randa = 255f;
-                        float randb = 255f;
-                        float randc = 255f;
-
-                        if (GetIndex("Random Color").enabled)
-                        {
-                            randa = UnityEngine.Random.Range(0, 255);
-                            randb = UnityEngine.Random.Range(0, 255);
-                            randc = UnityEngine.Random.Range(0, 255);
-                        }
-
-                        if (GetIndex("Rainbow Projectiles").enabled)
-                        {
-                            float h = (Time.frameCount / 180f) % 1f;
-                            UnityEngine.Color rgbcolor = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
-                            randa = rgbcolor.r * 255;
-                            randb = rgbcolor.g * 255;
-                            randc = rgbcolor.b * 255;
-                        }
-
-                        if (GetIndex("Hard Rainbow Projectiles").enabled)
-                        {
-                            float h = (Time.frameCount / 180f) % 1f;
-                            UnityEngine.Color rgbcolor = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
-                            randa = (Mathf.Floor(rgbcolor.r * 2f) / 2f * 255f) * 100f;
-                            randb = (Mathf.Floor(rgbcolor.g * 2f) / 2f * 255f) * 100f;
-                            randc = (Mathf.Floor(rgbcolor.b * 2f) / 2f * 255f) * 100f;
-                        }
-
-                        if (GetIndex("Black Projectiles").enabled)
-                        {
-                            randa = 0f;
-                            randb = 0f;
-                            randc = 0f;
-                        }
-
-                        if (GetIndex("No Texture Projectiles").enabled)
-                        {
-                            randa = 25500f;
-                            randb = 0f;
-                            randc = 25500f;
-                        }
-
-                        if (GetIndex("Custom Colored Projectiles").enabled)
-                        {
-                            randa = red * 255;
-                            randb = green * 255;
-                            randc = blue * 255;
-                        }
-
-                        SysFireProjectile(projectilename, trailname, startpos, charvel, randa / 255f, randb / 255f, randc / 255f, GetIndex("Blue Team Projectiles").enabled, GetIndex("Orange Team Projectiles").enabled);
+                    if (GetIndex("Shoot Projectiles").enabled)
+                    {
+                        charvel = (whoCopy.rightHandTransform.transform.forward * ShootStrength);
                     }
 
-                    if (whoCopy.leftMiddle.calcT > 0.5f)
+                    if (GetIndex("Finger Gun Projectiles").enabled)
                     {
-                        if (GetIndex("Random Projectile").enabled)
-                        {
-                            projIndex = UnityEngine.Random.Range(0, 4);
-                        }
-                        string projectilename = fullProjectileNames[projIndex];
-
-                        if (true)
-                        {
-                            trailIndex = UnityEngine.Random.Range(0, 8);
-                        }
-                        string trailname = fullTrailNames[trailIndex];
-
-                        Vector3 startpos = whoCopy.leftHandTransform.position;
-                        Vector3 charvel = Vector3.zero;
-
-                        if (GetIndex("Shoot Projectiles").enabled)
-                        {
-                            charvel = (whoCopy.leftHandTransform.transform.forward * ShootStrength);
-                        }
-
-                        if (GetIndex("Finger Gun Projectiles").enabled)
-                        {
-                            charvel = (TrueRightHand().forward * ShootStrength);
-                        }
-
-                        if (GetIndex("Random Direction").enabled)
-                        {
-                            charvel = new Vector3(UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33));
-                        }
-
-                        if (GetIndex("Above Players").enabled)
-                        {
-                            charvel = Vector3.zero;
-                            //List<VRRig> rigs = GorillaParent.instance.vrrigs;
-                            startpos = GetRandomVRRig(false).transform.position + new Vector3(0f, 1f, 0f);//rigs[UnityEngine.Random.Range(0, rigs.Count)].transform.position + new Vector3(0, 1, 0);
-                        }
-
-                        if (GetIndex("Rain Projectiles").enabled)
-                        {
-                            startpos = whoCopy.headMesh.transform.position + new Vector3(UnityEngine.Random.Range(-5f, 5f), 5f, UnityEngine.Random.Range(-5f, 5f));
-                            charvel = Vector3.zero;
-                        }
-
-                        if (GetIndex("Projectile Aura").enabled)
-                        {
-                            float time = Time.frameCount;
-                            startpos = whoCopy.headMesh.transform.position + new Vector3(MathF.Cos(time / 20), 2, MathF.Sin(time / 20));
-                        }
-
-                        if (GetIndex("Projectile Fountain").enabled)
-                        {
-                            startpos = whoCopy.headMesh.transform.position + new Vector3(0, 1, 0);
-                            charvel = new Vector3(UnityEngine.Random.Range(-10, 10), 15, UnityEngine.Random.Range(-10, 10));
-                        }
-
-                        float randa = 255f;
-                        float randb = 255f;
-                        float randc = 255f;
-
-                        if (GetIndex("Random Color").enabled)
-                        {
-                            randa = UnityEngine.Random.Range(0, 255);
-                            randb = UnityEngine.Random.Range(0, 255);
-                            randc = UnityEngine.Random.Range(0, 255);
-                        }
-
-                        if (GetIndex("Rainbow Projectiles").enabled)
-                        {
-                            float h = (Time.frameCount / 180f) % 1f;
-                            UnityEngine.Color rgbcolor = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
-                            randa = rgbcolor.r * 255;
-                            randb = rgbcolor.g * 255;
-                            randc = rgbcolor.b * 255;
-                        }
-
-                        if (GetIndex("Hard Rainbow Projectiles").enabled)
-                        {
-                            float h = (Time.frameCount / 180f) % 1f;
-                            UnityEngine.Color rgbcolor = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
-                            randa = (Mathf.Floor(rgbcolor.r * 2f) / 2f * 255f) * 100f;
-                            randb = (Mathf.Floor(rgbcolor.g * 2f) / 2f * 255f) * 100f;
-                            randc = (Mathf.Floor(rgbcolor.b * 2f) / 2f * 255f) * 100f;
-                        }
-
-                        if (GetIndex("Black Projectiles").enabled)
-                        {
-                            randa = 0f;
-                            randb = 0f;
-                            randc = 0f;
-                        }
-
-                        if (GetIndex("No Texture Projectiles").enabled)
-                        {
-                            randa = 25500f;
-                            randb = 0f;
-                            randc = 25500f;
-                        }
-
-                        if (GetIndex("Custom Colored Projectiles").enabled)
-                        {
-                            randa = red * 255;
-                            randb = green * 255;
-                            randc = blue * 255;
-                        }
-
-                        SysFireProjectile(projectilename, trailname, startpos, charvel, randa / 255f, randb / 255f, randc / 255f, GetIndex("Blue Team Projectiles").enabled, GetIndex("Orange Team Projectiles").enabled);
+                        charvel = (TrueRightHand().forward * ShootStrength);
                     }
+
+                    if (GetIndex("Random Direction").enabled)
+                    {
+                        charvel = new Vector3(UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33));
+                    }
+
+                    if (GetIndex("Above Players").enabled)
+                    {
+                        charvel = Vector3.zero;
+                        //List<VRRig> rigs = GorillaParent.instance.vrrigs;
+                        startpos = GetRandomVRRig(false).transform.position + new Vector3(0f, 1f, 0f);//rigs[UnityEngine.Random.Range(0, rigs.Count)].transform.position + new Vector3(0, 1, 0);
+                    }
+
+                    if (GetIndex("Rain Projectiles").enabled)
+                    {
+                        startpos = whoCopy.headMesh.transform.position + new Vector3(UnityEngine.Random.Range(-5f, 5f), 5f, UnityEngine.Random.Range(-5f, 5f));
+                        charvel = Vector3.zero;
+                    }
+
+                    if (GetIndex("Projectile Aura").enabled)
+                    {
+                        float time = Time.frameCount;
+                        startpos = whoCopy.headMesh.transform.position + new Vector3(MathF.Cos(time / 20), 2, MathF.Sin(time / 20));
+                    }
+
+                    if (GetIndex("Projectile Fountain").enabled)
+                    {
+                        startpos = whoCopy.headMesh.transform.position + new Vector3(0, 1, 0);
+                        charvel = new Vector3(UnityEngine.Random.Range(-10, 10), 15, UnityEngine.Random.Range(-10, 10));
+                    }
+
+                    float randa = 255f;
+                    float randb = 255f;
+                    float randc = 255f;
+
+                    if (GetIndex("Random Color").enabled)
+                    {
+                        randa = UnityEngine.Random.Range(0, 255);
+                        randb = UnityEngine.Random.Range(0, 255);
+                        randc = UnityEngine.Random.Range(0, 255);
+                    }
+
+                    if (GetIndex("Rainbow Projectiles").enabled)
+                    {
+                        float h = (Time.frameCount / 180f) % 1f;
+                        UnityEngine.Color rgbcolor = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
+                        randa = rgbcolor.r * 255;
+                        randb = rgbcolor.g * 255;
+                        randc = rgbcolor.b * 255;
+                    }
+
+                    if (GetIndex("Hard Rainbow Projectiles").enabled)
+                    {
+                        float h = (Time.frameCount / 180f) % 1f;
+                        UnityEngine.Color rgbcolor = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
+                        randa = (Mathf.Floor(rgbcolor.r * 2f) / 2f * 255f) * 100f;
+                        randb = (Mathf.Floor(rgbcolor.g * 2f) / 2f * 255f) * 100f;
+                        randc = (Mathf.Floor(rgbcolor.b * 2f) / 2f * 255f) * 100f;
+                    }
+
+                    if (GetIndex("Black Projectiles").enabled)
+                    {
+                        randa = 0f;
+                        randb = 0f;
+                        randc = 0f;
+                    }
+
+                    if (GetIndex("No Texture Projectiles").enabled)
+                    {
+                        randa = 25500f;
+                        randb = 0f;
+                        randc = 25500f;
+                    }
+
+                    if (GetIndex("Custom Colored Projectiles").enabled)
+                    {
+                        randa = red * 255;
+                        randb = green * 255;
+                        randc = blue * 255;
+                    }
+
+                    BetaFireProjectile(projectilename, startpos, charvel, new Color(randa / 255f, randb / 255f, randc / 255f));
                 }
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
@@ -608,111 +464,6 @@ namespace iiMenu.Mods.Spammers
             }
         }
 
-        /*
-        public static void ProjectileBomb()
-        {
-            if (rightGrab)
-            {
-                if (ProjBombObject == null)
-                {
-                    ProjBombObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                    UnityEngine.Object.Destroy(ProjBombObject.GetComponent<Rigidbody>());
-                    UnityEngine.Object.Destroy(ProjBombObject.GetComponent<SphereCollider>());
-                    ProjBombObject.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                }
-                ProjBombObject.transform.position = GorillaTagger.Instance.rightHandTransform.position;
-            }
-            if (ProjBombObject != null)
-            {
-                if (rightPrimary)
-                {
-                    Vector3 spawnPos = ProjBombObject.transform.position;
-                    UnityEngine.Object.Destroy(ProjBombObject);
-                    ProjBombObject = null;
-
-                    for (var i = 0; i < 5; i++)
-                    {
-                        int projIndex = projmode;
-                        if (GetIndex("Random Projectile").enabled)
-                        {
-                            projIndex = UnityEngine.Random.Range(0, 4);
-                        }
-                        string projectilename = fullProjectileNames[projIndex];
-
-                        int trailIndex = trailmode;
-                        if (true /*true)
-                        {
-                            trailIndex = UnityEngine.Random.Range(0, 8);
-                        }
-                        string trailname = fullTrailNames[trailIndex];
-
-                        Vector3 startpos = spawnPos;
-                        Vector3 charvel = new Vector3(UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33));
-
-                        float randa = 255f;
-                        float randb = 255f;
-                        float randc = 255f;
-
-                        if (GetIndex("Random Color").enabled)
-                        {
-                            randa = UnityEngine.Random.Range(0, 255);
-                            randb = UnityEngine.Random.Range(0, 255);
-                            randc = UnityEngine.Random.Range(0, 255);
-                        }
-
-                        if (GetIndex("Rainbow Projectiles").enabled)
-                        {
-                            float h = (Time.frameCount / 180f) % 1f;
-                            UnityEngine.Color rgbcolor = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
-                            randa = rgbcolor.r * 255;
-                            randb = rgbcolor.g * 255;
-                            randc = rgbcolor.b * 255;
-                        }
-
-                        if (GetIndex("Hard Rainbow Projectiles").enabled)
-                        {
-                            float h = (Time.frameCount / 180f) % 1f;
-                            UnityEngine.Color rgbcolor = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
-                            randa = (Mathf.Floor(rgbcolor.r * 2f) / 2f * 255f) * 100f;
-                            randb = (Mathf.Floor(rgbcolor.g * 2f) / 2f * 255f) * 100f;
-                            randc = (Mathf.Floor(rgbcolor.b * 2f) / 2f * 255f) * 100f;
-                        }
-
-                        if (GetIndex("Black Projectiles").enabled)
-                        {
-                            randa = 0f;
-                            randb = 0f;
-                            randc = 0f;
-                        }
-
-                        if (GetIndex("No Texture Projectiles").enabled)
-                        {
-                            randa = 25500f;
-                            randb = 0f;
-                            randc = 25500f;
-                        }
-
-                        if (GetIndex("Custom Colored Projectiles").enabled)
-                        {
-                            randa = red * 255;
-                            randb = green * 255;
-                            randc = blue * 255;
-                        }
-
-                        SysFireProjectile(projectilename, trailname, startpos, charvel, randa / 255f, randb / 255f, randc / 255f, GetIndex("Blue Team Projectiles").enabled, GetIndex("Orange Team Projectiles").enabled, true);
-                    }
-                    if (projDebounceType > 0f)
-                    {
-                        projDebounce = Time.time + projDebounceType;
-                    }
-                }
-                else
-                {
-                    ProjBombObject.GetComponent<Renderer>().material.color = buttonDefaultA;
-                }
-            }
-        }
-        */
         public static void SlingshotHelper()
         {
             GameObject slingy = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/palm.01.L/TransferrableItemLeftHand/Slingshot Anchor/Slingshot");
@@ -1022,57 +773,47 @@ namespace iiMenu.Mods.Spammers
             {
                 projIndex = UnityEngine.Random.Range(0, 4);
             }
-            int[] overrides = new int[]
+            if (jackshit == null)
             {
-                32,
-                204,
-                231,
-                240,
-                249,
-                252
-            };
-            
-            if (leftGrab && !lastLeftGrab)
-            {
-                ControllerInputPoller.instance.leftControllerGripFloat = 1f;
-                GameObject lhelp = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                UnityEngine.Object.Destroy(lhelp, 0.1f);
-                lhelp.transform.localScale = new Vector3(0.25f, 0.05f, 0.25f);
-                lhelp.transform.position = GorillaTagger.Instance.leftHandTransform.position + new Vector3(0f, 0.1f, 0f);
-                lhelp.AddComponent<GorillaSurfaceOverride>().overrideIndex = overrides[projIndex];
-                lhelp.GetComponent<Renderer>().enabled = false;
-
-                lhelp = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                UnityEngine.Object.Destroy(lhelp, 0.1f);
-                lhelp.transform.localScale = new Vector3(0.25f, 0.05f, 0.25f);
-                lhelp.transform.position = GorillaTagger.Instance.leftHandTransform.position - new Vector3(0f, 0.1f, 0f);
-                lhelp.AddComponent<GorillaSurfaceOverride>().overrideIndex = overrides[projIndex];
-                lhelp.GetComponent<Renderer>().enabled = false;
-
-                GorillaTagger.Instance.leftHandTransform.position += new Vector3(0f, 0.1f, 0f);
+                GameObject thepointless = new GameObject("Blank GVE");
+                jackshit = thepointless.AddComponent<GorillaVelocityEstimator>() as GorillaVelocityEstimator;
             }
-            lastLeftGrab = leftGrab;
+            jackshit.enabled = false;
 
-            if (rightGrab && !lastRightGrab)
+            if (leftGrab)
             {
-                ControllerInputPoller.instance.rightControllerGripFloat = 1f;
-                GameObject lhelp = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                UnityEngine.Object.Destroy(lhelp, 0.1f);
-                lhelp.transform.localScale = new Vector3(0.25f, 0.05f, 0.25f);
-                lhelp.transform.position = GorillaTagger.Instance.rightHandTransform.position + new Vector3(0f, 0.1f, 0f);
-                lhelp.AddComponent<GorillaSurfaceOverride>().overrideIndex = overrides[projIndex];
-                lhelp.GetComponent<Renderer>().enabled = false;
-
-                lhelp = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                UnityEngine.Object.Destroy(lhelp, 0.1f);
-                lhelp.transform.localScale = new Vector3(0.25f, 0.05f, 0.25f);
-                lhelp.transform.position = GorillaTagger.Instance.rightHandTransform.position - new Vector3(0f, 0.1f, 0f);
-                lhelp.AddComponent<GorillaSurfaceOverride>().overrideIndex = overrides[projIndex];
-                lhelp.GetComponent<Renderer>().enabled = false;
-
-                GorillaTagger.Instance.rightHandTransform.position += new Vector3(0f, 0.1f, 0f);
+                SnowballThrowable fart = GetProjectile(InternalProjectileNames[projIndex]);
+                if (!fart.gameObject.activeSelf)
+                {
+                    fart.EnableSnowballLocal(true);
+                    fart.velocityEstimator = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").GetComponent<GorillaVelocityEstimator>();
+                    fart.transform.position = GorillaTagger.Instance.leftHandTransform.position;
+                    fart.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
+                }
             }
-            lastRightGrab = rightGrab;
+
+            if (rightGrab)
+            {
+                string[] InternalProjectileNamesRight = new string[]
+                {
+                    "LMACF. RIGHT.",
+                    "LMAEY. RIGHT.",
+                    "LMAGE. RIGHT.",
+                    "LMAHR. RIGHT.",
+                    "LMAIF. RIGHT.",
+                    "LMAIP. RIGHT.",
+                };
+                string lol = InternalProjectileNamesRight[projIndex];
+                
+                SnowballThrowable fart = GetProjectile(lol);
+                if (!fart.gameObject.activeSelf)
+                {
+                    fart.EnableSnowballLocal(true);
+                    fart.velocityEstimator = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").GetComponent<GorillaVelocityEstimator>();
+                    fart.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                    fart.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
+                }
+            }
         }
 
         public static void PaperPlaneSpam()
@@ -1136,7 +877,7 @@ namespace iiMenu.Mods.Spammers
                 Vector3 startpos = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, -0.15f, 0f);
                 Vector3 charvel = GorillaTagger.Instance.bodyCollider.transform.forward * 8.33f;
 
-                SysFireProjectile("SnowballLeft", "none", startpos, charvel, 255f, 255f, 0f, false, false);
+                BetaFireProjectile("SnowballLeft", startpos, charvel, new Color(255f, 255f, 0f));
             }
         }
 
@@ -1147,7 +888,7 @@ namespace iiMenu.Mods.Spammers
                 Vector3 startpos = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, -0.3f, 0f);
                 Vector3 charvel = Vector3.zero;
 
-                SysFireProjectile("SnowballLeft", "none", startpos, charvel, 99f/255f, 43f/255f, 0f, false, false);
+                BetaFireProjectile("SnowballLeft", startpos, charvel, new Color(99f/255f, 43f/255f, 0f));
             }
         }
 
@@ -1158,7 +899,7 @@ namespace iiMenu.Mods.Spammers
                 Vector3 startpos = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, -0.15f, 0f);
                 Vector3 charvel = GorillaTagger.Instance.bodyCollider.transform.forward * 8.33f;
 
-                SysFireProjectile("SnowballLeft", "none", startpos, charvel, 255f, 255f, 255f, false, false);
+                BetaFireProjectile("SnowballLeft", startpos, charvel, new Color(255f, 255f, 255f));
             }
         }
 
@@ -1169,7 +910,7 @@ namespace iiMenu.Mods.Spammers
                 Vector3 startpos = GorillaTagger.Instance.headCollider.transform.position + (GorillaTagger.Instance.headCollider.transform.forward * 0.1f) + (GorillaTagger.Instance.headCollider.transform.up * -0.15f);
                 Vector3 charvel = GorillaTagger.Instance.headCollider.transform.forward * 8.33f;
 
-                SysFireProjectile("SnowballLeft", "none", startpos, charvel, 0f, 255f, 0f, false, false);
+                BetaFireProjectile("SnowballLeft", startpos, charvel, new Color(0f, 255f, 0f));
             }
         }
 
@@ -1180,7 +921,7 @@ namespace iiMenu.Mods.Spammers
                 Vector3 startpos = GorillaTagger.Instance.headCollider.transform.position + (GorillaTagger.Instance.headCollider.transform.forward * 0.1f) + (GorillaTagger.Instance.headCollider.transform.up * -0.15f);
                 Vector3 charvel = GorillaTagger.Instance.headCollider.transform.forward * 8.33f;
 
-                SysFireProjectile("SnowballLeft", "none", startpos, charvel, 0f, 255f, 255f, false, false);
+                BetaFireProjectile("SnowballLeft",  startpos, charvel, new Color(0f, 255f, 255f));
             }
         }
 
@@ -1191,14 +932,7 @@ namespace iiMenu.Mods.Spammers
             {
                 projIndex = UnityEngine.Random.Range(0, 4);
             }
-            string projectilename = fullProjectileNames[projIndex];
-
-            int trailIndex = trailmode;
-            if (true /*true*/)
-            {
-                trailIndex = UnityEngine.Random.Range(0, 8);
-            }
-            string trailname = fullTrailNames[trailIndex];
+            string projectilename = ExternalProjectileNames[projIndex];
 
             bool isInfectedPlayers = false;
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
