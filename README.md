@@ -23,7 +23,6 @@ I made my menu open-sourced as a resource for anyone interested in learning how 
 
 ## Can I take code from this?
 Yes, if you're following the GPL-3.0 license guidelines. If you're interested in using any part of my code, it must be open sourced. You can find my contact information on my [linktree](https://linktr.ee/iiWasHere) or in the [Discord server](https://discord.gg/iidk). This helps me and you keep the project alive. I'm happy to discuss any potential collaborations, so don't hesitate to get in touch if you have any questions or ideas regarding the code. Come on, [you wouldn't steal a method.](https://www.youtube.com/watch?v=zMBqPdMzZ9E)
-> List of people who have stolen my code: R Gold, Saturn - X, Space Menu, Switched, [Steal.lol](https://github.com/bbc123f/steal2), [ShibaGT Gold](https://github.com/7zennos/Gorilla-Tag-ShibaGT-Gold-Mod-Menu)
 
 ---
 

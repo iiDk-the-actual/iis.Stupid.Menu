@@ -4,9 +4,8 @@ using static iiMenu.Menu.Main;
 
 namespace iiMenu.Patches
 {
-    [HarmonyPatch(typeof(BuilderPieceInteractor))]
-    [HarmonyPatch("UpdateHandState", MethodType.Normal)]
-    internal class BuildPatch
+    [HarmonyPatch(typeof(BuilderPieceInteractor), "UpdateHandState")]
+    public class BuildPatch
     {
         public static bool isEnabled = false;
         public static float previous = 0f;

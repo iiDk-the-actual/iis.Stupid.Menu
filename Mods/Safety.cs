@@ -90,7 +90,7 @@ namespace iiMenu.Mods
             string[] names = new string[]
             {
                 "Default", // The report button
-                "Large", // The report button within the range of 5 people
+                "Large", // The report button within the range of 3 people
                 "Massive" // The entire fucking board
             };
             float[] distances = new float[]
@@ -118,6 +118,10 @@ namespace iiMenu.Mods
                     if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
                     {
                         Transform report = line.reportButton.gameObject.transform;
+                        if (GetIndex("Visualize Anti Report").enabled)
+                        {
+                            VisualizeAura(report.position, threshold, Color.red);
+                        }
                         foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                         {
                             if (vrrig != GorillaTagger.Instance.offlineVRRig)
@@ -148,6 +152,10 @@ namespace iiMenu.Mods
                     if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
                     {
                         Transform report = line.reportButton.gameObject.transform;
+                        if (GetIndex("Visualize Anti Report").enabled)
+                        {
+                            VisualizeAura(report.position, threshold, Color.red);
+                        }
                         foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                         {
                             if (vrrig != GorillaTagger.Instance.offlineVRRig)
@@ -157,9 +165,7 @@ namespace iiMenu.Mods
 
                                 if (D1 < threshold || D2 < threshold)
                                 {
-                                    rejRoom = PhotonNetwork.CurrentRoom.Name;
-                                    // rejDebounce = Time.time + 2f;
-                                    PhotonNetwork.Disconnect();
+                                    Important.Reconnect();
                                     RPCProtection();
                                     NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected and will be reconnected shortly.");
                                 }
@@ -180,6 +186,10 @@ namespace iiMenu.Mods
                     if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
                     {
                         Transform report = line.reportButton.gameObject.transform;
+                        if (GetIndex("Visualize Anti Report").enabled)
+                        {
+                            VisualizeAura(report.position, threshold, Color.red);
+                        }
                         foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                         {
                             if (vrrig != GorillaTagger.Instance.offlineVRRig)
@@ -192,7 +202,6 @@ namespace iiMenu.Mods
                                     PhotonNetwork.Disconnect();
                                     RPCProtection();
                                     isJoiningRandom = true;
-                                    //jrDebounce = Time.time + (float)internetTime;
                                     NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected and will be connected to a random lobby shortly.");
                                 }
                             }
@@ -203,99 +212,51 @@ namespace iiMenu.Mods
             catch { } // Not connected
         }
 
-        public static void AntiReportLag()
+        public static void AntiReportFRT(Player subject, bool doNotification = true)
         {
-            try
+            int antiReportType = 0;
+            string[] types = new string[]
             {
-                foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+                "Disconnect",
+                "Reconnect",
+                "Join Random"
+            };
+            for (int i = 0; i < types.Length - 1; i++)
+            {
+                ButtonInfo lol = GetIndex("Anti Report <color=grey>[</color><color=green>" + types[i] + "</color><color=grey>]</color>");
+                if (lol.enabled)
                 {
-                    if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
-                    {
-                        Transform report = line.reportButton.gameObject.transform;
-                        foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-                        {
-                            if (vrrig != GorillaTagger.Instance.offlineVRRig)
-                            {
-                                float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
-                                float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
-
-                                if ((D1 < threshold || D2 < threshold) && Time.time > kgDebounce)
-                                {
-                                    if (!riskyModsEnabled)
-                                    {
-                                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> This mod has been disabled due to safety.");
-                                    }
-                                    else
-                                    {
-                                        int num = RigManager.GetPhotonViewFromVRRig(vrrig).ViewID;
-                                        Hashtable ServerCleanDestroyEvent = new Hashtable();
-                                        RaiseEventOptions ServerCleanOptions = new RaiseEventOptions
-                                        {
-                                            CachingOption = EventCaching.RemoveFromRoomCache
-                                        };
-                                        ServerCleanDestroyEvent[0] = num;
-                                        ServerCleanOptions.CachingOption = EventCaching.AddToRoomCache;
-                                        PhotonNetwork.NetworkingClient.OpRaiseEvent(204, ServerCleanDestroyEvent, ServerCleanOptions, SendOptions.SendUnreliable);
-                                        RPCProtection();
-                                    }
-
-                                    vrrig.leftHandTransform.position = Vector3.zero;
-                                    vrrig.rightHandTransform.position = Vector3.zero;
-
-                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they are being lagged.");
-                                }
-                            }
-                        }
-                    }
+                    antiReportType = i;
                 }
             }
-            catch { } // Not connected
-        }
-        
-        public static void AntiReportCrash()
-        {
-            try
+            switch (antiReportType)
             {
-                foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
-                {
-                    if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
+                case 0:
+                    PhotonNetwork.Disconnect();
+                    RPCProtection();
+                    if (doNotification)
                     {
-                        Transform report = line.reportButton.gameObject.transform;
-                        foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-                        {
-                            if (vrrig != GorillaTagger.Instance.offlineVRRig)
-                            {
-                                float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
-                                float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
-
-                                if (D1 < threshold || D2 < threshold)
-                                {
-                                    if (!riskyModsEnabled)
-                                    {
-                                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> This mod has been disabled due to safety.");
-                                    }
-                                    else
-                                    {
-                                        int num = RigManager.GetPhotonViewFromVRRig(vrrig).ViewID;
-                                        Hashtable ServerCleanDestroyEvent = new Hashtable();
-                                        RaiseEventOptions ServerCleanOptions = new RaiseEventOptions
-                                        {
-                                            CachingOption = EventCaching.RemoveFromRoomCache
-                                        };
-                                        ServerCleanDestroyEvent[0] = num;
-                                        ServerCleanOptions.CachingOption = EventCaching.AddToRoomCache;
-                                        PhotonNetwork.NetworkingClient.OpRaiseEvent(204, ServerCleanDestroyEvent, ServerCleanOptions, SendOptions.SendUnreliable);
-                                        RPCProtection();
-                                    }
-
-                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they are being crashed.");
-                                }
-                            }
-                        }
+                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + subject.NickName + " attempted to report you, you have been disconnected.");
                     }
-                }
+                    break;
+                case 1:
+                    Important.Reconnect();
+                    RPCProtection();
+                    if (doNotification)
+                    {
+                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + subject.NickName + " attempted to report you, you have been disconnected and will be reconnected shortly.");
+                    }
+                    break;
+                case 2:
+                    PhotonNetwork.Disconnect();
+                    RPCProtection();
+                    isJoiningRandom = true;
+                    if (doNotification)
+                    {
+                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + subject.NickName + " attempted to report you, you have been disconnected and will be connected to a random lobby shortly.");
+                    }
+                    break;
             }
-            catch { } // Not connected
         }
 
         public static void AntiModerator()
@@ -308,7 +269,7 @@ namespace iiMenu.Mods
                     {
 
                         VRRig plr = vrrig;
-                        Photon.Realtime.Player player = GetPlayerFromVRRig(plr);
+                        NetPlayer player = GetPlayerFromVRRig(plr);
                         if (player != null)
                         {
                             string text = "Room: " + PhotonNetwork.CurrentRoom.Name;

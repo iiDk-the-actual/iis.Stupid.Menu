@@ -8,7 +8,7 @@ namespace iiMenu.Classes
 {
     internal class RigManager
     {
-        public static VRRig GetVRRigFromPlayer(Player p)
+        public static VRRig GetVRRigFromPlayer(NetPlayer p)
         {
             return GorillaGameManager.instance.FindPlayerVRRig(p);
         }
@@ -58,15 +58,15 @@ namespace iiMenu.Classes
             }
         }
 
-        public static Photon.Realtime.Player GetPlayerFromVRRig(VRRig p)
+        public static NetPlayer GetPlayerFromVRRig(VRRig p)
         {
             //return GetPhotonViewFromVRRig(p).Owner;
             return p.Creator;
         }
 
-        public static Photon.Realtime.Player GetPlayerFromID(string id)
+        public static NetPlayer GetPlayerFromID(string id)
         {
-            Photon.Realtime.Player found = null;
+            NetPlayer found = null;
             foreach (Photon.Realtime.Player target in PhotonNetwork.PlayerList)
             {
                 if (target.UserId == id)

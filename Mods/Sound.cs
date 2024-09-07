@@ -15,10 +15,7 @@ namespace iiMenu.Mods.Spammers
         {
             if (!PhotonNetwork.IsMasterClient)
             {
-                if (!GetIndex("Disable Auto Anti Ban").enabled)
-                {
-                    Overpowered.FastMaster();
-                }
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             }
             else
             {
@@ -51,7 +48,7 @@ namespace iiMenu.Mods.Spammers
                 int soundId = UnityEngine.Random.Range(0, 259);
                 if (PhotonNetwork.InRoom)
                 {
-                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                    GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.All, new object[] {
                         soundId,
                         false,
                         999999f
@@ -71,7 +68,7 @@ namespace iiMenu.Mods.Spammers
             {
                 if (PhotonNetwork.InRoom)
                 {
-                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                    GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.All, new object[]{
                         68,
                         false,
                         999999f
@@ -91,7 +88,7 @@ namespace iiMenu.Mods.Spammers
             {
                 if (PhotonNetwork.InRoom)
                 {
-                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                    GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.All, new object[]{
                         18,
                         false,
                         999999f
@@ -110,7 +107,7 @@ namespace iiMenu.Mods.Spammers
             {
                 if (PhotonNetwork.InRoom)
                 {
-                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                    GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.All, new object[]{
                         195,
                         false,
                         999999f
@@ -130,7 +127,7 @@ namespace iiMenu.Mods.Spammers
             {
                 if (PhotonNetwork.InRoom)
                 {
-                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                    GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.All, new object[]{
                         236,
                         false,
                         999999f
@@ -150,7 +147,7 @@ namespace iiMenu.Mods.Spammers
             {
                 if (PhotonNetwork.InRoom)
                 {
-                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                    GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.All, new object[]{
                         83,
                         false,
                         999999f
@@ -170,7 +167,7 @@ namespace iiMenu.Mods.Spammers
             {
                 if (PhotonNetwork.InRoom)
                 {
-                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                    GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.All, new object[]{
                         91,
                         false,
                         999999f
@@ -190,7 +187,7 @@ namespace iiMenu.Mods.Spammers
             {
                 if (PhotonNetwork.InRoom)
                 {
-                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                    GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.All, new object[]{
                         191,
                         false,
                         999999f
@@ -210,7 +207,7 @@ namespace iiMenu.Mods.Spammers
             {
                 if (PhotonNetwork.InRoom)
                 {
-                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                    GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.All, new object[]{
                         215,
                         false,
                         999999f
@@ -230,7 +227,7 @@ namespace iiMenu.Mods.Spammers
             {
                 if (PhotonNetwork.InRoom)
                 {
-                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                    GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.All, new object[]{
                         244,
                         false,
                         999999f
@@ -256,7 +253,7 @@ namespace iiMenu.Mods.Spammers
                 int soundId = sounds[UnityEngine.Random.Range(0, 1)];
                 if (PhotonNetwork.InRoom)
                 {
-                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                    GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.All, new object[]{
                         soundId,
                         false,
                         999999f
@@ -277,7 +274,7 @@ namespace iiMenu.Mods.Spammers
             {
                 if (PhotonNetwork.InRoom)
                 {
-                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                    GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.All, new object[]{
                         213,
                         false,
                         999999f
@@ -297,7 +294,7 @@ namespace iiMenu.Mods.Spammers
             {
                 if (PhotonNetwork.InRoom)
                 {
-                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                    GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.All, new object[]{
                         248,
                         false,
                         999999f
@@ -317,7 +314,7 @@ namespace iiMenu.Mods.Spammers
             {
                 if (PhotonNetwork.InRoom)
                 {
-                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                    GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.All, new object[]{
                         203,
                         false,
                         999999f
@@ -337,7 +334,7 @@ namespace iiMenu.Mods.Spammers
             {
                 if (PhotonNetwork.InRoom)
                 {
-                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                    GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.All, new object[]{
                         75 + (Time.frameCount % 2),
                         false,
                         999999f
@@ -357,7 +354,7 @@ namespace iiMenu.Mods.Spammers
             {
                 if (PhotonNetwork.InRoom)
                 {
-                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                    GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.All, new object[]{
                         48 + ((Time.frameCount / 15) % 2) * 2,
                         false,
                         999999f
@@ -393,7 +390,7 @@ namespace iiMenu.Mods.Spammers
             {
                 if (PhotonNetwork.InRoom)
                 {
-                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                    GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.All, new object[]{
                         soundId,
                         false,
                         999999f
@@ -411,7 +408,7 @@ namespace iiMenu.Mods.Spammers
         {
             if (rightGrab)
             {
-                /*GorillaTagger.Instance.myVRRig.RPC("PlayTagSound", RpcTarget.All, new object[]
+                /*GorillaTagger.Instance.myVRRig.SendRPC("PlayTagSound", RpcTarget.All, new object[]
                 {
                     1,
                     999999f

@@ -31,6 +31,11 @@ namespace iiMenu.Classes
                         float h = (Time.frameCount / 180f) % 1f;
                         color = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
                     }
+                    if (isPastelRainbow)
+                    {
+                        float h = (Time.frameCount / 180f) % 1f;
+                        color = UnityEngine.Color.HSVToRGB(h, 0.3f, 1f);
+                    }
                     if (isEpileptic)
                     {
                         color = new Color32((byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), 255);
@@ -56,6 +61,7 @@ namespace iiMenu.Classes
         public Color32 color;
         public bool timeBased = true;
         public bool isRainbow = false;
+        public bool isPastelRainbow = false;
         public bool isEpileptic = false;
         public bool isMonkeColors = false;
     }

@@ -9,7 +9,7 @@ using static iiMenu.Menu.Main;
 namespace iiMenu.Patches
 {
     [HarmonyPatch(typeof(MonoBehaviourPunCallbacks), "OnPlayerLeftRoom")]
-    internal class LeavePatch : MonoBehaviour
+    public class LeavePatch
     {
         private static void Prefix(Player otherPlayer)
         {

@@ -4,9 +4,8 @@ using static iiMenu.Menu.Main;
 
 namespace iiMenu.Patches
 {
-    [HarmonyPatch(typeof(GorillaLocomotion.Player))]
-    [HarmonyPatch("LateUpdate", MethodType.Normal)]
-    internal class TeleportPatch
+    [HarmonyPatch(typeof(GorillaLocomotion.Player), "LateUpdate")]
+    public class TeleportPatch
     {
         public static bool doTeleport = false;
         public static Vector3 telePos;

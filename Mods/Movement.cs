@@ -566,17 +566,25 @@ namespace iiMenu.Mods
             if (Mouse.current.rightButton.isPressed)
             {
                 Vector3 Euler = GorillaLocomotion.Player.Instance.rightControllerTransform.parent.rotation.eulerAngles;
+
                 if (startX < 0)
                 {
                     startX = Euler.y;
                     subThingy = Mouse.current.position.value.x / UnityEngine.Screen.width;
                 }
-                Euler = new Vector3(Euler.x, startX + ((((Mouse.current.position.value.x / UnityEngine.Screen.width) - subThingy) * 360) * 1.33f), Euler.z);
+                if (startY < 0)
+                {
+                    startY = Euler.x;
+                    subThingyZ = Mouse.current.position.value.y / UnityEngine.Screen.height;
+                }
+
+                Euler = new Vector3(startY - ((((Mouse.current.position.value.y / UnityEngine.Screen.height) - subThingyZ) * 360) * 1.33f), startX + ((((Mouse.current.position.value.x / UnityEngine.Screen.width) - subThingy) * 360) * 1.33f), Euler.z);
                 GorillaLocomotion.Player.Instance.rightControllerTransform.parent.rotation = Quaternion.Euler(Euler);
             }
             else
             {
                 startX = -1;
+                startY = -1;
             }
 
             if (W)
@@ -648,7 +656,7 @@ namespace iiMenu.Mods
                     GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity += GorillaTagger.Instance.leftHandTransform.forward * 5f;
                     if (PhotonNetwork.InRoom)
                     {
-                        GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                        GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.All, new object[]{
                             89,
                             true,
                             999999f
@@ -725,7 +733,7 @@ namespace iiMenu.Mods
                     GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity += GorillaTagger.Instance.rightHandTransform.forward * 5f;
                     if (PhotonNetwork.InRoom)
                     {
-                        GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                        GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.All, new object[]{
                             89,
                             false,
                             999999f
@@ -805,7 +813,7 @@ namespace iiMenu.Mods
                     isLeftGrappling = true;
                     if (PhotonNetwork.InRoom)
                     {
-                        GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                        GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.All, new object[]{
                             89,
                             true,
                             999999f
@@ -871,7 +879,7 @@ namespace iiMenu.Mods
                     isRightGrappling = true;
                     if (PhotonNetwork.InRoom)
                     {
-                        GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                        GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.All, new object[]{
                             89,
                             false,
                             999999f
@@ -1311,8 +1319,8 @@ namespace iiMenu.Mods
                         pearlmat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
                         pearlmat.renderQueue = (int)RenderQueue.Transparent;
 
-                        pearlmat.SetFloat("_Glossiness", 0.0f);
-                        pearlmat.SetFloat("_Metallic", 0.0f);
+                        pearlmat.SetFloat("_Glossiness", 0f);
+                        pearlmat.SetFloat("_Metallic", 0f);
                     }
                     pearl.GetComponent<Renderer>().material = pearlmat;
                 }
@@ -1337,7 +1345,7 @@ namespace iiMenu.Mods
                         TeleportPlayer(pearl.transform.position);
                         if (PhotonNetwork.InRoom)
                         {
-                            GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                            GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.All, new object[]{
                             84,
                             true,
                             999999f
@@ -1372,7 +1380,17 @@ namespace iiMenu.Mods
 
         public static void SpeedBoost()
         {
-            GorillaLocomotion.Player.Instance.maxJumpSpeed = jspeed;
+            float jspt = jspeed;
+            float jmpt = jmulti;
+            if (GetIndex("Factored Speed Boost").enabled)
+            {
+                jspt = (jspt / 6.5f) * GorillaLocomotion.Player.Instance.maxJumpSpeed;
+                jmpt = (jmpt / 1.1f) * GorillaLocomotion.Player.Instance.jumpMultiplier;
+            }
+            if (!GetIndex("Disable Max Speed Modification").enabled)
+            {
+                GorillaLocomotion.Player.Instance.maxJumpSpeed = jspeed;
+            }
             GorillaLocomotion.Player.Instance.jumpMultiplier = jmulti;
         }
 
@@ -1380,8 +1398,7 @@ namespace iiMenu.Mods
         {
             if (rightGrab)
             {
-                GorillaLocomotion.Player.Instance.maxJumpSpeed = jspeed;
-                GorillaLocomotion.Player.Instance.jumpMultiplier = jmulti;
+                SpeedBoost();
             }
         }
 
@@ -1389,16 +1406,16 @@ namespace iiMenu.Mods
         {
             if (SteamVR_Actions.gorillaTag_RightJoystickClick.state)
             {
-                GorillaLocomotion.Player.Instance.maxJumpSpeed = jspeed;
-                GorillaLocomotion.Player.Instance.jumpMultiplier = jmulti;
+                SpeedBoost();
             }
         }
 
+        /*
         public static void DisableSpeedBoost()
         {
             GorillaLocomotion.Player.Instance.maxJumpSpeed = 6.5f;
             GorillaLocomotion.Player.Instance.jumpMultiplier = 1.1f;
-        }
+        }*/
 
         public static void UncapMaxVelocity()
         {
@@ -1683,13 +1700,7 @@ namespace iiMenu.Mods
             {
                 Safety.NoFinger();
             }
-            System.Type type = GorillaLocomotion.Player.Instance.GetType();
-            FieldInfo fieldInfo = type.GetField("leftHandHolding", BindingFlags.NonPublic | BindingFlags.Instance);
-            fieldInfo.SetValue(GorillaLocomotion.Player.Instance, leftPrimary);
-            type = GorillaLocomotion.Player.Instance.GetType();
-            fieldInfo = type.GetField("rightHandHolding", BindingFlags.NonPublic | BindingFlags.Instance);
-            fieldInfo.SetValue(GorillaLocomotion.Player.Instance, leftPrimary);
-            GorillaLocomotion.Player.Instance.InReportMenu = leftPrimary;
+            GorillaLocomotion.Player.Instance.inOverlay = leftPrimary;
         }
 
         public static Vector3 deadPosition = Vector3.zero;
@@ -2450,6 +2461,8 @@ namespace iiMenu.Mods
         {
             Vector3 funnyDir = GorillaTagger.Instance.bodyCollider.transform.forward * GorillaLocomotion.Player.Instance.maxJumpSpeed;
             GorillaTagger.Instance.bodyCollider.attachedRigidbody.velocity = new Vector3(funnyDir.x, GorillaTagger.Instance.bodyCollider.attachedRigidbody.velocity.y, funnyDir.z);
+            Vector3 lol = GorillaTagger.Instance.bodyCollider.attachedRigidbody.velocity;
+            lol.y = (lol.y < 0 ? 0 : lol.y);
         }
 
         public static void DynamicStrafe()
@@ -2480,6 +2493,18 @@ namespace iiMenu.Mods
             if (rightGrab)
             {
                 DynamicStrafe();
+            }
+        }
+
+        public static void GroundHelper()
+        {
+            if (rightGrab)
+            {
+                Vector3 x3 = GorillaTagger.Instance.bodyCollider.attachedRigidbody.velocity;
+                if (x3.y > 0f)
+                {
+                    GorillaTagger.Instance.bodyCollider.attachedRigidbody.velocity = new Vector3(x3.x, 0f, x3.z);
+                }
             }
         }
 
@@ -3005,7 +3030,7 @@ namespace iiMenu.Mods
 
                     if (Time.time > splashDel)
                     {
-                        GorillaTagger.Instance.myVRRig.RPC("PlaySplashEffect", GetPlayerFromVRRig(whoCopy), new object[]
+                        GorillaTagger.Instance.myVRRig.SendRPC("PlaySplashEffect", GetPlayerFromVRRig(whoCopy), new object[]
                         {
                             whoCopy.transform.position + new Vector3(UnityEngine.Random.Range(-0.5f, 0.5f),UnityEngine.Random.Range(-0.5f, 0.5f),UnityEngine.Random.Range(-0.5f, 0.5f)),
                             Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0,360), UnityEngine.Random.Range(0,360), UnityEngine.Random.Range(0,360))),
@@ -3116,7 +3141,7 @@ namespace iiMenu.Mods
                     {
                         if (PhotonNetwork.InRoom)
                         {
-                            GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                            GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.All, new object[]{
                                 64,
                                 false,
                                 999999f
@@ -3203,7 +3228,7 @@ namespace iiMenu.Mods
                     {
                         if (PhotonNetwork.InRoom)
                         {
-                            GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                            GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.All, new object[]{
                                 64,
                                 true,
                                 999999f
