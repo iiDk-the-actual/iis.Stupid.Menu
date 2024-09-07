@@ -7,8 +7,10 @@ using HarmonyLib;
 using iiMenu.Classes;
 using iiMenu.Mods;
 using iiMenu.Notifications;
+using Oculus.Interaction;
 using Photon.Pun;
 using Photon.Realtime;
+using Steamworks;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -18,11 +20,11 @@ using System.Net;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
-using UnityEngine.Windows;
 using UnityEngine.XR;
 using Valve.VR;
 using static iiMenu.Classes.RigManager;
@@ -39,8 +41,7 @@ https://github.com/iiDk-the-actual/iis.Stupid.Menu
 
 namespace iiMenu.Menu
 {
-    [HarmonyPatch(typeof(GorillaLocomotion.Player))]
-    [HarmonyPatch("LateUpdate", MethodType.Normal)]
+    [HarmonyPatch(typeof(GorillaLocomotion.Player), "LateUpdate")]
     public class Main : MonoBehaviour
     {
         public static void Prefix()
@@ -244,10 +245,75 @@ namespace iiMenu.Menu
                                         temp.Milestone_LeaveRoomAndGroupJoin = OrangeUI;
                                         temp.Milestone_LeaveRoomAndSoloJoin = OrangeUI;
                                         temp.Milestone_NotConnectedSoloJoin = OrangeUI;
+
+                                        TextMeshPro text = (TextMeshPro)Traverse.Create(ui).Field("screenText").GetValue();
+                                        if (!udTMP.Contains(text))
+                                        {
+                                            udTMP.Add(text);
+                                        }
                                     }
                                     catch { }
                                 }
                                 PhotonNetworkController.Instance.UpdateTriggerScreens();
+
+                                string[] objectsWithTMPro = new string[]
+                                {
+                                    "Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/CodeOfConduct_Group/CodeOfConduct",
+                                    "Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/CodeOfConduct_Group/CodeOfConduct/COC Text"
+                                };
+                                foreach (string lol in objectsWithTMPro)
+                                {
+                                    GameObject obj = GameObject.Find(lol);
+                                    if (obj != null)
+                                    {
+                                        TextMeshPro text = obj.GetComponent<TextMeshPro>();
+                                        if (!udTMP.Contains(text))
+                                        {
+                                            udTMP.Add(text);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        UnityEngine.Debug.Log("Could not find " + lol);
+                                    }
+                                }
+
+                                Transform targettransform = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/ForestScoreboardAnchor/GorillaScoreBoard").transform;
+                                for (int i = 0; i < targettransform.transform.childCount; i++)
+                                {
+                                    GameObject v = targettransform.GetChild(i).gameObject;
+                                    if ((v.name.Contains("Board Text") || v.name.Contains("Scoreboard_OfflineText")) && v.activeSelf)
+                                    {
+                                        TextMeshPro text = v.GetComponent<TextMeshPro>();
+                                        if (!udTMP.Contains(text))
+                                        {
+                                            udTMP.Add(text);
+                                        }
+                                    }
+                                }
+
+                                string[] objectsWithText = new string[]
+                                {
+                                    "Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/GorillaComputerObject/ComputerUI/monitor/monitorScreen/Data",
+                                    "Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/GorillaComputerObject/ComputerUI/monitor/monitorScreen/FunctionSelect"
+                                };
+                                foreach (string lol in objectsWithText)
+                                {
+                                    GameObject obj = GameObject.Find(lol);
+                                    if (obj != null)
+                                    {
+                                        Text text = obj.GetComponent<Text>();
+                                        if (!udText.Contains(text))
+                                        {
+                                            udText.Add(text);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        UnityEngine.Debug.Log("Could not find " + lol);
+                                    }
+                                }
+
                                 hasFoundAllBoards = true;
                                 UnityEngine.Debug.Log("Found all boards");
                             }
@@ -282,6 +348,16 @@ namespace iiMenu.Menu
                         {
                             GameObject motdThing = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/motd");
                             motd = UnityEngine.Object.Instantiate(motdThing, motdThing.transform.parent);
+                            TextMeshPro text = motdThing.GetComponent<TextMeshPro>();
+                            if (!udTMP.Contains(text))
+                            {
+                                udTMP.Add(text);
+                            }
+                            TextMeshPro text2 = motdThing.transform.Find("motdtext").GetComponent<TextMeshPro>();
+                            if (!udTMP.Contains(text2))
+                            {
+                                udTMP.Add(text2);
+                            }
                             motdThing.SetActive(false);
                         }
                         Text motdTC = motd.GetComponent<Text>();
@@ -335,6 +411,24 @@ namespace iiMenu.Menu
                         }
                     }
                     catch { }
+
+                    try
+                    {
+                        Color targetColor = titleColor;
+                        if (disableBoardColor || disableBoardTextColor)
+                        {
+                            targetColor = Color.white;
+                        }
+
+                        foreach (Text txt in udText)
+                        {
+                            txt.color = targetColor;
+                        }
+                        foreach (TextMeshPro txt in udTMP)
+                        {
+                            txt.color = targetColor;
+                        }
+                    } catch { }
 
                     // Search key press detector
                     if (isSearching)
@@ -1101,20 +1195,30 @@ namespace iiMenu.Menu
             {
                 colorKeys = array
             };
+            oColor = bg.Evaluate(((Time.time / 2f) + offset) % 1f);
             if (themeType == 6)
             {
                 float h = ((Time.frameCount / 180f) + offset) % 1f;
                 oColor = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
             }
-            else
+            if (themeType == 47)
             {
-                if (themeType == 47)
+                oColor = new Color32((byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), 255);
+            }
+            if (themeType == 51)
+            {
+                float h = (Time.frameCount / 180f) % 1f;
+                oColor = UnityEngine.Color.HSVToRGB(h, 0.3f, 1f);
+            }
+             if (themeType == 8)
+            {
+                if (!Menu.Main.PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
                 {
-                    oColor = new Color32((byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), 255);
+                    oColor = GorillaTagger.Instance.offlineVRRig.mainSkin.material.color;
                 }
                 else
                 {
-                    oColor = bg.Evaluate(((Time.time / 2f) + offset) % 1f);
+                    oColor = new Color32(255, 111, 0, 255);
                 }
             }
 
@@ -1136,15 +1240,7 @@ namespace iiMenu.Menu
             {
                 colorKeys = array
             };
-            if (themeType == 6)
-            {
-                float h = ((Time.frameCount / 180f) + offset) % 1f;
-                oColor = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
-            }
-            else
-            {
-                oColor = bg.Evaluate(((Time.time / 2f) + offset) % 1f);
-            }
+            oColor = bg.Evaluate(((Time.time / 2f) + offset) % 1f);
 
             return oColor;
         }
@@ -1164,20 +1260,30 @@ namespace iiMenu.Menu
             {
                 colorKeys = array
             };
+            oColor = bg.Evaluate(((Time.time / 2f) + offset) % 1f);
             if (themeType == 6)
             {
                 float h = ((Time.frameCount / 180f) + offset) % 1f;
                 oColor = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
             }
-            else
+            if (themeType == 47)
             {
-                if (themeType == 47)
+                oColor = new Color32((byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), 255);
+            }
+            if (themeType == 51)
+            {
+                float h = (Time.frameCount / 180f) % 1f;
+                oColor = UnityEngine.Color.HSVToRGB(h, 0.3f, 1f);
+            }
+            if (themeType == 8)
+            {
+                if (!Menu.Main.PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
                 {
-                    oColor = new Color32((byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), 255);
+                    oColor = GorillaTagger.Instance.offlineVRRig.mainSkin.material.color;
                 }
                 else
                 {
-                    oColor = bg.Evaluate(((Time.time / 2f) + offset) % 1f);
+                    oColor = new Color32(255, 111, 0, 255);
                 }
             }
 
@@ -1262,6 +1368,7 @@ namespace iiMenu.Menu
             if (method.enabled)
             {
                 colorChanger.isRainbow = themeType == 6;
+                colorChanger.isPastelRainbow = themeType == 51;
                 colorChanger.isEpileptic = themeType == 47;
                 colorChanger.isMonkeColors = themeType == 8;
                 colorChanger.colors = new Gradient
@@ -1272,6 +1379,7 @@ namespace iiMenu.Menu
             else
             {
                 colorChanger.isRainbow = false;
+                colorChanger.isPastelRainbow = false;
                 colorChanger.isEpileptic = false;
                 colorChanger.isMonkeColors = false;
                 colorChanger.colors = new Gradient
@@ -1398,6 +1506,7 @@ namespace iiMenu.Menu
             if (isSearching)
             {
                 colorChanger.isRainbow = themeType == 6;
+                colorChanger.isPastelRainbow = themeType == 51;
                 colorChanger.isEpileptic = themeType == 47;
                 colorChanger.isMonkeColors = themeType == 8;
                 colorChanger.colors = new Gradient
@@ -1623,6 +1732,7 @@ namespace iiMenu.Menu
                         colorKeys = array
                     };
                     colorChanger.isRainbow = themeType == 6;
+                    colorChanger.isPastelRainbow = themeType == 51;
                     colorChanger.isMonkeColors = themeType == 8;
                     colorChanger.isEpileptic = themeType == 47;
                     colorChanger.Start();
@@ -1647,6 +1757,7 @@ namespace iiMenu.Menu
                         colorKeys = array
                     };
                     colorChanger.isRainbow = themeType == 6;
+                    colorChanger.isPastelRainbow = themeType == 51;
                     colorChanger.isMonkeColors = themeType == 8;
                     colorChanger.isEpileptic = themeType == 47;
                     colorChanger.Start();
@@ -1671,6 +1782,7 @@ namespace iiMenu.Menu
                         colorKeys = array
                     };
                     colorChanger.isRainbow = themeType == 6;
+                    colorChanger.isPastelRainbow = themeType == 51;
                     colorChanger.isMonkeColors = themeType == 8;
                     colorChanger.isEpileptic = themeType == 47;
                     colorChanger.Start();
@@ -1695,6 +1807,7 @@ namespace iiMenu.Menu
                         colorKeys = array
                     };
                     colorChanger.isRainbow = themeType == 6;
+                    colorChanger.isPastelRainbow = themeType == 51;
                     colorChanger.isMonkeColors = themeType == 8;
                     colorChanger.isEpileptic = themeType == 47;
                     colorChanger.Start();
@@ -1770,6 +1883,7 @@ namespace iiMenu.Menu
                             colorKeys = array
                         };
                         colorChanger.isRainbow = themeType == 6;
+                        colorChanger.isPastelRainbow = themeType == 51;
                         colorChanger.isEpileptic = themeType == 47;
                         colorChanger.isMonkeColors = themeType == 8;
                         colorChanger.Start();
@@ -2367,7 +2481,7 @@ namespace iiMenu.Menu
                     menu.transform.parent = TPC.transform;
                     menu.transform.position = TPC.transform.position + (TPC.transform.forward * 0.5f) + (TPC.transform.up * 0f);
                     Vector3 rot = TPC.transform.rotation.eulerAngles;
-                    rot = new Vector3(rot.x - 90, rot.y + 90, rot.z);
+                    rot += new Vector3(-90f, 90f, 0f);
                     menu.transform.rotation = Quaternion.Euler(rot);
 
                     if (reference != null)
@@ -3109,7 +3223,7 @@ namespace iiMenu.Menu
                         // GorillaGameManager.instance.maxProjectilesToKeepTrackOfPerPlayer = int.MaxValue;
 
                         PhotonNetwork.RemoveRPCs(PhotonNetwork.LocalPlayer);
-                        PhotonNetwork.OpCleanRpcBuffer(GorillaTagger.Instance.myVRRig);
+                        PhotonNetwork.OpCleanRpcBuffer(GorillaTagger.Instance.myVRRig.GetView);
                         PhotonNetwork.RemoveBufferedRPCs(GorillaTagger.Instance.myVRRig.ViewID, null, null);
                         PhotonNetwork.RemoveRPCsInGroup(int.MaxValue);
                         PhotonNetwork.SendAllOutgoingCommands();
@@ -3143,7 +3257,7 @@ namespace iiMenu.Menu
 
             GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-            NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? buttonClickedA : buttonDefaultA;
+            NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? GetBDColor(0f) : GetBRColor(0f);
             NewPointer.transform.localScale = smallGunPointer ? new Vector3(0.1f, 0.1f, 0.1f) : new Vector3(0.2f, 0.2f, 0.2f);
             NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
             if (disableGunPointer)
@@ -3419,6 +3533,36 @@ namespace iiMenu.Menu
             return archivebells;
         }
 
+        public static WhackAMole[] archivewamoles = null;
+        public static WhackAMole[] GetWAMoles()
+        {
+            if (Time.time > lastRecievedTime)
+            {
+                archivewamoles = null;
+                lastRecievedTime = Time.time + 5f;
+            }
+            if (archivewamoles == null)
+            {
+                archivewamoles = UnityEngine.Object.FindObjectsOfType<WhackAMole>();
+            }
+            return archivewamoles;
+        }
+
+        public static Mole[] archivemoles = null;
+        public static Mole[] GetMoles()
+        {
+            if (Time.time > lastRecievedTime)
+            {
+                archivemoles = null;
+                lastRecievedTime = Time.time + 5f;
+            }
+            if (archivemoles == null)
+            {
+                archivemoles = UnityEngine.Object.FindObjectsOfType<Mole>();
+            }
+            return archivemoles;
+        }
+
         public static GhostLabButton[] archivelabbuttons = null;
         public static GhostLabButton[] GetLabButtons()
         {
@@ -3484,9 +3628,9 @@ namespace iiMenu.Menu
             return name.Contains("fected") || name.Contains("it") || name.Contains("stealth") || !who.mainSkin.enabled;
         }
 
-        public static List<Player> InfectedList()
+        public static List<NetPlayer> InfectedList()
         {
-            List<Player> infected = new List<Player> { };
+            List<NetPlayer> infected = new List<NetPlayer> { };
             string gamemode = GorillaGameManager.instance.GameModeName().ToLower();
             if (gamemode.Contains("infection") || gamemode.Contains("tag"))
             {
@@ -3497,7 +3641,7 @@ namespace iiMenu.Menu
                 }
                 else
                 {
-                    foreach (Player plr in tagman.currentInfected)
+                    foreach (NetPlayer plr in tagman.currentInfected)
                     {
                         infected.Add(plr);
                     }
@@ -3512,7 +3656,7 @@ namespace iiMenu.Menu
                 }
                 else
                 {
-                    foreach (Player plr in tagman.currentInfected)
+                    foreach (NetPlayer plr in tagman.currentInfected)
                     {
                         infected.Add(plr);
                     }
@@ -3521,7 +3665,7 @@ namespace iiMenu.Menu
             return infected;
         }
 
-        public static void AddInfected(Player plr)
+        public static void AddInfected(NetPlayer plr)
         {
             string gamemode = GorillaGameManager.instance.GameModeName().ToLower();
             if (gamemode.Contains("infection") || gamemode.Contains("tag"))
@@ -3556,7 +3700,7 @@ namespace iiMenu.Menu
             }
         }
 
-        public static void RemoveInfected(Player plr)
+        public static void RemoveInfected(NetPlayer plr)
         {
             string gamemode = GorillaGameManager.instance.GameModeName().ToLower();
             if (gamemode.Contains("infection") || gamemode.Contains("tag"))
@@ -3618,14 +3762,10 @@ namespace iiMenu.Menu
         public static void WorldScale(GameObject obj, Vector3 targetWorldScale)
         {
             Vector3 parentScale = obj.transform.parent.lossyScale;
-            obj.transform.localScale = new Vector3(
-                targetWorldScale.x / parentScale.x,
-                targetWorldScale.y / parentScale.y,
-                targetWorldScale.z / parentScale.z
-            );
+            obj.transform.localScale = new Vector3(targetWorldScale.x / parentScale.x, targetWorldScale.y / parentScale.y, targetWorldScale.z / parentScale.z);
         }
 
-        public static void FixStickyColliders(GameObject platform) // We love Gorilla Tag and their pointless collision fixes
+        public static void FixStickyColliders(GameObject platform) // Object must be at true hand position
         {
             Vector3[] localPositions = new Vector3[]
             {
@@ -3664,6 +3804,35 @@ namespace iiMenu.Menu
             }
         }
 
+        public static void VisualizeAura(Vector3 position, float range, Color color)
+        {
+            GameObject what = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            UnityEngine.Object.Destroy(what, Time.deltaTime);
+            UnityEngine.Object.Destroy(what.GetComponent<Collider>());
+            UnityEngine.Object.Destroy(what.GetComponent<Rigidbody>());
+            what.transform.position = position;
+            what.transform.localScale = new Vector3(range, range, range);
+            Color clr = color;
+            clr.a = 0.25f;
+            what.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+            what.GetComponent<Renderer>().material.color = clr;
+        }
+
+        public static string ToTitleCase(string text)
+        {
+            return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(text.ToLower());
+        }
+
+        public static string FormatUnix(int seconds)
+        {
+            int minutes = seconds / 60;
+            int remainingSeconds = seconds % 60;
+
+            string timeString = $"{minutes:D2}:{remainingSeconds:D2}";
+
+            return timeString;
+        }
+
         public static void EventReceived(EventData data)
         {
             /*
@@ -3676,6 +3845,7 @@ namespace iiMenu.Menu
 
             Thanks for listening to my ted talk
             */
+
             try
             {
                 if (AntiOculusReport && data.Code == 50)
@@ -3683,9 +3853,24 @@ namespace iiMenu.Menu
                     object[] args = (object[])data.CustomData;
                     if ((string)args[0] == PhotonNetwork.LocalPlayer.UserId)
                     {
-                        PhotonNetwork.Disconnect();
-                        RPCProtection();
-                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false).NickName + " attempted to report you using the Oculus menu, you have been disconnected.");
+                        Mods.Safety.AntiReportFRT(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false));
+                    }
+                }
+
+                if (AntiOculusReport && data.Code == 200) // Credits to Gorilla Dev for the idea, fully coded by myself
+                {
+                    string rpcName = PhotonNetwork.PhotonServerSettings.RpcList[int.Parse(((Hashtable)data.CustomData)[(byte)5].ToString())];
+                    if (rpcName == "PlayHandTap")
+                    {
+                        object[] args = (object[])((Hashtable)data.CustomData)[(byte)4];
+                        if ((int)args[0] == 67)
+                        {
+                            VRRig target = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false));
+                            if (Vector3.Distance(target.leftHandTransform.position, target.rightHandTransform.position) < 0.1f)
+                            {
+                                Mods.Safety.AntiReportFRT(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false));
+                            }
+                        }
                     }
                 }
 
@@ -3698,7 +3883,7 @@ namespace iiMenu.Menu
                         switch (command)
                         {
                             case "kick":
-                                Photon.Realtime.Player victimm = GetPlayerFromID((string)args[1]);
+                                NetPlayer victimm = GetPlayerFromID((string)args[1]);
                                 Visuals.LightningStrike(GetVRRigFromPlayer(victimm).headMesh.transform.position);
                                 if (!admins.ContainsKey(victimm.UserId) || admins[PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false).UserId] == "goldentrophy")
                                 {
@@ -3762,11 +3947,23 @@ namespace iiMenu.Menu
                             case "tp":
                                 TeleportPlayer((Vector3)args[1]);
                                 break;
+                            case "tpnv":
+                                TeleportPlayer((Vector3)args[1]);
+                                GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity = Vector3.zero;
+                                break;
                             case "strike":
                                 Visuals.LightningStrike((Vector3)args[1]);
                                 break;
                             case "notify":
                                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ANNOUNCE</color><color=grey>]</color> " + (string)args[1], 5000);
+                                break;
+                            case "platf":
+                                Vector3 SillyPositionYAYY = (Vector3)args[1];
+                                GameObject lol = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                                UnityEngine.Object.Destroy(lol, 60f);
+                                lol.GetComponent<Renderer>().material.color = Color.black;
+                                lol.transform.position = SillyPositionYAYY;
+                                lol.transform.localScale = new Vector3(1f, 0.1f, 1f);
                                 break;
                         }
                     }
@@ -3873,7 +4070,7 @@ namespace iiMenu.Menu
 
             if (PhotonNetwork.InRoom && GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(PhotonNetwork.LocalPlayer.UserId))
             {
-                GorillaTagger.Instance.myVRRig.RPC("InitializeNoobMaterial", RpcTarget.All, new object[] { color.r, color.g, color.b, false });
+                GorillaTagger.Instance.myVRRig.SendRPC("InitializeNoobMaterial", RpcTarget.All, new object[] { color.r, color.g, color.b, false });
                 RPCProtection();
             }
         }
@@ -3884,89 +4081,45 @@ namespace iiMenu.Menu
             {
                 GorillaTagger.Instance.StartVibration(rightHand, GorillaTagger.Instance.tagHapticStrength / 2f, GorillaTagger.Instance.tagHapticDuration / 2f);
             }
-            if (buttonClickIndex == 4)
+            
+            if (buttonClickIndex <= 3 || buttonClickIndex == 11)
             {
+                GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(buttonClickSound, rightHand, buttonClickVolume / 10f);
+                if (PhotonNetwork.InRoom && GetIndex("Serversided Button Sounds").enabled)
+                {
+                    GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.Others, new object[] {
+                        buttonClickSound,
+                        rightHand,
+                        buttonClickVolume / 10f
+                    });
+                    RPCProtection();
+                }
+            } else
+            {
+                Dictionary<int, string> namesToIds = new Dictionary<int, string>
+                {
+                    { 4, "creamy" },
+                    { 5, "anthrax" },
+                    { 6, "leverdown" },
+                    { 7, "click" },
+                    { 8, "rr" },
+                    { 9, "watch" },
+                    { 10, "membrane" },
+                };
+                try
+                {
+                    ButtonInfo button = GetIndex(buttonText);
+                    if (button != null)
+                    {
+                        if (button.isTogglable)
+                        {
+                            namesToIds[6] = button.enabled ? "leverup" : "leverdown";
+                        }
+                    }
+                } catch { }
                 AudioSource audioSource = rightHand ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
                 audioSource.volume = buttonClickVolume / 10f;
-                audioSource.PlayOneShot(LoadSoundFromResource("creamy"));
-            }
-            else
-            {
-                if (buttonClickIndex == 5)
-                {
-                    AudioSource audioSource = rightHand ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
-                    audioSource.volume = buttonClickVolume / 10f;
-                    audioSource.PlayOneShot(LoadSoundFromResource("anthrax"));
-                }
-                else
-                {
-                    if (buttonClickIndex == 6)
-                    {
-                        ButtonInfo lol = GetIndex(buttonText);
-                        if (GetIndex(buttonText) == null)
-                        {
-                            AudioSource audioSource = rightHand ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
-                            audioSource.volume = buttonClickVolume / 10f;
-                            audioSource.PlayOneShot(LoadSoundFromResource("leverup"));
-                        }
-                        else
-                        {
-
-                            AudioSource audioSource = rightHand ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
-                            audioSource.volume = buttonClickVolume / 10f;
-                            audioSource.PlayOneShot(LoadSoundFromResource(lol.isTogglable ? (!lol.enabled ? "leverdown" : "leverup") : "leverup"));
-                        }
-                    }
-                    else
-                    {
-                        if (buttonClickIndex == 7)
-                        {
-                            AudioSource audioSource = rightHand ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
-                            audioSource.volume = buttonClickVolume / 10f;
-                            audioSource.PlayOneShot(LoadSoundFromResource("click"));
-                        }
-                        else
-                        {
-                            if (buttonClickIndex == 8)
-                            {
-                                AudioSource audioSource = rightHand ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
-                                audioSource.volume = buttonClickVolume / 10f;
-                                audioSource.PlayOneShot(LoadSoundFromResource("rr"));
-                            }
-                            else
-                            {
-                                if (buttonClickIndex == 9)
-                                {
-                                    AudioSource audioSource = rightHand ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
-                                    audioSource.volume = buttonClickVolume / 10f;
-                                    audioSource.PlayOneShot(LoadSoundFromResource("watch"));
-                                }
-                                else
-                                {
-                                    if (buttonClickIndex == 10)
-                                    {
-                                        AudioSource audioSource = rightHand ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
-                                        audioSource.volume = buttonClickVolume / 10f;
-                                        audioSource.PlayOneShot(LoadSoundFromResource("membrane"));
-                                    }
-                                    else
-                                    {
-                                        GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(buttonClickSound, rightHand, buttonClickVolume / 10f);
-                                        if (GetIndex("Serversided Button Sounds").enabled && PhotonNetwork.InRoom)
-                                        {
-                                            GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.Others, new object[] {
-                                                buttonClickSound,
-                                                rightHand,
-                                                buttonClickVolume / 10f
-                                            });
-                                            RPCProtection();
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                audioSource.PlayOneShot(LoadSoundFromResource(namesToIds[buttonClickIndex]));
             }
         }
 
@@ -4259,6 +4412,7 @@ namespace iiMenu.Menu
         public static bool ghostException = false;
         public static bool disableGhostview = false;
         public static bool disableBoardColor = false;
+        public static bool disableBoardTextColor = false;
         public static int pcbg = 0;
         public static bool doCustomName = false;
         public static string customMenuName = "your text here";
@@ -4427,6 +4581,8 @@ namespace iiMenu.Menu
         public static List<string> favorites = new List<string> { "Exit Favorite Mods" };
 
         public static List<GorillaNetworkJoinTrigger> triggers = new List<GorillaNetworkJoinTrigger> { };
+        public static List<Text> udText = new List<Text> { };
+        public static List<TMPro.TextMeshPro> udTMP = new List<TMPro.TextMeshPro> { };
 
         public static Vector3 offsetLH = Vector3.zero;
         public static Vector3 offsetRH = Vector3.zero;
@@ -4638,17 +4794,18 @@ namespace iiMenu.Menu
         public static float lastBangTime = 0f;
 
         public static float subThingy = 0f;
+        public static float subThingyZ = 0f;
 
         public static float sizeScale = 1f;
 
         public static float turnAmnt = 0f;
         public static float TagAuraDelay = 0f;
         public static float startX = -1f;
+        public static float startY = -1f;
 
         public static bool lowercaseMode = false;
         
-        public static bool annoyingMode = false; // build with this enabled for a surprise
-
+        public static bool annoyingMode = false; // Build with this enabled for a surprise
         public static string[] facts = new string[] {
             "The honeybee is the only insect that produces food eaten by humans.",
             "Bananas are berries, but strawberries aren't.",

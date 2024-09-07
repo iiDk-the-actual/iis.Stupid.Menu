@@ -4,7 +4,7 @@ using UnityEngine;
 namespace iiMenu.Patches
 {
     [HarmonyPatch(typeof(VRRig), "OnDisable")]
-    internal class GhostPatch : MonoBehaviour
+    public class GhostPatch
     {
         public static bool Prefix(VRRig __instance)
         {

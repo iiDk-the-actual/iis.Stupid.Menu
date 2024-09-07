@@ -107,10 +107,7 @@ namespace iiMenu.Mods
         {
             if (!PhotonNetwork.IsMasterClient)
             {
-                if (!GetIndex("Disable Auto Anti Ban").enabled)
-                {
-                    Overpowered.FastMaster();
-                }
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             }
             else
             {
@@ -126,10 +123,7 @@ namespace iiMenu.Mods
         {
             if (!PhotonNetwork.IsMasterClient)
             {
-                if (!GetIndex("Disable Auto Anti Ban").enabled)
-                {
-                    Overpowered.FastMaster();
-                }
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             }
             else
             {
@@ -159,10 +153,7 @@ namespace iiMenu.Mods
                 {
                     if (!PhotonNetwork.IsMasterClient)
                     {
-                        if (!GetIndex("Disable Auto Anti Ban").enabled)
-                        {
-                            Overpowered.FastMaster();
-                        }
+                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
                     }
                     else
                     {
@@ -207,10 +198,7 @@ namespace iiMenu.Mods
         {
             if (!PhotonNetwork.IsMasterClient)
             {
-                if (!GetIndex("Disable Auto Anti Ban").enabled)
-                {
-                    Overpowered.FastMaster();
-                }
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             }
             else
             {
@@ -235,10 +223,7 @@ namespace iiMenu.Mods
         {
             if (!PhotonNetwork.IsMasterClient)
             {
-                if (!GetIndex("Disable Auto Anti Ban").enabled)
-                {
-                    Overpowered.FastMaster();
-                }
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             }
             else
             {
@@ -293,6 +278,34 @@ namespace iiMenu.Mods
 
             tagAuraDistance = distances[tagAuraIndex];
             GetIndex("ctaRange").overlapText = "Change Tag Aura Distance <color=grey>[</color><color=green>"+names[tagAuraIndex]+"</color><color=grey>]</color>";
+        }
+
+        public static int tagRangeIndex = 0;
+        private static float tagReachDistance = 0.3f;
+        public static void ChangeTagReachDistance()
+        {
+            tagRangeIndex++;
+            if (tagRangeIndex > 3)
+            {
+                tagRangeIndex = 0;
+            }
+            string[] names = new string[]
+            {
+                "Unnoticable",
+                "Normal",
+                "Far",
+                "Maximum"
+            };
+            float[] distances = new float[]
+            {
+                0.3f,
+                0.5f,
+                1f,
+                3f
+            };
+
+            tagReachDistance = distances[tagRangeIndex];
+            GetIndex("ctrRange").overlapText = "Change Tag Reach Distance <color=grey>[</color><color=green>" + names[tagRangeIndex] + "</color><color=grey>]</color>";
         }
 
         public static void PhysicalTagAura()
@@ -352,6 +365,28 @@ namespace iiMenu.Mods
                     }
                 }
             }
+        }
+
+        public static void TagReach()
+        {
+            if (PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
+            {
+                Patches.SphereCastPatch.patchEnabled = true;
+                Patches.SphereCastPatch.overrideRadius = tagReachDistance;
+                if (GetIndex("Visualize Tag Reach").enabled)
+                {
+                    VisualizeAura(GorillaTagger.Instance.leftHandTransform.position, tagReachDistance, GetBGColor(0f));
+                    VisualizeAura(GorillaTagger.Instance.rightHandTransform.position, tagReachDistance, GetBGColor(0f));
+                }
+            } else
+            {
+                Patches.SphereCastPatch.patchEnabled = false;
+            }
+        }
+
+        public static void DisableTagReach()
+        {
+            Patches.SphereCastPatch.patchEnabled = false;
         }
 
         /*public static void RPCTagAura()
@@ -508,10 +543,7 @@ namespace iiMenu.Mods
                             RemoveInfected(RigManager.GetPlayerFromVRRig(possibly));
                         } else
                         {
-                            if (!GetIndex("Disable Auto Anti Ban").enabled)
-                            {
-                                Overpowered.FastMaster();
-                            }
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
                         }
                     }
                 }
@@ -626,7 +658,7 @@ namespace iiMenu.Mods
         public static void HuntTagAll()
         {
             GorillaHuntManager sillyComputer = GorillaGameManager.instance.gameObject.GetComponent<GorillaHuntManager>();
-            Photon.Realtime.Player target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
+            NetPlayer target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
             if (!GorillaLocomotion.Player.Instance.disableMovement)
             {
                 VRRig vrrig = RigManager.GetVRRigFromPlayer(target);

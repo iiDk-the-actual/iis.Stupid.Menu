@@ -12,7 +12,7 @@ using static iiMenu.Menu.Main;
 
 namespace iiMenu.Notifications
 {
-    // Originally created by lars, he gave me perms+
+    // Originally created by lars, he gave me permission
     // Modified by ii, not much though
     //[BepInPlugin("org.gorillatag.lars.notifications2", "NotificationLibrary", "1.0.5")]
     public class NotifiLib : MonoBehaviour
@@ -81,84 +81,65 @@ namespace iiMenu.Notifications
 
         private void FixedUpdate()
         {
-            if (!HasInit && GameObject.Find("Main Camera") != null)
-            {
-                Init();
-                HasInit = true;
-            }
-            HUDObj2.transform.position = new Vector3(MainCamera.transform.position.x, MainCamera.transform.position.y, MainCamera.transform.position.z);
-            HUDObj2.transform.rotation = MainCamera.transform.rotation;
             try
             {
-                Testtext.font = activeFont;
-                ModText.font = activeFont;
-
-                Testtext.fontStyle = activeFontStyle;
-                ModText.fontStyle = activeFontStyle;
-            } catch{ }
-            if (showEnabledModsVR)
-            {
-                string lol = "";
-                List<string> alphabetized = new List<string>();
-                foreach (ButtonInfo[] buttonlist in Buttons.buttons)
+                if (!HasInit && GameObject.Find("Main Camera") != null)
                 {
-                    foreach (ButtonInfo v in buttonlist)
+                    Init();
+                    HasInit = true;
+                }
+                HUDObj2.transform.position = new Vector3(MainCamera.transform.position.x, MainCamera.transform.position.y, MainCamera.transform.position.z);
+                HUDObj2.transform.rotation = MainCamera.transform.rotation;
+                try
+                {
+                    Testtext.font = activeFont;
+                    ModText.font = activeFont;
+
+                    Testtext.fontStyle = activeFontStyle;
+                    ModText.fontStyle = activeFontStyle;
+                }
+                catch { }
+                if (showEnabledModsVR)
+                {
+                    string lol = "";
+                    List<string> alphabetized = new List<string>();
+                    foreach (ButtonInfo[] buttonlist in Buttons.buttons)
                     {
-                        try
+                        foreach (ButtonInfo v in buttonlist)
                         {
-                            if (v.enabled)
+                            try
                             {
-                                alphabetized.Add((v.overlapText == null) ? v.buttonText : v.overlapText);
+                                if (v.enabled)
+                                {
+                                    alphabetized.Add((v.overlapText == null) ? v.buttonText : v.overlapText);
+                                }
                             }
-                        } catch { }
+                            catch { }
+                        }
                     }
-                }
 
-                Regex notags = new Regex("<.*?>");
-                string[] sortedButtons = alphabetized
-                    .OrderByDescending(s => (notags.Replace(s, "")).Length)
-                    .ToArray();
+                    Regex notags = new Regex("<.*?>");
+                    string[] sortedButtons = alphabetized
+                        .OrderByDescending(s => (notags.Replace(s, "")).Length)
+                        .ToArray();
 
-                foreach (string v in sortedButtons)
-                {
-                    lol += v + "\n";
-                }
-                ModText.text = lol;
-                ModText.color = GetBGColor(0f);
-            }
-            else
-            {
-                ModText.text = "";
-            }
-            if (lowercaseMode)
-            {
-                ModText.text = ModText.text.ToLower();
-                NotifiText.text = NotifiText.text.ToLower();
-            }
-            //if (Testtext.text != "")
-            //{
-            /*NotificationDecayTimeCounter++;
-            if (NotificationDecayTimeCounter > NotificationDecayTime)
-            {
-                /*Notifilines = null;
-                newtext = "";!this.HasInit && GameObject.Find("Main Camera") != null
-                NotificationDecayTimeCounter = 0;
-                Notifilines = Enumerable.ToArray<string>(Enumerable.Skip<string>(Testtext.text.Split(Environment.NewLine.ToCharArray()), 1));
-                foreach (string text in Notifilines)
-                {
-                    if (text != "")
+                    foreach (string v in sortedButtons)
                     {
-                        newtext = newtext + text + "\n";
+                        lol += v + "\n";
                     }
+                    ModText.text = lol;
+                    ModText.color = GetIndex("Swap GUI Colors").enabled ? GetBDColor(0f) : GetBGColor(0f);
                 }
-                Testtext.text = newtext;*
-                ClearLast();
-            }*/
-            //}
-            //else
-            //{
-            //    NotificationDecayTimeCounter = 0;
-            //}
+                else
+                {
+                    ModText.text = "";
+                }
+                if (lowercaseMode)
+                {
+                    ModText.text = ModText.text.ToLower();
+                    NotifiText.text = NotifiText.text.ToLower();
+                }
+            } catch { /* Game not initialized */ }
         }
 
         public static void SendNotification(string NotificationText, int clearTime = -1)

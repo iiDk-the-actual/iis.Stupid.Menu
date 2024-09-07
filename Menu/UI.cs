@@ -71,8 +71,10 @@ namespace iiMenu.UI
                 GUI.skin.button.fontStyle = activeFontStyle;
                 GUI.skin.label.fontStyle = activeFontStyle;
 
-                GUI.color = GetBGColor(0f);
-                GUI.backgroundColor = GetBGColor(0f);
+                Color victimColor = GetIndex("Swap GUI Colors").enabled ? GetBDColor(0f) : GetBGColor(0f);
+
+                GUI.color = victimColor;
+                GUI.backgroundColor = victimColor;
 
                 string roomText = "Not connected to room";
                 try
@@ -81,7 +83,7 @@ namespace iiMenu.UI
                     {
                         roomText = "Connected to room "+PhotonNetwork.CurrentRoom.Name;
                     }
-                } catch { } // shitty ass code
+                } catch { }
                 GUI.Label(new Rect(10, Screen.height - 35, Screen.width, 40), roomText);
                 
                 try
@@ -92,24 +94,7 @@ namespace iiMenu.UI
                     }
                 }
                 catch { }
-                /* pointless unoptimized shitstack
-                try
-                {
-                    if (icon != null)
-                    {
-                        Color[] pixels = icon.GetPixels();
-                        for (int i = 0; i < pixels.Length; i++)
-                        {
-                            float alpha = pixels[i].a;
-                            Color bgc = GetBGColor(0f);
-                            pixels[i] = new Color(bgc.r, bgc.g, bgc.b, alpha);
-                        }
 
-                        icon.SetPixels(pixels);
-                        icon.Apply();
-                    }
-                } catch { }
-                */
                 try
                 {
                     if (icon != null)
@@ -131,7 +116,6 @@ namespace iiMenu.UI
                 GUI.Box(new Rect(Screen.width - 250, 10, 240, 120), "", GUI.skin.box);
 
                 inputText = GUI.TextField(new Rect(Screen.width - 200, 20, 180, 20), inputText);
-                // inputText = inputText.ToUpper(); i dont need this
 
                 r = GUI.TextField(new Rect(Screen.width - 240, 20, 30, 20), r);
 
@@ -175,7 +159,6 @@ namespace iiMenu.UI
                     } else
                     {
                         string toJoin = inputText.Replace("\\n", "\n");
-                        iiMenu.Mods.Important.CreateRoom(toJoin, true);
                         PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(toJoin, JoinType.Solo);
                     }
                     
@@ -184,12 +167,11 @@ namespace iiMenu.UI
                 {
                     PhotonNetwork.Disconnect();
                     rejRoom = inputText;
-                    //rejDebounce = Time.time + 0.25f;
                 }
 
                 try
                 {
-                    GUI.color = GetBGColor(0f);
+                    GUI.color = victimColor;
                     GUILayout.BeginHorizontal(Array.Empty<GUILayoutOption>());
                     GUILayout.Space(5f);
                     GUILayout.BeginVertical(Array.Empty<GUILayoutOption>());
@@ -205,7 +187,12 @@ namespace iiMenu.UI
                             {
                                 if (v.enabled)
                                 {
-                                    alphabetized.Add((v.overlapText == null) ? v.buttonText : v.overlapText);
+                                    string toadd = (v.overlapText == null) ? v.buttonText : v.overlapText;
+                                    if (lowercaseMode)
+                                    {
+                                        toadd = toadd.ToLower();
+                                    }
+                                    alphabetized.Add(toadd);
                                 }
                             } catch { }
                         }

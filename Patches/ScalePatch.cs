@@ -6,8 +6,7 @@ using static iiMenu.Menu.Main;
 
 namespace iiMenu.Patches
 {
-    [HarmonyPatch(typeof(SizeManager))]
-    [HarmonyPatch("ControllingChanger", MethodType.Normal)]
+    [HarmonyPatch(typeof(SizeManager), "ControllingChanger")]
     public class ScalePatch
     {
         private static void Postfix(ref SizeChanger __result, Transform t)

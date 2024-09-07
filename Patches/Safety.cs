@@ -16,7 +16,7 @@ using static iiMenu.Menu.Main;
 namespace iiMenu.Patches
 {
     [HarmonyPatch(typeof(GorillaNot), "SendReport")]
-    internal class AntiCheat : MonoBehaviour
+    public class AntiCheat
     {
         private static bool Prefix(string susReason, string susId, string susNick)
         {
@@ -39,8 +39,7 @@ namespace iiMenu.Patches
             }
             if (AntiACReport)
             {
-                PhotonNetwork.Disconnect();
-                RPCProtection();
+                Mods.Safety.AntiReportFRT(null, false);
                 NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>The anti cheat attempted to report you, you have been disconnected.</color>");
             }
             return false;
@@ -211,19 +210,6 @@ namespace iiMenu.Patches
         }
     }
 
-    /*[HarmonyPatch(typeof(CosmeticsController.CosmeticSet), "MergeSets")]
-    public class CosmeticsPatch
-    {
-        public static bool Prefix(CosmeticsController.CosmeticSet tryOn, CosmeticsController.CosmeticSet current)
-        {
-            if (AntiCrashToggle)
-            {
-                return false;
-            }
-            return true;
-        }
-    }*/
-
     [HarmonyPatch(typeof(VRRig), "PlayHandTapLocal")]
     public class AntiSoundPatch
     {
@@ -249,31 +235,4 @@ namespace iiMenu.Patches
             return true;
         }
     }
-    /*
-    [HarmonyPatch(typeof(GorillaGameManager), "LaunchSlingshotProjectile")]
-    public class AntiCrash
-    {
-        private static bool Prefix(Vector3 slingshotLaunchLocation, Vector3 slingshotLaunchVelocity, int projHash, int trailHash, bool forLeftHand, int projectileCount, bool shouldOverrideColor, float colorR, float colorG, float colorB, float colorA, PhotonMessageInfo info)
-        {
-            if (AntiCrashToggle)
-            {
-                if (info.Sender != PhotonNetwork.LocalPlayer)
-                {
-                    if (Vector3.Distance(GorillaGameManager.instance.FindPlayerVRRig(info.Sender).transform.position, slingshotLaunchLocation) > 1.5f)
-                    {
-                        return false;
-                    }
-                    if (Vector3.Distance(slingshotLaunchLocation, GorillaLocomotion.Player.Instance.transform.position) > 10)
-                    {
-                        return false;
-                    }
-                    if (ObjectPools.instance.GetPoolByHash(projHash).objectToPool.GetComponent<SlingshotProjectileTrail>() != null)
-                    {
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
-    }*/
 }

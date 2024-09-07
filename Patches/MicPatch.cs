@@ -5,7 +5,7 @@ using static iiMenu.Menu.Main;
 namespace iiMenu.Patches
 {
     [HarmonyPatch(typeof(GorillaSpeakerLoudness), "InvokeUpdate")]
-    internal class MicPatch
+    public class MicPatch
     {
         public static bool returnAsNone = false;
 

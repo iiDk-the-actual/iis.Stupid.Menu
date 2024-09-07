@@ -2,6 +2,7 @@
 using iiMenu.Menu;
 using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
+using Photon.Pun;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -512,7 +513,7 @@ namespace iiMenu.Mods
         public static void ChangeMenuTheme()
         {
             themeType++;
-            if (themeType > 50)
+            if (themeType > 51)
             {
                 themeType = 1;
             }
@@ -1070,6 +1071,17 @@ namespace iiMenu.Mods
                     textColor = Color.white;
                     textClicked = Color.white;
                     break;
+                case 51: // Pastel Rainbow
+                    bgColorA = Color.white;
+                    bgColorB = Color.white;
+                    buttonDefaultA = Color.white;
+                    buttonDefaultB = Color.white;
+                    buttonClickedA = Color.white;
+                    buttonClickedB = Color.white;
+                    titleColor = Color.black;
+                    textColor = Color.black;
+                    textClicked = Color.black;
+                    break;
             }
         }
 
@@ -1581,7 +1593,7 @@ namespace iiMenu.Mods
                 }
             }
 
-            string ihateyouguys = platformMode + seperator + platformShape + seperator + flySpeedCycle + seperator + longarmCycle + seperator + speedboostCycle + seperator + projmode + seperator + trailmode + seperator + shootCycle + seperator + pointerIndex + seperator + tagAuraIndex + seperator + notificationDecayTime + seperator + fontStyleType + seperator + arrowType + seperator + pcbg + seperator + internetTime + seperator + hotkeyButton + seperator + buttonClickIndex + seperator + buttonClickVolume + seperator + Safety.antireportrangeindex;
+            string ihateyouguys = platformMode + seperator + platformShape + seperator + flySpeedCycle + seperator + longarmCycle + seperator + speedboostCycle + seperator + projmode + seperator + trailmode + seperator + shootCycle + seperator + pointerIndex + seperator + tagAuraIndex + seperator + notificationDecayTime + seperator + fontStyleType + seperator + arrowType + seperator + pcbg + seperator + internetTime + seperator + hotkeyButton + seperator + buttonClickIndex + seperator + buttonClickVolume + seperator + Safety.antireportrangeindex + seperator + Advantages.tagRangeIndex;
 
             string finaltext =
                 text + "\n" +
@@ -1706,44 +1718,49 @@ namespace iiMenu.Mods
                 favorites.Add(fav);
             }
 
-            string[] data = textData[2].Split(";;");
-            platformMode = int.Parse(data[0]) - 1;
-            Movement.ChangePlatformType();
-            platformShape = int.Parse(data[1]) - 1;
-            Movement.ChangePlatformShape();
-            flySpeedCycle = int.Parse(data[2]) - 1;
-            Movement.ChangeFlySpeed();
-            longarmCycle = int.Parse(data[3]) - 1;
-            Movement.ChangeArmLength();
-            speedboostCycle = int.Parse(data[4]) - 1;
-            Movement.ChangeSpeedBoostAmount();
-            projmode = int.Parse(data[5]) - 1;
-            Projectiles.ChangeProjectile();
-            trailmode = int.Parse(data[6]) - 1;
-            Projectiles.ChangeTrail();
-            shootCycle = int.Parse(data[7]) - 1;
-            Projectiles.ChangeShootSpeed();
-            pointerIndex = int.Parse(data[8]) - 1;
-            ChangePointerPosition();
-            tagAuraIndex = int.Parse(data[9]) - 1;
-            Advantages.ChangeTagAuraRange();
-            notificationDecayTime = int.Parse(data[10]) - 1000;
-            ChangeNotificationTime();
-            fontStyleType = int.Parse(data[11]) - 1;
-            Settings.ChangeFontStyleType();
-            arrowType = int.Parse(data[12]) - 1;
-            Settings.ChangeArrowType();
-            pcbg = int.Parse(data[13]) - 1;
-            Settings.ChangePCUI();
-            internetTime = int.Parse(data[14]) - 1;
-            Settings.ChangeReconnectTime();
-            hotkeyButton = data[15];
-            buttonClickIndex = int.Parse(data[16]) - 1;
-            Settings.ChangeButtonSound();
-            buttonClickVolume = int.Parse(data[17]) - 1;
-            Settings.ChangeButtonVolume();
-            Safety.antireportrangeindex = int.Parse(data[18]) - 1;
-            Safety.ChangeAntiReportRange();
+            try
+            {
+                string[] data = textData[2].Split(";;");
+                platformMode = int.Parse(data[0]) - 1;
+                Movement.ChangePlatformType();
+                platformShape = int.Parse(data[1]) - 1;
+                Movement.ChangePlatformShape();
+                flySpeedCycle = int.Parse(data[2]) - 1;
+                Movement.ChangeFlySpeed();
+                longarmCycle = int.Parse(data[3]) - 1;
+                Movement.ChangeArmLength();
+                speedboostCycle = int.Parse(data[4]) - 1;
+                Movement.ChangeSpeedBoostAmount();
+                projmode = int.Parse(data[5]) - 1;
+                Projectiles.ChangeProjectile();
+                trailmode = int.Parse(data[6]) - 1;
+                Projectiles.ChangeTrail();
+                shootCycle = int.Parse(data[7]) - 1;
+                Projectiles.ChangeShootSpeed();
+                pointerIndex = int.Parse(data[8]) - 1;
+                ChangePointerPosition();
+                tagAuraIndex = int.Parse(data[9]) - 1;
+                Advantages.ChangeTagAuraRange();
+                notificationDecayTime = int.Parse(data[10]) - 1000;
+                ChangeNotificationTime();
+                fontStyleType = int.Parse(data[11]) - 1;
+                ChangeFontStyleType();
+                arrowType = int.Parse(data[12]) - 1;
+                ChangeArrowType();
+                pcbg = int.Parse(data[13]) - 1;
+                ChangePCUI();
+                internetTime = int.Parse(data[14]) - 1;
+                ChangeReconnectTime();
+                hotkeyButton = data[15];
+                buttonClickIndex = int.Parse(data[16]) - 1;
+                ChangeButtonSound();
+                buttonClickVolume = int.Parse(data[17]) - 1;
+                ChangeButtonVolume();
+                Safety.antireportrangeindex = int.Parse(data[18]) - 1;
+                Safety.ChangeAntiReportRange();
+                Advantages.tagRangeIndex = int.Parse(data[19]) - 1;
+                Advantages.ChangeTagReachDistance();
+            } catch { UnityEngine.Debug.Log("Save file out of date"); }
 
             pageButtonType = int.Parse(textData[3]) - 1;
             Toggle("Change Page Type");
@@ -1937,6 +1954,16 @@ namespace iiMenu.Mods
             disableBoardColor = false;
             motd.SetActive(true);
             GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/motd").SetActive(false);
+        }
+
+        public static void DisableBoardTextColors()
+        {
+            disableBoardTextColor = true;
+        }
+
+        public static void EnableBoardTextColors()
+        {
+            disableBoardTextColor = false;
         }
     }
 }

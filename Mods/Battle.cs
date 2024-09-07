@@ -19,10 +19,7 @@ namespace iiMenu.Mods
         {
             if (!PhotonNetwork.IsMasterClient)
             {
-                if (!GetIndex("Disable Auto Anti Ban").enabled)
-                {
-                    Overpowered.FastMaster();
-                }
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             }
             else
             {
@@ -35,10 +32,7 @@ namespace iiMenu.Mods
         {
             if (!PhotonNetwork.IsMasterClient)
             {
-                if (!GetIndex("Disable Auto Anti Ban").enabled)
-                {
-                    Overpowered.FastMaster();
-                }
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             }
             else
             {
@@ -51,10 +45,7 @@ namespace iiMenu.Mods
         {
             if (!PhotonNetwork.IsMasterClient)
             {
-                if (!GetIndex("Disable Auto Anti Ban").enabled)
-                {
-                    Overpowered.FastMaster();
-                }
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             }
             else
             {
@@ -68,10 +59,7 @@ namespace iiMenu.Mods
         {
             if (!PhotonNetwork.IsMasterClient)
             {
-                if (!GetIndex("Disable Auto Anti Ban").enabled)
-                {
-                    Overpowered.FastMaster();
-                }
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             }
             else
             {
@@ -84,10 +72,7 @@ namespace iiMenu.Mods
         {
             if (!PhotonNetwork.IsMasterClient)
             {
-                if (!GetIndex("Disable Auto Anti Ban").enabled)
-                {
-                    Overpowered.FastMaster();
-                }
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             }
             else
             {
@@ -112,13 +97,10 @@ namespace iiMenu.Mods
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        Photon.Realtime.Player owner = GetPlayerFromVRRig(possibly);
+                        NetPlayer owner = GetPlayerFromVRRig(possibly);
                         if (!PhotonNetwork.IsMasterClient)
                         {
-                            if (!GetIndex("Disable Auto Anti Ban").enabled)
-                            {
-                                Overpowered.FastMaster();
-                            }
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
                         }
                         else
                         {
@@ -134,10 +116,7 @@ namespace iiMenu.Mods
         {
             if (!PhotonNetwork.IsMasterClient)
             {
-                if (!GetIndex("Disable Auto Anti Ban").enabled)
-                {
-                    Overpowered.FastMaster();
-                }
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             }
             else
             {
@@ -150,10 +129,7 @@ namespace iiMenu.Mods
         {
             if (!PhotonNetwork.IsMasterClient)
             {
-                if (!GetIndex("Disable Auto Anti Ban").enabled)
-                {
-                    Overpowered.FastMaster();
-                }
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             }
             else
             {
@@ -178,13 +154,10 @@ namespace iiMenu.Mods
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        Photon.Realtime.Player owner = GetPlayerFromVRRig(possibly);
+                        NetPlayer owner = GetPlayerFromVRRig(possibly);
                         if (!PhotonNetwork.IsMasterClient)
                         {
-                            if (!GetIndex("Disable Auto Anti Ban").enabled)
-                            {
-                                Overpowered.FastMaster();
-                            }
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
                         }
                         else
                         {
@@ -200,10 +173,7 @@ namespace iiMenu.Mods
         {
             if (!PhotonNetwork.IsMasterClient)
             {
-                if (!GetIndex("Disable Auto Anti Ban").enabled)
-                {
-                    Overpowered.FastMaster();
-                }
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             }
             else
             {
@@ -216,10 +186,7 @@ namespace iiMenu.Mods
         {
             if (!PhotonNetwork.IsMasterClient)
             {
-                if (!GetIndex("Disable Auto Anti Ban").enabled)
-                {
-                    Overpowered.FastMaster();
-                }
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             }
             else
             {
@@ -235,10 +202,7 @@ namespace iiMenu.Mods
         {
             if (!PhotonNetwork.IsMasterClient)
             {
-                if (!GetIndex("Disable Auto Anti Ban").enabled)
-                {
-                    Overpowered.FastMaster();
-                }
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             }
             else
             {

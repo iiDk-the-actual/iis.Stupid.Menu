@@ -209,6 +209,161 @@ namespace iiMenu.Mods
             UnityEngine.Object.Destroy(a, Time.deltaTime * 2f);
         }
 
+        public static void VelocityLabel()
+        {
+            GameObject go = new GameObject("Lbl");
+            go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+            TextMesh textMesh = go.AddComponent<TextMesh>();
+            textMesh.color = GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity.magnitude >= GorillaLocomotion.Player.Instance.maxJumpSpeed ? Color.green : Color.white;
+            textMesh.fontSize = 24;
+            textMesh.fontStyle = activeFontStyle;
+            textMesh.characterSize = 0.1f;
+            textMesh.anchor = TextAnchor.MiddleCenter;
+            textMesh.alignment = TextAlignment.Center;
+            textMesh.text = string.Format("{0:F1}m/s", GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity.magnitude);
+
+            go.transform.position = GorillaTagger.Instance.rightHandTransform.position + new Vector3(0f, 0.1f, 0f);
+            go.transform.LookAt(Camera.main.transform.position);
+            go.transform.Rotate(0f, 180f, 0f);
+            UnityEngine.Object.Destroy(go, Time.deltaTime);
+        }
+
+        private static float startTime = 0f;
+        private static float endTime = 0f;
+        private static bool lastWasTagged = false;
+        public static void TimeLabel()
+        {
+            if (PhotonNetwork.InRoom)
+            {
+                bool isThereTagged = false;
+                foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                {
+                    if (PlayerIsTagged(vrrig))
+                    {
+                        isThereTagged = true;
+                        break;
+                    }
+                }
+                if (isThereTagged)
+                {
+                    bool playerIsTagged = PlayerIsTagged(GorillaTagger.Instance.offlineVRRig);
+                    if (playerIsTagged && !lastWasTagged)
+                    {
+                        endTime = Time.time - startTime;
+                    }
+                    if (!playerIsTagged && lastWasTagged)
+                    {
+                        startTime = Time.time;
+                    }
+                    lastWasTagged = playerIsTagged;
+
+                    GameObject go = new GameObject("Lbl");
+                    go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+                    TextMesh textMesh = go.AddComponent<TextMesh>();
+                    textMesh.color = PlayerIsTagged(GorillaTagger.Instance.offlineVRRig) ? Color.green : Color.white;
+                    textMesh.fontSize = 24;
+                    textMesh.fontStyle = activeFontStyle;
+                    textMesh.characterSize = 0.1f;
+                    textMesh.anchor = TextAnchor.MiddleCenter;
+                    textMesh.alignment = TextAlignment.Center;
+                    textMesh.text = !playerIsTagged ?
+                        FormatUnix(Mathf.FloorToInt(Time.time - startTime)) :
+                        FormatUnix(Mathf.FloorToInt(endTime));
+
+                    go.transform.position = GorillaTagger.Instance.rightHandTransform.position + new Vector3(0f, GetIndex("Velocity Label").enabled ? 0.2f : 0.1f, 0f);
+                    go.transform.LookAt(Camera.main.transform.position);
+                    go.transform.Rotate(0f, 180f, 0f);
+                    UnityEngine.Object.Destroy(go, Time.deltaTime);
+                }
+                else
+                {
+                    startTime = Time.time;
+                }
+            }
+        }
+
+        public static void NearbyTaggerLabel()
+        {
+            if (!PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
+            {
+                float closest = float.MaxValue;
+                foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                {
+                    if (vrrig != GorillaTagger.Instance.offlineVRRig && PlayerIsTagged(vrrig))
+                    {
+                        float dist = Vector3.Distance(GorillaTagger.Instance.headCollider.transform.position, vrrig.headMesh.transform.position);
+                        if (dist < closest)
+                        {
+                            closest = dist;
+                        }
+                    }
+                }
+                if (closest != float.MaxValue)
+                {
+                    Color colorn = Color.green;
+                    if (closest < 30f)
+                    {
+                        colorn = Color.yellow;
+                    }
+                    if (closest < 20f)
+                    {
+                        colorn = new Color32(255, 90, 0, 255);
+                    }
+                    if (closest < 10f)
+                    {
+                        colorn = Color.red;
+                    }
+                    GameObject go = new GameObject("Lbl");
+                    go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+                    TextMesh textMesh = go.AddComponent<TextMesh>();
+                    textMesh.color = colorn;
+                    textMesh.fontSize = 24;
+                    textMesh.fontStyle = activeFontStyle;
+                    textMesh.characterSize = 0.1f;
+                    textMesh.anchor = TextAnchor.MiddleCenter;
+                    textMesh.alignment = TextAlignment.Center;
+                    textMesh.text = string.Format("{0:F1}m", closest);
+
+                    go.transform.position = GorillaTagger.Instance.leftHandTransform.position + new Vector3(0f, GetIndex("Last Label").enabled ? 0.2f : 0.1f, 0f);
+                    go.transform.LookAt(Camera.main.transform.position);
+                    go.transform.Rotate(0f, 180f, 0f);
+                    UnityEngine.Object.Destroy(go, Time.deltaTime);
+                }
+            }
+        }
+
+        public static void LastLabel()
+        {
+            bool isThereTagged = false;
+            int left = PhotonNetwork.PlayerList.Length;
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (PlayerIsTagged(vrrig))
+                {
+                    isThereTagged = true;
+                    left--;
+                }
+            }
+            if (PhotonNetwork.InRoom && isThereTagged)
+            {
+                GameObject go = new GameObject("Lbl");
+                go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+                TextMesh textMesh = go.AddComponent<TextMesh>();
+                textMesh.color = left <= 1 && !PlayerIsTagged(GorillaTagger.Instance.offlineVRRig) ? Color.green : Color.white;
+                textMesh.fontSize = 24;
+                textMesh.fontStyle = activeFontStyle;
+                textMesh.characterSize = 0.1f;
+                textMesh.anchor = TextAnchor.MiddleCenter;
+                textMesh.alignment = TextAlignment.Center;
+                textMesh.text = left.ToString() + " left";
+
+                go.transform.position = GorillaTagger.Instance.leftHandTransform.position + new Vector3(0f, 0.1f, 0f);
+                go.transform.LookAt(Camera.main.transform.position);
+                go.transform.Rotate(0f, 180f, 0f);
+                UnityEngine.Object.Destroy(go, Time.deltaTime);
+            }
+        }
+
         public static void FakeUnbanSelf()
         {
             PhotonNetworkController.Instance.UpdateTriggerScreens();
@@ -234,7 +389,7 @@ namespace iiMenu.Mods
             visualizerObject.GetComponent<Renderer>().material.color = GetBGColor(0f);
             visualizerOutline.GetComponent<Renderer>().material.color = GetBRColor(0f);
 
-            Physics.Raycast(GorillaTagger.Instance.bodyCollider.transform.position - new Vector3(0f, 0.2f, 0f), Vector3.down, out var Ray, 512f, NoInvisLayerMask());
+            Physics.Raycast(GorillaTagger.Instance.bodyCollider.transform.position - new Vector3(0f, 0.2f, 0f), Vector3.down, out var Ray, 512f, GorillaLocomotion.Player.Instance.locomotionEnabledLayers);
             visualizerObject.transform.position = Ray.point;
             visualizerObject.transform.rotation = Quaternion.LookRotation(Ray.normal) * Quaternion.Euler(90f, 0f, 0f);
 
@@ -253,7 +408,7 @@ namespace iiMenu.Mods
 
             visualizerOutline.transform.position = visualizerObject.transform.position;
             visualizerOutline.transform.rotation = visualizerObject.transform.rotation;
-            visualizerOutline.transform.localScale = new Vector3(size + 0.05f, 0.095f, size + 0.05f);
+            visualizerOutline.transform.localScale = new Vector3(size + 0.05f, 0.025f, size + 0.05f);
         }
 
         public static void DestroyAudioVisualizer()
@@ -495,6 +650,7 @@ namespace iiMenu.Mods
 
         public static void CasualTracers()
         {
+            float lineWidth = GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f;
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
                 if (vrrig != GorillaTagger.Instance.offlineVRRig)
@@ -503,7 +659,7 @@ namespace iiMenu.Mods
                     LineRenderer liner = line.AddComponent<LineRenderer>();
                     UnityEngine.Color thecolor = vrrig.playerColor;
                     if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); } if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
-                    liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = 0.025f; liner.endWidth = 0.025f; liner.positionCount = 2; liner.useWorldSpace = true;
+                    liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = lineWidth; liner.endWidth = lineWidth; liner.positionCount = 2; liner.useWorldSpace = true;
                     liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
                     liner.SetPosition(1, vrrig.transform.position);
                     liner.material.shader = Shader.Find("GUI/Text Shader");
@@ -514,6 +670,7 @@ namespace iiMenu.Mods
 
         public static void InfectionTracers()
         {
+            float lineWidth = GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f;
             bool isInfectedPlayers = false;
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
@@ -536,7 +693,7 @@ namespace iiMenu.Mods
                             UnityEngine.Color thecolor = new Color32(255, 111, 0, 255);
                             if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                             if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
-                            liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = 0.025f; liner.endWidth = 0.025f; liner.positionCount = 2; liner.useWorldSpace = true;
+                            liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = lineWidth; liner.endWidth = lineWidth; liner.positionCount = 2; liner.useWorldSpace = true;
                             liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
                             liner.SetPosition(1, vrrig.transform.position);
                             liner.material.shader = Shader.Find("GUI/Text Shader");
@@ -555,7 +712,7 @@ namespace iiMenu.Mods
                             UnityEngine.Color thecolor = vrrig.playerColor;
                             if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                             if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
-                            liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = 0.025f; liner.endWidth = 0.025f; liner.positionCount = 2; liner.useWorldSpace = true;
+                            liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = lineWidth; liner.endWidth = lineWidth; liner.positionCount = 2; liner.useWorldSpace = true;
                             liner.SetPosition(0, GorillaLocomotion.Player.Instance.rightControllerTransform.position);
                             liner.SetPosition(1, vrrig.transform.position);
                             liner.material.shader = Shader.Find("GUI/Text Shader");
@@ -575,7 +732,7 @@ namespace iiMenu.Mods
                         UnityEngine.Color thecolor = vrrig.playerColor;
                         if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                         if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
-                        liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = 0.025f; liner.endWidth = 0.025f; liner.positionCount = 2; liner.useWorldSpace = true;
+                        liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = lineWidth; liner.endWidth = lineWidth; liner.positionCount = 2; liner.useWorldSpace = true;
                         liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
                         liner.SetPosition(1, vrrig.transform.position);
                         liner.material.shader = Shader.Find("GUI/Text Shader");
@@ -587,9 +744,10 @@ namespace iiMenu.Mods
 
         public static void HuntTracers()
         {
+            float lineWidth = GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f;
             GorillaHuntManager sillyComputer = GorillaGameManager.instance.gameObject.GetComponent<GorillaHuntManager>();
-            Photon.Realtime.Player target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
-            foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
+            NetPlayer target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
+            foreach (NetPlayer player in PhotonNetwork.PlayerList)
             {
                 VRRig vrrig = RigManager.GetVRRigFromPlayer(player);
                 if (player == target)
@@ -599,19 +757,19 @@ namespace iiMenu.Mods
                     UnityEngine.Color thecolor = vrrig.playerColor;
                     if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                     if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
-                    liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = 0.025f; liner.endWidth = 0.025f; liner.positionCount = 2; liner.useWorldSpace = true;
+                    liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = lineWidth; liner.endWidth = lineWidth; liner.positionCount = 2; liner.useWorldSpace = true;
                     liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
                     liner.SetPosition(1, vrrig.transform.position);
                     liner.material.shader = Shader.Find("GUI/Text Shader");
                     UnityEngine.Object.Destroy(line, Time.deltaTime);
                 }
-                if (sillyComputer.GetTargetOf(player) == PhotonNetwork.LocalPlayer)
+                if (sillyComputer.GetTargetOf(player) == (NetPlayer)PhotonNetwork.LocalPlayer)
                 {
                     GameObject line = new GameObject("Line");
                     LineRenderer liner = line.AddComponent<LineRenderer>();
                     UnityEngine.Color thecolor = Color.red;
                     if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
-                    liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = 0.025f; liner.endWidth = 0.025f; liner.positionCount = 2; liner.useWorldSpace = true;
+                    liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = lineWidth; liner.endWidth = lineWidth; liner.positionCount = 2; liner.useWorldSpace = true;
                     liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
                     liner.SetPosition(1, vrrig.transform.position);
                     liner.material.shader = Shader.Find("GUI/Text Shader");
@@ -808,8 +966,8 @@ namespace iiMenu.Mods
         public static void HuntBoneESP()
         {
             GorillaHuntManager sillyComputer = GorillaGameManager.instance.gameObject.GetComponent<GorillaHuntManager>();
-            Photon.Realtime.Player target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
-            foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
+            NetPlayer target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
+            foreach (NetPlayer player in PhotonNetwork.PlayerList)
             {
                 VRRig vrrig = RigManager.GetVRRigFromPlayer(player);
                 if (player == target)
@@ -848,7 +1006,7 @@ namespace iiMenu.Mods
                         UnityEngine.Object.Destroy(liner, Time.deltaTime);
                     }
                 }
-                if (sillyComputer.GetTargetOf(player) == PhotonNetwork.LocalPlayer)
+                if (sillyComputer.GetTargetOf(player) == (NetPlayer)PhotonNetwork.LocalPlayer)
                 {
                     UnityEngine.Color thecolor = Color.red;
                     if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
@@ -960,8 +1118,8 @@ namespace iiMenu.Mods
         public static void HuntChams()
         {
             GorillaHuntManager sillyComputer = GorillaGameManager.instance.gameObject.GetComponent<GorillaHuntManager>();
-            Photon.Realtime.Player target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
-            foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
+            NetPlayer target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
+            foreach (NetPlayer player in PhotonNetwork.PlayerList)
             {
                 VRRig vrrig = RigManager.GetVRRigFromPlayer(player);
                 if (player == target)
@@ -971,7 +1129,7 @@ namespace iiMenu.Mods
                     if (GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = GetBGColor(0f); }
                     if (GetIndex("Transparent Theme").enabled) { vrrig.mainSkin.material.color = new Color(vrrig.mainSkin.material.color.r, vrrig.mainSkin.material.color.g, vrrig.mainSkin.material.color.b, 0.5f); }
                 } else {
-                    if (sillyComputer.GetTargetOf(player) == PhotonNetwork.LocalPlayer)
+                    if (sillyComputer.GetTargetOf(player) == (NetPlayer)PhotonNetwork.LocalPlayer)
                     {
                         vrrig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
                         vrrig.mainSkin.material.color = Color.red;
@@ -1092,8 +1250,8 @@ namespace iiMenu.Mods
         public static void HuntBeacons()
         {
             GorillaHuntManager sillyComputer = GorillaGameManager.instance.gameObject.GetComponent<GorillaHuntManager>();
-            Photon.Realtime.Player target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
-            foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
+            NetPlayer target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
+            foreach (NetPlayer player in PhotonNetwork.PlayerList)
             {
                 VRRig vrrig = RigManager.GetVRRigFromPlayer(player);
                 if (player == target)
@@ -1109,7 +1267,7 @@ namespace iiMenu.Mods
                     liner.material.shader = Shader.Find("GUI/Text Shader");
                     UnityEngine.Object.Destroy(line, Time.deltaTime);
                 }
-                if (sillyComputer.GetTargetOf(player) == PhotonNetwork.LocalPlayer)
+                if (sillyComputer.GetTargetOf(player) == (NetPlayer)PhotonNetwork.LocalPlayer)
                 {
                     GameObject line = new GameObject("Line");
                     LineRenderer liner = line.AddComponent<LineRenderer>();
@@ -1224,8 +1382,8 @@ namespace iiMenu.Mods
         public static void HuntBoxESP()
         {
             GorillaHuntManager sillyComputer = GorillaGameManager.instance.gameObject.GetComponent<GorillaHuntManager>();
-            Photon.Realtime.Player target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
-            foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
+            NetPlayer target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
+            foreach (NetPlayer player in PhotonNetwork.PlayerList)
             {
                 VRRig vrrig = RigManager.GetVRRigFromPlayer(player);
                 if (player == target)
@@ -1242,7 +1400,7 @@ namespace iiMenu.Mods
                     box.GetComponent<Renderer>().material.color = thecolor;
                     UnityEngine.Object.Destroy(box, Time.deltaTime);
                 }
-                if (sillyComputer.GetTargetOf(player) == PhotonNetwork.LocalPlayer)
+                if (sillyComputer.GetTargetOf(player) == (NetPlayer)PhotonNetwork.LocalPlayer)
                 {
                     UnityEngine.Color thecolor = Color.red;
                     if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
@@ -1506,8 +1664,8 @@ namespace iiMenu.Mods
         public static void HollowHuntBoxESP()
         {
             GorillaHuntManager sillyComputer = GorillaGameManager.instance.gameObject.GetComponent<GorillaHuntManager>();
-            Photon.Realtime.Player target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
-            foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
+            NetPlayer target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
+            foreach (NetPlayer player in PhotonNetwork.PlayerList)
             {
                 VRRig vrrig = RigManager.GetVRRigFromPlayer(player);
                 if (player == target)
@@ -1561,7 +1719,7 @@ namespace iiMenu.Mods
 
                     UnityEngine.Object.Destroy(box);
                 }
-                if (sillyComputer.GetTargetOf(player) == PhotonNetwork.LocalPlayer)
+                if (sillyComputer.GetTargetOf(player) == (NetPlayer)PhotonNetwork.LocalPlayer)
                 {
                     UnityEngine.Color thecolor = Color.red;
                     if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
@@ -1706,8 +1864,8 @@ namespace iiMenu.Mods
         public static void HuntBreadcrumbs()
         {
             GorillaHuntManager sillyComputer = GorillaGameManager.instance.gameObject.GetComponent<GorillaHuntManager>();
-            Photon.Realtime.Player target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
-            foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
+            NetPlayer target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
+            foreach (NetPlayer player in PhotonNetwork.PlayerList)
             {
                 VRRig vrrig = RigManager.GetVRRigFromPlayer(player);
                 if (player == target)
@@ -1722,7 +1880,7 @@ namespace iiMenu.Mods
                     sphere.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
                     UnityEngine.Object.Destroy(sphere, 10f);
                 }
-                if (sillyComputer.GetTargetOf(player) == PhotonNetwork.LocalPlayer)
+                if (sillyComputer.GetTargetOf(player) == (NetPlayer)PhotonNetwork.LocalPlayer)
                 {
                     UnityEngine.Color thecolor = Color.red;
                     if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
@@ -1751,7 +1909,6 @@ namespace iiMenu.Mods
                     if (GetIndex("Transparent Theme").enabled) { thecolor2.a = 0.5f; }
                     GameObject go = new GameObject("Dist");
                     TextMesh textMesh = go.AddComponent<TextMesh>();
-                    textMesh.font = activeFont;
                     textMesh.fontSize = 18;
                     textMesh.fontStyle = activeFontStyle;
                     textMesh.characterSize = 0.1f;
@@ -1802,7 +1959,6 @@ namespace iiMenu.Mods
                             if (GetIndex("Transparent Theme").enabled) { thecolor2.a = 0.5f; }
                             GameObject go = new GameObject("Dist");
                             TextMesh textMesh = go.AddComponent<TextMesh>();
-                            textMesh.font = activeFont;
                             textMesh.fontSize = 18;
                             textMesh.fontStyle = activeFontStyle;
                             textMesh.characterSize = 0.1f;
@@ -1839,7 +1995,6 @@ namespace iiMenu.Mods
                             if (GetIndex("Transparent Theme").enabled) { thecolor2.a = 0.5f; }
                             GameObject go = new GameObject("Dist");
                             TextMesh textMesh = go.AddComponent<TextMesh>();
-                            textMesh.font = activeFont;
                             textMesh.fontSize = 18;
                             textMesh.fontStyle = activeFontStyle;
                             textMesh.characterSize = 0.1f;
@@ -1877,7 +2032,6 @@ namespace iiMenu.Mods
                         if (GetIndex("Transparent Theme").enabled) { thecolor2.a = 0.5f; }
                         GameObject go = new GameObject("Dist");
                         TextMesh textMesh = go.AddComponent<TextMesh>();
-                        textMesh.font = activeFont;
                         textMesh.fontSize = 18;
                         textMesh.fontStyle = activeFontStyle;
                         textMesh.characterSize = 0.1f;
@@ -1905,8 +2059,8 @@ namespace iiMenu.Mods
         public static void HuntDistanceESP()
         {
             GorillaHuntManager sillyComputer = GorillaGameManager.instance.gameObject.GetComponent<GorillaHuntManager>();
-            Photon.Realtime.Player target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
-            foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
+            NetPlayer target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
+            foreach (NetPlayer player in PhotonNetwork.PlayerList)
             {
                 VRRig vrrig = RigManager.GetVRRigFromPlayer(player);
                 if (player == target)
@@ -1919,7 +2073,6 @@ namespace iiMenu.Mods
                     if (GetIndex("Transparent Theme").enabled) { thecolor2.a = 0.5f; }
                     GameObject go = new GameObject("Dist");
                     TextMesh textMesh = go.AddComponent<TextMesh>();
-                    textMesh.font = activeFont;
                     textMesh.fontSize = 18;
                     textMesh.fontStyle = activeFontStyle;
                     textMesh.characterSize = 0.1f;
@@ -1940,7 +2093,7 @@ namespace iiMenu.Mods
                     go.transform.Rotate(0f, 180f, 0f);
                     UnityEngine.Object.Destroy(go, Time.deltaTime);
                 }
-                if (sillyComputer.GetTargetOf(player) == PhotonNetwork.LocalPlayer)
+                if (sillyComputer.GetTargetOf(player) == (NetPlayer)PhotonNetwork.LocalPlayer)
                 {
                     UnityEngine.Color thecolor = Color.red;
                     if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
@@ -1950,7 +2103,6 @@ namespace iiMenu.Mods
                     if (GetIndex("Transparent Theme").enabled) { thecolor2.a = 0.5f; }
                     GameObject go = new GameObject("Dist");
                     TextMesh textMesh = go.AddComponent<TextMesh>();
-                    textMesh.font = activeFont;
                     textMesh.fontSize = 18;
                     textMesh.fontStyle = activeFontStyle;
                     textMesh.characterSize = 0.1f;

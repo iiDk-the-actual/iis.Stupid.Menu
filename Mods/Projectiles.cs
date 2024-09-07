@@ -498,7 +498,7 @@ namespace iiMenu.Mods.Spammers
             {
                 foreach (SlingshotProjectile projectile in GameObject.FindObjectsOfType<SlingshotProjectile>())
                 {
-                    if (projectile.projectileOwner == PhotonNetwork.LocalPlayer)
+                    if (projectile.projectileOwner == (NetPlayer)PhotonNetwork.LocalPlayer)
                     {
                         projectile.gameObject.transform.position = RigManager.GetRandomVRRig(false).headConstraint.transform.position;
                         RPCProtection();

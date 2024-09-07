@@ -21,6 +21,7 @@ namespace iiMenu.Mods
 {
     internal class Overpowered
     {
+        /*
         public static float lastTime = -1f;
         public static float gamemodeSetTimeAt = -1f;
         public static bool antibanworked = false;
@@ -124,18 +125,6 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void MasterCheck()
-        {
-            if (PhotonNetwork.IsMasterClient)
-            {
-                NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>You are master client!</color>");
-            }
-            else
-            {
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client!</color>");
-            }
-        }
-
         public static void SetMasterGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
@@ -167,6 +156,18 @@ namespace iiMenu.Mods
                         kgDebounce = Time.time + 0.5f;
                     }
                 }
+            }
+        }*/
+
+        public static void MasterCheck()
+        {
+            if (PhotonNetwork.IsMasterClient)
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>You are master client.</color>");
+            }
+            else
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             }
         }
 
@@ -323,7 +324,7 @@ namespace iiMenu.Mods
         {
             GameObject secondlook = GameObject.Find("Environment Objects/05Maze_PersistentObjects/MinesSecondLookSkeleton");
             secondlook.GetComponent<SecondLookSkeleton>().tapped = true;
-            secondlook.GetComponent<SecondLookSkeletonSynchValues>().photonView.RPC("RemoteActivateGhost", RpcTarget.All, new object[] { });
+            secondlook.GetComponent<SecondLookSkeletonSynchValues>().GetView.RPC("RemoteActivateGhost", RpcTarget.All, new object[] { });
         }
 
         public static void AngerSecondLook()
@@ -332,9 +333,9 @@ namespace iiMenu.Mods
             secondlook.GetComponent<SecondLookSkeleton>().tapped = true;
             if (secondlook.GetComponent<SecondLookSkeleton>().currentState == SecondLookSkeleton.GhostState.Unactivated)
             {
-                secondlook.GetComponent<SecondLookSkeletonSynchValues>().photonView.RPC("RemoteActivateGhost", RpcTarget.All, new object[] { });
+                secondlook.GetComponent<SecondLookSkeletonSynchValues>().GetView.RPC("RemoteActivateGhost", RpcTarget.All, new object[] { });
             }
-            secondlook.GetComponent<SecondLookSkeletonSynchValues>().photonView.RPC("RemotePlayerSeen", RpcTarget.All, new object[] { });
+            secondlook.GetComponent<SecondLookSkeletonSynchValues>().GetView.RPC("RemotePlayerSeen", RpcTarget.All, new object[] { });
         }
 
         public static void ThrowSecondLook()
@@ -343,9 +344,9 @@ namespace iiMenu.Mods
             secondlook.GetComponent<SecondLookSkeleton>().tapped = true;
             if (secondlook.GetComponent<SecondLookSkeleton>().currentState == SecondLookSkeleton.GhostState.Unactivated)
             {
-                secondlook.GetComponent<SecondLookSkeletonSynchValues>().photonView.RPC("RemoteActivateGhost", RpcTarget.All, new object[] { });
+                secondlook.GetComponent<SecondLookSkeletonSynchValues>().GetView.RPC("RemoteActivateGhost", RpcTarget.All, new object[] { });
             }
-            secondlook.GetComponent<SecondLookSkeletonSynchValues>().photonView.RPC("RemotePlayerCaught", RpcTarget.All, new object[] { });
+            secondlook.GetComponent<SecondLookSkeletonSynchValues>().GetView.RPC("RemotePlayerCaught", RpcTarget.All, new object[] { });
         }
 
         public static float lasttimeaa = 0f;
@@ -358,19 +359,20 @@ namespace iiMenu.Mods
                 secondlook.GetComponent<SecondLookSkeleton>().tapped = true;
                 if (secondlook.GetComponent<SecondLookSkeleton>().currentState == SecondLookSkeleton.GhostState.Unactivated || secondlook.GetComponent<SecondLookSkeleton>().currentState == SecondLookSkeleton.GhostState.PlayerThrown || secondlook.GetComponent<SecondLookSkeleton>().currentState == SecondLookSkeleton.GhostState.Reset)
                 {
-                    secondlook.GetComponent<SecondLookSkeletonSynchValues>().photonView.RPC("RemoteActivateGhost", RpcTarget.All, new object[] { });
+                    secondlook.GetComponent<SecondLookSkeletonSynchValues>().GetView.RPC("RemoteActivateGhost", RpcTarget.All, new object[] { });
                 }
                 if (secondlook.GetComponent<SecondLookSkeleton>().currentState == SecondLookSkeleton.GhostState.Activated || secondlook.GetComponent<SecondLookSkeleton>().currentState == SecondLookSkeleton.GhostState.Patrolling)
                 {
-                    secondlook.GetComponent<SecondLookSkeletonSynchValues>().photonView.RPC("RemotePlayerSeen", RpcTarget.All, new object[] { });
+                    secondlook.GetComponent<SecondLookSkeletonSynchValues>().GetView.RPC("RemotePlayerSeen", RpcTarget.All, new object[] { });
                 }
                 if (secondlook.GetComponent<SecondLookSkeleton>().currentState == SecondLookSkeleton.GhostState.Chasing)
                 {
-                    secondlook.GetComponent<SecondLookSkeletonSynchValues>().photonView.RPC("RemoteActivateGhost", RpcTarget.All, new object[] { });
+                    secondlook.GetComponent<SecondLookSkeletonSynchValues>().GetView.RPC("RemoteActivateGhost", RpcTarget.All, new object[] { });
                 }
             }
         }
 
+        /*
         public static void StepCrashMethod(RpcTarget who)
         {
             GorillaTagger.Instance.offlineVRRig.enabled = false;
@@ -560,7 +562,7 @@ namespace iiMenu.Mods
             {
                 GorillaTagger.Instance.offlineVRRig.enabled = true;
             }
-        }
+        }*/
 
         public static void AtticFlingGun()
         {
@@ -651,6 +653,7 @@ namespace iiMenu.Mods
         }
         */
 
+        /*
         public static void AcidSelf()
         {
             if (!IsModded())
@@ -729,16 +732,13 @@ namespace iiMenu.Mods
                 Traverse.Create(ScienceExperimentManager.instance).Field("inGamePlayerStates").SetValue(states);
                 RPCProtection();
             }
-        }
+        }*/
 
         public static void InfectionToTag()
         {
             if (!PhotonNetwork.IsMasterClient)
             {
-                if (!GetIndex("Disable Auto Anti Ban").enabled)
-                {
-                    FastMaster();
-                }
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             }
             else
             {
@@ -753,17 +753,14 @@ namespace iiMenu.Mods
         {
             if (!PhotonNetwork.IsMasterClient)
             {
-                if (!GetIndex("Disable Auto Anti Ban").enabled)
-                {
-                    FastMaster();
-                }
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             }
             else
             {
                 GorillaTagManager gorillaTagManager = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
                 gorillaTagManager.SetisCurrentlyTag(false);
                 gorillaTagManager.ClearInfectionState();
-                Player victim = GameMode.ParticipatingPlayers[UnityEngine.Random.Range(0, GameMode.ParticipatingPlayers.Count)];
+                NetPlayer victim = GameMode.ParticipatingPlayers[UnityEngine.Random.Range(0, GameMode.ParticipatingPlayers.Count)];
                 gorillaTagManager.AddInfectedPlayer(victim);
                 gorillaTagManager.lastInfectedPlayer = victim;
             }
@@ -773,10 +770,7 @@ namespace iiMenu.Mods
         {
             if (!PhotonNetwork.IsMasterClient)
             {
-                if (!GetIndex("Disable Auto Anti Ban").enabled)
-                {
-                    FastMaster();
-                }
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             }
             else
             {
@@ -790,6 +784,7 @@ namespace iiMenu.Mods
             }
         }
 
+        /*
         public static void InfectionGamemode()
         {
             if (!IsModded())
@@ -934,7 +929,7 @@ namespace iiMenu.Mods
             {
                 PhotonNetwork.CurrentRoom.IsVisible = true;
             }
-        }
+        }*/
 
         public static void SlowGun()
         {
@@ -949,7 +944,7 @@ namespace iiMenu.Mods
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        Photon.Realtime.Player player = GetPlayerFromVRRig(possibly);
+                        NetPlayer player = GetPlayerFromVRRig(possibly);
                         //GorillaGameManager.instance.FindVRRigForPlayer(player).RPC("SetTaggedTime", player, null);
                         BetaSetStatus(0, new RaiseEventOptions { TargetActors = new int[1] { player.ActorNumber } });
                         RPCProtection();
@@ -986,7 +981,7 @@ namespace iiMenu.Mods
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        Photon.Realtime.Player owner = GetPlayerFromVRRig(possibly);
+                        NetPlayer owner = GetPlayerFromVRRig(possibly);
                         //GorillaTagger.Instance.myVRRig.RPC("SetJoinTaggedTime", owner, null);
                         BetaSetStatus(1, new RaiseEventOptions { TargetActors = new int[1] { owner.ActorNumber } });
                         RPCProtection();
@@ -1010,6 +1005,7 @@ namespace iiMenu.Mods
             }
         }
         
+        /*
         public static void BlindGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
@@ -1054,7 +1050,7 @@ namespace iiMenu.Mods
             Vector3 charvel = Vector3.zero;
 
             BetaFireProjectile("WaterBalloonLeft", startpos, charvel, new Color32(0, 0, 0, 255));
-        }
+        }*/
 
         public static void GliderBlindGun()
         {
@@ -1078,7 +1074,7 @@ namespace iiMenu.Mods
                 {
                     foreach (GliderHoldable glider in GetGliders())
                     {
-                        if (glider.photonView.Owner == PhotonNetwork.LocalPlayer)
+                        if (glider.GetView.Owner == PhotonNetwork.LocalPlayer)
                         {
                             glider.gameObject.transform.position = whoCopy.headMesh.transform.position;
                             glider.gameObject.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
@@ -1111,7 +1107,7 @@ namespace iiMenu.Mods
                     try
                     {
                         GliderHoldable glider = those[index];
-                        if (glider.photonView.Owner == PhotonNetwork.LocalPlayer)
+                        if (glider.GetView.Owner == PhotonNetwork.LocalPlayer)
                         {
                             glider.gameObject.transform.position = vrrig.headMesh.transform.position;
                             glider.gameObject.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
@@ -1140,7 +1136,7 @@ namespace iiMenu.Mods
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        Photon.Realtime.Player owner = GetPlayerFromVRRig(possibly);
+                        NetPlayer owner = GetPlayerFromVRRig(possibly);
                         if (GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(owner.UserId) && GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(PhotonNetwork.LocalPlayer.UserId))
                         {
                             PhotonNetworkController.Instance.friendIDList = new List<string>(GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching);
@@ -1240,6 +1236,7 @@ namespace iiMenu.Mods
         }
         */
 
+        /*
         public static void DestroyGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
@@ -1291,7 +1288,7 @@ namespace iiMenu.Mods
                     PhotonNetwork.OpRemoveCompleteCacheOfPlayer(player.ActorNumber);
                 }
             }
-        }
+        }*/
 
         public static void BreakAudioGun()
         {
@@ -1303,7 +1300,7 @@ namespace iiMenu.Mods
 
                 if (isCopying && whoCopy != null)
                 {
-                    GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", GetPlayerFromVRRig(whoCopy), new object[]{
+                    GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", GetPlayerFromVRRig(whoCopy), new object[]{
                         111,
                         false,
                         999999f
@@ -1335,7 +1332,7 @@ namespace iiMenu.Mods
         {
             if (rightTrigger > 0.5f)
             {
-                GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.Others, new object[]{
+                GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.Others, new object[]{
                     111,
                     false,
                     999999f

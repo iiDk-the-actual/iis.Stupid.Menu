@@ -118,13 +118,14 @@ namespace iiMenu.Mods
         public static void CreateRoom(string roomName, bool isPublic) // Once again thanks to Shiny for discovering a thing that doesn't work anymore
         {
             PhotonNetworkController.Instance.currentJoinTrigger = GorillaComputer.instance.GetJoinTriggerForZone("forest");
+            UnityEngine.Debug.Log((string)typeof(PhotonNetworkController).GetField("platformTag", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(PhotonNetworkController.Instance));
             RoomConfig roomConfig = new RoomConfig()
             {
                 createIfMissing = true,
                 isJoinable = true,
                 isPublic = isPublic,
                 MaxPlayers = PhotonNetworkController.Instance.GetRoomSize(PhotonNetworkController.Instance.currentJoinTrigger.networkZone),
-                customProps = new ExitGames.Client.Photon.Hashtable()
+                CustomProps = new ExitGames.Client.Photon.Hashtable()
                 {
                     { "gameMode", PhotonNetworkController.Instance.currentJoinTrigger.GetFullDesiredGameModeString() },
                     { "platform", (string)typeof(PhotonNetworkController).GetField("platformTag", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(PhotonNetworkController.Instance) }
@@ -219,10 +220,11 @@ namespace iiMenu.Mods
         {
             if (leftPrimary)
             {
-                GameObject GorillaMetaReport = GameObject.Find("Miscellaneous Scripts/MetaReporting");
-
-                GorillaMetaReport.GetComponent<GorillaMetaReport>().enabled = true;
-                GorillaMetaReport.GetComponent<GorillaMetaReport>().Invoke("StartOverlay", 0.1f);
+                GorillaMetaReport gr = GameObject.Find("Miscellaneous Scripts").transform.Find("MetaReporting").GetComponent<GorillaMetaReport>();
+                gr.gameObject.SetActive(true);
+                gr.enabled = true;
+                MethodInfo inf = typeof(GorillaMetaReport).GetMethod("StartOverlay", BindingFlags.NonPublic | BindingFlags.Instance);
+                inf.Invoke(gr, null);
             }
         }
 
@@ -369,18 +371,16 @@ namespace iiMenu.Mods
             Application.targetFrameRate = 1024;
         }
 
-        private static float anotherdelay = 0f;
         public static void PCButtonClick()
         {
-            if (Mouse.current.leftButton.isPressed && Time.time > anotherdelay)
+            if (Mouse.current.leftButton.isPressed)
             {
                 Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
                 Physics.Raycast(ray, out var Ray, 512f, NoInvisLayerMask());
                 GorillaPressableButton possibly = Ray.collider.GetComponentInParent<GorillaPressableButton>();
                 if (possibly)
                 {
-                    possibly.ButtonActivation();
-                    anotherdelay = Time.time + 0.2f;
+                    typeof(GorillaPressableButton).GetMethod("OnTriggerEnter", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(possibly, new object[] { GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHandTriggerCollider").GetComponent<Collider>() });
                 }
             }
         }

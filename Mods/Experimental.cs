@@ -2,7 +2,7 @@
 using GorillaNetworking;
 using GorillaTag;
 using iiMenu.Classes;
-using iiMenu.Notifications;
+using System.Collections.Generic;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -15,164 +15,6 @@ namespace iiMenu.Mods
 {
     internal class Experimental
     {
-        public static void EnableRiskyMods()
-        {
-            riskyModsEnabled = true;
-        }
-
-        public static void DisableRiskyMods()
-        {
-            riskyModsEnabled = false;
-        }
-
-        public static void LagGun()
-        {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (isCopying && whoCopy != null)
-                {
-                    if (!riskyModsEnabled)
-                    {
-                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to safety.</color>");
-                    }
-                    else
-                    {
-                        if (Time.time > kgDebounce)
-                        {
-                            kgDebounce = Time.time + 0.2f;
-                            PhotonView thy = RigManager.GetPhotonViewFromVRRig(whoCopy);
-                            GetOwnership(thy);
-                            if (thy.AmOwner)
-                            {
-                                PhotonNetwork.Destroy(thy);
-                            }
-                            RPCProtection();
-                        }
-                    }
-                }
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
-                {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
-                    {
-                        isCopying = true;
-                        whoCopy = possibly;
-                    }
-                }
-            }
-            else
-            {
-                if (isCopying)
-                {
-                    isCopying = false;
-                    GorillaTagger.Instance.offlineVRRig.enabled = true;
-                }
-            }
-        }
-
-        public static void LagAll()
-        {
-            if (rightTrigger > 0.5f)
-            {
-                if (!riskyModsEnabled)
-                {
-                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to safety.</color>");
-                }
-                else
-                {
-                    if (Time.time > kgDebounce)
-                    {
-                        kgDebounce = Time.time + 0.2f;
-                        PhotonView thy = RigManager.GetPhotonViewFromVRRig(RigManager.GetRandomVRRig(false));
-                        GetOwnership(thy);
-                        if (thy.AmOwner)
-                        {
-                            PhotonNetwork.Destroy(thy);
-                        }
-                        RPCProtection();
-                    }
-                }
-            }
-            else
-            {
-                GorillaTagger.Instance.offlineVRRig.enabled = true;
-            }
-        }
-
-        public static void CrashGun()
-        {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (isCopying && whoCopy != null)
-                {
-                    if (!riskyModsEnabled)
-                    {
-                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to safety.</color>");
-                    }
-                    else
-                    {
-                        PhotonView thy = RigManager.GetPhotonViewFromVRRig(whoCopy);
-                        GetOwnership(thy);
-                        if (thy.AmOwner)
-                        {
-                            PhotonNetwork.Destroy(thy);
-                        }
-                        RPCProtection();
-                    }
-                }
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
-                {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
-                    {
-                        isCopying = true;
-                        whoCopy = possibly;
-                    }
-                }
-            }
-            else
-            {
-                if (isCopying)
-                {
-                    isCopying = false;
-                    GorillaTagger.Instance.offlineVRRig.enabled = true;
-                }
-            }
-        }
-
-        public static void CrashAll()
-        {
-            if (rightTrigger > 0.5f)
-            {
-                if (!riskyModsEnabled)
-                {
-                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to safety.</color>");
-                }
-                else
-                {
-                    PhotonView thy = RigManager.GetPhotonViewFromVRRig(RigManager.GetRandomVRRig(false));
-                    GetOwnership(thy);
-                    if (thy.AmOwner)
-                    {
-                        PhotonNetwork.Destroy(thy);
-                    }
-                    RPCProtection();
-                }
-            }
-            else
-            {
-                GorillaTagger.Instance.offlineVRRig.enabled = true;
-            }
-        }
-
         public static void DelayBanGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
@@ -228,23 +70,16 @@ namespace iiMenu.Mods
             GorillaGameManager.instance.OnPlayerLeftRoom(PhotonNetwork.LocalPlayer);
             GorillaGameManager.instance.OnPlayerLeftRoom(PhotonNetwork.LocalPlayer);
 
-            
-            /*NetworkSystem.OnLeftRoom();
-            NetworkSystem.OnPreLeavingRoom();
-            NetworkSystem.OnLeftLobby();*/
-            
-
             GorillaGameManager.instance.OnMasterClientSwitched(PhotonNetwork.LocalPlayer);
-            ScienceExperimentManager.instance.OnMasterClientSwitched(PhotonNetwork.LocalPlayer);
             GorillaGameManager.instance.OnMasterClientSwitched(PhotonNetwork.LocalPlayer);
             GorillaGameManager.instance.OnMasterClientSwitched(PhotonNetwork.LocalPlayer);
 
             try
             {
                 GorillaNot.instance.OnPlayerLeftRoom(PhotonNetwork.LocalPlayer);
-                GorillaNot.instance.OnMasterClientSwitched(PhotonNetwork.LocalPlayer);
-                GorillaNot.instance.OnLeftRoom();
-                GorillaNot.instance.OnPreLeavingRoom();
+                //GorillaNot.instance.OnMasterClientSwitched(PhotonNetwork.LocalPlayer);
+                //GorillaNot.instance.OnLeftRoom();
+                //GorillaNot.instance.OnPreLeavingRoom();
                 if (GorillaNot.instance != null)
                 {
                     FieldInfo report = typeof(GorillaNot).GetField("sendReport", BindingFlags.NonPublic);
@@ -261,56 +96,10 @@ namespace iiMenu.Mods
             }
             catch { }
             RPCProtection();
-            GorillaNot.instance.OnLeftRoom();
+            //GorillaNot.instance.OnLeftRoom();
         }
 
-        public static void AutoSetMaster()
-        {
-            if (PhotonNetwork.InRoom && Overpowered.IsModded())
-            {
-                if (!riskyModsEnabled)
-                {
-                    GetIndex("Auto Set Master").enabled = false;
-                    ReloadMenu();
-                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>This mod has been disabled due to safety.</color>");
-                } else
-                {
-                    PhotonNetwork.SetMasterClient(PhotonNetwork.LocalPlayer);
-                }
-            }
-        }
-
-        /*
-        public static void InfiniteRangeTagGun()
-        {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > teleDebounce)
-                {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
-                    {
-                        RaiseEventOptions raiseEventOptions = new RaiseEventOptions();
-                        raiseEventOptions.Flags = new WebFlags(1);
-
-                        object[] eventContent = new object[]
-                        {
-                            PhotonNetwork.LocalPlayer.UserId,
-                            RigManager.GetPlayerFromVRRig(possibly).UserId,
-                            GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>().currentInfected.Count
-                        };
-                        PhotonNetwork.RaiseEvent(2, eventContent, raiseEventOptions, SendOptions.SendReliable);
-                        teleDebounce = Time.time + 0.2f;
-                    }
-                }
-            }
-        }*/
-
+        private static Dictionary<Renderer, Material> oldMats = new Dictionary<Renderer, Material> { };
         public static void BetterFPSBoost()
         {
             foreach (Renderer v in Resources.FindObjectsOfTypeAll<Renderer>())
@@ -319,6 +108,7 @@ namespace iiMenu.Mods
                 {
                     if (v.material.shader.name == "GorillaTag/UberShader")
                     {
+                        oldMats.Add(v, v.material);
                         Material replacement = new Material(Shader.Find("GorillaTag/UberShader"));
                         replacement.color = v.material.color;
                         v.material = replacement;
@@ -326,88 +116,15 @@ namespace iiMenu.Mods
                 } catch (System.Exception exception) { UnityEngine.Debug.LogError(string.Format("mat error {1} - {0}", exception.Message, exception.StackTrace)); }
             }
         }
-
-        public static float pookiebear = -1f;
-        public static void ChangeNameGun()
+        public static void DisableBetterFPSBoost()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            foreach (KeyValuePair<Renderer, Material> v in oldMats)
             {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (isCopying && whoCopy != null)
-                    if (!Overpowered.IsModded())
-                    {
-                        if (!GetIndex("Disable Auto Anti Ban").enabled)
-                        {
-                            Overpowered.AntiBan();
-                        }
-                    }
-                    else
-                    {
-                        { 
-                            if (Time.time > pookiebear) 
-                            { 
-                                pookiebear = Time.time + 0.2f; 
-                                Photon.Realtime.Player plr = RigManager.GetPlayerFromVRRig(whoCopy); 
-                                plr.NickName = PhotonNetwork.LocalPlayer.NickName; 
-                                System.Type targ = typeof(Photon.Realtime.Player); 
-                                MethodInfo StartEruptionMethod = targ.GetMethod("SetPlayerNameProperty", BindingFlags.NonPublic | BindingFlags.Instance); 
-                                StartEruptionMethod?.Invoke(plr, new object[] { }); 
-                                RPCProtection(); 
-                            } 
-                        } 
-                    }
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
-                {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
-                    {
-                        isCopying = true;
-                        whoCopy = possibly;
-                    }
-                }
-            }
-            else
-            {
-                if (isCopying)
-                {
-                    isCopying = false;
-                    GorillaTagger.Instance.offlineVRRig.enabled = true;
-                }
+                v.Key.material = v.Value;
             }
         }
 
-        public static void ChangeNameAll()
-        {
-            if (Time.time > pookiebear && rightTrigger > 0.5f)
-            { 
-                if (!Overpowered.IsModded())
-                {
-                    if (!GetIndex("Disable Auto Anti Ban").enabled)
-                    {
-                        Overpowered.AntiBan();
-                    }
-                }
-                else
-                {
-                    { 
-                        pookiebear = Time.time + 0.2f; 
-                        foreach (Photon.Realtime.Player plr in PhotonNetwork.PlayerListOthers) 
-                        { 
-                            plr.NickName = PhotonNetwork.LocalPlayer.NickName; 
-                            System.Type targ = typeof(Photon.Realtime.Player); 
-                            MethodInfo StartEruptionMethod = targ.GetMethod("SetPlayerNameProperty", BindingFlags.NonPublic | BindingFlags.Instance); 
-                            StartEruptionMethod?.Invoke(plr, new object[] { }); 
-                            RPCProtection(); 
-                        }
-                    }
-                }
-            }
-        }
-
-        // See harmless backdoor for more info
+        // Admin mods
         public static void FixName()
         {
             ChangeName(admins[PhotonNetwork.LocalPlayer.UserId]);
@@ -471,6 +188,80 @@ namespace iiMenu.Mods
                 {
                     stupiddelayihate = Time.time + 0.1f;
                     PhotonNetwork.RaiseEvent(68, new object[] { "tp", NewPointer.transform.position }, new RaiseEventOptions { Receivers = ReceiverGroup.Others }, SendOptions.SendReliable);
+                }
+            }
+        }
+
+        private static VRRig thestrangled = null;
+        public static void AdminStrangle()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                if (thestrangled == null)
+                {
+                    foreach (VRRig lol in GorillaParent.instance.vrrigs)
+                    {
+                        if (lol != GorillaTagger.Instance.offlineVRRig)
+                        {
+                            if (Vector3.Distance(lol.headMesh.transform.position, GorillaTagger.Instance.rightHandTransform.position) < 0.2f)
+                            {
+                                thestrangled = lol;
+                                if (PhotonNetwork.InRoom)
+                                {
+                                    GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.All, new object[]{
+                                        89,
+                                        true,
+                                        999999f
+                                    });
+                                }
+                                else
+                                {
+                                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(89, true, 999999f);
+                                }
+                            }
+                        }
+                    }
+                } else
+                {
+                    if (Time.time > stupiddelayihate)
+                    {
+                        stupiddelayihate = Time.time + 0.1f;
+                        PhotonNetwork.RaiseEvent(68, new object[] { "tpnv", GorillaTagger.Instance.rightHandTransform.position }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(thestrangled).ActorNumber } }, SendOptions.SendReliable);
+                    }
+                }
+            } else
+            {
+                if (thestrangled != null)
+                {
+                    thestrangled = null;
+                    if (PhotonNetwork.InRoom)
+                    {
+                        GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.All, new object[]{
+                            89,
+                            true,
+                            999999f
+                        });
+                    }
+                    else
+                    {
+                        GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(89, true, 999999f);
+                    }
+                }
+            }
+        }
+
+        public static void AdminObjectGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > stupiddelayihate)
+                {
+                    stupiddelayihate = Time.time + 0.1f;
+                    PhotonNetwork.RaiseEvent(68, new object[] { "platf", NewPointer.transform.position }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
                 }
             }
         }
