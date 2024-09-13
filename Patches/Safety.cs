@@ -1,5 +1,4 @@
-﻿using GorillaNetworking;
-using GorillaTag;
+﻿using GorillaTag;
 using HarmonyLib;
 using iiMenu.Notifications;
 using Photon.Pun;
@@ -8,8 +7,6 @@ using PlayFab.ClientModels;
 using PlayFab.Internal;
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using Unity.Mathematics;
 using UnityEngine;
 using static iiMenu.Menu.Main;
 
@@ -167,6 +164,24 @@ namespace iiMenu.Patches
 
     [HarmonyPatch(typeof(GorillaNot), "DispatchReport")]
     internal class NoDispatchReport : MonoBehaviour
+    {
+        private static bool Prefix()
+        {
+            return false;
+        }
+    }
+
+    [HarmonyPatch(typeof(GorillaNetworkPublicTestsJoin), "GracePeriod")]
+    internal class GNPTJ1 : MonoBehaviour
+    {
+        private static bool Prefix()
+        {
+            return false;
+        }
+    }
+
+    [HarmonyPatch(typeof(GorillaNetworkPublicTestJoin2), "GracePeriod")]
+    internal class GNPTJ2 : MonoBehaviour
     {
         private static bool Prefix()
         {

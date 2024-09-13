@@ -7,10 +7,8 @@ using HarmonyLib;
 using iiMenu.Classes;
 using iiMenu.Mods;
 using iiMenu.Notifications;
-using Oculus.Interaction;
 using Photon.Pun;
 using Photon.Realtime;
-using Steamworks;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -3860,7 +3858,7 @@ namespace iiMenu.Menu
                 if (AntiOculusReport && data.Code == 200) // Credits to Gorilla Dev for the idea, fully coded by myself
                 {
                     string rpcName = PhotonNetwork.PhotonServerSettings.RpcList[int.Parse(((Hashtable)data.CustomData)[(byte)5].ToString())];
-                    if (rpcName == "PlayHandTap")
+                    if (rpcName == "RPC_PlayHandTap")
                     {
                         object[] args = (object[])((Hashtable)data.CustomData)[(byte)4];
                         if ((int)args[0] == 67)
@@ -3997,7 +3995,7 @@ namespace iiMenu.Menu
             } catch { }
         }
 
-        public static void TeleportPlayer(Vector3 pos) // Prevents your fat hands from getting stuck on trees
+        public static void TeleportPlayer(Vector3 pos) // Prevents your hands from getting stuck on trees
         {
             Patches.TeleportPatch.doTeleport = true;
             Patches.TeleportPatch.telePos = pos;
@@ -4070,7 +4068,7 @@ namespace iiMenu.Menu
 
             if (PhotonNetwork.InRoom && GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(PhotonNetwork.LocalPlayer.UserId))
             {
-                GorillaTagger.Instance.myVRRig.SendRPC("InitializeNoobMaterial", RpcTarget.All, new object[] { color.r, color.g, color.b, false });
+                GorillaTagger.Instance.myVRRig.SendRPC("RPC_InitializeNoobMaterial", RpcTarget.All, new object[] { color.r, color.g, color.b, false });
                 RPCProtection();
             }
         }
@@ -4087,7 +4085,7 @@ namespace iiMenu.Menu
                 GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(buttonClickSound, rightHand, buttonClickVolume / 10f);
                 if (PhotonNetwork.InRoom && GetIndex("Serversided Button Sounds").enabled)
                 {
-                    GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.Others, new object[] {
+                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.Others, new object[] {
                         buttonClickSound,
                         rightHand,
                         buttonClickVolume / 10f

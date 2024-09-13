@@ -1300,7 +1300,7 @@ namespace iiMenu.Mods
 
                 if (isCopying && whoCopy != null)
                 {
-                    GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", GetPlayerFromVRRig(whoCopy), new object[]{
+                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", GetPlayerFromVRRig(whoCopy), new object[]{
                         111,
                         false,
                         999999f
@@ -1332,7 +1332,7 @@ namespace iiMenu.Mods
         {
             if (rightTrigger > 0.5f)
             {
-                GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.Others, new object[]{
+                GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.Others, new object[]{
                     111,
                     false,
                     999999f

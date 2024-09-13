@@ -536,9 +536,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Water Splash Gun", method =() => Fun.WaterSplashGun(), toolTip = "Splashes water wherever your hand desires."},
                 new ButtonInfo { buttonText = "Confuse Player Gun", method =() => Movement.ConfusePlayerGun(), toolTip = "Makes whoever your hand desires look like they're going crazy by splashing water on their screen."},
 
-                new ButtonInfo { buttonText = "Particle Spam Hands <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.ParticleSpam(), toolTip = "Spams projectiles at your hand when holding <color=green>grip</color>."},
-                new ButtonInfo { buttonText = "Particle Spam Gun", method =() => Fun.ParticleSpamGun(), toolTip = "Spams projectiles in wherever your hand desires."},
-
                 new ButtonInfo { buttonText = "Boop", method =() => Fun.Boop(), toolTip = "Makes a pop sound when you touch someone's nose."},
                 new ButtonInfo { buttonText = "Slap", method =() => Fun.Slap(), toolTip = "Makes a bong sound when you hit someone's face."},
 

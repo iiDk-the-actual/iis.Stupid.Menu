@@ -239,6 +239,33 @@ namespace iiMenu.Mods
                     {
                         leftplat.transform.position += GorillaTagger.Instance.leftHandTransform.forward * (armlength - 0.917f);
                     }
+                    if (GetIndex("Multiplied Long Arms").enabled)
+                    {
+                        Vector3 legacyPosL = GorillaLocomotion.Player.Instance.leftControllerTransform.transform.position;
+                        Vector3 legacyPosR = GorillaLocomotion.Player.Instance.rightControllerTransform.transform.position;
+                        MultipliedLongArms();
+                        leftplat.transform.position = TrueLeftHand().position;
+                        GorillaLocomotion.Player.Instance.leftControllerTransform.transform.position = legacyPosL;
+                        GorillaLocomotion.Player.Instance.rightControllerTransform.transform.position = legacyPosR;
+                    }
+                    if (GetIndex("Vertical Long Arms").enabled)
+                    {
+                        Vector3 legacyPosL = GorillaLocomotion.Player.Instance.leftControllerTransform.transform.position;
+                        Vector3 legacyPosR = GorillaLocomotion.Player.Instance.rightControllerTransform.transform.position;
+                        VerticalLongArms();
+                        leftplat.transform.position = TrueLeftHand().position;
+                        GorillaLocomotion.Player.Instance.leftControllerTransform.transform.position = legacyPosL;
+                        GorillaLocomotion.Player.Instance.rightControllerTransform.transform.position = legacyPosR;
+                    }
+                    if (GetIndex("Horizontal Long Arms").enabled)
+                    {
+                        Vector3 legacyPosL = GorillaLocomotion.Player.Instance.leftControllerTransform.transform.position;
+                        Vector3 legacyPosR = GorillaLocomotion.Player.Instance.rightControllerTransform.transform.position;
+                        HorizontalLongArms();
+                        leftplat.transform.position = TrueLeftHand().position;
+                        GorillaLocomotion.Player.Instance.leftControllerTransform.transform.position = legacyPosL;
+                        GorillaLocomotion.Player.Instance.rightControllerTransform.transform.position = legacyPosR;
+                    }
                 }
                 else
                 {
@@ -290,6 +317,33 @@ namespace iiMenu.Mods
                     if (GetIndex("Stick Long Arms").enabled)
                     {
                         rightplat.transform.position += GorillaTagger.Instance.rightHandTransform.forward * (armlength - 0.917f);
+                    }
+                    if (GetIndex("Multiplied Long Arms").enabled)
+                    {
+                        Vector3 legacyPosL = GorillaLocomotion.Player.Instance.leftControllerTransform.transform.position;
+                        Vector3 legacyPosR = GorillaLocomotion.Player.Instance.rightControllerTransform.transform.position;
+                        MultipliedLongArms();
+                        rightplat.transform.position = TrueRightHand().position;
+                        GorillaLocomotion.Player.Instance.leftControllerTransform.transform.position = legacyPosL;
+                        GorillaLocomotion.Player.Instance.rightControllerTransform.transform.position = legacyPosR;
+                    }
+                    if (GetIndex("Vertical Long Arms").enabled)
+                    {
+                        Vector3 legacyPosL = GorillaLocomotion.Player.Instance.leftControllerTransform.transform.position;
+                        Vector3 legacyPosR = GorillaLocomotion.Player.Instance.rightControllerTransform.transform.position;
+                        VerticalLongArms();
+                        rightplat.transform.position = TrueRightHand().position;
+                        GorillaLocomotion.Player.Instance.leftControllerTransform.transform.position = legacyPosL;
+                        GorillaLocomotion.Player.Instance.rightControllerTransform.transform.position = legacyPosR;
+                    }
+                    if (GetIndex("Horizontal Long Arms").enabled)
+                    {
+                        Vector3 legacyPosL = GorillaLocomotion.Player.Instance.leftControllerTransform.transform.position;
+                        Vector3 legacyPosR = GorillaLocomotion.Player.Instance.rightControllerTransform.transform.position;
+                        HorizontalLongArms();
+                        rightplat.transform.position = TrueRightHand().position;
+                        GorillaLocomotion.Player.Instance.leftControllerTransform.transform.position = legacyPosL;
+                        GorillaLocomotion.Player.Instance.rightControllerTransform.transform.position = legacyPosR;
                     }
                 }
                 else
@@ -656,7 +710,7 @@ namespace iiMenu.Mods
                     GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity += GorillaTagger.Instance.leftHandTransform.forward * 5f;
                     if (PhotonNetwork.InRoom)
                     {
-                        GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.All, new object[]{
+                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
                             89,
                             true,
                             999999f
@@ -733,7 +787,7 @@ namespace iiMenu.Mods
                     GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity += GorillaTagger.Instance.rightHandTransform.forward * 5f;
                     if (PhotonNetwork.InRoom)
                     {
-                        GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.All, new object[]{
+                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
                             89,
                             false,
                             999999f
@@ -813,7 +867,7 @@ namespace iiMenu.Mods
                     isLeftGrappling = true;
                     if (PhotonNetwork.InRoom)
                     {
-                        GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.All, new object[]{
+                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
                             89,
                             true,
                             999999f
@@ -879,7 +933,7 @@ namespace iiMenu.Mods
                     isRightGrappling = true;
                     if (PhotonNetwork.InRoom)
                     {
-                        GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.All, new object[]{
+                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
                             89,
                             false,
                             999999f
@@ -1345,7 +1399,7 @@ namespace iiMenu.Mods
                         TeleportPlayer(pearl.transform.position);
                         if (PhotonNetwork.InRoom)
                         {
-                            GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.All, new object[]{
+                            GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
                             84,
                             true,
                             999999f
@@ -2977,7 +3031,7 @@ namespace iiMenu.Mods
 
                     /*if (PhotonNetwork.InRoom)
                     {
-                        GorillaTagger.Instance.myVRRig.RPC("PlayHandTap", RpcTarget.All, new object[]{
+                        GorillaTagger.Instance.myVRRig.RPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
                             91,
                             false,
                             999999f
@@ -3030,7 +3084,7 @@ namespace iiMenu.Mods
 
                     if (Time.time > splashDel)
                     {
-                        GorillaTagger.Instance.myVRRig.SendRPC("PlaySplashEffect", GetPlayerFromVRRig(whoCopy), new object[]
+                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", GetPlayerFromVRRig(whoCopy), new object[]
                         {
                             whoCopy.transform.position + new Vector3(UnityEngine.Random.Range(-0.5f, 0.5f),UnityEngine.Random.Range(-0.5f, 0.5f),UnityEngine.Random.Range(-0.5f, 0.5f)),
                             Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0,360), UnityEngine.Random.Range(0,360), UnityEngine.Random.Range(0,360))),
@@ -3141,7 +3195,7 @@ namespace iiMenu.Mods
                     {
                         if (PhotonNetwork.InRoom)
                         {
-                            GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.All, new object[]{
+                            GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
                                 64,
                                 false,
                                 999999f
@@ -3228,7 +3282,7 @@ namespace iiMenu.Mods
                     {
                         if (PhotonNetwork.InRoom)
                         {
-                            GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.All, new object[]{
+                            GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
                                 64,
                                 true,
                                 999999f

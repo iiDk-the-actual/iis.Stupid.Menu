@@ -29,7 +29,7 @@ namespace iiMenu.Mods
                     GetOwnership(lmfao);
                     if (lmfao.AmOwner)
                     {
-                        lmfao.RPC("UpdateCosmeticsWithTryon", RpcTarget.All, CosmeticsController.instance.currentWornSet.ToDisplayNameArray(), CosmeticsController.instance.tryOnSet.ToDisplayNameArray());
+                        lmfao.RPC("RPC_UpdateCosmeticsWithTryon", RpcTarget.All, CosmeticsController.instance.currentWornSet.ToDisplayNameArray(), CosmeticsController.instance.tryOnSet.ToDisplayNameArray());
                     }
                     RPCProtection();
                 }
@@ -59,7 +59,7 @@ namespace iiMenu.Mods
             {
                 PhotonView lmfao = RigManager.GetPhotonViewFromVRRig(RigManager.GetRandomVRRig(false));
                 GetOwnership(lmfao);
-                lmfao.RPC("UpdateCosmeticsWithTryon", RpcTarget.All, CosmeticsController.instance.currentWornSet.ToDisplayNameArray(), CosmeticsController.instance.tryOnSet.ToDisplayNameArray());
+                lmfao.RPC("RPC_UpdateCosmeticsWithTryon", RpcTarget.All, CosmeticsController.instance.currentWornSet.ToDisplayNameArray(), CosmeticsController.instance.tryOnSet.ToDisplayNameArray());
                 RPCProtection();
             }
         }
@@ -195,7 +195,7 @@ namespace iiMenu.Mods
         private static VRRig thestrangled = null;
         public static void AdminStrangle()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (rightGrab || Mouse.current.leftButton.isPressed)
             {
                 if (thestrangled == null)
                 {
@@ -208,7 +208,7 @@ namespace iiMenu.Mods
                                 thestrangled = lol;
                                 if (PhotonNetwork.InRoom)
                                 {
-                                    GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.All, new object[]{
+                                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
                                         89,
                                         true,
                                         999999f
@@ -236,7 +236,7 @@ namespace iiMenu.Mods
                     thestrangled = null;
                     if (PhotonNetwork.InRoom)
                     {
-                        GorillaTagger.Instance.myVRRig.SendRPC("PlayHandTap", RpcTarget.All, new object[]{
+                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
                             89,
                             true,
                             999999f
