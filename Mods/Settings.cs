@@ -513,7 +513,7 @@ namespace iiMenu.Mods
         public static void ChangeMenuTheme()
         {
             themeType++;
-            if (themeType > 51)
+            if (themeType > 52)
             {
                 themeType = 1;
             }
@@ -1081,6 +1081,17 @@ namespace iiMenu.Mods
                     titleColor = Color.black;
                     textColor = Color.black;
                     textClicked = Color.black;
+                    break;
+                case 52: // Rift Purple
+                    bgColorA = new Color32(25, 25, 25, 255);
+                    bgColorB = new Color32(25, 25, 25, 255);
+                    buttonDefaultA = new Color32(40, 40, 40, 255);
+                    buttonDefaultB = new Color32(40, 40, 40, 255);
+                    buttonClickedA = new Color32(165, 137, 255, 255);
+                    buttonClickedB = new Color32(165, 137, 255, 255);
+                    titleColor = new Color32(144, 144, 144, 255);
+                    textColor = new Color32(144, 144, 144, 255);
+                    textClicked = Color.white;
                     break;
             }
         }

@@ -24,7 +24,7 @@ namespace iiMenu.Patches
                 if (patchEnabled)
                 {
                     Photon.Realtime.Player playerRef = ((PunNetPlayer)NetworkSystem.Instance.GetPlayer(info.senderID)).PlayerRef;
-                    GorillaTagger.Instance.myVRRig.SendRPC("InitializeNoobMaterial", playerRef, new object[]
+                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_InitializeNoobMaterial", playerRef, new object[]
                     {
                         UnityEngine.Random.Range(0f, 255f) / 255f,
                         UnityEngine.Random.Range(0f, 255f) / 255f,
