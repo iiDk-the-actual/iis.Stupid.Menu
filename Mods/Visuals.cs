@@ -4,6 +4,7 @@ using Photon.Pun;
 using Photon.Voice.Unity;
 using System;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using static iiMenu.Menu.Main;
 
@@ -30,11 +31,11 @@ namespace iiMenu.Mods
 
         public static void WatchOn()
         {
-            GameObject mainwatch = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/huntcomputer (1)");
-            regwatchobject = UnityEngine.Object.Instantiate(mainwatch, rightHand ? GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R").transform : GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L").transform, false);
+            GameObject mainwatch = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/huntcomputer (1)");
+            regwatchobject = UnityEngine.Object.Instantiate(mainwatch, rightHand ? GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R").transform : GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L").transform, false);
             UnityEngine.Object.Destroy(regwatchobject.GetComponent<GorillaHuntComputer>());
             regwatchobject.SetActive(true);
-
+            
             Transform thething = regwatchobject.transform.Find("HuntWatch_ScreenLocal/Canvas/Anchor");
             thething.Find("Hat").gameObject.SetActive(false);
             thething.Find("Face").gameObject.SetActive(false);
@@ -394,10 +395,10 @@ namespace iiMenu.Mods
             visualizerObject.transform.rotation = Quaternion.LookRotation(Ray.normal) * Quaternion.Euler(90f, 0f, 0f);
 
             float size = 0f;
-            GameObject recorder = GameObject.Find("P_NetworkWrapper(Clone)/VoiceNetworkObject");
+            GorillaSpeakerLoudness recorder = GorillaTagger.Instance.offlineVRRig.GetComponent<GorillaSpeakerLoudness>();
             if (recorder != null)
             {
-                size = recorder.GetComponent<Recorder>().LevelMeter.CurrentAvgAmp;
+                size = recorder.Loudness;
             }
 
             size *= 16f;

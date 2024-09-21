@@ -38,6 +38,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Movement Settings", method =() => Settings.EnableMovementSettings(), isTogglable = false, toolTip = "Opens the settings for the movement mods."},
                 new ButtonInfo { buttonText = "Advantage Settings", method =() => Settings.EnableAdvantageSettings(), isTogglable = false, toolTip = "Opens the settings for the advantage mods."},
                 new ButtonInfo { buttonText = "Visual Settings", method =() => Settings.EnableVisualSettings(), isTogglable = false, toolTip = "Opens the settings for the visual mods."},
+                new ButtonInfo { buttonText = "Soundboard Settings", method =() => Settings.EnableSoundboardSettings(), isTogglable = false, toolTip = "Opens the settings for the soundboard."},
                 new ButtonInfo { buttonText = "Projectile Settings", method =() => Settings.EnableProjectileSettings(), isTogglable = false, toolTip = "Opens the settings for the projectiles."}
             },
 
@@ -65,7 +66,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Alphabetize Menu", toolTip = "Alphabetizes the entire menu."},
                 new ButtonInfo { buttonText = "Custom Menu Name", enableMethod =() => Settings.CustomMenuName(), disableMethod =() => Settings.NoCustomMenuName(), toolTip = "Changes the name of the menu to whatever. You can change the text inside of your Gorilla Tag files (iisStupidMenu/iiMenu_CustomMenuName.txt)."},
 
-                new ButtonInfo { buttonText = "No Global Search", enableMethod =() => Settings.NoGlobalSearch(), disableMethod =() => Settings.PleaseGlobalSearch(), toolTip = "Makes the search button only search for mods in the current subcategory, unless on the main page."},
+                new ButtonInfo { buttonText = "Dynamic Sounds", enableMethod =() => Settings.DynamicSounds(), disableMethod =() => Settings.NoDynamicSounds(), toolTip = "Adds more sounds to the menu, giving you a better sense of control."},
 
                 new ButtonInfo { buttonText = "Annoying Mode", enableMethod =() => Settings.AnnoyingModeOn(), disableMethod =() => Settings.AnnoyingModeOff(), toolTip = "Turns on the April Fools 2024 settings."},
                 new ButtonInfo { buttonText = "Lowercase Mode", enableMethod =() => Settings.LowercaseMode(), disableMethod =() => Settings.NoLowercaseMode(), toolTip = "Makes the entire menu's text lowercase."},
@@ -110,6 +111,8 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Disable Ghostview", enableMethod =() => Settings.DisableGhostview(), disableMethod =() => Settings.EnableGhostview(), toolTip = "Disables the transparent rig when you're in ghost."},
                 new ButtonInfo { buttonText = "Legacy Ghostview", enableMethod =() => Settings.LegacyGhostview(), disableMethod =() => Settings.NewGhostview(), toolTip = "Reverts the transparent rig to the two balls when you're in ghost."},
+
+                new ButtonInfo { buttonText = "No Global Search", enableMethod =() => Settings.NoGlobalSearch(), disableMethod =() => Settings.PleaseGlobalSearch(), toolTip = "Makes the search button only search for mods in the current subcategory, unless on the main page."},
 
                 new ButtonInfo { buttonText = "Menu Presets", method =() => Settings.EnableMenuPresets(), isTogglable = false, toolTip = "Opens the page of presets."},
                 new ButtonInfo { buttonText = "Save Preferences", method =() => Settings.SavePreferences(), isTogglable = false, toolTip = "Saves your preferences to a file."},
@@ -205,7 +208,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Oculus Report Menu <color=grey>[</color><color=green>X</color><color=grey>]</color>", method =() => Important.OculusReportMenu(), toolTip = "Opens the Oculus report menu when holding <color=green>X</color>."},
 
-                new ButtonInfo { buttonText = "Accept TOS", enableMethod =() => Important.AcceptTOS(), toolTip = "Accepts the Terms of Service for you."},
+                new ButtonInfo { buttonText = "Accept TOS", enableMethod =() => Important.AcceptTOS(), disableMethod =() => Important.DisableAcceptTOS(), toolTip = "Accepts the Terms of Service for you."},
 
                 new ButtonInfo { buttonText = "Copy Player Position", method =() => Important.CopyPlayerPosition(), isTogglable = false, toolTip = "Copies the current player position to the clipboard." },
 
@@ -339,6 +342,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Slippery Hands", enableMethod =() => Movement.EnableSlipperyHands(), disableMethod =() => Movement.DisableSlipperyHands(), toolTip = "Makes everything ice, as in extremely slippery."},
                 new ButtonInfo { buttonText = "Grippy Hands", enableMethod =() => Movement.EnableGrippyHands(), disableMethod =() => Movement.DisableGrippyHands(), toolTip = "Covers your hands in grip tape, letting you wallrun as high as you want."},
                 new ButtonInfo { buttonText = "Sticky Hands", method =() => Movement.StickyHands(), disableMethod =() => Movement.DisableStickyHands(), toolTip = "Makes your hands really sticky."},
+                new ButtonInfo { buttonText = "Climby Hands", method =() => Movement.ClimbyHands(), disableMethod =() => Movement.DisableClimbyHands(), toolTip = "Lets you climb everything like a rope."},
 
                 new ButtonInfo { buttonText = "Slide Control", enableMethod =() => Movement.EnableSlideControl(), disableMethod =() => Movement.DisableSlideControl(), toolTip = "Lets you control yourself on ice perfectly."},
                 new ButtonInfo { buttonText = "Weak Slide Control", enableMethod =() => Movement.EnableWeakSlideControl(), disableMethod =() => Movement.DisableSlideControl(), toolTip = "Lets you control yourself on ice a little more perfect than before."},
@@ -512,6 +516,8 @@ namespace iiMenu.Menu
 
             new ButtonInfo[] { // Fun Mods [12]
                 new ButtonInfo { buttonText = "Exit Fun Mods", method =() => Settings.ReturnToMain(), isTogglable = false, toolTip = "Returns you back to the main page."},
+
+                new ButtonInfo { buttonText = "Soundboard", method =() => Sound.LoadSoundboard(), isTogglable = false, toolTip = "A working, customizable soundboard that lets you play audios through your microphone."},
 
                 new ButtonInfo { buttonText = "Upside Down Head", method =() => Fun.UpsideDownHead(), disableMethod =() => Fun.FixHead(), toolTip = "Flips your head upside down on the Z axis."},
                 new ButtonInfo { buttonText = "Backwards Head", method =() => Fun.BackwardsHead(), disableMethod =() => Fun.FixHead(), toolTip = "Rotates your head 180 degrees on the Y axis."},
@@ -741,6 +747,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Infection to Tag", method =() => Overpowered.InfectionToTag(), isTogglable = false, toolTip = "Turns the game into tag instead of infection." },
                 new ButtonInfo { buttonText = "Tag to Infection", method =() => Overpowered.TagToInfection(), isTogglable = false, toolTip = "Turns the game into infection instead of tag." },
+                new ButtonInfo { buttonText = "Break Infection", method =() => Overpowered.BreakInfection(), isTogglable = false, toolTip = "Breaks the infection gamemode." },
 
                 new ButtonInfo { buttonText = "Tag Lag", enableMethod =() => Advantages.TagLag(), disableMethod =() => Advantages.NahTagLag(), toolTip = "Forces tag lag in the lobby, letting no one get tagged."},
 
@@ -751,23 +758,23 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Tag Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.TagSoundSpam(), toolTip = "Plays the tag sound when holding <color=green>grip</color>." },
                 new ButtonInfo { buttonText = "Round End Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.RoundEndSoundSpam(), toolTip = "Plays the round end sound when holding <color=green>grip</color>." },
 
-                new ButtonInfo { buttonText = "Battle Start Game", method =() => Battle.BattleStartGame(), isTogglable = false, toolTip = "Starts the game. Requires master." },
-                new ButtonInfo { buttonText = "Battle End Game", method =() => Battle.BattleEndGame(), isTogglable = false, toolTip = "Ends the game. Requires master." },
-                new ButtonInfo { buttonText = "Battle Restart Game", method =() => Battle.BattleRestartGame(), isTogglable = false, toolTip = "Restarts the game. Requires master." },
-                new ButtonInfo { buttonText = "Battle Restart Spam", method =() => Battle.BattleRestartGame(), toolTip = "Spam starts and ends the game. Requires master." },
+                new ButtonInfo { buttonText = "Battle Start Game", method =() => Advantages.BattleStartGame(), isTogglable = false, toolTip = "Starts the game. Requires master." },
+                new ButtonInfo { buttonText = "Battle End Game", method =() => Advantages.BattleEndGame(), isTogglable = false, toolTip = "Ends the game. Requires master." },
+                new ButtonInfo { buttonText = "Battle Restart Game", method =() => Advantages.BattleRestartGame(), isTogglable = false, toolTip = "Restarts the game. Requires master." },
+                new ButtonInfo { buttonText = "Battle Restart Spam", method =() => Advantages.BattleRestartGame(), toolTip = "Spam starts and ends the game. Requires master." },
 
-                new ButtonInfo { buttonText = "Battle Balloon Spam Self", method =() => Battle.BattleBalloonSpamSelf(), toolTip = "Spam pops and unpops your balloons. Requires master." },
-                new ButtonInfo { buttonText = "Battle Balloon Spam All", method =() => Battle.BattleBalloonSpam(), toolTip = "Spam pops and unpops everyone's balloons. Requires master." },
+                new ButtonInfo { buttonText = "Battle Balloon Spam Self", method =() => Advantages.BattleBalloonSpamSelf(), toolTip = "Spam pops and unpops your balloons. Requires master." },
+                new ButtonInfo { buttonText = "Battle Balloon Spam All", method =() => Advantages.BattleBalloonSpam(), toolTip = "Spam pops and unpops everyone's balloons. Requires master." },
 
-                new ButtonInfo { buttonText = "Battle Kill Gun", method =() => Battle.BattleKillGun(), toolTip = "Kills whoever your hand desires. Requires master." },
-                new ButtonInfo { buttonText = "Battle Kill Self", method =() => Battle.BattleKillSelf(), isTogglable = false, toolTip = "Kills yourself. Requires master." },
-                new ButtonInfo { buttonText = "Battle Kill All", method =() => Battle.BattleKillAll(), isTogglable = false, toolTip = "Kills everyone. Requires master." },
+                new ButtonInfo { buttonText = "Battle Kill Gun", method =() => Advantages.BattleKillGun(), toolTip = "Kills whoever your hand desires. Requires master." },
+                new ButtonInfo { buttonText = "Battle Kill Self", method =() => Advantages.BattleKillSelf(), isTogglable = false, toolTip = "Kills yourself. Requires master." },
+                new ButtonInfo { buttonText = "Battle Kill All", method =() => Advantages.BattleKillAll(), isTogglable = false, toolTip = "Kills everyone. Requires master." },
 
-                new ButtonInfo { buttonText = "Battle Revive Gun", method =() => Battle.BattleReviveGun(), toolTip = "Revives whoever your hand desires. Requires master." },
-                new ButtonInfo { buttonText = "Battle Revive Self", method =() => Battle.BattleReviveSelf(), isTogglable = false, toolTip = "Revives yourself. Requires master." },
-                new ButtonInfo { buttonText = "Battle Revive All", method =() => Battle.BattleReviveAll(), isTogglable = false, toolTip = "Revives everyone. Requires master." },
+                new ButtonInfo { buttonText = "Battle Revive Gun", method =() => Advantages.BattleReviveGun(), toolTip = "Revives whoever your hand desires. Requires master." },
+                new ButtonInfo { buttonText = "Battle Revive Self", method =() => Advantages.BattleReviveSelf(), isTogglable = false, toolTip = "Revives yourself. Requires master." },
+                new ButtonInfo { buttonText = "Battle Revive All", method =() => Advantages.BattleReviveAll(), isTogglable = false, toolTip = "Revives everyone. Requires master." },
 
-                new ButtonInfo { buttonText = "Battle God Mode", method =() => Battle.BattleGodMode(), toolTip = "Gives you god mode in brawl. Requires master." },
+                new ButtonInfo { buttonText = "Battle God Mode", method =() => Advantages.BattleGodMode(), toolTip = "Gives you god mode in brawl. Requires master." },
 
                 new ButtonInfo { buttonText = "Slow Gun", method =() => Overpowered.SlowGun(), toolTip = "Forces tag freeze on whoever your hand desires." },
                 new ButtonInfo { buttonText = "Slow All", method =() => Overpowered.SlowAll(), toolTip = "Forces tag freeze on everyone in the the room." },
@@ -802,8 +809,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Break Audio All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.BreakAudioAll(), toolTip = "Attempts to breaks everyone's audio when holding trigger." },
             },
 
-            new ButtonInfo[] { // Placeholder [18]
-                
+            new ButtonInfo[] { // Soundboard [18]
+                new ButtonInfo { buttonText = "Exit Soundboard", method = () => Settings.EnableFun(), isTogglable = false, toolTip = "Returns you back to the fun mods." }
             },
 
             new ButtonInfo[] { // Favorite Mods [19]
@@ -884,8 +891,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Global Return", method =() => Settings.GlobalReturn(), isTogglable = false, toolTip = "Returns you to the main page."}
             },
 
-            new ButtonInfo[] { // Placeholder [26]
-                
+            new ButtonInfo[] { // Sound Library [26]
+                new ButtonInfo { buttonText = "Exit Sound Library", method = () => Sound.LoadSoundboard(), isTogglable = false, toolTip = "Returns you back to the soundboard." }
             },
 
             new ButtonInfo[] { // Experimental Mods [27]
@@ -920,9 +927,14 @@ namespace iiMenu.Menu
 
             new ButtonInfo[] { // Temporary Category [29]
 
-            }
+            },
 
-            // Future goldentrophy, do not create a new category, you have a holder category at 18 and 26
+            new ButtonInfo[] { // Soundboard (in settings) [30]
+                new ButtonInfo { buttonText = "Exit Soundboard Settings", method =() => Settings.EnableSettings(), isTogglable = false, toolTip = "Returns you back to the settings menu."},
+
+                new ButtonInfo { buttonText = "Loop Sounds", enableMethod =() => Sound.EnableLoopSounds(), disableMethod =() => Sound.EnableLoopSounds(), toolTip = "Makes sounds loop forever until stopped."},
+                new ButtonInfo { buttonText = "sbds", overlapText = "Sound Bindings <color=grey>[</color><color=green>None</color><color=grey>]</color>", method =() => Sound.SoundBindings(), isTogglable = false, toolTip = "Changes the button used to play sounds on the soundboard."},
+            },
         };
     }
 }

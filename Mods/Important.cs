@@ -186,7 +186,7 @@ namespace iiMenu.Mods
         {
             if (TPC != null)
             {
-                TPC.gameObject.transform.Find("CM vcam1").GetComponent<CinemachineVirtualCamera>().enabled = wasenabled;
+                wasenabled = TPC.gameObject.transform.Find("CM vcam1").GetComponent<CinemachineVirtualCamera>().enabled;
             }
         }
 
@@ -240,7 +240,12 @@ namespace iiMenu.Mods
 
         public static void AcceptTOS()
         {
-            GameObject.Find("Miscellaneous Scripts/LegalAgreementCheck/Legal Agreements").GetComponent<LegalAgreements>().testFaceButtonPress = true;
+            Patches.TOSPatch.enabled = true;
+        }
+
+        public static void DisableAcceptTOS()
+        {
+            Patches.TOSPatch.enabled = false;
         }
 
         public static void JoinDiscord()

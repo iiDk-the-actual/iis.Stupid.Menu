@@ -707,6 +707,7 @@ namespace iiMenu.Mods
                 NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Everyone is tagged!</color>");
                 GorillaTagger.Instance.offlineVRRig.enabled = true;
                 GetIndex("Hunt Tag All").enabled = false;
+                ReloadMenu();
             }
         }
 
@@ -792,48 +793,201 @@ namespace iiMenu.Mods
             PlayerPrefs.Save();
         }
 
-        /*
-        public static void EnableRemoveChristmasLights()
+        public static void BattleStartGame()
         {
-            foreach (GameObject g in Resources.FindObjectsOfTypeAll<GameObject>())
+            if (!PhotonNetwork.IsMasterClient)
             {
-                if (g.activeSelf && g.name.Contains("holidaylights"))
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+            }
+            else
+            {
+                GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
+                lol.StartBattle();
+            }
+        }
+
+        public static void BattleEndGame()
+        {
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+            }
+            else
+            {
+                GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
+                lol.BattleEnd();
+            }
+        }
+
+        public static void BattleRestartGame()
+        {
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+            }
+            else
+            {
+                GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
+                lol.BattleEnd();
+                lol.StartBattle();
+            }
+        }
+
+        public static void BattleBalloonSpamSelf()
+        {
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+            }
+            else
+            {
+                GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
+                lol.playerLives[PhotonNetwork.LocalPlayer.ActorNumber] = UnityEngine.Random.Range(0, 4);
+            }
+        }
+
+        public static void BattleBalloonSpam()
+        {
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+            }
+            else
+            {
+                GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
+                foreach (Photon.Realtime.Player loln in PhotonNetwork.PlayerList)
                 {
-                    g.SetActive(false);
-                    lights.Add(g);
+                    lol.playerLives[loln.ActorNumber] = UnityEngine.Random.Range(0, 4);
                 }
             }
         }
 
-        public static void DisableRemoveChristmasLights()
+        public static void BattleKillGun()
         {
-            foreach (GameObject l in lights)
+            if (rightGrab || Mouse.current.rightButton.isPressed)
             {
-                l.SetActive(true);
-            }
-            lights.Clear();
-        }
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
 
-        public static void EnableRemoveChristmasDecorations()
-        {
-            foreach (GameObject g in Resources.FindObjectsOfTypeAll<GameObject>())
-            {
-                if (g.activeSelf && g.name.Contains("WinterJan2024"))
+                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
-                    g.SetActive(false);
-                    holidayobjects.Add(g);
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        NetPlayer owner = RigManager.GetPlayerFromVRRig(possibly);
+                        if (!PhotonNetwork.IsMasterClient)
+                        {
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                        }
+                        else
+                        {
+                            GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
+                            lol.playerLives[owner.ActorNumber] = 0;
+                        }
+                    }
                 }
             }
         }
 
-        public static void DisableRemoveChristmasDecorations()
+        public static void BattleKillSelf()
         {
-            foreach (GameObject h in holidayobjects)
+            if (!PhotonNetwork.IsMasterClient)
             {
-                h.SetActive(true);
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             }
-            holidayobjects.Clear();
+            else
+            {
+                GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
+                lol.playerLives[PhotonNetwork.LocalPlayer.ActorNumber] = 0;
+            }
         }
-        */
+
+        public static void BattleKillAll()
+        {
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+            }
+            else
+            {
+                GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
+                foreach (Photon.Realtime.Player loln in PhotonNetwork.PlayerList)
+                {
+                    lol.playerLives[loln.ActorNumber] = 0;
+                }
+            }
+        }
+
+        public static void BattleReviveGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        NetPlayer owner = RigManager.GetPlayerFromVRRig(possibly);
+                        if (!PhotonNetwork.IsMasterClient)
+                        {
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                        }
+                        else
+                        {
+                            GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
+                            lol.playerLives[owner.ActorNumber] = 4;
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void BattleReviveSelf()
+        {
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+            }
+            else
+            {
+                GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
+                lol.playerLives[PhotonNetwork.LocalPlayer.ActorNumber] = 4;
+            }
+        }
+
+        public static void BattleReviveAll()
+        {
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+            }
+            else
+            {
+                GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
+                foreach (Photon.Realtime.Player loln in PhotonNetwork.PlayerList)
+                {
+                    lol.playerLives[loln.ActorNumber] = 4;
+                }
+            }
+        }
+
+        public static void BattleGodMode()
+        {
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+            }
+            else
+            {
+                GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
+                lol.playerLives[PhotonNetwork.LocalPlayer.ActorNumber] = 4;
+                GorillaLocomotion.Player.Instance.disableMovement = false;
+            }
+        }
     }
 }

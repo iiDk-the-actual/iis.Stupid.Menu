@@ -575,7 +575,7 @@ namespace iiMenu.Mods
                 {
                     foreach (TappableBell stupid in GetBells())
                     {
-                        stupid.OnTap(1f, Time.time);
+                        stupid.OnTap(1f);
                         RPCProtection();
                     }
                     stupiddelay = Time.time + 0.1f;
@@ -591,7 +591,7 @@ namespace iiMenu.Mods
                 {
                     foreach (GorillaCaveCrystal stupid in GetCrystals())
                     {
-                        stupid.OnTap(1f, Time.time);
+                        stupid.OnTap(1f);
                         RPCProtection();
                     }
                     stupiddelay = Time.time + 0.1f;
@@ -624,7 +624,7 @@ namespace iiMenu.Mods
                 if (stupid.CanTap() && stupid.moleTypes[state].isHazard == false && Time.time > hitDelay)
                 {
                     hitDelay = Time.time + 0.1f;
-                    stupid.OnTap(1f, Time.time);
+                    stupid.OnTap(1f);
                     RPCProtection();
                 }
             }
@@ -638,7 +638,7 @@ namespace iiMenu.Mods
                 if (stupid.CanTap() && stupid.moleTypes[state].isHazard && Time.time > hitDelay)
                 {
                     hitDelay = Time.time + 0.1f;
-                    stupid.OnTap(1f, Time.time);
+                    stupid.OnTap(1f);
                     RPCProtection();
                 }
             }
@@ -2444,7 +2444,7 @@ namespace iiMenu.Mods
             archiveCosmetics = CosmeticsController.instance.currentWornSet.ToDisplayNameArray();
             CosmeticsController.instance.currentWornSet = new CosmeticsController.CosmeticSet(new string[] { }, CosmeticsController.instance);
             GorillaTagger.Instance.offlineVRRig.cosmeticSet = new CosmeticsController.CosmeticSet(new string[] { }, CosmeticsController.instance);
-            GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmetics", RpcTarget.All, new object[] { new string[] { } });
+            GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryon", RpcTarget.All, new object[] { new string[] { } });
             RPCProtection();
         }
 
@@ -2452,7 +2452,7 @@ namespace iiMenu.Mods
         {
             CosmeticsController.instance.currentWornSet = new CosmeticsController.CosmeticSet(archiveCosmetics, CosmeticsController.instance);
             GorillaTagger.Instance.offlineVRRig.cosmeticSet = new CosmeticsController.CosmeticSet(archiveCosmetics, CosmeticsController.instance);
-            GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmetics", RpcTarget.All, new object[] { archiveCosmetics, CosmeticsController.instance.tryOnSet.ToDisplayNameArray() });
+            GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryon", RpcTarget.All, new object[] { archiveCosmetics, CosmeticsController.instance.tryOnSet.ToDisplayNameArray() });
             RPCProtection();
         }
 

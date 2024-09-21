@@ -2244,6 +2244,52 @@ namespace iiMenu.Mods
             }
         }
 
+        private static bool leftisclimbing = false;
+        private static bool rightisclimbing = false;
+        private static GameObject climb = null;
+        public static void ClimbyHands()
+        {
+            if (climb == null)
+            {
+                climb = new GameObject("GR");
+                climb.AddComponent<GorillaClimbable>();
+            }
+            if (leftGrab)
+            {
+                if (GorillaLocomotion.Player.Instance.wasLeftHandTouching && !leftisclimbing)
+                {
+                    climb.transform.position = GorillaTagger.Instance.leftHandTransform.position;
+                    leftisclimbing = true;
+                    GorillaLocomotion.Player.Instance.BeginClimbing(climb.AddComponent<GorillaClimbable>(), GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller/GorillaHandClimber").GetComponent<GorillaHandClimber>());
+                }
+            } else
+            {
+                leftisclimbing = false;
+            }
+            if (rightGrab)
+            {
+                if (GorillaLocomotion.Player.Instance.wasRightHandTouching && !rightisclimbing)
+                {
+                    climb.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                    rightisclimbing = true;
+                    GorillaLocomotion.Player.Instance.BeginClimbing(climb.AddComponent<GorillaClimbable>(), GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller/GorillaHandClimber").GetComponent<GorillaHandClimber>());
+                }
+            }
+            else
+            {
+                rightisclimbing = false;
+            }
+        }
+
+        public static void DisableClimbyHands()
+        {
+            if (climb != null)
+            {
+                UnityEngine.Object.Destroy(climb);
+                climb = null;
+            }
+        }
+
         public static void EnableSlideControl()
         {
             oldSlide = GorillaLocomotion.Player.Instance.slideControl;
