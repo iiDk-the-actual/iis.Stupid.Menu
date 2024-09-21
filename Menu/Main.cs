@@ -21,6 +21,7 @@ using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Networking;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
 using UnityEngine.XR;
@@ -59,6 +60,10 @@ namespace iiMenu.Menu
                 if (bothHands)
                 {
                     buttonCondition = ControllerInputPoller.instance.leftControllerSecondaryButton || ControllerInputPoller.instance.rightControllerSecondaryButton;
+                    if (buttonCondition)
+                    {
+                        openedwithright = ControllerInputPoller.instance.rightControllerSecondaryButton;
+                    }
                 }
                 if (wristThing)
                 {
@@ -100,6 +105,10 @@ namespace iiMenu.Menu
                 }
                 if (buttonCondition && menu == null)
                 {
+                    if (dynamicSounds)
+                    {
+                        Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/open.wav", "open.wav"), buttonClickVolume / 10f);
+                    }
                     Draw();
                     if (!joystickMenu)
                     {
@@ -113,6 +122,10 @@ namespace iiMenu.Menu
                 {
                     if (!buttonCondition && menu != null)
                     {
+                        if (dynamicSounds)
+                        {
+                            Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/close.wav", "close.wav"), buttonClickVolume / 10f);
+                        }
                         if (TPC != null && TPC.transform.parent.gameObject.name.Contains("CameraTablet") && isOnPC)
                         {
                             isOnPC = false;
@@ -128,7 +141,7 @@ namespace iiMenu.Menu
                                 {
                                     comp.useGravity = false;
                                 }
-                                if (rightHand || (bothHands && ControllerInputPoller.instance.rightControllerSecondaryButton))
+                                if (rightHand || (bothHands && openedwithright))
                                 {
                                     if (GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").GetComponent<GorillaVelocityEstimator>() == null)
                                     {
@@ -235,6 +248,7 @@ namespace iiMenu.Menu
                                         temp.ScreenBG_LeaveRoomAndSoloJoin = OrangeUI;
                                         temp.ScreenBG_NotConnectedSoloJoin = OrangeUI;
 
+                                        /*
                                         temp.Milestone_AbandonPartyAndSoloJoin = OrangeUI;
                                         temp.Milestone_AlreadyInRoom = OrangeUI;
                                         temp.Milestone_ChangingGameModeSoloJoin = OrangeUI;
@@ -243,6 +257,7 @@ namespace iiMenu.Menu
                                         temp.Milestone_LeaveRoomAndGroupJoin = OrangeUI;
                                         temp.Milestone_LeaveRoomAndSoloJoin = OrangeUI;
                                         temp.Milestone_NotConnectedSoloJoin = OrangeUI;
+                                        */
 
                                         TextMeshPro text = (TextMeshPro)Traverse.Create(ui).Field("screenText").GetValue();
                                         if (!udTMP.Contains(text))
@@ -256,8 +271,10 @@ namespace iiMenu.Menu
 
                                 string[] objectsWithTMPro = new string[]
                                 {
-                                    "Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/CodeOfConduct_Group/CodeOfConduct",
-                                    "Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/CodeOfConduct_Group/CodeOfConduct/COC Text"
+                                    "Environment Objects/LocalObjects_Prefab/TreeRoom/CodeOfConduct",
+                                    "Environment Objects/LocalObjects_Prefab/TreeRoom/COC Text",
+                                    "Environment Objects/LocalObjects_Prefab/TreeRoom/Data",
+                                    "Environment Objects/LocalObjects_Prefab/TreeRoom/FunctionSelect"
                                 };
                                 foreach (string lol in objectsWithTMPro)
                                 {
@@ -287,28 +304,6 @@ namespace iiMenu.Menu
                                         {
                                             udTMP.Add(text);
                                         }
-                                    }
-                                }
-
-                                string[] objectsWithText = new string[]
-                                {
-                                    "Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/GorillaComputerObject/ComputerUI/monitor/monitorScreen/Data",
-                                    "Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/GorillaComputerObject/ComputerUI/monitor/monitorScreen/FunctionSelect"
-                                };
-                                foreach (string lol in objectsWithText)
-                                {
-                                    GameObject obj = GameObject.Find(lol);
-                                    if (obj != null)
-                                    {
-                                        Text text = obj.GetComponent<Text>();
-                                        if (!udText.Contains(text))
-                                        {
-                                            udText.Add(text);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        UnityEngine.Debug.Log("Could not find " + lol);
                                     }
                                 }
 
@@ -344,26 +339,26 @@ namespace iiMenu.Menu
 
                         if (motd == null)
                         {
-                            GameObject motdThing = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/motd");
+                            GameObject motdThing = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/motd (1)");
                             motd = UnityEngine.Object.Instantiate(motdThing, motdThing.transform.parent);
                             TextMeshPro text = motdThing.GetComponent<TextMeshPro>();
                             if (!udTMP.Contains(text))
                             {
                                 udTMP.Add(text);
                             }
-                            TextMeshPro text2 = motdThing.transform.Find("motdtext").GetComponent<TextMeshPro>();
+                            TextMeshPro text2 = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/motdtext").GetComponent<TextMeshPro>();
                             if (!udTMP.Contains(text2))
                             {
                                 udTMP.Add(text2);
                             }
                             motdThing.SetActive(false);
                         }
-                        Text motdTC = motd.GetComponent<Text>();
-                        RectTransform motdTRC = motd.GetComponent<RectTransform>();
-                        motdTC.supportRichText = true;
-                        motdTC.fontSize = 24;
-                        motdTC.font = activeFont;
-                        motdTC.fontStyle = activeFontStyle;
+                        TextMeshPro motdTC = motd.GetComponent<TextMeshPro>();
+                        //RectTransform motdTRC = motd.GetComponent<RectTransform>();
+                        motdTC.richText = true;
+                        motdTC.fontSize = 70;
+                        //motdTC.font = ConvertFontToTMP(activeFont);
+                        //motdTC.fontStyle = ConvertFontStyleToTMP(activeFontStyle);
                         motdTC.text = "Thanks for using ii's <b>Stupid</b> Menu!";
                         if (doCustomName)
                         {
@@ -374,26 +369,26 @@ namespace iiMenu.Menu
                             motdTC.text = motdTC.text.ToLower();
                         }
                         motdTC.color = titleColor;
-                        motdTC.horizontalOverflow = UnityEngine.HorizontalWrapMode.Overflow;
-                        motdTRC.sizeDelta = new Vector2(379.788f, 155.3812f);
-                        motdTRC.localScale = new Vector3(0.00395f, 0.00395f, 0.00395f);
+                        motdTC.overflowMode = TextOverflowModes.Overflow;
+                        //motdTRC.sizeDelta = new Vector2(379.788f, 155.3812f); 
+                        //motdTRC.localScale = new Vector3(0.00395f, 0.00395f, 0.00395f);
 
                         if (motdText == null)
                         {
-                            motdText = motd.transform.Find("motdtext").gameObject;
+                            motdText = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/motdtext").gameObject;
                             motdText.GetComponent<PlayFabTitleDataTextDisplay>().enabled = false;
                         }
-                        Text motdTextB = motdText.GetComponent<Text>();
-                        RectTransform transformation = motdText.GetComponent<RectTransform>();
-                        transformation.localPosition = new Vector3(-184.4942f, -110.3492f, -0.0006f);
-                        motdTextB.supportRichText = true;
-                        motdTextB.fontSize = 64;
-                        motdTextB.font = activeFont;
+                        TextMeshPro motdTextB = motdText.GetComponent<TextMeshPro>();
+                        //RectTransform transformation = motdText.GetComponent<RectTransform>();
+                        //transformation.localPosition = new Vector3(-184.4942f, -110.3492f, -0.0006f);
+                        motdTextB.richText = true;
+                        motdTextB.fontSize = 100;
+                        //motdTextB.font = ConvertFontToTMP(activeFont);
                         motdTextB.color = titleColor;
-                        motdTextB.fontStyle = activeFontStyle;
+                        //motdTextB.fontStyle = ConvertFontStyleToTMP(activeFontStyle);
                         //motdTextB.horizontalOverflow = UnityEngine.HorizontalWrapMode.Overflow;
-                        transformation.sizeDelta = new Vector2(1250f, 700f);
-                        transformation.localScale = new Vector3(0.2281f, 0.2281f, 0.2281f);
+                        //transformation.sizeDelta = new Vector2(1250f, 700f);
+                        //transformation.localScale = new Vector3(0.2281f, 0.2281f, 0.2281f);
                         if (fullModAmount < 0)
                         {
                             fullModAmount = 0;
@@ -418,10 +413,6 @@ namespace iiMenu.Menu
                             targetColor = Color.white;
                         }
 
-                        foreach (Text txt in udText)
-                        {
-                            txt.color = targetColor;
-                        }
                         foreach (TextMeshPro txt in udTMP)
                         {
                             txt.color = targetColor;
@@ -944,12 +935,20 @@ namespace iiMenu.Menu
                             {
                                 if (js.x > 0.5f)
                                 {
+                                    if (dynamicSounds)
+                                    {
+                                        Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/next.wav", "next.wav"), buttonClickVolume / 10f);
+                                    }
                                     Toggle("NextPage");
                                     ReloadMenu();
                                     joystickDelay = Time.time + 0.2f;
                                 }
                                 if (js.x < -0.5f)
                                 {
+                                    if (dynamicSounds)
+                                    {
+                                        Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/prev.wav", "prev.wav"), buttonClickVolume / 10f);
+                                    }
                                     Toggle("PreviousPage");
                                     ReloadMenu();
                                     joystickDelay = Time.time + 0.2f;
@@ -957,6 +956,10 @@ namespace iiMenu.Menu
 
                                 if (js.y > 0.5f)
                                 {
+                                    if (dynamicSounds)
+                                    {
+                                        Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/open.wav", "open.wav"), buttonClickVolume / 10f);
+                                    }
                                     joystickButtonSelected--;
                                     if (joystickButtonSelected < 0)
                                     {
@@ -967,6 +970,10 @@ namespace iiMenu.Menu
                                 }
                                 if (js.y < -0.5f)
                                 {
+                                    if (dynamicSounds)
+                                    {
+                                        Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/close.wav", "close.wav"), buttonClickVolume / 10f);
+                                    }
                                     joystickButtonSelected++;
                                     if (joystickButtonSelected > pageSize - 1)
                                     {
@@ -978,6 +985,10 @@ namespace iiMenu.Menu
 
                                 if (SteamVR_Actions.gorillaTag_LeftJoystickClick.state)
                                 {
+                                    if (dynamicSounds)
+                                    {
+                                        Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/select.wav", "select.wav"), buttonClickVolume / 10f);
+                                    }
                                     Toggle(joystickSelectedButton, true);
                                     ReloadMenu();
                                     joystickDelay = Time.time + 0.2f;
@@ -1134,6 +1145,18 @@ namespace iiMenu.Menu
                             }
                         }
                     }
+
+                    // Recover from playing sound on soundboard code
+                    try
+                    {
+                        if (iiMenu.Mods.Spammers.Sound.AudioIsPlaying)
+                        {
+                            if (Time.time > iiMenu.Mods.Spammers.Sound.RecoverTime)
+                            {
+                                iiMenu.Mods.Spammers.Sound.FixMicrophone();
+                            }
+                        }
+                    } catch { }
 
                     if (annoyingMode)
                     {
@@ -2234,7 +2257,7 @@ namespace iiMenu.Menu
                         }
                     }
                 }
-                ButtonInfo[] array2 = StringsToInfos(AlphabetizeThing(InfosToStrings(searchedMods.ToArray())));
+                ButtonInfo[] array2 = StringsToInfos(Alphabetize(InfosToStrings(searchedMods.ToArray())));
                 array2 = array2.Skip(pageNumber * (pageSize-1)).Take(pageSize-1).ToArray();
                 if (longmenu) { array2 = searchedMods.ToArray(); }
                 for (int i = 0; i < array2.Length; i++)
@@ -2260,7 +2283,7 @@ namespace iiMenu.Menu
                     if (buttonsType == 19)
                     {
                         string[] array2 = favorites.Skip(pageNumber * pageSize).Take(pageSize).ToArray();
-                        if (GetIndex("Alphabetize Menu").enabled) { array2 = AlphabetizeThing(favorites.ToArray()); array2 = array2.Skip(pageNumber * pageSize).Take(pageSize).ToArray(); }
+                        if (GetIndex("Alphabetize Menu").enabled) { array2 = Alphabetize(favorites.ToArray()); array2 = array2.Skip(pageNumber * pageSize).Take(pageSize).ToArray(); }
                         if (longmenu) { array2 = favorites.ToArray(); }
                         for (int i = 0; i < array2.Length; i++)
                         {
@@ -2291,7 +2314,7 @@ namespace iiMenu.Menu
                             }
 
                             string[] array2 = enabledMods.ToArray().Skip(pageNumber * pageSize).Take(pageSize).ToArray();
-                            if (GetIndex("Alphabetize Menu").enabled) { array2 = AlphabetizeThing(enabledMods.ToArray()); array2 = array2.Skip(pageNumber * pageSize).Take(pageSize).ToArray(); }
+                            if (GetIndex("Alphabetize Menu").enabled) { array2 = Alphabetize(enabledMods.ToArray()); array2 = array2.Skip(pageNumber * pageSize).Take(pageSize).ToArray(); }
                             if (longmenu) { array2 = enabledMods.ToArray(); }
                             for (int i = 0; i < array2.Length; i++)
                             {
@@ -2301,7 +2324,7 @@ namespace iiMenu.Menu
                         else
                         {
                             ButtonInfo[] array2 = Buttons.buttons[buttonsType].Skip(pageNumber * pageSize).Take(pageSize).ToArray();
-                            if (GetIndex("Alphabetize Menu").enabled) { array2 = StringsToInfos(AlphabetizeThing(InfosToStrings(Buttons.buttons[buttonsType]))); array2 = array2.Skip(pageNumber * pageSize).Take(pageSize).ToArray(); }
+                            if (GetIndex("Alphabetize Menu").enabled) { array2 = StringsToInfos(Alphabetize(InfosToStrings(Buttons.buttons[buttonsType]))); array2 = array2.Skip(pageNumber * pageSize).Take(pageSize).ToArray(); }
                             if (longmenu) { array2 = Buttons.buttons[buttonsType]; }
                             for (int i = 0; i < array2.Length; i++)
                             {
@@ -2461,7 +2484,7 @@ namespace iiMenu.Menu
                     Vector3[] pcpositions = new Vector3[]
                     {
                         new Vector3(10f, 10f, 10f),
-                        new Vector3(-0.1f, -0.1f, -0.1f),
+                        new Vector3(10f, 10f, 10f),
                         new Vector3(-67.9299f, 11.9144f, -84.2019f),
                         new Vector3(-63f, 3.634f, -65f)
                     };
@@ -3135,25 +3158,81 @@ namespace iiMenu.Menu
             return gameObject;
         }
 
+        public static Dictionary<string, AudioClip> audioPool = new Dictionary<string, AudioClip> { };
         public static AudioClip LoadSoundFromResource(string resourcePath)
         {
             AudioClip sound = null;
 
-            Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("iiMenu.Resources.iimenu");
-            if (stream != null)
+            if (!audioPool.ContainsKey(resourcePath))
             {
-                if (assetBundle == null)
+                Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("iiMenu.Resources.iimenu");
+                if (stream != null)
                 {
-                    assetBundle = AssetBundle.LoadFromStream(stream);
+                    if (assetBundle == null)
+                    {
+                        assetBundle = AssetBundle.LoadFromStream(stream);
+                    }
+                    sound = assetBundle.LoadAsset(resourcePath) as AudioClip;
+                    audioPool.Add(resourcePath, sound);
                 }
-                sound = assetBundle.LoadAsset(resourcePath) as AudioClip;
-            }
-            else
+                else
+                {
+                    Debug.LogError("Failed to load sound from resource: " + resourcePath);
+                }
+            } else
             {
-                Debug.LogError("Failed to load sound from resource: " + resourcePath);
+                sound = audioPool[resourcePath];
             }
 
             return sound;
+        }
+
+        public static Dictionary<string, AudioClip> audioFilePool = new Dictionary<string, AudioClip> { };
+        public static AudioClip LoadSoundFromFile(string fileName) // Thanks to ShibaGT for help with loading the audio from file
+        {
+            AudioClip sound = null;
+
+            if (!audioFilePool.ContainsKey(fileName))
+            {
+                if (!Directory.Exists("iisStupidMenu"))
+                {
+                    Directory.CreateDirectory("iisStupidMenu");
+                }
+                string filePath = System.IO.Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, "iisStupidMenu/" + fileName);
+                filePath = filePath.Split("BepInEx\\")[0] + "iisStupidMenu/" + fileName;
+                filePath = filePath.Replace("\\", "/");
+
+                UnityWebRequest actualrequest = UnityWebRequestMultimedia.GetAudioClip("file://" + filePath, GetAudioType(GetFileExtension(fileName)));
+                UnityWebRequestAsyncOperation newvar = actualrequest.SendWebRequest();
+                while (!newvar.isDone) { }
+
+                AudioClip actualclip = DownloadHandlerAudioClip.GetContent(actualrequest);
+                sound = Task.FromResult(actualclip).Result;
+
+                audioFilePool.Add(fileName, sound);
+            }
+            else
+            {
+                sound = audioFilePool[fileName];
+            }
+
+            return sound;
+        }
+
+        public static AudioClip LoadSoundFromURL(string resourcePath, string fileName)
+        {
+            if (!Directory.Exists("iisStupidMenu"))
+            {
+                Directory.CreateDirectory("iisStupidMenu");
+            }
+            if (!File.Exists("iisStupidMenu/" + fileName))
+            {
+                UnityEngine.Debug.Log("Downloading " + fileName);
+                WebClient stream = new WebClient();
+                stream.DownloadFile(resourcePath, "iisStupidMenu/" + fileName);
+            }
+
+            return LoadSoundFromFile(fileName);
         }
 
         public static Texture2D LoadTextureFromResource(string resourcePath)
@@ -3386,7 +3465,7 @@ namespace iiMenu.Menu
             return lol.ToArray();
         }
 
-        public static string[] AlphabetizeThing(string[] array)
+        public static string[] Alphabetize(string[] array)
         {
             if (array.Length <= 1)
                 return array;
@@ -3394,6 +3473,55 @@ namespace iiMenu.Menu
             string first = array[0];
             string[] others = array.Skip(1).OrderBy(s => s).ToArray();
             return new string[] { first }.Concat(others).ToArray();
+        }
+
+        public static string[] AlphabetizeNoSkip(string[] array)
+        {
+            if (array.Length <= 1)
+                return array;
+
+            string first = array[0];
+            string[] others = array.OrderBy(s => s).ToArray();
+            return new string[] { first }.Concat(others).ToArray();
+        }
+
+        public static string GetFileExtension(string fileName)
+        {
+            return fileName.Split(".")[fileName.Split(".").Length - 1];
+        }
+
+        public static string RemoveFileExtension(string file)
+        {
+            int index = 0;
+            string output = "";
+            string[] split = file.Split(".");
+            foreach (string lol in split)
+            {
+                index++;
+                if (index != split.Length)
+                {
+                    if (index > 1)
+                    {
+                        output += ".";
+                    }
+                    output += lol;
+                }
+            }
+            return output;
+        }
+
+        public static AudioType GetAudioType(string extension)
+        {
+            switch (extension)
+            {
+                case "mp3":
+                    return AudioType.MPEG;
+                case "wav":
+                    return AudioType.WAV;
+                case "ogg":
+                    return AudioType.OGGVORBIS;
+            }
+            return AudioType.WAV;
         }
 
         public static string GetFullPath(Transform transform)
@@ -3816,6 +3944,20 @@ namespace iiMenu.Menu
             what.GetComponent<Renderer>().material.color = clr;
         }
 
+        private static GameObject audiomgr = null;
+        public static void Play2DAudio(AudioClip sound, float volume)
+        {
+            if (audiomgr == null)
+            {
+                audiomgr = new GameObject("2DAudioMgr");
+                AudioSource temp = audiomgr.AddComponent<AudioSource>();
+                temp.spatialBlend = 0f;
+            }
+            AudioSource ausrc = audiomgr.GetComponent<AudioSource>();
+            ausrc.volume = volume;
+            ausrc.PlayOneShot(sound);
+        }
+
         public static string ToTitleCase(string text)
         {
             return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(text.ToLower());
@@ -4115,6 +4257,7 @@ namespace iiMenu.Menu
                         }
                     }
                 } catch { }
+
                 AudioSource audioSource = rightHand ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
                 audioSource.volume = buttonClickVolume / 10f;
                 audioSource.PlayOneShot(LoadSoundFromResource(namesToIds[buttonClickIndex]));
@@ -4435,6 +4578,8 @@ namespace iiMenu.Menu
         public static bool legacyGunDirection = false;
         public static bool riskyModsEnabled = false;
         public static bool doCustomMenuBackground = false;
+        public static bool openedwithright = false;
+        public static bool dynamicSounds = false;
 
         public static string ascii = 
 @"  _ _ _       ____  _               _     _   __  __                  
@@ -4579,7 +4724,6 @@ namespace iiMenu.Menu
         public static List<string> favorites = new List<string> { "Exit Favorite Mods" };
 
         public static List<GorillaNetworkJoinTrigger> triggers = new List<GorillaNetworkJoinTrigger> { };
-        public static List<Text> udText = new List<Text> { };
         public static List<TMPro.TextMeshPro> udTMP = new List<TMPro.TextMeshPro> { };
 
         public static Vector3 offsetLH = Vector3.zero;

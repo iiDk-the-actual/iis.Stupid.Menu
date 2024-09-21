@@ -50,6 +50,14 @@ namespace iiMenu.UI
             return texture;
         }
 
+        private void Start()
+        {
+            if (File.Exists("iisStupidMenu/iiMenu_HideGUI.txt"))
+            {
+                isOpen = false;
+            }
+        }
+
         private void OnGUI()
         {
             bool isKeyboardCondition = UnityInput.Current.GetKey(KeyCode.Backslash);
@@ -57,6 +65,19 @@ namespace iiMenu.UI
             if (isKeyboardCondition && !lastCondition)
             {
                 isOpen = !isOpen;
+                if (isOpen)
+                {
+                    if (!File.Exists("iisStupidMenu/iiMenu_HideGUI.txt"))
+                    {
+                        File.WriteAllText("iisStupidMenu/iiMenu_HideGUI.txt", "true");
+                    }
+                } else
+                {
+                    if (File.Exists("iisStupidMenu/iiMenu_HideGUI.txt"))
+                    {
+                        File.Delete("iisStupidMenu/iiMenu_HideGUI.txt");
+                    }
+                }
             }
             lastCondition = isKeyboardCondition;
 
@@ -71,7 +92,7 @@ namespace iiMenu.UI
                 GUI.skin.button.fontStyle = activeFontStyle;
                 GUI.skin.label.fontStyle = activeFontStyle;
 
-                Color victimColor = GetIndex("Swap GUI Colors").enabled ? GetBDColor(0f) : GetBGColor(0f);
+                Color victimColor = GetIndex("Swap GUI Colors").enabled ? textColor : GetBGColor(0f);
 
                 GUI.color = victimColor;
                 GUI.backgroundColor = victimColor;

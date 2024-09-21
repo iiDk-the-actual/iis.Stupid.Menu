@@ -738,7 +738,17 @@ namespace iiMenu.Mods
         {
             if (!PhotonNetwork.IsMasterClient)
             {
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                // NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                foreach (Photon.Realtime.Player oops in PhotonNetwork.PlayerListOthers)
+                {
+                    oops.SetCustomProperties(new Hashtable
+                    {
+                        {
+                            "didTutorial",
+                            "nope"
+                        }
+                    }, null, null);
+                }
             }
             else
             {
@@ -753,7 +763,17 @@ namespace iiMenu.Mods
         {
             if (!PhotonNetwork.IsMasterClient)
             {
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                // NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                foreach (Photon.Realtime.Player oops in PhotonNetwork.PlayerListOthers)
+                {
+                    oops.SetCustomProperties(new Hashtable
+                    {
+                        {
+                            "didTutorial",
+                            "done"
+                        }
+                    }, null, null);
+                }
             }
             else
             {
@@ -763,6 +783,20 @@ namespace iiMenu.Mods
                 NetPlayer victim = GameMode.ParticipatingPlayers[UnityEngine.Random.Range(0, GameMode.ParticipatingPlayers.Count)];
                 gorillaTagManager.AddInfectedPlayer(victim);
                 gorillaTagManager.lastInfectedPlayer = victim;
+            }
+        }
+
+        public static void BreakInfection()
+        {
+            foreach (Photon.Realtime.Player oops in PhotonNetwork.PlayerList)
+            {
+                oops.SetCustomProperties(new Hashtable
+                {
+                    {
+                        "didTutorial",
+                        "nope"
+                    }
+                }, null, null);
             }
         }
 

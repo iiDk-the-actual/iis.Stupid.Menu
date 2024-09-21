@@ -128,7 +128,7 @@ namespace iiMenu.Notifications
                         lol += v + "\n";
                     }
                     ModText.text = lol;
-                    ModText.color = GetIndex("Swap GUI Colors").enabled ? GetBDColor(0f) : GetBGColor(0f);
+                    ModText.color = GetIndex("Swap GUI Colors").enabled ? textColor : GetBGColor(0f);
                 }
                 else
                 {

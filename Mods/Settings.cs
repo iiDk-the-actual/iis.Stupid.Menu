@@ -232,6 +232,12 @@ namespace iiMenu.Mods
             pageNumber = 0;
         }
 
+        public static void EnableSoundboardSettings()
+        {
+            buttonsType = 30;
+            pageNumber = 0;
+        }
+
         public static void EnableRoom()
         {
             buttonsType = 6;
@@ -437,8 +443,8 @@ namespace iiMenu.Mods
         public static void WatchMenuOn()
         {
             wristThingV2 = true;
-            GameObject mainwatch = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/huntcomputer (1)");
-            watchobject = UnityEngine.Object.Instantiate(mainwatch,rightHand ? GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R").transform : GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L").transform, false); // See cause unlike skid.lol I actually clone the watch
+            GameObject mainwatch = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/huntcomputer (1)");
+            watchobject = UnityEngine.Object.Instantiate(mainwatch,rightHand ? GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R").transform : GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L").transform, false); // See cause unlike skid.lol I actually clone the watch
             UnityEngine.Object.Destroy(watchobject.GetComponent<GorillaHuntComputer>());
             watchobject.SetActive(true);
 
@@ -1549,6 +1555,16 @@ namespace iiMenu.Mods
             doCustomName = false;
         }
 
+        public static void DynamicSounds()
+        {
+            dynamicSounds = true;
+        }
+
+        public static void NoDynamicSounds()
+        {
+            dynamicSounds = false;
+        }
+
         public static void NoGlobalSearch()
         {
             nonGlobalSearch = true;
@@ -1604,7 +1620,7 @@ namespace iiMenu.Mods
                 }
             }
 
-            string ihateyouguys = platformMode + seperator + platformShape + seperator + flySpeedCycle + seperator + longarmCycle + seperator + speedboostCycle + seperator + projmode + seperator + trailmode + seperator + shootCycle + seperator + pointerIndex + seperator + tagAuraIndex + seperator + notificationDecayTime + seperator + fontStyleType + seperator + arrowType + seperator + pcbg + seperator + internetTime + seperator + hotkeyButton + seperator + buttonClickIndex + seperator + buttonClickVolume + seperator + Safety.antireportrangeindex + seperator + Advantages.tagRangeIndex;
+            string ihateyouguys = platformMode + seperator + platformShape + seperator + flySpeedCycle + seperator + longarmCycle + seperator + speedboostCycle + seperator + projmode + seperator + trailmode + seperator + shootCycle + seperator + pointerIndex + seperator + tagAuraIndex + seperator + notificationDecayTime + seperator + fontStyleType + seperator + arrowType + seperator + pcbg + seperator + internetTime + seperator + hotkeyButton + seperator + buttonClickIndex + seperator + buttonClickVolume + seperator + Safety.antireportrangeindex + seperator + Advantages.tagRangeIndex + seperator + Sound.BindMode;
 
             string finaltext =
                 text + "\n" +
@@ -1695,7 +1711,7 @@ namespace iiMenu.Mods
                 Settings.ChangeButtonVolume();
                 Safety.antireportrangeindex = int.Parse(data[18]) - 1;
                 Safety.ChangeAntiReportRange();
-            }
+            } // Legacy, do not add
             catch { }
 
             string pager = File.ReadAllText("iisStupidMenu/iiMenu_PageType.txt");
@@ -1771,6 +1787,8 @@ namespace iiMenu.Mods
                 Safety.ChangeAntiReportRange();
                 Advantages.tagRangeIndex = int.Parse(data[19]) - 1;
                 Advantages.ChangeTagReachDistance();
+                Sound.BindMode = int.Parse(data[20]) - 1;
+                Sound.SoundBindings();
             } catch { UnityEngine.Debug.Log("Save file out of date"); }
 
             pageButtonType = int.Parse(textData[3]) - 1;
