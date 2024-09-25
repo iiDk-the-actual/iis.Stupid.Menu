@@ -1,5 +1,6 @@
 ﻿using Cinemachine;
 using GorillaNetworking;
+using HarmonyLib;
 using iiMenu.Notifications;
 using Photon.Pun;
 using System.Diagnostics;
@@ -340,20 +341,12 @@ namespace iiMenu.Mods
 
         public static void DisableMouthMovement()
         {
-            /*GorillaMouthFlap victim = GorillaTagger.Instance.offlineVRRig.GetComponent<GorillaMouthFlap>();
-            GorillaSpeakerLoudness victimm = (GorillaSpeakerLoudness)typeof(GorillaMouthFlap).GetField("speaker", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(victim);
-            typeof(GorillaSpeakerLoudness).GetField("micConnected", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(victimm, false);*/
             GorillaTagger.Instance.offlineVRRig.shouldSendSpeakingLoudness = false;
-            typeof(VRRig).GetField("speakingLoudness", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(GorillaTagger.Instance.offlineVRRig, 0f);
             Patches.MicPatch.returnAsNone = true;
         }
 
         public static void EnableMouthMovement()
         {
-            /*GorillaTagger.Instance.offlineVRRig.GetComponent<GorillaMouthFlap>().enabled = true;
-            GorillaMouthFlap victim = GorillaTagger.Instance.offlineVRRig.GetComponent<GorillaMouthFlap>();
-            GorillaSpeakerLoudness victimm = (GorillaSpeakerLoudness)typeof(GorillaMouthFlap).GetField("speaker", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(victim);
-            typeof(GorillaSpeakerLoudness).GetField("micConnected", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(victimm, true);*/
             GorillaTagger.Instance.offlineVRRig.shouldSendSpeakingLoudness = true;
             Patches.MicPatch.returnAsNone = false;
         }

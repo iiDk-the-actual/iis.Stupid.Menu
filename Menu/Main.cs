@@ -450,7 +450,7 @@ namespace iiMenu.Menu
                                         {
                                             if (keyCode == KeyCode.Escape)
                                             {
-                                                isSearching = false;
+                                                Toggle("Global Search");
                                             }
                                             else
                                             {
@@ -2058,7 +2058,11 @@ namespace iiMenu.Menu
                 } else
                 {
                     AddButton(-0.30f, -1, GetIndex("Disconnect"));
-                    AddButton(-0.40f, -1, GetIndex(hotkeyButton));
+                    ButtonInfo hkb = GetIndex(hotkeyButton);
+                    if (hkb != null)
+                    {
+                        AddButton(-0.40f, -1, hkb);
+                    }
                 }
             }
 
@@ -3916,9 +3920,33 @@ namespace iiMenu.Menu
                 GameObject side = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 try
                 {
-                    if (platform.GetComponent<GorillaSurfaceOverride>() != null)
+                    if (platformMode == 5)
                     {
-                        side.AddComponent<GorillaSurfaceOverride>().overrideIndex = platform.GetComponent<GorillaSurfaceOverride>().overrideIndex;
+                        side.AddComponent<GorillaSurfaceOverride>().overrideIndex = 29;
+                    }
+                    if (platformMode == 6)
+                    {
+                        side.AddComponent<GorillaSurfaceOverride>().overrideIndex = 32;
+                    }
+                    if (platformMode == 7)
+                    {
+                        side.AddComponent<GorillaSurfaceOverride>().overrideIndex = 204;
+                    }
+                    if (platformMode == 8)
+                    {
+                        side.AddComponent<GorillaSurfaceOverride>().overrideIndex = 231;
+                    }
+                    if (platformMode == 9)
+                    {
+                        side.AddComponent<GorillaSurfaceOverride>().overrideIndex = 240;
+                    }
+                    if (platformMode == 10)
+                    {
+                        side.AddComponent<GorillaSurfaceOverride>().overrideIndex = 249;
+                    }
+                    if (platformMode == 11)
+                    {
+                        side.AddComponent<GorillaSurfaceOverride>().overrideIndex = 252;
                     }
                 } catch { }
                 float size = 0.025f;
@@ -4260,7 +4288,7 @@ namespace iiMenu.Menu
 
                 AudioSource audioSource = rightHand ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
                 audioSource.volume = buttonClickVolume / 10f;
-                audioSource.PlayOneShot(LoadSoundFromResource(namesToIds[buttonClickIndex]));
+                audioSource.PlayOneShot(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/" + namesToIds[buttonClickIndex] + ".ogg", namesToIds[buttonClickIndex] + ".ogg"));
             }
         }
 

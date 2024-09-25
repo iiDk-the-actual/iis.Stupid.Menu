@@ -4,11 +4,14 @@ using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
 using Photon.Pun;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Windows.Speech;
 using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods
@@ -1563,6 +1566,132 @@ namespace iiMenu.Mods
         public static void NoDynamicSounds()
         {
             dynamicSounds = false;
+        }
+
+        // Thanks to https://github.com/kingofnetflix/BAnANA for inspiration and support with voice recognition
+        // No, it's not skidded, read the debunk: https://pastebin.com/raw/dj55QNyC
+        private static KeywordRecognizer mainPhrases;
+        private static KeywordRecognizer modPhrases;
+        public static void VoiceRecognitionOn()
+        {
+            mainPhrases = new KeywordRecognizer(new string[] { "jarvis", "ii", "i i", "eye eye", "siri", "google", "alexa" });
+            mainPhrases.OnPhraseRecognized += ModRecognition;
+            mainPhrases.Start();
+        }
+
+        private static Coroutine timeoutCoroutine;
+        public static void ModRecognition(PhraseRecognizedEventArgs args)
+        {
+            mainPhrases.Stop();
+
+            timeoutCoroutine = CoroutineManager.RunCoroutine(Timeout());
+            List<string> rawbuttonnames = new List<string> { "nevermind", "cancel", "never mind" };
+            Regex notags = new Regex("<.*?>");
+            foreach (ButtonInfo[] buttonlist in Buttons.buttons)
+            {
+                foreach (ButtonInfo v in buttonlist)
+                {
+                    rawbuttonnames.Add(notags.Replace(v.overlapText == null ? v.buttonText : v.overlapText, ""));
+                }
+            }
+            modPhrases = new KeywordRecognizer(rawbuttonnames.ToArray());
+            modPhrases.OnPhraseRecognized += ExecuteVoiceCommand;
+            modPhrases.Start();
+
+            if (dynamicSounds)
+            {
+                Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/select.wav", "select.wav"), buttonClickVolume / 10f);
+            }
+            NotifiLib.SendNotification("<color=grey>[</color><color=purple>VOICE</color><color=grey>]</color> Listening...", 3000);
+        }
+
+        public static void ExecuteVoiceCommand(PhraseRecognizedEventArgs args)
+        {
+            modPhrases.Stop();
+            mainPhrases.Start();
+            CoroutineManager.EndCoroutine(timeoutCoroutine);
+
+            string output = args.text;
+            if (output == "nevermind" || output == "cancel" || output == "never mind")
+            {
+                CancelModRecognition();
+                return;
+            }
+
+            string modTarget = null;
+            bool exactMatch = false;
+
+            Regex notags = new Regex("<.*?>");
+            foreach (ButtonInfo[] buttonlist in Buttons.buttons)
+            {
+                if (exactMatch) { break; }
+                foreach (ButtonInfo v in buttonlist)
+                {
+                    if (exactMatch) { break; }
+                    string buttonName = notags.Replace(v.overlapText == null ? v.buttonText : v.overlapText, "");
+                    if (output.ToLower() == buttonName.ToLower())
+                    {
+                        modTarget = v.buttonText;
+                        exactMatch = true;
+                    } else
+                    {
+                        if (output.Contains(buttonName.ToLower()))
+                        {
+                            modTarget = v.buttonText;
+                        }
+                    }
+                }
+            }
+            if (modTarget != null)
+            {
+                ButtonInfo mod = GetIndex(modTarget);
+                NotifiLib.SendNotification("<color=grey>[</color><color=" + (mod.enabled ? "red" : "green") + "> VOICE</color><color=grey>]</color> " + (mod.enabled ? "Disabling " : "Enabling ") + (mod.overlapText == null ? mod.buttonText : mod.overlapText)+"...", 3000);
+                if (dynamicSounds)
+                {
+                    Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/confirm.wav", "confirm.wav"), buttonClickVolume / 10f);
+                }
+                Toggle(modTarget);
+            } else
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>VOICE</color><color=grey>]</color> No command found ("+output+").", 3000);
+                if (dynamicSounds)
+                {
+                    Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/close.wav", "close.wav"), buttonClickVolume / 10f);
+                }
+            }
+        }
+
+        public static IEnumerator Timeout()
+        {
+            yield return new WaitForSeconds(10f);
+            CancelModRecognition();
+        }
+
+        public static void CancelModRecognition()
+        {
+            modPhrases.Stop();
+            mainPhrases.Start();
+            CoroutineManager.EndCoroutine(timeoutCoroutine);
+
+            NotifiLib.SendNotification("<color=grey>[</color><color=red>VOICE</color><color=grey>]</color> Cancelling...", 3000);
+            if (dynamicSounds)
+            {
+                Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/close.wav", "close.wav"), buttonClickVolume / 10f);
+            }
+        }
+
+        public static void VoiceRecognitionOff()
+        {
+            if (mainPhrases != null)
+            {
+                mainPhrases.Stop();
+            }
+            if (modPhrases != null)
+            {
+                modPhrases.Stop();
+            }
+            mainPhrases = null;
+            modPhrases = null;
         }
 
         public static void NoGlobalSearch()
