@@ -67,15 +67,15 @@ namespace iiMenu.UI
                 isOpen = !isOpen;
                 if (isOpen)
                 {
-                    if (!File.Exists("iisStupidMenu/iiMenu_HideGUI.txt"))
-                    {
-                        File.WriteAllText("iisStupidMenu/iiMenu_HideGUI.txt", "true");
-                    }
-                } else
-                {
                     if (File.Exists("iisStupidMenu/iiMenu_HideGUI.txt"))
                     {
                         File.Delete("iisStupidMenu/iiMenu_HideGUI.txt");
+                    }
+                } else
+                {
+                    if (!File.Exists("iisStupidMenu/iiMenu_HideGUI.txt"))
+                    {
+                        File.WriteAllText("iisStupidMenu/iiMenu_HideGUI.txt", "true");
                     }
                 }
             }

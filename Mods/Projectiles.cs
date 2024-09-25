@@ -466,7 +466,7 @@ namespace iiMenu.Mods.Spammers
 
         public static void SlingshotHelper()
         {
-            GameObject slingy = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/RigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/palm.01.L/TransferrableItemLeftHand/Slingshot Anchor/Slingshot");
+            GameObject slingy = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/palm.01.L/TransferrableItemLeftHand/Slingshot Anchor/Slingshot");
             if (slingy != null)
             {
                 Slingshot yay = slingy.GetComponent<Slingshot>();

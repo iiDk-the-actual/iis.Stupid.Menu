@@ -120,8 +120,6 @@ namespace iiMenu.Mods
                 platform.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
             }
 
-            FixStickyColliders(platform);
-
             if (platformMode != 5)
             {
                 platform.GetComponent<Renderer>().material.color = GetBGColor(0f);
@@ -183,6 +181,9 @@ namespace iiMenu.Mods
                 platform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 252;
                 platform.GetComponent<Renderer>().enabled = false;
             }
+
+            FixStickyColliders(platform);
+
             if (GetIndex("Platform Outlines").enabled)
             {
                 GameObject gameObject = null;
@@ -2549,7 +2550,7 @@ namespace iiMenu.Mods
 
         public static void BunnyHop()
         {
-            Physics.Raycast(GorillaTagger.Instance.bodyCollider.transform.position - new Vector3(0f, 0.2f, 0f), Vector3.down, out var Ray, 512f, NoInvisLayerMask());
+            Physics.Raycast(GorillaTagger.Instance.bodyCollider.transform.position - new Vector3(0f, 0.2f, 0f), Vector3.down, out var Ray, 512f, GorillaLocomotion.Player.Instance.locomotionEnabledLayers);
 
             if (Ray.distance < 0.15f)
             {

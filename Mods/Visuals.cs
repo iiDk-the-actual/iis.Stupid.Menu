@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Rendering;
 using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods
@@ -594,6 +595,88 @@ namespace iiMenu.Mods
                         liner.SetPosition(1, vrrig.transform.position - new Vector3(0f, 9999f, 0f));
                         liner.material.shader = Shader.Find("GUI/Text Shader");
                         UnityEngine.Object.Destroy(line, Time.deltaTime);
+                    }
+                }
+            }
+        }
+
+        private static Texture2D voicetxt = null;
+        public static void VoiceESP()
+        {
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                {
+                    float size = 0f;
+                    GorillaSpeakerLoudness recorder = vrrig.GetComponent<GorillaSpeakerLoudness>();
+                    if (recorder != null)
+                    {
+                        size = recorder.Loudness * 3f;
+                    }
+                    if (size > 0f)
+                    {
+                        GameObject volIndicator = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        UnityEngine.Object.Destroy(volIndicator, Time.deltaTime);
+                        volIndicator.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                        if (voicetxt == null)
+                        {
+                            voicetxt = LoadTextureFromResource("iiMenu.Resources.speak.png");
+                        }
+                        volIndicator.GetComponent<Renderer>().material.mainTexture = voicetxt;
+                        volIndicator.GetComponent<Renderer>().material.color = PlayerIsTagged(vrrig) ? (Color)new Color32(255, 111, 0, 255) : vrrig.playerColor;
+                        UnityEngine.Object.Destroy(volIndicator.GetComponent<Collider>());
+                        volIndicator.transform.localScale = new Vector3(size, size, 0.01f);
+                        volIndicator.transform.position = vrrig.headMesh.transform.position + new Vector3(0f, 0.6f, 0f);
+                        volIndicator.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
+                    }
+                }
+            }
+        }
+
+        private static Material voiceMat = null;
+        public static void VoiceIndicators()
+        {
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                {
+                    float size = 0f;
+                    GorillaSpeakerLoudness recorder = vrrig.GetComponent<GorillaSpeakerLoudness>();
+                    if (recorder != null)
+                    {
+                        size = recorder.Loudness * 3f;
+                    }
+                    if (size > 0f)
+                    {
+                        GameObject volIndicator = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        UnityEngine.Object.Destroy(volIndicator, Time.deltaTime);
+                        if (voiceMat == null)
+                        {
+                            voiceMat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+
+                            if (voicetxt == null)
+                            {
+                                voicetxt = LoadTextureFromResource("iiMenu.Resources.speak.png");
+                            }
+                            voiceMat.mainTexture = voicetxt;
+
+                            voiceMat.SetFloat("_Surface", 1);
+                            voiceMat.SetFloat("_Blend", 0);
+                            voiceMat.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
+                            voiceMat.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
+                            voiceMat.SetFloat("_ZWrite", 0);
+                            voiceMat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+                            voiceMat.renderQueue = (int)RenderQueue.Transparent;
+
+                            voiceMat.SetFloat("_Glossiness", 0f);
+                            voiceMat.SetFloat("_Metallic", 0f);
+                        }
+                        volIndicator.GetComponent<Renderer>().material = voiceMat;
+                        volIndicator.GetComponent<Renderer>().material.color = PlayerIsTagged(vrrig) ? (Color)new Color32(255, 111, 0, 255) : vrrig.playerColor;
+                        UnityEngine.Object.Destroy(volIndicator.GetComponent<Collider>());
+                        volIndicator.transform.localScale = new Vector3(size, size, 0.01f);
+                        volIndicator.transform.position = vrrig.headMesh.transform.position + new Vector3(0f, 0.6f, 0f);
+                        volIndicator.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
                     }
                 }
             }

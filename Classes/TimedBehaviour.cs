@@ -9,23 +9,23 @@ namespace iiMenu.Classes
     {
         public virtual void Start()
         {
-            this.startTime = Time.time;
+            startTime = Time.time;
         }
 
         public virtual void Update()
         {
-            if (!this.complete)
+            if (!complete)
             {
-                this.progress = Mathf.Clamp((Time.time - this.startTime) / this.duration, 0f, 1f);
-                if (Time.time - this.startTime > this.duration)
+                progress = Mathf.Clamp((Time.time - startTime) / duration, 0f, 1f);
+                if (Time.time - startTime > duration)
                 {
-                    if (this.loop)
+                    if (loop)
                     {
-                        this.OnLoop();
+                        OnLoop();
                     }
                     else
                     {
-                        this.complete = true;
+                        complete = true;
                     }
                 }
             }
@@ -33,7 +33,7 @@ namespace iiMenu.Classes
 
         public virtual void OnLoop()
         {
-            this.startTime = Time.time;
+            startTime = Time.time;
         }
 
         public bool complete = false;
