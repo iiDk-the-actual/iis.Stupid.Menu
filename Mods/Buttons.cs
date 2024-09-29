@@ -209,7 +209,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Oculus Report Menu <color=grey>[</color><color=green>X</color><color=grey>]</color>", method =() => Important.OculusReportMenu(), toolTip = "Opens the Oculus report menu when holding <color=green>X</color>."},
 
-                new ButtonInfo { buttonText = "Accept TOS", enableMethod =() => Important.AcceptTOS(), disableMethod =() => Important.DisableAcceptTOS(), toolTip = "Accepts the Terms of Service for you."},
+                new ButtonInfo { buttonText = "Accept TOS", method =() => Important.AcceptTOS(), disableMethod =() => Important.DisableAcceptTOS(), toolTip = "Accepts the Terms of Service for you."},
 
                 new ButtonInfo { buttonText = "Copy Player Position", method =() => Important.CopyPlayerPosition(), isTogglable = false, toolTip = "Copies the current player position to the clipboard." },
 
@@ -553,6 +553,13 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Boop", method =() => Fun.Boop(), toolTip = "Makes a pop sound when you touch someone's nose."},
                 new ButtonInfo { buttonText = "Slap", method =() => Fun.Slap(), toolTip = "Makes a bong sound when you hit someone's face."},
 
+                new ButtonInfo { buttonText = "Low Quality Microphone", enableMethod =() => Fun.LowQualityMicrophone(), disableMethod =() => Fun.HighQualityMicrophone(), toolTip = "Makes your microphone have really bad quality."},
+                new ButtonInfo { buttonText = "Loud Microphone", enableMethod =() => Fun.LoudMicrophone(), disableMethod =() => Fun.NotLoudMicrophone(), toolTip = "Makes your microphone really loud."},
+                new ButtonInfo { buttonText = "Reload Microphone", method =() => Fun.ReloadMicrophone(), isTogglable = false,  toolTip = "Reloads / fixes your microphone."},
+
+                new ButtonInfo { buttonText = "Microphone Feedback", method =() => Fun.MicrophoneFeedback(), toolTip = "Plays sound coming through your microphone back to your speakers."},
+                new ButtonInfo { buttonText = "Copy Voice Gun", method =() => Fun.CopyVoiceGun(), toolTip = "Copies the voice of whoever your hand desires."},
+
                 new ButtonInfo { buttonText = "Activate All Doors <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.ActivateAllDoors(), toolTip = "Activates all doors when holding <color=green>grip</color>."},
                 new ButtonInfo { buttonText = "Tap All Crystals <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.TapAllCrystals(), toolTip = "Taps all crystals when holding <color=green>grip</color>."},
                 new ButtonInfo { buttonText = "Tap All Bells <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.TapAllBells(), toolTip = "Taps all bells when holding <color=green>grip</color>."},
@@ -792,16 +799,24 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Remove Self from Leaderboard", method =() => Overpowered.RemoveSelfFromLeaderboard(), isTogglable = false, toolTip = "Removes yourself from the leaderboard." },
 
+                new ButtonInfo { buttonText = "Freeze All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.FreezeAll(), toolTip = "Freezes everyone in the lobby when holding <color=green>trigger</color>." },
+                new ButtonInfo { buttonText = "Packet Stresser", method =() => Overpowered.PacketStresser(), isTogglable = false, toolTip = "Sends many packets to the server, speeding up Freeze All." },
+
                 //new ButtonInfo { buttonText = "Attic Fling Gun", method =() => Overpowered.AtticFlingGun(), toolTip = "Flings whoever your hand desires in the attic." },
                 //new ButtonInfo { buttonText = "Attic Fling All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.AtticFlingAll(), toolTip = "Flings everyone in the attic when holding <color=green>trigger</color>." },
                 
                 new ButtonInfo { buttonText = "Joystick Rope Control <color=grey>[</color><color=green>J</color><color=grey>]</color>", method =() => Overpowered.JoystickRopeControl(), toolTip = "Control the ropes in the direction of your joystick."},
-                
-                new ButtonInfo { buttonText = "Spaz Rope Gun", method =() => Overpowered.SpazRopeGun(), toolTip = "Gives whatever rope your hand desires a seizure when holding <color=green>trigger</color>."},
+
+                new ButtonInfo { buttonText = "Broken Ropes", method =() => Overpowered.SpazGrabbedRopes(), toolTip = "Gives any ropes currently being held onto a seizure."},
+                new ButtonInfo { buttonText = "Confusing Ropes", method =() => Overpowered.ConfusingRopes(), toolTip = "Gives any ropes currently being held onto a seizure but only for the person holding the rope."},
+                new ButtonInfo { buttonText = "Spaz Rope Gun", method =() => Overpowered.SpazRopeGun(), toolTip = "Gives whatever rope your hand desires a seizure."},
                 new ButtonInfo { buttonText = "Spaz All Ropes <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.SpazAllRopes(), toolTip = "Gives every rope a seizure when holding <color=green>trigger</color>."},
-                
+
                 new ButtonInfo { buttonText = "Fling Rope Gun", method =() => Overpowered.FlingRopeGun(), toolTip = "Flings whatever rope your hand desires away from you."},
                 new ButtonInfo { buttonText = "Fling All Ropes Gun", method =() => Overpowered.FlingAllRopesGun(), toolTip = "Flings every rope in whatever direction your hand desires."},
+
+                new ButtonInfo { buttonText = "Rope Lag Gun", method =() => Overpowered.RopeLagGun(), toolTip = "Lags whoever your hand desires with the ropes."},
+                new ButtonInfo { buttonText = "Rope Lag All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.RopeLagAll(), toolTip = "Lags everyone with the ropes when holding <color=green>trigger</color>."},
 
                 new ButtonInfo { buttonText = "Spawn Second Look", method =() => Overpowered.SpawnSecondLook(), isTogglable = false, toolTip = "Spawns the ghost in the rotational map." },
                 new ButtonInfo { buttonText = "Anger Second Look", method =() => Overpowered.AngerSecondLook(), isTogglable = false, toolTip = "Makes the ghost in the rotational map chase after people." },
@@ -923,10 +938,6 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Lowercase Name", method =() => Fun.LowercaseName(), isTogglable = false, toolTip = "Makes your name lowercase." },
                 new ButtonInfo { buttonText = "Long Name", method =() => Fun.LongName(), isTogglable = false, toolTip = "Makes your name really long." },
-
-                new ButtonInfo { buttonText = "Low Quality Microphone", enableMethod =() => Fun.LowQualityMicrophone(), disableMethod =() => Fun.HighQualityMicrophone(), toolTip = "Makes your microphone have really bad quality."},
-                new ButtonInfo { buttonText = "Loud Microphone", enableMethod =() => Fun.LoudMicrophone(), disableMethod =() => Fun.NotLoudMicrophone(), toolTip = "Makes your microphone really loud."},
-                new ButtonInfo { buttonText = "Reload Microphone", method =() => Fun.ReloadMicrophone(), isTogglable = false,  toolTip = "Reloads / fixes your microphone."},
 
                 new ButtonInfo { buttonText = "Delay Ban Gun", method =() => Experimental.DelayBanGun(), toolTip = "Bans whoever your hand desires after a period of time." },
                 new ButtonInfo { buttonText = "Delay Ban All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Experimental.DelayBanAll(), toolTip = "Bans everyone in the lobby after a period of time when holding <color=green>trigger</color>." },

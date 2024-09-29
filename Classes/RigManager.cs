@@ -58,6 +58,11 @@ namespace iiMenu.Classes
             }
         }
 
+        public static Player NetPlayerToPlayer(NetPlayer p)
+        {
+            return p.GetPlayerRef();
+        }
+
         public static NetPlayer GetPlayerFromVRRig(VRRig p)
         {
             //return GetPhotonViewFromVRRig(p).Owner;

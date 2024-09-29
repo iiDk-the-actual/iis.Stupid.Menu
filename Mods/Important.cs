@@ -242,6 +242,7 @@ namespace iiMenu.Mods
         public static void AcceptTOS()
         {
             Patches.TOSPatch.enabled = true;
+            LegalAgreements.instance.TurnPage(999);
         }
 
         public static void DisableAcceptTOS()
@@ -251,7 +252,7 @@ namespace iiMenu.Mods
 
         public static void JoinDiscord()
         {
-            Process.Start("https://discord.gg/iidk");
+            Process.Start(serverLink);
         }
 
         public static void CopyPlayerPosition()
@@ -379,6 +380,7 @@ namespace iiMenu.Mods
             Application.targetFrameRate = 1024;
         }
 
+        private static float keyboardDelay = 0f;
         public static void PCButtonClick()
         {
             if (Mouse.current.leftButton.isPressed)
@@ -389,6 +391,18 @@ namespace iiMenu.Mods
                 if (possibly)
                 {
                     typeof(GorillaPressableButton).GetMethod("OnTriggerEnter", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(possibly, new object[] { GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHandTriggerCollider").GetComponent<Collider>() });
+                }
+                GorillaKeyboardButton possibler = Ray.collider.GetComponentInParent<GorillaKeyboardButton>();
+                if (possibler && Time.time > keyboardDelay)
+                {
+                    keyboardDelay = Time.time + 0.1f;
+                    typeof(GorillaKeyboardButton).GetMethod("OnTriggerEnter", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(possibler, new object[] { GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHandTriggerCollider").GetComponent<Collider>() });
+                }
+                GorillaPlayerLineButton possiblest = Ray.collider.GetComponentInParent<GorillaPlayerLineButton>();
+                if (possiblest && Time.time > keyboardDelay)
+                {
+                    keyboardDelay = Time.time + 0.1f;
+                    typeof(GorillaPlayerLineButton).GetMethod("OnTriggerEnter", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(possiblest, new object[] { GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHandTriggerCollider").GetComponent<Collider>() });
                 }
             }
         }

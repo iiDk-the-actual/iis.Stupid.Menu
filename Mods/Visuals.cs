@@ -616,6 +616,7 @@ namespace iiMenu.Mods
                     if (size > 0f)
                     {
                         GameObject volIndicator = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        UnityEngine.Object.Destroy(volIndicator.GetComponent<Collider>());
                         UnityEngine.Object.Destroy(volIndicator, Time.deltaTime);
                         volIndicator.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                         if (voicetxt == null)
@@ -624,9 +625,8 @@ namespace iiMenu.Mods
                         }
                         volIndicator.GetComponent<Renderer>().material.mainTexture = voicetxt;
                         volIndicator.GetComponent<Renderer>().material.color = PlayerIsTagged(vrrig) ? (Color)new Color32(255, 111, 0, 255) : vrrig.playerColor;
-                        UnityEngine.Object.Destroy(volIndicator.GetComponent<Collider>());
                         volIndicator.transform.localScale = new Vector3(size, size, 0.01f);
-                        volIndicator.transform.position = vrrig.headMesh.transform.position + new Vector3(0f, 0.6f, 0f);
+                        volIndicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * 0.8f;
                         volIndicator.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
                     }
                 }
@@ -649,6 +649,7 @@ namespace iiMenu.Mods
                     if (size > 0f)
                     {
                         GameObject volIndicator = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        UnityEngine.Object.Destroy(volIndicator.GetComponent<Collider>());
                         UnityEngine.Object.Destroy(volIndicator, Time.deltaTime);
                         if (voiceMat == null)
                         {
@@ -673,9 +674,8 @@ namespace iiMenu.Mods
                         }
                         volIndicator.GetComponent<Renderer>().material = voiceMat;
                         volIndicator.GetComponent<Renderer>().material.color = PlayerIsTagged(vrrig) ? (Color)new Color32(255, 111, 0, 255) : vrrig.playerColor;
-                        UnityEngine.Object.Destroy(volIndicator.GetComponent<Collider>());
                         volIndicator.transform.localScale = new Vector3(size, size, 0.01f);
-                        volIndicator.transform.position = vrrig.headMesh.transform.position + new Vector3(0f, 0.6f, 0f);
+                        volIndicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * 0.8f; ;
                         volIndicator.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
                     }
                 }

@@ -1091,7 +1091,7 @@ namespace iiMenu.Mods
                     textColor = Color.black;
                     textClicked = Color.black;
                     break;
-                case 52: // Rift Purple
+                case 52: // Rift Light
                     bgColorA = new Color32(25, 25, 25, 255);
                     bgColorB = new Color32(25, 25, 25, 255);
                     buttonDefaultA = new Color32(40, 40, 40, 255);
@@ -1574,7 +1574,7 @@ namespace iiMenu.Mods
         private static KeywordRecognizer modPhrases;
         public static void VoiceRecognitionOn()
         {
-            mainPhrases = new KeywordRecognizer(new string[] { "jarvis", "ii", "i i", "eye eye", "siri", "google", "alexa" });
+            mainPhrases = new KeywordRecognizer(new string[] { "jarvis", "ii", "i i", "eye eye", "siri", "google", "alexa", "dummy", "computer", "stinky" });
             mainPhrases.OnPhraseRecognized += ModRecognition;
             mainPhrases.Start();
         }
@@ -2104,14 +2104,18 @@ namespace iiMenu.Mods
         {
             disableBoardColor = true;
             motd.SetActive(false);
-            GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/motd").SetActive(true);
+            motdText.SetActive(false);
+            GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/motd (1)").SetActive(true);
+            GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/motdtext").SetActive(true);
         }
 
         public static void EnableBoardColors()
         {
             disableBoardColor = false;
             motd.SetActive(true);
-            GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/motd").SetActive(false);
+            motdText.SetActive(true);
+            GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/motd (1)").SetActive(false);
+            GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/motdtext").SetActive(false);
         }
 
         public static void DisableBoardTextColors()
