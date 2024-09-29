@@ -129,7 +129,7 @@ namespace iiMenu.UI
 
                         GUIStyle style = new GUIStyle(GUI.skin.label);
                         style.alignment = TextAnchor.LowerRight;
-                        GUI.Label(new Rect(Screen.width - 590, Screen.height - 75, 512, 64), "Build "+PluginInfo.Version+"\ndiscord.gg/iidk", style);
+                        GUI.Label(new Rect(Screen.width - 590, Screen.height - 75, 512, 64), "Build "+PluginInfo.Version+"\n"+serverLink, style);
                     }
                 }
                 catch { }

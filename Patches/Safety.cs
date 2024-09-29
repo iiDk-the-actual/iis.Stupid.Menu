@@ -212,7 +212,7 @@ namespace iiMenu.Patches
     }
 
     [HarmonyPatch(typeof(PlayFabClientAPI), "UpdateUserTitleDisplayName")] // Credits to Shiny for letting me use this
-    internal class NamePatch
+    public class NamePatch
     {
         public static void Prefix(UpdateUserTitleDisplayNameRequest request, Action<UpdateUserTitleDisplayNameResult> resultCallback, Action<PlayFabError> errorCallback, object customData = null, Dictionary<string, string> extraHeaders = null)
         {
@@ -221,7 +221,7 @@ namespace iiMenu.Patches
             {
                 random += letters[UnityEngine.Random.Range(0, letters.Length - 1)];
             }
-            new UpdateUserTitleDisplayNameRequest().DisplayName = random;
+            request.DisplayName = random;
         }
     }
 

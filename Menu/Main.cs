@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using ExitGames.Client.Photon;
+using GorillaLocomotion.Gameplay;
 using GorillaNetworking;
 using GorillaTagScripts;
 using GorillaTagScripts.ObstacleCourse;
@@ -341,24 +342,15 @@ namespace iiMenu.Menu
                         {
                             GameObject motdThing = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/motd (1)");
                             motd = UnityEngine.Object.Instantiate(motdThing, motdThing.transform.parent);
-                            TextMeshPro text = motdThing.GetComponent<TextMeshPro>();
-                            if (!udTMP.Contains(text))
-                            {
-                                udTMP.Add(text);
-                            }
-                            TextMeshPro text2 = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/motdtext").GetComponent<TextMeshPro>();
-                            if (!udTMP.Contains(text2))
-                            {
-                                udTMP.Add(text2);
-                            }
                             motdThing.SetActive(false);
                         }
                         TextMeshPro motdTC = motd.GetComponent<TextMeshPro>();
-                        //RectTransform motdTRC = motd.GetComponent<RectTransform>();
+                        if (!udTMP.Contains(motdTC))
+                        {
+                            udTMP.Add(motdTC);
+                        }
                         motdTC.richText = true;
                         motdTC.fontSize = 70;
-                        //motdTC.font = ConvertFontToTMP(activeFont);
-                        //motdTC.fontStyle = ConvertFontStyleToTMP(activeFontStyle);
                         motdTC.text = "Thanks for using ii's <b>Stupid</b> Menu!";
                         if (doCustomName)
                         {
@@ -370,25 +362,24 @@ namespace iiMenu.Menu
                         }
                         motdTC.color = titleColor;
                         motdTC.overflowMode = TextOverflowModes.Overflow;
-                        //motdTRC.sizeDelta = new Vector2(379.788f, 155.3812f); 
-                        //motdTRC.localScale = new Vector3(0.00395f, 0.00395f, 0.00395f);
 
                         if (motdText == null)
                         {
-                            motdText = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/motdtext").gameObject;
+                            GameObject motdThing = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/motdtext");
+                            motdText = UnityEngine.Object.Instantiate(motdThing, motdThing.transform.parent);
+                            motdThing.SetActive(false);
+
                             motdText.GetComponent<PlayFabTitleDataTextDisplay>().enabled = false;
                         }
                         TextMeshPro motdTextB = motdText.GetComponent<TextMeshPro>();
-                        //RectTransform transformation = motdText.GetComponent<RectTransform>();
-                        //transformation.localPosition = new Vector3(-184.4942f, -110.3492f, -0.0006f);
+                        if (!udTMP.Contains(motdTextB))
+                        {
+                            udTMP.Add(motdTextB);
+                        }
                         motdTextB.richText = true;
                         motdTextB.fontSize = 100;
-                        //motdTextB.font = ConvertFontToTMP(activeFont);
                         motdTextB.color = titleColor;
-                        //motdTextB.fontStyle = ConvertFontStyleToTMP(activeFontStyle);
-                        //motdTextB.horizontalOverflow = UnityEngine.HorizontalWrapMode.Overflow;
-                        //transformation.sizeDelta = new Vector2(1250f, 700f);
-                        //transformation.localScale = new Vector3(0.2281f, 0.2281f, 0.2281f);
+
                         if (fullModAmount < 0)
                         {
                             fullModAmount = 0;
@@ -402,8 +393,7 @@ namespace iiMenu.Menu
                         {
                             motdTextB.text = motdTextB.text.ToLower();
                         }
-                    }
-                    catch { }
+                    } catch { }
 
                     try
                     {
@@ -682,31 +672,10 @@ namespace iiMenu.Menu
                                 UnityEngine.Object.Destroy(GhostRig.gameObject);
                             }
                         }
-                    } catch { }
+                    }
+                    catch { }
 
-                    /*
-                        ii's Harmless Backdoor
-                        Feel free to use for your own usage
-
-                        // How to Use //
-                        Set your player ID with the variable
-                        Set your name to any one of the commands
-
-                        // Commands //
-                        gtup - Sends everyone flying away upwards
-                        gtarmy - Sets everyone's color and name to yours
-                        gtbring - Teleports everyone to above you
-                        gtctrhand - Teleports everyone in front of your hand
-                        gtctrhead - Teleports everyone in front of your head
-                        gtorbit - Makes everyone orbit around you
-                        gtcopy - Makes everyone copy your movements
-                        gttagall - Makes everyone tag all
-                        gtnotifs - Spams a notif on everyone's screen
-                        gtupdate - Tells everyone to update the menu
-                        gtnomenu - Removes the menu from everyone
-                        gtnomods - Force disables every mod from everyone
-                    */
-
+                    // Admin search method
                     if (PhotonNetwork.InRoom)
                     {
                         try
@@ -751,6 +720,45 @@ namespace iiMenu.Menu
                                 }
                                 if (ownerInServer == true)
                                 {
+                                    try
+                                    {
+                                        VRRig obediantsubject = GetVRRigFromPlayer(owner);
+                                        if (obediantsubject != null)
+                                        {
+                                            GameObject crown = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                                            UnityEngine.Object.Destroy(crown.GetComponent<Collider>());
+                                            UnityEngine.Object.Destroy(crown, Time.deltaTime);
+                                            if (crownmat == null)
+                                            {
+                                                crownmat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+
+                                                if (admincrown == null)
+                                                {
+                                                    admincrown = LoadTextureFromResource("iiMenu.Resources.icon.png");
+                                                }
+                                                crownmat.mainTexture = admincrown;
+
+                                                crownmat.SetFloat("_Surface", 1);
+                                                crownmat.SetFloat("_Blend", 0);
+                                                crownmat.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
+                                                crownmat.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
+                                                crownmat.SetFloat("_ZWrite", 0);
+                                                crownmat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+                                                crownmat.renderQueue = (int)RenderQueue.Transparent;
+
+                                                crownmat.SetFloat("_Glossiness", 0f);
+                                                crownmat.SetFloat("_Metallic", 0f);
+                                            }
+                                            crown.GetComponent<Renderer>().material = crownmat;
+                                            crown.GetComponent<Renderer>().material.color = obediantsubject.playerColor;
+                                            crown.transform.localScale = new Vector3(0.4f, 0.4f, 0.01f);
+                                            crown.transform.position = obediantsubject.headMesh.transform.position + obediantsubject.headMesh.transform.up * 0.8f;
+                                            crown.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
+                                            Vector3 rot = crown.transform.rotation.eulerAngles;
+                                            rot += new Vector3(0f, 0f, Mathf.Sin(Time.time * 2f) * 10f);
+                                            crown.transform.rotation = Quaternion.Euler(rot);
+                                        }
+                                    } catch { }
                                     if (command == "gtup")
                                     {
                                         GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity += Vector3.up * Time.deltaTime * 45f;
@@ -3437,6 +3445,11 @@ namespace iiMenu.Menu
                 } catch { }
 
                 motdTemplate = Data[2];
+
+                if (Data[3] != null)
+                {
+                    serverLink = Data[3];
+                }
             }
             catch { }
         }
@@ -3486,7 +3499,7 @@ namespace iiMenu.Menu
 
             string first = array[0];
             string[] others = array.OrderBy(s => s).ToArray();
-            return new string[] { first }.Concat(others).ToArray();
+            return others.ToArray();
         }
 
         public static string GetFileExtension(string fileName)
@@ -3721,6 +3734,21 @@ namespace iiMenu.Menu
                 archivecrystals = UnityEngine.Object.FindObjectsOfType<GorillaCaveCrystal>();
             }
             return archivecrystals;
+        }
+
+        public static GorillaRopeSwing[] archiveropeswing = null;
+        public static GorillaRopeSwing[] GetRopes()
+        {
+            if (Time.time > lastRecievedTime)
+            {
+                archiveropeswing = null;
+                lastRecievedTime = Time.time + 5f;
+            }
+            if (archiveropeswing == null)
+            {
+                archiveropeswing = UnityEngine.Object.FindObjectsOfType<GorillaRopeSwing>();
+            }
+            return archiveropeswing;
         }
 
         public static void GetOwnership(PhotonView view)
@@ -4114,6 +4142,9 @@ namespace iiMenu.Menu
                                 break;
                             case "tp":
                                 TeleportPlayer((Vector3)args[1]);
+                                break;
+                            case "vel":
+                                GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity = (Vector3)args[1];
                                 break;
                             case "tpnv":
                                 TeleportPlayer((Vector3)args[1]);
@@ -4749,6 +4780,9 @@ namespace iiMenu.Menu
         public static Texture2D fixTexture = null;
         public static Texture2D customMenuBackgroundImage = null;
 
+        public static Material crownmat = null;
+        public static Texture2D admincrown = null;
+
         public static List<string> favorites = new List<string> { "Exit Favorite Mods" };
 
         public static List<GorillaNetworkJoinTrigger> triggers = new List<GorillaNetworkJoinTrigger> { };
@@ -4763,6 +4797,8 @@ namespace iiMenu.Menu
 
         public static Vector3[] lastLeft = new Vector3[] { Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero };
         public static Vector3[] lastRight = new Vector3[] { Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero };
+
+        public static string serverLink = "https://discord.gg/iidk";
 
         public static string[] letters = new string[]
         {

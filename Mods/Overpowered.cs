@@ -2,21 +2,15 @@
 using GorillaGameModes;
 using GorillaLocomotion.Gameplay;
 using GorillaNetworking;
-using GorillaTag;
 using HarmonyLib;
 using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
-using PlayFab;
-using PlayFab.ClientModels;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static GorillaNetworking.CosmeticsController;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
-using static iiMenu.Mods.Spammers.Projectiles;
 
 namespace iiMenu.Mods
 {
@@ -90,6 +84,37 @@ namespace iiMenu.Mods
         public static void RemoveSelfFromLeaderboard()
         {
             ChangeName("");
+        }
+
+        // Once again, not skidded still, read another debunk: https://pastebin.com/raw/FL5j8fcy
+        private static bool lastfreezegarbage = false;
+        private static float Garfield = 0f;
+        public static void FreezeAll()
+        {
+            if (rightTrigger > 0.5f)
+            {
+                if (Time.time > Garfield)
+                {
+                    lastfreezegarbage = !lastfreezegarbage;
+                    foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+                    {
+                        line.PressButton(lastfreezegarbage, GorillaPlayerLineButton.ButtonType.Mute);
+                    }
+                    Garfield = Time.time + 0.1f;
+                }
+            }
+        }
+
+        public static void PacketStresser()
+        {
+            for (int i = 0; i < 9; i++)
+            {
+                lastfreezegarbage = !lastfreezegarbage;
+                foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+                {
+                    line.PressButton(lastfreezegarbage, GorillaPlayerLineButton.ButtonType.Mute);
+                }
+            }
         }
 
         public static void AtticFlingGun()
@@ -243,7 +268,6 @@ namespace iiMenu.Mods
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
                         NetPlayer player = GetPlayerFromVRRig(possibly);
-                        //GorillaGameManager.instance.FindVRRigForPlayer(player).RPC("SetTaggedTime", player, null);
                         BetaSetStatus(0, new RaiseEventOptions { TargetActors = new int[1] { player.ActorNumber } });
                         RPCProtection();
                         kgDebounce = Time.time + 1f;
@@ -256,13 +280,9 @@ namespace iiMenu.Mods
         {
             if (Time.time > kgDebounce)
             {
-                /*foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
-                {
-                GorillaGameManager.instance.FindVRRigForPlayer(player).RPC("SetTaggedTime", player, null);*/
                 BetaSetStatus(0, new RaiseEventOptions { Receivers = ReceiverGroup.Others });
                 RPCProtection();
                 kgDebounce = Time.time + 1f;
-                //}
             }
         }
 
@@ -280,7 +300,6 @@ namespace iiMenu.Mods
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
                         NetPlayer owner = GetPlayerFromVRRig(possibly);
-                        //GorillaTagger.Instance.myVRRig.RPC("SetJoinTaggedTime", owner, null);
                         BetaSetStatus(1, new RaiseEventOptions { TargetActors = new int[1] { owner.ActorNumber } });
                         RPCProtection();
                         kgDebounce = Time.time + 0.5f;
@@ -293,13 +312,9 @@ namespace iiMenu.Mods
         {
             if (Time.time > kgDebounce)
             {
-                /*foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
-                {
-                GorillaTagger.Instance.myVRRig.RPC("SetJoinTaggedTime", player, null);*/
                 BetaSetStatus(1, new RaiseEventOptions { Receivers = ReceiverGroup.Others });
                 RPCProtection();
                 kgDebounce = Time.time + 0.5f;
-                //}
             }
         }
         
@@ -499,6 +514,54 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void RopeLagGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (isCopying && whoCopy != null)
+                {
+                    foreach (GorillaRopeSwing rope in GetRopes())
+                    {
+                        RopeSwingManager.instance.photonView.RPC("SetVelocity", NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)), new object[] { rope.ropeId, 1, new Vector3(UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f)), true, null });
+                        RPCProtection();
+                    }
+                }
+                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        isCopying = true;
+                        whoCopy = possibly;
+                    }
+                }
+            }
+            else
+            {
+                if (isCopying)
+                {
+                    isCopying = false;
+                    GorillaTagger.Instance.offlineVRRig.enabled = true;
+                }
+            }
+        }
+
+        public static void RopeLagAll()
+        {
+            if (rightTrigger > 0.5f)
+            {
+                foreach (GorillaRopeSwing rope in GetRopes())
+                {
+                    RopeSwingManager.instance.photonView.RPC("SetVelocity", RpcTarget.Others, new object[] { rope.ropeId, 1, new Vector3(UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f)), true, null });
+                    RPCProtection();
+                }
+            }
+        }
+
         private static float RopeDelay = 0f;
         public static void JoystickRopeControl() // Thanks to ShibaGT for the fix
         {
@@ -507,7 +570,7 @@ namespace iiMenu.Mods
             if ((Mathf.Abs(joy.x) > 0.05f || Mathf.Abs(joy.y) > 0.05f) && Time.time > RopeDelay)
             {
                 RopeDelay = Time.time + 0.25f;
-                foreach (GorillaRopeSwing rope in GameObject.FindObjectsOfType(typeof(GorillaRopeSwing)))
+                foreach (GorillaRopeSwing rope in GetRopes())
                 {
                     RopeSwingManager.instance.photonView.RPC("SetVelocity", RpcTarget.All, new object[] { rope.ropeId, 1, new Vector3(joy.x * 50f, joy.y * 50f, 0f), true, null });
                     RPCProtection();
@@ -546,9 +609,43 @@ namespace iiMenu.Mods
                 if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > RopeDelay)
                 {
                     RopeDelay = Time.time + 0.25f;
-                    foreach (GorillaRopeSwing rope in GameObject.FindObjectsOfType(typeof(GorillaRopeSwing)))
+                    foreach (GorillaRopeSwing rope in GetRopes())
                     {
                         RopeSwingManager.instance.photonView.RPC("SetVelocity", RpcTarget.All, new object[] { rope.ropeId, 1, new Vector3(UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f)), true, null });
+                        RPCProtection();
+                    }
+                }
+            }
+        }
+
+        public static void SpazGrabbedRopes()
+        {
+            if (Time.time > RopeDelay)
+            {
+                RopeDelay = Time.time + 0.1f;
+                foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                {
+                    GorillaRopeSwing rope = (GorillaRopeSwing)Traverse.Create(vrrig).Field("currentRopeSwing").GetValue();
+                    if (rope != null)
+                    {
+                        RopeSwingManager.instance.photonView.RPC("SetVelocity", RpcTarget.All, new object[] { rope.ropeId, 1, new Vector3(UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f)), true, null });
+                        RPCProtection();
+                    }
+                }
+            }
+        }
+
+        public static void ConfusingRopes()
+        {
+            if (Time.time > RopeDelay)
+            {
+                RopeDelay = Time.time + 0.1f;
+                foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                {
+                    GorillaRopeSwing rope = (GorillaRopeSwing)Traverse.Create(vrrig).Field("currentRopeSwing").GetValue();
+                    if (rope != null)
+                    {
+                        RopeSwingManager.instance.photonView.RPC("SetVelocity", NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)), new object[] { rope.ropeId, 1, new Vector3(UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f)), true, null });
                         RPCProtection();
                     }
                 }
@@ -586,7 +683,7 @@ namespace iiMenu.Mods
                 if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > RopeDelay)
                 {
                     RopeDelay = Time.time + 0.25f;
-                    foreach (GorillaRopeSwing rope in GameObject.FindObjectsOfType(typeof(GorillaRopeSwing)))
+                    foreach (GorillaRopeSwing rope in GetRopes())
                     {
                         RopeSwingManager.instance.photonView.RPC("SetVelocity", RpcTarget.All, new object[] { rope.ropeId, 1, (NewPointer.transform.position - rope.transform.position).normalized * 50f, true, null });
                         RPCProtection();
