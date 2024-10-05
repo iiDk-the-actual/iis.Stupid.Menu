@@ -1320,6 +1320,58 @@ namespace iiMenu.Mods
             }
         }
 
+        private static float lastRecievedTime = 0f;
+        public static NoncontrollableBroomstick[] archivebrooms = null;
+        public static NoncontrollableBroomstick[] GetBroomsticks() // Wicked witch of the west
+        {
+            if (Time.time > lastRecievedTime)
+            {
+                archivemonsters = null;
+                lastRecievedTime = Time.time + 5f;
+            }
+            if (archivebrooms == null)
+            {
+                archivebrooms = UnityEngine.Object.FindObjectsOfType<NoncontrollableBroomstick>();
+            }
+            return archivebrooms;
+        }
+
+        public static void FastBrooms()
+        {
+            NoncontrollableBroomstick[] brooms = GetBroomsticks();
+            foreach (NoncontrollableBroomstick broom in brooms)
+            {
+                broom.duration = 10f;
+            }
+        }
+
+        public static void SlowBrooms()
+        {
+            NoncontrollableBroomstick[] brooms = GetBroomsticks();
+            foreach (NoncontrollableBroomstick broom in brooms)
+            {
+                broom.duration = 60f;
+            }
+        }
+
+        public static void SpazBrooms()
+        {
+            NoncontrollableBroomstick[] brooms = GetBroomsticks();
+            foreach (NoncontrollableBroomstick broom in brooms)
+            {
+                Traverse.Create(broom).Field("progress").SetValue(UnityEngine.Random.Range(0f, 1f));
+            }
+        }
+
+        public static void FixBroomSpeed()
+        {
+            NoncontrollableBroomstick[] brooms = GetBroomsticks();
+            foreach (NoncontrollableBroomstick broom in brooms)
+            {
+                broom.duration = 30f;
+            }
+        }
+
         public static float lastTime = 0f;
         public static void SpazGliderMaterial()
         {

@@ -1,8 +1,10 @@
 ﻿using Cinemachine;
 using GorillaNetworking;
 using HarmonyLib;
+using iiMenu.Classes;
 using iiMenu.Notifications;
 using Photon.Pun;
+using System.Collections;
 using System.Diagnostics;
 using System.Reflection;
 using UnityEngine;
@@ -45,7 +47,6 @@ namespace iiMenu.Mods
         public static void CancelReconnect()
         {
             rejRoom = null;
-            isJoiningRandom = false;
             partyLastCode = null;
             phaseTwo = false;
         }
@@ -55,9 +56,14 @@ namespace iiMenu.Mods
             PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(lastRoom, JoinType.Solo);
         }
 
-        public static void ActJoinRandom()
+        public static void JoinRandom()
         {
-            //PhotonNetworkController.Instance.currentJoinTrigger.OnBoxTriggered();
+            if (PhotonNetwork.InRoom)
+            {
+                PhotonNetwork.Disconnect();
+                CoroutineManager.RunCoroutine(JoinRandomDelay());
+                return;
+            }
 
             string gamemode = PhotonNetworkController.Instance.currentJoinTrigger.networkZone;
 
@@ -91,21 +97,14 @@ namespace iiMenu.Mods
             }
             if (gamemode == "caves")
             {
-                GameObject.Find("Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Cave").GetComponent<GorillaNetworkJoinTrigger>().OnBoxTriggered();
+                GameObject.Find("Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Cave").GetComponent<GorillaNetworkJoinTrigger>();
             }
         }
 
-        public static void JoinRandom()
+        public static IEnumerator JoinRandomDelay()
         {
-            if (PhotonNetwork.InRoom)
-            {
-                PhotonNetwork.Disconnect();
-                isJoiningRandom = true;
-            }
-            else
-            {
-                ActJoinRandom();
-            }
+            yield return new WaitForSeconds(1f);
+            JoinRandom();
         }
 
         public static void JoinRandomR()
@@ -217,32 +216,23 @@ namespace iiMenu.Mods
             GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").SetActive(true);
         }
 
+        private static bool lastreportmenubooltogglelaaaa = false;
         public static void OculusReportMenu()
         {
-            if (leftPrimary)
+            if (leftPrimary && !lastreportmenubooltogglelaaaa)
             {
                 GorillaMetaReport gr = GameObject.Find("Miscellaneous Scripts").transform.Find("MetaReporting").GetComponent<GorillaMetaReport>();
                 gr.gameObject.SetActive(true);
                 gr.enabled = true;
                 MethodInfo inf = typeof(GorillaMetaReport).GetMethod("StartOverlay", BindingFlags.NonPublic | BindingFlags.Instance);
                 inf.Invoke(gr, null);
-            } else
-            {
-                GorillaMetaReport gr = GameObject.Find("Miscellaneous Scripts").transform.Find("MetaReporting").GetComponent<GorillaMetaReport>();
-                if (gr.gameObject.activeSelf)
-                {
-                    gr.gameObject.SetActive(false);
-                    gr.enabled = false;
-                    MethodInfo inf = typeof(GorillaMetaReport).GetMethod("Teardown", BindingFlags.NonPublic | BindingFlags.Instance);
-                    inf.Invoke(gr, null);
-                }
             }
+            lastreportmenubooltogglelaaaa = leftPrimary;
         }
 
         public static void AcceptTOS()
         {
             Patches.TOSPatch.enabled = true;
-            LegalAgreements.instance.TurnPage(999);
         }
 
         public static void DisableAcceptTOS()

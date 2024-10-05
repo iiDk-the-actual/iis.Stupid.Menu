@@ -3,6 +3,7 @@ using GorillaGameModes;
 using GorillaLocomotion.Gameplay;
 using GorillaNetworking;
 using HarmonyLib;
+using iiMenu.Classes;
 using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
@@ -26,6 +27,196 @@ namespace iiMenu.Mods
             {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             }
+        }
+
+        public static void SpawnBlueLucy()
+        {
+            HalloweenGhostChaser hgc = GameObject.Find("Environment Objects/05Maze_PersistentObjects/Halloween2024_PersistentObjects/Halloween Ghosts/Lucy/Halloween Ghost/FloatingChaseSkeleton").GetComponent<HalloweenGhostChaser>();
+            if (hgc.IsMine)
+            {
+                hgc.timeGongStarted = Time.time;
+                hgc.currentState = HalloweenGhostChaser.ChaseState.Gong;
+                hgc.isSummoned = false;
+            }
+            else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
+        }
+
+        public static void SpawnRedLucy()
+        {
+            HalloweenGhostChaser hgc = GameObject.Find("Environment Objects/05Maze_PersistentObjects/Halloween2024_PersistentObjects/Halloween Ghosts/Lucy/Halloween Ghost/FloatingChaseSkeleton").GetComponent<HalloweenGhostChaser>();
+            if (hgc.IsMine)
+            {
+                hgc.timeGongStarted = 0f;
+                hgc.currentState = HalloweenGhostChaser.ChaseState.Gong;
+                hgc.isSummoned = true;
+            }
+            else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
+        }
+
+        public static void DespawnLucy()
+        {
+            HalloweenGhostChaser hgc = GameObject.Find("Environment Objects/05Maze_PersistentObjects/Halloween2024_PersistentObjects/Halloween Ghosts/Lucy/Halloween Ghost/FloatingChaseSkeleton").GetComponent<HalloweenGhostChaser>();
+            if (hgc.IsMine)
+            {
+                hgc.currentState = HalloweenGhostChaser.ChaseState.Dormant;
+                hgc.isSummoned = false;
+            }
+            else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
+        }
+
+        public static void LucyChaseSelf()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                {
+                    HalloweenGhostChaser hgc = GameObject.Find("Environment Objects/05Maze_PersistentObjects/Halloween2024_PersistentObjects/Halloween Ghosts/Lucy/Halloween Ghost/FloatingChaseSkeleton").GetComponent<HalloweenGhostChaser>();
+                    if (hgc.IsMine)
+                    {
+                        VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                        if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                        {
+                            hgc.currentState = HalloweenGhostChaser.ChaseState.Chasing;
+                            hgc.targetPlayer = NetworkSystem.Instance.LocalPlayer;
+                        }
+                    }
+                    else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
+                }
+            }
+        }
+
+        public static void LucyChaseGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                {
+                    HalloweenGhostChaser hgc = GameObject.Find("Environment Objects/05Maze_PersistentObjects/Halloween2024_PersistentObjects/Halloween Ghosts/Lucy/Halloween Ghost/FloatingChaseSkeleton").GetComponent<HalloweenGhostChaser>();
+                    if (hgc.IsMine)
+                    {
+                        VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                        if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                        {
+                            hgc.currentState = HalloweenGhostChaser.ChaseState.Chasing;
+                            hgc.targetPlayer = GetPlayerFromVRRig(possibly);
+                        }
+                    }
+                    else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
+                }
+            }
+        }
+
+        public static void SpazChaseLucy()
+        {
+            HalloweenGhostChaser hgc = GameObject.Find("Environment Objects/05Maze_PersistentObjects/Halloween2024_PersistentObjects/Halloween Ghosts/Lucy/Halloween Ghost/FloatingChaseSkeleton").GetComponent<HalloweenGhostChaser>();
+            if (hgc.IsMine)
+            {
+                if (Time.time > lasttimethingblahblabhabja)
+                {
+                    if (hgc.currentState != HalloweenGhostChaser.ChaseState.Chasing)
+                    {
+                        hgc.currentState = HalloweenGhostChaser.ChaseState.Chasing;
+                        hgc.currentSpeed = 5f;
+                        hgc.targetPlayer = GetRandomPlayer(true);
+                    }
+                }
+            }
+            else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
+        }
+
+        public static void LucyAttackSelf()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                {
+                    HalloweenGhostChaser hgc = GameObject.Find("Environment Objects/05Maze_PersistentObjects/Halloween2024_PersistentObjects/Halloween Ghosts/Lucy/Halloween Ghost/FloatingChaseSkeleton").GetComponent<HalloweenGhostChaser>();
+                    if (hgc.IsMine)
+                    {
+                        VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                        if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                        {
+                            hgc.currentState = HalloweenGhostChaser.ChaseState.Grabbing;
+                            hgc.grabTime = Time.time;
+                            hgc.targetPlayer = NetworkSystem.Instance.LocalPlayer;
+                        }
+                    }
+                    else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
+                }
+            }
+        }
+
+        public static void LucyAttackGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                {
+                    HalloweenGhostChaser hgc = GameObject.Find("Environment Objects/05Maze_PersistentObjects/Halloween2024_PersistentObjects/Halloween Ghosts/Lucy/Halloween Ghost/FloatingChaseSkeleton").GetComponent<HalloweenGhostChaser>();
+                    if (hgc.IsMine)
+                    {
+                        VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                        if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                        {
+                            hgc.currentState = HalloweenGhostChaser.ChaseState.Grabbing;
+                            hgc.grabTime = Time.time;
+                            hgc.targetPlayer = GetPlayerFromVRRig(possibly);
+                        }
+                    } else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
+                }
+            }
+        }
+
+        private static float lasttimethingblahblabhabja = 0f;
+        public static void SpazLucy()
+        {
+            HalloweenGhostChaser hgc = GameObject.Find("Environment Objects/05Maze_PersistentObjects/Halloween2024_PersistentObjects/Halloween Ghosts/Lucy/Halloween Ghost/FloatingChaseSkeleton").GetComponent<HalloweenGhostChaser>();
+            if (hgc.IsMine)
+            {
+                if (Time.time > lasttimethingblahblabhabja)
+                {
+                    hgc.timeGongStarted = Time.time;
+                    hgc.currentState = hgc.currentState == HalloweenGhostChaser.ChaseState.Dormant ? HalloweenGhostChaser.ChaseState.Gong : HalloweenGhostChaser.ChaseState.Dormant;
+                    lasttimethingblahblabhabja = Time.time + 0.1f;
+                }
+            }
+            else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
+        }
+
+        public static void FastLucy()
+        {
+            HalloweenGhostChaser hgc = GameObject.Find("Environment Objects/05Maze_PersistentObjects/Halloween2024_PersistentObjects/Halloween Ghosts/Lucy/Halloween Ghost/FloatingChaseSkeleton").GetComponent<HalloweenGhostChaser>();
+            if (hgc.IsMine)
+            {
+                hgc.currentSpeed = 10f;
+            }
+            else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
+        }
+
+        public static void SlowLucy()
+        {
+            HalloweenGhostChaser hgc = GameObject.Find("Environment Objects/05Maze_PersistentObjects/Halloween2024_PersistentObjects/Halloween Ghosts/Lucy/Halloween Ghost/FloatingChaseSkeleton").GetComponent<HalloweenGhostChaser>();
+            if (hgc.IsMine)
+            {
+                hgc.currentSpeed = 1f;
+            }
+            else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
         }
 
         public static void SpawnSecondLook()
@@ -80,13 +271,7 @@ namespace iiMenu.Mods
             }
         }
 
-        // No, it's not skidded, read the debunk: https://pastebin.com/raw/dj55QNyC
-        public static void RemoveSelfFromLeaderboard()
-        {
-            ChangeName("");
-        }
-
-        // Once again, not skidded still, read another debunk: https://pastebin.com/raw/FL5j8fcy
+        // No, it's not skidded, read the debunk: https://pastebin.com/raw/FL5j8fcy
         private static bool lastfreezegarbage = false;
         private static float Garfield = 0f;
         public static void FreezeAll()
@@ -105,6 +290,7 @@ namespace iiMenu.Mods
             }
         }
 
+        /*
         public static void PacketStresser()
         {
             for (int i = 0; i < 9; i++)
@@ -112,10 +298,11 @@ namespace iiMenu.Mods
                 lastfreezegarbage = !lastfreezegarbage;
                 foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
                 {
-                    line.PressButton(lastfreezegarbage, GorillaPlayerLineButton.ButtonType.Mute);
+                    GorillaScoreboardTotalUpdater.ReportMute(line.linePlayer, lastfreezegarbage ? 1 : 0);
                 }
             }
         }
+        */
 
         public static void AtticFlingGun()
         {
@@ -357,7 +544,6 @@ namespace iiMenu.Mods
                 if (isCopying)
                 {
                     isCopying = false;
-                    GorillaTagger.Instance.offlineVRRig.enabled = true;
                 }
             }
         }
@@ -514,6 +700,7 @@ namespace iiMenu.Mods
             }
         }
 
+        private static float RopeDelay = 0f;
         public static void RopeLagGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
@@ -522,8 +709,9 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (isCopying && whoCopy != null)
+                if (isCopying && whoCopy != null && Time.time > RopeDelay)
                 {
+                    RopeDelay = Time.time + 0.08f;
                     foreach (GorillaRopeSwing rope in GetRopes())
                     {
                         RopeSwingManager.instance.photonView.RPC("SetVelocity", NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)), new object[] { rope.ropeId, 1, new Vector3(UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f)), true, null });
@@ -552,8 +740,9 @@ namespace iiMenu.Mods
 
         public static void RopeLagAll()
         {
-            if (rightTrigger > 0.5f)
+            if (rightTrigger > 0.5f && Time.time > RopeDelay)
             {
+                RopeDelay = Time.time + 0.08f;
                 foreach (GorillaRopeSwing rope in GetRopes())
                 {
                     RopeSwingManager.instance.photonView.RPC("SetVelocity", RpcTarget.Others, new object[] { rope.ropeId, 1, new Vector3(UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f)), true, null });
@@ -562,7 +751,6 @@ namespace iiMenu.Mods
             }
         }
 
-        private static float RopeDelay = 0f;
         public static void JoystickRopeControl() // Thanks to ShibaGT for the fix
         {
             Vector2 joy = ControllerInputPoller.instance.rightControllerPrimary2DAxis;

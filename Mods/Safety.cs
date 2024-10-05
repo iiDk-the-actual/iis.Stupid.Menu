@@ -109,6 +109,18 @@ namespace iiMenu.Mods
             GetIndex("carrg").overlapText = "Change Anti Report Distance <color=grey>[</color><color=green>" + names[antireportrangeindex] + "</color><color=grey>]</color>";
         }
 
+        private static bool smartarp = false;
+
+        public static void SmartAntiReport()
+        {
+            smartarp = true;
+        }
+
+        public static void StupidAntiReport() // lol
+        {
+            smartarp = false;
+        }
+
         public static void AntiReportDisconnect()
         {
             try
@@ -131,9 +143,12 @@ namespace iiMenu.Mods
 
                                 if (D1 < threshold || D2 < threshold)
                                 {
-                                    PhotonNetwork.Disconnect();
-                                    RPCProtection();
-                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected.");
+                                    if (!smartarp || (smartarp && PhotonNetwork.CurrentRoom.IsVisible && !PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED")))
+                                    {
+                                        PhotonNetwork.Disconnect();
+                                        RPCProtection();
+                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected.");
+                                    }
                                 }
                             }
                         }
@@ -165,9 +180,12 @@ namespace iiMenu.Mods
 
                                 if (D1 < threshold || D2 < threshold)
                                 {
-                                    Important.Reconnect();
-                                    RPCProtection();
-                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected and will be reconnected shortly.");
+                                    if (!smartarp || (smartarp && PhotonNetwork.CurrentRoom.IsVisible && !PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED")))
+                                    {
+                                        Important.Reconnect();
+                                        RPCProtection();
+                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected and will be reconnected shortly.");
+                                    }
                                 }
                             }
                         }
@@ -199,10 +217,12 @@ namespace iiMenu.Mods
 
                                 if (D1 < threshold || D2 < threshold)
                                 {
-                                    PhotonNetwork.Disconnect();
-                                    RPCProtection();
-                                    isJoiningRandom = true;
-                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected and will be connected to a random lobby shortly.");
+                                    if (!smartarp || (smartarp && PhotonNetwork.CurrentRoom.IsVisible && !PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED")))
+                                    {
+                                        RPCProtection();
+                                        Important.JoinRandom();
+                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected and will be connected to a random lobby shortly.");
+                                    }
                                 }
                             }
                         }
@@ -214,48 +234,50 @@ namespace iiMenu.Mods
 
         public static void AntiReportFRT(Player subject, bool doNotification = true)
         {
-            int antiReportType = 0;
-            string[] types = new string[]
+            if (!smartarp || (smartarp && PhotonNetwork.CurrentRoom.IsVisible && !PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED")))
             {
+                int antiReportType = 0;
+                string[] types = new string[]
+                {
                 "Disconnect",
                 "Reconnect",
                 "Join Random"
-            };
-            for (int i = 0; i < types.Length - 1; i++)
-            {
-                ButtonInfo lol = GetIndex("Anti Report <color=grey>[</color><color=green>" + types[i] + "</color><color=grey>]</color>");
-                if (lol.enabled)
+                };
+                for (int i = 0; i < types.Length - 1; i++)
                 {
-                    antiReportType = i;
+                    ButtonInfo lol = GetIndex("Anti Report <color=grey>[</color><color=green>" + types[i] + "</color><color=grey>]</color>");
+                    if (lol.enabled)
+                    {
+                        antiReportType = i;
+                    }
                 }
-            }
-            switch (antiReportType)
-            {
-                case 0:
-                    PhotonNetwork.Disconnect();
-                    RPCProtection();
-                    if (doNotification)
-                    {
-                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + subject.NickName + " attempted to report you, you have been disconnected.");
-                    }
-                    break;
-                case 1:
-                    Important.Reconnect();
-                    RPCProtection();
-                    if (doNotification)
-                    {
-                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + subject.NickName + " attempted to report you, you have been disconnected and will be reconnected shortly.");
-                    }
-                    break;
-                case 2:
-                    PhotonNetwork.Disconnect();
-                    RPCProtection();
-                    isJoiningRandom = true;
-                    if (doNotification)
-                    {
-                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + subject.NickName + " attempted to report you, you have been disconnected and will be connected to a random lobby shortly.");
-                    }
-                    break;
+                switch (antiReportType)
+                {
+                    case 0:
+                        PhotonNetwork.Disconnect();
+                        RPCProtection();
+                        if (doNotification)
+                        {
+                            NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + subject.NickName + " attempted to report you, you have been disconnected.");
+                        }
+                        break;
+                    case 1:
+                        Important.Reconnect();
+                        RPCProtection();
+                        if (doNotification)
+                        {
+                            NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + subject.NickName + " attempted to report you, you have been disconnected and will be reconnected shortly.");
+                        }
+                        break;
+                    case 2:
+                        RPCProtection();
+                        Important.JoinRandom();
+                        if (doNotification)
+                        {
+                            NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + subject.NickName + " attempted to report you, you have been disconnected and will be connected to a random lobby shortly.");
+                        }
+                        break;
+                }
             }
         }
 

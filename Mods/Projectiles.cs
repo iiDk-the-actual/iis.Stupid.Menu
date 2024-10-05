@@ -57,7 +57,7 @@ namespace iiMenu.Mods.Spammers
                 } catch (Exception e) { UnityEngine.Debug.Log(e.Message); }
                 if (projDebounceType > 0f && !nodelay)
                 {
-                    projDebounce = Time.time + projDebounceType;
+                    projDebounce = Time.time + projDebounceType + 0.05f;
                 }
             }
         }

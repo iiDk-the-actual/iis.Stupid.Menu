@@ -530,6 +530,7 @@ namespace iiMenu.Menu
                         if (PhotonNetwork.InRoom && !lastInRoom)
                         {
                             NotifiLib.SendNotification("<color=grey>[</color><color=blue>JOIN ROOM</color><color=grey>]</color> Room Code: " + lastRoom + "");
+                            RPCProtection();
                         }
                         if (!PhotonNetwork.InRoom && lastInRoom)
                         {
@@ -538,6 +539,7 @@ namespace iiMenu.Menu
                                 NotifiLib.ClearAllNotifications();
                             }
                             NotifiLib.SendNotification("<color=grey>[</color><color=blue>LEAVE ROOM</color><color=grey>]</color> Room Code: " + lastRoom + "");
+                            RPCProtection();
                             lastMasterClient = false;
                         }
 
@@ -1100,24 +1102,6 @@ namespace iiMenu.Menu
                             UnityEngine.Debug.Log("Attempting rejoin");
                             PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(rejRoom, JoinType.Solo);
                             rejDebounce = Time.time + (float)internetTime;
-                        }
-                    }
-
-                    // Join random code (for if you were already in lobby)
-                    if (PhotonNetwork.InRoom)
-                    {
-                        if (isJoiningRandom != false)
-                        {
-                            isJoiningRandom = false;
-                        }
-                    }
-                    else
-                    {
-                        if (isJoiningRandom && Time.time > jrDebounce)
-                        {
-                            Important.ActJoinRandom();
-
-                            //jrDebounce = Time.time + (float)internetTime;
                         }
                     }
 
@@ -3308,15 +3292,9 @@ namespace iiMenu.Menu
 
                         PhotonNetwork.MaxResendsBeforeDisconnect = int.MaxValue;
                         PhotonNetwork.QuickResends = int.MaxValue;
-                        // PhotonNetwork.SendRate = int.MaxValue;
-                        // GorillaGameManager.instance.maxProjectilesToKeepTrackOfPerPlayer = int.MaxValue;
 
-                        PhotonNetwork.RemoveRPCs(PhotonNetwork.LocalPlayer);
                         PhotonNetwork.OpCleanRpcBuffer(GorillaTagger.Instance.myVRRig.GetView);
-                        PhotonNetwork.RemoveBufferedRPCs(GorillaTagger.Instance.myVRRig.ViewID, null, null);
-                        PhotonNetwork.RemoveRPCsInGroup(int.MaxValue);
                         PhotonNetwork.SendAllOutgoingCommands();
-                        GorillaNot.instance.OnPlayerLeftRoom(PhotonNetwork.LocalPlayer);
                     }
                 }
             } catch { UnityEngine.Debug.Log("RPC protection failed, are you in a lobby?"); }
@@ -3394,7 +3372,11 @@ namespace iiMenu.Menu
                 shouldAttemptLoadData = false;
                 string[] Data = html.Split("\n");
 
-                UnityEngine.Debug.Log(Data[0]);
+                if (Data[3] != null)
+                {
+                    serverLink = Data[3];
+                }
+
                 if (Data[0] != PluginInfo.Version)
                 {
                     if (!isBetaTestVersion)
@@ -3445,11 +3427,6 @@ namespace iiMenu.Menu
                 } catch { }
 
                 motdTemplate = Data[2];
-
-                if (Data[3] != null)
-                {
-                    serverLink = Data[3];
-                }
             }
             catch { }
         }
@@ -3793,6 +3770,21 @@ namespace iiMenu.Menu
             if (gamemode.Contains("infection") || gamemode.Contains("tag"))
             {
                 GorillaTagManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
+                if (tagman.isCurrentlyTag)
+                {
+                    infected.Add(tagman.currentIt);
+                }
+                else
+                {
+                    foreach (NetPlayer plr in tagman.currentInfected)
+                    {
+                        infected.Add(plr);
+                    }
+                }
+            }
+            if (gamemode.Contains("ghost"))
+            {
+                GorillaAmbushManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla GhostTag Manager").GetComponent<GorillaAmbushManager>();
                 if (tagman.isCurrentlyTag)
                 {
                     infected.Add(tagman.currentIt);
@@ -4958,8 +4950,6 @@ namespace iiMenu.Menu
 
         public static bool lastprimaryhit = false;
         public static bool idiotfixthingy = false;
-
-        public static bool isJoiningRandom = false;
 
         public static int colorChangeType = 0;
         public static bool strobeColor = false;
