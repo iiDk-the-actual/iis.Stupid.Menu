@@ -68,6 +68,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Dynamic Sounds", enableMethod =() => Settings.DynamicSounds(), disableMethod =() => Settings.NoDynamicSounds(), toolTip = "Adds more sounds to the menu, giving you a better sense of control."},
                 new ButtonInfo { buttonText = "Voice Commands", enableMethod =() => Settings.VoiceRecognitionOn(), disableMethod =() => Settings.VoiceRecognitionOff(), toolTip = "Enable and disable sounds with your voice. Activate it like how you would any other voice assistant, like \"Jarvis\"."},
+                new ButtonInfo { buttonText = "Chain Voice Commands", toolTip = "Makes voice commands chain together, so you don't have to repeatedly ask it to listen to you."},
 
                 new ButtonInfo { buttonText = "Annoying Mode", enableMethod =() => Settings.AnnoyingModeOn(), disableMethod =() => Settings.AnnoyingModeOff(), toolTip = "Turns on the April Fools 2024 settings."},
                 new ButtonInfo { buttonText = "Lowercase Mode", enableMethod =() => Settings.LowercaseMode(), disableMethod =() => Settings.NoLowercaseMode(), toolTip = "Makes the entire menu's text lowercase."},
@@ -304,7 +305,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Left And Right", method =() => Movement.LeftAndRight(), toolTip = "Makes you go left when holding your <color=green>trigger</color>, and right when holding your <color=green>grip</color>."},
                 new ButtonInfo { buttonText = "Forwards And Backwards", method =() => Movement.ForwardsAndBackwards(), toolTip = "Makes you go forwards when holding your <color=green>trigger</color>, and backwards when holding your <color=green>grip</color>."},
 
-                new ButtonInfo { buttonText = "Size Changer", method =() => Movement.SizeChangerr(), enableMethod =() => Movement.EnableSizeChanger(), disableMethod =() => Movement.DisableSizeChanger(), toolTip = "Increase your size by holding <color=green>trigger</color>, and decrease your size by holding <color=green>grip</color>."},
+                new ButtonInfo { buttonText = "Size Changer", method =() => Movement.SizeChangerr(), enableMethod =() => Movement.DisableSizeChanger(), disableMethod =() => Movement.DisableSizeChanger(), toolTip = "Increase your size by holding <color=green>trigger</color>, and decrease your size by holding <color=green>grip</color>."},
 
                 new ButtonInfo { buttonText = "Auto Walk <color=grey>[</color><color=green>J</color><color=grey>]</color>", method =() => Movement.AutoWalk(), toolTip = "Makes your character automatically walk when using the <color=green>joystick</color>."},
                 new ButtonInfo { buttonText = "Auto Funny Run <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Movement.AutoFunnyRun(), toolTip = "Makes your character automatically funny run when holding <color=green>grip</color>."},
@@ -324,6 +325,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Spider Walk", method =() => Movement.SpiderWalk(), disableMethod =() => Movement.UnflipCharacter(), toolTip = "Makes your gravity and character towards any wall you touch. This may cause motion sickness."},
 
                 new ButtonInfo { buttonText = "Teleport to Random", method =() => Movement.TeleportToRandom(), isTogglable = false, toolTip = "Teleports you to a random player."},
+                new ButtonInfo { buttonText = "Teleport to Player", method =() => Movement.EnterTeleportToPlayer(), isTogglable = false, toolTip = "Teleports you to a player of your choosing."},
                 new ButtonInfo { buttonText = "Teleport Gun", method =() => Movement.TeleportGun(), toolTip = "Teleports to wherever your hand desires."},
                 new ButtonInfo { buttonText = "Airstrike", method =() => Movement.Airstrike(), toolTip = "Teleports to wherever your hand desires, except farther up, then launches you back down."},
 
@@ -332,6 +334,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "C4 <color=grey>[</color><color=green>A</color><color=grey>]</color>", method =() => Movement.Bomb(), disableMethod =() => Movement.DisableBomb(), toolTip = "Place a C4 with <color=green>grip</color> and detonate it with <color=green>A</color>."},
 
                 new ButtonInfo { buttonText = "Punch Mod", method =() => Movement.PunchMod(), toolTip = "Lets people punch you across the map."},
+                new ButtonInfo { buttonText = "Telekinesis", method =() => Movement.Telekinesis(), toolTip = "Lets people control you with nothing but the power of their finger."},
                 new ButtonInfo { buttonText = "Solid Players", method =() => Movement.SolidPlayers(), toolTip = "Lets you walk on top of other players."},
 
                 new ButtonInfo { buttonText = "Speed Boost", method =() => Movement.SpeedBoost(), toolTip = "Changes your speed to whatever you set it to."},
@@ -417,7 +420,7 @@ namespace iiMenu.Menu
             new ButtonInfo[] { // Advantage Mods [10]
                 new ButtonInfo { buttonText = "Exit Advantage Mods", method =() => Settings.ReturnToMain(), isTogglable = false, toolTip = "Returns you back to the main page."},
 
-                new ButtonInfo { buttonText = "Tag Self", method =() => Advantages.TagSelf(), toolTip = "Attempts to tags yourself."},
+                new ButtonInfo { buttonText = "Tag Self", method =() => Advantages.TagSelf(), disableMethod =() => Movement.EnableRig(), toolTip = "Attempts to tags yourself."},
 
                 new ButtonInfo { buttonText = "Tag Aura", method =() => Advantages.PhysicalTagAura(), toolTip = "Moves your hand into nearby players when tagged."},
                 new ButtonInfo { buttonText = "Grip Tag Aura <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Advantages.GripTagAura(), toolTip = "Moves your hand into nearby players when tagged and when holding <color=green>grip</color>."},
@@ -572,10 +575,6 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Fast Gliders", enableMethod =() => Fun.FastGliders(), disableMethod =() => Fun.FixGliderSpeed(), toolTip = "Makes the gliders fast."},
                 new ButtonInfo { buttonText = "Slow Gliders", enableMethod =() => Fun.SlowGliders(), disableMethod =() => Fun.FixGliderSpeed(), toolTip = "Makes the gliders slow."},
-
-                new ButtonInfo { buttonText = "Fast Brooms", enableMethod =() => Fun.FastBrooms(), disableMethod =() => Fun.FixBroomSpeed(), toolTip = "Makes the brooms become really fast." },
-                new ButtonInfo { buttonText = "Slow Brooms", enableMethod =() => Fun.SlowBrooms(), disableMethod =() => Fun.FixBroomSpeed(), toolTip = "Makes the brooms become really slow." },
-                new ButtonInfo { buttonText = "Spaz Brooms", method =() => Fun.SpazBrooms(), toolTip = "Gives the brooms a seizure." },
 
                 new ButtonInfo { buttonText = "Glider Blind Gun", method =() => Overpowered.GliderBlindGun(), toolTip = "Moves all of the gliders to whoever your hand desires' faces." },
                 new ButtonInfo { buttonText = "Glider Blind All", method =() => Overpowered.GliderBlindAll(), toolTip = "Moves all of the gliders to everyone's faces." },
@@ -755,10 +754,10 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Lucy Chase Self", method =() => Overpowered.LucyChaseSelf(), isTogglable = false, toolTip = "Makes the ghost Lucy chase you." },
                 new ButtonInfo { buttonText = "Lucy Chase Gun", method =() => Overpowered.LucyChaseGun(), toolTip = "Makes the ghost Lucy chase whoever your hand desires." },
-                new ButtonInfo { buttonText = "Lucy Chase Spaz", method =() => Overpowered.SpazChaseLucy(), toolTip = "Makes the ghost Lucy become undecided on who to chase." },
-
+                
                 new ButtonInfo { buttonText = "Lucy Attack Self", method =() => Overpowered.LucyAttackSelf(), isTogglable = false, toolTip = "Makes the ghost Lucy attack you." },
                 new ButtonInfo { buttonText = "Lucy Attack Gun", method =() => Overpowered.LucyAttackGun(), toolTip = "Makes the ghost Lucy attack whoever your hand desires." },
+                new ButtonInfo { buttonText = "Annoying Lucy", method =() => Overpowered.AnnoyingLucy(), toolTip = "Makes the ghost Lucy really annoying, by attacking everyone and making sounds of the bells." },
 
                 new ButtonInfo { buttonText = "Fast Lucy", method =() => Overpowered.FastLucy(), toolTip = "Makes the ghost Lucy become really fast." },
                 new ButtonInfo { buttonText = "Slow Lucy", method =() => Overpowered.SlowLucy(), toolTip = "Makes the ghost Lucy become really slow." },
@@ -830,9 +829,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Fling Rope Gun", method =() => Overpowered.FlingRopeGun(), toolTip = "Flings whatever rope your hand desires away from you."},
                 new ButtonInfo { buttonText = "Fling All Ropes Gun", method =() => Overpowered.FlingAllRopesGun(), toolTip = "Flings every rope in whatever direction your hand desires."},
 
-                new ButtonInfo { buttonText = "Rope Lag Gun", method =() => Overpowered.RopeLagGun(), toolTip = "Lags whoever your hand desires with the ropes."},
-                new ButtonInfo { buttonText = "Rope Lag All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.RopeLagAll(), toolTip = "Lags everyone with the ropes when holding <color=green>trigger</color>."},
-
                 new ButtonInfo { buttonText = "Spawn Second Look", method =() => Overpowered.SpawnSecondLook(), isTogglable = false, toolTip = "Spawns the ghost in the rotational map." },
                 new ButtonInfo { buttonText = "Anger Second Look", method =() => Overpowered.AngerSecondLook(), isTogglable = false, toolTip = "Makes the ghost in the rotational map chase after people." },
                 new ButtonInfo { buttonText = "Cancel Second Look", method =() => Overpowered.ThrowSecondLook(), isTogglable = false, toolTip = "Makes the ghost in the rotational map throw whoever it's holding." },
@@ -903,27 +899,39 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Admin Kick Gun", method =() => Experimental.AdminKickGun(), toolTip = "Kicks whoever your hand desires if they're using the menu."},
                 new ButtonInfo { buttonText = "Admin Kick All", method =() => Experimental.AdminKickAll(), isTogglable = false, toolTip = "Kicks everyone using the menu."},
+                
                 new ButtonInfo { buttonText = "Admin Flip Menu Gun", method =() => Experimental.FlipMenuGun(), toolTip = "Flips the menu of whoever your hand desires if they're using the menu."},
+                
                 new ButtonInfo { buttonText = "Admin Teleport Gun", method =() => Experimental.AdminTeleportGun(), toolTip = "Teleports whoever using the menu to wherever your hand desires."},
+                new ButtonInfo { buttonText = "Admin Fling Gun", method =() => Experimental.AdminFlingGun(), toolTip = "Flings whoever your hand desires upwards."},
                 new ButtonInfo { buttonText = "Admin Strangle", method =() => Experimental.AdminStrangle(), toolTip = "Strangles whoever you grab if they're using the menu."},
+                
                 new ButtonInfo { buttonText = "Admin Lightning Gun", method =() => Experimental.LightningGun(), toolTip = "Spawns lightning wherever your hand desires."},
                 new ButtonInfo { buttonText = "Admin Lightning Aura", method =() => Experimental.LightningAura(), toolTip = "Spawns lightning wherever your hand desires."},
+                new ButtonInfo { buttonText = "Admin Lightning Rain", method =() => Experimental.LightningRain(), toolTip = "Rains lightning around you and strikes whoever you hit."},
+
+                new ButtonInfo { buttonText = "Admin Laser", method =() => Experimental.AdminLaser(), toolTip = "Shines a red laser out of your hand when holding <color=green>A</color> or <color=green>X</color>."},
+
+                new ButtonInfo { buttonText = "Admin Fear Gun", method =() => Experimental.AdminFearGun(), toolTip = "Sends a person into pure fear and scarefulness."},
                 new ButtonInfo { buttonText = "Admin Object Gun", method =() => Experimental.AdminObjectGun(), toolTip = "Spawns an object wherever your hand desires."},
                 new ButtonInfo { buttonText = "Admin Notify Gun", method =() => Experimental.NotifyGun(), toolTip = "Sends a notification to whoever your hand desires. The notification text is based off of what you type into the search bar."},
+                new ButtonInfo { buttonText = "Admin Network Scale", method =() => Experimental.AdminNetworkScale(), disableMethod =() => Experimental.UnAdminNetworkScale(), toolTip = "Networks your scale to others with the menu."},
                 new ButtonInfo { buttonText = "Admin Notify All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Experimental.NotifyAll(), toolTip = "Sends a notification to whoever your hand desires. The notification text is based off of what you type into the search bar."},
+
+                new ButtonInfo { buttonText = "Admin Force Soundboard", method =() => Experimental.AdminSoundMicGun(), toolTip = "Plays a sound through whoever your hand desires' microphone if they're using the menu."},
+                new ButtonInfo { buttonText = "Admin Force Local Sound", method =() => Experimental.AdminSoundLocalGun(), toolTip = "Plays a sound through whoever your hand desires' headset if they're using the menu."},
+
+                new ButtonInfo { buttonText = "No Admin Indicator", enableMethod =() => Experimental.EnableNoAdminIndicator(), method =() => Experimental.NoAdminIndicator(), disableMethod =() => Experimental.AdminIndicatorBack(), toolTip = "Disables the cone that appears above your head to others with the menu."},
+
                 new ButtonInfo { buttonText = "Get Menu Users", method =() => Experimental.GetMenuUsers(), isTogglable = false, toolTip = "Detects who is using the menu."},
-                new ButtonInfo { buttonText = "Fly All Using", enableMethod =() => Experimental.FlyAllUsing(), disableMethod =() => Experimental.FixName(), toolTip = "Sends everyone using the menu flying away upwards."},
-                new ButtonInfo { buttonText = "Become Self All Using", enableMethod =() => Experimental.BecomeAllUsing(), disableMethod =() => Experimental.FixName(), toolTip = "Makes everyone using the menu become \"goldentrophy\"."},
-                new ButtonInfo { buttonText = "Bring All Using", enableMethod =() => Experimental.BringAllUsing(), disableMethod =() => Experimental.FixName(), toolTip = "Brings everyone using the menu to you."},
-                new ButtonInfo { buttonText = "Bring Hand All Using", enableMethod =() => Experimental.BringHandAllUsing(), disableMethod =() => Experimental.FixName(), toolTip = "Brings everyone using the menu to your hand."},
-                new ButtonInfo { buttonText = "Bring Head All Using", enableMethod =() => Experimental.BringHeadAllUsing(), disableMethod =() => Experimental.FixName(), toolTip = "Brings everyone using the menu to your head."},
-                new ButtonInfo { buttonText = "Orbit All Using", enableMethod =() => Experimental.OrbitAllUsing(), disableMethod =() => Experimental.FixName(), toolTip = "Makes everyone using the menu orbit you."},
-                new ButtonInfo { buttonText = "Copy All Using", enableMethod =() => Experimental.CopyAllUsing(), disableMethod =() => Experimental.FixName(), toolTip = "Makes everyone using the menu copy you."},
-                new ButtonInfo { buttonText = "Tag All Using", enableMethod =() => Experimental.TagAllUsing(), disableMethod =() => Experimental.FixName(), toolTip = "Enables Tag All for everyone using the menu."},
-                new ButtonInfo { buttonText = "Spam Notifications All Using", enableMethod =() => Experimental.SpamNotifsAllUsing(), disableMethod =() => Experimental.FixName(), toolTip = "Spams notifications for everyone using the menu."},
-                new ButtonInfo { buttonText = "Update Warning All Using", enableMethod =() => Experimental.UpdateWarningAllUsing(), disableMethod =() => Experimental.FixName(), toolTip = "Shows everyone using the menu to update it."},
-                new ButtonInfo { buttonText = "Remove Menu All Using", enableMethod =() => Experimental.NoMenuAllUsing(), disableMethod =() => Experimental.FixName(), toolTip = "Disables the menu for everyone who's using it."},
-                new ButtonInfo { buttonText = "Disable Mods All Using", enableMethod =() => Experimental.NoModsAllUsing(), disableMethod =() => Experimental.FixName(), toolTip = "Disables all mods for everyone using the menu."},
+                
+                new ButtonInfo { buttonText = "Fly All Using", method =() => Experimental.FlyAllUsing(), toolTip = "Sends everyone using the menu flying away upwards."},
+                new ButtonInfo { buttonText = "Bring All Using", method =() => Experimental.BringAllUsing(), toolTip = "Brings everyone using the menu to you."},
+                new ButtonInfo { buttonText = "Bring Hand All Using", method =() => Experimental.BringHandAllUsing(), toolTip = "Brings everyone using the menu to your hand."},
+                new ButtonInfo { buttonText = "Bring Head All Using", method =() => Experimental.BringHeadAllUsing(), toolTip = "Brings everyone using the menu to your head."},
+                new ButtonInfo { buttonText = "Orbit All Using", method =() => Experimental.OrbitAllUsing(), toolTip = "Makes everyone using the menu orbit you."},
+
+                new ButtonInfo { buttonText = "Confirm Notify All Using", method =() => Experimental.ConfirmNotifyAllUsing(), isTogglable = false, toolTip = "Sends a notification to everyone using the menu confirming that you're an admin."},
             },
 
             new ButtonInfo[] { // Enabled Mods [24]

@@ -2,11 +2,12 @@
 using ExitGames.Client.Photon;
 using GorillaLocomotion.Climbing;
 using GorillaLocomotion.Swimming;
-using HarmonyLib;
 using iiMenu.Classes;
+using iiMenu.Menu;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
@@ -423,6 +424,8 @@ namespace iiMenu.Mods
                 lol.AddComponent<GorillaSurfaceOverride>().overrideIndex = 61;
                 UnityEngine.Object.Destroy(lol, 1);
             }
+
+            GorillaTagger.Instance.bodyCollider.enabled = !(leftGrab || rightGrab);
         }
 
         public static void ChangeSpeedBoostAmount()
@@ -1229,6 +1232,32 @@ namespace iiMenu.Mods
             GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity = Vector3.zero;
         }
 
+        private static int rememberPageNumber = 0;
+        public static void EnterTeleportToPlayer()
+        {
+            rememberPageNumber = pageNumber;
+            buttonsType = 29;
+            pageNumber = 0;
+            List<ButtonInfo> tpbuttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Teleport to Player", method = () => ExitTeleportToPlayer(), isTogglable = false, toolTip = "Returns you back to the movement mods." } };
+            foreach (Player plr in PhotonNetwork.PlayerListOthers)
+            {
+                tpbuttons.Add(new ButtonInfo { buttonText = "TeleportPlayer"+tpbuttons.Count.ToString(), overlapText = ToTitleCase(plr.NickName), method = () => TeleportToPlayer(plr), isTogglable = false, toolTip = "Teleports you to " + ToTitleCase(plr.NickName) + "." });
+            }
+            Buttons.buttons[29] = tpbuttons.ToArray();
+        }
+
+        public static void TeleportToPlayer(Player plr)
+        {
+            TeleportPlayer(GetVRRigFromPlayer(plr).headMesh.transform.position);
+            ExitTeleportToPlayer();
+        }
+
+        public static void ExitTeleportToPlayer()
+        {
+            Settings.EnableMovement();
+            pageNumber = rememberPageNumber;
+        }
+
         public static void TeleportGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
@@ -1401,10 +1430,10 @@ namespace iiMenu.Mods
                         if (PhotonNetwork.InRoom)
                         {
                             GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
-                            84,
-                            true,
-                            999999f
-                        });
+                                84,
+                                true,
+                                999999f
+                            });
                         }
                         else
                         {
@@ -1738,13 +1767,32 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void FakeOculusMenu()
+        private static bool offsethaschanged = false;
+        private static Vector3 lastlefthandoffset = Vector3.zero;
+        private static Vector3 lastrighthandoffset = Vector3.zero;
+        public static void FakeOculusMenu() // Finally got around to making this look real
         {
             if (leftPrimary)
             {
                 Safety.NoFinger();
-                GorillaTagger.Instance.rightHandTransform.transform.rotation = Quaternion.identity;
-                GorillaTagger.Instance.leftHandTransform.transform.rotation = Quaternion.identity;
+                GorillaLocomotion.Player.Instance.leftControllerTransform.rotation = Camera.main.transform.rotation * Quaternion.Euler(0f, 100f, 0f);
+                GorillaLocomotion.Player.Instance.rightControllerTransform.rotation = Camera.main.transform.rotation * Quaternion.Euler(0f, -100f, 0f);
+                if (!offsethaschanged)
+                {
+                    lastlefthandoffset = GorillaLocomotion.Player.Instance.leftHandOffset;
+                    lastrighthandoffset = GorillaLocomotion.Player.Instance.rightHandOffset;
+                    offsethaschanged = true;
+                }
+                GorillaLocomotion.Player.Instance.leftHandOffset = new Vector3(-0.02f, -0.052f, -0.056f);
+                GorillaLocomotion.Player.Instance.rightHandOffset = new Vector3(0.02f, -0.052f, -0.056f);
+            } else
+            {
+                if (offsethaschanged)
+                {
+                    GorillaLocomotion.Player.Instance.leftHandOffset = lastlefthandoffset;
+                    GorillaLocomotion.Player.Instance.rightHandOffset = lastrighthandoffset;
+                    offsethaschanged = false;
+                }
             }
             GorillaLocomotion.Player.Instance.inOverlay = leftPrimary;
         }
@@ -2093,30 +2141,8 @@ namespace iiMenu.Mods
             }
         }
 
-        public static SizeChanger newSC = null;
-        private static bool lastjoined = false;
-        private static Traverse lol = null;
-        private static Traverse maxs = null;
-        private static Traverse mins = null;
-        public static bool schanging = false;
         public static void SizeChangerr()
         {
-            schanging = true;
-            if (PhotonNetwork.InRoom && !lastjoined)
-            {
-                foreach (SizeChangerTrigger sct in UnityEngine.Object.FindObjectsOfType<SizeChangerTrigger>()) // Thank you hamsterman for the patch
-                {
-                    sct.OnTriggerEnter(GorillaTagger.Instance.bodyCollider);
-                }
-            }
-            if (!PhotonNetwork.InRoom && lastjoined)
-            {
-                foreach (SizeChangerTrigger sct in UnityEngine.Object.FindObjectsOfType<SizeChangerTrigger>()) // Thank you hamsterman for the patch
-                {
-                    sct.OnTriggerExit(GorillaTagger.Instance.bodyCollider);
-                }
-            }
-            lastjoined = PhotonNetwork.InRoom;
             float increment = 0.05f;
             if (!GetIndex("Disable Size Changer Buttons").enabled)
             {
@@ -2146,45 +2172,14 @@ namespace iiMenu.Mods
                 sizeScale = 0.05f;
             }
             GorillaLocomotion.Player.Instance.scale = sizeScale;
-            // GorillaTagger.Instance.offlineVRRig.targetScale = sizeScale; Removed by lemming ty <3
             GorillaTagger.Instance.offlineVRRig.scaleFactor = sizeScale;
-            mins.SetValue(sizeScale);
-            maxs.SetValue(sizeScale);
-        }
-
-        public static void EnableSizeChanger()
-        {
-            schanging = true;
-            sizeScale = 1f;
-            GorillaLocomotion.Player.Instance.scale = sizeScale;
-            // GorillaTagger.Instance.offlineVRRig.targetScale = sizeScale; Removed by lemming ty <3
-            GorillaTagger.Instance.offlineVRRig.scaleFactor = sizeScale;
-            newSC = new GameObject("WHY DOES THIS WORK").AddComponent<SizeChanger>();
-            lol = Traverse.Create(newSC);
-            mins = lol.Field("minScale");
-            maxs = lol.Field("maxScale");
-            lol.Field("myType").SetValue(SizeChanger.ChangerType.Continuous);
-            lol.Field("staticEasing").SetValue(0.5f);
-            foreach (SizeChangerTrigger sct in UnityEngine.Object.FindObjectsOfType<SizeChangerTrigger>()) // Thank you hamsterman for the patch
-            {
-                sct.OnTriggerEnter(GorillaTagger.Instance.bodyCollider);
-            }
         }
 
         public static void DisableSizeChanger()
         {
-            schanging = false;
             sizeScale = 1f;
             GorillaLocomotion.Player.Instance.scale = sizeScale;
-            // GorillaTagger.Instance.offlineVRRig.targetScale = sizeScale; Removed by lemming ty <3
             GorillaTagger.Instance.offlineVRRig.scaleFactor = sizeScale;
-            mins.SetValue(sizeScale);
-            maxs.SetValue(sizeScale);
-            UnityEngine.Object.Destroy(newSC);
-            foreach (SizeChangerTrigger sct in UnityEngine.Object.FindObjectsOfType<SizeChangerTrigger>()) // Thank you hamsterman for the patch
-            {
-                sct.OnTriggerExit(GorillaTagger.Instance.bodyCollider);
-            }
         }
 
         public static void EnableSlipperyHands()
@@ -2335,6 +2330,66 @@ namespace iiMenu.Mods
                         GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity += Vector3.Normalize(vrrig.leftHandTransform.position - lastLeft[index]) * 10f;
                     }
                     lastLeft[index] = vrrig.leftHandTransform.position;
+                }
+            }
+        }
+
+        private static VRRig sithlord = null;
+        private static bool sithright = false;
+        private static float sithdist = 1f;
+        public static void Telekinesis()
+        {
+            if (sithlord == null)
+            {
+                foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                {
+                    try
+                    {
+                        if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                        {
+                            if (vrrig.rightIndex.calcT < 0.5f && vrrig.rightMiddle.calcT > 0.5f)
+                            {
+                                Vector3 dir = vrrig.transform.Find("RigAnchor/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R").up;
+                                Physics.SphereCast(vrrig.rightHandTransform.position + (dir * 0.1f), 0.3f, dir, out var Ray, 512f, NoInvisLayerMask());
+                                {
+                                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                                    if (possibly && possibly == GorillaTagger.Instance.offlineVRRig)
+                                    {
+                                        sithlord = vrrig;
+                                        sithright = true;
+                                        sithdist = Ray.distance;
+                                    }
+                                }
+                            }
+                            if (vrrig.leftIndex.calcT < 0.5f && vrrig.leftMiddle.calcT > 0.5f)
+                            {
+                                Vector3 dir = vrrig.transform.Find("RigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L").up;
+                                Physics.SphereCast(vrrig.leftHandTransform.position + (dir * 0.1f), 0.3f, dir, out var Ray, 512f, NoInvisLayerMask());
+                                {
+                                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                                    if (possibly && possibly == GorillaTagger.Instance.offlineVRRig)
+                                    {
+                                        sithlord = vrrig;
+                                        sithright = false;
+                                        sithdist = Ray.distance;
+                                    }
+                                }
+                            }
+                        }
+                    } catch { }
+                }
+            } else
+            {
+                if (sithright ? (sithlord.rightIndex.calcT < 0.5f && sithlord.rightMiddle.calcT > 0.5f) : (sithlord.leftMiddle.calcT < 0.5f && sithlord.leftMiddle.calcT > 0.5f))
+                {
+                    Transform hand = sithright ? sithlord.rightHandTransform : sithlord.leftHandTransform;
+                    Vector3 dir = sithright ? sithlord.transform.Find("RigAnchor/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R").up : sithlord.transform.Find("RigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L").up;
+                    TeleportPlayer(Vector3.Lerp(GorillaTagger.Instance.bodyCollider.transform.position, hand.position + dir * sithdist, 0.1f));
+                    GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity = Vector3.zero;
+                    ZeroGravity();
+                } else
+                {
+                    sithlord = null;
                 }
             }
         }
