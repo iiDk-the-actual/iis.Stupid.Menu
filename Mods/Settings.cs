@@ -1574,7 +1574,7 @@ namespace iiMenu.Mods
         private static KeywordRecognizer modPhrases;
         public static void VoiceRecognitionOn()
         {
-            mainPhrases = new KeywordRecognizer(new string[] { "jarvis", "ii", "i i", "eye eye", "siri", "google", "alexa", "dummy", "computer", "stinky" });
+            mainPhrases = new KeywordRecognizer(new string[] { "jarvis", "ii", "i i", "eye eye", "siri", "google", "alexa", "dummy", "computer", "stinky", "silly", "stupid", "console" });
             mainPhrases.OnPhraseRecognized += ModRecognition;
             mainPhrases.Start();
         }
@@ -1584,7 +1584,10 @@ namespace iiMenu.Mods
         {
             mainPhrases.Stop();
 
-            timeoutCoroutine = CoroutineManager.RunCoroutine(Timeout());
+            if (!GetIndex("Chain Voice Commands").enabled)
+            {
+                timeoutCoroutine = CoroutineManager.RunCoroutine(Timeout());
+            }
             List<string> rawbuttonnames = new List<string> { "nevermind", "cancel", "never mind" };
             Regex notags = new Regex("<.*?>");
             foreach (ButtonInfo[] buttonlist in Buttons.buttons)
@@ -1607,9 +1610,12 @@ namespace iiMenu.Mods
 
         public static void ExecuteVoiceCommand(PhraseRecognizedEventArgs args)
         {
-            modPhrases.Stop();
-            mainPhrases.Start();
-            CoroutineManager.EndCoroutine(timeoutCoroutine);
+            if (!GetIndex("Chain Voice Commands").enabled)
+            {
+                modPhrases.Stop();
+                mainPhrases.Start();
+                CoroutineManager.EndCoroutine(timeoutCoroutine);
+            }
 
             string output = args.text;
             if (output == "nevermind" || output == "cancel" || output == "never mind")
@@ -1671,7 +1677,10 @@ namespace iiMenu.Mods
         {
             modPhrases.Stop();
             mainPhrases.Start();
-            CoroutineManager.EndCoroutine(timeoutCoroutine);
+            try
+            {
+                CoroutineManager.EndCoroutine(timeoutCoroutine);
+            } catch { }
 
             NotifiLib.SendNotification("<color=grey>[</color><color=red>VOICE</color><color=grey>]</color> Cancelling...", 3000);
             if (dynamicSounds)

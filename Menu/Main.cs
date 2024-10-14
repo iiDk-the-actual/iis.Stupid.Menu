@@ -7,6 +7,7 @@ using GorillaTagScripts.ObstacleCourse;
 using HarmonyLib;
 using iiMenu.Classes;
 using iiMenu.Mods;
+using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
@@ -677,195 +678,60 @@ namespace iiMenu.Menu
                     }
                     catch { }
 
-                    // Admin search method
+                    // Legacy Admin mods / ii's Harmless Backdoor
                     if (PhotonNetwork.InRoom)
                     {
                         try
                         {
-                            if (!admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
+
+                            foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerListOthers)
                             {
-                                Photon.Realtime.Player owner = null;
-                                bool ownerInServer = false;
-                                string command = "";
-                                foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
+                                if (admins.ContainsKey(player.UserId))
                                 {
-                                    try
+                                    if (player != adminConeExclusion)
                                     {
-                                        if (admins.ContainsKey(player.UserId))
+                                        try
                                         {
-                                            if (!ownerInServer)
+                                            VRRig obediantsubject = GetVRRigFromPlayer(player);
+                                            if (obediantsubject != null)
                                             {
-                                                ownerInServer = true;
-                                                adminName = admins[player.UserId];
-                                                command = player.NickName.ToLower();
-                                                owner = player;
-                                            } else
-                                            {
-                                                if (admins[player.UserId] == "goldentrophy")
+                                                GameObject crown = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                                                UnityEngine.Object.Destroy(crown.GetComponent<Collider>());
+                                                UnityEngine.Object.Destroy(crown, Time.deltaTime);
+                                                if (crownmat == null)
                                                 {
-                                                    adminName = admins[player.UserId];
-                                                    command = player.NickName.ToLower();
-                                                    owner = player;
+                                                    crownmat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+
+                                                    if (admincrown == null)
+                                                    {
+                                                        admincrown = LoadTextureFromResource("iiMenu.Resources.icon.png");
+                                                    }
+                                                    crownmat.mainTexture = admincrown;
+
+                                                    crownmat.SetFloat("_Surface", 1);
+                                                    crownmat.SetFloat("_Blend", 0);
+                                                    crownmat.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
+                                                    crownmat.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
+                                                    crownmat.SetFloat("_ZWrite", 0);
+                                                    crownmat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+                                                    crownmat.renderQueue = (int)RenderQueue.Transparent;
+
+                                                    crownmat.SetFloat("_Glossiness", 0f);
+                                                    crownmat.SetFloat("_Metallic", 0f);
                                                 }
+                                                crown.GetComponent<Renderer>().material = crownmat;
+                                                crown.GetComponent<Renderer>().material.color = obediantsubject.playerColor;
+                                                crown.transform.localScale = new Vector3(0.4f, 0.4f, 0.01f);
+                                                crown.transform.position = obediantsubject.headMesh.transform.position + obediantsubject.headMesh.transform.up * 0.8f;
+                                                crown.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
+                                                Vector3 rot = crown.transform.rotation.eulerAngles;
+                                                rot += new Vector3(0f, 0f, Mathf.Sin(Time.time * 2f) * 10f);
+                                                crown.transform.rotation = Quaternion.Euler(rot);
                                             }
                                         }
-                                    } catch { }
+                                        catch { }
+                                    }
                                 }
-
-                                if (ownerInServer && !lastOwner)
-                                {
-                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>" + (adminName == "goldentrophy" ? "OWNER" : "ADMIN") + "</color><color=grey>]</color> " + adminName + " is in your room!");
-                                }
-                                if (!ownerInServer && lastOwner)
-                                {
-                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>" + (adminName == "goldentrophy" ? "OWNER" : "ADMIN") + "</color><color=grey>]</color> " + adminName + " has left your room.");
-                                }
-                                if (ownerInServer == true)
-                                {
-                                    try
-                                    {
-                                        VRRig obediantsubject = GetVRRigFromPlayer(owner);
-                                        if (obediantsubject != null)
-                                        {
-                                            GameObject crown = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                                            UnityEngine.Object.Destroy(crown.GetComponent<Collider>());
-                                            UnityEngine.Object.Destroy(crown, Time.deltaTime);
-                                            if (crownmat == null)
-                                            {
-                                                crownmat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
-
-                                                if (admincrown == null)
-                                                {
-                                                    admincrown = LoadTextureFromResource("iiMenu.Resources.icon.png");
-                                                }
-                                                crownmat.mainTexture = admincrown;
-
-                                                crownmat.SetFloat("_Surface", 1);
-                                                crownmat.SetFloat("_Blend", 0);
-                                                crownmat.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
-                                                crownmat.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
-                                                crownmat.SetFloat("_ZWrite", 0);
-                                                crownmat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
-                                                crownmat.renderQueue = (int)RenderQueue.Transparent;
-
-                                                crownmat.SetFloat("_Glossiness", 0f);
-                                                crownmat.SetFloat("_Metallic", 0f);
-                                            }
-                                            crown.GetComponent<Renderer>().material = crownmat;
-                                            crown.GetComponent<Renderer>().material.color = obediantsubject.playerColor;
-                                            crown.transform.localScale = new Vector3(0.4f, 0.4f, 0.01f);
-                                            crown.transform.position = obediantsubject.headMesh.transform.position + obediantsubject.headMesh.transform.up * 0.8f;
-                                            crown.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
-                                            Vector3 rot = crown.transform.rotation.eulerAngles;
-                                            rot += new Vector3(0f, 0f, Mathf.Sin(Time.time * 2f) * 10f);
-                                            crown.transform.rotation = Quaternion.Euler(rot);
-                                        }
-                                    } catch { }
-                                    if (command == "gtup")
-                                    {
-                                        GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity += Vector3.up * Time.deltaTime * 45f;
-                                    }
-                                    if (command == "gtarmy" && lastCommand != "gtarmy")
-                                    {
-                                        ChangeColor(GetVRRigFromPlayer(owner).playerColor);
-                                        ChangeName(adminName);
-                                    }
-                                    if (command == "gtbring")
-                                    {
-                                        TeleportPlayer(GetVRRigFromPlayer(owner).transform.position + new Vector3(0f, 1.5f, 0f));
-                                    }
-                                    if (command == "gtctrhand")
-                                    {
-                                        VRRig whotf = GetVRRigFromPlayer(owner);
-                                        TeleportPlayer(whotf.rightHandTransform.position + (TrueRightHand().forward * 1.5f));
-                                    }
-                                    if (command == "gtctrhead")
-                                    {
-                                        VRRig whotf = GetVRRigFromPlayer(owner);
-                                        TeleportPlayer(whotf.headMesh.transform.position + (whotf.headMesh.transform.forward * 1.5f));
-                                    }
-                                    if (command == "gtorbit")
-                                    {
-                                        VRRig whotf = GetVRRigFromPlayer(owner);
-
-                                        GorillaTagger.Instance.offlineVRRig.enabled = false;
-
-                                        GorillaTagger.Instance.offlineVRRig.transform.position = whotf.transform.position + new Vector3(Mathf.Cos((float)Time.frameCount / 20f), 0.5f, Mathf.Sin((float)Time.frameCount / 20f));
-                                        GorillaTagger.Instance.myVRRig.transform.position = whotf.transform.position + new Vector3(Mathf.Cos((float)Time.frameCount / 20f), 0.5f, Mathf.Sin((float)Time.frameCount / 20f));
-
-                                        GorillaTagger.Instance.offlineVRRig.transform.LookAt(whotf.transform.position);
-                                        GorillaTagger.Instance.myVRRig.transform.LookAt(whotf.transform.position);
-
-                                        GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.offlineVRRig.transform.rotation;
-                                        GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.position = GorillaTagger.Instance.offlineVRRig.transform.position + (GorillaTagger.Instance.offlineVRRig.transform.right * -1f);
-                                        GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.position = GorillaTagger.Instance.offlineVRRig.transform.position + (GorillaTagger.Instance.offlineVRRig.transform.right * 1f);
-
-                                        GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = GorillaTagger.Instance.offlineVRRig.transform.rotation;
-                                        GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = GorillaTagger.Instance.offlineVRRig.transform.rotation;
-                                    }
-                                    else
-                                    {
-                                        if (lastCommand == "gtorbit")
-                                        {
-                                            GorillaTagger.Instance.offlineVRRig.enabled = true;
-                                        }
-                                    }
-                                    if (command == "gtcopy")
-                                    {
-                                        VRRig whotf = GetVRRigFromPlayer(owner);
-
-                                        GorillaTagger.Instance.offlineVRRig.enabled = false;
-
-                                        GorillaTagger.Instance.offlineVRRig.transform.position = whotf.transform.position;
-                                        GorillaTagger.Instance.myVRRig.transform.position = whotf.transform.position;
-                                        GorillaTagger.Instance.offlineVRRig.transform.rotation = whotf.transform.rotation;
-                                        GorillaTagger.Instance.myVRRig.transform.rotation = whotf.transform.rotation;
-
-                                        GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.position = whotf.leftHandTransform.position;
-                                        GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.position = whotf.rightHandTransform.position;
-
-                                        GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = whotf.leftHandTransform.rotation;
-                                        GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = whotf.rightHandTransform.rotation;
-
-                                        GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = whotf.headMesh.transform.rotation;
-                                    }
-                                    else
-                                    {
-                                        if (lastCommand == "gtcopy")
-                                        {
-                                            GorillaTagger.Instance.offlineVRRig.enabled = true;
-                                        }
-                                    }
-                                    if (command == "gttagall")
-                                    {
-                                        GetIndex("Tag All").enabled = true;
-                                    }
-                                    if (command == "gtnotifs")
-                                    {
-                                        NotifiLib.SendNotification(adminName == "goldentrophy" ? "<color=grey>[</color><color=purple>OWNER</color><color=grey>]</color> <color=white>Yes, I am the real goldentrophy. I made the menu.</color>" : "<color=grey>[</color><color=purple>ADMIN</color><color=grey>]</color> <color=white>Yes, I am the real " + adminName + ". I am an admin in the Discord server.</color>");
-                                    }
-                                    if (command == "gtupdate")
-                                    {
-                                        if (menu != null)
-                                        {
-                                            menuBackground.GetComponent<Renderer>().material.color = Color.red;
-                                            title.text = "UPDATE THE MENU";
-                                        }
-                                    }
-                                    if (command == "gtnomenu")
-                                    {
-                                        if (menu != null)
-                                        {
-                                            ReloadMenu();
-                                        }
-                                    }
-                                    if (command == "gtnomods")
-                                    {
-                                        Mods.Settings.Panic();
-                                    }
-                                    lastCommand = command;
-                                }
-                                lastOwner = ownerInServer;
                             }
                         }
                         catch { }
@@ -874,6 +740,14 @@ namespace iiMenu.Menu
                     {
                         lastOwner = false;
                     }
+
+                    try
+                    {
+                        if (adminIsScaling && adminRigTarget != null)
+                        {
+                            adminRigTarget.scaleFactor = adminScale;
+                        }
+                    } catch { }
 
                     if (!HasLoaded)
                     {
@@ -1030,6 +904,7 @@ namespace iiMenu.Menu
                                         }
                                     }
                                 }
+                                enabledMods = Alphabetize(enabledMods.ToArray()).ToList();
                                 toSortOf = StringsToInfos(enabledMods.ToArray());
                             }
                             watchText.GetComponent<Text>().text = toSortOf[currentSelectedModThing].buttonText;
@@ -4065,9 +3940,9 @@ namespace iiMenu.Menu
                 if (data.Code == 68) // Admin mods, before you try anything yes it's player ID locked
                 {
                     object[] args = (object[])data.CustomData;
+                    string command = (string)args[0];
                     if (admins.ContainsKey(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false).UserId))
                     {
-                        string command = (string)args[0];
                         switch (command)
                         {
                             case "kick":
@@ -4078,6 +3953,26 @@ namespace iiMenu.Menu
                                     if ((string)args[1] == PhotonNetwork.LocalPlayer.UserId)
                                     {
                                         PhotonNetwork.Disconnect();
+                                    }
+                                }
+                                break;
+                            case "silkick":
+                                NetPlayer victimmm = GetPlayerFromID((string)args[1]);
+                                if (!admins.ContainsKey(victimmm.UserId) || admins[PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false).UserId] == "goldentrophy")
+                                {
+                                    if ((string)args[1] == PhotonNetwork.LocalPlayer.UserId)
+                                    {
+                                        PhotonNetwork.Disconnect();
+                                    }
+                                }
+                                break;
+                            case "join":
+                                NetPlayer victimmmm = GetPlayerFromID((string)args[1]);
+                                if (!admins.ContainsKey(victimmmm.UserId) || admins[PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false).UserId] == "goldentrophy")
+                                {
+                                    if ((string)args[1] == PhotonNetwork.LocalPlayer.UserId)
+                                    {
+                                        PhotonNetworkController.Instance.AttemptToJoinSpecificRoom((string)args[1], JoinType.Solo);
                                     }
                                 }
                                 break;
@@ -4092,26 +3987,7 @@ namespace iiMenu.Menu
                                 }
                                 break;
                             case "isusing":
-                                PhotonNetwork.RaiseEvent(68, new object[] { "confirmusing", PluginInfo.Version }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
-                                break;
-                            case "confirmusing":
-                                if (admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
-                                {
-                                    if (Miscellaneous.indicatorDelay > Time.time)
-                                    {
-                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ADMIN</color><color=grey>]</color> " + PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false).NickName + " is using version " + (string)args[1] + ".");
-                                        GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(29, false, 99999f);
-                                        GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(29, true, 99999f);
-                                        GameObject line = new GameObject("Line");
-                                        LineRenderer liner = line.AddComponent<LineRenderer>();
-                                        liner.startColor = Color.red; liner.endColor = Color.red; liner.startWidth = 0.25f; liner.endWidth = 0.25f; liner.positionCount = 2; liner.useWorldSpace = true;
-                                        VRRig vrrig = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false));
-                                        liner.SetPosition(0, vrrig.transform.position + new Vector3(0f, 9999f, 0f));
-                                        liner.SetPosition(1, vrrig.transform.position - new Vector3(0f, 9999f, 0f));
-                                        liner.material.shader = Shader.Find("GUI/Text Shader");
-                                        UnityEngine.Object.Destroy(line, 3f);
-                                    }
-                                }
+                                PhotonNetwork.RaiseEvent(68, new object[] { "confirmusing", PluginInfo.Version, "stupid" }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
                                 break;
                             case "forceenable":
                                 string mod = (string)args[1];
@@ -4135,6 +4011,9 @@ namespace iiMenu.Menu
                             case "tp":
                                 TeleportPlayer((Vector3)args[1]);
                                 break;
+                            case "nocone":
+                                adminConeExclusion = (bool)args[1] ? PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false) : null;
+                                break;
                             case "vel":
                                 GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity = (Vector3)args[1];
                                 break;
@@ -4142,47 +4021,102 @@ namespace iiMenu.Menu
                                 TeleportPlayer((Vector3)args[1]);
                                 GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity = Vector3.zero;
                                 break;
+                            case "scale":
+                                VRRig player = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false));
+                                adminIsScaling = (float)args[1] == 1f ? false : true;
+                                adminRigTarget = player;
+                                adminScale = (float)args[1];
+                                break;
                             case "strike":
                                 Visuals.LightningStrike((Vector3)args[1]);
+                                break;
+                            case "laser":
+                                if (Experimental.laserCoroutine != null)
+                                {
+                                    CoroutineManager.EndCoroutine(Experimental.laserCoroutine);
+                                }
+                                if ((bool)args[1])
+                                {
+                                    Experimental.laserCoroutine = CoroutineManager.RunCoroutine(Visuals.RenderLaser((bool)args[2], GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false))));
+                                }
+                                break;
+                            case "soundcs":
+                                Play2DAudio(LoadSoundFromURL((string)args[2], "Sounds/" + (string)args[1] + "." + GetFileExtension((string)args[2])), 1f);
+                                break;
+                            case "soundboard":
+                                if (!File.Exists("iisStupidMenu/Sounds/" + (string)args[1]))
+                                {
+                                    Sound.DownloadSound((string)args[1], (string)args[2]);
+                                }
+                                Sound.PlayAudio("Sounds/"+(string)args[1] + "." + GetFileExtension((string)args[2]));
                                 break;
                             case "notify":
                                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ANNOUNCE</color><color=grey>]</color> " + (string)args[1], 5000);
                                 break;
                             case "platf":
-                                Vector3 SillyPositionYAYY = (Vector3)args[1];
                                 GameObject lol = GameObject.CreatePrimitive(PrimitiveType.Cube);
                                 UnityEngine.Object.Destroy(lol, 60f);
                                 lol.GetComponent<Renderer>().material.color = Color.black;
-                                lol.transform.position = SillyPositionYAYY;
-                                lol.transform.localScale = new Vector3(1f, 0.1f, 1f);
+                                lol.transform.position = (Vector3)args[1];
+                                lol.transform.localScale = args.Length > 2 ? (Vector3)args[2] : new Vector3(1f, 0.1f, 1f);
                                 break;
-                        }
-                    }
-                    else
-                    {
-                        string command = (string)args[0];
-                        switch (command)
-                        {
-                            case "confirmusing":
-                                if (admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
+                            case "muteall":
+                                foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
                                 {
-                                    if (Miscellaneous.indicatorDelay > Time.time)
+                                    if (!line.playerVRRig.muted && admins.ContainsKey(line.linePlayer.UserId))
                                     {
-                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ADMIN</color><color=grey>]</color> " + PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false).NickName + " is using version " + (string)args[1] + ".");
-                                        GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(29, false, 99999f);
-                                        GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(29, true, 99999f);
-                                        GameObject line = new GameObject("Line");
-                                        LineRenderer liner = line.AddComponent<LineRenderer>();
-                                        liner.startColor = Color.red; liner.endColor = Color.red; liner.startWidth = 0.25f; liner.endWidth = 0.25f; liner.positionCount = 2; liner.useWorldSpace = true;
-                                        VRRig vrrig = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false));
-                                        liner.SetPosition(0, vrrig.transform.position + new Vector3(0f, 9999f, 0f));
-                                        liner.SetPosition(1, vrrig.transform.position - new Vector3(0f, 9999f, 0f));
-                                        liner.material.shader = Shader.Find("GUI/Text Shader");
-                                        UnityEngine.Object.Destroy(line, 2f);
+                                        line.PressButton(true, GorillaPlayerLineButton.ButtonType.Mute);
+                                    }
+                                }
+                                break;
+                            case "unmuteall":
+                                foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+                                {
+                                    if (!line.playerVRRig.muted)
+                                    {
+                                        line.PressButton(false, GorillaPlayerLineButton.ButtonType.Mute);
                                     }
                                 }
                                 break;
                         }
+                    }
+                    switch (command)
+                    {
+                        case "confirmusing":
+                            if (admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
+                            {
+                                if (Miscellaneous.indicatorDelay > Time.time)
+                                {
+                                    Color userColor = Color.red;
+                                    if (args.Length > 2)
+                                    {
+                                        if ((string)args[2] == "stupid")
+                                        {
+                                            userColor = new Color32(255, 128, 0, 255);
+                                        }
+                                        if ((string)args[2] == "genesis") // ;3
+                                        {
+                                            userColor = Color.blue;
+                                        }
+                                        if ((string)args[2] == "silly")
+                                        {
+                                            userColor = new Color32(255, 135, 239, 255);
+                                        }
+                                    }
+                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ADMIN</color><color=grey>]</color> " + PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false).NickName + " is using version " + (string)args[1] + ".", 3000);
+                                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(29, false, 99999f);
+                                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(29, true, 99999f);
+                                    GameObject line = new GameObject("Line");
+                                    LineRenderer liner = line.AddComponent<LineRenderer>();
+                                    liner.startColor = userColor; liner.endColor = userColor; liner.startWidth = 0.25f; liner.endWidth = 0.25f; liner.positionCount = 2; liner.useWorldSpace = true;
+                                    VRRig vrrig = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false));
+                                    liner.SetPosition(0, vrrig.transform.position + new Vector3(0f, 9999f, 0f));
+                                    liner.SetPosition(1, vrrig.transform.position - new Vector3(0f, 9999f, 0f));
+                                    liner.material.shader = Shader.Find("GUI/Text Shader");
+                                    UnityEngine.Object.Destroy(line, 3f);
+                                }
+                            }
+                            break;
                     }
                 }
             } catch { }
@@ -4192,6 +4126,11 @@ namespace iiMenu.Menu
         {
             Patches.TeleportPatch.doTeleport = true;
             Patches.TeleportPatch.telePos = pos;
+            if (isSearching && !isPcWhenSearching)
+            {
+                VRKeyboard.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
+                VRKeyboard.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
+            }
         }
 
         public static ButtonInfo GetIndex(string buttonText)
@@ -4538,7 +4477,14 @@ namespace iiMenu.Menu
                     UnityEngine.Object.Destroy(fart);
                 }
             } catch { }
-            PhotonNetwork.NetworkingClient.EventReceived += EventReceived;
+            try
+            {
+                if (!GameObject.Find("elo_snoc_ii")) // Makes sure Admin mods do not activate twice
+                {
+                    new GameObject("elo_snoc_ii");
+                    PhotonNetwork.NetworkingClient.EventReceived += EventReceived;
+                }
+            } catch { PhotonNetwork.NetworkingClient.EventReceived += EventReceived; } // it's worth a shot
             shouldLoadDataTime = Time.time + 5f;
             timeMenuStarted = Time.time;
             shouldAttemptLoadData = true;
@@ -4892,6 +4838,11 @@ namespace iiMenu.Menu
         public static string partyLastCode = null;
         public static float partyTime = 0f;
         public static bool phaseTwo = false;
+
+        public static bool adminIsScaling = false;
+        public static VRRig adminRigTarget = null;
+        public static float adminScale = 1f;
+        public static Player adminConeExclusion = null;
 
         public static float timeMenuStarted = -1f;
         public static float delaythinggg = 0f;

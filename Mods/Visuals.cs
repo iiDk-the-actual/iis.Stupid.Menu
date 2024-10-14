@@ -3,10 +3,12 @@ using iiMenu.Classes;
 using Photon.Pun;
 using Photon.Voice.Unity;
 using System;
+using System.Collections;
 using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.UIElements;
 using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods
@@ -15,9 +17,9 @@ namespace iiMenu.Mods
     {
         public static void LightningStrike(Vector3 position)
         {
-            GameObject line = new GameObject("Line");
+            GameObject line = new GameObject("LightningOuter");
             LineRenderer liner = line.AddComponent<LineRenderer>();
-            liner.startColor = Color.yellow; liner.endColor = Color.yellow; liner.startWidth = 0.25f; liner.endWidth = 0.25f; liner.positionCount = 5; liner.useWorldSpace = true;
+            liner.startColor = Color.cyan; liner.endColor = Color.cyan; liner.startWidth = 0.25f; liner.endWidth = 0.25f; liner.positionCount = 5; liner.useWorldSpace = true;
             Vector3 victim = position;
             for (int i = 0; i < 5; i++)
             {
@@ -28,6 +30,59 @@ namespace iiMenu.Mods
             }
             liner.material.shader = Shader.Find("GUI/Text Shader");
             UnityEngine.Object.Destroy(line, 2f);
+
+            GameObject line2 = new GameObject("LightningInner");
+            LineRenderer liner2 = line2.AddComponent<LineRenderer>();
+            liner2.startColor = Color.white; liner2.endColor = Color.white; liner2.startWidth = 0.15f; liner2.endWidth = 0.15f; liner2.positionCount = 5; liner2.useWorldSpace = true;
+            for (int i = 0; i < 5; i++)
+            {
+                liner2.SetPosition(i, liner.GetPosition(i));
+            }
+            liner2.material.shader = Shader.Find("GUI/Text Shader");
+            liner2.material.renderQueue = liner.material.renderQueue + 1;
+            UnityEngine.Object.Destroy(line2, 2f);
+        }
+
+        public static IEnumerator RenderLaser(bool rightHand, VRRig rigTarget)
+        {
+            float stoplasar = Time.time + 0.2f;
+            while (Time.time < stoplasar)
+            {
+                rigTarget.PlayHandTapLocal(18, !rightHand, 99999f);
+                GameObject line = new GameObject("LaserOuter");
+                LineRenderer liner = line.AddComponent<LineRenderer>();
+                liner.startColor = Color.red; liner.endColor = Color.red; liner.startWidth = 0.15f + (Mathf.Sin(Time.time * 5f) * 0.01f); liner.endWidth = liner.startWidth; liner.positionCount = 2; liner.useWorldSpace = true;
+                Vector3 startPos = (rightHand ? rigTarget.rightHandTransform.position : rigTarget.leftHandTransform.position) + ((rightHand ? rigTarget.rightHandTransform.up : rigTarget.leftHandTransform.up) * 0.1f);
+                Vector3 endPos = Vector3.zero;
+                Vector3 dir = rightHand ? rigTarget.rightHandTransform.right : -rigTarget.leftHandTransform.right;
+                try
+                {
+                    Physics.Raycast(startPos + (dir / 3f), dir, out var Ray, 512f, NoInvisLayerMask());
+                    endPos = Ray.point;
+                } catch { }
+                liner.SetPosition(0, startPos + (dir * 0.1f));
+                liner.SetPosition(1, endPos);
+                liner.material.shader = Shader.Find("GUI/Text Shader");
+                UnityEngine.Object.Destroy(line, Time.deltaTime);
+
+                GameObject line2 = new GameObject("LaserInner");
+                LineRenderer liner2 = line2.AddComponent<LineRenderer>();
+                liner2.startColor = Color.white; liner2.endColor = Color.white; liner2.startWidth = 0.1f; liner2.endWidth = 0.1f; liner2.positionCount = 2; liner2.useWorldSpace = true;
+                liner2.SetPosition(0, startPos + (dir * 0.1f));
+                liner2.SetPosition(1, endPos);
+                liner2.material.shader = Shader.Find("GUI/Text Shader");
+                liner2.material.renderQueue = liner.material.renderQueue + 1;
+                UnityEngine.Object.Destroy(line2, Time.deltaTime);
+
+                GameObject whiteParticle = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                UnityEngine.Object.Destroy(whiteParticle, 2f);
+                UnityEngine.Object.Destroy(whiteParticle.GetComponent<Collider>());
+                whiteParticle.GetComponent<Renderer>().material.color = Color.yellow;
+                whiteParticle.AddComponent<Rigidbody>().velocity = new Vector3(UnityEngine.Random.Range(-7.5f, 7.5f), UnityEngine.Random.Range(0f, 7.5f), UnityEngine.Random.Range(-7.5f, 7.5f));
+                whiteParticle.transform.position = endPos + new Vector3(UnityEngine.Random.Range(-0.1f, 0.1f), UnityEngine.Random.Range(-0.1f, 0.1f), UnityEngine.Random.Range(-0.1f, 0.1f));
+                whiteParticle.transform.localScale = new Vector3(0.05f, 0.05f, 0.05f);
+                yield return null;
+            }
         }
 
         public static void WatchOn()
@@ -470,7 +525,7 @@ namespace iiMenu.Mods
         {
             foreach (GameObject g in Resources.FindObjectsOfTypeAll<GameObject>())
             {
-                if (g.activeSelf && g.name.Contains("leaves_green"))
+                if (g.activeSelf && (g.name.Contains("leaves_green") || g.name.Contains("fallleaves")))
                 {
                     g.SetActive(false);
                     leaves.Add(g);

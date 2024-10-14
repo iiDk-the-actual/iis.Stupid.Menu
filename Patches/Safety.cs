@@ -199,13 +199,35 @@ namespace iiMenu.Patches
         }
     }
 
-    [HarmonyPatch(typeof(ScienceExperimentPlatformGenerator), "SpawnSodaBubbleRPC")]
+    [HarmonyPatch(typeof(RequestableOwnershipGuard), "OwnershipRequested")]
     public class AntiCrashPatch
     {
-        public static bool Prefix(Vector2 surfacePosLocal, float spawnSize, float lifetime, double spawnTime)
+        public static bool Prefix(RequestableOwnershipGuard __instance, string nonce, PhotonMessageInfo info)
         {
             if (AntiCrashToggle)
             {
+                NetPlayer player = NetworkSystem.Instance.GetPlayer(info.Sender);
+                if (info.Sender == PhotonNetwork.LocalPlayer)
+                {
+                    return false;
+                }
+
+                bool shouldrequest = true;
+                using (List<IRequestableOwnershipGuardCallbacks>.Enumerator enumerator = __instance.callbacksList.GetEnumerator())
+                {
+                    while (enumerator.MoveNext())
+                    {
+                        if (!enumerator.Current.OnOwnershipRequest(player))
+                        {
+                            shouldrequest = false;
+                        }
+                    }
+                }
+                if (!shouldrequest)
+                {
+                    return false;
+                }
+                __instance.TransferOwnership(player, nonce);
                 return false;
             }
             return true;
