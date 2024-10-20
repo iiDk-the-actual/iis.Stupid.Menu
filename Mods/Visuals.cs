@@ -971,6 +971,7 @@ namespace iiMenu.Mods
                     break;
                 }
             }
+
             if (isInfectedPlayers)
             {
                 if (!PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
@@ -982,35 +983,42 @@ namespace iiMenu.Mods
                         if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                         if (PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
                         {
-                            LineRenderer liner = vrrig.head.rigTarget.gameObject.AddComponent<LineRenderer>();
+                            // Check if LineRenderer already exists
+                            LineRenderer liner = vrrig.head.rigTarget.gameObject.GetComponent<LineRenderer>();
+                            if (liner == null)
+                            {
+                                liner = vrrig.head.rigTarget.gameObject.AddComponent<LineRenderer>();
+                            }
+
                             liner.startWidth = 0.025f;
                             liner.endWidth = 0.025f;
-
                             liner.startColor = thecolor;
                             liner.endColor = thecolor;
-
                             liner.material.shader = Shader.Find("GUI/Text Shader");
 
                             liner.SetPosition(0, vrrig.head.rigTarget.transform.position + new Vector3(0f, 0.16f, 0f));
                             liner.SetPosition(1, vrrig.head.rigTarget.transform.position - new Vector3(0f, 0.4f, 0f));
 
-                            UnityEngine.Object.Destroy(liner, Time.deltaTime);
+                            UnityEngine.Object.Destroy(liner, 1.0f);  // Delaying destruction by 1 second
+
                             for (int i = 0; i < bones.Count<int>(); i += 2)
                             {
-                                liner = vrrig.mainSkin.bones[bones[i]].gameObject.AddComponent<LineRenderer>();
+                                liner = vrrig.mainSkin.bones[bones[i]].gameObject.GetComponent<LineRenderer>();
+                                if (liner == null)
+                                {
+                                    liner = vrrig.mainSkin.bones[bones[i]].gameObject.AddComponent<LineRenderer>();
+                                }
 
                                 liner.startWidth = 0.025f;
                                 liner.endWidth = 0.025f;
-
                                 liner.startColor = thecolor;
                                 liner.endColor = thecolor;
-
                                 liner.material.shader = Shader.Find("GUI/Text Shader");
 
                                 liner.SetPosition(0, vrrig.mainSkin.bones[bones[i]].position);
                                 liner.SetPosition(1, vrrig.mainSkin.bones[bones[i + 1]].position);
 
-                                UnityEngine.Object.Destroy(liner, Time.deltaTime);
+                                UnityEngine.Object.Destroy(liner, 1.0f);
                             }
                         }
                     }
