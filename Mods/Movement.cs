@@ -1,4 +1,4 @@
-﻿using BepInEx;
+using BepInEx;
 using ExitGames.Client.Photon;
 using GorillaLocomotion.Climbing;
 using GorillaLocomotion.Swimming;
@@ -2334,6 +2334,21 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void ChangeTelekinesisDistance()
+        {
+            telekinesisDistanceCycle++;
+            if (telekinesisDistanceCycle > 4)
+            {
+                telekinesisDistanceCycle = 0;
+            }
+
+            float[] distanceamounts = new float[] { 0.3f, 0.5f, 2f, 5f, 0.1f };
+            telekinesisDistance = distanceamounts[telekinesisDistanceCycle];
+
+            string[] distanceNames = new string[] { "Small", "Normal", "Big", "Extra Big", "Extra Small" };
+            GetIndex("Change Telekinesis Distance").overlapText = "Change Telekinesis Distance <color=grey>[</color><color=green>" + distanceNames[telekinesisDistanceCycle] + "</color><color=grey>]</color>";
+        }
+
         private static VRRig sithlord = null;
         private static bool sithright = false;
         private static float sithdist = 1f;
@@ -2350,7 +2365,7 @@ namespace iiMenu.Mods
                             if (vrrig.rightIndex.calcT < 0.5f && vrrig.rightMiddle.calcT > 0.5f)
                             {
                                 Vector3 dir = vrrig.transform.Find("RigAnchor/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R").up;
-                                Physics.SphereCast(vrrig.rightHandTransform.position + (dir * 0.1f), 0.3f, dir, out var Ray, 512f, NoInvisLayerMask());
+                                Physics.SphereCast(vrrig.rightHandTransform.position + (dir * 0.1f), telekinesisDistance, dir, out var Ray, 512f, NoInvisLayerMask());
                                 {
                                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                                     if (possibly && possibly == GorillaTagger.Instance.offlineVRRig)
@@ -2364,7 +2379,7 @@ namespace iiMenu.Mods
                             if (vrrig.leftIndex.calcT < 0.5f && vrrig.leftMiddle.calcT > 0.5f)
                             {
                                 Vector3 dir = vrrig.transform.Find("RigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L").up;
-                                Physics.SphereCast(vrrig.leftHandTransform.position + (dir * 0.1f), 0.3f, dir, out var Ray, 512f, NoInvisLayerMask());
+                                Physics.SphereCast(vrrig.leftHandTransform.position + (dir * 0.1f), telekinesisDistance, dir, out var Ray, 512f, NoInvisLayerMask());
                                 {
                                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                                     if (possibly && possibly == GorillaTagger.Instance.offlineVRRig)

@@ -1,4 +1,4 @@
-﻿using BepInEx;
+using BepInEx;
 using ExitGames.Client.Photon;
 using GorillaLocomotion.Gameplay;
 using GorillaNetworking;
@@ -4889,6 +4889,9 @@ namespace iiMenu.Menu
 
         public static int flySpeedCycle = 1;
         public static float flySpeed = 10f;
+
+        public static int telekinesisDistanceCycle = 1;
+        public static float telekinesisDistance = 0.5f;
 
         public static int speedboostCycle = 1;
         public static float jspeed = 7.5f;
