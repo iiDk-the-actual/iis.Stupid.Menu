@@ -2,11 +2,16 @@
 using ExitGames.Client.Photon;
 using GorillaLocomotion.Climbing;
 using GorillaLocomotion.Swimming;
+using GorillaNetworking;
+using HarmonyLib;
 using iiMenu.Classes;
 using iiMenu.Menu;
+using iiMenu.Notifications;
+using Oculus.Platform;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -20,7 +25,7 @@ using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods
 {
-    internal class Movement
+    public class Movement
     {
         public static void DisableJoystick()
         {
@@ -556,7 +561,7 @@ namespace iiMenu.Mods
 
         public static void JoystickFly()
         {
-            Vector2 joy = ControllerInputPoller.instance.rightControllerPrimary2DAxis;
+            Vector2 joy = SteamVR_Actions.gorillaTag_LeftJoystick2DAxis.axis;
 
             if (Mathf.Abs(joy.x) > 0.3 || Mathf.Abs(joy.y) > 0.3)
             {
@@ -678,7 +683,7 @@ namespace iiMenu.Mods
 
         public static void Drive()
         {
-            Vector2 joy = ControllerInputPoller.instance.rightControllerPrimary2DAxis;
+            Vector2 joy = SteamVR_Actions.gorillaTag_LeftJoystick2DAxis.axis;
             lerpygerpy = Vector2.Lerp(lerpygerpy, joy, 0.05f);
 
             Vector3 addition = GorillaTagger.Instance.bodyCollider.transform.forward * lerpygerpy.y + GorillaTagger.Instance.bodyCollider.transform.right * lerpygerpy.x;// + new Vector3(0f, -1f, 0f);
@@ -702,6 +707,24 @@ namespace iiMenu.Mods
                 GorillaLocomotion.Player.Instance.bodyCollider.attachedRigidbody.AddForce(flySpeed * GorillaTagger.Instance.rightHandTransform.right, ForceMode.Acceleration);
                 GorillaTagger.Instance.StartVibration(false, GorillaTagger.Instance.tapHapticStrength / 50f * GorillaLocomotion.Player.Instance.bodyCollider.attachedRigidbody.velocity.magnitude, GorillaTagger.Instance.tapHapticDuration);
             }
+        }
+
+        private static float loaoalsode = 0f;
+        private static BalloonHoldable GetTargetBalloon()
+        {
+            foreach (BalloonHoldable balloo in GetBalloons())
+            {
+                if (balloo.IsMyItem())
+                {
+                    return balloo;
+                }
+            }
+            if (Time.time > loaoalsode)
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must equip a balloon.");
+                loaoalsode = Time.time + 1f;
+            }
+            return null;
         }
 
         public static void SpiderMan()
@@ -1005,6 +1028,64 @@ namespace iiMenu.Mods
             UnityEngine.Object.Destroy(rightjoint);
         }
 
+        public static void NetworkedGrappleMods()
+        {
+            if (GetIndex("Spider Man").enabled || GetIndex("Grappling Hooks").enabled)
+            {
+                if (isLeftGrappling || isRightGrappling)
+                {
+                    BalloonHoldable tb = GetTargetBalloon();
+                    Traverse.Create(tb).Field("balloonState").SetValue(0);
+                    tb.rigidbodyInstance.isKinematic = true;
+                    tb.gameObject.GetComponent<BalloonDynamics>().stringLength = 512f;
+                    tb.gameObject.GetComponent<BalloonDynamics>().stringStrength = 512f;
+                    Traverse.Create(tb.gameObject.GetComponent<BalloonDynamics>()).Field("enableDynamics").SetValue(false);
+                    if (tb != null)
+                    {
+                        if (isLeftGrappling)
+                        {
+                            if (!((LineRenderer)Traverse.Create(tb).Field("lineRenderer").GetValue()).enabled)
+                            {
+                                tb.currentState = TransferrableObject.PositionState.InLeftHand;
+                            }
+                            tb.transform.position = leftgrapplePoint;
+                            tb.transform.LookAt(GorillaTagger.Instance.leftHandTransform.position);
+                        }
+                        else
+                        {
+                            if (isRightGrappling)
+                            {
+                                if (!((LineRenderer)Traverse.Create(tb).Field("lineRenderer").GetValue()).enabled)
+                                {
+                                    tb.currentState = TransferrableObject.PositionState.InRightHand;
+                                }
+                                tb.transform.position = rightgrapplePoint;
+                                tb.transform.LookAt(GorillaTagger.Instance.rightHandTransform.position);
+                                tb.transform.Rotate(Vector3.left, 90f, Space.Self);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    BalloonHoldable tb = GetTargetBalloon();
+                    int balloonState = (int)Traverse.Create(tb).Field("balloonState").GetValue();
+                    if (balloonState != 1 && balloonState != 2 && balloonState != 5 && balloonState != 6)
+                    {
+                        Traverse.Create(tb).Field("balloonState").SetValue(0);
+                    }
+                    tb.rigidbodyInstance.isKinematic = false;
+                    tb.gameObject.GetComponent<BalloonDynamics>().stringLength = 0.5f;
+                    tb.gameObject.GetComponent<BalloonDynamics>().stringStrength = 0.9f;
+                    Traverse.Create(tb.gameObject.GetComponent<BalloonDynamics>()).Field("enableDynamics").SetValue(true);
+                    if (tb != null)
+                    {
+                        tb.currentState = TransferrableObject.PositionState.Dropped;
+                    }
+                }
+            }
+        }
+
         public static void UpAndDown()
         {
             if ((rightTrigger > 0.5f) || rightGrab)
@@ -1249,13 +1330,106 @@ namespace iiMenu.Mods
         public static void TeleportToPlayer(Player plr)
         {
             TeleportPlayer(GetVRRigFromPlayer(plr).headMesh.transform.position);
-            ExitTeleportToPlayer();
         }
 
         public static void ExitTeleportToPlayer()
         {
             Settings.EnableMovement();
             pageNumber = rememberPageNumber;
+        }
+
+        public static void EnterTeleportToMap() // Credits to Malachi for the positions
+        {
+            rememberPageNumber = pageNumber;
+            buttonsType = 29;
+            pageNumber = 0;
+            List<ButtonInfo> tpbuttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Teleport to Map", method = () => ExitTeleportToPlayer(), isTogglable = false, toolTip = "Returns you back to the movement mods." } };
+            string[][] mapData = new string[][]
+            {
+                new string[] // Forest
+                {
+                    "Forest",
+                    "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/TreeRoomSpawnForestZone",
+                    "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Forest, Tree Exit"
+                },
+                new string[] // City
+                {
+                    "City",
+                    "Environment Objects/LocalObjects_Prefab/City_WorkingPrefab",
+                    "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - City Front"
+                },
+                new string[] // Canyons
+                {
+                    "Canyons",
+                    "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/ForestCanyonTransition",
+                    "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Canyon"
+                },
+                new string[] // Clouds
+                {
+                    "Clouds",
+                    "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/CityToSkyJungle",
+                    "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Clouds From Computer"
+                },
+                new string[] // Caves
+                {
+                    "Caves",
+                    "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/ForestToCave",
+                    "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Cave"
+                },
+                new string[] // Beach
+                {
+                    "Beach",
+                    "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/BeachToForest",
+                    "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Beach for Computer"
+                },
+                new string[] // Mountains
+                {
+                    "Mountains",
+                    "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/CityToMountain",
+                    "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Mountain"
+                },
+                new string[] // Basement
+                {
+                    "Basement",
+                    "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/CityToBasement",
+                    "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Basement For Computer"
+                },
+                new string[] // Metropolis
+                {
+                    "Metropolis",
+                    "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/MetropolisOnly",
+                    "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Metropolis from Computer"
+                },
+                new string[] // Arcade
+                {
+                    "Arcade",
+                    "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/CityToArcade",
+                    "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - City frm Arcade"
+                },
+                new string[] // Rotating
+                {
+                    "Rotating",
+                    "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/CityToRotating",
+                    "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Rotating Map"
+                },
+                new string[] // Bayou
+                {
+                    "Bayou",
+                    "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/BayouOnly",
+                    "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - BayouComputer2"
+                },
+            };
+            foreach (string[] Data in mapData)
+            {
+                tpbuttons.Add(new ButtonInfo { buttonText = "TeleportMap" + tpbuttons.Count.ToString(), overlapText = Data[0], method = () => TeleportToMap(Data[1], Data[2]), isTogglable = false, toolTip = "Teleports you to the " + Data[0] + " map." });
+            }
+            Buttons.buttons[29] = tpbuttons.ToArray();
+        }
+
+        public static void TeleportToMap(string zone, string pos)
+        {
+            GameObject.Find(zone).GetComponent<GorillaSetZoneTrigger>().OnBoxTriggered();
+            TeleportPlayer(GameObject.Find(pos).transform.position);
         }
 
         public static void TeleportGun()
@@ -1508,7 +1682,14 @@ namespace iiMenu.Mods
 
         public static void AlwaysMaxVelocity()
         {
-            GorillaLocomotion.Player.Instance.jumpMultiplier = 99999f;
+            if (GetIndex("Always Max Velocity").enabled)
+            {
+                Toggle("Always Max Velocity");
+            }
+            else
+            {
+                GorillaLocomotion.Player.Instance.jumpMultiplier = 99999f;
+            }
         }
 
         public static void UpdateClipColliders(bool enabledd)
@@ -1540,19 +1721,13 @@ namespace iiMenu.Mods
         }
 
         private static bool wasDisabledAlready = false;
+        private static bool invisMonke = false;
         public static void Invisible()
         {
             bool hit = rightSecondary || Mouse.current.rightButton.isPressed;
-            if (hit == true && lastHit2 == false)
+            if (GetIndex("Non-Togglable Invisible").enabled)
             {
-                invisMonke = !invisMonke;
-                if (invisMonke)
-                {
-                    wasDisabledAlready = GorillaTagger.Instance.offlineVRRig.enabled;
-                } else
-                {
-                    GorillaTagger.Instance.offlineVRRig.enabled = wasDisabledAlready;
-                }
+                invisMonke = hit;
             }
             if (invisMonke)
             {
@@ -1564,12 +1739,29 @@ namespace iiMenu.Mods
                 }
                 catch { }
             }
+            if (hit == true && lastHit2 == false)
+            {
+                invisMonke = !invisMonke;
+                if (invisMonke)
+                {
+                    wasDisabledAlready = GorillaTagger.Instance.offlineVRRig.enabled;
+                }
+                else
+                {
+                    GorillaTagger.Instance.offlineVRRig.enabled = wasDisabledAlready;
+                }
+            }
             lastHit2 = hit;
         }
 
+        private static bool ghostMonke = false;
         public static void Ghost()
         {
             bool hit = rightPrimary || Mouse.current.leftButton.isPressed;
+            if (GetIndex("Non-Togglable Ghost").enabled)
+            {
+                ghostMonke = hit;
+            }
             GorillaTagger.Instance.offlineVRRig.enabled = !ghostMonke;
             if (hit == true && lastHit == false)
             {
@@ -2592,10 +2784,10 @@ namespace iiMenu.Mods
             {
                 if (longJumpPower == Vector3.zero)
                 {
-                    longJumpPower = GorillaLocomotion.Player.Instance.bodyCollider.attachedRigidbody.velocity / 150f;
+                    longJumpPower = GorillaLocomotion.Player.Instance.bodyCollider.attachedRigidbody.velocity / 125f;
                     longJumpPower.y = 0f;
                 }
-                GorillaLocomotion.Player.Instance.bodyCollider.attachedRigidbody.transform.position += longJumpPower;
+                GorillaLocomotion.Player.Instance.transform.position += longJumpPower;
             }
             else
             {

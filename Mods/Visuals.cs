@@ -1,4 +1,5 @@
-﻿using GorillaNetworking;
+﻿using GorillaExtensions;
+using GorillaNetworking;
 using iiMenu.Classes;
 using Photon.Pun;
 using Photon.Voice.Unity;
@@ -13,7 +14,7 @@ using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods
 {
-    internal class Visuals
+    public class Visuals
     {
         public static void LightningStrike(Vector3 position)
         {
@@ -688,6 +689,19 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void CrystalBallVision()
+        {
+            GameObject SHADERGARBAGE = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            UnityEngine.Object.Destroy(SHADERGARBAGE, 0.2f);
+            UnityEngine.Object.Destroy(SHADERGARBAGE.GetComponent<Collider>());
+            SHADERGARBAGE.transform.position = GorillaTagger.Instance.headCollider.transform.position;
+            SHADERGARBAGE.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
+            SHADERGARBAGE.transform.localPosition = new Vector3(0f, 0f, 0.25f);
+            SHADERGARBAGE.transform.localScale = new Vector3(10f, 10f, 0f);
+            SHADERGARBAGE.GetComponent<Renderer>().material.shader = Shader.Find("GorillaTag/URPScryGlass");
+            SHADERGARBAGE.GetComponent<Renderer>().material.color = Color.clear;
+        }
+
         private static Material voiceMat = null;
         public static void VoiceIndicators()
         {
@@ -926,7 +940,7 @@ namespace iiMenu.Mods
                 if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                 if (vrrig != GorillaTagger.Instance.offlineVRRig)
                 {
-                    LineRenderer liner = vrrig.head.rigTarget.gameObject.AddComponent<LineRenderer>();
+                    LineRenderer liner = vrrig.head.rigTarget.gameObject.GetOrAddComponent<LineRenderer>();
                     liner.startWidth = 0.025f;
                     liner.endWidth = 0.025f;
 
@@ -941,7 +955,7 @@ namespace iiMenu.Mods
                     UnityEngine.Object.Destroy(liner, Time.deltaTime);
                     for (int i = 0; i < bones.Count<int>(); i += 2)
                     {
-                        liner = vrrig.mainSkin.bones[bones[i]].gameObject.AddComponent<LineRenderer>();
+                        liner = vrrig.mainSkin.bones[bones[i]].gameObject.GetOrAddComponent<LineRenderer>();
 
                         liner.startWidth = 0.025f;
                         liner.endWidth = 0.025f;
@@ -982,7 +996,7 @@ namespace iiMenu.Mods
                         if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                         if (PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
                         {
-                            LineRenderer liner = vrrig.head.rigTarget.gameObject.AddComponent<LineRenderer>();
+                            LineRenderer liner = vrrig.head.rigTarget.gameObject.GetOrAddComponent<LineRenderer>();
                             liner.startWidth = 0.025f;
                             liner.endWidth = 0.025f;
 
@@ -997,7 +1011,7 @@ namespace iiMenu.Mods
                             UnityEngine.Object.Destroy(liner, Time.deltaTime);
                             for (int i = 0; i < bones.Count<int>(); i += 2)
                             {
-                                liner = vrrig.mainSkin.bones[bones[i]].gameObject.AddComponent<LineRenderer>();
+                                liner = vrrig.mainSkin.bones[bones[i]].gameObject.GetOrAddComponent<LineRenderer>();
 
                                 liner.startWidth = 0.025f;
                                 liner.endWidth = 0.025f;
@@ -1024,7 +1038,7 @@ namespace iiMenu.Mods
                         if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                         if (!PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
                         {
-                            LineRenderer liner = vrrig.head.rigTarget.gameObject.AddComponent<LineRenderer>();
+                            LineRenderer liner = vrrig.head.rigTarget.gameObject.GetOrAddComponent<LineRenderer>();
                             liner.startWidth = 0.025f;
                             liner.endWidth = 0.025f;
 
@@ -1039,7 +1053,7 @@ namespace iiMenu.Mods
                             UnityEngine.Object.Destroy(liner, Time.deltaTime);
                             for (int i = 0; i < bones.Count<int>(); i += 2)
                             {
-                                liner = vrrig.mainSkin.bones[bones[i]].gameObject.AddComponent<LineRenderer>();
+                                liner = vrrig.mainSkin.bones[bones[i]].gameObject.GetOrAddComponent<LineRenderer>();
 
                                 liner.startWidth = 0.025f;
                                 liner.endWidth = 0.025f;
@@ -1067,7 +1081,7 @@ namespace iiMenu.Mods
                     if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                     if (vrrig != GorillaTagger.Instance.offlineVRRig)
                     {
-                        LineRenderer liner = vrrig.head.rigTarget.gameObject.AddComponent<LineRenderer>();
+                        LineRenderer liner = vrrig.head.rigTarget.gameObject.GetOrAddComponent<LineRenderer>();
                         liner.startWidth = 0.025f;
                         liner.endWidth = 0.025f;
 
@@ -1082,7 +1096,7 @@ namespace iiMenu.Mods
                         UnityEngine.Object.Destroy(liner, Time.deltaTime);
                         for (int i = 0; i < bones.Count<int>(); i += 2)
                         {
-                            liner = vrrig.mainSkin.bones[bones[i]].gameObject.AddComponent<LineRenderer>();
+                            liner = vrrig.mainSkin.bones[bones[i]].gameObject.GetOrAddComponent<LineRenderer>();
 
                             liner.startWidth = 0.025f;
                             liner.endWidth = 0.025f;
@@ -1104,7 +1118,7 @@ namespace iiMenu.Mods
 
         public static void HuntBoneESP()
         {
-            GorillaHuntManager sillyComputer = GorillaGameManager.instance.gameObject.GetComponent<GorillaHuntManager>();
+            GorillaHuntManager sillyComputer = GorillaGameManager.instance.gameObject.GetOrAddComponent<GorillaHuntManager>();
             NetPlayer target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
             foreach (NetPlayer player in PhotonNetwork.PlayerList)
             {
@@ -1114,7 +1128,7 @@ namespace iiMenu.Mods
                     UnityEngine.Color thecolor = vrrig.playerColor;
                     if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                     if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
-                    LineRenderer liner = vrrig.head.rigTarget.gameObject.AddComponent<LineRenderer>();
+                    LineRenderer liner = vrrig.head.rigTarget.gameObject.GetOrAddComponent<LineRenderer>();
                     liner.startWidth = 0.025f;
                     liner.endWidth = 0.025f;
 
@@ -1129,7 +1143,7 @@ namespace iiMenu.Mods
                     UnityEngine.Object.Destroy(liner, Time.deltaTime);
                     for (int i = 0; i < bones.Count<int>(); i += 2)
                     {
-                        liner = vrrig.mainSkin.bones[bones[i]].gameObject.AddComponent<LineRenderer>();
+                        liner = vrrig.mainSkin.bones[bones[i]].gameObject.GetOrAddComponent<LineRenderer>();
 
                         liner.startWidth = 0.025f;
                         liner.endWidth = 0.025f;
@@ -1149,7 +1163,7 @@ namespace iiMenu.Mods
                 {
                     UnityEngine.Color thecolor = Color.red;
                     if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
-                    LineRenderer liner = vrrig.head.rigTarget.gameObject.AddComponent<LineRenderer>();
+                    LineRenderer liner = vrrig.head.rigTarget.gameObject.GetOrAddComponent<LineRenderer>();
                     liner.startWidth = 0.025f;
                     liner.endWidth = 0.025f;
 
@@ -1164,7 +1178,7 @@ namespace iiMenu.Mods
                     UnityEngine.Object.Destroy(liner, Time.deltaTime);
                     for (int i = 0; i < bones.Count<int>(); i += 2)
                     {
-                        liner = vrrig.mainSkin.bones[bones[i]].gameObject.AddComponent<LineRenderer>();
+                        liner = vrrig.mainSkin.bones[bones[i]].gameObject.GetOrAddComponent<LineRenderer>();
 
                         liner.startWidth = 0.025f;
                         liner.endWidth = 0.025f;

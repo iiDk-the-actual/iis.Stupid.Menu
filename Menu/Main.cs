@@ -3168,8 +3168,11 @@ namespace iiMenu.Menu
                         PhotonNetwork.MaxResendsBeforeDisconnect = int.MaxValue;
                         PhotonNetwork.QuickResends = int.MaxValue;
 
-                        PhotonNetwork.OpCleanRpcBuffer(GorillaTagger.Instance.myVRRig.GetView);
+                        //PhotonNetwork.OpCleanRpcBuffer(GorillaTagger.Instance.myVRRig.GetView);
+                        PhotonNetwork.OpCleanActorRpcBuffer(PhotonNetwork.LocalPlayer.ActorNumber);
                         PhotonNetwork.SendAllOutgoingCommands();
+
+                        GorillaNot.instance.OnPlayerLeftRoom(PhotonNetwork.LocalPlayer);
                     }
                 }
             } catch { UnityEngine.Debug.Log("RPC protection failed, are you in a lobby?"); }
@@ -3356,7 +3359,7 @@ namespace iiMenu.Menu
 
         public static string GetFileExtension(string fileName)
         {
-            return fileName.Split(".")[fileName.Split(".").Length - 1];
+            return fileName.ToLower().Split(".")[fileName.Split(".").Length - 1];
         }
 
         public static string RemoveFileExtension(string file)
@@ -3381,7 +3384,7 @@ namespace iiMenu.Menu
 
         public static AudioType GetAudioType(string extension)
         {
-            switch (extension)
+            switch (extension.ToLower())
             {
                 case "mp3":
                     return AudioType.MPEG;
@@ -3389,6 +3392,8 @@ namespace iiMenu.Menu
                     return AudioType.WAV;
                 case "ogg":
                     return AudioType.OGGVORBIS;
+                case "aiff":
+                    return AudioType.AIFF;
             }
             return AudioType.WAV;
         }
@@ -3603,6 +3608,21 @@ namespace iiMenu.Menu
             return archiveropeswing;
         }
 
+        public static TransferrableObject[] archivetransobjs = null;
+        public static TransferrableObject[] GetTransferrableObjects()
+        {
+            if (Time.time > lastRecievedTime)
+            {
+                archivetransobjs = null;
+                lastRecievedTime = Time.time + 30f;
+            }
+            if (archivetransobjs == null)
+            {
+                archivetransobjs = UnityEngine.Object.FindObjectsOfType<TransferrableObject>();
+            }
+            return archivetransobjs;
+        }
+
         public static void GetOwnership(PhotonView view)
         {
             if (!view.AmOwner)
@@ -3635,7 +3655,8 @@ namespace iiMenu.Menu
         public static bool PlayerIsTagged(VRRig who)
         {
             string name = who.mainSkin.material.name.ToLower();
-            return name.Contains("fected") || name.Contains("it") || name.Contains("stealth") || !who.mainSkin.enabled;
+            return name.Contains("fected") || name.Contains("it") || name.Contains("stealth") || !who.nameTagAnchor.activeSelf;
+            //return PlayerIsTagged(GorillaTagger.Instance.offlineVRRig);
         }
 
         public static List<NetPlayer> InfectedList()
@@ -3896,6 +3917,12 @@ namespace iiMenu.Menu
             return timeString;
         }
 
+        /* Incase I need it someday
+        public static string ColorToHex(Color color) 
+        {
+            return string.Format("{0:X2}{1:X2}{2:X2}", color.r, color.g, color.b);
+        }*/
+
         public static void EventReceived(EventData data)
         {
             /*
@@ -3932,6 +3959,79 @@ namespace iiMenu.Menu
                             if (Vector3.Distance(target.leftHandTransform.position, target.rightHandTransform.position) < 0.1f)
                             {
                                 Mods.Safety.AntiReportFRT(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false));
+                            }
+                        }
+                    }
+                }
+
+                if (Fun.keyboardTrackerEnabled && data.Code == 200)
+                {
+                    string rpcName = PhotonNetwork.PhotonServerSettings.RpcList[int.Parse(((Hashtable)data.CustomData)[(byte)5].ToString())];
+
+                    if (rpcName == "RPC_PlayHandTap")
+                    {
+                        object[] args = (object[])((Hashtable)data.CustomData)[(byte)4];
+                        if ((int)args[0] == 66)
+                        {
+                            VRRig target = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false));
+
+                            Transform keyboardTransform = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/GorillaComputerObject/ComputerUI/keyboard (1)").transform;
+                            if (Vector3.Distance(target.transform.position, keyboardTransform.position) < 3f)
+                            {
+                                string handPath = (bool)args[1]
+                                 ? "RigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/palm.01.L/f_index.01.L/f_index.02.L/f_index.03.L/f_index.03.L_end"
+                                 : "RigAnchor/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/f_index.01.R/f_index.02.R/f_index.03.R/f_index.03.R_end";
+
+                                Vector3 position = target.gameObject.transform.Find(handPath).position;
+
+                                GameObject keysParent = keyboardTransform.Find("Buttons/Keys").gameObject;
+                                float minimalDist = float.MaxValue;
+                                string closestKey = "[Null]";
+
+                                foreach (Transform child in keysParent.transform)
+                                {
+                                    float dist = Vector3.Distance(child.position, position);
+                                    if (dist < minimalDist)
+                                    {
+                                        minimalDist = dist;
+                                        closestKey = ToTitleCase(child.name);
+                                    }
+                                }
+                                if (closestKey.Length > 1)
+                                {
+                                    closestKey = "[" + closestKey + "]";
+                                }
+
+                                bool isKeyLogged = false;
+                                for (int i = 0; i < Fun.keyLogs.Count; i++)
+                                {
+                                    object[] keyLog = Fun.keyLogs[i];
+                                    if ((VRRig)keyLog[0] == target)
+                                    {
+                                        isKeyLogged = true;
+
+                                        string currentText = (string)keyLog[1];
+                                        if (closestKey.Contains("Delete"))
+                                        {
+                                            Fun.keyLogs[i][1] = currentText.Substring(0, currentText.Length - 1);
+                                        }
+                                        else
+                                        {
+                                            Fun.keyLogs[i][1] = currentText + closestKey;
+                                        }
+
+                                        Fun.keyLogs[i][2] = Time.time + 5f;
+                                        break;
+                                    }
+                                }
+
+                                if (!isKeyLogged)
+                                {
+                                    if (!closestKey.Contains("Delete"))
+                                    {
+                                        Fun.keyLogs.Add(new object[] { target, closestKey, Time.time + 5f });
+                                    }
+                                }
                             }
                         }
                     }
@@ -4126,6 +4226,7 @@ namespace iiMenu.Menu
         {
             Patches.TeleportPatch.doTeleport = true;
             Patches.TeleportPatch.telePos = pos;
+            closePosition = Vector3.zero;
             if (isSearching && !isPcWhenSearching)
             {
                 VRKeyboard.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
@@ -4917,8 +5018,6 @@ namespace iiMenu.Menu
         public static bool lastHit2 = false;
         public static bool lastRG;
 
-        public static bool ghostMonke = false;
-        public static bool invisMonke = false;
 
         public static int tindex = 1;
 

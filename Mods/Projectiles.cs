@@ -11,7 +11,7 @@ using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods.Spammers
 {
-    internal class Projectiles
+    public class Projectiles
     {
         public static GorillaVelocityEstimator jackshit = null;
 

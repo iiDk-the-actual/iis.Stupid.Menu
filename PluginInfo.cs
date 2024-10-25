@@ -1,10 +1,10 @@
 ﻿namespace iiMenu
 {
-    internal class PluginInfo
+    public class PluginInfo
     {
         public const string GUID = "org.iidk.gorillatag.iimenu";
         public const string Name = "ii's Stupid Menu";
         public const string Description = "Created by @goldentrophy with love <3";
-        public const string Version = "4.7.0";
+        public const string Version = "4.8.0";
     }
 }

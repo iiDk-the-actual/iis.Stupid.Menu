@@ -16,7 +16,7 @@ using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods
 {
-    internal class Settings
+    public class Settings
     {
         public static void Search() // This took me like 4 hours
         {

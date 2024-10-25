@@ -17,7 +17,7 @@ using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods
 {
-    internal class Overpowered
+    public class Overpowered
     {
         public static void MasterCheck()
         {
@@ -29,6 +29,47 @@ namespace iiMenu.Mods
             {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             }
+        }
+
+        public static void StartMoonEvent()
+        {
+            GreyZoneManager gzm = GameObject.Find("Environment Objects/05Maze_PersistentObjects/Halloween2024_PersistentObjects/GreyZoneManager").GetComponent<GreyZoneManager>();
+            if (PhotonNetwork.IsMasterClient)
+            {
+                gzm.ActivateGreyZoneAuthority();
+            }
+            else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
+        }
+
+        public static void EndMoonEvent()
+        {
+            GreyZoneManager gzm = GameObject.Find("Environment Objects/05Maze_PersistentObjects/Halloween2024_PersistentObjects/GreyZoneManager").GetComponent<GreyZoneManager>();
+            if (PhotonNetwork.IsMasterClient)
+            {
+                gzm.DeactivateGreyZoneAuthority();
+            }
+            else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
+        }
+
+        private static float lastidiotstupidlaaa = 0f;
+        public static void FlashScreen()
+        {
+            GreyZoneManager gzm = GameObject.Find("Environment Objects/05Maze_PersistentObjects/Halloween2024_PersistentObjects/GreyZoneManager").GetComponent<GreyZoneManager>();
+            if (PhotonNetwork.IsMasterClient)
+            {
+                if (Time.time > lastidiotstupidlaaa)
+                {
+                    lastidiotstupidlaaa = Time.time + 0.1f;
+                    if (gzm.GreyZoneActive)
+                    {
+                        gzm.DeactivateGreyZoneAuthority();
+                    } else
+                    {
+                        gzm.ActivateGreyZoneAuthority();
+                    }
+                }
+            }
+            else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
         }
 
         public static void SpawnBlueLucy()
@@ -289,10 +330,39 @@ namespace iiMenu.Mods
                     lastfreezegarbage = !lastfreezegarbage;
                     foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
                     {
-                        line.PressButton(lastfreezegarbage, GorillaPlayerLineButton.ButtonType.Mute);
+                        GorillaPlayerScoreboardLine.MutePlayer(line.linePlayer.UserId, line.linePlayer.NickName, lastfreezegarbage ? 1 : 0);
                     }
                     Garfield = Time.time + 0.1f;
                 }
+            }
+        }
+
+        public static void DestroyGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > kgDebounce)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        NetPlayer player = GetPlayerFromVRRig(possibly);
+                        PhotonNetwork.OpRemoveCompleteCacheOfPlayer(player.ActorNumber);
+                        kgDebounce = Time.time + 0.5f;
+                    }
+                }
+            }
+        }
+
+        public static void DestroyAll()
+        {
+            foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerListOthers)
+            {
+                PhotonNetwork.OpRemoveCompleteCacheOfPlayer(player.ActorNumber);
             }
         }
 
@@ -345,24 +415,7 @@ namespace iiMenu.Mods
         {
             if (!PhotonNetwork.IsMasterClient)
             {
-                // NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-                foreach (Photon.Realtime.Player oops in PhotonNetwork.PlayerListOthers)
-                {
-                    oops.SetCustomProperties(new Hashtable
-                    {
-                        {
-                            "didTutorial",
-                            "nope"
-                        }
-                    }, null, null);
-                }
-                PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable
-                {
-                    {
-                        "didTutorial",
-                        "done"
-                    }
-                }, null, null);
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             }
             else
             {
@@ -377,17 +430,7 @@ namespace iiMenu.Mods
         {
             if (!PhotonNetwork.IsMasterClient)
             {
-                // NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-                foreach (Photon.Realtime.Player oops in PhotonNetwork.PlayerList)
-                {
-                    oops.SetCustomProperties(new Hashtable
-                    {
-                        {
-                            "didTutorial",
-                            "done"
-                        }
-                    }, null, null);
-                }
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             }
             else
             {
@@ -397,20 +440,6 @@ namespace iiMenu.Mods
                 NetPlayer victim = GameMode.ParticipatingPlayers[UnityEngine.Random.Range(0, GameMode.ParticipatingPlayers.Count)];
                 gorillaTagManager.AddInfectedPlayer(victim);
                 gorillaTagManager.lastInfectedPlayer = victim;
-            }
-        }
-
-        public static void BreakInfection()
-        {
-            foreach (Photon.Realtime.Player oops in PhotonNetwork.PlayerList)
-            {
-                oops.SetCustomProperties(new Hashtable
-                {
-                    {
-                        "didTutorial",
-                        "nope"
-                    }
-                }, null, null);
             }
         }
 
@@ -565,82 +594,6 @@ namespace iiMenu.Mods
             }
         }
 
-        // Revert kick mods to 3.4.2
-        public static void KickGun()
-        {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > kgDebounce)
-                {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
-                    {
-                        NetPlayer owner = GetPlayerFromVRRig(possibly);
-                        if (GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(owner.UserId) && GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(PhotonNetwork.LocalPlayer.UserId))
-                        {
-                            PhotonNetworkController.Instance.friendIDList = new List<string>(GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching);
-                            PhotonNetworkController.Instance.shuffler = UnityEngine.Random.Range(0, 99999999).ToString().PadLeft(8, '0');
-                            PhotonNetworkController.Instance.keyStr = UnityEngine.Random.Range(0, 99999999).ToString().PadLeft(8, '0');
-
-                            object[] groupJoinSendData = new object[2];
-                            groupJoinSendData[0] = PhotonNetworkController.Instance.shuffler;
-                            groupJoinSendData[1] = PhotonNetworkController.Instance.keyStr;
-                            RaiseEventOptions raiseEventOptions = new RaiseEventOptions
-                            {
-                                TargetActors = new int[1] { owner.ActorNumber }
-                            };
-
-                            object obj = groupJoinSendData;
-                            object[] sendEventData = new object[3];
-                            sendEventData[0] = PhotonNetwork.ServerTimestamp;
-                            sendEventData[1] = (byte)4;
-                            sendEventData[2] = groupJoinSendData;
-                            PhotonNetwork.RaiseEvent(3, sendEventData, raiseEventOptions, SendOptions.SendUnreliable);
-                            RPCProtection();
-                        }
-                        kgDebounce = Time.time + 0.5f;
-                    }
-                }
-            }
-        }
-
-        public static void KickAll()
-        {
-            if (PhotonNetwork.InRoom && !PhotonNetwork.CurrentRoom.IsVisible)
-            {
-                PhotonNetworkController.Instance.friendIDList = new List<string>(GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching);
-                PhotonNetworkController.Instance.shuffler = UnityEngine.Random.Range(0, 99999999).ToString().PadLeft(8, '0');
-                PhotonNetworkController.Instance.keyStr = UnityEngine.Random.Range(0, 99999999).ToString().PadLeft(8, '0');
-                foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
-                {
-                    if (GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(player.UserId) && player != PhotonNetwork.LocalPlayer)
-                    {
-                        object[] groupJoinSendData = new object[2];
-                        groupJoinSendData[0] = PhotonNetworkController.Instance.shuffler;
-                        groupJoinSendData[1] = PhotonNetworkController.Instance.keyStr;
-                        RaiseEventOptions raiseEventOptions = new RaiseEventOptions
-                        {
-                            TargetActors = new int[1] { player.ActorNumber }
-                        };
-
-                        object obj = groupJoinSendData;
-                        object[] sendEventData = new object[3];
-                        sendEventData[0] = PhotonNetwork.ServerTimestamp;
-                        sendEventData[1] = (byte)4;
-                        sendEventData[2] = groupJoinSendData;
-                        PhotonNetwork.RaiseEvent(3, sendEventData, raiseEventOptions, SendOptions.SendUnreliable);
-                        RPCProtection();
-                    }
-                }
-                PhotonNetwork.SendAllOutgoingCommands();
-                RPCProtection();
-            }
-        }
-
         public static void BreakAudioGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
@@ -718,8 +671,9 @@ namespace iiMenu.Mods
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
                     GorillaRopeSwing possibly = Ray.collider.GetComponentInParent<GorillaRopeSwing>();
-                    if (possibly)
+                    if (possibly && Time.time > RopeDelay)
                     {
+                        RopeDelay = Time.time + 0.25f;
                         RopeSwingManager.instance.photonView.RPC("SetVelocity", RpcTarget.All, new object[] { possibly.ropeId, 1, new Vector3(UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f)), true, null });
                         RPCProtection();
                     }
