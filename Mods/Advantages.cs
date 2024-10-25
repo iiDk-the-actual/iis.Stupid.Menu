@@ -12,7 +12,7 @@ using GorillaTagScripts;
 
 namespace iiMenu.Mods
 {
-    internal class Advantages
+    public class Advantages
     {
         public static void TagSelf()
         {

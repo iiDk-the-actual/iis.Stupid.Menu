@@ -1,14 +1,17 @@
 ﻿using Photon.Pun;
+using PlayFab.ClientModels;
+using PlayFab;
 using System.Diagnostics;
 using System.IO;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
+using iiMenu.Notifications;
 
 namespace iiMenu.Mods
 {
-    internal class Miscellaneous
+    public class Miscellaneous
     {
         public static float indicatorDelay = 0f;
 
@@ -25,7 +28,9 @@ namespace iiMenu.Mods
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        GUIUtility.systemCopyBuffer = GetPlayerFromVRRig(possibly).UserId;
+                        string id = GetPlayerFromVRRig(possibly).UserId;
+                        NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> " + id, 5000);
+                        GUIUtility.systemCopyBuffer = id;
                     }
                 }
             }
@@ -33,7 +38,45 @@ namespace iiMenu.Mods
 
         public static void CopySelfID()
         {
-            GUIUtility.systemCopyBuffer = PhotonNetwork.LocalPlayer.UserId;
+            string id = PhotonNetwork.LocalPlayer.UserId;
+            NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> " + id, 5000);
+            GUIUtility.systemCopyBuffer = id;
+        }
+
+        private static float cgdgd = 0f;
+        public static void CopyCreationDateGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig && Time.time > cgdgd)
+                    {
+                        cgdgd = Time.time + 0.5f;
+                        PlayFabClientAPI.GetAccountInfo(new GetAccountInfoRequest { PlayFabId = GetPlayerFromVRRig(possibly).UserId }, delegate (GetAccountInfoResult result) // Who designed this
+                        {
+                            string date = result.AccountInfo.Created.ToString("MM/dd/yyyy HH:mm:ss:ff");
+                            NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> " + date, 5000);
+                            GUIUtility.systemCopyBuffer = date;
+                        }, delegate { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not copy creation date."); }, null, null);
+                    }
+                }
+            }
+        }
+
+        public static void CopyCreationDateSelf()
+        {
+            PlayFabClientAPI.GetAccountInfo(new GetAccountInfoRequest { PlayFabId = PhotonNetwork.LocalPlayer.UserId }, delegate (GetAccountInfoResult result) // Who designed this
+            {
+                string date = result.AccountInfo.Created.ToString("MM/dd/yyyy HH:mm:ss:ff");
+                NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> " + date, 5000);
+                GUIUtility.systemCopyBuffer = date;
+            }, delegate { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not copy creation date."); }, null, null);
         }
 
         public static void GrabPlayerInfo()

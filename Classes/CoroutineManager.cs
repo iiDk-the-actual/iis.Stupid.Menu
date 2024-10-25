@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace iiMenu.Classes
 {
-    internal class CoroutineManager : MonoBehaviour // Thanks to ShibaGT for helping with the coroutines
+    public class CoroutineManager : MonoBehaviour // Thanks to ShibaGT for helping with the coroutines
     {
         public static CoroutineManager instance = null;
 

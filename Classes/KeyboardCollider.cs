@@ -4,7 +4,7 @@ using static iiMenu.Menu.Main;
 
 namespace iiMenu.Classes
 {
-	internal class KeyboardKey : MonoBehaviour
+    public class KeyboardKey : MonoBehaviour
 	{
 		public string key;
 		

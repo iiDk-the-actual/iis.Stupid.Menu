@@ -12,7 +12,7 @@ using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods
 {
-    internal class Experimental
+    public class Experimental
     {
         public static void DelayBanGun()
         {
@@ -123,12 +123,6 @@ namespace iiMenu.Mods
             }
         }
 
-        // Admin mods
-        public static void FixName()
-        {
-            ChangeName(admins[PhotonNetwork.LocalPlayer.UserId]);
-        }
-
         private static float stupiddelayihate = 0f;
         public static void AdminKickGun()
         {
@@ -201,8 +195,12 @@ namespace iiMenu.Mods
 
                 if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > stupiddelayihate)
                 {
-                    stupiddelayihate = Time.time + 0.1f;
-                    PhotonNetwork.RaiseEvent(68, new object[] { "vel", new Vector3(0f, 100f, 0f) }, new RaiseEventOptions { Receivers = ReceiverGroup.Others }, SendOptions.SendReliable);
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        stupiddelayihate = Time.time + 0.1f;
+                        PhotonNetwork.RaiseEvent(68, new object[] { "vel", new Vector3(0f, 100f, 0f) }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(possibly).ActorNumber } }, SendOptions.SendReliable);
+                    }
                 }
             }
         }
@@ -527,6 +525,35 @@ namespace iiMenu.Mods
             PhotonNetwork.RaiseEvent(68, new object[] { "nocone", false }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
         }
 
+        public static void JoinGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > stupiddelayihate)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        stupiddelayihate = Time.time + 0.1f;
+                        PhotonNetwork.RaiseEvent(68, new object[] { "join", searchText }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(possibly).ActorNumber } }, SendOptions.SendReliable);
+                    }
+                }
+            }
+        }
+
+        public static void JoinAll()
+        {
+            if (rightTrigger > 0.5f && Time.time > stupiddelayihate)
+            {
+                stupiddelayihate = Time.time + 0.1f;
+                PhotonNetwork.RaiseEvent(68, new object[] { "join", searchText }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+            }
+        }
+
         public static void NotifyGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
@@ -568,9 +595,8 @@ namespace iiMenu.Mods
         {
             if (leftPrimary || rightPrimary)
             {
-                Vector3 startPos = (rightHand ? GorillaTagger.Instance.offlineVRRig.rightHandTransform.position : GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) + ((rightHand ? GorillaTagger.Instance.offlineVRRig.rightHandTransform.up : GorillaTagger.Instance.offlineVRRig.leftHandTransform.up) * 0.1f);
-                Vector3 endPos = Vector3.zero;
-                Vector3 dir = rightHand ? GorillaTagger.Instance.offlineVRRig.rightHandTransform.right : -GorillaTagger.Instance.offlineVRRig.leftHandTransform.right;
+                Vector3 dir = rightPrimary ? GorillaTagger.Instance.offlineVRRig.rightHandTransform.right : -GorillaTagger.Instance.offlineVRRig.leftHandTransform.right;
+                Vector3 startPos = (rightPrimary ? GorillaTagger.Instance.offlineVRRig.rightHandTransform.position : GorillaTagger.Instance.offlineVRRig.leftHandTransform.position) + (dir * 0.1f);
                 try
                 {
                     Physics.Raycast(startPos + (dir / 3f), dir, out var Ray, 512f, NoInvisLayerMask());
@@ -600,6 +626,26 @@ namespace iiMenu.Mods
             {
                 stupiddelayihate = Time.time + 0.05f;
                 PhotonNetwork.RaiseEvent(68, new object[] { "vel", new Vector3(0f, 10f, 0f) }, new RaiseEventOptions { Receivers = ReceiverGroup.Others }, SendOptions.SendReliable);
+            }
+        }
+
+        public static void AdminBringGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > stupiddelayihate)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        stupiddelayihate = Time.time + 0.1f;
+                        PhotonNetwork.RaiseEvent(68, new object[] { "tpnv", GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 1.5f, 0f) }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(possibly).ActorNumber } }, SendOptions.SendReliable);
+                    }
+                }
             }
         }
 

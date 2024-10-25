@@ -11,6 +11,7 @@ using iiMenu.Notifications;
 using Oculus.Platform;
 using OVR;
 using Photon.Pun;
+using Photon.Realtime;
 using Photon.Voice.Unity;
 using Photon.Voice.Unity.UtilityScripts;
 using POpusCodec.Enums;
@@ -26,7 +27,7 @@ using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods
 {
-    internal class Fun
+    public class Fun
     {
         public static void NightTime()
         {
@@ -560,6 +561,77 @@ namespace iiMenu.Mods
             }
             lastlhboop = isBoopLeft;
             lastrhboop = isBoopRight;
+        }
+
+        public static List<object[]> keyLogs = new List<object[]> { };
+        public static bool keyboardTrackerEnabled = false;
+        public static void KeyboardTracker()
+        {
+            keyboardTrackerEnabled = true;
+            if (keyLogs.Count > 0)
+            {
+                foreach (object[] keylog in keyLogs)
+                {
+                    if (Time.time > (float)keylog[2])
+                    {
+                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>KEYLOGS</color><color=grey>]</color> " + (string)keylog[1], 5000);
+                        keyLogs.Remove(keylog);
+                    }
+                }
+            }
+        }
+
+        public static void DisableKeyboardTracker()
+        {
+            keyboardTrackerEnabled = false;
+        }
+
+        private static float muteDelay = 0f;
+        public static void MuteGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > muteDelay)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+                        {
+                            if (line.linePlayer == GetPlayerFromVRRig(possibly))
+                            {
+                                line.PressButton(!line.muteButton.isOn, GorillaPlayerLineButton.ButtonType.Mute);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void MuteAll()
+        {
+            foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+            {
+                if (!line.muteButton.isOn)
+                {
+                    line.PressButton(true, GorillaPlayerLineButton.ButtonType.Mute);
+                }
+            }
+        }
+
+        public static void UnmuteAll()
+        {
+            foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+            {
+                if (line.muteButton.isOn)
+                {
+                    line.PressButton(false, GorillaPlayerLineButton.ButtonType.Mute);
+                }
+            }
         }
 
         public static void MicrophoneFeedback()
@@ -2489,6 +2561,48 @@ namespace iiMenu.Mods
             }
         }
 
+        private static float delayonhold = 0f;
+        public static void StickyHoldables()
+        {
+            if (Time.time > delayonhold)
+            {
+                delayonhold = Time.time + 0.1f;
+                foreach (TransferrableObject cosmet in GetTransferrableObjects())
+                {
+                    if (cosmet.IsMyItem())
+                    {
+                        if (cosmet.currentState == TransferrableObject.PositionState.OnLeftArm || cosmet.currentState == TransferrableObject.PositionState.OnLeftShoulder)
+                        {
+                            cosmet.currentState = TransferrableObject.PositionState.InLeftHand;
+                        }
+                        if (cosmet.currentState == TransferrableObject.PositionState.OnRightArm || cosmet.currentState == TransferrableObject.PositionState.OnRightShoulder || cosmet.currentState == TransferrableObject.PositionState.OnChest)
+                        {
+                            cosmet.currentState = TransferrableObject.PositionState.InRightHand;
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void SpazHoldables()
+        {
+            if (Time.time > delayonhold)
+            {
+                delayonhold = Time.time + 0.1f;
+                foreach (TransferrableObject cosmet in GetTransferrableObjects())
+                {
+                    if (cosmet.IsMyItem())
+                    {
+                        cosmet.currentState = (TransferrableObject.PositionState)((int)cosmet.currentState * 2);
+                        if ((int)cosmet.currentState > 128)
+                        {
+                            cosmet.currentState = TransferrableObject.PositionState.OnLeftArm;
+                        }
+                    }
+                }
+            }
+        }
+
         private static string[] archiveCosmetics = null;
         public static void TryOnAnywhere()
         {
@@ -2514,8 +2628,10 @@ namespace iiMenu.Mods
             CosmeticsController.instance.UpdateShoppingCart();
         }
 
+        private static int rememberdirectory = 0;
         public static void CosmeticBrowser()
         {
+            rememberdirectory = pageNumber;
             buttonsType = 29;
             pageNumber = 0;
             List<ButtonInfo> cosmeticbuttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Cosmetic Browser", method = () => Settings.EnableFun(), isTogglable = false, toolTip = "Returns you back to the fun mods." } };
@@ -2533,6 +2649,7 @@ namespace iiMenu.Mods
         {
             Buttons.buttons[29] = new ButtonInfo[] { };
             Settings.EnableFun();
+            pageNumber = rememberdirectory;
         }
 
         private static bool lasttagged = false;
@@ -2549,16 +2666,6 @@ namespace iiMenu.Mods
                 RPCProtection();
             }
             lasttagged = PlayerIsTagged(GorillaTagger.Instance.offlineVRRig);
-        }
-
-        public static void EnableCustomSoundOnJoin()
-        {
-            customSoundOnJoin = true;
-        }
-
-        public static void DisableCustomSoundOnJoin()
-        {
-            customSoundOnJoin = false;
         }
     }
 }

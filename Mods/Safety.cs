@@ -12,7 +12,7 @@ using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods
 {
-    internal class Safety
+    public class Safety
     {
         public static void NoFinger()
         {
@@ -402,66 +402,7 @@ namespace iiMenu.Mods
 
         public static void ChangeIdentityRegular()
         {
-            string[] names = new string[]
-            {
-                "0",
-                "1",
-                "2",
-                "3",
-                "4",
-                "5",
-                "6",
-                "7",
-                "8",
-                "9",
-                "SHIBAGT",
-                "PBBV",
-                "J3VU",
-                "BEES",
-                "NAMO",
-                "MANGO",
-                "FROSTY",
-                "FRISH",
-                "LITTLETIMMY",
-                "SILLYBILLY",
-                "TIMMY",
-                "MINIGAMES",
-                "MINIGAMESKID",
-                "JMANCURLY",
-                "VMT",
-                "ELLIOT",
-                "DEEP",
-                "BTC",
-                "KMAN",
-                "YOSEF",
-                "POLAR",
-                "3CLIPCE",
-                "GORILLAVR",
-                "GORILLAVRGT",
-                "GORILLAGTVR",
-                "GORILLAGT",
-                "SHARKPUPPET",
-                "DUCKY",
-                "EDDIE",
-                "EDDY",
-                "CASEOH",
-                "SKETCH",
-                "WATERMELON",
-                "CRAZY",
-                "MONK",
-                "MONKE",
-                "MONKI",
-                "MONKEY",
-                "MONKIY",
-                "GORILL",
-                "GOORILA",
-                "GORILLA",
-                "REDBERRY",
-                "FOX",
-                "RUFUS"
-            };
-
-            ChangeName(names[UnityEngine.Random.Range(0, names.Length - 1)]);
+            SpoofName();
 
             Color[] colors = new Color[]
             {
@@ -475,7 +416,12 @@ namespace iiMenu.Mods
                 Color.yellow,
                 Color.green,
                 new Color(1f, 0.5f, 1f, 255f),
-                new Color(0f, 0.5f, 0f, 255f)
+                new Color(0f, 0.5f, 0f, 255f),
+                new Color32(113, 0, 198, 255),
+                new Color32(170, 198, 170, 255),
+                new Color32(170, 170, 170, 255),
+                new Color32(227, 170, 85, 255),
+                new Color32(0, 226, 255, 255)
             };
             ChangeColor(colors[UnityEngine.Random.Range(0, colors.Length - 1)]);
         }
@@ -546,10 +492,6 @@ namespace iiMenu.Mods
                 "JMANCURLY",
                 "VMT",
                 "ELLIOT",
-                "DEEP",
-                "BTC",
-                "KMAN",
-                "YOSEF",
                 "POLAR",
                 "3CLIPCE",
                 "GORILLAVR",
@@ -560,6 +502,7 @@ namespace iiMenu.Mods
                 "DUCKY",
                 "EDDIE",
                 "EDDY",
+                "RAKZZ",
                 "CASEOH",
                 "SKETCH",
                 "WATERMELON",
@@ -574,7 +517,13 @@ namespace iiMenu.Mods
                 "GORILLA",
                 "REDBERRY",
                 "FOX",
-                "RUFUS"
+                "RUFUS",
+                "TTT",
+                "TTTPIG",
+                "PPPTIG",
+                "K9",
+                "BTC",
+                "TICKLETIPJR"
             };
 
             ChangeName(names[UnityEngine.Random.Range(0, names.Length - 1)]);

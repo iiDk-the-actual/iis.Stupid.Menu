@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace iiMenu.Classes
 {
-    internal class RigManager
+    public class RigManager
     {
         public static VRRig GetVRRigFromPlayer(NetPlayer p)
         {

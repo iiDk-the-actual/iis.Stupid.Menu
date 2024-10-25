@@ -4,7 +4,7 @@ using static iiMenu.Menu.Main;
 
 namespace iiMenu.Classes
 {
-	internal class Button : MonoBehaviour
+	public class Button : MonoBehaviour
 	{
 		public string relatedText;
 		
