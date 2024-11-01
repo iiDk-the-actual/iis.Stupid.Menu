@@ -10,7 +10,7 @@ namespace iiMenu.Patches
         public static bool doTeleport = false;
         public static Vector3 telePos;
 
-        public static bool Prefix(GorillaLocomotion.Player __instance, ref Vector3 ___lastPosition, ref Vector3 ___lastHeadPosition, ref Vector3 ___lastLeftHandPosition, ref Vector3 ___lastRightHandPosition, ref Vector3[] ___velocityHistory, ref Vector3 ___currentVelocity)
+        public static bool Prefix(GorillaLocomotion.Player __instance, ref Vector3 ___lastPosition, ref Vector3 ___lastHeadPosition, ref Vector3 ___lastLeftHandPosition, ref Vector3 ___lastRightHandPosition, ref Vector3[] ___velocityHistory, ref Rigidbody ___playerRigidBody)
         {
             if (doTeleport)
             {
@@ -22,7 +22,7 @@ namespace iiMenu.Patches
                 ___lastRightHandPosition = telePos;
 
                 ___velocityHistory = new Vector3[GorillaLocomotion.Player.Instance.velocityHistorySize];
-                ___currentVelocity = GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity;
+                ___playerRigidBody.velocity = GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity;
 
                 doTeleport = false;
                 return true;

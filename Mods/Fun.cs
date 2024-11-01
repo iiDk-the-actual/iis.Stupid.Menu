@@ -2634,7 +2634,7 @@ namespace iiMenu.Mods
             rememberdirectory = pageNumber;
             buttonsType = 29;
             pageNumber = 0;
-            List<ButtonInfo> cosmeticbuttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Cosmetic Browser", method = () => Settings.EnableFun(), isTogglable = false, toolTip = "Returns you back to the fun mods." } };
+            List<ButtonInfo> cosmeticbuttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Cosmetic Browser", method = () => RemoveCosmeticBrowser(), isTogglable = false, toolTip = "Returns you back to the fun mods." } };
             foreach (GorillaNetworking.CosmeticsController.CosmeticItem hat in GorillaNetworking.CosmeticsController.instance.allCosmetics)
             {
                 if (hat.canTryOn)
@@ -2647,7 +2647,6 @@ namespace iiMenu.Mods
 
         public static void RemoveCosmeticBrowser()
         {
-            Buttons.buttons[29] = new ButtonInfo[] { };
             Settings.EnableFun();
             pageNumber = rememberdirectory;
         }

@@ -19,7 +19,6 @@ namespace iiMenu.Mods.Spammers
     public class Sound
     {
         public static bool LoopAudio = false;
-        public static bool JoinSound = false;
         public static int BindMode = 0;
         public static void LoadSoundboard()
         {
@@ -48,7 +47,7 @@ namespace iiMenu.Mods.Spammers
             {
                 index++;
                 string FileName = file.Replace("\\", "/").Substring(21);
-                if (BindMode > 0 || JoinSound)
+                if (BindMode > 0)
                 {
                     string soundName = RemoveFileExtension(FileName).Replace("_", " ");
                     bool enabled = enabledSounds.Contains(soundName);
@@ -143,41 +142,30 @@ namespace iiMenu.Mods.Spammers
         private static bool lastBindPressed = false;
         public static void PrepareBindAudio(string file)
         {
-            if (BindMode > 0)
+            bool[] bindings = new bool[]
             {
-                bool[] bindings = new bool[]
+                rightPrimary,
+                rightSecondary,
+                leftPrimary,
+                leftSecondary,
+                leftGrab,
+                rightGrab,
+                leftTrigger > 0.5f,
+                rightTrigger > 0.5f
+            };
+            bool bindPressed = bindings[BindMode - 1];
+            if (bindPressed && !lastBindPressed)
+            {
+                if (GorillaTagger.Instance.myRecorder.SourceType == Recorder.InputSourceType.AudioClip)
                 {
-                    rightPrimary,
-                    rightSecondary,
-                    leftPrimary,
-                    leftSecondary,
-                    leftGrab,
-                    rightGrab,
-                    leftTrigger > 0.5f,
-                    rightTrigger > 0.5f
-                };
-                bool bindPressed = bindings[BindMode - 1];
-                if (bindPressed && !lastBindPressed)
-                {
-                    if (GorillaTagger.Instance.myRecorder.SourceType == Recorder.InputSourceType.AudioClip)
-                    {
-                        FixMicrophone();
-                    }
-                    else
-                    {
-                        PlayAudio(file);
-                    }
+                    FixMicrophone();
                 }
-                lastBindPressed = bindPressed;
-            } else
-            {
-                bool bindPressed = PhotonNetwork.InRoom;
-                if (bindPressed && !lastBindPressed)
+                else
                 {
                     PlayAudio(file);
                 }
-                lastBindPressed = bindPressed;
             }
+            lastBindPressed = bindPressed;
         }
 
         public static void OpenSoundFolder()
@@ -193,16 +181,6 @@ namespace iiMenu.Mods.Spammers
         }
 
         public static void DisableLoopSounds()
-        {
-            LoopAudio = false;
-        }
-
-        public static void CustomSoundOnJoin()
-        {
-            LoopAudio = true;
-        }
-
-        public static void CustomSoundOffJoin()
         {
             LoopAudio = false;
         }

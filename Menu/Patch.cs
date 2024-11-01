@@ -31,9 +31,6 @@ namespace iiMenu.Patches
         }
 
         private static Harmony instance;
-
         public const string InstanceId = PluginInfo.GUID;
-
-       // public static string SetTaggedTime = "SetTaggedTime";
     }
 }

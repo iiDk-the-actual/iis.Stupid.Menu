@@ -15,6 +15,7 @@ namespace iiMenu.Mods
     {
         public static float indicatorDelay = 0f;
 
+        private static float idgundelay = 0f;
         public static void CopyIDGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
@@ -23,11 +24,12 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > idgundelay)
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
+                        idgundelay = Time.time + 0.5f;
                         string id = GetPlayerFromVRRig(possibly).UserId;
                         NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> " + id, 5000);
                         GUIUtility.systemCopyBuffer = id;

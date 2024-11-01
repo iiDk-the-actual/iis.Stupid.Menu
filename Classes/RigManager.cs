@@ -47,6 +47,11 @@ namespace iiMenu.Classes
             return (PhotonView)Traverse.Create(p).Field("photonView").GetValue();
         }
 
+        public static NetworkView GetNetworkViewFromVRRig(VRRig p)
+        {
+            return (NetworkView)Traverse.Create(p).Field("netView").GetValue();
+        }
+
         public static Photon.Realtime.Player GetRandomPlayer(bool includeSelf)
         {
             if (includeSelf)
