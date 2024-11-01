@@ -1588,7 +1588,7 @@ namespace iiMenu.Mods
             {
                 timeoutCoroutine = CoroutineManager.RunCoroutine(Timeout());
             }
-            List<string> rawbuttonnames = new List<string> { "nevermind", "cancel", "never mind" };
+            List<string> rawbuttonnames = new List<string> { "nevermind", "cancel", "never mind", "stop" };
             Regex notags = new Regex("<.*?>");
             foreach (ButtonInfo[] buttonlist in Buttons.buttons)
             {
@@ -1618,7 +1618,7 @@ namespace iiMenu.Mods
             }
 
             string output = args.text;
-            if (output == "nevermind" || output == "cancel" || output == "never mind")
+            if (output == "nevermind" || output == "cancel" || output == "never mind" || output == "stop")
             {
                 CancelModRecognition();
                 return;
@@ -1758,7 +1758,7 @@ namespace iiMenu.Mods
                 }
             }
 
-            string ihateyouguys = platformMode + seperator + platformShape + seperator + flySpeedCycle + seperator + longarmCycle + seperator + speedboostCycle + seperator + projmode + seperator + trailmode + seperator + shootCycle + seperator + pointerIndex + seperator + tagAuraIndex + seperator + notificationDecayTime + seperator + fontStyleType + seperator + arrowType + seperator + pcbg + seperator + internetTime + seperator + hotkeyButton + seperator + buttonClickIndex + seperator + buttonClickVolume + seperator + Safety.antireportrangeindex + seperator + Advantages.tagRangeIndex + seperator + Sound.BindMode;
+            string ihateyouguys = platformMode + seperator + platformShape + seperator + flySpeedCycle + seperator + longarmCycle + seperator + speedboostCycle + seperator + projmode + seperator + trailmode + seperator + shootCycle + seperator + pointerIndex + seperator + tagAuraIndex + seperator + notificationDecayTime + seperator + fontStyleType + seperator + arrowType + seperator + pcbg + seperator + internetTime + seperator + hotkeyButton + seperator + buttonClickIndex + seperator + buttonClickVolume + seperator + Safety.antireportrangeindex + seperator + Advantages.tagRangeIndex + seperator + Sound.BindMode + Movement.driveInt + seperator;
 
             string finaltext =
                 text + "\n" +
@@ -1927,6 +1927,8 @@ namespace iiMenu.Mods
                 Advantages.ChangeTagReachDistance();
                 Sound.BindMode = int.Parse(data[20]) - 1;
                 Sound.SoundBindings();
+                Movement.driveInt = int.Parse(data[21]) - 1;
+                Movement.ChangeDriveSpeed();
             } catch { UnityEngine.Debug.Log("Save file out of date"); }
 
             pageButtonType = int.Parse(textData[3]) - 1;

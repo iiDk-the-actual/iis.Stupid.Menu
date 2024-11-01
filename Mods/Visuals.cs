@@ -475,6 +475,32 @@ namespace iiMenu.Mods
             UnityEngine.Object.Destroy(visualizerOutline);
         }
 
+        public static void VisualizeNetworkTriggers()
+        {
+            GameObject triggers = GameObject.Find("Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab");
+            for (int i=0; i<triggers.transform.childCount; i++)
+            {
+                Transform child = triggers.transform.GetChild(i);
+                if (child.gameObject.activeSelf)
+                {
+                    VisualizeCube(child.position, child.localScale, Color.red);
+                }
+            }
+        }
+
+        public static void VisualizeMapTriggers()
+        {
+            GameObject triggers = GameObject.Find("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab");
+            for (int i = 0; i < triggers.transform.childCount; i++)
+            {
+                Transform child = triggers.transform.GetChild(i);
+                if (child.gameObject.activeSelf)
+                {
+                    VisualizeCube(child.position, child.localScale, GetBGColor(0f));
+                }
+            }
+        }
+
         public static void ShowPlayspaceCenter()
         {
             GameObject playspaceCenter = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -694,9 +720,8 @@ namespace iiMenu.Mods
             GameObject SHADERGARBAGE = GameObject.CreatePrimitive(PrimitiveType.Cube);
             UnityEngine.Object.Destroy(SHADERGARBAGE, 0.2f);
             UnityEngine.Object.Destroy(SHADERGARBAGE.GetComponent<Collider>());
-            SHADERGARBAGE.transform.position = GorillaTagger.Instance.headCollider.transform.position;
+            SHADERGARBAGE.transform.position = GorillaTagger.Instance.headCollider.transform.position + GorillaTagger.Instance.headCollider.transform.forward * 0.5f;
             SHADERGARBAGE.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
-            SHADERGARBAGE.transform.localPosition = new Vector3(0f, 0f, 0.25f);
             SHADERGARBAGE.transform.localScale = new Vector3(10f, 10f, 0f);
             SHADERGARBAGE.GetComponent<Renderer>().material.shader = Shader.Find("GorillaTag/URPScryGlass");
             SHADERGARBAGE.GetComponent<Renderer>().material.color = Color.clear;
@@ -2037,7 +2062,6 @@ namespace iiMenu.Mods
                 {
                     UnityEngine.Color thecolor = Color.red;
                     if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
-                    GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                     UnityEngine.Object.Destroy(sphere.GetComponent<SphereCollider>());
                     sphere.GetComponent<Renderer>().material.color = thecolor;

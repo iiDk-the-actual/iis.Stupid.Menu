@@ -27,19 +27,6 @@ namespace iiMenu.Mods
 {
     public class Movement
     {
-        public static void DisableJoystick()
-        {
-            GorillaSnapTurn turning = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer").GetComponent<GorillaSnapTurn>();
-            turnAmnt = turning.turnAmount;
-            turning.turnAmount = 0f;
-        }
-
-        public static void EnableJoystick()
-        {
-            GorillaSnapTurn turning = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer").GetComponent<GorillaSnapTurn>();
-            turning.turnAmount = turnAmnt;
-        }
-
         public static void ChangePlatformType()
         {
             platformMode++;
@@ -650,35 +637,55 @@ namespace iiMenu.Mods
                 startY = -1;
             }
 
+            float speed = flySpeed;
+            if (UnityInput.Current.GetKey(KeyCode.LeftShift))
+                speed *= 2f;
             if (W)
             {
-                GorillaTagger.Instance.rigidbody.transform.position += GorillaLocomotion.Player.Instance.rightControllerTransform.parent.forward * Time.deltaTime * flySpeed;
+                GorillaTagger.Instance.rigidbody.transform.position += GorillaLocomotion.Player.Instance.rightControllerTransform.parent.forward * Time.deltaTime * speed;
             }
 
             if (S)
             {
-                GorillaTagger.Instance.rigidbody.transform.position += GorillaLocomotion.Player.Instance.rightControllerTransform.parent.forward * Time.deltaTime * -flySpeed;
+                GorillaTagger.Instance.rigidbody.transform.position += GorillaLocomotion.Player.Instance.rightControllerTransform.parent.forward * Time.deltaTime * -speed;
             }
 
             if (A)
             {
-                GorillaTagger.Instance.rigidbody.transform.position += GorillaLocomotion.Player.Instance.rightControllerTransform.parent.right * Time.deltaTime * -flySpeed;
+                GorillaTagger.Instance.rigidbody.transform.position += GorillaLocomotion.Player.Instance.rightControllerTransform.parent.right * Time.deltaTime * -speed;
             }
 
             if (D)
             {
-                GorillaTagger.Instance.rigidbody.transform.position += GorillaLocomotion.Player.Instance.rightControllerTransform.parent.right * Time.deltaTime * flySpeed;
+                GorillaTagger.Instance.rigidbody.transform.position += GorillaLocomotion.Player.Instance.rightControllerTransform.parent.right * Time.deltaTime * speed;
             }
 
             if (Space)
             {
-                GorillaTagger.Instance.rigidbody.transform.position += new Vector3(0f, Time.deltaTime * flySpeed, 0f);
+                GorillaTagger.Instance.rigidbody.transform.position += new Vector3(0f, Time.deltaTime * speed, 0f);
             }
 
             if (Ctrl)
             {
-                GorillaTagger.Instance.rigidbody.transform.position += new Vector3(0f, Time.deltaTime * -flySpeed, 0f);
+                GorillaTagger.Instance.rigidbody.transform.position += new Vector3(0f, Time.deltaTime * -speed, 0f);
             }
+        }
+
+        private static float driveSpeed = 0f;
+        public static int driveInt = 0;
+        public static void ChangeDriveSpeed()
+        {
+            speedboostCycle++;
+            if (speedboostCycle > 3)
+            {
+                speedboostCycle = 0;
+            }
+
+            float[] speedamounts = new float[] { 10f, 30f, 50f, 3f };
+            driveSpeed = speedamounts[speedboostCycle];
+
+            string[] speedNames = new string[] { "Normal", "Fast", "Ultra Fast", "Slow" };
+            GetIndex("cdSpeed").overlapText = "Change Drive Speed <color=grey>[</color><color=green>" + speedNames[speedboostCycle] + "</color><color=grey>]</color>";
         }
 
         public static void Drive()
@@ -1460,6 +1467,7 @@ namespace iiMenu.Mods
 
                 if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > teleDebounce)
                 {
+                    GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity = new Vector3(0f, -20f, 0f);
                     TeleportPlayer(NewPointer.transform.position + new Vector3(0f, 30f, 0f));
                     GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity = new Vector3(0f, -20f, 0f);
                     teleDebounce = Time.time + 0.5f;
@@ -1682,9 +1690,9 @@ namespace iiMenu.Mods
 
         public static void AlwaysMaxVelocity()
         {
-            if (GetIndex("Always Max Velocity").enabled)
+            if (GetIndex("Uncap Max Velocity").enabled)
             {
-                Toggle("Always Max Velocity");
+                Toggle("Uncap Max Velocity");
             }
             else
             {
@@ -2333,8 +2341,20 @@ namespace iiMenu.Mods
             }
         }
 
+        //private static Traverse minScale = null;
+        //private static Traverse maxScale = null;
         public static void SizeChangerr()
         {
+            //Patches.SizePatch.enabled = true;
+            //Patches.SizePatch.overlapSizeChanger = GameObject.Find("Environment Objects/05Maze_PersistentObjects/GuardianZoneManagers/GuardianZoneManager_Forest/GuardianSizeChanger").GetComponent<SizeChanger>();
+            //if (minScale == null)
+            //{
+            //    minScale = Traverse.Create(Patches.SizePatch.overlapSizeChanger).Field("minScale");
+            //}
+            //if (maxScale == null)
+            //{
+            //    maxScale = Traverse.Create(Patches.SizePatch.overlapSizeChanger).Field("maxScale");
+            //}
             float increment = 0.05f;
             if (!GetIndex("Disable Size Changer Buttons").enabled)
             {
@@ -2365,10 +2385,15 @@ namespace iiMenu.Mods
             }
             GorillaLocomotion.Player.Instance.scale = sizeScale;
             GorillaTagger.Instance.offlineVRRig.scaleFactor = sizeScale;
+            //minScale.SetValue(sizeScale);
+            //maxScale.SetValue(sizeScale);
         }
 
         public static void DisableSizeChanger()
         {
+            //Patches.SizePatch.enabled =  false;
+            //Traverse.Create(Patches.SizePatch.overlapSizeChanger).Field("minScale").SetValue(3f);
+            //Traverse.Create(Patches.SizePatch.overlapSizeChanger).Field("maxScale").SetValue(3f);
             sizeScale = 1f;
             GorillaLocomotion.Player.Instance.scale = sizeScale;
             GorillaTagger.Instance.offlineVRRig.scaleFactor = sizeScale;

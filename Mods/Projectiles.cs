@@ -218,11 +218,11 @@ namespace iiMenu.Mods.Spammers
                 string projectilename = ExternalProjectileNames[projIndex];
 
                 Vector3 startpos = GorillaTagger.Instance.rightHandTransform.position;
-                Vector3 charvel = GorillaLocomotion.Player.Instance.currentVelocity;
+                Vector3 charvel = GorillaLocomotion.Player.Instance.RigidbodyVelocity;
 
                 if (GetIndex("Shoot Projectiles").enabled)
                 {
-                    charvel = GorillaLocomotion.Player.Instance.currentVelocity + (GorillaTagger.Instance.rightHandTransform.transform.forward * ShootStrength);
+                    charvel = GorillaLocomotion.Player.Instance.RigidbodyVelocity + (GorillaTagger.Instance.rightHandTransform.transform.forward * ShootStrength);
                     if (Mouse.current.leftButton.isPressed)
                     {
                         Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
@@ -235,7 +235,7 @@ namespace iiMenu.Mods.Spammers
 
                 if (GetIndex("Finger Gun Projectiles").enabled)
                 {
-                    charvel = GorillaLocomotion.Player.Instance.currentVelocity + (TrueRightHand().forward * ShootStrength);
+                    charvel = GorillaLocomotion.Player.Instance.RigidbodyVelocity + (TrueRightHand().forward * ShootStrength);
                     //charvel = GorillaLocomotion.Player.Instance.currentVelocity + GorillaTagger.Instance.rightHandTransform.forward - GorillaTagger.Instance.offlineVRRig.rightHand.trackingRotationOffset;
                 }
 

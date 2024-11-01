@@ -683,53 +683,56 @@ namespace iiMenu.Menu
                     {
                         try
                         {
-
-                            foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerListOthers)
+                            // Admin indicator
+                            if (!Experimental.daaind)
                             {
-                                if (admins.ContainsKey(player.UserId))
+                                foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerListOthers)
                                 {
-                                    if (player != adminConeExclusion)
+                                    if (admins.ContainsKey(player.UserId))
                                     {
-                                        try
+                                        if (player != adminConeExclusion)
                                         {
-                                            VRRig obediantsubject = GetVRRigFromPlayer(player);
-                                            if (obediantsubject != null)
+                                            try
                                             {
-                                                GameObject crown = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                                                UnityEngine.Object.Destroy(crown.GetComponent<Collider>());
-                                                UnityEngine.Object.Destroy(crown, Time.deltaTime);
-                                                if (crownmat == null)
+                                                VRRig obediantsubject = GetVRRigFromPlayer(player);
+                                                if (obediantsubject != null)
                                                 {
-                                                    crownmat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
-
-                                                    if (admincrown == null)
+                                                    GameObject crown = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                                                    UnityEngine.Object.Destroy(crown.GetComponent<Collider>());
+                                                    UnityEngine.Object.Destroy(crown, Time.deltaTime);
+                                                    if (crownmat == null)
                                                     {
-                                                        admincrown = LoadTextureFromResource("iiMenu.Resources.icon.png");
+                                                        crownmat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+
+                                                        if (admincrown == null)
+                                                        {
+                                                            admincrown = LoadTextureFromResource("iiMenu.Resources.icon.png");
+                                                        }
+                                                        crownmat.mainTexture = admincrown;
+
+                                                        crownmat.SetFloat("_Surface", 1);
+                                                        crownmat.SetFloat("_Blend", 0);
+                                                        crownmat.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
+                                                        crownmat.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
+                                                        crownmat.SetFloat("_ZWrite", 0);
+                                                        crownmat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+                                                        crownmat.renderQueue = (int)RenderQueue.Transparent;
+
+                                                        crownmat.SetFloat("_Glossiness", 0f);
+                                                        crownmat.SetFloat("_Metallic", 0f);
                                                     }
-                                                    crownmat.mainTexture = admincrown;
-
-                                                    crownmat.SetFloat("_Surface", 1);
-                                                    crownmat.SetFloat("_Blend", 0);
-                                                    crownmat.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
-                                                    crownmat.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
-                                                    crownmat.SetFloat("_ZWrite", 0);
-                                                    crownmat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
-                                                    crownmat.renderQueue = (int)RenderQueue.Transparent;
-
-                                                    crownmat.SetFloat("_Glossiness", 0f);
-                                                    crownmat.SetFloat("_Metallic", 0f);
+                                                    crown.GetComponent<Renderer>().material = crownmat;
+                                                    crown.GetComponent<Renderer>().material.color = obediantsubject.playerColor;
+                                                    crown.transform.localScale = new Vector3(0.4f, 0.4f, 0.01f);
+                                                    crown.transform.position = obediantsubject.headMesh.transform.position + obediantsubject.headMesh.transform.up * 0.8f;
+                                                    crown.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
+                                                    Vector3 rot = crown.transform.rotation.eulerAngles;
+                                                    rot += new Vector3(0f, 0f, Mathf.Sin(Time.time * 2f) * 10f);
+                                                    crown.transform.rotation = Quaternion.Euler(rot);
                                                 }
-                                                crown.GetComponent<Renderer>().material = crownmat;
-                                                crown.GetComponent<Renderer>().material.color = obediantsubject.playerColor;
-                                                crown.transform.localScale = new Vector3(0.4f, 0.4f, 0.01f);
-                                                crown.transform.position = obediantsubject.headMesh.transform.position + obediantsubject.headMesh.transform.up * 0.8f;
-                                                crown.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
-                                                Vector3 rot = crown.transform.rotation.eulerAngles;
-                                                rot += new Vector3(0f, 0f, Mathf.Sin(Time.time * 2f) * 10f);
-                                                crown.transform.rotation = Quaternion.Euler(rot);
                                             }
+                                            catch { }
                                         }
-                                        catch { }
                                     }
                                 }
                             }
@@ -3623,6 +3626,21 @@ namespace iiMenu.Menu
             return archivetransobjs;
         }
 
+        public static TappableGuardianIdol[] archivetgi = null;
+        public static TappableGuardianIdol[] GetGuardianIdols()
+        {
+            if (Time.time > lastRecievedTime)
+            {
+                archivetgi = null;
+                lastRecievedTime = Time.time + 30f;
+            }
+            if (archivetgi == null)
+            {
+                archivetgi = UnityEngine.Object.FindObjectsOfType<TappableGuardianIdol>();
+            }
+            return archivetgi;
+        }
+
         public static void GetOwnership(PhotonView view)
         {
             if (!view.AmOwner)
@@ -3882,6 +3900,20 @@ namespace iiMenu.Menu
             UnityEngine.Object.Destroy(what.GetComponent<Rigidbody>());
             what.transform.position = position;
             what.transform.localScale = new Vector3(range, range, range);
+            Color clr = color;
+            clr.a = 0.25f;
+            what.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+            what.GetComponent<Renderer>().material.color = clr;
+        }
+
+        public static void VisualizeCube(Vector3 position, Vector3 scale, Color color)
+        {
+            GameObject what = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            UnityEngine.Object.Destroy(what, Time.deltaTime);
+            UnityEngine.Object.Destroy(what.GetComponent<Collider>());
+            UnityEngine.Object.Destroy(what.GetComponent<Rigidbody>());
+            what.transform.position = position;
+            what.transform.localScale = scale;
             Color clr = color;
             clr.a = 0.25f;
             what.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
@@ -4301,7 +4333,7 @@ namespace iiMenu.Menu
 
             if (PhotonNetwork.InRoom && GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(PhotonNetwork.LocalPlayer.UserId))
             {
-                GorillaTagger.Instance.myVRRig.SendRPC("RPC_InitializeNoobMaterial", RpcTarget.All, new object[] { color.r, color.g, color.b, false });
+                GorillaTagger.Instance.myVRRig.SendRPC("RPC_InitializeNoobMaterial", RpcTarget.All, new object[] { color.r, color.g, color.b });
                 RPCProtection();
             }
         }

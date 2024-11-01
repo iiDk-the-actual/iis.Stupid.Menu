@@ -2,14 +2,11 @@
 using GorillaGameModes;
 using GorillaLocomotion.Gameplay;
 using GorillaNetworking;
-using GorillaTagScripts;
 using HarmonyLib;
 using iiMenu.Classes;
 using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
-using System.Collections.Generic;
-using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static iiMenu.Classes.RigManager;
@@ -31,7 +28,252 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void StartMoonEvent()
+        public static float dumbdelay = 0f;
+        public static void AlwaysGuardian()
+        {
+            if (PhotonNetwork.IsMasterClient)
+            {
+                foreach (GorillaGuardianZoneManager gorillaGuardianZoneManager in GorillaGuardianZoneManager.zoneManagers)
+                {
+                    if (gorillaGuardianZoneManager.enabled)
+                    {
+                        gorillaGuardianZoneManager.SetGuardian(NetworkSystem.Instance.LocalPlayer);
+                    }
+                }
+            }
+            else
+            {
+                foreach (TappableGuardianIdol tgi in GetGuardianIdols())
+                {
+                    if (tgi.enabled && tgi.isActivationReady)
+                    {
+                        GorillaGuardianManager gman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Guardian Manager").GetComponent<GorillaGuardianManager>();
+                        //GorillaGuardianZoneManager gzm = (GorillaGuardianZoneManager)Traverse.Create(tgi).Field("zoneManager").GetValue();
+                        if (!gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer)) // gzm.enabled && 
+                        {
+                            GorillaTagger.Instance.offlineVRRig.enabled = false;
+                            GorillaTagger.Instance.offlineVRRig.transform.position = tgi.transform.position;
+
+                            GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f)));
+                            GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f)));
+
+                            GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.position = GorillaTagger.Instance.offlineVRRig.transform.position + GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.forward * 3f;
+                            GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.position = GorillaTagger.Instance.offlineVRRig.transform.position + GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.forward * 3f;
+                            //float loltime = (float)Traverse.Create(gzm).Field("_currentActivationTime").GetValue();
+                            if (Time.time > dumbdelay)
+                            {
+                                dumbdelay = Time.time + 0.27f;
+                                tgi.OnTap(UnityEngine.Random.Range(0.2f, 0.4f));
+                            }
+                        }
+                        else
+                        {
+                            GorillaTagger.Instance.offlineVRRig.enabled = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void GrabGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > kgDebounce)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        GorillaGuardianManager gman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Guardian Manager").GetComponent<GorillaGuardianManager>();
+                        if (gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
+                        {
+                            RigManager.GetNetworkViewFromVRRig(possibly).SendRPC("GrabbedByPlayer", RpcTarget.All, new object[] { true, false, false });
+                        }
+                        else
+                        {
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be guardian.</color>");
+                        }
+                        kgDebounce = Time.time + 0.1f;
+                    }
+                }
+            }
+        }
+
+        public static void GrabAll()
+        {
+            if (rightTrigger > 0.5f && Time.time > kgDebounce)
+            {
+                kgDebounce = Time.time + 0.1f;
+                GorillaGuardianManager gman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Guardian Manager").GetComponent<GorillaGuardianManager>();
+                if (gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
+                {
+                    foreach (VRRig plr in GorillaParent.instance.vrrigs)
+                    {
+                        RigManager.GetNetworkViewFromVRRig(plr).SendRPC("GrabbedByPlayer", RpcTarget.All, new object[] { true, false, false });
+                    }
+                }
+                else
+                {
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be guardian.</color>");
+                }
+            }
+        }
+
+        public static void ReleaseGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > kgDebounce)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        GorillaGuardianManager gman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Guardian Manager").GetComponent<GorillaGuardianManager>();
+                        if (gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
+                        {
+                            RigManager.GetNetworkViewFromVRRig(possibly).SendRPC("DroppedByPlayer", RpcTarget.All, new object[] { new Vector3(0f, 20f, 0f) });
+                        }
+                        else
+                        {
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be guardian.</color>");
+                        }
+                        kgDebounce = Time.time + 0.1f;
+                    }
+                }
+            }
+        }
+
+        public static void ReleaseAll()
+        {
+            if (rightTrigger > 0.5f && Time.time > kgDebounce)
+            {
+                kgDebounce = Time.time + 0.1f;
+                GorillaGuardianManager gman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Guardian Manager").GetComponent<GorillaGuardianManager>();
+                if (gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
+                {
+                    foreach (VRRig plr in GorillaParent.instance.vrrigs)
+                    {
+                        RigManager.GetNetworkViewFromVRRig(plr).SendRPC("DroppedByPlayer", RpcTarget.All, new object[] { new Vector3(0f, 0f, 0f) });
+                    }
+                }
+                else
+                {
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be guardian.</color>");
+                }
+            }
+        }
+
+        public static void BringGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > kgDebounce)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        GorillaGuardianManager gman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Guardian Manager").GetComponent<GorillaGuardianManager>();
+                        if (gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
+                        {
+                            RigManager.GetNetworkViewFromVRRig(possibly).SendRPC("GrabbedByPlayer", RpcTarget.All, new object[] { true, false, false });
+                            RigManager.GetNetworkViewFromVRRig(possibly).SendRPC("DroppedByPlayer", RpcTarget.All, new object[] { new Vector3(0f, 0f, 0f) });
+                        }
+                        else
+                        {
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be guardian.</color>");
+                        }
+                        kgDebounce = Time.time + 0.1f;
+                    }
+                }
+            }
+        }
+
+        public static void BringAll()
+        {
+            if (rightTrigger > 0.5f && Time.time > kgDebounce)
+            {
+                kgDebounce = Time.time + 0.1f;
+                GorillaGuardianManager gman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Guardian Manager").GetComponent<GorillaGuardianManager>();
+                if (gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
+                {
+                    foreach (VRRig plr in GorillaParent.instance.vrrigs)
+                    {
+                        RigManager.GetNetworkViewFromVRRig(plr).SendRPC("GrabbedByPlayer", RpcTarget.All, new object[] { true, false, false });
+                        RigManager.GetNetworkViewFromVRRig(plr).SendRPC("DroppedByPlayer", RpcTarget.All, new object[] { new Vector3(0f, 0f, 0f) });
+                    }
+                }
+                else
+                {
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be guardian.</color>");
+                }
+            }
+        }
+
+        public static void FlingGun()
+        {
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > kgDebounce)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        GorillaGuardianManager gman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Guardian Manager").GetComponent<GorillaGuardianManager>();
+                        if (gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
+                        {
+                            RigManager.GetNetworkViewFromVRRig(possibly).SendRPC("GrabbedByPlayer", RpcTarget.All, new object[] { true, false, false });
+                            RigManager.GetNetworkViewFromVRRig(possibly).SendRPC("DroppedByPlayer", RpcTarget.All, new object[] { new Vector3(0f, 20f, 0f) });
+                        }
+                        else
+                        {
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be guardian.</color>");
+                        }
+                        kgDebounce = Time.time + 0.1f;
+                    }
+                }
+            }
+        }
+
+        public static void FlingAll()
+        {
+            if (rightTrigger > 0.5f && Time.time > kgDebounce)
+            {
+                kgDebounce = Time.time + 0.1f;
+                GorillaGuardianManager gman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Guardian Manager").GetComponent<GorillaGuardianManager>();
+                if (gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
+                {
+                    foreach (VRRig plr in GorillaParent.instance.vrrigs)
+                    {
+                        RigManager.GetNetworkViewFromVRRig(plr).SendRPC("GrabbedByPlayer", RpcTarget.All, new object[] { true, false, false });
+                        RigManager.GetNetworkViewFromVRRig(plr).SendRPC("DroppedByPlayer", RpcTarget.All, new object[] { new Vector3(0f, 20f, 0f) });
+                    }
+                }
+                else
+                {
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be guardian.</color>");
+                }
+            }
+        }
+
+        //float num = Mathf.Min(Time.time - (float)Traverse.Create(gzm).Field("_lastTappedTime").GetValue(), (float)Traverse.Create(gzm).Field("activationTimePerTap").GetValue());
+
+        /*public static void StartMoonEvent()
         {
             GreyZoneManager gzm = GameObject.Find("Environment Objects/05Maze_PersistentObjects/Halloween2024_PersistentObjects/GreyZoneManager").GetComponent<GreyZoneManager>();
             if (PhotonNetwork.IsMasterClient)
@@ -264,7 +506,7 @@ namespace iiMenu.Mods
                 hgc.currentSpeed = 1f;
             }
             else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
-        }
+        }*/
 
         public static void SpawnSecondLook()
         {
@@ -364,6 +606,18 @@ namespace iiMenu.Mods
             {
                 PhotonNetwork.OpRemoveCompleteCacheOfPlayer(player.ActorNumber);
             }
+        }
+
+        public static void TargetSpam()
+        {
+            if (PhotonNetwork.IsMasterClient)
+            {
+                foreach (HitTargetNetworkState hitTargetNetworkState in Resources.FindObjectsOfTypeAll<HitTargetNetworkState>())
+                {
+                    Traverse.Create(hitTargetNetworkState).Field("hitCooldownTime").SetValue(0);
+                    hitTargetNetworkState.TargetHit(Vector3.zero, Vector3.zero);
+                }
+            } else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
         }
 
         public static void AtticFlingGun()

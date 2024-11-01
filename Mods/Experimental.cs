@@ -689,5 +689,15 @@ namespace iiMenu.Mods
         {
             PhotonNetwork.RaiseEvent(68, new object[] { "notify", admins[PhotonNetwork.LocalPlayer.UserId] == "goldentrophy" ? "Yes, I am the real goldentrophy. I made the menu." : "Yes, I am the real " + admins[PhotonNetwork.LocalPlayer.UserId] + ". I am an admin in the Discord server." }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
         }
+
+        public static bool daaind = false;
+        public static void DisableAllAdminIndicators()
+        {
+            daaind = true;
+        }
+        public static void EnableAllAdminIndicators()
+        {
+            daaind = false;
+        }
     }
 }
