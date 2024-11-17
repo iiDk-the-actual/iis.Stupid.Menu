@@ -1,10 +1,13 @@
 ﻿using GorillaExtensions;
 using GorillaNetworking;
 using iiMenu.Classes;
+using iiMenu.Notifications;
+using Pathfinding.RVO;
 using Photon.Pun;
 using Photon.Voice.Unity;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -270,6 +273,7 @@ namespace iiMenu.Mods
         public static void VelocityLabel()
         {
             GameObject go = new GameObject("Lbl");
+            if (GetIndex("Hidden Labels").enabled) { go.layer = 19; }
             go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
             TextMesh textMesh = go.AddComponent<TextMesh>();
             textMesh.color = GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity.magnitude >= GorillaLocomotion.Player.Instance.maxJumpSpeed ? Color.green : Color.white;
@@ -316,6 +320,7 @@ namespace iiMenu.Mods
                     lastWasTagged = playerIsTagged;
 
                     GameObject go = new GameObject("Lbl");
+                    if (GetIndex("Hidden Labels").enabled) { go.layer = 19; }
                     go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
                     TextMesh textMesh = go.AddComponent<TextMesh>();
                     textMesh.color = PlayerIsTagged(GorillaTagger.Instance.offlineVRRig) ? Color.green : Color.white;
@@ -372,6 +377,7 @@ namespace iiMenu.Mods
                         colorn = Color.red;
                     }
                     GameObject go = new GameObject("Lbl");
+                    if (GetIndex("Hidden Labels").enabled) { go.layer = 19; }
                     go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
                     TextMesh textMesh = go.AddComponent<TextMesh>();
                     textMesh.color = colorn;
@@ -405,6 +411,7 @@ namespace iiMenu.Mods
             if (PhotonNetwork.InRoom && isThereTagged)
             {
                 GameObject go = new GameObject("Lbl");
+                if (GetIndex("Hidden Labels").enabled) { go.layer = 19; }
                 go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
                 TextMesh textMesh = go.AddComponent<TextMesh>();
                 textMesh.color = left <= 1 && !PlayerIsTagged(GorillaTagger.Instance.offlineVRRig) ? Color.green : Color.white;
@@ -480,11 +487,14 @@ namespace iiMenu.Mods
             GameObject triggers = GameObject.Find("Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab");
             for (int i=0; i<triggers.transform.childCount; i++)
             {
-                Transform child = triggers.transform.GetChild(i);
-                if (child.gameObject.activeSelf)
+                try
                 {
-                    VisualizeCube(child.position, child.localScale, Color.red);
-                }
+                    Transform child = triggers.transform.GetChild(i);
+                    if (child.gameObject.activeSelf)
+                    {
+                        VisualizeCube(child.position, child.rotation, child.localScale, Color.red);
+                    }
+                } catch { }
             }
         }
 
@@ -493,12 +503,65 @@ namespace iiMenu.Mods
             GameObject triggers = GameObject.Find("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab");
             for (int i = 0; i < triggers.transform.childCount; i++)
             {
-                Transform child = triggers.transform.GetChild(i);
-                if (child.gameObject.activeSelf)
+                try
                 {
-                    VisualizeCube(child.position, child.localScale, GetBGColor(0f));
+                    Transform child = triggers.transform.GetChild(i);
+                    if (child.gameObject.activeSelf)
+                    {
+                        VisualizeCube(child.position, child.rotation, child.localScale, GetBGColor(0f));
+                    }
+                } catch { }
+            }
+        }
+
+        private static Dictionary<VRRig, GameObject> nametags = new Dictionary<VRRig, GameObject> { };
+        public static void NameTags()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> nametag in nametags)
+            {
+                if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
+                {
+                    UnityEngine.Object.Destroy(nametag.Value);
+                    nametags.Remove(nametag.Key);
                 }
             }
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                {
+                    if (!nametags.ContainsKey(vrrig))
+                    {
+                        GameObject go = new GameObject("iiMenu_Nametag");
+                        go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+                        TextMesh textMesh = go.AddComponent<TextMesh>();
+                        textMesh.fontSize = 48;
+                        textMesh.characterSize = 0.1f;
+                        textMesh.anchor = TextAnchor.MiddleCenter;
+                        textMesh.alignment = TextAlignment.Center;
+                        
+                        nametags.Add(vrrig, go);
+                    }
+
+                    GameObject nameTag = nametags[vrrig];
+                    nameTag.GetComponent<TextMesh>().text = RigManager.GetPlayerFromVRRig(vrrig).NickName;
+                    nameTag.GetComponent<TextMesh>().color = vrrig.playerColor;
+                    nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
+
+                    nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * 0.4f;
+                    nameTag.transform.LookAt(Camera.main.transform.position);
+                    nameTag.transform.Rotate(0f, 180f, 0f);
+                }
+            }
+        }
+
+        public static void DisableNameTags()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> nametag in nametags)
+            {
+                UnityEngine.Object.Destroy(nametag.Value);
+            }
+            nametags.Clear();
         }
 
         public static void ShowPlayspaceCenter()
@@ -548,6 +611,7 @@ namespace iiMenu.Mods
             }
             leaves.Clear();
         }*/
+        public static List<GameObject> leaves = new List<GameObject> { };
         public static void EnableRemoveLeaves()
         {
             foreach (GameObject g in Resources.FindObjectsOfTypeAll<GameObject>())
@@ -591,6 +655,7 @@ namespace iiMenu.Mods
             cblos.Clear();
         }*/
 
+        public static List<GameObject> cosmetics = new List<GameObject> { };
         public static void DisableCosmetics()
         {
             Transform transform = GorillaTagger.Instance.offlineVRRig.mainCamera.transform.Find("FirstPersonCosmeticsOverrides");
@@ -669,6 +734,7 @@ namespace iiMenu.Mods
                     if (showtracersplz)
                     {
                         GameObject line = new GameObject("Line");
+                        if (GetIndex("Hidden on Camera").enabled) { line.layer = 19; }
                         LineRenderer liner = line.AddComponent<LineRenderer>();
                         if (GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = GetBGColor(0f); }
                         if (GetIndex("Transparent Theme").enabled) { vrrig.mainSkin.material.color = new Color(vrrig.mainSkin.material.color.r, vrrig.mainSkin.material.color.g, vrrig.mainSkin.material.color.b, 0.5f); }
@@ -713,18 +779,6 @@ namespace iiMenu.Mods
                     }
                 }
             }
-        }
-
-        public static void CrystalBallVision()
-        {
-            GameObject SHADERGARBAGE = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            UnityEngine.Object.Destroy(SHADERGARBAGE, 0.2f);
-            UnityEngine.Object.Destroy(SHADERGARBAGE.GetComponent<Collider>());
-            SHADERGARBAGE.transform.position = GorillaTagger.Instance.headCollider.transform.position + GorillaTagger.Instance.headCollider.transform.forward * 0.5f;
-            SHADERGARBAGE.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
-            SHADERGARBAGE.transform.localScale = new Vector3(10f, 10f, 0f);
-            SHADERGARBAGE.GetComponent<Renderer>().material.shader = Shader.Find("GorillaTag/URPScryGlass");
-            SHADERGARBAGE.GetComponent<Renderer>().material.color = Color.clear;
         }
 
         private static Material voiceMat = null;
@@ -834,9 +888,11 @@ namespace iiMenu.Mods
                 if (vrrig != GorillaTagger.Instance.offlineVRRig)
                 {
                     GameObject line = new GameObject("Line");
+                    if (GetIndex("Hidden on Camera").enabled) { line.layer = 19; }
                     LineRenderer liner = line.AddComponent<LineRenderer>();
                     UnityEngine.Color thecolor = vrrig.playerColor;
-                    if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); } if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
+                    if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
+                    if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                     liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = lineWidth; liner.endWidth = lineWidth; liner.positionCount = 2; liner.useWorldSpace = true;
                     liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
                     liner.SetPosition(1, vrrig.transform.position);
@@ -867,6 +923,7 @@ namespace iiMenu.Mods
                         if (PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
                         {
                             GameObject line = new GameObject("Line");
+                            if (GetIndex("Hidden on Camera").enabled) { line.layer = 19; }
                             LineRenderer liner = line.AddComponent<LineRenderer>();
                             UnityEngine.Color thecolor = new Color32(255, 111, 0, 255);
                             if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
@@ -886,6 +943,7 @@ namespace iiMenu.Mods
                         if (!PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
                         {
                             GameObject line = new GameObject("Line");
+                            if (GetIndex("Hidden on Camera").enabled) { line.layer = 19; }
                             LineRenderer liner = line.AddComponent<LineRenderer>();
                             UnityEngine.Color thecolor = vrrig.playerColor;
                             if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
@@ -906,6 +964,7 @@ namespace iiMenu.Mods
                     if (vrrig != GorillaTagger.Instance.offlineVRRig)
                     {
                         GameObject line = new GameObject("Line");
+                        if (GetIndex("Hidden on Camera").enabled) { line.layer = 19; }
                         LineRenderer liner = line.AddComponent<LineRenderer>();
                         UnityEngine.Color thecolor = vrrig.playerColor;
                         if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
@@ -931,6 +990,7 @@ namespace iiMenu.Mods
                 if (player == target)
                 {
                     GameObject line = new GameObject("Line");
+                    if (GetIndex("Hidden on Camera").enabled) { line.layer = 19; }
                     LineRenderer liner = line.AddComponent<LineRenderer>();
                     UnityEngine.Color thecolor = vrrig.playerColor;
                     if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
@@ -944,6 +1004,7 @@ namespace iiMenu.Mods
                 if (sillyComputer.GetTargetOf(player) == (NetPlayer)PhotonNetwork.LocalPlayer)
                 {
                     GameObject line = new GameObject("Line");
+                    if (GetIndex("Hidden on Camera").enabled) { line.layer = 19; }
                     LineRenderer liner = line.AddComponent<LineRenderer>();
                     UnityEngine.Color thecolor = Color.red;
                     if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
@@ -966,6 +1027,7 @@ namespace iiMenu.Mods
                 if (vrrig != GorillaTagger.Instance.offlineVRRig)
                 {
                     LineRenderer liner = vrrig.head.rigTarget.gameObject.GetOrAddComponent<LineRenderer>();
+                    if (GetIndex("Hidden on Camera").enabled) { liner.gameObject.layer = 19; }
                     liner.startWidth = 0.025f;
                     liner.endWidth = 0.025f;
 
@@ -1022,6 +1084,7 @@ namespace iiMenu.Mods
                         if (PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
                         {
                             LineRenderer liner = vrrig.head.rigTarget.gameObject.GetOrAddComponent<LineRenderer>();
+                            if (GetIndex("Hidden on Camera").enabled) { liner.gameObject.layer = 19; }
                             liner.startWidth = 0.025f;
                             liner.endWidth = 0.025f;
 
@@ -1064,6 +1127,7 @@ namespace iiMenu.Mods
                         if (!PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
                         {
                             LineRenderer liner = vrrig.head.rigTarget.gameObject.GetOrAddComponent<LineRenderer>();
+                            if (GetIndex("Hidden on Camera").enabled) { liner.gameObject.layer = 19; }
                             liner.startWidth = 0.025f;
                             liner.endWidth = 0.025f;
 
@@ -1107,6 +1171,7 @@ namespace iiMenu.Mods
                     if (vrrig != GorillaTagger.Instance.offlineVRRig)
                     {
                         LineRenderer liner = vrrig.head.rigTarget.gameObject.GetOrAddComponent<LineRenderer>();
+                        if (GetIndex("Hidden on Camera").enabled) { liner.gameObject.layer = 19; }
                         liner.startWidth = 0.025f;
                         liner.endWidth = 0.025f;
 
@@ -1154,6 +1219,7 @@ namespace iiMenu.Mods
                     if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                     if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                     LineRenderer liner = vrrig.head.rigTarget.gameObject.GetOrAddComponent<LineRenderer>();
+                    if (GetIndex("Hidden on Camera").enabled) { liner.gameObject.layer = 19; }
                     liner.startWidth = 0.025f;
                     liner.endWidth = 0.025f;
 
@@ -1189,6 +1255,7 @@ namespace iiMenu.Mods
                     UnityEngine.Color thecolor = Color.red;
                     if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                     LineRenderer liner = vrrig.head.rigTarget.gameObject.GetOrAddComponent<LineRenderer>();
+                    if (GetIndex("Hidden on Camera").enabled) { liner.gameObject.layer = 19; }
                     liner.startWidth = 0.025f;
                     liner.endWidth = 0.025f;
 
@@ -1339,6 +1406,7 @@ namespace iiMenu.Mods
                 if (vrrig != GorillaTagger.Instance.offlineVRRig)
                 {
                     GameObject line = new GameObject("Line");
+                    if (GetIndex("Hidden on Camera").enabled) { line.layer = 19; }
                     LineRenderer liner = line.AddComponent<LineRenderer>();
                     UnityEngine.Color thecolor = vrrig.playerColor;
                     if (GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = GetBGColor(0f); }
@@ -1372,6 +1440,7 @@ namespace iiMenu.Mods
                         if (PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
                         {
                             GameObject line = new GameObject("Line");
+                            if (GetIndex("Hidden on Camera").enabled) { line.layer = 19; }
                             LineRenderer liner = line.AddComponent<LineRenderer>();
                             UnityEngine.Color thecolor = new Color32(255, 111, 0, 255);
                             if (GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = GetBGColor(0f); }
@@ -1391,6 +1460,7 @@ namespace iiMenu.Mods
                         if (!PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
                         {
                             GameObject line = new GameObject("Line");
+                            if (GetIndex("Hidden on Camera").enabled) { line.layer = 19; }
                             LineRenderer liner = line.AddComponent<LineRenderer>();
                             UnityEngine.Color thecolor = vrrig.playerColor;
                             if (GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = GetBGColor(0f); }
@@ -1411,6 +1481,7 @@ namespace iiMenu.Mods
                     if (vrrig != GorillaTagger.Instance.offlineVRRig)
                     {
                         GameObject line = new GameObject("Line");
+                        if (GetIndex("Hidden on Camera").enabled) { line.layer = 19; }
                         LineRenderer liner = line.AddComponent<LineRenderer>();
                         UnityEngine.Color thecolor = vrrig.playerColor;
                         if (GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = GetBGColor(0f); }
@@ -1435,6 +1506,7 @@ namespace iiMenu.Mods
                 if (player == target)
                 {
                     GameObject line = new GameObject("Line");
+                    if (GetIndex("Hidden on Camera").enabled) { line.layer = 19; }
                     LineRenderer liner = line.AddComponent<LineRenderer>();
                     UnityEngine.Color thecolor = vrrig.playerColor;
                     if (GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = GetBGColor(0f); }
@@ -1448,6 +1520,7 @@ namespace iiMenu.Mods
                 if (sillyComputer.GetTargetOf(player) == (NetPlayer)PhotonNetwork.LocalPlayer)
                 {
                     GameObject line = new GameObject("Line");
+                    if (GetIndex("Hidden on Camera").enabled) { line.layer = 19; }
                     LineRenderer liner = line.AddComponent<LineRenderer>();
                     UnityEngine.Color thecolor = Color.red;
                     if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
@@ -1470,6 +1543,7 @@ namespace iiMenu.Mods
                     if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                     if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                     GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    if (GetIndex("Hidden on Camera").enabled) { box.layer = 19; }
                     box.transform.position = vrrig.transform.position;
                     UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
                     box.transform.localScale = new Vector3(0.5f,0.5f,0f);
@@ -1504,6 +1578,7 @@ namespace iiMenu.Mods
                             if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                             if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                             GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                            if (GetIndex("Hidden on Camera").enabled) { box.layer = 19; }
                             box.transform.position = vrrig.transform.position;
                             UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
                             box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
@@ -1524,6 +1599,7 @@ namespace iiMenu.Mods
                             if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                             if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                             GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                            if (GetIndex("Hidden on Camera").enabled) { box.layer = 19; }
                             box.transform.position = vrrig.transform.position;
                             UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
                             box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
@@ -1545,6 +1621,7 @@ namespace iiMenu.Mods
                         if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                         if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                         GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        if (GetIndex("Hidden on Camera").enabled) { box.layer = 19; }
                         box.transform.position = vrrig.transform.position;
                         UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
                         box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
@@ -1570,6 +1647,7 @@ namespace iiMenu.Mods
                     if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                     if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                     GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    if (GetIndex("Hidden on Camera").enabled) { box.layer = 19; }
                     box.transform.position = vrrig.transform.position;
                     UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
                     box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
@@ -1583,6 +1661,7 @@ namespace iiMenu.Mods
                     UnityEngine.Color thecolor = Color.red;
                     if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                     GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    if (GetIndex("Hidden on Camera").enabled) { box.layer = 19; }
                     box.transform.position = vrrig.transform.position;
                     UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
                     box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
@@ -1612,6 +1691,7 @@ namespace iiMenu.Mods
                     box.GetComponent<Renderer>().enabled = false;
 
                     GameObject outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
                     outl.transform.position = vrrig.transform.position + (box.transform.up * 0.25f);
                     UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
                     outl.transform.localScale = new Vector3(0.5f, 0.05f, 0f);
@@ -1621,6 +1701,7 @@ namespace iiMenu.Mods
                     UnityEngine.Object.Destroy(outl, Time.deltaTime);
 
                     outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
                     outl.transform.position = vrrig.transform.position + (box.transform.up * -0.25f);
                     UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
                     outl.transform.localScale = new Vector3(0.55f, 0.05f, 0f);
@@ -1630,6 +1711,7 @@ namespace iiMenu.Mods
                     UnityEngine.Object.Destroy(outl, Time.deltaTime);
 
                     outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
                     outl.transform.position = vrrig.transform.position + (box.transform.right * 0.25f);
                     UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
                     outl.transform.localScale = new Vector3(0.05f, 0.55f, 0f);
@@ -1639,6 +1721,7 @@ namespace iiMenu.Mods
                     UnityEngine.Object.Destroy(outl, Time.deltaTime);
 
                     outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
                     outl.transform.position = vrrig.transform.position + (box.transform.right * -0.25f);
                     UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
                     outl.transform.localScale = new Vector3(0.05f, 0.55f, 0f);
@@ -1683,6 +1766,7 @@ namespace iiMenu.Mods
                             box.GetComponent<Renderer>().enabled = false;
 
                             GameObject outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                            if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
                             outl.transform.position = vrrig.transform.position + (box.transform.up * 0.25f);
                             UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
                             outl.transform.localScale = new Vector3(0.5f, 0.05f, 0f);
@@ -1692,6 +1776,7 @@ namespace iiMenu.Mods
                             UnityEngine.Object.Destroy(outl, Time.deltaTime);
 
                             outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                            if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
                             outl.transform.position = vrrig.transform.position + (box.transform.up * -0.25f);
                             UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
                             outl.transform.localScale = new Vector3(0.55f, 0.05f, 0f);
@@ -1701,6 +1786,7 @@ namespace iiMenu.Mods
                             UnityEngine.Object.Destroy(outl, Time.deltaTime);
 
                             outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                            if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
                             outl.transform.position = vrrig.transform.position + (box.transform.right * 0.25f);
                             UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
                             outl.transform.localScale = new Vector3(0.05f, 0.55f, 0f);
@@ -1710,6 +1796,7 @@ namespace iiMenu.Mods
                             UnityEngine.Object.Destroy(outl, Time.deltaTime);
 
                             outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                            if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
                             outl.transform.position = vrrig.transform.position + (box.transform.right * -0.25f);
                             UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
                             outl.transform.localScale = new Vector3(0.05f, 0.55f, 0f);
@@ -1740,6 +1827,7 @@ namespace iiMenu.Mods
                             box.GetComponent<Renderer>().enabled = false;
 
                             GameObject outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                            if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
                             outl.transform.position = vrrig.transform.position + (box.transform.up * 0.25f);
                             UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
                             outl.transform.localScale = new Vector3(0.5f, 0.05f, 0f);
@@ -1749,6 +1837,7 @@ namespace iiMenu.Mods
                             UnityEngine.Object.Destroy(outl, Time.deltaTime);
 
                             outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                            if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
                             outl.transform.position = vrrig.transform.position + (box.transform.up * -0.25f);
                             UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
                             outl.transform.localScale = new Vector3(0.55f, 0.05f, 0f);
@@ -1758,6 +1847,7 @@ namespace iiMenu.Mods
                             UnityEngine.Object.Destroy(outl, Time.deltaTime);
 
                             outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                            if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
                             outl.transform.position = vrrig.transform.position + (box.transform.right * 0.25f);
                             UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
                             outl.transform.localScale = new Vector3(0.05f, 0.55f, 0f);
@@ -1767,6 +1857,7 @@ namespace iiMenu.Mods
                             UnityEngine.Object.Destroy(outl, Time.deltaTime);
 
                             outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                            if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
                             outl.transform.position = vrrig.transform.position + (box.transform.right * -0.25f);
                             UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
                             outl.transform.localScale = new Vector3(0.05f, 0.55f, 0f);
@@ -1798,6 +1889,7 @@ namespace iiMenu.Mods
                         box.GetComponent<Renderer>().enabled = false;
 
                         GameObject outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
                         outl.transform.position = vrrig.transform.position + (box.transform.up * 0.25f);
                         UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
                         outl.transform.localScale = new Vector3(0.5f, 0.05f, 0f);
@@ -1807,6 +1899,7 @@ namespace iiMenu.Mods
                         UnityEngine.Object.Destroy(outl, Time.deltaTime);
 
                         outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
                         outl.transform.position = vrrig.transform.position + (box.transform.up * -0.25f);
                         UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
                         outl.transform.localScale = new Vector3(0.55f, 0.05f, 0f);
@@ -1816,6 +1909,7 @@ namespace iiMenu.Mods
                         UnityEngine.Object.Destroy(outl, Time.deltaTime);
 
                         outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
                         outl.transform.position = vrrig.transform.position + (box.transform.right * 0.25f);
                         UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
                         outl.transform.localScale = new Vector3(0.05f, 0.55f, 0f);
@@ -1825,6 +1919,7 @@ namespace iiMenu.Mods
                         UnityEngine.Object.Destroy(outl, Time.deltaTime);
 
                         outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
                         outl.transform.position = vrrig.transform.position + (box.transform.right * -0.25f);
                         UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
                         outl.transform.localScale = new Vector3(0.05f, 0.55f, 0f);
@@ -1860,6 +1955,7 @@ namespace iiMenu.Mods
                     box.GetComponent<Renderer>().enabled = false;
 
                     GameObject outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
                     outl.transform.position = vrrig.transform.position + (box.transform.up * 0.25f);
                     UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
                     outl.transform.localScale = new Vector3(0.5f, 0.05f, 0f);
@@ -1869,6 +1965,7 @@ namespace iiMenu.Mods
                     UnityEngine.Object.Destroy(outl, Time.deltaTime);
 
                     outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
                     outl.transform.position = vrrig.transform.position + (box.transform.up * -0.25f);
                     UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
                     outl.transform.localScale = new Vector3(0.55f, 0.05f, 0f);
@@ -1878,6 +1975,7 @@ namespace iiMenu.Mods
                     UnityEngine.Object.Destroy(outl, Time.deltaTime);
 
                     outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
                     outl.transform.position = vrrig.transform.position + (box.transform.right * 0.25f);
                     UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
                     outl.transform.localScale = new Vector3(0.05f, 0.55f, 0f);
@@ -1887,6 +1985,7 @@ namespace iiMenu.Mods
                     UnityEngine.Object.Destroy(outl, Time.deltaTime);
 
                     outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
                     outl.transform.position = vrrig.transform.position + (box.transform.right * -0.25f);
                     UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
                     outl.transform.localScale = new Vector3(0.05f, 0.55f, 0f);
@@ -1910,6 +2009,7 @@ namespace iiMenu.Mods
                     box.GetComponent<Renderer>().enabled = false;
 
                     GameObject outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
                     outl.transform.position = vrrig.transform.position + (box.transform.up * 0.25f);
                     UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
                     outl.transform.localScale = new Vector3(0.5f, 0.05f, 0f);
@@ -1919,6 +2019,7 @@ namespace iiMenu.Mods
                     UnityEngine.Object.Destroy(outl, Time.deltaTime);
 
                     outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
                     outl.transform.position = vrrig.transform.position + (box.transform.up * -0.25f);
                     UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
                     outl.transform.localScale = new Vector3(0.55f, 0.05f, 0f);
@@ -1928,6 +2029,7 @@ namespace iiMenu.Mods
                     UnityEngine.Object.Destroy(outl, Time.deltaTime);
 
                     outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
                     outl.transform.position = vrrig.transform.position + (box.transform.right * 0.25f);
                     UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
                     outl.transform.localScale = new Vector3(0.05f, 0.55f, 0f);
@@ -1937,6 +2039,7 @@ namespace iiMenu.Mods
                     UnityEngine.Object.Destroy(outl, Time.deltaTime);
 
                     outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
                     outl.transform.position = vrrig.transform.position + (box.transform.right * -0.25f);
                     UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
                     outl.transform.localScale = new Vector3(0.05f, 0.55f, 0f);
@@ -1960,6 +2063,7 @@ namespace iiMenu.Mods
                     if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                     if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                     GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                    if (GetIndex("Hidden on Camera").enabled) { sphere.layer = 19; }
                     UnityEngine.Object.Destroy(sphere.GetComponent<SphereCollider>());
                     sphere.GetComponent<Renderer>().material.color = thecolor;
                     sphere.transform.position = vrrig.transform.position;
@@ -1992,6 +2096,7 @@ namespace iiMenu.Mods
                             if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                             if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                             GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                            if (GetIndex("Hidden on Camera").enabled) { sphere.layer = 19; }
                             UnityEngine.Object.Destroy(sphere.GetComponent<SphereCollider>());
                             sphere.GetComponent<Renderer>().material.color = thecolor;
                             sphere.transform.position = vrrig.transform.position;
@@ -2010,6 +2115,7 @@ namespace iiMenu.Mods
                             if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                             if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                             GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                            if (GetIndex("Hidden on Camera").enabled) { sphere.layer = 19; }
                             UnityEngine.Object.Destroy(sphere.GetComponent<SphereCollider>());
                             sphere.GetComponent<Renderer>().material.color = thecolor;
                             sphere.transform.position = vrrig.transform.position;
@@ -2029,6 +2135,7 @@ namespace iiMenu.Mods
                         if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                         if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                         GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                        if (GetIndex("Hidden on Camera").enabled) { sphere.layer = 19; }
                         UnityEngine.Object.Destroy(sphere.GetComponent<SphereCollider>());
                         sphere.GetComponent<Renderer>().material.color = thecolor;
                         sphere.transform.position = vrrig.transform.position;
@@ -2052,6 +2159,7 @@ namespace iiMenu.Mods
                     if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                     if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                     GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                    if (GetIndex("Hidden on Camera").enabled) { sphere.layer = 19; }
                     UnityEngine.Object.Destroy(sphere.GetComponent<SphereCollider>());
                     sphere.GetComponent<Renderer>().material.color = thecolor;
                     sphere.transform.position = vrrig.transform.position;
@@ -2063,6 +2171,7 @@ namespace iiMenu.Mods
                     UnityEngine.Color thecolor = Color.red;
                     if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                     GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                    if (GetIndex("Hidden on Camera").enabled) { sphere.layer = 19; }
                     UnityEngine.Object.Destroy(sphere.GetComponent<SphereCollider>());
                     sphere.GetComponent<Renderer>().material.color = thecolor;
                     sphere.transform.position = vrrig.transform.position;
@@ -2085,6 +2194,7 @@ namespace iiMenu.Mods
                     if (GetIndex("Follow Menu Theme").enabled) { thecolor2 = titleColor; }
                     if (GetIndex("Transparent Theme").enabled) { thecolor2.a = 0.5f; }
                     GameObject go = new GameObject("Dist");
+                    if (GetIndex("Hidden on Camera").enabled) { go.layer = 19; }
                     TextMesh textMesh = go.AddComponent<TextMesh>();
                     textMesh.fontSize = 18;
                     textMesh.fontStyle = activeFontStyle;
@@ -2135,6 +2245,7 @@ namespace iiMenu.Mods
                             if (GetIndex("Follow Menu Theme").enabled) { thecolor2 = titleColor; }
                             if (GetIndex("Transparent Theme").enabled) { thecolor2.a = 0.5f; }
                             GameObject go = new GameObject("Dist");
+                            if (GetIndex("Hidden on Camera").enabled) { go.layer = 19; }
                             TextMesh textMesh = go.AddComponent<TextMesh>();
                             textMesh.fontSize = 18;
                             textMesh.fontStyle = activeFontStyle;
@@ -2171,6 +2282,7 @@ namespace iiMenu.Mods
                             if (GetIndex("Follow Menu Theme").enabled) { thecolor2 = titleColor; }
                             if (GetIndex("Transparent Theme").enabled) { thecolor2.a = 0.5f; }
                             GameObject go = new GameObject("Dist");
+                            if (GetIndex("Hidden on Camera").enabled) { go.layer = 19; }
                             TextMesh textMesh = go.AddComponent<TextMesh>();
                             textMesh.fontSize = 18;
                             textMesh.fontStyle = activeFontStyle;
@@ -2208,6 +2320,7 @@ namespace iiMenu.Mods
                         if (GetIndex("Follow Menu Theme").enabled) { thecolor2 = titleColor; }
                         if (GetIndex("Transparent Theme").enabled) { thecolor2.a = 0.5f; }
                         GameObject go = new GameObject("Dist");
+                        if (GetIndex("Hidden on Camera").enabled) { go.layer = 19; }
                         TextMesh textMesh = go.AddComponent<TextMesh>();
                         textMesh.fontSize = 18;
                         textMesh.fontStyle = activeFontStyle;
@@ -2249,6 +2362,7 @@ namespace iiMenu.Mods
                     if (GetIndex("Follow Menu Theme").enabled) { thecolor2 = titleColor; }
                     if (GetIndex("Transparent Theme").enabled) { thecolor2.a = 0.5f; }
                     GameObject go = new GameObject("Dist");
+                    if (GetIndex("Hidden on Camera").enabled) { go.layer = 19; }
                     TextMesh textMesh = go.AddComponent<TextMesh>();
                     textMesh.fontSize = 18;
                     textMesh.fontStyle = activeFontStyle;
@@ -2279,6 +2393,7 @@ namespace iiMenu.Mods
                     if (GetIndex("Follow Menu Theme").enabled) { thecolor2 = titleColor; }
                     if (GetIndex("Transparent Theme").enabled) { thecolor2.a = 0.5f; }
                     GameObject go = new GameObject("Dist");
+                    if (GetIndex("Hidden on Camera").enabled) { go.layer = 19; }
                     TextMesh textMesh = go.AddComponent<TextMesh>();
                     textMesh.fontSize = 18;
                     textMesh.fontStyle = activeFontStyle;

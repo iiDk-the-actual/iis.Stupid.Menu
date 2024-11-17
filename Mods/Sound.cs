@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using UnityEngine;
+using Valve.VR;
 using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods.Spammers
@@ -151,9 +152,15 @@ namespace iiMenu.Mods.Spammers
                 leftGrab,
                 rightGrab,
                 leftTrigger > 0.5f,
-                rightTrigger > 0.5f
+                rightTrigger > 0.5f,
+                false,
+                false
             };
             bool bindPressed = bindings[BindMode - 1];
+            if ((BindMode - 1) == 8) // If I don't do this it errors for some reason
+                bindPressed = SteamVR_Actions.gorillaTag_LeftJoystickClick.state;
+            if ((BindMode - 1) == 9)
+                bindPressed = SteamVR_Actions.gorillaTag_RightJoystickClick.state;
             if (bindPressed && !lastBindPressed)
             {
                 if (GorillaTagger.Instance.myRecorder.SourceType == Recorder.InputSourceType.AudioClip)
@@ -197,7 +204,9 @@ namespace iiMenu.Mods.Spammers
                 "Left Grip",
                 "Right Grip",
                 "Left Trigger",
-                "Right Trigger"
+                "Right Trigger",
+                "Left Joystick",
+                "Right Joystick"
             };
             BindMode++;
             if (BindMode > names.Length - 1)

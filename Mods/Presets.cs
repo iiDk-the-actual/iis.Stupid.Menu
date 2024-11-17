@@ -13,14 +13,17 @@ namespace iiMenu.Mods
             {
                 "Joystick Menu",
                 "Thin Menu",
-                "Force Enable Hands",
-                "Show Anti Cheat Reports <color=grey>[</color><color=green>Self</color><color=grey>]</color>",
                 "Disable Enabled GUI",
                 "Disable Board Colors",
                 "Disable Disconnect Button",
                 "Disable Page Buttons",
+                "Disable Search Button",
+                "Disable Return Button",
+                "Hidden on Camera",
+                "Hide Notifications on Camera",
+                "Hide Text on Camera",
                 "Disable FPS Counter",
-                "Fake Oculus Menu <color=grey>[</color><color=green>X</color><color=grey>]</color>"
+                "Fix Rig Colors",
             };
 
             themeType = 29;
@@ -50,8 +53,7 @@ namespace iiMenu.Mods
                 "Steam Long Arms",
                 "Break Audio Gun",
                 "No Finger Movement",
-                "Platforms",
-                "Thin Menu"
+                "Platforms"
             };
 
             longarmCycle = 3;
@@ -116,7 +118,6 @@ namespace iiMenu.Mods
                 "Infection Tracers",
                 "Infection Distance ESP",
                 "Auto Party Kick",
-                "Small Building",
                 "Obnoxious Tag"
             };
 
@@ -141,7 +142,6 @@ namespace iiMenu.Mods
         {
             string[] presetMods = new string[]
             {
-                "Thin Menu",
                 "Disable Enabled GUI",
                 "Disable Board Colors",
                 "Disable FPS Counter",
@@ -171,7 +171,6 @@ namespace iiMenu.Mods
         {
             string[] presetMods = new string[]
             {
-                "Thin Menu",
                 "No Finger Movement",
                 "Fake Oculus Menu <color=grey>[</color><color=green>X</color><color=grey>]</color>",
                 "Disable Gamemode Buttons",

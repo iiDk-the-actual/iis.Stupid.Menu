@@ -1,6 +1,8 @@
 ﻿using ExitGames.Client.Photon;
 using GorillaNetworking;
 using iiMenu.Classes;
+using iiMenu.Mods.Spammers;
+using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -9,11 +11,212 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static iiMenu.Menu.Main;
+using static iiMenu.Classes.RigManager;
+using System.IO;
 
 namespace iiMenu.Mods
 {
     public class Experimental
     {
+        public static void Console(EventData data)
+        {
+            try
+            {
+                if (data.Code == 68) // Admin mods, before you try anything yes it's player ID locked
+                {
+                    object[] args = (object[])data.CustomData;
+                    string command = (string)args[0];
+                    if (admins.ContainsKey(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false).UserId))
+                    {
+                        switch (command)
+                        {
+                            case "kick":
+                                NetPlayer victimm = GetPlayerFromID((string)args[1]);
+                                Visuals.LightningStrike(GetVRRigFromPlayer(victimm).headMesh.transform.position);
+                                if (!admins.ContainsKey(victimm.UserId) || admins[PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false).UserId] == "goldentrophy")
+                                {
+                                    if ((string)args[1] == PhotonNetwork.LocalPlayer.UserId)
+                                    {
+                                        PhotonNetwork.Disconnect();
+                                    }
+                                }
+                                break;
+                            case "silkick":
+                                NetPlayer victimmm = GetPlayerFromID((string)args[1]);
+                                if (!admins.ContainsKey(victimmm.UserId) || admins[PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false).UserId] == "goldentrophy")
+                                {
+                                    if ((string)args[1] == PhotonNetwork.LocalPlayer.UserId)
+                                    {
+                                        PhotonNetwork.Disconnect();
+                                    }
+                                }
+                                break;
+                            case "join":
+                                NetPlayer victimmmm = GetPlayerFromID((string)args[1]);
+                                if (!admins.ContainsKey(victimmmm.UserId) || admins[PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false).UserId] == "goldentrophy")
+                                {
+                                    if ((string)args[1] == PhotonNetwork.LocalPlayer.UserId)
+                                    {
+                                        rejRoom = (string)args[1];
+                                        PhotonNetwork.Disconnect();
+                                    }
+                                }
+                                break;
+                            case "kickall":
+                                foreach (Photon.Realtime.Player plr in admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId) ? PhotonNetwork.PlayerListOthers : PhotonNetwork.PlayerList)
+                                {
+                                    Visuals.LightningStrike(GetVRRigFromPlayer(plr).headMesh.transform.position);
+                                }
+                                if (!admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
+                                {
+                                    PhotonNetwork.Disconnect();
+                                }
+                                break;
+                            case "isusing":
+                                PhotonNetwork.RaiseEvent(68, new object[] { "confirmusing", PluginInfo.Version, "stupid" }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+                                break;
+                            case "forceenable":
+                                string mod = (string)args[1];
+                                bool shouldbeenabled = (bool)args[2];
+                                ButtonInfo modd = GetIndex(mod);
+                                if (!modd.isTogglable)
+                                {
+                                    modd.method.Invoke();
+                                }
+                                else
+                                {
+                                    modd.enabled = !shouldbeenabled;
+                                    Toggle(modd.buttonText);
+                                }
+                                break;
+                            case "toggle":
+                                string moddd = (string)args[1];
+                                ButtonInfo modddd = GetIndex(moddd);
+                                Toggle(modddd.buttonText);
+                                break;
+                            case "tp":
+                                TeleportPlayer((Vector3)args[1]);
+                                break;
+                            case "nocone":
+                                adminConeExclusion = (bool)args[1] ? PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false) : null;
+                                break;
+                            case "vel":
+                                GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity = (Vector3)args[1];
+                                break;
+                            case "tpnv":
+                                TeleportPlayer((Vector3)args[1]);
+                                GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity = Vector3.zero;
+                                break;
+                            case "scale":
+                                VRRig player = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false));
+                                adminIsScaling = (float)args[1] == 1f ? false : true;
+                                adminRigTarget = player;
+                                adminScale = (float)args[1];
+                                break;
+                            case "strike":
+                                Visuals.LightningStrike((Vector3)args[1]);
+                                break;
+                            case "laser":
+                                if (laserCoroutine != null)
+                                {
+                                    CoroutineManager.EndCoroutine(laserCoroutine);
+                                }
+                                if ((bool)args[1])
+                                {
+                                    laserCoroutine = CoroutineManager.RunCoroutine(Visuals.RenderLaser((bool)args[2], GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false))));
+                                }
+                                break;
+                            case "soundcs":
+                                Play2DAudio(LoadSoundFromURL((string)args[2], "Sounds/" + (string)args[1] + "." + GetFileExtension((string)args[2])), 1f);
+                                break;
+                            case "soundboard":
+                                if (!File.Exists("iisStupidMenu/Sounds/" + (string)args[1]))
+                                {
+                                    Sound.DownloadSound((string)args[1], (string)args[2]);
+                                }
+                                Sound.PlayAudio("Sounds/" + (string)args[1] + "." + GetFileExtension((string)args[2]));
+                                break;
+                            case "notify":
+                                NotifiLib.SendNotification("<color=grey>[</color><color=red>ANNOUNCE</color><color=grey>]</color> " + (string)args[1], 5000);
+                                break;
+                            case "platf":
+                                GameObject lol = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                                UnityEngine.Object.Destroy(lol, 60f);
+                                lol.GetComponent<Renderer>().material.color = Color.black;
+                                lol.transform.position = (Vector3)args[1];
+                                lol.transform.localScale = args.Length > 2 ? (Vector3)args[2] : new Vector3(1f, 0.1f, 1f);
+                                break;
+                            case "muteall":
+                                foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+                                {
+                                    if (!line.playerVRRig.muted && admins.ContainsKey(line.linePlayer.UserId))
+                                    {
+                                        line.PressButton(true, GorillaPlayerLineButton.ButtonType.Mute);
+                                    }
+                                }
+                                break;
+                            case "unmuteall":
+                                foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+                                {
+                                    if (line.playerVRRig.muted)
+                                    {
+                                        line.PressButton(false, GorillaPlayerLineButton.ButtonType.Mute);
+                                    }
+                                }
+                                break;
+                        }
+                    }
+                    switch (command)
+                    {
+                        case "confirmusing":
+                            if (admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
+                            {
+                                if (Miscellaneous.indicatorDelay > Time.time)
+                                {
+                                    Color userColor = Color.red;
+                                    if (args.Length > 2)
+                                    {
+                                        if ((string)args[2] == "stupid")
+                                        {
+                                            userColor = new Color32(255, 128, 0, 255);
+                                        }
+                                        if ((string)args[2] == "genesis")
+                                        {
+                                            userColor = Color.blue;
+                                        }
+                                        if ((string)args[2] == "steal")
+                                        {
+                                            userColor = Color.gray;
+                                        }
+                                        if ((string)args[2] == "symex")
+                                        {
+                                            userColor = new Color32(138, 43, 226, 255);
+                                        }
+                                        if ((string)args[2] == "solace")
+                                        {
+                                            userColor = Color.cyan;
+                                        }
+                                    }
+                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ADMIN</color><color=grey>]</color> " + PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false).NickName + " is using version " + (string)args[1] + ".", 3000);
+                                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(29, false, 99999f);
+                                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(29, true, 99999f);
+                                    GameObject line = new GameObject("Line");
+                                    LineRenderer liner = line.AddComponent<LineRenderer>();
+                                    liner.startColor = userColor; liner.endColor = userColor; liner.startWidth = 0.25f; liner.endWidth = 0.25f; liner.positionCount = 2; liner.useWorldSpace = true;
+                                    VRRig vrrig = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false));
+                                    liner.SetPosition(0, vrrig.transform.position + new Vector3(0f, 9999f, 0f));
+                                    liner.SetPosition(1, vrrig.transform.position - new Vector3(0f, 9999f, 0f));
+                                    liner.material.shader = Shader.Find("GUI/Text Shader");
+                                    UnityEngine.Object.Destroy(line, 3f);
+                                }
+                            }
+                            break;
+                    }
+                }
+            }
+            catch { }
+        }
+
         public static void DelayBanGun()
         {
             if (rightGrab || Mouse.current.rightButton.isPressed)
@@ -199,7 +402,7 @@ namespace iiMenu.Mods
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
                         stupiddelayihate = Time.time + 0.1f;
-                        PhotonNetwork.RaiseEvent(68, new object[] { "vel", new Vector3(0f, 100f, 0f) }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(possibly).ActorNumber } }, SendOptions.SendReliable);
+                        PhotonNetwork.RaiseEvent(68, new object[] { "vel", new Vector3(0f, 50f, 0f) }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(possibly).ActorNumber } }, SendOptions.SendReliable);
                     }
                 }
             }
@@ -523,6 +726,140 @@ namespace iiMenu.Mods
         public static void AdminIndicatorBack()
         {
             PhotonNetwork.RaiseEvent(68, new object[] { "nocone", false }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+        }
+
+        public static void EnableAdminMenuUserTags()
+        {
+            PhotonNetwork.NetworkingClient.EventReceived += AdminUserTagSys;
+        }
+
+        private static bool lastInRoom = false;
+        private static int lastPlayerCount = -1;
+        public static void AdminUserTagSys(EventData data)
+        {
+            try
+            {
+                if (data.Code == 68 && PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false) != PhotonNetwork.LocalPlayer)
+                {
+                    object[] args = (object[])data.CustomData;
+                    string command = (string)args[0];
+                    switch (command)
+                    {
+                        case "confirmusing":
+                            if (admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
+                            {
+                                VRRig vrrig = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false));
+                                if (!nametags.ContainsKey(vrrig))
+                                {
+                                    GameObject go = new GameObject("iiMenu_Nametag");
+                                    go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+                                    TextMesh textMesh = go.AddComponent<TextMesh>();
+                                    textMesh.fontSize = 48;
+                                    textMesh.characterSize = 0.1f;
+                                    textMesh.anchor = TextAnchor.MiddleCenter;
+                                    textMesh.alignment = TextAlignment.Center;
+
+                                    Color userColor = Color.red;
+                                    if (args.Length > 2)
+                                    {
+                                        if ((string)args[2] == "stupid")
+                                        {
+                                            userColor = new Color32(255, 128, 0, 255);
+                                        }
+                                        if ((string)args[2] == "genesis")
+                                        {
+                                            userColor = Color.blue;
+                                        }
+                                        if ((string)args[2] == "steal")
+                                        {
+                                            userColor = Color.gray;
+                                        }
+                                        if ((string)args[2] == "symex")
+                                        {
+                                            userColor = new Color32(138, 43, 226, 255);
+                                        }
+                                        if ((string)args[2] == "solace")
+                                        {
+                                            userColor = Color.cyan;
+                                        }
+                                    }
+
+                                    textMesh.color = userColor;
+                                    textMesh.text = ToTitleCase((string)args[2]);
+
+                                    nametags.Add(vrrig, go);
+                                } else
+                                {
+                                    TextMesh textMesh = nametags[vrrig].GetComponent<TextMesh>();
+
+                                    Color userColor = Color.red;
+                                    if (args.Length > 2)
+                                    {
+                                        if ((string)args[2] == "stupid")
+                                        {
+                                            userColor = new Color32(255, 128, 0, 255);
+                                        }
+                                        if ((string)args[2] == "genesis")
+                                        {
+                                            userColor = Color.blue;
+                                        }
+                                        if ((string)args[2] == "steal")
+                                        {
+                                            userColor = Color.gray;
+                                        }
+                                        if ((string)args[2] == "symex")
+                                        {
+                                            userColor = new Color32(138, 43, 226, 255);
+                                        }
+                                    }
+
+                                    textMesh.color = userColor;
+                                    textMesh.text = ToTitleCase((string)args[2]);
+                                }
+                            }
+                            break;
+                    }
+                }
+            }
+            catch { }
+        }
+
+        private static Dictionary<VRRig, GameObject> nametags = new Dictionary<VRRig, GameObject> { };
+        public static void AdminMenuUserTags()
+        {
+            if (PhotonNetwork.InRoom && (!lastInRoom || PhotonNetwork.PlayerList.Length != lastPlayerCount))
+            {
+                PhotonNetwork.RaiseEvent(68, new object[] { "isusing" }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+            }
+            lastInRoom = PhotonNetwork.InRoom;
+            lastPlayerCount = PhotonNetwork.PlayerList.Length;
+            if (!PhotonNetwork.InRoom)
+                lastPlayerCount = -1;
+            
+            foreach (KeyValuePair<VRRig, GameObject> nametag in nametags)
+            {
+                if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
+                {
+                    UnityEngine.Object.Destroy(nametag.Value);
+                    nametags.Remove(nametag.Key);
+                } else
+                {
+                    nametag.Value.GetComponent<TextMesh>().fontStyle = activeFontStyle;
+
+                    nametag.Value.transform.position = nametag.Key.headMesh.transform.position + nametag.Key.headMesh.transform.up * 0.6f;
+                    nametag.Value.transform.LookAt(Camera.main.transform.position);
+                    nametag.Value.transform.Rotate(0f, 180f, 0f);
+                }
+            }
+        }
+
+        public static void DisableAdminMenuUserTags()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> nametag in nametags)
+            {
+                UnityEngine.Object.Destroy(nametag.Value);
+            }
+            nametags.Clear();
         }
 
         public static void JoinGun()
