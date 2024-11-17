@@ -1,5 +1,7 @@
 ﻿using ExitGames.Client.Photon;
+using HarmonyLib;
 using iiMenu.Classes;
+using iiMenu.Patches;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -57,7 +59,7 @@ namespace iiMenu.Mods.Spammers
                 } catch (Exception e) { UnityEngine.Debug.Log(e.Message); }
                 if (projDebounceType > 0f && !nodelay)
                 {
-                    projDebounce = Time.time + projDebounceType + 0.05f;
+                    projDebounce = Time.time + projDebounceType + 0.1f;
                 }
             }
         }
@@ -98,7 +100,12 @@ namespace iiMenu.Mods.Spammers
                 "Lava Rock",
                 "Present",
                 "Mentos",
-                "Fish Food"
+                "Fish Food",
+                "Candy",
+                "Voting Rock",
+                "Bat",
+                "Explosion",
+                "Apple"
             };
 
             projmode++;
@@ -106,6 +113,9 @@ namespace iiMenu.Mods.Spammers
             {
                 projmode = 0;
             }
+
+            SnowballPatch.enabled = projmode == 8 || projmode == 9;
+            SnowballPatch.minusIndex = projmode == 9 ? 2 : 1;
 
             GetIndex("Change Projectile").overlapText = "Change Projectile <color=grey>[</color><color=green>" + shortProjectileNames[projmode] + "</color><color=grey>]</color>";
         }
@@ -168,7 +178,7 @@ namespace iiMenu.Mods.Spammers
                 red = 0f;
             }
 
-            GetIndex("Red").overlapText = "Red <color=grey>[</color><color=green>" + (Mathf.Floor(red * 10f) / 10f).ToString() + "</color><color=grey>]</color>";
+            GetIndex("RedProj").overlapText = "Red <color=grey>[</color><color=green>" + Mathf.Floor(red * 10f).ToString() + "</color><color=grey>]</color>";
         }
 
         public static void IncreaseGreen()
@@ -179,7 +189,7 @@ namespace iiMenu.Mods.Spammers
                 green = 0f;
             }
 
-            GetIndex("Green").overlapText = "Green <color=grey>[</color><color=green>" + (Mathf.Floor(green * 10f) / 10f).ToString() + "</color><color=grey>]</color>";
+            GetIndex("GreenProj").overlapText = "Green <color=grey>[</color><color=green>" + Mathf.Floor(green * 10f).ToString() + "</color><color=grey>]</color>";
         }
 
         public static void IncreaseBlue()
@@ -190,7 +200,7 @@ namespace iiMenu.Mods.Spammers
                 blue = 0f;
             }
 
-            GetIndex("Blue").overlapText = "Blue <color=grey>[</color><color=green>" + (Mathf.Floor(blue * 10f) / 10f).ToString() + "</color><color=grey>]</color>";
+            GetIndex("BlueProj").overlapText = "Blue <color=grey>[</color><color=green>" + Mathf.Floor(blue * 10f).ToString() + "</color><color=grey>]</color>";
         }
 
         public static void ProjectileDelay()
@@ -658,7 +668,7 @@ namespace iiMenu.Mods.Spammers
 
                 if (projDebounceType > 0f)
                 {
-                    projDebounce = Time.time + projDebounceType;
+                    projDebounce = Time.time + projDebounceType + 0.05f;
                 }
             }
 
@@ -802,6 +812,11 @@ namespace iiMenu.Mods.Spammers
                     "LMAHR. RIGHT.",
                     "LMAIF. RIGHT.",
                     "LMAIP. RIGHT.",
+                    "LMAMO. RIGHT.",
+                    "LMAMT. RIGHT.",
+                    "LMAMO. RIGHT.",
+                    "LMAMO. RIGHT.",
+                    "LMAMV."
                 };
                 string lol = InternalProjectileNamesRight[projIndex];
                 
@@ -820,7 +835,7 @@ namespace iiMenu.Mods.Spammers
         {
             if (rightGrab)
             {
-                PaperPlaneThrowable funnyplane = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/TransferrableItemLeftArm/DropZoneAnchor/PaperAirplaneAnchor/LMAHY.").GetComponent<PaperPlaneThrowable>();
+                PaperPlaneThrowable funnyplane = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/TransferrableItemLeftArm/DropZoneAnchor/PaperAirplaneAnchor(Clone)/LMAHY.").GetComponent<PaperPlaneThrowable>();
                 if (Time.time > projDebounce)
                 {
                     projDebounce = Time.time + projDebounceType;
@@ -828,13 +843,9 @@ namespace iiMenu.Mods.Spammers
                     Quaternion rotation = GorillaTagger.Instance.rightHandTransform.rotation;
                     Vector3 velocity = GorillaTagger.Instance.rightHandTransform.forward * (ShootStrength * 2f);
 
-                    typeof(PaperPlaneThrowable).GetMethod("LaunchProjectile", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(funnyplane, new object[] { position, rotation, velocity });
-                    int viewid = UnityEngine.Random.Range(-2147483647, 2147483647);
-                    FieldInfo lol = typeof(PaperPlaneThrowable).GetField("gLaunchRPC", BindingFlags.NonPublic | BindingFlags.Static);
-                    PhotonEvent lol2 = (PhotonEvent)lol.GetValue(funnyplane);
-                    lol2.RaiseOthers(new object[]
+                    ((PhotonEvent)Traverse.Create(funnyplane).Field("gLaunchRPC").GetValue()).RaiseAll(new object[]
                     {
-                        viewid,
+                        GorillaTagger.Instance.myVRRig.ViewID,
                         position,
                         rotation,
                         velocity
@@ -847,7 +858,7 @@ namespace iiMenu.Mods.Spammers
         {
             if (rightGrab)
             {
-                PaperPlaneThrowable funnyplane = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/TransferrableItemLeftArm/DropZoneAnchor/FireballAnchor/LMAJM.").GetComponent<PaperPlaneThrowable>();
+                PaperPlaneThrowable funnyplane = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/TransferrableItemLeftArm/DropZoneAnchor/FireballAnchor(Clone)/LMAJM.").GetComponent<PaperPlaneThrowable>();
                 if (Time.time > projDebounce)
                 {
                     projDebounce = Time.time + projDebounceType;
@@ -856,12 +867,11 @@ namespace iiMenu.Mods.Spammers
                     Vector3 velocity = GorillaTagger.Instance.rightHandTransform.forward * (ShootStrength * 2f);
 
                     typeof(PaperPlaneThrowable).GetMethod("LaunchProjectile", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(funnyplane, new object[] { position, rotation, velocity });
-                    int viewid = UnityEngine.Random.Range(-2147483647,2147483647);
                     FieldInfo lol = typeof(PaperPlaneThrowable).GetField("gLaunchRPC", BindingFlags.NonPublic | BindingFlags.Static);
                     PhotonEvent lol2 = (PhotonEvent)lol.GetValue(funnyplane);
                     lol2.RaiseOthers(new object[]
                     {
-                        viewid,
+                        Traverse.Create(typeof(PaperPlaneThrowable)).Method("FetchViewID").GetValue(funnyplane),
                         position,
                         rotation,
                         velocity

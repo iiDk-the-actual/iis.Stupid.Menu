@@ -67,7 +67,8 @@ namespace iiMenu.Mods
 
             string gamemode = PhotonNetworkController.Instance.currentJoinTrigger.networkZone;
 
-            // Good god
+            PhotonNetworkController.Instance.AttemptToJoinPublicRoom(GorillaComputer.instance.GetJoinTriggerForZone(gamemode), JoinType.Solo);
+            /*
             switch (gamemode)
             {
                 case "forest":
@@ -106,8 +107,7 @@ namespace iiMenu.Mods
                 case "caves":
                     GameObject.Find("Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Cave").GetComponent<GorillaNetworkJoinTrigger>().OnBoxTriggered();
                     break;
-            }
-
+            }*/
         }
 
         public static IEnumerator JoinRandomDelay()

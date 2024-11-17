@@ -1,6 +1,6 @@
-﻿using GorillaLocomotion.Gameplay;
+﻿using ExitGames.Client.Photon;
+using GorillaLocomotion.Gameplay;
 using GorillaNetworking;
-using GorillaTag;
 using GorillaTagScripts;
 using GorillaTagScripts.ObstacleCourse;
 using HarmonyLib;
@@ -8,20 +8,18 @@ using iiMenu.Classes;
 using iiMenu.Menu;
 using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
-using Oculus.Platform;
-using OVR;
 using Photon.Pun;
-using Photon.Realtime;
 using Photon.Voice.Unity;
 using Photon.Voice.Unity.UtilityScripts;
 using POpusCodec.Enums;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Valve.VR.InteractionSystem;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -114,17 +112,37 @@ namespace iiMenu.Mods
 
         public static void SpinHeadX()
         {
-            GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.x += 10f;
+            if (GorillaTagger.Instance.offlineVRRig.enabled)
+            {
+                GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.x += 10f;
+            } else
+            {
+                GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = Quaternion.Euler(GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation.eulerAngles + new Vector3(10f, 0f, 0f));
+            }
         }
 
         public static void SpinHeadY()
         {
-            GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.y += 10f;
+            if (GorillaTagger.Instance.offlineVRRig.enabled)
+            {
+                GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.y += 10f;
+            }
+            else
+            {
+                GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = Quaternion.Euler(GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation.eulerAngles + new Vector3(0f, 10f, 0f));
+            }
         }
 
         public static void SpinHeadZ()
         {
-            GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.z += 10f;
+            if (GorillaTagger.Instance.offlineVRRig.enabled)
+            {
+                GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.z += 10f;
+            }
+            else
+            {
+                GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = Quaternion.Euler(GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation.eulerAngles + new Vector3(0f, 0f, 10f));
+            }
         }
 
         public static void FlipHands()
@@ -604,6 +622,7 @@ namespace iiMenu.Mods
                         {
                             if (line.linePlayer == GetPlayerFromVRRig(possibly))
                             {
+                                muteDelay = Time.time + 0.5f;
                                 line.PressButton(!line.muteButton.isOn, GorillaPlayerLineButton.ButtonType.Mute);
                             }
                         }
@@ -616,7 +635,7 @@ namespace iiMenu.Mods
         {
             foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
             {
-                if (!line.muteButton.isOn)
+                if (!line.muteButton.isAutoOn)
                 {
                     line.PressButton(true, GorillaPlayerLineButton.ButtonType.Mute);
                 }
@@ -627,7 +646,7 @@ namespace iiMenu.Mods
         {
             foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
             {
-                if (line.muteButton.isOn)
+                if (line.muteButton.isAutoOn)
                 {
                     line.PressButton(false, GorillaPlayerLineButton.ButtonType.Mute);
                 }
@@ -1274,44 +1293,39 @@ namespace iiMenu.Mods
             }
         }
 
+        private static float lastReceivedTime = 0f;
+        private static List<BuilderPiece> archivepiecesfiltered = new List<BuilderPiece>() { };
+        public static BuilderPiece[] GetPiecesFiltered()
+        {
+            if (Time.time > lastReceivedTime)
+            {
+                archivepiecesfiltered = null;
+                lastReceivedTime = Time.time + 5f;
+            }
+            if (archivepiecesfiltered == null)
+            {
+                archivepiecesfiltered = new List<BuilderPiece>() { };
+                foreach (BuilderPiece piece in GetPieces())
+                {
+                    if (piece.pieceType > 0)
+                    {
+                        archivepiecesfiltered.Add(piece);
+                    }
+                }
+            }
+            return archivepieces.ToArray();
+        }
+
         private static float blockDelay = 0f;
-        public static void BetaDropBlock(BuilderPiece piece, Vector3 pos, Quaternion rot, Vector3 vel, Vector3 angvel)
+        public static void BetaDropBlock(BuilderPiece piece, Vector3 pos, Quaternion rot)
         {
             if (Time.time > blockDelay)
             {
-                BuilderTable.instance.DropPiece(piece.pieceId, pos, rot, vel, angvel, PhotonNetwork.LocalPlayer, true);
-                BuilderTableNetworking.instance.GetView.RPC("RequestDropPieceRPC", RpcTarget.MasterClient, new object[] { piece.pieceId, pos, rot, vel, angvel, PhotonNetwork.LocalPlayer });
+                BuilderTable.instance.RequestCreatePiece(piece.pieceType, pos, rot, piece.materialType);
                 RPCProtection();
                 blockDelay = Time.time + 0.1f;
             }
         }
-        public static void BetaDropBlock(int pieceId, Vector3 pos, Quaternion rot, Vector3 vel, Vector3 angvel)
-        {
-            if (Time.time > blockDelay)
-            {
-                BuilderTable.instance.DropPiece(pieceId, pos, rot, vel, angvel, PhotonNetwork.LocalPlayer, true);
-                BuilderTableNetworking.instance.GetView.RPC("RequestDropPieceRPC", RpcTarget.MasterClient, new object[] { pieceId, pieceId, pos, rot, vel, angvel, PhotonNetwork.LocalPlayer });
-                RPCProtection();
-                blockDelay = Time.time + 0.1f;
-            }
-        }
-        public static void BetaDropBlock(object[] args)
-        {
-            if (Time.time > blockDelay)
-            {
-                int pieceId = (int)args[0];
-                Vector3 pos = (Vector3)args[1];
-                Quaternion rot = (Quaternion)args[2];
-                Vector3 vel = (Vector3)args[3];
-                Vector3 angvel = (Vector3)args[4];
-
-                BuilderTable.instance.DropPiece(pieceId, pos, rot, vel, angvel, PhotonNetwork.LocalPlayer, true);
-                BuilderTableNetworking.instance.GetView.RPC("RequestDropPieceRPC", RpcTarget.MasterClient, new object[] { pieceId, pos, rot, vel, angvel, PhotonNetwork.LocalPlayer });
-                RPCProtection();
-                blockDelay = Time.time + 0.1f;
-            }
-        }
-
         
         public static void BlocksGun()
         {
@@ -1323,9 +1337,8 @@ namespace iiMenu.Mods
 
                 if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
                 {
-                    BuilderPiece[] them = GetPieces();
-                    BuilderPiece that = GetPieces()[UnityEngine.Random.Range(0, GetPieces().Length - 1)];
-                    BetaDropBlock(new object[] { that.pieceId, NewPointer.transform.position + new Vector3(0f, 1f, 0f), Quaternion.identity, Vector3.zero, new Vector3(UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f)), PhotonNetwork.LocalPlayer });
+                    BuilderPiece that = GetBlocks("snappiececolumn01")[0];
+                    BetaDropBlock(that, NewPointer.transform.position + new Vector3(0f, 1f, 0f), Quaternion.identity);
                     RPCProtection();
                 }
             }
@@ -1460,52 +1473,13 @@ namespace iiMenu.Mods
             }
         }
 
-        private static bool imkillingmyself = false;
-        private static List<int> last = new List<int> { };
-        public static void FreezeBlocks()
-        {
-            if (rightGrab)
-            {
-                imkillingmyself = !imkillingmyself;
-                ControllerInputPoller.instance.rightControllerGripFloat = imkillingmyself ? 1f : 0f;
-                BuilderPiece[] them = GetPieces();
-                int index = UnityEngine.Random.Range(0, them.Length - 1);
-                int index2 = 0;
-                foreach (BuilderPiece block in them)
-                {
-                    if (!block.isBuiltIntoTable)
-                    {
-                        if (last.Contains(index2))
-                        {
-                            try
-                            {
-                                block.SetKinematic(true);
-                            } catch { }
-                            last.Remove(index2);
-                        }
-                        else
-                        {
-                            if (index2 == index && Time.time > blockDelay)
-                            {
-                                blockDelay = Time.time + 0.1f;
-                                last.Add(index2);
-                                block.transform.position = GorillaTagger.Instance.rightHandTransform.position;
-                            }
-                        }
-
-                    }
-                    index2++;
-                }
-            }
-        }
-
         public static void SpamGrabBlocks()
         {
             if (rightGrab)
             {
-                BuilderPiece[] them = GetPieces();
-                BuilderPiece that = GetPieces()[UnityEngine.Random.Range(0, GetPieces().Length - 1)];
-                BetaDropBlock(new object[] { that.pieceId, GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), PhotonNetwork.LocalPlayer });
+                BuilderPiece that = GetBlocks("snappiececolumn01")[0];
+                UnityEngine.Debug.Log(that.pieceType);
+                BetaDropBlock(that, GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation);
                 RPCProtection();
             }
         }
@@ -1539,39 +1513,50 @@ namespace iiMenu.Mods
                 }
             }
         }
-        
+
         public static void DestroyBlocks()
         {
-            BuilderPiece[] them = GetPieces();
-            BuilderPiece that = GetPieces()[UnityEngine.Random.Range(0, GetPieces().Length - 1)];
-            BetaDropBlock(new object[] { that.pieceId, new Vector3(99999f, 99999f, 99999f), Quaternion.identity, new Vector3(99999f, 99999f, 99999f), new Vector3(0f, 0f, 0f), PhotonNetwork.LocalPlayer });
-            RPCProtection();
+            foreach (BuilderPiece piece in GetPieces())
+            {
+                if (piece.gameObject.activeSelf)
+                    BuilderTable.instance.RequestRecyclePiece(piece, true, 2);
+            }
         }
 
-        public static void ShootBuildingBlocks()
+        private static float dumbdelay = 0f;
+        public static void DestroyBlockGun()
         {
-            if (rightGrab)
+            if (rightGrab || Mouse.current.rightButton.isPressed)
             {
-                BuilderPiece[] them = GetPieces();
-                BuilderPiece that = GetPieces()[UnityEngine.Random.Range(0, GetPieces().Length - 1)];
-                BetaDropBlock(new object[] { that.pieceId, GorillaTagger.Instance.rightHandTransform.position, Quaternion.identity, GorillaTagger.Instance.rightHandTransform.forward * ShootStrength, new Vector3(UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f)), PhotonNetwork.LocalPlayer });
-                RPCProtection();
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                {
+                    BuilderPiece possibly = Ray.collider.GetComponentInParent<BuilderPiece>();
+                    if (possibly && Time.time > dumbdelay)
+                    {
+                        dumbdelay = Time.time + 0.1f;
+                        BuilderTable.instance.RequestRecyclePiece(possibly, true, 2);
+                        RPCProtection();
+                    }
+                }
             }
+            //RPCProtection();
         }
 
         public static void BuildingBlockAura()
         {
-            BuilderPiece[] them = GetPieces();
-            BuilderPiece that = GetPieces()[UnityEngine.Random.Range(0, GetPieces().Length - 1)];
-            BetaDropBlock(new object[] { that.pieceId, GorillaTagger.Instance.offlineVRRig.transform.position + new Vector3(UnityEngine.Random.Range(-1.5f, 1.5f), UnityEngine.Random.Range(-0.5f, 1.5f), UnityEngine.Random.Range(-1.5f, 1.5f)), Quaternion.identity, Vector3.zero, new Vector3(UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f)), PhotonNetwork.LocalPlayer });
+            BuilderPiece that = GetBlocks("snappiececolumn01")[0];
+            BetaDropBlock(that, GorillaTagger.Instance.offlineVRRig.transform.position + new Vector3(UnityEngine.Random.Range(-1.5f, 1.5f), UnityEngine.Random.Range(-0.5f, 1.5f), UnityEngine.Random.Range(-1.5f, 1.5f)), Quaternion.identity);
             RPCProtection();
         }
 
         public static void RainBuildingBlocks()
         {
-            BuilderPiece[] them = GetPieces();
-            BuilderPiece that = GetPieces()[UnityEngine.Random.Range(0, GetPieces().Length - 1)];
-            BetaDropBlock(new object[] { that.pieceId, GorillaTagger.Instance.offlineVRRig.transform.position + new Vector3(UnityEngine.Random.Range(-3f, 3f), 4f, UnityEngine.Random.Range(-3f, 3f)), Quaternion.identity, Vector3.zero, new Vector3(UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f)), PhotonNetwork.LocalPlayer });
+            BuilderPiece that = GetBlocks("snappiececolumn01")[0];
+            BetaDropBlock(that, GorillaTagger.Instance.offlineVRRig.transform.position + new Vector3(UnityEngine.Random.Range(-3f, 3f), 4f, UnityEngine.Random.Range(-3f, 3f)), Quaternion.identity);
             RPCProtection();
         }
 
@@ -1603,14 +1588,6 @@ namespace iiMenu.Mods
                     glider.OnHover(null, null);
                 }
             }
-        }
-
-        public static void SpazBuildingBlocks()
-        {
-            BuilderPiece[] them = GetPieces();
-            BuilderPiece that = GetPieces()[UnityEngine.Random.Range(0, GetPieces().Length - 1)];
-            BetaDropBlock(new object[] { that.pieceId, that.transform.position, Quaternion.Euler(new Vector3(UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f))), Vector3.zero, new Vector3(UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f)), PhotonNetwork.LocalPlayer });
-            RPCProtection();
         }
 
         public static void BugHalo()
@@ -1652,9 +1629,8 @@ namespace iiMenu.Mods
 
         public static void OrbitBlocks()
         {
-            BuilderPiece[] them = GetPieces();
-            BuilderPiece that = GetPieces()[UnityEngine.Random.Range(0, GetPieces().Length - 1)];
-            BetaDropBlock(new object[] { that.pieceId, GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos((float)Time.frameCount / 30), 0f, MathF.Sin((float)Time.frameCount / 30)), Quaternion.identity, Vector3.zero, new Vector3(UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f), UnityEngine.Random.Range(-360f, 360f)), PhotonNetwork.LocalPlayer });
+            BuilderPiece that = GetBlocks("snappiececolumn01")[0];
+            BetaDropBlock(that, GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos((float)Time.frameCount / 30), 0f, MathF.Sin((float)Time.frameCount / 30)), Quaternion.identity);
             RPCProtection();
         }
 
@@ -1710,6 +1686,402 @@ namespace iiMenu.Mods
         {
             BuilderPieceInteractor.instance.handState[1] = BuilderPieceInteractor.HandState.Empty;
             BuilderPieceInteractor.instance.heldPiece[1] = null;
+        }
+
+        /*
+        public static void PieceNameHelper()
+        {
+            if (BuilderPieceInteractor.instance.handState[1] == BuilderPieceInteractor.HandState.Grabbed)
+                NotifiLib.SendNotification(BuilderPieceInteractor.instance.heldPiece[1].name + " type " + BuilderPieceInteractor.instance.heldPiece[1].pieceType);
+        }*/
+
+        public static int pieceId = -1;
+        public static IEnumerator CreateGetPiece(int pieceType, Action<BuilderPiece> onComplete)
+        {
+            BuilderPiece target = null;
+
+            Patches.CreatePatch.enabled = true;
+            Patches.CreatePatch.pieceTypeSearch = pieceType;
+
+            yield return null;
+
+            BuilderTable.instance.RequestCreatePiece(pieceType, GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 1f, 0f), Quaternion.identity, 0);
+
+            while (pieceId < 0)
+            {
+                yield return null;
+            }
+            yield return null;
+
+            target = BuilderTable.instance.GetPiece(pieceId);
+            pieceId = -1;
+            Patches.CreatePatch.enabled = false;
+            Patches.CreatePatch.pieceTypeSearch = 0;
+
+            onComplete?.Invoke(target); // so bad
+        }
+
+        public static IEnumerator CreateShotgun()
+        {
+            BuilderPiece basea = null;
+
+            yield return CreateGetPiece(-1927069002, piece =>
+            {
+                basea = piece;
+            });
+            while (basea == null)
+            {
+                yield return null;
+            }
+
+            BuilderTable.instance.RequestGrabPiece(basea, false, Vector3.zero, Quaternion.identity);
+            yield return null;
+            
+            BuilderPieceInteractor.instance.handState[1] = BuilderPieceInteractor.HandState.Empty;
+            BuilderPieceInteractor.instance.heldPiece[1] = null;
+            yield return null;
+
+            BuilderPiece base2a = null;
+
+            yield return CreateGetPiece(-1621444201, piece =>
+            {
+                base2a = piece;
+
+            });
+            while (base2a == null)
+            {
+                yield return null;
+            }
+
+            BuilderTable.instance.RequestGrabPiece(base2a, false, Vector3.zero, Quaternion.identity);
+            yield return null;
+            BuilderTable.instance.RequestPlacePiece(base2a, base2a, 0, 0, 0, basea, 1, 0);
+            yield return null;
+
+            BuilderPiece slopea = null;
+
+            yield return CreateGetPiece(-993249117, piece =>
+            {
+                slopea = piece;
+
+            });
+            while (slopea == null)
+            {
+                yield return null;
+            }
+
+            BuilderTable.instance.RequestGrabPiece(slopea, false, Vector3.zero, Quaternion.identity);
+            yield return null;
+            BuilderTable.instance.RequestPlacePiece(slopea, slopea, 0, 0, 2, base2a, 1, 0);
+            yield return null;
+
+            BuilderPiece trigger = null;
+
+            yield return CreateGetPiece(251444537, piece =>
+            {
+                trigger = piece;
+
+            });
+            while (slopea == null)
+            {
+                yield return null;
+            }
+
+            BuilderTable.instance.RequestGrabPiece(trigger, false, Vector3.zero, Quaternion.identity);
+            yield return null;
+            BuilderTable.instance.RequestPlacePiece(trigger, trigger, -1, -2, 3, slopea, 1, 0);
+            yield return null;
+
+            BuilderPiece slopeb = null;
+
+            yield return CreateGetPiece(-993249117, piece =>
+            {
+                slopeb = piece;
+            });
+            while (slopeb == null)
+            {
+                yield return null;
+            }
+
+            BuilderTable.instance.RequestGrabPiece(slopeb, false, Vector3.zero, Quaternion.identity);
+            yield return null;
+            BuilderTable.instance.RequestPlacePiece(basea, trigger, 0, -2, 3, slopeb, 1, 0);
+            yield return null;
+
+            BuilderPiece base2b = null;
+
+            yield return CreateGetPiece(-1621444201, piece =>
+            {
+                base2b = piece;
+            });
+            while (base2b == null)
+            {
+                yield return null;
+            }
+
+            BuilderTable.instance.RequestGrabPiece(base2b, false, Vector3.zero, Quaternion.identity);
+            yield return null;
+            BuilderTable.instance.RequestPlacePiece(slopeb, slopeb, 0, 0, 2, base2b, 1, 0);
+            yield return null;
+
+            BuilderPiece baseb = null;
+
+            yield return CreateGetPiece(-1927069002, piece =>
+            {
+                baseb = piece;
+            });
+            while (baseb == null)
+            {
+                yield return null;
+            }
+
+            BuilderTable.instance.RequestGrabPiece(baseb, false, Vector3.zero, Quaternion.identity);
+            yield return null;
+            BuilderTable.instance.RequestPlacePiece(base2b, base2b, 0, 0, 0, baseb, 1, 0);
+            yield return null;
+
+            BuilderPiece minislopeb = null;
+
+            yield return CreateGetPiece(1700655257, piece =>
+            {
+                minislopeb = piece;
+            });
+            while (minislopeb == null)
+            {
+                yield return null;
+            }
+
+            BuilderTable.instance.RequestGrabPiece(minislopeb, false, Vector3.zero, Quaternion.identity);
+            yield return null;
+            BuilderTable.instance.RequestPlacePiece(baseb, slopea, 0, -3, 2, minislopeb, 2, 0);
+            yield return null;
+
+            BuilderPiece minislopea = null;
+
+            yield return CreateGetPiece(1700655257, piece =>
+            {
+                minislopea = piece;
+            });
+            while (minislopea == null)
+            {
+                yield return null;
+            }
+
+            BuilderTable.instance.RequestGrabPiece(minislopea, false, Vector3.zero, Quaternion.identity);
+            yield return null;
+            BuilderTable.instance.RequestPlacePiece(minislopeb, slopeb, 0, -3, 2, minislopea, 2, 0);
+            yield return null;
+
+            BuilderPiece minislope2a = null;
+
+            yield return CreateGetPiece(1700655257, piece =>
+            {
+                minislope2a = piece;
+            });
+            while (minislope2a == null)
+            {
+                yield return null;
+            }
+
+            BuilderTable.instance.RequestGrabPiece(minislope2a, false, Vector3.zero, Quaternion.identity);
+            yield return null;
+            BuilderTable.instance.RequestPlacePiece(minislopea, minislopeb, 0, 0, 2, minislope2a, 1, 0);
+            yield return null;
+
+            BuilderPiece minislope2b = null;
+
+            yield return CreateGetPiece(1700655257, piece =>
+            {
+                minislope2b = piece;
+            });
+            while (minislope2b == null)
+            {
+                yield return null;
+            }
+
+            BuilderTable.instance.RequestGrabPiece(minislope2b, false, Vector3.zero, Quaternion.identity);
+            yield return null;
+            BuilderTable.instance.RequestPlacePiece(minislope2a, minislopea, 0, 0, 2, minislope2b, 1, 0);
+            yield return null;
+
+            BuilderPiece flatthinga = null;
+
+            yield return CreateGetPiece(477262573, piece =>
+            {
+                flatthinga = piece;
+            });
+            while (flatthinga == null)
+            {
+                yield return null;
+            }
+
+            BuilderTable.instance.RequestGrabPiece(flatthinga, false, Vector3.zero, Quaternion.identity);
+            yield return null;
+            BuilderTable.instance.RequestPlacePiece(minislope2b, minislope2b, 0, -1, 2, flatthinga, 2, 0);
+            yield return null;
+
+            BuilderPiece flatthingb = null;
+
+            yield return CreateGetPiece(477262573, piece =>
+            {
+                flatthingb = piece;
+            });
+            while (flatthingb == null)
+            {
+                yield return null;
+            }
+
+            BuilderTable.instance.RequestGrabPiece(flatthingb, false, Vector3.zero, Quaternion.identity);
+            yield return null;
+            BuilderTable.instance.RequestPlacePiece(flatthinga, minislope2a, 0, -1, 2, flatthingb, 2, 0);
+            yield return null;
+
+            BuilderPiece connectorthinga = null;
+
+            yield return CreateGetPiece(251444537, piece =>
+            {
+                connectorthinga = piece;
+            });
+            while (connectorthinga == null)
+            {
+                yield return null;
+            }
+
+            BuilderTable.instance.RequestGrabPiece(connectorthinga, false, Vector3.zero, Quaternion.identity);
+            yield return null;
+            BuilderTable.instance.RequestPlacePiece(flatthingb, flatthinga, -1, 1, 3, connectorthinga, 1, 0);
+            yield return null;
+
+            BuilderPiece connectorthingb = null;
+
+            yield return CreateGetPiece(661312857, piece =>
+            {
+                connectorthingb = piece;
+            });
+            while (connectorthingb == null)
+            {
+                yield return null;
+            }
+
+            BuilderTable.instance.RequestGrabPiece(connectorthingb, false, Vector3.zero, Quaternion.identity);
+            yield return null;
+            BuilderTable.instance.RequestPlacePiece(connectorthinga, connectorthinga, -1, 0, 1, connectorthingb, 1, 0);
+            yield return null;
+
+            BuilderPiece connectorthingc = null;
+
+            yield return CreateGetPiece(661312857, piece =>
+            {
+                connectorthingc = piece;
+            });
+            while (connectorthingc == null)
+            {
+                yield return null;
+            }
+
+            BuilderTable.instance.RequestGrabPiece(connectorthingc, false, Vector3.zero, Quaternion.identity);
+            yield return null;
+            BuilderTable.instance.RequestPlacePiece(connectorthingb, connectorthinga, 0, 0, 1, connectorthingc, 1, 0);
+            yield return null;
+
+            BuilderPiece barrela = null;
+
+            yield return CreateGetPiece(661312857, piece =>
+            {
+                barrela = piece;
+            });
+            while (barrela == null)
+            {
+                yield return null;
+            }
+
+            BuilderTable.instance.RequestGrabPiece(barrela, false, Vector3.zero, Quaternion.identity);
+            yield return null;
+            BuilderTable.instance.RequestPlacePiece(connectorthingc, connectorthingb, 0, 0, 1, barrela, 1, 0);
+            yield return null;
+
+            BuilderPiece barrelb = null;
+
+            yield return CreateGetPiece(661312857, piece =>
+            {
+                barrelb = piece;
+            });
+            while (barrelb == null)
+            {
+                yield return null;
+            }
+
+            BuilderTable.instance.RequestGrabPiece(barrelb, false, Vector3.zero, Quaternion.identity);
+            yield return null;
+            BuilderTable.instance.RequestPlacePiece(barrela, barrela, 0, 0, 2, barrelb, 1, 0);
+            yield return null;
+
+            BuilderPiece scope = null;
+
+            yield return CreateGetPiece(-648273975, piece =>
+            {
+                scope = piece;
+            });
+            while (scope == null)
+            {
+                yield return null;
+            }
+
+            BuilderTable.instance.RequestGrabPiece(scope, false, Vector3.zero, Quaternion.identity);
+            yield return null;
+            BuilderTable.instance.RequestPlacePiece(barrelb, minislope2a, -2, 1, 3, scope, 1, 0);
+            yield return null;
+            BuilderTable.instance.RequestDropPiece(scope, GorillaTagger.Instance.rightHandTransform.position, Quaternion.identity, Vector3.zero, Vector3.zero);
+            yield return null;
+            // pos is forward/back, left/right, up/down
+            BuilderTable.instance.RequestGrabPiece(basea, false, new Vector3(-0.2f, 0.01f, -0.3f), new Quaternion(0f, 0.1f, 0.75f, -0.6f));
+            yield return null;
+        }
+
+        private static bool isFiring = false;
+        public static IEnumerator FireShotgun()
+        {
+            isFiring = true;
+
+            if (!File.Exists("iisStupidMenu/shotgun.wav"))
+                LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/refs/heads/main/shotgun.wav", "shotgun.wav");
+
+            iiMenu.Mods.Spammers.Sound.PlayAudio("shotgun.wav");
+
+            BuilderPiece bullet = null;
+
+            yield return CreateGetPiece(1925587737, piece =>
+            {
+                bullet = piece;
+            });
+            while (bullet == null)
+            {
+                yield return null;
+            }
+
+            BuilderTable.instance.RequestGrabPiece(bullet, true, Vector3.zero, Quaternion.identity);
+            yield return null;
+            BuilderTable.instance.RequestDropPiece(bullet, TrueRightHand().position + TrueRightHand().forward * 0.65f + TrueRightHand().right * 0.03f + TrueRightHand().up * 0.05f, TrueRightHand().rotation, TrueRightHand().forward * 19.9f, Vector3.zero);
+            yield return null;
+
+            isFiring = false;
+        }
+
+        private static bool lastgripcrap = false;
+        private static bool lasttrigcrap = false;
+        public static void Shotgun()
+        {
+            if (isFiring)
+                ControllerInputPoller.instance.leftControllerGripFloat = 1f;
+
+            if (rightGrab && !lastgripcrap)
+                CoroutineManager.RunCoroutine(CreateShotgun());
+
+            if (rightGrab && (rightTrigger > 0.5f && !lasttrigcrap))
+                CoroutineManager.RunCoroutine(FireShotgun());
+
+            lastgripcrap = rightGrab;
+            lasttrigcrap = rightTrigger > 0.5f;
         }
 
         public static void SlowMonsters()
@@ -1801,25 +2173,66 @@ namespace iiMenu.Mods
             }
         }
 
-        private static List<BuilderPiece> treees = new List<BuilderPiece> { };
-        public static void GetTrees()
+        public static List<BuilderPiece> GetBlocks(string blockname)
         {
-            treees.Clear();
-            foreach (BuilderPiece lol in GetPieces())
+            List<BuilderPiece> blocks = new List<BuilderPiece> { };
+
+            foreach (BuilderPiece lol in GetPiecesFiltered())
             {
-                if (lol.name.ToLower().Contains("tree"))
+                if (lol.name.ToLower().Contains(blockname))
                 {
-                    treees.Add(lol);
+                    blocks.Add(lol);
                 }
             }
+
+            return blocks;
         }
 
-        public static void GrabTree()
+        public static void GrabBallistas()
         {
             if (rightGrab && Time.time > blockDelay)
             {
                 blockDelay = Time.time + 0.1f;
-                BuilderTable.instance.RequestGrabPiece(treees[UnityEngine.Random.Range(0, treees.Count - 1)], false, Vector3.zero, Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360))));
+
+                BuilderPiece door = GetBlocks("ballista")[0];
+                BuilderTable.instance.RequestCreatePiece(door.pieceType, GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, door.materialType);
+                RPCProtection();
+            }
+        }
+
+        private static List<BuilderPiece> potentialgrabbedpieces = new List<BuilderPiece> { };
+        public static void GrabAllBlocksNearby()
+        {
+            if (rightGrab && Time.time > blockDelay)
+            {
+                blockDelay = Time.time + 0.25f;
+                int amnt = 0;
+                foreach (BuilderPiece piece in GetPieces())
+                {
+                    if (Vector3.Distance(piece.transform.position, GorillaTagger.Instance.rightHandTransform.position) < 2.5f)
+                    {
+                        if (!potentialgrabbedpieces.Contains(piece))
+                        {
+                            amnt++;
+                            if (amnt < 8)
+                            {
+                                BuilderTable.instance.RequestGrabPiece(piece, false, Vector3.zero, Quaternion.identity);
+                                potentialgrabbedpieces.Add(piece);
+                            }
+                        }
+                    }
+                }
+                RPCProtection();
+            }
+            if (rightTrigger > 0.5f && Time.time > blockDelay)
+            {
+                blockDelay = Time.time + 0.25f;
+                foreach (BuilderPiece piece in potentialgrabbedpieces)
+                {
+                    BuilderTable.instance.RequestDropPiece(piece, GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, new Vector3(UnityEngine.Random.Range(-19f, 19f), UnityEngine.Random.Range(-19f, 19f), UnityEngine.Random.Range(-19f, 19f)), new Vector3(UnityEngine.Random.Range(-19f, 19f), UnityEngine.Random.Range(-19f, 19f), UnityEngine.Random.Range(-19f, 19f)));
+                }
+                potentialgrabbedpieces.Clear();
+                RPCProtection();
             }
         }
 
@@ -2503,10 +2916,12 @@ namespace iiMenu.Mods
             return tryonarchive.ToArray();
         }
 
+        private static float delay = 0f;
         public static void SpazAccessories()
         {
-            if (rightTrigger > 0.5f)
+            if (rightTrigger > 0.5f && Time.time > delay)
             {
+                delay = Time.time + 0.05f;
                 string[] owned = GorillaTagger.Instance.offlineVRRig.inTryOnRoom ? GetTryOnCosmetics() : GetOwnedCosmetics();
                 int amnt = Math.Clamp(owned.Length, 0, 15);
                 if (amnt > 0)
@@ -2534,8 +2949,9 @@ namespace iiMenu.Mods
 
         public static void SpazAccessoriesOthers()
         {
-            if (rightTrigger > 0.5f)
+            if (rightTrigger > 0.5f && Time.time > delay)
             {
+                delay = Time.time + 0.05f;
                 string[] owned = GorillaTagger.Instance.offlineVRRig.inTryOnRoom ? GetTryOnCosmetics() : GetOwnedCosmetics();
                 int amnt = Math.Clamp(owned.Length, 0, 15);
                 if (amnt > 0)

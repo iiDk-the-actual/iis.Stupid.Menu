@@ -83,7 +83,7 @@ namespace iiMenu.Mods
         }
 
         public static int antireportrangeindex = 0;
-        private static float threshold = 0.35f;
+        public static float threshold = 0.35f;
 
         public static void ChangeAntiReportRange()
         {
@@ -109,7 +109,7 @@ namespace iiMenu.Mods
             GetIndex("carrg").overlapText = "Change Anti Report Distance <color=grey>[</color><color=green>" + names[antireportrangeindex] + "</color><color=grey>]</color>";
         }
 
-        private static bool smartarp = false;
+        public static bool smartarp = false;
 
         public static void SmartAntiReport()
         {

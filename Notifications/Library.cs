@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -56,6 +57,7 @@ namespace iiMenu.Notifications
             Testtext.font = agency;
             Testtext.rectTransform.sizeDelta = new Vector2(450f, 210f);
             Testtext.alignment = TextAnchor.LowerLeft;
+            Testtext.verticalOverflow = VerticalWrapMode.Overflow;
             Testtext.rectTransform.localScale = new Vector3(0.00333333333f, 0.00333333333f, 0.33333333f);
             Testtext.rectTransform.localPosition = new Vector3(-1f, -1f, -0.5f);
             Testtext.material = AlertText;
@@ -111,7 +113,16 @@ namespace iiMenu.Notifications
                             {
                                 if (v.enabled)
                                 {
-                                    alphabetized.Add((v.overlapText == null) ? v.buttonText : v.overlapText);
+                                    string buttonText = (v.overlapText == null) ? v.buttonText : v.overlapText;
+                                    if (translate)
+                                    {
+                                        buttonText = TranslateText(buttonText);
+                                    }
+                                    if (lowercaseMode)
+                                    {
+                                        buttonText = buttonText.ToLower();
+                                    }
+                                    alphabetized.Add(buttonText);
                                 }
                             }
                             catch { }
@@ -139,6 +150,7 @@ namespace iiMenu.Notifications
                     ModText.text = ModText.text.ToLower();
                     NotifiText.text = NotifiText.text.ToLower();
                 }
+                HUDObj.layer = GetIndex("Hide Notifications on Camera").enabled ? 19 : 0;
             } catch { /* Game not initialized */ }
         }
 
@@ -158,6 +170,10 @@ namespace iiMenu.Notifications
                         {
                             NotificationText += Environment.NewLine;
                         }
+                        if (translate)
+                        {
+                            NotificationText = TranslateText(NotificationText);
+                        }
                         NotifiLib.NotifiText.text = NotifiLib.NotifiText.text + NotificationText;
                         if (lowercaseMode)
                         {
@@ -167,7 +183,7 @@ namespace iiMenu.Notifications
                         NotifiLib.PreviousNotifi = NotificationText;
                         try
                         {
-                            Task.Delay(clearTime).ContinueWith(t => ClearLast());
+                            CoroutineManager.RunCoroutine(ClearLast());
                         } catch { /* cheeseburger */ }
                     }
                 }
@@ -197,8 +213,9 @@ namespace iiMenu.Notifications
             NotifiLib.NotifiText.text = text;
         }
 
-        public static void ClearLast()
+        public static IEnumerator ClearLast()
         {
+            yield return new WaitForSeconds(1);
             ClearPastNotifications(1);
         }
 

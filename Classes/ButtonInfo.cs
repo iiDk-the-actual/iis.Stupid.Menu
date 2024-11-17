@@ -11,6 +11,7 @@ namespace iiMenu.Classes
         public Action disableMethod = null;
         public bool enabled = false;
         public bool isTogglable = true;
+        public bool label = false;
         public string toolTip = "This button doesn't have a tooltip/tutorial.";
     }
 }

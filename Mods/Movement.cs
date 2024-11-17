@@ -219,6 +219,8 @@ namespace iiMenu.Mods
             return platform;
         }
 
+        public static GameObject leftplat = null;
+        public static GameObject rightplat = null;
         public static void Platforms()
         {
             if (leftGrab)
@@ -688,6 +690,7 @@ namespace iiMenu.Mods
             GetIndex("cdSpeed").overlapText = "Change Drive Speed <color=grey>[</color><color=green>" + speedNames[speedboostCycle] + "</color><color=grey>]</color>";
         }
 
+        public static Vector2 lerpygerpy = Vector2.zero;
         public static void Drive()
         {
             Vector2 joy = SteamVR_Actions.gorillaTag_LeftJoystick2DAxis.axis;
@@ -734,6 +737,12 @@ namespace iiMenu.Mods
             return null;
         }
 
+        public static Vector3 rightgrapplePoint;
+        public static Vector3 leftgrapplePoint;
+        public static SpringJoint rightjoint;
+        public static SpringJoint leftjoint;
+        public static bool isLeftGrappling = false;
+        public static bool isRightGrappling = false;
         public static void SpiderMan()
         {
             if (leftGrab)
@@ -1362,7 +1371,7 @@ namespace iiMenu.Mods
                 new string[] // City
                 {
                     "City",
-                    "Environment Objects/LocalObjects_Prefab/City_WorkingPrefab",
+                    "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/ForestToCity",
                     "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - City Front"
                 },
                 new string[] // Canyons
@@ -1475,6 +1484,7 @@ namespace iiMenu.Mods
             }
         }
 
+        public static GameObject CheckPoint = null;
         public static void Checkpoint()
         {
             if (rightGrab)
@@ -1512,6 +1522,7 @@ namespace iiMenu.Mods
             }
         }
 
+        public static GameObject BombObject = null;
         public static void Bomb()
         {
             if (rightGrab)
@@ -1828,6 +1839,9 @@ namespace iiMenu.Mods
             }
         }
 
+        public static Vector3 offsetLH = Vector3.zero;
+        public static Vector3 offsetRH = Vector3.zero;
+        public static Vector3 offsetH = Vector3.zero;
         public static void EnableSpazRig()
         {
             ghostException = true;
@@ -2343,7 +2357,7 @@ namespace iiMenu.Mods
 
         //private static Traverse minScale = null;
         //private static Traverse maxScale = null;
-        public static void SizeChangerr()
+        public static void SizeChanger()
         {
             //Patches.SizePatch.enabled = true;
             //Patches.SizePatch.overlapSizeChanger = GameObject.Find("Environment Objects/05Maze_PersistentObjects/GuardianZoneManagers/GuardianZoneManager_Forest/GuardianSizeChanger").GetComponent<SizeChanger>();
@@ -2419,6 +2433,7 @@ namespace iiMenu.Mods
             EverythingGrippy = false;
         }
 
+        public static GameObject stickpart = null;
         public static void StickyHands()
         {
             if (stickpart == null)
@@ -2520,6 +2535,9 @@ namespace iiMenu.Mods
             GorillaLocomotion.Player.Instance.slideControl = oldSlide;
         }
 
+        public static Vector3[] lastLeft = new Vector3[] { Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero };
+        public static Vector3[] lastRight = new Vector3[] { Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero };
+
         public static void PunchMod()
         {
             int index = -1;
@@ -2533,7 +2551,7 @@ namespace iiMenu.Mods
                     Vector3 notthem = GorillaTagger.Instance.offlineVRRig.head.rigTarget.position;
                     float distance = Vector3.Distance(they, notthem);
 
-                    if (distance < 0.25)
+                    if (distance < 0.25f)
                     {
                         GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity += Vector3.Normalize(vrrig.rightHandTransform.position - lastRight[index]) * 10f;
                     }
@@ -2542,7 +2560,7 @@ namespace iiMenu.Mods
                     they = vrrig.leftHandTransform.position;
                     distance = Vector3.Distance(they, notthem);
 
-                    if (distance < 0.25)
+                    if (distance < 0.25f)
                     {
                         GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity += Vector3.Normalize(vrrig.leftHandTransform.position - lastLeft[index]) * 10f;
                     }
@@ -2643,6 +2661,21 @@ namespace iiMenu.Mods
             }
         }
 
+        public static bool lasttouchleft = false;
+        public static bool lasttouchright = false;
+        public static void PullMod()
+        {
+            if (((!GorillaLocomotion.Player.Instance.wasLeftHandTouching && lasttouchleft) || (!GorillaLocomotion.Player.Instance.wasRightHandTouching && lasttouchright)) && rightGrab)
+            {
+                Vector3 vel = GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity;
+                GorillaLocomotion.Player.Instance.transform.position += new Vector3(vel.x / 20f, 0f, vel.z / 20f);
+            }
+            lasttouchleft = GorillaLocomotion.Player.Instance.wasLeftHandTouching;
+            lasttouchright = GorillaLocomotion.Player.Instance.wasRightHandTouching;
+        }
+
+        public static GameObject leftThrow = null;
+        public static GameObject rightThrow = null;
         public static void ThrowControllers()
         {
             if (leftPrimary)
@@ -2803,6 +2836,7 @@ namespace iiMenu.Mods
             }
         }
 
+        public static Vector3 longJumpPower = Vector3.zero;
         public static void LongJump()
         {
             if (rightPrimary)
@@ -2906,11 +2940,12 @@ namespace iiMenu.Mods
             GorillaTagger.Instance.bodyCollider.material.dynamicFriction = preFrictiness;
         }
 
+        public static List<ForceVolume> fvol = new List<ForceVolume> { };
         public static void DisableAir()
         {
-            foreach (ForceVolume fv in Resources.FindObjectsOfTypeAll<ForceVolume>())
+            foreach (ForceVolume fv in GetForceVolumes())
             {
-                if (fv.enabled)
+                if (fv.enabled && !fvol.Contains(fv))
                 {
                     fv.enabled = false;
                     fvol.Add(fv);
@@ -2954,6 +2989,7 @@ namespace iiMenu.Mods
             }
         }
 
+        public static GameObject airSwimPart = null;
         public static void AirSwim()
         {
             if (airSwimPart == null)
@@ -3643,9 +3679,16 @@ namespace iiMenu.Mods
 
         public static void SpazHead()
         {
-            GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.x = UnityEngine.Random.Range(0f, 360f);
-            GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.y = UnityEngine.Random.Range(0f, 360f);
-            GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.z = UnityEngine.Random.Range(0f, 360f);
+            if (GorillaTagger.Instance.offlineVRRig.enabled)
+            {
+                GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.x = UnityEngine.Random.Range(0f, 360f);
+                GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.y = UnityEngine.Random.Range(0f, 360f);
+                GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.z = UnityEngine.Random.Range(0f, 360f);
+            }
+            else
+            {
+                GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = Quaternion.Euler(UnityEngine.Random.Range(0f, 360f), UnityEngine.Random.Range(0f, 360f), UnityEngine.Random.Range(0f, 360f));
+            }
         }
 
         public static void RandomSpazHead()

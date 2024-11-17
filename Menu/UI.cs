@@ -97,12 +97,12 @@ namespace iiMenu.UI
                 GUI.color = victimColor;
                 GUI.backgroundColor = victimColor;
 
-                string roomText = "Not connected to room";
+                string roomText = translate ? TranslateText("Not connected to room") : "Not connected to room";
                 try
                 {
                     if (PhotonNetwork.InRoom)
                     {
-                        roomText = "Connected to room "+PhotonNetwork.CurrentRoom.Name;
+                        roomText = (translate ? TranslateText("Connected to room ") : "Connected to room ") + PhotonNetwork.CurrentRoom.Name;
                     }
                 } catch { }
                 GUI.Label(new Rect(10, Screen.height - 35, Screen.width, 40), roomText);
@@ -129,7 +129,7 @@ namespace iiMenu.UI
 
                         GUIStyle style = new GUIStyle(GUI.skin.label);
                         style.alignment = TextAnchor.LowerRight;
-                        GUI.Label(new Rect(Screen.width - 590, Screen.height - 75, 512, 64), "Build "+PluginInfo.Version+"\n"+(serverLink.Replace("https://", "")), style);
+                        GUI.Label(new Rect(Screen.width - 590, Screen.height - 75, 512, 64), (translate ? TranslateText("Build ") : "Build ")+PluginInfo.Version+"\n"+(serverLink.Replace("https://", "")), style);
                     }
                 }
                 catch { }
@@ -209,6 +209,10 @@ namespace iiMenu.UI
                                 if (v.enabled)
                                 {
                                     string toadd = (v.overlapText == null) ? v.buttonText : v.overlapText;
+                                    if (translate)
+                                    {
+                                        toadd = TranslateText(toadd);
+                                    }
                                     if (lowercaseMode)
                                     {
                                         toadd = toadd.ToLower();
