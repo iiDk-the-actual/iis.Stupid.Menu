@@ -2203,31 +2203,19 @@ namespace iiMenu.Mods
             }
         }
 
-        public static List<BuilderPiece> GetBlocks(string blockname)
+        public static List<BuilderPiece> GetBlocks(int blockID)
         {
             List<BuilderPiece> blocks = new List<BuilderPiece> { };
 
             foreach (BuilderPiece lol in GetPiecesFiltered())
             {
-                if (lol.name.ToLower().Contains(blockname))
+                if (lol.pieceType == blockID)
                 {
                     blocks.Add(lol);
                 }
             }
 
             return blocks;
-        }
-
-        public static void GrabBallistas()
-        {
-            if (rightGrab && Time.time > blockDelay)
-            {
-                blockDelay = Time.time + 0.1f;
-
-                BuilderPiece door = GetBlocks("ballista")[0];
-                BuilderTable.instance.RequestCreatePiece(door.pieceType, GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, door.materialType);
-                RPCProtection();
-            }
         }
 
         private static List<BuilderPiece> potentialgrabbedpieces = new List<BuilderPiece> { };
