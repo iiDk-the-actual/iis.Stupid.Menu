@@ -609,6 +609,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Small Building", enableMethod =() => Fun.SmallBuilding(), disableMethod =() => Fun.BigBuilding(), toolTip = "Lets you build in the attic while small."},
                 new ButtonInfo { buttonText = "Multi Grab", method =() => Fun.MultiGrab(), toolTip = "Lets you grab multiple objects."},
 
+                new ButtonInfo { buttonText = "Select Building Block", method =() => Fun.SelectBlock(), toolTip = "<color=green>Grab</color> the Building Block you want to use for other Mods." },
+                new ButtonInfo { buttonText = "Use Selected Block for Shotgun", enableMethod =() => Fun.EnableUseSelectedBlockForShotgun(), disableMethod =() => Fun.DisableUseSelectedBlockForShotgun(), toolTip = "Enable/Disable if you want to use the Selected Block from \"Select Building Block Gun\" as the Building Block Shotgun Bullets"},
+
                 new ButtonInfo { buttonText = "Shotgun <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.Shotgun(), toolTip = "Spawns you a shotgun when you press <color=green>grip</color>."},
 
                 new ButtonInfo { buttonText = "Grab Ballistas <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.GrabBallistas(), toolTip = "Grabs ballistas when holding <color=green>G</color>."},
