@@ -2082,7 +2082,12 @@ namespace iiMenu.Mods
         {
             if (BuilderPieceInteractor.instance.handState[1] == BuilderPieceInteractor.HandState.Grabbed)
             {
-                SelectedBlockID = BuilderPieceInteractor.instance.heldPiece[1].pieceType;
+                if (SelectedBlockID != BuilderPieceInteractor.instance.heldPiece[1].pieceType)
+                {
+                    SelectedBlockID = BuilderPieceInteractor.instance.heldPiece[1].pieceType;
+
+                    NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Selected Block ID: " + SelectedBlockID + "</color>")
+                }
             }
         }
 
