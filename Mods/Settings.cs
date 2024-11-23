@@ -2872,5 +2872,10 @@ namespace iiMenu.Mods
         {
             disableBoardTextColor = false;
         }
+
+        public static void DoNothing()
+        {
+            UnityEngine.Debug.Log("Doing Nothing [iiMenu.Mods.Settings.DoNothing()]");
+        }
     }
 }

@@ -543,7 +543,7 @@ namespace iiMenu.Menu
             new ButtonInfo[] { // Fun Mods [12]
                 new ButtonInfo { buttonText = "Exit Fun Mods", method =() => Settings.ReturnToMain(), isTogglable = false, toolTip = "Returns you back to the main page."},
 
-                new ButtonInfo { buttonText = "Soundboard", method =() => Sound.LoadSoundboard(), isTogglable = false, toolTip = "A working, customizable soundboard that lets you play audios through your microphone."},
+                new ButtonInfo { buttonText = "Soundboard", method =() => Sound.LoadSoundboard(""), isTogglable = false, toolTip = "A working, customizable soundboard that lets you play audios through your microphone."},
 
                 new ButtonInfo { buttonText = "Upside Down Head", method =() => Fun.UpsideDownHead(), disableMethod =() => Fun.FixHead(), toolTip = "Flips your head upside down on the Z axis."},
                 new ButtonInfo { buttonText = "Backwards Head", method =() => Fun.BackwardsHead(), disableMethod =() => Fun.FixHead(), toolTip = "Rotates your head 180 degrees on the Y axis."},
@@ -1005,7 +1005,7 @@ namespace iiMenu.Menu
             },
 
             new ButtonInfo[] { // Sound Library [26]
-                new ButtonInfo { buttonText = "Exit Sound Library", method = () => Sound.LoadSoundboard(), isTogglable = false, toolTip = "Returns you back to the soundboard." }
+                new ButtonInfo { buttonText = "Exit Sound Library", method = () => Sound.LoadSoundboard(""), isTogglable = false, toolTip = "Returns you back to the soundboard." }
             },
 
             new ButtonInfo[] { // Experimental Mods [27]
