@@ -2086,7 +2086,7 @@ namespace iiMenu.Mods
                 {
                     SelectedBlockID = BuilderPieceInteractor.instance.heldPiece[1].pieceType;
 
-                    NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Selected Block ID: " + SelectedBlockID + "</color>")
+                    NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Selected Block ID: " + SelectedBlockID + "</color>");
                 }
             }
         }
