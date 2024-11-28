@@ -16,17 +16,13 @@
 ---
 
 # ii's Stupid Menu
-ii's Stupid Menu is a mod menu for Gorilla Tag, created by iiDk. This menu is designed to be as useful as possible by providing any variety of features and options you would ever need. With ii's Stupid Menu, you can explore new functionalities, experiment with different settings, and enjoy a more personalized modding experience.
-
-## Why make your menu open-sourced?
-I made my menu open-sourced as a resource for anyone interested in learning how to create their own mods for this game. By sharing my work, I want to provide a valuable educational tool for the community, enabling developers of all skill levels to explore, understand, and contribute to the game's modding community. I want modding to go back to how it used to be, with everything free and open-sourced, unlike today, where everything is obfuscated and locked behind paywalls. By making my menu open-sourced, I hope to inspire a return to a more collaborative and accessible modding culture.
-- iidk
+ii's Stupid Menu is a mod menu for Gorilla Tag, created by iiDk. This menu is designed to be as useful as possible by providing any variety of features and options you would ever need. With ii's Stupid Menu, you can explore new functionalities, experiment with different settings, and enjoy a more personalized modding experience. I modified this menu to allow for great pleasure of using this menu without cheating.
 
 ---
 
 # Installation
 
-- Download the release from [here](https://github.com/iiDk-the-actual/iis.Stupid.Menu/releases/latest)
+- Download the release from [here](https://github.com/ciperuoy/Legal.iis.Stupid/releases/latest)
 - Drag the file `iis_Stupid_Menu.dll` to your plugins folder
 - Start Gorilla Tag if needed
 
