@@ -1,4 +1,4 @@
-﻿using BepInEx;
+using BepInEx;
 using ExitGames.Client.Photon;
 using GorillaLocomotion.Gameplay;
 using GorillaNetworking;
@@ -34,7 +34,8 @@ using static iiMenu.Classes.RigManager;
 
 /*
 ii's Stupid Menu, written by @goldentrophy
-Any comments are dev comments I wrote
+Modified by @ciperuoy
+Any comments are dev comments iiDk and ciperuoy wrote.
 Most comments are used to find certain parts of code faster with Ctrl + F
 Feel free to read them if you want
 
@@ -4837,11 +4838,12 @@ namespace iiMenu.Menu
                              |_|                                     
 ";
 
-        public static string motdTemplate = "You are using build {0}. This menu was created by iiDk (@goldentrophy) on discord. " +
+        public static string motdTemplate = "You are using build {0}. This menu was created by iiDk (@goldentrophy) and modified by ciperuoy (@ciperuoy) on discord." +
         "This menu is completely free and open sourced, if you paid for this menu you have been scammed. " +
         "There are a total of <b>{1}</b> mods on this menu. " +
-        "<color=red>I, iiDk, am not responsible for any bans using this menu.</color> " +
-        "If you get banned while using this, it's your responsibility.";
+        "<color=red>iiDk, if you see this, message me if you want this menu taken down." +
+        "If you find issues, please message @ciperuoy on discord" +
+        "<color=blue>github.com/ciperuoy/Legal.iis.Stupid"
 
         public static bool shouldBePC = false;
         public static bool rightPrimary = false;
@@ -5207,3 +5209,4 @@ namespace iiMenu.Menu
         };
     }
 }
+       
