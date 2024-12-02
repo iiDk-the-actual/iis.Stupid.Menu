@@ -629,7 +629,8 @@ namespace iiMenu.Menu
                             }
                         } else
                         {
-                            nextTimeUntilReload = Time.time + 60f;
+                            if (GorillaComputer.instance.isConnectedToMaster)
+                                nextTimeUntilReload = Time.time + 60f;
                         }
                     } catch { }
 
