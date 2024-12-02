@@ -20,6 +20,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.ProBuilder.Shapes;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -388,13 +389,13 @@ namespace iiMenu.Mods
 
         public static void WaterSplashGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     GorillaTagger.Instance.offlineVRRig.enabled = false;
                     GorillaTagger.Instance.offlineVRRig.transform.position = NewPointer.transform.position - new Vector3(0, 1, 0);
@@ -581,6 +582,26 @@ namespace iiMenu.Mods
             lastrhboop = isBoopRight;
         }
 
+        private static bool autoclickstate = false;
+        public static void AutoClicker()
+        {
+            autoclickstate = !autoclickstate;
+            if (leftTrigger > 0.5f)
+            {
+                ControllerInputPoller.instance.leftControllerIndexFloat = autoclickstate ? 1f : 0f;
+
+                GorillaTagger.Instance.offlineVRRig.leftHand.calcT = autoclickstate ? 1f : 0f;
+                GorillaTagger.Instance.offlineVRRig.leftHand.LerpFinger(1f, false);
+            }
+            if (rightTrigger > 0.5f)
+            {
+                ControllerInputPoller.instance.rightControllerIndexFloat = autoclickstate ? 1f : 0f;
+
+                GorillaTagger.Instance.offlineVRRig.rightHand.calcT = autoclickstate ? 1f : 0f;
+                GorillaTagger.Instance.offlineVRRig.rightHand.LerpFinger(1f, false);
+            }
+        }
+
         public static List<object[]> keyLogs = new List<object[]> { };
         public static bool keyboardTrackerEnabled = false;
         public static void KeyboardTracker()
@@ -607,13 +628,13 @@ namespace iiMenu.Mods
         private static float muteDelay = 0f;
         public static void MuteGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > muteDelay)
+                if (GetGunInput(true) && Time.time > muteDelay)
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -663,7 +684,7 @@ namespace iiMenu.Mods
 
         public static void CopyVoiceGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
@@ -677,7 +698,7 @@ namespace iiMenu.Mods
                         GorillaTagger.Instance.myRecorder.AudioClip = clippy;
                     }
                 }
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -926,13 +947,13 @@ namespace iiMenu.Mods
 
         public static void AngerBeesGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     if (!PhotonNetwork.IsMasterClient)
                     {
@@ -1005,13 +1026,13 @@ namespace iiMenu.Mods
 
         public static void StingGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > kgDebounce)
+                if (GetGunInput(true) && Time.time > kgDebounce)
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -1138,13 +1159,13 @@ namespace iiMenu.Mods
         public static void LavaSplashGun()
         {
             GorillaLocomotion.Player.Instance.OnEnterWaterVolume(GorillaLocomotion.Player.Instance.bodyCollider, GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/ILavaYou_PrefabV/Lava/ForestLavaWaterVolume").GetComponent<GorillaLocomotion.Swimming.WaterVolume>());
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     GorillaTagger.Instance.offlineVRRig.enabled = false;
                     GorillaTagger.Instance.offlineVRRig.transform.position = NewPointer.transform.position - new Vector3(0, 1, 0);
@@ -1226,13 +1247,13 @@ namespace iiMenu.Mods
 
         public static void BugGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                         GameObject.Find("Floating Bug Holdable").transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
                 }
@@ -1241,13 +1262,13 @@ namespace iiMenu.Mods
 
         public static void BatGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     GameObject.Find("Cave Bat Holdable").transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
                 }
@@ -1256,13 +1277,13 @@ namespace iiMenu.Mods
 
         public static void BeachBallGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     GameObject.Find("BeachBall").transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
                 }
@@ -1271,13 +1292,13 @@ namespace iiMenu.Mods
 
         public static void GliderGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     foreach (GliderHoldable glider in GetGliders())
                     {
@@ -1316,32 +1337,46 @@ namespace iiMenu.Mods
             return archivepieces.ToArray();
         }
 
+        private static int pieceIdSet = 251444537;
         private static float blockDelay = 0f;
-        public static void BetaDropBlock(BuilderPiece piece, Vector3 pos, Quaternion rot)
-        {
-            if (Time.time > blockDelay)
-            {
-                BuilderTable.instance.RequestCreatePiece(piece.pieceType, pos, rot, piece.materialType);
-                RPCProtection();
-                blockDelay = Time.time + 0.1f;
-            }
-        }
-        
         public static void BlocksGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
-                    BuilderPiece that = GetBlocks("snappiececolumn01")[0];
-                    BetaDropBlock(that, NewPointer.transform.position + new Vector3(0f, 1f, 0f), Quaternion.identity);
+                    BuilderTable.instance.RequestCreatePiece(pieceIdSet, NewPointer.transform.position + new Vector3(0f, 1f, 0f), Quaternion.identity, 0);
                     RPCProtection();
                 }
             }
+        }
+
+        private static float gbgd = 0f;
+        public static void SelectBlockGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    BuilderPiece possibly = Ray.collider.GetComponentInParent<BuilderPiece>();
+                    if (possibly && Time.time > gbgd)
+                    {
+                        gbgd = Time.time + 0.1f;
+                        pieceIdSet = possibly.pieceType;
+                        NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully selected piece " + possibly.name.Replace("(Clone)", "") + "!");
+                        RPCProtection();
+                    }
+                }
+            }
+            //RPCProtection();
         }
 
         public static void NoRespawnBug()
@@ -1376,6 +1411,16 @@ namespace iiMenu.Mods
         public static void PleaseRespawnGliders()
         {
             NoGliderRespawn = false;
+        }
+
+        public static void AntiGrab()
+        {
+            Patches.GrabPatch.enabled = true;
+        }
+
+        public static void AntiGrabDisabled()
+        {
+            Patches.GrabPatch.enabled = false;
         }
 
         public static void FastGliders()
@@ -1477,9 +1522,7 @@ namespace iiMenu.Mods
         {
             if (rightGrab)
             {
-                BuilderPiece that = GetBlocks("snappiececolumn01")[0];
-                UnityEngine.Debug.Log(that.pieceType);
-                BetaDropBlock(that, GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation);
+                BuilderTable.instance.RequestCreatePiece(pieceIdSet, GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, 0);
                 RPCProtection();
             }
         }
@@ -1526,13 +1569,13 @@ namespace iiMenu.Mods
         private static float dumbdelay = 0f;
         public static void DestroyBlockGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     BuilderPiece possibly = Ray.collider.GetComponentInParent<BuilderPiece>();
                     if (possibly && Time.time > dumbdelay)
@@ -1548,15 +1591,13 @@ namespace iiMenu.Mods
 
         public static void BuildingBlockAura()
         {
-            BuilderPiece that = GetBlocks("snappiececolumn01")[0];
-            BetaDropBlock(that, GorillaTagger.Instance.offlineVRRig.transform.position + new Vector3(UnityEngine.Random.Range(-1.5f, 1.5f), UnityEngine.Random.Range(-0.5f, 1.5f), UnityEngine.Random.Range(-1.5f, 1.5f)), Quaternion.identity);
+            BuilderTable.instance.RequestCreatePiece(pieceIdSet, GorillaTagger.Instance.offlineVRRig.transform.position + Vector3.Normalize(new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f))) * 2f, Quaternion.identity, 0);
             RPCProtection();
         }
 
         public static void RainBuildingBlocks()
         {
-            BuilderPiece that = GetBlocks("snappiececolumn01")[0];
-            BetaDropBlock(that, GorillaTagger.Instance.offlineVRRig.transform.position + new Vector3(UnityEngine.Random.Range(-3f, 3f), 4f, UnityEngine.Random.Range(-3f, 3f)), Quaternion.identity);
+            BuilderTable.instance.RequestCreatePiece(pieceIdSet, GorillaTagger.Instance.offlineVRRig.transform.position + new Vector3(UnityEngine.Random.Range(-3f, 3f), 4f, UnityEngine.Random.Range(-3f, 3f)), Quaternion.identity, 0);
             RPCProtection();
         }
 
@@ -1629,8 +1670,7 @@ namespace iiMenu.Mods
 
         public static void OrbitBlocks()
         {
-            BuilderPiece that = GetBlocks("snappiececolumn01")[0];
-            BetaDropBlock(that, GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos((float)Time.frameCount / 30), 0f, MathF.Sin((float)Time.frameCount / 30)), Quaternion.identity);
+            BuilderTable.instance.RequestCreatePiece(pieceIdSet, GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos((float)Time.frameCount / 30), 0f, MathF.Sin((float)Time.frameCount / 30)), Quaternion.identity, 0);
             RPCProtection();
         }
 
@@ -1705,7 +1745,8 @@ namespace iiMenu.Mods
 
             yield return null;
 
-            BuilderTable.instance.RequestCreatePiece(pieceType, GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 1f, 0f), Quaternion.identity, 0);
+            BuilderTable.instance.RequestCreatePiece(pieceType, GorillaTagger.Instance.offlineVRRig.transform.position + new Vector3(0f, 1f, 0f), Quaternion.identity, 0);
+            RPCProtection();
 
             while (pieceId < 0)
             {
@@ -1780,9 +1821,8 @@ namespace iiMenu.Mods
             yield return CreateGetPiece(251444537, piece =>
             {
                 trigger = piece;
-
             });
-            while (slopea == null)
+            while (trigger == null)
             {
                 yield return null;
             }
@@ -2084,6 +2124,45 @@ namespace iiMenu.Mods
             lasttrigcrap = rightTrigger > 0.5f;
         }
 
+        public static IEnumerator CreateMassiveBlock()
+        {
+            GorillaTagger.Instance.offlineVRRig.sizeManager.currentSizeLayerMaskValue = 2;
+            yield return new WaitForSeconds(0.55f);
+
+            BuilderPiece stupid = null;
+
+            yield return CreateGetPiece(pieceIdSet, piece =>
+            {
+                stupid = piece;
+            });
+            while (stupid == null)
+            {
+                yield return null;
+            }
+
+            BuilderTable.instance.RequestGrabPiece(stupid, false, Vector3.zero, Quaternion.identity);
+            yield return new WaitForSeconds(0.7f);
+
+            GorillaTagger.Instance.offlineVRRig.sizeManager.currentSizeLayerMaskValue = 13;
+        }
+
+        public static void MassiveBlock()
+        {
+            if (rightGrab && !lastgripcrap)
+                CoroutineManager.RunCoroutine(CreateMassiveBlock());
+
+            lastgripcrap = rightGrab;
+        }
+
+        public static void AtticSizeToggle()
+        {
+            if (rightTrigger > 0.5f)
+                GorillaTagger.Instance.offlineVRRig.sizeManager.currentSizeLayerMaskValue = 13;
+
+            if (rightGrab)
+                GorillaTagger.Instance.offlineVRRig.sizeManager.currentSizeLayerMaskValue = 2;
+        }
+
         public static void SlowMonsters()
         {
             foreach (MonkeyeAI monkeyeAI in GetMonsters())
@@ -2125,13 +2204,13 @@ namespace iiMenu.Mods
 
         public static void MonsterGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     foreach (MonkeyeAI monkeyeAI in GetMonsters())
                     {
@@ -2188,18 +2267,6 @@ namespace iiMenu.Mods
             return blocks;
         }
 
-        public static void GrabBallistas()
-        {
-            if (rightGrab && Time.time > blockDelay)
-            {
-                blockDelay = Time.time + 0.1f;
-
-                BuilderPiece door = GetBlocks("ballista")[0];
-                BuilderTable.instance.RequestCreatePiece(door.pieceType, GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, door.materialType);
-                RPCProtection();
-            }
-        }
-
         private static List<BuilderPiece> potentialgrabbedpieces = new List<BuilderPiece> { };
         public static void GrabAllBlocksNearby()
         {
@@ -2216,7 +2283,7 @@ namespace iiMenu.Mods
                             amnt++;
                             if (amnt < 8)
                             {
-                                BuilderTable.instance.RequestGrabPiece(piece, false, Vector3.zero, Quaternion.identity);
+                                BuilderTable.instance.RequestGrabPiece(piece, false, new Vector3(UnityEngine.Random.Range(-0.5f, 0.5f), UnityEngine.Random.Range(-0.5f, 0.5f), UnityEngine.Random.Range(-0.5f, 0.5f)), Quaternion.identity);
                                 potentialgrabbedpieces.Add(piece);
                             }
                         }
@@ -2331,13 +2398,13 @@ namespace iiMenu.Mods
 
         public static void BalloonGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     foreach (BalloonHoldable balloon in GetBalloons())
                     {
@@ -2394,13 +2461,13 @@ namespace iiMenu.Mods
 
         public static void UnacidGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > kgDebounce)
+                if (GetGunInput(true) && Time.time > kgDebounce)
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -2440,13 +2507,13 @@ namespace iiMenu.Mods
 
         public static void TrainGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/Holiday2023Forest/Holiday2023Forest_Gameplay/NCTrain_Kit_Prefab").transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
                 }
@@ -2755,13 +2822,13 @@ namespace iiMenu.Mods
 
         public static void CopyIdentityGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > stealIdentityDelay)
+                if (GetGunInput(true) && Time.time > stealIdentityDelay)
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -3065,6 +3132,20 @@ namespace iiMenu.Mods
         {
             Settings.EnableFun();
             pageNumber = rememberdirectory;
+        }
+
+        public static void AutoLoadCosmetics()
+        {
+            Patches.RequestPatch.enabled = true;
+            if (Patches.RequestPatch.currentCoroutine == null)
+                Patches.RequestPatch.currentCoroutine = CoroutineManager.RunCoroutine(Patches.RequestPatch.LoadCosmetics());
+            GameObject.Find("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Cosmetics Room Triggers/TryOnRoom").GetComponent<CosmeticBoundaryTrigger>().enabled = false;
+        }
+
+        public static void NoAutoLoadCosmetics()
+        {
+            GameObject.Find("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Cosmetics Room Triggers/TryOnRoom").GetComponent<CosmeticBoundaryTrigger>().enabled = true;
+            Patches.RequestPatch.enabled = false;
         }
 
         private static bool lasttagged = false;

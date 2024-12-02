@@ -118,6 +118,10 @@ namespace iiMenu.Notifications
                                     {
                                         buttonText = TranslateText(buttonText);
                                     }
+                                    if (inputTextColor != "green")
+                                    {
+                                        buttonText = buttonText.Replace(" <color=grey>[</color><color=green>", " <color=grey>[</color><color=" + inputTextColor + ">");
+                                    }
                                     if (lowercaseMode)
                                     {
                                         buttonText = buttonText.ToLower();
@@ -173,6 +177,10 @@ namespace iiMenu.Notifications
                         if (translate)
                         {
                             NotificationText = TranslateText(NotificationText);
+                        }
+                        if (inputTextColor != "green")
+                        {
+                            NotificationText = NotificationText.Replace("<color=green>", "<color=" + inputTextColor + ">");
                         }
                         NotifiLib.NotifiText.text = NotifiLib.NotifiText.text + NotificationText;
                         if (lowercaseMode)

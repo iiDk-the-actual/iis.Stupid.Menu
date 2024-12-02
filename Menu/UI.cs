@@ -213,6 +213,10 @@ namespace iiMenu.UI
                                     {
                                         toadd = TranslateText(toadd);
                                     }
+                                    if (inputTextColor != "green")
+                                    {
+                                        toadd = toadd.Replace(" <color=grey>[</color><color=green>", " <color=grey>[</color><color=" + inputTextColor + ">");
+                                    }
                                     if (lowercaseMode)
                                     {
                                         toadd = toadd.ToLower();

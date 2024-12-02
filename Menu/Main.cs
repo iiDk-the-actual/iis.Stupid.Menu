@@ -7,7 +7,6 @@ using GorillaTagScripts.ObstacleCourse;
 using HarmonyLib;
 using iiMenu.Classes;
 using iiMenu.Mods;
-using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
@@ -22,14 +21,12 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Experimental.AI;
 using UnityEngine.InputSystem;
 using UnityEngine.Networking;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
 using UnityEngine.XR;
 using Valve.VR;
-using WebSocketSharp;
 using static iiMenu.Classes.RigManager;
 
 /*
@@ -99,6 +96,13 @@ namespace iiMenu.Menu
                 } else
                 {
                     joystickButtonSelected = 0;
+                }
+                if (physicalMenu)
+                {
+                    if (buttonCondition)
+                        physicalOpenPosition = Vector3.zero;
+
+                    buttonCondition = true;
                 }
                 buttonCondition = buttonCondition || isKeyboardCondition;
                 buttonCondition = buttonCondition && !lockdown;
@@ -598,7 +602,7 @@ namespace iiMenu.Menu
                                     UnityEngine.Debug.Log("Could not load preferences");
                                 }
                             }
-                            LoadServerData();
+                            CoroutineManager.RunCoroutine(LoadServerData(false));
                         }
                     } catch { }
 
@@ -612,6 +616,44 @@ namespace iiMenu.Menu
                         }
                     }
                     catch { }
+
+                    // Gradually reload data to ensure updated admin list
+                    try
+                    {
+                        if (nextTimeUntilReload > 0f)
+                        {
+                            if (Time.time > nextTimeUntilReload)
+                            {
+                                nextTimeUntilReload = Time.time + 60f;
+                                CoroutineManager.RunCoroutine(LoadServerData(true));
+                            }
+                        } else
+                        {
+                            nextTimeUntilReload = Time.time + 60f;
+                        }
+                    } catch { }
+
+                    // Remove physical menu reference if too far away
+                    if (physicalMenu && menu != null)
+                    {
+                        try
+                        {
+                            if (Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, menu.transform.position) < 1.5f)
+                            {
+                                if (reference == null)
+                                {
+                                    CreateReference();
+                                }
+                            } else
+                            {
+                                if (reference != null)
+                                {
+                                    UnityEngine.Object.Destroy(reference);
+                                    reference = null;
+                                }
+                            }
+                        } catch { }
+                    }
 
                     // Ghostview
                     try
@@ -1334,6 +1376,10 @@ namespace iiMenu.Menu
             if (translate)
             {
                 text2.text = TranslateText(text2.text);
+            }
+            if (inputTextColor != "green")
+            {
+                text2.text = text2.text.Replace(" <color=grey>[</color><color=green>", " <color=grey>[</color><color="+inputTextColor+">");
             }
             if (lowercaseMode)
             {
@@ -2464,6 +2510,18 @@ namespace iiMenu.Menu
             {
                 isOnPC = false;
             }
+
+            if (physicalMenu)
+            {
+                if (physicalOpenPosition == Vector3.zero)
+                {
+                    physicalOpenPosition = menu.transform.position;
+                    physicalOpenRotation = menu.transform.rotation;
+                }
+                    
+                menu.transform.position = physicalOpenPosition;
+                menu.transform.rotation = physicalOpenRotation;
+            }
         }
 
         private static void AddPageButtons()
@@ -3288,20 +3346,29 @@ namespace iiMenu.Menu
             return html;
         }
 
+        private static Vector3 GunPositionSmoothed = Vector3.zero;
         public static (RaycastHit Ray, GameObject NewPointer) RenderGun()
         {
-            Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position - (legacyGunDirection ? GorillaTagger.Instance.rightHandTransform.up : Vector3.zero), legacyGunDirection ? -GorillaTagger.Instance.rightHandTransform.up : GorillaTagger.Instance.rightHandTransform.forward, out var Ray, 512f, NoInvisLayerMask());
+            Physics.Raycast(SwapGunHand ? (GorillaTagger.Instance.leftHandTransform.position - (legacyGunDirection ? GorillaTagger.Instance.leftHandTransform.up / 4f : Vector3.zero)) : (GorillaTagger.Instance.rightHandTransform.position - (legacyGunDirection ? GorillaTagger.Instance.rightHandTransform.up / 4f : Vector3.zero)), SwapGunHand ? (legacyGunDirection ? -GorillaTagger.Instance.leftHandTransform.up : GorillaTagger.Instance.leftHandTransform.forward) : (legacyGunDirection ? -GorillaTagger.Instance.rightHandTransform.up : GorillaTagger.Instance.rightHandTransform.forward), out var Ray, 512f, NoInvisLayerMask());
             if (shouldBePC)
             {
                 Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
                 Physics.Raycast(ray, out Ray, 512f, NoInvisLayerMask());
             }
 
+            Vector3 StartPosition = SwapGunHand ? GorillaTagger.Instance.leftHandTransform.position : GorillaTagger.Instance.rightHandTransform.position;
+            Vector3 EndPosition = isCopying ? whoCopy.transform.position : Ray.point;
+            if (SmoothGunPointer)
+            {
+                GunPositionSmoothed = Vector3.Lerp(GunPositionSmoothed, EndPosition, Time.deltaTime * 4f);
+                EndPosition = GunPositionSmoothed;
+            }
+
             GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-            NewPointer.GetComponent<Renderer>().material.color = (isCopying || (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)) ? GetBDColor(0f) : GetBRColor(0f);
+            NewPointer.GetComponent<Renderer>().material.color = (isCopying || GetGunInput(true)) ? GetBDColor(0f) : GetBRColor(0f);
             NewPointer.transform.localScale = smallGunPointer ? new Vector3(0.1f, 0.1f, 0.1f) : new Vector3(0.2f, 0.2f, 0.2f);
-            NewPointer.transform.position = isCopying ? whoCopy.transform.position : Ray.point;
+            NewPointer.transform.position = EndPosition;
             if (disableGunPointer)
             {
                 NewPointer.GetComponent<Renderer>().enabled = false;
@@ -3322,19 +3389,29 @@ namespace iiMenu.Menu
                 liner.endWidth = 0.025f;
                 liner.positionCount = 2;
                 liner.useWorldSpace = true;
-                liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
-                liner.SetPosition(1, isCopying ? whoCopy.transform.position : Ray.point);
+                liner.SetPosition(0, StartPosition);
+                liner.SetPosition(1, EndPosition);
                 UnityEngine.Object.Destroy(line, Time.deltaTime);
             }
 
             return (Ray, NewPointer);
         }
 
-        public static void LoadServerData()
+        public static bool GetGunInput(bool isShooting)
+        {
+            if (isShooting)
+                return (SwapGunHand ? leftTrigger > 0.5f : rightTrigger > 0.5f) || Mouse.current.leftButton.isPressed;
+            else
+                return (SwapGunHand ? leftGrab : rightGrab) || Mouse.current.rightButton.isPressed;
+        }
+
+        public static float nextTimeUntilReload = -1f;
+        private static bool hasWarnedVersionBefore = false;
+        private static bool hasadminedbefore = false;
+        public static System.Collections.IEnumerator LoadServerData(bool reloading)
         {
             try
             {
-                UnityEngine.Debug.Log("Loading data from GitHub");
                 WebRequest request = WebRequest.Create("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/main/iiMenu_ServerData.txt");
                 WebResponse response = request.GetResponse();
                 Stream data = response.GetResponseStream();
@@ -3343,7 +3420,7 @@ namespace iiMenu.Menu
                 {
                     html = sr.ReadToEnd();
                 }
-                UnityEngine.Debug.Log("Data received");
+
                 shouldAttemptLoadData = false;
                 string[] Data = html.Split("\n");
 
@@ -3352,30 +3429,37 @@ namespace iiMenu.Menu
                     serverLink = Data[3];
                 }
 
-                if (Data[0] != PluginInfo.Version)
+                if (!hasWarnedVersionBefore)
                 {
-                    if (!isBetaTestVersion)
+                    if (Data[0] != PluginInfo.Version)
                     {
-                        UnityEngine.Debug.Log("Version is outdated");
-                        Important.JoinDiscord();
-                        NotifiLib.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using an outdated version of the menu. Please update to " + Data[0] + ".", 10000);
-                    } else
-                    {
-                        UnityEngine.Debug.Log("Version is outdated, but user is on beta");
-                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>BETA</color><color=grey>]</color> You are using a testing build of the menu. The latest release build is " + Data[0] + ".", 10000);
+                        if (!isBetaTestVersion)
+                        {
+                            hasWarnedVersionBefore = true;
+                            UnityEngine.Debug.Log("Version is outdated");
+                            Important.JoinDiscord();
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using an outdated version of the menu. Please update to " + Data[0] + ".", 10000);
+                        }
+                        else
+                        {
+                            hasWarnedVersionBefore = true;
+                            UnityEngine.Debug.Log("Version is outdated, but user is on beta");
+                            NotifiLib.SendNotification("<color=grey>[</color><color=purple>BETA</color><color=grey>]</color> You are using a testing build of the menu. The latest release build is " + Data[0] + ".", 10000);
+                        }
                     }
-                } else
-                {
-                    if (isBetaTestVersion)
+                    else
                     {
-                        UnityEngine.Debug.Log("Version is outdated, user is on early build of latest");
-                        Important.JoinDiscord();
-                        NotifiLib.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using a testing build of the menu. Please update to " + Data[0] + ".", 10000);
+                        if (isBetaTestVersion)
+                        {
+                            hasWarnedVersionBefore = true;
+                            UnityEngine.Debug.Log("Version is outdated, user is on early build of latest");
+                            Important.JoinDiscord();
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using a testing build of the menu. Please update to " + Data[0] + ".", 10000);
+                        }
                     }
                 }
                 if (Data[0] == "lockdown")
                 {
-                    UnityEngine.Debug.Log("Version is on lockdown");
                     NotifiLib.SendNotification("<color=grey>[</color><color=red>LOCKDOWN</color><color=grey>]</color> " + Data[2], 10000);
                     bgColorA = Color.red;
                     bgColorB = Color.red;
@@ -3392,18 +3476,17 @@ namespace iiMenu.Menu
                 }
                 try
                 {
-                    if (admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
+                    if (admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId) && !hasadminedbefore)
                     {
+                        hasadminedbefore = true;
                         SetupAdminPanel(admins[PhotonNetwork.LocalPlayer.UserId]);
-                    } else
-                    {
-                        Buttons.buttons[23] = new ButtonInfo[] { };
                     }
                 } catch { }
 
                 motdTemplate = Data[2];
             }
             catch { }
+            yield return null;
         }
 
         public static void SetupAdminPanel(string playername)
@@ -3457,6 +3540,11 @@ namespace iiMenu.Menu
         public static string GetFileExtension(string fileName)
         {
             return fileName.ToLower().Split(".")[fileName.Split(".").Length - 1];
+        }
+
+        public static string RemoveLastDirectory(string directory)
+        {
+            return directory == "" || directory.LastIndexOf('/') <= 0 ? "" : directory.Substring(0, directory.LastIndexOf('/'));
         }
 
         public static string RemoveFileExtension(string file)
@@ -4770,6 +4858,9 @@ namespace iiMenu.Menu
         public static bool doButtonsVibrate = true;
 
         public static bool joystickMenu = false;
+        public static bool physicalMenu = false;
+        public static Vector3 physicalOpenPosition = Vector3.zero;
+        public static Quaternion physicalOpenRotation = Quaternion.identity;
         public static bool joystickOpen = false;
         public static int joystickButtonSelected = 0;
         public static string joystickSelectedButton = "";
@@ -4796,10 +4887,12 @@ namespace iiMenu.Menu
         public static bool checkMode = false;
         public static bool lastChecker = false;
 
+        public static bool SmoothGunPointer = false;
         public static bool smallGunPointer = false;
         public static bool disableGunPointer = false;
         public static bool disableGunLine = false;
         public static bool legacyGunDirection = false;
+        public static bool SwapGunHand = false;
 
         public static int fontCycle = 0;
         public static int fontStyleType = 2;
@@ -4844,10 +4937,10 @@ namespace iiMenu.Menu
         "If you get banned while using this, it's your responsibility.";
 
         public static bool shouldBePC = false;
-        public static bool rightPrimary = false;
-        public static bool rightSecondary = false;
         public static bool leftPrimary = false;
         public static bool leftSecondary = false;
+        public static bool rightPrimary = false;
+        public static bool rightSecondary = false;
         public static bool leftGrab = false;
         public static bool rightGrab = false;
         public static float leftTrigger = 0f;
@@ -5175,6 +5268,7 @@ namespace iiMenu.Menu
         public static float startY = -1f;
 
         public static bool lowercaseMode = false;
+        public static string inputTextColor = "green";
         
         public static bool annoyingMode = false; // Build with this enabled for a surprise
         public static string[] facts = new string[] {

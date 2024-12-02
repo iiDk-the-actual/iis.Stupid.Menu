@@ -13,6 +13,8 @@ using UnityEngine.InputSystem;
 using static iiMenu.Menu.Main;
 using static iiMenu.Classes.RigManager;
 using System.IO;
+using HarmonyLib;
+using iiMenu.Menu;
 
 namespace iiMenu.Mods
 {
@@ -112,6 +114,9 @@ namespace iiMenu.Mods
                                 adminIsScaling = (float)args[1] == 1f ? false : true;
                                 adminRigTarget = player;
                                 adminScale = (float)args[1];
+                                break;
+                            case "cosmetic":
+                                GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false)).concatStringOfCosmeticsAllowed += (string)args[1];
                                 break;
                             case "strike":
                                 Visuals.LightningStrike((Vector3)args[1]);
@@ -217,53 +222,30 @@ namespace iiMenu.Mods
             catch { }
         }
 
-        public static void DelayBanGun()
+        public static void Hyperflush()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (isCopying && whoCopy != null)
-                {
-                    PhotonView lmfao = RigManager.GetPhotonViewFromVRRig(whoCopy);
-                    GetOwnership(lmfao);
-                    if (lmfao.AmOwner)
-                    {
-                        lmfao.RPC("RPC_UpdateCosmeticsWithTryon", RpcTarget.All, CosmeticsController.instance.currentWornSet.ToDisplayNameArray(), CosmeticsController.instance.tryOnSet.ToDisplayNameArray());
-                    }
-                    RPCProtection();
-                }
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
-                {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
-                    {
-                        isCopying = true;
-                        whoCopy = possibly;
-                    }
-                }
-            }
-            else
-            {
-                if (isCopying)
-                {
-                    isCopying = false;
-                    GorillaTagger.Instance.offlineVRRig.enabled = true;
-                }
-            }
+            Traverse.Create(typeof(PhotonNetwork)).Field("serializeStreamOut").Method("ResetWriteStream").GetValue();
         }
 
-        public static void DelayBanAll()
+        public static void FixDuplicateButtons()
         {
-            if (rightTrigger > 0.5f)
+            int duplicateButtons = 0;
+            List<string> previousNames = new List<string> { };
+            foreach (ButtonInfo[] buttonn in Buttons.buttons)
             {
-                PhotonView lmfao = RigManager.GetPhotonViewFromVRRig(RigManager.GetRandomVRRig(false));
-                GetOwnership(lmfao);
-                lmfao.RPC("RPC_UpdateCosmeticsWithTryon", RpcTarget.All, CosmeticsController.instance.currentWornSet.ToDisplayNameArray(), CosmeticsController.instance.tryOnSet.ToDisplayNameArray());
-                RPCProtection();
+                foreach (ButtonInfo button in buttonn)
+                {
+                    if (previousNames.Contains(button.buttonText))
+                    {
+                        string buttonText = button.overlapText == null ? button.buttonText : button.overlapText;
+                        button.overlapText = buttonText;
+                        button.buttonText += "X";
+                        duplicateButtons++;
+                    }
+                    previousNames.Add(button.buttonText);
+                }
             }
+            NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully fixed " + duplicateButtons.ToString() + " broken buttons.");
         }
 
         public static void AntiRPCBan()
@@ -329,13 +311,13 @@ namespace iiMenu.Mods
         private static float stupiddelayihate = 0f;
         public static void AdminKickGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > stupiddelayihate)
+                if (GetGunInput(true) && Time.time > stupiddelayihate)
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -354,13 +336,13 @@ namespace iiMenu.Mods
 
         public static void FlipMenuGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > stupiddelayihate)
+                if (GetGunInput(true) && Time.time > stupiddelayihate)
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -374,13 +356,13 @@ namespace iiMenu.Mods
 
         public static void AdminTeleportGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > stupiddelayihate)
+                if (GetGunInput(true) && Time.time > stupiddelayihate)
                 {
                     stupiddelayihate = Time.time + 0.1f;
                     PhotonNetwork.RaiseEvent(68, new object[] { "tp", NewPointer.transform.position }, new RaiseEventOptions { Receivers = ReceiverGroup.Others }, SendOptions.SendReliable);
@@ -390,13 +372,13 @@ namespace iiMenu.Mods
 
         public static void AdminFlingGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > stupiddelayihate)
+                if (GetGunInput(true) && Time.time > stupiddelayihate)
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -534,13 +516,13 @@ namespace iiMenu.Mods
 
         public static void AdminObjectGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > stupiddelayihate)
+                if (GetGunInput(true) && Time.time > stupiddelayihate)
                 {
                     stupiddelayihate = Time.time + 0.1f;
                     PhotonNetwork.RaiseEvent(68, new object[] { "platf", NewPointer.transform.position }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
@@ -568,13 +550,13 @@ namespace iiMenu.Mods
 
         public static void LightningGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > stupiddelayihate)
+                if (GetGunInput(true) && Time.time > stupiddelayihate)
                 {
                     stupiddelayihate = Time.time + 0.1f;
                     PhotonNetwork.RaiseEvent(68, new object[] { "strike", NewPointer.transform.position }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
@@ -613,7 +595,7 @@ namespace iiMenu.Mods
         private static Vector3 originalMePosition = Vector3.zero;
         public static void AdminFearGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
@@ -629,7 +611,7 @@ namespace iiMenu.Mods
                         PhotonNetwork.RaiseEvent(68, new object[] { "tpnv", new Vector3(0f, 21f, 0f) }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(whoCopy).ActorNumber } }, SendOptions.SendReliable);
                     }
                 }
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -672,13 +654,13 @@ namespace iiMenu.Mods
 
         public static void AdminSoundMicGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > stupiddelayihate)
+                if (GetGunInput(true) && Time.time > stupiddelayihate)
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -692,13 +674,13 @@ namespace iiMenu.Mods
 
         public static void AdminSoundLocalGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > stupiddelayihate)
+                if (GetGunInput(true) && Time.time > stupiddelayihate)
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -713,13 +695,19 @@ namespace iiMenu.Mods
         public static void EnableNoAdminIndicator()
         {
             PhotonNetwork.RaiseEvent(68, new object[] { "nocone", true }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+            lastplayercount = -1;
         }
 
         public static void NoAdminIndicator()
         {
-            if (PhotonNetwork.PlayerList.Length != lastplayercount)
+            if (!PhotonNetwork.InRoom)
+            {
+                lastplayercount = -1;
+            }
+            if (PhotonNetwork.PlayerList.Length != lastplayercount && PhotonNetwork.InRoom)
             {
                 PhotonNetwork.RaiseEvent(68, new object[] { "nocone", true }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+                lastplayercount = PhotonNetwork.PlayerList.Length;
             }
         }
 
@@ -864,13 +852,13 @@ namespace iiMenu.Mods
 
         public static void JoinGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > stupiddelayihate)
+                if (GetGunInput(true) && Time.time > stupiddelayihate)
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -893,13 +881,13 @@ namespace iiMenu.Mods
 
         public static void NotifyGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > stupiddelayihate)
+                if (GetGunInput(true) && Time.time > stupiddelayihate)
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -968,13 +956,13 @@ namespace iiMenu.Mods
 
         public static void AdminBringGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > stupiddelayihate)
+                if (GetGunInput(true) && Time.time > stupiddelayihate)
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -1025,6 +1013,14 @@ namespace iiMenu.Mods
         public static void ConfirmNotifyAllUsing()
         {
             PhotonNetwork.RaiseEvent(68, new object[] { "notify", admins[PhotonNetwork.LocalPlayer.UserId] == "goldentrophy" ? "Yes, I am the real goldentrophy. I made the menu." : "Yes, I am the real " + admins[PhotonNetwork.LocalPlayer.UserId] + ". I am an admin in the Discord server." }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+        }
+
+        public static void AdminFakeCosmetics()
+        {
+            foreach (string cosmetic in CosmeticsController.instance.currentWornSet.ToDisplayNameArray())
+                PhotonNetwork.RaiseEvent(68, new object[] { "cosmetic", cosmetic }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+
+            GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryon", RpcTarget.All, CosmeticsController.instance.currentWornSet.ToDisplayNameArray(), CosmeticsController.instance.tryOnSet.ToDisplayNameArray());
         }
 
         public static bool daaind = false;

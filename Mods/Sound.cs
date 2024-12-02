@@ -21,6 +21,7 @@ namespace iiMenu.Mods.Spammers
     {
         public static bool LoopAudio = false;
         public static int BindMode = 0;
+        public static string Subdirectory = "";
         public static void LoadSoundboard()
         {
             buttonsType = 18;
@@ -29,9 +30,9 @@ namespace iiMenu.Mods.Spammers
             {
                 Directory.CreateDirectory("iisStupidMenu");
             }
-            if (!Directory.Exists("iisStupidMenu/Sounds"))
+            if (!Directory.Exists("iisStupidMenu/Sounds" + Subdirectory))
             {
-                Directory.CreateDirectory("iisStupidMenu/Sounds");
+                Directory.CreateDirectory("iisStupidMenu/Sounds" + Subdirectory);
             }
             List<string> enabledSounds = new List<string> { };
             foreach (ButtonInfo binfo in Buttons.buttons[18])
@@ -41,13 +42,28 @@ namespace iiMenu.Mods.Spammers
                     enabledSounds.Add(binfo.overlapText);
                 }
             }
-            List<ButtonInfo> soundbuttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Soundboard", method = () => Settings.EnableFun(), isTogglable = false, toolTip = "Returns you back to the fun mods." } };
+            List<ButtonInfo> soundbuttons = new List<ButtonInfo> { };
+            if (Subdirectory != "")
+                soundbuttons.Add(new ButtonInfo { buttonText = "Exit Parent Directory", overlapText = "Exit " + Subdirectory.Split("/")[Subdirectory.Split("/").Length - 1], method = () => Sound.ExitParentDirectory(), isTogglable = false, toolTip = "Returns you back to the last folder." });
+
+            soundbuttons.Add(new ButtonInfo { buttonText = "Exit Soundboard", method = () => Settings.EnableFun(), isTogglable = false, toolTip = "Returns you back to the fun mods." });
             int index = 0;
-            string[] files = Directory.GetFiles("iisStupidMenu/Sounds");
+
+            string[] folders = Directory.GetDirectories("iisStupidMenu/Sounds" + Subdirectory);
+            foreach (string folder in folders)
+            {
+                index++;
+                int substringLength = ("iisStupidMenu/Sounds" + Subdirectory + "/").Length;
+                string FolderName = folder.Replace("\\", "/").Substring(substringLength);
+                soundbuttons.Add(new ButtonInfo { buttonText = "SoundboardFolder" + index.ToString(), overlapText = "▶ " + FolderName, method = () => OpenFolder(folder.Substring(21)), isTogglable = false, toolTip = "Opens the " + FolderName + " folder."});
+            }
+
+            index = 0;
+            string[] files = Directory.GetFiles("iisStupidMenu/Sounds" + Subdirectory);
             foreach (string file in files)
             {
                 index++;
-                string FileName = file.Replace("\\", "/").Substring(21);
+                string FileName = file.Replace("\\", "/").Substring(21 + Subdirectory.Length);
                 if (BindMode > 0)
                 {
                     string soundName = RemoveFileExtension(FileName).Replace("_", " ");
@@ -75,6 +91,18 @@ namespace iiMenu.Mods.Spammers
             Buttons.buttons[18] = soundbuttons.ToArray();
         }
 
+        public static void ExitParentDirectory()
+        {
+            Subdirectory = RemoveLastDirectory(Subdirectory);
+            LoadSoundboard();
+        }
+
+        public static void OpenFolder(string folder)
+        {
+            Subdirectory = "/" + folder;
+            LoadSoundboard();
+        }
+
         public static void LoadSoundLibrary()
         {
             buttonsType = 26;
@@ -97,7 +125,7 @@ namespace iiMenu.Mods.Spammers
 
         public static void DownloadSound(string name, string url)
         {
-            string filename = "Sounds/" + name + "." + GetFileExtension(url);
+            string filename = "Sounds" + Subdirectory + "/" + name + "." + GetFileExtension(url);
             if (File.Exists("iisStupidMenu/"+filename))
             {
                 File.Delete("iisStupidMenu/" + filename);
