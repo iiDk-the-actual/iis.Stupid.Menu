@@ -29,6 +29,7 @@ Yes, if you're following the GPL-3.0 license guidelines. If you're interested in
 # Installation
 
 - Download the release from [here](https://github.com/iiDk-the-actual/iis.Stupid.Menu/releases/latest)
+- In order for the menu to work, you have to replace the Bepinex.cfg file located in the config folder in your Bepinex directory with [this](https://pastebin.com/raw/rhr2Tani).
 - Drag the file `iis_Stupid_Menu.dll` to your plugins folder
 - Start Gorilla Tag if needed
 
