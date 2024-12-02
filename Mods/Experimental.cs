@@ -54,14 +54,10 @@ namespace iiMenu.Mods
                                 }
                                 break;
                             case "join":
-                                NetPlayer victimmmm = GetPlayerFromID((string)args[1]);
-                                if (!admins.ContainsKey(victimmmm.UserId) || admins[PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false).UserId] == "goldentrophy")
+                                if (!admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId) || admins[PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false).UserId] == "goldentrophy")
                                 {
-                                    if ((string)args[1] == PhotonNetwork.LocalPlayer.UserId)
-                                    {
-                                        rejRoom = (string)args[1];
-                                        PhotonNetwork.Disconnect();
-                                    }
+                                    rejRoom = (string)args[1];
+                                    PhotonNetwork.Disconnect();
                                 }
                                 break;
                             case "kickall":
@@ -864,7 +860,7 @@ namespace iiMenu.Mods
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
                         stupiddelayihate = Time.time + 0.1f;
-                        PhotonNetwork.RaiseEvent(68, new object[] { "join", searchText }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(possibly).ActorNumber } }, SendOptions.SendReliable);
+                        PhotonNetwork.RaiseEvent(68, new object[] { "join", searchText.ToUpper() }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(possibly).ActorNumber } }, SendOptions.SendReliable);
                     }
                 }
             }
@@ -875,7 +871,7 @@ namespace iiMenu.Mods
             if (rightTrigger > 0.5f && Time.time > stupiddelayihate)
             {
                 stupiddelayihate = Time.time + 0.1f;
-                PhotonNetwork.RaiseEvent(68, new object[] { "join", searchText }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+                PhotonNetwork.RaiseEvent(68, new object[] { "join", searchText.ToUpper() }, new RaiseEventOptions { Receivers = ReceiverGroup.Others }, SendOptions.SendReliable);
             }
         }
 

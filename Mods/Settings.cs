@@ -356,6 +356,12 @@ namespace iiMenu.Mods
             pageNumber = 0;
         }
 
+        public static void EnableOverpoweredSettings()
+        {
+            buttonsType = 31;
+            pageNumber = 0;
+        }
+
         public static void EnableAdmin()
         {
             buttonsType = 23;

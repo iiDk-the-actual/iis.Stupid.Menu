@@ -715,6 +715,16 @@ namespace iiMenu.Mods
             }
         }
 
+        private static bool lastaomfg = false;
+        public static void Dash()
+        {
+            if (rightPrimary && !lastaomfg)
+            {
+                GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity += GorillaLocomotion.Player.Instance.headCollider.transform.forward * (flySpeed * 2);
+            }
+            lastaomfg = rightPrimary;
+        }
+
         public static void IronMan()
         {
             if (leftPrimary)
