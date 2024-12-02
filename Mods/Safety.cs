@@ -232,6 +232,46 @@ namespace iiMenu.Mods
             catch { } // Not connected
         }
 
+        private static float delaysonospam = 0f;
+        public static void AntiReportNotify()
+        {
+            try
+            {
+                if (Time.time > delaysonospam)
+                {
+                    foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+                    {
+                        if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
+                        {
+                            Transform report = line.reportButton.gameObject.transform;
+                            if (GetIndex("Visualize Anti Report").enabled)
+                            {
+                                VisualizeAura(report.position, threshold, Color.red);
+                            }
+                            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                            {
+                                if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                                {
+                                    float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
+                                    float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
+
+                                    if (D1 < threshold || D2 < threshold)
+                                    {
+                                        if (!smartarp || (smartarp && PhotonNetwork.CurrentRoom.IsVisible && !PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED")))
+                                        {
+                                            delaysonospam = Time.time + 0.1f;
+                                            NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " is reporting you.");
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch { } // Not connected
+        }
+
         public static void AntiReportFRT(Player subject, bool doNotification = true)
         {
             if (!smartarp || (smartarp && PhotonNetwork.CurrentRoom.IsVisible && !PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED")))

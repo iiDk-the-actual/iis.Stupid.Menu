@@ -1,5 +1,4 @@
 ﻿using GorillaNetworking;
-using HarmonyLib;
 using iiMenu.Classes;
 using iiMenu.Menu;
 using iiMenu.Mods.Spammers;
@@ -11,7 +10,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Windows.Speech;
@@ -441,6 +439,18 @@ namespace iiMenu.Mods
             shouldOutline = true;
         }
 
+        public static void PhysicalMenuOn()
+        {
+            physicalMenu = true;
+            physicalOpenPosition = Vector3.zero;
+        }
+
+        public static void PhysicalMenuOff()
+        {
+            physicalMenu = false;
+            physicalOpenPosition = Vector3.zero;
+        }
+
         public static void OutlineMenuOff()
         {
             shouldOutline = false;
@@ -574,7 +584,7 @@ namespace iiMenu.Mods
         public static void ChangeMenuTheme()
         {
             themeType++;
-            if (themeType > 52)
+            if (themeType > 54)
             {
                 themeType = 1;
             }
@@ -816,7 +826,7 @@ namespace iiMenu.Mods
                     textColor = Color.blue;
                     textClicked = Color.black;
                     break;
-                case 22: // Blurple Fade
+                case 22: // Purple Fade
                     bgColorA = new Color32(119, 0, 255, 255);
                     bgColorB = Color.black;
                     buttonDefaultA = Color.black;
@@ -1155,6 +1165,28 @@ namespace iiMenu.Mods
                     buttonClickedB = new Color32(165, 137, 255, 255);
                     titleColor = new Color32(144, 144, 144, 255);
                     textColor = new Color32(144, 144, 144, 255);
+                    textClicked = Color.white;
+                    break;
+                case 53: // Rose (Solace)
+                    bgColorA = new Color32(176, 12, 64, 255);
+                    bgColorB = new Color32(176, 12, 64, 255);
+                    buttonDefaultA = new Color32(140, 10, 51, 255);
+                    buttonDefaultB = new Color32(140, 10, 51, 255);
+                    buttonClickedA = new Color32(250, 2, 81, 255);
+                    buttonClickedB = new Color32(250, 2, 81, 255);
+                    titleColor = Color.white;
+                    textColor = Color.white;
+                    textClicked = Color.white;
+                    break;
+                case 54: // Tenacity (Solace)
+                    bgColorA = new Color32(124, 25, 194, 255);
+                    bgColorB = new Color32(124, 25, 194, 255);
+                    buttonDefaultA = new Color32(88, 9, 145, 255);
+                    buttonDefaultB = new Color32(88, 9, 145, 255);
+                    buttonClickedA = new Color32(136, 9, 227, 255);
+                    buttonClickedB = new Color32(136, 9, 227, 255);
+                    titleColor = Color.white;
+                    textColor = Color.white;
                     textClicked = Color.white;
                     break;
             }
@@ -1938,6 +1970,49 @@ namespace iiMenu.Mods
             activeFontStyle = (FontStyle)fontStyleType;
         }
 
+        public static int inputTextColorInt = 3;
+        public static void ChangeInputTextColor()
+        {
+            string[] textColors = new string[]
+            {
+                "Red",
+                "Orange",
+                "Yellow",
+                "Green",
+                "Blue",
+                "Cyan",
+                "Purple",
+                "Pink",
+                "White",
+                "Grey",
+                "Black",
+                "Rose"
+            };
+            string[] realinputcolor = new string[]
+            {
+                "red",
+                "#ff8000",
+                "yellow",
+                "green",
+                "blue",
+                "cyan",
+                "#7700ff",
+                "magenta",
+                "white",
+                "grey",
+                "black",
+                "#ff005d"
+            };
+            inputTextColorInt++;
+            if (inputTextColorInt > realinputcolor.Length - 1)
+            {
+                inputTextColorInt = 0;
+            }
+
+            inputTextColor = realinputcolor[inputTextColorInt];
+            GetIndex("Change Input Text Color").overlapText = "Change Input Text Color <color=grey>[</color><color=green>" + textColors[inputTextColorInt] + "</color><color=grey>]</color>";
+        }
+
         public static void ChangePCUI()
         {
             pcbg++;
@@ -1976,6 +2051,16 @@ namespace iiMenu.Mods
             try { reference.transform.localPosition = pointerOffset; } catch { }
         }
 
+        public static void EnableSwapGunHand()
+        {
+            SwapGunHand = true;
+        }
+
+        public static void DisableSwapGunHand()
+        {
+            SwapGunHand = false;
+        }
+
         public static void SmallGunPointer()
         {
             smallGunPointer = true;
@@ -1984,6 +2069,16 @@ namespace iiMenu.Mods
         public static void BigGunPointer()
         {
             smallGunPointer = false;
+        }
+
+        public static void DoSmoothGunPointer()
+        {
+            SmoothGunPointer = true;
+        }
+
+        public static void NoSmoothGunPointer()
+        {
+            SmoothGunPointer = false;
         }
 
         public static void NoGunPointer()
@@ -2445,7 +2540,7 @@ namespace iiMenu.Mods
                 }
             }
 
-            string ihateyouguys = platformMode + seperator + platformShape + seperator + flySpeedCycle + seperator + longarmCycle + seperator + speedboostCycle + seperator + projmode + seperator + trailmode + seperator + shootCycle + seperator + pointerIndex + seperator + tagAuraIndex + seperator + notificationDecayTime + seperator + fontStyleType + seperator + arrowType + seperator + pcbg + seperator + internetTime + seperator + hotkeyButton + seperator + buttonClickIndex + seperator + buttonClickVolume + seperator + Safety.antireportrangeindex + seperator + Advantages.tagRangeIndex + seperator + Sound.BindMode + seperator + Movement.driveInt + seperator + langInd;
+            string ihateyouguys = platformMode + seperator + platformShape + seperator + flySpeedCycle + seperator + longarmCycle + seperator + speedboostCycle + seperator + projmode + seperator + trailmode + seperator + shootCycle + seperator + pointerIndex + seperator + tagAuraIndex + seperator + notificationDecayTime + seperator + fontStyleType + seperator + arrowType + seperator + pcbg + seperator + internetTime + seperator + hotkeyButton + seperator + buttonClickIndex + seperator + buttonClickVolume + seperator + Safety.antireportrangeindex + seperator + Advantages.tagRangeIndex + seperator + Sound.BindMode + seperator + Movement.driveInt + seperator + langInd + seperator + inputTextColorInt + seperator + Movement.pullPowerInt;
 
             string finaltext =
                 text + "\n" +
@@ -2618,6 +2713,10 @@ namespace iiMenu.Mods
                 Movement.ChangeDriveSpeed();
                 langInd = int.Parse(data[22]) - 1;
                 ChangeMenuLanguage();
+                inputTextColorInt = int.Parse(data[23]) - 1;
+                ChangeInputTextColor();
+                Movement.pullPowerInt = int.Parse(data[24]) - 1;
+                Movement.ChangePullModPower();
             } catch { UnityEngine.Debug.Log("Save file out of date"); }
 
             pageButtonType = int.Parse(textData[3]) - 1;
@@ -2733,7 +2832,8 @@ namespace iiMenu.Mods
                 66,
                 66,
                 66,
-                106
+                106,
+                189
             };
             string[] buttonSoundNames = new string[]
             {
@@ -2748,7 +2848,8 @@ namespace iiMenu.Mods
                 "Rec Room",
                 "Watch",
                 "Membrane",
-                "Jar"
+                "Jar",
+                "Wall"
             };
 
             buttonClickIndex++;

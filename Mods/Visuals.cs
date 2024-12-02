@@ -633,6 +633,27 @@ namespace iiMenu.Mods
             leaves.Clear();
         }
 
+        public static void EnableStreamerRemoveLeaves()
+        {
+            foreach (GameObject g in Resources.FindObjectsOfTypeAll<GameObject>())
+            {
+                if (g.activeSelf && (g.name.Contains("leaves_green") || g.name.Contains("fallleaves")))
+                {
+                    g.layer = 16;
+                    leaves.Add(g);
+                }
+            }
+        }
+
+        public static void DisableStreamerRemoveLeaves()
+        {
+            foreach (GameObject l in leaves)
+            {
+                l.layer = 0;
+            }
+            leaves.Clear();
+        }
+
         /*
         public static void EnableRemoveCherryBlossoms()
         {
@@ -888,7 +909,7 @@ namespace iiMenu.Mods
                 if (vrrig != GorillaTagger.Instance.offlineVRRig)
                 {
                     GameObject line = new GameObject("Line");
-                    if (GetIndex("Hidden on Camera").enabled) { line.layer = 19; }
+                    //if (GetIndex("Hidden on Camera").enabled) { line.layer = 19; }
                     LineRenderer liner = line.AddComponent<LineRenderer>();
                     UnityEngine.Color thecolor = vrrig.playerColor;
                     if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }

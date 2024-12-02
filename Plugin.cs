@@ -1,11 +1,10 @@
 using BepInEx;
 using System;
-using System.ComponentModel;
 using UnityEngine;
 
 namespace iiMenu
 {
-    [Description(PluginInfo.Description)]
+    [System.ComponentModel.Description(PluginInfo.Description)]
     [BepInPlugin(PluginInfo.GUID, PluginInfo.Name, PluginInfo.Version)]
     public class Plugin : BaseUnityPlugin
     {

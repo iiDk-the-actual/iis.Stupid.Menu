@@ -18,13 +18,13 @@ namespace iiMenu.Mods
         private static float idgundelay = 0f;
         public static void CopyIDGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > idgundelay)
+                if (GetGunInput(true) && Time.time > idgundelay)
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -48,13 +48,13 @@ namespace iiMenu.Mods
         private static float cgdgd = 0f;
         public static void CopyCreationDateGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig && Time.time > cgdgd)
@@ -62,7 +62,7 @@ namespace iiMenu.Mods
                         cgdgd = Time.time + 0.5f;
                         PlayFabClientAPI.GetAccountInfo(new GetAccountInfoRequest { PlayFabId = GetPlayerFromVRRig(possibly).UserId }, delegate (GetAccountInfoResult result) // Who designed this
                         {
-                            string date = result.AccountInfo.Created.ToString("MM/dd/yyyy HH:mm:ss:ff");
+                            string date = result.AccountInfo.Created.ToString("MMMM dd, yyyy h:mm tt");
                             NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> " + date, 5000);
                             GUIUtility.systemCopyBuffer = date;
                         }, delegate { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not copy creation date."); }, null, null);
@@ -75,7 +75,7 @@ namespace iiMenu.Mods
         {
             PlayFabClientAPI.GetAccountInfo(new GetAccountInfoRequest { PlayFabId = PhotonNetwork.LocalPlayer.UserId }, delegate (GetAccountInfoResult result) // Who designed this
             {
-                string date = result.AccountInfo.Created.ToString("MM/dd/yyyy HH:mm:ss:ff");
+                string date = result.AccountInfo.Created.ToString("MMMM dd, yyyy h:mm tt");
                 NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> " + date, 5000);
                 GUIUtility.systemCopyBuffer = date;
             }, delegate { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not copy creation date."); }, null, null);

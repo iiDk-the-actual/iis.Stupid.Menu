@@ -1,21 +1,15 @@
 ﻿using ExitGames.Client.Photon;
 using GorillaGameModes;
 using GorillaLocomotion.Gameplay;
-using GorillaNetworking;
-using GorillaTag.Cosmetics;
 using GorillaTagScripts;
 using HarmonyLib;
 using iiMenu.Classes;
 using iiMenu.Notifications;
-using Meta.WitAi;
 using Photon.Pun;
 using Photon.Realtime;
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.ProBuilder.Shapes;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -70,13 +64,13 @@ namespace iiMenu.Mods
 
         public static void GuardianGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > kgDebounce)
+                if (GetGunInput(true) && Time.time > kgDebounce)
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -135,13 +129,13 @@ namespace iiMenu.Mods
 
         public static void UnguardianGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > kgDebounce)
+                if (GetGunInput(true) && Time.time > kgDebounce)
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -179,6 +173,21 @@ namespace iiMenu.Mods
                 }
             }
             else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
+        }
+
+        private static float guardianspazdelay = 0f;
+        private static bool lastGuardianThing = false;
+        public static void GuardianSpaz()
+        {
+            if (Time.time > guardianspazdelay)
+            {
+                guardianspazdelay = Time.time + 0.1f;
+                lastGuardianThing = !lastGuardianThing;
+                if (lastGuardianThing)
+                    GuardianAll();
+                else
+                    UnguardianAll();
+            }
         }
 
         public static void AlwaysGuardian()
@@ -273,13 +282,13 @@ namespace iiMenu.Mods
 
         public static void GrabGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > kgDebounce)
+                if (GetGunInput(true) && Time.time > kgDebounce)
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -326,13 +335,13 @@ namespace iiMenu.Mods
 
         public static void ReleaseGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > kgDebounce)
+                if (GetGunInput(true) && Time.time > kgDebounce)
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -379,18 +388,18 @@ namespace iiMenu.Mods
 
         public static void FlingGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > kgDebounce)
+                if (GetGunInput(true) && Time.time > kgDebounce)
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        BetaSetVelocityPlayer(GetPlayerFromVRRig(possibly), new Vector3(0f, 500f, 0f) );
+                        BetaSetVelocityPlayer(GetPlayerFromVRRig(possibly), new Vector3(0f, 19.9f, 0f) );
                         RPCProtection();
                         kgDebounce = Time.time + 0.1f;
                     }
@@ -406,7 +415,7 @@ namespace iiMenu.Mods
                 GorillaGuardianManager gman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Guardian Manager").GetComponent<GorillaGuardianManager>();
                 if (gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
                 {
-                    BetaSetVelocityTargetGroup(RpcTarget.Others, new Vector3(0f, 500f, 0f));
+                    BetaSetVelocityTargetGroup(RpcTarget.Others, new Vector3(0f, 19.9f, 0f));
                     RPCProtection();
                 }
                 else
@@ -416,9 +425,10 @@ namespace iiMenu.Mods
             }
         }
 
+
         public static void SpazPlayerGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
@@ -433,7 +443,7 @@ namespace iiMenu.Mods
                         kgDebounce = Time.time + 0.1f;
                     }
                 }
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -462,9 +472,400 @@ namespace iiMenu.Mods
             }
         }
 
+        private static float miniaturedelay = 0f;
+        private static float lastBeforeClearTime = -1f;
+        public static void AtticCrashGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (isCopying && whoCopy != null)
+                {
+                    if (Time.time > miniaturedelay)
+                    {
+                        miniaturedelay = Time.time + 0.022f;
+                        BuilderTable.instance.RequestCreatePiece(1700948013, whoCopy.headMesh.transform.position, Quaternion.identity, 0);
+                        BuilderTable.instance.RequestCreatePiece(1700948013, whoCopy.rightHandTransform.position, Quaternion.identity, 0);
+                        BuilderTable.instance.RequestCreatePiece(1700948013, whoCopy.leftHandTransform.position, Quaternion.identity, 0);
+                        BuilderTable.instance.RequestCreatePiece(1700948013, whoCopy.transform.position, Quaternion.identity, 0);
+                    }
+
+                    if (Time.time > lastBeforeClearTime)
+                    {
+                        RPCProtection();
+                        foreach (BuilderPiece piece in GetPieces())
+                        {
+                            if (piece.pieceType == 1700948013)
+                                piece.gameObject.SetActive(false);
+                        }
+                        lastBeforeClearTime = Time.time + 1f;
+                    }
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        isCopying = true;
+                        whoCopy = possibly;
+                    }
+                }
+            }
+            else
+            {
+                if (isCopying)
+                {
+                    isCopying = false;
+                }
+            }
+        }
+
+        public static void AtticCrashAll()
+        {
+            if (rightTrigger > 0.5f)
+            {
+                if (Time.time > miniaturedelay)
+                {
+                    miniaturedelay = Time.time + 0.022f;
+                    for (int i = 0; i < 4; i++)
+                    {
+                        BuilderTable.instance.RequestCreatePiece(1700948013, GorillaTagger.Instance.headCollider.transform.position, Quaternion.identity, 0);
+                    }
+                }
+
+                if (Time.time > lastBeforeClearTime)
+                {
+                    RPCProtection();
+                    foreach (BuilderPiece piece in GetPieces())
+                    {
+                        if (piece.pieceType == 1700948013)
+                            piece.gameObject.SetActive(false);
+                    }
+                    lastBeforeClearTime = Time.time + 1f;
+                }
+            }
+        }
+
+        private static float delaything = 0f;
+        public static void GuardianBlindGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+                
+                if (GetGunInput(true) && Time.time > delaything)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        delaything = Time.time + 0.1f;
+                        RigManager.GetNetworkViewFromVRRig(possibly).SendRPC("GrabbedByPlayer", GetPlayerFromVRRig(possibly), new object[] { true, false, false });
+                        RigManager.GetNetworkViewFromVRRig(possibly).SendRPC("DroppedByPlayer", GetPlayerFromVRRig(possibly), new object[] { new Vector3(0f, float.NaN, 0f) });
+                    }
+                }
+            }
+        }
+
+        public static void GuardianBlindAll()
+        {
+            if (rightTrigger > 0.5f)
+            {
+                if (Time.time > delaything)
+                {
+                    delaything = Time.time + 0.1f;
+                    foreach (VRRig player in GorillaParent.instance.vrrigs)
+                    {
+                        RigManager.GetNetworkViewFromVRRig(player).SendRPC("GrabbedByPlayer", RpcTarget.Others, new object[] { true, false, false });
+                        RigManager.GetNetworkViewFromVRRig(player).SendRPC("DroppedByPlayer", RpcTarget.Others, new object[] { new Vector3(0f, float.NaN, 0f) });
+                    }
+                }
+            }
+        }
+
+        // Hi skids :3
+        // If you take this code you like giving sloppy wet kisses to cute boys >_<
+        // I gotta stop
+
+        public static void MuteGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (isCopying && whoCopy != null)
+                {
+                    if (Time.time > delaything)
+                    {
+                        delaything = Time.time + 0.027f;
+                        PhotonNetwork.RaiseEvent(0, null, new RaiseEventOptions
+                        {
+                            CachingOption = EventCaching.DoNotCache,
+                            TargetActors = new int[]
+                            {
+                                whoCopy.OwningNetPlayer.ActorNumber
+                            }
+                        }, SendOptions.SendReliable);
+
+                        NetworkView view = RigManager.GetNetworkViewFromVRRig(whoCopy);
+                        view.GetView.ControllerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
+
+                        PhotonNetwork.Destroy(view.GetView); // Trust
+                    }
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        isCopying = true;
+                        whoCopy = possibly;
+                    }
+                }
+            }
+            else
+            {
+                if (isCopying)
+                {
+                    isCopying = false;
+                }
+            }
+        }
+
+        public static void MuteAll()
+        {
+            if (rightTrigger > 0.5f)
+            {
+                if (Time.time > delaything)
+                {
+                    delaything = Time.time + 0.05f;
+                    PhotonNetwork.RaiseEvent(0, null, new RaiseEventOptions
+                    {
+                        CachingOption = EventCaching.DoNotCache,
+                        Receivers = ReceiverGroup.Others
+                    }, SendOptions.SendReliable);
+
+                    foreach (VRRig player in GorillaParent.instance.vrrigs)
+                    {
+                        NetworkView view = RigManager.GetNetworkViewFromVRRig(player);
+                        view.GetView.ControllerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
+
+                        PhotonNetwork.Destroy(view.GetView); // Trust
+                    }
+                }
+            }
+        }
+
+        // Huge thanks to kingofnetflix
+        public static void LagGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (isCopying && whoCopy != null)
+                {
+                    if (Time.time > delaything)
+                    {
+                        delaything = Time.time + 0.3f;
+                        PhotonView photonView = GameObject.Find("WorldShareableCosmetic").GetComponent<WorldShareableItem>().guard.photonView;
+                        for (int i = 0; i < 100; i++)
+                        {
+                            photonView.RPC("OnMasterClientAssistedTakeoverRequest", NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)), new object[2]);
+                        }
+                    }
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        RPCProtection();
+                        isCopying = true;
+                        whoCopy = possibly;
+                    }
+                }
+            }
+            else
+            {
+                if (isCopying)
+                {
+                    RPCProtection();
+                    isCopying = false;
+                }
+            }
+        }
+
+        public static void LagAll()
+        {
+            if (rightTrigger > 0.5f)
+            {
+                if (Time.time > delaything)
+                {
+                    delaything = Time.time + 0.3f;
+                    PhotonView photonView = GameObject.Find("WorldShareableCosmetic").GetComponent<WorldShareableItem>().guard.photonView;
+                    for (int i = 0; i < 100; i++)
+                    {
+                        photonView.RPC("OnMasterClientAssistedTakeoverRequest", RpcTarget.Others, new object[2]);
+                    }
+                }
+            }
+        }
+
+        public static IEnumerator KickRig(VRRig FUCKER)
+        {
+            Traverse.Create(GameObject.Find("PhotonMono").GetComponent<PhotonHandler>()).Field("nextSendTickCountOnSerialize").SetValue((int)(Time.realtimeSinceStartup * 9999f));
+            yield return new WaitForSeconds(0.5f);
+            for (int i = 0; i < 3950; i++)
+            {
+                // What is this
+                PhotonView photonView = GetPhotonViewFromVRRig(FUCKER);
+                ExitGames.Client.Photon.Hashtable rpcHash = new ExitGames.Client.Photon.Hashtable
+                {
+                    { 0, photonView.ViewID },
+                    { 2, (int)(PhotonNetwork.ServerTimestamp + -int.MaxValue) },
+                    { 3, "RPC_RequestMaterialColor" },
+                    { 4, new object[] { NetPlayerToPlayer(GetPlayerFromVRRig(FUCKER)) } },
+                    { 5, (byte)91 }
+                };
+                PhotonNetwork.NetworkingClient.LoadBalancingPeer.OpRaiseEvent(200, rpcHash, new RaiseEventOptions
+                {
+                    Receivers = ReceiverGroup.Others,
+                    InterestGroup = photonView.Group
+                }, new SendOptions
+                {
+                    Reliability = true,
+                    DeliveryMode = DeliveryMode.ReliableUnsequenced,
+                    Encrypt = false
+                });
+            }
+        }
+
+        private static Coroutine KVCoroutine = null;
+        private static string ihavediahrrea = "";
+        public static void KickGun()
+        {
+            if (!PhotonNetwork.InRoom)
+            {
+                Traverse.Create(GameObject.Find("PhotonMono").GetComponent<PhotonHandler>()).Field("nextSendTickCountOnSerialize").SetValue((int)(Time.realtimeSinceStartup * 1000f));
+            }
+            if (rightGrab || Mouse.current.rightButton.isPressed)
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (isCopying && whoCopy != null)
+                {
+                    if (!PhotonNetwork.InRoom)
+                    {
+                        isCopying = false;
+                        whoCopy = null;
+                        SetTick(1000f);
+                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You have been kicked for sending too many RPCs, you will reconnect shortly.</color>");
+                        rejRoom = ihavediahrrea;
+                    }
+                    if (GetPlayerFromVRRig(whoCopy) == null)
+                    {
+                        isCopying = false;
+                        whoCopy = null;
+                        SetTick(1000f);
+                        NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Player has been kicked!</color>");
+                        rejRoom = ihavediahrrea;
+                    }
+                }
+                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && !isCopying)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        isCopying = true;
+                        whoCopy = possibly;
+                        KVCoroutine = CoroutineManager.RunCoroutine(KickRig(whoCopy));
+                        SetTick(9999f);
+                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>KICK</color><color=grey>]</color> <color=white>Player is being kicked...</color>");
+                    }
+                }
+            } else
+            {
+                if (isCopying)
+                {
+                    isCopying = false;
+                    CoroutineManager.EndCoroutine(KVCoroutine);
+                    SetTick(1000f);
+                }
+            }
+        }
+
+        public static void SetTick(float tick)
+        {
+            Traverse.Create(GameObject.Find("PhotonMono").GetComponent<PhotonHandler>()).Field("nextSendTickCountOnSerialize").SetValue((int)(Time.realtimeSinceStartup * tick));
+        }
+
+        // I see you
+        public static void ForceUnloadCustomMap()
+        {
+            delaything = Time.time + 0.1f;
+            PhotonView goldentrophy = GameObject.Find("Environment Objects/LocalObjects_Prefab/VirtualStump_CustomMapLobby/ModIOMapsTerminal/NetworkObject").GetComponent<PhotonView>();
+
+            goldentrophy.RPC("UnloadMapRPC", RpcTarget.All, new object[] { });
+            RPCProtection();
+        }
+
+        // Don't steal this
+        public static void VirtualStumpKickGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true) && Time.time > delaything)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        delaything = Time.time + 0.1f;
+                        PhotonView goldentrophy = GameObject.Find("Environment Objects/LocalObjects_Prefab/VirtualStump_CustomMapLobby/ModIOMapsTerminal/NetworkObject").GetComponent<PhotonView>();
+
+                        goldentrophy.RPC("SetRoomMapRPC", NetPlayerToPlayer(GetPlayerFromVRRig(possibly)), new object[] { UnityEngine.Random.Range(-99999L, 99999L) });
+                        goldentrophy.RPC("UnloadMapRPC", NetPlayerToPlayer(GetPlayerFromVRRig(possibly)), new object[] { });
+                        RPCProtection();
+                    }
+                }
+            }
+        }
+
+        // Or I will kill you
+        public static void VirtualStumpKickAll()
+        {
+            if (rightTrigger > 0.5f)
+            {
+                if (Time.time > delaything)
+                {
+                    delaything = Time.time + 0.1f;
+
+                    PhotonView goldentrophy = GameObject.Find("Environment Objects/LocalObjects_Prefab/VirtualStump_CustomMapLobby/ModIOMapsTerminal/NetworkObject").GetComponent<PhotonView>();
+
+                    goldentrophy.RPC("SetRoomMapRPC", RpcTarget.Others, new object[] { UnityEngine.Random.Range(-99999L, 99999L) });
+                    goldentrophy.RPC("UnloadMapRPC", RpcTarget.Others, new object[] { });
+                    RPCProtection();
+                }
+            }
+        }
+
         public static void PhysicalFreezeGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
@@ -479,7 +880,7 @@ namespace iiMenu.Mods
                         kgDebounce = Time.time + 0.1f;
                     }
                 }
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -510,7 +911,7 @@ namespace iiMenu.Mods
 
         public static void BringGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
@@ -525,7 +926,7 @@ namespace iiMenu.Mods
                         kgDebounce = Time.time + 0.1f;
                     }
                 }
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -563,7 +964,7 @@ namespace iiMenu.Mods
         private static float thingdeb = 0f;
         public static void GiveFlyGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
@@ -581,7 +982,7 @@ namespace iiMenu.Mods
                         thingdeb = Time.time + 0.1f;
                     }
                 }
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -781,13 +1182,13 @@ namespace iiMenu.Mods
 
         public static void BringAllGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     if (Time.time > kgDebounce)
                     {
@@ -849,13 +1250,13 @@ namespace iiMenu.Mods
 
         public static void EffectSpamGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     GorillaGuardianManager gman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Guardian Manager").GetComponent<GorillaGuardianManager>();
                     if (Time.time > slamDel)
@@ -876,243 +1277,6 @@ namespace iiMenu.Mods
                 }
             }
         }
-
-        //float num = Mathf.Min(Time.time - (float)Traverse.Create(gzm).Field("_lastTappedTime").GetValue(), (float)Traverse.Create(gzm).Field("activationTimePerTap").GetValue());
-
-        /*public static void StartMoonEvent()
-        {
-            GreyZoneManager gzm = GameObject.Find("Environment Objects/05Maze_PersistentObjects/Halloween2024_PersistentObjects/GreyZoneManager").GetComponent<GreyZoneManager>();
-            if (PhotonNetwork.IsMasterClient)
-            {
-                gzm.ActivateGreyZoneAuthority();
-            }
-            else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
-        }
-
-        public static void EndMoonEvent()
-        {
-            GreyZoneManager gzm = GameObject.Find("Environment Objects/05Maze_PersistentObjects/Halloween2024_PersistentObjects/GreyZoneManager").GetComponent<GreyZoneManager>();
-            if (PhotonNetwork.IsMasterClient)
-            {
-                gzm.DeactivateGreyZoneAuthority();
-            }
-            else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
-        }
-
-        private static float lastidiotstupidlaaa = 0f;
-        public static void FlashScreen()
-        {
-            GreyZoneManager gzm = GameObject.Find("Environment Objects/05Maze_PersistentObjects/Halloween2024_PersistentObjects/GreyZoneManager").GetComponent<GreyZoneManager>();
-            if (PhotonNetwork.IsMasterClient)
-            {
-                if (Time.time > lastidiotstupidlaaa)
-                {
-                    lastidiotstupidlaaa = Time.time + 0.1f;
-                    if (gzm.GreyZoneActive)
-                    {
-                        gzm.DeactivateGreyZoneAuthority();
-                    } else
-                    {
-                        gzm.ActivateGreyZoneAuthority();
-                    }
-                }
-            }
-            else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
-        }
-
-        public static void SpawnBlueLucy()
-        {
-            HalloweenGhostChaser hgc = GameObject.Find("Environment Objects/05Maze_PersistentObjects/Halloween2024_PersistentObjects/Halloween Ghosts/Lucy/Halloween Ghost/FloatingChaseSkeleton").GetComponent<HalloweenGhostChaser>();
-            if (hgc.IsMine)
-            {
-                hgc.timeGongStarted = Time.time;
-                hgc.currentState = HalloweenGhostChaser.ChaseState.Gong;
-                hgc.isSummoned = false;
-            }
-            else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
-        }
-
-        public static void SpawnRedLucy()
-        {
-            HalloweenGhostChaser hgc = GameObject.Find("Environment Objects/05Maze_PersistentObjects/Halloween2024_PersistentObjects/Halloween Ghosts/Lucy/Halloween Ghost/FloatingChaseSkeleton").GetComponent<HalloweenGhostChaser>();
-            if (hgc.IsMine)
-            {
-                hgc.timeGongStarted = Time.time;
-                hgc.currentState = HalloweenGhostChaser.ChaseState.Gong;
-                hgc.isSummoned = true;
-            }
-            else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
-        }
-
-        public static void DespawnLucy()
-        {
-            HalloweenGhostChaser hgc = GameObject.Find("Environment Objects/05Maze_PersistentObjects/Halloween2024_PersistentObjects/Halloween Ghosts/Lucy/Halloween Ghost/FloatingChaseSkeleton").GetComponent<HalloweenGhostChaser>();
-            if (hgc.IsMine)
-            {
-                hgc.currentState = HalloweenGhostChaser.ChaseState.Dormant;
-                hgc.isSummoned = false;
-            }
-            else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
-        }
-
-        public static void LucyChaseSelf()
-        {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
-                {
-                    HalloweenGhostChaser hgc = GameObject.Find("Environment Objects/05Maze_PersistentObjects/Halloween2024_PersistentObjects/Halloween Ghosts/Lucy/Halloween Ghost/FloatingChaseSkeleton").GetComponent<HalloweenGhostChaser>();
-                    if (hgc.IsMine)
-                    {
-                        VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                        if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
-                        {
-                            hgc.currentState = HalloweenGhostChaser.ChaseState.Chasing;
-                            hgc.targetPlayer = NetworkSystem.Instance.LocalPlayer;
-                            hgc.followTarget = GorillaTagger.Instance.offlineVRRig.transform;
-                        }
-                    }
-                    else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
-                }
-            }
-        }
-
-        public static void LucyChaseGun()
-        {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
-                {
-                    HalloweenGhostChaser hgc = GameObject.Find("Environment Objects/05Maze_PersistentObjects/Halloween2024_PersistentObjects/Halloween Ghosts/Lucy/Halloween Ghost/FloatingChaseSkeleton").GetComponent<HalloweenGhostChaser>();
-                    if (hgc.IsMine)
-                    {
-                        VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                        if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
-                        {
-                            hgc.currentState = HalloweenGhostChaser.ChaseState.Chasing;
-                            hgc.targetPlayer = GetPlayerFromVRRig(possibly);
-                            hgc.followTarget = possibly.transform;
-                        }
-                    }
-                    else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
-                }
-            }
-        }
-
-        public static void LucyAttackSelf()
-        {
-            HalloweenGhostChaser hgc = GameObject.Find("Environment Objects/05Maze_PersistentObjects/Halloween2024_PersistentObjects/Halloween Ghosts/Lucy/Halloween Ghost/FloatingChaseSkeleton").GetComponent<HalloweenGhostChaser>();
-            if (hgc.IsMine)
-            {
-                hgc.currentState = HalloweenGhostChaser.ChaseState.Grabbing;
-                hgc.grabTime = Time.time;
-                hgc.targetPlayer = NetworkSystem.Instance.LocalPlayer;
-            }
-            else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
-        }
-
-        public static void LucyAttackGun()
-        {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (isCopying && whoCopy != null)
-                {
-                    HalloweenGhostChaser hgc = GameObject.Find("Environment Objects/05Maze_PersistentObjects/Halloween2024_PersistentObjects/Halloween Ghosts/Lucy/Halloween Ghost/FloatingChaseSkeleton").GetComponent<HalloweenGhostChaser>();
-                    if (hgc.IsMine)
-                    {
-                        if (Time.time > hgc.grabTime + hgc.grabDuration + 0.1f)
-                        {
-                            hgc.currentState = HalloweenGhostChaser.ChaseState.Grabbing;
-                            hgc.grabTime = Time.time;
-                            hgc.targetPlayer = GetPlayerFromVRRig(whoCopy);
-                        }
-                    }
-                    else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
-                }
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
-                {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
-                    {
-                        isCopying = true;
-                        whoCopy = possibly;
-                    }
-                }
-            }
-            else
-            {
-                if (isCopying)
-                {
-                    isCopying = false;
-                }
-            }
-        }
-
-        private static float lasttimethingblahblabhabja = 0f;
-        public static void SpazLucy()
-        {
-            HalloweenGhostChaser hgc = GameObject.Find("Environment Objects/05Maze_PersistentObjects/Halloween2024_PersistentObjects/Halloween Ghosts/Lucy/Halloween Ghost/FloatingChaseSkeleton").GetComponent<HalloweenGhostChaser>();
-            if (hgc.IsMine)
-            {
-                if (Time.time > lasttimethingblahblabhabja)
-                {
-                    hgc.timeGongStarted = hgc.timeGongStarted == 0f ? Time.time : 0f;
-                    hgc.currentState = HalloweenGhostChaser.ChaseState.Gong;
-                    hgc.isSummoned = true;
-                    lasttimethingblahblabhabja = Time.time + 0.1f;
-                }
-            }
-            else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
-        }
-
-        public static void AnnoyingLucy()
-        {
-            HalloweenGhostChaser hgc = GameObject.Find("Environment Objects/05Maze_PersistentObjects/Halloween2024_PersistentObjects/Halloween Ghosts/Lucy/Halloween Ghost/FloatingChaseSkeleton").GetComponent<HalloweenGhostChaser>();
-            if (hgc.IsMine)
-            {
-                if (Time.time > lasttimethingblahblabhabja)
-                {
-                    hgc.timeGongStarted = Time.time;
-                    hgc.grabTime = Time.time;
-                    hgc.currentState = hgc.currentState == HalloweenGhostChaser.ChaseState.Gong ? HalloweenGhostChaser.ChaseState.Grabbing : HalloweenGhostChaser.ChaseState.Gong;
-                    hgc.targetPlayer = GetRandomPlayer(true);
-                    lasttimethingblahblabhabja = Time.time + 0.1f;
-                }
-            }
-            else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
-        }
-
-        public static void FastLucy()
-        {
-            HalloweenGhostChaser hgc = GameObject.Find("Environment Objects/05Maze_PersistentObjects/Halloween2024_PersistentObjects/Halloween Ghosts/Lucy/Halloween Ghost/FloatingChaseSkeleton").GetComponent<HalloweenGhostChaser>();
-            if (hgc.IsMine)
-            {
-                hgc.currentSpeed = 10f;
-            }
-            else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
-        }
-
-        public static void SlowLucy()
-        {
-            HalloweenGhostChaser hgc = GameObject.Find("Environment Objects/05Maze_PersistentObjects/Halloween2024_PersistentObjects/Halloween Ghosts/Lucy/Halloween Ghost/FloatingChaseSkeleton").GetComponent<HalloweenGhostChaser>();
-            if (hgc.IsMine)
-            {
-                hgc.currentSpeed = 1f;
-            }
-            else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
-        }*/
 
         public static void SpawnSecondLook()
         {
@@ -1187,13 +1351,13 @@ namespace iiMenu.Mods
 
         public static void DestroyGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > kgDebounce)
+                if (GetGunInput(true) && Time.time > kgDebounce)
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -1278,13 +1442,13 @@ namespace iiMenu.Mods
 
         public static void SlowGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > kgDebounce)
+                if (GetGunInput(true) && Time.time > kgDebounce)
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -1310,13 +1474,13 @@ namespace iiMenu.Mods
 
         public static void VibrateGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > kgDebounce)
+                if (GetGunInput(true) && Time.time > kgDebounce)
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -1342,13 +1506,13 @@ namespace iiMenu.Mods
         
         public static void GliderBlindGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -1411,7 +1575,7 @@ namespace iiMenu.Mods
 
         public static void BreakAudioGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
@@ -1427,7 +1591,7 @@ namespace iiMenu.Mods
                     });
                     RPCProtection();
                 }
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -1477,13 +1641,13 @@ namespace iiMenu.Mods
 
         public static void SpazRopeGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     GorillaRopeSwing possibly = Ray.collider.GetComponentInParent<GorillaRopeSwing>();
                     if (possibly && Time.time > RopeDelay)
@@ -1504,7 +1668,7 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > RopeDelay)
+                if (GetGunInput(true) && Time.time > RopeDelay)
                 {
                     RopeDelay = Time.time + 0.25f;
                     foreach (GorillaRopeSwing rope in GetRopes())
@@ -1552,13 +1716,13 @@ namespace iiMenu.Mods
 
         public static void FlingRopeGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     GorillaRopeSwing possibly = Ray.collider.GetComponentInParent<GorillaRopeSwing>();
                     if (possibly)
@@ -1572,13 +1736,13 @@ namespace iiMenu.Mods
 
         public static void FlingAllRopesGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > RopeDelay)
+                if (GetGunInput(true) && Time.time > RopeDelay)
                 {
                     RopeDelay = Time.time + 0.25f;
                     foreach (GorillaRopeSwing rope in GetRopes())

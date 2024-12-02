@@ -1,4 +1,5 @@
-﻿using GorillaTag;
+﻿using GorillaExtensions;
+using GorillaTag;
 using HarmonyLib;
 using iiMenu.Notifications;
 using Photon.Pun;
@@ -199,38 +200,46 @@ namespace iiMenu.Patches
         }
     }
 
-    [HarmonyPatch(typeof(RequestableOwnershipGuard), "OwnershipRequested")]
+    [HarmonyPatch(typeof(VRRig), "DroppedByPlayer")]
     public class AntiCrashPatch
     {
-        public static bool Prefix(RequestableOwnershipGuard __instance, string nonce, PhotonMessageInfo info)
+        public static bool Prefix(VRRig __instance, VRRig grabbedByRig, Vector3 throwVelocity)
         {
-            if (AntiCrashToggle)
+            if (AntiCrashToggle && __instance == GorillaTagger.Instance.offlineVRRig && !GTExt.IsValid(throwVelocity))
             {
-                NetPlayer player = NetworkSystem.Instance.GetPlayer(info.Sender);
-                if (info.Sender == PhotonNetwork.LocalPlayer)
-                {
-                    return false;
-                }
-
-                bool shouldrequest = true;
-                using (List<IRequestableOwnershipGuardCallbacks>.Enumerator enumerator = __instance.callbacksList.GetEnumerator())
-                {
-                    while (enumerator.MoveNext())
-                    {
-                        if (!enumerator.Current.OnOwnershipRequest(player))
-                        {
-                            shouldrequest = false;
-                        }
-                    }
-                }
-                if (!shouldrequest)
-                {
-                    return false;
-                }
-                __instance.TransferOwnership(player, nonce);
                 return false;
             }
             return true;
+        }
+    }
+
+    [HarmonyPatch(typeof(RequestableOwnershipGuard), "OwnershipRequested")]
+    public class AntiCrashPatch2
+    {
+        public static bool Prefix()
+        {
+            List<DateTime> callTimestamps = new List<DateTime>();
+
+            DateTime now = DateTime.Now;
+            callTimestamps.Add(now);
+            callTimestamps.RemoveAll(t => (now - t).TotalSeconds > 2);
+
+            return callTimestamps.Count > 10;
+        }
+    }
+
+    [HarmonyPatch(typeof(RequestableOwnershipGuard), "OnMasterClientAssistedTakeoverRequest")]
+    public class AntiCrashPatch3
+    {
+        public static bool Prefix()
+        {
+            List<DateTime> callTimestamps = new List<DateTime>();
+
+            DateTime now = DateTime.Now;
+            callTimestamps.Add(now);
+            callTimestamps.RemoveAll(t => (now - t).TotalSeconds > 2);
+
+            return callTimestamps.Count > 10;
         }
     }
 

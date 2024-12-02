@@ -1,5 +1,4 @@
-﻿using BepInEx;
-using HarmonyLib;
+﻿using HarmonyLib;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
@@ -44,7 +43,7 @@ namespace iiMenu.Classes
 
         public static PhotonView GetPhotonViewFromVRRig(VRRig p)
         {
-            return (PhotonView)Traverse.Create(p).Field("photonView").GetValue();
+            return GetNetworkViewFromVRRig(p).GetView;
         }
 
         public static NetworkView GetNetworkViewFromVRRig(VRRig p)

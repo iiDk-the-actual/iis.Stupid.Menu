@@ -59,7 +59,7 @@ namespace iiMenu.Mods.Spammers
                 } catch (Exception e) { UnityEngine.Debug.Log(e.Message); }
                 if (projDebounceType > 0f && !nodelay)
                 {
-                    projDebounce = Time.time + projDebounceType + 0.1f;
+                    projDebounce = Time.time + projDebounceType + 0.07f;
                 }
             }
         }
@@ -342,7 +342,7 @@ namespace iiMenu.Mods.Spammers
 
         public static void GiveProjectileSpamGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
@@ -454,7 +454,7 @@ namespace iiMenu.Mods.Spammers
 
                     BetaFireProjectile(projectilename, startpos, charvel, new Color(randa / 255f, randb / 255f, randc / 255f));
                 }
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -999,7 +999,7 @@ namespace iiMenu.Mods.Spammers
 
         public static void UrineGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
@@ -1012,7 +1012,7 @@ namespace iiMenu.Mods.Spammers
 
                     BetaFireProjectile("SnowballLeft", startpos, charvel, new Color(255f, 255f, 0f, 1f));
                 }
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -1034,7 +1034,7 @@ namespace iiMenu.Mods.Spammers
 
         public static void FecesGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
@@ -1047,7 +1047,7 @@ namespace iiMenu.Mods.Spammers
 
                     BetaFireProjectile("SnowballLeft", startpos, charvel, new Color32(99, 43, 0, 255));
                 }
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -1069,7 +1069,7 @@ namespace iiMenu.Mods.Spammers
 
         public static void SemenGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
@@ -1082,7 +1082,7 @@ namespace iiMenu.Mods.Spammers
 
                     BetaFireProjectile("SnowballLeft", startpos, charvel, new Color(255f, 255f, 255f, 1f));
                 }
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -1104,7 +1104,7 @@ namespace iiMenu.Mods.Spammers
 
         public static void VomitGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
@@ -1117,7 +1117,7 @@ namespace iiMenu.Mods.Spammers
 
                     BetaFireProjectile("SnowballLeft", startpos, charvel, new Color(0f, 255f, 0f, 1f));
                 }
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -1139,7 +1139,7 @@ namespace iiMenu.Mods.Spammers
 
         public static void SpitGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
@@ -1152,7 +1152,7 @@ namespace iiMenu.Mods.Spammers
 
                     BetaFireProjectile("SnowballLeft", startpos, charvel, new Color(0f, 255f, 255f, 1f));
                 }
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)

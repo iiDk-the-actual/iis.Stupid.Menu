@@ -3,6 +3,7 @@ using ExitGames.Client.Photon;
 using GorillaLocomotion.Climbing;
 using GorillaLocomotion.Swimming;
 using GorillaNetworking;
+using GorillaTagScripts;
 using HarmonyLib;
 using iiMenu.Classes;
 using iiMenu.Menu;
@@ -18,6 +19,7 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
+using UnityEngine.Tilemaps;
 using UnityEngine.XR.Interaction.Toolkit;
 using Valve.VR;
 using static iiMenu.Classes.RigManager;
@@ -442,7 +444,7 @@ namespace iiMenu.Mods
 
         public static void PlatformSpam()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (rightGrab)
             {
                 GameObject platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 UnityEngine.Object.Destroy(platform.GetComponent<BoxCollider>());
@@ -458,13 +460,13 @@ namespace iiMenu.Mods
 
         public static void PlatformGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     GameObject platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     UnityEngine.Object.Destroy(platform.GetComponent<BoxCollider>());
@@ -576,6 +578,14 @@ namespace iiMenu.Mods
             var velocity = inputDirection.x * playerRight + y * Vector3.up + inputDirection.z * playerForward;
             velocity *= GorillaLocomotion.Player.Instance.scale * flySpeed;
             rb.velocity = Vector3.Lerp(rb.velocity, velocity, 0.12875f);
+        }
+
+        public static void VelocityBarkFly()
+        {
+            if ((Mathf.Abs(SteamVR_Actions.gorillaTag_LeftJoystick2DAxis.axis.x) > 0.3 || Mathf.Abs(SteamVR_Actions.gorillaTag_LeftJoystick2DAxis.axis.y) > 0.3) || (Mathf.Abs(SteamVR_Actions.gorillaTag_RightJoystick2DAxis.axis.x) > 0.3 || Mathf.Abs(SteamVR_Actions.gorillaTag_RightJoystick2DAxis.axis.y) > 0.3))
+            {
+                BarkFly();
+            }
         }
 
         public static void HandFly()
@@ -1102,6 +1112,41 @@ namespace iiMenu.Mods
             }
         }
 
+        private static bool lastWasGrab = false;
+        private static bool lastWasRightGrab = false;
+        public static void NetworkedPlatforms()
+        {
+            if (GetIndex("Platforms").enabled)
+            {
+                if (leftGrab && !lastWasGrab)
+                {
+                    CoroutineManager.RunCoroutine(CreateLeftPlatform());
+                }
+                if (rightGrab && !lastWasRightGrab)
+                {
+                    CoroutineManager.RunCoroutine(CreateRightPlatform());
+                }
+                lastWasGrab = leftGrab;
+                lastWasRightGrab = rightGrab;
+            }
+        }
+
+        public static IEnumerator CreateLeftPlatform()
+        {
+            yield return Fun.CreateGetPiece(1924370326, piece =>
+            {
+                BuilderTable.instance.RequestGrabPiece(piece, true, new Vector3(-0.03f, -0.03f, -0.27f), new Quaternion(-0.6f, 0.5f, -0.4f, 0.5f));
+            });
+        }
+
+        public static IEnumerator CreateRightPlatform()
+        {
+            yield return Fun.CreateGetPiece(1924370326, piece =>
+            {
+                BuilderTable.instance.RequestGrabPiece(piece, false, new Vector3(0.03f, -0.03f, -0.27f), new Quaternion(0.5f, -0.6f, -0.5f, 0.4f));
+            });
+        }
+
         public static void UpAndDown()
         {
             if ((rightTrigger > 0.5f) || rightGrab)
@@ -1338,7 +1383,13 @@ namespace iiMenu.Mods
             List<ButtonInfo> tpbuttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Teleport to Player", method = () => ExitTeleportToPlayer(), isTogglable = false, toolTip = "Returns you back to the movement mods." } };
             foreach (Player plr in PhotonNetwork.PlayerListOthers)
             {
-                tpbuttons.Add(new ButtonInfo { buttonText = "TeleportPlayer"+tpbuttons.Count.ToString(), overlapText = ToTitleCase(plr.NickName), method = () => TeleportToPlayer(plr), isTogglable = false, toolTip = "Teleports you to " + ToTitleCase(plr.NickName) + "." });
+                string clrtxt = "#ffffff";
+                try
+                {
+                    clrtxt = ColorToHex(GetVRRigFromPlayer(plr).playerColor);
+                }
+                catch { }
+                tpbuttons.Add(new ButtonInfo { buttonText = "TeleportPlayer"+tpbuttons.Count.ToString(), overlapText = "<color="+clrtxt+">"+ToTitleCase(plr.NickName)+"</color>", method = () => TeleportToPlayer(plr), isTogglable = false, toolTip = "Teleports you to " + ToTitleCase(plr.NickName) + "." });
             }
             Buttons.buttons[29] = tpbuttons.ToArray();
         }
@@ -1434,6 +1485,12 @@ namespace iiMenu.Mods
                     "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/BayouOnly",
                     "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - BayouComputer2"
                 },
+                new string[] // Bayou
+                {
+                    "Virtual Stump",
+                    "VSTUMP",
+                    "VSTUMP"
+                },
             };
             foreach (string[] Data in mapData)
             {
@@ -1444,19 +1501,30 @@ namespace iiMenu.Mods
 
         public static void TeleportToMap(string zone, string pos)
         {
-            GameObject.Find(zone).GetComponent<GorillaSetZoneTrigger>().OnBoxTriggered();
-            TeleportPlayer(GameObject.Find(pos).transform.position);
+            if (zone == "VSTUMP")
+            {
+                ModIOLoginTeleporter tele = GameObject.Find("Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/Arcade_prefab/MainRoom/VRArea/ModIOArcadeTeleporter/TeleportTriggers_1/VRHeadsetTrigger_1").GetComponent<ModIOLoginTeleporter>();
+
+                tele.gameObject.transform.parent.parent.parent.parent.parent.parent.gameObject.SetActive(true);
+                tele.gameObject.transform.parent.parent.parent.parent.gameObject.SetActive(true);
+
+                tele.LoginAndTeleport();
+            } else
+            {
+                GameObject.Find(zone).GetComponent<GorillaSetZoneTrigger>().OnBoxTriggered();
+                TeleportPlayer(GameObject.Find(pos).transform.position);
+            }
         }
 
         public static void TeleportGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > teleDebounce)
+                if (GetGunInput(true) && Time.time > teleDebounce)
                 {
                     closePosition = Vector3.zero;
                     TeleportPlayer(NewPointer.transform.position + new Vector3(0f, 1f, 0f));
@@ -1468,13 +1536,13 @@ namespace iiMenu.Mods
 
         public static void Airstrike()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && Time.time > teleDebounce)
+                if (GetGunInput(true) && Time.time > teleDebounce)
                 {
                     GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity = new Vector3(0f, -20f, 0f);
                     TeleportPlayer(NewPointer.transform.position + new Vector3(0f, 30f, 0f));
@@ -1797,13 +1865,13 @@ namespace iiMenu.Mods
 
         public static void RigGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     GorillaTagger.Instance.offlineVRRig.enabled = false;
                     GorillaTagger.Instance.offlineVRRig.transform.position = NewPointer.transform.position + new Vector3(0, 1, 0);
@@ -1981,34 +2049,18 @@ namespace iiMenu.Mods
             }
         }
 
-        private static bool offsethaschanged = false;
-        private static Vector3 lastlefthandoffset = Vector3.zero;
-        private static Vector3 lastrighthandoffset = Vector3.zero;
-        public static void FakeOculusMenu() // Finally got around to making this look real
+        public static void FakeOculusMenu() // I swear I thought the oculus menu had their arms crossed
         {
             if (leftPrimary)
             {
                 Safety.NoFinger();
-                GorillaLocomotion.Player.Instance.leftControllerTransform.rotation = Camera.main.transform.rotation * Quaternion.Euler(0f, 100f, 0f);
-                GorillaLocomotion.Player.Instance.rightControllerTransform.rotation = Camera.main.transform.rotation * Quaternion.Euler(0f, -100f, 0f);
-                if (!offsethaschanged)
-                {
-                    lastlefthandoffset = GorillaLocomotion.Player.Instance.leftHandOffset;
-                    lastrighthandoffset = GorillaLocomotion.Player.Instance.rightHandOffset;
-                    offsethaschanged = true;
-                }
-                GorillaLocomotion.Player.Instance.leftHandOffset = new Vector3(-0.02f, -0.052f, -0.056f);
-                GorillaLocomotion.Player.Instance.rightHandOffset = new Vector3(0.02f, -0.052f, -0.056f);
-            } else
-            {
-                if (offsethaschanged)
-                {
-                    GorillaLocomotion.Player.Instance.leftHandOffset = lastlefthandoffset;
-                    GorillaLocomotion.Player.Instance.rightHandOffset = lastrighthandoffset;
-                    offsethaschanged = false;
-                }
+                GorillaLocomotion.Player.Instance.inOverlay = true;
+                GorillaLocomotion.Player.Instance.leftControllerTransform.localPosition = new Vector3(238f, -90f, 0f);
+                GorillaLocomotion.Player.Instance.rightControllerTransform.localPosition = new Vector3(-190f, 90f, 0f);
+                GorillaLocomotion.Player.Instance.leftControllerTransform.rotation = Camera.main.transform.rotation * Quaternion.Euler(-55f, 90f, 0f);
+                GorillaLocomotion.Player.Instance.rightControllerTransform.rotation = Camera.main.transform.rotation * Quaternion.Euler(-55f, -49f, 0f);
             }
-            GorillaLocomotion.Player.Instance.inOverlay = leftPrimary;
+           
         }
 
         public static void FakeReportMenu()
@@ -2242,7 +2294,115 @@ namespace iiMenu.Mods
             }
         }
 
+        private static Vector3 headPos = Vector3.zero;
+        private static Vector3 headRot = Vector3.zero;
+
+        private static Vector3 handPos_L = Vector3.zero;
+        private static Vector3 handRot_L = Vector3.zero;
+
+        private static Vector3 handPos_R = Vector3.zero;
+        private static Vector3 handRot_R = Vector3.zero;
+
         public static void GhostAnimations()
+        {
+            GorillaTagger.Instance.offlineVRRig.enabled = false;
+
+            if (headPos == Vector3.zero)
+                headPos = GorillaTagger.Instance.headCollider.transform.position;
+            if (headRot == Vector3.zero)
+                headRot = GorillaTagger.Instance.headCollider.transform.rotation.eulerAngles;
+
+            if (handPos_L == Vector3.zero)
+                handPos_L = GorillaTagger.Instance.leftHandTransform.transform.position;
+            if (handRot_L == Vector3.zero)
+                handRot_L = GorillaTagger.Instance.leftHandTransform.transform.rotation.eulerAngles;
+
+            if (handPos_R == Vector3.zero)
+                handPos_R = GorillaTagger.Instance.rightHandTransform.transform.position;
+            if (handRot_R == Vector3.zero)
+                handRot_R = GorillaTagger.Instance.rightHandTransform.transform.rotation.eulerAngles;
+
+            float positionSpeed = 0.01f; 
+            float rotationSpeed = 2.0f; 
+            float positionThreshold = 0.05f;
+            float rotationThreshold = 11.5f; 
+            if (Vector3.Distance(headPos, GorillaTagger.Instance.headCollider.transform.position) > positionThreshold)
+                headPos += Vector3.Normalize(GorillaTagger.Instance.headCollider.transform.position - headPos) * positionSpeed;
+
+            if (Quaternion.Angle(Quaternion.Euler(headRot), GorillaTagger.Instance.headCollider.transform.rotation) > rotationThreshold)
+                headRot = Quaternion.RotateTowards(Quaternion.Euler(headRot), GorillaTagger.Instance.headCollider.transform.rotation, rotationSpeed).eulerAngles;
+
+            if (Vector3.Distance(handPos_L, GorillaTagger.Instance.leftHandTransform.transform.position) > positionThreshold)
+                handPos_L += Vector3.Normalize(GorillaTagger.Instance.leftHandTransform.transform.position - handPos_L) * positionSpeed;
+
+            if (Quaternion.Angle(Quaternion.Euler(handRot_L), GorillaTagger.Instance.leftHandTransform.transform.rotation) > rotationThreshold)
+                handRot_L = Quaternion.RotateTowards(Quaternion.Euler(handRot_L), GorillaTagger.Instance.leftHandTransform.transform.rotation, rotationSpeed).eulerAngles;
+
+            if (Vector3.Distance(handPos_R, GorillaTagger.Instance.rightHandTransform.transform.position) > positionThreshold)
+                handPos_R += Vector3.Normalize(GorillaTagger.Instance.rightHandTransform.transform.position - handPos_R) * positionSpeed;
+
+            if (Quaternion.Angle(Quaternion.Euler(handRot_R), GorillaTagger.Instance.rightHandTransform.transform.rotation) > rotationThreshold)
+                handRot_R = Quaternion.RotateTowards(Quaternion.Euler(handRot_R), GorillaTagger.Instance.rightHandTransform.transform.rotation, rotationSpeed).eulerAngles;
+
+
+
+            GorillaTagger.Instance.offlineVRRig.transform.position = headPos - new Vector3(0f, 0.15f, 0f);
+            try
+            {
+                GorillaTagger.Instance.myVRRig.transform.position = headPos - new Vector3(0f, 0.15f, 0f);
+            }
+            catch { }
+
+            GorillaTagger.Instance.offlineVRRig.transform.rotation = Quaternion.Euler(new Vector3(0f, headRot.y, 0f));
+            try
+            {
+                GorillaTagger.Instance.myVRRig.transform.rotation = Quaternion.Euler(new Vector3(0f, headRot.y, 0f));
+            }
+            catch { }
+
+            GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = Quaternion.Euler(headRot);
+
+            GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.position = handPos_L;
+            GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.position = handPos_R;
+
+            GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(handRot_L);
+            GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(handRot_R);
+
+            GorillaTagger.Instance.offlineVRRig.leftIndex.calcT = leftTrigger;
+            GorillaTagger.Instance.offlineVRRig.leftMiddle.calcT = leftGrab ? 1 : 0;
+            GorillaTagger.Instance.offlineVRRig.leftThumb.calcT = leftPrimary || leftSecondary ? 1 : 0;
+
+            GorillaTagger.Instance.offlineVRRig.leftIndex.LerpFinger(1f, false);
+            GorillaTagger.Instance.offlineVRRig.leftMiddle.LerpFinger(1f, false);
+            GorillaTagger.Instance.offlineVRRig.leftThumb.LerpFinger(1f, false);
+
+            GorillaTagger.Instance.offlineVRRig.rightIndex.calcT = rightTrigger;
+            GorillaTagger.Instance.offlineVRRig.rightMiddle.calcT = rightGrab ? 1 : 0;
+            GorillaTagger.Instance.offlineVRRig.rightThumb.calcT = rightPrimary || rightSecondary ? 1 : 0;
+
+            GorillaTagger.Instance.offlineVRRig.rightIndex.LerpFinger(1f, false);
+            GorillaTagger.Instance.offlineVRRig.rightMiddle.LerpFinger(1f, false);
+            GorillaTagger.Instance.offlineVRRig.rightThumb.LerpFinger(1f, false);
+
+
+            FixRigHandRotation();
+        }
+
+        public static void DisableGhostAnimations()
+        {
+            headPos = Vector3.zero;
+            headRot = Vector3.zero;
+
+            handPos_L = Vector3.zero;
+            handRot_L = Vector3.zero;
+
+            handPos_R = Vector3.zero;
+            handRot_R = Vector3.zero;
+
+            GorillaTagger.Instance.offlineVRRig.enabled = true;
+        }
+
+        public static void MinecraftAnimations()
         {
             GorillaTagger.Instance.offlineVRRig.enabled = false;
 
@@ -2290,7 +2450,7 @@ namespace iiMenu.Mods
 
         public static void StareAtGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
@@ -2301,7 +2461,7 @@ namespace iiMenu.Mods
                     GorillaTagger.Instance.offlineVRRig.headConstraint.LookAt(whoCopy.headMesh.transform.position);
                     GorillaTagger.Instance.offlineVRRig.head.rigTarget.LookAt(whoCopy.headMesh.transform.position);
                 }
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -2661,14 +2821,41 @@ namespace iiMenu.Mods
             }
         }
 
-        public static bool lasttouchleft = false;
-        public static bool lasttouchright = false;
+        public static int pullPowerInt = 0;
+        public static void ChangePullModPower()
+        {
+            float[] powers = new float[]
+            {
+                0.05f,
+                0.1f,
+                0.2f,
+                0.4f
+            };
+            string[] powerNames = new string[]
+            {
+                "Normal",
+                "Medium",
+                "Strong",
+                "Powerful"
+            };
+            pullPowerInt++;
+            if (pullPowerInt > powers.Length - 1)
+            {
+                pullPowerInt = 0;
+            }
+            pullPower = powers[pullPowerInt];
+            GetIndex("Change Pull Mod Power").overlapText = "Change Pull Mod Power <color=grey>[</color><color=green>" + powerNames[pullPowerInt] + "</color><color=grey>]</color>";
+        }
+
+        private static float pullPower = 0.05f;
+        private static bool lasttouchleft = false;
+        private static bool lasttouchright = false;
         public static void PullMod()
         {
             if (((!GorillaLocomotion.Player.Instance.wasLeftHandTouching && lasttouchleft) || (!GorillaLocomotion.Player.Instance.wasRightHandTouching && lasttouchright)) && rightGrab)
             {
                 Vector3 vel = GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity;
-                GorillaLocomotion.Player.Instance.transform.position += new Vector3(vel.x / 20f, 0f, vel.z / 20f);
+                GorillaLocomotion.Player.Instance.transform.position += new Vector3(vel.x * pullPower, 0f, vel.z * pullPower);
             }
             lasttouchleft = GorillaLocomotion.Player.Instance.wasLeftHandTouching;
             lasttouchright = GorillaLocomotion.Player.Instance.wasRightHandTouching;
@@ -3023,7 +3210,7 @@ namespace iiMenu.Mods
 
         public static void PiggybackGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
@@ -3034,7 +3221,7 @@ namespace iiMenu.Mods
                     TeleportPlayer(whoCopy.transform.position + new Vector3(0f, 0.5f, 0f));
                     GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity = Vector3.zero;
                 }
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -3055,7 +3242,7 @@ namespace iiMenu.Mods
 
         public static void CopyMovementGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
@@ -3100,7 +3287,7 @@ namespace iiMenu.Mods
 
                     GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = whoCopy.headMesh.transform.rotation;
                 }
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -3122,7 +3309,7 @@ namespace iiMenu.Mods
 
         public static void FollowPlayerGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
@@ -3174,7 +3361,7 @@ namespace iiMenu.Mods
                     GorillaTagger.Instance.offlineVRRig.rightMiddle.LerpFinger(1f, false);
                     GorillaTagger.Instance.offlineVRRig.rightThumb.LerpFinger(1f, false);
                 }
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -3196,7 +3383,7 @@ namespace iiMenu.Mods
 
         public static void OrbitPlayerGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
@@ -3242,7 +3429,7 @@ namespace iiMenu.Mods
                     GorillaTagger.Instance.offlineVRRig.rightMiddle.LerpFinger(1f, false);
                     GorillaTagger.Instance.offlineVRRig.rightThumb.LerpFinger(1f, false);
                 }
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -3264,7 +3451,7 @@ namespace iiMenu.Mods
 
         public static void JumpscareGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
@@ -3315,7 +3502,7 @@ namespace iiMenu.Mods
                     GorillaTagger.Instance.offlineVRRig.rightMiddle.LerpFinger(1f, false);
                     GorillaTagger.Instance.offlineVRRig.rightThumb.LerpFinger(1f, false);
                 }
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -3337,7 +3524,7 @@ namespace iiMenu.Mods
 
         public static void AnnoyPlayerGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
@@ -3398,7 +3585,7 @@ namespace iiMenu.Mods
                         GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(91, false, 999999f);
                     }*/
                 }
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -3420,7 +3607,7 @@ namespace iiMenu.Mods
 
         public static void ConfusePlayerGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
@@ -3452,7 +3639,7 @@ namespace iiMenu.Mods
                         splashDel = Time.time + 0.1f;
                     }
                 }
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -3474,7 +3661,7 @@ namespace iiMenu.Mods
 
         public static void IntercourseGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
@@ -3563,7 +3750,7 @@ namespace iiMenu.Mods
                         }
                     }
                 }
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -3585,7 +3772,7 @@ namespace iiMenu.Mods
 
         public static void HeadGun()
         {
-            if (rightGrab || Mouse.current.rightButton.isPressed)
+            if (GetGunInput(false))
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
@@ -3650,7 +3837,7 @@ namespace iiMenu.Mods
                         }
                     }
                 }
-                if (rightTrigger > 0.5f || Mouse.current.leftButton.isPressed)
+                if (GetGunInput(true))
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
