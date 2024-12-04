@@ -216,30 +216,52 @@ namespace iiMenu.Patches
     [HarmonyPatch(typeof(RequestableOwnershipGuard), "OwnershipRequested")]
     public class AntiCrashPatch2
     {
+        private static List<DateTime> callTimestamps = new List<DateTime>();
         public static bool Prefix()
         {
-            List<DateTime> callTimestamps = new List<DateTime>();
+            if (AntiCrashToggle)
+            {
+                DateTime now = DateTime.Now;
+                callTimestamps.Add(now);
+                callTimestamps.RemoveAll(t => (now - t).TotalSeconds > 1);
 
-            DateTime now = DateTime.Now;
-            callTimestamps.Add(now);
-            callTimestamps.RemoveAll(t => (now - t).TotalSeconds > 2);
-
-            return callTimestamps.Count > 10;
+                return callTimestamps.Count > 15;
+            }
+            return true;
         }
     }
 
-    [HarmonyPatch(typeof(RequestableOwnershipGuard), "OnMasterClientAssistedTakeoverRequest")]
+    [HarmonyPatch(typeof(VRRig), "RequestCosmetics")]
     public class AntiCrashPatch3
     {
-        public static bool Prefix()
+        private static List<float> callTimestamps = new List<float>();
+        public static bool Prefix(VRRig __instance)
         {
-            List<DateTime> callTimestamps = new List<DateTime>();
+            if (AntiCrashToggle && __instance == GorillaTagger.Instance.offlineVRRig)
+            {
+                callTimestamps.Add(Time.time);
+                callTimestamps.RemoveAll(t => (Time.time - t) > 1);
 
-            DateTime now = DateTime.Now;
-            callTimestamps.Add(now);
-            callTimestamps.RemoveAll(t => (now - t).TotalSeconds > 2);
+                return callTimestamps.Count > 15;
+            }
+            return true;
+        }
+    }
 
-            return callTimestamps.Count > 10;
+    [HarmonyPatch(typeof(VRRig), "RequestMaterialColor")]
+    public class AntiCrashPatch4
+    {
+        private static List<float> callTimestamps = new List<float>();
+        public static bool Prefix(VRRig __instance)
+        {
+            if (AntiCrashToggle && __instance == GorillaTagger.Instance.offlineVRRig)
+            {
+                callTimestamps.Add(Time.time);
+                callTimestamps.RemoveAll(t => (Time.time - t) > 1);
+
+                return callTimestamps.Count > 15;
+            }
+            return true;
         }
     }
 

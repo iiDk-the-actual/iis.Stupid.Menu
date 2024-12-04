@@ -3310,10 +3310,14 @@ namespace iiMenu.Menu
                     hasRemovedThisFrame = true;
                     if (GetIndex("Experimental RPC Protection").enabled)
                     {
-                        RaiseEventOptions options = new RaiseEventOptions();
-                        options.CachingOption = EventCaching.RemoveFromRoomCache;
-                        options.TargetActors = new int[1] { PhotonNetwork.LocalPlayer.ActorNumber };
-                        PhotonNetwork.NetworkingClient.OpRaiseEvent(200, null, options, SendOptions.SendReliable);
+                        PhotonNetwork.RaiseEvent(0, null, new RaiseEventOptions
+                        {
+                            CachingOption = EventCaching.DoNotCache,
+                            TargetActors = new int[]
+                            {
+                                PhotonNetwork.LocalPlayer.ActorNumber
+                            }
+                        }, SendOptions.SendReliable);
                     }
                     else
                     {

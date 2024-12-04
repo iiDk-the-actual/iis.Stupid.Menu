@@ -720,7 +720,7 @@ namespace iiMenu.Mods
         {
             if (rightPrimary && !lastaomfg)
             {
-                GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity += GorillaLocomotion.Player.Instance.headCollider.transform.forward * (flySpeed * 2);
+                GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity += GorillaLocomotion.Player.Instance.headCollider.transform.forward * flySpeed;
             }
             lastaomfg = rightPrimary;
         }
