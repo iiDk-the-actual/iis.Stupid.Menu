@@ -7,6 +7,7 @@ using iiMenu.Classes;
 using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
+using Photon.Voice.PUN;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -550,43 +551,6 @@ namespace iiMenu.Mods
         }
 
         private static float delaything = 0f;
-        public static void GuardianBlindGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-                
-                if (GetGunInput(true) && Time.time > delaything)
-                {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
-                    {
-                        delaything = Time.time + 0.1f;
-                        RigManager.GetNetworkViewFromVRRig(possibly).SendRPC("GrabbedByPlayer", GetPlayerFromVRRig(possibly), new object[] { true, false, false });
-                        RigManager.GetNetworkViewFromVRRig(possibly).SendRPC("DroppedByPlayer", GetPlayerFromVRRig(possibly), new object[] { new Vector3(0f, float.NaN, 0f) });
-                    }
-                }
-            }
-        }
-
-        public static void GuardianBlindAll()
-        {
-            if (rightTrigger > 0.5f)
-            {
-                if (Time.time > delaything)
-                {
-                    delaything = Time.time + 0.1f;
-                    foreach (VRRig player in GorillaParent.instance.vrrigs)
-                    {
-                        RigManager.GetNetworkViewFromVRRig(player).SendRPC("GrabbedByPlayer", RpcTarget.Others, new object[] { true, false, false });
-                        RigManager.GetNetworkViewFromVRRig(player).SendRPC("DroppedByPlayer", RpcTarget.Others, new object[] { new Vector3(0f, float.NaN, 0f) });
-                    }
-                }
-            }
-        }
-
         // Hi skids :3
         // If you take this code you like giving sloppy wet kisses to cute boys >_<
         // I gotta stop
@@ -675,11 +639,10 @@ namespace iiMenu.Mods
                 {
                     if (Time.time > delaything)
                     {
-                        delaything = Time.time + 0.3f;
-                        PhotonView photonView = GameObject.Find("WorldShareableCosmetic").GetComponent<WorldShareableItem>().guard.photonView;
-                        for (int i = 0; i < 100; i++)
+                        delaything = Time.time + 0.049f;
+                        for (int i = 0; i < 25; i++)
                         {
-                            photonView.RPC("OnMasterClientAssistedTakeoverRequest", NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)), new object[2]);
+                            FriendshipGroupDetection.Instance.photonView.RPC("NotifyNoPartyToMerge", NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)), new object[] { null });
                         }
                     }
                 }
@@ -710,11 +673,11 @@ namespace iiMenu.Mods
             {
                 if (Time.time > delaything)
                 {
-                    delaything = Time.time + 0.3f;
+                    delaything = Time.time + 0.049f;
                     PhotonView photonView = GameObject.Find("WorldShareableCosmetic").GetComponent<WorldShareableItem>().guard.photonView;
-                    for (int i = 0; i < 100; i++)
+                    for (int i = 0; i < 25; i++)
                     {
-                        photonView.RPC("OnMasterClientAssistedTakeoverRequest", RpcTarget.Others, new object[2]);
+                        FriendshipGroupDetection.Instance.photonView.RPC("NotifyNoPartyToMerge", RpcTarget.Others, new object[] { null });
                     }
                 }
             }
@@ -732,9 +695,9 @@ namespace iiMenu.Mods
                 {
                     { 0, photonView.ViewID },
                     { 2, (int)(PhotonNetwork.ServerTimestamp + -int.MaxValue) },
-                    { 3, "RPC_RequestCosmetics" },
-                    { 4, new object[] { /*NetPlayerToPlayer(GetPlayerFromVRRig(FUCKER))*/ } },
-                    { 5, (byte)PhotonNetwork.PhotonServerSettings.RpcList.IndexOf("RPC_RequestCosmetics") }
+                    { 3, "RPC_RequestMaterialColor" },
+                    { 4, new object[] { NetPlayerToPlayer(GetPlayerFromVRRig(FUCKER)) } },
+                    { 5, (byte)91 }
                 };
                 PhotonNetwork.NetworkingClient.LoadBalancingPeer.OpRaiseEvent(200, rpcHash, new RaiseEventOptions
                 {
@@ -747,36 +710,7 @@ namespace iiMenu.Mods
                     Encrypt = false
                 });
             }
-        }
-
-        public static IEnumerator KickRigCyrus(VRRig rig)
-        {
-            PhotonHandler handler = GameObject.Find("PhotonMono").GetComponent<PhotonHandler>();
-
-            PhotonView photonView = GetPhotonViewFromVRRig(rig);
-            Player kickingPlayer = NetPlayerToPlayer(GetPlayerFromVRRig(rig));
-
-            SetTick(9999f);
-
-            yield return new WaitForSeconds(0.5f);
-
-            Traverse.Create(handler)
-                .Field("SendAsap")
-                .SetValue(true);
-
-            Traverse.Create(handler)
-                .Field("MaxDatagrams")
-                .SetValue(255);
-
-            for (int i = 0; i < 3945; i += 100)
-            {
-                for (int j = i; j < System.Math.Min(i + 100, 3945); j++)
-                {
-                    photonView.RPC("RPC_RequestMaterialColor", RpcTarget.Others, new object[] { kickingPlayer });
-                }
-                PhotonNetwork.SendAllOutgoingCommands();
-            }
-            PhotonNetwork.SendAllOutgoingCommands();
+            RPCProtection();
         }
 
         private static Coroutine KVCoroutine = null;
@@ -787,7 +721,7 @@ namespace iiMenu.Mods
             {
                 SetTick(1000f);
             }
-            if (rightGrab || Mouse.current.rightButton.isPressed || isCopying)
+            if (GetGunInput(false) || isCopying)
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
@@ -814,7 +748,7 @@ namespace iiMenu.Mods
                         try { CoroutineManager.EndCoroutine(KVCoroutine); } catch { }
                     }
                 }
-                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && !isCopying)
+                if (GetGunInput(true) && !isCopying && PhotonVoiceNetwork.Instance.PrimaryRecorder.IsInitialized)
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
@@ -823,7 +757,7 @@ namespace iiMenu.Mods
                         whoCopy = possibly;
                         SetTick(9999f);
                         NotifiLib.SendNotification("<color=grey>[</color><color=purple>KICK</color><color=grey>]</color> <color=white>Player is being kicked...</color>");
-                        KVCoroutine = CoroutineManager.RunCoroutine(GetIndex("Legacy Kick").enabled ? KickRig(whoCopy) : KickRigCyrus(whoCopy));
+                        KVCoroutine = CoroutineManager.RunCoroutine(KickRig(whoCopy));
                     }
                 }
             } else
@@ -836,60 +770,14 @@ namespace iiMenu.Mods
                 }
             }
         }
-        public static void KickGunCyrus()
-        {
-            if (!PhotonNetwork.InRoom)
-            {
-                SetTick(1000f);
-            }
-            if (rightGrab || Mouse.current.rightButton.isPressed || isCopying)
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
-                if (isCopying && whoCopy != null)
-                {
-                    if (!PhotonNetwork.InRoom)
-                    {
-                        isCopying = false;
-                        whoCopy = null;
-                        SetTick(1000f);
-                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You have been kicked for sending too many RPCs, you will reconnect shortly.</color>");
-                        rejRoom = ihavediahrrea;
-                        try { CoroutineManager.EndCoroutine(KVCoroutine); } catch { }
-                    }
-                    if (GetPlayerFromVRRig(whoCopy) == null)
-                    {
-                        isCopying = false;
-                        whoCopy = null;
-                        SetTick(1000f);
-                        NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Player has been kicked!</color>");
-                        rejRoom = ihavediahrrea;
-                        try { CoroutineManager.EndCoroutine(KVCoroutine); } catch { }
-                    }
-                }
-                if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && !isCopying)
-                {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
-                    {
-                        isCopying = true;
-                        whoCopy = possibly;
-                        SetTick(9999f);
-                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>KICK</color><color=grey>]</color> <color=white>Player is being kicked...</color>");
-                        KVCoroutine = CoroutineManager.RunCoroutine(KickRigCyrus(whoCopy));
-                    }
-                }
-            }
-            else
+        public static void DisableKickGun()
+        {
+            SetTick(1000f);
+            if (isCopying)
             {
-                if (isCopying)
-                {
-                    isCopying = false;
-                    SetTick(1000f);
-                    try { CoroutineManager.EndCoroutine(KVCoroutine); } catch { }
-                }
+                isCopying = false;
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>Player kick has been cancelled.</color>");
             }
         }
 

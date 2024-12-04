@@ -913,8 +913,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Attic Crash Gun", method =() => Overpowered.AtticCrashGun(), toolTip = "Crashes whoever your hand desires in the attic."},
                 new ButtonInfo { buttonText = "Attic Crash All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.AtticCrashAll(), toolTip = "Crashes everybody inside of the attic."},
 
-                new ButtonInfo { buttonText = "Guardian Blind Gun", method =() => Overpowered.GuardianBlindGun(), toolTip = "Blinds whoever your hand desires if you're guardian."},
-                new ButtonInfo { buttonText = "Guardian Blind All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.GuardianBlindAll(), toolTip = "Blinds everybody if you're guardian."},
+                //new ButtonInfo { buttonText = "Guardian Blind Gun", method =() => Overpowered.GuardianBlindGun(), toolTip = "Blinds whoever your hand desires if you're guardian."},
+                //new ButtonInfo { buttonText = "Guardian Blind All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.GuardianBlindAll(), toolTip = "Blinds everybody if you're guardian."},
 
                 new ButtonInfo { buttonText = "Destroy Gun", method =() => Overpowered.DestroyGun(), toolTip = "Block new players from seeing whoever your hand desires."},
                 new ButtonInfo { buttonText = "Destroy All", method =() => Overpowered.DestroyAll(), isTogglable = false, toolTip = "Block new players from seeing everyone."},
@@ -1093,9 +1093,9 @@ namespace iiMenu.Menu
             },
 
             new ButtonInfo[] { // Overpowered (in Settings) [31]
-                new ButtonInfo { buttonText = "Exit Overpowered Settings", method =() => Settings.EnableSettings(), isTogglable = false, toolTip = "Returns you back to the settings menu."},
+                new ButtonInfo { buttonText = "Exit Overpowered Settings", method =() => Settings.EnableSettings(), isTogglable = false, toolTip = "Returns you back to the settings menu."}
 
-                new ButtonInfo { buttonText = "Legacy Kick", toolTip = "Uses the old version of the kick mods."}
+                // What a lone category
             },
         };
     }
