@@ -238,7 +238,7 @@ namespace iiMenu.Menu
                                 if (v.name.Contains("forestatlas"))
                                 {
                                     indexOfThatThing++;
-                                    if (indexOfThatThing == 4)
+                                    if (indexOfThatThing == 2)
                                     {
                                         UnityEngine.Debug.Log("Board found");
                                         found2 = true;
@@ -1803,6 +1803,8 @@ namespace iiMenu.Menu
                                     pride.wrapMode = TextureWrapMode.Clamp;
                                 }
                                 menuBackground.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Lit");
+                                menuBackground.GetComponent<Renderer>().material.SetFloat("_Glossiness", 0f);
+                                menuBackground.GetComponent<Renderer>().material.SetFloat("_Metallic", 0f);
                                 menuBackground.GetComponent<Renderer>().material.color = Color.white;
                                 menuBackground.GetComponent<Renderer>().material.mainTexture = pride;
                                 UnityEngine.Debug.Log("gayed the texture");
@@ -1815,6 +1817,8 @@ namespace iiMenu.Menu
                                     trans.wrapMode = TextureWrapMode.Clamp;
                                 }
                                 menuBackground.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Lit");
+                                menuBackground.GetComponent<Renderer>().material.SetFloat("_Glossiness", 0f);
+                                menuBackground.GetComponent<Renderer>().material.SetFloat("_Metallic", 0f);
                                 menuBackground.GetComponent<Renderer>().material.color = Color.white;
                                 menuBackground.GetComponent<Renderer>().material.mainTexture = trans;
                                 break;
@@ -1826,6 +1830,8 @@ namespace iiMenu.Menu
                                     gay.wrapMode = TextureWrapMode.Clamp;
                                 }
                                 menuBackground.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Lit");
+                                menuBackground.GetComponent<Renderer>().material.SetFloat("_Glossiness", 0f);
+                                menuBackground.GetComponent<Renderer>().material.SetFloat("_Metallic", 0f);
                                 menuBackground.GetComponent<Renderer>().material.color = Color.white;
                                 menuBackground.GetComponent<Renderer>().material.mainTexture = gay;
                                 break;
@@ -1838,6 +1844,8 @@ namespace iiMenu.Menu
                     if (doCustomMenuBackground)
                     {
                         menuBackground.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Lit");
+                        menuBackground.GetComponent<Renderer>().material.SetFloat("_Glossiness", 0f);
+                        menuBackground.GetComponent<Renderer>().material.SetFloat("_Metallic", 0f);
                         menuBackground.GetComponent<Renderer>().material.color = Color.white;
                         menuBackground.GetComponent<Renderer>().material.mainTexture = customMenuBackgroundImage;
                     }
@@ -3301,6 +3309,25 @@ namespace iiMenu.Menu
             return texture;
         }
 
+        private static Dictionary<Color[], Texture2D> cacheGradients = new Dictionary<Color[], Texture2D> { };
+        public static Texture2D GetGradientTexture(Color colorA, Color colorB)
+        {
+            if (cacheGradients.ContainsKey(new Color[] { colorA, colorB }))
+                return cacheGradients[new Color[] { colorA, colorB }];
+
+            Texture2D txt2d = new Texture2D(128, 128);
+            for (int i = 1; i <= 128; i++)
+            {
+                for (int j = 1; j <= 128; j++)
+                {
+                    Color clr = Color.Lerp(colorA, colorB, i / 128f);
+                    txt2d.SetPixel(i, j, clr);
+                }
+            }
+            txt2d.Apply();
+            return txt2d;
+        }
+
         public static void RPCProtection()
         {
             try
@@ -3974,6 +4001,21 @@ namespace iiMenu.Menu
             if (gamemode.Contains("ghost"))
             {
                 GorillaAmbushManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla GhostTag Manager").GetComponent<GorillaAmbushManager>();
+                if (tagman.isCurrentlyTag)
+                {
+                    infected.Add(tagman.currentIt);
+                }
+                else
+                {
+                    foreach (NetPlayer plr in tagman.currentInfected)
+                    {
+                        infected.Add(plr);
+                    }
+                }
+            }
+            if (gamemode.Contains("ambush") || gamemode.Contains("stealth"))
+            {
+                GorillaAmbushManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Stealth Manager").GetComponent<GorillaAmbushManager>();
                 if (tagman.isCurrentlyTag)
                 {
                     infected.Add(tagman.currentIt);
@@ -4924,6 +4966,7 @@ namespace iiMenu.Menu
 
         public static bool dynamicSounds = false;
         public static bool dynamicAnimations = false;
+        public static bool dynamicGradients = false;
         public static string lastClickedName = "";
 
         public static string ascii = 

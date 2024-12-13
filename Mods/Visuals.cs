@@ -909,7 +909,7 @@ namespace iiMenu.Mods
                 if (vrrig != GorillaTagger.Instance.offlineVRRig)
                 {
                     GameObject line = new GameObject("Line");
-                    //if (GetIndex("Hidden on Camera").enabled) { line.layer = 19; }
+                    if (GetIndex("Hidden on Camera").enabled) { line.layer = 19; }
                     LineRenderer liner = line.AddComponent<LineRenderer>();
                     UnityEngine.Color thecolor = vrrig.playerColor;
                     if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }

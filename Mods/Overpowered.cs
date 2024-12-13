@@ -9,6 +9,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using Photon.Voice.PUN;
 using System.Collections;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static iiMenu.Classes.RigManager;
@@ -551,6 +552,7 @@ namespace iiMenu.Mods
         }
 
         private static float delaything = 0f;
+
         // Hi skids :3
         // If you take this code you like giving sloppy wet kisses to cute boys >_<
         // I gotta stop
@@ -627,6 +629,7 @@ namespace iiMenu.Mods
         }
 
         // Huge thanks to kingofnetflix
+        private static float flushDelay = 0f;
         public static void LagGun()
         {
             if (GetGunInput(false))
@@ -644,6 +647,11 @@ namespace iiMenu.Mods
                         {
                             FriendshipGroupDetection.Instance.photonView.RPC("NotifyNoPartyToMerge", NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)), new object[] { null });
                         }
+                    }
+                    if (Time.time > flushDelay)
+                    {
+                        flushDelay = Time.time + 0.5f;
+                        RPCProtection();
                     }
                 }
                 if (GetGunInput(true))
@@ -679,6 +687,11 @@ namespace iiMenu.Mods
                     {
                         FriendshipGroupDetection.Instance.photonView.RPC("NotifyNoPartyToMerge", RpcTarget.Others, new object[] { null });
                     }
+                }
+                if (Time.time > flushDelay)
+                {
+                    flushDelay = Time.time + 0.5f;
+                    RPCProtection();
                 }
             }
         }
@@ -734,8 +747,11 @@ namespace iiMenu.Mods
                         isCopying = false;
                         whoCopy = null;
                         SetTick(1000f);
-                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You have been kicked for sending too many RPCs, you will reconnect shortly.</color>");
-                        rejRoom = ihavediahrrea;
+                        if (!GetIndex("Disable Kick Gun Reconnect").enabled)
+                        {
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You have been kicked for sending too many RPCs, you will reconnect shortly.</color>");
+                            rejRoom = ihavediahrrea;
+                        }
                         try { CoroutineManager.EndCoroutine(KVCoroutine); } catch { }
                     }
                     if (GetPlayerFromVRRig(whoCopy) == null)
@@ -744,7 +760,6 @@ namespace iiMenu.Mods
                         whoCopy = null;
                         SetTick(1000f);
                         NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Player has been kicked!</color>");
-                        rejRoom = ihavediahrrea;
                         try { CoroutineManager.EndCoroutine(KVCoroutine); } catch { }
                     }
                 }

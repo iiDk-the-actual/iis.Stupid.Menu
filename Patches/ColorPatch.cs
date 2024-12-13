@@ -15,11 +15,7 @@ namespace iiMenu.Patches
             {
                 if (nameSpoofEnabled)
                 {
-                    try
-                    {
-                        iiMenu.Mods.Safety.SpoofName();
-                    }
-                    catch { }
+                    return false;
                 }
                 if (patchEnabled)
                 {

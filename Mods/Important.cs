@@ -126,7 +126,7 @@ namespace iiMenu.Mods
 
         public static void CreateRoom(string roomName, bool isPublic) // Once again thanks to Shiny for discovering a thing that doesn't work anymore
         {
-            PhotonNetworkController.Instance.currentJoinTrigger = GorillaComputer.instance.GetJoinTriggerForZone("forest");
+            //PhotonNetworkController.Instance.currentJoinTrigger = GorillaComputer.instance.GetJoinTriggerForZone("forest");
             UnityEngine.Debug.Log((string)typeof(PhotonNetworkController).GetField("platformTag", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(PhotonNetworkController.Instance));
             RoomConfig roomConfig = new RoomConfig()
             {
@@ -137,7 +137,8 @@ namespace iiMenu.Mods
                 CustomProps = new ExitGames.Client.Photon.Hashtable()
                 {
                     { "gameMode", PhotonNetworkController.Instance.currentJoinTrigger.GetFullDesiredGameModeString() },
-                    { "platform", (string)typeof(PhotonNetworkController).GetField("platformTag", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(PhotonNetworkController.Instance) }
+                    { "platform", (string)typeof(PhotonNetworkController).GetField("platformTag", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(PhotonNetworkController.Instance) },
+                    { "queueName", GorillaComputer.instance.currentQueue }
                 }
             };
             NetworkSystem.Instance.ConnectToRoom(roomName, roomConfig);
@@ -283,15 +284,15 @@ namespace iiMenu.Mods
             GUIUtility.systemCopyBuffer = text;
         }
 
-
+        // The oldest bug in this menu: I enabled the AFK kick when turning on ANTI afk. I'm killing myself
         public static void EnableAntiAFK()
         {
-            PhotonNetworkController.Instance.disableAFKKick = false;
+            PhotonNetworkController.Instance.disableAFKKick = true;
         }
 
         public static void DisableAntiAFK()
         {
-            PhotonNetworkController.Instance.disableAFKKick = true;
+            PhotonNetworkController.Instance.disableAFKKick = false;
         }
 
         public static void DisableNetworkTriggers()
