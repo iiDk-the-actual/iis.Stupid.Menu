@@ -216,16 +216,15 @@ namespace iiMenu.Patches
     [HarmonyPatch(typeof(RequestableOwnershipGuard), "OwnershipRequested")]
     public class AntiCrashPatch2
     {
-        private static List<DateTime> callTimestamps = new List<DateTime>();
+        private static List<float> callTimestamps = new List<float>();
         public static bool Prefix()
         {
             if (AntiCrashToggle)
             {
-                DateTime now = DateTime.Now;
-                callTimestamps.Add(now);
-                callTimestamps.RemoveAll(t => (now - t).TotalSeconds > 1);
+                callTimestamps.Add(Time.time);
+                callTimestamps.RemoveAll(t => (Time.time - t) > 1);
 
-                return callTimestamps.Count > 15;
+                return callTimestamps.Count < 15;
             }
             return true;
         }
@@ -242,7 +241,7 @@ namespace iiMenu.Patches
                 callTimestamps.Add(Time.time);
                 callTimestamps.RemoveAll(t => (Time.time - t) > 1);
 
-                return callTimestamps.Count > 15;
+                return callTimestamps.Count < 15;
             }
             return true;
         }
@@ -259,7 +258,7 @@ namespace iiMenu.Patches
                 callTimestamps.Add(Time.time);
                 callTimestamps.RemoveAll(t => (Time.time - t) > 1);
 
-                return callTimestamps.Count > 15;
+                return callTimestamps.Count < 15;
             }
             return true;
         }

@@ -13,7 +13,7 @@ namespace iiMenu
             Console.Title = "ii's Stupid Menu // Build " + PluginInfo.Version;
 
             iiMenu.Patches.Menu.ApplyHarmonyPatches();
-            GameObject Loading = new GameObject();
+            GameObject Loading = new GameObject("ii");
             Loading.AddComponent<iiMenu.UI.Main>();
             Loading.AddComponent<iiMenu.Notifications.NotifiLib>();
             Loading.AddComponent<iiMenu.Classes.CoroutineManager>();

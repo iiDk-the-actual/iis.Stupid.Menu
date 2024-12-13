@@ -2356,13 +2356,23 @@ namespace iiMenu.Mods
             dynamicAnimations = false;
         }
 
+        public static void DynamicGradients()
+        {
+            dynamicGradients = true;
+        }
+
+        public static void NoDynamicGradients()
+        {
+            dynamicGradients = false;
+        }
+
         // Thanks to https://github.com/kingofnetflix/BAnANA for inspiration and support with voice recognition
         // No, it's not skidded, read the debunk: https://pastebin.com/raw/dj55QNyC
         private static KeywordRecognizer mainPhrases;
         private static KeywordRecognizer modPhrases;
         public static void VoiceRecognitionOn()
         {
-            mainPhrases = new KeywordRecognizer(new string[] { "jarvis", "ii", "i i", "eye eye", "siri", "google", "alexa", "dummy", "computer", "stinky", "silly", "stupid", "console" });
+            mainPhrases = new KeywordRecognizer(new string[] { "jarvis", "ii", "i i", "eye eye", "siri", "google", "alexa", "dummy", "computer", "stinky", "silly", "stupid", "console", "go go gadget" });
             mainPhrases.OnPhraseRecognized += ModRecognition;
             mainPhrases.Start();
         }

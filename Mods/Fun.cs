@@ -1566,6 +1566,18 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void UnlimitedBuilding()
+        {
+            BuilderPieceInteractor.instance.maxHoldablePieceStackCount = int.MaxValue;
+            Patches.UnlimitPatches.enabled = true;
+        }
+
+        public static void DisableUnlimitedBuilding()
+        {
+            BuilderPieceInteractor.instance.maxHoldablePieceStackCount = 50;
+            Patches.UnlimitPatches.enabled = false;
+        }
+
         private static float dumbdelay = 0f;
         public static void DestroyBlockGun()
         {
