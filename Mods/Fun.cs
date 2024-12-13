@@ -104,7 +104,7 @@ namespace iiMenu.Mods
             if (Time.time > lastBangTime)
             {
                 GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.x = 50f;
-                lastBangTime = Time.time + (60f/(float)BPM);
+                lastBangTime = Time.time + (60f / (float)BPM);
             } else
             {
                 GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.x = Mathf.Lerp(GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.x,0f,0.1f);
@@ -196,7 +196,6 @@ namespace iiMenu.Mods
             {
                 FixHandTaps();
             }
-            
         }
 
         public static void EnableInstantHandTaps()
@@ -1255,7 +1254,7 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true))
                 {
-                        GameObject.Find("Floating Bug Holdable").transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
+                    GameObject.Find("Floating Bug Holdable").transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
                 }
             }
         }
@@ -1603,7 +1602,7 @@ namespace iiMenu.Mods
 
         public static void SpazBug()
         {
-             GameObject.Find("Floating Bug Holdable").transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+            GameObject.Find("Floating Bug Holdable").transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
         }
 
         public static void SpazBat()
@@ -2122,6 +2121,147 @@ namespace iiMenu.Mods
 
             lastgripcrap = rightGrab;
             lasttrigcrap = rightTrigger > 0.5f;
+        }
+
+        public static void OpenBlockTowerSettings()
+        {
+            buttonsType = 32;
+            pageNumber = 0;
+        }
+
+        // Position
+
+        public static int towerPosForward = 0;
+
+        public static void TowerPosForward()
+        {
+            towerPosForward++;
+
+            GetIndex("Current Position").overlapText = "Position <color=grey>[</color><color=green>" + towerPosForward.ToString() + ", " + towerPosRight.ToString() + ", " + towerPosUp.ToString() + "</color><color=grey>]</color>";
+        }
+
+        public static void TowerPosBackward()
+        {
+            towerPosForward--;
+
+            GetIndex("Current Position").overlapText = "Position <color=grey>[</color><color=green>" + towerPosForward.ToString() + ", " + towerPosRight.ToString() + ", " + towerPosUp.ToString() + "</color><color=grey>]</color>";
+        }
+
+        public static int towerPosRight = 0;
+
+        public static void TowerPosRight()
+        {
+            towerPosRight++;
+
+            GetIndex("Current Position").overlapText = "Position <color=grey>[</color><color=green>" + towerPosForward.ToString() + ", " + towerPosRight.ToString() + ", " + towerPosUp.ToString() + "</color><color=grey>]</color>";
+        }
+
+        public static void TowerPosLeft()
+        {
+            towerPosRight--;
+
+            GetIndex("Current Position").overlapText = "Position <color=grey>[</color><color=green>" + towerPosForward.ToString() + ", " + towerPosRight.ToString() + ", " + towerPosUp.ToString() + "</color><color=grey>]</color>";
+        }
+
+        public static int towerPosUp = 0;
+
+        public static void TowerPosUp()
+        {
+            towerPosUp++;
+
+            GetIndex("Current Position").overlapText = "Position <color=grey>[</color><color=green>" + towerPosForward.ToString() + ", " + towerPosRight.ToString() + ", " + towerPosUp.ToString() + "</color><color=grey>]</color>";
+        }
+
+        public static void TowerPosDown()
+        {
+            towerPosUp--;
+
+            GetIndex("Current Position").overlapText = "Position <color=grey>[</color><color=green>" + towerPosForward.ToString() + ", " + towerPosRight.ToString() + ", " + towerPosUp.ToString() + "</color><color=grey>]</color>";
+        }
+
+        // Size
+
+        public static int towerSize = 5;
+
+        public static void TowerSizeBigger()
+        {
+            towerSize++;
+
+            GetIndex("Current Size").overlapText = "Size <color=grey>[</color><color=green>" + towerSize.ToString() + "</color><color=grey>]</color>";
+        }
+
+        public static void TowerSizeSmaller()
+        {
+            if (towerSize != 5)
+            {
+                towerSize--;
+            }
+            else
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>Tower Size cannot be smaller than 5.</color>");
+                towerSize = 5;
+            }
+
+            GetIndex("Current Size").overlapText = "Size <color=grey>[</color><color=green>" + towerSize.ToString() + "</color><color=grey>]</color>";
+
+        }
+
+        public static void CloseBlockTowerSettings()
+        {
+            buttonsType = 12;
+            pageNumber = 7;
+        }
+
+        public static void BlockTower()
+        {
+            if (rightGrab && !lastgripcrap)
+                CoroutineManager.RunCoroutine(CreateBlockTower());
+
+            lastgripcrap = rightGrab;
+        }
+
+        public static IEnumerator CreateBlockTower()
+        {
+            int currBlockNum = 2;
+            BuilderPiece currBlock = null;
+            BuilderPiece prevBlock = null;
+
+            yield return CreateGetPiece(pieceIdSet, piece =>
+            {
+                prevBlock = piece;
+            });
+
+            while (prevBlock == null)
+            {
+                yield return null;
+            }
+
+            BuilderTable.instance.RequestGrabPiece(prevBlock, false, Vector3.zero, Quaternion.identity);
+            yield return null;
+
+            while (currBlockNum <= towerSize)
+            {
+                yield return CreateGetPiece(pieceIdSet, piece =>
+                {
+                    currBlock = piece;
+                });
+
+                while (currBlock == null)
+                {
+                    yield return null;
+                }
+
+                BuilderTable.instance.RequestGrabPiece(currBlock, false, Vector3.zero, Quaternion.identity);
+                yield return null;
+
+                BuilderTable.instance.RequestPlacePiece(currBlock, currBlock, (sbyte)towerPosForward, (sbyte)towerPosRight, (byte)towerPosUp, prevBlock, 2, 0);
+                yield return null;
+
+                // Block Positioning is forward/back, left/right, up/down
+
+                prevBlock = currBlock;
+                currBlockNum++;
+            }
         }
 
         public static IEnumerator CreateMassiveBlock()

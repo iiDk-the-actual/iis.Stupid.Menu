@@ -110,7 +110,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Clear Notifications on Disconnect", toolTip = "Clears all notifications on disconnect."},
                 new ButtonInfo { buttonText = "Hide Notifications on Camera", overlapText = "Streamer Mode Notifications", toolTip = "Makes notifications only render in VR."},
                 new ButtonInfo { buttonText = "Disable Notifications", enableMethod =() => Settings.DisableNotifications(), disableMethod =() => Settings.EnableNotifications(), toolTip = "Disables all notifications."},
-                new ButtonInfo { buttonText = "Disable Enabled GUI", overlapText = "Disable Arraylist GUI", enableMethod =() => Settings.DisableEnabledGUI(), disableMethod =() => Settings.EnableEnabledGUI(), toolTip = "Disables the GUI that shows the enabled mods."},
+                new ButtonInfo { buttonText = "Disable Mods GUI VR", overlapText = "Disable List of Enabled Mods in VR", enableMethod =() => Settings.DisableEnabledGUI(), disableMethod =() => Settings.EnableEnabledGUI(), toolTip = "Disables the GUI that shows the Enabled Mods."},
                 new ButtonInfo { buttonText = "Disable Disconnect Button", enableMethod =() => Settings.DisableDisconnectButton(), disableMethod =() => Settings.EnableDisconnectButton(), toolTip = "Disables the disconnect button at the top of the menu."},
                 new ButtonInfo { buttonText = "Disable Search Button", enableMethod =() => Settings.DisableSearchButton(), disableMethod =() => Settings.EnableSearchButton(), toolTip = "Disables the search button at the bottom of the menu."},
                 new ButtonInfo { buttonText = "Disable Return Button", enableMethod =() => Settings.DisableReturnButton(), disableMethod =() => Settings.EnableReturnButton(), toolTip = "Disables the return button at the bottom of the menu."},
@@ -633,7 +633,12 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Shotgun <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.Shotgun(), toolTip = "Spawns you a shotgun when you press <color=green>grip</color>."},
                 new ButtonInfo { buttonText = "Massive Block <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.MassiveBlock(), toolTip = "Spawns you a massive block when you press <color=green>grip</color>."},
                 new ButtonInfo { buttonText = "Select Block Gun", method =() => Fun.SelectBlockGun(), toolTip = "Selects whatever building block your hand desires to be used for the building mods." },
-                
+
+                new ButtonInfo { buttonText = "Fast Ropes", enableMethod =() => Fun.FastRopes(), disableMethod =() => Fun.RegularRopes(), toolTip = "Makes the ropes really fast." },
+
+                new ButtonInfo { buttonText = "Block Tower Settings", method =() => Fun.OpenBlockTowerSettings(), isTogglable = false, toolTip = "Opens the Block Tower Settings." },
+                new ButtonInfo { buttonText = "Block Tower <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.BlockTower(), toolTip = "Creates a Block Tower in your Hand." },
+
                 new ButtonInfo { buttonText = "Spaz All Moles", method =() => Fun.SpazMoleMachines(), toolTip = "Gives the moles a seizure."},
                 new ButtonInfo { buttonText = "Auto Start Moles", method =() => Fun.AutoStartMoles(), toolTip = "Automatically starts the mole games."},
                 new ButtonInfo { buttonText = "Auto Hit Moles", method =() => Fun.AutoHitMoles(), toolTip = "Hits all of the moles automatically."},
@@ -716,8 +721,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Cosmetic Browser", method =() => Fun.CosmeticBrowser(), isTogglable = false, toolTip = "Browse through every cosmetic that you can try on and add it to your cart." },
                 new ButtonInfo { buttonText = "Auto Spoof Cosmetics", enableMethod =() => Fun.AutoLoadCosmetics(), disableMethod =() => Fun.NoAutoLoadCosmetics(), toolTip = "Automatically spoofs your cosmetics, making you appear with anything you're able to try-on." },
                 new ButtonInfo { buttonText = "Disable Cosmetics on Tag", method =() => Fun.DisableCosmeticsOnTag(), toolTip = "Disables your cosmetics when you get tagged, good for ambush." },
-
-                new ButtonInfo { buttonText = "Fast Ropes", enableMethod =() => Fun.FastRopes(), disableMethod =() => Fun.RegularRopes(), toolTip = "Makes the ropes really fast." },
 
                 new ButtonInfo { buttonText = "Get ID Self", method =() => Miscellaneous.CopySelfID(), isTogglable = false, toolTip = "Gets your player ID and copies it to the clipboard."},
                 new ButtonInfo { buttonText = "Get ID Gun", method =() => Miscellaneous.CopyIDGun(), toolTip = "Gets the player ID of whoever your hand desires and copies it to the clipboard." },
