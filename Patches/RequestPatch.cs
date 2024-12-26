@@ -42,7 +42,7 @@ namespace iiMenu.Patches
         {
             if (PhotonNetwork.InRoom)
             {
-                Vector3 target = GameObject.Find("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Cosmetics Room Triggers/TryOnRoom").transform.position - new Vector3(0f, GameObject.Find("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Cosmetics Room Triggers/TryOnRoom").transform.localScale.y / 3f, 0f);
+                Vector3 target = new Vector3(-51.4897f, 16.9286f, -120.1083f);
 
                 string[] spamarray = new string[] { "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU." };
 
@@ -62,7 +62,7 @@ namespace iiMenu.Patches
 
                 GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryon", RpcTarget.Others, new object[] { spamarray, CosmeticsController.instance.currentWornSet.ToDisplayNameArray() });
                 GorillaTagger.Instance.offlineVRRig.enabled = true;
-                yield return new WaitForSeconds(0.1f);
+                yield return new WaitForSeconds(0.5f);
 
                 CosmeticsController.instance.currentWornSet = new CosmeticsController.CosmeticSet(archiveCosmetics, CosmeticsController.instance);
                 GorillaTagger.Instance.offlineVRRig.LocalUpdateCosmeticsWithTryon(CosmeticsController.instance.currentWornSet, CosmeticsController.instance.tryOnSet);

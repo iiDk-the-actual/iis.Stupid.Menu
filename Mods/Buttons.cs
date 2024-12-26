@@ -40,7 +40,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Visual Settings", method =() => Settings.EnableVisualSettings(), isTogglable = false, toolTip = "Opens the settings for the visual mods."},
                 new ButtonInfo { buttonText = "Overpowered Settings", method =() => Settings.EnableOverpoweredSettings(), isTogglable = false, toolTip = "Opens the settings for the overpowered mods."},
                 new ButtonInfo { buttonText = "Soundboard Settings", method =() => Settings.EnableSoundboardSettings(), isTogglable = false, toolTip = "Opens the settings for the soundboard."},
-                new ButtonInfo { buttonText = "Projectile Settings", method =() => Settings.EnableProjectileSettings(), isTogglable = false, toolTip = "Opens the settings for the projectiles."}
+                new ButtonInfo { buttonText = "Projectile Settings", method =() => Settings.EnableProjectileSettings(), isTogglable = false, toolTip = "Opens the settings for the projectiles."},
+                new ButtonInfo { buttonText = "Keybind Settings", method =() => Settings.EnableKeybindSettings(), isTogglable = false, toolTip = "Opens the settings for the keybinds."}
             },
 
             new ButtonInfo[] { // Menu (in Settings) [2]
@@ -91,6 +92,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Change Input Text Color", overlapText = "Change Input Text Color <color=grey>[</color><color=green>Green</color><color=grey>]</color>", method =() => Settings.ChangeInputTextColor(), isTogglable = false, toolTip = "Changes the color of the input indicator next to the buttons."},
                 new ButtonInfo { buttonText = "Change PC Menu Background", method =() => Settings.ChangePCUI(), isTogglable = false, toolTip = "Changes the background of the PC ui."},
                 new ButtonInfo { buttonText = "Change Notification Time", overlapText = "Change Notification Time <color=grey>[</color><color=green>1</color><color=grey>]</color>", method =() => Settings.ChangeNotificationTime(), isTogglable = false, toolTip = "Changes the time before a notification is removed."},
+                new ButtonInfo { buttonText = "Change Notification Sound", overlapText = "Change Notification Sound <color=grey>[</color><color=green>None</color><color=grey>]</color>", method =() => Settings.ChangeNotificationSound(), isTogglable = false, toolTip = "Changes the sound that plays when receiving a notification."},
                 new ButtonInfo { buttonText = "Change Pointer Position", method =() => Settings.ChangePointerPosition(), isTogglable = false, toolTip = "Changes the position of the pointer."},
 
                 new ButtonInfo { buttonText = "Swap GUI Colors", toolTip = "Swaps the GUI colors to the enabled color, for darker themes."},
@@ -267,6 +269,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Fake Oculus Menu <color=grey>[</color><color=green>X</color><color=grey>]</color>", method =() => Movement.FakeOculusMenu(), toolTip = "Imitates opening your Oculus menu when holding <color=green>X</color>."},
                 new ButtonInfo { buttonText = "Fake Report Menu <color=grey>[</color><color=green>X</color><color=grey>]</color>", method =() => Movement.FakeReportMenu(), toolTip = "Imitates opening the report menu when holding <color=green>X</color>."},
+                new ButtonInfo { buttonText = "Fake Broken Controller <color=grey>[</color><color=green>X</color><color=grey>]</color>", enableMethod =() => Movement.EnableFakeBrokenController(), method =() => Movement.FakeBrokenController(), disableMethod =() => Movement.DisableFakeBrokenController(), toolTip = "Makes you look like your left controller is broken, hold <color=green>X</color> to move your right hand with your left hand."},
                 new ButtonInfo { buttonText = "Fake Power Off <color=grey>[</color><color=green>J</color><color=grey>]</color>", method =() => Movement.FakePowerOff(), toolTip = "Imitates turning off your headset when holding down your <color=green>joystick</color>."},
                 new ButtonInfo { buttonText = "Toggle Igloo <color=grey>[</color><color=green>J</color><color=grey>]</color>", method =() => Safety.ToggleIgloo(), toolTip = "Toggles the igloo in mountains when clicking your <color=green>joystick</color>."},
 
@@ -418,6 +421,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Spaz Head", overlapText = "Spaz Head Rotation", method =() => Movement.SpazHead(), disableMethod =() => Fun.FixHead(), toolTip = "Makes your head rotation spaz out."},
                 new ButtonInfo { buttonText = "Random Spaz Head", overlapText = "Random Spaz Head Rotation", method =() => Movement.RandomSpazHead(), disableMethod =() => Fun.FixHead(), toolTip = "Makes your head rotation spaz out for 0 to 1 seconds every 1 to 4 seconds."},
                 new ButtonInfo { buttonText = "Laggy Rig", method =() => Movement.LaggyRig(), disableMethod =() => Movement.EnableRig(), toolTip = "Makes your rig laggy."},
+                new ButtonInfo { buttonText = "Smooth Rig", method =() => Movement.SmoothRig(), disableMethod =() => Movement.DisableSmoothRig(), toolTip = "Makes your rig really smooth."},
                 new ButtonInfo { buttonText = "Update Rig <color=grey>[</color><color=green>A</color><color=grey>]</color>", method =() => Movement.UpdateRig(), disableMethod =() => Movement.EnableRig(), toolTip = "Freezes your rig in place. Whenever you click <color=green>A</color>, your rig will update."},
                 new ButtonInfo { buttonText = "Freeze Rig Limbs <color=grey>[</color><color=green>A</color><color=grey>]</color>", method =() => Movement.FreezeRigLimbs(), toolTip = "Makes your hands and head freeze on your rig, but not your body, when holding <color=green>A</color>."},
                 new ButtonInfo { buttonText = "Freeze Rig Body <color=grey>[</color><color=green>A</color><color=grey>]</color>", method =() => Movement.FreezeRigBody(), toolTip = "Makes your body freeze on your rig, but not your hands and head, when holding <color=green>A</color>."},
@@ -891,6 +895,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Spaz Player Gun", method =() => Overpowered.SpazPlayerGun(), toolTip = "Spazzes out whoever your hand desires."},
                 new ButtonInfo { buttonText = "Spaz All Players <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.SpazAllPlayers(), toolTip = "Spazzes out everyone in the lobby."},
 
+                new ButtonInfo { buttonText = "Guardian Break Movement Gun", method =() => Overpowered.GuardianBreakMovementGun(), toolTip = "Breaks the movement of whoever your hand desires if you're guardian."},
+                new ButtonInfo { buttonText = "Guardian Break Movement All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.GuardianBreakMovementAll(), toolTip = "Breaks the movement of everybody if you're guardian."},
+
                 new ButtonInfo { buttonText = "Effect Spam Hands <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.EffectSpamHands(), toolTip = "Spawns effects when holding <color=green>grip</color>."},
                 new ButtonInfo { buttonText = "Effect Spam Gun", method =() => Overpowered.EffectSpamGun(), toolTip = "Spawns effects wherever your hand desires."},
 
@@ -898,14 +905,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Physical Freeze All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.PhysicalFreezeAll(), toolTip = "Freezes everyone in the lobby when holding <color=green>trigger</color>." },
 
                 new ButtonInfo { buttonText = "Freeze All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.FreezeAll(), toolTip = "Freezes everyone in the lobby when holding <color=green>trigger</color>." },
-
-                new ButtonInfo { buttonText = "Serversided Mute Gun", method =() => Overpowered.MuteGun(), toolTip = "Mutes whoever your hand desires for everyone."},
-                new ButtonInfo { buttonText = "Serversided Mute All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.MuteAll(), toolTip = "Mutes everybody in the lobby when holding <color=green>trigger</color>."},
-
-                new ButtonInfo { buttonText = "Lag Gun", method =() => Overpowered.LagGun(), toolTip = "Lags whoever your hand desires."},
-                new ButtonInfo { buttonText = "Lag All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.LagAll(), toolTip = "Lags everybody in the lobby when holding <color=green>trigger</color>."},
-
-                new ButtonInfo { buttonText = "Kick Gun", method =() => Overpowered.KickGun(), disableMethod =() => Overpowered.DisableKickGun(), toolTip = "Kicks whoever your hand desires."},
 
                 new ButtonInfo { buttonText = "Virtual Stump Kick Gun", method =() => Overpowered.VirtualStumpKickGun(), toolTip = "Kicks whoever your hand desires in the custom map."},
                 new ButtonInfo { buttonText = "Virtual Stump Kick All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.VirtualStumpKickAll(), toolTip = "Kicks everybody in the custom map when holding <color=green>trigger</color>."},
@@ -1096,6 +1095,24 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Disable Kick Gun Reconnect", toolTip = "Disables automatically reconnecting to the room when the kick gun fails."},
             },
+
+            new ButtonInfo[] { // Keybind (in Settings) [32]
+                new ButtonInfo { buttonText = "Exit Keybind Settings", method =() => Settings.EnableSettings(), isTogglable = false, toolTip = "Returns you back to the settings menu."},
+
+                new ButtonInfo { buttonText = "Non-Toggle Keybinds", enableMethod =() => Settings.NonToggleKeybinds(), disableMethod =() => Settings.ToggleKeybinds(), toolTip = "Enables mods while holding down the button, instead of toggling them."},
+                new ButtonInfo { buttonText = "Clear All Keybinds", method =() => Settings.ClearAllKeybinds(), isTogglable = false, toolTip = "Enables mods while holding down the button, instead of toggling them."},
+
+                new ButtonInfo { buttonText = "Keybind A", enableMethod =() => Settings.StartBind("A"), disableMethod =() => Settings.CancelBind(), toolTip = "Enables binding mode, letting you bind a mod to a button."},
+                new ButtonInfo { buttonText = "Keybind B", enableMethod =() => Settings.StartBind("B"), disableMethod =() => Settings.CancelBind(), toolTip = "Enables binding mode, letting you bind a mod to a button."},
+                new ButtonInfo { buttonText = "Keybind X", enableMethod =() => Settings.StartBind("X"), disableMethod =() => Settings.CancelBind(), toolTip = "Enables binding mode, letting you bind a mod to a button."},
+                new ButtonInfo { buttonText = "Keybind Y", enableMethod =() => Settings.StartBind("Y"), disableMethod =() => Settings.CancelBind(), toolTip = "Enables binding mode, letting you bind a mod to a button."},
+                new ButtonInfo { buttonText = "Keybind Left Grip", enableMethod =() => Settings.StartBind("LG"), disableMethod =() => Settings.CancelBind(), toolTip = "Enables binding mode, letting you bind a mod to a button."},
+                new ButtonInfo { buttonText = "Keybind Right Grip", enableMethod =() => Settings.StartBind("RG"), disableMethod =() => Settings.CancelBind(), toolTip = "Enables binding mode, letting you bind a mod to a button."},
+                new ButtonInfo { buttonText = "Keybind Left Trigger", enableMethod =() => Settings.StartBind("LT"), disableMethod =() => Settings.CancelBind(), toolTip = "Enables binding mode, letting you bind a mod to a button."},
+                new ButtonInfo { buttonText = "Keybind Right Trigger", enableMethod =() => Settings.StartBind("RT"), disableMethod =() => Settings.CancelBind(), toolTip = "Enables binding mode, letting you bind a mod to a button."},
+                new ButtonInfo { buttonText = "Keybind Left Joystick", enableMethod =() => Settings.StartBind("LJ"), disableMethod =() => Settings.CancelBind(), toolTip = "Enables binding mode, letting you bind a mod to a button."},
+                new ButtonInfo { buttonText = "Keybind Right Joystick", enableMethod =() => Settings.StartBind("RJ"), disableMethod =() => Settings.CancelBind(), toolTip = "Enables binding mode, letting you bind a mod to a button."},
+            },
         };
     }
 }
@@ -1103,6 +1120,19 @@ namespace iiMenu.Menu
 /*
 The mod cemetary
 Every mod listed below has been removed from the menu, for one reason or another
+
+new ButtonInfo { buttonText = "Crash Gun", method =() => Overpowered.CrashGun(), toolTip = "Crashes whoever your hand desires." },
+new ButtonInfo { buttonText = "Crash All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.CrashAll(), toolTip = "Crashes everyone in the lobby when holding <color=green>grip</color>." },
+
+new ButtonInfo { buttonText = "Instant Crash Gun", method =() => Overpowered.InstantCrashGun(), toolTip = "Crashes whoever your hand desires instantly." },
+new ButtonInfo { buttonText = "Instant Crash All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.InstantCrashAll(), toolTip = "Crashes everyone in the lobby instantly when holding <color=green>grip</color>." },
+
+
+new ButtonInfo { buttonText = "Instant Crank Elves", method =() => Projectiles.InstantCrankElf(), disableMethod =() => Projectiles.DisableInstantCrankElf(), toolTip = "Makes the elf launcher instantly spawn elves when barely moving the handle." },
+new ButtonInfo { buttonText = "Elf Launcher Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Projectiles.ElfLauncherSpam(), toolTip = "Spams the elf launcher cosmetic when holding <color=green>grip</color>." },
+new ButtonInfo { buttonText = "Elf Gun", method =() => Projectiles.ElfGun(), toolTip = "Spams elves wherever your hand desires." },
+new ButtonInfo { buttonText = "Elf Annoy Gun", method =() => Projectiles.ElfAnnoyGun(), toolTip = "Spams the elf launcher cosmetic around and towards whoever your hand desires." },
+new ButtonInfo { buttonText = "Elf Airstrike Gun", method =() => Projectiles.ElfAirstrikeGun(), toolTip = "Spams the elf launcher cosmetic above and down towards whoever your hand desires." },
 
 new ButtonInfo { buttonText = "Piece Name Helper", method =() => Fun.PieceNameHelper(), toolTip = "Remove me later."},
 

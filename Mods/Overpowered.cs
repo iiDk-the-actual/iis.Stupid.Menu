@@ -7,11 +7,7 @@ using iiMenu.Classes;
 using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
-using Photon.Voice.PUN;
-using System.Collections;
-using System.Reflection;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -427,7 +423,6 @@ namespace iiMenu.Mods
             }
         }
 
-
         public static void SpazPlayerGun()
         {
             if (GetGunInput(false))
@@ -471,6 +466,43 @@ namespace iiMenu.Mods
                 kgDebounce = Time.time + 0.1f;
                 BetaSetVelocityTargetGroup(RpcTarget.Others, new Vector3(UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f)));
                 RPCProtection();
+            }
+        }
+
+        public static void GuardianBreakMovementGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true) && Time.time > delaything)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        delaything = Time.time + 0.1f;
+                        RigManager.GetNetworkViewFromVRRig(possibly).SendRPC("GrabbedByPlayer", GetPlayerFromVRRig(possibly), new object[] { true, false, false });
+                        RigManager.GetNetworkViewFromVRRig(possibly).SendRPC("DroppedByPlayer", GetPlayerFromVRRig(possibly), new object[] { new Vector3(0f, float.MinValue, 0f) });
+                    }
+                }
+            }
+        }
+
+        public static void GuardianBreakMovementAll()
+        {
+            if (rightTrigger > 0.5f)
+            {
+                if (Time.time > delaything)
+                {
+                    delaything = Time.time + 0.1f;
+                    foreach (VRRig player in GorillaParent.instance.vrrigs)
+                    {
+                        RigManager.GetNetworkViewFromVRRig(player).SendRPC("GrabbedByPlayer", RpcTarget.Others, new object[] { true, false, false });
+                        RigManager.GetNetworkViewFromVRRig(player).SendRPC("DroppedByPlayer", RpcTarget.Others, new object[] { new Vector3(0f, float.MinValue, 0f) });
+                    }
+                }
             }
         }
 
@@ -626,179 +658,6 @@ namespace iiMenu.Mods
                     }
                 }
             }
-        }
-
-        // Huge thanks to kingofnetflix
-        private static float flushDelay = 0f;
-        public static void LagGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (isCopying && whoCopy != null)
-                {
-                    if (Time.time > delaything)
-                    {
-                        delaything = Time.time + 0.049f;
-                        for (int i = 0; i < 25; i++)
-                        {
-                            FriendshipGroupDetection.Instance.photonView.RPC("NotifyNoPartyToMerge", NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)), new object[] { null });
-                        }
-                    }
-                    if (Time.time > flushDelay)
-                    {
-                        flushDelay = Time.time + 0.5f;
-                        RPCProtection();
-                    }
-                }
-                if (GetGunInput(true))
-                {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
-                    {
-                        RPCProtection();
-                        isCopying = true;
-                        whoCopy = possibly;
-                    }
-                }
-            }
-            else
-            {
-                if (isCopying)
-                {
-                    RPCProtection();
-                    isCopying = false;
-                }
-            }
-        }
-
-        public static void LagAll()
-        {
-            if (rightTrigger > 0.5f)
-            {
-                if (Time.time > delaything)
-                {
-                    delaything = Time.time + 0.049f;
-                    PhotonView photonView = GameObject.Find("WorldShareableCosmetic").GetComponent<WorldShareableItem>().guard.photonView;
-                    for (int i = 0; i < 25; i++)
-                    {
-                        FriendshipGroupDetection.Instance.photonView.RPC("NotifyNoPartyToMerge", RpcTarget.Others, new object[] { null });
-                    }
-                }
-                if (Time.time > flushDelay)
-                {
-                    flushDelay = Time.time + 0.5f;
-                    RPCProtection();
-                }
-            }
-        }
-
-        public static IEnumerator KickRig(VRRig FUCKER)
-        {
-            Traverse.Create(GameObject.Find("PhotonMono").GetComponent<PhotonHandler>()).Field("nextSendTickCountOnSerialize").SetValue((int)(Time.realtimeSinceStartup * 9999f));
-            yield return new WaitForSeconds(0.5f);
-            for (int i = 0; i < 3950; i++)
-            {
-                // What is this
-                PhotonView photonView = GetPhotonViewFromVRRig(FUCKER);
-                ExitGames.Client.Photon.Hashtable rpcHash = new ExitGames.Client.Photon.Hashtable
-                {
-                    { 0, photonView.ViewID },
-                    { 2, (int)(PhotonNetwork.ServerTimestamp + -int.MaxValue) },
-                    { 3, "RPC_RequestMaterialColor" },
-                    { 4, new object[] { NetPlayerToPlayer(GetPlayerFromVRRig(FUCKER)) } },
-                    { 5, (byte)91 }
-                };
-                PhotonNetwork.NetworkingClient.LoadBalancingPeer.OpRaiseEvent(200, rpcHash, new RaiseEventOptions
-                {
-                    Receivers = ReceiverGroup.Others,
-                    InterestGroup = photonView.Group
-                }, new SendOptions
-                {
-                    Reliability = true,
-                    DeliveryMode = DeliveryMode.ReliableUnsequenced,
-                    Encrypt = false
-                });
-            }
-            RPCProtection();
-        }
-
-        private static Coroutine KVCoroutine = null;
-        private static string ihavediahrrea = "";
-        public static void KickGun()
-        {
-            if (!PhotonNetwork.InRoom)
-            {
-                SetTick(1000f);
-            }
-            if (GetGunInput(false) || isCopying)
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (isCopying && whoCopy != null)
-                {
-                    if (!PhotonNetwork.InRoom)
-                    {
-                        isCopying = false;
-                        whoCopy = null;
-                        SetTick(1000f);
-                        if (!GetIndex("Disable Kick Gun Reconnect").enabled)
-                        {
-                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You have been kicked for sending too many RPCs, you will reconnect shortly.</color>");
-                            rejRoom = ihavediahrrea;
-                        }
-                        try { CoroutineManager.EndCoroutine(KVCoroutine); } catch { }
-                    }
-                    if (GetPlayerFromVRRig(whoCopy) == null)
-                    {
-                        isCopying = false;
-                        whoCopy = null;
-                        SetTick(1000f);
-                        NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Player has been kicked!</color>");
-                        try { CoroutineManager.EndCoroutine(KVCoroutine); } catch { }
-                    }
-                }
-                if (GetGunInput(true) && !isCopying && PhotonVoiceNetwork.Instance.PrimaryRecorder.IsInitialized)
-                {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
-                    {
-                        isCopying = true;
-                        whoCopy = possibly;
-                        SetTick(9999f);
-                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>KICK</color><color=grey>]</color> <color=white>Player is being kicked...</color>");
-                        KVCoroutine = CoroutineManager.RunCoroutine(KickRig(whoCopy));
-                    }
-                }
-            } else
-            {
-                if (isCopying)
-                {
-                    isCopying = false;
-                    SetTick(1000f);
-                    try { CoroutineManager.EndCoroutine(KVCoroutine); } catch { }
-                }
-            }
-        }
-
-        public static void DisableKickGun()
-        {
-            SetTick(1000f);
-            if (isCopying)
-            {
-                isCopying = false;
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>Player kick has been cancelled.</color>");
-            }
-        }
-
-        public static void SetTick(float tick)
-        {
-            Traverse.Create(GameObject.Find("PhotonMono").GetComponent<PhotonHandler>()).Field("nextSendTickCountOnSerialize").SetValue((int)(Time.realtimeSinceStartup * tick));
         }
 
         // I see you

@@ -552,7 +552,7 @@ namespace iiMenu.Mods
 
         public static void JoystickFly()
         {
-            Vector2 joy = SteamVR_Actions.gorillaTag_LeftJoystick2DAxis.axis;
+            Vector2 joy = leftJoystick;
 
             if (Mathf.Abs(joy.x) > 0.3 || Mathf.Abs(joy.y) > 0.3)
             {
@@ -566,8 +566,8 @@ namespace iiMenu.Mods
             ZeroGravity();
 
             var rb = GorillaLocomotion.Player.Instance.bodyCollider.attachedRigidbody;
-            Vector2 xz = SteamVR_Actions.gorillaTag_LeftJoystick2DAxis.axis;
-            float y = SteamVR_Actions.gorillaTag_RightJoystick2DAxis.axis.y;
+            Vector2 xz = leftJoystick;
+            float y = rightJoystick.y;
 
             Vector3 inputDirection = new Vector3(xz.x, y, xz.y);
             var playerForward = GorillaLocomotion.Player.Instance.bodyCollider.transform.forward;
@@ -582,7 +582,7 @@ namespace iiMenu.Mods
 
         public static void VelocityBarkFly()
         {
-            if ((Mathf.Abs(SteamVR_Actions.gorillaTag_LeftJoystick2DAxis.axis.x) > 0.3 || Mathf.Abs(SteamVR_Actions.gorillaTag_LeftJoystick2DAxis.axis.y) > 0.3) || (Mathf.Abs(SteamVR_Actions.gorillaTag_RightJoystick2DAxis.axis.x) > 0.3 || Mathf.Abs(SteamVR_Actions.gorillaTag_RightJoystick2DAxis.axis.y) > 0.3))
+            if ((Mathf.Abs(leftJoystick.x) > 0.3 || Mathf.Abs(leftJoystick.y) > 0.3) || (Mathf.Abs(rightJoystick.x) > 0.3 || Mathf.Abs(rightJoystick.y) > 0.3))
             {
                 BarkFly();
             }
@@ -703,7 +703,7 @@ namespace iiMenu.Mods
         public static Vector2 lerpygerpy = Vector2.zero;
         public static void Drive()
         {
-            Vector2 joy = SteamVR_Actions.gorillaTag_LeftJoystick2DAxis.axis;
+            Vector2 joy = leftJoystick;
             lerpygerpy = Vector2.Lerp(lerpygerpy, joy, 0.05f);
 
             Vector3 addition = GorillaTagger.Instance.bodyCollider.transform.forward * lerpygerpy.y + GorillaTagger.Instance.bodyCollider.transform.right * lerpygerpy.x;// + new Vector3(0f, -1f, 0f);
@@ -1210,12 +1210,12 @@ namespace iiMenu.Mods
 
         public static void AutoWalk()
         {
-            Vector2 joy = SteamVR_Actions.gorillaTag_LeftJoystick2DAxis.axis;
+            Vector2 joy = leftJoystick;
 
             float armLength = 0.45f;
             float animSpeed = 9f;
 
-            if (SteamVR_Actions.gorillaTag_LeftJoystickClick.state)
+            if (leftJoystickClick)
             {
                 animSpeed *= 1.5f;
             }
@@ -1759,7 +1759,7 @@ namespace iiMenu.Mods
 
         public static void JoystickSpeedBoost()
         {
-            if (SteamVR_Actions.gorillaTag_RightJoystickClick.state)
+            if (rightJoystickClick)
             {
                 SpeedBoost();
             }
@@ -2076,17 +2076,39 @@ namespace iiMenu.Mods
         public static void FakeReportMenu()
         {
             if (leftPrimary)
-            {
                 Safety.NoFinger();
-            }
+
             GorillaLocomotion.Player.Instance.inOverlay = leftPrimary;
+        }
+
+        public static void EnableFakeBrokenController()
+        {
+            GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHandTriggerCollider").GetComponent<Collider>().enabled = false;
+        }
+
+        public static void FakeBrokenController()
+        {
+            Vector3 Position = leftPrimary ? GorillaTagger.Instance.leftHandTransform.position : GorillaTagger.Instance.rightHandTransform.position;
+            Quaternion Rotation = leftPrimary ? GorillaTagger.Instance.leftHandTransform.rotation : GorillaTagger.Instance.rightHandTransform.rotation;
+
+            GorillaLocomotion.Player.Instance.leftControllerTransform.position = Position;
+            GorillaLocomotion.Player.Instance.rightControllerTransform.position = Position;
+            GorillaLocomotion.Player.Instance.leftControllerTransform.rotation = Rotation;
+            GorillaLocomotion.Player.Instance.rightControllerTransform.rotation = Rotation;
+
+            Safety.NoFinger();
+        }
+
+        public static void DisableFakeBrokenController()
+        {
+            GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHandTriggerCollider").GetComponent<Collider>().enabled = true;
         }
 
         public static Vector3 deadPosition = Vector3.zero;
         public static Vector3 lvel = Vector3.zero;
         public static void FakePowerOff()
         {
-            if (SteamVR_Actions.gorillaTag_LeftJoystickClick.state)
+            if (leftJoystickClick)
             {
                 if (deadPosition == Vector3.zero)
                 {
@@ -3263,15 +3285,7 @@ namespace iiMenu.Mods
                     GorillaTagger.Instance.offlineVRRig.enabled = false;
 
                     GorillaTagger.Instance.offlineVRRig.transform.position = whoCopy.transform.position;
-                    try
-                    {
-                        GorillaTagger.Instance.myVRRig.transform.position = whoCopy.transform.position;
-                    } catch { }
                     GorillaTagger.Instance.offlineVRRig.transform.rotation = whoCopy.transform.rotation;
-                    try
-                    {
-                        GorillaTagger.Instance.myVRRig.transform.rotation = whoCopy.transform.rotation;
-                    } catch { }
 
                     GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.position = whoCopy.leftHandTransform.position;
                     GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.position = whoCopy.rightHandTransform.position;
@@ -3967,6 +3981,19 @@ namespace iiMenu.Mods
                     GorillaTagger.Instance.offlineVRRig.enabled = false;
                 }
             }
+        }
+
+        private static int PreviousSerializationRate = -1;
+        public static void SmoothRig()
+        {
+            PreviousSerializationRate = PhotonNetwork.SerializationRate;
+            PhotonNetwork.SerializationRate *= 4;
+        }
+
+        public static void DisableSmoothRig()
+        {
+            if (PreviousSerializationRate > 0)
+                PhotonNetwork.SerializationRate = PreviousSerializationRate;
         }
 
         public static void UpdateRig()

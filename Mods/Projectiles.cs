@@ -1,4 +1,6 @@
-﻿using ExitGames.Client.Photon;
+﻿using BepInEx;
+using ExitGames.Client.Photon;
+using GorillaNetworking;
 using HarmonyLib;
 using iiMenu.Classes;
 using iiMenu.Patches;
@@ -6,6 +8,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using System;
 using System.Reflection;
+using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static iiMenu.Classes.RigManager;
@@ -830,6 +833,204 @@ namespace iiMenu.Mods.Spammers
                 }
             }
         }
+        /*
+        public static void InstantCrankElf()
+        {
+            foreach (ElfLauncher elf in GetElves())
+            {
+                TransferrableObject transobj = (TransferrableObject)Traverse.Create(elf).Field("parentHoldable").GetValue();
+                if (transobj.IsLocalObject())
+                {
+                    elf.GetType().GetField("crankShootThreshold", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static).SetValue(elf, 0f);
+                }
+            }
+        }
+
+        public static void DisableInstantCrankElf()
+        {
+            foreach (ElfLauncher elf in GetElves())
+            {
+                TransferrableObject transobj = (TransferrableObject)Traverse.Create(elf).Field("parentHoldable").GetValue();
+                if (transobj.IsLocalObject())
+                {
+                    elf.GetType().GetField("crankShootThreshold", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static).SetValue(elf, 360f);
+                }
+            }
+        }
+
+        public static void ElfLauncherSpam()
+        {
+            if (rightGrab)
+            {
+                GorillaTagger.Instance.offlineVRRig.enabled = false;
+                GorillaTagger.Instance.offlineVRRig.transform.position = new Vector3(-51.4897f, 16.9286f, -120.1083f);
+
+                bool didThing = false;
+                foreach (ElfLauncher elf in GetElves())
+                {
+                    TransferrableObject transobj = (TransferrableObject)Traverse.Create(elf).Field("parentHoldable").GetValue();
+                    if (transobj.IsLocalObject())
+                    {
+                        didThing = true;
+                        RubberDuckEvents rde = (RubberDuckEvents)elf.GetType().GetField("_events", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static).GetValue(elf);
+                        rde.Activate.RaiseAll(new object[] { GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward * (ShootStrength / 2f) });
+                        RPCProtection();
+                    }
+                }
+                if (!didThing)
+                {
+                    CosmeticsController.instance.ApplyCosmeticItemToSet(GorillaTagger.Instance.offlineVRRig.tryOnSet, CosmeticsController.instance.GetItemFromDict("LMANE."), true, false);
+                    CosmeticsController.instance.UpdateWornCosmetics(true);
+                    archiveelves = null;
+                }
+            } else
+            {
+                GorillaTagger.Instance.offlineVRRig.enabled = true;
+            }
+        }
+
+        public static void ElfGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    GorillaTagger.Instance.offlineVRRig.enabled = false;
+                    GorillaTagger.Instance.offlineVRRig.transform.position = new Vector3(-51.4897f, 16.9286f, -120.1083f);
+
+                    bool didThing = false;
+                    foreach (ElfLauncher elf in GetElves())
+                    {
+                        TransferrableObject transobj = (TransferrableObject)Traverse.Create(elf).Field("parentHoldable").GetValue();
+                        if (transobj.IsLocalObject())
+                        {
+                            didThing = true;
+                            RubberDuckEvents rde = (RubberDuckEvents)elf.GetType().GetField("_events", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static).GetValue(elf);
+                            rde.Activate.RaiseAll(new object[] { NewPointer.transform.position + new Vector3(0f, 1f, 0f), Vector3.zero });
+                            RPCProtection();
+                        }
+                    }
+                    if (!didThing)
+                    {
+                        CosmeticsController.instance.ApplyCosmeticItemToSet(GorillaTagger.Instance.offlineVRRig.tryOnSet, CosmeticsController.instance.GetItemFromDict("LMANE."), true, false);
+                        CosmeticsController.instance.UpdateWornCosmetics(true);
+                        archiveelves = null;
+                    }
+                } else
+                {
+                    GorillaTagger.Instance.offlineVRRig.enabled = true;
+                }
+            }
+        }
+
+        public static void ElfAirstrikeGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (isCopying && whoCopy != null)
+                {
+                    GorillaTagger.Instance.offlineVRRig.enabled = false;
+                    GorillaTagger.Instance.offlineVRRig.transform.position = new Vector3(-51.4897f, 16.9286f, -120.1083f);
+
+                    bool didThing = false;
+                    foreach (ElfLauncher elf in GetElves())
+                    {
+                        TransferrableObject transobj = (TransferrableObject)Traverse.Create(elf).Field("parentHoldable").GetValue();
+                        if (transobj.IsLocalObject())
+                        {
+                            didThing = true;
+                            RubberDuckEvents rde = (RubberDuckEvents)elf.GetType().GetField("_events", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static).GetValue(elf);
+                            rde.Activate.RaiseAll(new object[] { whoCopy.headMesh.transform.position + new Vector3(0f, 20f, 0f), Vector3.down * (ShootStrength / 2f) });
+                            RPCProtection();
+                        }
+                    }
+                    if (!didThing)
+                    {
+                        CosmeticsController.instance.ApplyCosmeticItemToSet(GorillaTagger.Instance.offlineVRRig.tryOnSet, CosmeticsController.instance.GetItemFromDict("LMANE."), true, false);
+                        CosmeticsController.instance.UpdateWornCosmetics(true);
+                        archiveelves = null;
+                    }
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        isCopying = true;
+                        whoCopy = possibly;
+                    }
+                }
+            }
+            else
+            {
+                if (isCopying)
+                {
+                    isCopying = false;
+                    GorillaTagger.Instance.offlineVRRig.enabled = true;
+                }
+            }
+        }
+
+        public static void ElfAnnoyGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (isCopying && whoCopy != null)
+                {
+                    GorillaTagger.Instance.offlineVRRig.enabled = false;
+                    GorillaTagger.Instance.offlineVRRig.transform.position = new Vector3(-51.4897f, 16.9286f, -120.1083f);
+                    
+                    bool didThing = false;
+                    foreach (ElfLauncher elf in GetElves())
+                    {
+                        TransferrableObject transobj = (TransferrableObject)Traverse.Create(elf).Field("parentHoldable").GetValue();
+                        if (transobj.IsLocalObject())
+                        {
+                            didThing = true;
+                            RubberDuckEvents rde = (RubberDuckEvents)elf.GetType().GetField("_events", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static).GetValue(elf);
+                            Vector3 position = whoCopy.headMesh.transform.position + new Vector3(UnityEngine.Random.Range(-2f, 2f), 2f, UnityEngine.Random.Range(-2f, 2f));
+                            rde.Activate.RaiseAll(new object[] { position, (whoCopy.headMesh.transform.position - position).normalized * (ShootStrength / 2f) });
+                            RPCProtection();
+                        }
+                    }
+                    if (!didThing)
+                    {
+                        CosmeticsController.instance.ApplyCosmeticItemToSet(GorillaTagger.Instance.offlineVRRig.tryOnSet, CosmeticsController.instance.GetItemFromDict("LMANE."), true, false);
+                        CosmeticsController.instance.UpdateWornCosmetics(true);
+                        archiveelves = null;
+                    }
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        isCopying = true;
+                        whoCopy = possibly;
+                    }
+                }
+            }
+            else
+            {
+                if (isCopying)
+                {
+                    isCopying = false;
+                    GorillaTagger.Instance.offlineVRRig.enabled = true;
+                }
+            }
+        }*/
 
         public static void PaperPlaneSpam()
         {

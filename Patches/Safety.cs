@@ -264,6 +264,23 @@ namespace iiMenu.Patches
         }
     }
 
+    /*[HarmonyPatch(typeof(ElfLauncher), "ShootShared", new Type[] { typeof(Vector3), typeof(Vector3) })]
+    public class AntiCrashPatch5
+    {
+        private static List<float> callTimestamps = new List<float>();
+        public static bool Prefix(Vector3 origin, Vector3 direction)
+        {
+            if (AntiCrashToggle)
+            {
+                callTimestamps.Add(Time.time);
+                callTimestamps.RemoveAll(t => (Time.time - t) > 1);
+
+                return callTimestamps.Count < 15 && GTExt.IsValid(origin) && GTExt.IsValid(direction);
+            }
+            return true;
+        }
+    }*/
+
     [HarmonyPatch(typeof(PlayFabClientAPI), "UpdateUserTitleDisplayName")] // Credits to Shiny for letting me use this
     public class NamePatch
     {

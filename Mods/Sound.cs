@@ -181,14 +181,11 @@ namespace iiMenu.Mods.Spammers
                 rightGrab,
                 leftTrigger > 0.5f,
                 rightTrigger > 0.5f,
-                false,
-                false
+                leftJoystickClick,
+                rightJoystickClick
             };
+
             bool bindPressed = bindings[BindMode - 1];
-            if ((BindMode - 1) == 8) // If I don't do this it errors for some reason
-                bindPressed = SteamVR_Actions.gorillaTag_LeftJoystickClick.state;
-            if ((BindMode - 1) == 9)
-                bindPressed = SteamVR_Actions.gorillaTag_RightJoystickClick.state;
             if (bindPressed && !lastBindPressed)
             {
                 if (GorillaTagger.Instance.myRecorder.SourceType == Recorder.InputSourceType.AudioClip)

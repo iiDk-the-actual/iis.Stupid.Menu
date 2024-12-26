@@ -27,8 +27,8 @@ namespace iiMenu.Mods
             Vector3 victim = position;
             for (int i = 0; i < 5; i++)
             {
-                GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(68, false, 99999f);
-                GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(68, true, 99999f);
+                GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(68, false, 5f);
+                GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(68, true, 5f);
                 liner.SetPosition(i, victim);
                 victim += new Vector3(UnityEngine.Random.Range(-5f, 5f), 5f, UnityEngine.Random.Range(-5f, 5f));
             }
