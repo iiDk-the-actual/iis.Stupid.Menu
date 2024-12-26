@@ -167,6 +167,7 @@ namespace iiMenu.Mods
             Patches.HandTapPatch.tapsEnabled = true;
             Patches.HandTapPatch.doOverride = false;
             Patches.HandTapPatch.overrideVolume = 0.1f;
+            Patches.HandTapPatch.tapMultiplier = 1;
         }
 
         public static void LoudHandTaps()
@@ -175,16 +176,18 @@ namespace iiMenu.Mods
             Patches.HandTapPatch.tapsEnabled = true;
             Patches.HandTapPatch.doOverride = true;
             Patches.HandTapPatch.overrideVolume = 99999f;
+            Patches.HandTapPatch.tapMultiplier = 10;
             GorillaTagger.Instance.handTapVolume = 99999f;
         }
 
         public static void SilentHandTaps()
         {
-            GorillaTagger.Instance.handTapVolume = 0;
             Patches.HandTapPatch.doPatch = true;
             Patches.HandTapPatch.tapsEnabled = false;
             Patches.HandTapPatch.doOverride = false;
             Patches.HandTapPatch.overrideVolume = 0f;
+            Patches.HandTapPatch.tapMultiplier = 0;
+            GorillaTagger.Instance.handTapVolume = 0;
         }
 
         public static void SilentHandTapsOnTag()

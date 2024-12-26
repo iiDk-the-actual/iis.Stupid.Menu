@@ -345,7 +345,7 @@ namespace iiMenu.Mods
         public static bool jta = false;
         public static void JoystickTagAura()
         {
-            bool l = SteamVR_Actions.gorillaTag_RightJoystickClick.state;
+            bool l = rightJoystickClick;
             if (l && !lastj)
             {
                 jta = !jta;

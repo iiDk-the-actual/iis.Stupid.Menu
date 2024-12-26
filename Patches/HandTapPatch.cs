@@ -1,16 +1,8 @@
-﻿using GorillaLocomotion.Climbing;
-using GorillaTagScripts;
-using HarmonyLib;
+﻿using HarmonyLib;
+using iiMenu.Menu;
 using Photon.Pun;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using GorillaGameModes;
-using UnityEngine;
 using System.Reflection;
-using UnityEngine.UIElements;
-using Photon.Realtime;
-using Valve.VR;
+using UnityEngine;
 
 namespace iiMenu.Patches
 {
@@ -21,6 +13,7 @@ namespace iiMenu.Patches
         public static bool tapsEnabled = true;
         public static bool doOverride = false;
         public static float overrideVolume = 99999f;
+        public static int tapMultiplier = 1;
 
         private static bool Prefix(VRRig __instance, int soundIndex, bool isLeftHand, float handSpeed, Vector3 tapDir)
         {
@@ -36,13 +29,30 @@ namespace iiMenu.Patches
                         typeof(GorillaTagger).GetField("tempHitDir", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(GorillaTagger.Instance, new Vector3(overrideVolume, overrideVolume, overrideVolume));
                         if (PhotonNetwork.InRoom)
                         {
-                            GorillaTagger.Instance.myVRRig.SendRPC("OnHandTapRPC", PhotonNetwork.LocalPlayer, new object[]
+                            if (tapMultiplier > 1)
                             {
-                                soundIndex,
-                                isLeftHand,
-                                handSpeed,
-                                Utils.PackVector3ToLong(tapDir)
-                            });
+                                for (int i = 0; i < tapMultiplier; i++)
+                                {
+                                    GorillaTagger.Instance.myVRRig.SendRPC("OnHandTapRPC", RpcTarget.All, new object[]
+                                    {
+                                        soundIndex,
+                                        isLeftHand,
+                                        handSpeed,
+                                        Utils.PackVector3ToLong(tapDir)
+                                    });
+                                }
+                                Main.RPCProtection();
+                            } else
+                            {
+                                GorillaTagger.Instance.myVRRig.SendRPC("OnHandTapRPC", RpcTarget.All, new object[]
+                                {
+                                    soundIndex,
+                                    isLeftHand,
+                                    handSpeed,
+                                    Utils.PackVector3ToLong(tapDir)
+                                });
+                            }
+                            
                         } else
                         {
                             GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(soundIndex, isLeftHand, handSpeed);

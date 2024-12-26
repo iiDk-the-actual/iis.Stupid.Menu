@@ -34,7 +34,7 @@ namespace iiMenu.Mods
         public static bool isActive = true;
         public static void ToggleIgloo()
         {
-            bool fuck = SteamVR_Actions.gorillaTag_RightJoystickClick.state;
+            bool fuck = rightJoystickClick;
             if (fuck && !lastjsi)
             {
                 isActive = !isActive;

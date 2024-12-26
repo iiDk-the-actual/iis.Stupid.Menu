@@ -15,7 +15,7 @@ namespace iiMenu.Notifications
 {
     // Originally created by lars, he gave me permission
     // Modified by ii, not much though
-    //[BepInPlugin("org.gorillatag.lars.notifications2", "NotificationLibrary", "1.0.5")]
+
     public class NotifiLib : MonoBehaviour
     {
         private void Start()
@@ -61,7 +61,7 @@ namespace iiMenu.Notifications
             Testtext.rectTransform.localScale = new Vector3(0.00333333333f, 0.00333333333f, 0.33333333f);
             Testtext.rectTransform.localPosition = new Vector3(-1f, -1f, -0.5f);
             Testtext.material = AlertText;
-            NotifiLib.NotifiText = Testtext;
+            NotifiText = Testtext;
 
             Text Text2 = new GameObject
             {
@@ -78,7 +78,7 @@ namespace iiMenu.Notifications
             Text2.rectTransform.localScale = new Vector3(0.00333333333f, 0.00333333333f, 0.33333333f);
             Text2.rectTransform.localPosition = new Vector3(-1f, -0.7f, -0.5f);
             Text2.material = AlertText;
-            NotifiLib.ModText = Text2;
+            ModText = Text2;
         }
 
         private void FixedUpdate()
@@ -115,17 +115,14 @@ namespace iiMenu.Notifications
                                 {
                                     string buttonText = (v.overlapText == null) ? v.buttonText : v.overlapText;
                                     if (translate)
-                                    {
                                         buttonText = TranslateText(buttonText);
-                                    }
+                                    
                                     if (inputTextColor != "green")
-                                    {
                                         buttonText = buttonText.Replace(" <color=grey>[</color><color=green>", " <color=grey>[</color><color=" + inputTextColor + ">");
-                                    }
+                                    
                                     if (lowercaseMode)
-                                    {
                                         buttonText = buttonText.ToLower();
-                                    }
+                                    
                                     alphabetized.Add(buttonText);
                                 }
                             }
@@ -139,9 +136,8 @@ namespace iiMenu.Notifications
                         .ToArray();
 
                     foreach (string v in sortedButtons)
-                    {
                         lol += v + "\n";
-                    }
+                    
                     ModText.text = lol;
                     ModText.color = GetIndex("Swap GUI Colors").enabled ? textColor : GetBGColor(0f);
                 }
@@ -161,34 +157,45 @@ namespace iiMenu.Notifications
         public static void SendNotification(string NotificationText, int clearTime = -1)
         {
             if (clearTime < 0)
-            {
                 clearTime = notificationDecayTime;
-            }
+            
             if (!disableNotifications)
             {
                 try
                 {
-                    if (NotifiLib.IsEnabled && NotifiLib.PreviousNotifi != NotificationText)
+                    if (PreviousNotifi != NotificationText)
                     {
+                        if (notificationSoundIndex != 0)
+                        {
+                            string[] notificationServerNames = new string[]
+                            {
+                                "none",
+                                "pop",
+                                "ding",
+                                "twitter",
+                                "discord",
+                                "whatsapp",
+                                "grindr",
+                                "ios"
+                            };
+                            Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/" + notificationServerNames[notificationSoundIndex] + ".wav", notificationServerNames[notificationSoundIndex] + ".wav"), buttonClickVolume / 10f);
+                        }
+
                         if (!NotificationText.Contains(Environment.NewLine))
-                        {
                             NotificationText += Environment.NewLine;
-                        }
+                        
                         if (translate)
-                        {
                             NotificationText = TranslateText(NotificationText);
-                        }
+                        
                         if (inputTextColor != "green")
-                        {
                             NotificationText = NotificationText.Replace("<color=green>", "<color=" + inputTextColor + ">");
-                        }
-                        NotifiLib.NotifiText.text = NotifiLib.NotifiText.text + NotificationText;
+                        NotifiText.text = NotifiText.text + NotificationText;
                         if (lowercaseMode)
-                        {
                             NotifiText.text = NotifiText.text.ToLower();
-                        }
-                        NotifiLib.NotifiText.supportRichText = true;
-                        NotifiLib.PreviousNotifi = NotificationText;
+
+                        NotifiText.supportRichText = true;
+                        PreviousNotifi = NotificationText;
+
                         try
                         {
                             CoroutineManager.RunCoroutine(ClearLast());
@@ -204,21 +211,19 @@ namespace iiMenu.Notifications
 
         public static void ClearAllNotifications()
         {
-            //NotifiLib.NotifiText.text = "<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Notifications cleared.</color>" + Environment.NewLine;
-            NotifiLib.NotifiText.text = "";
+            //NotifiText.text = "<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Notifications cleared.</color>" + Environment.NewLine;
+            NotifiText.text = "";
         }
 
         public static void ClearPastNotifications(int amount)
         {
             string text = "";
-            foreach (string text2 in Enumerable.ToArray<string>(Enumerable.Skip<string>(NotifiLib.NotifiText.text.Split(Environment.NewLine.ToCharArray()), amount)))
+            foreach (string text2 in Enumerable.ToArray<string>(Enumerable.Skip<string>(NotifiText.text.Split(Environment.NewLine.ToCharArray()), amount)))
             {
                 if (text2 != "")
-                {
                     text = text + text2 + "\n";
-                }
             }
-            NotifiLib.NotifiText.text = text;
+            NotifiText.text = text;
         }
 
         public static IEnumerator ClearLast()
@@ -228,32 +233,19 @@ namespace iiMenu.Notifications
         }
 
         private GameObject HUDObj;
-
         private GameObject HUDObj2;
 
         private GameObject MainCamera;
 
-        private Text Testtext;
-
         private Material AlertText = new Material(Shader.Find("GUI/Text Shader"));
-
-        //private int NotificationDecayTime = 144;
-
-        //private int NotificationDecayTimeCounter;
-
-        public static int NoticationThreshold = 30;
-
-        //private string[] Notifilines;
-
-        //private string newtext;
 
         public static string PreviousNotifi;
 
-        private bool HasInit;
-
         private static Text NotifiText;
         private static Text ModText;
+        private Text Testtext;
 
-        public static bool IsEnabled = true;
+        private bool HasInit;
+
     }
 }

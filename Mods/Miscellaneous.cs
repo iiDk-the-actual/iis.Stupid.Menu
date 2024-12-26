@@ -1,13 +1,12 @@
-﻿using Photon.Pun;
-using PlayFab.ClientModels;
+﻿using iiMenu.Notifications;
+using Photon.Pun;
 using PlayFab;
+using PlayFab.ClientModels;
 using System.Diagnostics;
 using System.IO;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
-using iiMenu.Notifications;
 
 namespace iiMenu.Mods
 {

@@ -9,10 +9,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Windows.Speech;
+using Valve.VR;
 using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods
@@ -236,6 +238,12 @@ namespace iiMenu.Mods
             pageNumber = 0;
         }
 
+        public static void EnableKeybindSettings()
+        {
+            buttonsType = 32;
+            pageNumber = 0;
+        }
+
         public static void EnableSoundboardSettings()
         {
             buttonsType = 30;
@@ -406,6 +414,38 @@ namespace iiMenu.Mods
                 Toggle("Info Watch");
                 NotifiLib.ClearAllNotifications();
             }
+        }
+
+        public static void NonToggleKeybinds()
+        {
+            ToggleBindings = false;
+        }
+
+        public static void ClearAllKeybinds()
+        {
+            foreach (KeyValuePair<string, List<string>> Bind in ModBindings)
+            {
+                foreach (string modName in Bind.Value)
+                    GetIndex(modName).customBind = null;
+
+                Bind.Value.Clear();
+            }
+        }
+
+        public static void ToggleKeybinds()
+        {
+            ToggleBindings = true;
+        }
+
+        public static void StartBind(string Bind)
+        {
+            IsBinding = true;
+            BindInput = Bind;
+        }
+
+        public static void CancelBind()
+        {
+            IsBinding = false;
         }
 
         public static void BothHandsOn()
@@ -2038,6 +2078,29 @@ namespace iiMenu.Mods
             GetIndex("Change Notification Time").overlapText = "Change Notification Time <color=grey>[</color><color=green>" + (notificationDecayTime / 1000).ToString() + "</color><color=grey>]</color>";
         }
 
+        public static void ChangeNotificationSound()
+        {
+            string[] notificationSoundNames = new string[]
+            {
+                "None",
+                "Pop",
+                "Ding",
+                "Twitter",
+                "Discord",
+                "Whatsapp",
+                "Grindr",
+                "iOS"
+            };
+
+            notificationSoundIndex++;
+            if (notificationSoundIndex > notificationSoundNames.Length - 1)
+            {
+                notificationSoundIndex = 0;
+            }
+
+            GetIndex("Change Notification Sound").overlapText = "Change Notification Sound <color=grey>[</color><color=green>" + notificationSoundNames[notificationSoundIndex] + "</color><color=grey>]</color>";
+        }
+
         public static void ChangePointerPosition()
         {
             pointerIndex++;
@@ -2547,16 +2610,27 @@ namespace iiMenu.Mods
             foreach (string fav in favorites)
             {
                 if (favz == "")
-                {
                     favz += fav;
-                }
                 else
-                {
                     favz += seperator + fav;
-                }
             }
 
-            string ihateyouguys = platformMode + seperator + platformShape + seperator + flySpeedCycle + seperator + longarmCycle + seperator + speedboostCycle + seperator + projmode + seperator + trailmode + seperator + shootCycle + seperator + pointerIndex + seperator + tagAuraIndex + seperator + notificationDecayTime + seperator + fontStyleType + seperator + arrowType + seperator + pcbg + seperator + internetTime + seperator + hotkeyButton + seperator + buttonClickIndex + seperator + buttonClickVolume + seperator + Safety.antireportrangeindex + seperator + Advantages.tagRangeIndex + seperator + Sound.BindMode + seperator + Movement.driveInt + seperator + langInd + seperator + inputTextColorInt + seperator + Movement.pullPowerInt;
+            string ihateyouguys = platformMode + seperator + platformShape + seperator + flySpeedCycle + seperator + longarmCycle + seperator + speedboostCycle + seperator + projmode + seperator + trailmode + seperator + shootCycle + seperator + pointerIndex + seperator + tagAuraIndex + seperator + notificationDecayTime + seperator + fontStyleType + seperator + arrowType + seperator + pcbg + seperator + internetTime + seperator + hotkeyButton + seperator + buttonClickIndex + seperator + buttonClickVolume + seperator + Safety.antireportrangeindex + seperator + Advantages.tagRangeIndex + seperator + Sound.BindMode + seperator + Movement.driveInt + seperator + langInd + seperator + inputTextColorInt + seperator + Movement.pullPowerInt + seperator + notificationSoundIndex;
+
+            string bindsToSave = "";
+            foreach (KeyValuePair<string, List<string>> Bind in ModBindings)
+            {
+                if (bindsToSave != "")
+                    bindsToSave += "~~";
+
+                string toAppend = Bind.Key;
+                foreach (string modName in Bind.Value)
+                {
+                    toAppend += seperator += modName;
+                }
+
+                bindsToSave += toAppend;
+            }
 
             string finaltext =
                 text + "\n" +
@@ -2564,7 +2638,8 @@ namespace iiMenu.Mods
                 ihateyouguys + "\n" +
                 pageButtonType.ToString() + "\n" +
                 themeType.ToString() + "\n" +
-                fontCycle.ToString();
+                fontCycle.ToString() + "\n" + 
+                bindsToSave;
 
             return finaltext;
         }
@@ -2733,6 +2808,8 @@ namespace iiMenu.Mods
                 ChangeInputTextColor();
                 Movement.pullPowerInt = int.Parse(data[24]) - 1;
                 Movement.ChangePullModPower();
+                notificationSoundIndex = int.Parse(data[25]) - 1;
+                ChangeNotificationSound();
             } catch { UnityEngine.Debug.Log("Save file out of date"); }
 
             pageButtonType = int.Parse(textData[3]) - 1;
@@ -2742,6 +2819,29 @@ namespace iiMenu.Mods
             fontCycle = int.Parse(textData[5]) - 1;
             Toggle("Change Font Type");
 
+            try
+            {
+                foreach (string Bindings in textData[6].Split("~~"))
+                {
+                    if (Bindings.Contains(";;"))
+                    {
+                        string[] BindData = Bindings.Split(";;");
+                        string BindName = BindData[0];
+
+                        List<string> Binds = new List<string> { };
+
+                        for (int i = 1; i < BindData.Length; i++)
+                        {
+                            string ModName = BindData[i];
+                            if (GetIndex(ModName) != null)
+                                Binds.Add(ModName);
+                        }
+
+                        ModBindings[BindName] = Binds;
+                    }
+                }
+            } catch { }
+            
             NotifiLib.ClearAllNotifications();
             hasLoadedPreferences = true;
         }

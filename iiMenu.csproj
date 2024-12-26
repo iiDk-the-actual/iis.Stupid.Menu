@@ -200,9 +200,6 @@
     <Reference Include="NavMeshComponents">
       <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\NavMeshComponents.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json.UnityConverters">
       <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Newtonsoft.Json.UnityConverters.dll</HintPath>
     </Reference>
