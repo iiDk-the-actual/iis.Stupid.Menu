@@ -480,9 +480,24 @@ namespace iiMenu.Mods
             joystickOpen = false;
         }
 
+        public static void RoundMenuOn()
+        {
+            shouldRound = true;
+        }
+
+        public static void RoundMenuOff()
+        {
+            shouldRound = false;
+        }
+
         public static void OutlineMenuOn()
         {
             shouldOutline = true;
+        }
+
+        public static void OutlineMenuOff()
+        {
+            shouldOutline = false;
         }
 
         public static void PhysicalMenuOn()
@@ -495,11 +510,6 @@ namespace iiMenu.Mods
         {
             physicalMenu = false;
             physicalOpenPosition = Vector3.zero;
-        }
-
-        public static void OutlineMenuOff()
-        {
-            shouldOutline = false;
         }
 
         public static void WatchMenuOn()
@@ -2182,15 +2192,12 @@ namespace iiMenu.Mods
 
         public static void FreezePlayerInMenu()
         {
-            if (menu != null)
+            if (physicalMenu ? isMenuButtonHeld : menu != null)
             {
                 if (closePosition == Vector3.zero)
-                {
                     closePosition = GorillaTagger.Instance.rigidbody.transform.position;
-                } else
-                {
+                else
                     GorillaTagger.Instance.rigidbody.transform.position = closePosition;
-                }
                 GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity = new Vector3(0f, 0f, 0f);
             } else
             {
@@ -2615,7 +2622,7 @@ namespace iiMenu.Mods
                     favz += seperator + fav;
             }
 
-            string ihateyouguys = platformMode + seperator + platformShape + seperator + flySpeedCycle + seperator + longarmCycle + seperator + speedboostCycle + seperator + projmode + seperator + trailmode + seperator + shootCycle + seperator + pointerIndex + seperator + tagAuraIndex + seperator + notificationDecayTime + seperator + fontStyleType + seperator + arrowType + seperator + pcbg + seperator + internetTime + seperator + hotkeyButton + seperator + buttonClickIndex + seperator + buttonClickVolume + seperator + Safety.antireportrangeindex + seperator + Advantages.tagRangeIndex + seperator + Sound.BindMode + seperator + Movement.driveInt + seperator + langInd + seperator + inputTextColorInt + seperator + Movement.pullPowerInt + seperator + notificationSoundIndex;
+            string ihateyouguys = platformMode + seperator + platformShape + seperator + flySpeedCycle + seperator + longarmCycle + seperator + speedboostCycle + seperator + projmode + seperator + trailmode + seperator + shootCycle + seperator + pointerIndex + seperator + tagAuraIndex + seperator + notificationDecayTime + seperator + fontStyleType + seperator + arrowType + seperator + pcbg + seperator + internetTime + seperator + hotkeyButton + seperator + buttonClickIndex + seperator + buttonClickVolume + seperator + Safety.antireportrangeindex + seperator + Advantages.tagRangeIndex + seperator + Sound.BindMode + seperator + Movement.driveInt + seperator + langInd + seperator + inputTextColorInt + seperator + Movement.pullPowerInt + seperator + notificationSoundIndex + seperator + Visuals.PerformanceModeStepIndex;
 
             string bindsToSave = "";
             foreach (KeyValuePair<string, List<string>> Bind in ModBindings)
@@ -2626,7 +2633,7 @@ namespace iiMenu.Mods
                 string toAppend = Bind.Key;
                 foreach (string modName in Bind.Value)
                 {
-                    toAppend += seperator += modName;
+                    toAppend += seperator + modName;
                 }
 
                 bindsToSave += toAppend;
@@ -2810,6 +2817,8 @@ namespace iiMenu.Mods
                 Movement.ChangePullModPower();
                 notificationSoundIndex = int.Parse(data[25]) - 1;
                 ChangeNotificationSound();
+                Visuals.PerformanceModeStepIndex = int.Parse(data[26]) - 1;
+                Visuals.ChangePerformanceModeVisualStep();
             } catch { UnityEngine.Debug.Log("Save file out of date"); }
 
             pageButtonType = int.Parse(textData[3]) - 1;

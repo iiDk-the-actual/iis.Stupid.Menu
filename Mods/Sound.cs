@@ -125,6 +125,9 @@ namespace iiMenu.Mods.Spammers
 
         public static void DownloadSound(string name, string url)
         {
+            if (name.Contains(".."))
+                name = name.Replace("..", "");
+
             string filename = "Sounds" + Subdirectory + "/" + name + "." + GetFileExtension(url);
             if (File.Exists("iisStupidMenu/"+filename))
             {

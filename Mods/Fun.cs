@@ -1,6 +1,4 @@
-﻿using ExitGames.Client.Photon;
-using GorillaLocomotion.Gameplay;
-using GorillaNetworking;
+﻿using GorillaNetworking;
 using GorillaTagScripts;
 using GorillaTagScripts.ObstacleCourse;
 using HarmonyLib;
@@ -8,7 +6,9 @@ using iiMenu.Classes;
 using iiMenu.Menu;
 using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
+using iiMenu.Patches;
 using Photon.Pun;
+using Photon.Realtime;
 using Photon.Voice.Unity;
 using Photon.Voice.Unity.UtilityScripts;
 using POpusCodec.Enums;
@@ -19,8 +19,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.ProBuilder.Shapes;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -210,28 +208,6 @@ namespace iiMenu.Mods
         public static void DisableInstantHandTaps()
         {
             GorillaTagger.Instance.tapCoolDown = 0.33f;
-        }
-
-        public static void FastRopes()
-        {
-            foreach (GorillaRopeSwingSettings settings in GameObject.FindObjectsOfType(typeof(GorillaRopeSwingSettings)))
-            {
-                if (settings.name.Contains("Default"))
-                {
-                    settings.inheritVelocityMultiplier = 4f;
-                }
-            }
-        }
-
-        public static void RegularRopes()
-        {
-            foreach (GorillaRopeSwingSettings settings in GameObject.FindObjectsOfType(typeof(GorillaRopeSwingSettings)))
-            {
-                if (settings.name.Contains("Default"))
-                {
-                    settings.inheritVelocityMultiplier = 0.9f;
-                }
-            }
         }
 
         /*
@@ -585,6 +561,19 @@ namespace iiMenu.Mods
             lastrhboop = isBoopRight;
         }
 
+        private static float GlassesOnGripDelay = 0f;
+        public static void GlassesOnGrip()
+        {
+            if (((leftGrab && Vector3.Distance(GorillaTagger.Instance.headCollider.transform.position, GorillaTagger.Instance.leftHandTransform.position) < 0.16f) || (rightGrab && Vector3.Distance(GorillaTagger.Instance.headCollider.transform.position, GorillaTagger.Instance.rightHandTransform.position) < 0.16f)) && Time.time > GlassesOnGripDelay)
+            {
+                GlassesOnGripDelay = Time.time + 1f;
+
+                CosmeticsController.instance.ApplyCosmeticItemToSet(CosmeticsController.instance.currentWornSet, CosmeticsController.instance.GetItemFromDict("LFABC."), true, false);
+                CosmeticsController.instance.ApplyCosmeticItemToSet(GorillaTagger.Instance.offlineVRRig.tryOnSet, CosmeticsController.instance.GetItemFromDict("LFABC."), true, false);
+                CosmeticsController.instance.UpdateWornCosmetics(true);
+            }
+        }
+
         private static bool autoclickstate = false;
         public static void AutoClicker()
         {
@@ -682,6 +671,14 @@ namespace iiMenu.Mods
             if (!GorillaTagger.Instance.myRecorder.DebugEchoMode)
             {
                 GorillaTagger.Instance.myRecorder.DebugEchoMode = true;
+            }
+        }
+
+        public static void DisableMicrophoneFeedback()
+        {
+            if (GorillaTagger.Instance.myRecorder.DebugEchoMode)
+            {
+                GorillaTagger.Instance.myRecorder.DebugEchoMode = false;
             }
         }
 
@@ -899,6 +896,63 @@ namespace iiMenu.Mods
                 false,
                 false
             });
+            RPCProtection();
+        }
+
+        public static void RainbowBracelet()
+        {
+            Patches.BraceletPatch.enabled = true;
+            if (!GorillaTagger.Instance.offlineVRRig.nonCosmeticRightHandItem.IsEnabled)
+            {
+                GorillaTagger.Instance.myVRRig.SendRPC("EnableNonCosmeticHandItemRPC", RpcTarget.Others, new object[]
+                {
+                    true,
+                    false
+                });
+                RPCProtection();
+
+                GorillaTagger.Instance.offlineVRRig.nonCosmeticRightHandItem.EnableItem(true);
+            }
+            List<Color> rgbColors = new List<Color> { };
+            for (int i=0; i<10; i++)
+                rgbColors.Add(Color.HSVToRGB(((Time.frameCount / 180f) + (i / 10f)) % 1f, 1f, 1f));
+            
+            GorillaTagger.Instance.offlineVRRig.reliableState.isBraceletLeftHanded = false;
+            GorillaTagger.Instance.offlineVRRig.reliableState.braceletSelfIndex = 99;
+            GorillaTagger.Instance.offlineVRRig.reliableState.braceletBeadColors = rgbColors;
+            GorillaTagger.Instance.offlineVRRig.friendshipBraceletRightHand.UpdateBeads(rgbColors, 99);
+        }
+
+        public static void RemoveRainbowBracelet()
+        {
+            Patches.BraceletPatch.enabled = false;
+            if (!GorillaTagger.Instance.offlineVRRig.nonCosmeticRightHandItem.IsEnabled)
+            {
+                GorillaTagger.Instance.myVRRig.SendRPC("EnableNonCosmeticHandItemRPC", RpcTarget.Others, new object[]
+                {
+                    false,
+                    false
+                });
+                RPCProtection();
+
+                GorillaTagger.Instance.offlineVRRig.nonCosmeticRightHandItem.EnableItem(false);
+            }
+
+            GorillaTagger.Instance.offlineVRRig.reliableState.isBraceletLeftHanded = false;
+            GorillaTagger.Instance.offlineVRRig.reliableState.braceletSelfIndex = 0;
+            GorillaTagger.Instance.offlineVRRig.reliableState.braceletBeadColors.Clear();
+            GorillaTagger.Instance.offlineVRRig.UpdateFriendshipBracelet();
+        }
+
+        public static void GiveBuilderWatch()
+        {
+            GorillaTagger.Instance.offlineVRRig.EnableBuilderResizeWatch(true);
+            RPCProtection();
+        }
+
+        public static void RemoveBuilderWatch()
+        {
+            GorillaTagger.Instance.offlineVRRig.EnableBuilderResizeWatch(false);
             RPCProtection();
         }
 
@@ -1258,7 +1312,7 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true))
                 {
-                        GameObject.Find("Floating Bug Holdable").transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
+                    GameObject.Find("Floating Bug Holdable").transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
                 }
             }
         }
@@ -1340,7 +1394,7 @@ namespace iiMenu.Mods
             return archivepieces.ToArray();
         }
 
-        private static int pieceIdSet = 251444537;
+        private static int pieceIdSet = -566818631;
         private static float blockDelay = 0f;
         public static void BlocksGun()
         {
@@ -1380,6 +1434,16 @@ namespace iiMenu.Mods
                 }
             }
             //RPCProtection();
+        }
+
+        public static void EnableFastRopes()
+        {
+            Patches.RopePatch.enabled = true;
+        }
+
+        public static void DisableFastRopes()
+        {
+            Patches.RopePatch.enabled = false;
         }
 
         public static void NoRespawnBug()
@@ -1424,6 +1488,26 @@ namespace iiMenu.Mods
         public static void AntiGrabDisabled()
         {
             Patches.GrabPatch.enabled = false;
+        }
+
+        public static void AntiKnockback()
+        {
+            Patches.KnockbackPatch.enabled = true;
+        }
+
+        public static void AntiKnockbackDisabled()
+        {
+            Patches.KnockbackPatch.enabled = false;
+        }
+
+        public static void LargeSnowballs()
+        {
+            Patches.EnablePatch.enabled = true;
+        }
+
+        public static void LargeSnowballsDisabled()
+        {
+            Patches.EnablePatch.enabled = false;
         }
 
         public static void FastGliders()
@@ -1560,13 +1644,266 @@ namespace iiMenu.Mods
             }
         }
 
+        private static float delayer = -1f;
         public static void DestroyBlocks()
         {
-            foreach (BuilderPiece piece in GetPieces())
+            if (Time.time > delayer)
             {
-                if (piece.gameObject.activeSelf)
-                    BuilderTable.instance.RequestRecyclePiece(piece, true, 2);
+                delayer = Time.time + 1f;
+                archivepieces = null;
+                int count = 0;
+                foreach (BuilderPiece piece in GetPieces())
+                {
+                    if (count > 400)
+                        break;
+                    if (piece.gameObject.activeSelf)
+                    {
+                        count++;
+                        BuilderTable.instance.RequestRecyclePiece(piece, true, 2);
+                    }
+                }
             }
+        }
+
+        private static float startTimeBuilding = 0f;
+        public static void EnableAtticAntiReport()
+        {
+            startTimeBuilding = Time.time + 5f;
+        }
+
+        public static void AtticAntiReport()
+        {
+            if (Time.time > startTimeBuilding)
+                GetIndex("Attic Anti Report").enabled = false;
+
+            foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+            {
+                if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
+                {
+                    BuilderTableNetworking.instance.photonView.RPC("PieceCreatedByShelfRPC", RpcTarget.All, new object[] { -566818631, BuilderTable.instance.CreatePieceId(), VRRig.PackWorldPosForNetwork(line.reportButton.transform.position + new Vector3(UnityEngine.Random.Range(-0.3f, 0.3f), UnityEngine.Random.Range(-0.3f, 0.3f), UnityEngine.Random.Range(-0.3f, 0.3f))), VRRig.PackQuaternionForNetwork(Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)))), 0, (byte)4, 4, PhotonNetwork.LocalPlayer });
+                    RPCProtection();
+                }
+            }
+        }
+
+        public static void AtticDrawGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    if (!PhotonNetwork.IsMasterClient)
+                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                    else
+                    {
+                        CoroutineManager.RunCoroutine(DrawSmallDelay(NewPointer.transform.position));
+                    }
+                }
+            }
+        }
+
+        public static void AtticBuildGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    if (!PhotonNetwork.IsMasterClient)
+                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                    else
+                    {
+                        BuilderTableNetworking.instance.photonView.RPC("PieceCreatedByShelfRPC", RpcTarget.All, new object[] { pieceIdSet, BuilderTable.instance.CreatePieceId(), VRRig.PackWorldPosForNetwork(NewPointer.transform.position), VRRig.PackQuaternionForNetwork(Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)))), 0, (byte)4, 4, PhotonNetwork.LocalPlayer });
+                        RPCProtection();
+                    }
+                }
+            }
+        }
+
+        public static IEnumerator DrawSmallDelay(Vector3 position)
+        {
+            GameObject Temporary = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            Temporary.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
+            Temporary.transform.position = position;
+            UnityEngine.Object.Destroy(Temporary.GetComponent<Collider>());
+            yield return new WaitForSeconds(0.5f);
+            UnityEngine.Object.Destroy(Temporary);
+            BuilderTableNetworking.instance.photonView.RPC("PieceCreatedByShelfRPC", RpcTarget.All, new object[] { pieceIdSet, BuilderTable.instance.CreatePieceId(), VRRig.PackWorldPosForNetwork(position), VRRig.PackQuaternionForNetwork(Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)))), 0, (byte)4, 4, PhotonNetwork.LocalPlayer });
+            RPCProtection();
+        }
+
+        public static IEnumerator CreateGetShelfPiece(int pieceType, Action<BuilderPiece> onComplete)
+        {
+            BuilderPiece target = null;
+
+            pieceId = BuilderTable.instance.CreatePieceId();
+            BuilderTableNetworking.instance.photonView.RPC("PieceCreatedByShelfRPC", RpcTarget.All, new object[] { pieceType, pieceId, VRRig.PackWorldPosForNetwork(GorillaTagger.Instance.offlineVRRig.transform.position + new Vector3(0f, 1f, 0f)), VRRig.PackQuaternionForNetwork(Quaternion.identity), 0, (byte)4, 4, PhotonNetwork.LocalPlayer });
+            RPCProtection();
+
+            yield return null;
+
+            target = BuilderTable.instance.GetPiece(pieceId);
+
+            onComplete?.Invoke(target);
+        }
+
+        public static void AtticFreezeGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (isCopying && whoCopy != null)
+                {
+                    if (!PhotonNetwork.IsMasterClient)
+                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                    else
+                    {
+                        BuilderTableNetworking.instance.photonView.RPC("PieceCreatedByShelfRPC", NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)), new object[] { -566818631, BuilderTable.instance.CreatePieceId(), VRRig.PackWorldPosForNetwork(whoCopy.headMesh.transform.position + new Vector3(UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f))), VRRig.PackQuaternionForNetwork(Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)))), 0, (byte)4, 4, PhotonNetwork.LocalPlayer });
+                        BuilderTableNetworking.instance.photonView.RPC("PieceCreatedByShelfRPC", NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)), new object[] { -566818631, BuilderTable.instance.CreatePieceId(), VRRig.PackWorldPosForNetwork(whoCopy.leftHandTransform.position + new Vector3(UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f))), VRRig.PackQuaternionForNetwork(Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)))), 0, (byte)4, 4, PhotonNetwork.LocalPlayer });
+                        BuilderTableNetworking.instance.photonView.RPC("PieceCreatedByShelfRPC", NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)), new object[] { -566818631, BuilderTable.instance.CreatePieceId(), VRRig.PackWorldPosForNetwork(whoCopy.rightHandTransform.position + new Vector3(UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f))), VRRig.PackQuaternionForNetwork(Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)))), 0, (byte)4, 4, PhotonNetwork.LocalPlayer });
+                        RPCProtection();
+                    }
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        isCopying = true;
+                        whoCopy = possibly;
+                    }
+                }
+            }
+            else
+            {
+                if (isCopying)
+                {
+                    isCopying = false;
+                }
+            }
+        }
+
+        public static void AtticFreezeAll()
+        {
+            if (rightTrigger > 0.5f)
+            {
+                Player target = GetRandomPlayer(false);
+
+                if (!PhotonNetwork.IsMasterClient)
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                else
+                {
+                    BuilderTableNetworking.instance.photonView.RPC("PieceCreatedByShelfRPC", target, new object[] { -566818631, BuilderTable.instance.CreatePieceId(), VRRig.PackWorldPosForNetwork(GetVRRigFromPlayer(target).headMesh.transform.position + new Vector3(UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f))), VRRig.PackQuaternionForNetwork(Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)))), 0, (byte)4, 4, PhotonNetwork.LocalPlayer });
+                    BuilderTableNetworking.instance.photonView.RPC("PieceCreatedByShelfRPC", target, new object[] { -566818631, BuilderTable.instance.CreatePieceId(), VRRig.PackWorldPosForNetwork(GetVRRigFromPlayer(target).leftHandTransform.position + new Vector3(UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f))), VRRig.PackQuaternionForNetwork(Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)))), 0, (byte)4, 4, PhotonNetwork.LocalPlayer });
+                    BuilderTableNetworking.instance.photonView.RPC("PieceCreatedByShelfRPC", target, new object[] { -566818631, BuilderTable.instance.CreatePieceId(), VRRig.PackWorldPosForNetwork(GetVRRigFromPlayer(target).rightHandTransform.position + new Vector3(UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f))), VRRig.PackQuaternionForNetwork(Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)))), 0, (byte)4, 4, PhotonNetwork.LocalPlayer });
+                    RPCProtection();
+                }
+            }
+        }
+
+        private static float stupidThing = 0f;
+        public static void AtticFloatGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (isCopying && whoCopy != null)
+                {
+                    if (!PhotonNetwork.IsMasterClient)
+                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                    else
+                    {
+                        stupidThing += (0.3f - stupidThing) * 0.05f;
+                        BuilderTableNetworking.instance.photonView.RPC("PieceCreatedByShelfRPC", NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)), new object[] { -566818631, BuilderTable.instance.CreatePieceId(), VRRig.PackWorldPosForNetwork(whoCopy.transform.position - new Vector3(0f, stupidThing, 0f)), VRRig.PackQuaternionForNetwork(Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 350f), 0f)), 0, (byte)4, 4, PhotonNetwork.LocalPlayer });
+                        RPCProtection();
+                    }
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        isCopying = true;
+                        whoCopy = possibly;
+                    }
+                }
+            }
+            else
+            {
+                stupidThing = 0.35f;
+                if (isCopying)
+                {
+                    isCopying = false;
+                }
+            }
+        }
+
+        public static Vector3 position = Vector3.zero;
+        public static void AtticTowerGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (position != Vector3.zero)
+                {
+                    BuilderTableNetworking.instance.photonView.RPC("PieceCreatedByShelfRPC", RpcTarget.All, new object[] { pieceIdSet, BuilderTable.instance.CreatePieceId(), VRRig.PackWorldPosForNetwork(position), VRRig.PackQuaternionForNetwork(Quaternion.Euler(0f, Time.frameCount % 360, 0f)), 0, (byte)4, 4, PhotonNetwork.LocalPlayer });
+                    RPCProtection();
+
+                    position += new Vector3(0f, 0.1f, 0f);
+                }
+
+                if (GetGunInput(true))
+                {
+                    position = NewPointer.transform.position;
+                }
+            }
+            else
+            {
+                position = Vector3.zero;
+            }
+        }
+
+        private static bool isFiring = false;
+        public static IEnumerator FireShotgun()
+        {
+            isFiring = true;
+
+            if (!File.Exists("iisStupidMenu/shotgun.wav"))
+                LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/refs/heads/main/shotgun.wav", "shotgun.wav");
+
+            iiMenu.Mods.Spammers.Sound.PlayAudio("shotgun.wav");
+
+            BuilderPiece bullet = null;
+
+            yield return CreateGetPiece(1925587737, piece =>
+            {
+                bullet = piece;
+            });
+            while (bullet == null)
+            {
+                yield return null;
+            }
+
+            BuilderTable.instance.RequestGrabPiece(bullet, true, Vector3.zero, Quaternion.identity);
+            yield return null;
+            BuilderTable.instance.RequestDropPiece(bullet, TrueRightHand().position + TrueRightHand().forward * 0.65f + TrueRightHand().right * 0.03f + TrueRightHand().up * 0.05f, TrueRightHand().rotation, TrueRightHand().forward * 19.9f, Vector3.zero);
+            yield return null;
         }
 
         public static void UnlimitedBuilding()
@@ -1581,7 +1918,6 @@ namespace iiMenu.Mods
             Patches.UnlimitPatches.enabled = false;
         }
 
-        private static float dumbdelay = 0f;
         public static void DestroyBlockGun()
         {
             if (GetGunInput(false))
@@ -1593,9 +1929,8 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     BuilderPiece possibly = Ray.collider.GetComponentInParent<BuilderPiece>();
-                    if (possibly && Time.time > dumbdelay)
+                    if (possibly)
                     {
-                        dumbdelay = Time.time + 0.1f;
                         BuilderTable.instance.RequestRecyclePiece(possibly, true, 2);
                         RPCProtection();
                     }
@@ -2093,35 +2428,6 @@ namespace iiMenu.Mods
             yield return null;
         }
 
-        private static bool isFiring = false;
-        public static IEnumerator FireShotgun()
-        {
-            isFiring = true;
-
-            if (!File.Exists("iisStupidMenu/shotgun.wav"))
-                LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/refs/heads/main/shotgun.wav", "shotgun.wav");
-
-            iiMenu.Mods.Spammers.Sound.PlayAudio("shotgun.wav");
-
-            BuilderPiece bullet = null;
-
-            yield return CreateGetPiece(1925587737, piece =>
-            {
-                bullet = piece;
-            });
-            while (bullet == null)
-            {
-                yield return null;
-            }
-
-            BuilderTable.instance.RequestGrabPiece(bullet, true, Vector3.zero, Quaternion.identity);
-            yield return null;
-            BuilderTable.instance.RequestDropPiece(bullet, TrueRightHand().position + TrueRightHand().forward * 0.65f + TrueRightHand().right * 0.03f + TrueRightHand().up * 0.05f, TrueRightHand().rotation, TrueRightHand().forward * 19.9f, Vector3.zero);
-            yield return null;
-
-            isFiring = false;
-        }
-
         private static bool lastgripcrap = false;
         private static bool lasttrigcrap = false;
         public static void Shotgun()
@@ -2352,10 +2658,8 @@ namespace iiMenu.Mods
         {
             foreach (BalloonHoldable balloon in GetBalloons())
             {
-                Vector3 startpos = balloon.gameObject.transform.position;
-                Vector3 charvel = Vector3.zero;
-
-                Mods.Spammers.Projectiles.BetaFireProjectile("SnowballLeft", startpos, charvel, Color.white, true);
+                typeof(BalloonHoldable).GetMethod("OwnerPopBalloon", BindingFlags.NonPublic | BindingFlags.Static).Invoke(balloon, new object[] { });
+                balloon.PopBalloonRemote();
             }
         }
 
@@ -2450,6 +2754,45 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void BecomeBalloon()
+        {
+            if (rightTrigger > 0.5f)
+            {
+                GorillaTagger.Instance.offlineVRRig.enabled = false;
+                GorillaTagger.Instance.offlineVRRig.inTryOnRoom = true;
+                GorillaTagger.Instance.offlineVRRig.transform.position = new Vector3(-51.4897f, 16.9286f, -120.1083f);
+
+                bool FoundBalloon = false;
+                foreach (BalloonHoldable Balloon in GetBalloons())
+                {
+                    if (Balloon.ownerRig == GorillaTagger.Instance.offlineVRRig && Balloon.gameObject.name.Contains("LMAMI"))
+                    {
+                        FoundBalloon = true;
+
+                        Traverse.Create(Balloon).Field("maxDistanceFromOwner").SetValue(float.MaxValue);
+                        Balloon.currentState = TransferrableObject.PositionState.Dropped;
+
+                        Balloon.gameObject.transform.position = GorillaTagger.Instance.headCollider.transform.position + (GorillaTagger.Instance.headCollider.transform.up * - 1f);
+                        Balloon.gameObject.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
+                    }
+                }
+
+                if (!FoundBalloon)
+                {
+                    CosmeticsController.instance.ApplyCosmeticItemToSet(GorillaTagger.Instance.offlineVRRig.tryOnSet, CosmeticsController.instance.GetItemFromDict("LMAMI."), true, false);
+                    CosmeticsController.instance.UpdateWornCosmetics(true);
+                    RPCProtection();
+
+                    archiveballoons = null;
+                }
+            }
+            else
+            {
+                if (!GorillaTagger.Instance.offlineVRRig.enabled)
+                    GorillaTagger.Instance.offlineVRRig.enabled = true;
+            }
+        }
+
         public static void DestroyGliders()
         {
             foreach (GliderHoldable glider in GetGliders())
@@ -2464,105 +2807,6 @@ namespace iiMenu.Mods
                 }
             }
         }
-
-        /*
-        public static void UnacidSelf()
-        {
-            ScienceExperimentManager.instance.photonView.RPC("PlayerHitByWaterBalloonRPC", RpcTarget.All, new object[]
-            {
-                PhotonNetwork.LocalPlayer.ActorNumber
-            });
-        }
-
-        public static void UnacidGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (GetGunInput(true) && Time.time > kgDebounce)
-                {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
-                    {
-                        Photon.Realtime.Player player = GetPlayerFromVRRig(possibly);
-                        // Not created by me, leaked by REV
-                        ScienceExperimentManager.instance.photonView.RPC("PlayerHitByWaterBalloonRPC", RpcTarget.All, new object[]
-                        {
-                            player.ActorNumber
-                        });
-                        RPCProtection();
-                        kgDebounce = Time.time + 0.5f;
-                    }
-                }
-            }
-        }
-
-        public static void UnacidAll()
-        {
-            foreach (Photon.Realtime.Player plr in PhotonNetwork.PlayerList)
-            {
-                ScienceExperimentManager.instance.photonView.RPC("PlayerHitByWaterBalloonRPC", RpcTarget.All, new object[]
-                {
-                    plr.ActorNumber
-                });
-            };
-        }*/
-
-        /*
-        public static void GrabTrain()
-        {
-            if (rightGrab)
-            {
-                GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/Holiday2023Forest/Holiday2023Forest_Gameplay/NCTrain_Kit_Prefab").transform.position = GorillaTagger.Instance.rightHandTransform.position;
-            }
-        }
-
-        public static void TrainGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (GetGunInput(true))
-                {
-                    GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/Holiday2023Forest/Holiday2023Forest_Gameplay/NCTrain_Kit_Prefab").transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
-                }
-            }
-        }
-
-        public static void DestroyTrain()
-        {
-            GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/Holiday2023Forest/Holiday2023Forest_Gameplay/NCTrain_Kit_Prefab").transform.position = new Vector3(99999f, 99999f, 99999f);
-        }
-
-        public static void SlowTrain()
-        {
-            GameObject train = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/Holiday2023Forest/Holiday2023Forest_Gameplay/NCTrain_Kit_Prefab/NCTrainEngine_Prefab");
-            train.GetComponent<PhotonView>().ControllerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
-            train.GetComponent<PhotonView>().OwnerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
-            train.GetComponent<TraverseSpline>().duration = 60f;
-        }
-
-        public static void FastTrain()
-        {
-            GameObject train = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/Holiday2023Forest/Holiday2023Forest_Gameplay/NCTrain_Kit_Prefab/NCTrainEngine_Prefab");
-            train.GetComponent<PhotonView>().ControllerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
-            train.GetComponent<PhotonView>().OwnerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
-            train.GetComponent<TraverseSpline>().duration = 10f;
-        }
-
-        public static void FixTrain()
-        {
-            GameObject train = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/Holiday2023Forest/Holiday2023Forest_Gameplay/NCTrain_Kit_Prefab/NCTrainEngine_Prefab");
-            train.GetComponent<PhotonView>().ControllerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
-            train.GetComponent<PhotonView>().OwnerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
-            train.GetComponent<TraverseSpline>().duration = 30f;
-        }*/
 
         public static void LowercaseName()
         {
@@ -2965,6 +3209,18 @@ namespace iiMenu.Mods
             lastHitRS = rightSecondary;
         }
 
+        private static Dictionary<string[], int[]> cachePacked = new Dictionary<string[], int[]> { };
+        public static int[] PackCosmetics(string[] Cosmetics)
+        {
+            if (cachePacked.ContainsKey(Cosmetics))
+                return cachePacked[Cosmetics];
+
+            CosmeticsController.CosmeticSet Set = new CosmeticsController.CosmeticSet(Cosmetics, CosmeticsController.instance);
+            int[] PackedIDs = Set.ToPackedIDArray();
+            cachePacked.Add(Cosmetics, PackedIDs);
+            return PackedIDs;
+        }
+
         private static List<string> ownedarchive = null;
         private static string[] GetOwnedCosmetics()
         {
@@ -3023,7 +3279,7 @@ namespace iiMenu.Mods
                         CosmeticsController.instance.currentWornSet = new CosmeticsController.CosmeticSet(holyshit.ToArray(), CosmeticsController.instance);
                         GorillaTagger.Instance.offlineVRRig.cosmeticSet = new CosmeticsController.CosmeticSet(holyshit.ToArray(), CosmeticsController.instance);
                     }
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryon", RpcTarget.All, new object[] { holyshit.ToArray(), holyshit.ToArray() });
+                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.All, new object[] { PackCosmetics(holyshit.ToArray()), PackCosmetics(holyshit.ToArray()) });
                     RPCProtection();
                 }
             }
@@ -3053,7 +3309,7 @@ namespace iiMenu.Mods
                         CosmeticsController.instance.currentWornSet = new CosmeticsController.CosmeticSet(holyshit.ToArray(), CosmeticsController.instance);
                         GorillaTagger.Instance.offlineVRRig.cosmeticSet = new CosmeticsController.CosmeticSet(holyshit.ToArray(), CosmeticsController.instance);
                     }
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryon", RpcTarget.Others, new object[] { holyshit.ToArray(), holyshit.ToArray() });
+                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.All, new object[] { PackCosmetics(holyshit.ToArray()), PackCosmetics(holyshit.ToArray()) });
                     RPCProtection();
                 }
             }
@@ -3101,14 +3357,14 @@ namespace iiMenu.Mods
             }
         }
 
-        private static string[] archiveCosmetics = null;
+        private static int[] archiveCosmetics = null;
         public static void TryOnAnywhere()
         {
-            archiveCosmetics = CosmeticsController.instance.currentWornSet.ToDisplayNameArray();
+            archiveCosmetics = CosmeticsController.instance.currentWornSet.ToPackedIDArray();
             string[] itjustworks = new string[] { "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU." };
             CosmeticsController.instance.currentWornSet = new CosmeticsController.CosmeticSet(itjustworks, CosmeticsController.instance);
             GorillaTagger.Instance.offlineVRRig.cosmeticSet = new CosmeticsController.CosmeticSet(itjustworks, CosmeticsController.instance);
-            GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryon", RpcTarget.All, new object[] { itjustworks, CosmeticsController.instance.tryOnSet.ToDisplayNameArray() });
+            GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.All, new object[] { PackCosmetics(itjustworks), CosmeticsController.instance.tryOnSet.ToPackedIDArray() });
             RPCProtection();
         }
 
@@ -3116,7 +3372,7 @@ namespace iiMenu.Mods
         {
             CosmeticsController.instance.currentWornSet = new CosmeticsController.CosmeticSet(archiveCosmetics, CosmeticsController.instance);
             GorillaTagger.Instance.offlineVRRig.cosmeticSet = new CosmeticsController.CosmeticSet(archiveCosmetics, CosmeticsController.instance);
-            GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryon", RpcTarget.All, new object[] { archiveCosmetics, CosmeticsController.instance.tryOnSet.ToDisplayNameArray() });
+            GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryon", RpcTarget.All, new object[] { archiveCosmetics, CosmeticsController.instance.tryOnSet.ToPackedIDArray() });
             RPCProtection();
         }
 

@@ -184,6 +184,24 @@ namespace iiMenu.Mods
             // rejDebounce = Time.time + 2f;
         }
 
+        public static void AutoJoinRoomLUCIO()
+        {
+            rejRoom = "LUCIO";
+            // rejDebounce = Time.time + 2f;
+        }
+
+        public static void AutoJoinRoomVEN1()
+        {
+            rejRoom = "VEN1";
+            // rejDebounce = Time.time + 2f;
+        }
+
+        public static void AutoJoinRoomSREN17()
+        {
+            rejRoom = "SREN17";
+            // rejDebounce = Time.time + 2f;
+        }
+
         public static void RestartGame()
         {
             Process.Start("steam://rungameid/1533390");

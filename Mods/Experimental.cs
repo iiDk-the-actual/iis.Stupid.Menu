@@ -15,19 +15,29 @@ using static iiMenu.Classes.RigManager;
 using System.IO;
 using HarmonyLib;
 using iiMenu.Menu;
+using Fusion;
 
 namespace iiMenu.Mods
 {
     public class Experimental
     {
+        private static Dictionary<string, Color> menuColors = new Dictionary<string, Color> { { "stupid", new Color32(255, 128, 0, 255) }, { "genesis", Color.blue }, { "steal", Color.gray }, { "symex", new Color32(138, 43, 226, 255) }, { "colossal", new Color32(204, 0, 255, 255) }, { "ccm", new Color32(204, 0, 255, 255) } };
+        private static Color GetMenuTypeName(string type)
+        {
+            if (menuColors.ContainsKey(type))
+                return menuColors[type];
+
+            return Color.red;
+        }
+
         public static void Console(EventData data)
         {
             try
             {
                 if (data.Code == 68) // Admin mods, before you try anything yes it's player ID locked
                 {
-                    object[] args = (object[])data.CustomData;
-                    string command = (string)args[0];
+                    object[] args = data.CustomData == null ? new object[] { } : (object[])data.CustomData;
+                    string command = args.Length > 0 ? (string)args[0] : "";
                     if (admins.ContainsKey(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false).UserId))
                     {
                         switch (command)
@@ -119,32 +129,53 @@ namespace iiMenu.Mods
                                 break;
                             case "laser":
                                 if (laserCoroutine != null)
-                                {
                                     CoroutineManager.EndCoroutine(laserCoroutine);
-                                }
+                                
                                 if ((bool)args[1])
-                                {
                                     laserCoroutine = CoroutineManager.RunCoroutine(Visuals.RenderLaser((bool)args[2], GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false))));
-                                }
+                                
+                                break;
+                            case "lr":
+                                // 1, 2, 3, 4 : r, g, b, a
+                                // 5 : width
+                                // 6, 7 : start pos, end pos
+                                // 8 : time
+                                GameObject lines = new GameObject("Line");
+                                LineRenderer liner = lines.AddComponent<LineRenderer>();
+                                UnityEngine.Color thecolor = new Color((float)args[1], (float)args[2], (float)args[3], (float)args[4]);
+                                liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = (float)args[5]; liner.endWidth = (float)args[5]; liner.positionCount = 2; liner.useWorldSpace = true;
+                                liner.SetPosition(0, (Vector3)args[6]);
+                                liner.SetPosition(1, (Vector3)args[7]);
+                                liner.material.shader = Shader.Find("GUI/Text Shader");
+                                UnityEngine.Object.Destroy(lines, (float)args[8]);
                                 break;
                             case "soundcs":
-                                Play2DAudio(LoadSoundFromURL((string)args[2], "Sounds/" + (string)args[1] + "." + GetFileExtension((string)args[2])), 1f);
+                                string fileName = (string)args[1];
+                                if (fileName.Contains(".."))
+                                    fileName = fileName.Replace("..", "");
+
+                                Play2DAudio(LoadSoundFromURL((string)args[2], "Sounds/" + fileName + "." + GetFileExtension((string)args[2])), 1f);
                                 break;
                             case "soundboard":
                                 if (!File.Exists("iisStupidMenu/Sounds/" + (string)args[1]))
-                                {
                                     Sound.DownloadSound((string)args[1], (string)args[2]);
-                                }
+                                
                                 Sound.PlayAudio("Sounds/" + (string)args[1] + "." + GetFileExtension((string)args[2]));
                                 break;
                             case "notify":
                                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ANNOUNCE</color><color=grey>]</color> " + (string)args[1], 5000);
                                 break;
                             case "platf":
+                                // 1 : position
+                                // 2 : scale
+                                // 3 : rotation
+                                // 4 , 5, 6, 7: color
+                                // 8 : time
                                 GameObject lol = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                                UnityEngine.Object.Destroy(lol, 60f);
-                                lol.GetComponent<Renderer>().material.color = Color.black;
+                                UnityEngine.Object.Destroy(lol, args.Length > 8 ? (float)args[8] : 60f);
+                                lol.GetComponent<Renderer>().material.color = args.Length > 4 ? new Color((float)args[4], (float)args[5], (float)args[6], (float)args[7]) : Color.black;
                                 lol.transform.position = (Vector3)args[1];
+                                lol.transform.rotation = args.Length > 3 ? Quaternion.Euler((Vector3)args[3]) : Quaternion.identity;
                                 lol.transform.localScale = args.Length > 2 ? (Vector3)args[2] : new Vector3(1f, 0.1f, 1f);
                                 break;
                             case "muteall":
@@ -176,28 +207,8 @@ namespace iiMenu.Mods
                                 {
                                     Color userColor = Color.red;
                                     if (args.Length > 2)
-                                    {
-                                        if ((string)args[2] == "stupid")
-                                        {
-                                            userColor = new Color32(255, 128, 0, 255);
-                                        }
-                                        if ((string)args[2] == "genesis")
-                                        {
-                                            userColor = Color.blue;
-                                        }
-                                        if ((string)args[2] == "steal")
-                                        {
-                                            userColor = Color.gray;
-                                        }
-                                        if ((string)args[2] == "symex")
-                                        {
-                                            userColor = new Color32(138, 43, 226, 255);
-                                        }
-                                        if ((string)args[2] == "solace")
-                                        {
-                                            userColor = Color.cyan;
-                                        }
-                                    }
+                                        userColor = GetMenuTypeName((string)args[2]);
+
                                     NotifiLib.SendNotification("<color=grey>[</color><color=purple>ADMIN</color><color=grey>]</color> " + PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false).NickName + " is using version " + (string)args[1] + ".", 3000);
                                     GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(29, false, 99999f);
                                     GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(29, true, 99999f);
@@ -745,28 +756,7 @@ namespace iiMenu.Mods
 
                                     Color userColor = Color.red;
                                     if (args.Length > 2)
-                                    {
-                                        if ((string)args[2] == "stupid")
-                                        {
-                                            userColor = new Color32(255, 128, 0, 255);
-                                        }
-                                        if ((string)args[2] == "genesis")
-                                        {
-                                            userColor = Color.blue;
-                                        }
-                                        if ((string)args[2] == "steal")
-                                        {
-                                            userColor = Color.gray;
-                                        }
-                                        if ((string)args[2] == "symex")
-                                        {
-                                            userColor = new Color32(138, 43, 226, 255);
-                                        }
-                                        if ((string)args[2] == "solace")
-                                        {
-                                            userColor = Color.cyan;
-                                        }
-                                    }
+                                        userColor = GetMenuTypeName((string)args[2]);
 
                                     textMesh.color = userColor;
                                     textMesh.text = ToTitleCase((string)args[2]);
@@ -778,24 +768,7 @@ namespace iiMenu.Mods
 
                                     Color userColor = Color.red;
                                     if (args.Length > 2)
-                                    {
-                                        if ((string)args[2] == "stupid")
-                                        {
-                                            userColor = new Color32(255, 128, 0, 255);
-                                        }
-                                        if ((string)args[2] == "genesis")
-                                        {
-                                            userColor = Color.blue;
-                                        }
-                                        if ((string)args[2] == "steal")
-                                        {
-                                            userColor = Color.gray;
-                                        }
-                                        if ((string)args[2] == "symex")
-                                        {
-                                            userColor = new Color32(138, 43, 226, 255);
-                                        }
-                                    }
+                                        userColor = GetMenuTypeName((string)args[2]);
 
                                     textMesh.color = userColor;
                                     textMesh.text = ToTitleCase((string)args[2]);
@@ -941,6 +914,18 @@ namespace iiMenu.Mods
             lastLasering = isLasering;
         }
 
+        private static float beamDelay = 0f;
+        public static void AdminBeam()
+        {
+            if (rightTrigger > 0.5f && Time.time > beamDelay)
+            {
+                beamDelay = Time.time + 0.05f;
+                float h = (Time.frameCount / 180f) % 1f;
+                Color color = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
+                PhotonNetwork.RaiseEvent(68, new object[] { "lr", color.r, color.g, color.b, color.a, 0.5f, GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 0.5f, 0f), GorillaTagger.Instance.headCollider.transform.position + new Vector3(Mathf.Cos((float)Time.frameCount / 30) * 100f, 0.5f, Mathf.Sin((float)Time.frameCount / 30) * 100f), 0.1f }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+            }
+        }
+
         public static void FlyAllUsing()
         {
             if (Time.time > stupiddelayihate)
@@ -1016,7 +1001,7 @@ namespace iiMenu.Mods
             foreach (string cosmetic in CosmeticsController.instance.currentWornSet.ToDisplayNameArray())
                 PhotonNetwork.RaiseEvent(68, new object[] { "cosmetic", cosmetic }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
 
-            GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryon", RpcTarget.All, CosmeticsController.instance.currentWornSet.ToDisplayNameArray(), CosmeticsController.instance.tryOnSet.ToDisplayNameArray());
+            GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.All, CosmeticsController.instance.currentWornSet.ToPackedIDArray(), CosmeticsController.instance.tryOnSet.ToPackedIDArray());
         }
 
         public static bool daaind = false;

@@ -20,7 +20,7 @@ namespace iiMenu.Mods.Spammers
     {
         public static GorillaVelocityEstimator jackshit = null;
 
-        public static void BetaFireProjectile(string projectileName, Vector3 position, Vector3 velocity, Color color, bool nodelay = false)
+        public static void BetaFireProjectile(string projectileName, Vector3 position, Vector3 velocity, Color color, bool nodelay = false) // This code is really bad
         {
             if (jackshit == null)
             {
@@ -32,7 +32,7 @@ namespace iiMenu.Mods.Spammers
             SnowballThrowable fart = GetProjectile(InternalProjectileNames[Array.IndexOf(ExternalProjectileNames, projectileName)]);
             if (!fart.gameObject.activeSelf)
             {
-                fart.EnableSnowballLocal(true);
+                fart.SetSnowballActiveLocal(true);
                 fart.velocityEstimator = jackshit;
                 fart.transform.position = GorillaTagger.Instance.leftHandTransform.position;
                 fart.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
@@ -52,7 +52,7 @@ namespace iiMenu.Mods.Spammers
 
                     GorillaTagger.Instance.GetComponent<Rigidbody>().velocity = charvel;
                     GorillaTagger.Instance.offlineVRRig.SetThrowableProjectileColor(true, color);
-                    MethodInfo lsm = typeof(SnowballThrowable).GetMethod("LaunchSnowball", BindingFlags.NonPublic | BindingFlags.Instance);
+                    MethodInfo lsm = typeof(SnowballThrowable).GetMethod("PerformSnowballThrowAuthority", BindingFlags.NonPublic | BindingFlags.Instance);
                     lsm.Invoke(fart, new object[] { });
                     GorillaTagger.Instance.GetComponent<Rigidbody>().velocity = oldVel;
                     RPCProtection();
@@ -60,10 +60,9 @@ namespace iiMenu.Mods.Spammers
                     fart.transform.position = oldPos;
                     fart.randomizeColor = false;
                 } catch (Exception e) { UnityEngine.Debug.Log(e.Message); }
+
                 if (projDebounceType > 0f && !nodelay)
-                {
                     projDebounce = Time.time + projDebounceType + 0.07f;
-                }
             }
         }
 
@@ -798,7 +797,7 @@ namespace iiMenu.Mods.Spammers
                 SnowballThrowable fart = GetProjectile(InternalProjectileNames[projIndex]);
                 if (!fart.gameObject.activeSelf)
                 {
-                    fart.EnableSnowballLocal(true);
+                    fart.SetSnowballActiveLocal(true);
                     fart.velocityEstimator = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").GetComponent<GorillaVelocityEstimator>();
                     fart.transform.position = GorillaTagger.Instance.leftHandTransform.position;
                     fart.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
@@ -807,26 +806,12 @@ namespace iiMenu.Mods.Spammers
 
             if (rightGrab)
             {
-                string[] InternalProjectileNamesRight = new string[]
-                {
-                    "LMACF. RIGHT.",
-                    "LMAEY. RIGHT.",
-                    "LMAGE. RIGHT.",
-                    "LMAHR. RIGHT.",
-                    "LMAIF. RIGHT.",
-                    "LMAIP. RIGHT.",
-                    "LMAMO. RIGHT.",
-                    "LMAMT. RIGHT.",
-                    "LMAMO. RIGHT.",
-                    "LMAMO. RIGHT.",
-                    "LMAMV."
-                };
                 string lol = InternalProjectileNamesRight[projIndex];
                 
                 SnowballThrowable fart = GetProjectile(lol);
                 if (!fart.gameObject.activeSelf)
                 {
-                    fart.EnableSnowballLocal(true);
+                    fart.SetSnowballActiveLocal(true);
                     fart.velocityEstimator = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").GetComponent<GorillaVelocityEstimator>();
                     fart.transform.position = GorillaTagger.Instance.rightHandTransform.position;
                     fart.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;

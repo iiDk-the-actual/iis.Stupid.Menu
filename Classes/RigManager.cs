@@ -14,15 +14,12 @@ namespace iiMenu.Classes
 
         public static VRRig GetRandomVRRig(bool includeSelf)
         {
-            Photon.Realtime.Player randomPlayer;
+            Player randomPlayer;
             if (includeSelf)
-            {
                 randomPlayer = PhotonNetwork.PlayerList[UnityEngine.Random.Range(0, PhotonNetwork.PlayerList.Length -1)];
-            }
             else
-            {
                 randomPlayer = PhotonNetwork.PlayerListOthers[UnityEngine.Random.Range(0, PhotonNetwork.PlayerListOthers.Length - 1)];
-            }
+            
             return GetVRRigFromPlayer(randomPlayer);
         }
 
@@ -54,12 +51,9 @@ namespace iiMenu.Classes
         public static Photon.Realtime.Player GetRandomPlayer(bool includeSelf)
         {
             if (includeSelf)
-            {
                 return PhotonNetwork.PlayerList[UnityEngine.Random.Range(0, PhotonNetwork.PlayerList.Length - 1)];
-            } else
-            {
+            else
                 return PhotonNetwork.PlayerListOthers[UnityEngine.Random.Range(0, PhotonNetwork.PlayerListOthers.Length - 1)];
-            }
         }
 
         public static Player NetPlayerToPlayer(NetPlayer p)
