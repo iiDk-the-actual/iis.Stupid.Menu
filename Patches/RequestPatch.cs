@@ -1,13 +1,11 @@
 ﻿using GorillaNetworking;
 using HarmonyLib;
 using iiMenu.Classes;
+using iiMenu.Mods;
 using Photon.Pun;
 using System;
 using System.Collections;
-using TMPro;
 using UnityEngine;
-using UnityEngine.ProBuilder.MeshOperations;
-using static GorillaNetworking.CosmeticsController;
 
 namespace iiMenu.Patches
 {
@@ -60,7 +58,7 @@ namespace iiMenu.Patches
                 }
                 yield return new WaitForSeconds(0.1f);
 
-                GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryon", RpcTarget.Others, new object[] { spamarray, CosmeticsController.instance.currentWornSet.ToDisplayNameArray() });
+                GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.Others, new object[] { Fun.PackCosmetics(spamarray), CosmeticsController.instance.currentWornSet.ToPackedIDArray() });
                 GorillaTagger.Instance.offlineVRRig.enabled = true;
                 yield return new WaitForSeconds(0.5f);
 

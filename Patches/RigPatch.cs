@@ -4,7 +4,7 @@ using UnityEngine;
 namespace iiMenu.Patches
 {
     [HarmonyPatch(typeof(VRRig), "OnDisable")]
-    public class GhostPatch
+    public class RigPatch
     {
         public static bool Prefix(VRRig __instance)
         {

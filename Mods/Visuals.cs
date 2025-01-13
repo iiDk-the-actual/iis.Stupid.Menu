@@ -156,8 +156,43 @@ namespace iiMenu.Mods
             sky.GetComponent<Renderer>().material = oldSkyMat;
         }
 
+        public static bool PerformanceVisuals;
+        public static void PerformanceVisualsEnabled()
+        {
+            PerformanceVisuals = true;
+        }
+        public static void PerformanceVisualsDisabled()
+        {
+            PerformanceVisuals = false;
+        }
+
+        public static float PerformanceModeStep = 0.2f;
+        public static int PerformanceModeStepIndex = 2;
+        public static void ChangePerformanceModeVisualStep()
+        {
+            PerformanceModeStepIndex++;
+            if (PerformanceModeStepIndex > 10)
+                PerformanceModeStepIndex = 0;
+
+            PerformanceModeStep = PerformanceModeStepIndex / 10f;
+            GetIndex("Change Performance Visuals Step").overlapText = "Change Performance Visuals Step <color=grey>[</color><color=green>" + PerformanceModeStep.ToString() + "</color><color=grey>]</color>";
+        }
+        public static float PerformanceVisualDelay;
+        public static int DelayChangeStep;
+
         public static void GreenScreen()
         {
+            if (PerformanceVisuals)
+            {
+                if (Time.time < PerformanceVisualDelay)
+                {
+                    if (Time.frameCount != DelayChangeStep)
+                        return;
+                }
+                else
+                    { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
+            }
+
             Color bgcolor = Color.green;
 
             GameObject a = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -166,7 +201,7 @@ namespace iiMenu.Mods
             a.transform.position = new Vector3(-54.0404f, 16.2321f, -124.5915f);
             a.transform.localScale = new Vector3(14.0131f, 0.0347f, 15.8359f);
             a.GetComponent<Renderer>().material.color = bgcolor;
-            UnityEngine.Object.Destroy(a, Time.deltaTime * 2f);
+            UnityEngine.Object.Destroy(a, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime * 2f);
 
             a = GameObject.CreatePrimitive(PrimitiveType.Cube);
             UnityEngine.Object.Destroy(a.GetComponent<Rigidbody>());
@@ -174,7 +209,7 @@ namespace iiMenu.Mods
             a.transform.position = new Vector3(-52.7365f, 17.5233f, -122.333f);
             a.transform.localScale = new Vector3(14.0131f, 6.4907f, 0.0305f);
             a.GetComponent<Renderer>().material.color = bgcolor;
-            UnityEngine.Object.Destroy(a, Time.deltaTime * 2f);
+            UnityEngine.Object.Destroy(a, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime * 2f);
 
             a = GameObject.CreatePrimitive(PrimitiveType.Cube);
             UnityEngine.Object.Destroy(a.GetComponent<Rigidbody>());
@@ -183,7 +218,7 @@ namespace iiMenu.Mods
             a.transform.localScale = new Vector3(15.5363f, 6.4907f, 0.0305f);
             a.transform.rotation = Quaternion.Euler(0f, 270f, 0f);
             a.GetComponent<Renderer>().material.color = bgcolor;
-            UnityEngine.Object.Destroy(a, Time.deltaTime * 2f);
+            UnityEngine.Object.Destroy(a, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime * 2f);
 
             a = GameObject.CreatePrimitive(PrimitiveType.Cube);
             UnityEngine.Object.Destroy(a.GetComponent<Rigidbody>());
@@ -191,11 +226,22 @@ namespace iiMenu.Mods
             a.transform.position = new Vector3(-54.0606f, 18.8161f, -124.6264f);
             a.transform.localScale = new Vector3(14.0131f, 0.0347f, 15.5983f);
             a.GetComponent<Renderer>().material.color = bgcolor;
-            UnityEngine.Object.Destroy(a, Time.deltaTime * 2f);
+            UnityEngine.Object.Destroy(a, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime * 2f);
         }
 
         public static void BlueScreen()
         {
+            if (PerformanceVisuals)
+            {
+                if (Time.time < PerformanceVisualDelay)
+                {
+                    if (Time.frameCount != DelayChangeStep)
+                        return;
+                }
+                else
+                    { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
+            }
+
             Color bgcolor = Color.blue;
 
             GameObject a = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -204,7 +250,7 @@ namespace iiMenu.Mods
             a.transform.position = new Vector3(-54.0404f, 16.2321f, -124.5915f);
             a.transform.localScale = new Vector3(14.0131f, 0.0347f, 15.8359f);
             a.GetComponent<Renderer>().material.color = bgcolor;
-            UnityEngine.Object.Destroy(a, Time.deltaTime * 2f);
+            UnityEngine.Object.Destroy(a, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime * 2f);
 
             a = GameObject.CreatePrimitive(PrimitiveType.Cube);
             UnityEngine.Object.Destroy(a.GetComponent<Rigidbody>());
@@ -212,7 +258,7 @@ namespace iiMenu.Mods
             a.transform.position = new Vector3(-52.7365f, 17.5233f, -122.333f);
             a.transform.localScale = new Vector3(14.0131f, 6.4907f, 0.0305f);
             a.GetComponent<Renderer>().material.color = bgcolor;
-            UnityEngine.Object.Destroy(a, Time.deltaTime * 2f);
+            UnityEngine.Object.Destroy(a, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime * 2f);
 
             a = GameObject.CreatePrimitive(PrimitiveType.Cube);
             UnityEngine.Object.Destroy(a.GetComponent<Rigidbody>());
@@ -221,7 +267,7 @@ namespace iiMenu.Mods
             a.transform.localScale = new Vector3(15.5363f, 6.4907f, 0.0305f);
             a.transform.rotation = Quaternion.Euler(0f, 270f, 0f);
             a.GetComponent<Renderer>().material.color = bgcolor;
-            UnityEngine.Object.Destroy(a, Time.deltaTime * 2f);
+            UnityEngine.Object.Destroy(a, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime * 2f);
 
             a = GameObject.CreatePrimitive(PrimitiveType.Cube);
             UnityEngine.Object.Destroy(a.GetComponent<Rigidbody>());
@@ -229,11 +275,22 @@ namespace iiMenu.Mods
             a.transform.position = new Vector3(-54.0606f, 18.8161f, -124.6264f);
             a.transform.localScale = new Vector3(14.0131f, 0.0347f, 15.5983f);
             a.GetComponent<Renderer>().material.color = bgcolor;
-            UnityEngine.Object.Destroy(a, Time.deltaTime * 2f);
+            UnityEngine.Object.Destroy(a, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime * 2f);
         }
 
         public static void RedScreen()
         {
+            if (PerformanceVisuals)
+            {
+                if (Time.time < PerformanceVisualDelay)
+                {
+                    if (Time.frameCount != DelayChangeStep)
+                        return;
+                }
+                else
+                    { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
+            }
+
             Color bgcolor = Color.red;
 
             GameObject a = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -242,7 +299,7 @@ namespace iiMenu.Mods
             a.transform.position = new Vector3(-54.0404f, 16.2321f, -124.5915f);
             a.transform.localScale = new Vector3(14.0131f, 0.0347f, 15.8359f);
             a.GetComponent<Renderer>().material.color = bgcolor;
-            UnityEngine.Object.Destroy(a, Time.deltaTime * 2f);
+            UnityEngine.Object.Destroy(a, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime * 2f);
 
             a = GameObject.CreatePrimitive(PrimitiveType.Cube);
             UnityEngine.Object.Destroy(a.GetComponent<Rigidbody>());
@@ -250,7 +307,7 @@ namespace iiMenu.Mods
             a.transform.position = new Vector3(-52.7365f, 17.5233f, -122.333f);
             a.transform.localScale = new Vector3(14.0131f, 6.4907f, 0.0305f);
             a.GetComponent<Renderer>().material.color = bgcolor;
-            UnityEngine.Object.Destroy(a, Time.deltaTime * 2f);
+            UnityEngine.Object.Destroy(a, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime * 2f);
 
             a = GameObject.CreatePrimitive(PrimitiveType.Cube);
             UnityEngine.Object.Destroy(a.GetComponent<Rigidbody>());
@@ -259,7 +316,7 @@ namespace iiMenu.Mods
             a.transform.localScale = new Vector3(15.5363f, 6.4907f, 0.0305f);
             a.transform.rotation = Quaternion.Euler(0f, 270f, 0f);
             a.GetComponent<Renderer>().material.color = bgcolor;
-            UnityEngine.Object.Destroy(a, Time.deltaTime * 2f);
+            UnityEngine.Object.Destroy(a, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime * 2f);
 
             a = GameObject.CreatePrimitive(PrimitiveType.Cube);
             UnityEngine.Object.Destroy(a.GetComponent<Rigidbody>());
@@ -267,11 +324,22 @@ namespace iiMenu.Mods
             a.transform.position = new Vector3(-54.0606f, 18.8161f, -124.6264f);
             a.transform.localScale = new Vector3(14.0131f, 0.0347f, 15.5983f);
             a.GetComponent<Renderer>().material.color = bgcolor;
-            UnityEngine.Object.Destroy(a, Time.deltaTime * 2f);
+            UnityEngine.Object.Destroy(a, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime * 2f);
         }
 
         public static void VelocityLabel()
         {
+            if (PerformanceVisuals)
+            {
+                if (Time.time < PerformanceVisualDelay)
+                {
+                    if (Time.frameCount != DelayChangeStep)
+                        return;
+                }
+                else
+                    { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
+            }
+
             GameObject go = new GameObject("Lbl");
             if (GetIndex("Hidden Labels").enabled) { go.layer = 19; }
             go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
@@ -287,7 +355,7 @@ namespace iiMenu.Mods
             go.transform.position = GorillaTagger.Instance.rightHandTransform.position + new Vector3(0f, 0.1f, 0f);
             go.transform.LookAt(Camera.main.transform.position);
             go.transform.Rotate(0f, 180f, 0f);
-            UnityEngine.Object.Destroy(go, Time.deltaTime);
+            UnityEngine.Object.Destroy(go, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
         }
 
         private static float startTime = 0f;
@@ -295,6 +363,17 @@ namespace iiMenu.Mods
         private static bool lastWasTagged = false;
         public static void TimeLabel()
         {
+            if (PerformanceVisuals)
+            {
+                if (Time.time < PerformanceVisualDelay)
+                {
+                    if (Time.frameCount != DelayChangeStep)
+                        return;
+                }
+                else
+                    { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
+            }
+
             if (PhotonNetwork.InRoom)
             {
                 bool isThereTagged = false;
@@ -336,7 +415,7 @@ namespace iiMenu.Mods
                     go.transform.position = GorillaTagger.Instance.rightHandTransform.position + new Vector3(0f, GetIndex("Velocity Label").enabled ? 0.2f : 0.1f, 0f);
                     go.transform.LookAt(Camera.main.transform.position);
                     go.transform.Rotate(0f, 180f, 0f);
-                    UnityEngine.Object.Destroy(go, Time.deltaTime);
+                    UnityEngine.Object.Destroy(go, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                 }
                 else
                 {
@@ -347,6 +426,17 @@ namespace iiMenu.Mods
 
         public static void NearbyTaggerLabel()
         {
+            if (PerformanceVisuals)
+            {
+                if (Time.time < PerformanceVisualDelay)
+                {
+                    if (Time.frameCount != DelayChangeStep)
+                        return;
+                }
+                else
+                    { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
+            }
+
             if (!PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
             {
                 float closest = float.MaxValue;
@@ -391,13 +481,24 @@ namespace iiMenu.Mods
                     go.transform.position = GorillaTagger.Instance.leftHandTransform.position + new Vector3(0f, GetIndex("Last Label").enabled ? 0.2f : 0.1f, 0f);
                     go.transform.LookAt(Camera.main.transform.position);
                     go.transform.Rotate(0f, 180f, 0f);
-                    UnityEngine.Object.Destroy(go, Time.deltaTime);
+                    UnityEngine.Object.Destroy(go, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                 }
             }
         }
 
         public static void LastLabel()
         {
+            if (PerformanceVisuals)
+            {
+                if (Time.time < PerformanceVisualDelay)
+                {
+                    if (Time.frameCount != DelayChangeStep)
+                        return;
+                }
+                else
+                    { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
+            }
+
             bool isThereTagged = false;
             int left = PhotonNetwork.PlayerList.Length;
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
@@ -425,7 +526,7 @@ namespace iiMenu.Mods
                 go.transform.position = GorillaTagger.Instance.leftHandTransform.position + new Vector3(0f, 0.1f, 0f);
                 go.transform.LookAt(Camera.main.transform.position);
                 go.transform.Rotate(0f, 180f, 0f);
-                UnityEngine.Object.Destroy(go, Time.deltaTime);
+                UnityEngine.Object.Destroy(go, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
             }
         }
 
@@ -566,6 +667,17 @@ namespace iiMenu.Mods
 
         public static void ShowPlayspaceCenter()
         {
+            if (PerformanceVisuals)
+            {
+                if (Time.time < PerformanceVisualDelay)
+                {
+                    if (Time.frameCount != DelayChangeStep)
+                        return;
+                }
+                else
+                    { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
+            }
+
             GameObject playspaceCenter = GameObject.CreatePrimitive(PrimitiveType.Cube);
             UnityEngine.Object.Destroy(playspaceCenter.GetComponent<Collider>());
             UnityEngine.Object.Destroy(playspaceCenter.GetComponent<Renderer>());
@@ -577,7 +689,7 @@ namespace iiMenu.Mods
             playspaceCenter.transform.position = Ray.point;
             playspaceCenter.transform.rotation = GorillaTagger.Instance.transform.rotation;
 
-            UnityEngine.Object.Destroy(playspaceCenter, Time.deltaTime);
+            UnityEngine.Object.Destroy(playspaceCenter, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
         }
 
         public static void FixRigColors()
@@ -679,16 +791,18 @@ namespace iiMenu.Mods
         public static List<GameObject> cosmetics = new List<GameObject> { };
         public static void DisableCosmetics()
         {
-            Transform transform = GorillaTagger.Instance.offlineVRRig.mainCamera.transform.Find("FirstPersonCosmeticsOverrides");
-            for (int i = 0; i < transform.childCount; i++)
+            try
             {
-                GameObject v = transform.GetChild(i).gameObject;
-                if (v.activeSelf)
+                foreach (GameObject Cosmetic in GorillaTagger.Instance.offlineVRRig.cosmetics)
                 {
-                    v.SetActive(false);
-                    cosmetics.Add(v);
+                    if (Cosmetic.activeSelf && Cosmetic.transform.parent == GorillaTagger.Instance.offlineVRRig.mainCamera.transform)
+                    {
+                        cosmetics.Add(Cosmetic);
+                        Cosmetic.SetActive(false);
+                    }
                 }
             }
+            catch { }
         }
 
         public static void EnableCosmetics()
@@ -726,6 +840,17 @@ namespace iiMenu.Mods
 
         public static void CosmeticESP() // Messy code lol
         {
+            if (PerformanceVisuals)
+            {
+                if (Time.time < PerformanceVisualDelay)
+                {
+                    if (Time.frameCount != DelayChangeStep)
+                        return;
+                }
+                else
+                    { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
+            }
+
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
                 if (vrrig != GorillaTagger.Instance.offlineVRRig)
@@ -763,7 +888,7 @@ namespace iiMenu.Mods
                         liner.SetPosition(0, vrrig.transform.position + new Vector3(0f, 9999f, 0f));
                         liner.SetPosition(1, vrrig.transform.position - new Vector3(0f, 9999f, 0f));
                         liner.material.shader = Shader.Find("GUI/Text Shader");
-                        UnityEngine.Object.Destroy(line, Time.deltaTime);
+                        UnityEngine.Object.Destroy(line, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                     }
                 }
             }
@@ -772,6 +897,17 @@ namespace iiMenu.Mods
         private static Texture2D voicetxt = null;
         public static void VoiceESP()
         {
+            if (PerformanceVisuals)
+            {
+                if (Time.time < PerformanceVisualDelay)
+                {
+                    if (Time.frameCount != DelayChangeStep)
+                        return;
+                }
+                else
+                    { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
+            }
+
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
                 if (vrrig != GorillaTagger.Instance.offlineVRRig)
@@ -786,7 +922,7 @@ namespace iiMenu.Mods
                     {
                         GameObject volIndicator = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         UnityEngine.Object.Destroy(volIndicator.GetComponent<Collider>());
-                        UnityEngine.Object.Destroy(volIndicator, Time.deltaTime);
+                        UnityEngine.Object.Destroy(volIndicator, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                         volIndicator.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                         if (voicetxt == null)
                         {
@@ -805,6 +941,17 @@ namespace iiMenu.Mods
         private static Material voiceMat = null;
         public static void VoiceIndicators()
         {
+            if (PerformanceVisuals)
+            {
+                if (Time.time < PerformanceVisualDelay)
+                {
+                    if (Time.frameCount != DelayChangeStep)
+                        return;
+                }
+                else
+                    { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
+            }
+
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
                 if (vrrig != GorillaTagger.Instance.offlineVRRig)
@@ -819,7 +966,7 @@ namespace iiMenu.Mods
                     {
                         GameObject volIndicator = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         UnityEngine.Object.Destroy(volIndicator.GetComponent<Collider>());
-                        UnityEngine.Object.Destroy(volIndicator, Time.deltaTime);
+                        UnityEngine.Object.Destroy(volIndicator, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                         if (voiceMat == null)
                         {
                             voiceMat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
@@ -903,6 +1050,17 @@ namespace iiMenu.Mods
 
         public static void CasualTracers()
         {
+            if (PerformanceVisuals)
+            {
+                if (Time.time < PerformanceVisualDelay)
+                {
+                    if (Time.frameCount != DelayChangeStep)
+                        return;
+                }
+                else
+                    { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
+            }
+
             float lineWidth = GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f;
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
@@ -918,13 +1076,24 @@ namespace iiMenu.Mods
                     liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
                     liner.SetPosition(1, vrrig.transform.position);
                     liner.material.shader = Shader.Find("GUI/Text Shader");
-                    UnityEngine.Object.Destroy(line, Time.deltaTime);
+                    UnityEngine.Object.Destroy(line, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                 }
             }
         }
 
         public static void InfectionTracers()
         {
+            if (PerformanceVisuals)
+            {
+                if (Time.time < PerformanceVisualDelay)
+                {
+                    if (Time.frameCount != DelayChangeStep)
+                        return;
+                }
+                else
+                    { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
+            }
+
             float lineWidth = GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f;
             bool isInfectedPlayers = false;
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
@@ -953,7 +1122,7 @@ namespace iiMenu.Mods
                             liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
                             liner.SetPosition(1, vrrig.transform.position);
                             liner.material.shader = Shader.Find("GUI/Text Shader");
-                            UnityEngine.Object.Destroy(line, Time.deltaTime);
+                            UnityEngine.Object.Destroy(line, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                         }
                     }
                 }
@@ -973,7 +1142,7 @@ namespace iiMenu.Mods
                             liner.SetPosition(0, GorillaLocomotion.Player.Instance.rightControllerTransform.position);
                             liner.SetPosition(1, vrrig.transform.position);
                             liner.material.shader = Shader.Find("GUI/Text Shader");
-                            UnityEngine.Object.Destroy(line, Time.deltaTime);
+                            UnityEngine.Object.Destroy(line, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                         }
                     }
                 }
@@ -994,7 +1163,7 @@ namespace iiMenu.Mods
                         liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
                         liner.SetPosition(1, vrrig.transform.position);
                         liner.material.shader = Shader.Find("GUI/Text Shader");
-                        UnityEngine.Object.Destroy(line, Time.deltaTime);
+                        UnityEngine.Object.Destroy(line, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                     }
                 }
             }
@@ -1002,6 +1171,17 @@ namespace iiMenu.Mods
 
         public static void HuntTracers()
         {
+            if (PerformanceVisuals)
+            {
+                if (Time.time < PerformanceVisualDelay)
+                {
+                    if (Time.frameCount != DelayChangeStep)
+                        return;
+                }
+                else
+                    { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
+            }
+
             float lineWidth = GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f;
             GorillaHuntManager sillyComputer = GorillaGameManager.instance.gameObject.GetComponent<GorillaHuntManager>();
             NetPlayer target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
@@ -1020,7 +1200,7 @@ namespace iiMenu.Mods
                     liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
                     liner.SetPosition(1, vrrig.transform.position);
                     liner.material.shader = Shader.Find("GUI/Text Shader");
-                    UnityEngine.Object.Destroy(line, Time.deltaTime);
+                    UnityEngine.Object.Destroy(line, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                 }
                 if (sillyComputer.GetTargetOf(player) == (NetPlayer)PhotonNetwork.LocalPlayer)
                 {
@@ -1033,13 +1213,24 @@ namespace iiMenu.Mods
                     liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
                     liner.SetPosition(1, vrrig.transform.position);
                     liner.material.shader = Shader.Find("GUI/Text Shader");
-                    UnityEngine.Object.Destroy(line, Time.deltaTime);
+                    UnityEngine.Object.Destroy(line, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                 }
             }
         }
 
         public static void CasualBoneESP()
         {
+            if (PerformanceVisuals)
+            {
+                if (Time.time < PerformanceVisualDelay)
+                {
+                    if (Time.frameCount != DelayChangeStep)
+                        return;
+                }
+                else
+                    { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
+            }
+
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
                 UnityEngine.Color thecolor = vrrig.playerColor;
@@ -1060,7 +1251,7 @@ namespace iiMenu.Mods
                     liner.SetPosition(0, vrrig.head.rigTarget.transform.position + new Vector3(0f, 0.16f, 0f));
                     liner.SetPosition(1, vrrig.head.rigTarget.transform.position - new Vector3(0f, 0.4f, 0f));
 
-                    UnityEngine.Object.Destroy(liner, Time.deltaTime);
+                    UnityEngine.Object.Destroy(liner, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                     for (int i = 0; i < bones.Count<int>(); i += 2)
                     {
                         liner = vrrig.mainSkin.bones[bones[i]].gameObject.GetOrAddComponent<LineRenderer>();
@@ -1076,7 +1267,7 @@ namespace iiMenu.Mods
                         liner.SetPosition(0, vrrig.mainSkin.bones[bones[i]].position);
                         liner.SetPosition(1, vrrig.mainSkin.bones[bones[i + 1]].position);
 
-                        UnityEngine.Object.Destroy(liner, Time.deltaTime);
+                        UnityEngine.Object.Destroy(liner, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                     }
                 }
             }
@@ -1084,6 +1275,17 @@ namespace iiMenu.Mods
 
         public static void InfectionBoneESP()
         {
+            if (PerformanceVisuals)
+            {
+                if (Time.time < PerformanceVisualDelay)
+                {
+                    if (Time.frameCount != DelayChangeStep)
+                        return;
+                }
+                else
+                    { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
+            }
+
             bool isInfectedPlayers = false;
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
@@ -1117,7 +1319,7 @@ namespace iiMenu.Mods
                             liner.SetPosition(0, vrrig.head.rigTarget.transform.position + new Vector3(0f, 0.16f, 0f));
                             liner.SetPosition(1, vrrig.head.rigTarget.transform.position - new Vector3(0f, 0.4f, 0f));
 
-                            UnityEngine.Object.Destroy(liner, Time.deltaTime);
+                            UnityEngine.Object.Destroy(liner, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                             for (int i = 0; i < bones.Count<int>(); i += 2)
                             {
                                 liner = vrrig.mainSkin.bones[bones[i]].gameObject.GetOrAddComponent<LineRenderer>();
@@ -1133,7 +1335,7 @@ namespace iiMenu.Mods
                                 liner.SetPosition(0, vrrig.mainSkin.bones[bones[i]].position);
                                 liner.SetPosition(1, vrrig.mainSkin.bones[bones[i + 1]].position);
 
-                                UnityEngine.Object.Destroy(liner, Time.deltaTime);
+                                UnityEngine.Object.Destroy(liner, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                             }
                         }
                     }
@@ -1160,7 +1362,7 @@ namespace iiMenu.Mods
                             liner.SetPosition(0, vrrig.head.rigTarget.transform.position + new Vector3(0f, 0.16f, 0f));
                             liner.SetPosition(1, vrrig.head.rigTarget.transform.position - new Vector3(0f, 0.4f, 0f));
 
-                            UnityEngine.Object.Destroy(liner, Time.deltaTime);
+                            UnityEngine.Object.Destroy(liner, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                             for (int i = 0; i < bones.Count<int>(); i += 2)
                             {
                                 liner = vrrig.mainSkin.bones[bones[i]].gameObject.GetOrAddComponent<LineRenderer>();
@@ -1176,7 +1378,7 @@ namespace iiMenu.Mods
                                 liner.SetPosition(0, vrrig.mainSkin.bones[bones[i]].position);
                                 liner.SetPosition(1, vrrig.mainSkin.bones[bones[i + 1]].position);
 
-                                UnityEngine.Object.Destroy(liner, Time.deltaTime);
+                                UnityEngine.Object.Destroy(liner, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                             }
                         }
                     }
@@ -1204,7 +1406,7 @@ namespace iiMenu.Mods
                         liner.SetPosition(0, vrrig.head.rigTarget.transform.position + new Vector3(0f, 0.16f, 0f));
                         liner.SetPosition(1, vrrig.head.rigTarget.transform.position - new Vector3(0f, 0.4f, 0f));
 
-                        UnityEngine.Object.Destroy(liner, Time.deltaTime);
+                        UnityEngine.Object.Destroy(liner, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                         for (int i = 0; i < bones.Count<int>(); i += 2)
                         {
                             liner = vrrig.mainSkin.bones[bones[i]].gameObject.GetOrAddComponent<LineRenderer>();
@@ -1220,7 +1422,7 @@ namespace iiMenu.Mods
                             liner.SetPosition(0, vrrig.mainSkin.bones[bones[i]].position);
                             liner.SetPosition(1, vrrig.mainSkin.bones[bones[i + 1]].position);
 
-                            UnityEngine.Object.Destroy(liner, Time.deltaTime);
+                            UnityEngine.Object.Destroy(liner, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                         }
                     }
                 }
@@ -1229,6 +1431,17 @@ namespace iiMenu.Mods
 
         public static void HuntBoneESP()
         {
+            if (PerformanceVisuals)
+            {
+                if (Time.time < PerformanceVisualDelay)
+                {
+                    if (Time.frameCount != DelayChangeStep)
+                        return;
+                }
+                else
+                    { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
+            }
+
             GorillaHuntManager sillyComputer = GorillaGameManager.instance.gameObject.GetOrAddComponent<GorillaHuntManager>();
             NetPlayer target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
             foreach (NetPlayer player in PhotonNetwork.PlayerList)
@@ -1252,7 +1465,7 @@ namespace iiMenu.Mods
                     liner.SetPosition(0, vrrig.head.rigTarget.transform.position + new Vector3(0f, 0.16f, 0f));
                     liner.SetPosition(1, vrrig.head.rigTarget.transform.position - new Vector3(0f, 0.4f, 0f));
 
-                    UnityEngine.Object.Destroy(liner, Time.deltaTime);
+                    UnityEngine.Object.Destroy(liner, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                     for (int i = 0; i < bones.Count<int>(); i += 2)
                     {
                         liner = vrrig.mainSkin.bones[bones[i]].gameObject.GetOrAddComponent<LineRenderer>();
@@ -1268,7 +1481,7 @@ namespace iiMenu.Mods
                         liner.SetPosition(0, vrrig.mainSkin.bones[bones[i]].position);
                         liner.SetPosition(1, vrrig.mainSkin.bones[bones[i + 1]].position);
 
-                        UnityEngine.Object.Destroy(liner, Time.deltaTime);
+                        UnityEngine.Object.Destroy(liner, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                     }
                 }
                 if (sillyComputer.GetTargetOf(player) == (NetPlayer)PhotonNetwork.LocalPlayer)
@@ -1288,7 +1501,7 @@ namespace iiMenu.Mods
                     liner.SetPosition(0, vrrig.head.rigTarget.transform.position + new Vector3(0f, 0.16f, 0f));
                     liner.SetPosition(1, vrrig.head.rigTarget.transform.position - new Vector3(0f, 0.4f, 0f));
 
-                    UnityEngine.Object.Destroy(liner, Time.deltaTime);
+                    UnityEngine.Object.Destroy(liner, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                     for (int i = 0; i < bones.Count<int>(); i += 2)
                     {
                         liner = vrrig.mainSkin.bones[bones[i]].gameObject.GetOrAddComponent<LineRenderer>();
@@ -1304,7 +1517,7 @@ namespace iiMenu.Mods
                         liner.SetPosition(0, vrrig.mainSkin.bones[bones[i]].position);
                         liner.SetPosition(1, vrrig.mainSkin.bones[bones[i + 1]].position);
 
-                        UnityEngine.Object.Destroy(liner, Time.deltaTime);
+                        UnityEngine.Object.Destroy(liner, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                     }
                 }
             }
@@ -1422,6 +1635,17 @@ namespace iiMenu.Mods
 
         public static void CasualBeacons()
         {
+            if (PerformanceVisuals)
+            {
+                if (Time.time < PerformanceVisualDelay)
+                {
+                    if (Time.frameCount != DelayChangeStep)
+                        return;
+                }
+                else
+                    { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
+            }
+
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
                 if (vrrig != GorillaTagger.Instance.offlineVRRig)
@@ -1436,13 +1660,24 @@ namespace iiMenu.Mods
                     liner.SetPosition(0, vrrig.transform.position + new Vector3(0f, 9999f, 0f));
                     liner.SetPosition(1, vrrig.transform.position - new Vector3(0f, 9999f, 0f));
                     liner.material.shader = Shader.Find("GUI/Text Shader");
-                    UnityEngine.Object.Destroy(line, Time.deltaTime);
+                    UnityEngine.Object.Destroy(line, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                 }
             }
         }
 
         public static void InfectionBeacons()
         {
+            if (PerformanceVisuals)
+            {
+                if (Time.time < PerformanceVisualDelay)
+                {
+                    if (Time.frameCount != DelayChangeStep)
+                        return;
+                }
+                else
+                    { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
+            }
+
             bool isInfectedPlayers = false;
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
@@ -1470,7 +1705,7 @@ namespace iiMenu.Mods
                             liner.SetPosition(0, vrrig.transform.position + new Vector3(0f, 9999f, 0f));
                             liner.SetPosition(1, vrrig.transform.position - new Vector3(0f, 9999f, 0f));
                             liner.material.shader = Shader.Find("GUI/Text Shader");
-                            UnityEngine.Object.Destroy(line, Time.deltaTime);
+                            UnityEngine.Object.Destroy(line, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                         }
                     }
                 }
@@ -1490,7 +1725,7 @@ namespace iiMenu.Mods
                             liner.SetPosition(0, vrrig.transform.position + new Vector3(0f, 9999f, 0f));
                             liner.SetPosition(1, vrrig.transform.position - new Vector3(0f, 9999f, 0f));
                             liner.material.shader = Shader.Find("GUI/Text Shader");
-                            UnityEngine.Object.Destroy(line, Time.deltaTime);
+                            UnityEngine.Object.Destroy(line, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                         }
                     }
                 }
@@ -1511,7 +1746,7 @@ namespace iiMenu.Mods
                         liner.SetPosition(0, vrrig.transform.position + new Vector3(0f, 9999f, 0f));
                         liner.SetPosition(1, vrrig.transform.position - new Vector3(0f, 9999f, 0f));
                         liner.material.shader = Shader.Find("GUI/Text Shader");
-                        UnityEngine.Object.Destroy(line, Time.deltaTime);
+                        UnityEngine.Object.Destroy(line, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                     }
                 }
             }
@@ -1519,6 +1754,17 @@ namespace iiMenu.Mods
 
         public static void HuntBeacons()
         {
+            if (PerformanceVisuals)
+            {
+                if (Time.time < PerformanceVisualDelay)
+                {
+                    if (Time.frameCount != DelayChangeStep)
+                        return;
+                }
+                else
+                    { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
+            }
+
             GorillaHuntManager sillyComputer = GorillaGameManager.instance.gameObject.GetComponent<GorillaHuntManager>();
             NetPlayer target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
             foreach (NetPlayer player in PhotonNetwork.PlayerList)
@@ -1536,7 +1782,7 @@ namespace iiMenu.Mods
                     liner.SetPosition(0, vrrig.transform.position + new Vector3(0f, 9999f, 0f));
                     liner.SetPosition(1, vrrig.transform.position - new Vector3(0f, 9999f, 0f));
                     liner.material.shader = Shader.Find("GUI/Text Shader");
-                    UnityEngine.Object.Destroy(line, Time.deltaTime);
+                    UnityEngine.Object.Destroy(line, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                 }
                 if (sillyComputer.GetTargetOf(player) == (NetPlayer)PhotonNetwork.LocalPlayer)
                 {
@@ -1549,13 +1795,24 @@ namespace iiMenu.Mods
                     liner.SetPosition(0, vrrig.transform.position + new Vector3(0f, 9999f, 0f));
                     liner.SetPosition(1, vrrig.transform.position - new Vector3(0f, 9999f, 0f));
                     liner.material.shader = Shader.Find("GUI/Text Shader");
-                    UnityEngine.Object.Destroy(line, Time.deltaTime);
+                    UnityEngine.Object.Destroy(line, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                 }
             }
         }
 
         public static void CasualBoxESP()
         {
+            if (PerformanceVisuals)
+            {
+                if (Time.time < PerformanceVisualDelay)
+                {
+                    if (Time.frameCount != DelayChangeStep)
+                        return;
+                }
+                else
+                    { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
+            }
+
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
                 if (vrrig != GorillaTagger.Instance.offlineVRRig)
@@ -1571,13 +1828,24 @@ namespace iiMenu.Mods
                     box.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
                     box.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                     box.GetComponent<Renderer>().material.color = thecolor;
-                    UnityEngine.Object.Destroy(box, Time.deltaTime);
+                    UnityEngine.Object.Destroy(box, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                 }
             }
         }
 
         public static void InfectionBoxESP()
         {
+            if (PerformanceVisuals)
+            {
+                if (Time.time < PerformanceVisualDelay)
+                {
+                    if (Time.frameCount != DelayChangeStep)
+                        return;
+                }
+                else
+                    { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
+            }
+
             bool isInfectedPlayers = false;
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
@@ -1606,7 +1874,7 @@ namespace iiMenu.Mods
                             box.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
                             box.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                             box.GetComponent<Renderer>().material.color = thecolor;
-                            UnityEngine.Object.Destroy(box, Time.deltaTime);
+                            UnityEngine.Object.Destroy(box, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                         }
                     }
                 }
@@ -1627,7 +1895,7 @@ namespace iiMenu.Mods
                             box.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
                             box.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                             box.GetComponent<Renderer>().material.color = thecolor;
-                            UnityEngine.Object.Destroy(box, Time.deltaTime);
+                            UnityEngine.Object.Destroy(box, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                         }
                     }
                 }
@@ -1649,7 +1917,7 @@ namespace iiMenu.Mods
                         box.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
                         box.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                         box.GetComponent<Renderer>().material.color = thecolor;
-                        UnityEngine.Object.Destroy(box, Time.deltaTime);
+                        UnityEngine.Object.Destroy(box, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                     }
                 }
             }
@@ -1657,6 +1925,17 @@ namespace iiMenu.Mods
 
         public static void HuntBoxESP()
         {
+            if (PerformanceVisuals)
+            {
+                if (Time.time < PerformanceVisualDelay)
+                {
+                    if (Time.frameCount != DelayChangeStep)
+                        return;
+                }
+                else
+                    { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
+            }
+
             GorillaHuntManager sillyComputer = GorillaGameManager.instance.gameObject.GetComponent<GorillaHuntManager>();
             NetPlayer target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
             foreach (NetPlayer player in PhotonNetwork.PlayerList)
@@ -1675,7 +1954,7 @@ namespace iiMenu.Mods
                     box.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
                     box.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                     box.GetComponent<Renderer>().material.color = thecolor;
-                    UnityEngine.Object.Destroy(box, Time.deltaTime);
+                    UnityEngine.Object.Destroy(box, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                 }
                 if (sillyComputer.GetTargetOf(player) == (NetPlayer)PhotonNetwork.LocalPlayer)
                 {
@@ -1689,13 +1968,24 @@ namespace iiMenu.Mods
                     box.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
                     box.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                     box.GetComponent<Renderer>().material.color = thecolor;
-                    UnityEngine.Object.Destroy(box, Time.deltaTime);
+                    UnityEngine.Object.Destroy(box, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                 }
             }
         }
 
         public static void CasualHollowBoxESP()
         {
+            if (PerformanceVisuals)
+            {
+                if (Time.time < PerformanceVisualDelay)
+                {
+                    if (Time.frameCount != DelayChangeStep)
+                        return;
+                }
+                else
+                    { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
+            }
+
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
                 if (vrrig != GorillaTagger.Instance.offlineVRRig)
@@ -1719,7 +2009,7 @@ namespace iiMenu.Mods
                     outl.transform.rotation = box.transform.rotation;
                     outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                     outl.GetComponent<Renderer>().material.color = thecolor;
-                    UnityEngine.Object.Destroy(outl, Time.deltaTime);
+                    UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
 
                     outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
@@ -1729,7 +2019,7 @@ namespace iiMenu.Mods
                     outl.transform.rotation = box.transform.rotation;
                     outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                     outl.GetComponent<Renderer>().material.color = thecolor;
-                    UnityEngine.Object.Destroy(outl, Time.deltaTime);
+                    UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
 
                     outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
@@ -1739,7 +2029,7 @@ namespace iiMenu.Mods
                     outl.transform.rotation = box.transform.rotation;
                     outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                     outl.GetComponent<Renderer>().material.color = thecolor;
-                    UnityEngine.Object.Destroy(outl, Time.deltaTime);
+                    UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
 
                     outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
@@ -1749,7 +2039,7 @@ namespace iiMenu.Mods
                     outl.transform.rotation = box.transform.rotation;
                     outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                     outl.GetComponent<Renderer>().material.color = thecolor;
-                    UnityEngine.Object.Destroy(outl, Time.deltaTime);
+                    UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
 
                     UnityEngine.Object.Destroy(box);
                 }
@@ -1758,6 +2048,17 @@ namespace iiMenu.Mods
 
         public static void HollowInfectionBoxESP()
         {
+            if (PerformanceVisuals)
+            {
+                if (Time.time < PerformanceVisualDelay)
+                {
+                    if (Time.frameCount != DelayChangeStep)
+                        return;
+                }
+                else
+                    { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
+            }
+
             bool isInfectedPlayers = false;
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
@@ -1794,7 +2095,7 @@ namespace iiMenu.Mods
                             outl.transform.rotation = box.transform.rotation;
                             outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                             outl.GetComponent<Renderer>().material.color = thecolor;
-                            UnityEngine.Object.Destroy(outl, Time.deltaTime);
+                            UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
 
                             outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
                             if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
@@ -1804,7 +2105,7 @@ namespace iiMenu.Mods
                             outl.transform.rotation = box.transform.rotation;
                             outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                             outl.GetComponent<Renderer>().material.color = thecolor;
-                            UnityEngine.Object.Destroy(outl, Time.deltaTime);
+                            UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
 
                             outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
                             if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
@@ -1814,7 +2115,7 @@ namespace iiMenu.Mods
                             outl.transform.rotation = box.transform.rotation;
                             outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                             outl.GetComponent<Renderer>().material.color = thecolor;
-                            UnityEngine.Object.Destroy(outl, Time.deltaTime);
+                            UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
 
                             outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
                             if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
@@ -1824,7 +2125,7 @@ namespace iiMenu.Mods
                             outl.transform.rotation = box.transform.rotation;
                             outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                             outl.GetComponent<Renderer>().material.color = thecolor;
-                            UnityEngine.Object.Destroy(outl, Time.deltaTime);
+                            UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
 
                             UnityEngine.Object.Destroy(box);
                         }
@@ -1855,7 +2156,7 @@ namespace iiMenu.Mods
                             outl.transform.rotation = box.transform.rotation;
                             outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                             outl.GetComponent<Renderer>().material.color = thecolor;
-                            UnityEngine.Object.Destroy(outl, Time.deltaTime);
+                            UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
 
                             outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
                             if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
@@ -1865,7 +2166,7 @@ namespace iiMenu.Mods
                             outl.transform.rotation = box.transform.rotation;
                             outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                             outl.GetComponent<Renderer>().material.color = thecolor;
-                            UnityEngine.Object.Destroy(outl, Time.deltaTime);
+                            UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
 
                             outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
                             if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
@@ -1875,7 +2176,7 @@ namespace iiMenu.Mods
                             outl.transform.rotation = box.transform.rotation;
                             outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                             outl.GetComponent<Renderer>().material.color = thecolor;
-                            UnityEngine.Object.Destroy(outl, Time.deltaTime);
+                            UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
 
                             outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
                             if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
@@ -1885,7 +2186,7 @@ namespace iiMenu.Mods
                             outl.transform.rotation = box.transform.rotation;
                             outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                             outl.GetComponent<Renderer>().material.color = thecolor;
-                            UnityEngine.Object.Destroy(outl, Time.deltaTime);
+                            UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
 
                             UnityEngine.Object.Destroy(box);
                         }
@@ -1917,7 +2218,7 @@ namespace iiMenu.Mods
                         outl.transform.rotation = box.transform.rotation;
                         outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                         outl.GetComponent<Renderer>().material.color = thecolor;
-                        UnityEngine.Object.Destroy(outl, Time.deltaTime);
+                        UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
 
                         outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
@@ -1927,7 +2228,7 @@ namespace iiMenu.Mods
                         outl.transform.rotation = box.transform.rotation;
                         outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                         outl.GetComponent<Renderer>().material.color = thecolor;
-                        UnityEngine.Object.Destroy(outl, Time.deltaTime);
+                        UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
 
                         outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
@@ -1937,7 +2238,7 @@ namespace iiMenu.Mods
                         outl.transform.rotation = box.transform.rotation;
                         outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                         outl.GetComponent<Renderer>().material.color = thecolor;
-                        UnityEngine.Object.Destroy(outl, Time.deltaTime);
+                        UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
 
                         outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
@@ -1947,7 +2248,7 @@ namespace iiMenu.Mods
                         outl.transform.rotation = box.transform.rotation;
                         outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                         outl.GetComponent<Renderer>().material.color = thecolor;
-                        UnityEngine.Object.Destroy(outl, Time.deltaTime);
+                        UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
 
                         UnityEngine.Object.Destroy(box);
                     }
@@ -1957,6 +2258,17 @@ namespace iiMenu.Mods
 
         public static void HollowHuntBoxESP()
         {
+            if (PerformanceVisuals)
+            {
+                if (Time.time < PerformanceVisualDelay)
+                {
+                    if (Time.frameCount != DelayChangeStep)
+                        return;
+                }
+                else
+                    { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
+            }
+
             GorillaHuntManager sillyComputer = GorillaGameManager.instance.gameObject.GetComponent<GorillaHuntManager>();
             NetPlayer target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
             foreach (NetPlayer player in PhotonNetwork.PlayerList)
@@ -1983,7 +2295,7 @@ namespace iiMenu.Mods
                     outl.transform.rotation = box.transform.rotation;
                     outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                     outl.GetComponent<Renderer>().material.color = thecolor;
-                    UnityEngine.Object.Destroy(outl, Time.deltaTime);
+                    UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
 
                     outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
@@ -1993,7 +2305,7 @@ namespace iiMenu.Mods
                     outl.transform.rotation = box.transform.rotation;
                     outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                     outl.GetComponent<Renderer>().material.color = thecolor;
-                    UnityEngine.Object.Destroy(outl, Time.deltaTime);
+                    UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
 
                     outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
@@ -2003,7 +2315,7 @@ namespace iiMenu.Mods
                     outl.transform.rotation = box.transform.rotation;
                     outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                     outl.GetComponent<Renderer>().material.color = thecolor;
-                    UnityEngine.Object.Destroy(outl, Time.deltaTime);
+                    UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
 
                     outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
@@ -2013,7 +2325,7 @@ namespace iiMenu.Mods
                     outl.transform.rotation = box.transform.rotation;
                     outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                     outl.GetComponent<Renderer>().material.color = thecolor;
-                    UnityEngine.Object.Destroy(outl, Time.deltaTime);
+                    UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
 
                     UnityEngine.Object.Destroy(box);
                 }
@@ -2037,7 +2349,7 @@ namespace iiMenu.Mods
                     outl.transform.rotation = box.transform.rotation;
                     outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                     outl.GetComponent<Renderer>().material.color = thecolor;
-                    UnityEngine.Object.Destroy(outl, Time.deltaTime);
+                    UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
 
                     outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
@@ -2047,7 +2359,7 @@ namespace iiMenu.Mods
                     outl.transform.rotation = box.transform.rotation;
                     outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                     outl.GetComponent<Renderer>().material.color = thecolor;
-                    UnityEngine.Object.Destroy(outl, Time.deltaTime);
+                    UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
 
                     outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
@@ -2057,7 +2369,7 @@ namespace iiMenu.Mods
                     outl.transform.rotation = box.transform.rotation;
                     outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                     outl.GetComponent<Renderer>().material.color = thecolor;
-                    UnityEngine.Object.Destroy(outl, Time.deltaTime);
+                    UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
 
                     outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
@@ -2067,7 +2379,7 @@ namespace iiMenu.Mods
                     outl.transform.rotation = box.transform.rotation;
                     outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                     outl.GetComponent<Renderer>().material.color = thecolor;
-                    UnityEngine.Object.Destroy(outl, Time.deltaTime);
+                    UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
 
                     UnityEngine.Object.Destroy(box);
                 }
@@ -2204,6 +2516,17 @@ namespace iiMenu.Mods
 
         public static void CasualDistanceESP()
         {
+            if (PerformanceVisuals)
+            {
+                if (Time.time < PerformanceVisualDelay)
+                {
+                    if (Time.frameCount != DelayChangeStep)
+                        return;
+                }
+                else
+                    { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
+            }
+
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
                 if (vrrig != GorillaTagger.Instance.offlineVRRig)
@@ -2235,13 +2558,24 @@ namespace iiMenu.Mods
                     textMesh.GetComponent<Renderer>().material.renderQueue = bg.GetComponent<Renderer>().material.renderQueue + 1;
                     go.transform.LookAt(Camera.main.transform.position);
                     go.transform.Rotate(0f, 180f, 0f);
-                    UnityEngine.Object.Destroy(go, Time.deltaTime);
+                    UnityEngine.Object.Destroy(go, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                 }
             }
         }
 
         public static void InfectionDistanceESP()
         {
+            if (PerformanceVisuals)
+            {
+                if (Time.time < PerformanceVisualDelay)
+                {
+                    if (Time.frameCount != DelayChangeStep)
+                        return;
+                }
+                else
+                    { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
+            }
+
             bool isInfectedPlayers = false;
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
@@ -2286,7 +2620,7 @@ namespace iiMenu.Mods
                             textMesh.GetComponent<Renderer>().material.renderQueue = bg.GetComponent<Renderer>().material.renderQueue + 1;
                             go.transform.LookAt(Camera.main.transform.position);
                             go.transform.Rotate(0f, 180f, 0f);
-                            UnityEngine.Object.Destroy(go, Time.deltaTime);
+                            UnityEngine.Object.Destroy(go, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                         }
                     }
                 }
@@ -2323,7 +2657,7 @@ namespace iiMenu.Mods
                             textMesh.GetComponent<Renderer>().material.renderQueue = bg.GetComponent<Renderer>().material.renderQueue + 1;
                             go.transform.LookAt(Camera.main.transform.position);
                             go.transform.Rotate(0f, 180f, 0f);
-                            UnityEngine.Object.Destroy(go, Time.deltaTime);
+                            UnityEngine.Object.Destroy(go, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                         }
                     }
                 }
@@ -2361,7 +2695,7 @@ namespace iiMenu.Mods
                         textMesh.GetComponent<Renderer>().material.renderQueue = bg.GetComponent<Renderer>().material.renderQueue + 1;
                         go.transform.LookAt(Camera.main.transform.position);
                         go.transform.Rotate(0f, 180f, 0f);
-                        UnityEngine.Object.Destroy(go, Time.deltaTime);
+                        UnityEngine.Object.Destroy(go, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                     }
                 }
             }
@@ -2369,6 +2703,17 @@ namespace iiMenu.Mods
 
         public static void HuntDistanceESP()
         {
+            if (PerformanceVisuals)
+            {
+                if (Time.time < PerformanceVisualDelay)
+                {
+                    if (Time.frameCount != DelayChangeStep)
+                        return;
+                }
+                else
+                    { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
+            }
+
             GorillaHuntManager sillyComputer = GorillaGameManager.instance.gameObject.GetComponent<GorillaHuntManager>();
             NetPlayer target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
             foreach (NetPlayer player in PhotonNetwork.PlayerList)
@@ -2403,7 +2748,7 @@ namespace iiMenu.Mods
                     textMesh.GetComponent<Renderer>().material.renderQueue = bg.GetComponent<Renderer>().material.renderQueue + 1;
                     go.transform.LookAt(Camera.main.transform.position);
                     go.transform.Rotate(0f, 180f, 0f);
-                    UnityEngine.Object.Destroy(go, Time.deltaTime);
+                    UnityEngine.Object.Destroy(go, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                 }
                 if (sillyComputer.GetTargetOf(player) == (NetPlayer)PhotonNetwork.LocalPlayer)
                 {
@@ -2434,20 +2779,34 @@ namespace iiMenu.Mods
                     textMesh.GetComponent<Renderer>().material.renderQueue = bg.GetComponent<Renderer>().material.renderQueue + 1;
                     go.transform.LookAt(Camera.main.transform.position);
                     go.transform.Rotate(0f, 180f, 0f);
-                    UnityEngine.Object.Destroy(go, Time.deltaTime);
+                    UnityEngine.Object.Destroy(go, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                 }
             }
         }
 
         public static void ShowButtonColliders()
         {
+            if (PerformanceVisuals)
+            {
+                if (Time.time < PerformanceVisualDelay)
+                {
+                    if (Time.frameCount != DelayChangeStep)
+                        return;
+                }
+                else
+                {
+                    { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
+                    DelayChangeStep = Time.frameCount;
+                }
+            }
+
             GameObject left = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             left.transform.parent = GorillaTagger.Instance.leftHandTransform;
             left.GetComponent<Renderer>().material.color = bgColorA;
             left.transform.localPosition = pointerOffset;
             left.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
             UnityEngine.Object.Destroy(left.GetComponent<SphereCollider>());
-            UnityEngine.Object.Destroy(left, Time.deltaTime);
+            UnityEngine.Object.Destroy(left, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
 
             GameObject right = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             right.transform.parent = GorillaTagger.Instance.rightHandTransform;
@@ -2455,7 +2814,7 @@ namespace iiMenu.Mods
             right.transform.localPosition = pointerOffset;
             right.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
             UnityEngine.Object.Destroy(right.GetComponent<SphereCollider>());
-            UnityEngine.Object.Destroy(right, Time.deltaTime);
+            UnityEngine.Object.Destroy(right, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
         }
     }
 }

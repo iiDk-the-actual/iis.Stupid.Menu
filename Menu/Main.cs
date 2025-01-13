@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using ExitGames.Client.Photon;
+using GorillaExtensions;
 using GorillaLocomotion.Gameplay;
 using GorillaNetworking;
 using GorillaTagScripts;
@@ -108,9 +109,8 @@ namespace iiMenu.Menu
                 buttonCondition = buttonCondition && !lockdown;
                 buttonCondition = buttonCondition || isSearching;
                 if (wristThingV2)
-                {
                     buttonCondition = isKeyboardCondition;
-                }
+                isMenuButtonHeld = buttonCondition;
                 if (buttonCondition && menu == null)
                 {
                     if (dynamicSounds)
@@ -157,21 +157,13 @@ namespace iiMenu.Menu
                                     }
                                     if (rightHand || (bothHands && openedwithright))
                                     {
-                                        if (GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").GetComponent<GorillaVelocityEstimator>() == null)
-                                        {
-                                            GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").AddComponent<GorillaVelocityEstimator>();
-                                        }
                                         comp.velocity = GorillaLocomotion.Player.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0);
-                                        comp.angularVelocity = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").GetComponent<GorillaVelocityEstimator>().angularVelocity;
+                                        comp.angularVelocity = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").GetOrAddComponent<GorillaVelocityEstimator>().angularVelocity;
                                     }
                                     else
                                     {
-                                        if (GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").GetComponent<GorillaVelocityEstimator>() == null)
-                                        {
-                                            GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").AddComponent<GorillaVelocityEstimator>();
-                                        }
                                         comp.velocity = GorillaLocomotion.Player.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0);
-                                        comp.angularVelocity = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").GetComponent<GorillaVelocityEstimator>().angularVelocity;
+                                        comp.angularVelocity = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").GetOrAddComponent<GorillaVelocityEstimator>().angularVelocity;
                                     }
                                     if (annoyingMode)
                                     {
@@ -213,13 +205,13 @@ namespace iiMenu.Menu
                     {
                         try
                         {
-                            UnityEngine.Debug.Log("Looking for boards");
+                            //UnityEngine.Debug.Log("Looking for boards");
                             bool found = false;
                             int indexOfThatThing = 0;
                             for (int i = 0; i < GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.childCount; i++)
                             {
                                 GameObject v = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.GetChild(i).gameObject;
-                                if (v.name.Contains("forestatlas"))
+                                if (v.name.Contains("UnityTempFile-f87e45b632f72bc4baf46aa7455248a8"))
                                 {
                                     indexOfThatThing++;
                                     if (indexOfThatThing == 2)
@@ -235,12 +227,11 @@ namespace iiMenu.Menu
                             for (int i = 0; i < GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest").transform.childCount; i++)
                             {
                                 GameObject v = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest").transform.GetChild(i).gameObject;
-                                if (v.name.Contains("forestatlas"))
+                                if (v.name.Contains("UnityTempFile-f87e45b632f72bc4baf46aa7455248a8"))
                                 {
                                     indexOfThatThing++;
                                     if (indexOfThatThing == 2)
                                     {
-                                        UnityEngine.Debug.Log("Board found");
                                         found2 = true;
                                         v.GetComponent<Renderer>().material = OrangeUI;
                                     }
@@ -813,39 +804,43 @@ namespace iiMenu.Menu
                         OnLaunch();
                     }
 
-                    rightPrimary = ControllerInputPoller.instance.rightControllerPrimaryButton || UnityInput.Current.GetKey(KeyCode.E);
-                    rightSecondary = ControllerInputPoller.instance.rightControllerSecondaryButton || UnityInput.Current.GetKey(KeyCode.R);
-                    leftPrimary = ControllerInputPoller.instance.leftControllerPrimaryButton || UnityInput.Current.GetKey(KeyCode.F);
-                    leftSecondary = ControllerInputPoller.instance.leftControllerSecondaryButton || UnityInput.Current.GetKey(KeyCode.G);
-                    leftGrab = ControllerInputPoller.instance.leftGrab || UnityInput.Current.GetKey(KeyCode.LeftBracket);
-                    rightGrab = ControllerInputPoller.instance.rightGrab || UnityInput.Current.GetKey(KeyCode.RightBracket);
-                    leftTrigger = ControllerInputPoller.TriggerFloat(XRNode.LeftHand);
-                    rightTrigger = ControllerInputPoller.TriggerFloat(XRNode.RightHand);
-                    if (UnityInput.Current.GetKey(KeyCode.Minus))
+                    try
                     {
-                        leftTrigger = 1f;
-                    }
-                    if (UnityInput.Current.GetKey(KeyCode.Equals))
-                    {
-                        rightTrigger = 1f;
-                    }
+                        rightPrimary = ControllerInputPoller.instance.rightControllerPrimaryButton || UnityInput.Current.GetKey(KeyCode.E);
+                        rightSecondary = ControllerInputPoller.instance.rightControllerSecondaryButton || UnityInput.Current.GetKey(KeyCode.R);
+                        leftPrimary = ControllerInputPoller.instance.leftControllerPrimaryButton || UnityInput.Current.GetKey(KeyCode.F);
+                        leftSecondary = ControllerInputPoller.instance.leftControllerSecondaryButton || UnityInput.Current.GetKey(KeyCode.G);
+                        leftGrab = ControllerInputPoller.instance.leftGrab || UnityInput.Current.GetKey(KeyCode.LeftBracket);
+                        rightGrab = ControllerInputPoller.instance.rightGrab || UnityInput.Current.GetKey(KeyCode.RightBracket);
+                        leftTrigger = ControllerInputPoller.TriggerFloat(XRNode.LeftHand);
+                        rightTrigger = ControllerInputPoller.TriggerFloat(XRNode.RightHand);
+                        if (UnityInput.Current.GetKey(KeyCode.Minus))
+                        {
+                            leftTrigger = 1f;
+                        }
+                        if (UnityInput.Current.GetKey(KeyCode.Equals))
+                        {
+                            rightTrigger = 1f;
+                        }
 
-                    if (IsSteam)
-                    {
-                        leftJoystick = SteamVR_Actions.gorillaTag_LeftJoystick2DAxis.GetAxis(SteamVR_Input_Sources.LeftHand);
-                        rightJoystick = SteamVR_Actions.gorillaTag_RightJoystick2DAxis.GetAxis(SteamVR_Input_Sources.RightHand);
+                        if (IsSteam)
+                        {
+                            leftJoystick = SteamVR_Actions.gorillaTag_LeftJoystick2DAxis.GetAxis(SteamVR_Input_Sources.LeftHand);
+                            rightJoystick = SteamVR_Actions.gorillaTag_RightJoystick2DAxis.GetAxis(SteamVR_Input_Sources.RightHand);
 
-                        leftJoystickClick = SteamVR_Actions.gorillaTag_LeftJoystickClick.GetState(SteamVR_Input_Sources.LeftHand);
-                        rightJoystickClick = SteamVR_Actions.gorillaTag_RightJoystickClick.GetState(SteamVR_Input_Sources.RightHand);
-                    }
-                    else
-                    {
-                        ControllerInputPoller.instance.leftControllerDevice.TryGetFeatureValue(UnityEngine.XR.CommonUsages.primary2DAxis, out leftJoystick);
-                        ControllerInputPoller.instance.rightControllerDevice.TryGetFeatureValue(UnityEngine.XR.CommonUsages.primary2DAxis, out rightJoystick);
+                            leftJoystickClick = SteamVR_Actions.gorillaTag_LeftJoystickClick.GetState(SteamVR_Input_Sources.LeftHand);
+                            rightJoystickClick = SteamVR_Actions.gorillaTag_RightJoystickClick.GetState(SteamVR_Input_Sources.RightHand);
+                        }
+                        else
+                        {
+                            ControllerInputPoller.instance.leftControllerDevice.TryGetFeatureValue(UnityEngine.XR.CommonUsages.primary2DAxis, out leftJoystick);
+                            ControllerInputPoller.instance.rightControllerDevice.TryGetFeatureValue(UnityEngine.XR.CommonUsages.primary2DAxis, out rightJoystick);
 
-                        ControllerInputPoller.instance.leftControllerDevice.TryGetFeatureValue(UnityEngine.XR.CommonUsages.primary2DAxisClick, out leftJoystickClick);
-                        ControllerInputPoller.instance.rightControllerDevice.TryGetFeatureValue(UnityEngine.XR.CommonUsages.primary2DAxisClick, out rightJoystickClick);
-                    }
+                            ControllerInputPoller.instance.leftControllerDevice.TryGetFeatureValue(UnityEngine.XR.CommonUsages.primary2DAxisClick, out leftJoystickClick);
+                            ControllerInputPoller.instance.rightControllerDevice.TryGetFeatureValue(UnityEngine.XR.CommonUsages.primary2DAxisClick, out rightJoystickClick);
+                        }
+                    } catch { }
+                    
 
                     shouldBePC = UnityInput.Current.GetKey(KeyCode.E) || UnityInput.Current.GetKey(KeyCode.R) || UnityInput.Current.GetKey(KeyCode.F) || UnityInput.Current.GetKey(KeyCode.G) || UnityInput.Current.GetKey(KeyCode.LeftBracket) || UnityInput.Current.GetKey(KeyCode.RightBracket) || UnityInput.Current.GetKey(KeyCode.Minus) || UnityInput.Current.GetKey(KeyCode.Equals) || Mouse.current.leftButton.isPressed || Mouse.current.rightButton.isPressed;
 
@@ -1355,9 +1350,7 @@ namespace iiMenu.Menu
                 gameObject.AddComponent<Classes.Button>().relatedText = method.buttonText;
 
                 if (shouldOutline)
-                {
                     OutlineObj(gameObject, !method.enabled);
-                }
 
                 if (lastClickedName != method.buttonText)
                 {
@@ -1428,6 +1421,9 @@ namespace iiMenu.Menu
                 {
                     CoroutineManager.RunCoroutine(ButtonClick(buttonIndex, method.buttonText, gameObject.GetComponent<Renderer>()));
                 }
+
+                if (shouldRound)
+                    RoundObj(gameObject);
             }
 
             Text text2 = new GameObject
@@ -1514,10 +1510,8 @@ namespace iiMenu.Menu
             gameObject.AddComponent<Classes.Button>().relatedText = "Search";
 
             if (shouldOutline)
-            {
                 OutlineObj(gameObject, !isSearching);
-            }
-
+            
             GradientColorKey[] pressedColors = new GradientColorKey[3];
             pressedColors[0].color = buttonClickedA;
             pressedColors[0].time = 0f;
@@ -1557,6 +1551,10 @@ namespace iiMenu.Menu
                 };
             }
             colorChanger.Start();
+
+            if (shouldRound)
+                RoundObj(gameObject);
+
             Image image = new GameObject
             {
                 transform =
@@ -1623,9 +1621,7 @@ namespace iiMenu.Menu
             gameObject.AddComponent<Classes.Button>().relatedText = "Global Return";
 
             if (shouldOutline)
-            {
                 OutlineObj(gameObject, true);
-            }
 
             GradientColorKey[] releasedColors = new GradientColorKey[3];
             releasedColors[0].color = buttonDefaultA;
@@ -1644,6 +1640,10 @@ namespace iiMenu.Menu
                 colorKeys = releasedColors
             };
             colorChanger.Start();
+
+            if (shouldRound)
+                RoundObj(gameObject);
+
             Image image = new GameObject
             {
                 transform =
@@ -1850,10 +1850,13 @@ namespace iiMenu.Menu
                     colorChanger.isEpileptic = themeType == 47;
                     colorChanger.Start();
                 }
+
                 if (shouldOutline)
-                {
                     OutlineObj(menuBackground, false);
-                }
+
+                if (shouldRound)
+                    RoundObj(menuBackground);
+
                 if (themeType == 25 || themeType == 26 || themeType == 27)
                 {
                     try
@@ -2176,9 +2179,7 @@ namespace iiMenu.Menu
                 gameObject.transform.localPosition = new Vector3(0.56f, 0f, 0.28f - (buttonOffset / 10));
 
                 if (shouldOutline)
-                {
                     OutlineObj(gameObject, true);
-                }
 
                 GradientColorKey[] releasedColors = new GradientColorKey[3];
                 releasedColors[0].color = buttonDefaultA;
@@ -2215,6 +2216,10 @@ namespace iiMenu.Menu
                     };
                 }
                 colorChanger.Start();
+
+                if (shouldRound)
+                    RoundObj(gameObject);
+
                 Text text2 = new GameObject
                 {
                     transform =
@@ -2738,6 +2743,12 @@ namespace iiMenu.Menu
                     OutlineObj(gameObject, true);
                     OutlineObj(gameObject2, true);
                 }
+
+                if (shouldRound)
+                {
+                    RoundObj(gameObject);
+                    RoundObj(gameObject2);
+                }
             }
 
             if (pageButtonType == 2)
@@ -2809,10 +2820,13 @@ namespace iiMenu.Menu
                     component.localPosition = new Vector3(0.064f, 0.267f, 0f);
                 }
                 component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+
                 if (shouldOutline)
-                {
                     OutlineObj(gameObject, true);
-                }
+
+                if (shouldRound)
+                    RoundObj(gameObject);
+
                 gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 if (themeType == 30)
                 {
@@ -2880,10 +2894,12 @@ namespace iiMenu.Menu
                     component.localPosition = new Vector3(0.064f, -0.267f, 0f);
                 }
                 component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+                
                 if (shouldOutline)
-                {
                     OutlineObj(gameObject, true);
-                }
+
+                if (shouldRound)
+                    RoundObj(gameObject);
             }
 
             if (pageButtonType == 5)
@@ -2955,10 +2971,12 @@ namespace iiMenu.Menu
                     component.localPosition = new Vector3(0.064f, 0.15f, 0.135f);
                 }
                 component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+                
                 if (shouldOutline)
-                {
                     OutlineObj(gameObject, true);
-                }
+
+                if (shouldRound)
+                    RoundObj(gameObject);
 
                 gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 if (themeType == 30)
@@ -3027,10 +3045,12 @@ namespace iiMenu.Menu
                     component.localPosition = new Vector3(0.064f, -0.15f, 0.135f);
                 }
                 component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+                
                 if (shouldOutline)
-                {
                     OutlineObj(gameObject, true);
-                }
+
+                if (shouldRound)
+                    RoundObj(gameObject);
             }
 
             if (pageButtonType == 6)
@@ -3098,10 +3118,12 @@ namespace iiMenu.Menu
                     component.localPosition = new Vector3(.064f, 0.54444444444f / 2.6f, -0.58f / 2.7f);
                 }
                 component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+                
                 if (shouldOutline)
-                {
                     OutlineObj(gameObject, true);
-                }
+
+                if (shouldRound)
+                    RoundObj(gameObject);
 
                 gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 if (themeType == 30)
@@ -3168,10 +3190,12 @@ namespace iiMenu.Menu
                 }
                 component.localPosition -= new Vector3(0f, 0.0475f, 0f);
                 component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+                
                 if (shouldOutline)
-                {
                     OutlineObj(gameObject, true);
-                }
+
+                if (shouldRound)
+                    RoundObj(gameObject);
             }
         }
 
@@ -3204,6 +3228,9 @@ namespace iiMenu.Menu
             colorChanger.isMonkeColors = shouldBeEnabled && themeType == 8;
             colorChanger.isEpileptic = shouldBeEnabled && themeType == 47;
             colorChanger.Start();
+
+            if (shouldRound)
+                RoundObj(gameObject);
         }
 
         public static void OutlineObjNonMenu(GameObject toOut, bool shouldBeEnabled)
@@ -3232,9 +3259,95 @@ namespace iiMenu.Menu
                 colorKeys = array
             };
             colorChanger.isRainbow = shouldBeEnabled && themeType == 6;
+            colorChanger.isPastelRainbow = shouldBeEnabled && themeType == 51;
             colorChanger.isMonkeColors = shouldBeEnabled && themeType == 8;
             colorChanger.isEpileptic = shouldBeEnabled && themeType == 47;
+
             colorChanger.Start();
+        }
+
+        public static void RoundObj(GameObject toRound)
+        {
+            float Bevel = 0.02f;
+
+            Renderer ToRoundRenderer = toRound.GetComponent<Renderer>();
+            GameObject BaseA = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            BaseA.GetComponent<Renderer>().enabled = ToRoundRenderer.enabled;
+            UnityEngine.Object.Destroy(BaseA.GetComponent<Collider>());
+
+            BaseA.transform.parent = menu.transform;
+            BaseA.transform.rotation = Quaternion.identity;
+            BaseA.transform.localPosition = toRound.transform.localPosition;
+            BaseA.transform.localScale = toRound.transform.localScale + new Vector3(0f, Bevel * -2.55f, 0f);
+
+            GameObject BaseB = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            BaseB.GetComponent<Renderer>().enabled = ToRoundRenderer.enabled;
+            UnityEngine.Object.Destroy(BaseB.GetComponent<Collider>());
+
+            BaseB.transform.parent = menu.transform;
+            BaseB.transform.rotation = Quaternion.identity;
+            BaseB.transform.localPosition = toRound.transform.localPosition;
+            BaseB.transform.localScale = toRound.transform.localScale + new Vector3(0f, 0f, -Bevel * 2f);
+
+            GameObject RoundCornerA = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            RoundCornerA.GetComponent<Renderer>().enabled = ToRoundRenderer.enabled;
+            UnityEngine.Object.Destroy(RoundCornerA.GetComponent<Collider>());
+
+            RoundCornerA.transform.parent = menu.transform;
+            RoundCornerA.transform.rotation = Quaternion.identity * Quaternion.Euler(0f, 0f, 90f);
+            
+            RoundCornerA.transform.localPosition = toRound.transform.localPosition + new Vector3(0f, (toRound.transform.localScale.y / 2f) - (Bevel * 1.275f), (toRound.transform.localScale.z / 2f) - Bevel);
+            RoundCornerA.transform.localScale = new Vector3(Bevel * 2.55f, toRound.transform.localScale.x / 2f, Bevel * 2f);
+
+            GameObject RoundCornerB = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            RoundCornerB.GetComponent<Renderer>().enabled = ToRoundRenderer.enabled;
+            UnityEngine.Object.Destroy(RoundCornerB.GetComponent<Collider>());
+
+            RoundCornerB.transform.parent = menu.transform;
+            RoundCornerB.transform.rotation = Quaternion.identity * Quaternion.Euler(0f, 0f, 90f);
+
+            RoundCornerB.transform.localPosition = toRound.transform.localPosition + new Vector3(0f, -(toRound.transform.localScale.y / 2f) + (Bevel * 1.275f), (toRound.transform.localScale.z / 2f) - Bevel);
+            RoundCornerB.transform.localScale = new Vector3(Bevel * 2.55f, toRound.transform.localScale.x / 2f, Bevel * 2f);
+
+            GameObject RoundCornerC = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            RoundCornerC.GetComponent<Renderer>().enabled = ToRoundRenderer.enabled;
+            UnityEngine.Object.Destroy(RoundCornerC.GetComponent<Collider>());
+
+            RoundCornerC.transform.parent = menu.transform;
+            RoundCornerC.transform.rotation = Quaternion.identity * Quaternion.Euler(0f, 0f, 90f);
+
+            RoundCornerC.transform.localPosition = toRound.transform.localPosition + new Vector3(0f, (toRound.transform.localScale.y / 2f) - (Bevel * 1.275f), -(toRound.transform.localScale.z / 2f) + Bevel);
+            RoundCornerC.transform.localScale = new Vector3(Bevel * 2.55f, toRound.transform.localScale.x / 2f, Bevel * 2f);
+
+            GameObject RoundCornerD = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            RoundCornerD.GetComponent<Renderer>().enabled = ToRoundRenderer.enabled;
+            UnityEngine.Object.Destroy(RoundCornerD.GetComponent<Collider>());
+
+            RoundCornerD.transform.parent = menu.transform;
+            RoundCornerD.transform.rotation = Quaternion.identity * Quaternion.Euler(0f, 0f, 90f);
+
+            RoundCornerD.transform.localPosition = toRound.transform.localPosition + new Vector3(0f, -(toRound.transform.localScale.y / 2f) + (Bevel * 1.275f), -(toRound.transform.localScale.z / 2f) + Bevel);
+            RoundCornerD.transform.localScale = new Vector3(Bevel * 2.55f, toRound.transform.localScale.x / 2f, Bevel * 2f);
+
+            GameObject[] ToChange = new GameObject[]
+            {
+                BaseA,
+                BaseB,
+                RoundCornerA,
+                RoundCornerB,
+                RoundCornerC,
+                RoundCornerD
+            };
+
+            foreach (GameObject Changed in ToChange)
+            {
+                ClampColor TargetChanger = Changed.AddComponent<ClampColor>();
+                TargetChanger.targetRenderer = ToRoundRenderer;
+
+                TargetChanger.Start();
+            }
+
+            ToRoundRenderer.enabled = false;
         }
 
         public static GameObject LoadAsset(string assetName)
@@ -3374,22 +3487,28 @@ namespace iiMenu.Menu
             return texture;
         }
 
-        private static Dictionary<Color[], Texture2D> cacheGradients = new Dictionary<Color[], Texture2D> { };
+        private static Dictionary<(Color, Color), Texture2D> cacheGradients = new Dictionary<(Color, Color), Texture2D>();
+
         public static Texture2D GetGradientTexture(Color colorA, Color colorB)
         {
-            if (cacheGradients.ContainsKey(new Color[] { colorA, colorB }))
-                return cacheGradients[new Color[] { colorA, colorB }];
+            var key = (colorA, colorB);
+            if (cacheGradients.TryGetValue(key, out Texture2D cachedTexture))
+                return cachedTexture;
 
             Texture2D txt2d = new Texture2D(128, 128);
-            for (int i = 1; i <= 128; i++)
+            Color[] pixels = new Color[128 * 128];
+
+            for (int i = 0; i < 128; i++)
             {
-                for (int j = 1; j <= 128; j++)
-                {
-                    Color clr = Color.Lerp(colorA, colorB, i / 128f);
-                    txt2d.SetPixel(i, j, clr);
-                }
+                Color rowColor = Color.Lerp(colorA, colorB, i / 128f);
+                for (int j = 0; j < 128; j++)
+                    pixels[j * 128 + i] = rowColor;
             }
+
+            txt2d.SetPixels(pixels);
             txt2d.Apply();
+
+            cacheGradients.Add(key, txt2d);
             return txt2d;
         }
 
@@ -3444,9 +3563,9 @@ namespace iiMenu.Menu
         }
 
         private static Vector3 GunPositionSmoothed = Vector3.zero;
-        public static (RaycastHit Ray, GameObject NewPointer) RenderGun()
+        public static (RaycastHit Ray, GameObject NewPointer) RenderGun(int overrideLayerMask = -1)
         {
-            Physics.Raycast(SwapGunHand ? (GorillaTagger.Instance.leftHandTransform.position - (legacyGunDirection ? GorillaTagger.Instance.leftHandTransform.up / 4f : Vector3.zero)) : (GorillaTagger.Instance.rightHandTransform.position - (legacyGunDirection ? GorillaTagger.Instance.rightHandTransform.up / 4f : Vector3.zero)), SwapGunHand ? (legacyGunDirection ? -GorillaTagger.Instance.leftHandTransform.up : GorillaTagger.Instance.leftHandTransform.forward) : (legacyGunDirection ? -GorillaTagger.Instance.rightHandTransform.up : GorillaTagger.Instance.rightHandTransform.forward), out var Ray, 512f, NoInvisLayerMask());
+            Physics.Raycast(SwapGunHand ? (GorillaTagger.Instance.leftHandTransform.position - (legacyGunDirection ? GorillaTagger.Instance.leftHandTransform.up / 4f : Vector3.zero)) : (GorillaTagger.Instance.rightHandTransform.position - (legacyGunDirection ? GorillaTagger.Instance.rightHandTransform.up / 4f : Vector3.zero)), SwapGunHand ? (legacyGunDirection ? -GorillaTagger.Instance.leftHandTransform.up : GorillaTagger.Instance.leftHandTransform.forward) : (legacyGunDirection ? -GorillaTagger.Instance.rightHandTransform.up : GorillaTagger.Instance.rightHandTransform.forward), out var Ray, 512f, overrideLayerMask > 0 ? overrideLayerMask : NoInvisLayerMask());
             if (shouldBePC)
             {
                 Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
@@ -3751,6 +3870,7 @@ namespace iiMenu.Menu
                 elapsedTime += Time.deltaTime;
                 yield return null;
             }
+
             GradientColorKey[] releasedColors = new GradientColorKey[3];
             releasedColors[0].color = buttonDefaultA;
             releasedColors[0].time = 0f;
@@ -3832,7 +3952,7 @@ namespace iiMenu.Menu
                 {
                     try
                     {
-                        if (GetFullPath(lol.transform.parent).ToLower() == "player objects/local vrrig/local gorilla player/holdables")
+                        if (GetFullPath(lol.transform.parent).ToLower() == "player objects/local vrrig/local gorilla player/holdables" || GetFullPath(lol.transform.parent).ToLower().Contains("player objects/local vrrig/local gorilla player/riganchor/rig/body/shoulder.l/upper_arm.l/forearm.l/hand.l/palm.01.l/transferrableitemlefthand") || GetFullPath(lol.transform.parent).ToLower().Contains("player objects/local vrrig/local gorilla player/riganchor/rig/body/shoulder.r/upper_arm.r/forearm.r/hand.r/palm.01.r/transferrableitemrighthand"))
                         {
                             UnityEngine.Debug.Log("Projectile " + lol.gameObject.name + " logged");
                             snowballDict.Add(lol.gameObject.name, lol);
@@ -4067,7 +4187,7 @@ namespace iiMenu.Menu
         public static bool PlayerIsTagged(VRRig who)
         {
             string name = who.mainSkin.material.name.ToLower();
-            return name.Contains("fected") || name.Contains("it") || name.Contains("stealth") || name.Contains("stealth") || name.Contains("ice") || !who.nameTagAnchor.activeSelf;
+            return name.Contains("fected") || name.Contains("it") || name.Contains("stealth") || name.Contains("ice") || !who.nameTagAnchor.activeSelf;
             //return PlayerIsTagged(GorillaTagger.Instance.offlineVRRig);
         }
 
@@ -4384,7 +4504,7 @@ namespace iiMenu.Menu
         public static void VisualizeCube(Vector3 position, Quaternion rotation, Vector3 scale, Color color)
         {
             GameObject what = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            UnityEngine.Object.Destroy(what, Time.deltaTime);
+            UnityEngine.Object.Destroy(what, Visuals.PerformanceVisuals ? Visuals.PerformanceModeStep : Time.deltaTime);
             UnityEngine.Object.Destroy(what.GetComponent<Collider>());
             UnityEngine.Object.Destroy(what.GetComponent<Rigidbody>());
             what.transform.position = position;
@@ -4636,20 +4756,34 @@ namespace iiMenu.Menu
             }
         }
 
+        private static Dictionary<string, (int Category, int Index)> cacheGetIndex = new Dictionary<string, (int Category, int Index)> { }; // Looping through 800 elements is not a light task :/
         public static ButtonInfo GetIndex(string buttonText)
         {
+            if (cacheGetIndex.ContainsKey(buttonText))
+            {
+                var CacheData = cacheGetIndex[buttonText];
+                try
+                {
+                    if (Buttons.buttons[CacheData.Category][CacheData.Index].buttonText == buttonText)
+                        return Buttons.buttons[CacheData.Category][CacheData.Index];
+
+                } catch { cacheGetIndex.Remove(buttonText); }
+            }
+
+            int categoryIndex = 0;
             foreach (ButtonInfo[] buttons in Menu.Buttons.buttons)
             {
+                int buttonIndex = 0;
                 foreach (ButtonInfo button in buttons)
                 {
-                    try
+                    if (button.buttonText == buttonText)
                     {
-                        if (button.buttonText == buttonText)
-                        {
-                            return button;
-                        }
-                    } catch { }
+                        cacheGetIndex.Add(buttonText, (categoryIndex, buttonIndex));
+                        return button;
+                    }
+                    buttonIndex++;
                 }
+                categoryIndex++;
             }
 
             return null;
@@ -5081,6 +5215,7 @@ namespace iiMenu.Menu
         public static bool shinymenu = false;
         public static bool dropOnRemove = true;
         public static bool shouldOutline = false;
+        public static bool shouldRound = false;
         public static bool lastclicking = false;
         public static bool openedwithright = false;
         public static bool likebark = false;
@@ -5178,6 +5313,7 @@ namespace iiMenu.Menu
         "<color=red>I, iiDk, am not responsible for any bans using this menu.</color> " +
         "If you get banned while using this, it's your responsibility.";
 
+        public static bool isMenuButtonHeld = false;
         public static bool shouldBePC = false;
         public static bool leftPrimary = false;
         public static bool leftSecondary = false;
@@ -5373,6 +5509,7 @@ namespace iiMenu.Menu
             "TrickTreatFunctionalAnchor",
             "AppleLeftAnchor"
         };
+
         public static string[] InternalProjectileNames = new string[]
         {
             "LMACE. LEFT.",
@@ -5386,6 +5523,21 @@ namespace iiMenu.Menu
             "LMAMN. LEFT.",
             "LMAMN. LEFT.",
             "LMAMU. LEFT."
+        };
+
+        public static string[] InternalProjectileNamesRight = new string[]
+        {
+            "LMACF. RIGHT.",
+            "LMAEY. RIGHT.",
+            "LMAGE. RIGHT.",
+            "LMAHR. RIGHT.",
+            "LMAIF. RIGHT.",
+            "LMAIP. RIGHT.",
+            "LMAMO. RIGHT.",
+            "LMAMT. RIGHT.",
+            "LMAMO. RIGHT.",
+            "LMAMO. RIGHT.",
+            "LMAMV."
         };
 
         public static int themeType = 1;

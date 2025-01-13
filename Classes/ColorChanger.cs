@@ -72,7 +72,6 @@ namespace iiMenu.Classes
                             gameObjectRenderer.material.SetFloat("_Glossiness", 0f);
                             gameObjectRenderer.material.SetFloat("_Metallic", 0f);
 
-
                             gameObjectRenderer.material.mainTexture = iiMenu.Menu.Main.GetGradientTexture(colors.colorKeys[0].color, colors.colorKeys[1].color);
                         }
                     }

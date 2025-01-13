@@ -31,9 +31,7 @@ namespace iiMenu.Patches
                 else
                 {
                     if (AntiCheatAll)
-                    {
                         NotifiLib.SendNotification("<color=grey>[</color><color=green>ANTI-CHEAT</color><color=grey>] </color><color=white>" + susNick + " was reported for " + susReason + ".</color>");
-                    }
                 }
             }
             if (AntiACReport)
@@ -206,32 +204,14 @@ namespace iiMenu.Patches
         public static bool Prefix(VRRig __instance, VRRig grabbedByRig, Vector3 throwVelocity)
         {
             if (AntiCrashToggle && __instance == GorillaTagger.Instance.offlineVRRig && !GTExt.IsValid(throwVelocity))
-            {
                 return false;
-            }
-            return true;
-        }
-    }
-
-    [HarmonyPatch(typeof(RequestableOwnershipGuard), "OwnershipRequested")]
-    public class AntiCrashPatch2
-    {
-        private static List<float> callTimestamps = new List<float>();
-        public static bool Prefix()
-        {
-            if (AntiCrashToggle)
-            {
-                callTimestamps.Add(Time.time);
-                callTimestamps.RemoveAll(t => (Time.time - t) > 1);
-
-                return callTimestamps.Count < 15;
-            }
+            
             return true;
         }
     }
 
     [HarmonyPatch(typeof(VRRig), "RequestCosmetics")]
-    public class AntiCrashPatch3
+    public class AntiCrashPatch2
     {
         private static List<float> callTimestamps = new List<float>();
         public static bool Prefix(VRRig __instance)
@@ -248,7 +228,7 @@ namespace iiMenu.Patches
     }
 
     [HarmonyPatch(typeof(VRRig), "RequestMaterialColor")]
-    public class AntiCrashPatch4
+    public class AntiCrashPatch3
     {
         private static List<float> callTimestamps = new List<float>();
         public static bool Prefix(VRRig __instance)
@@ -265,7 +245,7 @@ namespace iiMenu.Patches
     }
 
     /*[HarmonyPatch(typeof(ElfLauncher), "ShootShared", new Type[] { typeof(Vector3), typeof(Vector3) })]
-    public class AntiCrashPatch5
+    public class AntiCrashPatch4
     {
         private static List<float> callTimestamps = new List<float>();
         public static bool Prefix(Vector3 origin, Vector3 direction)
@@ -284,13 +264,12 @@ namespace iiMenu.Patches
     [HarmonyPatch(typeof(PlayFabClientAPI), "UpdateUserTitleDisplayName")] // Credits to Shiny for letting me use this
     public class NamePatch
     {
-        public static void Prefix(UpdateUserTitleDisplayNameRequest request, Action<UpdateUserTitleDisplayNameResult> resultCallback, Action<PlayFabError> errorCallback, object customData = null, Dictionary<string, string> extraHeaders = null)
+        public static void Prefix(ref UpdateUserTitleDisplayNameRequest request, Action<UpdateUserTitleDisplayNameResult> resultCallback, Action<PlayFabError> errorCallback, object customData = null, Dictionary<string, string> extraHeaders = null)
         {
             string random = "";
             for (int i = 0; i < 8; i++)
-            {
                 random += letters[UnityEngine.Random.Range(0, letters.Length - 1)];
-            }
+            
             request.DisplayName = random;
         }
     }
@@ -301,9 +280,8 @@ namespace iiMenu.Patches
         public static bool Prefix(int soundIndex, bool isLeftHand, float tapVolume)
         {
             if (AntiSoundToggle)
-            {
                 return false;
-            }
+            
             return true;
         }
     }
@@ -314,9 +292,8 @@ namespace iiMenu.Patches
         public static bool Prefix()
         {
             if (NoGliderRespawn)
-            {
                 return false;
-            }
+            
             return true;
         }
     }

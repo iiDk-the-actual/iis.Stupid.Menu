@@ -2,13 +2,11 @@
 using ExitGames.Client.Photon;
 using GorillaLocomotion.Climbing;
 using GorillaLocomotion.Swimming;
-using GorillaNetworking;
 using GorillaTagScripts;
 using HarmonyLib;
 using iiMenu.Classes;
 using iiMenu.Menu;
 using iiMenu.Notifications;
-using Oculus.Platform;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -19,9 +17,6 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
-using UnityEngine.Tilemaps;
-using UnityEngine.XR.Interaction.Toolkit;
-using Valve.VR;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -1072,6 +1067,7 @@ namespace iiMenu.Mods
                 {
                     BalloonHoldable tb = GetTargetBalloon();
                     Traverse.Create(tb).Field("balloonState").SetValue(0);
+                    Traverse.Create(tb).Field("maxDistanceFromOwner").SetValue(float.MaxValue);
                     tb.rigidbodyInstance.isKinematic = true;
                     tb.gameObject.GetComponent<BalloonDynamics>().stringLength = 512f;
                     tb.gameObject.GetComponent<BalloonDynamics>().stringStrength = 512f;
@@ -2057,6 +2053,42 @@ namespace iiMenu.Mods
             {
                 GorillaTagger.Instance.offlineVRRig.enabled = true;
             }
+        }
+
+        public static void SpinRigBody()
+        {
+            Patches.TorsoPatch.enabled = true;
+            Patches.TorsoPatch.mode = 0;
+        }
+
+        public static void SpazRigBody()
+        {
+            Patches.TorsoPatch.enabled = true;
+            Patches.TorsoPatch.mode = 1;
+        }
+
+        public static void ReverseRigBody()
+        {
+            Patches.TorsoPatch.enabled = true;
+            Patches.TorsoPatch.mode = 2;
+        }
+
+        public static GameObject recBodyRotary;
+        public static void RecRoomBody()
+        {
+            Patches.TorsoPatch.enabled = true;
+            Patches.TorsoPatch.mode = 3;
+
+            if (recBodyRotary == null)
+                recBodyRotary = new GameObject("ii_recBodyRotary");
+            recBodyRotary.transform.rotation = Quaternion.Lerp(recBodyRotary.transform.rotation, Quaternion.Euler(0f, GorillaTagger.Instance.headCollider.transform.rotation.eulerAngles.y, 0f), Time.deltaTime * 6.5f);
+        }
+
+        public static void FixBody()
+        {
+            Patches.TorsoPatch.enabled = false;
+            if (recBodyRotary != null)
+                UnityEngine.Object.Destroy(recBodyRotary);
         }
 
         public static void FakeOculusMenu() // I swear I thought the oculus menu had their arms crossed

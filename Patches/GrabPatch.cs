@@ -1,8 +1,5 @@
-﻿using GorillaExtensions;
-using HarmonyLib;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using HarmonyLib;
+using UnityEngine;
 
 namespace iiMenu.Patches
 {
@@ -14,9 +11,20 @@ namespace iiMenu.Patches
         public static bool Prefix(VRRig __instance, VRRig grabbedByRig, bool grabbedBody, bool grabbedLeftHand, bool grabbedWithLeftHand)
         {
             if (enabled && __instance == GorillaTagger.Instance.offlineVRRig)
-            {
                 return false;
-            }
+            
+            return true;
+        }
+    }
+
+    [HarmonyPatch(typeof(VRRig), "DroppedByPlayer")]
+    public class DropPatch
+    {
+        public static bool Prefix(VRRig __instance, VRRig grabbedByRig, Vector3 throwVelocity)
+        {
+            if (GrabPatch.enabled && __instance == GorillaTagger.Instance.offlineVRRig)
+                return false;
+
             return true;
         }
     }
