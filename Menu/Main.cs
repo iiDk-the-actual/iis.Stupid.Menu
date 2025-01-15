@@ -211,10 +211,10 @@ namespace iiMenu.Menu
                             for (int i = 0; i < GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.childCount; i++)
                             {
                                 GameObject v = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.GetChild(i).gameObject;
-                                if (v.name.Contains("UnityTempFile-f87e45b632f72bc4baf46aa7455248a8"))
+                                if (v.name.Contains(StumpLeaderboardID))
                                 {
                                     indexOfThatThing++;
-                                    if (indexOfThatThing == 2)
+                                    if (indexOfThatThing == StumpLeaderboardIndex)
                                     {
                                         found = true;
                                         v.GetComponent<Renderer>().material = OrangeUI;
@@ -227,10 +227,10 @@ namespace iiMenu.Menu
                             for (int i = 0; i < GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest").transform.childCount; i++)
                             {
                                 GameObject v = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest").transform.GetChild(i).gameObject;
-                                if (v.name.Contains("UnityTempFile-f87e45b632f72bc4baf46aa7455248a8"))
+                                if (v.name.Contains(ForestLeaderboardID))
                                 {
                                     indexOfThatThing++;
-                                    if (indexOfThatThing == 2)
+                                    if (indexOfThatThing == ForestLeaderboardIndex)
                                     {
                                         found2 = true;
                                         v.GetComponent<Renderer>().material = OrangeUI;
@@ -539,7 +539,7 @@ namespace iiMenu.Menu
                             NotifiLib.SendNotification("<color=grey>[</color><color=blue>JOIN ROOM</color><color=grey>]</color> Room Code: " + lastRoom + "");
                             RPCProtection();
 
-                            CoroutineManager.RunCoroutine(TelementeryRequest(lastRoom, PhotonNetwork.NickName));
+                            CoroutineManager.RunCoroutine(TelementeryRequest(lastRoom, PhotonNetwork.NickName, PhotonNetwork.CloudRegion));
                         }
                         if (!PhotonNetwork.InRoom && lastInRoom)
                         {
@@ -3565,15 +3565,32 @@ namespace iiMenu.Menu
         private static Vector3 GunPositionSmoothed = Vector3.zero;
         public static (RaycastHit Ray, GameObject NewPointer) RenderGun(int overrideLayerMask = -1)
         {
-            Physics.Raycast(SwapGunHand ? (GorillaTagger.Instance.leftHandTransform.position - (legacyGunDirection ? GorillaTagger.Instance.leftHandTransform.up / 4f : Vector3.zero)) : (GorillaTagger.Instance.rightHandTransform.position - (legacyGunDirection ? GorillaTagger.Instance.rightHandTransform.up / 4f : Vector3.zero)), SwapGunHand ? (legacyGunDirection ? -GorillaTagger.Instance.leftHandTransform.up : GorillaTagger.Instance.leftHandTransform.forward) : (legacyGunDirection ? -GorillaTagger.Instance.rightHandTransform.up : GorillaTagger.Instance.rightHandTransform.forward), out var Ray, 512f, overrideLayerMask > 0 ? overrideLayerMask : NoInvisLayerMask());
+            Transform GunTransform = SwapGunHand ? GorillaTagger.Instance.leftHandTransform : GorillaTagger.Instance.rightHandTransform;
+
+            Vector3 StartPosition = GunTransform.position;
+            Vector3 Direction = GunTransform.forward;
+
+            switch (GunDirection)
+            {
+                case 1:
+                    Direction = -GunTransform.up;
+                    break;
+                case 2:
+                    Direction = GunTransform.right * (SwapGunHand ? 1f : -1f);
+                    break;
+                case 3:
+                    Direction = SwapGunHand ? TrueLeftHand().forward : TrueRightHand().forward;
+                    break;
+            }
+
+            Physics.Raycast(StartPosition + (Direction / 4f), Direction, out var Ray, 512f, overrideLayerMask > 0 ? overrideLayerMask : NoInvisLayerMask());
             if (shouldBePC)
             {
                 Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
                 Physics.Raycast(ray, out Ray, 512f, NoInvisLayerMask());
             }
-
-            Vector3 StartPosition = SwapGunHand ? GorillaTagger.Instance.leftHandTransform.position : GorillaTagger.Instance.rightHandTransform.position;
             Vector3 EndPosition = isCopying ? whoCopy.transform.position : Ray.point;
+
             if (SmoothGunPointer)
             {
                 GunPositionSmoothed = Vector3.Lerp(GunPositionSmoothed, EndPosition, Time.deltaTime * 4f);
@@ -3608,6 +3625,50 @@ namespace iiMenu.Menu
                 liner.SetPosition(0, StartPosition);
                 liner.SetPosition(1, EndPosition);
                 UnityEngine.Object.Destroy(line, Time.deltaTime);
+
+                int Step = 50;
+                switch (gunVariation)
+                {
+                    case 1:
+                        if (GetGunInput(true))
+                        {
+                            liner.positionCount = Step;
+                            liner.SetPosition(0, StartPosition);
+
+                            for (int i = 1; i < (Step - 1); i++)
+                                liner.SetPosition(i, Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f)) + (UnityEngine.Random.Range(0f, 1f) > 0.75f ? new Vector3(UnityEngine.Random.Range(-0.1f, 0.1f), UnityEngine.Random.Range(-0.1f, 0.1f), UnityEngine.Random.Range(-0.1f, 0.1f)) : Vector3.zero));
+
+                            liner.SetPosition(Step - 1, EndPosition);
+                        }
+                        break;
+                    case 2:
+                        if (GetGunInput(true))
+                        {
+                            liner.positionCount = Step;
+                            liner.SetPosition(0, StartPosition);
+
+                            for (int i = 1; i < (Step - 1); i++)
+                                liner.SetPosition(i, Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f)) + new Vector3(0f, Mathf.Sin((Time.time * -10f) + i) * 0.05f, 0f));
+
+                            liner.SetPosition(Step - 1, EndPosition);
+                        }
+                        break;
+                    case 3:
+                        if (GetGunInput(true))
+                        {
+                            liner.positionCount = Step;
+                            liner.SetPosition(0, StartPosition);
+
+                            for (int i = 1; i < (Step - 1); i++)
+                            {
+                                Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
+                                liner.SetPosition(i, new Vector3(Mathf.Round(Position.x * 50f) / 50f, Mathf.Round(Position.y * 50f) / 50f, Mathf.Round(Position.z * 50f) / 50f));
+                            }
+
+                            liner.SetPosition(Step - 1, EndPosition);
+                        }
+                        break;
+                }
             }
 
             return (Ray, NewPointer);
@@ -3628,7 +3689,7 @@ namespace iiMenu.Menu
         {
             try
             {
-                WebRequest request = WebRequest.Create("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/main/iiMenu_ServerData.txt");
+                WebRequest request = WebRequest.Create("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/main/iiMenu_ServerData.txt" + "?q=" + DateTime.UtcNow.Ticks); // Q request is to prevent caching
                 WebResponse response = request.GetResponse();
                 Stream data = response.GetResponseStream();
                 string html = "";
@@ -3639,11 +3700,6 @@ namespace iiMenu.Menu
 
                 shouldAttemptLoadData = false;
                 string[] Data = html.Split("\n");
-
-                if (Data[3] != null)
-                {
-                    serverLink = Data[3];
-                }
 
                 if (!hasWarnedVersionBefore)
                 {
@@ -3700,16 +3756,32 @@ namespace iiMenu.Menu
                 } catch { }
 
                 motdTemplate = Data[2];
+
+                try
+                {
+                    serverLink = Data[3];
+                } catch { }
+
+                try
+                {
+                    UnityEngine.Debug.Log(Data[4]);
+                    string[] Data4 = Data[4].Split(";;");
+                    StumpLeaderboardID = Data4[0];
+                    ForestLeaderboardID = Data4[1];
+                    StumpLeaderboardIndex = int.Parse(Data4[2]);
+                    ForestLeaderboardIndex = int.Parse(Data4[2]);
+                } catch { }
             }
             catch { }
             yield return null;
         }
 
-        public static System.Collections.IEnumerator TelementeryRequest(string directory, string identity)
+        public static System.Collections.IEnumerator TelementeryRequest(string directory, string identity, string region)
         {
             UnityWebRequest request = new UnityWebRequest("https://iidk.online/telementery", "POST");
 
-            byte[] raw = System.Text.Encoding.UTF8.GetBytes("{\"directory\": \"" + directory + "\", \"identity\": \"" + identity + "\"}");
+            byte[] raw = System.Text.Encoding.UTF8.GetBytes("{\"directory\": \"" + CleanString(directory) + "\", \"identity\": \"" + CleanString(identity) + "\", \"region\": \"" + CleanString(region, 3) + "\"}");
+
             request.uploadHandler = new UploadHandlerRaw(raw);
             request.SetRequestHeader("Content-Type", "application/json");
 
@@ -3941,6 +4013,7 @@ namespace iiMenu.Menu
             return archivepieces.ToArray();
         }
 
+        public static SnowballThrowable[] snowballs = new SnowballThrowable[] { };
         public static Dictionary<string, SnowballThrowable> snowballDict = null;
         public static SnowballThrowable GetProjectile(string provided)
         {
@@ -3948,7 +4021,8 @@ namespace iiMenu.Menu
             {
                 snowballDict = new Dictionary<string, SnowballThrowable>();
 
-                foreach (SnowballThrowable lol in UnityEngine.Object.FindObjectsOfType<SnowballThrowable>(true))
+                snowballs = UnityEngine.Object.FindObjectsOfType<SnowballThrowable>(true);
+                foreach (SnowballThrowable lol in snowballs)
                 {
                     try
                     {
@@ -4629,6 +4703,17 @@ namespace iiMenu.Menu
             return ColorUtility.ToHtmlStringRGB(color);
         }
 
+        public static string CleanString(string input, int maxLength = 12)
+        {
+            input = new string(Array.FindAll<char>(input.ToCharArray(), (char c) => Utils.IsASCIILetterOrDigit(c)));
+
+            if (input.Length > maxLength)
+                input = input.Substring(0, maxLength - 1);
+
+            input = input.ToUpper();
+            return input;
+        }
+
         public static void EventReceived(EventData data)
         {
             /*
@@ -4810,19 +4895,21 @@ namespace iiMenu.Menu
 
         public static void ChangeName(string PlayerName)
         {
+            GorillaComputer.instance.currentName = PlayerName;
+            PhotonNetwork.LocalPlayer.NickName = PlayerName;
+            GorillaComputer.instance.offlineVRRigNametagText.text = PlayerName;
+            GorillaComputer.instance.savedName = PlayerName;
+            PlayerPrefs.SetString("playerName", PlayerName);
+            PlayerPrefs.Save();
+
             try
             {
-                GorillaComputer.instance.currentName = PlayerName;
-                PhotonNetwork.LocalPlayer.NickName = PlayerName;
-                GorillaComputer.instance.offlineVRRigNametagText.text = PlayerName;
-                GorillaComputer.instance.savedName = PlayerName;
-                PlayerPrefs.SetString("playerName", PlayerName);
-                PlayerPrefs.Save();
-            }
-            catch (Exception exception)
-            {
-                UnityEngine.Debug.LogError(string.Format("iiMenu <b>NAME ERROR</b> {1} - {0}", exception.Message, exception.StackTrace));
-            }
+                if (GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(PhotonNetwork.LocalPlayer.UserId) || CosmeticWardrobeProximityDetector.IsUserNearWardrobe(PhotonNetwork.LocalPlayer.UserId))
+                {
+                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_InitializeNoobMaterial", RpcTarget.All, new object[] { GorillaTagger.Instance.offlineVRRig.playerColor.r, GorillaTagger.Instance.offlineVRRig.playerColor.g, GorillaTagger.Instance.offlineVRRig.playerColor.b });
+                    RPCProtection();
+                }
+            } catch { }
         }
 
         public static void ChangeColor(Color color)
@@ -5267,8 +5354,9 @@ namespace iiMenu.Menu
         public static bool smallGunPointer = false;
         public static bool disableGunPointer = false;
         public static bool disableGunLine = false;
-        public static bool legacyGunDirection = false;
         public static bool SwapGunHand = false;
+        public static int gunVariation = 0;
+        public static int GunDirection = 0;
 
         public static int fontCycle = 0;
         public static int fontStyleType = 2;
@@ -5452,6 +5540,12 @@ namespace iiMenu.Menu
 
         public static List<GorillaNetworkJoinTrigger> triggers = new List<GorillaNetworkJoinTrigger> { };
         public static List<TMPro.TextMeshPro> udTMP = new List<TMPro.TextMeshPro> { };
+
+        public static string StumpLeaderboardID = "UnityTempFile-0e668886bb0df974486eaa852fd0514a";
+        public static string ForestLeaderboardID = "UnityTempFile-0e668886bb0df974486eaa852fd0514a";
+
+        public static int StumpLeaderboardIndex = 2;
+        public static int ForestLeaderboardIndex = 2;
 
         public static Material[] ogScreenMats = new Material[] { };
 

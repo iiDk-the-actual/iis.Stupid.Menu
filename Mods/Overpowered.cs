@@ -1,4 +1,5 @@
 ﻿using ExitGames.Client.Photon;
+using GorillaExtensions;
 using GorillaGameModes;
 using GorillaLocomotion.Gameplay;
 using GorillaNetworking;
@@ -22,6 +23,7 @@ using UnityEngine.Animations.Rigging;
 using UnityEngine.Experimental.AI;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
+using static Fusion.Sockets.NetBitBuffer;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -586,9 +588,12 @@ namespace iiMenu.Mods
         }
 
         private static Coroutine DisableCoroutine;
-        private static IEnumerator DisableSnowball()
+        private static IEnumerator DisableSnowball(bool rigDisabled)
         {
             yield return new WaitForSeconds(0.3f);
+
+            if (rigDisabled)
+                GorillaTagger.Instance.offlineVRRig.enabled = true;
             GetProjectile("LMACF. RIGHT.").SetSnowballActiveLocal(false);
         }
 
@@ -601,9 +606,19 @@ namespace iiMenu.Mods
                     GetProjectile("LMACF. RIGHT.").SetSnowballActiveLocal(true);
                 } catch { }
 
+                Vel = Vel.ClampMagnitudeSafe(50f);
+
+                bool isTooFar = Vector3.Distance(Pos, GorillaTagger.Instance.bodyCollider.transform.position) > 3.5f;
+                if (isTooFar)
+                {
+                    GorillaTagger.Instance.offlineVRRig.enabled = false;
+                    GorillaTagger.Instance.offlineVRRig.transform.position = Pos + new Vector3(0f, Vel.y > 0f ? -3f : 3f, 0f);
+                }
+
                 if (DisableCoroutine != null)
                     CoroutineManager.EndCoroutine(DisableCoroutine);
-                DisableCoroutine = CoroutineManager.RunCoroutine(DisableSnowball());
+
+                DisableCoroutine = CoroutineManager.RunCoroutine(DisableSnowball(isTooFar));
 
                 GrowingSnowballThrowable GrowingSnowball = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/GrowingSnowballRightAnchor(Clone)/LMACF. RIGHT.").GetComponent<GrowingSnowballThrowable>();
                 PhotonEvent Event = (PhotonEvent)Traverse.Create(GrowingSnowball).Field("snowballThrowEvent").GetValue();
@@ -675,6 +690,42 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void SnowballRain()
+        {
+            if (rightTrigger > 0.5f)
+            {
+                if (Time.time > snowballDelay)
+                {
+                    BetaSpawnSnowball(GorillaTagger.Instance.offlineVRRig.transform.position + new Vector3(UnityEngine.Random.Range(-5f, 5f), 5f, UnityEngine.Random.Range(-5f, 5f)), Vector3.zero, 1f, 0);
+                    snowballDelay = Time.time + 0.12f;
+                }
+            }
+        }
+
+        public static void SnowballHail()
+        {
+            if (rightTrigger > 0.5f)
+            {
+                if (Time.time > snowballDelay)
+                {
+                    BetaSpawnSnowball(GorillaTagger.Instance.offlineVRRig.transform.position + new Vector3(UnityEngine.Random.Range(-5f, 5f), 5f, UnityEngine.Random.Range(-5f, 5f)), new Vector3(0f, -50f, 0f), 3f, 0);
+                    snowballDelay = Time.time + 0.12f;
+                }
+            }
+        }
+
+        public static void SnowballOrbit()
+        {
+            if (rightTrigger > 0.5f)
+            {
+                if (Time.time > snowballDelay)
+                {
+                    BetaSpawnSnowball(GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos((float)Time.frameCount / 30f), 2f, MathF.Sin((float)Time.frameCount / 30f)), new Vector3(0f, 50f, 0f), 5f, 0);
+                    snowballDelay = Time.time + 0.12f;
+                }
+            }
+        }
+
         public static void MassiveSnowballGun()
         {
             if (GetGunInput(false))
@@ -685,17 +736,17 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true) && Time.time > snowballDelay)
                 {
-                    BetaSpawnSnowball(NewPointer.transform.position + new Vector3(0f, 1f, 0f), new Vector3(0f, 30f, 0f), 10f, 0);
+                    BetaSpawnSnowball(NewPointer.transform.position + new Vector3(0f, 1f, 0f), new Vector3(0f, 50f, 0f), 10f, 0);
                     snowballDelay = Time.time + 0.12f;
                 }
             }
         }
 
-        public static void MassiveSnowballMinigun()
+        public static void SnowballMinigun()
         {
             if (rightGrab && Time.time > snowballDelay)
             {
-                BetaSpawnSnowball(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.transform.forward * ShootStrength * 2f, 10f, 0);
+                BetaSpawnSnowball(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.transform.forward * ShootStrength * 5f, 5f, 0);
                 snowballDelay = Time.time + 0.12f;
             }
         }
@@ -787,15 +838,74 @@ namespace iiMenu.Mods
             }
         }
 
+        private static bool randomPlayerToggle = false;
+        private static float playerWait = 0f;
+        private static Player archiveRandomPlayer = null;
+        public static Player SpedGetRandomPlayer()
+        {
+            if (Time.time > playerWait || archiveRandomPlayer == null)
+            {
+                randomPlayerToggle = !randomPlayerToggle;
+
+                if (randomPlayerToggle || archiveRandomPlayer == null)
+                    archiveRandomPlayer = GetRandomPlayer(false);
+
+                playerWait = Time.time + 0.0777f;
+            }
+            
+            return archiveRandomPlayer;
+        }
+
         public static void SnowballFlingAll()
         {
             if (rightTrigger > 0.5f && Time.time > snowballDelay)
             {
-                snowballDelay = Time.time + 0.2f;
-                foreach (Player plr in PhotonNetwork.PlayerListOthers)
+                snowballDelay = Time.time + 0.0777f;
+                Player plr = SpedGetRandomPlayer();
+                BetaSpawnSnowball(GetVRRigFromPlayer(plr).transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(UnityEngine.Random.Range(-1f, 1f), 0f, UnityEngine.Random.Range(-1f, 1f)).normalized / 1.7f, new Vector3(0f, -500f, 0f), 5f, 2, plr);
+            }
+        }
+
+        public static void SnowballFlingVerticalGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (isCopying && whoCopy != null)
                 {
-                    BetaSpawnSnowball(GetVRRigFromPlayer(plr).transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(UnityEngine.Random.Range(-1f, 1f), 0f, UnityEngine.Random.Range(-1f, 1f)).normalized / 1.7f, new Vector3(0f, -500f, 0f), 5f, 2, plr);
+                    if (Time.time > snowballDelay)
+                    {
+                        BetaSpawnSnowball(whoCopy.headMesh.transform.position + new Vector3(0f, -0.7f, 0f), new Vector3(0f, -500f, 0f), 5f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)));
+                        snowballDelay = Time.time + 0.12f;
+                    }
                 }
+                if (GetGunInput(true))
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        isCopying = true;
+                        whoCopy = possibly;
+                    }
+                }
+            }
+            else
+            {
+                if (isCopying)
+                    isCopying = false;
+            }
+        }
+
+        public static void SnowballFlingVerticalAll()
+        {
+            if (rightTrigger > 0.5f && Time.time > snowballDelay)
+            {
+                snowballDelay = Time.time + 0.0777f;
+                Player plr = SpedGetRandomPlayer();
+                BetaSpawnSnowball(GetVRRigFromPlayer(plr).transform.position + new Vector3(0f, -0.7f, 0f), new Vector3(0f, -500f, 0f), 5f, 2, plr);
             }
         }
 
@@ -809,16 +919,131 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true) && Time.time > snowballDelay)
                 {
-                    snowballDelay = Time.time + 0.2f;
-                    foreach (Player plr in PhotonNetwork.PlayerListOthers)
-                    {
-                        Vector3 targetDirection = NewPointer.transform.position - GetVRRigFromPlayer(plr).headMesh.transform.position;
-                        BetaSpawnSnowball(GetVRRigFromPlayer(plr).transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(-targetDirection.x, 0f, -targetDirection.z).normalized / 1.7f, new Vector3(0f, -500f, 0f), 5f, 2, plr);
-                    }
+                    snowballDelay = Time.time + 0.0777f;
+                    Player plr = SpedGetRandomPlayer();
+                    Vector3 targetDirection = (NewPointer.transform.position - GetVRRigFromPlayer(plr).headMesh.transform.position).normalized;
+                    BetaSpawnSnowball(GetVRRigFromPlayer(plr).transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(-targetDirection.x, 0f, -targetDirection.z) / 1.7f, new Vector3(0f, -500f, 0f), 5f, 2, plr);
                 }
             }
         }
 
+        public static void SnowballFlingAwayGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true) && Time.time > snowballDelay)
+                {
+                    BetaSpawnSnowball(NewPointer.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, -500f, 0f), 15f, 1);
+                    snowballDelay = Time.time + 0.12f;
+                }
+            }
+        }
+
+        public static void SnowballFlingPlayerTowardsGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (isCopying && whoCopy != null)
+                {
+                    if (Time.time > snowballDelay)
+                    {
+                        Vector3 targetDirection = (whoCopy.headMesh.transform.position - GorillaTagger.Instance.headCollider.transform.position).normalized;
+                        BetaSpawnSnowball(whoCopy.headMesh.transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(targetDirection.x, 0f, targetDirection.z) * 1.5f, new Vector3(0f, -100f, 0f), 5f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)));
+                        snowballDelay = Time.time + 0.12f;
+                    }
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        isCopying = true;
+                        whoCopy = possibly;
+                    }
+                }
+            }
+            else
+            {
+                if (isCopying)
+                    isCopying = false;
+            }
+        }
+
+        public static void SnowballFlingPlayerAwayGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (isCopying && whoCopy != null)
+                {
+                    if (Time.time > snowballDelay)
+                    {
+                        Vector3 targetDirection = (GorillaTagger.Instance.headCollider.transform.position - whoCopy.headMesh.transform.position).normalized;
+                        BetaSpawnSnowball(whoCopy.headMesh.transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(targetDirection.x, 0f, targetDirection.z) * 1.5f, new Vector3(0f, -100f, 0f), 5f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)));
+                        snowballDelay = Time.time + 0.12f;
+                    }
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        isCopying = true;
+                        whoCopy = possibly;
+                    }
+                }
+            }
+            else
+            {
+                if (isCopying)
+                    isCopying = false;
+            }
+        }
+
+        public static void SnowballPushGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (isCopying && whoCopy != null)
+                {
+                    if (Time.time > snowballDelay)
+                    {
+                        Vector3 targetDirection = GorillaTagger.Instance.headCollider.transform.position - whoCopy.headMesh.transform.position;
+                        BetaSpawnSnowball(GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(targetDirection.x, 0f, targetDirection.z).normalized / 1.7f, new Vector3(0f, -500f, 0f), 5f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)));
+                        snowballDelay = Time.time + 0.12f;
+                    }
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        isCopying = true;
+                        whoCopy = possibly;
+                    }
+                }
+            }
+            else
+            {
+                if (isCopying)
+                    isCopying = false;
+            }
+        }
 
         public static void SnowballStrongFlingGun()
         {
@@ -900,193 +1125,6 @@ namespace iiMenu.Mods
                 }
             }
             catch { } // Not connected
-        }
-
-        public static void SnowballLagGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (isCopying && whoCopy != null)
-                {
-                    if (Time.time > snowballDelay)
-                    {
-                        BetaSpawnSnowball(new Vector3(9999f, 9999f, 9999f), Vector3.zero, 0f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)));
-                        snowballDelay = Time.time + 0.12f;
-                    }
-                }
-                if (GetGunInput(true))
-                {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
-                    {
-                        isCopying = true;
-                        whoCopy = possibly;
-                    }
-                }
-            }
-            else
-            {
-                if (isCopying)
-                    isCopying = false;
-            }
-        }
-
-        public static void SnowballLagAll()
-        {
-            if (rightTrigger > 0.5f && Time.time > snowballDelay)
-            {
-                snowballDelay = Time.time + 0.12f;
-                BetaSpawnSnowball(new Vector3(9999f, 9999f, 9999f), Vector3.zero, 0f, 1);
-            }
-        }
-
-        public static void SnowballCrashGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (isCopying && whoCopy != null)
-                {
-                    if (Time.time > snowballDelay)
-                    {
-                        BetaSpawnSnowball(new Vector3(GorillaTagger.Instance.headCollider.transform.position.x, -500f, GorillaTagger.Instance.headCollider.transform.position.z), new Vector3(0f, 9999f, 0f), 9999f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)));
-                        snowballDelay = Time.time + 0.12f;
-                    }
-                }
-                if (GetGunInput(true))
-                {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
-                    {
-                        isCopying = true;
-                        whoCopy = possibly;
-                    }
-                }
-            }
-            else
-            {
-                if (isCopying)
-                    isCopying = false;
-            }
-        }
-
-        public static void SnowballCrashAll()
-        {
-            if (rightTrigger > 0.5f && Time.time > snowballDelay)
-            {
-                snowballDelay = Time.time + 0.12f;
-                BetaSpawnSnowball(new Vector3(GorillaTagger.Instance.headCollider.transform.position.x, -500f, GorillaTagger.Instance.headCollider.transform.position.z), new Vector3(0f, 9999f, 0f), 9999f, 1);
-            }
-        }
-
-        private static float startedCrashingTime = 0f;
-        private static Player crashingPlayer = null;
-        public static void LeaderboardCrash()
-        {
-            if (!PhotonNetwork.InRoom || Time.time > startedCrashingTime)
-                crashingPlayer = null;
-
-            if (Time.time > snowballDelay && crashingPlayer != null)
-            {
-                snowballDelay = Time.time + 0.12f;
-                BetaSpawnSnowball(new Vector3(GorillaTagger.Instance.headCollider.transform.position.x, -500f, GorillaTagger.Instance.headCollider.transform.position.z), new Vector3(0f, 9999f, 0f), 9999f, 2, crashingPlayer);
-            }
-
-            try
-            {
-                foreach (GorillaScoreBoard scoreboard in GorillaScoreboardTotalUpdater.allScoreboards)
-                {
-                    if (scoreboard.buttonText.text.Contains("REPORT"))
-                        scoreboard.buttonText.text = scoreboard.buttonText.text.Replace("REPORT", "CRASH");
-                }
-
-                foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
-                {
-                    if (line.linePlayer != NetworkSystem.Instance.LocalPlayer)
-                    {
-                        if (line.reportInProgress)
-                        {
-                            startedCrashingTime = Time.time + 1.5f;
-                            crashingPlayer = NetPlayerToPlayer(line.linePlayer);
-                            line.SetReportState(false, GorillaPlayerLineButton.ButtonType.Cancel);
-                        }
-                    }
-                }
-            }
-            catch { } // Not connected
-        }
-
-        public static void DisableLeaderboardCrash()
-        {
-            try
-            {
-                foreach (GorillaScoreBoard scoreboard in GorillaScoreboardTotalUpdater.allScoreboards)
-                {
-                    if (scoreboard.buttonText.text.Contains("CRASH"))
-                        scoreboard.buttonText.text = scoreboard.buttonText.text.Replace("CRASH", "REPORT");
-                }
-            }
-            catch { } // Not connected
-        }
-
-        private static float delayBetweenChecks = 0f;
-        private static Player crashingPlayer2 = null;
-        public static void AntiReportCrash()
-        {
-            if (!PhotonNetwork.InRoom || Time.time > startedCrashingTime)
-                crashingPlayer2 = null;
-
-            if (Time.time > snowballDelay && crashingPlayer2 != null)
-            {
-                snowballDelay = Time.time + 0.12f;
-                BetaSpawnSnowball(new Vector3(GorillaTagger.Instance.headCollider.transform.position.x, -500f, GorillaTagger.Instance.headCollider.transform.position.z), new Vector3(0f, 9999f, 0f), 9999f, 2, crashingPlayer2);
-            }
-
-            if (Time.time > delayBetweenChecks)
-            {
-                try
-                {
-                    foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
-                    {
-                        if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
-                        {
-                            Transform report = line.reportButton.gameObject.transform;
-                            if (GetIndex("Visualize Anti Report").enabled)
-                            {
-                                VisualizeAura(report.position, Safety.threshold, Color.red);
-                            }
-                            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-                            {
-                                if (vrrig != GorillaTagger.Instance.offlineVRRig)
-                                {
-                                    float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
-                                    float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
-
-                                    if (D1 < Safety.threshold || D2 < Safety.threshold)
-                                    {
-                                        if (!Safety.smartarp || (Safety.smartarp && PhotonNetwork.CurrentRoom.IsVisible && !PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED")))
-                                        {
-                                            startedCrashingTime = Time.time + 2f;
-                                            delayBetweenChecks = Time.time + 0.1f;
-                                            crashingPlayer2 = NetPlayerToPlayer(GetPlayerFromVRRig(vrrig));
-
-                                            NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " tried to report you, they are being crashed.");
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                catch { } // Not connected
-            }
         }
 
         public static bool SpedRPC(PhotonView photonView, string method, Player player, object[] parameters)

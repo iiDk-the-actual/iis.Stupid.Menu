@@ -6,7 +6,6 @@ using iiMenu.Classes;
 using iiMenu.Menu;
 using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
-using iiMenu.Patches;
 using Photon.Pun;
 using Photon.Realtime;
 using Photon.Voice.Unity;
@@ -1510,6 +1509,39 @@ namespace iiMenu.Mods
             Patches.EnablePatch.enabled = false;
         }
 
+        public static void FastSnowballs()
+        {
+            GetProjectile("LMACE. LEFT.");
+            foreach (SnowballThrowable snowball in snowballs)
+            {
+                snowball.linSpeedMultiplier = 10f;
+                snowball.maxLinSpeed = 99999f;
+                snowball.maxWristSpeed = 99999f;
+            }
+        }
+
+        public static void SlowSnowballs()
+        {
+            GetProjectile("LMACE. LEFT.");
+            foreach (SnowballThrowable snowball in snowballs)
+            {
+                snowball.linSpeedMultiplier = 0.2f;
+                snowball.maxLinSpeed = 6f;
+                snowball.maxWristSpeed = 2f;
+            }
+        }
+
+        public static void FixSnowballs()
+        {
+            GetProjectile("LMACE. LEFT.");
+            foreach (SnowballThrowable snowball in snowballs)
+            {
+                snowball.linSpeedMultiplier = 1f;
+                snowball.maxLinSpeed = 12f;
+                snowball.maxWristSpeed = 4f;
+            }
+        }
+
         public static void FastGliders()
         {
             foreach (GliderHoldable glider in GetGliders())
@@ -2754,6 +2786,8 @@ namespace iiMenu.Mods
             }
         }
 
+        // I would like to apologize to anyone who had this beforehand
+        // "Tubski" will be long loved forever because that was the original name of this mod I don't know what that means
         public static void BecomeBalloon()
         {
             if (rightTrigger > 0.5f)

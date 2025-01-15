@@ -98,12 +98,13 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Swap GUI Colors", toolTip = "Swaps the GUI colors to the enabled color, for darker themes."},
 
+                new ButtonInfo { buttonText = "Change Gun Variation", overlapText = "Change Gun Variation <color=grey>[</color><color=green>Default</color><color=grey>]</color>", method =() => Settings.ChangeGunVariation(), isTogglable = false, toolTip = "Changes the look of the gun."},
+                new ButtonInfo { buttonText = "Change Gun Direction", overlapText = "Change Gun Direction <color=grey>[</color><color=green>Default</color><color=grey>]</color>", method =() => Settings.ChangeGunDirection(), isTogglable = false, toolTip = "Changes the direction of the gun."},
                 new ButtonInfo { buttonText = "Swap Gun Hand", enableMethod =() => Settings.EnableSwapGunHand(), disableMethod =() => Settings.DisableSwapGunHand(), toolTip = "Swaps the hand gun mods work with."},
                 new ButtonInfo { buttonText = "Small Gun Pointer", enableMethod =() => Settings.SmallGunPointer(), disableMethod =() => Settings.BigGunPointer(), toolTip = "Makes the ball at the end of every gun mod smaller."},
                 new ButtonInfo { buttonText = "Smooth Gun Pointer", enableMethod =() => Settings.DoSmoothGunPointer(), disableMethod =() => Settings.NoSmoothGunPointer(), toolTip = "Makes the ball at the end of every gun mod smoother."},
                 new ButtonInfo { buttonText = "Disable Gun Pointer", enableMethod =() => Settings.NoGunPointer(), disableMethod =() => Settings.YesGunPointer(), toolTip = "Disables the ball at the end of every gun mod."},
                 new ButtonInfo { buttonText = "Disable Gun Line", enableMethod =() => Settings.NoGunLine(), disableMethod =() => Settings.YesGunLine(), toolTip = "Disables the gun from your hand to the end of every gun mod."},
-                new ButtonInfo { buttonText = "Legacy Gun Direction", enableMethod =() => Settings.LegacyGunDirection(), disableMethod =() => Settings.NewGunDirection(), toolTip = "Makes the guns come out of the bottom of your hand instead of your thumb."},
 
                 new ButtonInfo { buttonText = "Checkbox Buttons", enableMethod =() => Settings.CheckboxButtons(), disableMethod =() => Settings.CheckboxButtonsOff(), toolTip = "Turns the buttons into checkboxes."},
                 new ButtonInfo { buttonText = "cbsound", overlapText  = "Change Button Sound <color=grey>[</color><color=green>Wood</color><color=grey>]</color>", method =() => Settings.ChangeButtonSound(), isTogglable = false, toolTip = "Changes the button click sound."},
@@ -134,7 +135,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Menu Presets", method =() => Settings.EnableMenuPresets(), isTogglable = false, toolTip = "Opens the page of presets."},
                 new ButtonInfo { buttonText = "Save Preferences", method =() => Settings.SavePreferences(), isTogglable = false, toolTip = "Saves your preferences to a file."},
                 new ButtonInfo { buttonText = "Load Preferences", method =() => Settings.LoadPreferences(), isTogglable = false, toolTip = "Loads your preferences from a file."},
-                new ButtonInfo { buttonText = "Disable Autosave", enableMethod =() => Settings.SavePreferences(), method =() => Settings.NoAutoSave(), toolTip = "Disables the auto save mechanism."},
+                new ButtonInfo { buttonText = "Disable Autosave", method =() => Settings.NoAutoSave(), toolTip = "Disables the auto save mechanism."},
                 new ButtonInfo { buttonText = "Panic", method =() => Settings.Panic(), isTogglable = false, toolTip = "Disables every single active mod."},
             },
 
@@ -646,6 +647,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Anti Knockback", enableMethod =() => Fun.AntiKnockback(), disableMethod =() => Fun.AntiKnockbackDisabled(), toolTip = "Prevents players from knocking you back with snowballs."},
 
                 new ButtonInfo { buttonText = "Large Snowballs", enableMethod =() => Fun.LargeSnowballs(), disableMethod =() => Fun.LargeSnowballsDisabled(), toolTip = "Makes snowballs by default the largest size."},
+                new ButtonInfo { buttonText = "Fast Snowballs", method =() => Fun.FastSnowballs(), disableMethod =() => Fun.FixSnowballs(), toolTip = "Makes snowballs go really fast when thrown."},
+                new ButtonInfo { buttonText = "Slow Snowballs", method =() => Fun.SlowSnowballs(), disableMethod =() => Fun.FixSnowballs(), toolTip = "Makes snowballs go really slow when thrown."},
 
                 new ButtonInfo { buttonText = "Break Bug", enableMethod =() => Fun.BreakBug(), disableMethod =() => Fun.FixBug(), toolTip = "Makes the bug ungrabbable."},
                 new ButtonInfo { buttonText = "Break Bat", enableMethod =() => Fun.BreakBat(), disableMethod =() => Fun.FixBat(), toolTip = "Makes the bat ungrabbable."},
@@ -952,7 +955,13 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Snowball Airstrike Gun", method =() => Overpowered.SnowballAirstrikeGun(), toolTip = "Spawns a massive snowball airstrike wherever your hand desires."},
                 new ButtonInfo { buttonText = "Massive Snowball Gun", method =() => Overpowered.MassiveSnowballGun(), toolTip = "Spawns a massive snowball wherever your hand desires."},
-                new ButtonInfo { buttonText = "Massive Snowball Minigun", method =() => Overpowered.MassiveSnowballMinigun(), toolTip = "Spawns massive snowballs towards wherever your hand desires."},
+
+                new ButtonInfo { buttonText = "Snowball Rain <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.SnowballRain(), toolTip = "Rains snowballs around you when holding <color=green>trigger</color>."},
+                new ButtonInfo { buttonText = "Snowball Hail <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.SnowballHail(), toolTip = "Hails snowballs around you when holding <color=green>trigger</color>."},
+
+                new ButtonInfo { buttonText = "Snowball Orbit <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.SnowballOrbit(), toolTip = "Orbits snowballs around you when holding <color=green>trigger</color>."},
+
+                new ButtonInfo { buttonText = "Snowball Minigun", method =() => Overpowered.SnowballMinigun(), toolTip = "Spawns snowballs towards wherever your hand desires."},
 
                 new ButtonInfo { buttonText = "Snowball Particle Gun", method =() => Overpowered.SnowballParticleGun(), toolTip = "Spawns snowball particles wherever your hand desires."},
                 new ButtonInfo { buttonText = "Snowball Impact Effect Gun", method =() => Overpowered.SnowballImpactEffectGun(), toolTip = "Spawns snowball impact events on whoever your hand desires."},
@@ -962,24 +971,16 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Snowball Fling Gun", method =() => Overpowered.SnowballFlingGun(), toolTip = "Flings whoever your hand desires."},
                 new ButtonInfo { buttonText = "Snowball Fling All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.SnowballFlingAll(), toolTip = "Flings everybody when holding <color=green>trigger</color>."},
 
-                new ButtonInfo { buttonText = "Snowball Fling Towards Gun", method =() => Overpowered.SnowballFlingTowardsGun(), toolTip = "Flings everybody towards wherever your hand desires."},
+                new ButtonInfo { buttonText = "Snowball Fling Vertical Gun", method =() => Overpowered.SnowballFlingVerticalGun(), toolTip = "Flings whoever your hand desires vertically."},
+                new ButtonInfo { buttonText = "Snowball Fling Vertical All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.SnowballFlingVerticalAll(), toolTip = "Flings everybody vertically when holding <color=green>trigger</color>."},
 
-                new ButtonInfo { buttonText = "Snowball Strong Fling Gun", method =() => Overpowered.SnowballStrongFlingGun(), toolTip = "Flings whoever your hand desires very strong."},
-                new ButtonInfo { buttonText = "Snowball Strong Fling All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.SnowballStrongFlingAll(), toolTip = "Flings everybody when holding <color=green>trigger</color> very strong."},
+                new ButtonInfo { buttonText = "Snowball Fling Towards Gun", method =() => Overpowered.SnowballFlingTowardsGun(), toolTip = "Flings everybody towards wherever your hand desires."},
+                new ButtonInfo { buttonText = "Snowball Fling Away Gun", method =() => Overpowered.SnowballFlingAwayGun(), toolTip = "Flings everybody away from wherever your hand desires."},
+                
+                new ButtonInfo { buttonText = "Snowball Fling Player Towards Gun", method =() => Overpowered.SnowballFlingPlayerTowardsGun(), toolTip = "Flings whoever your hand desires towards you."},
+                new ButtonInfo { buttonText = "Snowball Fling Player Away Gun", method =() => Overpowered.SnowballFlingPlayerAwayGun(), toolTip = "Flings whoever your hand desires away from you."},
 
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Fling</color><color=grey>]</color>", method =() => Overpowered.AntiReportFling(), toolTip = "Flings whoever tries to report you."},
-
-                new ButtonInfo { buttonText = "Snowball Lag Gun", method =() => Overpowered.SnowballLagGun(), toolTip = "Lags whoever your hand desires."},
-                new ButtonInfo { buttonText = "Snowball Lag All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.SnowballLagAll(), toolTip = "Lags everybody in the room when holding <color=green>trigger</color>."},
-
-                //new ButtonInfo { buttonText = "Snowball Lag Spike Gun", method =() => Overpowered.SnowballLagSpikeGun(), toolTip = "Crashes whoever your hand desires."},
-                //new ButtonInfo { buttonText = "Snowball Lag Spike <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.SnowballLagSpikeAll(), toolTip = "Crashes everybody in the room when holding <color=green>trigger</color>."},
-
-                new ButtonInfo { buttonText = "Snowball Crash Gun", method =() => Overpowered.SnowballCrashGun(), toolTip = "Crashes whoever your hand desires with the snowballs."},
-                new ButtonInfo { buttonText = "Snowball Crash All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.SnowballCrashAll(), toolTip = "Crashes whoever your hand desires with the snowballs when holding <color=green>trigger</color>."},
-
-                new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Crash</color><color=grey>]</color>", method =() => Overpowered.AntiReportCrash(), toolTip = "Crashes whoever tries to report you."},
-                new ButtonInfo { buttonText = "Leaderboard Crash", method =() => Overpowered.LeaderboardCrash(), disableMethod =() => Overpowered.DisableLeaderboardCrash(), toolTip = "Changes the report button into a crash button."},
 
                 new ButtonInfo { buttonText = "Destroy Gun", method =() => Overpowered.DestroyGun(), toolTip = "Block new players from seeing whoever your hand desires."},
                 new ButtonInfo { buttonText = "Destroy All", method =() => Overpowered.DestroyAll(), isTogglable = false, toolTip = "Block new players from seeing everyone."},

@@ -4015,17 +4015,14 @@ namespace iiMenu.Mods
             }
         }
 
-        private static int PreviousSerializationRate = -1;
         public static void SmoothRig()
         {
-            PreviousSerializationRate = PhotonNetwork.SerializationRate;
-            PhotonNetwork.SerializationRate *= 4;
+            PhotonNetwork.SerializationRate = 30;
         }
 
         public static void DisableSmoothRig()
         {
-            if (PreviousSerializationRate > 0)
-                PhotonNetwork.SerializationRate = PreviousSerializationRate;
+            PhotonNetwork.SerializationRate = 10;
         }
 
         public static void UpdateRig()
