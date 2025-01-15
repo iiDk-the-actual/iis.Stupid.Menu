@@ -2130,6 +2130,40 @@ namespace iiMenu.Mods
             try { reference.transform.localPosition = pointerOffset; } catch { }
         }
 
+        public static void ChangeGunVariation()
+        {
+            string[] VariationNames = new string[]
+            {
+                "Default",
+                "Lightning",
+                "Wavy",
+                "Blocky"
+            };
+
+            gunVariation++;
+            if (gunVariation > VariationNames.Length - 1)
+                gunVariation = 0;
+
+            GetIndex("Change Gun Variation").overlapText = "Change Gun Variation <color=grey>[</color><color=green>" + VariationNames[gunVariation] + "</color><color=grey>]</color>";
+        }
+
+        public static void ChangeGunDirection()
+        {
+            string[] DirectionNames = new string[]
+            {
+                "Default",
+                "Legacy",
+                "Laser",
+                "Finger"
+            };
+
+            GunDirection++;
+            if (GunDirection > DirectionNames.Length - 1)
+                GunDirection = 0;
+
+            GetIndex("Change Gun Direction").overlapText = "Change Gun Direction <color=grey>[</color><color=green>" + DirectionNames[GunDirection] + "</color><color=grey>]</color>";
+        }
+
         public static void EnableSwapGunHand()
         {
             SwapGunHand = true;
@@ -2178,16 +2212,6 @@ namespace iiMenu.Mods
         public static void YesGunLine()
         {
             disableGunLine = false;
-        }
-
-        public static void LegacyGunDirection()
-        {
-            legacyGunDirection = true;
-        }
-
-        public static void NewGunDirection()
-        {
-            legacyGunDirection = false;
         }
 
         public static void FreezePlayerInMenu()
@@ -2622,7 +2646,7 @@ namespace iiMenu.Mods
                     favz += seperator + fav;
             }
 
-            string ihateyouguys = platformMode + seperator + platformShape + seperator + flySpeedCycle + seperator + longarmCycle + seperator + speedboostCycle + seperator + projmode + seperator + trailmode + seperator + shootCycle + seperator + pointerIndex + seperator + tagAuraIndex + seperator + notificationDecayTime + seperator + fontStyleType + seperator + arrowType + seperator + pcbg + seperator + internetTime + seperator + hotkeyButton + seperator + buttonClickIndex + seperator + buttonClickVolume + seperator + Safety.antireportrangeindex + seperator + Advantages.tagRangeIndex + seperator + Sound.BindMode + seperator + Movement.driveInt + seperator + langInd + seperator + inputTextColorInt + seperator + Movement.pullPowerInt + seperator + notificationSoundIndex + seperator + Visuals.PerformanceModeStepIndex;
+            string ihateyouguys = platformMode + seperator + platformShape + seperator + flySpeedCycle + seperator + longarmCycle + seperator + speedboostCycle + seperator + projmode + seperator + trailmode + seperator + shootCycle + seperator + pointerIndex + seperator + tagAuraIndex + seperator + notificationDecayTime + seperator + fontStyleType + seperator + arrowType + seperator + pcbg + seperator + internetTime + seperator + hotkeyButton + seperator + buttonClickIndex + seperator + buttonClickVolume + seperator + Safety.antireportrangeindex + seperator + Advantages.tagRangeIndex + seperator + Sound.BindMode + seperator + Movement.driveInt + seperator + langInd + seperator + inputTextColorInt + seperator + Movement.pullPowerInt + seperator + notificationSoundIndex + seperator + Visuals.PerformanceModeStepIndex + seperator + gunVariation + seperator + GunDirection;
 
             string bindsToSave = "";
             foreach (KeyValuePair<string, List<string>> Bind in ModBindings)
@@ -2819,6 +2843,10 @@ namespace iiMenu.Mods
                 ChangeNotificationSound();
                 Visuals.PerformanceModeStepIndex = int.Parse(data[26]) - 1;
                 Visuals.ChangePerformanceModeVisualStep();
+                gunVariation = int.Parse(data[27]) - 1;
+                ChangeGunVariation();
+                GunDirection = int.Parse(data[28]) - 1;
+                ChangeGunDirection();
             } catch { UnityEngine.Debug.Log("Save file out of date"); }
 
             pageButtonType = int.Parse(textData[3]) - 1;
