@@ -14,7 +14,7 @@ namespace iiMenu.Menu
             new ButtonInfo[] { // Main Stuff [0]
                 new ButtonInfo { buttonText = "Join Discord", method =() => Important.JoinDiscord(), isTogglable = false, toolTip = "Invites you to join the ii's <b>Stupid</b> Mods Discord server."},
                 new ButtonInfo { buttonText = "Settings", method =() => Settings.EnableSettings(), isTogglable = false, toolTip = "Opens the settings menu."},
-                
+
                 new ButtonInfo { buttonText = "Favorite Mods", method =() => Settings.EnableFavorites(), isTogglable = false, toolTip = "Opens your favorite mods. Favorite mods with left grip."},
                 new ButtonInfo { buttonText = "Enabled Mods", method =() => Settings.EnableEnabled(), isTogglable = false, toolTip = "Shows all mods you have enabled."},
                 new ButtonInfo { buttonText = "Room Mods", method =() => Settings.EnableRoom(), isTogglable = false, toolTip = "Opens the room mods."},
@@ -114,6 +114,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Clear Notifications on Disconnect", toolTip = "Clears all notifications on disconnect."},
                 new ButtonInfo { buttonText = "Hide Notifications on Camera", overlapText = "Streamer Mode Notifications", toolTip = "Makes notifications only render in VR."},
+                new ButtonInfo { buttonText = "Narrate Notifications", enableMethod =() => Settings.NarrateNotifications(), disableMethod =() => Settings.NarrateNotificationsDisabled(), toolTip = "Narrates all notifications with text to speech."},
                 new ButtonInfo { buttonText = "Disable Notifications", enableMethod =() => Settings.DisableNotifications(), disableMethod =() => Settings.EnableNotifications(), toolTip = "Disables all notifications."},
                 new ButtonInfo { buttonText = "Disable Enabled GUI", overlapText = "Disable Arraylist GUI", enableMethod =() => Settings.DisableEnabledGUI(), disableMethod =() => Settings.EnableEnabledGUI(), toolTip = "Disables the GUI that shows the enabled mods."},
                 new ButtonInfo { buttonText = "Disable Disconnect Button", enableMethod =() => Settings.DisableDisconnectButton(), disableMethod =() => Settings.EnableDisconnectButton(), toolTip = "Disables the disconnect button at the top of the menu."},
@@ -133,6 +134,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "No Global Search", enableMethod =() => Settings.NoGlobalSearch(), disableMethod =() => Settings.PleaseGlobalSearch(), toolTip = "Makes the search button only search for mods in the current subcategory, unless on the main page."},
 
                 new ButtonInfo { buttonText = "Menu Presets", method =() => Settings.EnableMenuPresets(), isTogglable = false, toolTip = "Opens the page of presets."},
+                new ButtonInfo { buttonText = "Backup Preferences", enableMethod =() => Settings.EnableBackupPreferences(), disableMethod =() => Settings.DisableBackupPreferences(), toolTip = "Automatically saves a copy of your preferences every minute."},
                 new ButtonInfo { buttonText = "Save Preferences", method =() => Settings.SavePreferences(), isTogglable = false, toolTip = "Saves your preferences to a file."},
                 new ButtonInfo { buttonText = "Load Preferences", method =() => Settings.LoadPreferences(), isTogglable = false, toolTip = "Loads your preferences from a file."},
                 new ButtonInfo { buttonText = "Disable Autosave", method =() => Settings.NoAutoSave(), toolTip = "Disables the auto save mechanism."},
@@ -434,7 +436,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Spin Rig Body", method =() => Movement.SpinRigBody(), disableMethod =() => Movement.FixBody(), toolTip = "Makes your body spin around forever."},
                 new ButtonInfo { buttonText = "Spaz Rig Body", method =() => Movement.SpazRigBody(), disableMethod =() => Movement.FixBody(), toolTip = "Gives your body a seizure, randomizing its rotation."},
                 new ButtonInfo { buttonText = "Reverse Rig Body", method =() => Movement.ReverseRigBody(), disableMethod =() => Movement.FixBody(), toolTip = "Flips your body around backwards."},
-                new ButtonInfo { buttonText = "Rec Room Body", method =() => Movement.RecRoomBody(), disableMethod =() => Movement.FixBody(), toolTip = "Makes your body rotate like a Rec Room character."},
+                //new ButtonInfo { buttonText = "Rec Room Body", method =() => Movement.RecRoomBody(), disableMethod =() => Movement.FixBody(), toolTip = "Makes your body rotate like a Rec Room character."},
 
                 new ButtonInfo { buttonText = "Auto Dance <color=grey>[</color><color=green>A</color><color=grey>]</color>", method =() => Movement.AutoDance(), toolTip = "Makes you dance when holding <color=green>A</color>."},
                 new ButtonInfo { buttonText = "Auto Griddy <color=grey>[</color><color=green>A</color><color=grey>]</color>", method =() => Movement.AutoGriddy(), toolTip = "Makes you griddy when holding <color=green>A</color>."},
@@ -600,7 +602,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Boop", method =() => Fun.Boop(), toolTip = "Makes a pop sound when you touch someone's nose."},
                 new ButtonInfo { buttonText = "Slap", method =() => Fun.Slap(), toolTip = "Makes a bong sound when you hit someone's face."},
 
-                new ButtonInfo { buttonText = "Glasses on Grip <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.GlassesOnGrip(), toolTip = "Equips glasses when you put your hand up to your face and press <color=green>grip</color>."},
+                //new ButtonInfo { buttonText = "Glasses on Grip <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.GlassesOnGrip(), toolTip = "Equips glasses when you put your hand up to your face and press <color=green>grip</color>."},
 
                 new ButtonInfo { buttonText = "Auto Clicker <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Fun.AutoClicker(), toolTip = "Automatically presses  trigger for you when holding <color=green>trigger</color>."},
 
@@ -608,6 +610,8 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Mute Gun", method =() => Fun.MuteGun(), toolTip = "Mutes or unmutes whoever your hand desires."},
                 new ButtonInfo { buttonText = "Mute All", method =() => Fun.MuteAll(), disableMethod =() => Fun.UnmuteAll(), toolTip = "Mutes everyone in the lobby."},
+
+                new ButtonInfo { buttonText = "Mute DJ Sets", method =() => Fun.MuteDJSets(), disableMethod =() => Fun.UnmuteDJSets(), toolTip = "Mutes every DJ set so you don't have to hear the worst music known to man."},
 
                 new ButtonInfo { buttonText = "Low Quality Microphone", enableMethod =() => Fun.LowQualityMicrophone(), disableMethod =() => Fun.HighQualityMicrophone(), toolTip = "Makes your microphone have really bad quality."},
                 new ButtonInfo { buttonText = "Loud Microphone", enableMethod =() => Fun.LoudMicrophone(), disableMethod =() => Fun.NotLoudMicrophone(), toolTip = "Makes your microphone really loud."},
@@ -662,7 +666,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Shotgun <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.Shotgun(), toolTip = "Spawns you a shotgun when you press <color=green>grip</color>."},
                 new ButtonInfo { buttonText = "Massive Block <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.MassiveBlock(), toolTip = "Spawns you a massive block when you press <color=green>grip</color>."},
                 new ButtonInfo { buttonText = "Select Block Gun", method =() => Fun.SelectBlockGun(), toolTip = "Selects whatever building block your hand desires to be used for the building mods." },
-                
+
                 new ButtonInfo { buttonText = "Spaz All Moles", method =() => Fun.SpazMoleMachines(), toolTip = "Gives the moles a seizure."},
                 new ButtonInfo { buttonText = "Auto Start Moles", method =() => Fun.AutoStartMoles(), toolTip = "Automatically starts the mole games."},
                 new ButtonInfo { buttonText = "Auto Hit Moles", method =() => Fun.AutoHitMoles(), toolTip = "Hits all of the moles automatically."},
@@ -833,22 +837,26 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Guardian Spaz", method =() => Overpowered.GuardianSpaz(), toolTip = "Spams the guardian position for everyone in the lobby."},
 
-                new ButtonInfo { buttonText = "Attic Serversided Blocks", method =() => Overpowered.AtticServersidedBlocks(), toolTip = "Lets you spawn and do anything with blocks in any map."},
+                //new ButtonInfo { buttonText = "Attic Serversided Blocks", method =() => Overpowered.AtticServersidedBlocks(), toolTip = "Lets you spawn and do anything with blocks in any map."},
 
                 new ButtonInfo { buttonText = "Unlimited Building", enableMethod =() => Fun.UnlimitedBuilding(), disableMethod =() => Fun.DisableUnlimitedBuilding(), toolTip = "Unlimits building, disabling drop zones and letting you place on people's plots." },
                 new ButtonInfo { buttonText = "Destroy Building Block Gun", method =() => Fun.DestroyBlockGun(), toolTip = "Shreds whatever building block your hand desires." },
                 new ButtonInfo { buttonText = "Destroy Building Blocks", method =() => Fun.DestroyBlocks(), toolTip = "Shreds every building block." },
 
-                new ButtonInfo { buttonText = "Attic Anti Report", enableMethod =() => Fun.EnableAtticAntiReport(), method =() => Fun.AtticAntiReport(), toolTip = "Automatically builds a block around your report button."},
+                //new ButtonInfo { buttonText = "Master Crash Gun", method =() => Overpowered.MasterCrashGun(), toolTip = "Crashes whoever your hand desires if you're master client."},
+                //new ButtonInfo { buttonText = "Master Crash All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.MasterCrashAll(), toolTip = "Crashes everybody in the room when holding <color=green>trigger</color> if you're master client."},
 
-                new ButtonInfo { buttonText = "Attic Draw Gun", method =() => Fun.AtticDrawGun(), toolTip = "Draw wherever your hand desires."},
-                new ButtonInfo { buttonText = "Attic Build Gun", method =() => Fun.AtticBuildGun(), toolTip = "Draw wherever your hand desires with no delay."},
-                new ButtonInfo { buttonText = "Attic Tower Gun", method =() => Fun.AtticTowerGun(), toolTip = "Builds a tower wherever your hand desires."},
-                
-                new ButtonInfo { buttonText = "Attic Freeze Gun", method =() => Fun.AtticFreezeGun(), toolTip = "Freeze whoever your hand desires."},
-                new ButtonInfo { buttonText = "Attic Freeze All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Fun.AtticFreezeAll(), toolTip = "Freezes everyone in the lobby when holding <color=green>trigger</color>."},
+                //new ButtonInfo { buttonText = "Attic Anti Report", enableMethod =() => Fun.EnableAtticAntiReport(), method =() => Fun.AtticAntiReport(), toolTip = "Automatically builds a block around your report button."},
 
-                new ButtonInfo { buttonText = "Attic Float Gun", method =() => Fun.AtticFloatGun(), toolTip = "Makes whoever your hand desires float."},
+                //new ButtonInfo { buttonText = "Attic Draw Gun", method =() => Fun.AtticDrawGun(), toolTip = "Draw wherever your hand desires."},
+                //new ButtonInfo { buttonText = "Attic Build Gun", method =() => Fun.AtticBuildGun(), toolTip = "Draw wherever your hand desires with no delay."},
+                //new ButtonInfo { buttonText = "Attic Tower Gun", method =() => Fun.AtticTowerGun(), toolTip = "Builds a tower wherever your hand desires."},
+
+                //new ButtonInfo { buttonText = "Attic Freeze Gun", method =() => Fun.AtticFreezeGun(), toolTip = "Freeze whoever your hand desires."},
+                //new ButtonInfo { buttonText = "Attic Freeze All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Fun.AtticFreezeAll(), toolTip = "Freezes everyone in the lobby when holding <color=green>trigger</color>."},
+
+                //new ButtonInfo { buttonText = "Attic Float Gun", method =() => Fun.AtticFloatGun(), toolTip = "Makes whoever your hand desires float."},
+                //new ButtonInfo { buttonText = "Attic Float All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Fun.AtticFloatAll(), toolTip = "Makes everyone in the lobby float when holding <color=green>trigger</color>."},
 
                 new ButtonInfo { buttonText = "Spaz Targets", method =() => Overpowered.TargetSpam(), toolTip = "Gives the targets a seizure."},
 
@@ -953,6 +961,14 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Attic Crash All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.AtticCrashAll(), toolTip = "Crashes everybody inside of the attic."},
 
+                new ButtonInfo { buttonText = "Lag Gun", method =() => Overpowered.LagGun(), toolTip = "Lags whoever your hand desires."},
+                new ButtonInfo { buttonText = "Lag All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.LagAll(), toolTip = "Lags everybody in the lobby when holding <color=green>trigger</color>."},
+
+                new ButtonInfo { buttonText = "Lag Spike Gun", method =() => Overpowered.LagSpikeGun(), toolTip = "Lags whoever your hand desires hard, but with a delay."},
+                new ButtonInfo { buttonText = "Lag Spike All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.LagSpikeAll(), toolTip = "Lags everybody in the lobby when holding <color=green>trigger</color> hard, but with a delay."},
+
+                new ButtonInfo { buttonText = "Crash All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.CrashAll(), toolTip = "Crashes everybody in the room when holding <color=green>trigger</color>."},
+
                 new ButtonInfo { buttonText = "Snowball Airstrike Gun", method =() => Overpowered.SnowballAirstrikeGun(), toolTip = "Spawns a massive snowball airstrike wherever your hand desires."},
                 new ButtonInfo { buttonText = "Massive Snowball Gun", method =() => Overpowered.MassiveSnowballGun(), toolTip = "Spawns a massive snowball wherever your hand desires."},
 
@@ -976,7 +992,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Snowball Fling Towards Gun", method =() => Overpowered.SnowballFlingTowardsGun(), toolTip = "Flings everybody towards wherever your hand desires."},
                 new ButtonInfo { buttonText = "Snowball Fling Away Gun", method =() => Overpowered.SnowballFlingAwayGun(), toolTip = "Flings everybody away from wherever your hand desires."},
-                
+
                 new ButtonInfo { buttonText = "Snowball Fling Player Towards Gun", method =() => Overpowered.SnowballFlingPlayerTowardsGun(), toolTip = "Flings whoever your hand desires towards you."},
                 new ButtonInfo { buttonText = "Snowball Fling Player Away Gun", method =() => Overpowered.SnowballFlingPlayerAwayGun(), toolTip = "Flings whoever your hand desires away from you."},
 
@@ -1181,7 +1197,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Keybind Right Trigger", enableMethod =() => Settings.StartBind("RT"), disableMethod =() => Settings.CancelBind(), toolTip = "Enables binding mode, letting you bind a mod to a button."},
                 new ButtonInfo { buttonText = "Keybind Left Joystick", enableMethod =() => Settings.StartBind("LJ"), disableMethod =() => Settings.CancelBind(), toolTip = "Enables binding mode, letting you bind a mod to a button."},
                 new ButtonInfo { buttonText = "Keybind Right Joystick", enableMethod =() => Settings.StartBind("RJ"), disableMethod =() => Settings.CancelBind(), toolTip = "Enables binding mode, letting you bind a mod to a button."},
-            },
+            }
         };
     }
 }

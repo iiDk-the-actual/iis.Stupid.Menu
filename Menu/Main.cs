@@ -18,6 +18,8 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TMPro;
@@ -604,6 +606,17 @@ namespace iiMenu.Menu
                             autoSaveDelay = Time.time + 60f;
                             Settings.SavePreferences();
                             UnityEngine.Debug.Log("Automatically saved preferences");
+
+                            if (BackupPreferences)
+                            {
+                                if (!Directory.Exists("iisStupidMenu"))
+                                    Directory.CreateDirectory("iisStupidMenu");
+
+                                if (!Directory.Exists("iisStupidMenu/Backups"))
+                                    Directory.CreateDirectory("iisStupidMenu/Backups");
+
+                                File.WriteAllText("iisStupidMenu/Backups/" + ISO8601().Replace(":", ".") + ".txt", Settings.SavePreferencesToText());
+                            }
                         }
                     }
                     catch { }
@@ -1158,6 +1171,9 @@ namespace iiMenu.Menu
                             }
                         }
                     } catch { }
+
+                    if (lockdown)
+                        return;
 
                     // Execute mods
                     foreach (ButtonInfo[] buttonlist in Buttons.buttons)
@@ -3243,6 +3259,7 @@ namespace iiMenu.Menu
             UnityEngine.Object.Destroy(gameObject.GetComponent<Rigidbody>());
             UnityEngine.Object.Destroy(gameObject.GetComponent<BoxCollider>());
             gameObject.transform.parent = toOut.transform.parent;
+            gameObject.transform.parent = toOut.transform.parent;
             gameObject.transform.rotation = toOut.transform.rotation;
             gameObject.transform.localPosition = toOut.transform.localPosition;
             gameObject.transform.localScale = toOut.transform.localScale + new Vector3(0.005f, 0.005f, -0.001f);
@@ -3350,23 +3367,23 @@ namespace iiMenu.Menu
             ToRoundRenderer.enabled = false;
         }
 
+        private static void LoadAssetBundle()
+        {
+            Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("iiMenu.Resources.iimenu");
+            if (stream != null)
+                assetBundle = AssetBundle.LoadFromStream(stream);
+            else
+                Debug.LogError("Failed to load assetbundle");
+        }
+
         public static GameObject LoadAsset(string assetName)
         {
             GameObject gameObject = null;
-
-            Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("iiMenu.Resources.iimenu");
-            if (stream != null)
-            {
-                if (assetBundle == null)
-                {
-                    assetBundle = AssetBundle.LoadFromStream(stream);
-                }
-                gameObject = Instantiate<GameObject>(assetBundle.LoadAsset<GameObject>(assetName));
-            }
-            else
-            {
-                Debug.LogError("Failed to load asset from resource: " + assetName);
-            }
+            
+            if (assetBundle == null)
+                LoadAssetBundle();
+            
+            gameObject = UnityEngine.Object.Instantiate(assetBundle.LoadAsset<GameObject>(assetName));
             
             return gameObject;
         }
@@ -3378,24 +3395,14 @@ namespace iiMenu.Menu
 
             if (!audioPool.ContainsKey(resourcePath))
             {
-                Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("iiMenu.Resources.iimenu");
-                if (stream != null)
-                {
-                    if (assetBundle == null)
-                    {
-                        assetBundle = AssetBundle.LoadFromStream(stream);
-                    }
-                    sound = assetBundle.LoadAsset(resourcePath) as AudioClip;
-                    audioPool.Add(resourcePath, sound);
-                }
-                else
-                {
-                    Debug.LogError("Failed to load sound from resource: " + resourcePath);
-                }
+                if (assetBundle == null)
+                    LoadAssetBundle();
+
+                sound = assetBundle.LoadAsset<AudioClip>(resourcePath);
+                audioPool.Add(resourcePath, sound);
             } else
-            {
                 sound = audioPool[resourcePath];
-            }
+            
 
             return sound;
         }
@@ -3435,9 +3442,8 @@ namespace iiMenu.Menu
         public static AudioClip LoadSoundFromURL(string resourcePath, string fileName)
         {
             if (!Directory.Exists("iisStupidMenu"))
-            {
                 Directory.CreateDirectory("iisStupidMenu");
-            }
+            
             if (!File.Exists("iisStupidMenu/" + fileName))
             {
                 UnityEngine.Debug.Log("Downloading " + fileName);
@@ -3630,7 +3636,7 @@ namespace iiMenu.Menu
                 switch (gunVariation)
                 {
                     case 1:
-                        if (GetGunInput(true))
+                        if (GetGunInput(true) || isCopying)
                         {
                             liner.positionCount = Step;
                             liner.SetPosition(0, StartPosition);
@@ -3642,7 +3648,7 @@ namespace iiMenu.Menu
                         }
                         break;
                     case 2:
-                        if (GetGunInput(true))
+                        if (GetGunInput(true) || isCopying)
                         {
                             liner.positionCount = Step;
                             liner.SetPosition(0, StartPosition);
@@ -3654,7 +3660,7 @@ namespace iiMenu.Menu
                         }
                         break;
                     case 3:
-                        if (GetGunInput(true))
+                        if (GetGunInput(true) || isCopying)
                         {
                             liner.positionCount = Step;
                             liner.SetPosition(0, StartPosition);
@@ -3735,7 +3741,7 @@ namespace iiMenu.Menu
                     NotifiLib.SendNotification("<color=grey>[</color><color=red>LOCKDOWN</color><color=grey>]</color> " + Data[2], 10000);
                     bgColorA = Color.red;
                     bgColorB = Color.red;
-                    Settings.Panic();
+                    
                     lockdown = true;
                 }
 
@@ -3764,7 +3770,6 @@ namespace iiMenu.Menu
 
                 try
                 {
-                    UnityEngine.Debug.Log(Data[4]);
                     string[] Data4 = Data[4].Split(";;");
                     StumpLeaderboardID = Data4[0];
                     ForestLeaderboardID = Data4[1];
@@ -3787,6 +3792,55 @@ namespace iiMenu.Menu
 
             request.downloadHandler = new DownloadHandlerBuffer();
             yield return request.SendWebRequest();
+        }
+
+        public static System.Collections.IEnumerator NarrateText(string text)
+        {
+            if (Time.time < (timeMenuStarted + 5f))
+                yield break;
+
+            string fileName = GetSHA256(text) + ".wav";
+            string directoryPath = "iisStupidMenu/TTS";
+
+            if (!Directory.Exists("iisStupidMenu"))
+                Directory.CreateDirectory("iisStupidMenu");
+
+            if (!Directory.Exists(directoryPath))
+                Directory.CreateDirectory(directoryPath);
+
+            if (!File.Exists("iisStupidMenu/TTS/" + fileName))
+            {
+                string filePath = directoryPath + "/" + fileName;
+
+                if (!File.Exists(filePath))
+                {
+                    string postData = "{\"text\": \"" + text.Replace("\n", "").Replace("\r", "").Replace("\"", "") + "\"}";
+                    UnityEngine.Debug.Log(postData);
+
+                    using (UnityWebRequest request = new UnityWebRequest("https://iidk.online/tts", "POST"))
+                    {
+                        byte[] raw = Encoding.UTF8.GetBytes(postData);
+
+                        request.uploadHandler = new UploadHandlerRaw(raw);
+                        request.SetRequestHeader("Content-Type", "application/json");
+
+                        request.downloadHandler = new DownloadHandlerBuffer();
+                        yield return request.SendWebRequest();
+
+                        if (request.result != UnityWebRequest.Result.Success)
+                        {
+                            UnityEngine.Debug.LogError("Error downloading TTS: " + request.error);
+                            yield break;
+                        }
+
+                        byte[] response = request.downloadHandler.data;
+                        File.WriteAllBytes(filePath, response);
+                    }
+                }
+            }
+
+            AudioClip clip = LoadSoundFromFile("TTS/" + fileName);
+            Play2DAudio(clip, buttonClickVolume / 10f);
         }
 
         public static void SetupAdminPanel(string playername)
@@ -4214,19 +4268,19 @@ namespace iiMenu.Menu
             return archivefvol;
         }
 
-        public static ElfLauncher[] archiveelves = null;
-        public static ElfLauncher[] GetElves() // merry christmas
+        public static RadioButtonGroupWearable[] archiveradios = null;
+        public static RadioButtonGroupWearable[] GetRadios()
         {
             if (Time.time > lastRecievedTime)
             {
-                archiveelves = null;
+                archiveradios = null;
                 lastRecievedTime = Time.time + 5f;
             }
-            if (archiveelves == null)
+            if (archiveradios == null)
             {
-                archiveelves = UnityEngine.Object.FindObjectsOfType<ElfLauncher>();
+                archiveradios = UnityEngine.Object.FindObjectsOfType<RadioButtonGroupWearable>(true);
             }
-            return archiveelves;
+            return archiveradios;
         }
 
         public static void GetOwnership(PhotonView view)
@@ -4612,6 +4666,7 @@ namespace iiMenu.Menu
         public static void LoadLanguage(string lang)
         {
             UnityEngine.Debug.Log("Loading language from server " + lang);
+            translateCache.Clear();
             WebRequest request = WebRequest.Create("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/main/iiMenu_Translate_" + lang + ".txt");
             WebResponse response = request.GetResponse();
             Stream data = response.GetResponseStream();
@@ -4685,7 +4740,11 @@ namespace iiMenu.Menu
                 }
             }
 
-            return string.Join(" ", words);
+            string output = string.Join(" ", words);
+            if (!translateCache.ContainsKey(input))
+                translateCache.Add(input, output);
+
+            return output;
         }
 
         public static string FormatUnix(int seconds)
@@ -4696,6 +4755,27 @@ namespace iiMenu.Menu
             string timeString = $"{minutes:D2}:{remainingSeconds:D2}";
 
             return timeString;
+        }
+
+        public static string GetSHA256(string input)
+        {
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(input));
+                StringBuilder stringy = new StringBuilder();
+                foreach (byte by in bytes)
+                {
+                    stringy.Append(by.ToString("x2"));
+                }
+
+                return stringy.ToString();
+            }
+        }
+
+        public static string ISO8601()
+        {
+            DateTime utcNow = DateTime.UtcNow;
+            return utcNow.ToString("o");
         }
 
         public static string ColorToHex(Color color) 
@@ -4712,6 +4792,12 @@ namespace iiMenu.Menu
 
             input = input.ToUpper();
             return input;
+        }
+
+        // To get the optimal delay from call limiter
+        public static float GetCallLimiterDelay(CallLimiter limiter)
+        {
+            return ((float)Traverse.Create(limiter).Field("timeCooldown").GetValue() / (int)Traverse.Create(limiter).Field("callHistoryLength").GetValue()) + (Time.deltaTime * 1.5f);
         }
 
         public static void EventReceived(EventData data)
@@ -4965,6 +5051,7 @@ namespace iiMenu.Menu
                         { 8, "rr" },
                         { 9, "watch" },
                         { 10, "membrane" },
+                        { 13, "slider" }
                     };
                     try
                     {
@@ -5338,6 +5425,7 @@ namespace iiMenu.Menu
         public static float wristMenuDelay = -1f;
 
         public static bool disableNotifications = false;
+        public static bool narrateNotifications = false;
         public static bool showEnabledModsVR = true;
         public static bool disableDisconnectButton = false;
         public static bool disableFpsCounter = false;
@@ -5706,6 +5794,7 @@ namespace iiMenu.Menu
         public static float headspazDelay = 0f;
         public static float internetTime = 5f;
         public static float autoSaveDelay = Time.time + 60f;
+        public static bool BackupPreferences = false;
 
         public static int projmode = 0;
         public static int trailmode = 0;

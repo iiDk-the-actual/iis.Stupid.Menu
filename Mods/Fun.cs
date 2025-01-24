@@ -6,8 +6,10 @@ using iiMenu.Classes;
 using iiMenu.Menu;
 using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
+using Pathfinding.RVO;
 using Photon.Pun;
 using Photon.Realtime;
+using Photon.Voice;
 using Photon.Voice.Unity;
 using Photon.Voice.Unity.UtilityScripts;
 using POpusCodec.Enums;
@@ -18,8 +20,10 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.ProBuilder.Shapes;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
+using static UnityEngine.Terrain;
 
 namespace iiMenu.Mods
 {
@@ -648,9 +652,7 @@ namespace iiMenu.Mods
             foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
             {
                 if (!line.muteButton.isAutoOn)
-                {
                     line.PressButton(true, GorillaPlayerLineButton.ButtonType.Mute);
-                }
             }
         }
 
@@ -659,9 +661,25 @@ namespace iiMenu.Mods
             foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
             {
                 if (line.muteButton.isAutoOn)
-                {
                     line.PressButton(false, GorillaPlayerLineButton.ButtonType.Mute);
-                }
+            }
+        }
+
+        public static void MuteDJSets()
+        {
+            foreach (RadioButtonGroupWearable djSet in GetRadios())
+            {
+                if (djSet.enabled)
+                    djSet.enabled = false;
+            }
+        }
+
+        public static void UnmuteDJSets()
+        {
+            foreach (RadioButtonGroupWearable djSet in GetRadios())
+            {
+                if (!djSet.enabled)
+                    djSet.enabled = true;
             }
         }
 
@@ -1712,8 +1730,7 @@ namespace iiMenu.Mods
             {
                 if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
                 {
-                    BuilderTableNetworking.instance.photonView.RPC("PieceCreatedByShelfRPC", RpcTarget.All, new object[] { -566818631, BuilderTable.instance.CreatePieceId(), VRRig.PackWorldPosForNetwork(line.reportButton.transform.position + new Vector3(UnityEngine.Random.Range(-0.3f, 0.3f), UnityEngine.Random.Range(-0.3f, 0.3f), UnityEngine.Random.Range(-0.3f, 0.3f))), VRRig.PackQuaternionForNetwork(Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)))), 0, (byte)4, 4, PhotonNetwork.LocalPlayer });
-                    RPCProtection();
+                    RequestPieceMaster(-566818631, line.reportButton.transform.position + new Vector3(UnityEngine.Random.Range(-0.3f, 0.3f), UnityEngine.Random.Range(-0.3f, 0.3f), UnityEngine.Random.Range(-0.3f, 0.3f)), Quaternion.Euler(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)), Vector3.zero, BuilderPiece.State.OnShelf);
                 }
             }
         }
@@ -1752,8 +1769,7 @@ namespace iiMenu.Mods
                         NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
                     else
                     {
-                        BuilderTableNetworking.instance.photonView.RPC("PieceCreatedByShelfRPC", RpcTarget.All, new object[] { pieceIdSet, BuilderTable.instance.CreatePieceId(), VRRig.PackWorldPosForNetwork(NewPointer.transform.position), VRRig.PackQuaternionForNetwork(Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)))), 0, (byte)4, 4, PhotonNetwork.LocalPlayer });
-                        RPCProtection();
+                        RequestPieceMaster(pieceIdSet, NewPointer.transform.position, Quaternion.Euler(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)), Vector3.zero, BuilderPiece.State.AttachedAndPlaced);
                     }
                 }
             }
@@ -1767,23 +1783,7 @@ namespace iiMenu.Mods
             UnityEngine.Object.Destroy(Temporary.GetComponent<Collider>());
             yield return new WaitForSeconds(0.5f);
             UnityEngine.Object.Destroy(Temporary);
-            BuilderTableNetworking.instance.photonView.RPC("PieceCreatedByShelfRPC", RpcTarget.All, new object[] { pieceIdSet, BuilderTable.instance.CreatePieceId(), VRRig.PackWorldPosForNetwork(position), VRRig.PackQuaternionForNetwork(Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)))), 0, (byte)4, 4, PhotonNetwork.LocalPlayer });
-            RPCProtection();
-        }
-
-        public static IEnumerator CreateGetShelfPiece(int pieceType, Action<BuilderPiece> onComplete)
-        {
-            BuilderPiece target = null;
-
-            pieceId = BuilderTable.instance.CreatePieceId();
-            BuilderTableNetworking.instance.photonView.RPC("PieceCreatedByShelfRPC", RpcTarget.All, new object[] { pieceType, pieceId, VRRig.PackWorldPosForNetwork(GorillaTagger.Instance.offlineVRRig.transform.position + new Vector3(0f, 1f, 0f)), VRRig.PackQuaternionForNetwork(Quaternion.identity), 0, (byte)4, 4, PhotonNetwork.LocalPlayer });
-            RPCProtection();
-
-            yield return null;
-
-            target = BuilderTable.instance.GetPiece(pieceId);
-
-            onComplete?.Invoke(target);
+            RequestPieceMaster(pieceIdSet, position, Quaternion.Euler(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)), Vector3.zero, BuilderPiece.State.AttachedAndPlaced);
         }
 
         public static void AtticFreezeGun()
@@ -1800,10 +1800,9 @@ namespace iiMenu.Mods
                         NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
                     else
                     {
-                        BuilderTableNetworking.instance.photonView.RPC("PieceCreatedByShelfRPC", NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)), new object[] { -566818631, BuilderTable.instance.CreatePieceId(), VRRig.PackWorldPosForNetwork(whoCopy.headMesh.transform.position + new Vector3(UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f))), VRRig.PackQuaternionForNetwork(Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)))), 0, (byte)4, 4, PhotonNetwork.LocalPlayer });
-                        BuilderTableNetworking.instance.photonView.RPC("PieceCreatedByShelfRPC", NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)), new object[] { -566818631, BuilderTable.instance.CreatePieceId(), VRRig.PackWorldPosForNetwork(whoCopy.leftHandTransform.position + new Vector3(UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f))), VRRig.PackQuaternionForNetwork(Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)))), 0, (byte)4, 4, PhotonNetwork.LocalPlayer });
-                        BuilderTableNetworking.instance.photonView.RPC("PieceCreatedByShelfRPC", NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)), new object[] { -566818631, BuilderTable.instance.CreatePieceId(), VRRig.PackWorldPosForNetwork(whoCopy.rightHandTransform.position + new Vector3(UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f))), VRRig.PackQuaternionForNetwork(Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)))), 0, (byte)4, 4, PhotonNetwork.LocalPlayer });
-                        RPCProtection();
+                        RequestPieceMaster(-566818631, whoCopy.headMesh.transform.position + new Vector3(UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f)), Quaternion.Euler(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)), Vector3.zero, BuilderPiece.State.OnShelf);
+                        RequestPieceMaster(-566818631, whoCopy.leftHandTransform.position + new Vector3(UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f)), Quaternion.Euler(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)), Vector3.zero, BuilderPiece.State.OnShelf);
+                        RequestPieceMaster(-566818631, whoCopy.rightHandTransform.position + new Vector3(UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f)), Quaternion.Euler(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)), Vector3.zero, BuilderPiece.State.OnShelf);
                     }
                 }
                 if (GetGunInput(true))
@@ -1829,21 +1828,22 @@ namespace iiMenu.Mods
         {
             if (rightTrigger > 0.5f)
             {
-                Player target = GetRandomPlayer(false);
+                VRRig target = GetRandomVRRig(false);
 
                 if (!PhotonNetwork.IsMasterClient)
                     NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
                 else
                 {
-                    BuilderTableNetworking.instance.photonView.RPC("PieceCreatedByShelfRPC", target, new object[] { -566818631, BuilderTable.instance.CreatePieceId(), VRRig.PackWorldPosForNetwork(GetVRRigFromPlayer(target).headMesh.transform.position + new Vector3(UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f))), VRRig.PackQuaternionForNetwork(Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)))), 0, (byte)4, 4, PhotonNetwork.LocalPlayer });
-                    BuilderTableNetworking.instance.photonView.RPC("PieceCreatedByShelfRPC", target, new object[] { -566818631, BuilderTable.instance.CreatePieceId(), VRRig.PackWorldPosForNetwork(GetVRRigFromPlayer(target).leftHandTransform.position + new Vector3(UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f))), VRRig.PackQuaternionForNetwork(Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)))), 0, (byte)4, 4, PhotonNetwork.LocalPlayer });
-                    BuilderTableNetworking.instance.photonView.RPC("PieceCreatedByShelfRPC", target, new object[] { -566818631, BuilderTable.instance.CreatePieceId(), VRRig.PackWorldPosForNetwork(GetVRRigFromPlayer(target).rightHandTransform.position + new Vector3(UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f))), VRRig.PackQuaternionForNetwork(Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)))), 0, (byte)4, 4, PhotonNetwork.LocalPlayer });
-                    RPCProtection();
+                    for (int i=0; i<4; i++)
+                    {
+                        RequestPieceMaster(-566818631, target.headMesh.transform.position + new Vector3(UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f)), Quaternion.Euler(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)), Vector3.zero, BuilderPiece.State.OnShelf);
+                        RequestPieceMaster(-566818631, target.leftHandTransform.position + new Vector3(UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f)), Quaternion.Euler(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)), Vector3.zero, BuilderPiece.State.OnShelf);
+                        RequestPieceMaster(-566818631, target.rightHandTransform.position + new Vector3(UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f)), Quaternion.Euler(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)), Vector3.zero, BuilderPiece.State.OnShelf);
+                    }
                 }
             }
         }
 
-        private static float stupidThing = 0f;
         public static void AtticFloatGun()
         {
             if (GetGunInput(false))
@@ -1858,9 +1858,7 @@ namespace iiMenu.Mods
                         NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
                     else
                     {
-                        stupidThing += (0.3f - stupidThing) * 0.05f;
-                        BuilderTableNetworking.instance.photonView.RPC("PieceCreatedByShelfRPC", NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)), new object[] { -566818631, BuilderTable.instance.CreatePieceId(), VRRig.PackWorldPosForNetwork(whoCopy.transform.position - new Vector3(0f, stupidThing, 0f)), VRRig.PackQuaternionForNetwork(Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 350f), 0f)), 0, (byte)4, 4, PhotonNetwork.LocalPlayer });
-                        RPCProtection();
+                        RequestPieceMaster(532163265, whoCopy.transform.position - new Vector3(0f, 0.35f, 0f), Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 360f), 0f), Vector3.zero, BuilderPiece.State.OnShelf);
                     }
                 }
                 if (GetGunInput(true))
@@ -1875,11 +1873,33 @@ namespace iiMenu.Mods
             }
             else
             {
-                stupidThing = 0.35f;
                 if (isCopying)
-                {
                     isCopying = false;
+            }
+        }
+
+        public static void AtticFloatAll()
+        {
+            if (rightTrigger > 0.5f)
+            {
+                VRRig target = GetRandomVRRig(false);
+
+                if (!PhotonNetwork.IsMasterClient)
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                else
+                {
+                    RequestPieceMaster(532163265, target.transform.position - new Vector3(0f, 0.35f, 0f), Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 360f), 0f), Vector3.zero, BuilderPiece.State.OnShelf);
                 }
+            }
+        }
+
+        private static int serializeFrame = -1;
+        public static void RequestPieceMaster(int PieceType, Vector3 Position, Quaternion Rotation, Vector3 Velocity, BuilderPiece.State State)
+        {
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                return;
             }
         }
 
@@ -1894,9 +1914,7 @@ namespace iiMenu.Mods
 
                 if (position != Vector3.zero)
                 {
-                    BuilderTableNetworking.instance.photonView.RPC("PieceCreatedByShelfRPC", RpcTarget.All, new object[] { pieceIdSet, BuilderTable.instance.CreatePieceId(), VRRig.PackWorldPosForNetwork(position), VRRig.PackQuaternionForNetwork(Quaternion.Euler(0f, Time.frameCount % 360, 0f)), 0, (byte)4, 4, PhotonNetwork.LocalPlayer });
-                    RPCProtection();
-
+                    RequestPieceMaster(pieceIdSet, position, Quaternion.Euler(0f, Time.frameCount % 360, 0f), Vector3.zero, BuilderPiece.State.AttachedAndPlaced);
                     position += new Vector3(0f, 0.1f, 0f);
                 }
 
@@ -2799,7 +2817,7 @@ namespace iiMenu.Mods
                 bool FoundBalloon = false;
                 foreach (BalloonHoldable Balloon in GetBalloons())
                 {
-                    if (Balloon.ownerRig == GorillaTagger.Instance.offlineVRRig && Balloon.gameObject.name.Contains("LMAMI"))
+                    if (Balloon.ownerRig == GorillaTagger.Instance.offlineVRRig && Balloon.gameObject.name.Contains("LMAAP"))
                     {
                         FoundBalloon = true;
 
@@ -2813,7 +2831,7 @@ namespace iiMenu.Mods
 
                 if (!FoundBalloon)
                 {
-                    CosmeticsController.instance.ApplyCosmeticItemToSet(GorillaTagger.Instance.offlineVRRig.tryOnSet, CosmeticsController.instance.GetItemFromDict("LMAMI."), true, false);
+                    CosmeticsController.instance.ApplyCosmeticItemToSet(GorillaTagger.Instance.offlineVRRig.tryOnSet, CosmeticsController.instance.GetItemFromDict("LMAAP."), true, false);
                     CosmeticsController.instance.UpdateWornCosmetics(true);
                     RPCProtection();
 

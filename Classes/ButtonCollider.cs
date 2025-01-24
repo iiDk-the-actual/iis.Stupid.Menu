@@ -1,10 +1,9 @@
-using Photon.Pun;
 using UnityEngine;
 using static iiMenu.Menu.Main;
 
 namespace iiMenu.Classes
 {
-	public class Button : MonoBehaviour
+    public class Button : MonoBehaviour
 	{
 		public string relatedText;
 		
