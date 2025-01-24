@@ -200,6 +200,16 @@ namespace iiMenu.Notifications
                         {
                             CoroutineManager.RunCoroutine(ClearLast());
                         } catch { /* cheeseburger */ }
+
+                        if (narrateNotifications)
+                        {
+                            try
+                            {
+                                Regex notags = new Regex("<.*?>");
+                                CoroutineManager.RunCoroutine(NarrateText(notags.Replace(NotificationText, "")));
+                            }
+                            catch { }
+                        }
                     }
                 }
                 catch

@@ -7,6 +7,7 @@ using GorillaTagScripts;
 using HarmonyLib;
 using iiMenu.Classes;
 using iiMenu.Notifications;
+using iiMenu.Patches;
 using Photon.Pun;
 using Photon.Realtime;
 using Photon.Voice;
@@ -15,6 +16,7 @@ using PlayFab.MultiplayerModels;
 using Sirenix.OdinInspector;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -485,6 +487,7 @@ namespace iiMenu.Mods
             }
         }
 
+        private static float delaything = 0f;
         public static void GuardianBlindGun()
         {
             if (GetGunInput(false))
@@ -594,6 +597,8 @@ namespace iiMenu.Mods
 
             if (rigDisabled)
                 GorillaTagger.Instance.offlineVRRig.enabled = true;
+            DistancePatch.enabled = false;
+
             GetProjectile("LMACF. RIGHT.").SetSnowballActiveLocal(false);
         }
 
@@ -614,6 +619,8 @@ namespace iiMenu.Mods
                     GorillaTagger.Instance.offlineVRRig.enabled = false;
                     GorillaTagger.Instance.offlineVRRig.transform.position = Pos + new Vector3(0f, Vel.y > 0f ? -3f : 3f, 0f);
                 }
+
+                DistancePatch.enabled = true;
 
                 if (DisableCoroutine != null)
                     CoroutineManager.EndCoroutine(DisableCoroutine);
@@ -1176,7 +1183,6 @@ namespace iiMenu.Mods
         // Hi skids :3
         // If you take this code you like giving sloppy wet kisses to cute boys >_<
         // I gotta stop
-        private static float delaything = 0f;
         private static float CptiDelay = 0f;
         public static void AtticServersidedBlocks()
         {
@@ -1184,24 +1190,29 @@ namespace iiMenu.Mods
             {
                 CptiDelay = Time.time + 5f;
 
-                MethodInfo cpti = typeof(BuilderTableNetworking).GetMethod("CreatePlayerTableInit", BindingFlags.NonPublic | BindingFlags.Instance);
-                foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
-                {
-                    cpti.Invoke(BuilderTableNetworking.instance, new object[] { player });
-                }
-            }
-
-            if (PhotonNetwork.InRoom)
-            {
-                if (!BuilderTable.instance.IsInBuilderZone() && PhotonNetwork.IsMasterClient)
-                    BuilderTable.instance.SetInBuilderZone(true);
-            } else
-            {
-                if (BuilderTable.instance.IsInBuilderZone())
-                    BuilderTable.instance.SetInBuilderZone(false);
+                SerializeTable();
             }
         }
 
+        public static void SerializeTable(Player target = null)
+        {
+            if (!BuilderTable.instance.IsInBuilderZone() && PhotonNetwork.InRoom)
+                BuilderTable.instance.SetInBuilderZone(true);
+        }
+
+        public static void CrashAll()
+        {
+            if (rightTrigger > 0.5f)
+            {
+                if (Time.time > delaything)
+                {
+                    delaything = Time.time + 0.3f;
+                    for (int i=0; i<100; i++)
+                        BuilderTableNetworking.instance.PlayerEnterBuilder();
+                    RPCProtection();
+                }
+            }
+        }
         /*public static void ChangeGamemode(string gamemode)
         {
             if (!PhotonNetwork.IsMasterClient)
@@ -1244,6 +1255,112 @@ namespace iiMenu.Mods
                 {
                     that.RPC("ActivateTeleportVFX", Photon.Pun.RpcTarget.All, new object[] { (short)i });
                     that.RPC("ActivateReturnVFX", Photon.Pun.RpcTarget.All, new object[] { (short)i });
+                    RPCProtection();
+                }
+            }
+        }
+
+        public static void LagGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (isCopying && whoCopy != null)
+                {
+                    if (Time.time > delaything)
+                    {
+                        delaything = Time.time + 0.6f;
+                        PhotonView that = GameObject.Find("Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/Arcade_prefab/MainRoom/VRArea/ModIOArcadeTeleporter/NetObject_VRTeleporter").GetComponent<Photon.Pun.PhotonView>();
+                        for (int i = 0; i < 250; i++)
+                            that.RPC("ActivateTeleportVFX", NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)), new object[] { (short)UnityEngine.Random.Range(0, 7) });
+                        RPCProtection();
+                    }
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        isCopying = true;
+                        whoCopy = possibly;
+                    }
+                }
+            }
+            else
+            {
+                if (isCopying)
+                {
+                    isCopying = false;
+                }
+            }
+        }
+
+        public static void LagAll()
+        {
+            if (rightTrigger > 0.5f)
+            {
+                if (Time.time > delaything)
+                {
+                    delaything = Time.time + 0.6f;
+                    PhotonView that = GameObject.Find("Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/Arcade_prefab/MainRoom/VRArea/ModIOArcadeTeleporter/NetObject_VRTeleporter").GetComponent<Photon.Pun.PhotonView>();
+                    for (int i = 0; i < 250; i++)
+                        that.RPC("ActivateTeleportVFX", RpcTarget.Others, new object[] { (short)UnityEngine.Random.Range(0, 7) });
+                    RPCProtection();
+                }
+            }
+        }
+
+        public static void LagSpikeGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (isCopying && whoCopy != null)
+                {
+                    if (Time.time > delaything)
+                    {
+                        delaything = Time.time + 2.5f;
+                        PhotonView that = GameObject.Find("Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/Arcade_prefab/MainRoom/VRArea/ModIOArcadeTeleporter/NetObject_VRTeleporter").GetComponent<Photon.Pun.PhotonView>();
+                        for (int i = 0; i < 1200; i++)
+                            that.RPC("ActivateTeleportVFX", NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)), new object[] { (short)UnityEngine.Random.Range(0, 7) });
+                        RPCProtection();
+                    }
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        isCopying = true;
+                        whoCopy = possibly;
+                    }
+                }
+            }
+            else
+            {
+                if (isCopying)
+                {
+                    isCopying = false;
+                }
+            }
+        }
+
+        public static void LagSpikeAll()
+        {
+            if (rightTrigger > 0.5f)
+            {
+                if (Time.time > delaything)
+                {
+                    delaything = Time.time + 2.5f;
+                    PhotonView that = GameObject.Find("Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/Arcade_prefab/MainRoom/VRArea/ModIOArcadeTeleporter/NetObject_VRTeleporter").GetComponent<Photon.Pun.PhotonView>();
+                    for (int i = 0; i < 1200; i++)
+                        that.RPC("ActivateTeleportVFX", RpcTarget.Others, new object[] { (short)UnityEngine.Random.Range(0, 7) });
                     RPCProtection();
                 }
             }

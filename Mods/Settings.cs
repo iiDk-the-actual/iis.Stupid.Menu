@@ -601,7 +601,8 @@ namespace iiMenu.Mods
                 "Italiano",
                 "Português",
                 "Nederlands",
-                "Русский"
+                "Русский",
+                "Polski"
             };
 
             string[] codenames = new string[]
@@ -614,7 +615,8 @@ namespace iiMenu.Mods
                 "IT",
                 "PT",
                 "NL",
-                "RU"
+                "RU",
+                "PL"
             };
 
             langInd++;
@@ -2335,6 +2337,16 @@ namespace iiMenu.Mods
             GetIndex("Join Random").isTogglable = false;
         }
 
+        public static void NarrateNotifications()
+        {
+            narrateNotifications = true;
+        }
+
+        public static void NarrateNotificationsDisabled()
+        {
+            narrateNotifications = false;
+        }
+
         public static void DisableNotifications()
         {
             disableNotifications = true;
@@ -2460,7 +2472,7 @@ namespace iiMenu.Mods
             dynamicGradients = false;
         }
 
-        // Thanks to https://github.com/kingofnetflix/BAnANA for inspiration and support with voice recognition
+        // Thanks to kingofnetflix for inspiration and support with voice recognition
         // No, it's not skidded, read the debunk: https://pastebin.com/raw/dj55QNyC
         private static KeywordRecognizer mainPhrases;
         private static KeywordRecognizer modPhrases;
@@ -2613,6 +2625,16 @@ namespace iiMenu.Mods
         public static void EnableFPSCounter()
         {
             disableFpsCounter = false;
+        }
+
+        public static void EnableBackupPreferences()
+        {
+            BackupPreferences = true;
+        }
+
+        public static void DisableBackupPreferences()
+        {
+            BackupPreferences = false;
         }
 
         public static string SavePreferencesToText()
@@ -2986,7 +3008,8 @@ namespace iiMenu.Mods
                 66,
                 66,
                 106,
-                189
+                189,
+                66
             };
             string[] buttonSoundNames = new string[]
             {
@@ -3002,14 +3025,14 @@ namespace iiMenu.Mods
                 "Watch",
                 "Membrane",
                 "Jar",
-                "Wall"
+                "Wall",
+                "Slider"
             };
 
             buttonClickIndex++;
             if (buttonClickIndex > buttonSoundNames.Length - 1)
-            {
                 buttonClickIndex = 0;
-            }
+            
             buttonClickSound = sounds[buttonClickIndex];
             GetIndex("cbsound").overlapText = "Change Button Sound <color=grey>[</color><color=green>" + buttonSoundNames[buttonClickIndex] + "</color><color=grey>]</color>";
         }
