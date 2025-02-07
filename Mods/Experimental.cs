@@ -926,6 +926,24 @@ namespace iiMenu.Mods
             }
         }
 
+        private static float startTimeTrigger = 0f;
+        private static bool lastTriggerLaserSpam = false;
+        public static void AdminFractals()
+        {
+            if (rightTrigger > 0.5f && !lastTriggerLaserSpam)
+                startTimeTrigger = Time.time;
+
+            lastTriggerLaserSpam = rightTrigger > 0.5f;
+
+            if (rightTrigger > 0.5f && Time.time > beamDelay)
+            {
+                beamDelay = Time.time + 0.5f;
+                float h = (Time.frameCount / 180f) % 1f;
+                Color color = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
+                PhotonNetwork.RaiseEvent(68, new object[] { "lr", 0f, 1f, 1f, 0.3f, 0.25f, GorillaTagger.Instance.bodyCollider.transform.position, GorillaTagger.Instance.headCollider.transform.position + new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f)).normalized * 1000f, 20f - (Time.time - startTimeTrigger) }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+            }
+        }
+
         public static void FlyAllUsing()
         {
             if (Time.time > stupiddelayihate)

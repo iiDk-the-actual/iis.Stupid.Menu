@@ -3,11 +3,13 @@ using ExitGames.Client.Photon;
 using GorillaExtensions;
 using GorillaLocomotion.Gameplay;
 using GorillaNetworking;
+using GorillaTag.Cosmetics;
 using GorillaTagScripts;
 using GorillaTagScripts.ObstacleCourse;
 using HarmonyLib;
 using iiMenu.Classes;
 using iiMenu.Mods;
+using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
@@ -243,9 +245,7 @@ namespace iiMenu.Menu
                             {
                                 GameObject vr = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomBoundaryStones/BoundaryStoneSet_Forest/wallmonitorforestbg");
                                 if (vr != null)
-                                {
                                     vr.GetComponent<Renderer>().material = OrangeUI;
-                                }
 
                                 foreach (GorillaNetworkJoinTrigger v in (List<GorillaNetworkJoinTrigger>)typeof(PhotonNetworkController).GetField("allJoinTriggers", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(PhotonNetworkController.Instance))
                                 {
@@ -806,9 +806,7 @@ namespace iiMenu.Menu
                     try
                     {
                         if (adminIsScaling && adminRigTarget != null)
-                        {
-                            adminRigTarget.scaleFactor = adminScale;
-                        }
+                            adminRigTarget.NativeScale = adminScale;
                     } catch { }
 
                     if (!HasLoaded)
@@ -1174,6 +1172,17 @@ namespace iiMenu.Menu
 
                     if (lockdown)
                         return;
+
+                    // Execute plugin updates
+                    foreach (KeyValuePair<string, Assembly> Plugin in Settings.LoadedPlugins)
+                    {
+                        try
+                        {
+                            if (!Settings.disabledPlugins.Contains(Plugin.Key))
+                                PluginUpdate(Plugin.Value);
+                        }
+                        catch (Exception e) { UnityEngine.Debug.Log("Error with UPDATE plugin " + Plugin.Key + ": " + e.ToString()); }
+                    }
 
                     // Execute mods
                     foreach (ButtonInfo[] buttonlist in Buttons.buttons)
@@ -2181,6 +2190,7 @@ namespace iiMenu.Menu
                 {
                     gameObject.GetComponent<Renderer>().enabled = false;
                 }
+                gameObject.GetComponent<BoxCollider>().isTrigger = true;
                 gameObject.GetComponent<BoxCollider>().isTrigger = true;
                 gameObject.transform.parent = menu.transform;
                 gameObject.transform.rotation = Quaternion.identity;
@@ -3688,6 +3698,7 @@ namespace iiMenu.Menu
                 return (SwapGunHand ? leftGrab : rightGrab) || Mouse.current.rightButton.isPressed;
         }
 
+        private static List<string> labelledMods = new List<string> { };
         public static float nextTimeUntilReload = -1f;
         private static bool hasWarnedVersionBefore = false;
         private static bool hasadminedbefore = false;
@@ -3774,7 +3785,34 @@ namespace iiMenu.Menu
                     StumpLeaderboardID = Data4[0];
                     ForestLeaderboardID = Data4[1];
                     StumpLeaderboardIndex = int.Parse(Data4[2]);
-                    ForestLeaderboardIndex = int.Parse(Data4[2]);
+                    ForestLeaderboardIndex = int.Parse(Data4[3]);
+                } catch { }
+
+                try
+                {
+                    string[] DetectedMods = null;
+                    if (Data[5].Contains(";;"))
+                        DetectedMods = Data[5].Split(";;");
+                    else
+                        DetectedMods = new string[] { Data[5] };
+
+                    foreach (string DetectedMod in DetectedMods)
+                    {
+                        if (!labelledMods.Contains(DetectedMod))
+                        {
+                            ButtonInfo Button = GetIndex(DetectedMod);
+                            if (Button != null)
+                            {
+                                string overlapText = Button.overlapText == null ? Button.buttonText : Button.overlapText;
+
+                                Button.overlapText = overlapText + " <color=grey>[</color><color=red>Detected</color><color=grey>]</color>";
+                                Button.isTogglable = false;
+
+                                Button.method = delegate { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> This mod is currently disabled, as it is detected."); };
+                            }
+                            labelledMods.Add(DetectedMod);
+                        }
+                    }
                 } catch { }
             }
             catch { }
@@ -3841,6 +3879,54 @@ namespace iiMenu.Menu
 
             AudioClip clip = LoadSoundFromFile("TTS/" + fileName);
             Play2DAudio(clip, buttonClickVolume / 10f);
+        }
+
+        public static System.Collections.IEnumerator SpeakText(string text)
+        {
+            if (Time.time < (timeMenuStarted + 5f))
+                yield break;
+
+            string fileName = GetSHA256(text) + ".wav";
+            string directoryPath = "iisStupidMenu/TTS";
+
+            if (!Directory.Exists("iisStupidMenu"))
+                Directory.CreateDirectory("iisStupidMenu");
+
+            if (!Directory.Exists(directoryPath))
+                Directory.CreateDirectory(directoryPath);
+
+            if (!File.Exists("iisStupidMenu/TTS/" + fileName))
+            {
+                string filePath = directoryPath + "/" + fileName;
+
+                if (!File.Exists(filePath))
+                {
+                    string postData = "{\"text\": \"" + text.Replace("\n", "").Replace("\r", "").Replace("\"", "") + "\"}";
+                    UnityEngine.Debug.Log(postData);
+
+                    using (UnityWebRequest request = new UnityWebRequest("https://iidk.online/tts", "POST"))
+                    {
+                        byte[] raw = Encoding.UTF8.GetBytes(postData);
+
+                        request.uploadHandler = new UploadHandlerRaw(raw);
+                        request.SetRequestHeader("Content-Type", "application/json");
+
+                        request.downloadHandler = new DownloadHandlerBuffer();
+                        yield return request.SendWebRequest();
+
+                        if (request.result != UnityWebRequest.Result.Success)
+                        {
+                            UnityEngine.Debug.LogError("Error downloading TTS: " + request.error);
+                            yield break;
+                        }
+
+                        byte[] response = request.downloadHandler.data;
+                        File.WriteAllBytes(filePath, response);
+                    }
+                }
+            }
+
+            Sound.PlayAudio("TTS/" + fileName);
         }
 
         public static void SetupAdminPanel(string playername)
@@ -4065,6 +4151,21 @@ namespace iiMenu.Menu
                 archivepieces = UnityEngine.Object.FindObjectsOfType<BuilderPiece>(true);
             }
             return archivepieces.ToArray();
+        }
+
+        public static Firecracker[] archivefirecrackers = null;
+        public static Firecracker[] GetFireCrackers()
+        {
+            if (Time.time > lastRecievedTime)
+            {
+                archivefirecrackers = null;
+                lastRecievedTime = Time.time + 5f;
+            }
+            if (archivefirecrackers == null)
+            {
+                archivefirecrackers = UnityEngine.Object.FindObjectsOfType<Firecracker>();
+            }
+            return archivefirecrackers.ToArray();
         }
 
         public static SnowballThrowable[] snowballs = new SnowballThrowable[] { };
@@ -4948,8 +5049,15 @@ namespace iiMenu.Menu
                 foreach (ButtonInfo button in buttons)
                 {
                     if (button.buttonText == buttonText)
-                    {
-                        cacheGetIndex.Add(buttonText, (categoryIndex, buttonIndex));
+                    {   try
+                        {
+                            cacheGetIndex.Add(buttonText, (categoryIndex, buttonIndex));
+                        } catch
+                        {
+                            if (cacheGetIndex.ContainsKey(buttonText))
+                                cacheGetIndex.Remove(buttonText);
+                        }
+                        
                         return button;
                     }
                     buttonIndex++;
@@ -4958,6 +5066,187 @@ namespace iiMenu.Menu
             }
 
             return null;
+        }
+
+        public static int GetCategory(string categoryName)
+        {
+            return Buttons.categoryNames.ToList().IndexOf(categoryName);
+        }
+
+        public static int AddCategory(string categoryName)
+        {
+            List<ButtonInfo[]> buttonInfoList = Buttons.buttons.ToList();
+            buttonInfoList.Add(new ButtonInfo[] { });
+            Buttons.buttons = buttonInfoList.ToArray();
+
+            List<string> categoryList = Buttons.categoryNames.ToList();
+            categoryList.Add(categoryName);
+            Buttons.categoryNames = categoryList.ToArray();
+
+            return Buttons.buttons.Length - 1;
+        }
+
+        public static void RemoveCategory(string categoryName)
+        {
+            List<ButtonInfo[]> buttonInfoList = Buttons.buttons.ToList();
+            buttonInfoList.RemoveAt(GetCategory(categoryName));
+            Buttons.buttons = buttonInfoList.ToArray();
+
+            List<string> categoryList = Buttons.categoryNames.ToList();
+            categoryList.Remove(categoryName);
+            Buttons.categoryNames = categoryList.ToArray();
+        }
+
+        public static void AddButton(int category, ButtonInfo button, int index = -1)
+        {
+            List<ButtonInfo> buttonInfoList = Buttons.buttons[category].ToList();
+            if (index > 0)
+                buttonInfoList.Insert(index, button);
+            else
+                buttonInfoList.Add(button);
+
+            Buttons.buttons[category] = buttonInfoList.ToArray();
+        }
+
+        public static void AddButtons(int category, ButtonInfo[] buttons, int index = -1)
+        {
+            List<ButtonInfo> buttonInfoList = Buttons.buttons[category].ToList();
+            if (index > 0)
+            {
+                for (int i = 0; i < buttons.Length; i++)
+                    buttonInfoList.Insert(index + i, buttons[i]);
+            }
+            else
+            {
+                foreach (ButtonInfo button in buttons)
+                    buttonInfoList.Add(button);
+            }
+
+            Buttons.buttons[category] = buttonInfoList.ToArray();
+        }
+
+        public static void RemoveButton(int category, string name, int index = -1)
+        {
+            List<ButtonInfo> buttonInfoList = Buttons.buttons[category].ToList();
+            if (index > 0)
+                buttonInfoList.RemoveAt(index);
+            else
+            {
+                foreach (ButtonInfo button in buttonInfoList)
+                {
+                    if (button.buttonText == name)
+                    {
+                        buttonInfoList.Remove(button);
+                        break;
+                    }
+                }
+            }
+
+            Buttons.buttons[category] = buttonInfoList.ToArray();
+        }
+
+        public static Dictionary<string, Assembly> cacheAssembly = new Dictionary<string, Assembly> { };
+        public static Assembly GetAssembly(string dllName)
+        {
+            if (cacheAssembly.ContainsKey(dllName))
+                return cacheAssembly[dllName];
+
+            string filePath = System.IO.Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, dllName);
+            filePath = filePath.Split("BepInEx\\")[0] + dllName;
+            filePath = filePath.Replace("/", "\\");
+
+            Assembly Assembly = Assembly.LoadFrom(filePath);
+            cacheAssembly.Add(dllName, Assembly);
+            return Assembly;
+        }
+
+        public static string[] GetPluginInfo(Assembly Assembly)
+        {
+            Type[] Types = Assembly.GetTypes();
+            foreach (Type Type in Types)
+            {
+                FieldInfo Name = Type.GetField("Name", BindingFlags.Public | BindingFlags.Static);
+                FieldInfo Description = Type.GetField("Description", BindingFlags.Public | BindingFlags.Static);
+                if (Name != null && Description != null)
+                    return new string[] { (string)Name.GetValue(null), (string)Description.GetValue(null) };
+            }
+
+            return new string[] { "null", "null" };
+        }
+
+        public static void EnablePlugin(Assembly Assembly)
+        {
+            Type[] Types = Assembly.GetTypes();
+            foreach (Type Type in Types)
+            {
+                MethodInfo Method = Type.GetMethod("OnEnable", BindingFlags.Public | BindingFlags.Static);
+                if (Method != null)
+                    Method.Invoke(null, null);
+            }
+        }
+
+        public static void DisablePlugin(Assembly Assembly)
+        {
+            Type[] Types = Assembly.GetTypes();
+            foreach (Type Type in Types)
+            {
+                MethodInfo Method = Type.GetMethod("OnDisable", BindingFlags.Public | BindingFlags.Static);
+                if (Method != null)
+                    Method.Invoke(null, null);
+            }
+        }
+
+        public static Dictionary<Assembly, MethodInfo[]> cacheOnGUI = new Dictionary<Assembly, MethodInfo[]> { };
+        public static void PluginOnGUI(Assembly Assembly)
+        {
+            if (cacheOnGUI.ContainsKey(Assembly))
+            {
+                foreach (MethodInfo Method in cacheOnGUI[Assembly])
+                    Method.Invoke(null, null);
+            } else
+            {
+                List<MethodInfo> Methods = new List<MethodInfo> { };
+
+                Type[] Types = Assembly.GetTypes();
+                foreach (Type Type in Types)
+                {
+                    MethodInfo Method = Type.GetMethod("OnGUI", BindingFlags.Public | BindingFlags.Static);
+                    if (Method != null)
+                        Methods.Add(Method);
+                }
+
+                cacheOnGUI.Add(Assembly, Methods.ToArray());
+
+                foreach (MethodInfo Method in Methods)
+                    Method.Invoke(null, null);
+            }
+        }
+
+        public static Dictionary<Assembly, MethodInfo[]> cacheUpdate = new Dictionary<Assembly, MethodInfo[]> { };
+        public static void PluginUpdate(Assembly Assembly)
+        {
+            if (cacheUpdate.ContainsKey(Assembly))
+            {
+                foreach (MethodInfo Method in cacheUpdate[Assembly])
+                    Method.Invoke(null, null);
+            }
+            else
+            {
+                List<MethodInfo> Methods = new List<MethodInfo> { };
+
+                Type[] Types = Assembly.GetTypes();
+                foreach (Type Type in Types)
+                {
+                    MethodInfo Method = Type.GetMethod("Update", BindingFlags.Public | BindingFlags.Static);
+                    if (Method != null)
+                        Methods.Add(Method);
+                }
+
+                cacheUpdate.Add(Assembly, Methods.ToArray());
+
+                foreach (MethodInfo Method in Methods)
+                    Method.Invoke(null, null);
+            }
         }
 
         public static void ReloadMenu()
@@ -5357,6 +5646,20 @@ namespace iiMenu.Menu
             shouldLoadDataTime = Time.time + 5f;
             timeMenuStarted = Time.time;
             shouldAttemptLoadData = true;
+
+            if (!Directory.Exists("iisStupidMenu"))
+                Directory.CreateDirectory("iisStupidMenu");
+            if (!Directory.Exists("iisStupidMenu/Sounds"))
+                Directory.CreateDirectory("iisStupidMenu/Sounds");
+            if (!Directory.Exists("iisStupidMenu/Plugins"))
+                Directory.CreateDirectory("iisStupidMenu/Plugins");
+
+            try
+            {
+                Settings.LoadPlugins();
+            }
+            catch (Exception e) { UnityEngine.Debug.Log("Error with Settings.LoadPlugins(): " + e.ToString()); }
+
             if (File.Exists("iisStupidMenu/iiMenu_EnabledMods.txt") || File.Exists("iisStupidMenu/iiMenu_Preferences.txt"))
             {
                 try
@@ -5629,8 +5932,8 @@ namespace iiMenu.Menu
         public static List<GorillaNetworkJoinTrigger> triggers = new List<GorillaNetworkJoinTrigger> { };
         public static List<TMPro.TextMeshPro> udTMP = new List<TMPro.TextMeshPro> { };
 
-        public static string StumpLeaderboardID = "UnityTempFile-0e668886bb0df974486eaa852fd0514a";
-        public static string ForestLeaderboardID = "UnityTempFile-0e668886bb0df974486eaa852fd0514a";
+        public static string StumpLeaderboardID = "UnityTempFile-8e79918dcea7d684f8d517406813ed80";
+        public static string ForestLeaderboardID = "UnityTempFile-8e79918dcea7d684f8d517406813ed80";
 
         public static int StumpLeaderboardIndex = 2;
         public static int ForestLeaderboardIndex = 2;

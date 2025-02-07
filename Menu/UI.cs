@@ -2,6 +2,7 @@
 using GorillaNetworking;
 using iiMenu.Classes;
 using iiMenu.Menu;
+using iiMenu.Mods;
 using Photon.Pun;
 using System;
 using System.Collections.Generic;
@@ -139,9 +140,7 @@ namespace iiMenu.UI
                 inputText = GUI.TextField(new Rect(Screen.width - 200, 20, 180, 20), inputText);
 
                 r = GUI.TextField(new Rect(Screen.width - 240, 20, 30, 20), r);
-
                 g = GUI.TextField(new Rect(Screen.width - 240, 50, 30, 20), g);
-
                 b = GUI.TextField(new Rect(Screen.width - 240, 80, 30, 20), b);
 
                 if (GUI.Button(new Rect(Screen.width - 200, 50, 85, 30), "Name"))
@@ -240,9 +239,16 @@ namespace iiMenu.UI
                     GUILayout.EndVertical();
                     GUILayout.EndHorizontal();
                 }
-                catch
+                catch { }
+
+                foreach (KeyValuePair<string, Assembly> Plugin in Settings.LoadedPlugins)
                 {
-                    UnityEngine.Debug.Log("FUCKKK");
+                    try
+                    {
+                        if (!Settings.disabledPlugins.Contains(Plugin.Key))
+                            PluginOnGUI(Plugin.Value);
+                    }
+                    catch (Exception e) { UnityEngine.Debug.Log("Error with ONGUI plugin " + Plugin.Key + ": " + e.ToString()); }
                 }
             }
         }

@@ -6,16 +6,21 @@ using iiMenu.Notifications;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 using UnityEngine.Windows.Speech;
 using Valve.VR;
 using static iiMenu.Menu.Main;
+using static Mono.Security.X509.X520;
+using static QRCoder.PayloadGenerator;
 
 namespace iiMenu.Mods
 {
@@ -242,6 +247,147 @@ namespace iiMenu.Mods
         {
             buttonsType = 32;
             pageNumber = 0;
+        }
+
+        public static void EnablePluginSettings()
+        {
+            buttonsType = 33;
+            pageNumber = 0;
+        }
+
+        public static Dictionary<string, Assembly> LoadedPlugins = new Dictionary<string, Assembly> { };
+        public static List<string> disabledPlugins = new List<string> { };
+        public static void LoadPlugins()
+        {
+            Buttons.buttons[33] = new ButtonInfo[] { new ButtonInfo { buttonText = "Exit Plugin Settings", method = () => Settings.EnableSettings(), isTogglable = false, toolTip = "Returns you back to the settings menu." } };
+
+            if (LoadedPlugins.Count > 0)
+            {
+                foreach (KeyValuePair<string, Assembly> Plugin in LoadedPlugins)
+                {
+                    if (!disabledPlugins.Contains(Plugin.Key))
+                        DisablePlugin(Plugin.Value);
+                }
+            }
+
+            cacheAssembly.Clear();
+
+            cacheUpdate.Clear();
+            cacheOnGUI.Clear();
+
+            LoadedPlugins.Clear();
+
+            if (!Directory.Exists("iisStupidMenu"))
+                Directory.CreateDirectory("iisStupidMenu");
+            if (!Directory.Exists("iisStupidMenu/Plugins"))
+                Directory.CreateDirectory("iisStupidMenu/Plugins");
+
+            if (!File.Exists("iisStupidMenu/Plugins/DisabledPlugins.txt"))
+                File.WriteAllText("iisStupidMenu/Plugins/DisabledPlugins.txt", "");
+            else
+            {
+                string text = File.ReadAllText("iisStupidMenu/Plugins/DisabledPlugins.txt");
+                if (text.Length > 1)
+                    disabledPlugins = text.Split("\n").ToList();
+            }
+
+            string[] Files = Directory.GetFiles("iisStupidMenu/Plugins");
+            foreach (string File in Files)
+            {
+                try
+                {
+                    if (GetFileExtension(File) == "dll")
+                    {
+                        string PluginName = File.Replace("iisStupidMenu/Plugins/", "");
+                        LoadedPlugins.Add(PluginName, GetAssembly(File));
+                    }
+                } catch (Exception e) { UnityEngine.Debug.Log("Error with loading plugin " + File + ": " + e.ToString()); }
+            }
+
+            foreach (KeyValuePair<string, Assembly> Plugin in LoadedPlugins)
+            {
+                try
+                {
+                    string[] PluginInfo = GetPluginInfo(Plugin.Value);
+                    AddButton(33, new ButtonInfo { buttonText = Plugin.Key, overlapText = (disabledPlugins.Contains(Plugin.Key) ? "<color=grey>[</color><color=red>OFF</color><color=grey>]</color>" : "<color=grey>[</color><color=green>ON</color><color=grey>]</color>") + " " + PluginInfo[0], method = () => TogglePlugin(Plugin), isTogglable = false, toolTip = PluginInfo[1] });
+                    if (!disabledPlugins.Contains(Plugin.Key))
+                    {
+                        EnablePlugin(Plugin.Value);
+                    }
+                }
+                catch (Exception e) { UnityEngine.Debug.Log("Error with enabling plugin " + Plugin.Key + ": " + e.ToString()); }
+            }
+
+            AddButton(33, new ButtonInfo { buttonText = "Open Plugins Folder", method = () => OpenPluginsFolder(), isTogglable = false, toolTip = "Opens a folder containing all of your plugins." });
+            AddButton(33, new ButtonInfo { buttonText = "Reload Plugins", method = () => LoadPlugins(), isTogglable = false, toolTip = "Reloads all of your plugins." });
+            AddButton(33, new ButtonInfo { buttonText = "Get More Plugins", method = () => LoadPluginLibrary(), isTogglable = false, toolTip = "Opens a public plugin library, where you can download your own plugins." });
+        }
+
+        public static void OpenPluginsFolder()
+        {
+            string filePath = System.IO.Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, "iisStupidMenu/Plugins");
+            filePath = filePath.Split("BepInEx\\")[0] + "iisStupidMenu/Plugins";
+            Process.Start(filePath);
+        }
+
+        public static void LoadPluginLibrary()
+        {
+            buttonsType = 26;
+            pageNumber = 0;
+            string library = GetHttp("https://github.com/iiDk-the-actual/ModInfo/raw/main/Plugins/PluginLibrary.txt");
+            string[] plugins = AlphabetizeNoSkip(library.Split("\n"));
+            List<ButtonInfo> pluginbuttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Plugin Library", method = () => EnablePluginSettings(), isTogglable = false, toolTip = "Returns you back to the plugin settings." } };
+            int index = 0;
+            foreach (string plugin in plugins)
+            {
+                if (plugin.Length > 2)
+                {
+                    index++;
+                    string[] Data = plugin.Split(";");
+                    pluginbuttons.Add(new ButtonInfo { buttonText = "PluginDownload" + index.ToString(), overlapText = Data[0], method =() => DownloadPlugin(Data[0], Data[2]), isTogglable = false, toolTip = Data[1] });
+                }
+            }
+            Buttons.buttons[26] = pluginbuttons.ToArray();
+        }
+
+        public static void DownloadPlugin(string name, string url)
+        {
+            if (name.Contains(".."))
+                name = name.Replace("..", "");
+
+            string filename = url.Split("/")[url.Split("/").Length - 1];
+
+            if (File.Exists("iisStupidMenu/Plugins/" + filename))
+                File.Delete("iisStupidMenu/Plugins/" + filename);
+
+            WebClient stream = new WebClient();
+            stream.DownloadFile(url, "iisStupidMenu/Plugins/" + filename);
+
+            LoadPlugins();
+            NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully downloaded " + name + " to your plugins.");
+        }
+
+        public static void TogglePlugin(KeyValuePair<string, Assembly> Plugin)
+        {
+            if (disabledPlugins.Contains(Plugin.Key))
+            {
+                disabledPlugins.Remove(Plugin.Key);
+                EnablePlugin(Plugin.Value);
+            } else
+            {
+                disabledPlugins.Add(Plugin.Key);
+                DisablePlugin(Plugin.Value);
+            }
+
+            string disabledPluginsString = "";
+            foreach (string disabledPlugin in disabledPlugins)
+            {
+                disabledPluginsString += disabledPlugin + "\n";
+            }
+
+            File.WriteAllText("iisStupidMenu/Plugins/DisabledPlugins.txt", disabledPluginsString);
+
+            GetIndex(Plugin.Key).overlapText = (disabledPlugins.Contains(Plugin.Key) ? "<color=grey>[</color><color=red>OFF</color><color=grey>]</color>" : "<color=grey>[</color><color=green>ON</color><color=grey>]</color>") + " " + GetPluginInfo(Plugin.Value)[0];
         }
 
         public static void EnableSoundboardSettings()

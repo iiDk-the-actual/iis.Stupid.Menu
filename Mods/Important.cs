@@ -419,7 +419,7 @@ namespace iiMenu.Mods
                 if (possibler && Time.time > keyboardDelay)
                 {
                     keyboardDelay = Time.time + 0.1f;
-                    typeof(GorillaKeyboardButton).GetMethod("OnTriggerEnter", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(possibler, new object[] { GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHandTriggerCollider").GetComponent<Collider>() });
+                    GameEvents.OnGorrillaKeyboardButtonPressedEvent.Invoke(possibler.Binding);
                 }
                 GorillaPlayerLineButton possiblest = Ray.collider.GetComponentInParent<GorillaPlayerLineButton>();
                 if (possiblest && Time.time > keyboardDelay)
