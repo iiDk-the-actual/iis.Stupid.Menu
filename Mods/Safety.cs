@@ -70,6 +70,16 @@ namespace iiMenu.Mods
             AntiCrashToggle = false;
         }
 
+        private static float lastCacheClearedTime = 0f;
+        public static void AutoClearCache()
+        {
+            if (Time.time > lastCacheClearedTime)
+            {
+                lastCacheClearedTime = Time.time + 60f;
+                System.GC.Collect();
+            }
+        }
+
         public static void EnableAntiHandTap()
         {
             //GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools").SetActive(false);

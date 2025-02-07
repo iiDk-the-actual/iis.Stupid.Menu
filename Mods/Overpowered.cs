@@ -3,6 +3,7 @@ using GorillaExtensions;
 using GorillaGameModes;
 using GorillaLocomotion.Gameplay;
 using GorillaNetworking;
+using GorillaTag.Cosmetics;
 using GorillaTagScripts;
 using HarmonyLib;
 using iiMenu.Classes;
@@ -13,6 +14,7 @@ using Photon.Realtime;
 using Photon.Voice;
 using Photon.Voice.PUN;
 using PlayFab.MultiplayerModels;
+using POpusCodec.Enums;
 using Sirenix.OdinInspector;
 using System;
 using System.Collections;
@@ -590,6 +592,27 @@ namespace iiMenu.Mods
             }
         }
 
+        private static float scDelay = 0f;
+        public static void SizeChanger()
+        {
+            sizeScale = Mathf.Clamp(sizeScale, 0.1f, 10f);
+            Movement.SizeChanger();
+            sizeScale = Mathf.Clamp(sizeScale, 0.1f, 10f);
+
+            if (Time.time > scDelay)
+            {
+                scDelay = Time.time + 1.01f;
+
+                GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateNativeSize", RpcTarget.Others, new object[] { sizeScale });
+            }
+        }
+        public static void DisableSizeChanger()
+        {
+            Movement.DisableSizeChanger();
+
+            GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateNativeSize", RpcTarget.Others, new object[] { 1f });
+        }
+
         private static Coroutine DisableCoroutine;
         private static IEnumerator DisableSnowball(bool rigDisabled)
         {
@@ -733,7 +756,7 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void MassiveSnowballGun()
+        public static void SnowballGun()
         {
             if (GetGunInput(false))
             {
@@ -1183,59 +1206,7 @@ namespace iiMenu.Mods
         // Hi skids :3
         // If you take this code you like giving sloppy wet kisses to cute boys >_<
         // I gotta stop
-        private static float CptiDelay = 0f;
-        public static void AtticServersidedBlocks()
-        {
-            if (PhotonNetwork.IsMasterClient && Time.time > CptiDelay)
-            {
-                CptiDelay = Time.time + 5f;
-
-                SerializeTable();
-            }
-        }
-
-        public static void SerializeTable(Player target = null)
-        {
-            if (!BuilderTable.instance.IsInBuilderZone() && PhotonNetwork.InRoom)
-                BuilderTable.instance.SetInBuilderZone(true);
-        }
-
-        public static void CrashAll()
-        {
-            if (rightTrigger > 0.5f)
-            {
-                if (Time.time > delaything)
-                {
-                    delaything = Time.time + 0.3f;
-                    for (int i=0; i<100; i++)
-                        BuilderTableNetworking.instance.PlayerEnterBuilder();
-                    RPCProtection();
-                }
-            }
-        }
-        /*public static void ChangeGamemode(string gamemode)
-        {
-            if (!PhotonNetwork.IsMasterClient)
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-            else
-            {
-                ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable
-                {
-                    { "gameMode", PhotonNetwork.CurrentRoom.CustomProperties["gameMode"].ToString().Replace(GorillaComputer.instance.currentGameMode.Value.ToUpper(), gamemode) }
-                };
-                PhotonNetwork.CurrentRoom.SetCustomProperties(hash, null, null);
-                /*
-                NetworkView netView = (NetworkView)Traverse.Create(typeof(GameMode)).Field("activeNetworkHandler").Field("netView").GetValue();
-                NetworkSystem.Instance.NetDestroy(netView.gameObject);
-
-                GorillaGameManager ggs = (GorillaGameManager)Traverse.Create(typeof(GameMode)).Field("activeGameMode").GetValue();
-                Traverse.Create(typeof(GameMode)).Field("activeGameMode").SetValue(null);
-                Traverse.Create(typeof(GameMode)).Field("activeNetworkHandler").SetValue(null);
-
-                GameMode.LoadGameMode(gamemode);
-            }
-        }*/
-
+        
         // I see you
         public static void ForceUnloadCustomMap()
         {
@@ -1246,126 +1217,19 @@ namespace iiMenu.Mods
             RPCProtection();
         }
 
+        private static float delay = 0f;
         public static void VirtualStumpTeleporterEffectSpammer()
         {
-            if (rightTrigger > 0.5f)
+            if (rightTrigger > 0.5f && Time.time < delay)
             {
                 PhotonView that = GameObject.Find("Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/Arcade_prefab/MainRoom/VRArea/ModIOArcadeTeleporter/NetObject_VRTeleporter").GetComponent<Photon.Pun.PhotonView>();
-                for (int i = 0; i < 8; i++)
-                {
-                    that.RPC("ActivateTeleportVFX", Photon.Pun.RpcTarget.All, new object[] { (short)i });
-                    that.RPC("ActivateReturnVFX", Photon.Pun.RpcTarget.All, new object[] { (short)i });
-                    RPCProtection();
-                }
+                delay = Time.time + 0.1f;
+                that.RPC("ActivateTeleportVFX", Photon.Pun.RpcTarget.All, new object[] { (short)UnityEngine.Random.Range(0, 7) });
+                that.RPC("ActivateReturnVFX", Photon.Pun.RpcTarget.All, new object[] { (short)UnityEngine.Random.Range(0, 7) });
+                RPCProtection();
             }
         }
-
-        public static void LagGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (isCopying && whoCopy != null)
-                {
-                    if (Time.time > delaything)
-                    {
-                        delaything = Time.time + 0.6f;
-                        PhotonView that = GameObject.Find("Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/Arcade_prefab/MainRoom/VRArea/ModIOArcadeTeleporter/NetObject_VRTeleporter").GetComponent<Photon.Pun.PhotonView>();
-                        for (int i = 0; i < 250; i++)
-                            that.RPC("ActivateTeleportVFX", NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)), new object[] { (short)UnityEngine.Random.Range(0, 7) });
-                        RPCProtection();
-                    }
-                }
-                if (GetGunInput(true))
-                {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
-                    {
-                        isCopying = true;
-                        whoCopy = possibly;
-                    }
-                }
-            }
-            else
-            {
-                if (isCopying)
-                {
-                    isCopying = false;
-                }
-            }
-        }
-
-        public static void LagAll()
-        {
-            if (rightTrigger > 0.5f)
-            {
-                if (Time.time > delaything)
-                {
-                    delaything = Time.time + 0.6f;
-                    PhotonView that = GameObject.Find("Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/Arcade_prefab/MainRoom/VRArea/ModIOArcadeTeleporter/NetObject_VRTeleporter").GetComponent<Photon.Pun.PhotonView>();
-                    for (int i = 0; i < 250; i++)
-                        that.RPC("ActivateTeleportVFX", RpcTarget.Others, new object[] { (short)UnityEngine.Random.Range(0, 7) });
-                    RPCProtection();
-                }
-            }
-        }
-
-        public static void LagSpikeGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (isCopying && whoCopy != null)
-                {
-                    if (Time.time > delaything)
-                    {
-                        delaything = Time.time + 2.5f;
-                        PhotonView that = GameObject.Find("Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/Arcade_prefab/MainRoom/VRArea/ModIOArcadeTeleporter/NetObject_VRTeleporter").GetComponent<Photon.Pun.PhotonView>();
-                        for (int i = 0; i < 1200; i++)
-                            that.RPC("ActivateTeleportVFX", NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)), new object[] { (short)UnityEngine.Random.Range(0, 7) });
-                        RPCProtection();
-                    }
-                }
-                if (GetGunInput(true))
-                {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
-                    {
-                        isCopying = true;
-                        whoCopy = possibly;
-                    }
-                }
-            }
-            else
-            {
-                if (isCopying)
-                {
-                    isCopying = false;
-                }
-            }
-        }
-
-        public static void LagSpikeAll()
-        {
-            if (rightTrigger > 0.5f)
-            {
-                if (Time.time > delaything)
-                {
-                    delaything = Time.time + 2.5f;
-                    PhotonView that = GameObject.Find("Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/Arcade_prefab/MainRoom/VRArea/ModIOArcadeTeleporter/NetObject_VRTeleporter").GetComponent<Photon.Pun.PhotonView>();
-                    for (int i = 0; i < 1200; i++)
-                        that.RPC("ActivateTeleportVFX", RpcTarget.Others, new object[] { (short)UnityEngine.Random.Range(0, 7) });
-                    RPCProtection();
-                }
-            }
-        }
-
+        
         // Don't steal this
         public static void VirtualStumpKickGun()
         {

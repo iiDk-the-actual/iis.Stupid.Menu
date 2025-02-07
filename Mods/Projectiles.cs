@@ -6,11 +6,13 @@ using iiMenu.Classes;
 using iiMenu.Patches;
 using Photon.Pun;
 using Photon.Realtime;
+using Photon.Voice;
 using System;
 using System.Reflection;
 using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 

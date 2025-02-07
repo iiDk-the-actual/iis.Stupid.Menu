@@ -13,8 +13,8 @@ namespace iiMenu.Patches
         {
             if (isEnabled)
             {
-                previous = GorillaTagger.Instance.offlineVRRig.scaleFactor;
-                GorillaTagger.Instance.offlineVRRig.scaleFactor = 1f;
+                previous = GorillaTagger.Instance.offlineVRRig.NativeScale;
+                GorillaTagger.Instance.offlineVRRig.NativeScale = 1f;
             }
         }
 
@@ -22,7 +22,7 @@ namespace iiMenu.Patches
         {
             if (isEnabled)
             {
-                GorillaTagger.Instance.offlineVRRig.scaleFactor = previous;
+                GorillaTagger.Instance.offlineVRRig.NativeScale = previous;
             }
         }
     }

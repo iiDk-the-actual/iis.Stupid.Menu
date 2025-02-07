@@ -1,4 +1,6 @@
-﻿using iiMenu.Notifications;
+﻿using iiMenu.Classes;
+using iiMenu.Mods.Spammers;
+using iiMenu.Notifications;
 using Photon.Pun;
 using PlayFab;
 using PlayFab.ClientModels;
@@ -42,6 +44,31 @@ namespace iiMenu.Mods
             string id = PhotonNetwork.LocalPlayer.UserId;
             NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> " + id, 5000);
             GUIUtility.systemCopyBuffer = id;
+        }
+
+        public static void NarrateIDGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true) && Time.time > idgundelay)
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        idgundelay = Time.time + 0.5f;
+                        CoroutineManager.RunCoroutine(SpeakText("Name: " + GetPlayerFromVRRig(possibly).NickName + ". I D: " + GetPlayerFromVRRig(possibly).UserId));
+                    }
+                }
+            }
+        }
+
+        public static void NarrateSelfID()
+        {
+            CoroutineManager.RunCoroutine(SpeakText("Name: " + PhotonNetwork.LocalPlayer.NickName + ". I D: " + PhotonNetwork.LocalPlayer.UserId));
         }
 
         private static float cgdgd = 0f;

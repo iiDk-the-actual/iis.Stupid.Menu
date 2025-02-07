@@ -564,19 +564,6 @@ namespace iiMenu.Mods
             lastrhboop = isBoopRight;
         }
 
-        private static float GlassesOnGripDelay = 0f;
-        public static void GlassesOnGrip()
-        {
-            if (((leftGrab && Vector3.Distance(GorillaTagger.Instance.headCollider.transform.position, GorillaTagger.Instance.leftHandTransform.position) < 0.16f) || (rightGrab && Vector3.Distance(GorillaTagger.Instance.headCollider.transform.position, GorillaTagger.Instance.rightHandTransform.position) < 0.16f)) && Time.time > GlassesOnGripDelay)
-            {
-                GlassesOnGripDelay = Time.time + 1f;
-
-                CosmeticsController.instance.ApplyCosmeticItemToSet(CosmeticsController.instance.currentWornSet, CosmeticsController.instance.GetItemFromDict("LFABC."), true, false);
-                CosmeticsController.instance.ApplyCosmeticItemToSet(GorillaTagger.Instance.offlineVRRig.tryOnSet, CosmeticsController.instance.GetItemFromDict("LFABC."), true, false);
-                CosmeticsController.instance.UpdateWornCosmetics(true);
-            }
-        }
-
         private static bool autoclickstate = false;
         public static void AutoClicker()
         {
@@ -971,6 +958,26 @@ namespace iiMenu.Mods
         {
             GorillaTagger.Instance.offlineVRRig.EnableBuilderResizeWatch(false);
             RPCProtection();
+        }
+
+        private static float lastTimeDingied = 0f;
+        public static void QuestNoises()
+        {
+            if (rightTrigger > 0.5f && Time.time > lastTimeDingied)
+            {
+                lastTimeDingied = Time.time + 0.12f;
+                GameObject.Find("Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/CosmeticsRoomAnchor/outsidestores_prefab/Bottom Layer/OutsideBuildings/Wardrobe Hut/MonkeBusinessStation").GetComponent<PhotonView>().RPC("BroadcastRedeemQuestPoints", RpcTarget.All, UnityEngine.Random.Range(0, 50));
+            }
+        }
+
+        private static float delaybetweenscore = 0f;
+        public static void MaxQuestScore()
+        {
+            if (Time.time > delaybetweenscore)
+            {
+                delaybetweenscore = Time.time + 1f;
+                GorillaTagger.Instance.offlineVRRig.SetQuestScore(int.MaxValue);
+            }
         }
 
         public static void GrabIDCard()
@@ -1712,220 +1719,6 @@ namespace iiMenu.Mods
                         BuilderTable.instance.RequestRecyclePiece(piece, true, 2);
                     }
                 }
-            }
-        }
-
-        private static float startTimeBuilding = 0f;
-        public static void EnableAtticAntiReport()
-        {
-            startTimeBuilding = Time.time + 5f;
-        }
-
-        public static void AtticAntiReport()
-        {
-            if (Time.time > startTimeBuilding)
-                GetIndex("Attic Anti Report").enabled = false;
-
-            foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
-            {
-                if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
-                {
-                    RequestPieceMaster(-566818631, line.reportButton.transform.position + new Vector3(UnityEngine.Random.Range(-0.3f, 0.3f), UnityEngine.Random.Range(-0.3f, 0.3f), UnityEngine.Random.Range(-0.3f, 0.3f)), Quaternion.Euler(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)), Vector3.zero, BuilderPiece.State.OnShelf);
-                }
-            }
-        }
-
-        public static void AtticDrawGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (GetGunInput(true))
-                {
-                    if (!PhotonNetwork.IsMasterClient)
-                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-                    else
-                    {
-                        CoroutineManager.RunCoroutine(DrawSmallDelay(NewPointer.transform.position));
-                    }
-                }
-            }
-        }
-
-        public static void AtticBuildGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (GetGunInput(true))
-                {
-                    if (!PhotonNetwork.IsMasterClient)
-                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-                    else
-                    {
-                        RequestPieceMaster(pieceIdSet, NewPointer.transform.position, Quaternion.Euler(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)), Vector3.zero, BuilderPiece.State.AttachedAndPlaced);
-                    }
-                }
-            }
-        }
-
-        public static IEnumerator DrawSmallDelay(Vector3 position)
-        {
-            GameObject Temporary = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            Temporary.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
-            Temporary.transform.position = position;
-            UnityEngine.Object.Destroy(Temporary.GetComponent<Collider>());
-            yield return new WaitForSeconds(0.5f);
-            UnityEngine.Object.Destroy(Temporary);
-            RequestPieceMaster(pieceIdSet, position, Quaternion.Euler(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)), Vector3.zero, BuilderPiece.State.AttachedAndPlaced);
-        }
-
-        public static void AtticFreezeGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (isCopying && whoCopy != null)
-                {
-                    if (!PhotonNetwork.IsMasterClient)
-                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-                    else
-                    {
-                        RequestPieceMaster(-566818631, whoCopy.headMesh.transform.position + new Vector3(UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f)), Quaternion.Euler(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)), Vector3.zero, BuilderPiece.State.OnShelf);
-                        RequestPieceMaster(-566818631, whoCopy.leftHandTransform.position + new Vector3(UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f)), Quaternion.Euler(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)), Vector3.zero, BuilderPiece.State.OnShelf);
-                        RequestPieceMaster(-566818631, whoCopy.rightHandTransform.position + new Vector3(UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f)), Quaternion.Euler(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)), Vector3.zero, BuilderPiece.State.OnShelf);
-                    }
-                }
-                if (GetGunInput(true))
-                {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
-                    {
-                        isCopying = true;
-                        whoCopy = possibly;
-                    }
-                }
-            }
-            else
-            {
-                if (isCopying)
-                {
-                    isCopying = false;
-                }
-            }
-        }
-
-        public static void AtticFreezeAll()
-        {
-            if (rightTrigger > 0.5f)
-            {
-                VRRig target = GetRandomVRRig(false);
-
-                if (!PhotonNetwork.IsMasterClient)
-                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-                else
-                {
-                    for (int i=0; i<4; i++)
-                    {
-                        RequestPieceMaster(-566818631, target.headMesh.transform.position + new Vector3(UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f)), Quaternion.Euler(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)), Vector3.zero, BuilderPiece.State.OnShelf);
-                        RequestPieceMaster(-566818631, target.leftHandTransform.position + new Vector3(UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f)), Quaternion.Euler(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)), Vector3.zero, BuilderPiece.State.OnShelf);
-                        RequestPieceMaster(-566818631, target.rightHandTransform.position + new Vector3(UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f), UnityEngine.Random.Range(-0.4f, 0.4f)), Quaternion.Euler(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)), Vector3.zero, BuilderPiece.State.OnShelf);
-                    }
-                }
-            }
-        }
-
-        public static void AtticFloatGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (isCopying && whoCopy != null)
-                {
-                    if (!PhotonNetwork.IsMasterClient)
-                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-                    else
-                    {
-                        RequestPieceMaster(532163265, whoCopy.transform.position - new Vector3(0f, 0.35f, 0f), Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 360f), 0f), Vector3.zero, BuilderPiece.State.OnShelf);
-                    }
-                }
-                if (GetGunInput(true))
-                {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
-                    {
-                        isCopying = true;
-                        whoCopy = possibly;
-                    }
-                }
-            }
-            else
-            {
-                if (isCopying)
-                    isCopying = false;
-            }
-        }
-
-        public static void AtticFloatAll()
-        {
-            if (rightTrigger > 0.5f)
-            {
-                VRRig target = GetRandomVRRig(false);
-
-                if (!PhotonNetwork.IsMasterClient)
-                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-                else
-                {
-                    RequestPieceMaster(532163265, target.transform.position - new Vector3(0f, 0.35f, 0f), Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 360f), 0f), Vector3.zero, BuilderPiece.State.OnShelf);
-                }
-            }
-        }
-
-        private static int serializeFrame = -1;
-        public static void RequestPieceMaster(int PieceType, Vector3 Position, Quaternion Rotation, Vector3 Velocity, BuilderPiece.State State)
-        {
-            if (!PhotonNetwork.IsMasterClient)
-            {
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-                return;
-            }
-        }
-
-        public static Vector3 position = Vector3.zero;
-        public static void AtticTowerGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (position != Vector3.zero)
-                {
-                    RequestPieceMaster(pieceIdSet, position, Quaternion.Euler(0f, Time.frameCount % 360, 0f), Vector3.zero, BuilderPiece.State.AttachedAndPlaced);
-                    position += new Vector3(0f, 0.1f, 0f);
-                }
-
-                if (GetGunInput(true))
-                {
-                    position = NewPointer.transform.position;
-                }
-            }
-            else
-            {
-                position = Vector3.zero;
             }
         }
 
@@ -2817,7 +2610,7 @@ namespace iiMenu.Mods
                 bool FoundBalloon = false;
                 foreach (BalloonHoldable Balloon in GetBalloons())
                 {
-                    if (Balloon.ownerRig == GorillaTagger.Instance.offlineVRRig && Balloon.gameObject.name.Contains("LMAAP"))
+                    if (Balloon.ownerRig == GorillaTagger.Instance.offlineVRRig && Balloon.gameObject.name.Contains("LMAMI"))
                     {
                         FoundBalloon = true;
 

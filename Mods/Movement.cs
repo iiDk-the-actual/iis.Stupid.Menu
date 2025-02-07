@@ -622,21 +622,28 @@ namespace iiMenu.Mods
 
             if (Mouse.current.rightButton.isPressed)
             {
-                Vector3 Euler = GorillaLocomotion.Player.Instance.rightControllerTransform.parent.rotation.eulerAngles;
+                Transform parentTransform = GorillaLocomotion.Player.Instance.rightControllerTransform.parent;
+                Quaternion currentRotation = parentTransform.rotation;
+                Vector3 euler = currentRotation.eulerAngles;
 
                 if (startX < 0)
                 {
-                    startX = Euler.y;
+                    startX = euler.y;
                     subThingy = Mouse.current.position.value.x / UnityEngine.Screen.width;
                 }
                 if (startY < 0)
                 {
-                    startY = Euler.x;
+                    startY = euler.x;
                     subThingyZ = Mouse.current.position.value.y / UnityEngine.Screen.height;
                 }
 
-                Euler = new Vector3(startY - ((((Mouse.current.position.value.y / UnityEngine.Screen.height) - subThingyZ) * 360) * 1.33f), startX + ((((Mouse.current.position.value.x / UnityEngine.Screen.width) - subThingy) * 360) * 1.33f), Euler.z);
-                GorillaLocomotion.Player.Instance.rightControllerTransform.parent.rotation = Quaternion.Euler(Euler);
+                float newX = startY - ((((Mouse.current.position.value.y / UnityEngine.Screen.height) - subThingyZ) * 360) * 1.33f);
+                float newY = startX + ((((Mouse.current.position.value.x / UnityEngine.Screen.width) - subThingy) * 360) * 1.33f);
+
+                newX = (newX > 180f) ? newX - 360f : newX;
+                newX = Mathf.Clamp(newX, -90f, 90f);
+
+                parentTransform.rotation = Quaternion.Euler(newX, newY, euler.z);
             }
             else
             {
@@ -2579,20 +2586,8 @@ namespace iiMenu.Mods
             }
         }
 
-        //private static Traverse minScale = null;
-        //private static Traverse maxScale = null;
         public static void SizeChanger()
         {
-            //Patches.SizePatch.enabled = true;
-            //Patches.SizePatch.overlapSizeChanger = GameObject.Find("Environment Objects/05Maze_PersistentObjects/GuardianZoneManagers/GuardianZoneManager_Forest/GuardianSizeChanger").GetComponent<SizeChanger>();
-            //if (minScale == null)
-            //{
-            //    minScale = Traverse.Create(Patches.SizePatch.overlapSizeChanger).Field("minScale");
-            //}
-            //if (maxScale == null)
-            //{
-            //    maxScale = Traverse.Create(Patches.SizePatch.overlapSizeChanger).Field("maxScale");
-            //}
             float increment = 0.05f;
             if (!GetIndex("Disable Size Changer Buttons").enabled)
             {
@@ -2621,20 +2616,19 @@ namespace iiMenu.Mods
             {
                 sizeScale = 0.05f;
             }
-            GorillaLocomotion.Player.Instance.scale = sizeScale;
-            GorillaTagger.Instance.offlineVRRig.scaleFactor = sizeScale;
-            //minScale.SetValue(sizeScale);
-            //maxScale.SetValue(sizeScale);
+
+            GorillaTagger.Instance.offlineVRRig.transform.localScale = Vector3.one * sizeScale;
+            GorillaTagger.Instance.offlineVRRig.NativeScale = sizeScale;
+            typeof(GorillaLocomotion.Player).GetField("nativeScale", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(GorillaLocomotion.Player.Instance, sizeScale);
         }
 
         public static void DisableSizeChanger()
         {
-            //Patches.SizePatch.enabled =  false;
-            //Traverse.Create(Patches.SizePatch.overlapSizeChanger).Field("minScale").SetValue(3f);
-            //Traverse.Create(Patches.SizePatch.overlapSizeChanger).Field("maxScale").SetValue(3f);
             sizeScale = 1f;
-            GorillaLocomotion.Player.Instance.scale = sizeScale;
-            GorillaTagger.Instance.offlineVRRig.scaleFactor = sizeScale;
+
+            GorillaTagger.Instance.offlineVRRig.transform.localScale = Vector3.one * sizeScale;
+            GorillaTagger.Instance.offlineVRRig.NativeScale = sizeScale;
+            typeof(GorillaLocomotion.Player).GetField("nativeScale", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(GorillaLocomotion.Player.Instance, sizeScale);
         }
 
         public static void EnableSlipperyHands()
