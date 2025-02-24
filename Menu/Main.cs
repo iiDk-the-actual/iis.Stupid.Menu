@@ -668,9 +668,7 @@ namespace iiMenu.Menu
                             if (legacyGhostview)
                             {
                                 if (GhostRig != null)
-                                {
                                     UnityEngine.Object.Destroy(GhostRig.gameObject);
-                                }
 
                                 GameObject l = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                                 UnityEngine.Object.Destroy(l.GetComponent<Rigidbody>());
@@ -703,6 +701,7 @@ namespace iiMenu.Menu
                                     GhostRig.transform.Find("VR Constraints/LeftArm/Left Arm IK/SlideAudio").gameObject.SetActive(false);
                                     GhostRig.transform.Find("VR Constraints/RightArm/Right Arm IK/SlideAudio").gameObject.SetActive(false);
 
+                                    Visuals.FixRigMaterialESPColors(GhostRig);
                                     //GhostPatch.Prefix(GorillaTagger.Instance.offlineVRRig);
                                 }
 
@@ -3534,7 +3533,9 @@ namespace iiMenu.Menu
             {
                 if (hasRemovedThisFrame == false)
                 {
-                    hasRemovedThisFrame = true;
+                    if (NoOverlapRPCs)
+                        hasRemovedThisFrame = true;
+
                     if (GetIndex("Experimental RPC Protection").enabled)
                     {
                         PhotonNetwork.RaiseEvent(0, null, new RaiseEventOptions
@@ -3807,6 +3808,7 @@ namespace iiMenu.Menu
 
                                 Button.overlapText = overlapText + " <color=grey>[</color><color=red>Detected</color><color=grey>]</color>";
                                 Button.isTogglable = false;
+                                Button.enabled = false;
 
                                 Button.method = delegate { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> This mod is currently disabled, as it is detected."); };
                             }
@@ -5038,7 +5040,6 @@ namespace iiMenu.Menu
                 {
                     if (Buttons.buttons[CacheData.Category][CacheData.Index].buttonText == buttonText)
                         return Buttons.buttons[CacheData.Category][CacheData.Index];
-
                 } catch { cacheGetIndex.Remove(buttonText); }
             }
 
@@ -5151,11 +5152,7 @@ namespace iiMenu.Menu
             if (cacheAssembly.ContainsKey(dllName))
                 return cacheAssembly[dllName];
 
-            string filePath = System.IO.Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, dllName);
-            filePath = filePath.Split("BepInEx\\")[0] + dllName;
-            filePath = filePath.Replace("/", "\\");
-
-            Assembly Assembly = Assembly.LoadFrom(filePath);
+            Assembly Assembly = Assembly.Load(File.ReadAllBytes(dllName.Replace("/", "\\")));
             cacheAssembly.Add(dllName, Assembly);
             return Assembly;
         }
@@ -5673,108 +5670,119 @@ namespace iiMenu.Menu
         }
 
         // The variable warehouse
-        public static bool isBetaTestVersion = false;
-        public static bool lockdown = false;
-        public static bool isOnPC = false;
+        public static string rat = @"
+     _   _
+    (q\_/p)
+.-.  |. .|
+   \ =\,/=
+    )/ _ \  |\
+   (/\):(/\  )\
+jgs \_   _/ |Oo\
+    `\""^""` `""`
+";
+
+        public static bool isBetaTestVersion;
+        public static bool lockdown;
+        public static bool isOnPC;
         public static bool IsSteam = true;
 
-        public static bool HasLoaded = false;
-        public static bool hasLoadedPreferences = false;
-        public static bool hasRemovedThisFrame = false;
-        public static bool shouldAttemptLoadData = false;
+        public static bool HasLoaded;
+        public static bool hasLoadedPreferences;
+        public static bool hasRemovedThisFrame;
+        public static bool NoOverlapRPCs = true;
+        public static bool shouldAttemptLoadData;
         public static float shouldLoadDataTime = -1f;
-        public static int attemptsToLoad = 0;
+        public static int attemptsToLoad;
 
         public static bool FATMENU = true;
-        public static bool longmenu = false;
-        public static bool disorganized = false;
-        public static bool flipMenu = false;
-        public static bool shinymenu = false;
+        public static bool longmenu;
+        public static bool disorganized;
+        public static bool flipMenu;
+        public static bool shinymenu;
         public static bool dropOnRemove = true;
-        public static bool shouldOutline = false;
-        public static bool shouldRound = false;
-        public static bool lastclicking = false;
-        public static bool openedwithright = false;
-        public static bool likebark = false;
+        public static bool shouldOutline;
+        public static bool shouldRound;
+        public static bool lastclicking;
+        public static bool openedwithright;
+        public static bool likebark;
 
         public static int pageSize = 6;
-        public static int pageNumber = 0;
-        public static bool noPageNumber = false;
-        public static bool disablePageButtons = false;
+        public static int pageNumber;
+        public static bool noPageNumber;
+        public static bool disablePageButtons;
         public static int pageButtonType = 1;
 
-        public static int buttonsType = 0;
+        public static int buttonsType;
         public static int buttonClickSound = 8;
-        public static int buttonClickIndex = 0;
+        public static int buttonClickIndex;
         public static int buttonClickVolume = 4;
         public static float buttonOffset = 2;
         public static bool doButtonsVibrate = true;
 
-        public static bool joystickMenu = false;
-        public static bool physicalMenu = false;
+        public static bool joystickMenu;
+        public static bool physicalMenu;
         public static Vector3 physicalOpenPosition = Vector3.zero;
         public static Quaternion physicalOpenRotation = Quaternion.identity;
-        public static bool joystickOpen = false;
-        public static int joystickButtonSelected = 0;
+        public static bool joystickOpen;
+        public static int joystickButtonSelected;
         public static string joystickSelectedButton = "";
         public static float joystickDelay = -1f;
 
-        public static bool rightHand = false;
-        public static bool isRightHand = false;
-        public static bool bothHands = false;
-        public static bool wristThing = false;
-        public static bool wristThingV2 = false;
-        public static bool wristOpen = false;
+        public static bool rightHand;
+        public static bool isRightHand;
+        public static bool bothHands;
+        public static bool wristThing;
+        public static bool wristThingV2;
+        public static bool wristOpen;
         public static float wristMenuDelay = -1f;
 
-        public static bool disableNotifications = false;
-        public static bool narrateNotifications = false;
+        public static bool disableNotifications;
+        public static bool narrateNotifications;
         public static bool showEnabledModsVR = true;
-        public static bool disableDisconnectButton = false;
-        public static bool disableFpsCounter = false;
-        public static bool disableSearchButton = false;
-        public static bool disableReturnButton = false;
+        public static bool disableDisconnectButton;
+        public static bool disableFpsCounter;
+        public static bool disableSearchButton;
+        public static bool disableReturnButton;
 
-        public static bool ghostException = false;
-        public static bool disableGhostview = false;
-        public static bool legacyGhostview = false;
-        public static bool checkMode = false;
-        public static bool lastChecker = false;
+        public static bool ghostException;
+        public static bool disableGhostview;
+        public static bool legacyGhostview;
+        public static bool checkMode;
+        public static bool lastChecker;
 
-        public static bool SmoothGunPointer = false;
-        public static bool smallGunPointer = false;
-        public static bool disableGunPointer = false;
-        public static bool disableGunLine = false;
-        public static bool SwapGunHand = false;
-        public static int gunVariation = 0;
-        public static int GunDirection = 0;
+        public static bool SmoothGunPointer;
+        public static bool smallGunPointer;
+        public static bool disableGunPointer;
+        public static bool disableGunLine;
+        public static bool SwapGunHand;
+        public static int gunVariation;
+        public static int GunDirection;
 
-        public static int fontCycle = 0;
+        public static int fontCycle;
         public static int fontStyleType = 2;
-        public static bool NoAutoSizeText = false;
+        public static bool NoAutoSizeText;
 
-        public static bool doCustomName = false;
+        public static bool doCustomName;
         public static string customMenuName = "your text here";
-        public static bool doCustomMenuBackground = false;
-        public static bool disableBoardColor = false;
-        public static bool disableBoardTextColor = false;
-        public static int pcbg = 0;
+        public static bool doCustomMenuBackground;
+        public static bool disableBoardColor;
+        public static bool disableBoardTextColor;
+        public static int pcbg;
 
-        public static bool isSearching = false;
-        public static bool nonGlobalSearch = false;
-        public static bool isPcWhenSearching = false;
+        public static bool isSearching;
+        public static bool nonGlobalSearch;
+        public static bool isPcWhenSearching;
         public static string searchText = "";
-        public static float lastBackspaceTime = 0f;
+        public static float lastBackspaceTime;
 
         public static int fullModAmount = -1;
-        public static int amountPartying = 0;
-        public static bool waitForPlayerJoin = false;
-        public static bool riskyModsEnabled = false;
-        public static bool scaleWithPlayer = false;
+        public static int amountPartying;
+        public static bool waitForPlayerJoin;
+        public static bool scaleWithPlayer;
 
-        public static bool dynamicSounds = false;
-        public static bool dynamicAnimations = false;
-        public static bool dynamicGradients = false;
+        public static bool dynamicSounds;
+        public static bool dynamicAnimations;
+        public static bool dynamicGradients;
         public static string lastClickedName = "";
 
         public static string ascii = 
@@ -5792,21 +5800,21 @@ namespace iiMenu.Menu
         "<color=red>I, iiDk, am not responsible for any bans using this menu.</color> " +
         "If you get banned while using this, it's your responsibility.";
 
-        public static bool isMenuButtonHeld = false;
-        public static bool shouldBePC = false;
-        public static bool leftPrimary = false;
-        public static bool leftSecondary = false;
-        public static bool rightPrimary = false;
-        public static bool rightSecondary = false;
-        public static bool leftGrab = false;
-        public static bool rightGrab = false;
-        public static float leftTrigger = 0f;
-        public static float rightTrigger = 0f;
+        public static bool isMenuButtonHeld;
+        public static bool shouldBePC;
+        public static bool leftPrimary;
+        public static bool leftSecondary;
+        public static bool rightPrimary;
+        public static bool rightSecondary;
+        public static bool leftGrab;
+        public static bool rightGrab;
+        public static float leftTrigger;
+        public static float rightTrigger;
 
         public static Vector2 leftJoystick = Vector2.zero;
         public static Vector2 rightJoystick = Vector2.zero;
-        public static bool leftJoystickClick = false;
-        public static bool rightJoystickClick = false;
+        public static bool leftJoystickClick;
+        public static bool rightJoystickClick;
 
         public static List<KeyCode> lastPressedKeys = new List<KeyCode>();
         public static KeyCode[] allowedKeys = {
@@ -5819,7 +5827,7 @@ namespace iiMenu.Menu
         };
 
         public static bool ToggleBindings = true;
-        public static bool IsBinding = false;
+        public static bool IsBinding;
         public static string BindInput = "";
 
         public static Dictionary<string, List<string>> ModBindings = new Dictionary<string, List<string>> {
@@ -5903,7 +5911,7 @@ namespace iiMenu.Menu
         public static GameObject watchShell = null;
         public static GameObject watchEnabledIndicator = null;
         public static Material watchIndicatorMat = null;
-        public static int currentSelectedModThing = 0;
+        public static int currentSelectedModThing;
 
         public static GameObject regwatchobject = null;
         public static GameObject regwatchText = null;
@@ -5932,16 +5940,16 @@ namespace iiMenu.Menu
         public static List<GorillaNetworkJoinTrigger> triggers = new List<GorillaNetworkJoinTrigger> { };
         public static List<TMPro.TextMeshPro> udTMP = new List<TMPro.TextMeshPro> { };
 
-        public static string StumpLeaderboardID = "UnityTempFile-8e79918dcea7d684f8d517406813ed80";
-        public static string ForestLeaderboardID = "UnityTempFile-8e79918dcea7d684f8d517406813ed80";
+        public static string StumpLeaderboardID = "UnityTempFile";
+        public static string ForestLeaderboardID = "UnityTempFile";
 
-        public static int StumpLeaderboardIndex = 2;
-        public static int ForestLeaderboardIndex = 2;
+        public static int StumpLeaderboardIndex = 3;
+        public static int ForestLeaderboardIndex = 7;
 
         public static Material[] ogScreenMats = new Material[] { };
 
         public static Dictionary<string, string> translations = new Dictionary<string, string> { };
-        public static bool translate = false;
+        public static bool translate;
 
         public static string serverLink = "https://discord.gg/iidk";
 
@@ -5954,7 +5962,7 @@ namespace iiMenu.Menu
             4, 3, 5, 4, 19, 18, 20, 19, 3, 18, 21, 20, 22, 21, 25, 21, 29, 21, 31, 29, 27, 25, 24, 22, 6, 5, 7, 6, 10, 6, 14, 6, 16, 14, 12, 10, 9, 7
         };
 
-        public static int arrowType = 0;
+        public static int arrowType;
         public static string[][] arrowTypes = new string[][] // http://xahlee.info/comp/unicode_index.html
         {
             new string[] {"<", ">"},
@@ -6040,83 +6048,74 @@ namespace iiMenu.Menu
         public static Color textClicked = new Color32(255, 190, 125, 255);
         public static Color colorChange = Color.black;
 
-        public static Vector3 walkPos;
-        public static Vector3 walkNormal;
-
         public static Vector3 closePosition;
 
         public static Vector3 pointerOffset = new Vector3(0f, -0.1f, 0f);
-        public static int pointerIndex = 0;
+        public static int pointerIndex;
 
-        public static float tagAuraDistance = 1.666f;
-        public static int tagAuraIndex = 1;
+        public static bool lastSlingThing;
+        public static bool noclip;
 
-        public static bool lastSlingThing = false;
-        public static bool noclip = false;
+        public static bool isCopying;
 
-        public static bool isCopying = false;
-
-        public static bool lastInRoom = false;
-        public static bool lastMasterClient = false;
+        public static bool lastInRoom;
+        public static bool lastMasterClient;
         public static string lastRoom = "";
 
-        public static int platformMode = 0;
-        public static int platformShape = 0;
+        public static int platformMode;
+        public static int platformShape;
 
-        public static bool customSoundOnJoin = false;
-        public static float partDelay = 0f;
+        public static bool customSoundOnJoin;
 
         public static string rejRoom = null;
-        public static float rejDebounce = 0f;
+        public static float rejDebounce;
 
         public static string partyLastCode = null;
-        public static float partyTime = 0f;
-        public static bool phaseTwo = false;
+        public static float partyTime;
+        public static bool phaseTwo;
 
-        public static bool adminIsScaling = false;
+        public static bool adminIsScaling;
         public static VRRig adminRigTarget = null;
         public static float adminScale = 1f;
         public static Player adminConeExclusion = null;
 
         public static float timeMenuStarted = -1f;
-        public static float delaythinggg = 0f;
-        public static float debounce = 0f;
-        public static float kgDebounce = 0f;
-        public static float nameCycleDelay = 0f;
-        public static float stealIdentityDelay = 0f;
-        public static float beesDelay = 0f;
-        public static float laggyRigDelay = 0f;
-        public static float jrDebounce = 0f;
-        public static float projDebounce = 0f;
+        public static float kgDebounce;
+        public static float nameCycleDelay;
+        public static float stealIdentityDelay;
+        public static float beesDelay;
+        public static float laggyRigDelay;
+        public static float jrDebounce;
+        public static float projDebounce;
         public static float projDebounceType = 0.1f;
-        public static float soundDebounce = 0f;
-        public static float buttonCooldown = 0f;
-        public static float colorChangerDelay = 0f;
-        public static float teleDebounce = 0f;
-        public static float splashDel = 0f;
-        public static float headspazDelay = 0f;
+        public static float soundDebounce;
+        public static float buttonCooldown;
+        public static float colorChangerDelay;
+        public static float teleDebounce;
+        public static float splashDel;
+        public static float headspazDelay;
         public static float internetTime = 5f;
         public static float autoSaveDelay = Time.time + 60f;
-        public static bool BackupPreferences = false;
+        public static bool BackupPreferences;
 
-        public static int projmode = 0;
-        public static int trailmode = 0;
+        public static int projmode;
+        public static int trailmode;
 
         public static int notificationDecayTime = 1000;
-        public static int notificationSoundIndex = 0;
+        public static int notificationSoundIndex;
 
-        public static float oldSlide = 0f;
+        public static float oldSlide;
 
-        public static int accessoryType = 0;
-        public static int hat = 0;
+        public static int accessoryType;
+        public static int hat;
 
-        public static int soundId = 0;
+        public static int soundId;
 
         public static float red = 1f;
         public static float green = 0.5f;
-        public static float blue = 0f;
+        public static float blue;
 
-        public static bool lastOwner = false;
+        public static bool lastOwner;
         public static string inputText = "";
         public static string lastCommand = "";
 
@@ -6133,60 +6132,59 @@ namespace iiMenu.Menu
         public static int longarmCycle = 2;
         public static float armlength = 1.25f;
 
-        public static int nameCycleIndex = 0;
+        public static int nameCycleIndex;
 
-        public static bool lastprimaryhit = false;
-        public static bool idiotfixthingy = false;
+        public static bool lastprimaryhit;
 
-        public static int colorChangeType = 0;
-        public static bool strobeColor = false;
+        public static int colorChangeType;
+        public static bool strobeColor;
 
-        public static bool AntiCrashToggle = false;
-        public static bool AntiSoundToggle = false;
-        public static bool AntiCheatSelf = false;
-        public static bool AntiCheatAll = false;
-        public static bool AntiACReport = false;
-        public static bool AntiOculusReport = false;
-        public static bool NoGliderRespawn = false;
+        public static bool AntiCrashToggle;
+        public static bool AntiSoundToggle;
+        public static bool AntiCheatSelf;
+        public static bool AntiCheatAll;
+        public static bool AntiACReport;
+        public static bool AntiOculusReport;
+        public static bool NoGliderRespawn;
 
-        public static bool lastHit = false;
-        public static bool lastHit2 = false;
+        public static bool lastHit;
+        public static bool lastHit2;
         public static bool lastRG;
 
         public static int tindex = 1;
 
-        public static bool lastHitL = false;
-        public static bool lastHitR = false;
-        public static bool lastHitLP = false;
-        public static bool lastHitRP = false;
-        public static bool lastHitRS = false;
+        public static bool lastHitL;
+        public static bool lastHitR;
+        public static bool lastHitLP;
+        public static bool lastHitRP;
+        public static bool lastHitRS;
 
-        public static bool plastLeftGrip = false;
-        public static bool plastRightGrip = false;
+        public static bool plastLeftGrip;
+        public static bool plastRightGrip;
 
-        public static bool EverythingSlippery = false;
-        public static bool EverythingGrippy = false;
+        public static bool EverythingSlippery;
+        public static bool EverythingGrippy;
 
-        public static bool headspazType = false;
+        public static bool headspazType;
 
-        public static bool hasFoundAllBoards = false;
+        public static bool hasFoundAllBoards;
 
-        public static float lastBangTime = 0f;
+        public static float lastBangTime;
 
-        public static float subThingy = 0f;
-        public static float subThingyZ = 0f;
+        public static float subThingy;
+        public static float subThingyZ;
 
         public static float sizeScale = 1f;
 
-        public static float turnAmnt = 0f;
-        public static float TagAuraDelay = 0f;
+        public static float turnAmnt;
+        public static float TagAuraDelay;
         public static float startX = -1f;
         public static float startY = -1f;
 
-        public static bool lowercaseMode = false;
+        public static bool lowercaseMode;
         public static string inputTextColor = "green";
         
-        public static bool annoyingMode = false; // Build with this enabled for a surprise
+        public static bool annoyingMode; // Build with this enabled for a surprise
         public static string[] facts = new string[] {
             "The honeybee is the only insect that produces food eaten by humans.",
             "Bananas are berries, but strawberries aren't.",

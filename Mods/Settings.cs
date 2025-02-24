@@ -2814,7 +2814,7 @@ namespace iiMenu.Mods
                     favz += seperator + fav;
             }
 
-            string ihateyouguys = platformMode + seperator + platformShape + seperator + flySpeedCycle + seperator + longarmCycle + seperator + speedboostCycle + seperator + projmode + seperator + trailmode + seperator + shootCycle + seperator + pointerIndex + seperator + tagAuraIndex + seperator + notificationDecayTime + seperator + fontStyleType + seperator + arrowType + seperator + pcbg + seperator + internetTime + seperator + hotkeyButton + seperator + buttonClickIndex + seperator + buttonClickVolume + seperator + Safety.antireportrangeindex + seperator + Advantages.tagRangeIndex + seperator + Sound.BindMode + seperator + Movement.driveInt + seperator + langInd + seperator + inputTextColorInt + seperator + Movement.pullPowerInt + seperator + notificationSoundIndex + seperator + Visuals.PerformanceModeStepIndex + seperator + gunVariation + seperator + GunDirection;
+            string ihateyouguys = platformMode + seperator + platformShape + seperator + flySpeedCycle + seperator + longarmCycle + seperator + speedboostCycle + seperator + projmode + seperator + trailmode + seperator + shootCycle + seperator + pointerIndex + seperator + Advantages.tagAuraIndex + seperator + notificationDecayTime + seperator + fontStyleType + seperator + arrowType + seperator + pcbg + seperator + internetTime + seperator + hotkeyButton + seperator + buttonClickIndex + seperator + buttonClickVolume + seperator + Safety.antireportrangeindex + seperator + Advantages.tagRangeIndex + seperator + Sound.BindMode + seperator + Movement.driveInt + seperator + langInd + seperator + inputTextColorInt + seperator + Movement.pullPowerInt + seperator + notificationSoundIndex + seperator + Visuals.PerformanceModeStepIndex + seperator + gunVariation + seperator + GunDirection;
 
             string bindsToSave = "";
             foreach (KeyValuePair<string, List<string>> Bind in ModBindings)
@@ -2902,7 +2902,7 @@ namespace iiMenu.Mods
                 Projectiles.ChangeShootSpeed();
                 pointerIndex = int.Parse(data[8]) - 1;
                 ChangePointerPosition();
-                tagAuraIndex = int.Parse(data[9]) - 1;
+                Advantages.tagAuraIndex = int.Parse(data[9]) - 1;
                 Advantages.ChangeTagAuraRange();
                 notificationDecayTime = int.Parse(data[10]) - 1000;
                 ChangeNotificationTime();
@@ -2976,7 +2976,7 @@ namespace iiMenu.Mods
                 Projectiles.ChangeShootSpeed();
                 pointerIndex = int.Parse(data[8]) - 1;
                 ChangePointerPosition();
-                tagAuraIndex = int.Parse(data[9]) - 1;
+                Advantages.tagAuraIndex = int.Parse(data[9]) - 1;
                 Advantages.ChangeTagAuraRange();
                 notificationDecayTime = int.Parse(data[10]) - 1000;
                 ChangeNotificationTime();

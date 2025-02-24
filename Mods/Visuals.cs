@@ -1,18 +1,13 @@
 ﻿using GorillaExtensions;
 using GorillaNetworking;
 using iiMenu.Classes;
-using iiMenu.Notifications;
-using Pathfinding.RVO;
 using Photon.Pun;
-using Photon.Voice.Unity;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
-using UnityEngine.UIElements;
 using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods
@@ -1523,12 +1518,29 @@ namespace iiMenu.Mods
             }
         }
 
+        private static Dictionary<VRRig, float> delays = new Dictionary<VRRig, float> { };
+        public static void FixRigMaterialESPColors(VRRig rig)
+        {
+            if ((delays.ContainsKey(rig) && Time.time > delays[rig]) || !delays.ContainsKey(rig))
+            {
+                if (delays.ContainsKey(rig))
+                    delays[rig] = Time.time + 5f;
+                else
+                    delays.Add(rig, Time.time + 5f);
+
+                rig.mainSkin.sharedMesh.colors32 = Enumerable.Repeat((Color32)Color.white, rig.mainSkin.sharedMesh.colors32.Length).ToArray();
+                rig.mainSkin.sharedMesh.colors = Enumerable.Repeat(Color.white, rig.mainSkin.sharedMesh.colors.Length).ToArray();
+            }
+        }
+
         public static void CasualChams()
         {
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
                 if (vrrig != GorillaTagger.Instance.offlineVRRig)
                 {
+                    FixRigMaterialESPColors(vrrig);
+
                     vrrig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
                     vrrig.mainSkin.material.color = vrrig.playerColor;
                     if (GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = GetBGColor(0f); }
@@ -1556,6 +1568,8 @@ namespace iiMenu.Mods
                     {
                         if (PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
                         {
+                            FixRigMaterialESPColors(vrrig);
+
                             vrrig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
                             vrrig.mainSkin.material.color = new Color32(255, 111, 0, 255);
                             if (GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = GetBGColor(0f); }
@@ -1573,6 +1587,8 @@ namespace iiMenu.Mods
                     {
                         if (!PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
                         {
+                            FixRigMaterialESPColors(vrrig);
+
                             vrrig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
                             vrrig.mainSkin.material.color = vrrig.playerColor;
                             if (GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = GetBGColor(0f); }
@@ -1587,6 +1603,8 @@ namespace iiMenu.Mods
                 {
                     if (vrrig != GorillaTagger.Instance.offlineVRRig)
                     {
+                        FixRigMaterialESPColors(vrrig);
+
                         vrrig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
                         vrrig.mainSkin.material.color = vrrig.playerColor;
                     }
@@ -1603,6 +1621,8 @@ namespace iiMenu.Mods
                 VRRig vrrig = RigManager.GetVRRigFromPlayer(player);
                 if (player == target)
                 {
+                    FixRigMaterialESPColors(vrrig);
+
                     vrrig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
                     vrrig.mainSkin.material.color = vrrig.playerColor;
                     if (GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = GetBGColor(0f); }
