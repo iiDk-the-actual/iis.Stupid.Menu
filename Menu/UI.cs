@@ -20,36 +20,13 @@ namespace iiMenu.UI
         private string inputText = "goldentrophy";
 
         private string r = "255";
-
         private string g = "128";
-
         private string b = "0";
 
         public static bool isOpen = true;
-
         public static bool lastCondition = false;
 
-        public static float lasttimeiconupdated = -1f;
-
         public static Texture2D icon;
-
-        private Texture2D LoadTextureFromResource(string resourcePath)
-        {
-            Texture2D texture = new Texture2D(2, 2);
-
-            Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourcePath);
-            if (stream != null)
-            {
-                byte[] fileData = new byte[stream.Length];
-                stream.Read(fileData, 0, (int)stream.Length);
-                texture.LoadImage(fileData);
-            }
-            else
-            {
-                Debug.LogError("Failed to load texture from resource: " + resourcePath);
-            }
-            return texture;
-        }
 
         private void Start()
         {
@@ -144,44 +121,26 @@ namespace iiMenu.UI
                 b = GUI.TextField(new Rect(Screen.width - 240, 80, 30, 20), b);
 
                 if (GUI.Button(new Rect(Screen.width - 200, 50, 85, 30), "Name"))
-                {
-                    try
-                    {
-                        GorillaComputer.instance.currentName = inputText;
-                        PhotonNetwork.LocalPlayer.NickName = inputText;
-                        GorillaComputer.instance.offlineVRRigNametagText.text = inputText;
-                        GorillaComputer.instance.savedName = inputText;
-                        PlayerPrefs.SetString("playerName", inputText);
-                        PlayerPrefs.Save();
-                    }
-                    catch
-                    {
-                        UnityEngine.Debug.Log("lemming is yet to fix me");
-                    }
-                }
+                    ChangeName(inputText.Replace("\\n", "\n"));
+                
                 if (GUI.Button(new Rect(Screen.width - 105, 50, 85, 30), "Color"))
                 {
                     UnityEngine.Color color = new Color32(byte.Parse(r), byte.Parse(g), byte.Parse(b), 255);
-
                     ChangeColor(color);
                 }
+
                 bool Create = false;
                 try
                 {
                     Create = UnityInput.Current.GetKey(KeyCode.LeftControl);
                 } catch { }
+
                 if (GUI.Button(new Rect(Screen.width - 200, 90, 85, 30), Create ? "Create" : "Join"))
                 {
                     if (Create)
-                    {
-                        string toJoin = inputText.Replace("\\n", "\n");
-                        iiMenu.Mods.Important.CreateRoom(toJoin, true);
-                    } else
-                    {
-                        string toJoin = inputText.Replace("\\n", "\n");
-                        PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(toJoin, JoinType.Solo);
-                    }
-                    
+                        iiMenu.Mods.Important.CreateRoom(inputText.Replace("\\n", "\n"), true);
+                    else
+                        PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(inputText.Replace("\\n", "\n"), JoinType.Solo);
                 }
                 if (GUI.Button(new Rect(Screen.width - 105, 90, 85, 30), "Queue"))
                 {
@@ -232,9 +191,7 @@ namespace iiMenu.UI
                         .ToArray();
 
                     foreach (string v in sortedButtons)
-                    {
                         GUILayout.Label(v, Array.Empty<GUILayoutOption>());
-                    }
 
                     GUILayout.EndVertical();
                     GUILayout.EndHorizontal();

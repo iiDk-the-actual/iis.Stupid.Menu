@@ -1,14 +1,10 @@
 ﻿using ExitGames.Client.Photon;
+using GorillaTagScripts;
 using iiMenu.Classes;
 using iiMenu.Notifications;
 using Photon.Pun;
-using System;
 using UnityEngine;
-using Valve.VR;
-using UnityEngine.InputSystem;
 using static iiMenu.Menu.Main;
-using UnityEngine.Animations.Rigging;
-using GorillaTagScripts;
 
 namespace iiMenu.Mods
 {
@@ -253,6 +249,9 @@ namespace iiMenu.Mods
                 tagman.tagCoolDown = 5f;
             }
         }
+
+        public static float tagAuraDistance = 1.666f;
+        public static int tagAuraIndex = 1;
 
         public static void ChangeTagAuraRange()
         {

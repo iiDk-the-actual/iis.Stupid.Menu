@@ -255,6 +255,17 @@ namespace iiMenu.Mods
             NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully fixed " + duplicateButtons.ToString() + " broken buttons.");
         }
 
+        public static void EnableOverlapRPCs()
+        {
+            NoOverlapRPCs = false;
+        }
+
+        public static void DisableOverlapRPCs()
+        {
+            NoOverlapRPCs = true;
+        }
+
+        // Damn sure this does jack shit, idk who sent this to me
         public static void AntiRPCBan()
         {
             GorillaGameManager.instance.OnPlayerLeftRoom(PhotonNetwork.LocalPlayer);

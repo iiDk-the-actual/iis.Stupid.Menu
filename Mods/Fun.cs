@@ -408,7 +408,7 @@ namespace iiMenu.Mods
         {
             if (Time.time > splashDel)
             {
-                if (GorillaLocomotion.Player.Instance.wasLeftHandTouching)
+                if (GorillaLocomotion.Player.Instance.IsHandTouching(true))
                 {
                     FieldInfo fieldInfo = typeof(GorillaLocomotion.Player).GetField("lastHitInfoHand", BindingFlags.NonPublic | BindingFlags.Instance);
                     RaycastHit ray = (RaycastHit)fieldInfo.GetValue(GorillaLocomotion.Player.Instance);
@@ -424,7 +424,7 @@ namespace iiMenu.Mods
                     RPCProtection();
                     splashDel = Time.time + 0.1f;
                 }
-                if (GorillaLocomotion.Player.Instance.wasRightHandTouching)
+                if (GorillaLocomotion.Player.Instance.IsHandTouching(false))
                 {
                     FieldInfo fieldInfo = typeof(GorillaLocomotion.Player).GetField("lastHitInfoHand", BindingFlags.NonPublic | BindingFlags.Instance);
                     RaycastHit ray = (RaycastHit)fieldInfo.GetValue(GorillaLocomotion.Player.Instance);
@@ -1565,6 +1565,16 @@ namespace iiMenu.Mods
                 snowball.maxLinSpeed = 12f;
                 snowball.maxWristSpeed = 4f;
             }
+        }
+
+        public static void GlobalHoverboard()
+        {
+            GorillaLocomotion.Player.Instance.SetEnableHoverboard(true);
+        }
+
+        public static void DisableGlobalHoverboard()
+        {
+            GorillaLocomotion.Player.Instance.SetEnableHoverboard(false);
         }
 
         public static void FastGliders()

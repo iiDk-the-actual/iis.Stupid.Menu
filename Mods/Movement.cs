@@ -1308,9 +1308,12 @@ namespace iiMenu.Mods
             GorillaLocomotion.Player.Instance.rightControllerTransform.parent.rotation = Quaternion.identity;
         }
 
+        private static Vector3 walkPos;
+        private static Vector3 walkNormal;
+
         public static void WallWalk()
         {
-            if (GorillaLocomotion.Player.Instance.wasLeftHandTouching || GorillaLocomotion.Player.Instance.wasRightHandTouching)
+            if (GorillaLocomotion.Player.Instance.IsHandTouching(true) || GorillaLocomotion.Player.Instance.IsHandTouching(false))
             {
                 FieldInfo fieldInfo = typeof(GorillaLocomotion.Player).GetField("lastHitInfoHand", BindingFlags.NonPublic | BindingFlags.Instance);
                 RaycastHit ray = (RaycastHit)fieldInfo.GetValue(GorillaLocomotion.Player.Instance);
@@ -1328,7 +1331,7 @@ namespace iiMenu.Mods
 
         public static void WeakWallWalk()
         {
-            if (GorillaLocomotion.Player.Instance.wasLeftHandTouching || GorillaLocomotion.Player.Instance.wasRightHandTouching)
+            if (GorillaLocomotion.Player.Instance.IsHandTouching(true) || GorillaLocomotion.Player.Instance.IsHandTouching(false))
             {
                 FieldInfo fieldInfo = typeof(GorillaLocomotion.Player).GetField("lastHitInfoHand", BindingFlags.NonPublic | BindingFlags.Instance);
                 RaycastHit ray = (RaycastHit)fieldInfo.GetValue(GorillaLocomotion.Player.Instance);
@@ -1346,7 +1349,7 @@ namespace iiMenu.Mods
 
         public static void StrongWallWalk()
         {
-            if (GorillaLocomotion.Player.Instance.wasLeftHandTouching || GorillaLocomotion.Player.Instance.wasRightHandTouching)
+            if (GorillaLocomotion.Player.Instance.IsHandTouching(true) || GorillaLocomotion.Player.Instance.IsHandTouching(false))
             {
                 FieldInfo fieldInfo = typeof(GorillaLocomotion.Player).GetField("lastHitInfoHand", BindingFlags.NonPublic | BindingFlags.Instance);
                 RaycastHit ray = (RaycastHit)fieldInfo.GetValue(GorillaLocomotion.Player.Instance);
@@ -1364,7 +1367,7 @@ namespace iiMenu.Mods
 
         public static void SpiderWalk()
         {
-            if (GorillaLocomotion.Player.Instance.wasLeftHandTouching || GorillaLocomotion.Player.Instance.wasRightHandTouching)
+            if (GorillaLocomotion.Player.Instance.IsHandTouching(true) || GorillaLocomotion.Player.Instance.IsHandTouching(false))
             {
                 FieldInfo fieldInfo = typeof(GorillaLocomotion.Player).GetField("lastHitInfoHand", BindingFlags.NonPublic | BindingFlags.Instance);
                 RaycastHit ray = (RaycastHit)fieldInfo.GetValue(GorillaLocomotion.Player.Instance);
@@ -2661,24 +2664,14 @@ namespace iiMenu.Mods
                 stickpart.transform.localScale = new Vector3(0.15f, 0.15f, 0.15f);
                 stickpart.GetComponent<Renderer>().enabled = false;
             }
-            if (Time.time > partDelay)
-            {
-                if (GorillaLocomotion.Player.Instance.wasLeftHandTouching)
-                {
-                    stickpart.transform.position = TrueLeftHand().position;
-                    //partDelay = Time.time + 0.1f;
-                }
-                if (GorillaLocomotion.Player.Instance.wasRightHandTouching)
-                {
-                    stickpart.transform.position = TrueRightHand().position;
-                    //partDelay = Time.time + 0.1f;
-                }
-                if (GorillaLocomotion.Player.Instance.wasLeftHandTouching && GorillaLocomotion.Player.Instance.wasRightHandTouching)
-                {
-                    stickpart.transform.position = Vector3.zero;
-                    //partDelay = Time.time;
-                }
-            }
+            if (GorillaLocomotion.Player.Instance.IsHandTouching(true))
+                stickpart.transform.position = TrueLeftHand().position;
+
+            if (GorillaLocomotion.Player.Instance.IsHandTouching(false))
+                stickpart.transform.position = TrueRightHand().position;
+
+            if (GorillaLocomotion.Player.Instance.IsHandTouching(true) && GorillaLocomotion.Player.Instance.IsHandTouching(false))
+                stickpart.transform.position = Vector3.zero;
         }
 
         public static void DisableStickyHands()
@@ -2702,7 +2695,7 @@ namespace iiMenu.Mods
             }
             if (leftGrab)
             {
-                if (GorillaLocomotion.Player.Instance.wasLeftHandTouching && !leftisclimbing)
+                if (GorillaLocomotion.Player.Instance.IsHandTouching(true) && !leftisclimbing)
                 {
                     climb.transform.position = GorillaTagger.Instance.leftHandTransform.position;
                     leftisclimbing = true;
@@ -2714,7 +2707,7 @@ namespace iiMenu.Mods
             }
             if (rightGrab)
             {
-                if (GorillaLocomotion.Player.Instance.wasRightHandTouching && !rightisclimbing)
+                if (GorillaLocomotion.Player.Instance.IsHandTouching(false) && !rightisclimbing)
                 {
                     climb.transform.position = GorillaTagger.Instance.rightHandTransform.position;
                     rightisclimbing = true;
@@ -2910,13 +2903,13 @@ namespace iiMenu.Mods
         private static bool lasttouchright = false;
         public static void PullMod()
         {
-            if (((!GorillaLocomotion.Player.Instance.wasLeftHandTouching && lasttouchleft) || (!GorillaLocomotion.Player.Instance.wasRightHandTouching && lasttouchright)) && rightGrab)
+            if (((!GorillaLocomotion.Player.Instance.IsHandTouching(true) && lasttouchleft) || (!GorillaLocomotion.Player.Instance.IsHandTouching(false) && lasttouchright)) && rightGrab)
             {
                 Vector3 vel = GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity;
                 GorillaLocomotion.Player.Instance.transform.position += new Vector3(vel.x * pullPower, 0f, vel.z * pullPower);
             }
-            lasttouchleft = GorillaLocomotion.Player.Instance.wasLeftHandTouching;
-            lasttouchright = GorillaLocomotion.Player.Instance.wasRightHandTouching;
+            lasttouchleft = GorillaLocomotion.Player.Instance.IsHandTouching(true);
+            lasttouchright = GorillaLocomotion.Player.Instance.IsHandTouching(false);
         }
 
         public static GameObject leftThrow = null;
@@ -3988,6 +3981,7 @@ namespace iiMenu.Mods
             }
         }
 
+        public static bool idiotfixthingy = false;
         public static void LaggyRig()
         {
             ghostException = true;

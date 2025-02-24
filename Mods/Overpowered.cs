@@ -592,6 +592,7 @@ namespace iiMenu.Mods
             }
         }
 
+        /*
         private static float scDelay = 0f;
         public static void SizeChanger()
         {
@@ -611,6 +612,107 @@ namespace iiMenu.Mods
             Movement.DisableSizeChanger();
 
             GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateNativeSize", RpcTarget.Others, new object[] { 1f });
+        }*/
+
+        // Shoutouts 2 the one guy that said "GET THIS PATCHED"
+        public static void LagGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+                if (isCopying && whoCopy != null)
+                {
+                    if (Time.time > delaything)
+                    {
+                        delaything = Time.time + 0.6f;
+                        for (int i = 0; i < 250; i++)
+                            FriendshipGroupDetection.Instance.photonView.RPC("NotifyPartyGameModeChanged", NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)), new object[1]);
+                        RPCProtection();
+                    }
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        isCopying = true;
+                        whoCopy = possibly;
+                    }
+                }
+            }
+            else
+            {
+                if (isCopying)
+                {
+                    isCopying = false;
+                }
+            }
+        }
+
+        public static void LagAll()
+        {
+            if (rightTrigger > 0.5f)
+            {
+                if (Time.time > delaything)
+                {
+                    delaything = Time.time + 0.6f;
+                    for (int i = 0; i < 250; i++)
+                        FriendshipGroupDetection.Instance.photonView.RPC("NotifyPartyGameModeChanged", RpcTarget.Others, new object[1]);
+                    RPCProtection();
+                }
+            }
+        }
+
+        public static void LagSpikeGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+                if (isCopying && whoCopy != null)
+                {
+                    if (Time.time > delaything)
+                    {
+                        delaything = Time.time + 2.5f;
+                        for (int i = 0; i < 1200; i++)
+                            FriendshipGroupDetection.Instance.photonView.RPC("NotifyPartyGameModeChanged", NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)), new object[1]);
+                        RPCProtection();
+                    }
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        isCopying = true;
+                        whoCopy = possibly;
+                    }
+                }
+            }
+            else
+            {
+                if (isCopying)
+                {
+                    isCopying = false;
+                }
+            }
+        }
+
+        public static void LagSpikeAll()
+        {
+            if (rightTrigger > 0.5f)
+            {
+                if (Time.time > delaything)
+                {
+                    delaything = Time.time + 2.5f;
+                    for (int i = 0; i < 1200; i++)
+                        FriendshipGroupDetection.Instance.photonView.RPC("NotifyPartyGameModeChanged", RpcTarget.Others, new object[1]);
+                    RPCProtection();
+                }
+            }
         }
 
         private static Coroutine DisableCoroutine;
