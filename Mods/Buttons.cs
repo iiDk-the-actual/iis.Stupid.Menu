@@ -1,4 +1,4 @@
-﻿using iiMenu.Classes;
+using iiMenu.Classes;
 using iiMenu.Mods;
 using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
@@ -542,9 +542,9 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "No Limb Mode", enableMethod =() => Visuals.StartNoLimb(), method =() => Visuals.NoLimbMode(), disableMethod =() => Visuals.EndNoLimb(), toolTip = "Makes your regular rig invisible, and puts balls on your hands."},
 
-                new ButtonInfo { buttonText = "Casual Tracers", method =() => Visuals.CasualTracers(), toolTip = "Puts tracers on your right hand. Shows untagged when tagged, vice versa."},
-                new ButtonInfo { buttonText = "Infection Tracers", method =() => Visuals.InfectionTracers(), toolTip = "Puts tracers on your right hand. Shows everyone."},
-                new ButtonInfo { buttonText = "Hunt Tracers", method =() => Visuals.HuntTracers(), toolTip = "Puts tracers on your right hand. Shows your target and who is hunting you."},
+                new ButtonInfo { buttonText = "Casual Tracers", method =() => Visuals.CasualTracers(), disableMethod =() => {Visuals.isLineRenderQueued = true;}, toolTip = "Puts tracers on your right hand. Shows untagged when tagged, vice versa."},
+                new ButtonInfo { buttonText = "Infection Tracers", method =() => Visuals.InfectionTracers(), disableMethod =() => {Visuals.isLineRenderQueued = true;}, toolTip = "Puts tracers on your right hand. Shows everyone."},
+                new ButtonInfo { buttonText = "Hunt Tracers", method =() => Visuals.HuntTracers(), disableMethod =() => {Visuals.isLineRenderQueued = true;}, toolTip = "Puts tracers on your right hand. Shows your target and who is hunting you."},
 
                 new ButtonInfo { buttonText = "Casual Box ESP", method =() => Visuals.CasualBoxESP(), toolTip = "Acts like casual tracers color wise, but with boxes."},
                 new ButtonInfo { buttonText = "Infection Box ESP", method =() => Visuals.InfectionBoxESP(), toolTip = "Acts like infection tracers color wise, but with boxes."},
@@ -566,15 +566,15 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Infection Chams", method =() => Visuals.InfectionChams(), disableMethod =() => Visuals.DisableChams(), toolTip = "Acts like infection tracers color wise, but lets you see their fur through walls."},
                 new ButtonInfo { buttonText = "Hunt Chams", method =() => Visuals.HuntChams(), disableMethod =() => Visuals.DisableChams(), toolTip = "Acts like hunt tracers color wise, but lets you see their fur through walls."},
 
-                new ButtonInfo { buttonText = "Casual Beacons", method =() => Visuals.CasualBeacons(), toolTip = "Acts like casual tracers color wise, but it's just a giant line."},
-                new ButtonInfo { buttonText = "Infection Beacons", method =() => Visuals.InfectionBeacons(), toolTip = "Acts like infection tracers color wise, but it's just a giant line."},
-                new ButtonInfo { buttonText = "Hunt Beacons", method =() => Visuals.HuntBeacons(), toolTip = "Acts like hunt tracers color wise, but it's just a giant line."},
+                new ButtonInfo { buttonText = "Casual Beacons", method =() => Visuals.CasualBeacons(), disableMethod =() => {Visuals.isLineRenderQueued = true;}, toolTip = "Acts like casual tracers color wise, but it's just a giant line."},
+                new ButtonInfo { buttonText = "Infection Beacons", method =() => Visuals.InfectionBeacons(), disableMethod =() => {Visuals.isLineRenderQueued = true;}, toolTip = "Acts like infection tracers color wise, but it's just a giant line."},
+                new ButtonInfo { buttonText = "Hunt Beacons", method =() => Visuals.HuntBeacons(), disableMethod =() => {Visuals.isLineRenderQueued = true;}, toolTip = "Acts like hunt tracers color wise, but it's just a giant line."},
 
-                new ButtonInfo { buttonText = "Casual Distance ESP", method =() => Visuals.CasualDistanceESP(), toolTip = "Shows your distance from players."},
-                new ButtonInfo { buttonText = "Infection Distance ESP", method =() => Visuals.InfectionDistanceESP(), toolTip = "Acts like infection tracers color wise, but with text."},
-                new ButtonInfo { buttonText = "Hunt Distance ESP", method =() => Visuals.HuntDistanceESP(), toolTip = "Acts like infection tracers color wise, but with text."},
+                new ButtonInfo { buttonText = "Casual Distance ESP", method =() => Visuals.CasualDistanceESP(), disableMethod =() => {Visuals.isNameTagQueued = true;}, toolTip = "Shows your distance from players."},
+                new ButtonInfo { buttonText = "Infection Distance ESP", method =() => Visuals.InfectionDistanceESP(), disableMethod =() => {Visuals.isNameTagQueued = true;}, toolTip = "Acts like infection tracers color wise, but with text."},
+                new ButtonInfo { buttonText = "Hunt Distance ESP", method =() => Visuals.HuntDistanceESP(), disableMethod =() => {Visuals.isNameTagQueued = true;}, toolTip = "Acts like infection tracers color wise, but with text."},
 
-                new ButtonInfo { buttonText = "Show Pointers", method =() => Visuals.ShowButtonColliders(), toolTip = "Shows dots near your hands, such as when you open the menu."},
+                new ButtonInfo { buttonText = "Show Pointers", method =() => Visuals.ShowButtonColliders(), disableMethod =() => Visuals.HideButtonColliders(), toolTip = "Shows dots near your hands, such as when you open the menu."},
             },
 
             new ButtonInfo[] { // Fun Mods [12]
