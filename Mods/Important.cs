@@ -23,9 +23,20 @@ namespace iiMenu.Mods
 
         public static void Reconnect()
         {
+            int PlayerCount = PhotonNetwork.CurrentRoom.PlayerCount;
+            PlayerCount = PlayerCount - 1;
             rejRoom = PhotonNetwork.CurrentRoom.Name;
             //rejDebounce = Time.time + (float)internetTime;
             PhotonNetwork.Disconnect();
+            //Hide messages temporarily mainly to hide the anti report messages so you can see the player count.
+            for(int i = 0; i < 10; i++)
+            {
+             NotifiLib.ClearAllNotifications();
+            }
+            for(int i2 = 0; i2 < 10; i2++)
+            {
+            NotifiLib.SendNotification(PlayerCount + " players in room. Rejoining!");
+            }
         }
 
         public static void DisconnectR()
