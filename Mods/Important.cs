@@ -278,29 +278,20 @@ namespace iiMenu.Mods
         }
 
         public static void CopyPlayerPosition()
-        {
-            string text = "Body\n";
-            Transform p = GorillaTagger.Instance.bodyCollider.transform;
-            text += "new Vector3(" + p.position.x.ToString() + ", " + p.position.y.ToString() + ", " + p.position.z.ToString() + ");";
-            text += "new Quaternion(" + p.rotation.x.ToString() + ", " + p.rotation.y.ToString() + ", " + p.rotation.z.ToString() + ", " + p.rotation.w.ToString() + ");\n\n";
-
-            text += "Head\n";
-            p = GorillaTagger.Instance.headCollider.transform;
-            text += "new Vector3(" + p.position.x.ToString() + ", " + p.position.y.ToString() + ", " + p.position.z.ToString() + ");";
-            text += "new Quaternion(" + p.rotation.x.ToString() + ", " + p.rotation.y.ToString() + ", " + p.rotation.z.ToString() + ", " + p.rotation.w.ToString() + ");\n\n";
-
-            text += "Left Hand\n";
-            p = GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform;
-            text += "new Vector3(" + p.position.x.ToString() + ", " + p.position.y.ToString() + ", " + p.position.z.ToString() + ");";
-            text += "new Quaternion(" + p.rotation.x.ToString() + ", " + p.rotation.y.ToString() + ", " + p.rotation.z.ToString() + ", " + p.rotation.w.ToString() + ");\n\n";
-
-            text += "Right Hand\n";
-            p = GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform;
-            text += "new Vector3(" + p.position.x.ToString() + ", " + p.position.y.ToString() + ", " + p.position.z.ToString() + ");";
-            text += "new Quaternion(" + p.rotation.x.ToString() + ", " + p.rotation.y.ToString() + ", " + p.rotation.z.ToString() + ", " + p.rotation.w.ToString() + ");";
-
-            GUIUtility.systemCopyBuffer = text;
-        }
+{
+    var builder = new StringBuilder();
+    void AppendTransform(string label, Transform transform)
+    {
+        builder.AppendLine(label);
+        builder.AppendFormat("new Vector3({0}, {1}, {2});", transform.position.x, transform.position.y, transform.position.z);
+        builder.AppendFormat("new Quaternion({0}, {1}, {2}, {3});\n\n", transform.rotation.x, transform.rotation.y, transform.rotation.z, transform.rotation.w);
+    }
+    AppendTransform("Body", GorillaTagger.Instance.bodyCollider.transform);
+    AppendTransform("Head", GorillaTagger.Instance.headCollider.transform);
+    AppendTransform("Left Hand", GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform);
+    AppendTransform("Right Hand", GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform);
+    GUIUtility.systemCopyBuffer = builder.ToString();
+}
 
         // The oldest bug in this menu: I enabled the AFK kick when turning on ANTI afk. I'm killing myself
         public static void EnableAntiAFK()
