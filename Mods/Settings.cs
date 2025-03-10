@@ -2252,11 +2252,32 @@ namespace iiMenu.Mods
 
             notificationSoundIndex++;
             if (notificationSoundIndex > notificationSoundNames.Length - 1)
-            {
                 notificationSoundIndex = 0;
-            }
 
             GetIndex("Change Notification Sound").overlapText = "Change Notification Sound <color=grey>[</color><color=green>" + notificationSoundNames[notificationSoundIndex] + "</color><color=grey>]</color>";
+        }
+
+        public static void ChangeNarrationVoice()
+        {
+            string[] narratorNames = new string[]
+            {
+                "Default",
+                "Kimberly",
+                "Brian",
+                "Matthew",
+                "Joey",
+                "Justin",
+                "Cristiano",
+                "Giorgio",
+                "Ewa"
+            };
+
+            narratorIndex++;
+            if (narratorIndex > narratorNames.Length - 1)
+                narratorIndex = 0;
+
+            GetIndex("Change Narration Voice").overlapText = "Change Narration Voice <color=grey>[</color><color=green>" + narratorNames[narratorIndex] + "</color><color=grey>]</color>";
+            narratorName = narratorNames[narratorIndex];
         }
 
         public static void ChangePointerPosition()
@@ -2278,6 +2299,7 @@ namespace iiMenu.Mods
             try { reference.transform.localPosition = pointerOffset; } catch { }
         }
 
+        // Credits to Scintilla for the idea
         public static void ChangeGunVariation()
         {
             string[] VariationNames = new string[]
@@ -2814,7 +2836,7 @@ namespace iiMenu.Mods
                     favz += seperator + fav;
             }
 
-            string ihateyouguys = platformMode + seperator + platformShape + seperator + flySpeedCycle + seperator + longarmCycle + seperator + speedboostCycle + seperator + projmode + seperator + trailmode + seperator + shootCycle + seperator + pointerIndex + seperator + Advantages.tagAuraIndex + seperator + notificationDecayTime + seperator + fontStyleType + seperator + arrowType + seperator + pcbg + seperator + internetTime + seperator + hotkeyButton + seperator + buttonClickIndex + seperator + buttonClickVolume + seperator + Safety.antireportrangeindex + seperator + Advantages.tagRangeIndex + seperator + Sound.BindMode + seperator + Movement.driveInt + seperator + langInd + seperator + inputTextColorInt + seperator + Movement.pullPowerInt + seperator + notificationSoundIndex + seperator + Visuals.PerformanceModeStepIndex + seperator + gunVariation + seperator + GunDirection;
+            string ihateyouguys = platformMode + seperator + platformShape + seperator + flySpeedCycle + seperator + longarmCycle + seperator + speedboostCycle + seperator + projmode + seperator + trailmode + seperator + shootCycle + seperator + pointerIndex + seperator + Advantages.tagAuraIndex + seperator + notificationDecayTime + seperator + fontStyleType + seperator + arrowType + seperator + pcbg + seperator + internetTime + seperator + hotkeyButton + seperator + buttonClickIndex + seperator + buttonClickVolume + seperator + Safety.antireportrangeindex + seperator + Advantages.tagRangeIndex + seperator + Sound.BindMode + seperator + Movement.driveInt + seperator + langInd + seperator + inputTextColorInt + seperator + Movement.pullPowerInt + seperator + notificationSoundIndex + seperator + Visuals.PerformanceModeStepIndex + seperator + gunVariation + seperator + GunDirection + seperator + narratorIndex;
 
             string bindsToSave = "";
             foreach (KeyValuePair<string, List<string>> Bind in ModBindings)
@@ -3015,6 +3037,8 @@ namespace iiMenu.Mods
                 ChangeGunVariation();
                 GunDirection = int.Parse(data[28]) - 1;
                 ChangeGunDirection();
+                narratorIndex = int.Parse(data[29]) - 1;
+                ChangeNarrationVoice();
             } catch { UnityEngine.Debug.Log("Save file out of date"); }
 
             pageButtonType = int.Parse(textData[3]) - 1;
