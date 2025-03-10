@@ -19,6 +19,7 @@ using UnityEngine.Experimental.GlobalIllumination;
 using UnityEngine.Rendering;
 using UnityEngine.XR.Interaction.Toolkit;
 using static iiMenu.Menu.Main;
+using static iiMenu.Classes.RigManager;
 
 namespace iiMenu.Mods
 {
@@ -786,11 +787,6 @@ namespace iiMenu.Mods
                         thecolor = Color.green;
                         showtracersplz = true;
                     }
-                    if (vrrig.concatStringOfCosmeticsAllowed.Contains("LBACP"))
-                    {
-                        thecolor = Color.blue;
-                        showtracersplz = true;
-                    }
                     if (vrrig.concatStringOfCosmeticsAllowed.Contains("LBAAK"))
                     {
                         thecolor = Color.red;
@@ -849,15 +845,112 @@ namespace iiMenu.Mods
                         UnityEngine.Object.Destroy(volIndicator, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                         volIndicator.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                         if (voicetxt == null)
-                        {
                             voicetxt = LoadTextureFromResource("iiMenu.Resources.speak.png");
-                        }
                         volIndicator.GetComponent<Renderer>().material.mainTexture = voicetxt;
                         volIndicator.GetComponent<Renderer>().material.color = PlayerIsTagged(vrrig) ? (Color)new Color32(255, 111, 0, 255) : vrrig.playerColor;
                         volIndicator.transform.localScale = new Vector3(size, size, 0.01f);
                         volIndicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * 0.8f;
                         volIndicator.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
                     }
+                }
+            }
+        }
+
+        // Credits to zvbex for the 'FIRST LOGIN' concat check-+
+        private static Material platformMat;
+        private static Texture2D steamtxt;
+        private static Texture2D oculustxt;
+        public static void PlatformIndicators()
+        {
+            if (PerformanceVisuals)
+            {
+                if (Time.time < PerformanceVisualDelay)
+                {
+                    if (Time.frameCount != DelayChangeStep)
+                        return;
+                }
+                else
+                { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
+            }
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                {
+                    GameObject volIndicator = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    UnityEngine.Object.Destroy(volIndicator.GetComponent<Collider>());
+                    UnityEngine.Object.Destroy(volIndicator, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
+
+                    volIndicator.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+
+                    if (platformMat == null)
+                    {
+                        platformMat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+
+                        platformMat.SetFloat("_Surface", 1);
+                        platformMat.SetFloat("_Blend", 0);
+                        platformMat.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
+                        platformMat.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
+                        platformMat.SetFloat("_ZWrite", 0);
+                        platformMat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+                        platformMat.renderQueue = (int)RenderQueue.Transparent;
+
+                        platformMat.SetFloat("_Glossiness", 0f);
+                        platformMat.SetFloat("_Metallic", 0f);
+                    }
+                    volIndicator.GetComponent<Renderer>().material = platformMat;
+
+                    if (steamtxt == null)
+                        steamtxt = LoadTextureFromURL("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/refs/heads/main/oculus.png", "oculus.png");
+
+                    if (oculustxt == null)
+                        oculustxt = LoadTextureFromURL("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/refs/heads/main/steam.png", "steam.png");
+
+                    volIndicator.GetComponent<Renderer>().material.mainTexture = vrrig.concatStringOfCosmeticsAllowed.Contains("FIRST LOGIN") ? steamtxt : oculustxt;
+                    volIndicator.GetComponent<Renderer>().material.color = PlayerIsTagged(vrrig) ? (Color)new Color32(255, 111, 0, 255) : vrrig.playerColor;
+
+                    volIndicator.transform.localScale = new Vector3(0.5f, 0.5f, 0.01f);
+                    volIndicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * 0.8f;
+                    volIndicator.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
+                }
+            }
+        }
+
+        public static void PlatformESP()
+        {
+            if (PerformanceVisuals)
+            {
+                if (Time.time < PerformanceVisualDelay)
+                {
+                    if (Time.frameCount != DelayChangeStep)
+                        return;
+                }
+                else
+                { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
+            }
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                {
+                    GameObject volIndicator = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    UnityEngine.Object.Destroy(volIndicator.GetComponent<Collider>());
+                    UnityEngine.Object.Destroy(volIndicator, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
+
+                    volIndicator.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+
+                    if (steamtxt == null)
+                        steamtxt = LoadTextureFromURL("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/refs/heads/main/oculus.png", "oculus.png");
+
+                    if (oculustxt == null)
+                        oculustxt = LoadTextureFromURL("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/refs/heads/main/steam.png", "steam.png");
+
+                    volIndicator.GetComponent<Renderer>().material.mainTexture = vrrig.concatStringOfCosmeticsAllowed.Contains("FIRST LOGIN") ? steamtxt : oculustxt;
+                    volIndicator.GetComponent<Renderer>().material.color = PlayerIsTagged(vrrig) ? (Color)new Color32(255, 111, 0, 255) : vrrig.playerColor;
+                        
+                    volIndicator.transform.localScale = new Vector3(0.5f, 0.5f, 0.01f);
+                    volIndicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * 0.8f;
+                    volIndicator.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
                 }
             }
         }
@@ -2127,9 +2220,8 @@ namespace iiMenu.Mods
             }
         }
 
-        //everything below this was rewritin by drperky for iidk <3
-
-        private static bool DoPerformanceCheck() //wrap this up
+        // Thanks DrPerky for rewriting visual mods <@427495360517111809>
+        private static bool DoPerformanceCheck()
         {
             if (PerformanceVisuals)
             {
@@ -2150,15 +2242,12 @@ namespace iiMenu.Mods
 
         static Color infectedColor = new Color32(255, 111, 0, 255);
 
-        //other
-
         static GameObject LeftSphere = null;
         static GameObject RightSphere = null;
         public static void ShowButtonColliders()
         {
             if (DoPerformanceCheck())
                 return;
-
 
             if (LeftSphere == null || RightSphere == null)
             {
@@ -2197,16 +2286,13 @@ namespace iiMenu.Mods
             RightSphere = null;
         }
 
-        //tracers
+        // Tracers
         public static void CasualTracers()
         {
             if (DoPerformanceCheck())
                 return;
 
             if (GorillaGameManager.instance == null)
-                return;
-
-            if (GorillaGameManager.instance.GameType() == GameModeType.Hunt || GorillaGameManager.instance.GameType() == GameModeType.Infection)
                 return;
 
             bool followMenuTheme = GetIndex("Follow Menu Theme").enabled;
@@ -2218,23 +2304,18 @@ namespace iiMenu.Mods
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
             {
-                if (playerRig.OwningNetPlayer.UserId == PhotonNetwork.LocalPlayer.UserId)
+                if (playerRig == GorillaTagger.Instance.offlineVRRig)
                     continue;
 
                 Color lineColor = playerRig.playerColor;
 
-                LineRenderer line = getLineRender(hiddenOnCamera);
-                
+                LineRenderer line = GetLineRender(hiddenOnCamera);
 
                 if (followMenuTheme)
-                {
                     lineColor = menuColor;
-                }
 
                 if (transparentTheme)
-                {
                     lineColor.a = 0.5f;
-                }
 
                 line.startColor = lineColor;
                 line.endColor = lineColor;
@@ -2255,39 +2336,38 @@ namespace iiMenu.Mods
             if (GorillaGameManager.instance == null)
                 return;
 
-            if (GorillaGameManager.instance.GameType() != GameModeType.Infection)
-                return;
-
-            //bool followMenuTheme = GetIndex("Follow Menu Theme").enabled;
+            bool followMenuTheme = GetIndex("Follow Menu Theme").enabled;
             bool transparentTheme = GetIndex("Transparent Theme").enabled;
             bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
             float lineWidth = GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f;
 
             bool LocalTagged = PlayerIsTagged(GorillaTagger.Instance.offlineVRRig);
+            bool NoInfected = InfectedList().Count == 0;
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
             {
-                if (playerRig.OwningNetPlayer.UserId == PhotonNetwork.LocalPlayer.UserId)
+                if (playerRig == GorillaTagger.Instance.offlineVRRig)
                     continue;
 
-                Color lineColor;
+                Color lineColor = playerRig.playerColor;
 
-                if (LocalTagged)
+                if (!NoInfected)
                 {
-                    if (PlayerIsTagged(playerRig))
-                        continue;
+                    if (LocalTagged)
+                    {
+                        if (PlayerIsTagged(playerRig))
+                            continue;
+                    }
+                    else
+                    {
+                        if (!PlayerIsTagged(playerRig))
+                            continue;
 
-                    lineColor = Color.green;
+                        lineColor = infectedColor;
+                    }
                 }
-                else
-                {
-                    if (!PlayerIsTagged(playerRig))
-                        continue;
 
-                    lineColor = infectedColor;
-                }
-
-                LineRenderer line = getLineRender(hiddenOnCamera);
+                LineRenderer line = GetLineRender(hiddenOnCamera);
 
                 if (transparentTheme)
                 {
@@ -2300,9 +2380,7 @@ namespace iiMenu.Mods
                 line.endWidth = lineWidth;
                 line.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
                 line.SetPosition(1, playerRig.transform.position);
-
             }
-
         }
 
         public static void HuntTracers()
@@ -2321,6 +2399,7 @@ namespace iiMenu.Mods
             if (sillyComputer == null)
                 return;
 
+            bool followMenuTheme = GetIndex("Follow Menu Theme").enabled;
             bool transparentTheme = GetIndex("Transparent Theme").enabled;
             bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
             float lineWidth = GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f;
@@ -2329,14 +2408,14 @@ namespace iiMenu.Mods
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
             {
-                if (playerRig.OwningNetPlayer.UserId == PhotonNetwork.LocalPlayer.UserId)
+                if (playerRig == GorillaTagger.Instance.offlineVRRig)
                     continue;
 
-                if (playerRig.OwningNetPlayer.UserId == currentTarget.UserId)
+                if (GetPlayerFromVRRig(playerRig) == currentTarget)
                 {
-                    Color lineColor = Color.green;
+                    Color lineColor = playerRig.playerColor;
 
-                    LineRenderer line = getLineRender(hiddenOnCamera);
+                    LineRenderer line = GetLineRender(hiddenOnCamera);
 
                     if (transparentTheme)
                     {
@@ -2350,11 +2429,11 @@ namespace iiMenu.Mods
                     line.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
                     line.SetPosition(1, playerRig.transform.position);
                 }
-                else if (sillyComputer.IsTargetOf(playerRig.OwningNetPlayer, PhotonNetwork.LocalPlayer))
+                else if (sillyComputer.IsTargetOf(GetPlayerFromVRRig(playerRig), PhotonNetwork.LocalPlayer))
                 {
                     Color lineColor = Color.red;
 
-                    LineRenderer line = getLineRender(hiddenOnCamera);
+                    LineRenderer line = GetLineRender(hiddenOnCamera);
 
                     if (transparentTheme)
                     {
@@ -2371,17 +2450,13 @@ namespace iiMenu.Mods
             }
         }
 
-        //beacons
-
+        // Beacons
         public static void CasualBeacons()
         {
             if (DoPerformanceCheck())
                 return;
 
             if (GorillaGameManager.instance == null)
-                return;
-
-            if (GorillaGameManager.instance.GameType() == GameModeType.Hunt || GorillaGameManager.instance.GameType() == GameModeType.Infection)
                 return;
 
             bool followMenuTheme = GetIndex("Follow Menu Theme").enabled;
@@ -2392,22 +2467,18 @@ namespace iiMenu.Mods
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
             {
-                if (playerRig.OwningNetPlayer.UserId == PhotonNetwork.LocalPlayer.UserId)
+                if (playerRig == GorillaTagger.Instance.offlineVRRig)
                     continue;
 
                 Color lineColor = playerRig.playerColor;
 
-                LineRenderer line = getLineRender(hiddenOnCamera);
+                LineRenderer line = GetLineRender(hiddenOnCamera);
 
                 if (followMenuTheme)
-                {
                     lineColor = menuColor;
-                }
 
                 if (transparentTheme)
-                {
                     lineColor.a = 0.5f;
-                }
 
                 line.startColor = lineColor;
                 line.endColor = lineColor;
@@ -2426,47 +2497,45 @@ namespace iiMenu.Mods
             if (GorillaGameManager.instance == null)
                 return;
 
-            if (GorillaGameManager.instance.GameType() != GameModeType.Infection)
-                return;
-
+            bool followMenuTheme = GetIndex("Follow Menu Theme").enabled;
             bool transparentTheme = GetIndex("Transparent Theme").enabled;
             bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
 
             bool LocalTagged = PlayerIsTagged(GorillaTagger.Instance.offlineVRRig);
+            bool NoInfected = InfectedList().Count == 0;
+
+            Color menuColor = GetBDColor(0f);
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
             {
-                if (playerRig.OwningNetPlayer.UserId == PhotonNetwork.LocalPlayer.UserId)
+                if (playerRig == GorillaTagger.Instance.offlineVRRig)
                     continue;
 
-                Color lineColor;
+                Color lineColor = playerRig.playerColor;
 
-                if (LocalTagged)
+                if (!NoInfected)
                 {
-                    if (PlayerIsTagged(playerRig))
-                        continue;
+                    if (LocalTagged)
+                    {
+                        if (PlayerIsTagged(playerRig))
+                            continue;
+                    }
+                    else
+                    {
+                        if (!PlayerIsTagged(playerRig))
+                            continue;
 
-                    lineColor = Color.green;
+                        lineColor = infectedColor;
+                    }
                 }
-                else
-                {
-                    if (!PlayerIsTagged(playerRig))
-                        continue;
 
-                    lineColor = infectedColor;
-                }
+                LineRenderer line = GetLineRender(hiddenOnCamera);
+
+                if (followMenuTheme)
+                    lineColor = menuColor;
 
                 if (transparentTheme)
-                {
                     lineColor.a = 0.5f;
-                }
-
-                LineRenderer line = getLineRender(hiddenOnCamera);
-
-                if (transparentTheme)
-                {
-                    lineColor.a = 0.5f;
-                }
 
                 line.startColor = lineColor;
                 line.endColor = lineColor;
@@ -2493,26 +2562,29 @@ namespace iiMenu.Mods
             if (sillyComputer == null)
                 return;
 
+            bool followMenuTheme = GetIndex("Follow Menu Theme").enabled;
             bool transparentTheme = GetIndex("Transparent Theme").enabled;
             bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
+
+            Color menuColor = GetBDColor(0f);
 
             NetPlayer currentTarget = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
             {
-                if (playerRig.OwningNetPlayer.UserId == PhotonNetwork.LocalPlayer.UserId)
+                if (playerRig == GorillaTagger.Instance.offlineVRRig)
                     continue;
 
-                if (playerRig.OwningNetPlayer.UserId == currentTarget.UserId)
+                if (GetPlayerFromVRRig(playerRig) == currentTarget)
                 {
-                    Color lineColor = Color.green;
+                    Color lineColor = playerRig.playerColor;
+                    LineRenderer line = GetLineRender(hiddenOnCamera);
 
-                    LineRenderer line = getLineRender(hiddenOnCamera);
+                    if (followMenuTheme)
+                        lineColor = menuColor;
 
                     if (transparentTheme)
-                    {
                         lineColor.a = 0.5f;
-                    }
 
                     line.startColor = lineColor;
                     line.endColor = lineColor;
@@ -2521,16 +2593,17 @@ namespace iiMenu.Mods
                     line.SetPosition(0, playerRig.transform.position + new Vector3(0f, 9999f, 0f));
                     line.SetPosition(1, playerRig.transform.position - new Vector3(0f, 9999f, 0f));
                 } 
-                else if (sillyComputer.IsTargetOf(playerRig.OwningNetPlayer, PhotonNetwork.LocalPlayer))
+                else if (sillyComputer.IsTargetOf(GetPlayerFromVRRig(playerRig), PhotonNetwork.LocalPlayer))
                 {
                     Color lineColor = Color.red;
 
-                    LineRenderer line = getLineRender(hiddenOnCamera);
+                    LineRenderer line = GetLineRender(hiddenOnCamera);
+
+                    if (followMenuTheme)
+                        lineColor = menuColor;
 
                     if (transparentTheme)
-                    {
                         lineColor.a = 0.5f;
-                    }
 
                     line.startColor = lineColor;
                     line.endColor = lineColor;
@@ -2542,18 +2615,13 @@ namespace iiMenu.Mods
             }
         }
 
-
-        //distance esp
-
+        // Distance ESP
         public static void CasualDistanceESP()
         {
             if (DoPerformanceCheck())
                 return;
 
             if (GorillaGameManager.instance == null)
-                return;
-
-            if (GorillaGameManager.instance.GameType() == GameModeType.Hunt || GorillaGameManager.instance.GameType() == GameModeType.Infection)
                 return;
 
             bool followMenuTheme = GetIndex("Follow Menu Theme").enabled;
@@ -2564,17 +2632,14 @@ namespace iiMenu.Mods
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
             {
-
-                if (playerRig.OwningNetPlayer.UserId == PhotonNetwork.LocalPlayer.UserId) //skip local player
+                if (playerRig == GorillaTagger.Instance.offlineVRRig) // Skip local player
                     continue;
 
-                Color tagColor = Color.white;
+                Color tagColor = followMenuTheme ? titleColor : Color.white;
                 Color backgroundColor = playerRig.playerColor;
 
                 if (followMenuTheme)
-                {
                     backgroundColor = menuColor;
-                }
 
                 if (transparentTheme)
                 {
@@ -2582,7 +2647,7 @@ namespace iiMenu.Mods
                     tagColor.a = 0.5f;
                 }
 
-                TextMesh nameTagText = getNameTag(hiddenOnCamera);
+                TextMesh nameTagText = GetNameTag(hiddenOnCamera);
 
                 nameTagText.gameObject.transform.position = playerRig.transform.position + new Vector3(0f, -0.2f, 0f);
                 nameTagText.color = tagColor;
@@ -2596,7 +2661,7 @@ namespace iiMenu.Mods
                         transform.gameObject.GetComponent<Renderer>().material.color = backgroundColor;
                         transform.localScale = new Vector3(nameTagText.GetComponent<Renderer>().bounds.size.x + 0.2f, 0.2f, 0.01f);
                     }
-                    else if (transform.gameObject.name == "oh") //outline holder
+                    else if (transform.gameObject.name == "oh") // Outline holder
                     {
                         nameTagText.GetComponent<TextMesh>().text = finalString;
 
@@ -2620,37 +2685,41 @@ namespace iiMenu.Mods
             if (GorillaGameManager.instance == null)
                 return;
 
-            if (GorillaGameManager.instance.GameType() != GameModeType.Infection)
-                return;
-
+            bool followMenuTheme = GetIndex("Follow Menu Theme").enabled;
             bool transparentTheme = GetIndex("Transparent Theme").enabled;
             bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
 
             bool LocalTagged = PlayerIsTagged(GorillaTagger.Instance.offlineVRRig);
+            bool NoInfected = InfectedList().Count == 0;
+
+            Color menuColor = GetBDColor(0f);
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
             {
-
-                if (playerRig.OwningNetPlayer.UserId == PhotonNetwork.LocalPlayer.UserId) //skip local player
+                if (playerRig == GorillaTagger.Instance.offlineVRRig) //skip local player
                     continue;
 
-                Color tagColor = Color.white;
-                Color backgroundColor;
+                Color tagColor = followMenuTheme ? titleColor : Color.white;
+                Color backgroundColor = playerRig.playerColor;
 
-                if (LocalTagged)
+                if (!NoInfected)
                 {
-                    if (PlayerIsTagged(playerRig))
-                        continue;
+                    if (LocalTagged)
+                    {
+                        if (PlayerIsTagged(playerRig))
+                            continue;
+                    }
+                    else
+                    {
+                        if (!PlayerIsTagged(playerRig))
+                            continue;
 
-                    backgroundColor = Color.green;
+                        backgroundColor = infectedColor;
+                    }
                 }
-                else
-                {
-                    if (!PlayerIsTagged(playerRig))
-                        continue;
 
-                    backgroundColor = infectedColor;
-                }
+                if (followMenuTheme)
+                    backgroundColor = menuColor;
 
                 if (transparentTheme)
                 {
@@ -2658,7 +2727,7 @@ namespace iiMenu.Mods
                     tagColor.a = 0.5f;
                 }
 
-                TextMesh nameTagText = getNameTag(hiddenOnCamera);
+                TextMesh nameTagText = GetNameTag(hiddenOnCamera);
 
                 nameTagText.gameObject.transform.position = playerRig.transform.position + new Vector3(0f, -0.2f, 0f);
                 nameTagText.color = tagColor;
@@ -2691,11 +2760,10 @@ namespace iiMenu.Mods
 
         public static void HuntDistanceESP()
         {
-
             if (DoPerformanceCheck())
                 return;
 
-            //sanity checks, dont remove these
+            // Sanity checks, dont remove these
 
             if (GorillaGameManager.instance == null)
                 return;
@@ -2709,25 +2777,29 @@ namespace iiMenu.Mods
                 return;
 
 
-            //cache these here so your not finding the values from GetIndex every call (GetIndex is fucking slow)
-            //bool followMenuTheme = GetIndex("Follow Menu Theme").enabled;
+            // Cache these here so your not finding the values from GetIndex every call (GetIndex is fucking slow)
+            bool followMenuTheme = GetIndex("Follow Menu Theme").enabled;
             bool transparentTheme = GetIndex("Transparent Theme").enabled;
             bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
-            
+
+            Color menuColor = GetBDColor(0f);
+
             NetPlayer currentTarget = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
 
-            //Color bgColor = GetBGColor(0f); //dont need to call this function twice, just use a variable
+            // Color bgColor = GetBGColor(0f); //dont need to call this function twice, just use a variable
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
             {
-                if (playerRig.OwningNetPlayer.UserId == PhotonNetwork.LocalPlayer.UserId) //skip local player
+                if (playerRig == GorillaTagger.Instance.offlineVRRig) // Skip local player
                     continue;
 
-                if (playerRig.OwningNetPlayer.UserId == currentTarget.UserId) //use id for quick comparison
+                if (GetPlayerFromVRRig(playerRig) == currentTarget) // Use ID for quick comparison
                 {
+                    Color tagColor = followMenuTheme ? titleColor : Color.white;
+                    Color backgroundColor = playerRig.playerColor;
 
-                    Color tagColor = Color.white;
-                    Color backgroundColor = Color.green;
+                    if (followMenuTheme)
+                        backgroundColor = menuColor;
 
                     if (transparentTheme)
                     {
@@ -2735,21 +2807,21 @@ namespace iiMenu.Mods
                         tagColor.a = 0.5f;
                     }
 
-                    TextMesh nameTagText = getNameTag(hiddenOnCamera);
+                    TextMesh nameTagText = GetNameTag(hiddenOnCamera);
 
                     nameTagText.gameObject.transform.position = playerRig.transform.position + new Vector3(0f, -0.2f, 0f);
                     nameTagText.color = tagColor;
 
                     string finalString = string.Format("{0:F1}m", Vector3.Distance(Camera.main.transform.position, playerRig.transform.position));
 
-                    foreach (Transform transform in nameTagText.gameObject.GetComponentsInChildren<Transform>()) //background color
+                    foreach (Transform transform in nameTagText.gameObject.GetComponentsInChildren<Transform>()) // Background color
                     {
                         if (transform.gameObject.name == "bg")
                         {
                             transform.gameObject.GetComponent<Renderer>().material.color = backgroundColor;
                             transform.localScale = new Vector3(nameTagText.GetComponent<Renderer>().bounds.size.x + 0.2f, 0.2f, 0.01f);
                         }
-                        else if (transform.gameObject.name == "oh") //outline holder
+                        else if (transform.gameObject.name == "oh") // Outline holder
                         {
                             nameTagText.GetComponent<TextMesh>().text = finalString;
 
@@ -2763,10 +2835,13 @@ namespace iiMenu.Mods
                         }
                     }
                 } 
-                else if (sillyComputer.IsTargetOf(playerRig.OwningNetPlayer, PhotonNetwork.LocalPlayer))
+                else if (sillyComputer.IsTargetOf(GetPlayerFromVRRig(playerRig), PhotonNetwork.LocalPlayer))
                 {
-                    Color tagColor = Color.white;
+                    Color tagColor = followMenuTheme ? titleColor : Color.white;
                     Color backgroundColor = Color.red;
+
+                    if (followMenuTheme)
+                        backgroundColor = menuColor;
 
                     if (transparentTheme)
                     {
@@ -2774,21 +2849,21 @@ namespace iiMenu.Mods
                         tagColor.a = 0.5f;
                     }
 
-                    TextMesh nameTagText = getNameTag(hiddenOnCamera);
+                    TextMesh nameTagText = GetNameTag(hiddenOnCamera);
 
                     nameTagText.gameObject.transform.position = playerRig.transform.position + new Vector3(0f, -0.2f, 0f);
                     nameTagText.color = tagColor;
 
                     string finalString = string.Format("{0:F1}m", Vector3.Distance(Camera.main.transform.position, playerRig.transform.position));
 
-                    foreach (Transform transform in nameTagText.gameObject.GetComponentsInChildren<Transform>()) //background color
+                    foreach (Transform transform in nameTagText.gameObject.GetComponentsInChildren<Transform>()) // Background color
                     {
                         if (transform.gameObject.name == "bg")
                         {
                             transform.gameObject.GetComponent<Renderer>().material.color = backgroundColor;
                             transform.localScale = new Vector3(nameTagText.GetComponent<Renderer>().bounds.size.x + 0.2f, 0.2f, 0.01f);
                         }
-                        else if (transform.gameObject.name == "oh") //outline holder
+                        else if (transform.gameObject.name == "oh") // Outline holder
                         {
                             nameTagText.GetComponent<TextMesh>().text = finalString;
 
@@ -2805,7 +2880,7 @@ namespace iiMenu.Mods
             }
         }
 
-        //cache backend
+        // Cache backend
 
         private static List<TextMesh> nameTagPool = new List<TextMesh>();
 
@@ -2813,7 +2888,7 @@ namespace iiMenu.Mods
 
         public static bool isNameTagQueued = false;
 
-        private static TextMesh getNameTag(bool hideOnCamera)
+        private static TextMesh GetNameTag(bool hideOnCamera)
         {
             if (nameTagHolder == null)
             {
@@ -2832,7 +2907,7 @@ namespace iiMenu.Mods
 
                     textMesh.fontStyle = activeFontStyle;
 
-                    //update font style of outline here
+                    // Update font style of outline here
 
                     finalTextMesh = textMesh;
                 }
@@ -2867,11 +2942,9 @@ namespace iiMenu.Mods
                 backgroundRender.material.color = Color.white;
                 MeshRender.material.renderQueue = backgroundRender.material.renderQueue + 2;
 
+                // I could do this a better way but right now, I just couldnt care less
 
-
-                //i could do this a better way but right now i just couldnt care less
-
-                GameObject outlineHolder = new GameObject("oh"); //outline holder
+                GameObject outlineHolder = new GameObject("oh"); // Outline holder
                 outlineHolder.transform.parent = MeshHolder.transform;
 
                 GameObject textOutline1 = new GameObject("outline1");
@@ -2932,34 +3005,28 @@ namespace iiMenu.Mods
             }
 
             if (hideOnCamera)
-            {
-                finalTextMesh.gameObject.layer = 19; //what does 19 actually do?
-            }
+                finalTextMesh.gameObject.layer = 19; // What does 19 actually do?
             else
-            {
                 finalTextMesh.gameObject.layer = nameTagHolder.layer;
-            }
 
             return finalTextMesh;
         }
 
-        public static void clearNameTagPool(bool destroy = false) //set destroy when you disable a feature that needs a lot of nameTags
+        public static void ClearNameTagPool(bool destroy = false) // Set destroy when you disable a feature that needs a lot of nameTags
         {
+            if (DoPerformanceCheck())
+                return;
+
             foreach (TextMesh textMesh in nameTagPool)
             {
                 if (destroy || isNameTagQueued)
-                {
                     UnityEngine.Object.Destroy(textMesh.gameObject);
-                }
                 else
-                {
                     textMesh.gameObject.SetActive(false);
-                }
             }
 
             if (destroy || isNameTagQueued)
                 nameTagPool.Clear();
-
 
             isNameTagQueued = false;
         }
@@ -2971,12 +3038,10 @@ namespace iiMenu.Mods
 
         public static bool isLineRenderQueued = false;
 
-        private static LineRenderer getLineRender(bool hideOnCamera)
+        private static LineRenderer GetLineRender(bool hideOnCamera)
         {
             if (lineRenderHolder == null)
-            {
                 lineRenderHolder = new GameObject("LineRender_Holder");
-            }
 
             LineRenderer finalRender = null;
 
@@ -3008,29 +3073,24 @@ namespace iiMenu.Mods
             }
 
             if (hideOnCamera)
-            {
-                finalRender.gameObject.layer = 19; //what does 19 actually do?
-            }
+                finalRender.gameObject.layer = 19;
             else
-            {
                 finalRender.gameObject.layer = lineRenderHolder.layer;
-            }
 
             return finalRender;
         }
 
-        public static void clearLinePool(bool destroy = false) //set destroy when you disable a feature that needs a lot of lines
+        public static void ClearLinePool(bool destroy = false) // Set destroy when you disable a feature that needs a lot of lines
         {
+            if (DoPerformanceCheck())
+                return;
+
             foreach (LineRenderer line in linePool)
             {
                 if (destroy || isLineRenderQueued)
-                {
                     UnityEngine.Object.Destroy(line.gameObject);
-                }
                 else
-                {
                     line.gameObject.SetActive(false);
-                }
             }
 
             if (destroy || isLineRenderQueued)
