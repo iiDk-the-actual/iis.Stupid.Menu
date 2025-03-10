@@ -45,7 +45,7 @@ namespace iiMenu.Patches
     }
 
     [HarmonyPatch(typeof(GorillaNot), "LogErrorCount")]
-    public class NoLogErrorCount : MonoBehaviour
+    public class NoLogErrorCount
     {
         private static bool Prefix(string logString, string stackTrace, LogType type)
         {
@@ -54,7 +54,7 @@ namespace iiMenu.Patches
     }
 
     [HarmonyPatch(typeof(GorillaNot), "CloseInvalidRoom")]
-    public class NoCloseInvalidRoom : MonoBehaviour
+    public class NoCloseInvalidRoom
     {
         private static bool Prefix()
         {
@@ -63,7 +63,7 @@ namespace iiMenu.Patches
     }
 
     [HarmonyPatch(typeof(GorillaNot), "CheckReports", MethodType.Enumerator)]
-    public class NoCheckReports : MonoBehaviour
+    public class NoCheckReports
     {
         private static bool Prefix()
         {
@@ -72,7 +72,7 @@ namespace iiMenu.Patches
     }
 
     [HarmonyPatch(typeof(GorillaNot), "QuitDelay", MethodType.Enumerator)]
-    public class NoQuitDelay : MonoBehaviour
+    public class NoQuitDelay
     {
         private static bool Prefix()
         {
@@ -81,7 +81,7 @@ namespace iiMenu.Patches
     }
 
     [HarmonyPatch(typeof(GorillaGameManager), "ForceStopGame_DisconnectAndDestroy")]
-    public class NoQuitOnBan : MonoBehaviour
+    public class NoQuitOnBan
     {
         private static bool Prefix()
         {
@@ -90,7 +90,7 @@ namespace iiMenu.Patches
     }
 
     /*[HarmonyPatch(typeof(GorillaNot), "IncrementRPCTracker", new Type[] { typeof(string), typeof(string), typeof(int) })]
-    public class NoIncrementRPCTracker : MonoBehaviour
+    public class NoIncrementRPCTracker
     {
         private static bool Prefix()
         {
@@ -99,7 +99,7 @@ namespace iiMenu.Patches
     }*/
 
     [HarmonyPatch(typeof(GorillaNot), "IncrementRPCCallLocal")]
-    public class NoIncrementRPCCallLocal : MonoBehaviour
+    public class NoIncrementRPCCallLocal
     {
         private static bool Prefix(PhotonMessageInfoWrapped infoWrapped, string rpcFunction)
         {
@@ -109,7 +109,7 @@ namespace iiMenu.Patches
     }
 
     [HarmonyPatch(typeof(GorillaNot), "GetRPCCallTracker")]
-    internal class NoGetRPCCallTracker : MonoBehaviour
+    internal class NoGetRPCCallTracker
     {
         private static bool Prefix()
         {
@@ -118,7 +118,7 @@ namespace iiMenu.Patches
     }
 
     [HarmonyPatch(typeof(GorillaNot), "IncrementRPCCall", new Type[] { typeof(PhotonMessageInfo), typeof(string) })]
-    public class NoIncrementRPCCall : MonoBehaviour
+    public class NoIncrementRPCCall
     {
         private static bool Prefix(PhotonMessageInfo info, string callingMethod = "")
         {
@@ -128,7 +128,7 @@ namespace iiMenu.Patches
 
     // Thanks DrPerky
     [HarmonyPatch(typeof(VRRig), "IncrementRPC", new Type[] { typeof(PhotonMessageInfoWrapped), typeof(string) })]
-    public class NoIncrementRPC : MonoBehaviour
+    public class NoIncrementRPC
     {
         private static bool Prefix(PhotonMessageInfoWrapped info, string sourceCall)
         {
@@ -137,16 +137,7 @@ namespace iiMenu.Patches
     }
 
     [HarmonyPatch(typeof(PlayFabDeviceUtil), "SendDeviceInfoToPlayFab")]
-    internal class PlayfabUtil01 : MonoBehaviour
-    {
-        private static bool Prefix()
-        {
-            return false;
-        }
-    }
-
-    [HarmonyPatch(typeof(PlayFabHttp), "InitializeScreenTimeTracker")]
-    internal class PlayfabUtil02 : MonoBehaviour
+    internal class PlayfabUtil01
     {
         private static bool Prefix()
         {
@@ -155,7 +146,43 @@ namespace iiMenu.Patches
     }
 
     [HarmonyPatch(typeof(PlayFabClientInstanceAPI), "ReportDeviceInfo")]
-    internal class PlayfabUtil03 : MonoBehaviour
+    internal class PlayfabUtil02
+    {
+        private static bool Prefix()
+        {
+            return false;
+        }
+    }
+
+    [HarmonyPatch(typeof(PlayFabClientAPI), "ReportDeviceInfo")]
+    public class PlayfabUtil03
+    {
+        private static bool Prefix()
+        {
+            return false;
+        }
+    }
+
+    [HarmonyPatch(typeof(PlayFabDeviceUtil), "GetAdvertIdFromUnity")]
+    public class PlayfabUtil04
+    {
+        private static bool Prefix()
+        {
+            return false;
+        }
+    }
+
+    [HarmonyPatch(typeof(PlayFabClientAPI), "AttributeInstall")]
+    public class PlayfabUtil05
+    {
+        private static bool Prefix()
+        {
+            return false;
+        }
+    }
+
+    [HarmonyPatch(typeof(PlayFabHttp), "InitializeScreenTimeTracker")]
+    public class PlayfabUtil06
     {
         private static bool Prefix()
         {
@@ -164,7 +191,7 @@ namespace iiMenu.Patches
     }
 
     [HarmonyPatch(typeof(GorillaNot), "DispatchReport")]
-    internal class NoDispatchReport : MonoBehaviour
+    public class NoDispatchReport
     {
         private static bool Prefix()
         {
@@ -173,7 +200,7 @@ namespace iiMenu.Patches
     }
 
     [HarmonyPatch(typeof(GorillaNetworkPublicTestsJoin), "GracePeriod")]
-    internal class GNPTJ1 : MonoBehaviour
+    public class GNPTJ1
     {
         private static bool Prefix()
         {
@@ -182,7 +209,7 @@ namespace iiMenu.Patches
     }
 
     [HarmonyPatch(typeof(GorillaNetworkPublicTestJoin2), "GracePeriod")]
-    internal class GNPTJ2 : MonoBehaviour
+    public class GNPTJ2
     {
         private static bool Prefix()
         {
@@ -191,7 +218,7 @@ namespace iiMenu.Patches
     }
 
     [HarmonyPatch(typeof(GorillaNot), "ShouldDisconnectFromRoom")]
-    internal class NoShouldDisconnectFromRoom : MonoBehaviour
+    public class NoShouldDisconnectFromRoom
     {
         private static bool Prefix()
         {
