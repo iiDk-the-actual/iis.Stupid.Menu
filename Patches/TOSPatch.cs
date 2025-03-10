@@ -16,6 +16,7 @@ namespace iiMenu.Patches
             {
                 __instance.TurnPage(999);
                 Traverse.Create(__instance).Field("controllerBehaviour").Field("buttonDown").SetValue(true);
+                Traverse.Create(__instance).Field("holdTime").SetValue(0.1f);
                 return false;
             }
             return true;
@@ -31,6 +32,7 @@ namespace iiMenu.Patches
             {
                 __instance.TurnPage(999);
                 Traverse.Create(__instance).Field("controllerBehaviour").Field("buttonDown").SetValue(true);
+                Traverse.Create(__instance).Field("holdTime").SetValue(0.1f);
                 return false;
             }
             return true;
