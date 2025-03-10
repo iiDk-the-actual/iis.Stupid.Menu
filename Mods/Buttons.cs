@@ -100,6 +100,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Change PC Menu Background", method =() => Settings.ChangePCUI(), isTogglable = false, toolTip = "Changes the background of the PC ui."},
                 new ButtonInfo { buttonText = "Change Notification Time", overlapText = "Change Notification Time <color=grey>[</color><color=green>1</color><color=grey>]</color>", method =() => Settings.ChangeNotificationTime(), isTogglable = false, toolTip = "Changes the time before a notification is removed."},
                 new ButtonInfo { buttonText = "Change Notification Sound", overlapText = "Change Notification Sound <color=grey>[</color><color=green>None</color><color=grey>]</color>", method =() => Settings.ChangeNotificationSound(), isTogglable = false, toolTip = "Changes the sound that plays when receiving a notification."},
+                new ButtonInfo { buttonText = "Change Narration Voice", overlapText = "Change Narration Voice <color=grey>[</color><color=green>Default</color><color=grey>]</color>", method =() => Settings.ChangeNarrationVoice(), isTogglable = false, toolTip = "Changes the voice of the narrator."},
                 new ButtonInfo { buttonText = "Change Pointer Position", method =() => Settings.ChangePointerPosition(), isTogglable = false, toolTip = "Changes the position of the pointer."},
 
                 new ButtonInfo { buttonText = "Swap GUI Colors", toolTip = "Swaps the GUI colors to the enabled color, for darker themes."},
@@ -539,6 +540,9 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Voice Indicators", method =() => Visuals.VoiceIndicators(), toolTip = "Puts voice indicators above people's heads when they're talking."},
                 new ButtonInfo { buttonText = "Voice ESP", method =() => Visuals.VoiceESP(), toolTip = "Puts voice indicators above people's heads when they're talking, but now they go through walls."},
+
+                new ButtonInfo { buttonText = "Platform Indicators", method =() => Visuals.PlatformIndicators(), toolTip = "Puts indicators above people's heads that show what platform they are playing on."},
+                new ButtonInfo { buttonText = "Platform ESP", method =() => Visuals.PlatformESP(), toolTip = "Puts indicators above people's heads that show what platform they are playing on, but now they go through walls."},
 
                 new ButtonInfo { buttonText = "No Limb Mode", enableMethod =() => Visuals.StartNoLimb(), method =() => Visuals.NoLimbMode(), disableMethod =() => Visuals.EndNoLimb(), toolTip = "Makes your regular rig invisible, and puts balls on your hands."},
 
