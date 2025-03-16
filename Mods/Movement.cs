@@ -3178,26 +3178,14 @@ namespace iiMenu.Mods
             GorillaTagger.Instance.bodyCollider.material.dynamicFriction = preFrictiness;
         }
 
-        public static List<ForceVolume> fvol = new List<ForceVolume> { };
         public static void DisableAir()
         {
-            foreach (ForceVolume fv in GetForceVolumes())
-            {
-                if (fv.enabled && !fvol.Contains(fv))
-                {
-                    fv.enabled = false;
-                    fvol.Add(fv);
-                }
-            }
+            Patches.ForcePatch.enabled = true;
         }
 
         public static void EnableAir()
         {
-            foreach (ForceVolume fv in fvol)
-            {
-                fv.enabled = true;
-            }
-            fvol.Clear();
+            Patches.ForcePatch.enabled = false;
         }
 
         public static void DisableWater()
