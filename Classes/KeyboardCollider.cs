@@ -1,8 +1,8 @@
 using Photon.Pun;
 using UnityEngine;
-using static iiMenu.Menu.Main;
+using static hykmMenu.Menu.Main;
 
-namespace iiMenu.Classes
+namespace hykmMenu.Classes
 {
     public class KeyboardKey : MonoBehaviour
 	{

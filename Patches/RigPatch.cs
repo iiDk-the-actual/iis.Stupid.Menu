@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using UnityEngine;
 
-namespace iiMenu.Patches
+namespace hykmMenu.Patches
 {
     [HarmonyPatch(typeof(VRRig), "OnDisable")]
     public class RigPatch

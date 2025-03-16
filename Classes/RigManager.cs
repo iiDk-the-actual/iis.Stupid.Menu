@@ -3,7 +3,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
 
-namespace iiMenu.Classes
+namespace hykmMenu.Classes
 {
     public class RigManager
     {

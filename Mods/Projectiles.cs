@@ -2,8 +2,8 @@
 using ExitGames.Client.Photon;
 using GorillaNetworking;
 using HarmonyLib;
-using iiMenu.Classes;
-using iiMenu.Patches;
+using hykmMenu.Classes;
+using hykmMenu.Patches;
 using Photon.Pun;
 using Photon.Realtime;
 using Photon.Voice;
@@ -13,10 +13,10 @@ using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
-using static iiMenu.Classes.RigManager;
-using static iiMenu.Menu.Main;
+using static hykmMenu.Classes.RigManager;
+using static hykmMenu.Menu.Main;
 
-namespace iiMenu.Mods.Spammers
+namespace hykmMenu.Mods.Spammers
 {
     public class Projectiles
     {

@@ -1,7 +1,7 @@
 ﻿using ExitGames.Client.Photon;
-using iiMenu.Classes;
-using iiMenu.Menu;
-using iiMenu.Notifications;
+using hykmMenu.Classes;
+using hykmMenu.Menu;
+using hykmMenu.Notifications;
 using OVR;
 using Photon.Pun;
 using Photon.Realtime;
@@ -13,9 +13,9 @@ using System.Diagnostics;
 using System.IO;
 using UnityEngine;
 using Valve.VR;
-using static iiMenu.Menu.Main;
+using static hykmMenu.Menu.Main;
 
-namespace iiMenu.Mods.Spammers
+namespace hykmMenu.Mods.Spammers
 {
     public class Sound
     {

@@ -1,8 +1,8 @@
 ﻿using HarmonyLib;
-using iiMenu.Mods;
+using hykmMenu.Mods;
 using UnityEngine;
 
-namespace iiMenu.Patches
+namespace hykmMenu.Patches
 {
     [HarmonyPatch(typeof(VRRig), "LateUpdate")]
     public class TorsoPatch

@@ -1,9 +1,9 @@
 ﻿using System;
 using HarmonyLib;
 using UnityEngine;
-using static iiMenu.Menu.Main;
+using static hykmMenu.Menu.Main;
 
-namespace iiMenu.Patches
+namespace hykmMenu.Patches
 {
     [HarmonyPatch(typeof(GameObject), "CreatePrimitive")]
     public class ShaderFix

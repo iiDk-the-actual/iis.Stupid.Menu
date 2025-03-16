@@ -1,16 +1,16 @@
-﻿using iiMenu.Classes;
-using iiMenu.Mods.Spammers;
-using iiMenu.Notifications;
+﻿using hykmMenu.Classes;
+using hykmMenu.Mods.Spammers;
+using hykmMenu.Notifications;
 using Photon.Pun;
 using PlayFab;
 using PlayFab.ClientModels;
 using System.Diagnostics;
 using System.IO;
 using UnityEngine;
-using static iiMenu.Classes.RigManager;
-using static iiMenu.Menu.Main;
+using static hykmMenu.Classes.RigManager;
+using static hykmMenu.Menu.Main;
 
-namespace iiMenu.Mods
+namespace hykmMenu.Mods
 {
     public class Miscellaneous
     {

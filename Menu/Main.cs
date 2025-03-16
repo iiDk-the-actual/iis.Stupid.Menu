@@ -7,10 +7,10 @@ using GorillaTag.Cosmetics;
 using GorillaTagScripts;
 using GorillaTagScripts.ObstacleCourse;
 using HarmonyLib;
-using iiMenu.Classes;
-using iiMenu.Mods;
-using iiMenu.Mods.Spammers;
-using iiMenu.Notifications;
+using hykmMenu.Classes;
+using hykmMenu.Mods;
+using hykmMenu.Mods.Spammers;
+using hykmMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -32,7 +32,7 @@ using UnityEngine.Rendering;
 using UnityEngine.UI;
 using UnityEngine.XR;
 using Valve.VR;
-using static iiMenu.Classes.RigManager;
+using static hykmMenu.Classes.RigManager;
 
 /*
 ii's Stupid Menu, written by @goldentrophy
@@ -44,7 +44,7 @@ ii's Stupid Menu falls under the GPL-3.0 license
 https://github.com/iiDk-the-actual/iis.Stupid.Menu
 */
 
-namespace iiMenu.Menu
+namespace hykmMenu.Menu
 {
     [HarmonyPatch(typeof(GorillaLocomotion.Player), "LateUpdate")]
     public class Main : MonoBehaviour
@@ -310,7 +310,7 @@ namespace iiMenu.Menu
                         }
                         catch (Exception exception)
                         {
-                            UnityEngine.Debug.LogError(string.Format("iiMenu <b>COLOR ERROR</b> {1} - {0}", exception.Message, exception.StackTrace));
+                            UnityEngine.Debug.LogError(string.Format("hykmMenu <b>COLOR ERROR</b> {1} - {0}", exception.Message, exception.StackTrace));
                             hasFoundAllBoards = false;
                         }
                     }
@@ -757,7 +757,7 @@ namespace iiMenu.Menu
 
                                                         if (admincrown == null)
                                                         {
-                                                            admincrown = LoadTextureFromResource("iiMenu.Resources.icon.png");
+                                                            admincrown = LoadTextureFromResource("hykmMenu.Resources.icon.png");
                                                         }
                                                         crownmat.mainTexture = admincrown;
 
@@ -1090,11 +1090,11 @@ namespace iiMenu.Menu
                     // Recover from playing sound on soundboard code
                     try
                     {
-                        if (iiMenu.Mods.Spammers.Sound.AudioIsPlaying)
+                        if (hykmMenu.Mods.Spammers.Sound.AudioIsPlaying)
                         {
-                            if (Time.time > iiMenu.Mods.Spammers.Sound.RecoverTime)
+                            if (Time.time > hykmMenu.Mods.Spammers.Sound.RecoverTime)
                             {
-                                iiMenu.Mods.Spammers.Sound.FixMicrophone();
+                                hykmMenu.Mods.Spammers.Sound.FixMicrophone();
                             }
                         }
                     } catch { }
@@ -1210,7 +1210,7 @@ namespace iiMenu.Menu
             }
             catch (Exception exception)
             {
-                UnityEngine.Debug.LogError(string.Format("iiMenu <b>FATAL ERROR</b> {1} - {0}", exception.Message, exception.StackTrace));
+                UnityEngine.Debug.LogError(string.Format("hykmMenu <b>FATAL ERROR</b> {1} - {0}", exception.Message, exception.StackTrace));
             }
         }
 
@@ -1587,7 +1587,7 @@ namespace iiMenu.Menu
             }.AddComponent<Image>();
             if (searchIcon == null)
             {
-                searchIcon = LoadTextureFromResource("iiMenu.Resources.search.png");
+                searchIcon = LoadTextureFromResource("hykmMenu.Resources.search.png");
             }
             if (searchMat == null)
             {
@@ -1676,7 +1676,7 @@ namespace iiMenu.Menu
             }.AddComponent<Image>();
             if (returnIcon == null)
             {
-                returnIcon = LoadTextureFromResource("iiMenu.Resources.return.png");
+                returnIcon = LoadTextureFromResource("hykmMenu.Resources.return.png");
             }
             if (returnMat == null)
             {
@@ -1889,7 +1889,7 @@ namespace iiMenu.Menu
                             case 25:
                                 if (pride == null)
                                 {
-                                    pride = LoadTextureFromResource("iiMenu.Resources.pride.png");
+                                    pride = LoadTextureFromResource("hykmMenu.Resources.pride.png");
                                     pride.filterMode = FilterMode.Point;
                                     pride.wrapMode = TextureWrapMode.Clamp;
                                 }
@@ -1903,7 +1903,7 @@ namespace iiMenu.Menu
                             case 26:
                                 if (trans == null)
                                 {
-                                    trans = LoadTextureFromResource("iiMenu.Resources.trans.png");
+                                    trans = LoadTextureFromResource("hykmMenu.Resources.trans.png");
                                     trans.filterMode = FilterMode.Point;
                                     trans.wrapMode = TextureWrapMode.Clamp;
                                 }
@@ -1916,7 +1916,7 @@ namespace iiMenu.Menu
                             case 27:
                                 if (gay == null)
                                 {
-                                    gay = LoadTextureFromResource("iiMenu.Resources.mlm.png");
+                                    gay = LoadTextureFromResource("hykmMenu.Resources.mlm.png");
                                     gay.filterMode = FilterMode.Point;
                                     gay.wrapMode = TextureWrapMode.Clamp;
                                 }
@@ -1928,7 +1928,7 @@ namespace iiMenu.Menu
                                 break;
                         }
                     }
-                    catch (Exception exception) { UnityEngine.Debug.LogError(string.Format("iiMenu <b>TEXTURE ERROR</b> {1} - {0}", exception.Message, exception.StackTrace)); }
+                    catch (Exception exception) { UnityEngine.Debug.LogError(string.Format("hykmMenu <b>TEXTURE ERROR</b> {1} - {0}", exception.Message, exception.StackTrace)); }
                 }
                 else
                 {
@@ -3372,7 +3372,7 @@ namespace iiMenu.Menu
 
         private static void LoadAssetBundle()
         {
-            Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("iiMenu.Resources.iimenu");
+            Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("hykmMenu.Resources.hykmMenu");
             if (stream != null)
                 assetBundle = AssetBundle.LoadFromStream(stream);
             else
@@ -3701,7 +3701,7 @@ namespace iiMenu.Menu
         {
             try
             {
-                WebRequest request = WebRequest.Create("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/main/iiMenu_ServerData.txt" + "?q=" + DateTime.UtcNow.Ticks); // Q request is to prevent caching
+                WebRequest request = WebRequest.Create("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/main/hykmMenu_ServerData.txt" + "?q=" + DateTime.UtcNow.Ticks); // Q request is to prevent caching
                 WebResponse response = request.GetResponse();
                 Stream data = response.GetResponseStream();
                 string html = "";
@@ -4781,7 +4781,7 @@ namespace iiMenu.Menu
         {
             UnityEngine.Debug.Log("Loading language from server " + lang);
             translateCache.Clear();
-            WebRequest request = WebRequest.Create("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/main/iiMenu_Translate_" + lang + ".txt");
+            WebRequest request = WebRequest.Create("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/main/hykmMenu_Translate_" + lang + ".txt");
             WebResponse response = request.GetResponse();
             Stream data = response.GetResponseStream();
             string html = "";
@@ -5668,7 +5668,7 @@ namespace iiMenu.Menu
             }
             catch (Exception e) { UnityEngine.Debug.Log("Error with Settings.LoadPlugins(): " + e.ToString()); }
 
-            if (File.Exists("iisStupidMenu/iiMenu_EnabledMods.txt") || File.Exists("iisStupidMenu/iiMenu_Preferences.txt"))
+            if (File.Exists("iisStupidMenu/hykmMenu_EnabledMods.txt") || File.Exists("iisStupidMenu/hykmMenu_Preferences.txt"))
             {
                 try
                 {

@@ -1,10 +1,10 @@
 ﻿using HarmonyLib;
-using iiMenu.Menu;
+using hykmMenu.Menu;
 using Photon.Pun;
 using System.Reflection;
 using UnityEngine;
 
-namespace iiMenu.Patches
+namespace hykmMenu.Patches
 {
     [HarmonyPatch(typeof(VRRig), "OnHandTap")]
     public class HandTapPatch

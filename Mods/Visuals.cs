@@ -5,7 +5,7 @@ using GorillaGameModes;
 using GorillaNetworking;
 using GorillaTag;
 using HarmonyLib;
-using iiMenu.Classes;
+using hykmMenu.Classes;
 using Pathfinding.RVO;
 using Photon.Pun;
 using System;
@@ -18,10 +18,10 @@ using UnityEngine.Animations.Rigging;
 using UnityEngine.Experimental.GlobalIllumination;
 using UnityEngine.Rendering;
 using UnityEngine.XR.Interaction.Toolkit;
-using static iiMenu.Menu.Main;
-using static iiMenu.Classes.RigManager;
+using static hykmMenu.Menu.Main;
+using static hykmMenu.Classes.RigManager;
 
-namespace iiMenu.Mods
+namespace hykmMenu.Mods
 {
     public class Visuals
     {
@@ -558,7 +558,7 @@ namespace iiMenu.Mods
                 {
                     if (!nametags.ContainsKey(vrrig))
                     {
-                        GameObject go = new GameObject("iiMenu_Nametag");
+                        GameObject go = new GameObject("hykmMenu_Nametag");
                         go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
                         TextMesh textMesh = go.AddComponent<TextMesh>();
                         textMesh.fontSize = 48;
@@ -845,7 +845,7 @@ namespace iiMenu.Mods
                         UnityEngine.Object.Destroy(volIndicator, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                         volIndicator.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                         if (voicetxt == null)
-                            voicetxt = LoadTextureFromResource("iiMenu.Resources.speak.png");
+                            voicetxt = LoadTextureFromResource("hykmMenu.Resources.speak.png");
                         volIndicator.GetComponent<Renderer>().material.mainTexture = voicetxt;
                         volIndicator.GetComponent<Renderer>().material.color = PlayerIsTagged(vrrig) ? (Color)new Color32(255, 111, 0, 255) : vrrig.playerColor;
                         volIndicator.transform.localScale = new Vector3(size, size, 0.01f);
@@ -990,7 +990,7 @@ namespace iiMenu.Mods
 
                             if (voicetxt == null)
                             {
-                                voicetxt = LoadTextureFromResource("iiMenu.Resources.speak.png");
+                                voicetxt = LoadTextureFromResource("hykmMenu.Resources.speak.png");
                             }
                             voiceMat.mainTexture = voicetxt;
 

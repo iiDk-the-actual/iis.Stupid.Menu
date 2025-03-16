@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace iiMenu.Classes
+namespace hykmMenu.Classes
 {
     public class ButtonInfo
     {

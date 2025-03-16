@@ -1,10 +1,10 @@
-﻿using iiMenu.Menu;
+﻿using hykmMenu.Menu;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
-namespace iiMenu.Classes
+namespace hykmMenu.Classes
 {
     public class ClampColor : MonoBehaviour
     {

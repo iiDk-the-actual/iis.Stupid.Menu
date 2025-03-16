@@ -1,10 +1,10 @@
-﻿using iiMenu.Menu;
+﻿using hykmMenu.Menu;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
-namespace iiMenu.Classes
+namespace hykmMenu.Classes
 {
     public class ColorChanger : TimedBehaviour
     {
@@ -20,7 +20,7 @@ namespace iiMenu.Classes
             base.Update();
             if (colors != null)
             {
-                if (!iiMenu.Menu.Main.dynamicGradients)
+                if (!hykmMenu.Menu.Main.dynamicGradients)
                 {
                     if (!isMonkeColors)
                     {
@@ -72,7 +72,7 @@ namespace iiMenu.Classes
                             gameObjectRenderer.material.SetFloat("_Glossiness", 0f);
                             gameObjectRenderer.material.SetFloat("_Metallic", 0f);
 
-                            gameObjectRenderer.material.mainTexture = iiMenu.Menu.Main.GetGradientTexture(colors.colorKeys[0].color, colors.colorKeys[1].color);
+                            gameObjectRenderer.material.mainTexture = hykmMenu.Menu.Main.GetGradientTexture(colors.colorKeys[0].color, colors.colorKeys[1].color);
                         }
                     }
                 }

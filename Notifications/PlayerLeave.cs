@@ -1,12 +1,12 @@
 ﻿using HarmonyLib;
-using iiMenu.Notifications;
+using hykmMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
 using System.IO;
 using UnityEngine;
-using static iiMenu.Menu.Main;
+using static hykmMenu.Menu.Main;
 
-namespace iiMenu.Patches
+namespace hykmMenu.Patches
 {
     [HarmonyPatch(typeof(MonoBehaviourPunCallbacks), "OnPlayerLeftRoom")]
     public class LeavePatch
@@ -22,7 +22,7 @@ namespace iiMenu.Patches
                     {
                         Directory.CreateDirectory("iisStupidMenu");
                     }
-                    File.WriteAllText("iisStupidMenu/iiMenu_CustomSoundOnJoin.txt", "PlayerLeave");
+                    File.WriteAllText("iisStupidMenu/hykmMenu_CustomSoundOnJoin.txt", "PlayerLeave");
                 }
                 a = otherPlayer;
             }

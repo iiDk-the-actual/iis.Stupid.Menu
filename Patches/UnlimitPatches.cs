@@ -1,7 +1,7 @@
 ﻿using GorillaTagScripts;
 using HarmonyLib;
 
-namespace iiMenu.Patches
+namespace hykmMenu.Patches
 {
     public class UnlimitPatches
     {

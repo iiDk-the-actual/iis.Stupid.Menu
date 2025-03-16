@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using BepInEx;
-using iiMenu.Classes;
-using iiMenu.Menu;
+using hykmMenu.Classes;
+using hykmMenu.Menu;
 using UnityEngine;
 using UnityEngine.UI;
-using static iiMenu.Menu.Main;
+using static hykmMenu.Menu.Main;
 
-namespace iiMenu.Notifications
+namespace hykmMenu.Notifications
 {
     // Originally created by lars, he gave me permission
     // Modified by ii, not much though

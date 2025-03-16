@@ -8,7 +8,7 @@ using UnityEngine.XR;
 using UnityEngine;
 using Photon.Voice.Unity.UtilityScripts;
 
-namespace iiMenu.Patches
+namespace hykmMenu.Patches
 {
     [HarmonyPatch(typeof(GorillaRopeSwing), "AttachLocalPlayer")]
     public class RopePatch

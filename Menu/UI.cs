@@ -1,8 +1,8 @@
 ﻿using BepInEx;
 using GorillaNetworking;
-using iiMenu.Classes;
-using iiMenu.Menu;
-using iiMenu.Mods;
+using hykmMenu.Classes;
+using hykmMenu.Menu;
+using hykmMenu.Mods;
 using Photon.Pun;
 using System;
 using System.Collections.Generic;
@@ -11,9 +11,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using UnityEngine;
-using static iiMenu.Menu.Main;
+using static hykmMenu.Menu.Main;
 
-namespace iiMenu.UI
+namespace hykmMenu.UI
 {
     public class Main : MonoBehaviour
     {
@@ -30,7 +30,7 @@ namespace iiMenu.UI
 
         private void Start()
         {
-            if (File.Exists("iisStupidMenu/iiMenu_HideGUI.txt"))
+            if (File.Exists("iisStupidMenu/hykmMenu_HideGUI.txt"))
             {
                 isOpen = false;
             }
@@ -45,15 +45,15 @@ namespace iiMenu.UI
                 isOpen = !isOpen;
                 if (isOpen)
                 {
-                    if (File.Exists("iisStupidMenu/iiMenu_HideGUI.txt"))
+                    if (File.Exists("iisStupidMenu/hykmMenu_HideGUI.txt"))
                     {
-                        File.Delete("iisStupidMenu/iiMenu_HideGUI.txt");
+                        File.Delete("iisStupidMenu/hykmMenu_HideGUI.txt");
                     }
                 } else
                 {
-                    if (!File.Exists("iisStupidMenu/iiMenu_HideGUI.txt"))
+                    if (!File.Exists("iisStupidMenu/hykmMenu_HideGUI.txt"))
                     {
-                        File.WriteAllText("iisStupidMenu/iiMenu_HideGUI.txt", "true");
+                        File.WriteAllText("iisStupidMenu/hykmMenu_HideGUI.txt", "true");
                     }
                 }
             }
@@ -89,7 +89,7 @@ namespace iiMenu.UI
                 {
                     if (icon == null)
                     {
-                        icon = LoadTextureFromResource("iiMenu.Resources.icon.png");
+                        icon = LoadTextureFromResource("hykmMenu.Resources.icon.png");
                     }
                 }
                 catch { }
@@ -138,7 +138,7 @@ namespace iiMenu.UI
                 if (GUI.Button(new Rect(Screen.width - 200, 90, 85, 30), Create ? "Create" : "Join"))
                 {
                     if (Create)
-                        iiMenu.Mods.Important.CreateRoom(inputText.Replace("\\n", "\n"), true);
+                        hykmMenu.Mods.Important.CreateRoom(inputText.Replace("\\n", "\n"), true);
                     else
                         PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(inputText.Replace("\\n", "\n"), JoinType.Solo);
                 }

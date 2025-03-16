@@ -2,7 +2,7 @@ using BepInEx;
 using System;
 using UnityEngine;
 
-namespace iiMenu
+namespace hykmMenu
 {
     [System.ComponentModel.Description(PluginInfo.Description)]
     [BepInPlugin(PluginInfo.GUID, PluginInfo.Name, PluginInfo.Version)]
@@ -10,13 +10,13 @@ namespace iiMenu
     {
         private void Start() // To that one dude that uses SMI to inject my menu, it's this method
         {
-            Console.Title = "ii's Stupid Menu // Build " + PluginInfo.Version;
+            Console.Title = "Hayakom Menu // Build " + PluginInfo.Version;
 
-            iiMenu.Patches.Menu.ApplyHarmonyPatches();
-            GameObject Loading = new GameObject("ii");
-            Loading.AddComponent<iiMenu.UI.Main>();
-            Loading.AddComponent<iiMenu.Notifications.NotifiLib>();
-            Loading.AddComponent<iiMenu.Classes.CoroutineManager>();
+            hykmMenu.Patches.Menu.ApplyHarmonyPatches();
+            GameObject Loading = new GameObject("hykm");
+            Loading.AddComponent<hykmMenu.UI.Main>();
+            Loading.AddComponent<hykmMenu.Notifications.NotifiLib>();
+            Loading.AddComponent<hykmMenu.Classes.CoroutineManager>();
             UnityEngine.Object.DontDestroyOnLoad(Loading);
         }
     }
