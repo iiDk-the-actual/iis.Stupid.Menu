@@ -1,4 +1,5 @@
 ﻿using GorillaNetworking;
+using GorillaTag;
 using GorillaTagScripts;
 using GorillaTagScripts.ObstacleCourse;
 using HarmonyLib;
@@ -6,10 +7,8 @@ using iiMenu.Classes;
 using iiMenu.Menu;
 using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
-using Pathfinding.RVO;
 using Photon.Pun;
 using Photon.Realtime;
-using Photon.Voice;
 using Photon.Voice.Unity;
 using Photon.Voice.Unity.UtilityScripts;
 using POpusCodec.Enums;
@@ -20,10 +19,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
-using UnityEngine.ProBuilder.Shapes;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
-using static UnityEngine.Terrain;
 
 namespace iiMenu.Mods
 {
@@ -213,27 +210,34 @@ namespace iiMenu.Mods
             GorillaTagger.Instance.tapCoolDown = 0.33f;
         }
 
-        /*
+        private static float instantPartyDelay = 0f;
         public static void InstantParty()
         {
-            typeof(FriendshipGroupDetection).GetField("groupTime", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(FriendshipGroupDetection.Instance, 0f);
-            typeof(FriendshipGroupDetection).GetField("groupCreateAfterTimestamp", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(FriendshipGroupDetection.Instance, -1f);
-            typeof(FriendshipGroupDetection).GetField("amFirstProvisionalPlayer", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(FriendshipGroupDetection.Instance, true);
-        }
+            if (Time.time > instantPartyDelay)
+            {
+                instantPartyDelay = Time.time + 0.1f;
 
-        public static void PartyAll()
-        {
-            List<string> people = new List<string> { };
-            foreach (Photon.Realtime.Player plr in PhotonNetwork.PlayerListOthers)
-            {
-                people.Add(plr.UserId);
+                Traverse.Create(FriendshipGroupDetection.Instance).Field("suppressPartyCreationUntilTimestamp").SetValue(0f);
+                Traverse.Create(FriendshipGroupDetection.Instance).Field("groupCreateAfterTimestamp").SetValue(0f);
+
+                List<int> provisionalMembers = (List<int>)Traverse.Create(FriendshipGroupDetection.Instance).Field("playersInProvisionalGroup").GetValue();
+
+                if (provisionalMembers.Count > 0)
+                {
+                    Color targetColor = GTColor.RandomHSV((GTColor.HSVRanges)Traverse.Create(FriendshipGroupDetection.Instance).Field("braceletRandomColorHSVRanges").GetValue());
+                    Traverse.Create(FriendshipGroupDetection.Instance).Field("myBraceletColor").SetValue(targetColor);
+
+                    List<int> members = new List<int> { PhotonNetwork.LocalPlayer.ActorNumber };
+                    foreach (Player player in PhotonNetwork.PlayerListOthers)
+                    {
+                        if (FriendshipGroupDetection.Instance.IsInMyGroup(player.UserId) || provisionalMembers.Contains(player.ActorNumber))
+                            members.Add(player.ActorNumber);
+                    }
+                    typeof(FriendshipGroupDetection).GetMethod("SendPartyFormedRPC", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(FriendshipGroupDetection.Instance, new object[] { FriendshipGroupDetection.PackColor(targetColor), members.ToArray(), false });
+                    RPCProtection();
+                }
             }
-            FriendshipGroupDetection.Instance.photonView.RPC("AddPartyMembers", RpcTarget.Others, new object[]
-            {
-                FriendshipGroupDetection.PackColor(new Color(0f, 0f, 0f)),
-                people.ToArray()
-            });
-        }*/
+        }
 
         public static void LeaveParty()
         {
@@ -276,13 +280,31 @@ namespace iiMenu.Mods
             }
         }
 
+        public static Coroutine partyKickDelayCoroutine;
+        public static IEnumerator PartyKickDelay(bool ban)
+        {
+            yield return new WaitForSeconds(0.25f);
+
+            if (ban)
+                BanAllInParty();
+            else
+                KickAllInParty();
+
+            Coroutine thisCoroutine = partyKickDelayCoroutine;
+            partyKickDelayCoroutine = null;
+
+            CoroutineManager.EndCoroutine(thisCoroutine);
+        }
+
         public static bool lastPartyKickThingy = false;
         public static void AutoPartyKick()
         {
             if (FriendshipGroupDetection.Instance.IsInParty && !lastPartyKickThingy)
             {
-                KickAllInParty();
+                if (partyKickDelayCoroutine == null)
+                    partyKickDelayCoroutine = CoroutineManager.RunCoroutine(PartyKickDelay(false));
             }
+            
             lastPartyKickThingy = FriendshipGroupDetection.Instance.IsInParty;
         }
 
@@ -290,8 +312,10 @@ namespace iiMenu.Mods
         {
             if (FriendshipGroupDetection.Instance.IsInParty && !lastPartyKickThingy)
             {
-                BanAllInParty();
+                if (partyKickDelayCoroutine == null)
+                    partyKickDelayCoroutine = CoroutineManager.RunCoroutine(PartyKickDelay(true));
             }
+
             lastPartyKickThingy = FriendshipGroupDetection.Instance.IsInParty;
         }
 
@@ -1570,11 +1594,13 @@ namespace iiMenu.Mods
         public static void GlobalHoverboard()
         {
             GorillaLocomotion.Player.Instance.SetEnableHoverboard(true);
+            GorillaTagger.Instance.offlineVRRig.hoverboardVisual.SetActive(true);
         }
 
         public static void DisableGlobalHoverboard()
         {
             GorillaLocomotion.Player.Instance.SetEnableHoverboard(false);
+            GorillaTagger.Instance.offlineVRRig.hoverboardVisual.SetActive(false);
         }
 
         public static void FastGliders()
