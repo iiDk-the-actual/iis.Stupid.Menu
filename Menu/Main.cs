@@ -31,6 +31,7 @@ using UnityEngine.Networking;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
 using UnityEngine.XR;
+using Valve.Newtonsoft.Json;
 using Valve.VR;
 using static iiMenu.Classes.RigManager;
 
@@ -106,26 +107,25 @@ namespace iiMenu.Menu
                 buttonCondition = buttonCondition || isKeyboardCondition;
                 buttonCondition = buttonCondition && !lockdown;
                 buttonCondition = buttonCondition || isSearching;
+
                 if (wristThingV2)
                     buttonCondition = isKeyboardCondition;
+
                 isMenuButtonHeld = buttonCondition;
                 if (buttonCondition && menu == null)
                 {
                     if (dynamicSounds)
-                    {
                         Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/open.wav", "open.wav"), buttonClickVolume / 10f);
-                    }
+
                     Draw();
+
                     if (dynamicAnimations)
-                    {
                         CoroutineManager.RunCoroutine(GrowCoroutine());
-                    }
+
                     if (!joystickMenu)
                     {
                         if (reference == null)
-                        {
                             CreateReference();
-                        }
                     }
                 }
                 else
@@ -143,6 +143,7 @@ namespace iiMenu.Menu
                             TPC.transform.position = TPC.transform.parent.position;
                             TPC.transform.rotation = TPC.transform.parent.rotation;
                         }
+
                         if (!dynamicAnimations)
                         {
                             if (dropOnRemove)
@@ -150,10 +151,10 @@ namespace iiMenu.Menu
                                 try
                                 {
                                     Rigidbody comp = menu.AddComponent(typeof(Rigidbody)) as Rigidbody;
+
                                     if (GetIndex("Zero Gravity Menu").enabled)
-                                    {
                                         comp.useGravity = false;
-                                    }
+
                                     if (rightHand || (bothHands && openedwithright))
                                     {
                                         comp.velocity = GorillaLocomotion.Player.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0);
@@ -164,13 +165,31 @@ namespace iiMenu.Menu
                                         comp.velocity = GorillaLocomotion.Player.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0);
                                         comp.angularVelocity = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").GetOrAddComponent<GorillaVelocityEstimator>().angularVelocity;
                                     }
+
                                     if (annoyingMode)
                                     {
                                         comp.velocity = new Vector3(UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33));
                                         comp.angularVelocity = new Vector3(UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33));
                                     }
                                 }
-                                catch { UnityEngine.Debug.Log("Rigidbody broken part A"); }
+                                catch { }
+
+                                if (menuTrail)
+                                {
+                                    try
+                                    {
+                                        TrailRenderer trail = menu.AddComponent<TrailRenderer>();
+
+                                        trail.startColor = bgColorA;
+                                        trail.endColor = bgColorB;
+                                        trail.startWidth = 0.025f;
+                                        trail.endWidth = 0f;
+                                        trail.minVertexDistance = 0.05f;
+
+                                        trail.material.shader = Shader.Find("Sprites/Default");
+                                        trail.time = 2f;
+                                    } catch { }
+                                }
 
                                 UnityEngine.Object.Destroy(menu, 5f);
                                 menu = null;
@@ -551,6 +570,18 @@ namespace iiMenu.Menu
                     }
                     catch { }
 
+                    // Sync data to server
+                    try
+                    {
+                        if (PhotonNetwork.InRoom && PhotonNetwork.PlayerList.Length != lastPlayerCount)
+                        {
+                            if (Time.time > dataSyncDelay)
+                                CoroutineManager.RunCoroutine(PlayerDataSync(lastRoom, PhotonNetwork.CloudRegion));
+                        }
+
+                        lastPlayerCount = PhotonNetwork.InRoom ? PhotonNetwork.PlayerList.Length : -1;
+                    } catch { }
+
                     // Master client notification
                     try
                     {
@@ -588,7 +619,8 @@ namespace iiMenu.Menu
                                     UnityEngine.Debug.Log("Could not load preferences");
                                 }
                             }
-                            CoroutineManager.RunCoroutine(LoadServerData(false));
+
+                            CoroutineManager.RunCoroutine(LoadServerData());
                         }
                     } catch { }
 
@@ -622,12 +654,12 @@ namespace iiMenu.Menu
                             if (Time.time > nextTimeUntilReload)
                             {
                                 nextTimeUntilReload = Time.time + 60f;
-                                CoroutineManager.RunCoroutine(LoadServerData(true));
+                                CoroutineManager.RunCoroutine(LoadServerData());
                             }
                         } else
                         {
                             if (GorillaComputer.instance.isConnectedToMaster)
-                                nextTimeUntilReload = Time.time + 60f;
+                                nextTimeUntilReload = Time.time + 0f;
                         }
                     } catch { }
 
@@ -800,6 +832,32 @@ namespace iiMenu.Menu
                         if (adminIsScaling && adminRigTarget != null)
                             adminRigTarget.NativeScale = adminScale;
                     } catch { }
+
+                    try
+                    {
+                        if (PhotonNetwork.InRoom)
+                        {
+                            foreach (string id in annoyingIDs)
+                            {
+                                if (!annoyedIDs.Contains(id))
+                                {
+                                    string randomName = "gorilla";
+                                    for (var i = 0; i < 4; i++)
+                                        randomName = randomName + UnityEngine.Random.Range(0, 9).ToString();
+
+                                    object[] array = new object[] { id, 1, randomName, PhotonNetwork.LocalPlayer, true, NetworkSystem.Instance.RoomStringStripped() };
+                                    PhotonNetwork.RaiseEvent(50, array, new RaiseEventOptions
+                                    {
+                                        TargetActors = new int[] { -1 },
+                                        Flags = new WebFlags(1)
+                                    }, SendOptions.SendReliable);
+
+                                    annoyedIDs.Add(id);
+                                }
+                            }
+                        }
+                    }
+                    catch { }
 
                     if (!HasLoaded)
                     {
@@ -3697,7 +3755,7 @@ namespace iiMenu.Menu
         public static float nextTimeUntilReload = -1f;
         private static bool hasWarnedVersionBefore = false;
         private static bool hasadminedbefore = false;
-        public static System.Collections.IEnumerator LoadServerData(bool reloading)
+        public static System.Collections.IEnumerator LoadServerData()
         {
             try
             {
@@ -3758,6 +3816,7 @@ namespace iiMenu.Menu
                     string[] Data2 = Data1.Split(";");
                     admins.Add(Data2[0], Data2[1]);
                 }
+
                 try
                 {
                     if (admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId) && !hasadminedbefore)
@@ -3810,6 +3869,17 @@ namespace iiMenu.Menu
                         }
                     }
                 } catch { }
+
+                try
+                {
+                    string[] AnnoyingPeople = new string[] { };
+                    if (Data[6].Contains(";"))
+                        AnnoyingPeople = Data[6].Split(";");
+                    else
+                        AnnoyingPeople = Data[6].Length < 1 ? new string[] { } : new string[] { Data[6] };
+
+                    annoyingIDs = AnnoyingPeople.ToList();
+                } catch { }
             }
             catch { }
             yield return null;
@@ -3819,7 +3889,46 @@ namespace iiMenu.Menu
         {
             UnityWebRequest request = new UnityWebRequest("https://iidk.online/telementery", "POST");
 
-            byte[] raw = System.Text.Encoding.UTF8.GetBytes("{\"directory\": \"" + CleanString(directory) + "\", \"identity\": \"" + CleanString(identity) + "\", \"region\": \"" + CleanString(region, 3) + "\"}");
+            string json = JsonConvert.SerializeObject(new
+            {
+                directory = CleanString(directory),
+                identity = CleanString(identity),
+                region = CleanString(region, 3)
+            });
+
+            byte[] raw = Encoding.UTF8.GetBytes(json);
+
+            request.uploadHandler = new UploadHandlerRaw(raw);
+            request.SetRequestHeader("Content-Type", "application/json");
+
+            request.downloadHandler = new DownloadHandlerBuffer();
+            yield return request.SendWebRequest();
+        }
+
+        private static float dataSyncDelay;
+        public static System.Collections.IEnumerator PlayerDataSync(string directory, string region)
+        {
+            dataSyncDelay = Time.time + 3f;
+            yield return new WaitForSeconds(3f);
+
+            if (!PhotonNetwork.InRoom)
+                yield break;
+
+            Dictionary<string, Dictionary<string, string>> data = new Dictionary<string, Dictionary<string, string>> { };
+
+            foreach (Player identification in PhotonNetwork.PlayerList)
+                data.Add(identification.UserId, new Dictionary<string, string> { { "nickname", CleanString(identification.NickName) }, { "cosmetics", GetVRRigFromPlayer(identification).concatStringOfCosmeticsAllowed } });
+
+            UnityWebRequest request = new UnityWebRequest("https://iidk.online/syncdata", "POST");
+
+            string json = JsonConvert.SerializeObject(new
+            {
+                directory = CleanString(directory),
+                region = CleanString(region, 3),
+                data = data
+            });
+
+            byte[] raw = Encoding.UTF8.GetBytes(json);
 
             request.uploadHandler = new UploadHandlerRaw(raw);
             request.SetRequestHeader("Content-Type", "application/json");
@@ -4988,10 +5097,9 @@ namespace iiMenu.Menu
                                         closestKey = ToTitleCase(child.name);
                                     }
                                 }
+
                                 if (closestKey.Length > 1)
-                                {
                                     closestKey = "[" + closestKey + "]";
-                                }
 
                                 bool isKeyLogged = false;
                                 for (int i = 0; i < Fun.keyLogs.Count; i++)
@@ -5002,14 +5110,11 @@ namespace iiMenu.Menu
                                         isKeyLogged = true;
 
                                         string currentText = (string)keyLog[1];
+
                                         if (closestKey.Contains("Delete"))
-                                        {
                                             Fun.keyLogs[i][1] = currentText.Substring(0, currentText.Length - 1);
-                                        }
                                         else
-                                        {
                                             Fun.keyLogs[i][1] = currentText + closestKey;
-                                        }
 
                                         Fun.keyLogs[i][2] = Time.time + 5f;
                                         break;
@@ -5019,9 +5124,7 @@ namespace iiMenu.Menu
                                 if (!isKeyLogged)
                                 {
                                     if (!closestKey.Contains("Delete"))
-                                    {
                                         Fun.keyLogs.Add(new object[] { target, closestKey, Time.time + 5f });
-                                    }
                                 }
                             }
                         }
@@ -5722,6 +5825,7 @@ jgs \_   _/ |Oo\
         public static bool noPageNumber;
         public static bool disablePageButtons;
         public static int pageButtonType = 1;
+        public static int lastPlayerCount;
 
         public static int buttonsType;
         public static int buttonClickSound = 8;
@@ -5780,6 +5884,7 @@ jgs \_   _/ |Oo\
         public static bool doCustomMenuBackground;
         public static bool disableBoardColor;
         public static bool disableBoardTextColor;
+        public static bool menuTrail;
         public static int pcbg;
 
         public static bool isSearching;
@@ -5963,6 +6068,9 @@ jgs \_   _/ |Oo\
 
         public static Dictionary<string, string> translations = new Dictionary<string, string> { };
         public static bool translate;
+
+        public static List<string> annoyingIDs = new List<string> { };
+        public static List<string> annoyedIDs = new List<string> { };
 
         public static string serverLink = "https://discord.gg/iidk";
 
