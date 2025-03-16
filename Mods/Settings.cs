@@ -2610,6 +2610,16 @@ namespace iiMenu.Mods
             doCustomName = false;
         }
 
+        public static void MenuTrail()
+        {
+            menuTrail = true;
+        }
+
+        public static void NoMenuTrail()
+        {
+            menuTrail = false;
+        }
+
         public static void DynamicSounds()
         {
             dynamicSounds = true;
