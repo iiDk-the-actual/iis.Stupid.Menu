@@ -745,7 +745,7 @@ namespace iiMenu.Mods
             {
                 if (vrrig != GorillaTagger.Instance.offlineVRRig)
                 {
-                    vrrig.lerpValueBody = 1f;
+                    vrrig.lerpValueBody = 2f;
                     vrrig.lerpValueFingers = 1f;
                 }
             }
@@ -906,7 +906,7 @@ namespace iiMenu.Mods
                     if (oculustxt == null)
                         oculustxt = LoadTextureFromURL("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/refs/heads/main/steam.png", "steam.png");
 
-                    volIndicator.GetComponent<Renderer>().material.mainTexture = vrrig.concatStringOfCosmeticsAllowed.Contains("FIRST LOGIN") ? steamtxt : oculustxt;
+                    volIndicator.GetComponent<Renderer>().material.mainTexture = vrrig.concatStringOfCosmeticsAllowed.Contains("FIRST LOGIN") ? oculustxt : steamtxt;
                     volIndicator.GetComponent<Renderer>().material.color = PlayerIsTagged(vrrig) ? (Color)new Color32(255, 111, 0, 255) : vrrig.playerColor;
 
                     volIndicator.transform.localScale = new Vector3(0.5f, 0.5f, 0.01f);
@@ -945,7 +945,7 @@ namespace iiMenu.Mods
                     if (oculustxt == null)
                         oculustxt = LoadTextureFromURL("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/refs/heads/main/steam.png", "steam.png");
 
-                    volIndicator.GetComponent<Renderer>().material.mainTexture = vrrig.concatStringOfCosmeticsAllowed.Contains("FIRST LOGIN") ? steamtxt : oculustxt;
+                    volIndicator.GetComponent<Renderer>().material.mainTexture = vrrig.concatStringOfCosmeticsAllowed.Contains("FIRST LOGIN") ? oculustxt : steamtxt;
                     volIndicator.GetComponent<Renderer>().material.color = PlayerIsTagged(vrrig) ? (Color)new Color32(255, 111, 0, 255) : vrrig.playerColor;
                         
                     volIndicator.transform.localScale = new Vector3(0.5f, 0.5f, 0.01f);
@@ -2323,9 +2323,7 @@ namespace iiMenu.Mods
                 line.endWidth = lineWidth;
                 line.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
                 line.SetPosition(1, playerRig.transform.position);
-
             }
-
         }
 
         public static void InfectionTracers()
