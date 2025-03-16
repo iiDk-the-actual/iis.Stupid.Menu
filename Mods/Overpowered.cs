@@ -628,7 +628,7 @@ namespace iiMenu.Mods
                     {
                         delaything = Time.time + 0.6f;
                         for (int i = 0; i < 250; i++)
-                            FriendshipGroupDetection.Instance.photonView.RPC("NotifyPartyGameModeChanged", NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)), new object[1]);
+                            FriendshipGroupDetection.Instance.photonView.RPC("NotifyPartyGameModeChanged", NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)), new object[] { "Infection" } );
                         RPCProtection();
                     }
                 }
@@ -659,7 +659,7 @@ namespace iiMenu.Mods
                 {
                     delaything = Time.time + 0.6f;
                     for (int i = 0; i < 250; i++)
-                        FriendshipGroupDetection.Instance.photonView.RPC("NotifyPartyGameModeChanged", RpcTarget.Others, new object[1]);
+                        FriendshipGroupDetection.Instance.photonView.RPC("NotifyPartyGameModeChanged", RpcTarget.Others, new object[] { "Infection" } );
                     RPCProtection();
                 }
             }
@@ -678,7 +678,7 @@ namespace iiMenu.Mods
                     {
                         delaything = Time.time + 2.5f;
                         for (int i = 0; i < 1200; i++)
-                            FriendshipGroupDetection.Instance.photonView.RPC("NotifyPartyGameModeChanged", NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)), new object[1]);
+                            FriendshipGroupDetection.Instance.photonView.RPC("NotifyPartyGameModeChanged", NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)), new object[] { "Infection" } );
                         RPCProtection();
                     }
                 }
@@ -709,7 +709,7 @@ namespace iiMenu.Mods
                 {
                     delaything = Time.time + 2.5f;
                     for (int i = 0; i < 1200; i++)
-                        FriendshipGroupDetection.Instance.photonView.RPC("NotifyPartyGameModeChanged", RpcTarget.Others, new object[1]);
+                        FriendshipGroupDetection.Instance.photonView.RPC("NotifyPartyGameModeChanged", RpcTarget.Others, new object[] { "Infection" } );
                     RPCProtection();
                 }
             }
@@ -1319,19 +1319,32 @@ namespace iiMenu.Mods
             RPCProtection();
         }
 
-        private static float delay = 0f;
-        public static void VirtualStumpTeleporterEffectSpammer()
+        private static float delay;
+        private static bool returnOrTeleport;
+        public static void ArcadeTeleporterEffectSpammer()
         {
-            if (rightTrigger > 0.5f && Time.time < delay)
+            if (rightTrigger > 0.5f && Time.time > delay)
             {
                 PhotonView that = GameObject.Find("Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/Arcade_prefab/MainRoom/VRArea/ModIOArcadeTeleporter/NetObject_VRTeleporter").GetComponent<Photon.Pun.PhotonView>();
-                delay = Time.time + 0.1f;
-                that.RPC("ActivateTeleportVFX", Photon.Pun.RpcTarget.All, new object[] { (short)UnityEngine.Random.Range(0, 7) });
-                that.RPC("ActivateReturnVFX", Photon.Pun.RpcTarget.All, new object[] { (short)UnityEngine.Random.Range(0, 7) });
+                delay = Time.time + 0.05f;
+                returnOrTeleport = !returnOrTeleport;
+                that.RPC(returnOrTeleport ? "ActivateTeleportVFX" : "ActivateReturnVFX", RpcTarget.All, new object[] { (short)UnityEngine.Random.Range(0, 7) });
                 RPCProtection();
             }
         }
-        
+
+        public static void StumpTeleporterEffectSpammer()
+        {
+            if (rightTrigger > 0.5f && Time.time > delay)
+            {
+                PhotonView that = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/StumpVRHeadset/ModIOArcadeTeleporter (1)/NetObject_VRTeleporter").GetComponent<Photon.Pun.PhotonView>();
+                delay = Time.time + 0.05f;
+                returnOrTeleport = !returnOrTeleport;
+                that.RPC(returnOrTeleport ? "ActivateTeleportVFX" : "ActivateReturnVFX", RpcTarget.All, new object[] { (short)0 });
+                RPCProtection();
+            }
+        }
+
         // Don't steal this
         public static void VirtualStumpKickGun()
         {
