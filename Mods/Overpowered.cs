@@ -6,9 +6,9 @@ using GorillaNetworking;
 using GorillaTag.Cosmetics;
 using GorillaTagScripts;
 using HarmonyLib;
-using iiMenu.Classes;
-using iiMenu.Notifications;
-using iiMenu.Patches;
+using hykmMenu.Classes;
+using hykmMenu.Notifications;
+using hykmMenu.Patches;
 using Photon.Pun;
 using Photon.Realtime;
 using Photon.Voice;
@@ -28,10 +28,10 @@ using UnityEngine.Experimental.AI;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 using static Fusion.Sockets.NetBitBuffer;
-using static iiMenu.Classes.RigManager;
-using static iiMenu.Menu.Main;
+using static hykmMenu.Classes.RigManager;
+using static hykmMenu.Menu.Main;
 
-namespace iiMenu.Mods
+namespace hykmMenu.Mods
 {
     public class Overpowered
     {

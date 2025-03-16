@@ -1,10 +1,10 @@
 ﻿using HarmonyLib;
-using iiMenu.Mods;
+using hykmMenu.Mods;
 using System;
 using UnityEngine;
-using static iiMenu.Menu.Main;
+using static hykmMenu.Menu.Main;
 
-namespace iiMenu.Patches
+namespace hykmMenu.Patches
 {
     [HarmonyPatch(typeof(LegalAgreements), "PostUpdate")]
     public class TOSPatch

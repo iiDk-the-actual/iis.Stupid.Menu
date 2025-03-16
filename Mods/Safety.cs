@@ -1,16 +1,16 @@
 ﻿using ExitGames.Client.Photon;
 using GorillaNetworking;
-using iiMenu.Classes;
-using iiMenu.Notifications;
+using hykmMenu.Classes;
+using hykmMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
 using System.IO;
 using UnityEngine;
 using Valve.VR;
-using static iiMenu.Classes.RigManager;
-using static iiMenu.Menu.Main;
+using static hykmMenu.Classes.RigManager;
+using static hykmMenu.Menu.Main;
 
-namespace iiMenu.Mods
+namespace hykmMenu.Mods
 {
     public class Safety
     {
@@ -504,12 +504,12 @@ namespace iiMenu.Mods
 
         public static void NameSpoofEnabled()
         {
-            iiMenu.Patches.ColorPatch.nameSpoofEnabled = true;
+            hykmMenu.Patches.ColorPatch.nameSpoofEnabled = true;
         }
 
         public static void NameSpoofDisabled()
         {
-            iiMenu.Patches.ColorPatch.nameSpoofEnabled = false;
+            hykmMenu.Patches.ColorPatch.nameSpoofEnabled = false;
         }
 
         public static void SpoofName()
@@ -581,12 +581,12 @@ namespace iiMenu.Mods
 
         public static void ColorSpoof()
         {
-            iiMenu.Patches.ColorPatch.patchEnabled = true;
+            hykmMenu.Patches.ColorPatch.patchEnabled = true;
         }
 
         public static void NoColorSpoof()
         {
-            iiMenu.Patches.ColorPatch.patchEnabled = false;
+            hykmMenu.Patches.ColorPatch.patchEnabled = false;
         }
     }
 }

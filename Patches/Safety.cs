@@ -1,7 +1,7 @@
 ﻿using GorillaExtensions;
 using GorillaTag;
 using HarmonyLib;
-using iiMenu.Notifications;
+using hykmMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
 using PlayFab;
@@ -11,9 +11,9 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
-using static iiMenu.Menu.Main;
+using static hykmMenu.Menu.Main;
 
-namespace iiMenu.Patches
+namespace hykmMenu.Patches
 {
     [HarmonyPatch(typeof(GorillaNot), "SendReport")]
     public class AntiCheat

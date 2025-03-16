@@ -1,8 +1,8 @@
 ﻿using Cinemachine;
 using GorillaNetworking;
 using HarmonyLib;
-using iiMenu.Classes;
-using iiMenu.Notifications;
+using hykmMenu.Classes;
+using hykmMenu.Notifications;
 using Photon.Pun;
 using System.Collections;
 using System.Diagnostics;
@@ -10,9 +10,9 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Valve.VR;
-using static iiMenu.Menu.Main;
+using static hykmMenu.Menu.Main;
 
-namespace iiMenu.Mods
+namespace hykmMenu.Mods
 {
     public class Important
     {

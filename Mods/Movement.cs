@@ -4,9 +4,9 @@ using GorillaLocomotion.Climbing;
 using GorillaLocomotion.Swimming;
 using GorillaTagScripts;
 using HarmonyLib;
-using iiMenu.Classes;
-using iiMenu.Menu;
-using iiMenu.Notifications;
+using hykmMenu.Classes;
+using hykmMenu.Menu;
+using hykmMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -17,10 +17,10 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
-using static iiMenu.Classes.RigManager;
-using static iiMenu.Menu.Main;
+using static hykmMenu.Classes.RigManager;
+using static hykmMenu.Menu.Main;
 
-namespace iiMenu.Mods
+namespace hykmMenu.Mods
 {
     public class Movement
     {
@@ -1666,7 +1666,7 @@ namespace iiMenu.Mods
                         pearlmat.color = Color.white;
                         if (pearltxt == null)
                         {
-                            pearltxt = LoadTextureFromResource("iiMenu.Resources.pearl.png");
+                            pearltxt = LoadTextureFromResource("hykmMenu.Resources.pearl.png");
                             pearltxt.filterMode = FilterMode.Point;
                             pearltxt.wrapMode = TextureWrapMode.Clamp;
                         }

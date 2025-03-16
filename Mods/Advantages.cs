@@ -1,12 +1,12 @@
 ﻿using ExitGames.Client.Photon;
 using GorillaTagScripts;
-using iiMenu.Classes;
-using iiMenu.Notifications;
+using hykmMenu.Classes;
+using hykmMenu.Notifications;
 using Photon.Pun;
 using UnityEngine;
-using static iiMenu.Menu.Main;
+using static hykmMenu.Menu.Main;
 
-namespace iiMenu.Mods
+namespace hykmMenu.Mods
 {
     public class Advantages
     {

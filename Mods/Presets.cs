@@ -1,9 +1,9 @@
-﻿using iiMenu.Menu;
-using iiMenu.Notifications;
+﻿using hykmMenu.Menu;
+using hykmMenu.Notifications;
 using System.IO;
-using static iiMenu.Menu.Main;
+using static hykmMenu.Menu.Main;
 
-namespace iiMenu.Mods
+namespace hykmMenu.Mods
 {
     public class Presets
     {

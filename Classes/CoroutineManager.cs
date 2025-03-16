@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using UnityEngine;
 
-namespace iiMenu.Classes
+namespace hykmMenu.Classes
 {
     public class CoroutineManager : MonoBehaviour // Thanks to ShibaGT for helping with the coroutines
     {

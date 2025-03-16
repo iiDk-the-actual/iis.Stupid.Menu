@@ -1,13 +1,13 @@
 ﻿using GorillaNetworking;
 using HarmonyLib;
-using iiMenu.Classes;
-using iiMenu.Mods;
+using hykmMenu.Classes;
+using hykmMenu.Mods;
 using Photon.Pun;
 using System;
 using System.Collections;
 using UnityEngine;
 
-namespace iiMenu.Patches
+namespace hykmMenu.Patches
 {
     [HarmonyPatch(typeof(VRRig), "RequestCosmetics")]
     public class RequestPatch
