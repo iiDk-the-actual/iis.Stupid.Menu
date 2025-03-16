@@ -76,6 +76,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Player Scale Menu", enableMethod =() => Settings.ScaleMenuWithPlayer(), disableMethod =() => Settings.DontScaleMenuWithPlayer(), toolTip = "Scales the menu with your player scale."},
                 new ButtonInfo { buttonText = "Alphabetize Menu", toolTip = "Alphabetizes the entire menu."},
                 new ButtonInfo { buttonText = "Custom Menu Name", enableMethod =() => Settings.CustomMenuName(), disableMethod =() => Settings.NoCustomMenuName(), toolTip = "Changes the name of the menu to whatever. You can change the text inside of your Gorilla Tag files (iisStupidMenu/iiMenu_CustomMenuName.txt)."},
+                new ButtonInfo { buttonText = "Menu Trail", enableMethod =() => Settings.MenuTrail(), disableMethod =() => Settings.NoMenuTrail(), toolTip = "Gives the menu a trail when you drop."},
 
                 new ButtonInfo { buttonText = "Dynamic Animations", enableMethod =() => Settings.DynamicAnimations(), disableMethod =() => Settings.NoDynamicAnimations(), toolTip = "Adds more animations to the menu, giving you a better sense of control."},
                 new ButtonInfo { buttonText = "Dynamic Gradients", enableMethod =() => Settings.DynamicGradients(), disableMethod =() => Settings.NoDynamicGradients(), toolTip = "Makes gradients dynamic, showing you the full gradient instead of a pulsing color."},
@@ -956,7 +957,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Virtual Stump Kick All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.VirtualStumpKickAll(), toolTip = "Kicks everybody in the custom map when holding <color=green>trigger</color>."},
 
                 new ButtonInfo { buttonText = "Force Unload Custom Map", method =() => Overpowered.ForceUnloadCustomMap(), isTogglable = false, toolTip = "Forcefully unloads the current custom map."},
-                new ButtonInfo { buttonText = "Virtual Stump Teleporter Effect Spammer <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.VirtualStumpTeleporterEffectSpammer(), toolTip = "Kicks everybody in the custom map when holding <color=green>trigger</color>."},
+                new ButtonInfo { buttonText = "Arcade Teleporter Effect Spammer <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.ArcadeTeleporterEffectSpammer(), toolTip = "Spams the effects on the virtual stump teleporters in the arcade when holding <color=green>trigger</color>."},
+                new ButtonInfo { buttonText = "Stump Teleporter Effect Spammer <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.StumpTeleporterEffectSpammer(), toolTip = "Spams the effects on the virtual stump teleporter in forest when holding <color=green>trigger</color>."},
 
                 new ButtonInfo { buttonText = "Attic Crash All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.AtticCrashAll(), toolTip = "Crashes everybody inside of the attic."},
 
@@ -1013,6 +1015,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Cancel Second Look", method =() => Overpowered.ThrowSecondLook(), isTogglable = false, toolTip = "Makes the ghost in the rotational map throw whoever it's holding." },
                 new ButtonInfo { buttonText = "Spaz Second Look", method =() => Overpowered.SpazSecondLook(), toolTip = "Makes the ghost in the rotational map automatically try chasing people and throwing things." },
 
+                new ButtonInfo { buttonText = "Instant Party", method =() => Fun.InstantParty(), toolTip = "Makes parties form instantly, instead of having to wait a couple of seconds." },
                 new ButtonInfo { buttonText = "Leave Party", method =() => Fun.LeaveParty(), isTogglable = false, toolTip = "Leaves the party, incase you can't pull off the string." },
 
                 new ButtonInfo { buttonText = "Kick All in Party", method =() => Fun.KickAllInParty(), isTogglable = false, toolTip = "Sends everyone in your party to a random room." },
