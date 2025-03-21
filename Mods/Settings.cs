@@ -2392,7 +2392,7 @@ namespace iiMenu.Mods
                     closePosition = GorillaTagger.Instance.rigidbody.transform.position;
                 else
                     GorillaTagger.Instance.rigidbody.transform.position = closePosition;
-                GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity = new Vector3(0f, 0f, 0f);
+                GorillaLocomotion.GTPlayer.Instance.GetComponent<Rigidbody>().velocity = new Vector3(0f, 0f, 0f);
             } else
             {
                 closePosition = Vector3.zero;

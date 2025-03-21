@@ -82,7 +82,7 @@ namespace iiMenu.Mods
             {
                 RemoveInfected(PhotonNetwork.LocalPlayer);
             }
-            GorillaLocomotion.Player.Instance.disableMovement = false;
+            GorillaLocomotion.GTPlayer.Instance.disableMovement = false;
         }
 
         public static void AntiTag()
@@ -315,9 +315,9 @@ namespace iiMenu.Mods
                 Vector3 notthem = GorillaTagger.Instance.offlineVRRig.head.rigTarget.position;
                 float distance = Vector3.Distance(they, notthem);
 
-                if (PlayerIsTagged(GorillaTagger.Instance.offlineVRRig) && !PlayerIsTagged(vrrig) && GorillaLocomotion.Player.Instance.disableMovement == false && distance < tagAuraDistance)
+                if (PlayerIsTagged(GorillaTagger.Instance.offlineVRRig) && !PlayerIsTagged(vrrig) && GorillaLocomotion.GTPlayer.Instance.disableMovement == false && distance < tagAuraDistance)
                 {
-                    if (rightHand == true) { GorillaLocomotion.Player.Instance.rightControllerTransform.position = they; } else { GorillaLocomotion.Player.Instance.leftControllerTransform.position = they; }
+                    if (rightHand == true) { GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = they; } else { GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.position = they; }
                 }
             }
         }
@@ -332,9 +332,9 @@ namespace iiMenu.Mods
                     Vector3 notthem = GorillaTagger.Instance.offlineVRRig.head.rigTarget.position;
                     float distance = Vector3.Distance(they, notthem);
 
-                    if (PlayerIsTagged(GorillaTagger.Instance.offlineVRRig) && !PlayerIsTagged(vrrig) && GorillaLocomotion.Player.Instance.disableMovement == false && distance < tagAuraDistance)
+                    if (PlayerIsTagged(GorillaTagger.Instance.offlineVRRig) && !PlayerIsTagged(vrrig) && GorillaLocomotion.GTPlayer.Instance.disableMovement == false && distance < tagAuraDistance)
                     {
-                        if (rightHand == true) { GorillaLocomotion.Player.Instance.rightControllerTransform.position = they; } else { GorillaLocomotion.Player.Instance.leftControllerTransform.position = they; }
+                        if (rightHand == true) { GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = they; } else { GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.position = they; }
                     }
                 }
             }
@@ -358,9 +358,9 @@ namespace iiMenu.Mods
                     Vector3 notthem = GorillaTagger.Instance.offlineVRRig.head.rigTarget.position;
                     float distance = Vector3.Distance(they, notthem);
 
-                    if (PlayerIsTagged(GorillaTagger.Instance.offlineVRRig) && !PlayerIsTagged(vrrig) && GorillaLocomotion.Player.Instance.disableMovement == false && distance < tagAuraDistance)
+                    if (PlayerIsTagged(GorillaTagger.Instance.offlineVRRig) && !PlayerIsTagged(vrrig) && GorillaLocomotion.GTPlayer.Instance.disableMovement == false && distance < tagAuraDistance)
                     {
-                        if (rightHand == true) { GorillaLocomotion.Player.Instance.rightControllerTransform.position = they; } else { GorillaLocomotion.Player.Instance.leftControllerTransform.position = they; }
+                        if (rightHand == true) { GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = they; } else { GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.position = they; }
                     }
                 }
             }
@@ -465,7 +465,7 @@ namespace iiMenu.Mods
                             GorillaTagger.Instance.offlineVRRig.rightThumb.LerpFinger(1f, false);
                         }
 
-                        GorillaLocomotion.Player.Instance.rightControllerTransform.position = whoCopy.transform.position;
+                        GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = whoCopy.transform.position;
                         /*
                         GameObject l = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                         UnityEngine.Object.Destroy(l.GetComponent<Rigidbody>());
@@ -559,7 +559,7 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true))
                 {
-                    GorillaLocomotion.Player.Instance.rightControllerTransform.position = Ray.point + new Vector3(0f, 0.3f, 0f);
+                    GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = Ray.point + new Vector3(0f, 0.3f, 0f);
                 }
             }
         }
@@ -640,7 +640,7 @@ namespace iiMenu.Mods
                                     GorillaTagger.Instance.offlineVRRig.rightThumb.LerpFinger(1f, false);
                                 }
 
-                                GorillaLocomotion.Player.Instance.rightControllerTransform.position = vrrig.transform.position;
+                                GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = vrrig.transform.position;
                             }
                         }
                     }
@@ -658,7 +658,7 @@ namespace iiMenu.Mods
         {
             GorillaHuntManager sillyComputer = GorillaGameManager.instance.gameObject.GetComponent<GorillaHuntManager>();
             NetPlayer target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
-            if (!GorillaLocomotion.Player.Instance.disableMovement)
+            if (!GorillaLocomotion.GTPlayer.Instance.disableMovement)
             {
                 VRRig vrrig = RigManager.GetVRRigFromPlayer(target);
                 GorillaTagger.Instance.offlineVRRig.enabled = false;
@@ -699,7 +699,7 @@ namespace iiMenu.Mods
                     GorillaTagger.Instance.offlineVRRig.rightThumb.LerpFinger(1f, false);
                 }
 
-                GorillaLocomotion.Player.Instance.rightControllerTransform.position = vrrig.transform.position;
+                GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = vrrig.transform.position;
             }
             else
             {
@@ -765,7 +765,7 @@ namespace iiMenu.Mods
             }
             if (PhotonNetwork.InRoom)
             {
-                if (!GorillaLocomotion.Player.Instance.disableMovement)
+                if (!GorillaLocomotion.GTPlayer.Instance.disableMovement)
                 {
                     GetIndex("Hunt Tag All").enabled = true;
                 }
@@ -985,7 +985,7 @@ namespace iiMenu.Mods
             {
                 GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
                 lol.playerLives[PhotonNetwork.LocalPlayer.ActorNumber] = 4;
-                GorillaLocomotion.Player.Instance.disableMovement = false;
+                GorillaLocomotion.GTPlayer.Instance.disableMovement = false;
             }
         }
     }

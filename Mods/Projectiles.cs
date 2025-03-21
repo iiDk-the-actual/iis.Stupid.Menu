@@ -232,11 +232,11 @@ namespace iiMenu.Mods.Spammers
                 string projectilename = ExternalProjectileNames[projIndex];
 
                 Vector3 startpos = GorillaTagger.Instance.rightHandTransform.position;
-                Vector3 charvel = GorillaLocomotion.Player.Instance.RigidbodyVelocity;
+                Vector3 charvel = GorillaLocomotion.GTPlayer.Instance.RigidbodyVelocity;
 
                 if (GetIndex("Shoot Projectiles").enabled)
                 {
-                    charvel = GorillaLocomotion.Player.Instance.RigidbodyVelocity + (GorillaTagger.Instance.rightHandTransform.transform.forward * ShootStrength);
+                    charvel = GorillaLocomotion.GTPlayer.Instance.RigidbodyVelocity + (GorillaTagger.Instance.rightHandTransform.transform.forward * ShootStrength);
                     if (Mouse.current.leftButton.isPressed)
                     {
                         Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
@@ -249,8 +249,8 @@ namespace iiMenu.Mods.Spammers
 
                 if (GetIndex("Finger Gun Projectiles").enabled)
                 {
-                    charvel = GorillaLocomotion.Player.Instance.RigidbodyVelocity + (TrueRightHand().forward * ShootStrength);
-                    //charvel = GorillaLocomotion.Player.Instance.currentVelocity + GorillaTagger.Instance.rightHandTransform.forward - GorillaTagger.Instance.offlineVRRig.rightHand.trackingRotationOffset;
+                    charvel = GorillaLocomotion.GTPlayer.Instance.RigidbodyVelocity + (TrueRightHand().forward * ShootStrength);
+                    //charvel = GorillaLocomotion.GTPlayer.Instance.currentVelocity + GorillaTagger.Instance.rightHandTransform.forward - GorillaTagger.Instance.offlineVRRig.rightHand.trackingRotationOffset;
                 }
 
                 if (GetIndex("Random Direction").enabled)
@@ -285,7 +285,7 @@ namespace iiMenu.Mods.Spammers
 
                 if (GetIndex("Include Hand Velocity").enabled)
                 {
-                    charvel = GorillaLocomotion.Player.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0);
+                    charvel = GorillaLocomotion.GTPlayer.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0);
                 }
 
                 float randa = 255f;
