@@ -4,10 +4,10 @@ using static iiMenu.Menu.Main;
 
 namespace iiMenu.Patches
 {
-    [HarmonyPatch(typeof(Player), "GetSlidePercentage")]
+    [HarmonyPatch(typeof(GTPlayer), "GetSlidePercentage")]
     public class SlidePatch
     {
-        private static void Postfix(Player __instance, ref float __result)
+        private static void Postfix(GTPlayer __instance, ref float __result)
         {
             try
             {

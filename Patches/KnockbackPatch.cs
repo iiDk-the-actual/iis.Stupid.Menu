@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace iiMenu.Patches
 {
-    [HarmonyPatch(typeof(GorillaLocomotion.Player), "ApplyKnockback")]
+    [HarmonyPatch(typeof(GorillaLocomotion.GTPlayer), "ApplyKnockback")]
     public class KnockbackPatch
     {
         public static bool enabled = false;

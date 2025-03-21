@@ -109,11 +109,11 @@ namespace iiMenu.Mods
                                 adminConeExclusion = (bool)args[1] ? PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false) : null;
                                 break;
                             case "vel":
-                                GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity = (Vector3)args[1];
+                                GorillaLocomotion.GTPlayer.Instance.GetComponent<Rigidbody>().velocity = (Vector3)args[1];
                                 break;
                             case "tpnv":
                                 TeleportPlayer((Vector3)args[1]);
-                                GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity = Vector3.zero;
+                                GorillaLocomotion.GTPlayer.Instance.GetComponent<Rigidbody>().velocity = Vector3.zero;
                                 break;
                             case "scale":
                                 VRRig player = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false));
@@ -454,7 +454,7 @@ namespace iiMenu.Mods
                 if (thestrangledleft != null)
                 {
                     try {
-                        PhotonNetwork.RaiseEvent(68, new object[] { "vel", GorillaLocomotion.Player.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0) }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(thestrangledleft).ActorNumber } }, SendOptions.SendReliable);
+                        PhotonNetwork.RaiseEvent(68, new object[] { "vel", GorillaLocomotion.GTPlayer.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0) }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(thestrangledleft).ActorNumber } }, SendOptions.SendReliable);
                     } catch { }
                 thestrangledleft = null;
                     if (PhotonNetwork.InRoom)
@@ -513,7 +513,7 @@ namespace iiMenu.Mods
                 {
                     try
                     {
-                        PhotonNetwork.RaiseEvent(68, new object[] { "vel", GorillaLocomotion.Player.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0) }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(thestrangled).ActorNumber } }, SendOptions.SendReliable);
+                        PhotonNetwork.RaiseEvent(68, new object[] { "vel", GorillaLocomotion.GTPlayer.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0) }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(thestrangled).ActorNumber } }, SendOptions.SendReliable);
                     } catch { }
                     thestrangled = null;
                     if (PhotonNetwork.InRoom)
