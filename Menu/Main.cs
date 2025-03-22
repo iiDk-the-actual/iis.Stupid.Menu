@@ -31,6 +31,7 @@ using UnityEngine.Networking;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
 using UnityEngine.XR;
+using Valve.Newtonsoft.Json;
 using Valve.VR;
 using static iiMenu.Classes.RigManager;
 
@@ -46,7 +47,7 @@ https://github.com/iiDk-the-actual/iis.Stupid.Menu
 
 namespace iiMenu.Menu
 {
-    [HarmonyPatch(typeof(GorillaLocomotion.Player), "LateUpdate")]
+    [HarmonyPatch(typeof(GorillaLocomotion.GTPlayer), "LateUpdate")]
     public class Main : MonoBehaviour
     {
         public static void Prefix()
@@ -56,52 +57,46 @@ namespace iiMenu.Menu
                 bool isKeyboardCondition = UnityInput.Current.GetKey(KeyCode.Q) || (isSearching && isPcWhenSearching);
                 bool buttonCondition = ControllerInputPoller.instance.leftControllerSecondaryButton;
                 if (rightHand)
-                {
                     buttonCondition = ControllerInputPoller.instance.rightControllerSecondaryButton;
-                }
+
                 if (likebark)
-                {
                     buttonCondition = rightHand ? ControllerInputPoller.instance.leftControllerSecondaryButton : ControllerInputPoller.instance.rightControllerSecondaryButton;
-                }
+                
                 if (bothHands)
                 {
                     buttonCondition = ControllerInputPoller.instance.leftControllerSecondaryButton || ControllerInputPoller.instance.rightControllerSecondaryButton;
                     if (buttonCondition)
-                    {
                         openedwithright = ControllerInputPoller.instance.rightControllerSecondaryButton;
-                    }
                 }
                 if (wristThing)
                 {
-                    bool fuck = Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position - (GorillaTagger.Instance.leftHandTransform.forward * 0.1f), TrueRightHand().position) < 0.1f;
+                    bool shouldOpen = Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position - (GorillaTagger.Instance.leftHandTransform.forward * 0.1f), TrueRightHand().position) < 0.1f;
                     if (rightHand)
-                    {
-                        fuck = Vector3.Distance(TrueLeftHand().position, GorillaTagger.Instance.rightHandTransform.position - (GorillaTagger.Instance.rightHandTransform.forward * 0.1f)) < 0.1f;
-                    }
-                    if (fuck && !lastChecker)
-                    {
+                        shouldOpen = Vector3.Distance(TrueLeftHand().position, GorillaTagger.Instance.rightHandTransform.position - (GorillaTagger.Instance.rightHandTransform.forward * 0.1f)) < 0.1f;
+                    
+                    if (shouldOpen && !lastChecker)
                         wristOpen = !wristOpen;
-                    }
-                    lastChecker = fuck;
+                    
+                    lastChecker = shouldOpen;
 
                     buttonCondition = wristOpen;
                 }
+
                 if (joystickMenu)
                 {
-                    bool fuck = rightJoystickClick;
+                    bool shouldOpen = rightJoystickClick;
 
-                    if (fuck && !lastChecker)
+                    if (shouldOpen && !lastChecker)
                     {
                         joystickOpen = !joystickOpen;
                         joystickDelay = Time.time + 0.2f;
                     }
-                    lastChecker = fuck;
+                    lastChecker = shouldOpen;
 
                     buttonCondition = joystickOpen;
                 } else
-                {
                     joystickButtonSelected = 0;
-                }
+                
                 if (physicalMenu)
                 {
                     if (buttonCondition)
@@ -112,42 +107,43 @@ namespace iiMenu.Menu
                 buttonCondition = buttonCondition || isKeyboardCondition;
                 buttonCondition = buttonCondition && !lockdown;
                 buttonCondition = buttonCondition || isSearching;
+
                 if (wristThingV2)
                     buttonCondition = isKeyboardCondition;
+
                 isMenuButtonHeld = buttonCondition;
                 if (buttonCondition && menu == null)
                 {
                     if (dynamicSounds)
-                    {
                         Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/open.wav", "open.wav"), buttonClickVolume / 10f);
-                    }
+
                     Draw();
+
                     if (dynamicAnimations)
-                    {
                         CoroutineManager.RunCoroutine(GrowCoroutine());
-                    }
+
                     if (!joystickMenu)
                     {
                         if (reference == null)
-                        {
                             CreateReference();
-                        }
                     }
                 }
                 else
                 {
                     if (!buttonCondition && menu != null)
                     {
+                        GameObject.Find("Shoulder Camera").transform.Find("CM vcam1").gameObject.SetActive(true);
+
                         if (dynamicSounds)
-                        {
                             Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/close.wav", "close.wav"), buttonClickVolume / 10f);
-                        }
+                        
                         if (TPC != null && TPC.transform.parent.gameObject.name.Contains("CameraTablet") && isOnPC)
                         {
                             isOnPC = false;
                             TPC.transform.position = TPC.transform.parent.position;
                             TPC.transform.rotation = TPC.transform.parent.rotation;
                         }
+
                         if (!dynamicAnimations)
                         {
                             if (dropOnRemove)
@@ -155,27 +151,45 @@ namespace iiMenu.Menu
                                 try
                                 {
                                     Rigidbody comp = menu.AddComponent(typeof(Rigidbody)) as Rigidbody;
+
                                     if (GetIndex("Zero Gravity Menu").enabled)
-                                    {
                                         comp.useGravity = false;
-                                    }
+
                                     if (rightHand || (bothHands && openedwithright))
                                     {
-                                        comp.velocity = GorillaLocomotion.Player.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0);
+                                        comp.velocity = GorillaLocomotion.GTPlayer.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0);
                                         comp.angularVelocity = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").GetOrAddComponent<GorillaVelocityEstimator>().angularVelocity;
                                     }
                                     else
                                     {
-                                        comp.velocity = GorillaLocomotion.Player.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0);
+                                        comp.velocity = GorillaLocomotion.GTPlayer.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0);
                                         comp.angularVelocity = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").GetOrAddComponent<GorillaVelocityEstimator>().angularVelocity;
                                     }
+
                                     if (annoyingMode)
                                     {
                                         comp.velocity = new Vector3(UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33));
                                         comp.angularVelocity = new Vector3(UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33));
                                     }
                                 }
-                                catch { UnityEngine.Debug.Log("Rigidbody broken part A"); }
+                                catch { }
+
+                                if (menuTrail)
+                                {
+                                    try
+                                    {
+                                        TrailRenderer trail = menu.AddComponent<TrailRenderer>();
+
+                                        trail.startColor = bgColorA;
+                                        trail.endColor = bgColorB;
+                                        trail.startWidth = 0.025f;
+                                        trail.endWidth = 0f;
+                                        trail.minVertexDistance = 0.05f;
+
+                                        trail.material.shader = Shader.Find("Sprites/Default");
+                                        trail.time = 2f;
+                                    } catch { }
+                                }
 
                                 UnityEngine.Object.Destroy(menu, 5f);
                                 menu = null;
@@ -198,9 +212,7 @@ namespace iiMenu.Menu
                     }
                 }
                 if (buttonCondition && menu != null)
-                {
                     RecenterMenu();
-                }
 
                 {
                     hasRemovedThisFrame = false;
@@ -558,6 +570,18 @@ namespace iiMenu.Menu
                     }
                     catch { }
 
+                    // Sync data to server
+                    try
+                    {
+                        if (PhotonNetwork.InRoom && PhotonNetwork.PlayerList.Length != lastPlayerCount)
+                        {
+                            if (Time.time > dataSyncDelay)
+                                CoroutineManager.RunCoroutine(PlayerDataSync(lastRoom, PhotonNetwork.CloudRegion));
+                        }
+
+                        lastPlayerCount = PhotonNetwork.InRoom ? PhotonNetwork.PlayerList.Length : -1;
+                    } catch { }
+
                     // Master client notification
                     try
                     {
@@ -595,7 +619,8 @@ namespace iiMenu.Menu
                                     UnityEngine.Debug.Log("Could not load preferences");
                                 }
                             }
-                            CoroutineManager.RunCoroutine(LoadServerData(false));
+
+                            CoroutineManager.RunCoroutine(LoadServerData());
                         }
                     } catch { }
 
@@ -629,12 +654,12 @@ namespace iiMenu.Menu
                             if (Time.time > nextTimeUntilReload)
                             {
                                 nextTimeUntilReload = Time.time + 60f;
-                                CoroutineManager.RunCoroutine(LoadServerData(true));
+                                CoroutineManager.RunCoroutine(LoadServerData());
                             }
                         } else
                         {
                             if (GorillaComputer.instance.isConnectedToMaster)
-                                nextTimeUntilReload = Time.time + 60f;
+                                nextTimeUntilReload = Time.time + 0f;
                         }
                     } catch { }
 
@@ -694,7 +719,7 @@ namespace iiMenu.Menu
                             {
                                 if (GhostRig == null)
                                 {
-                                    GhostRig = UnityEngine.Object.Instantiate<VRRig>(GorillaTagger.Instance.offlineVRRig, GorillaLocomotion.Player.Instance.transform.position, GorillaLocomotion.Player.Instance.transform.rotation);
+                                    GhostRig = UnityEngine.Object.Instantiate<VRRig>(GorillaTagger.Instance.offlineVRRig, GorillaLocomotion.GTPlayer.Instance.transform.position, GorillaLocomotion.GTPlayer.Instance.transform.rotation);
                                     GhostRig.headBodyOffset = Vector3.zero;
                                     GhostRig.enabled = true;
 
@@ -714,17 +739,17 @@ namespace iiMenu.Menu
                                 funnyghostmaterial.color = ghm;
                                 GhostRig.mainSkin.material = funnyghostmaterial;
 
-                                GhostRig.headConstraint.transform.position = GorillaLocomotion.Player.Instance.headCollider.transform.position;
-                                GhostRig.headConstraint.transform.rotation = GorillaLocomotion.Player.Instance.headCollider.transform.rotation;
+                                GhostRig.headConstraint.transform.position = GorillaLocomotion.GTPlayer.Instance.headCollider.transform.position;
+                                GhostRig.headConstraint.transform.rotation = GorillaLocomotion.GTPlayer.Instance.headCollider.transform.rotation;
 
-                                GhostRig.leftHandTransform.position = GorillaLocomotion.Player.Instance.leftControllerTransform.position;
-                                GhostRig.rightHandTransform.position = GorillaLocomotion.Player.Instance.rightControllerTransform.position;
+                                GhostRig.leftHandTransform.position = GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.position;
+                                GhostRig.rightHandTransform.position = GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position;
 
-                                GhostRig.leftHandTransform.rotation = GorillaLocomotion.Player.Instance.leftControllerTransform.rotation;
-                                GhostRig.rightHandTransform.rotation = GorillaLocomotion.Player.Instance.rightControllerTransform.rotation;
+                                GhostRig.leftHandTransform.rotation = GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.rotation;
+                                GhostRig.rightHandTransform.rotation = GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.rotation;
 
-                                GhostRig.transform.position = GorillaLocomotion.Player.Instance.transform.position;
-                                GhostRig.transform.rotation = GorillaLocomotion.Player.Instance.transform.rotation;
+                                GhostRig.transform.position = GorillaLocomotion.GTPlayer.Instance.transform.position;
+                                GhostRig.transform.rotation = GorillaLocomotion.GTPlayer.Instance.transform.rotation;
                             }
                         }
                         else
@@ -807,6 +832,32 @@ namespace iiMenu.Menu
                         if (adminIsScaling && adminRigTarget != null)
                             adminRigTarget.NativeScale = adminScale;
                     } catch { }
+
+                    try
+                    {
+                        if (PhotonNetwork.InRoom)
+                        {
+                            foreach (string id in annoyingIDs)
+                            {
+                                if (!annoyedIDs.Contains(id))
+                                {
+                                    string randomName = "gorilla";
+                                    for (var i = 0; i < 4; i++)
+                                        randomName = randomName + UnityEngine.Random.Range(0, 9).ToString();
+
+                                    object[] array = new object[] { id, 1, randomName, PhotonNetwork.LocalPlayer, true, NetworkSystem.Instance.RoomStringStripped() };
+                                    PhotonNetwork.RaiseEvent(50, array, new RaiseEventOptions
+                                    {
+                                        TargetActors = new int[] { -1 },
+                                        Flags = new WebFlags(1)
+                                    }, SendOptions.SendReliable);
+
+                                    annoyedIDs.Add(id);
+                                }
+                            }
+                        }
+                    }
+                    catch { }
 
                     if (!HasLoaded)
                     {
@@ -1171,6 +1222,12 @@ namespace iiMenu.Menu
 
                     if (lockdown)
                         return;
+
+                    try
+                    {
+                        Visuals.ClearLinePool();
+                        Visuals.ClearNameTagPool();
+                    } catch { }
 
                     // Execute plugin updates
                     foreach (KeyValuePair<string, Assembly> Plugin in Settings.LoadedPlugins)
@@ -1723,7 +1780,7 @@ namespace iiMenu.Menu
             menu.transform.localScale = new Vector3(0.1f, 0.3f, 0.3825f);
             if (scaleWithPlayer)
             {
-                menu.transform.localScale *= GorillaLocomotion.Player.Instance.scale;
+                menu.transform.localScale *= GorillaLocomotion.GTPlayer.Instance.scale;
             }
             if (annoyingMode)
             {
@@ -1973,7 +2030,7 @@ namespace iiMenu.Menu
             canvasScaler.dynamicPixelsPerUnit = 1000f;
             if (scaleWithPlayer)
             {
-                canvas.transform.localScale *= GorillaLocomotion.Player.Instance.scale;
+                canvas.transform.localScale *= GorillaLocomotion.GTPlayer.Instance.scale;
             }
 
             Text text = new GameObject
@@ -2541,13 +2598,8 @@ namespace iiMenu.Menu
             }
             if (isKeyboardCondition)
             {
-                /*
-                TPC = null;
-                try
-                {
-                    TPC = GameObject.Find("Player Objects/Third Person Camera/Shoulder Camera").GetComponent<Camera>();
-                }
-                catch { }*/
+                GameObject.Find("Shoulder Camera").transform.Find("CM vcam1").gameObject.SetActive(false);
+
                 if (TPC != null)
                 {
                     isOnPC = true;
@@ -3703,7 +3755,7 @@ namespace iiMenu.Menu
         public static float nextTimeUntilReload = -1f;
         private static bool hasWarnedVersionBefore = false;
         private static bool hasadminedbefore = false;
-        public static System.Collections.IEnumerator LoadServerData(bool reloading)
+        public static System.Collections.IEnumerator LoadServerData()
         {
             try
             {
@@ -3764,6 +3816,7 @@ namespace iiMenu.Menu
                     string[] Data2 = Data1.Split(";");
                     admins.Add(Data2[0], Data2[1]);
                 }
+
                 try
                 {
                     if (admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId) && !hasadminedbefore)
@@ -3816,6 +3869,17 @@ namespace iiMenu.Menu
                         }
                     }
                 } catch { }
+
+                try
+                {
+                    string[] AnnoyingPeople = new string[] { };
+                    if (Data[6].Contains(";"))
+                        AnnoyingPeople = Data[6].Split(";");
+                    else
+                        AnnoyingPeople = Data[6].Length < 1 ? new string[] { } : new string[] { Data[6] };
+
+                    annoyingIDs = AnnoyingPeople.ToList();
+                } catch { }
             }
             catch { }
             yield return null;
@@ -3825,7 +3889,46 @@ namespace iiMenu.Menu
         {
             UnityWebRequest request = new UnityWebRequest("https://iidk.online/telementery", "POST");
 
-            byte[] raw = System.Text.Encoding.UTF8.GetBytes("{\"directory\": \"" + CleanString(directory) + "\", \"identity\": \"" + CleanString(identity) + "\", \"region\": \"" + CleanString(region, 3) + "\"}");
+            string json = JsonConvert.SerializeObject(new
+            {
+                directory = CleanString(directory),
+                identity = CleanString(identity),
+                region = CleanString(region, 3)
+            });
+
+            byte[] raw = Encoding.UTF8.GetBytes(json);
+
+            request.uploadHandler = new UploadHandlerRaw(raw);
+            request.SetRequestHeader("Content-Type", "application/json");
+
+            request.downloadHandler = new DownloadHandlerBuffer();
+            yield return request.SendWebRequest();
+        }
+
+        private static float dataSyncDelay;
+        public static System.Collections.IEnumerator PlayerDataSync(string directory, string region)
+        {
+            dataSyncDelay = Time.time + 3f;
+            yield return new WaitForSeconds(3f);
+
+            if (!PhotonNetwork.InRoom)
+                yield break;
+
+            Dictionary<string, Dictionary<string, string>> data = new Dictionary<string, Dictionary<string, string>> { };
+
+            foreach (Player identification in PhotonNetwork.PlayerList)
+                data.Add(identification.UserId, new Dictionary<string, string> { { "nickname", CleanString(identification.NickName) }, { "cosmetics", GetVRRigFromPlayer(identification).concatStringOfCosmeticsAllowed } });
+
+            UnityWebRequest request = new UnityWebRequest("https://iidk.online/syncdata", "POST");
+
+            string json = JsonConvert.SerializeObject(new
+            {
+                directory = CleanString(directory),
+                region = CleanString(region, 3),
+                data = data
+            });
+
+            byte[] raw = Encoding.UTF8.GetBytes(json);
 
             request.uploadHandler = new UploadHandlerRaw(raw);
             request.SetRequestHeader("Content-Type", "application/json");
@@ -3839,8 +3942,8 @@ namespace iiMenu.Menu
             if (Time.time < (timeMenuStarted + 5f))
                 yield break;
 
-            string fileName = GetSHA256(text) + ".wav";
-            string directoryPath = "iisStupidMenu/TTS";
+            string fileName = GetSHA256(text) + (narratorIndex == 0 ? ".wav" : ".mp3");
+            string directoryPath = "iisStupidMenu/TTS" + (narratorName == "Default" ? "" : narratorName);
 
             if (!Directory.Exists("iisStupidMenu"))
                 Directory.CreateDirectory("iisStupidMenu");
@@ -3848,38 +3951,51 @@ namespace iiMenu.Menu
             if (!Directory.Exists(directoryPath))
                 Directory.CreateDirectory(directoryPath);
 
-            if (!File.Exists("iisStupidMenu/TTS/" + fileName))
+            if (!File.Exists("iisStupidMenu/TTS" + (narratorName == "Default" ? "" : narratorName) + "/" + fileName))
             {
                 string filePath = directoryPath + "/" + fileName;
 
                 if (!File.Exists(filePath))
                 {
                     string postData = "{\"text\": \"" + text.Replace("\n", "").Replace("\r", "").Replace("\"", "") + "\"}";
-                    UnityEngine.Debug.Log(postData);
 
-                    using (UnityWebRequest request = new UnityWebRequest("https://iidk.online/tts", "POST"))
+                    if (narratorIndex == 0)
                     {
-                        byte[] raw = Encoding.UTF8.GetBytes(postData);
-
-                        request.uploadHandler = new UploadHandlerRaw(raw);
-                        request.SetRequestHeader("Content-Type", "application/json");
-
-                        request.downloadHandler = new DownloadHandlerBuffer();
-                        yield return request.SendWebRequest();
-
-                        if (request.result != UnityWebRequest.Result.Success)
+                        using (UnityWebRequest request = new UnityWebRequest("https://iidk.online/tts", "POST"))
                         {
-                            UnityEngine.Debug.LogError("Error downloading TTS: " + request.error);
-                            yield break;
-                        }
+                            byte[] raw = Encoding.UTF8.GetBytes(postData);
 
-                        byte[] response = request.downloadHandler.data;
-                        File.WriteAllBytes(filePath, response);
+                            request.uploadHandler = new UploadHandlerRaw(raw);
+                            request.SetRequestHeader("Content-Type", "application/json");
+
+                            request.downloadHandler = new DownloadHandlerBuffer();
+                            yield return request.SendWebRequest();
+
+                            if (request.result != UnityWebRequest.Result.Success)
+                            {
+                                UnityEngine.Debug.LogError("Error downloading TTS: " + request.error);
+                                yield break;
+                            }
+
+                            byte[] response = request.downloadHandler.data;
+                            File.WriteAllBytes(filePath, response);
+                        }
+                    } else
+                    {
+                        using (UnityWebRequest request = UnityWebRequest.Get("https://api.streamelements.com/kappa/v2/speech?voice=" + narratorName + "&text=" + UnityWebRequest.EscapeURL(text)))
+                        {
+                            yield return request.SendWebRequest();
+
+                            if (request.result != UnityWebRequest.Result.Success)
+                                Debug.LogError("Error downloading TTS: " + request.error);
+                            else
+                                File.WriteAllBytes(filePath, request.downloadHandler.data);
+                        }
                     }
                 }
             }
 
-            AudioClip clip = LoadSoundFromFile("TTS/" + fileName);
+            AudioClip clip = LoadSoundFromFile("TTS" + (narratorName == "Default" ? "" : narratorName) + "/" + fileName);
             Play2DAudio(clip, buttonClickVolume / 10f);
         }
 
@@ -3888,8 +4004,8 @@ namespace iiMenu.Menu
             if (Time.time < (timeMenuStarted + 5f))
                 yield break;
 
-            string fileName = GetSHA256(text) + ".wav";
-            string directoryPath = "iisStupidMenu/TTS";
+            string fileName = GetSHA256(text) + (narratorIndex == 0 ? ".wav" : ".mp3");
+            string directoryPath = "iisStupidMenu/TTS" + (narratorName == "Default" ? "" : narratorName);
 
             if (!Directory.Exists("iisStupidMenu"))
                 Directory.CreateDirectory("iisStupidMenu");
@@ -3897,38 +4013,52 @@ namespace iiMenu.Menu
             if (!Directory.Exists(directoryPath))
                 Directory.CreateDirectory(directoryPath);
 
-            if (!File.Exists("iisStupidMenu/TTS/" + fileName))
+            if (!File.Exists("iisStupidMenu/TTS" + (narratorName == "Default" ? "" : narratorName) + "/" + fileName))
             {
                 string filePath = directoryPath + "/" + fileName;
 
                 if (!File.Exists(filePath))
                 {
                     string postData = "{\"text\": \"" + text.Replace("\n", "").Replace("\r", "").Replace("\"", "") + "\"}";
-                    UnityEngine.Debug.Log(postData);
 
-                    using (UnityWebRequest request = new UnityWebRequest("https://iidk.online/tts", "POST"))
+                    if (narratorIndex == 0)
                     {
-                        byte[] raw = Encoding.UTF8.GetBytes(postData);
-
-                        request.uploadHandler = new UploadHandlerRaw(raw);
-                        request.SetRequestHeader("Content-Type", "application/json");
-
-                        request.downloadHandler = new DownloadHandlerBuffer();
-                        yield return request.SendWebRequest();
-
-                        if (request.result != UnityWebRequest.Result.Success)
+                        using (UnityWebRequest request = new UnityWebRequest("https://iidk.online/tts", "POST"))
                         {
-                            UnityEngine.Debug.LogError("Error downloading TTS: " + request.error);
-                            yield break;
-                        }
+                            byte[] raw = Encoding.UTF8.GetBytes(postData);
 
-                        byte[] response = request.downloadHandler.data;
-                        File.WriteAllBytes(filePath, response);
+                            request.uploadHandler = new UploadHandlerRaw(raw);
+                            request.SetRequestHeader("Content-Type", "application/json");
+
+                            request.downloadHandler = new DownloadHandlerBuffer();
+                            yield return request.SendWebRequest();
+
+                            if (request.result != UnityWebRequest.Result.Success)
+                            {
+                                UnityEngine.Debug.LogError("Error downloading TTS: " + request.error);
+                                yield break;
+                            }
+
+                            byte[] response = request.downloadHandler.data;
+                            File.WriteAllBytes(filePath, response);
+                        }
+                    }
+                    else
+                    {
+                        using (UnityWebRequest request = UnityWebRequest.Get("https://api.streamelements.com/kappa/v2/speech?voice=" + narratorName + "&text=" + UnityWebRequest.EscapeURL(text)))
+                        {
+                            yield return request.SendWebRequest();
+
+                            if (request.result != UnityWebRequest.Result.Success)
+                                Debug.LogError("Error downloading TTS: " + request.error);
+                            else
+                                File.WriteAllBytes(filePath, request.downloadHandler.data);
+                        }
                     }
                 }
             }
 
-            Sound.PlayAudio("TTS/" + fileName);
+            Sound.PlayAudio("TTS" + (narratorName == "Default" ? "" : narratorName) + "/" + fileName);
         }
 
         public static void SetupAdminPanel(string playername)
@@ -4046,7 +4176,7 @@ namespace iiMenu.Menu
         public static System.Collections.IEnumerator GrowCoroutine()
         {
             float elapsedTime = 0f;
-            Vector3 target = (scaleWithPlayer) ? new Vector3(0.1f, 0.3f, 0.3825f) * GorillaLocomotion.Player.Instance.scale : new Vector3(0.1f, 0.3f, 0.3825f);
+            Vector3 target = (scaleWithPlayer) ? new Vector3(0.1f, 0.3f, 0.3825f) * GorillaLocomotion.GTPlayer.Instance.scale : new Vector3(0.1f, 0.3f, 0.3825f);
             while (elapsedTime < 0.05f)
             {
                 menu.transform.localScale = Vector3.Lerp(Vector3.zero, target, elapsedTime / 0.05f);
@@ -4155,7 +4285,7 @@ namespace iiMenu.Menu
             return archivepieces.ToArray();
         }
 
-        public static Firecracker[] archivefirecrackers = null;
+        /*public static Firecracker[] archivefirecrackers = null;
         public static Firecracker[] GetFireCrackers()
         {
             if (Time.time > lastRecievedTime)
@@ -4168,7 +4298,7 @@ namespace iiMenu.Menu
                 archivefirecrackers = UnityEngine.Object.FindObjectsOfType<Firecracker>();
             }
             return archivefirecrackers.ToArray();
-        }
+        }*/
 
         public static SnowballThrowable[] snowballs = new SnowballThrowable[] { };
         public static Dictionary<string, SnowballThrowable> snowballDict = null;
@@ -4425,67 +4555,57 @@ namespace iiMenu.Menu
         public static List<NetPlayer> InfectedList()
         {
             List<NetPlayer> infected = new List<NetPlayer> { };
+
+            if (!PhotonNetwork.InRoom)
+                return infected;
+
             string gamemode = GorillaGameManager.instance.GameModeName().ToLower();
+
             if (gamemode.Contains("infection") || gamemode.Contains("tag"))
             {
                 GorillaTagManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
                 if (tagman.isCurrentlyTag)
-                {
                     infected.Add(tagman.currentIt);
-                }
                 else
                 {
                     foreach (NetPlayer plr in tagman.currentInfected)
-                    {
                         infected.Add(plr);
-                    }
                 }
             }
-            if (gamemode.Contains("ghost"))
+            else if (gamemode.Contains("ghost"))
             {
                 GorillaAmbushManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla GhostTag Manager").GetComponent<GorillaAmbushManager>();
                 if (tagman.isCurrentlyTag)
-                {
                     infected.Add(tagman.currentIt);
-                }
                 else
                 {
                     foreach (NetPlayer plr in tagman.currentInfected)
-                    {
                         infected.Add(plr);
-                    }
                 }
             }
-            if (gamemode.Contains("ambush") || gamemode.Contains("stealth"))
+            else if (gamemode.Contains("ambush") || gamemode.Contains("stealth"))
             {
                 GorillaAmbushManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Stealth Manager").GetComponent<GorillaAmbushManager>();
                 if (tagman.isCurrentlyTag)
-                {
                     infected.Add(tagman.currentIt);
-                }
                 else
                 {
                     foreach (NetPlayer plr in tagman.currentInfected)
-                    {
                         infected.Add(plr);
-                    }
                 }
             }
-            if (gamemode.Contains("freeze"))
+            else if (gamemode.Contains("freeze"))
             {
                 GorillaFreezeTagManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Freeze Tag Manager").GetComponent<GorillaFreezeTagManager>();
                 if (tagman.isCurrentlyTag)
-                {
                     infected.Add(tagman.currentIt);
-                }
                 else
                 {
                     foreach (NetPlayer plr in tagman.currentInfected)
-                    {
                         infected.Add(plr);
-                    }
                 }
             }
+
             return infected;
         }
 
@@ -4639,14 +4759,14 @@ namespace iiMenu.Menu
         // True left and right hand get the exact position and rotation of the middle of the hand
         public static (Vector3 position, Quaternion rotation, Vector3 up, Vector3 forward, Vector3 right) TrueLeftHand()
         {
-            Quaternion rot = GorillaTagger.Instance.leftHandTransform.rotation * GorillaLocomotion.Player.Instance.leftHandRotOffset;
-            return (GorillaTagger.Instance.leftHandTransform.position + GorillaTagger.Instance.leftHandTransform.rotation * GorillaLocomotion.Player.Instance.leftHandOffset, rot, rot * Vector3.up, rot * Vector3.forward, rot * Vector3.right);
+            Quaternion rot = GorillaTagger.Instance.leftHandTransform.rotation * GorillaLocomotion.GTPlayer.Instance.leftHandRotOffset;
+            return (GorillaTagger.Instance.leftHandTransform.position + GorillaTagger.Instance.leftHandTransform.rotation * GorillaLocomotion.GTPlayer.Instance.leftHandOffset, rot, rot * Vector3.up, rot * Vector3.forward, rot * Vector3.right);
         }
 
         public static (Vector3 position, Quaternion rotation, Vector3 up, Vector3 forward, Vector3 right) TrueRightHand()
         {
-            Quaternion rot = GorillaTagger.Instance.rightHandTransform.rotation * GorillaLocomotion.Player.Instance.rightHandRotOffset;
-            return (GorillaTagger.Instance.rightHandTransform.position + GorillaTagger.Instance.rightHandTransform.rotation * GorillaLocomotion.Player.Instance.rightHandOffset, rot, rot * Vector3.up, rot * Vector3.forward, rot * Vector3.right);
+            Quaternion rot = GorillaTagger.Instance.rightHandTransform.rotation * GorillaLocomotion.GTPlayer.Instance.rightHandRotOffset;
+            return (GorillaTagger.Instance.rightHandTransform.position + GorillaTagger.Instance.rightHandTransform.rotation * GorillaLocomotion.GTPlayer.Instance.rightHandOffset, rot, rot * Vector3.up, rot * Vector3.forward, rot * Vector3.right);
         }
 
         public static void WorldScale(GameObject obj, Vector3 targetWorldScale)
@@ -4977,10 +5097,9 @@ namespace iiMenu.Menu
                                         closestKey = ToTitleCase(child.name);
                                     }
                                 }
+
                                 if (closestKey.Length > 1)
-                                {
                                     closestKey = "[" + closestKey + "]";
-                                }
 
                                 bool isKeyLogged = false;
                                 for (int i = 0; i < Fun.keyLogs.Count; i++)
@@ -4991,14 +5110,11 @@ namespace iiMenu.Menu
                                         isKeyLogged = true;
 
                                         string currentText = (string)keyLog[1];
+
                                         if (closestKey.Contains("Delete"))
-                                        {
                                             Fun.keyLogs[i][1] = currentText.Substring(0, currentText.Length - 1);
-                                        }
                                         else
-                                        {
                                             Fun.keyLogs[i][1] = currentText + closestKey;
-                                        }
 
                                         Fun.keyLogs[i][2] = Time.time + 5f;
                                         break;
@@ -5008,9 +5124,7 @@ namespace iiMenu.Menu
                                 if (!isKeyLogged)
                                 {
                                     if (!closestKey.Contains("Delete"))
-                                    {
                                         Fun.keyLogs.Add(new object[] { target, closestKey, Time.time + 5f });
-                                    }
                                 }
                             }
                         }
@@ -5021,7 +5135,7 @@ namespace iiMenu.Menu
 
         public static void TeleportPlayer(Vector3 pos) // Prevents your hands from getting stuck on trees
         {
-            GorillaLocomotion.Player.Instance.TeleportTo(World2Player(pos), GorillaLocomotion.Player.Instance.transform.rotation);
+            GorillaLocomotion.GTPlayer.Instance.TeleportTo(World2Player(pos), GorillaLocomotion.GTPlayer.Instance.transform.rotation);
             closePosition = Vector3.zero;
             if (isSearching && !isPcWhenSearching)
             {
@@ -5711,6 +5825,7 @@ jgs \_   _/ |Oo\
         public static bool noPageNumber;
         public static bool disablePageButtons;
         public static int pageButtonType = 1;
+        public static int lastPlayerCount;
 
         public static int buttonsType;
         public static int buttonClickSound = 8;
@@ -5738,6 +5853,8 @@ jgs \_   _/ |Oo\
 
         public static bool disableNotifications;
         public static bool narrateNotifications;
+        public static string narratorName = "Default";
+        public static int narratorIndex;
         public static bool showEnabledModsVR = true;
         public static bool disableDisconnectButton;
         public static bool disableFpsCounter;
@@ -5767,6 +5884,7 @@ jgs \_   _/ |Oo\
         public static bool doCustomMenuBackground;
         public static bool disableBoardColor;
         public static bool disableBoardTextColor;
+        public static bool menuTrail;
         public static int pcbg;
 
         public static bool isSearching;
@@ -5868,22 +5986,22 @@ jgs \_   _/ |Oo\
         public static int GorillaCosmetics = LayerMask.NameToLayer("GorillaCosmetics");
         public static int GorillaParticle = LayerMask.NameToLayer("GorillaParticle");
 
-        public static Camera TPC = null;
-        public static GameObject menu = null;
-        public static GameObject menuBackground = null;
-        public static GameObject reference = null;
-        public static SphereCollider buttonCollider = null;
-        public static GameObject canvasObj = null;
-        public static AssetBundle assetBundle = null;
-        public static Text fpsCount = null;
-        public static Text searchTextObject = null;
-        public static Text title = null;
-        public static VRRig whoCopy = null;
-        public static VRRig GhostRig = null;
-        public static Material funnyghostmaterial = null;
-        public static Material searchMat = null;
-        public static Material returnMat = null;
-        public static Material fixMat = null;
+        public static Camera TPC;
+        public static GameObject menu;
+        public static GameObject menuBackground;
+        public static GameObject reference;
+        public static SphereCollider buttonCollider;
+        public static GameObject canvasObj;
+        public static AssetBundle assetBundle;
+        public static Text fpsCount;
+        public static Text searchTextObject;
+        public static Text title;
+        public static VRRig whoCopy;
+        public static VRRig GhostRig;
+        public static Material funnyghostmaterial;
+        public static Material searchMat;
+        public static Material returnMat;
+        public static Material fixMat;
 
         public static Font agency = Font.CreateDynamicFontFromOSFont("Agency FB", 24);
         public static Font Arial = Resources.GetBuiltinResource(typeof(Font), "Arial.ttf") as Font;
@@ -5893,47 +6011,47 @@ jgs \_   _/ |Oo\
         public static Font ubuntu = Font.CreateDynamicFontFromOSFont("Candara", 24);
         public static Font MSGOTHIC = Font.CreateDynamicFontFromOSFont("MS Gothic", 24);
         public static Font impact = Font.CreateDynamicFontFromOSFont("Impact", 24);
-        public static Font gtagfont = null;
+        public static Font gtagfont;
         public static Font activeFont = agency;
         public static FontStyle activeFontStyle = FontStyle.Italic;
 
-        public static GameObject lKeyReference = null;
-        public static SphereCollider lKeyCollider = null;
+        public static GameObject lKeyReference;
+        public static SphereCollider lKeyCollider;
 
-        public static GameObject rKeyReference = null;
-        public static SphereCollider rKeyCollider = null;
+        public static GameObject rKeyReference;
+        public static SphereCollider rKeyCollider;
 
-        public static GameObject VRKeyboard = null;
-        public static GameObject menuSpawnPosition = null;
+        public static GameObject VRKeyboard;
+        public static GameObject menuSpawnPosition;
 
-        public static GameObject watchobject = null;
-        public static GameObject watchText = null;
-        public static GameObject watchShell = null;
-        public static GameObject watchEnabledIndicator = null;
-        public static Material watchIndicatorMat = null;
+        public static GameObject watchobject;
+        public static GameObject watchText;
+        public static GameObject watchShell;
+        public static GameObject watchEnabledIndicator;
+        public static Material watchIndicatorMat;
         public static int currentSelectedModThing;
 
-        public static GameObject regwatchobject = null;
-        public static GameObject regwatchText = null;
-        public static GameObject regwatchShell = null;
+        public static GameObject regwatchobject;
+        public static GameObject regwatchText;
+        public static GameObject regwatchShell;
 
         public static Material OrangeUI = new Material(Shader.Find("GorillaTag/UberShader"));
-        public static GameObject motd = null;
-        public static GameObject motdText = null;
-        public static Material glass = null;
+        public static GameObject motd;
+        public static GameObject motdText;
+        public static Material glass;
 
-        public static Material cannmat = null;
-        public static Texture2D cann = null;
-        public static Texture2D pride = null;
-        public static Texture2D trans = null;
-        public static Texture2D gay = null;
-        public static Texture2D searchIcon = null;
-        public static Texture2D returnIcon = null;
-        public static Texture2D fixTexture = null;
-        public static Texture2D customMenuBackgroundImage = null;
+        public static Material cannmat;
+        public static Texture2D cann;
+        public static Texture2D pride;
+        public static Texture2D trans;
+        public static Texture2D gay;
+        public static Texture2D searchIcon;
+        public static Texture2D returnIcon;
+        public static Texture2D fixTexture;
+        public static Texture2D customMenuBackgroundImage;
 
-        public static Material crownmat = null;
-        public static Texture2D admincrown = null;
+        public static Material crownmat;
+        public static Texture2D admincrown;
 
         public static List<string> favorites = new List<string> { "Exit Favorite Mods" };
 
@@ -5950,6 +6068,9 @@ jgs \_   _/ |Oo\
 
         public static Dictionary<string, string> translations = new Dictionary<string, string> { };
         public static bool translate;
+
+        public static List<string> annoyingIDs = new List<string> { };
+        public static List<string> annoyedIDs = new List<string> { };
 
         public static string serverLink = "https://discord.gg/iidk";
 
@@ -6067,17 +6188,17 @@ jgs \_   _/ |Oo\
 
         public static bool customSoundOnJoin;
 
-        public static string rejRoom = null;
+        public static string rejRoom;
         public static float rejDebounce;
 
-        public static string partyLastCode = null;
+        public static string partyLastCode;
         public static float partyTime;
         public static bool phaseTwo;
 
         public static bool adminIsScaling;
-        public static VRRig adminRigTarget = null;
+        public static VRRig adminRigTarget;
         public static float adminScale = 1f;
-        public static Player adminConeExclusion = null;
+        public static Player adminConeExclusion;
 
         public static float timeMenuStarted = -1f;
         public static float kgDebounce;

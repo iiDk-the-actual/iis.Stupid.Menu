@@ -76,6 +76,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Player Scale Menu", enableMethod =() => Settings.ScaleMenuWithPlayer(), disableMethod =() => Settings.DontScaleMenuWithPlayer(), toolTip = "Scales the menu with your player scale."},
                 new ButtonInfo { buttonText = "Alphabetize Menu", toolTip = "Alphabetizes the entire menu."},
                 new ButtonInfo { buttonText = "Custom Menu Name", enableMethod =() => Settings.CustomMenuName(), disableMethod =() => Settings.NoCustomMenuName(), toolTip = "Changes the name of the menu to whatever. You can change the text inside of your Gorilla Tag files (iisStupidMenu/iiMenu_CustomMenuName.txt)."},
+                new ButtonInfo { buttonText = "Menu Trail", enableMethod =() => Settings.MenuTrail(), disableMethod =() => Settings.NoMenuTrail(), toolTip = "Gives the menu a trail when you drop."},
 
                 new ButtonInfo { buttonText = "Dynamic Animations", enableMethod =() => Settings.DynamicAnimations(), disableMethod =() => Settings.NoDynamicAnimations(), toolTip = "Adds more animations to the menu, giving you a better sense of control."},
                 new ButtonInfo { buttonText = "Dynamic Gradients", enableMethod =() => Settings.DynamicGradients(), disableMethod =() => Settings.NoDynamicGradients(), toolTip = "Makes gradients dynamic, showing you the full gradient instead of a pulsing color."},
@@ -100,6 +101,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Change PC Menu Background", method =() => Settings.ChangePCUI(), isTogglable = false, toolTip = "Changes the background of the PC ui."},
                 new ButtonInfo { buttonText = "Change Notification Time", overlapText = "Change Notification Time <color=grey>[</color><color=green>1</color><color=grey>]</color>", method =() => Settings.ChangeNotificationTime(), isTogglable = false, toolTip = "Changes the time before a notification is removed."},
                 new ButtonInfo { buttonText = "Change Notification Sound", overlapText = "Change Notification Sound <color=grey>[</color><color=green>None</color><color=grey>]</color>", method =() => Settings.ChangeNotificationSound(), isTogglable = false, toolTip = "Changes the sound that plays when receiving a notification."},
+                new ButtonInfo { buttonText = "Change Narration Voice", overlapText = "Change Narration Voice <color=grey>[</color><color=green>Default</color><color=grey>]</color>", method =() => Settings.ChangeNarrationVoice(), isTogglable = false, toolTip = "Changes the voice of the narrator."},
                 new ButtonInfo { buttonText = "Change Pointer Position", method =() => Settings.ChangePointerPosition(), isTogglable = false, toolTip = "Changes the position of the pointer."},
 
                 new ButtonInfo { buttonText = "Swap GUI Colors", toolTip = "Swaps the GUI colors to the enabled color, for darker themes."},
@@ -540,6 +542,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Voice Indicators", method =() => Visuals.VoiceIndicators(), toolTip = "Puts voice indicators above people's heads when they're talking."},
                 new ButtonInfo { buttonText = "Voice ESP", method =() => Visuals.VoiceESP(), toolTip = "Puts voice indicators above people's heads when they're talking, but now they go through walls."},
 
+                new ButtonInfo { buttonText = "Platform Indicators", method =() => Visuals.PlatformIndicators(), toolTip = "Puts indicators above people's heads that show what platform they are playing on."},
+                new ButtonInfo { buttonText = "Platform ESP", method =() => Visuals.PlatformESP(), toolTip = "Puts indicators above people's heads that show what platform they are playing on, but now they go through walls."},
+
                 new ButtonInfo { buttonText = "No Limb Mode", enableMethod =() => Visuals.StartNoLimb(), method =() => Visuals.NoLimbMode(), disableMethod =() => Visuals.EndNoLimb(), toolTip = "Makes your regular rig invisible, and puts balls on your hands."},
 
                 new ButtonInfo { buttonText = "Casual Tracers", method =() => Visuals.CasualTracers(), disableMethod =() => {Visuals.isLineRenderQueued = true;}, toolTip = "Puts tracers on your right hand. Shows untagged when tagged, vice versa."},
@@ -661,7 +666,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Fast Snowballs", method =() => Fun.FastSnowballs(), disableMethod =() => Fun.FixSnowballs(), toolTip = "Makes snowballs go really fast when thrown."},
                 new ButtonInfo { buttonText = "Slow Snowballs", method =() => Fun.SlowSnowballs(), disableMethod =() => Fun.FixSnowballs(), toolTip = "Makes snowballs go really slow when thrown."},
 
-                new ButtonInfo { buttonText = "Global Hoverboard", method =() => Fun.GlobalHoverboard(), disableMethod =() => Fun.DisableGlobalHoverboard(), toolTip = "Gives you the hoverboard no matter where you are."},
+                /*new ButtonInfo { buttonText = "Global Hoverboard", method =() => Fun.GlobalHoverboard(), disableMethod =() => Fun.DisableGlobalHoverboard(), toolTip = "Gives you the hoverboard no matter where you are."},*/
 
                 new ButtonInfo { buttonText = "Break Bug", enableMethod =() => Fun.BreakBug(), disableMethod =() => Fun.FixBug(), toolTip = "Makes the bug ungrabbable."},
                 new ButtonInfo { buttonText = "Break Bat", enableMethod =() => Fun.BreakBat(), disableMethod =() => Fun.FixBat(), toolTip = "Makes the bat ungrabbable."},
@@ -952,7 +957,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Virtual Stump Kick All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.VirtualStumpKickAll(), toolTip = "Kicks everybody in the custom map when holding <color=green>trigger</color>."},
 
                 new ButtonInfo { buttonText = "Force Unload Custom Map", method =() => Overpowered.ForceUnloadCustomMap(), isTogglable = false, toolTip = "Forcefully unloads the current custom map."},
-                new ButtonInfo { buttonText = "Virtual Stump Teleporter Effect Spammer <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.VirtualStumpTeleporterEffectSpammer(), toolTip = "Kicks everybody in the custom map when holding <color=green>trigger</color>."},
+                new ButtonInfo { buttonText = "Arcade Teleporter Effect Spammer <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.ArcadeTeleporterEffectSpammer(), toolTip = "Spams the effects on the virtual stump teleporters in the arcade when holding <color=green>trigger</color>."},
+                new ButtonInfo { buttonText = "Stump Teleporter Effect Spammer <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.StumpTeleporterEffectSpammer(), toolTip = "Spams the effects on the virtual stump teleporter in forest when holding <color=green>trigger</color>."},
 
                 new ButtonInfo { buttonText = "Attic Crash All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.AtticCrashAll(), toolTip = "Crashes everybody inside of the attic."},
 
@@ -1009,6 +1015,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Cancel Second Look", method =() => Overpowered.ThrowSecondLook(), isTogglable = false, toolTip = "Makes the ghost in the rotational map throw whoever it's holding." },
                 new ButtonInfo { buttonText = "Spaz Second Look", method =() => Overpowered.SpazSecondLook(), toolTip = "Makes the ghost in the rotational map automatically try chasing people and throwing things." },
 
+                new ButtonInfo { buttonText = "Instant Party", method =() => Fun.InstantParty(), toolTip = "Makes parties form instantly, instead of having to wait a couple of seconds." },
                 new ButtonInfo { buttonText = "Leave Party", method =() => Fun.LeaveParty(), isTogglable = false, toolTip = "Leaves the party, incase you can't pull off the string." },
 
                 new ButtonInfo { buttonText = "Kick All in Party", method =() => Fun.KickAllInParty(), isTogglable = false, toolTip = "Sends everyone in your party to a random room." },
