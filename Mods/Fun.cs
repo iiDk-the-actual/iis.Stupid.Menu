@@ -1598,6 +1598,8 @@ namespace iiMenu.Mods
         /*public static void GlobalHoverboard()
         {
             GorillaLocomotion.GTPlayer.Instance.GrabPersonalHoverboard(true);
+=======
+            GorillaLocomotion.Player.Instance.SetEnableHoverboard(true);
             GorillaTagger.Instance.offlineVRRig.hoverboardVisual.SetActive(true);
         }
 
@@ -1610,6 +1612,9 @@ namespace iiMenu.Mods
 
 
 
+            GorillaLocomotion.Player.Instance.SetEnableHoverboard(false);
+            GorillaTagger.Instance.offlineVRRig.hoverboardVisual.SetActive(false);
+        }
 
         public static void FastGliders()
         {
