@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace iiMenu.Patches
 {
-    [HarmonyPatch(typeof(VRRig), "CheckDistance")]
+    [HarmonyPatch(typeof(VRRig), "IsPositionInRange")]
     public class DistancePatch
     {
         public static bool enabled = false;

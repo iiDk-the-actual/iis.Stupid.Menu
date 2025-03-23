@@ -128,6 +128,9 @@ namespace iiMenu.Mods.Spammers
             if (name.Contains(".."))
                 name = name.Replace("..", "");
 
+            if (name.Contains(":"))
+                return;
+
             string filename = "Sounds" + Subdirectory + "/" + name + "." + GetFileExtension(url);
             if (File.Exists("iisStupidMenu/"+filename))
             {
