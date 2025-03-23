@@ -8,7 +8,7 @@ namespace iiMenu.Patches
     {
         public static bool enabled = false;
 
-        public static void Postfix(ref bool __result, Vector3 position, float max)
+        public static void Postfix(ref bool __result, Vector3 position, float range)
         {
             if (enabled)
                 __result = true;
