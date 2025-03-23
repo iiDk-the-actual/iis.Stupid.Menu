@@ -4285,8 +4285,8 @@ namespace iiMenu.Menu
             return archivepieces.ToArray();
         }
 
-        public static GorillaTag.Shared.Scripts.FirecrackerProjectile[] archivefirecrackers = null;
-        public static GorillaTag.Shared.Scripts.FirecrackerProjectile[] GetFireCrackers()
+        public static ThrowableHoldableCosmetic[] archivefirecrackers = null;
+        public static ThrowableHoldableCosmetic[] GetFireCrackers()
         {
             if (Time.time > lastRecievedTime)
             {
@@ -4295,7 +4295,7 @@ namespace iiMenu.Menu
             }
             if (archivefirecrackers == null)
             {
-                archivefirecrackers = UnityEngine.Object.FindObjectsOfType<GorillaTag.Shared.Scripts.FirecrackerProjectile>();
+                archivefirecrackers = UnityEngine.Object.FindObjectsOfType<ThrowableHoldableCosmetic>();
             }
             return archivefirecrackers.ToArray();
         }
@@ -6062,7 +6062,7 @@ jgs \_   _/ |Oo\
         public static string ForestLeaderboardID = "UnityTempFile";
 
         public static int StumpLeaderboardIndex = 3;
-        public static int ForestLeaderboardIndex = 7;
+        public static int ForestLeaderboardIndex = 8;
 
         public static Material[] ogScreenMats = new Material[] { };
 
