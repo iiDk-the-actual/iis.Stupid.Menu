@@ -151,11 +151,11 @@ namespace iiMenu.Mods
             Quaternion lhr = GorillaTagger.Instance.leftHandTransform.rotation;
             Quaternion rhr = GorillaTagger.Instance.rightHandTransform.rotation;
 
-            GorillaLocomotion.Player.Instance.rightControllerTransform.transform.position = lh;
-            GorillaLocomotion.Player.Instance.leftControllerTransform.transform.position = rh;
+            GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.transform.position = lh;
+            GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.transform.position = rh;
 
-            GorillaLocomotion.Player.Instance.rightControllerTransform.transform.rotation = lhr;
-            GorillaLocomotion.Player.Instance.leftControllerTransform.transform.rotation = rhr;
+            GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.transform.rotation = lhr;
+            GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.transform.rotation = rhr;
         }
 
         public static void FixHandTaps()
@@ -432,10 +432,10 @@ namespace iiMenu.Mods
         {
             if (Time.time > splashDel)
             {
-                if (GorillaLocomotion.Player.Instance.IsHandTouching(true))
+                if (GorillaLocomotion.GTPlayer.Instance.IsHandTouching(true))
                 {
-                    FieldInfo fieldInfo = typeof(GorillaLocomotion.Player).GetField("lastHitInfoHand", BindingFlags.NonPublic | BindingFlags.Instance);
-                    RaycastHit ray = (RaycastHit)fieldInfo.GetValue(GorillaLocomotion.Player.Instance);
+                    FieldInfo fieldInfo = typeof(GorillaLocomotion.GTPlayer).GetField("lastHitInfoHand", BindingFlags.NonPublic | BindingFlags.Instance);
+                    RaycastHit ray = (RaycastHit)fieldInfo.GetValue(GorillaLocomotion.GTPlayer.Instance);
                     GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", RpcTarget.All, new object[]
                     {
                         GorillaTagger.Instance.leftHandTransform.position,
@@ -448,10 +448,10 @@ namespace iiMenu.Mods
                     RPCProtection();
                     splashDel = Time.time + 0.1f;
                 }
-                if (GorillaLocomotion.Player.Instance.IsHandTouching(false))
+                if (GorillaLocomotion.GTPlayer.Instance.IsHandTouching(false))
                 {
-                    FieldInfo fieldInfo = typeof(GorillaLocomotion.Player).GetField("lastHitInfoHand", BindingFlags.NonPublic | BindingFlags.Instance);
-                    RaycastHit ray = (RaycastHit)fieldInfo.GetValue(GorillaLocomotion.Player.Instance);
+                    FieldInfo fieldInfo = typeof(GorillaLocomotion.GTPlayer).GetField("lastHitInfoHand", BindingFlags.NonPublic | BindingFlags.Instance);
+                    RaycastHit ray = (RaycastHit)fieldInfo.GetValue(GorillaLocomotion.GTPlayer.Instance);
                     GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", RpcTarget.All, new object[]
                     {
                         GorillaTagger.Instance.rightHandTransform.position,
@@ -1205,7 +1205,7 @@ namespace iiMenu.Mods
 
         public static void LavaSplashHands()
         {
-            GorillaLocomotion.Player.Instance.OnEnterWaterVolume(GorillaLocomotion.Player.Instance.bodyCollider, GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/ILavaYou_PrefabV/Lava/ForestLavaWaterVolume").GetComponent<GorillaLocomotion.Swimming.WaterVolume>());
+            GorillaLocomotion.GTPlayer.Instance.OnEnterWaterVolume(GorillaLocomotion.GTPlayer.Instance.bodyCollider, GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/ILavaYou_PrefabV/Lava/ForestLavaWaterVolume").GetComponent<GorillaLocomotion.Swimming.WaterVolume>());
             if (rightGrab)
             {
                 if (Time.time > splashDel)
@@ -1244,7 +1244,7 @@ namespace iiMenu.Mods
 
         public static void LavaSplashAura()
         {
-            GorillaLocomotion.Player.Instance.OnEnterWaterVolume(GorillaLocomotion.Player.Instance.bodyCollider, GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/ILavaYou_PrefabV/Lava/ForestLavaWaterVolume").GetComponent<GorillaLocomotion.Swimming.WaterVolume>());
+            GorillaLocomotion.GTPlayer.Instance.OnEnterWaterVolume(GorillaLocomotion.GTPlayer.Instance.bodyCollider, GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/ILavaYou_PrefabV/Lava/ForestLavaWaterVolume").GetComponent<GorillaLocomotion.Swimming.WaterVolume>());
             if (Time.time > splashDel)
             {
                 GorillaTagger.Instance.myVRRig.RPC("PlaySplashEffect", RpcTarget.All, new object[]
@@ -1263,7 +1263,7 @@ namespace iiMenu.Mods
 
         public static void LavaSplashGun()
         {
-            GorillaLocomotion.Player.Instance.OnEnterWaterVolume(GorillaLocomotion.Player.Instance.bodyCollider, GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/ILavaYou_PrefabV/Lava/ForestLavaWaterVolume").GetComponent<GorillaLocomotion.Swimming.WaterVolume>());
+            GorillaLocomotion.GTPlayer.Instance.OnEnterWaterVolume(GorillaLocomotion.GTPlayer.Instance.bodyCollider, GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/ILavaYou_PrefabV/Lava/ForestLavaWaterVolume").GetComponent<GorillaLocomotion.Swimming.WaterVolume>());
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
@@ -1591,16 +1591,51 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void FastHoverboard()
+        {
+            Traverse hover = Traverse.Create(GorillaLocomotion.GTPlayer.Instance);
+            hover.Field("hoverboardPaddleBoostMax").SetValue(99999f);
+            hover.Field("hoverboardPaddleBoostMultiplier").SetValue(5f);
+            hover.Field("hoverboardBoostGracePeriod").SetValue(0f);
+        }
+
+        public static void SlowHoverboard()
+        {
+            Traverse hover = Traverse.Create(GorillaLocomotion.GTPlayer.Instance);
+            hover.Field("hoverboardPaddleBoostMax").SetValue(3.5f);
+            hover.Field("hoverboardPaddleBoostMultiplier").SetValue(0.025f);
+            hover.Field("hoverboardBoostGracePeriod").SetValue(3f);
+        }
+
+        public static void FixHoverboard()
+        {
+            Traverse hover = Traverse.Create(GorillaLocomotion.GTPlayer.Instance);
+            hover.Field("hoverboardPaddleBoostMax").SetValue(10f);
+            hover.Field("hoverboardPaddleBoostMultiplier").SetValue(0.1f);
+            hover.Field("hoverboardBoostGracePeriod").SetValue(1f);
+        }
+
+        private static bool hasGrabbedHoverboard;
         public static void GlobalHoverboard()
         {
-            GorillaLocomotion.Player.Instance.SetEnableHoverboard(true);
-            GorillaTagger.Instance.offlineVRRig.hoverboardVisual.SetActive(true);
+            if (!hasGrabbedHoverboard)
+            {
+                GorillaLocomotion.GTPlayer.Instance.GrabPersonalHoverboard(false, Vector3.zero, Quaternion.identity, Color.black);
+                hasGrabbedHoverboard = true;
+            }
+
+            GorillaLocomotion.GTPlayer.Instance.SetHoverAllowed(true);
+            GorillaLocomotion.GTPlayer.Instance.SetHoverActive(true);
+            GorillaTagger.Instance.offlineVRRig.hoverboardVisual.gameObject.SetActive(true);
         }
 
         public static void DisableGlobalHoverboard()
         {
-            GorillaLocomotion.Player.Instance.SetEnableHoverboard(false);
-            GorillaTagger.Instance.offlineVRRig.hoverboardVisual.SetActive(false);
+            hasGrabbedHoverboard = false;
+
+            GorillaLocomotion.GTPlayer.Instance.SetHoverAllowed(false);
+            GorillaLocomotion.GTPlayer.Instance.SetHoverActive(false);
+            GorillaTagger.Instance.offlineVRRig.hoverboardVisual.gameObject.SetActive(false);
         }
 
         public static void FastGliders()

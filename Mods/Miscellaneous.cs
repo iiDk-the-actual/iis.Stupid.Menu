@@ -175,9 +175,9 @@ namespace iiMenu.Mods
 
         public static void DumpSoundData()
         {
-            string text = "Handtap Sound Data\n(from GorillaLocomotion.Player.Instance.materialData)";
+            string text = "Handtap Sound Data\n(from GorillaLocomotion.GTPlayer.Instance.materialData)";
             int i = 0;
-            foreach (GorillaLocomotion.Player.MaterialData oneshot in GorillaLocomotion.Player.Instance.materialData)
+            foreach (GorillaLocomotion.GTPlayer.MaterialData oneshot in GorillaLocomotion.GTPlayer.Instance.materialData)
             {
                 try
                 {

@@ -19,11 +19,11 @@ namespace iiMenu.Patches
                 if (customSoundOnJoin)
                 {
                     if (!Directory.Exists("iisStupidMenu"))
-                    {
                         Directory.CreateDirectory("iisStupidMenu");
-                    }
+                    
                     File.WriteAllText("iisStupidMenu/iiMenu_CustomSoundOnJoin.txt", "PlayerLeave");
                 }
+                lastPlayerCount = -1;
                 a = otherPlayer;
             }
         }

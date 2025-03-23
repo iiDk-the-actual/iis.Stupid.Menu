@@ -1,23 +1,14 @@
-using Fusion;
-using g3;
 using GorillaExtensions;
 using GorillaGameModes;
 using GorillaNetworking;
-using GorillaTag;
-using HarmonyLib;
 using iiMenu.Classes;
-using Pathfinding.RVO;
 using Photon.Pun;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.AI;
-using UnityEngine.Animations.Rigging;
-using UnityEngine.Experimental.GlobalIllumination;
 using UnityEngine.Rendering;
-using UnityEngine.XR.Interaction.Toolkit;
 using static iiMenu.Menu.Main;
 using static iiMenu.Classes.RigManager;
 
@@ -269,13 +260,13 @@ namespace iiMenu.Mods
             if (GetIndex("Hidden Labels").enabled) { go.layer = 19; }
             go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
             TextMesh textMesh = go.AddComponent<TextMesh>();
-            textMesh.color = GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity.magnitude >= GorillaLocomotion.Player.Instance.maxJumpSpeed ? Color.green : Color.white;
+            textMesh.color = GorillaLocomotion.GTPlayer.Instance.GetComponent<Rigidbody>().velocity.magnitude >= GorillaLocomotion.GTPlayer.Instance.maxJumpSpeed ? Color.green : Color.white;
             textMesh.fontSize = 24;
             textMesh.fontStyle = activeFontStyle;
             textMesh.characterSize = 0.1f;
             textMesh.anchor = TextAnchor.MiddleCenter;
             textMesh.alignment = TextAlignment.Center;
-            textMesh.text = string.Format("{0:F1}m/s", GorillaLocomotion.Player.Instance.GetComponent<Rigidbody>().velocity.magnitude);
+            textMesh.text = string.Format("{0:F1}m/s", GorillaLocomotion.GTPlayer.Instance.GetComponent<Rigidbody>().velocity.magnitude);
 
             go.transform.position = GorillaTagger.Instance.rightHandTransform.position + new Vector3(0f, 0.1f, 0f);
             go.transform.LookAt(Camera.main.transform.position);
@@ -480,7 +471,7 @@ namespace iiMenu.Mods
             visualizerObject.GetComponent<Renderer>().material.color = GetBGColor(0f);
             visualizerOutline.GetComponent<Renderer>().material.color = GetBRColor(0f);
 
-            Physics.Raycast(GorillaTagger.Instance.bodyCollider.transform.position - new Vector3(0f, 0.2f, 0f), Vector3.down, out var Ray, 512f, GorillaLocomotion.Player.Instance.locomotionEnabledLayers);
+            Physics.Raycast(GorillaTagger.Instance.bodyCollider.transform.position - new Vector3(0f, 0.2f, 0f), Vector3.down, out var Ray, 512f, GorillaLocomotion.GTPlayer.Instance.locomotionEnabledLayers);
             visualizerObject.transform.position = Ray.point;
             visualizerObject.transform.rotation = Quaternion.LookRotation(Ray.normal) * Quaternion.Euler(90f, 0f, 0f);
 
