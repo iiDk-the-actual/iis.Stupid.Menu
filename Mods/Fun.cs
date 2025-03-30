@@ -1597,6 +1597,7 @@ namespace iiMenu.Mods
             hover.Field("hoverboardPaddleBoostMax").SetValue(99999f);
             hover.Field("hoverboardPaddleBoostMultiplier").SetValue(5f);
             hover.Field("hoverboardBoostGracePeriod").SetValue(0f);
+            hover.Field("hoverTiltAdjustsForwardFactor").SetValue(1f);
         }
 
         public static void SlowHoverboard()
@@ -1605,6 +1606,7 @@ namespace iiMenu.Mods
             hover.Field("hoverboardPaddleBoostMax").SetValue(3.5f);
             hover.Field("hoverboardPaddleBoostMultiplier").SetValue(0.025f);
             hover.Field("hoverboardBoostGracePeriod").SetValue(3f);
+            hover.Field("hoverTiltAdjustsForwardFactor").SetValue(0.1f);
         }
 
         public static void FixHoverboard()
@@ -1613,6 +1615,7 @@ namespace iiMenu.Mods
             hover.Field("hoverboardPaddleBoostMax").SetValue(10f);
             hover.Field("hoverboardPaddleBoostMultiplier").SetValue(0.1f);
             hover.Field("hoverboardBoostGracePeriod").SetValue(1f);
+            hover.Field("hoverTiltAdjustsForwardFactor").SetValue(0.2f);
         }
 
         private static bool hasGrabbedHoverboard;
@@ -1636,6 +1639,68 @@ namespace iiMenu.Mods
             GorillaLocomotion.GTPlayer.Instance.SetHoverAllowed(false);
             GorillaLocomotion.GTPlayer.Instance.SetHoverActive(false);
             GorillaTagger.Instance.offlineVRRig.hoverboardVisual.gameObject.SetActive(false);
+        }
+
+        public static void RainbowHoverboard()
+        {
+            if (GorillaTagger.Instance.offlineVRRig.hoverboardVisual != null && GorillaTagger.Instance.offlineVRRig.hoverboardVisual.IsHeld)
+            {
+                float h = (Time.frameCount / 180f) % 1f;
+                Color rgbColor = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
+                GorillaTagger.Instance.offlineVRRig.hoverboardVisual.SetIsHeld(GorillaTagger.Instance.offlineVRRig.hoverboardVisual.IsLeftHanded, GorillaTagger.Instance.offlineVRRig.hoverboardVisual.NominalLocalPosition, GorillaTagger.Instance.offlineVRRig.hoverboardVisual.NominalLocalRotation, rgbColor);
+            }
+        }
+
+        private static float hoverboardSpamDelay;
+        public static void HoverboardSpam()
+        {
+            if (rightGrab && Time.time > hoverboardSpamDelay)
+            {
+                hoverboardSpamDelay = Time.time + 0.5f;
+
+                FreeHoverboardManager.instance.SendDropBoardRPC(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, GorillaTagger.Instance.rightHandTransform.forward * 15f, new Vector3(100f, 100f, 100f), new Color32((byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), 255));
+            }
+        }
+
+        public static void OrbitHoverboards()
+        {
+            if (Time.time > hoverboardSpamDelay)
+            {
+                hoverboardSpamDelay = Time.time + 0.2f;
+
+                float offset = 0f;
+                Vector3 position = new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)) * 2f, 1f, MathF.Sin(offset + ((float)Time.frameCount / 30)) * 2f);
+
+                offset = -25f;
+                Vector3 position2 = new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)) * 2f, 1f, MathF.Sin(offset + ((float)Time.frameCount / 30)) * 2f);
+
+                FreeHoverboardManager.instance.SendDropBoardRPC(GorillaTagger.Instance.headCollider.transform.position + position, Quaternion.Euler((GorillaTagger.Instance.headCollider.transform.position - position).normalized), (position2 - position).normalized * 6.5f, new Vector3(0f, 360f, 0f), new Color32((byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), 255));
+
+                offset = 180f;
+                position = new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)) * 2f, 1f, MathF.Sin(offset + ((float)Time.frameCount / 30)) * 2f);
+
+                offset = 155f;
+                position2 = new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)) * 2f, 1f, MathF.Sin(offset + ((float)Time.frameCount / 30)) * 2f);
+
+                FreeHoverboardManager.instance.SendDropBoardRPC(GorillaTagger.Instance.headCollider.transform.position + position, Quaternion.Euler((GorillaTagger.Instance.headCollider.transform.position - position).normalized), (position2 - position).normalized * 6.5f, new Vector3(0f, 360f, 0f), new Color32((byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), 255));
+            }
+        }
+
+        private static bool flashColor;
+        private static float flashDelay;
+        public static void StrobeHoverboard()
+        {
+            if (GorillaTagger.Instance.offlineVRRig.hoverboardVisual != null && GorillaTagger.Instance.offlineVRRig.hoverboardVisual.IsHeld)
+            {
+                if (Time.time > flashDelay)
+                {
+                    flashDelay = Time.time + 0.1f;
+                    flashColor = !flashColor;
+                }
+
+                Color rgbColor = flashColor ? Color.white : Color.black;
+                GorillaTagger.Instance.offlineVRRig.hoverboardVisual.SetIsHeld(GorillaTagger.Instance.offlineVRRig.hoverboardVisual.IsLeftHanded, GorillaTagger.Instance.offlineVRRig.hoverboardVisual.NominalLocalPosition, GorillaTagger.Instance.offlineVRRig.hoverboardVisual.NominalLocalRotation, rgbColor);
+            }
         }
 
         public static void FastGliders()

@@ -17,6 +17,7 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
+using UnityEngine.UI;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -1272,6 +1273,83 @@ namespace iiMenu.Mods
             }
         }
 
+        private static List<Vector3> posArchive = null;
+        public static Vector3[] GetAllTreeBranchPositions()
+        {
+            if (posArchive != null)
+                return posArchive.ToArray();
+
+            posArchive = new List<Vector3> { };
+
+            Vector3[] TreeBranchOffsets = new Vector3[]
+            {
+                new Vector3(-2.383f, 3.784f, 0.738f),
+                new Vector3(1.55f, 5.559f, -1.56f),
+                new Vector3(-2.225f, 7.214f, 0.063f),
+                new Vector3(1.365f, 6.62f, 0.82f),
+                new Vector3(0.405f, 8.865f, -2.759f),
+                new Vector3(-2.227f, 9.763f, 2.071f),
+                new Vector3(2.421f, 10.91f, 1.313f),
+                new Vector3(1.618f, 13.169f, -1.216f),
+                new Vector3(2.175f, 12.959f, -0.229f),
+                new Vector3(1.855f, 13.837f, 1.215f),
+                new Vector3(-0.265f, 14.953f, 2.935f),
+                new Vector3(-2.049f, 14.962f, -1.708f),
+                new Vector3(-1.249f, 18.93f, -1.62f),
+            };
+
+            string[] SmallTreeTargets = new string[] {
+                "Environment Objects/LocalObjects_Prefab/Forest/Terrain/SmallTrees/Group1",
+                "Environment Objects/LocalObjects_Prefab/Forest/Terrain/SmallTrees/Group2"
+            };
+
+            foreach (string SmallTreeTarget in SmallTreeTargets)
+            {
+                GameObject TreeGroupGO = GameObject.Find(SmallTreeTarget);
+
+                for (int i = 0; i < TreeGroupGO.transform.childCount; i++)
+                {
+                    GameObject v = TreeGroupGO.transform.GetChild(i).gameObject;
+                    Vector3 oldlocalscale = v.transform.localScale;
+                    v.transform.localScale *= 5;
+                    foreach (Vector3 TreeBranchOffset in TreeBranchOffsets)
+                    {
+                        posArchive.Add(v.transform.TransformPoint(TreeBranchOffset));
+                    }
+                    v.transform.localScale = oldlocalscale;
+                }
+            }
+
+            return posArchive.ToArray();
+        }
+
+        public static void AutoBranch()
+        {
+            if (rightGrab)
+            {
+                float dist = float.MaxValue;
+                Vector3 closeDist = Vector3.zero;
+
+                foreach (Vector3 treeBranchPos in GetAllTreeBranchPositions())
+                {
+                    Vector3 compareDist = GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.bodyCollider.transform.right;
+
+                    float foundDist = Vector3.Distance(compareDist, treeBranchPos);
+                    if (foundDist < dist)
+                    {
+                        dist = foundDist;
+                        closeDist = treeBranchPos;
+                    }
+                }
+
+                if (dist < 3f)
+                {
+                    GorillaTagger.Instance.rightHandTransform.position = closeDist;
+                }
+
+            }
+        }
+
         public static void ForceTagFreeze()
         {
             GorillaLocomotion.GTPlayer.Instance.disableMovement = true;
@@ -1306,6 +1384,51 @@ namespace iiMenu.Mods
         public static void UnflipCharacter()
         {
             GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.parent.rotation = Quaternion.identity;
+        }
+
+        private static List<object[]> playerPositions = new List<object[]> { };
+        public static void Rewind()
+        {
+            if (rightTrigger > 0.5f)
+            {
+                if (playerPositions.Count > 0)
+                {
+                    object[] targetPos = playerPositions[playerPositions.Count - 1];
+
+                    TeleportPlayer((Vector3)targetPos[0]);
+
+                    GorillaTagger.Instance.leftHandTransform.position = (Vector3)targetPos[1];
+                    GorillaTagger.Instance.leftHandTransform.rotation = (Quaternion)targetPos[2];
+
+                    GorillaTagger.Instance.rightHandTransform.position = (Vector3)targetPos[3];
+                    GorillaTagger.Instance.rightHandTransform.rotation = (Quaternion)targetPos[4];
+
+                    GorillaLocomotion.GTPlayer.Instance.bodyCollider.attachedRigidbody.velocity = (Vector3)targetPos[5] * -1f;
+
+                    playerPositions.RemoveAt(playerPositions.Count - 1);
+                }
+            } else
+            {
+                playerPositions.Add(new object[] {
+                    GorillaTagger.Instance.bodyCollider.transform.position,
+
+                    GorillaTagger.Instance.leftHandTransform.position,
+                    GorillaTagger.Instance.leftHandTransform.rotation,
+
+                    GorillaTagger.Instance.rightHandTransform.position,
+                    GorillaTagger.Instance.rightHandTransform.rotation,
+
+                    GorillaLocomotion.GTPlayer.Instance.bodyCollider.attachedRigidbody.velocity
+                });
+
+                if (playerPositions.Count > 8640)
+                    playerPositions.RemoveAt(0);
+            }
+        }
+
+        public static void ClearRewind()
+        {
+            playerPositions.Clear();
         }
 
         private static Vector3 walkPos;
@@ -1362,6 +1485,35 @@ namespace iiMenu.Mods
                 //GorillaLocomotion.GTPlayer.Instance.bodyCollider.attachedRigidbody.AddForce(walkNormal * -10, ForceMode.Acceleration);
                 GorillaLocomotion.GTPlayer.Instance.bodyCollider.attachedRigidbody.AddForce(walkNormal * -50f, ForceMode.Acceleration);
                 ZeroGravity();
+            }
+        }
+
+        // Credits to Intelligence for the idea (You can't code a mod menu but you are insanely good at making competitive cheats)
+        public static void LegitimateWallWalk()
+        {
+            float range = 0.2f;
+            float power = -3f;
+
+            if (leftGrab)
+            {
+                FieldInfo fieldInfo = typeof(GorillaLocomotion.GTPlayer).GetField("lastHitInfoHand", BindingFlags.NonPublic | BindingFlags.Instance);
+                RaycastHit ray = (RaycastHit)fieldInfo.GetValue(GorillaLocomotion.GTPlayer.Instance);
+
+                if (Physics.Raycast(TrueLeftHand().position, -ray.normal, out var Ray, range, GorillaLocomotion.GTPlayer.Instance.locomotionEnabledLayers))
+                {
+                    GorillaLocomotion.GTPlayer.Instance.bodyCollider.attachedRigidbody.AddForce(Ray.normal * power, ForceMode.Acceleration);
+                }
+            }
+
+            if (rightGrab)
+            {
+                FieldInfo fieldInfo = typeof(GorillaLocomotion.GTPlayer).GetField("lastHitInfoHand", BindingFlags.NonPublic | BindingFlags.Instance);
+                RaycastHit ray = (RaycastHit)fieldInfo.GetValue(GorillaLocomotion.GTPlayer.Instance);
+
+                if (Physics.Raycast(TrueRightHand().position, -ray.normal, out var Ray, range, GorillaLocomotion.GTPlayer.Instance.locomotionEnabledLayers))
+                {
+                    GorillaLocomotion.GTPlayer.Instance.bodyCollider.attachedRigidbody.AddForce(Ray.normal * power, ForceMode.Acceleration);
+                }
             }
         }
 
@@ -1604,6 +1756,123 @@ namespace iiMenu.Mods
                 UnityEngine.Object.Destroy(CheckPoint);
                 CheckPoint = null;
             }
+        }
+
+        public static int selectedCheckpoint = -1;
+        public static float selectedCheckpointDelay;
+        public static List<GameObject> checkpoints = new List<GameObject> { };
+        public static void AdvancedCheckpoints()
+        {
+            if (rightGrab)
+            {
+                bool isNearCheckpoint = false;
+                foreach (GameObject checkpoint in checkpoints)
+                {
+                    if (Vector3.Distance(GorillaTagger.Instance.rightHandTransform.position, checkpoint.transform.position) < 0.2f)
+                    {
+                        isNearCheckpoint = true;
+                        checkpoint.transform.position = GorillaTagger.Instance.rightHandTransform.transform.position;
+                        break;
+                    }
+                }
+
+                if (!isNearCheckpoint)
+                {
+                    GameObject newCheckpoint = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                    UnityEngine.Object.Destroy(newCheckpoint.GetComponent<Rigidbody>());
+                    UnityEngine.Object.Destroy(newCheckpoint.GetComponent<SphereCollider>());
+                    newCheckpoint.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+                    newCheckpoint.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                    newCheckpoint.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                    newCheckpoint.GetComponent<Renderer>().material.color = GetBGColor(0f);
+
+                    GameObject MeshHolder = new GameObject("Label");
+                    MeshHolder.transform.parent = newCheckpoint.transform;
+                    MeshHolder.transform.localPosition = Vector3.zero;
+                    TextMesh newMesh = MeshHolder.AddComponent<TextMesh>();
+
+                    Renderer MeshRender = newMesh.GetComponent<Renderer>();
+                    MeshRender.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                    newMesh.fontSize = 12;
+                    newMesh.fontStyle = activeFontStyle;
+                    newMesh.characterSize = 0.1f;
+                    newMesh.anchor = TextAnchor.MiddleCenter;
+                    newMesh.alignment = TextAlignment.Center;
+                    newMesh.color = Color.white;
+                    newMesh.text = (checkpoints.Count + 1).ToString();
+
+                    MeshRender.material.renderQueue = newCheckpoint.GetComponent<Renderer>().material.renderQueue + 2;
+                    checkpoints.Add(newCheckpoint);
+                }
+            }
+
+            if (rightTrigger > 0.5f)
+            {
+                foreach (GameObject checkpoint in checkpoints)
+                {
+                    if (Vector3.Distance(GorillaTagger.Instance.rightHandTransform.position, checkpoint.transform.position) < 0.2f)
+                    {
+                        checkpoints.Remove(checkpoint);
+                        UnityEngine.Object.Destroy(checkpoint);
+                    }
+                }
+            }
+
+            if (rightPrimary)
+            {
+                TeleportPlayer(checkpoints[selectedCheckpoint].transform.position);
+            }
+
+            foreach (GameObject checkpoint in checkpoints)
+            {
+                checkpoint.GetComponent<Renderer>().material.color = GetBGColor(0f);
+
+                GameObject textObject = checkpoint.transform.Find("Label").gameObject;
+                textObject.transform.LookAt(Camera.main.transform.position);
+                textObject.transform.Rotate(0f, 180f, 0f);
+            }
+
+            if (Mathf.Abs(rightJoystick.y) > 0.5f && Time.time > selectedCheckpointDelay)
+            {
+                selectedCheckpointDelay = Time.time + 0.2f;
+                selectedCheckpoint += rightJoystick.y > 0 ? 1 : -1;
+
+                if (selectedCheckpoint < 0)
+                    selectedCheckpoint = checkpoints.Count - 1;
+            }
+
+            if (selectedCheckpoint < 0 && checkpoints.Count > 0)
+                selectedCheckpoint = 0;
+
+            if (selectedCheckpoint > checkpoints.Count - 1)
+                selectedCheckpoint = 0;
+
+            GameObject go = new GameObject("Lbl");
+            if (GetIndex("Hidden Labels").enabled) { go.layer = 19; }
+            go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+            TextMesh textMesh = go.AddComponent<TextMesh>();
+            textMesh.color = GorillaLocomotion.GTPlayer.Instance.GetComponent<Rigidbody>().velocity.magnitude >= GorillaLocomotion.GTPlayer.Instance.maxJumpSpeed ? Color.green : Color.white;
+            textMesh.fontSize = 24;
+            textMesh.fontStyle = activeFontStyle;
+            textMesh.characterSize = 0.1f;
+            textMesh.anchor = TextAnchor.MiddleCenter;
+            textMesh.alignment = TextAlignment.Center;
+            textMesh.text = (selectedCheckpoint + 1).ToString();
+
+            go.transform.position = GorillaTagger.Instance.rightHandTransform.position + new Vector3(0f, 0.1f, 0f);
+            go.transform.LookAt(Camera.main.transform.position);
+            go.transform.Rotate(0f, 180f, 0f);
+            UnityEngine.Object.Destroy(go, Time.deltaTime);
+        }
+
+        public static void DisableAdvancedCheckpoints()
+        {
+            selectedCheckpoint = 0;
+
+            foreach (GameObject checkpoint in checkpoints)
+                UnityEngine.Object.Destroy(checkpoint);
+            
+            checkpoints.Clear();
         }
 
         public static GameObject BombObject = null;

@@ -2974,19 +2974,20 @@ namespace iiMenu.Mods
             Panic();
             string[] textData = text.Split("\n");
 
+            UnityEngine.Debug.Log("Toggling on buttons");
             string[] activebuttons = textData[0].Split(";;");
             for (int index = 0; index < activebuttons.Length; index++)
             {
                 Toggle(activebuttons[index]);
             }
 
+            UnityEngine.Debug.Log("Toggling on favs");
             string[] favz = textData[1].Split(";;");
             favorites.Clear();
             foreach (string fav in favz)
-            {
                 favorites.Add(fav);
-            }
 
+            UnityEngine.Debug.Log("Toggling on textdata");
             try
             {
                 string[] data = textData[2].Split(";;");
@@ -3051,6 +3052,7 @@ namespace iiMenu.Mods
                 ChangeNarrationVoice();
             } catch { UnityEngine.Debug.Log("Save file out of date"); }
 
+            UnityEngine.Debug.Log("Doing settings");
             pageButtonType = int.Parse(textData[3]) - 1;
             Toggle("Change Page Type");
             themeType = int.Parse(textData[4]) - 1;
@@ -3291,6 +3293,30 @@ namespace iiMenu.Mods
             motdText.SetActive(false);
             GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/motd (1)").SetActive(true);
             GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/motdtext").SetActive(true);
+
+            int indexOfThatThing = 0;
+            for (int i = 0; i < GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.childCount; i++)
+            {
+                GameObject v = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.GetChild(i).gameObject;
+                if (v.name.Contains(StumpLeaderboardID))
+                {
+                    indexOfThatThing++;
+                    if (indexOfThatThing == StumpLeaderboardIndex)
+                        v.GetComponent<Renderer>().material = StumpMat;
+                }
+            }
+
+            indexOfThatThing = 0;
+            for (int i = 0; i < GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest").transform.childCount; i++)
+            {
+                GameObject v = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest").transform.GetChild(i).gameObject;
+                if (v.name.Contains(ForestLeaderboardID))
+                {
+                    indexOfThatThing++;
+                    if (indexOfThatThing == ForestLeaderboardIndex)
+                        v.GetComponent<Renderer>().material = ForestMat;
+                }
+            }
         }
 
         public static void EnableBoardColors()
@@ -3313,6 +3339,7 @@ namespace iiMenu.Mods
                 }
                 catch { }
             }
+            hasFoundAllBoards = false;
             disableBoardColor = false;
             motd.SetActive(true);
             motdText.SetActive(true);
