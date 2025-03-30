@@ -715,8 +715,8 @@ namespace iiMenu.Mods
             }
         }
 
-        private static Coroutine DisableCoroutine;
-        private static IEnumerator DisableSnowball(bool rigDisabled)
+        public static Coroutine DisableCoroutine;
+        public static IEnumerator DisableSnowball(bool rigDisabled)
         {
             yield return new WaitForSeconds(0.3f);
 

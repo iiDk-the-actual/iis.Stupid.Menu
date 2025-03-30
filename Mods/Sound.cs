@@ -160,7 +160,7 @@ namespace iiMenu.Mods.Spammers
             if (!LoopAudio)
             {
                 AudioIsPlaying = true;
-                RecoverTime = Time.time + sound.length;
+                RecoverTime = Time.time + sound.length + 0.4f;
             }
         }
 

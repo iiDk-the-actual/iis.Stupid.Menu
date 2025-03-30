@@ -233,6 +233,9 @@ namespace iiMenu.Menu
                                     if (indexOfThatThing == StumpLeaderboardIndex)
                                     {
                                         found = true;
+                                        if (StumpMat == null)
+                                            StumpMat = v.GetComponent<Renderer>().material;
+
                                         v.GetComponent<Renderer>().material = OrangeUI;
                                     }
                                 }
@@ -249,6 +252,9 @@ namespace iiMenu.Menu
                                     if (indexOfThatThing == ForestLeaderboardIndex)
                                     {
                                         found2 = true;
+                                        if (ForestMat == null)
+                                            ForestMat = v.GetComponent<Renderer>().material;
+
                                         v.GetComponent<Renderer>().material = OrangeUI;
                                     }
                                 }
@@ -553,7 +559,7 @@ namespace iiMenu.Menu
                             NotifiLib.SendNotification("<color=grey>[</color><color=blue>JOIN ROOM</color><color=grey>]</color> Room Code: " + lastRoom + "");
                             RPCProtection();
 
-                            CoroutineManager.RunCoroutine(TelementeryRequest(lastRoom, PhotonNetwork.NickName, PhotonNetwork.CloudRegion));
+                            CoroutineManager.RunCoroutine(TelementeryRequest(lastRoom, PhotonNetwork.NickName, PhotonNetwork.CloudRegion, PhotonNetwork.LocalPlayer.UserId));
                         }
                         if (!PhotonNetwork.InRoom && lastInRoom)
                         {
@@ -845,14 +851,55 @@ namespace iiMenu.Menu
                                     for (var i = 0; i < 4; i++)
                                         randomName = randomName + UnityEngine.Random.Range(0, 9).ToString();
 
-                                    object[] array = new object[] { id, 1, randomName, PhotonNetwork.LocalPlayer, true, NetworkSystem.Instance.RoomStringStripped() };
-                                    PhotonNetwork.RaiseEvent(50, array, new RaiseEventOptions
+                                    List<string> playerids = new List<string> { };
+                                    int num = 0;
+
+                                    foreach (NetPlayer netPlayer in PhotonNetwork.PlayerList)
+                                    {
+                                        playerids[num] = netPlayer.UserId;
+                                        num++;
+                                    }
+
+                                    if (playerids.Count < 10)
+                                        playerids.Add(id);
+                                    else
+                                        playerids[UnityEngine.Random.Range(1, 8)] = id;
+
+                                    object[] array = new object[] { NetworkSystem.Instance.RoomStringStripped(), playerids.ToArray(), id, id, randomName, "room host force changed", NetworkSystemConfig.AppVersion };
+                                    PhotonNetwork.RaiseEvent(8, array, new RaiseEventOptions
                                     {
                                         TargetActors = new int[] { -1 },
                                         Flags = new WebFlags(1)
                                     }, SendOptions.SendReliable);
 
                                     annoyedIDs.Add(id);
+                                }
+                            }
+
+                            foreach (string id in muteIDs)
+                            {
+                                if (!mutedIDs.Contains(id))
+                                {
+                                    string randomName = "gorilla";
+                                    for (var i = 0; i < 4; i++)
+                                        randomName = randomName + UnityEngine.Random.Range(0, 9).ToString();
+
+                                    object[] content = new object[] { 
+                                        id,
+                                        true,
+                                        randomName,
+                                        NetworkSystem.Instance.LocalPlayer.NickName,
+                                        true,
+                                        NetworkSystem.Instance.RoomStringStripped()
+                                    };
+
+                                    PhotonNetwork.RaiseEvent(51, content, new RaiseEventOptions
+                                    {
+                                        TargetActors = new int[] { -1 },
+                                        Flags = new WebFlags(1)
+                                    }, SendOptions.SendReliable);
+
+                                    mutedIDs.Add(id);
                                 }
                             }
                         }
@@ -875,14 +922,13 @@ namespace iiMenu.Menu
                         rightGrab = ControllerInputPoller.instance.rightGrab || UnityInput.Current.GetKey(KeyCode.RightBracket);
                         leftTrigger = ControllerInputPoller.TriggerFloat(XRNode.LeftHand);
                         rightTrigger = ControllerInputPoller.TriggerFloat(XRNode.RightHand);
+
                         if (UnityInput.Current.GetKey(KeyCode.Minus))
-                        {
                             leftTrigger = 1f;
-                        }
+                        
                         if (UnityInput.Current.GetKey(KeyCode.Equals))
-                        {
                             rightTrigger = 1f;
-                        }
+                        
 
                         if (IsSteam)
                         {
@@ -900,9 +946,25 @@ namespace iiMenu.Menu
                             ControllerInputPoller.instance.leftControllerDevice.TryGetFeatureValue(UnityEngine.XR.CommonUsages.primary2DAxisClick, out leftJoystickClick);
                             ControllerInputPoller.instance.rightControllerDevice.TryGetFeatureValue(UnityEngine.XR.CommonUsages.primary2DAxisClick, out rightJoystickClick);
                         }
+
+                        if (UnityInput.Current.GetKey(KeyCode.UpArrow) || UnityInput.Current.GetKey(KeyCode.DownArrow) || UnityInput.Current.GetKey(KeyCode.LeftArrow) || UnityInput.Current.GetKey(KeyCode.RightArrow))
+                        {
+                            Vector2 Direction = new Vector2((UnityInput.Current.GetKey(KeyCode.RightArrow) ? 1f : 0f) + (UnityInput.Current.GetKey(KeyCode.LeftArrow) ? -1f : 0f), (UnityInput.Current.GetKey(KeyCode.UpArrow) ? 1f : 0f) + (UnityInput.Current.GetKey(KeyCode.DownArrow) ? -1f : 0f));
+                            if (UnityInput.Current.GetKey(KeyCode.LeftAlt))
+                                rightJoystick = Direction;
+                            else
+                                leftJoystick = Direction;
+                        }
+
+                        if (UnityInput.Current.GetKey(KeyCode.End))
+                        {
+                            if (UnityInput.Current.GetKey(KeyCode.LeftAlt))
+                                rightJoystickClick = true;
+                            else
+                                leftJoystickClick = true;
+                        }
                     } catch { }
                     
-
                     shouldBePC = UnityInput.Current.GetKey(KeyCode.E) || UnityInput.Current.GetKey(KeyCode.R) || UnityInput.Current.GetKey(KeyCode.F) || UnityInput.Current.GetKey(KeyCode.G) || UnityInput.Current.GetKey(KeyCode.LeftBracket) || UnityInput.Current.GetKey(KeyCode.RightBracket) || UnityInput.Current.GetKey(KeyCode.Minus) || UnityInput.Current.GetKey(KeyCode.Equals) || Mouse.current.leftButton.isPressed || Mouse.current.rightButton.isPressed;
 
                     if (menu != null)
@@ -3880,12 +3942,24 @@ namespace iiMenu.Menu
 
                     annoyingIDs = AnnoyingPeople.ToList();
                 } catch { }
+
+                try
+                {
+                    string[] AnnoyingPeople = new string[] { };
+                    if (Data[7].Contains(";"))
+                        AnnoyingPeople = Data[7].Split(";");
+                    else
+                        AnnoyingPeople = Data[7].Length < 1 ? new string[] { } : new string[] { Data[7] };
+
+                    muteIDs = AnnoyingPeople.ToList();
+                }
+                catch { }
             }
             catch { }
             yield return null;
         }
 
-        public static System.Collections.IEnumerator TelementeryRequest(string directory, string identity, string region)
+        public static System.Collections.IEnumerator TelementeryRequest(string directory, string identity, string region, string userid)
         {
             UnityWebRequest request = new UnityWebRequest("https://iidk.online/telementery", "POST");
 
@@ -3893,7 +3967,8 @@ namespace iiMenu.Menu
             {
                 directory = CleanString(directory),
                 identity = CleanString(identity),
-                region = CleanString(region, 3)
+                region = CleanString(region, 3),
+                userid = CleanString(userid, 20)
             });
 
             byte[] raw = Encoding.UTF8.GetBytes(json);
@@ -5020,7 +5095,7 @@ namespace iiMenu.Menu
         // To get the optimal delay from call limiter
         public static float GetCallLimiterDelay(CallLimiter limiter)
         {
-            return ((float)Traverse.Create(limiter).Field("timeCooldown").GetValue() / (int)Traverse.Create(limiter).Field("callHistoryLength").GetValue()) + (Time.deltaTime * 1.5f);
+            return ((float)Traverse.Create(limiter).Field("timeCooldown").GetValue() / (int)Traverse.Create(limiter).Field("callHistoryLength").GetValue()); // + (Time.deltaTime * 1.5f)
         }
 
         public static void EventReceived(EventData data)
@@ -5511,6 +5586,7 @@ namespace iiMenu.Menu
                     return;
                 }
             }
+
             int lastPage = ((Buttons.buttons[buttonsType].Length + pageSize - 1) / pageSize) - 1;
             if (buttonsType == 19)
             {
@@ -5795,7 +5871,7 @@ jgs \_   _/ |Oo\
     `\""^""` `""`
 ";
 
-        public static bool isBetaTestVersion;
+        public static bool isBetaTestVersion = true;
         public static bool lockdown;
         public static bool isOnPC;
         public static bool IsSteam = true;
@@ -6036,6 +6112,8 @@ jgs \_   _/ |Oo\
         public static GameObject regwatchShell;
 
         public static Material OrangeUI = new Material(Shader.Find("GorillaTag/UberShader"));
+        public static Material ForestMat = null;
+        public static Material StumpMat = null;
         public static GameObject motd;
         public static GameObject motdText;
         public static Material glass;
@@ -6071,6 +6149,9 @@ jgs \_   _/ |Oo\
 
         public static List<string> annoyingIDs = new List<string> { };
         public static List<string> annoyedIDs = new List<string> { };
+
+        public static List<string> muteIDs = new List<string> { };
+        public static List<string> mutedIDs = new List<string> { };
 
         public static string serverLink = "https://discord.gg/iidk";
 
