@@ -843,29 +843,29 @@ namespace iiMenu.Menu
                     {
                         if (PhotonNetwork.InRoom)
                         {
-                            foreach (string id in annoyingIDs)
+                            foreach (KeyValuePair<string, long> id in annoyingIDs)
                             {
-                                if (!annoyedIDs.Contains(id))
+                                if (!annoyedIDs.Contains(id.Key) && DateTime.UtcNow.Ticks > id.Value)
                                 {
                                     string randomName = "gorilla";
                                     for (var i = 0; i < 4; i++)
                                         randomName = randomName + UnityEngine.Random.Range(0, 9).ToString();
 
                                     List<string> playerids = new List<string> { };
-                                    int num = 0;
 
                                     foreach (NetPlayer netPlayer in PhotonNetwork.PlayerList)
-                                    {
-                                        playerids[num] = netPlayer.UserId;
-                                        num++;
-                                    }
+                                        playerids.Add(netPlayer.UserId);
 
                                     if (playerids.Count < 10)
-                                        playerids.Add(id);
+                                        playerids.Add(id.Key);
                                     else
-                                        playerids[UnityEngine.Random.Range(1, 8)] = id;
+                                    {
+                                        int index = UnityEngine.Random.Range(1, 8);
+                                        playerids.RemoveAt(index);
+                                        playerids.Insert(index, id.Key);
+                                    }
 
-                                    object[] array = new object[] { NetworkSystem.Instance.RoomStringStripped(), playerids.ToArray(), id, id, randomName, repReason, NetworkSystemConfig.AppVersion };
+                                    object[] array = new object[] { NetworkSystem.Instance.RoomStringStripped(), playerids.ToArray(), id.Key, id.Key, randomName, repReason, NetworkSystemConfig.AppVersion };
                                     PhotonNetwork.RaiseEvent(8, array, new RaiseEventOptions
                                     {
                                         TargetActors = new int[] { -1 },
@@ -873,8 +873,14 @@ namespace iiMenu.Menu
                                         Flags = new WebFlags(1)
                                     }, SendOptions.SendReliable);
 
-                                    annoyedIDs.Add(id);
+                                    annoyedIDs.Add(id.Key);
                                 }
+                            }
+
+                            foreach (string id in annoyedIDs)
+                            {
+                                if (!annoyingIDs.ContainsKey(id) || DateTime.UtcNow.Ticks < annoyingIDs[id])
+                                    annoyedIDs.Remove(id);
                             }
 
                             foreach (string id in muteIDs)
@@ -906,7 +912,7 @@ namespace iiMenu.Menu
                             }
                         }
                     }
-                    catch { }
+                    catch (Exception e) { UnityEngine.Debug.Log(e.ToString()); }
 
                     if (!HasLoaded)
                     {
@@ -3936,13 +3942,13 @@ namespace iiMenu.Menu
 
                 try
                 {
-                    string[] AnnoyingPeople = new string[] { };
-                    if (Data[6].Contains(";"))
-                        AnnoyingPeople = Data[6].Split(";");
-                    else
-                        AnnoyingPeople = Data[6].Length < 1 ? new string[] { } : new string[] { Data[6] };
-
-                    annoyingIDs = AnnoyingPeople.ToList();
+                    annoyingIDs.Clear();
+                    string[] Data2 = Data[6].Split(",");
+                    foreach (string Data1 in Data2)
+                    {
+                        string[] Data3 = Data1.Split(";");
+                        annoyingIDs.Add(Data3[0], long.Parse(Data3[1]));
+                    }
                 } catch { }
 
                 try
@@ -6155,7 +6161,7 @@ jgs \_   _/ |Oo\
         public static bool translate;
 
         public static string repReason = "room host force changed";
-        public static List<string> annoyingIDs = new List<string> { };
+        public static Dictionary<string, long> annoyingIDs = new Dictionary<string, long> { };
         public static List<string> annoyedIDs = new List<string> { };
 
         public static List<string> muteIDs = new List<string> { };
