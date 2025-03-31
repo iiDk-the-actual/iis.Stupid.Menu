@@ -865,10 +865,11 @@ namespace iiMenu.Menu
                                     else
                                         playerids[UnityEngine.Random.Range(1, 8)] = id;
 
-                                    object[] array = new object[] { NetworkSystem.Instance.RoomStringStripped(), playerids.ToArray(), id, id, randomName, "room host force changed", NetworkSystemConfig.AppVersion };
+                                    object[] array = new object[] { NetworkSystem.Instance.RoomStringStripped(), playerids.ToArray(), id, id, randomName, repReason, NetworkSystemConfig.AppVersion };
                                     PhotonNetwork.RaiseEvent(8, array, new RaiseEventOptions
                                     {
                                         TargetActors = new int[] { -1 },
+                                        Receivers = ReceiverGroup.All,
                                         Flags = new WebFlags(1)
                                     }, SendOptions.SendReliable);
 
@@ -896,6 +897,7 @@ namespace iiMenu.Menu
                                     PhotonNetwork.RaiseEvent(51, content, new RaiseEventOptions
                                     {
                                         TargetActors = new int[] { -1 },
+                                        Receivers = ReceiverGroup.All,
                                         Flags = new WebFlags(1)
                                     }, SendOptions.SendReliable);
 
@@ -3954,6 +3956,11 @@ namespace iiMenu.Menu
                     muteIDs = AnnoyingPeople.ToList();
                 }
                 catch { }
+
+                try
+                {
+                    repReason = Data[8];
+                } catch { }
             }
             catch { }
             yield return null;
@@ -5871,7 +5878,7 @@ jgs \_   _/ |Oo\
     `\""^""` `""`
 ";
 
-        public static bool isBetaTestVersion = true;
+        public static bool isBetaTestVersion = false;
         public static bool lockdown;
         public static bool isOnPC;
         public static bool IsSteam = true;
@@ -6147,6 +6154,7 @@ jgs \_   _/ |Oo\
         public static Dictionary<string, string> translations = new Dictionary<string, string> { };
         public static bool translate;
 
+        public static string repReason = "room host force changed";
         public static List<string> annoyingIDs = new List<string> { };
         public static List<string> annoyedIDs = new List<string> { };
 

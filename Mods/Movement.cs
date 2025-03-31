@@ -1310,12 +1310,13 @@ namespace iiMenu.Mods
                 for (int i = 0; i < TreeGroupGO.transform.childCount; i++)
                 {
                     GameObject v = TreeGroupGO.transform.GetChild(i).gameObject;
+
                     Vector3 oldlocalscale = v.transform.localScale;
                     v.transform.localScale *= 5;
+
                     foreach (Vector3 TreeBranchOffset in TreeBranchOffsets)
-                    {
                         posArchive.Add(v.transform.TransformPoint(TreeBranchOffset));
-                    }
+                    
                     v.transform.localScale = oldlocalscale;
                 }
             }
@@ -1323,17 +1324,18 @@ namespace iiMenu.Mods
             return posArchive.ToArray();
         }
 
+        public static Vector3 leftPos = Vector3.zero;
+        public static Vector3 rightPos = Vector3.zero;
         public static void AutoBranch()
         {
             if (rightGrab)
             {
                 float dist = float.MaxValue;
                 Vector3 closeDist = Vector3.zero;
+                Vector3 compareDist = GorillaTagger.Instance.bodyCollider.transform.position;
 
                 foreach (Vector3 treeBranchPos in GetAllTreeBranchPositions())
                 {
-                    Vector3 compareDist = GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.bodyCollider.transform.right;
-
                     float foundDist = Vector3.Distance(compareDist, treeBranchPos);
                     if (foundDist < dist)
                     {
@@ -1343,10 +1345,37 @@ namespace iiMenu.Mods
                 }
 
                 if (dist < 3f)
+                    rightPos = Vector3.Lerp(rightPos, closeDist, 0.2f);
+                else
+                    rightPos = Vector3.Lerp(rightPos, GorillaTagger.Instance.rightHandTransform.position, 0.2f);
+                
+                GorillaTagger.Instance.rightHandTransform.position = rightPos;
+
+                Vector3 lastFoundDist = closeDist;
+                dist = float.MaxValue;
+                closeDist = Vector3.zero;
+                compareDist = GorillaTagger.Instance.bodyCollider.transform.position;
+
+                foreach (Vector3 treeBranchPos in GetAllTreeBranchPositions())
                 {
-                    GorillaTagger.Instance.rightHandTransform.position = closeDist;
+                    float foundDist = Vector3.Distance(compareDist, treeBranchPos);
+                    if (foundDist < dist && treeBranchPos != lastFoundDist)
+                    {
+                        dist = foundDist;
+                        closeDist = treeBranchPos;
+                    }
                 }
 
+                if (dist < 3f)
+                    leftPos = Vector3.Lerp(leftPos, closeDist, 0.2f);
+                else
+                    leftPos = Vector3.Lerp(leftPos, GorillaTagger.Instance.leftHandTransform.position, 0.2f);
+
+                GorillaTagger.Instance.leftHandTransform.position = leftPos;
+            } else
+            {
+                leftPos = GorillaTagger.Instance.bodyCollider.transform.position;
+                rightPos = GorillaTagger.Instance.bodyCollider.transform.position;
             }
         }
 
