@@ -912,7 +912,7 @@ namespace iiMenu.Menu
                             }
                         }
                     }
-                    catch (Exception e) { UnityEngine.Debug.Log(e.ToString()); }
+                    catch { }
 
                     if (!HasLoaded)
                     {
