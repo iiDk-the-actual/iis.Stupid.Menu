@@ -238,7 +238,7 @@ namespace iiMenu.Notifications
 
         public static IEnumerator ClearLast()
         {
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(notificationDecayTime/1000);
             ClearPastNotifications(1);
         }
 
