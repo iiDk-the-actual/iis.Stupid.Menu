@@ -181,7 +181,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Networked Grapple Mods", method =() => Movement.NetworkedGrappleMods(), toolTip = "Makes the spider man and grappling hook mods networked, showing the line for everyone. This requires a balloon."},
 
                 new ButtonInfo { buttonText = "Non-Togglable Ghost", toolTip = "Makes the ghost mod only activate when holding down the button."},
-                new ButtonInfo { buttonText = "Non-Togglable Invisible", toolTip = "Makes the invisible mod only activate when holding down the button"},
+                new ButtonInfo { buttonText = "visType", overlapText = "Change Invisible Type <color=grey>[</color><color=green>Toggle</color><color=grey>]</color>", method =() => Movement.ChangeInvisType(), isTogglable = false, toolTip = "Makes the invisible mod only activate when holding down the button"},
 
                 new ButtonInfo { buttonText = "Reverse Intercourse", toolTip = "Turns you into the bottom when using the intercourse gun."}
             },
