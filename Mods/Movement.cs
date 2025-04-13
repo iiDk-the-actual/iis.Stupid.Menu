@@ -1,4 +1,4 @@
-﻿using BepInEx;
+using BepInEx;
 using ExitGames.Client.Photon;
 using GorillaLocomotion.Climbing;
 using GorillaLocomotion.Swimming;
@@ -25,6 +25,21 @@ namespace iiMenu.Mods
 {
     public class Movement
     {
+        public static void ChangeInvisType()
+        {
+            invisType++;
+            if (invisType > 2.5)
+            {
+                invisType = 0;
+            }
+            string[] invisibleTypeNames = new string[] {
+                "Toggle",
+                "Hold",
+                "Reverse Hold"
+            };
+            GetIndex("visType").overlapText = "Change Invisible Type <color=grey>[</color><color=green>" + invisibleTypeNames[invisType] + "</color><color=grey>]</color>";
+        }        
+
         public static void ChangePlatformType()
         {
             platformMode++;
@@ -2126,9 +2141,13 @@ namespace iiMenu.Mods
         public static void Invisible()
         {
             bool hit = rightSecondary || Mouse.current.rightButton.isPressed;
-            if (GetIndex("Non-Togglable Invisible").enabled)
+            if (invisType == 1)
             {
                 invisMonke = hit;
+            }
+            if (invisType == 2)
+            {
+                invisMonke = !hit;
             }
             if (invisMonke)
             {
@@ -2140,19 +2159,19 @@ namespace iiMenu.Mods
                 }
                 catch { }
             }
-            if (hit == true && lastHit2 == false)
+            if (hit == true && lastHit2 == false && invisType == 0)
             {
                 invisMonke = !invisMonke;
-                if (invisMonke)
-                {
-                    wasDisabledAlready = GorillaTagger.Instance.offlineVRRig.enabled;
-                }
-                else
-                {
-                    GorillaTagger.Instance.offlineVRRig.enabled = wasDisabledAlready;
-                }
             }
             lastHit2 = hit;
+            if (invisMonke)
+            {
+                wasDisabledAlready = GorillaTagger.Instance.offlineVRRig.enabled;
+            }
+            else
+            {
+                GorillaTagger.Instance.offlineVRRig.enabled = !wasDisabledAlready;
+            }
         }
 
         private static bool ghostMonke = false;
