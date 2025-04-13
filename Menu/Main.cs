@@ -6281,6 +6281,8 @@ jgs \_   _/ |Oo\
         public static int platformMode;
         public static int platformShape;
 
+        public static int invisType = 0;
+        
         public static bool customSoundOnJoin;
 
         public static string rejRoom;
