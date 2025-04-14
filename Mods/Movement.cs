@@ -75,125 +75,114 @@ namespace iiMenu.Mods
         public static GameObject CreatePlatform()
         {
             GameObject platform = null;
-            if (platformShape == 0)
+            switch (platformShape)
             {
-                platform = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                platform.transform.localScale = new Vector3(0.333f, 0.333f, 0.333f);
-            }
-            if (platformShape == 1)
-            {
-                platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                platform.transform.localScale = new Vector3(0.333f, 0.333f, 0.333f);
-            }
-            if (platformShape == 2)
-            {
-                platform = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-                platform.transform.localScale = new Vector3(0.333f, 0.333f, 0.333f);
-            }
-            if (platformShape == 3)
-            {
-                platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                platform.transform.localScale = new Vector3(0.025f, 0.3f, 0.4f);
-            }
-            if (platformShape == 4)
-            {
-                platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                platform.transform.localScale = new Vector3(0.025f, 0.15f, 0.2f);
-            }
-            if (platformShape == 5)
-            {
-                platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                platform.transform.localScale = new Vector3(0.025f, 0.3f, 0.8f);
-            }
-            if (platformShape == 6)
-            {
-                platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                platform.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                case 0:
+                    platform = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                    platform.transform.localScale = new Vector3(0.333f, 0.333f, 0.333f);
+                    break;
+                case 1:
+                    platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    platform.transform.localScale = new Vector3(0.333f, 0.333f, 0.333f);
+                    break;
+                case 2:
+                    platform = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                    platform.transform.localScale = new Vector3(0.333f, 0.333f, 0.333f);
+                    break;
+                case 3:
+                    platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    platform.transform.localScale = new Vector3(0.025f, 0.3f, 0.4f);
+                    break;
+                case 4:
+                    platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    platform.transform.localScale = new Vector3(0.025f, 0.15f, 0.2f);
+                    break;
+                case 5:
+                    platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    platform.transform.localScale = new Vector3(0.025f, 0.3f, 0.8f);
+                    break;
+                case 6:
+                    platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    platform.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                    break;
             }
 
-            if (platformMode != 5)
+            switch (platformMode)
             {
-                platform.GetComponent<Renderer>().material.color = GetBGColor(0f);
+                case 1:
+                    platform.GetComponent<Renderer>().enabled = false;
+                    break;
+                case 2:
+                    float h = (Time.frameCount / 180f) % 1f;
+                    platform.GetComponent<Renderer>().material.color = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
+                    break;
+                case 3:
+                    platform.GetComponent<Renderer>().material.color = new Color32(
+                        (byte)UnityEngine.Random.Range(0, 255),
+                        (byte)UnityEngine.Random.Range(0, 255),
+                        (byte)UnityEngine.Random.Range(0, 255),
+                        128);
+                    break;
+                case 4:
+                    UpdateClipColliders(false);
+                    break;
+                case 5:
+                    platform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 29;
+                    if (glass == null)
+                    {
+                        glass = new Material(Shader.Find("GUI/Text Shader"));
+                        glass.color = new Color32(145, 187, 255, 100);
+                    }
+                    platform.GetComponent<Renderer>().material = glass;
+                    break;
+                case 6:
+                    platform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 32;
+                    platform.GetComponent<Renderer>().enabled = false;
+                    break;
+                case 7:
+                    platform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 204;
+                    platform.GetComponent<Renderer>().enabled = false;
+                    break;
+                case 8:
+                    platform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 231;
+                    platform.GetComponent<Renderer>().enabled = false;
+                    break;
+                case 9:
+                    platform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 240;
+                    platform.GetComponent<Renderer>().enabled = false;
+                    break;
+                case 10:
+                    platform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 249;
+                    platform.GetComponent<Renderer>().enabled = false;
+                    break;
+                case 11:
+                    platform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 252;
+                    platform.GetComponent<Renderer>().enabled = false;
+                    break;
             }
-            if (platformMode == 1)
-            {
-                platform.GetComponent<Renderer>().enabled = false;
-            }
-            if (platformMode == 2)
-            {
-                float h = (Time.frameCount / 180f) % 1f;
-                platform.GetComponent<Renderer>().material.color = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
-            }
-            if (platformMode == 3)
-            {
-                platform.GetComponent<Renderer>().material.color = new Color32((byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), 128);
-            }
-            if (platformMode == 4)
-            {
-                UpdateClipColliders(false);
-            }
-            if (platformMode == 5)
-            {
-                platform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 29;
-                if (glass == null)
-                {
-                    glass = new Material(Shader.Find("GUI/Text Shader"));
-                    glass.color = new Color32(145, 187, 255, 100);
-                }
-                platform.GetComponent<Renderer>().material = glass;
-            }
-            if (platformMode == 6)
-            {
-                platform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 32;
-                platform.GetComponent<Renderer>().enabled = false;
-            }
-            if (platformMode == 7)
-            {
-                platform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 204;
-                platform.GetComponent<Renderer>().enabled = false;
-            }
-            if (platformMode == 8)
-            {
-                platform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 231;
-                platform.GetComponent<Renderer>().enabled = false;
-            }
-            if (platformMode == 9)
-            {
-                platform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 240;
-                platform.GetComponent<Renderer>().enabled = false;
-            }
-            if (platformMode == 10)
-            {
-                platform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 249;
-                platform.GetComponent<Renderer>().enabled = false;
-            }
-            if (platformMode == 11)
-            {
-                platform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 252;
-                platform.GetComponent<Renderer>().enabled = false;
-            }
+
 
             FixStickyColliders(platform);
 
             if (GetIndex("Platform Outlines").enabled)
             {
                 GameObject gameObject = null;
-                if (platformShape == 2)
+                switch (platformShape)
                 {
-                    gameObject = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                    case 0:
+                        gameObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                        break;
+                    case 1:
+                        gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        break;
+                    case 2:
+                        gameObject = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                        break;
+                    default:
+                        gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        break;
                 }
-                if (platformShape == 1)
-                {
-                    gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                }
-                if (platformShape == 0)
-                {
-                    gameObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                }
-                if (gameObject == null)
-                {
-                    gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                }
+
                 UnityEngine.Object.Destroy(gameObject.GetComponent<Rigidbody>());
                 UnityEngine.Object.Destroy(gameObject.GetComponent<BoxCollider>());
                 gameObject.transform.parent = platform.transform;
@@ -1326,8 +1315,13 @@ namespace iiMenu.Mods
 
         public static Vector3 leftPos = Vector3.zero;
         public static Vector3 rightPos = Vector3.zero;
+        public static bool lastOnBranch;
         public static void AutoBranch()
         {
+            bool isOnBranch = false;
+            float branchDist = 5f;
+            float lerpTime = 0.3f;
+
             if (rightGrab)
             {
                 float dist = float.MaxValue;
@@ -1337,17 +1331,22 @@ namespace iiMenu.Mods
                 foreach (Vector3 treeBranchPos in GetAllTreeBranchPositions())
                 {
                     float foundDist = Vector3.Distance(compareDist, treeBranchPos);
-                    if (foundDist < dist)
+                    float dot = Vector3.Dot(treeBranchPos - compareDist, GorillaTagger.Instance.bodyCollider.transform.right);
+
+                    if (foundDist < dist && dot > 0)
                     {
                         dist = foundDist;
                         closeDist = treeBranchPos;
                     }
                 }
 
-                if (dist < 3f)
-                    rightPos = Vector3.Lerp(rightPos, closeDist, 0.2f);
+                if (dist < branchDist)
+                {
+                    isOnBranch = true;
+                    rightPos = Vector3.Lerp(rightPos, closeDist, lerpTime);
+                }
                 else
-                    rightPos = Vector3.Lerp(rightPos, GorillaTagger.Instance.rightHandTransform.position, 0.2f);
+                    rightPos = Vector3.Lerp(rightPos, GorillaTagger.Instance.rightHandTransform.position, lerpTime);
                 
                 GorillaTagger.Instance.rightHandTransform.position = rightPos;
 
@@ -1359,24 +1358,40 @@ namespace iiMenu.Mods
                 foreach (Vector3 treeBranchPos in GetAllTreeBranchPositions())
                 {
                     float foundDist = Vector3.Distance(compareDist, treeBranchPos);
-                    if (foundDist < dist && treeBranchPos != lastFoundDist)
+                    float dot = Vector3.Dot(treeBranchPos - compareDist, GorillaTagger.Instance.bodyCollider.transform.right);
+
+                    if (foundDist < dist && treeBranchPos != lastFoundDist && dot < 0)
                     {
                         dist = foundDist;
                         closeDist = treeBranchPos;
                     }
                 }
 
-                if (dist < 3f)
-                    leftPos = Vector3.Lerp(leftPos, closeDist, 0.2f);
+                if (dist < branchDist)
+                {
+                    isOnBranch = true;
+                    leftPos = Vector3.Lerp(leftPos, closeDist, lerpTime);
+                }
                 else
-                    leftPos = Vector3.Lerp(leftPos, GorillaTagger.Instance.leftHandTransform.position, 0.2f);
+                    leftPos = Vector3.Lerp(leftPos, GorillaTagger.Instance.leftHandTransform.position, lerpTime);
 
                 GorillaTagger.Instance.leftHandTransform.position = leftPos;
             } else
             {
-                leftPos = GorillaTagger.Instance.bodyCollider.transform.position;
-                rightPos = GorillaTagger.Instance.bodyCollider.transform.position;
+                leftPos = GorillaTagger.Instance.leftHandTransform.position;
+                rightPos = GorillaTagger.Instance.rightHandTransform.position;
             }
+
+            if (isOnBranch)
+                GorillaLocomotion.GTPlayer.Instance.GetComponent<Rigidbody>().velocity = GorillaLocomotion.GTPlayer.Instance.headCollider.transform.forward * 10f;
+
+            if (isOnBranch && !lastOnBranch)
+                UpdateClipColliders(false);
+
+            if (!isOnBranch && lastOnBranch)
+                UpdateClipColliders(true);
+
+            lastOnBranch = isOnBranch;
         }
 
         public static void ForceTagFreeze()
@@ -1521,7 +1536,7 @@ namespace iiMenu.Mods
         public static void LegitimateWallWalk()
         {
             float range = 0.2f;
-            float power = -3f;
+            float power = -2f;
 
             if (leftGrab)
             {
@@ -3356,20 +3371,44 @@ namespace iiMenu.Mods
             UnityEngine.Debug.Log(rvT);
         }
 
+        public static float predCount = 0.0125f;
+        public static int predInt = 1;
+        public static void ChangePredictionAmount()
+        {
+            float[] predAmnts = new float[]
+            {
+                0.00625f,
+                0.0125f,
+                0.025f,
+                0.05f
+            };
+            string[] predAmntNames = new string[]
+            {
+                "Low",
+                "Normal",
+                "High",
+                "Extreme"
+            };
+            predInt++;
+            if (predInt > predAmnts.Length - 1)
+                predInt = 0;
+
+            predCount = predAmnts[predInt];
+            GetIndex("Change Prediction Amount").overlapText = "Change Prediction Amount <color=grey>[</color><color=green>" + predAmntNames[predInt] + "</color><color=grey>]</color>";
+        }
+
         public static void VelocityLongArms()
         {
             lvT.transform.position = GorillaTagger.Instance.headCollider.transform.position - GorillaTagger.Instance.leftHandTransform.position;
             rvT.transform.position = GorillaTagger.Instance.headCollider.transform.position - GorillaTagger.Instance.rightHandTransform.position;
-            GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.transform.position -= lvT.GetComponent<GorillaVelocityTracker>().GetAverageVelocity(true, 0) * 0.0125f;
-            GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.transform.position -= rvT.GetComponent<GorillaVelocityTracker>().GetAverageVelocity(true, 0) * 0.0125f;
+            GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.transform.position -= lvT.GetComponent<GorillaVelocityTracker>().GetAverageVelocity(true, 0) * predCount;
+            GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.transform.position -= rvT.GetComponent<GorillaVelocityTracker>().GetAverageVelocity(true, 0) * predCount;
         }
 
         public static void FlickJump()
         {
             if (rightPrimary)
-            {
                 GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.transform.position = GorillaTagger.Instance.rightHandTransform.position + new Vector3(0f, -1.5f, 0f);
-            }
         }
 
         public static Vector3 longJumpPower = Vector3.zero;

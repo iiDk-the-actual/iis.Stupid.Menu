@@ -198,7 +198,7 @@ namespace iiMenu.Notifications
 
                         try
                         {
-                            CoroutineManager.RunCoroutine(ClearLast());
+                            CoroutineManager.RunCoroutine(ClearLast(clearTime / 1000f));
                         } catch { /* cheeseburger */ }
 
                         if (narrateNotifications)
@@ -236,9 +236,9 @@ namespace iiMenu.Notifications
             NotifiText.text = text;
         }
 
-        public static IEnumerator ClearLast()
+        public static IEnumerator ClearLast(float time = 1f)
         {
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(time);
             ClearPastNotifications(1);
         }
 

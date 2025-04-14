@@ -11,6 +11,8 @@ using Photon.Pun;
 using Photon.Realtime;
 using Photon.Voice.Unity;
 using Photon.Voice.Unity.UtilityScripts;
+using PlayFab.ClientModels;
+using PlayFab;
 using POpusCodec.Enums;
 using System;
 using System.Collections;
@@ -1004,6 +1006,17 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void FakeFPS()
+        {
+            Patches.FPSPatch.enabled = true;
+            Patches.FPSPatch.spoofFPSValue = UnityEngine.Random.Range(0, 2147483647);
+        }
+
+        public static void NoFakeFPS()
+        {
+            Patches.FPSPatch.enabled = false;
+        }
+
         public static void GrabIDCard()
         {
             if (rightGrab)
@@ -1536,6 +1549,16 @@ namespace iiMenu.Mods
         public static void AntiGrabDisabled()
         {
             Patches.GrabPatch.enabled = false;
+        }
+
+        public static void AntiNoclip()
+        {
+            Patches.CaughtPatch.enabled = true;
+        }
+
+        public static void AntiNoclipDisabled()
+        {
+            Patches.CaughtPatch.enabled = false;
         }
 
         public static void AntiKnockback()
@@ -3398,6 +3421,35 @@ namespace iiMenu.Mods
         {
             GameObject.Find("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Cosmetics Room Triggers/TryOnRoom").GetComponent<CosmeticBoundaryTrigger>().enabled = true;
             Patches.RequestPatch.enabled = false;
+        }
+
+        private static float lastTimeCosmeticsChecked;
+        public static void AutoPurchaseCosmetics()
+        {
+            if (!GorillaComputer.instance.isConnectedToMaster)
+                lastTimeCosmeticsChecked = Time.time + 60f;
+
+            if (Time.time > lastTimeCosmeticsChecked)
+            {
+                lastTimeCosmeticsChecked = Time.time + 60f;
+                foreach (CosmeticsController.CosmeticItem hat in CosmeticsController.instance.allCosmetics)
+                {
+                    if (hat.cost == 0 && hat.canTryOn && !GorillaTagger.Instance.offlineVRRig.concatStringOfCosmeticsAllowed.Contains(hat.itemName))
+                    {
+                        PlayFabClientAPI.PurchaseItem(new PurchaseItemRequest
+                        {
+                            ItemId = hat.itemName,
+                            Price = hat.cost,
+                            VirtualCurrency = CosmeticsController.instance.currencyName,
+                            CatalogVersion = CosmeticsController.instance.catalog
+                        }, delegate (PurchaseItemResult result)
+                        {
+                            NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Item \"" + ToTitleCase(hat.overrideDisplayName) + "\" has been purchased.");
+                            CosmeticsController.instance.ProcessExternalUnlock(hat.itemName, false, false);
+                        }, null, null, null);
+                    }
+                }
+            }
         }
 
         private static bool lasttagged = false;

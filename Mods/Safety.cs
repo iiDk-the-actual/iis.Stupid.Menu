@@ -34,13 +34,12 @@ namespace iiMenu.Mods
         public static bool isActive = true;
         public static void ToggleIgloo()
         {
-            bool fuck = rightJoystickClick;
-            if (fuck && !lastjsi)
+            if (rightJoystickClick && !lastjsi)
             {
                 isActive = !isActive;
                 GameObject.Find("Mountain/Geometry/goodigloo").SetActive(isActive);
             }
-            lastjsi = fuck;
+            lastjsi = rightJoystickClick;
         }
 
         public static void DisableGamemodeButtons()
@@ -500,6 +499,17 @@ namespace iiMenu.Mods
                 Fun.BecomeMinigamesKid();
             }
             lastinlobbyagain = PhotonNetwork.InRoom;
+        }
+
+        public static void FPSSpoof()
+        {
+            Patches.FPSPatch.enabled = true;
+            Patches.FPSPatch.spoofFPSValue = UnityEngine.Random.Range(88, 92); //  - (UnityEngine.Random.Range(0, 400) > 399 ? UnityEngine.Random.Range(15, 60) : 0)
+        }
+
+        public static void NoFPSSpoof()
+        {
+            Patches.FPSPatch.enabled = false;
         }
 
         public static void NameSpoofEnabled()

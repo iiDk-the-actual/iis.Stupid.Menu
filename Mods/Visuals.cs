@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using static iiMenu.Menu.Main;
 using static iiMenu.Classes.RigManager;
+using HarmonyLib;
 
 namespace iiMenu.Mods
 {
@@ -531,6 +532,28 @@ namespace iiMenu.Mods
             }
         }
 
+        private static Dictionary<VRRig, List<int>> ntDistanceList = new Dictionary<VRRig, List<int>> { };
+        public static float GetTagDistance(VRRig rig)
+        {
+            if (ntDistanceList.ContainsKey(rig))
+            {
+                if (ntDistanceList[rig][0] == Time.frameCount)
+                {
+                    ntDistanceList[rig].Add(Time.frameCount);
+                    return 0.25f + (ntDistanceList[rig].Count * 0.15f);
+                } else
+                {
+                    ntDistanceList[rig].Clear();
+                    ntDistanceList[rig].Add(Time.frameCount);
+                    return 0.25f + (ntDistanceList[rig].Count * 0.15f);
+                }
+            } else
+            {
+                ntDistanceList.Add(rig, new List<int> { Time.frameCount });
+                return 0.4f;
+            }
+        }
+
         private static Dictionary<VRRig, GameObject> nametags = new Dictionary<VRRig, GameObject> { };
         public static void NameTags()
         {
@@ -565,7 +588,7 @@ namespace iiMenu.Mods
                     nameTag.GetComponent<TextMesh>().color = vrrig.playerColor;
                     nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
 
-                    nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * 0.4f;
+                    nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
                     nameTag.transform.LookAt(Camera.main.transform.position);
                     nameTag.transform.Rotate(0f, 180f, 0f);
                 }
@@ -575,10 +598,232 @@ namespace iiMenu.Mods
         public static void DisableNameTags()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in nametags)
-            {
                 UnityEngine.Object.Destroy(nametag.Value);
-            }
+            
             nametags.Clear();
+        }
+
+        private static Dictionary<VRRig, GameObject> velnametags = new Dictionary<VRRig, GameObject> { };
+        public static void VelocityTags()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> nametag in velnametags)
+            {
+                if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
+                {
+                    UnityEngine.Object.Destroy(nametag.Value);
+                    velnametags.Remove(nametag.Key);
+                }
+            }
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                try
+                {
+                    if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        if (!velnametags.ContainsKey(vrrig))
+                        {
+                            GameObject go = new GameObject("iiMenu_Veltag");
+                            go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+                            TextMesh textMesh = go.AddComponent<TextMesh>();
+                            textMesh.fontSize = 48;
+                            textMesh.characterSize = 0.1f;
+                            textMesh.anchor = TextAnchor.MiddleCenter;
+                            textMesh.alignment = TextAlignment.Center;
+
+                            velnametags.Add(vrrig, go);
+                        }
+
+                        GameObject nameTag = velnametags[vrrig];
+                        nameTag.GetComponent<TextMesh>().text = string.Format("{0:F1}m/s", vrrig.LatestVelocity().magnitude);
+                        nameTag.GetComponent<TextMesh>().color = vrrig.playerColor;
+                        nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
+
+                        nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
+                        nameTag.transform.LookAt(Camera.main.transform.position);
+                        nameTag.transform.Rotate(0f, 180f, 0f);
+                    }
+                } catch { }
+            }
+        }
+
+        public static void DisableVelocityTags()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> nametag in velnametags)
+                UnityEngine.Object.Destroy(nametag.Value);
+            
+            velnametags.Clear();
+        }
+
+        private static Dictionary<VRRig, GameObject> FPSnametags = new Dictionary<VRRig, GameObject> { };
+        public static void FPSTags()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> nametag in FPSnametags)
+            {
+                if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
+                {
+                    UnityEngine.Object.Destroy(nametag.Value);
+                    FPSnametags.Remove(nametag.Key);
+                }
+            }
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                try
+                {
+                    if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        if (!FPSnametags.ContainsKey(vrrig))
+                        {
+                            GameObject go = new GameObject("iiMenu_FPStag");
+                            go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+                            TextMesh textMesh = go.AddComponent<TextMesh>();
+                            textMesh.fontSize = 48;
+                            textMesh.characterSize = 0.1f;
+                            textMesh.anchor = TextAnchor.MiddleCenter;
+                            textMesh.alignment = TextAlignment.Center;
+
+                            FPSnametags.Add(vrrig, go);
+                        }
+
+                        GameObject nameTag = FPSnametags[vrrig];
+                        nameTag.GetComponent<TextMesh>().text = Traverse.Create(vrrig).Field("fps").GetValue().ToString() + " FPS";
+                        nameTag.GetComponent<TextMesh>().color = vrrig.playerColor;
+                        nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
+
+                        nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
+                        nameTag.transform.LookAt(Camera.main.transform.position);
+                        nameTag.transform.Rotate(0f, 180f, 0f);
+                    }
+                } catch { }
+            }
+        }
+
+        public static void DisableFPSTags()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> nametag in FPSnametags)
+                UnityEngine.Object.Destroy(nametag.Value);
+
+            FPSnametags.Clear();
+        }
+
+        private static Dictionary<VRRig, GameObject> turnNameTags = new Dictionary<VRRig, GameObject> { };
+        public static void TurnTags()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> nametag in turnNameTags)
+            {
+                if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
+                {
+                    UnityEngine.Object.Destroy(nametag.Value);
+                    turnNameTags.Remove(nametag.Key);
+                }
+            }
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                try
+                {
+                    if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        if (!turnNameTags.ContainsKey(vrrig))
+                        {
+                            GameObject go = new GameObject("iiMenu_Turntag");
+                            go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+                            TextMesh textMesh = go.AddComponent<TextMesh>();
+                            textMesh.fontSize = 48;
+                            textMesh.characterSize = 0.1f;
+                            textMesh.anchor = TextAnchor.MiddleCenter;
+                            textMesh.alignment = TextAlignment.Center;
+
+                            turnNameTags.Add(vrrig, go);
+                        }
+
+                        string turnType = (string)Traverse.Create(vrrig).Field("turnType").GetValue();
+                        int turnFactor = (int)Traverse.Create(vrrig).Field("turnFactor").GetValue();
+
+                        GameObject nameTag = turnNameTags[vrrig];
+                        nameTag.GetComponent<TextMesh>().text = turnType == "NONE" ? "None" : ToTitleCase(turnType) + " " + turnFactor.ToString();
+                        nameTag.GetComponent<TextMesh>().color = vrrig.playerColor;
+                        nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
+
+                        nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
+                        nameTag.transform.LookAt(Camera.main.transform.position);
+                        nameTag.transform.Rotate(0f, 180f, 0f);
+                    }
+                } catch { }
+            }
+        }
+
+        public static void DisableTurnTags()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> nametag in turnNameTags)
+                UnityEngine.Object.Destroy(nametag.Value);
+
+            turnNameTags.Clear();
+        }
+
+        private static Dictionary<VRRig, GameObject> taggedNameTags = new Dictionary<VRRig, GameObject> { };
+        public static void TaggedTags()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> nametag in taggedNameTags)
+            {
+                if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
+                {
+                    UnityEngine.Object.Destroy(nametag.Value);
+                    taggedNameTags.Remove(nametag.Key);
+                }
+            }
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                try
+                {
+                    if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        if (!taggedNameTags.ContainsKey(vrrig))
+                        {
+                            GameObject go = new GameObject("iiMenu_Taggedtag");
+                            go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+                            TextMesh textMesh = go.AddComponent<TextMesh>();
+                            textMesh.fontSize = 48;
+                            textMesh.characterSize = 0.1f;
+                            textMesh.anchor = TextAnchor.MiddleCenter;
+                            textMesh.alignment = TextAlignment.Center;
+
+                            taggedNameTags.Add(vrrig, go);
+                        }
+
+                        
+                        GameObject nameTag = taggedNameTags[vrrig];
+                        if (PlayerIsTagged(vrrig))
+                        {
+                            int taggedById = (int)Traverse.Create(vrrig).Field("taggedById").GetValue();
+                            NetPlayer tagger = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(taggedById, false);
+
+                            if (tagger != null)
+                                nameTag.GetComponent<TextMesh>().text = "Tagged by " + tagger?.NickName;
+                        } else
+                        {
+                            nameTag.GetComponent<TextMesh>().text = "";
+                        }
+                            
+                        nameTag.GetComponent<TextMesh>().color = vrrig.playerColor;
+                        nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
+
+                        nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
+                        nameTag.transform.LookAt(Camera.main.transform.position);
+                        nameTag.transform.Rotate(0f, 180f, 0f);
+                    }
+                } catch { }
+            }
+        }
+
+        public static void DisableTaggedTags()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> nametag in taggedNameTags)
+                UnityEngine.Object.Destroy(nametag.Value);
+
+            taggedNameTags.Clear();
         }
 
         public static void ShowPlayspaceCenter()
@@ -599,6 +844,7 @@ namespace iiMenu.Mods
             UnityEngine.Object.Destroy(playspaceCenter.GetComponent<Renderer>());
 
             playspaceCenter.GetComponent<Renderer>().material.color = GetBGColor(0f);
+            playspaceCenter.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
             playspaceCenter.transform.localScale = new Vector3(0.1f, 0.1f, 0.15f);
 
             Physics.Raycast(new Vector3(GorillaTagger.Instance.transform.position.x, GorillaTagger.Instance.headCollider.transform.position.y, GorillaTagger.Instance.transform.position.x), Vector3.down, out var Ray, 512f, NoInvisLayerMask());
@@ -682,27 +928,15 @@ namespace iiMenu.Mods
             leaves.Clear();
         }
 
-        /*
         public static void EnableRemoveCherryBlossoms()
         {
-            foreach (GameObject g in Resources.FindObjectsOfTypeAll<GameObject>())
-            {
-                if (g.activeSelf && g.name.Contains("Cherry Blossoms"))
-                {
-                    g.SetActive(false);
-                    cblos.Add(g);
-                }
-            }
+            GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/UnityTempFile-6a37efad541c4d843b5d1d1f7fe407ea (combined by EdMeshCombiner)").SetActive(false);
         }
 
         public static void DisableRemoveCherryBlossoms()
         {
-            foreach (GameObject l in cblos)
-            {
-                l.SetActive(true);
-            }
-            cblos.Clear();
-        }*/
+            GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/UnityTempFile-6a37efad541c4d843b5d1d1f7fe407ea (combined by EdMeshCombiner)").SetActive(true);
+        }
 
         public static List<GameObject> cosmetics = new List<GameObject> { };
         public static void DisableCosmetics()
@@ -711,7 +945,7 @@ namespace iiMenu.Mods
             {
                 foreach (GameObject Cosmetic in GorillaTagger.Instance.offlineVRRig.cosmetics)
                 {
-                    if (Cosmetic.activeSelf && Cosmetic.transform.parent == GorillaTagger.Instance.offlineVRRig.mainCamera.transform)
+                    if (Cosmetic.activeSelf && Cosmetic.transform.parent == GorillaTagger.Instance.offlineVRRig.mainCamera.transform.Find("HeadCosmetics"))
                     {
                         cosmetics.Add(Cosmetic);
                         Cosmetic.SetActive(false);
@@ -2764,7 +2998,6 @@ namespace iiMenu.Mods
             
             if (sillyComputer == null)
                 return;
-
 
             // Cache these here so your not finding the values from GetIndex every call (GetIndex is fucking slow)
             bool followMenuTheme = GetIndex("Follow Menu Theme").enabled;
