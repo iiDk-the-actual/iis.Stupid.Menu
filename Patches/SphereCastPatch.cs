@@ -12,9 +12,7 @@ namespace iiMenu.Patches
         public static void Postfix(GorillaTagger __instance, ref float __result)
         {
             if (patchEnabled)
-            {
                 __result = overrideRadius;
-            }
         }
     }
 }

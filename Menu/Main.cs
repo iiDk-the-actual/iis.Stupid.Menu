@@ -137,12 +137,15 @@ namespace iiMenu.Menu
                         if (dynamicSounds)
                             Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/close.wav", "close.wav"), buttonClickVolume / 10f);
                         
-                        if (TPC != null && TPC.transform.parent.gameObject.name.Contains("CameraTablet") && isOnPC)
+                        try
                         {
-                            isOnPC = false;
-                            TPC.transform.position = TPC.transform.parent.position;
-                            TPC.transform.rotation = TPC.transform.parent.rotation;
-                        }
+                            if (isOnPC && TPC != null && TPC.transform.parent.gameObject.name.Contains("CameraTablet"))
+                            {
+                                isOnPC = false;
+                                TPC.transform.position = TPC.transform.parent.position;
+                                TPC.transform.rotation = TPC.transform.parent.rotation;
+                            }
+                        } catch { }
 
                         if (!dynamicAnimations)
                         {
@@ -761,9 +764,7 @@ namespace iiMenu.Menu
                         else
                         {
                             if (GhostRig != null)
-                            {
                                 UnityEngine.Object.Destroy(GhostRig.gameObject);
-                            }
                         }
                     }
                     catch { }
@@ -794,9 +795,8 @@ namespace iiMenu.Menu
                                                         crownmat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
 
                                                         if (admincrown == null)
-                                                        {
                                                             admincrown = LoadTextureFromResource("iiMenu.Resources.icon.png");
-                                                        }
+                                                        
                                                         crownmat.mainTexture = admincrown;
 
                                                         crownmat.SetFloat("_Surface", 1);
@@ -1022,9 +1022,8 @@ namespace iiMenu.Menu
                                 if (js.x > 0.5f)
                                 {
                                     if (dynamicSounds)
-                                    {
                                         Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/next.wav", "next.wav"), buttonClickVolume / 10f);
-                                    }
+                                    
                                     Toggle("NextPage");
                                     ReloadMenu();
                                     joystickDelay = Time.time + 0.2f;
@@ -1032,9 +1031,8 @@ namespace iiMenu.Menu
                                 if (js.x < -0.5f)
                                 {
                                     if (dynamicSounds)
-                                    {
                                         Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/prev.wav", "prev.wav"), buttonClickVolume / 10f);
-                                    }
+                                    
                                     Toggle("PreviousPage");
                                     ReloadMenu();
                                     joystickDelay = Time.time + 0.2f;
@@ -1043,28 +1041,24 @@ namespace iiMenu.Menu
                                 if (js.y > 0.5f)
                                 {
                                     if (dynamicSounds)
-                                    {
                                         Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/open.wav", "open.wav"), buttonClickVolume / 10f);
-                                    }
+                                    
                                     joystickButtonSelected--;
                                     if (joystickButtonSelected < 0)
-                                    {
                                         joystickButtonSelected = pageSize - 1;
-                                    }
+                                    
                                     ReloadMenu();
                                     joystickDelay = Time.time + 0.2f;
                                 }
                                 if (js.y < -0.5f)
                                 {
                                     if (dynamicSounds)
-                                    {
                                         Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/close.wav", "close.wav"), buttonClickVolume / 10f);
-                                    }
+                                    
                                     joystickButtonSelected++;
                                     if (joystickButtonSelected > pageSize - 1)
-                                    {
                                         joystickButtonSelected = 0;
-                                    }
+                                    
                                     ReloadMenu();
                                     joystickDelay = Time.time + 0.2f;
                                 }
@@ -1072,9 +1066,8 @@ namespace iiMenu.Menu
                                 if (leftJoystickClick)
                                 {
                                     if (dynamicSounds)
-                                    {
                                         Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/select.wav", "select.wav"), buttonClickVolume / 10f);
-                                    }
+                                    
                                     Toggle(joystickSelectedButton, true);
                                     ReloadMenu();
                                     joystickDelay = Time.time + 0.2f;
@@ -1101,9 +1094,7 @@ namespace iiMenu.Menu
                                     foreach (ButtonInfo v in buttonlist)
                                     {
                                         if (v.enabled)
-                                        {
                                             enabledMods.Add(v.buttonText);
-                                        }
                                     }
                                 }
                                 enabledMods = Alphabetize(enabledMods.ToArray()).ToList();
@@ -1111,21 +1102,17 @@ namespace iiMenu.Menu
                             }
                             watchText.GetComponent<Text>().text = toSortOf[currentSelectedModThing].buttonText;
                             if (toSortOf[currentSelectedModThing].overlapText != null)
-                            {
                                 watchText.GetComponent<Text>().text = toSortOf[currentSelectedModThing].overlapText;
-                            }
+                            
                             watchText.GetComponent<Text>().text += "\n<color=grey>[" + (currentSelectedModThing + 1).ToString() + "/" + toSortOf.Length.ToString() + "]\n" + DateTime.Now.ToString("hh:mm tt") + "</color>";
                             watchText.GetComponent<Text>().color = titleColor;
 
                             if (lowercaseMode)
-                            {
                                 watchText.GetComponent<Text>().text = watchText.GetComponent<Text>().text.ToLower();
-                            }
 
                             if (watchIndicatorMat == null)
-                            {
                                 watchIndicatorMat = new Material(Shader.Find("GorillaTag/UberShader"));
-                            }
+                            
                             watchIndicatorMat.color = toSortOf[currentSelectedModThing].enabled ? GetBDColor(0f) : GetBRColor(0f);
                             watchEnabledIndicator.GetComponent<Image>().material = watchIndicatorMat;
 
@@ -1136,18 +1123,16 @@ namespace iiMenu.Menu
                                 {
                                     currentSelectedModThing++;
                                     if (currentSelectedModThing > toSortOf.Length - 1)
-                                    {
                                         currentSelectedModThing = 0;
-                                    }
+                                    
                                     wristMenuDelay = Time.time + 0.2f;
                                 }
                                 if (js.x < -0.5f || (rightHand ? (js.y > 0.5f) : (js.y < -0.5f)))
                                 {
                                     currentSelectedModThing--;
                                     if (currentSelectedModThing < 0)
-                                    {
                                         currentSelectedModThing = toSortOf.Length - 1;
-                                    }
+
                                     wristMenuDelay = Time.time + 0.2f;
                                 }
                                 if (rightHand ? rightJoystickClick : leftJoystickClick)
@@ -1155,9 +1140,8 @@ namespace iiMenu.Menu
                                     int archive = buttonsType;
                                     Toggle(toSortOf[currentSelectedModThing].buttonText, true);
                                     if (buttonsType != archive)
-                                    {
                                         currentSelectedModThing = 0;
-                                    }
+                                    
                                     wristMenuDelay = Time.time + 0.2f;
                                 }
                             }
@@ -1168,9 +1152,7 @@ namespace iiMenu.Menu
                     if (PhotonNetwork.InRoom)
                     {
                         if (rejRoom != null)
-                        {
                             rejRoom = null;
-                        }
                     }
                     else
                     {
@@ -1218,12 +1200,10 @@ namespace iiMenu.Menu
                     // Recover from playing sound on soundboard code
                     try
                     {
-                        if (iiMenu.Mods.Spammers.Sound.AudioIsPlaying)
+                        if (Sound.AudioIsPlaying)
                         {
-                            if (Time.time > iiMenu.Mods.Spammers.Sound.RecoverTime)
-                            {
-                                iiMenu.Mods.Spammers.Sound.FixMicrophone();
-                            }
+                            if (Time.time > Sound.RecoverTime)
+                                Sound.FixMicrophone();
                         }
                     } catch { }
 
@@ -2097,7 +2077,7 @@ namespace iiMenu.Menu
             CanvasScaler canvasScaler = canvasObj.AddComponent<CanvasScaler>();
             canvasObj.AddComponent<GraphicRaycaster>();
             canvas.renderMode = RenderMode.WorldSpace;
-            canvasScaler.dynamicPixelsPerUnit = 1000f;
+            canvasScaler.dynamicPixelsPerUnit = highQualityText ? 2500f : 1000f;
             if (scaleWithPlayer)
             {
                 canvas.transform.localScale *= GorillaLocomotion.GTPlayer.Instance.scale;
@@ -3658,32 +3638,14 @@ namespace iiMenu.Menu
                     if (NoOverlapRPCs)
                         hasRemovedThisFrame = true;
 
-                    if (GetIndex("Experimental RPC Protection").enabled)
-                    {
-                        PhotonNetwork.RaiseEvent(0, null, new RaiseEventOptions
-                        {
-                            CachingOption = EventCaching.DoNotCache,
-                            TargetActors = new int[]
-                            {
-                                PhotonNetwork.LocalPlayer.ActorNumber
-                            }
-                        }, SendOptions.SendReliable);
-                    }
-                    else
-                    {
-                        GorillaNot.instance.rpcErrorMax = int.MaxValue;
-                        GorillaNot.instance.rpcCallLimit = int.MaxValue;
-                        GorillaNot.instance.logErrorMax = int.MaxValue;
+                    GorillaNot.instance.rpcErrorMax = int.MaxValue;
+                    GorillaNot.instance.rpcCallLimit = int.MaxValue;
+                    GorillaNot.instance.logErrorMax = int.MaxValue;
 
-                        PhotonNetwork.MaxResendsBeforeDisconnect = int.MaxValue;
-                        PhotonNetwork.QuickResends = int.MaxValue;
+                    PhotonNetwork.MaxResendsBeforeDisconnect = int.MaxValue;
+                    PhotonNetwork.QuickResends = int.MaxValue;
 
-                        //PhotonNetwork.OpCleanRpcBuffer(GorillaTagger.Instance.myVRRig.GetView);
-                        PhotonNetwork.OpCleanActorRpcBuffer(PhotonNetwork.LocalPlayer.ActorNumber);
-                        PhotonNetwork.SendAllOutgoingCommands();
-
-                        GorillaNot.instance.OnPlayerLeftRoom(PhotonNetwork.LocalPlayer);
-                    }
+                    PhotonNetwork.SendAllOutgoingCommands();
                 }
             } catch { UnityEngine.Debug.Log("RPC protection failed, are you in a lobby?"); }
         }
@@ -3801,7 +3763,24 @@ namespace iiMenu.Menu
                             for (int i = 1; i < (Step - 1); i++)
                             {
                                 Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
-                                liner.SetPosition(i, new Vector3(Mathf.Round(Position.x * 50f) / 50f, Mathf.Round(Position.y * 50f) / 50f, Mathf.Round(Position.z * 50f) / 50f));
+                                liner.SetPosition(i, new Vector3(Mathf.Round(Position.x * 25f) / 25f, Mathf.Round(Position.y * 25f) / 25f, Mathf.Round(Position.z * 25f) / 25f));
+                            }
+
+                            liner.SetPosition(Step - 1, EndPosition);
+                        }
+                        break;
+                    case 4:
+                        Step = 25;
+
+                        if (GetGunInput(true) || isCopying)
+                        {
+                            liner.positionCount = Step;
+                            liner.SetPosition(0, StartPosition);
+
+                            for (int i = 1; i < (Step - 1); i++)
+                            {
+                                Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
+                                liner.SetPosition(i, Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f)) + new Vector3(0f, (((Mathf.Round(Time.time * 10f) + i) % 2) - 0.5f) * 0.25f, 0f));
                             }
 
                             liner.SetPosition(Step - 1, EndPosition);
@@ -5955,6 +5934,7 @@ jgs \_   _/ |Oo\
         public static bool legacyGhostview;
         public static bool checkMode;
         public static bool lastChecker;
+        public static bool highQualityText;
 
         public static bool SmoothGunPointer;
         public static bool smallGunPointer;

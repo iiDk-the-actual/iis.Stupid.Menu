@@ -724,6 +724,16 @@ namespace iiMenu.Mods
             dropOnRemove = true;
         }
 
+        public static void HighQualityText()
+        {
+            highQualityText = true;
+        }
+
+        public static void HighQualityTextOff()
+        {
+            highQualityText = false;
+        }
+
         public static void FlipMenu()
         {
             flipMenu = true;
@@ -2307,7 +2317,8 @@ namespace iiMenu.Mods
                 "Default",
                 "Lightning",
                 "Wavy",
-                "Blocky"
+                "Blocky",
+                "Zigzag"
             };
 
             gunVariation++;
@@ -2846,7 +2857,7 @@ namespace iiMenu.Mods
                     favz += seperator + fav;
             }
 
-            string ihateyouguys = platformMode + seperator + platformShape + seperator + flySpeedCycle + seperator + longarmCycle + seperator + speedboostCycle + seperator + projmode + seperator + trailmode + seperator + shootCycle + seperator + pointerIndex + seperator + Advantages.tagAuraIndex + seperator + notificationDecayTime + seperator + fontStyleType + seperator + arrowType + seperator + pcbg + seperator + internetTime + seperator + hotkeyButton + seperator + buttonClickIndex + seperator + buttonClickVolume + seperator + Safety.antireportrangeindex + seperator + Advantages.tagRangeIndex + seperator + Sound.BindMode + seperator + Movement.driveInt + seperator + langInd + seperator + inputTextColorInt + seperator + Movement.pullPowerInt + seperator + notificationSoundIndex + seperator + Visuals.PerformanceModeStepIndex + seperator + gunVariation + seperator + GunDirection + seperator + narratorIndex;
+            string ihateyouguys = platformMode + seperator + platformShape + seperator + flySpeedCycle + seperator + longarmCycle + seperator + speedboostCycle + seperator + projmode + seperator + trailmode + seperator + shootCycle + seperator + pointerIndex + seperator + Advantages.tagAuraIndex + seperator + notificationDecayTime + seperator + fontStyleType + seperator + arrowType + seperator + pcbg + seperator + internetTime + seperator + hotkeyButton + seperator + buttonClickIndex + seperator + buttonClickVolume + seperator + Safety.antireportrangeindex + seperator + Advantages.tagRangeIndex + seperator + Sound.BindMode + seperator + Movement.driveInt + seperator + langInd + seperator + inputTextColorInt + seperator + Movement.pullPowerInt + seperator + notificationSoundIndex + seperator + Visuals.PerformanceModeStepIndex + seperator + gunVariation + seperator + GunDirection + seperator + narratorIndex + seperator + Movement.predInt;
 
             string bindsToSave = "";
             foreach (KeyValuePair<string, List<string>> Bind in ModBindings)
@@ -2974,20 +2985,15 @@ namespace iiMenu.Mods
             Panic();
             string[] textData = text.Split("\n");
 
-            UnityEngine.Debug.Log("Toggling on buttons");
             string[] activebuttons = textData[0].Split(";;");
             for (int index = 0; index < activebuttons.Length; index++)
-            {
                 Toggle(activebuttons[index]);
-            }
 
-            UnityEngine.Debug.Log("Toggling on favs");
             string[] favz = textData[1].Split(";;");
             favorites.Clear();
             foreach (string fav in favz)
                 favorites.Add(fav);
 
-            UnityEngine.Debug.Log("Toggling on textdata");
             try
             {
                 string[] data = textData[2].Split(";;");
@@ -3050,9 +3056,10 @@ namespace iiMenu.Mods
                 ChangeGunDirection();
                 narratorIndex = int.Parse(data[29]) - 1;
                 ChangeNarrationVoice();
+                Movement.predInt = int.Parse(data[30]) - 1;
+                Movement.ChangePredictionAmount();
             } catch { UnityEngine.Debug.Log("Save file out of date"); }
 
-            UnityEngine.Debug.Log("Doing settings");
             pageButtonType = int.Parse(textData[3]) - 1;
             Toggle("Change Page Type");
             themeType = int.Parse(textData[4]) - 1;

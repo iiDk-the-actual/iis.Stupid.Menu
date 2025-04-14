@@ -1308,17 +1308,6 @@ namespace iiMenu.Mods
         // Hi skids :3
         // If you take this code you like giving sloppy wet kisses to cute boys >_<
         // I gotta stop
-        
-        // I see you
-        public static void ForceUnloadCustomMap()
-        {
-            delaything = Time.time + 0.1f;
-            PhotonView goldentrophy = GameObject.Find("Environment Objects/LocalObjects_Prefab/VirtualStump_CustomMapLobby/ModIOMapsTerminal/NetworkObject").GetComponent<PhotonView>();
-
-            goldentrophy.RPC("UnloadMapRPC", RpcTarget.All, new object[] { });
-            RPCProtection();
-        }
-
         private static float delay;
         private static bool returnOrTeleport;
         public static void ArcadeTeleporterEffectSpammer()
@@ -1342,49 +1331,6 @@ namespace iiMenu.Mods
                 returnOrTeleport = !returnOrTeleport;
                 that.RPC(returnOrTeleport ? "ActivateTeleportVFX" : "ActivateReturnVFX", RpcTarget.All, new object[] { (short)0 });
                 RPCProtection();
-            }
-        }
-
-        // Don't steal this
-        public static void VirtualStumpKickGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (GetGunInput(true) && Time.time > delaything)
-                {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
-                    {
-                        delaything = Time.time + 0.1f;
-                        PhotonView goldentrophy = GameObject.Find("Environment Objects/LocalObjects_Prefab/VirtualStump_CustomMapLobby/ModIOMapsTerminal/NetworkObject").GetComponent<PhotonView>();
-
-                        goldentrophy.RPC("SetRoomMapRPC", NetPlayerToPlayer(GetPlayerFromVRRig(possibly)), new object[] { UnityEngine.Random.Range(-99999L, 99999L) });
-                        goldentrophy.RPC("UnloadMapRPC", NetPlayerToPlayer(GetPlayerFromVRRig(possibly)), new object[] { });
-                        RPCProtection();
-                    }
-                }
-            }
-        }
-
-        // Or I will kill you
-        public static void VirtualStumpKickAll()
-        {
-            if (rightTrigger > 0.5f)
-            {
-                if (Time.time > delaything)
-                {
-                    delaything = Time.time + 0.1f;
-
-                    PhotonView goldentrophy = GameObject.Find("Environment Objects/LocalObjects_Prefab/VirtualStump_CustomMapLobby/ModIOMapsTerminal/NetworkObject").GetComponent<PhotonView>();
-
-                    goldentrophy.RPC("SetRoomMapRPC", RpcTarget.Others, new object[] { UnityEngine.Random.Range(-99999L, 99999L) });
-                    goldentrophy.RPC("UnloadMapRPC", RpcTarget.Others, new object[] { });
-                    RPCProtection();
-                }
             }
         }
 
@@ -1677,7 +1623,6 @@ namespace iiMenu.Mods
         public static void SpawnSecondLook()
         {
             GameObject secondlook = GameObject.Find("Environment Objects/05Maze_PersistentObjects/MinesSecondLookSkeleton");
-            secondlook.GetComponent<SecondLookSkeleton>().tapped = true;
             secondlook.GetComponent<SecondLookSkeletonSynchValues>().GetView.RPC("RemoteActivateGhost", RpcTarget.All, new object[] { });
         }
 
