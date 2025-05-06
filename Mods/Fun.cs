@@ -11,8 +11,8 @@ using Photon.Pun;
 using Photon.Realtime;
 using Photon.Voice.Unity;
 using Photon.Voice.Unity.UtilityScripts;
-using PlayFab.ClientModels;
 using PlayFab;
+using PlayFab.ClientModels;
 using POpusCodec.Enums;
 using System;
 using System.Collections;
@@ -69,11 +69,13 @@ namespace iiMenu.Mods
         {
             hell = LightmapSettings.lightmaps;
             LightmapSettings.lightmaps = null;
+            GameLightingManager.instance.SetCustomDynamicLightingEnabled(false);
         }
 
         public static void Fullshade()
         {
             LightmapSettings.lightmaps = hell;
+            GameLightingManager.instance.SetCustomDynamicLightingEnabled(true);
         }
 
         public static void FixHead()
@@ -724,9 +726,7 @@ namespace iiMenu.Mods
                 {
                     AudioClip clippy = ((Photon.Voice.Unity.Speaker)Traverse.Create(whoCopy.gameObject.GetComponent<GorillaSpeakerLoudness>()).Field("speaker").GetValue()).gameObject.GetComponent<AudioSource>().clip;
                     if (GorillaTagger.Instance.myRecorder.AudioClip != clippy)
-                    {
                         GorillaTagger.Instance.myRecorder.AudioClip = clippy;
-                    }
                 }
                 if (GetGunInput(true))
                 {
@@ -1009,7 +1009,7 @@ namespace iiMenu.Mods
         public static void FakeFPS()
         {
             Patches.FPSPatch.enabled = true;
-            Patches.FPSPatch.spoofFPSValue = UnityEngine.Random.Range(0, 2147483647);
+            Patches.FPSPatch.spoofFPSValue = UnityEngine.Random.Range(0, 255);
         }
 
         public static void NoFakeFPS()
@@ -1017,53 +1017,105 @@ namespace iiMenu.Mods
             Patches.FPSPatch.enabled = false;
         }
 
+        public static void EverythingGrabbable()
+        {
+            GamePlayerLocal.instance.gamePlayer.DisableGrabbing(false);
+            foreach (GameEntity entity in Traverse.Create(GameEntityManager.instance).Field("entities").GetValue<List<GameEntity>>())
+            {
+                if (entity != null)
+                {
+                    try
+                    {
+                        entity.onlyGrabActorNumber = -1;
+                        entity.pickupable = true;
+                    } catch { }
+                }
+            }
+        }
+
+        public static void EntityReach()
+        {
+            Patches.EntityGrabPatch.enabled = true;
+        }
+
+        public static void NoEntityReach()
+        {
+            Patches.EntityGrabPatch.enabled = false;
+        }
+
         public static void GrabIDCard()
         {
             if (rightGrab)
             {
-                GameObject.Find("Environment Objects/05Maze_PersistentObjects/HiddenIDCard/ID Card Anchor/ID Card Holdable").GetComponent<ScannableIDCard>().enabled = true;
-                GameObject.Find("Environment Objects/05Maze_PersistentObjects/HiddenIDCard/ID Card Anchor/ID Card Holdable").transform.position = GorillaTagger.Instance.rightHandTransform.position; ;
-            }
-        }
+                GamePlayer plr = GamePlayerLocal.instance.gamePlayer;
 
-        /*
-        public static void KillBees()
-        {
-            if (!PhotonNetwork.IsMasterClient)
-            {
-                if (!GetIndex("Disable Auto Anti Ban").enabled)
+                if (!plr.IsHoldingEntity(false))
                 {
-                    Overpowered.FastMaster();
+                    foreach (GRBadge grBadge in GameObject.Find("GhostReactorRoot/GhostReactorZone/GhostReactorEmployeeBadges").GetComponent<GRUIStationEmployeeBadges>().badgeDict.Values)
+                    {
+                        GameEntity entity = Traverse.Create(grBadge).Field("gameEntity").GetValue<GameEntity>();
+                        if (entity.onlyGrabActorNumber == PhotonNetwork.LocalPlayer.ActorNumber)
+                        {
+                            GorillaTagger.Instance.offlineVRRig.enabled = false;
+                            GorillaTagger.Instance.offlineVRRig.transform.position = entity.transform.position;
+
+                            GameEntityManager.instance.RequestGrabEntity(entity.id, false, Vector3.zero, Quaternion.identity);
+                        }
+                    }
                 }
             }
             else
             {
-                AngryBeeSwarm goldentrophy = GameObject.Find("Environment Objects/PersistentObjects_Prefab/Nowruz2024_PersistentObjects/AngryBeeSwarm/FloatingChaseBeeSwarm").GetComponent<AngryBeeSwarm>();
-                goldentrophy.photonView.OwnerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
-                Vector3 goldentrophyy = new Vector3(99999f, 99999f, 99999f);
-                goldentrophy.Emerge(goldentrophyy, new Vector3(999f, 999f, 999f));
+                GorillaTagger.Instance.offlineVRRig.enabled = true;
             }
         }
 
-        public static void AngerBees()
+        private static float crateDelay;
+        public static void BreakAllCrates()
         {
-            if (!PhotonNetwork.IsMasterClient)
+            if (rightTrigger > 0.5f)
             {
-                if (!GetIndex("Disable Auto Anti Ban").enabled)
+                GamePlayer plr = GamePlayerLocal.instance.gamePlayer;
+
+                if (!plr.IsHoldingEntity(false))
                 {
-                    Overpowered.FastMaster();
+                    foreach (GameEntity entity in Traverse.Create(GameEntityManager.instance).Field("entities").GetValue<List<GameEntity>>())
+                    {
+                        if (entity.gameObject.name.Contains("BreakableCrate"))
+                        {
+                            GorillaTagger.Instance.offlineVRRig.enabled = false;
+                            GorillaTagger.Instance.offlineVRRig.transform.position = entity.transform.position;
+
+                            if (Time.time > crateDelay)
+                            {
+                                GhostReactorManager.instance.ReportBreakableBroken(entity);
+                                crateDelay = Time.time + 0.1f;
+                            }
+                        }
+                    }
                 }
             }
             else
+                GorillaTagger.Instance.offlineVRRig.enabled = true;
+        }
+
+        private static float purchaseDelay;
+        public static void PurchaseAllToolStations()
+        {
+            if (Time.time > purchaseDelay)
             {
-                AngryBeeSwarm goldentrophy = GameObject.Find("Environment Objects/PersistentObjects_Prefab/Nowruz2024_PersistentObjects/AngryBeeSwarm/FloatingChaseBeeSwarm").GetComponent<AngryBeeSwarm>();
-                goldentrophy.photonView.OwnerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
-                Vector3 goldentrophyy = GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 3f, 0f);
-                goldentrophy.Emerge(goldentrophyy, goldentrophyy);
+                GhostReactorManager.instance.ToolPurchaseStationRequest(UnityEngine.Random.Range(0, GhostReactorManager.instance.reactor.toolPurchasingStations.Count - 1), GhostReactorManager.ToolPurchaseStationAction.TryPurchase);
+                purchaseDelay = Time.time + 0.1f;
             }
         }
 
-        public static void AngerBeesGun()
+        public static void MaxCurrencySelf()
+        {
+            if (!PhotonNetwork.IsMasterClient) { return; }
+            GRPlayer.Get(PhotonNetwork.LocalPlayer.ActorNumber).currency = int.MaxValue;
+        }
+
+        public static void MaxCurrencyGun()
         {
             if (GetGunInput(false))
             {
@@ -1072,211 +1124,38 @@ namespace iiMenu.Mods
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
-                {
-                    if (!PhotonNetwork.IsMasterClient)
-                    {
-                        if (!GetIndex("Disable Auto Anti Ban").enabled)
-                        {
-                            Overpowered.FastMaster();
-                        }
-                    }
-                    else
-                    {
-                        AngryBeeSwarm goldentrophy = GameObject.Find("Environment Objects/PersistentObjects_Prefab/Nowruz2024_PersistentObjects/AngryBeeSwarm/FloatingChaseBeeSwarm").GetComponent<AngryBeeSwarm>();
-                        goldentrophy.photonView.OwnerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
-                        Vector3 goldentrophyy = Ray.point;
-                        goldentrophy.Emerge(goldentrophyy, goldentrophyy);
-                    }
-                }
-            }
-        }
-
-        public static float beedelay = -1f;
-        public static void AngerBeesAll()
-        {
-            if (!PhotonNetwork.IsMasterClient)
-            {
-                if (!GetIndex("Disable Auto Anti Ban").enabled)
-                {
-                    Overpowered.FastMaster();
-                }
-            }
-            else
-            {
-                if (Time.time > beedelay)
-                {
-                    beedelay = Time.time + 0.1f;
-                    AngryBeeSwarm goldentrophy = GameObject.Find("Environment Objects/PersistentObjects_Prefab/Nowruz2024_PersistentObjects/AngryBeeSwarm/FloatingChaseBeeSwarm").GetComponent<AngryBeeSwarm>();
-                    goldentrophy.photonView.OwnerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
-                    Vector3 goldentrophyy = GetRandomVRRig(true).headConstraint.transform.position;
-                    goldentrophy.Emerge(goldentrophyy, goldentrophyy);
-                }
-            }
-        }
-
-        public static void StingSelf()
-        {
-            if (!PhotonNetwork.IsMasterClient)
-            {
-                if (!GetIndex("Disable Auto Anti Ban").enabled)
-                {
-                    Overpowered.FastMaster();
-                }
-            }
-            else
-            {
-                AngryBeeSwarm goldentrophy = GameObject.Find("Environment Objects/PersistentObjects_Prefab/Nowruz2024_PersistentObjects/AngryBeeSwarm/FloatingChaseBeeSwarm").GetComponent<AngryBeeSwarm>();
-                goldentrophy.photonView.OwnerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
-
-                System.Type goldentrophyy = goldentrophy.GetType();
-                FieldInfo goldentrophyyy = goldentrophyy.GetField("grabTimestamp", BindingFlags.NonPublic | BindingFlags.Instance);
-                goldentrophyyy.SetValue(goldentrophy, Time.time);
-                goldentrophyyy = goldentrophyy.GetField("emergeStartedTimestamp", BindingFlags.NonPublic | BindingFlags.Instance);
-                goldentrophyyy.SetValue(goldentrophy, Time.time);
-
-                goldentrophy.targetPlayer = PhotonNetwork.LocalPlayer;
-                goldentrophy.grabbedPlayer = PhotonNetwork.LocalPlayer;
-
-                goldentrophy.lastState = AngryBeeSwarm.ChaseState.Chasing;
-                goldentrophy.currentState = AngryBeeSwarm.ChaseState.Grabbing;
-            }
-        }
-
-        public static void StingGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (GetGunInput(true) && Time.time > kgDebounce)
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        Photon.Realtime.Player player = GetPlayerFromVRRig(possibly);
-                        if (!PhotonNetwork.IsMasterClient)
-                        {
-                            if (!GetIndex("Disable Auto Anti Ban").enabled)
-                            {
-                                Overpowered.FastMaster();
-                            }
-                        }
+                        if (PhotonNetwork.LocalPlayer.IsMasterClient)
+                            GRPlayer.Get(GetPlayerFromVRRig(possibly).ActorNumber).currency = int.MaxValue;
                         else
-                        {
-                            AngryBeeSwarm goldentrophy = GameObject.Find("Environment Objects/PersistentObjects_Prefab/Nowruz2024_PersistentObjects/AngryBeeSwarm/FloatingChaseBeeSwarm").GetComponent<AngryBeeSwarm>();
-                            goldentrophy.photonView.OwnerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
-
-                            System.Type goldentrophyy = goldentrophy.GetType();
-                            FieldInfo goldentrophyyy = goldentrophyy.GetField("grabTimestamp", BindingFlags.NonPublic | BindingFlags.Instance);
-                            goldentrophyyy.SetValue(goldentrophy, Time.time);
-                            goldentrophyyy = goldentrophyy.GetField("emergeStartedTimestamp", BindingFlags.NonPublic | BindingFlags.Instance);
-                            goldentrophyyy.SetValue(goldentrophy, Time.time);
-
-                            goldentrophy.targetPlayer = player;
-                            goldentrophy.grabbedPlayer = player;
-
-                            goldentrophy.currentState = AngryBeeSwarm.ChaseState.Grabbing;
-                        }
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
                     }
                 }
             }
         }
 
-        public static void StingAll()
+        public static void MaxCurrencyAll()
         {
-            if (!PhotonNetwork.IsMasterClient)
+            if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
+
+            foreach (Player target in PhotonNetwork.PlayerList)
             {
-                if (!GetIndex("Disable Auto Anti Ban").enabled)
-                {
-                    Overpowered.FastMaster();
-                }
-            }
-            else
-            {
-                if (Time.time > beedelay)
-                {
-                    beedelay = Time.time + 0.1f;
-                    Photon.Realtime.Player player = GetRandomPlayer(true);
-                    AngryBeeSwarm goldentrophy = GameObject.Find("Environment Objects/PersistentObjects_Prefab/Nowruz2024_PersistentObjects/AngryBeeSwarm/FloatingChaseBeeSwarm").GetComponent<AngryBeeSwarm>();
-                    goldentrophy.photonView.OwnerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
-
-                    System.Type goldentrophyy = goldentrophy.GetType();
-                    FieldInfo goldentrophyyy = goldentrophyy.GetField("grabTimestamp", BindingFlags.NonPublic | BindingFlags.Instance);
-                    goldentrophyyy.SetValue(goldentrophy, Time.time);
-                    goldentrophyyy = goldentrophyy.GetField("emergeStartedTimestamp", BindingFlags.NonPublic | BindingFlags.Instance);
-                    goldentrophyyy.SetValue(goldentrophy, Time.time);
-
-                    goldentrophy.targetPlayer = player;
-                    goldentrophy.grabbedPlayer = player;
-
-                    goldentrophy.currentState = AngryBeeSwarm.ChaseState.Grabbing;
-                }
+                GRPlayer plr = GRPlayer.Get(target.ActorNumber);
+                plr.currency = int.MaxValue;
             }
         }
 
-        public static void LavaSplashHands()
+        public static void RemoveCurrencySelf()
         {
-            GorillaLocomotion.GTPlayer.Instance.OnEnterWaterVolume(GorillaLocomotion.GTPlayer.Instance.bodyCollider, GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/ILavaYou_PrefabV/Lava/ForestLavaWaterVolume").GetComponent<GorillaLocomotion.Swimming.WaterVolume>());
-            if (rightGrab)
-            {
-                if (Time.time > splashDel)
-                {
-                    GorillaTagger.Instance.myVRRig.RPC("RPC_PlaySplashEffect", RpcTarget.All, new object[]
-                    {
-                        GorillaTagger.Instance.rightHandTransform.position,
-                        GorillaTagger.Instance.rightHandTransform.rotation,
-                        4f,
-                        100f,
-                        true,
-                        false
-                    });
-                    RPCProtection();
-                    splashDel = Time.time + 0.1f;
-                }
-            }
-            if (leftGrab)
-            {
-                if (Time.time > splashDel)
-                {
-                    GorillaTagger.Instance.myVRRig.RPC("PlaySplashEffect", RpcTarget.All, new object[]
-                    {
-                        GorillaTagger.Instance.leftHandTransform.position,
-                        GorillaTagger.Instance.leftHandTransform.rotation,
-                        4f,
-                        100f,
-                        true,
-                        false
-                    });
-                    RPCProtection();
-                    splashDel = Time.time + 0.1f;
-                }
-            }
+            if (!PhotonNetwork.IsMasterClient) { return; }
+            GRPlayer.Get(PhotonNetwork.LocalPlayer.ActorNumber).currency = 0;
         }
 
-        public static void LavaSplashAura()
+        public static void RemoveCurrencyGun()
         {
-            GorillaLocomotion.GTPlayer.Instance.OnEnterWaterVolume(GorillaLocomotion.GTPlayer.Instance.bodyCollider, GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/ILavaYou_PrefabV/Lava/ForestLavaWaterVolume").GetComponent<GorillaLocomotion.Swimming.WaterVolume>());
-            if (Time.time > splashDel)
-            {
-                GorillaTagger.Instance.myVRRig.RPC("PlaySplashEffect", RpcTarget.All, new object[]
-                {
-                    GorillaTagger.Instance.offlineVRRig.transform.position + new Vector3(UnityEngine.Random.Range(-0.5f,0.5f),UnityEngine.Random.Range(-0.5f,0.5f),UnityEngine.Random.Range(-0.5f,0.5f)),
-                    GorillaTagger.Instance.offlineVRRig.transform.rotation,
-                    4f,
-                    100f,
-                    true,
-                    false
-                });
-                RPCProtection();
-                splashDel = Time.time + 0.1f;
-            }
-        }
-
-        public static void LavaSplashGun()
-        {
-            GorillaLocomotion.GTPlayer.Instance.OnEnterWaterVolume(GorillaLocomotion.GTPlayer.Instance.bodyCollider, GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/ILavaYou_PrefabV/Lava/ForestLavaWaterVolume").GetComponent<GorillaLocomotion.Swimming.WaterVolume>());
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
@@ -1285,36 +1164,184 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true))
                 {
-                    GorillaTagger.Instance.offlineVRRig.enabled = false;
-                    GorillaTagger.Instance.offlineVRRig.transform.position = NewPointer.transform.position - new Vector3(0, 1, 0);
-                    GorillaTagger.Instance.myVRRig.transform.position = NewPointer.transform.position - new Vector3(0, 1, 0);
-                    if (Time.time > splashDel)
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        GorillaTagger.Instance.myVRRig.RPC("PlaySplashEffect", RpcTarget.All, new object[]
-                        {
-                            NewPointer.transform.position,
-                            Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0,360), UnityEngine.Random.Range(0,360), UnityEngine.Random.Range(0,360))),
-                            4f,
-                            100f,
-                            true,
-                            false
-                        });
-                        RPCProtection();
-                        splashDel = Time.time + 0.1f;
+                        if (PhotonNetwork.LocalPlayer.IsMasterClient)
+                            GRPlayer.Get(GetPlayerFromVRRig(possibly).ActorNumber).currency = 0;
+                        else
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
                     }
                 }
-                else
+            }
+        }
+
+        public static void RemoveCurrencyAll()
+        {
+            if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
+
+            foreach (Player target in PhotonNetwork.PlayerList)
+            {
+                GRPlayer plr = GRPlayer.Get(target.ActorNumber);
+                plr.currency = 0;
+            }
+        }
+
+        public static void Invincibility()
+        {
+            if (!PhotonNetwork.IsMasterClient) { return; }
+            GRPlayer plr = GRPlayer.Get(PhotonNetwork.LocalPlayer.ActorNumber);
+            Traverse.Create(plr).Field("hp").SetValue(Traverse.Create(plr).Field("maxHp").GetValue<int>());
+        }
+
+        private static float killDelay;
+        public static void KillSelf()
+        {
+            if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
+
+            GRPlayer plr = GRPlayer.Get(PhotonNetwork.LocalPlayer.ActorNumber);
+            plr.ChangePlayerState(GRPlayer.GRPlayerState.Ghost);
+        }
+
+        public static void KillGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
                 {
-                    GorillaTagger.Instance.offlineVRRig.enabled = true;
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        if (PhotonNetwork.LocalPlayer.IsMasterClient)
+                            GRPlayer.Get(GetPlayerFromVRRig(possibly).ActorNumber).ChangePlayerState(GRPlayer.GRPlayerState.Ghost);
+                        else
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                    }
                 }
             }
-        }*/
+        }
+
+        public static void KillAll()
+        {
+            if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
+
+            foreach (Player target in PhotonNetwork.PlayerList)
+            {
+                GRPlayer plr = GRPlayer.Get(target.ActorNumber);
+                plr.ChangePlayerState(GRPlayer.GRPlayerState.Ghost);
+            }
+        }
+
+        public static void ReviveSelf()
+        {
+            if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
+
+            GRPlayer plr = GRPlayer.Get(PhotonNetwork.LocalPlayer.ActorNumber);
+            plr.ChangePlayerState(GRPlayer.GRPlayerState.Alive);
+        }
+
+        public static void ReviveGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        if (PhotonNetwork.LocalPlayer.IsMasterClient)
+                            GRPlayer.Get(GetPlayerFromVRRig(possibly).ActorNumber).ChangePlayerState(GRPlayer.GRPlayerState.Alive);
+                        else
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                    }
+                }
+            }
+        }
+
+        public static void ReviveAll()
+        {
+            if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
+
+            foreach (Player target in PhotonNetwork.PlayerList)
+            {
+                GRPlayer plr = GRPlayer.Get(target.ActorNumber);
+                plr.ChangePlayerState(GRPlayer.GRPlayerState.Alive);
+            }
+        }
+
+        public static void SpazKillSelf()
+        {
+            if (Time.time > killDelay)
+            {
+                killDelay = Time.time + 0.1f;
+                if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
+
+                GRPlayer plr = GRPlayer.Get(PhotonNetwork.LocalPlayer.ActorNumber);
+                plr.ChangePlayerState(plr.State == GRPlayer.GRPlayerState.Alive ? GRPlayer.GRPlayerState.Ghost : GRPlayer.GRPlayerState.Alive);
+            }
+        }
+
+        public static void SpazKillGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        if (PhotonNetwork.LocalPlayer.IsMasterClient)
+                        {
+                            GRPlayer plr = GRPlayer.Get(GetPlayerFromVRRig(possibly).ActorNumber);
+                            plr.ChangePlayerState(plr.State == GRPlayer.GRPlayerState.Alive ? GRPlayer.GRPlayerState.Ghost : GRPlayer.GRPlayerState.Alive);
+                        }
+                        else
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                    }
+                }
+            }
+        }
+
+        public static void SpazKillAll()
+        {
+            if (Time.time > killDelay)
+            {
+                foreach (Player target in PhotonNetwork.PlayerList)
+                {
+                    killDelay = Time.time + 0.1f;
+                    if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
+
+                    GRPlayer plr = GRPlayer.Get(target.ActorNumber);
+                    plr.ChangePlayerState(plr.State == GRPlayer.GRPlayerState.Alive ? GRPlayer.GRPlayerState.Ghost : GRPlayer.GRPlayerState.Alive);
+                }
+            }
+        }
+
+        public static void SpazToolStations()
+        {
+            if (Time.time > purchaseDelay)
+            {
+                GhostReactorManager.instance.ToolPurchaseStationRequest(UnityEngine.Random.Range(0, GhostReactorManager.instance.reactor.toolPurchasingStations.Count - 1), (GhostReactorManager.ToolPurchaseStationAction)UnityEngine.Random.Range(0, 2));
+                purchaseDelay = Time.time + 0.1f;
+            }
+        }
 
         public static void LowQualityMicrophone()
         {
             Photon.Voice.Unity.Recorder mic = GorillaTagger.Instance.myRecorder;
             mic.SamplingRate = SamplingRate.Sampling08000;
-            //oldBitrate = mic.Bitrate;
             mic.Bitrate = 5;
 
             mic.RestartRecording(true);
@@ -1467,7 +1494,7 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true))
                 {
-                    BuilderTable.instance.RequestCreatePiece(pieceIdSet, NewPointer.transform.position + new Vector3(0f, 1f, 0f), Quaternion.identity, 0);
+                    RequestCreatePiece(pieceIdSet, NewPointer.transform.position + new Vector3(0f, 1f, 0f), Quaternion.identity, 0);
                     RPCProtection();
                 }
             }
@@ -1709,6 +1736,15 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void StartAllRaces()
+        {
+            foreach (object race in Traverse.Create(RacingManager.instance).Field("races").GetValue<object[]>())
+            {
+                if (Traverse.Create(race).Field("racingState").GetValue<int>() == 0)
+                    race.GetType().GetMethod("Button_StartRace", BindingFlags.Public | BindingFlags.Instance).Invoke(race, new object[] { 5 });
+            }
+        }
+
         private static bool flashColor;
         private static float flashDelay;
         public static void StrobeHoverboard()
@@ -1825,7 +1861,7 @@ namespace iiMenu.Mods
         {
             if (rightGrab)
             {
-                BuilderTable.instance.RequestCreatePiece(pieceIdSet, GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, 0);
+                RequestCreatePiece(pieceIdSet, GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, 0);
                 RPCProtection();
             }
         }
@@ -1884,6 +1920,12 @@ namespace iiMenu.Mods
         private static bool isFiring = false;
         public static IEnumerator FireShotgun()
         {
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                yield break;
+            }
+
             isFiring = true;
 
             if (!File.Exists("iisStupidMenu/shotgun.wav"))
@@ -1941,15 +1983,38 @@ namespace iiMenu.Mods
             //RPCProtection();
         }
 
+        public static void RequestCreatePiece(int pieceType, Vector3 position, Quaternion rotation, int materialType)
+        {
+            if (PhotonNetwork.IsMasterClient)
+            {
+                int pieceId = BuilderTable.instance.CreatePieceId();
+
+                BuilderTableNetworking.instance.photonView.RPC("PieceCreatedByShelfRPC", RpcTarget.All, new object[]
+                {
+                    pieceType,
+                    pieceId,
+                    BitPackUtils.PackWorldPosForNetwork(position),
+                    BitPackUtils.PackQuaternionForNetwork(rotation),
+                    materialType,
+                    (byte)4,
+                    1,
+                    PhotonNetwork.LocalPlayer
+                });
+            } else
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+            }
+        }
+
         public static void BuildingBlockAura()
         {
-            BuilderTable.instance.RequestCreatePiece(pieceIdSet, GorillaTagger.Instance.offlineVRRig.transform.position + Vector3.Normalize(new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f))) * 2f, Quaternion.identity, 0);
+            RequestCreatePiece(pieceIdSet, GorillaTagger.Instance.offlineVRRig.transform.position + Vector3.Normalize(new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f))) * 2f, Quaternion.identity, 0);
             RPCProtection();
         }
 
         public static void RainBuildingBlocks()
         {
-            BuilderTable.instance.RequestCreatePiece(pieceIdSet, GorillaTagger.Instance.offlineVRRig.transform.position + new Vector3(UnityEngine.Random.Range(-3f, 3f), 4f, UnityEngine.Random.Range(-3f, 3f)), Quaternion.identity, 0);
+            RequestCreatePiece(pieceIdSet, GorillaTagger.Instance.offlineVRRig.transform.position + new Vector3(UnityEngine.Random.Range(-3f, 3f), 4f, UnityEngine.Random.Range(-3f, 3f)), Quaternion.identity, 0);
             RPCProtection();
         }
 
@@ -2022,7 +2087,7 @@ namespace iiMenu.Mods
 
         public static void OrbitBlocks()
         {
-            BuilderTable.instance.RequestCreatePiece(pieceIdSet, GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos((float)Time.frameCount / 30), 0f, MathF.Sin((float)Time.frameCount / 30)), Quaternion.identity, 0);
+            RequestCreatePiece(pieceIdSet, GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos((float)Time.frameCount / 30), 0f, MathF.Sin((float)Time.frameCount / 30)), Quaternion.identity, 0);
             RPCProtection();
         }
 
@@ -2097,7 +2162,7 @@ namespace iiMenu.Mods
 
             yield return null;
 
-            BuilderTable.instance.RequestCreatePiece(pieceType, GorillaTagger.Instance.offlineVRRig.transform.position + new Vector3(0f, 1f, 0f), Quaternion.identity, 0);
+            RequestCreatePiece(pieceType, GorillaTagger.Instance.offlineVRRig.transform.position + new Vector3(0f, 1f, 0f), Quaternion.identity, 0);
             RPCProtection();
 
             while (pieceId < 0)
@@ -2116,6 +2181,12 @@ namespace iiMenu.Mods
 
         public static IEnumerator CreateShotgun()
         {
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                yield break;
+            }
+
             BuilderPiece basea = null;
 
             yield return CreateGetPiece(-1927069002, piece =>

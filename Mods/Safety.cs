@@ -1,12 +1,10 @@
-﻿using ExitGames.Client.Photon;
-using GorillaNetworking;
+﻿using GorillaNetworking;
 using iiMenu.Classes;
 using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
 using System.IO;
 using UnityEngine;
-using Valve.VR;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -334,7 +332,7 @@ namespace iiMenu.Mods
         {
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (!vrrig.isOfflineVRRig && vrrig.concatStringOfCosmeticsAllowed.Contains("LBAAK") || vrrig.concatStringOfCosmeticsAllowed.Contains("LBAAD"))
+                if (!vrrig.isOfflineVRRig && vrrig.concatStringOfCosmeticsAllowed.Contains("LBAAK") || vrrig.concatStringOfCosmeticsAllowed.Contains("LBAAD") || vrrig.concatStringOfCosmeticsAllowed.Contains("LMAPY."))
                 {
                     try
                     {
@@ -522,70 +520,22 @@ namespace iiMenu.Mods
             iiMenu.Patches.ColorPatch.nameSpoofEnabled = false;
         }
 
+        public static string[] names = new string[]
+        {
+            "0", "SHIBAGT", "PBBV", "J3VU", "BEES", "NAMO", "MANGO", "FROSTY", "FRISH", "LITTLETIMMY",
+            "SILLYBILLY", "TIMMY", "MINIGAMES", "MINIGAMESKID", "JMANCURLY", "VMT", "ELLIOT", "POLAR", "3CLIPCE", "GORILLAVR",
+            "GORILLAVRGT", "GORILLAGTVR", "GORILLAGT", "SHARKPUPPET", "DUCKY", "EDDIE", "EDDY", "RAKZZ", "CASEOH", "SKETCH",
+            "WATERMELON", "CRAZY", "MONK", "MONKE", "MONKI", "MONKEY", "MONKIY", "GORILL", "GOORILA", "GORILLA",
+            "REDBERRY", "FOX", "RUFUS", "TTT", "TTTPIG", "PPPTIG", "K9", "BTC", "TICKLETIPJR", "BANANA",
+            "PEANUTBUTTER", "GHOSTMONKE", "STATUE", "TURBOALLEN", "NOVA", "LUNAR", "MOON", "SUN", "RANDOM", "UNKNOWN",
+            "GLITCH", "BUG", "ERROR", "CODE", "HACKER", "MODDER", "INVIS", "INVISIBLE", "TAGGER", "UNTAGGED",
+            "BLUE", "RED", "GREEN", "PURPLE", "YELLOW", "BLACK", "WHITE", "BROWN", "CYAN", "GRAY",
+            "GREY", "OG", "BANNED", "LEMON", "PLUSHIE", "CHEETO", "TIKTOK", "YOUTUBE", "TWITCH", "DISCORD"
+        };
+
+
         public static void SpoofName()
         {
-            string[] names = new string[]
-            {
-                "0",
-                "1",
-                "2",
-                "3",
-                "4",
-                "5",
-                "6",
-                "7",
-                "8",
-                "9",
-                "SHIBAGT",
-                "PBBV",
-                "J3VU",
-                "BEES",
-                "NAMO",
-                "MANGO",
-                "FROSTY",
-                "FRISH",
-                "LITTLETIMMY",
-                "SILLYBILLY",
-                "TIMMY",
-                "MINIGAMES",
-                "MINIGAMESKID",
-                "JMANCURLY",
-                "VMT",
-                "ELLIOT",
-                "POLAR",
-                "3CLIPCE",
-                "GORILLAVR",
-                "GORILLAVRGT",
-                "GORILLAGTVR",
-                "GORILLAGT",
-                "SHARKPUPPET",
-                "DUCKY",
-                "EDDIE",
-                "EDDY",
-                "RAKZZ",
-                "CASEOH",
-                "SKETCH",
-                "WATERMELON",
-                "CRAZY",
-                "MONK",
-                "MONKE",
-                "MONKI",
-                "MONKEY",
-                "MONKIY",
-                "GORILL",
-                "GOORILA",
-                "GORILLA",
-                "REDBERRY",
-                "FOX",
-                "RUFUS",
-                "TTT",
-                "TTTPIG",
-                "PPPTIG",
-                "K9",
-                "BTC",
-                "TICKLETIPJR"
-            };
-
             ChangeName(names[UnityEngine.Random.Range(0, names.Length - 1)]);
         }
 

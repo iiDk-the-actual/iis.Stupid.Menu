@@ -9,7 +9,6 @@ using System.Diagnostics;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Valve.VR;
 using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods
@@ -65,49 +64,8 @@ namespace iiMenu.Mods
                 return;
             }
 
-            string gamemode = PhotonNetworkController.Instance.currentJoinTrigger.networkZone;
-
+            string gamemode = PhotonNetworkController.Instance.currentJoinTrigger == null ? "forest" : PhotonNetworkController.Instance.currentJoinTrigger.networkZone;
             PhotonNetworkController.Instance.AttemptToJoinPublicRoom(GorillaComputer.instance.GetJoinTriggerForZone(gamemode), JoinType.Solo);
-            /*
-            switch (gamemode)
-            {
-                case "forest":
-                    GameObject.Find("Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Forest, Tree Exit").GetComponent<GorillaNetworkJoinTrigger>().OnBoxTriggered();
-                    break;
-                case "city":
-                    GameObject.Find("Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - City Front").GetComponent<GorillaNetworkJoinTrigger>().OnBoxTriggered();
-                    break;
-                case "canyons":
-                    GameObject.Find("Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Canyon").GetComponent<GorillaNetworkJoinTrigger>().OnBoxTriggered();
-                    break;
-                case "mountains":
-                    GameObject.Find("Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Mountain For Computer").GetComponent<GorillaNetworkJoinTrigger>().OnBoxTriggered();
-                    break;
-                case "beach":
-                    GameObject.Find("Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Beach from Forest").GetComponent<GorillaNetworkJoinTrigger>().OnBoxTriggered();
-                    break;
-                case "sky":
-                    GameObject.Find("Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Clouds").GetComponent<GorillaNetworkJoinTrigger>().OnBoxTriggered();
-                    break;
-                case "basement":
-                    GameObject.Find("Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Basement For Computer").GetComponent<GorillaNetworkJoinTrigger>().OnBoxTriggered();
-                    break;
-                case "metro":
-                    GameObject.Find("Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Metropolis from Computer").GetComponent<GorillaNetworkJoinTrigger>().OnBoxTriggered();
-                    break;
-                case "arcade":
-                    GameObject.Find("Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - City frm Arcade").GetComponent<GorillaNetworkJoinTrigger>().OnBoxTriggered();
-                    break;
-                case "rotating":
-                    GameObject.Find("Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Rotating Map").GetComponent<GorillaNetworkJoinTrigger>().OnBoxTriggered();
-                    break;
-                case "bayou":
-                    GameObject.Find("Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - BayouComputer2").GetComponent<GorillaNetworkJoinTrigger>().OnBoxTriggered();
-                    break;
-                case "caves":
-                    GameObject.Find("Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Cave").GetComponent<GorillaNetworkJoinTrigger>().OnBoxTriggered();
-                    break;
-            }*/
         }
 
         public static IEnumerator JoinRandomDelay()
@@ -374,6 +332,24 @@ namespace iiMenu.Mods
             Patches.MicPatch.returnAsNone = false;
         }
 
+        public static void LowMicLatency()
+        {
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                    ((Photon.Voice.Unity.Speaker)Traverse.Create(vrrig.gameObject.GetComponent<GorillaSpeakerLoudness>()).Field("speaker").GetValue()).SetPlaybackDelaySettings(new Photon.Voice.Unity.PlaybackDelaySettings() { MinDelaySoft = 0, MaxDelaySoft = 400, MaxDelayHard = 100 });
+            } 
+        }
+
+        public static void NoLowMicLatency()
+        {
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                    ((Photon.Voice.Unity.Speaker)Traverse.Create(vrrig.gameObject.GetComponent<GorillaSpeakerLoudness>()).Field("speaker").GetValue()).SetPlaybackDelaySettings(new Photon.Voice.Unity.PlaybackDelaySettings() { MinDelaySoft = 200, MaxDelaySoft = 400, MaxDelayHard = 100 });
+            }
+        }
+
         public static void EnableFPSBoost()
         {
             QualitySettings.globalTextureMipmapLimit = 99999;
@@ -410,22 +386,26 @@ namespace iiMenu.Mods
             {
                 Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
                 Physics.Raycast(ray, out var Ray, 512f, NoInvisLayerMask());
-                GorillaPressableButton possibly = Ray.collider.GetComponentInParent<GorillaPressableButton>();
-                if (possibly)
+
+                foreach (Component component in Ray.collider.GetComponents<Component>())
                 {
-                    typeof(GorillaPressableButton).GetMethod("OnTriggerEnter", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(possibly, new object[] { GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHandTriggerCollider").GetComponent<Collider>() });
-                }
-                GorillaKeyboardButton possibler = Ray.collider.GetComponentInParent<GorillaKeyboardButton>();
-                if (possibler && Time.time > keyboardDelay)
-                {
-                    keyboardDelay = Time.time + 0.1f;
-                    GameEvents.OnGorrillaKeyboardButtonPressedEvent.Invoke(possibler.Binding);
-                }
-                GorillaPlayerLineButton possiblest = Ray.collider.GetComponentInParent<GorillaPlayerLineButton>();
-                if (possiblest && Time.time > keyboardDelay)
-                {
-                    keyboardDelay = Time.time + 0.1f;
-                    typeof(GorillaPlayerLineButton).GetMethod("OnTriggerEnter", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(possiblest, new object[] { GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHandTriggerCollider").GetComponent<Collider>() });
+                    System.Type compType = component.GetType();
+                    string compName = compType.Name;
+
+                    if (compName == "GorillaPressableButton" || typeof(GorillaPressableButton).IsAssignableFrom(compType) || (compName == "GorillaPlayerLineButton" && Time.time > keyboardDelay))
+                        compType.GetMethod("OnTriggerEnter", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(component, new object[] { GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHandTriggerCollider").GetComponent<Collider>() });
+
+                    if (compName == "CustomKeyboardKey" && Time.time > keyboardDelay)
+                    {
+                        keyboardDelay = Time.time + 0.1f;
+                        compType.GetMethod("OnTriggerEnter", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(component, new object[] { GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHandTriggerCollider").GetComponent<Collider>() });
+                    }
+
+                    if (compName == "GorillaKeyboardButton" && Time.time > keyboardDelay)
+                    {
+                        keyboardDelay = Time.time + 0.1f;
+                        GameEvents.OnGorrillaKeyboardButtonPressedEvent.Invoke(Traverse.Create(component).Field("Binding").GetValue<GorillaKeyboardBindings>());
+                    }
                 }
             }
         }

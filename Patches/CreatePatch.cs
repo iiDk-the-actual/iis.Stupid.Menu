@@ -5,7 +5,7 @@ using static iiMenu.Menu.Main;
 
 namespace iiMenu.Patches
 {
-    [HarmonyPatch(typeof(BuilderTableNetworking), "PieceCreatedRPC")]
+    [HarmonyPatch(typeof(BuilderTableNetworking), "PieceCreatedByShelfRPC")]
     public class CreatePatch
     {
         public static bool enabled = false;

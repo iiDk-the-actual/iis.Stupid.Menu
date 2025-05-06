@@ -1715,12 +1715,12 @@ namespace iiMenu.Mods
         {
             if (zone == "VSTUMP")
             {
-                ModIOLoginTeleporter tele = GameObject.Find("Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/Arcade_prefab/MainRoom/VRArea/ModIOArcadeTeleporter/TeleportTriggers_1/VRHeadsetTrigger_1").GetComponent<ModIOLoginTeleporter>();
+                VirtualStumpTeleporter tele = GameObject.Find("Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/Arcade_prefab/MainRoom/VRArea/ModIOArcadeTeleporter/TeleportTriggers_1/VRHeadsetTrigger_1").GetComponent<VirtualStumpTeleporter>();
 
                 tele.gameObject.transform.parent.parent.parent.parent.parent.parent.gameObject.SetActive(true); // wtf
                 tele.gameObject.transform.parent.parent.parent.parent.gameObject.SetActive(true);
 
-                tele.LoginAndTeleport();
+                tele.TeleportPlayer();
             } else
             {
                 GameObject.Find(zone).GetComponent<GorillaSetZoneTrigger>().OnBoxTriggered();

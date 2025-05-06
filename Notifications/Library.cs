@@ -165,6 +165,17 @@ namespace iiMenu.Notifications
                 {
                     if (PreviousNotifi != NotificationText)
                     {
+                        if (translate)
+                        {
+                            if (translateCache.ContainsKey(NotificationText))
+                                NotificationText = TranslateText(NotificationText);
+                            else
+                            {
+                                TranslateText(NotificationText, delegate { SendNotification(NotificationText, clearTime); });
+                                return;
+                            }
+                        }
+
                         if (notificationSoundIndex != 0)
                         {
                             string[] notificationServerNames = new string[]
@@ -184,11 +195,9 @@ namespace iiMenu.Notifications
                         if (!NotificationText.Contains(Environment.NewLine))
                             NotificationText += Environment.NewLine;
                         
-                        if (translate)
-                            NotificationText = TranslateText(NotificationText);
-                        
                         if (inputTextColor != "green")
                             NotificationText = NotificationText.Replace("<color=green>", "<color=" + inputTextColor + ">");
+
                         NotifiText.text = NotifiText.text + NotificationText;
                         if (lowercaseMode)
                             NotifiText.text = NotifiText.text.ToLower();
