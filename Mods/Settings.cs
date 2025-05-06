@@ -11,16 +11,11 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
-using UnityEngine.Rendering;
 using UnityEngine.UI;
 using UnityEngine.Windows.Speech;
-using Valve.VR;
 using static iiMenu.Menu.Main;
-using static Mono.Security.X509.X520;
-using static QRCoder.PayloadGenerator;
 
 namespace iiMenu.Mods
 {
@@ -763,36 +758,31 @@ namespace iiMenu.Mods
 
             string[] codenames = new string[]
             {
-                "EN",
-                "ES",
-                "FR",
-                "DE",
-                "JP",
-                "IT",
-                "PT",
-                "NL",
-                "RU",
-                "PL"
+                "en",
+                "es",
+                "fr",
+                "de",
+                "ja",
+                "it",
+                "pt",
+                "nl",
+                "ru",
+                "pl"
             };
 
             langInd++;
             if (langInd > langnames.Length - 1)
-            {
                 langInd = 0;
-            }
+
+            translateCache.Clear();
+            language = codenames[langInd];
 
             GetIndex("Change Menu Language").overlapText = "Change Menu Language <color=grey>[</color><color=green>" + langnames[langInd] + "</color><color=grey>]</color>";
 
             if (langInd == 0)
-            {
                 translate = false;
-                translations.Clear();
-                translateCache.Clear();
-            } else
-            {
+            else
                 translate = true;
-                LoadLanguage(codenames[langInd]);
-            }
         }
 
         public static void ChangeMenuTheme()
@@ -2318,7 +2308,8 @@ namespace iiMenu.Mods
                 "Lightning",
                 "Wavy",
                 "Blocky",
-                "Zigzag"
+                "Zigzag",
+                "Spring"
             };
 
             gunVariation++;

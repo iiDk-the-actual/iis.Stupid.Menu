@@ -277,14 +277,19 @@ namespace iiMenu.Mods.Spammers
             }
         }
 
-        public static void RandomSoundSpam()
+        private static float soundSpamDelay;
+        public static void SoundSpam(int soundId)
         {
             if (rightGrab)
             {
-                int soundId = UnityEngine.Random.Range(0, 259);
+                if (Time.time > soundSpamDelay)
+                    soundSpamDelay = Time.time + 0.1f;
+                else
+                    return;
+
                 if (PhotonNetwork.InRoom)
                 {
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[] {
+                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
                         soundId,
                         false,
                         999999f
@@ -298,311 +303,37 @@ namespace iiMenu.Mods.Spammers
             }
         }
 
-        public static void BassSoundSpam()
+        public static void RandomSoundSpam()
         {
-            if (rightGrab)
-            {
-                if (PhotonNetwork.InRoom)
-                {
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
-                        68,
-                        false,
-                        999999f
-                    });
-                    RPCProtection();
-                }
-                else
-                {
-                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(68, false, 999999f);
-                }
-            }
-        }
-
-        public static void MetalSoundSpam()
-        {
-            if (rightGrab)
-            {
-                if (PhotonNetwork.InRoom)
-                {
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
-                        18,
-                        false,
-                        999999f
-                    });
-                }
-                else
-                {
-                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(18, false, 999999f);
-                }
-            }
-        }
-
-        public static void WolfSoundSpam()
-        {
-            if (rightGrab)
-            {
-                if (PhotonNetwork.InRoom)
-                {
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
-                        195,
-                        false,
-                        999999f
-                    });
-                    RPCProtection();
-                }
-                else
-                {
-                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(195, false, 999999f);
-                }
-            }
-        }
-
-        public static void CatSoundSpam()
-        {
-            if (rightGrab)
-            {
-                if (PhotonNetwork.InRoom)
-                {
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
-                        236,
-                        false,
-                        999999f
-                    });
-                    RPCProtection();
-                }
-                else
-                {
-                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(236, false, 999999f);
-                }
-            }
-        }
-
-        public static void TurkeySoundSpam()
-        {
-            if (rightGrab)
-            {
-                if (PhotonNetwork.InRoom)
-                {
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
-                        83,
-                        false,
-                        999999f
-                    });
-                    RPCProtection();
-                }
-                else
-                {
-                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(83, false, 999999f);
-                }
-            }
-        }
-
-        public static void FrogSoundSpam()
-        {
-            if (rightGrab)
-            {
-                if (PhotonNetwork.InRoom)
-                {
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
-                        91,
-                        false,
-                        999999f
-                    });
-                    RPCProtection();
-                }
-                else
-                {
-                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(91, false, 999999f);
-                }
-            }
-        }
-
-        public static void BeeSoundSpam()
-        {
-            if (rightGrab)
-            {
-                if (PhotonNetwork.InRoom)
-                {
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
-                        191,
-                        false,
-                        999999f
-                    });
-                    RPCProtection();
-                }
-                else
-                {
-                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(191, false, 999999f);
-                }
-            }
-        }
-
-        public static void EarrapeSoundSpam()
-        {
-            if (rightGrab)
-            {
-                if (PhotonNetwork.InRoom)
-                {
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
-                        215,
-                        false,
-                        999999f
-                    });
-                    RPCProtection();
-                }
-                else
-                {
-                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(215, false, 999999f);
-                }
-            }
-        }
-
-        public static void DingSoundSpam()
-        {
-            if (rightGrab)
-            {
-                if (PhotonNetwork.InRoom)
-                {
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
-                        244,
-                        false,
-                        999999f
-                    });
-                    RPCProtection();
-                }
-                else
-                {
-                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(244, false, 999999f);
-                }
-            }
+            SoundSpam(UnityEngine.Random.Range(0, GorillaLocomotion.GTPlayer.Instance.materialData.Count));
         }
 
         public static void CrystalSoundSpam()
         {
-            if (rightGrab)
+            int[] sounds = new int[]
             {
-                int[] sounds = new int[]
-                {
-                    UnityEngine.Random.Range(40,54),
-                    UnityEngine.Random.Range(214,221)
-                };
-                int soundId = sounds[UnityEngine.Random.Range(0, 1)];
-                if (PhotonNetwork.InRoom)
-                {
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
-                        soundId,
-                        false,
-                        999999f
-                    });
-                    RPCProtection();
-                }
-                else
-                {
-                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(soundId, false, 999999f);
-                }
-                RPCProtection();
-            }
+                UnityEngine.Random.Range(40,54),
+                UnityEngine.Random.Range(214,221)
+            };
+            SoundSpam(sounds[UnityEngine.Random.Range(0, 1)]);
         }
 
-        public static void BigCrystalSoundSpam()
-        {
-            if (rightGrab)
-            {
-                if (PhotonNetwork.InRoom)
-                {
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
-                        213,
-                        false,
-                        999999f
-                    });
-                    RPCProtection();
-                }
-                else
-                {
-                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(213, false, 999999f);
-                }
-            }
-        }
-
-        public static void PanSoundSpam()
-        {
-            if (rightGrab)
-            {
-                if (PhotonNetwork.InRoom)
-                {
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
-                        248,
-                        false,
-                        999999f
-                    });
-                    RPCProtection();
-                }
-                else
-                {
-                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(248, false, 999999f);
-                }
-            }
-        }
-
-        public static void AK47SoundSpam()
-        {
-            if (rightGrab)
-            {
-                if (PhotonNetwork.InRoom)
-                {
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
-                        203,
-                        false,
-                        999999f
-                    });
-                    RPCProtection();
-                }
-                else
-                {
-                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(203, false, 999999f);
-                }
-            }
-        }
-
+        private static bool squeakToggle = false;
         public static void SqueakSoundSpam()
         {
-            if (rightGrab)
-            {
-                if (PhotonNetwork.InRoom)
-                {
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
-                        75 + (Time.frameCount % 2),
-                        false,
-                        999999f
-                    });
-                    RPCProtection();
-                }
-                else
-                {
-                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(75 + (Time.frameCount % 2), false, 999999f);
-                }
-            }
+            squeakToggle = !squeakToggle;
+            if (Time.time > soundSpamDelay)
+                SoundSpam(squeakToggle ? 75 : 76);
         }
 
+        private static bool sirenToggle = false;
         public static void SirenSoundSpam()
         {
-            if (rightGrab)
-            {
-                if (PhotonNetwork.InRoom)
-                {
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
-                        48 + ((Time.frameCount / 15) % 2) * 2,
-                        false,
-                        999999f
-                    });
-                    RPCProtection();
-                }
-                else
-                {
-                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(48 + ((Time.frameCount / 15) % 2) * 2, false, 999999f);
-                }
-            }
+            sirenToggle = !sirenToggle;
+            if (Time.time > soundSpamDelay)
+                SoundSpam(sirenToggle ? 48 : 50);
         }
+
 
         public static void DecreaseSoundID()
         {
@@ -622,22 +353,7 @@ namespace iiMenu.Mods.Spammers
 
         public static void CustomSoundSpam()
         {
-            if (rightGrab)
-            {
-                if (PhotonNetwork.InRoom)
-                {
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
-                        soundId,
-                        false,
-                        999999f
-                    });
-                    RPCProtection();
-                }
-                else
-                {
-                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(soundId, false, 999999f);
-                }
-            }
+            SoundSpam(soundId);
         }
 
         public static void CountSoundSpam()

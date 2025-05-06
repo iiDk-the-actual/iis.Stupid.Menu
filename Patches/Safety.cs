@@ -92,15 +92,6 @@ namespace iiMenu.Patches
         }
     }
 
-    /*[HarmonyPatch(typeof(GorillaNot), "IncrementRPCTracker", new Type[] { typeof(string), typeof(string), typeof(int) })]
-    public class NoIncrementRPCTracker
-    {
-        private static bool Prefix()
-        {
-            return false;
-        }
-    }*/
-
     [HarmonyPatch(typeof(GorillaNot), "IncrementRPCCallLocal")]
     public class NoIncrementRPCCallLocal
     {
@@ -275,25 +266,17 @@ namespace iiMenu.Patches
         }
     }
 
-    /*[HarmonyPatch(typeof(ElfLauncher), "ShootShared", new Type[] { typeof(Vector3), typeof(Vector3) })]
-    public class AntiCrashPatch4
+    [HarmonyPatch(typeof(ModIOManager), "OnJoinedRoom")]
+    public class ModIOPatch
     {
-        private static List<float> callTimestamps = new List<float>();
-        public static bool Prefix(Vector3 origin, Vector3 direction)
+        public static bool Prefix(VRRig __instance)
         {
-            if (AntiCrashToggle)
-            {
-                callTimestamps.Add(Time.time);
-                callTimestamps.RemoveAll(t => (Time.time - t) > 1);
-
-                return callTimestamps.Count < 15 && GTExt.IsValid(origin) && GTExt.IsValid(direction);
-            }
-            return true;
+            return false;
         }
-    }*/
+    }
 
     [HarmonyPatch(typeof(PlayFabClientAPI), "UpdateUserTitleDisplayName")] // Credits to Shiny for letting me use this
-    public class NamePatch
+    public class DisplayNamePatch
     {
         public static void Prefix(ref UpdateUserTitleDisplayNameRequest request, Action<UpdateUserTitleDisplayNameResult> resultCallback, Action<PlayFabError> errorCallback, object customData = null, Dictionary<string, string> extraHeaders = null)
         {

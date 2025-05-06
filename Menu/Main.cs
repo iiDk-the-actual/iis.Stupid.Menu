@@ -465,7 +465,8 @@ namespace iiMenu.Menu
                                         {
                                             if (Time.time > lastBackspaceTime)
                                             {
-                                                searchText = searchText.Substring(0, searchText.Length - 1);
+                                                if (searchText.Length > 0)
+                                                    searchText = searchText.Substring(0, searchText.Length - 1);
                                             }
                                         }
                                         else
@@ -668,7 +669,7 @@ namespace iiMenu.Menu
                         } else
                         {
                             if (GorillaComputer.instance.isConnectedToMaster)
-                                nextTimeUntilReload = Time.time + 0f;
+                                nextTimeUntilReload = Time.time + 5f;
                         }
                     } catch { }
 
@@ -1572,7 +1573,7 @@ namespace iiMenu.Menu
                 text2.text = method.overlapText;
             
             if (translate)
-                text2.text = TranslateText(text2.text);
+                text2.text = TranslateText(text2.text, (string output) => ReloadMenu());
 
             if (method.customBind != null)
             {
@@ -2091,7 +2092,7 @@ namespace iiMenu.Menu
                 }
             }.AddComponent<Text>();
             text.font = activeFont;
-            text.text = "ii's <b>Stupid</b> Menu";
+            text.text = translate ? "ii's Stupid Menu" : "ii's <b>Stupid</b> Menu";
             if (doCustomName)
             {
                 text.text = customMenuName;
@@ -2117,17 +2118,14 @@ namespace iiMenu.Menu
                 }
             }
             if (translate)
-            {
-                text.text = TranslateText(text.text);
-            }
+                text.text = TranslateText(text.text, (string output) => ReloadMenu());
+            
             if (lowercaseMode)
-            {
                 text.text = text.text.ToLower();
-            }
+            
             if (!noPageNumber)
-            {
                 text.text += " <color=grey>[</color><color=white>" + (pageNumber + 1).ToString() + "</color><color=grey>]</color>";
-            }
+            
             text.fontSize = 1;
             text.color = titleColor;
             title = text;
@@ -2161,7 +2159,7 @@ namespace iiMenu.Menu
             }
             if (translate)
             {
-                text.text = TranslateText(text.text);
+                text.text = TranslateText(text.text, (string output) => ReloadMenu());
             }
             if (lowercaseMode)
             {
@@ -2254,29 +2252,6 @@ namespace iiMenu.Menu
                     AddReturnButton(false);
                 }
             }
-
-            /*
-            // Unity bug where all Image objects have their material property shared, manual buggy fix
-            // It was not a Unity bug I was just being retarded
-            Image image = new GameObject
-            {
-                transform =
-                {
-                    parent = canvasObj.transform
-                }
-            }.AddComponent<Image>();
-            if (fixTexture == null)
-            {
-                fixTexture = new Texture2D(2, 2);
-            }
-            if (fixMat == null)
-            {
-                fixMat = new Material(image.material);
-            }
-            image.material = fixMat;
-            image.material.SetTexture("_MainTex", fixTexture);
-            UnityEngine.Object.Destroy(image);
-            */
 
             if (!disablePageButtons)
             {
@@ -2405,11 +2380,6 @@ namespace iiMenu.Menu
                                 buttonText = v.overlapText;
                             }
 
-                            if (translate)
-                            {
-                                buttonText = TranslateText(buttonText);
-                            }
-
                             if (buttonText.Replace(" ", "").ToLower().Contains(searchText.Replace(" ", "").ToLower()))
                             {
                                 searchedMods.Add(v);
@@ -2430,11 +2400,6 @@ namespace iiMenu.Menu
                                 if (v.overlapText != null)
                                 {
                                     buttonText = v.overlapText;
-                                }
-
-                                if (translate)
-                                {
-                                    buttonText = TranslateText(buttonText);
                                 }
 
                                 if (buttonText.Replace(" ", "").ToLower().Contains(searchText.Replace(" ", "").ToLower()))
@@ -3730,7 +3695,7 @@ namespace iiMenu.Menu
                 int Step = 50;
                 switch (gunVariation)
                 {
-                    case 1:
+                    case 1: // Lightning
                         if (GetGunInput(true) || isCopying)
                         {
                             liner.positionCount = Step;
@@ -3742,19 +3707,19 @@ namespace iiMenu.Menu
                             liner.SetPosition(Step - 1, EndPosition);
                         }
                         break;
-                    case 2:
+                    case 2: // Wavy
                         if (GetGunInput(true) || isCopying)
                         {
                             liner.positionCount = Step;
                             liner.SetPosition(0, StartPosition);
 
                             for (int i = 1; i < (Step - 1); i++)
-                                liner.SetPosition(i, Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f)) + new Vector3(0f, Mathf.Sin((Time.time * -10f) + i) * 0.05f, 0f));
+                                liner.SetPosition(i, Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f)) + ((SwapGunHand ? TrueLeftHand().up : TrueRightHand().up) * Mathf.Sin((Time.time * -10f) + i) * 0.05f));
 
                             liner.SetPosition(Step - 1, EndPosition);
                         }
                         break;
-                    case 3:
+                    case 3: // Blocky
                         if (GetGunInput(true) || isCopying)
                         {
                             liner.positionCount = Step;
@@ -3769,7 +3734,7 @@ namespace iiMenu.Menu
                             liner.SetPosition(Step - 1, EndPosition);
                         }
                         break;
-                    case 4:
+                    case 4: // Sinewave
                         Step = 25;
 
                         if (GetGunInput(true) || isCopying)
@@ -3782,6 +3747,20 @@ namespace iiMenu.Menu
                                 Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
                                 liner.SetPosition(i, Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f)) + new Vector3(0f, (((Mathf.Round(Time.time * 10f) + i) % 2) - 0.5f) * 0.25f, 0f));
                             }
+
+                            liner.SetPosition(Step - 1, EndPosition);
+                        }
+                        break;
+                    case 5: // Spring
+                        Step = 50;
+
+                        if (GetGunInput(true) || isCopying)
+                        {
+                            liner.positionCount = Step;
+                            liner.SetPosition(0, StartPosition);
+
+                            for (int i = 1; i < (Step - 1); i++)
+                                liner.SetPosition(i, Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f)) + ((SwapGunHand ? TrueLeftHand().right : TrueRightHand().right) * Mathf.Cos((Time.time * -10f) + i) * 0.05f) + ((SwapGunHand ? TrueLeftHand().up : TrueRightHand().up) * Mathf.Sin((Time.time * -10f) + i) * 0.05f));
 
                             liner.SetPosition(Step - 1, EndPosition);
                         }
@@ -4953,88 +4932,93 @@ namespace iiMenu.Menu
             return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(text.ToLower());
         }
 
-        public static void LoadLanguage(string lang)
-        {
-            UnityEngine.Debug.Log("Loading language from server " + lang);
-            translateCache.Clear();
-            WebRequest request = WebRequest.Create("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/main/iiMenu_Translate_" + lang + ".txt");
-            WebResponse response = request.GetResponse();
-            Stream data = response.GetResponseStream();
-            string html = "";
-            using (StreamReader sr = new StreamReader(data))
-            {
-                html = sr.ReadToEnd();
-            }
-            UnityEngine.Debug.Log("Data received");
-
-            translations.Clear();
-
-            string[] Data0 = html.Split("\n");
-            foreach (string Data1 in Data0)
-            {
-                try
-                {
-                    string[] Data2 = Data1.Split(";");
-                    try
-                    {
-                        translations.Add(Data2[0], Data2[1]);
-                    }
-                    catch { }
-                    try
-                    {
-                        translations.Add(Data2[0].ToUpper(), Data2[1].ToUpper());
-                    }
-                    catch { }
-                    try
-                    {
-                        translations.Add(Data2[0].ToLower(), Data2[1].ToLower());
-                    }
-                    catch { }
-                    try
-                    {
-                        translations.Add(ToTitleCase(Data2[0]), ToTitleCase(Data2[1]));
-                    }
-                    catch { }
-                } catch { }
-            }
-            UnityEngine.Debug.Log("Language parsed");
-        }
-
+        public static Dictionary<string, float> waitingForTranslate = new Dictionary<string, float> { };
         public static Dictionary<string, string> translateCache = new Dictionary<string, string> { };
-        public static string TranslateText(string input)
+        public static string TranslateText(string input, Action<string> onTranslated = null)
         {
             if (translateCache.ContainsKey(input))
                 return translateCache[input];
-
-            if (translations.ContainsKey(input))
-                return translations[input];
-
-            string[] words = input.Split(' ');
-            for (int i = 0; i < words.Length; i++)
+            else
             {
-                string word = words[i];
-                if (translations.ContainsKey(word))
+                if (!waitingForTranslate.ContainsKey(input))
                 {
-                    words[i] = translations[word];
-                }
-                else
+                    waitingForTranslate.Add(input, Time.time + 10f);
+                    CoroutineManager.instance.StartCoroutine(GetTranslation(input, onTranslated));
+                } else
                 {
-                    foreach (KeyValuePair<string, string> kvp in translations)
+                    if (Time.time > waitingForTranslate[input])
                     {
-                        if (word.Contains(kvp.Key, StringComparison.Ordinal))
+                        waitingForTranslate.Remove(input);
+
+                        waitingForTranslate.Add(input, Time.time + 10f);
+                        CoroutineManager.instance.StartCoroutine(GetTranslation(input, onTranslated));
+                    }
+                }
+
+                return "Loading...";
+            }
+        }
+
+        public static System.Collections.IEnumerator GetTranslation(string text, Action<string> onTranslated = null)
+        {
+            if (translateCache.ContainsKey(text))
+            {
+                if (onTranslated != null)
+                    onTranslated.Invoke(translateCache[text]);
+
+                yield break;
+            }
+
+            string fileName = GetSHA256(text) + ".txt";
+            string directoryPath = "iisStupidMenu/TranslationData" + language.ToUpper();
+
+            if (!Directory.Exists("iisStupidMenu"))
+                Directory.CreateDirectory("iisStupidMenu");
+
+            if (!Directory.Exists(directoryPath))
+                Directory.CreateDirectory(directoryPath);
+
+            string filePath = Path.Combine(directoryPath, fileName);
+
+            string translation = null;
+
+            if (!File.Exists(filePath))
+            {
+                string postData = "{\"text\": \"" + text.Replace("\n", "").Replace("\r", "").Replace("\"", "") + "\", \"lang\": \"" + language + "\"}";
+
+                using (UnityWebRequest request = new UnityWebRequest("https://iidk.online/translate", "POST"))
+                {
+                    byte[] bodyRaw = Encoding.UTF8.GetBytes(postData);
+                    request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+                    request.downloadHandler = new DownloadHandlerBuffer();
+                    request.SetRequestHeader("Content-Type", "application/json");
+
+                    yield return request.SendWebRequest();
+
+                    if (request.result == UnityWebRequest.Result.Success)
+                    {
+                        string json = request.downloadHandler.text;
+                        Match match = Regex.Match(json, "\"translation\"\\s*:\\s*\"(.*?)\"");
+                        if (match.Success)
                         {
-                            words[i] = word.Replace(kvp.Key, kvp.Value);
-                            break;
+                            translation = match.Groups[1].Value;
+                            File.WriteAllText(filePath, translation);
                         }
                     }
                 }
             }
+            else
+            {
+                translation = File.ReadAllText(filePath);
+            }
 
-            string output = string.Join(" ", words);
-            if (!translateCache.ContainsKey(input))
-                translateCache.Add(input, output);
+            if (translation != null)
+            {
+                translateCache.Add(text, translation);
 
-            return output;
+                if (onTranslated != null)
+                    onTranslated.Invoke(translation);
+            }
         }
 
         public static string FormatUnix(int seconds)
@@ -5179,7 +5163,7 @@ namespace iiMenu.Menu
                                         string currentText = (string)keyLog[1];
 
                                         if (closestKey.Contains("Delete"))
-                                            Fun.keyLogs[i][1] = currentText.Substring(0, currentText.Length - 1);
+                                            Fun.keyLogs[i][1] = currentText.Length == 0 ? currentText : currentText.Substring(0, currentText.Length - 1);
                                         else
                                             Fun.keyLogs[i][1] = currentText + closestKey;
 
@@ -5450,7 +5434,8 @@ namespace iiMenu.Menu
         {
             GorillaComputer.instance.currentName = PlayerName;
             PhotonNetwork.LocalPlayer.NickName = PlayerName;
-            GorillaComputer.instance.offlineVRRigNametagText.text = PlayerName;
+            GorillaTagger.Instance.offlineVRRig.playerText1.text = PlayerName;
+            GorillaTagger.Instance.offlineVRRig.playerText2.text = PlayerName;
             GorillaComputer.instance.savedName = PlayerName;
             PlayerPrefs.SetString("playerName", PlayerName);
             PlayerPrefs.Save();
@@ -5551,7 +5536,8 @@ namespace iiMenu.Menu
             {
                 if (key == "Backspace")
                 {
-                    searchText = searchText.Substring(0, searchText.Length - 1);
+                    if (searchText.Length > 0)
+                        searchText = searchText.Substring(0, searchText.Length - 1);
                 }
                 else
                 {
@@ -5863,7 +5849,7 @@ jgs \_   _/ |Oo\
     `\""^""` `""`
 ";
 
-        public static bool isBetaTestVersion = false;
+        public static bool isBetaTestVersion;
         public static bool lockdown;
         public static bool isOnPC;
         public static bool IsSteam = true;
@@ -6133,12 +6119,12 @@ jgs \_   _/ |Oo\
         public static string ForestLeaderboardID = "UnityTempFile";
 
         public static int StumpLeaderboardIndex = 3;
-        public static int ForestLeaderboardIndex = 8;
+        public static int ForestLeaderboardIndex = 10;
 
         public static Material[] ogScreenMats = new Material[] { };
 
-        public static Dictionary<string, string> translations = new Dictionary<string, string> { };
         public static bool translate;
+        public static string language;
 
         public static string repReason = "room host force changed";
         public static Dictionary<string, long> annoyingIDs = new Dictionary<string, long> { };

@@ -2,8 +2,6 @@
 using GorillaExtensions;
 using GorillaGameModes;
 using GorillaLocomotion.Gameplay;
-using GorillaNetworking;
-using GorillaTag.Cosmetics;
 using GorillaTagScripts;
 using HarmonyLib;
 using iiMenu.Classes;
@@ -11,23 +9,12 @@ using iiMenu.Notifications;
 using iiMenu.Patches;
 using Photon.Pun;
 using Photon.Realtime;
-using Photon.Voice;
-using Photon.Voice.PUN;
-using PlayFab.MultiplayerModels;
-using POpusCodec.Enums;
-using Sirenix.OdinInspector;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using UnityEngine;
-using UnityEngine.Animations.Rigging;
-using UnityEngine.Experimental.AI;
-using UnityEngine.InputSystem;
-using UnityEngine.UIElements;
-using static Fusion.Sockets.NetBitBuffer;
+using UnityEngine.ProBuilder.Shapes;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -249,6 +236,159 @@ namespace iiMenu.Mods
                     else
                     {
                         GorillaTagger.Instance.offlineVRRig.enabled = true;
+                    }
+                }
+            }
+        }
+
+        public static void CreateItem(object target, int hash, Vector3 position, Quaternion rotation, Vector3 velocity, Vector3 angVelocity, long[] sendData = null)
+        {
+            if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
+
+            int netId = (int)typeof(GameEntityManager).GetMethod("CreateNetId", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(GameEntityManager.instance, new object[] { });
+
+            if (target is NetPlayer)
+                target = NetPlayerToPlayer((NetPlayer)target);
+
+            if (sendData == null)
+                sendData = new long[] { 0L };
+
+            object[] createData = new object[]
+            {
+                new int[] { netId },
+                new int[] { (int)GTZone.ghostReactor },
+                new int[] { hash },
+                new long[] { BitPackUtils.PackWorldPosForNetwork(position) },
+                new int[] { BitPackUtils.PackQuaternionForNetwork(rotation) },
+                sendData
+            };
+
+            if (target is RpcTarget)
+                GameEntityManager.instance.photonView.RPC("CreateItemRPC", (RpcTarget)target, createData);
+
+            if (target is Player)
+                GameEntityManager.instance.photonView.RPC("CreateItemRPC", (Player)target, createData);
+
+            if (velocity != Vector3.zero || angVelocity != Vector3.zero)
+            {
+                bool handTarget = GamePlayerLocal.instance.gamePlayer.IsHoldingEntity(false);
+                velocity = velocity.ClampMagnitudeSafe(1600f);
+
+                object[] grabData = new object[]
+                {
+                    netId,
+                    handTarget,
+                    BitPackUtils.PackHandPosRotForNetwork(Vector3.zero, Quaternion.identity),
+                    PhotonNetwork.LocalPlayer
+                };
+
+                if (target is RpcTarget)
+                    GameEntityManager.instance.photonView.RPC("GrabEntityRPC", (RpcTarget)target, grabData);
+
+                if (target is Player)
+                    GameEntityManager.instance.photonView.RPC("GrabEntityRPC", (Player)target, grabData);
+                
+                object[] dropData = new object[]
+                {
+                    netId,
+                    handTarget,
+                    position,
+                    rotation,
+                    velocity,
+                    angVelocity,
+                    PhotonNetwork.LocalPlayer,
+                    PhotonNetwork.Time
+                };
+
+                if (target is RpcTarget)
+                    GameEntityManager.instance.photonView.RPC("ThrowEntityRPC", (RpcTarget)target, dropData);
+
+                if (target is Player)
+                    GameEntityManager.instance.photonView.RPC("ThrowEntityRPC", (Player)target, dropData);
+            }
+
+            RPCProtection();
+        }
+
+        public static void SpamObjectGun(int objectId)
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                    CreateItem(RpcTarget.All, objectId, NewPointer.transform.position, Quaternion.Euler(UnityEngine.Random.Range(0f, 360f), UnityEngine.Random.Range(0f, 360f), UnityEngine.Random.Range(0f, 360f)), Vector3.zero, Vector3.zero);
+            }
+        }
+
+        private static float minigunDelay;
+        public static void SpamObjectMinigun(int objectId)
+        {
+            if (rightGrab)
+            {
+                Safety.NoFinger();
+                if (Time.time > minigunDelay)
+                {
+                    minigunDelay = Time.time + 0.02f;
+                    CreateItem(RpcTarget.All, objectId, GorillaTagger.Instance.rightHandTransform.position, Quaternion.Euler(UnityEngine.Random.Range(0f, 360f), UnityEngine.Random.Range(0f, 360f), UnityEngine.Random.Range(0f, 360f)), GorillaTagger.Instance.rightHandTransform.forward * ShootStrength * 5f, Vector3.zero);
+                }
+            }
+        }
+
+        public static void ToolSpamGun()
+        {
+            int[] objectIds = new int[]
+            {
+                225241881,
+                1115277044,
+                1165678479,
+                1989693521,
+                -175001459
+            };
+
+            SpamObjectGun(UnityEngine.Random.Range(0, objectIds.Length - 1));
+        }
+
+        private static float destroyDelay;
+        public static void DestroyEntityGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    if (Time.time > destroyDelay)
+                    {
+                        destroyDelay = Time.time + 0.02f;
+                        if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
+
+                        GameEntityId gameEntityId = GameEntityId.Invalid;
+                        float closestDist = float.MaxValue;
+
+                        List<GameEntity> entities = Traverse.Create(GameEntityManager.instance).Field("entities").GetValue<List<GameEntity>>();
+                        foreach (GameEntity entity in entities)
+                        {
+                            if (entity != null)
+                            {
+                                float distance = Vector3.Distance(NewPointer.transform.position, entity.transform.position);
+                                if (distance < 0.75f && distance < closestDist)
+                                {
+                                    gameEntityId = entity.id;
+                                    closestDist = distance;
+                                }
+                            }
+                        }
+
+                        if (gameEntityId != GameEntityId.Invalid)
+                        {
+                            GameEntityManager.instance.photonView.RPC("DestroyItemRPC", RpcTarget.All, new object[] { new int[] { gameEntityId.GetNetId() } });
+                            RPCProtection();
+                        }
                     }
                 }
             }
@@ -614,7 +754,7 @@ namespace iiMenu.Mods
             GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateNativeSize", RpcTarget.Others, new object[] { 1f });
         }*/
 
-        // Shoutouts 2 the one guy that said "GET THIS PATCHED"
+        /*// Shoutouts 2 the one guy that said "GET THIS PATCHED"
         public static void LagGun()
         {
             if (GetGunInput(false))
@@ -713,7 +853,7 @@ namespace iiMenu.Mods
                     RPCProtection();
                 }
             }
-        }
+        }*/
 
         public static Coroutine DisableCoroutine;
         public static IEnumerator DisableSnowball(bool rigDisabled)
@@ -727,6 +867,34 @@ namespace iiMenu.Mods
             GetProjectile("LMACF. RIGHT.").SetSnowballActiveLocal(false);
         }
 
+        private static int archiveIncrement;
+        public static int GetProjectileIncrement(Vector3 Position, Vector3 Velocity, float Scale)
+        {
+            try
+            {
+                GameObject SlingshotProjectileGameObject = new GameObject("SlingshotProjectileHolder");
+                SlingshotProjectile SlingshotProjectile = SlingshotProjectileGameObject.AddComponent<SlingshotProjectile>();
+
+                Type ProjectileTracker = typeof(GorillaLocomotion.GTPlayer).Assembly.GetType("ProjectileTracker");
+                Type ProjectileInfo = ProjectileTracker.GetNestedType("ProjectileInfo", BindingFlags.Public | BindingFlags.Instance);
+                object LocalProjectileInfo = Activator.CreateInstance(ProjectileInfo, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, new object[] { PhotonNetwork.Time, Velocity, Position, Scale, SlingshotProjectile }, null);
+
+                object m_localProjectiles = ProjectileTracker.GetField("m_localProjectiles", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null);
+
+                MethodInfo AddAndIncrement = m_localProjectiles.GetType().GetMethod("AddAndIncrement", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                int Data = (int)AddAndIncrement.Invoke(m_localProjectiles, new object[] { LocalProjectileInfo });
+
+                UnityEngine.Object.Destroy(SlingshotProjectileGameObject);
+                return Data;
+            } catch
+            {
+                UnityEngine.Debug.Log("Falling back to archiveIncrement");
+
+                archiveIncrement++;
+                return archiveIncrement;
+            }
+        }
+        
         public static void BetaSpawnSnowball(Vector3 Pos, Vector3 Vel, float Scale, int Mode, Player Target = null, bool NetworkSize = true, int customNetworkedSize = -1)
         {
             try
@@ -764,10 +932,10 @@ namespace iiMenu.Mods
                 switch (Mode)
                 {
                     case 0:
-                        Event.RaiseAll(Pos, Vel, Scale);
+                        Event.RaiseAll(Pos, Vel, GetProjectileIncrement(Pos, Vel, Scale));
                         break;
                     case 1:
-                        Event.RaiseOthers(Pos, Vel, Scale);
+                        Event.RaiseOthers(Pos, Vel, GetProjectileIncrement(Pos, Vel, Scale));
                         break;
                     case 2:
                         PhotonNetwork.RaiseEvent(176, new object[]
@@ -775,7 +943,7 @@ namespace iiMenu.Mods
                             (int)Traverse.Create(Event).Field("_eventId").GetValue(),
                             Pos,
                             Vel,
-                            Scale
+                            GetProjectileIncrement(Pos, Vel, Scale)
                         }, new RaiseEventOptions
                         {
                             TargetActors = new int[] { Target.ActorNumber }
@@ -817,7 +985,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true) && Time.time > snowballDelay)
                 {
                     BetaSpawnSnowball(NewPointer.transform.position + new Vector3(0f, 50f, 0f), Vector3.zero, 50f, 0);
-                    snowballDelay = Time.time + 0.12f;
+                    snowballDelay = Time.time + 0.1f;
                 }
             }
         }
@@ -829,7 +997,7 @@ namespace iiMenu.Mods
                 if (Time.time > snowballDelay)
                 {
                     BetaSpawnSnowball(GorillaTagger.Instance.offlineVRRig.transform.position + new Vector3(UnityEngine.Random.Range(-5f, 5f), 5f, UnityEngine.Random.Range(-5f, 5f)), Vector3.zero, 1f, 0);
-                    snowballDelay = Time.time + 0.12f;
+                    snowballDelay = Time.time + 0.1f;
                 }
             }
         }
@@ -841,7 +1009,7 @@ namespace iiMenu.Mods
                 if (Time.time > snowballDelay)
                 {
                     BetaSpawnSnowball(GorillaTagger.Instance.offlineVRRig.transform.position + new Vector3(UnityEngine.Random.Range(-5f, 5f), 5f, UnityEngine.Random.Range(-5f, 5f)), new Vector3(0f, -50f, 0f), 3f, 0);
-                    snowballDelay = Time.time + 0.12f;
+                    snowballDelay = Time.time + 0.1f;
                 }
             }
         }
@@ -853,7 +1021,7 @@ namespace iiMenu.Mods
                 if (Time.time > snowballDelay)
                 {
                     BetaSpawnSnowball(GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos((float)Time.frameCount / 30f), 2f, MathF.Sin((float)Time.frameCount / 30f)), new Vector3(0f, 50f, 0f), 5f, 0);
-                    snowballDelay = Time.time + 0.12f;
+                    snowballDelay = Time.time + 0.1f;
                 }
             }
         }
@@ -869,7 +1037,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true) && Time.time > snowballDelay)
                 {
                     BetaSpawnSnowball(NewPointer.transform.position + new Vector3(0f, 1f, 0f), new Vector3(0f, 50f, 0f), 10f, 0);
-                    snowballDelay = Time.time + 0.12f;
+                    snowballDelay = Time.time + 0.1f;
                 }
             }
         }
@@ -879,7 +1047,7 @@ namespace iiMenu.Mods
             if (rightGrab && Time.time > snowballDelay)
             {
                 BetaSpawnSnowball(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.transform.forward * ShootStrength * 5f, 5f, 0);
-                snowballDelay = Time.time + 0.12f;
+                snowballDelay = Time.time + 0.1f;
             }
         }
 
@@ -894,7 +1062,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true) && Time.time > snowballDelay)
                 {
                     BetaSpawnSnowball(NewPointer.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, 0f, 0f), 15f, 0);
-                    snowballDelay = Time.time + 0.12f;
+                    snowballDelay = Time.time + 0.1f;
                 }
             }
         }
@@ -929,7 +1097,7 @@ namespace iiMenu.Mods
                     {
                         Vector3 targetDirection = GorillaTagger.Instance.headCollider.transform.position - rig.headMesh.transform.position;
                         BetaSpawnSnowball(GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(targetDirection.x, 0f, targetDirection.z).normalized / 1.7f, new Vector3(0f, -500f, 0f), 5f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(rig)));
-                        snowballDelay = Time.time + 0.12f;
+                        snowballDelay = Time.time + 0.1f;
                     }
                 }
             }
@@ -948,7 +1116,7 @@ namespace iiMenu.Mods
                     if (Time.time > snowballDelay)
                     {
                         BetaSpawnSnowball(whoCopy.transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(UnityEngine.Random.Range(-1f, 1f), 0f, UnityEngine.Random.Range(-1f, 1f)).normalized / 1.7f, new Vector3(0f, -500f, 0f), 5f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)));
-                        snowballDelay = Time.time + 0.12f;
+                        snowballDelay = Time.time + 0.1f;
                     }
                 }
                 if (GetGunInput(true))
@@ -1011,7 +1179,7 @@ namespace iiMenu.Mods
                     if (Time.time > snowballDelay)
                     {
                         BetaSpawnSnowball(whoCopy.headMesh.transform.position + new Vector3(0f, -0.7f, 0f), new Vector3(0f, -500f, 0f), 5f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)));
-                        snowballDelay = Time.time + 0.12f;
+                        snowballDelay = Time.time + 0.1f;
                     }
                 }
                 if (GetGunInput(true))
@@ -1070,7 +1238,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true) && Time.time > snowballDelay)
                 {
                     BetaSpawnSnowball(NewPointer.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, -500f, 0f), 15f, 1);
-                    snowballDelay = Time.time + 0.12f;
+                    snowballDelay = Time.time + 0.1f;
                 }
             }
         }
@@ -1089,7 +1257,7 @@ namespace iiMenu.Mods
                     {
                         Vector3 targetDirection = (whoCopy.headMesh.transform.position - GorillaTagger.Instance.headCollider.transform.position).normalized;
                         BetaSpawnSnowball(whoCopy.headMesh.transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(targetDirection.x, 0f, targetDirection.z) * 1.5f, new Vector3(0f, -100f, 0f), 5f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)));
-                        snowballDelay = Time.time + 0.12f;
+                        snowballDelay = Time.time + 0.1f;
                     }
                 }
                 if (GetGunInput(true))
@@ -1123,7 +1291,7 @@ namespace iiMenu.Mods
                     {
                         Vector3 targetDirection = (GorillaTagger.Instance.headCollider.transform.position - whoCopy.headMesh.transform.position).normalized;
                         BetaSpawnSnowball(whoCopy.headMesh.transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(targetDirection.x, 0f, targetDirection.z) * 1.5f, new Vector3(0f, -100f, 0f), 5f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)));
-                        snowballDelay = Time.time + 0.12f;
+                        snowballDelay = Time.time + 0.1f;
                     }
                 }
                 if (GetGunInput(true))
@@ -1157,7 +1325,7 @@ namespace iiMenu.Mods
                     {
                         Vector3 targetDirection = GorillaTagger.Instance.headCollider.transform.position - whoCopy.headMesh.transform.position;
                         BetaSpawnSnowball(GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(targetDirection.x, 0f, targetDirection.z).normalized / 1.7f, new Vector3(0f, -500f, 0f), 5f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)));
-                        snowballDelay = Time.time + 0.12f;
+                        snowballDelay = Time.time + 0.1f;
                     }
                 }
                 if (GetGunInput(true))
@@ -1190,7 +1358,7 @@ namespace iiMenu.Mods
                     if (Time.time > snowballDelay)
                     {
                         BetaSpawnSnowball(new Vector3(GorillaTagger.Instance.headCollider.transform.position.x, 1000f, GorillaTagger.Instance.headCollider.transform.position.z), new Vector3(0f, -9999f, 0f), 9999f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)));
-                        snowballDelay = Time.time + 0.12f;
+                        snowballDelay = Time.time + 0.1f;
                     }
                 }
                 if (GetGunInput(true))
@@ -1214,7 +1382,7 @@ namespace iiMenu.Mods
         {
             if (rightTrigger > 0.5f && Time.time > snowballDelay)
             {
-                snowballDelay = Time.time + 0.12f;
+                snowballDelay = Time.time + 0.1f;
                 BetaSpawnSnowball(new Vector3(GorillaTagger.Instance.headCollider.transform.position.x, 1000f, GorillaTagger.Instance.headCollider.transform.position.z), new Vector3(0f, -9999f, 0f), 9999f, 1);
             }
         }
@@ -1245,7 +1413,7 @@ namespace iiMenu.Mods
                                     {
                                         if (!Safety.smartarp || (Safety.smartarp && PhotonNetwork.CurrentRoom.IsVisible && !PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED")))
                                         {
-                                            snowballDelay = Time.time + 0.12f;
+                                            snowballDelay = Time.time + 0.1f;
                                             BetaSpawnSnowball(report.position, new Vector3(0f, -500f, 0f), 5f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(vrrig)));
                                             NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they have been flung.");
                                         }

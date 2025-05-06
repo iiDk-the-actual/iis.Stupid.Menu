@@ -34,7 +34,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Exit Settings", method =() => Settings.ReturnToMain(), isTogglable = false, toolTip = "Returns you back to the main page."},
 
                 new ButtonInfo { buttonText = "Menu Settings", method =() => Settings.EnableMenuSettings(), isTogglable = false, toolTip = "Opens the settings for the menu."},
-                
+
                 new ButtonInfo { buttonText = "Keybind Settings", method =() => Settings.EnableKeybindSettings(), isTogglable = false, toolTip = "Opens the settings for the keybinds."},
                 new ButtonInfo { buttonText = "Plugin Settings", method =() => Settings.EnablePluginSettings(), isTogglable = false, toolTip = "Opens the settings for the plugins."},
 
@@ -263,6 +263,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Physical Quit Box", enableMethod =() => Important.PhysicalQuitbox(), disableMethod =() => Important.NotPhysicalQuitbox(), toolTip = "Makes the quitbox physical, letting you see and walk on it."},
 
                 new ButtonInfo { buttonText = "Disable Mouth Movement", method =() => Important.DisableMouthMovement(), disableMethod =() => Important.EnableMouthMovement(), toolTip = "Disables your mouth from moving."},
+                new ButtonInfo { buttonText = "Low Mic Latency", method =() => Important.LowMicLatency(), disableMethod =() => Important.NoLowMicLatency(), toolTip = "Lowers the microphone latency of other users, letting you hear them faster."},
 
                 new ButtonInfo { buttonText = "60 FPS", method =() => Important.ForceLagGame(), toolTip = "Caps your FPS at 60 frames per second."},
                 new ButtonInfo { buttonText = "Grip 60 FPS <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Important.GripForceLagGame(), toolTip = "Caps your FPS at 60 frames per second when holding <color=green>grip</color>."},
@@ -413,7 +414,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Multiplied Long Arms", method =() => Movement.MultipliedLongArms(), toolTip = "Gives you a weird version of long arms."},
                 new ButtonInfo { buttonText = "Vertical Long Arms", method =() => Movement.VerticalLongArms(), toolTip = "Gives you a version of long arms to help you vertically."},
                 new ButtonInfo { buttonText = "Horizontal Long Arms", method =() => Movement.HorizontalLongArms(), toolTip = "Gives you a version of long arms to help you horizontally."},
-                
+
                 new ButtonInfo { buttonText = "Flick Jump <color=grey>[</color><color=green>A</color><color=grey>]</color>", method =() => Movement.FlickJump(), toolTip = "Makes your hand go down really fast when holding <color=green>A</color>."},
                 new ButtonInfo { buttonText = "Long Jump <color=grey>[</color><color=green>A</color><color=grey>]</color>", method =() => Movement.LongJump(), toolTip = "Makes you look like you're legitimately long jumping when holding <color=green>A</color>."},
 
@@ -547,7 +548,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Disable Rig Lerping", method =() => Visuals.NoSmoothRigs(), disableMethod =() => Visuals.ReSmoothRigs(), toolTip = "Disables rig movement smoothing."},
                 new ButtonInfo { buttonText = "Remove Leaves", enableMethod =() => Visuals.EnableRemoveLeaves(), disableMethod =() => Visuals.DisableRemoveLeaves(), toolTip = "Removes leaves on trees, good for branching."},
                 new ButtonInfo { buttonText = "Streamer Remove Leaves", enableMethod =() => Visuals.EnableStreamerRemoveLeaves(), disableMethod =() => Visuals.DisableStreamerRemoveLeaves(), toolTip = "Removes leaves on trees in VR, but not on the camera. Good for streaming."},
-                new ButtonInfo { buttonText = "Remove Cherry Blossoms", enableMethod = () => Visuals.EnableRemoveCherryBlossoms(), disableMethod = () => Visuals.DisableRemoveCherryBlossoms(), toolTip = "Removes cherry blossoms on trees, good for branching." },
                 new ButtonInfo { buttonText = "Remove Cosmetics", enableMethod =() => Visuals.DisableCosmetics(), disableMethod =() => Visuals.EnableCosmetics(), toolTip = "Locally toggles off your cosmetics, so you can wear sight-blocking cosmetics such as the eyepatch."},
 
                 new ButtonInfo { buttonText = "Cosmetic ESP", method =() => Visuals.CosmeticESP(), toolTip = "Shows beacons above people's heads if they are a Finger Painter, Illustrator, Administrator, Stick, or if they have any unreleased cosmetics."},
@@ -660,6 +660,12 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Remove Builder Watch", method =() => Fun.RemoveBuilderWatch(), isTogglable = false, toolTip = "Disables the builder watch."},
 
                 new ButtonInfo { buttonText = "Grab ID Card <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.GrabIDCard(), toolTip = "Puts the ID card in your hand." },
+                new ButtonInfo { buttonText = "Everything Grabbable", method =() => Fun.EverythingGrabbable(), toolTip = "Gives you the ability to grab any entity in the horror map." },
+                new ButtonInfo { buttonText = "Entity Reach", method =() => Fun.EntityReach(), disableMethod =() => Fun.NoEntityReach(), toolTip = "Gives you the ability to grab entities from farther away in the horror map." },
+                new ButtonInfo { buttonText = "Break All Crates", method =() => Fun.BreakAllCrates(), toolTip = "Breaks every crate in the horror map." },
+
+                new ButtonInfo { buttonText = "Spaz Tool Stations", method =() => Fun.SpazToolStations(), toolTip = "Spazzes out the tool purchase stations in the horror map." },
+                new ButtonInfo { buttonText = "Purchase All Tool Stations", method =() => Fun.PurchaseAllToolStations(), toolTip = "Makes every tool purchase station force purchase in the horror map." },
 
                 new ButtonInfo { buttonText = "Fast Gliders", enableMethod =() => Fun.FastGliders(), disableMethod =() => Fun.FixGliderSpeed(), toolTip = "Makes the gliders fast."},
                 new ButtonInfo { buttonText = "Slow Gliders", enableMethod =() => Fun.SlowGliders(), disableMethod =() => Fun.FixGliderSpeed(), toolTip = "Makes the gliders slow."},
@@ -692,6 +698,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Hoverboard Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.HoverboardSpam(), toolTip = "Spams hoverboards from your hand when holding <color=green>grip</color>."},
                 new ButtonInfo { buttonText = "Orbit Hoverboards", method =() => Fun.OrbitHoverboards(), toolTip = "Orbits the hoverboards around you."},
 
+                new ButtonInfo { buttonText = "Start All Races", method =() => Fun.StartAllRaces(), isTogglable = false, toolTip = "Starts every race in the hoverboard map."},
+
                 new ButtonInfo { buttonText = "Break Bug", enableMethod =() => Fun.BreakBug(), disableMethod =() => Fun.FixBug(), toolTip = "Makes the bug ungrabbable."},
                 new ButtonInfo { buttonText = "Break Bat", enableMethod =() => Fun.BreakBat(), disableMethod =() => Fun.FixBat(), toolTip = "Makes the bat ungrabbable."},
 
@@ -700,10 +708,6 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Attic Size Toggle", method =() => Fun.AtticSizeToggle(), toolTip = "Toggles your scale when pressing <color=green>grip</color> or <color=green>trigger</color>."},
                 new ButtonInfo { buttonText = "Grab All Nearby <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.GrabAllBlocksNearby(), toolTip = "Grabs every nearby building block when holding <color=green>G</color>."},
-
-                new ButtonInfo { buttonText = "Shotgun <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.Shotgun(), toolTip = "Spawns you a shotgun when you press <color=green>grip</color>."},
-                new ButtonInfo { buttonText = "Massive Block <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.MassiveBlock(), toolTip = "Spawns you a massive block when you press <color=green>grip</color>."},
-                new ButtonInfo { buttonText = "Select Block Gun", method =() => Fun.SelectBlockGun(), toolTip = "Selects whatever building block your hand desires to be used for the building mods." },
 
                 new ButtonInfo { buttonText = "Spaz All Moles", method =() => Fun.SpazMoleMachines(), toolTip = "Gives the moles a seizure."},
                 new ButtonInfo { buttonText = "Auto Start Moles", method =() => Fun.AutoStartMoles(), toolTip = "Automatically starts the mole games."},
@@ -715,14 +719,12 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Grab Beach Ball <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.GrabBeachBall(), toolTip = "Forces the beach ball into your hand when holding <color=green>grip</color>." },
                 new ButtonInfo { buttonText = "Grab Balloons <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.GrabBalloons(), toolTip = "Forces every single balloon cosmetic into your hand when holding <color=green>grip</color>." },
                 new ButtonInfo { buttonText = "Grab Gliders <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.GrabGliders(), toolTip = "Forces the bug into your hand when holding <color=green>grip</color>." },
-                new ButtonInfo { buttonText = "Grab Building Blocks <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.SpamGrabBlocks(), toolTip = "Forces the building block into your hand when holding <color=green>grip</color>." },
 
                 new ButtonInfo { buttonText = "Bug Gun", method =() => Fun.BugGun(), toolTip = "Moves the bug to wherever your hand desires." },
                 new ButtonInfo { buttonText = "Bat Gun", method =() => Fun.BatGun(), toolTip = "Moves the bat to wherever your hand desires." },
                 new ButtonInfo { buttonText = "Beach Ball Gun", method =() => Fun.BeachBallGun(), toolTip = "Moves the beach ball to wherever your hand desires." },
                 new ButtonInfo { buttonText = "Balloon Gun", method =() => Fun.BalloonGun(), toolTip = "Moves every single balloon cosmetic to wherever your hand desires." },
                 new ButtonInfo { buttonText = "Glider Gun", method =() => Fun.GliderGun(), toolTip = "Moves the gliders to wherever your hand desires." },
-                new ButtonInfo { buttonText = "Building Block Gun", method =() => Fun.BlocksGun(), toolTip = "Moves the building blocks to wherever your hand desires." },
 
                 new ButtonInfo { buttonText = "Spaz Bug", method =() => Fun.SpazBug(), toolTip = "Gives the bug a seizure." },
                 new ButtonInfo { buttonText = "Spaz Bat", method =() => Fun.SpazBat(), toolTip = "Gives the bat a seizure." },
@@ -735,9 +737,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Orbit Beach Ball", method =() => Fun.BeachBallHalo(), toolTip = "Orbits the beach ball around you." },
                 new ButtonInfo { buttonText = "Orbit Balloons", method =() => Fun.OrbitBalloons(), toolTip = "Orbits the balloons around you." },
                 new ButtonInfo { buttonText = "Orbit Gliders", method =() => Fun.OrbitGliders(), toolTip = "Orbits the gliders around you." },
-                new ButtonInfo { buttonText = "Orbit Building Blocks", method =() => Fun.OrbitBlocks(), toolTip = "Orbits the building blocks around you." },
-                new ButtonInfo { buttonText = "Rain Building Blocks", method =() => Fun.RainBuildingBlocks(), toolTip = "Makes the building blocks fall around you like rain." },
-                new ButtonInfo { buttonText = "Building Block Aura", method =() => Fun.BuildingBlockAura(), toolTip = "Moves the building blocks around you at random positions." },
 
                 new ButtonInfo { buttonText = "Ride Bug", method =() => Fun.RideBug(), toolTip = "Repeatedly teleports you on top of the bug." },
                 new ButtonInfo { buttonText = "Ride Bat", method =() => Fun.RideBat(), toolTip = "Repeatedly teleports you on top of the bat." },
@@ -812,21 +811,21 @@ namespace iiMenu.Menu
             new ButtonInfo[] { // Sound Spam Mods [14]
                 new ButtonInfo { buttonText = "Exit Sound Mods", method =() => Settings.EnableSpam(), isTogglable = false, toolTip = "Returns you back to the spam page."},
 
-                new ButtonInfo { buttonText = "Bass Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.BassSoundSpam(), toolTip = "Plays the loud drum sound when holding <color=green>grip</color>." },
-                new ButtonInfo { buttonText = "Metal Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.MetalSoundSpam(), toolTip = "Plays the metal sound when holding <color=green>grip</color>." },
-                new ButtonInfo { buttonText = "Wolf Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.WolfSoundSpam(), toolTip = "Plays the wolf howl when holding <color=green>grip</color>." },
-                new ButtonInfo { buttonText = "Cat Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.CatSoundSpam(), toolTip = "Plays the cat meow when holding <color=green>grip</color>." },
-                new ButtonInfo { buttonText = "Turkey Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.TurkeySoundSpam(), toolTip = "Plays the turkey sound when holding <color=green>grip</color>." },
-                new ButtonInfo { buttonText = "Frog Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.FrogSoundSpam(), toolTip = "Plays the frog creak when holding <color=green>grip</color>." },
-                new ButtonInfo { buttonText = "Bee Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.BeeSoundSpam(), toolTip = "Plays the bee buzz when holding <color=green>grip</color>." },
-                new ButtonInfo { buttonText = "Squeak Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.SqueakSoundSpam(), toolTip = "Plays the squeak sound when holding <color=green>grip</color>." },
+                new ButtonInfo { buttonText = "Bass Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.SoundSpam(68), toolTip = "Plays the loud drum sound when holding <color=green>grip</color>." },
+                new ButtonInfo { buttonText = "Metal Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.SoundSpam(18), toolTip = "Plays the metal sound when holding <color=green>grip</color>." },
+                new ButtonInfo { buttonText = "Wolf Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.SoundSpam(195), toolTip = "Plays the wolf howl when holding <color=green>grip</color>." },
+                new ButtonInfo { buttonText = "Cat Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.SoundSpam(236), toolTip = "Plays the cat meow when holding <color=green>grip</color>." },
+                new ButtonInfo { buttonText = "Turkey Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.SoundSpam(83), toolTip = "Plays the turkey sound when holding <color=green>grip</color>." },
+                new ButtonInfo { buttonText = "Frog Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.SoundSpam(91), toolTip = "Plays the frog creak when holding <color=green>grip</color>." },
+                new ButtonInfo { buttonText = "Bee Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.SoundSpam(191), toolTip = "Plays the bee buzz when holding <color=green>grip</color>." },
+                new ButtonInfo { buttonText = "Squeak Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.SoundSpam(215), toolTip = "Plays the squeak sound when holding <color=green>grip</color>." },
                 new ButtonInfo { buttonText = "Random Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.RandomSoundSpam(), toolTip = "Plays random sounds when holding <color=green>grip</color>." },
-                new ButtonInfo { buttonText = "Earrape Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.EarrapeSoundSpam(), toolTip = "Plays a high-pitched sound when holding <color=green>grip</color>." },
-                new ButtonInfo { buttonText = "Ding Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.DingSoundSpam(), toolTip = "Plays a ding sound when holding <color=green>grip</color>." },
+                new ButtonInfo { buttonText = "Earrape Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.SoundSpam(215), toolTip = "Plays a high-pitched sound when holding <color=green>grip</color>." },
+                new ButtonInfo { buttonText = "Ding Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.SoundSpam(244), toolTip = "Plays a ding sound when holding <color=green>grip</color>." },
                 new ButtonInfo { buttonText = "Crystal Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.CrystalSoundSpam(), toolTip = "Plays some crystal noises when holding <color=green>grip</color>." },
-                new ButtonInfo { buttonText = "Big Crystal Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.BigCrystalSoundSpam(), toolTip = "Plays a long crystal sound when holding <color=green>grip</color>." },
-                new ButtonInfo { buttonText = "Pan Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.PanSoundSpam(), toolTip = "Plays a pan sound when holding <color=green>grip</color>." },
-                new ButtonInfo { buttonText = "AK-47 Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.AK47SoundSpam(), toolTip = "Plays a sound that sounds like an AK-47 when holding <color=green>grip</color>." },
+                new ButtonInfo { buttonText = "Big Crystal Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.SoundSpam(213), toolTip = "Plays a long crystal sound when holding <color=green>grip</color>." },
+                new ButtonInfo { buttonText = "Pan Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.SoundSpam(248), toolTip = "Plays a pan sound when holding <color=green>grip</color>." },
+                new ButtonInfo { buttonText = "AK-47 Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.SoundSpam(203), toolTip = "Plays a sound that sounds like an AK-47 when holding <color=green>grip</color>." },
                 new ButtonInfo { buttonText = "Siren Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Sound.SirenSoundSpam(), toolTip = "Plays a siren sound when holding <color=green>grip</color>." },
 
                 new ButtonInfo { buttonText = "- Sound ID", method =() => Sound.DecreaseSoundID(), isTogglable = false, toolTip = "Lowers the Sound ID of the Custom Sound Spam." },
@@ -879,7 +878,50 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Guardian Spaz", method =() => Overpowered.GuardianSpaz(), toolTip = "Spams the guardian position for everyone in the lobby."},
 
+                new ButtonInfo { buttonText = "Max Currency Self", method =() => Fun.MaxCurrencySelf(), isTogglable = false, toolTip = "Gives you the maximum amount of currency in the horror map (2 billion)."},
+                new ButtonInfo { buttonText = "Max Currency Gun", method =() => Fun.MaxCurrencyGun(), toolTip = "Gives whoever your hand desires the maximum amount of currency in the horror map (2 billion)."},
+                new ButtonInfo { buttonText = "Max Currency All", method =() => Fun.MaxCurrencyAll(), isTogglable = false, toolTip = "Gives everyone in the room the maximum amount of currency in the horror map (2 billion)."},
+
+                new ButtonInfo { buttonText = "Remove Currency Self", method =() => Fun.RemoveCurrencySelf(), isTogglable = false, toolTip = "Removes all currency in the horror map from yourself."},
+                new ButtonInfo { buttonText = "Remove Currency Gun", method =() => Fun.RemoveCurrencyGun(), toolTip = "Removes all currency in the horror map from whoever your hand desires."},
+                new ButtonInfo { buttonText = "Remove Currency All", method =() => Fun.RemoveCurrencyAll(), isTogglable = false, toolTip = "Removes all currency in the horror map from everyone in the room."},
+
+                new ButtonInfo { buttonText = "Invincibility", method =() => Fun.Invincibility(), toolTip = "Makes you unable to die in the horror map."},
+
+                new ButtonInfo { buttonText = "Kill Self", method =() => Fun.KillSelf(), isTogglable = false, toolTip = "Turns you into a ghost."},
+                new ButtonInfo { buttonText = "Kill Gun", method =() => Fun.KillGun(), toolTip = "Turns whoever your hand desires into a ghost."},
+                new ButtonInfo { buttonText = "Kill All", method =() => Fun.KillAll(), isTogglable = false, toolTip = "Turns everyone in the room into a ghost."},
+
+                new ButtonInfo { buttonText = "Revive Self", method =() => Fun.ReviveSelf(), isTogglable = false, toolTip = "Revives you from death."},
+                new ButtonInfo { buttonText = "Revive Gun", method =() => Fun.ReviveGun(), toolTip = "Revives whowever your hand desires from death."},
+                new ButtonInfo { buttonText = "Revive All", method =() => Fun.ReviveAll(), isTogglable = false, toolTip = "Revives everyone in the room from death."},
+
+                new ButtonInfo { buttonText = "Spaz Kill Self", method =() => Fun.SpazKillSelf(), toolTip = "Repeatedly kills and revives you."},
+                new ButtonInfo { buttonText = "Spaz Kill Gun", method =() => Fun.SpazKillGun(), toolTip = "Repeatedly kills and revives whoever your hand desires."},
+                new ButtonInfo { buttonText = "Spaz Kill All", method =() => Fun.SpazKillAll(), toolTip = "Repeatedly kills and revives everyone in the room."},
+
+                new ButtonInfo { buttonText = "Gate Spam Gun", method =() => Overpowered.SpamObjectGun(-735557236), toolTip = "Spawns gates at wherever your hand desires."},
+                new ButtonInfo { buttonText = "Core Spam Gun", method =() => Overpowered.SpamObjectGun(166197108), toolTip = "Spawns collectible cores at wherever your hand desires."},
+                new ButtonInfo { buttonText = "Tool Spam Gun", method =() => Overpowered.ToolSpamGun(), toolTip = "Spawns random tools at wherever your hand desires."},
+                new ButtonInfo { buttonText = "Flower Spam Gun", method =() => Overpowered.SpamObjectGun(-20887423), toolTip = "Spawns flowers at wherever your hand desires."},
+                new ButtonInfo { buttonText = "Barrel Spam Gun", method =() => Overpowered.SpamObjectGun(-1724683316), toolTip = "Spawns barrels at wherever your hand desires."},
+                new ButtonInfo { buttonText = "Ranged Enemy Spam Gun", method =() => Overpowered.SpamObjectGun(-144412770), toolTip = "Spawns ranged enemies at wherever your hand desires."},
+                new ButtonInfo { buttonText = "Chaser Enemy Spam Gun", method =() => Overpowered.SpamObjectGun(48354877), toolTip = "Spawns chasing enemies at wherever your hand desires."},
+                new ButtonInfo { buttonText = "Destroy Entity Gun", method =() => Overpowered.DestroyEntityGun(), toolTip = "Destroys any entity which your hand desires."},
+
                 new ButtonInfo { buttonText = "Unlimited Building", enableMethod =() => Fun.UnlimitedBuilding(), disableMethod =() => Fun.DisableUnlimitedBuilding(), toolTip = "Unlimits building, disabling drop zones and letting you place on people's plots." },
+
+                new ButtonInfo { buttonText = "Shotgun <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.Shotgun(), toolTip = "Spawns you a shotgun when you press <color=green>grip</color>."},
+                new ButtonInfo { buttonText = "Massive Block <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.MassiveBlock(), toolTip = "Spawns you a massive block when you press <color=green>grip</color>."},
+                new ButtonInfo { buttonText = "Select Block Gun", method =() => Fun.SelectBlockGun(), toolTip = "Selects whatever building block your hand desires to be used for the building mods." },
+
+                new ButtonInfo { buttonText = "Grab Building Blocks <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.SpamGrabBlocks(), toolTip = "Forces the building block into your hand when holding <color=green>grip</color>." },
+                new ButtonInfo { buttonText = "Building Block Gun", method =() => Fun.BlocksGun(), toolTip = "Moves the building blocks to wherever your hand desires." },
+
+                new ButtonInfo { buttonText = "Orbit Building Blocks", method =() => Fun.OrbitBlocks(), toolTip = "Orbits the building blocks around you." },
+                new ButtonInfo { buttonText = "Rain Building Blocks", method =() => Fun.RainBuildingBlocks(), toolTip = "Makes the building blocks fall around you like rain." },
+                new ButtonInfo { buttonText = "Building Block Aura", method =() => Fun.BuildingBlockAura(), toolTip = "Moves the building blocks around you at random positions." },
+
                 new ButtonInfo { buttonText = "Destroy Building Block Gun", method =() => Fun.DestroyBlockGun(), toolTip = "Shreds whatever building block your hand desires." },
                 new ButtonInfo { buttonText = "Destroy Building Blocks", method =() => Fun.DestroyBlocks(), toolTip = "Shreds every building block." },
 
@@ -1164,6 +1206,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Get Sound Data", method =() => Miscellaneous.DumpSoundData(), isTogglable = false, toolTip = "Dumps the hand tap sounds to a file."},
                 new ButtonInfo { buttonText = "Get Cosmetic Data", method =() => Miscellaneous.DumpCosmeticData(), isTogglable = false, toolTip = "Dumps the cosmetics and their data to a file."},
+                new ButtonInfo { buttonText = "Get Decryptable Cosmetic Data", method =() => Miscellaneous.DecryptableCosmeticData(), isTogglable = false, toolTip = "Dumps the cosmetics and their data to a easily decryptable file for databases."},
                 new ButtonInfo { buttonText = "Get RPC Data", method =() => Miscellaneous.DumpRPCData(), isTogglable = false, toolTip = "Dumps the data of every RPC to a file."},
 
                 new ButtonInfo { buttonText = "Better FPS Boost", enableMethod =() => Experimental.BetterFPSBoost(), disableMethod =() => Experimental.DisableBetterFPSBoost(), toolTip = "Makes everything one color, boosting your FPS."},
@@ -1264,6 +1307,11 @@ namespace iiMenu.Menu
 /*
 The mod cemetary
 Every mod listed below has been removed from the menu, for one reason or another
+
+new ButtonInfo { buttonText = "Barrel Minigun <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.SpamObjectMinigun(-1724683316), toolTip = "Spawns barrels out of your hand."},
+new ButtonInfo { buttonText = "Core Minigun <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.SpamObjectMinigun(166197108), toolTip = "Spawns collectible cores out of your hand."},
+
+new ButtonInfo { buttonText = "Remove Cherry Blossoms", enableMethod = () => Visuals.EnableRemoveCherryBlossoms(), disableMethod = () => Visuals.DisableRemoveCherryBlossoms(), toolTip = "Removes cherry blossoms on trees, good for branching." },
 
 new ButtonInfo { buttonText = "Noclip Gun", method =() => Overpowered.NoclipGun(), toolTip = "Makes whoever your hand desires clip through the floor."},
 new ButtonInfo { buttonText = "Noclip All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.NoclipAll(), toolTip = "Makes everyone clip through the floor when holding <color=green>trigger</color>."},

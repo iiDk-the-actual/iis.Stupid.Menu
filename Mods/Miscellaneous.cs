@@ -247,6 +247,40 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void DecryptableCosmeticData()
+        {
+            string text = "";
+            int i = 0;
+            foreach (GorillaNetworking.CosmeticsController.CosmeticItem hat in GorillaNetworking.CosmeticsController.instance.allCosmetics)
+            {
+                try
+                {
+                    text += hat.itemName + ";;" + hat.overrideDisplayName + ";;" + hat.cost.ToString() + "\n";
+                }
+                catch { UnityEngine.Debug.Log("Failed to log hat"); }
+                i++;
+            }
+            string fileName = "iisStupidMenu/DecryptableCosmeticData.txt";
+            if (!Directory.Exists("iisStupidMenu"))
+            {
+                Directory.CreateDirectory("iisStupidMenu");
+            }
+            File.WriteAllText(fileName, text);
+
+            //string filePath = System.IO.Path.Combine(Application.dataPath, fileName);
+            string filePath = System.IO.Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, fileName);
+            filePath = filePath.Split("BepInEx\\")[0] + fileName;
+            //filePath = filePath.Split("\\")[0] + "/" + filePath.Split("\\")[1];
+            try
+            {
+                Process.Start(filePath);
+            }
+            catch
+            {
+                UnityEngine.Debug.Log("Could not open process " + filePath);
+            }
+        }
+
         public static void DumpRPCData()
         {
             string text = "RPC Data\n(from PhotonNetwork.PhotonServerSettings.RpcList)";

@@ -80,7 +80,7 @@ namespace iiMenu.UI
                 {
                     if (PhotonNetwork.InRoom)
                     {
-                        roomText = (translate ? TranslateText("Connected to room ") : "Connected to room ") + PhotonNetwork.CurrentRoom.Name;
+                        roomText = (translate ? TranslateText("Connected to room") : "Connected to room") + " " + PhotonNetwork.CurrentRoom.Name;
                     }
                 } catch { }
                 GUI.Label(new Rect(10, Screen.height - 35, Screen.width, 40), roomText);
@@ -107,7 +107,7 @@ namespace iiMenu.UI
 
                         GUIStyle style = new GUIStyle(GUI.skin.label);
                         style.alignment = TextAnchor.LowerRight;
-                        GUI.Label(new Rect(Screen.width - 590, Screen.height - 75, 512, 64), (translate ? TranslateText("Build ") : "Build ")+PluginInfo.Version+"\n"+(serverLink.Replace("https://", "")), style);
+                        GUI.Label(new Rect(Screen.width - 590, Screen.height - 75, 512, 64), (translate ? TranslateText("Build") : "Build")+" "+PluginInfo.Version+"\n"+(serverLink.Replace("https://", "")), style);
                     }
                 }
                 catch { }
@@ -120,10 +120,10 @@ namespace iiMenu.UI
                 g = GUI.TextField(new Rect(Screen.width - 240, 50, 30, 20), g);
                 b = GUI.TextField(new Rect(Screen.width - 240, 80, 30, 20), b);
 
-                if (GUI.Button(new Rect(Screen.width - 200, 50, 85, 30), "Name"))
+                if (GUI.Button(new Rect(Screen.width - 200, 50, 85, 30), translate ? TranslateText("Name") : "Name"))
                     ChangeName(inputText.Replace("\\n", "\n"));
                 
-                if (GUI.Button(new Rect(Screen.width - 105, 50, 85, 30), "Color"))
+                if (GUI.Button(new Rect(Screen.width - 105, 50, 85, 30), translate ? TranslateText("Color") : "Color"))
                 {
                     UnityEngine.Color color = new Color32(byte.Parse(r), byte.Parse(g), byte.Parse(b), 255);
                     ChangeColor(color);
@@ -135,7 +135,8 @@ namespace iiMenu.UI
                     Create = UnityInput.Current.GetKey(KeyCode.LeftControl);
                 } catch { }
 
-                if (GUI.Button(new Rect(Screen.width - 200, 90, 85, 30), Create ? "Create" : "Join"))
+                string targetText = Create ? "Create" : "Join";
+                if (GUI.Button(new Rect(Screen.width - 200, 90, 85, 30), translate ? TranslateText(targetText) : targetText))
                 {
                     if (Create)
                         iiMenu.Mods.Important.CreateRoom(inputText.Replace("\\n", "\n"), true);
@@ -168,9 +169,8 @@ namespace iiMenu.UI
                                 {
                                     string toadd = (v.overlapText == null) ? v.buttonText : v.overlapText;
                                     if (translate)
-                                    {
                                         toadd = TranslateText(toadd);
-                                    }
+                                    
                                     if (inputTextColor != "green")
                                     {
                                         toadd = toadd.Replace(" <color=grey>[</color><color=green>", " <color=grey>[</color><color=" + inputTextColor + ">");
