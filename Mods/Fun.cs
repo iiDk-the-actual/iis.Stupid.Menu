@@ -1051,7 +1051,7 @@ namespace iiMenu.Mods
 
                 if (!plr.IsHoldingEntity(false))
                 {
-                    foreach (GRBadge grBadge in GameObject.Find("GhostReactorRoot/GhostReactorZone/GhostReactorEmployeeBadges").GetComponent<GRUIStationEmployeeBadges>().badgeDict.Values)
+                    foreach (GRBadge grBadge in GameObject.Find("GhostReactorRoot/GhostReactorZone/GhostReactorEmployeeBadges").GetComponent<GRUIStationEmployeeBadges>().registeredBadges)
                     {
                         GameEntity entity = Traverse.Create(grBadge).Field("gameEntity").GetValue<GameEntity>();
                         if (entity.onlyGrabActorNumber == PhotonNetwork.LocalPlayer.ActorNumber)
