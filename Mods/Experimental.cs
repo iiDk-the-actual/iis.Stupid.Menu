@@ -9,19 +9,17 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using static iiMenu.Menu.Main;
 using static iiMenu.Classes.RigManager;
 using System.IO;
 using HarmonyLib;
 using iiMenu.Menu;
-using Fusion;
 
 namespace iiMenu.Mods
 {
     public class Experimental
     {
-        private static Dictionary<string, Color> menuColors = new Dictionary<string, Color> { { "stupid", new Color32(255, 128, 0, 255) }, { "genesis", Color.blue }, { "steal", Color.gray }, { "symex", new Color32(138, 43, 226, 255) }, { "colossal", new Color32(204, 0, 255, 255) }, { "ccm", new Color32(204, 0, 255, 255) } };
+        private static Dictionary<string, Color> menuColors = new Dictionary<string, Color> { { "stupid", new Color32(255, 128, 0, 255) }, { "genesis", Color.blue }, { "steal", Color.gray }, { "symex", new Color32(138, 43, 226, 255) }, { "colossal", new Color32(204, 0, 255, 255) }, { "ccm", new Color32(204, 0, 255, 255) }, { "untitled", new Color32(45, 115, 175, 255) } };
         private static Color GetMenuTypeName(string type)
         {
             if (menuColors.ContainsKey(type))
