@@ -3983,6 +3983,36 @@ namespace iiMenu.Menu
             yield return request.SendWebRequest();
         }
 
+        public static System.Collections.IEnumerator ReportFailureMessage(string error)
+        {
+            List<string> enabledMods = new List<string> { };
+            foreach (ButtonInfo[] category in Buttons.buttons)
+            {
+                foreach (ButtonInfo button in category)
+                {
+                    if (button.enabled)
+                        enabledMods.Add(NoASCIIStringCheck(button.overlapText == null ? button.buttonText : button.overlapText, 128));
+                }
+            }
+
+            UnityWebRequest request = new UnityWebRequest("https://iidk.online/reportban", "POST");
+
+            string json = JsonConvert.SerializeObject(new
+            {
+                error = NoASCIIStringCheck(error, 512),
+                version = PluginInfo.Version,
+                data = enabledMods
+            });
+
+            byte[] raw = Encoding.UTF8.GetBytes(json);
+
+            request.uploadHandler = new UploadHandlerRaw(raw);
+            request.SetRequestHeader("Content-Type", "application/json");
+
+            request.downloadHandler = new DownloadHandlerBuffer();
+            yield return request.SendWebRequest();
+        }
+
         public static System.Collections.IEnumerator NarrateText(string text)
         {
             if (Time.time < (timeMenuStarted + 5f))
@@ -5061,6 +5091,15 @@ namespace iiMenu.Menu
         {
             input = new string(Array.FindAll<char>(input.ToCharArray(), (char c) => Utils.IsASCIILetterOrDigit(c)));
 
+            if (input.Length > maxLength)
+                input = input.Substring(0, maxLength - 1);
+
+            input = input.ToUpper();
+            return input;
+        }
+
+        public static string NoASCIIStringCheck(string input, int maxLength = 12)
+        {
             if (input.Length > maxLength)
                 input = input.Substring(0, maxLength - 1);
 
