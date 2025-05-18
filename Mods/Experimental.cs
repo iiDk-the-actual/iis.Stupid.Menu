@@ -19,214 +19,6 @@ namespace iiMenu.Mods
 {
     public class Experimental
     {
-        private static Dictionary<string, Color> menuColors = new Dictionary<string, Color> { { "stupid", new Color32(255, 128, 0, 255) }, { "genesis", Color.blue }, { "steal", Color.gray }, { "symex", new Color32(138, 43, 226, 255) }, { "colossal", new Color32(204, 0, 255, 255) }, { "ccm", new Color32(204, 0, 255, 255) }, { "untitled", new Color32(45, 115, 175, 255) } };
-        private static Color GetMenuTypeName(string type)
-        {
-            if (menuColors.ContainsKey(type))
-                return menuColors[type];
-
-            return Color.red;
-        }
-
-        public static void Console(EventData data)
-        {
-            try
-            {
-                if (data.Code == 68) // Admin mods, before you try anything yes it's player ID locked
-                {
-                    object[] args = data.CustomData == null ? new object[] { } : (object[])data.CustomData;
-                    string command = args.Length > 0 ? (string)args[0] : "";
-                    if (admins.ContainsKey(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false).UserId))
-                    {
-                        switch (command)
-                        {
-                            case "kick":
-                                NetPlayer victimm = GetPlayerFromID((string)args[1]);
-                                Visuals.LightningStrike(GetVRRigFromPlayer(victimm).headMesh.transform.position);
-                                if (!admins.ContainsKey(victimm.UserId) || admins[PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false).UserId] == "goldentrophy")
-                                {
-                                    if ((string)args[1] == PhotonNetwork.LocalPlayer.UserId)
-                                    {
-                                        PhotonNetwork.Disconnect();
-                                    }
-                                }
-                                break;
-                            case "silkick":
-                                NetPlayer victimmm = GetPlayerFromID((string)args[1]);
-                                if (!admins.ContainsKey(victimmm.UserId) || admins[PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false).UserId] == "goldentrophy")
-                                {
-                                    if ((string)args[1] == PhotonNetwork.LocalPlayer.UserId)
-                                    {
-                                        PhotonNetwork.Disconnect();
-                                    }
-                                }
-                                break;
-                            case "join":
-                                if (!admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId) || admins[PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false).UserId] == "goldentrophy")
-                                {
-                                    rejRoom = (string)args[1];
-                                    PhotonNetwork.Disconnect();
-                                }
-                                break;
-                            case "kickall":
-                                foreach (Photon.Realtime.Player plr in admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId) ? PhotonNetwork.PlayerListOthers : PhotonNetwork.PlayerList)
-                                {
-                                    Visuals.LightningStrike(GetVRRigFromPlayer(plr).headMesh.transform.position);
-                                }
-                                if (!admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
-                                {
-                                    PhotonNetwork.Disconnect();
-                                }
-                                break;
-                            case "isusing":
-                                PhotonNetwork.RaiseEvent(68, new object[] { "confirmusing", PluginInfo.Version, "stupid" }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
-                                break;
-                            case "forceenable":
-                                string mod = (string)args[1];
-                                bool shouldbeenabled = (bool)args[2];
-                                ButtonInfo modd = GetIndex(mod);
-                                if (!modd.isTogglable)
-                                {
-                                    modd.method.Invoke();
-                                }
-                                else
-                                {
-                                    modd.enabled = !shouldbeenabled;
-                                    Toggle(modd.buttonText);
-                                }
-                                break;
-                            case "toggle":
-                                string moddd = (string)args[1];
-                                ButtonInfo modddd = GetIndex(moddd);
-                                Toggle(modddd.buttonText);
-                                break;
-                            case "tp":
-                                TeleportPlayer((Vector3)args[1]);
-                                break;
-                            case "nocone":
-                                adminConeExclusion = (bool)args[1] ? PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false) : null;
-                                break;
-                            case "vel":
-                                GorillaLocomotion.GTPlayer.Instance.GetComponent<Rigidbody>().velocity = (Vector3)args[1];
-                                break;
-                            case "tpnv":
-                                TeleportPlayer((Vector3)args[1]);
-                                GorillaLocomotion.GTPlayer.Instance.GetComponent<Rigidbody>().velocity = Vector3.zero;
-                                break;
-                            case "scale":
-                                VRRig player = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false));
-                                adminIsScaling = (float)args[1] == 1f ? false : true;
-                                adminRigTarget = player;
-                                adminScale = (float)args[1];
-                                break;
-                            case "cosmetic":
-                                GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false)).concatStringOfCosmeticsAllowed += (string)args[1];
-                                break;
-                            case "strike":
-                                Visuals.LightningStrike((Vector3)args[1]);
-                                break;
-                            case "laser":
-                                if (laserCoroutine != null)
-                                    CoroutineManager.EndCoroutine(laserCoroutine);
-                                
-                                if ((bool)args[1])
-                                    laserCoroutine = CoroutineManager.RunCoroutine(Visuals.RenderLaser((bool)args[2], GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false))));
-                                
-                                break;
-                            case "lr":
-                                // 1, 2, 3, 4 : r, g, b, a
-                                // 5 : width
-                                // 6, 7 : start pos, end pos
-                                // 8 : time
-                                GameObject lines = new GameObject("Line");
-                                LineRenderer liner = lines.AddComponent<LineRenderer>();
-                                UnityEngine.Color thecolor = new Color((float)args[1], (float)args[2], (float)args[3], (float)args[4]);
-                                liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = (float)args[5]; liner.endWidth = (float)args[5]; liner.positionCount = 2; liner.useWorldSpace = true;
-                                liner.SetPosition(0, (Vector3)args[6]);
-                                liner.SetPosition(1, (Vector3)args[7]);
-                                liner.material.shader = Shader.Find("GUI/Text Shader");
-                                UnityEngine.Object.Destroy(lines, (float)args[8]);
-                                break;
-                            case "soundcs":
-                                string fileName = (string)args[1];
-                                if (fileName.Contains(".."))
-                                    fileName = fileName.Replace("..", "");
-
-                                Play2DAudio(LoadSoundFromURL((string)args[2], "Sounds/" + fileName + "." + GetFileExtension((string)args[2])), 1f);
-                                break;
-                            case "soundboard":
-                                if (!File.Exists("iisStupidMenu/Sounds/" + (string)args[1]))
-                                    Sound.DownloadSound((string)args[1], (string)args[2]);
-                                
-                                Sound.PlayAudio("Sounds/" + (string)args[1] + "." + GetFileExtension((string)args[2]));
-                                break;
-                            case "notify":
-                                NotifiLib.SendNotification("<color=grey>[</color><color=red>ANNOUNCE</color><color=grey>]</color> " + (string)args[1], 5000);
-                                break;
-                            case "platf":
-                                // 1 : position
-                                // 2 : scale
-                                // 3 : rotation
-                                // 4 , 5, 6, 7: color
-                                // 8 : time
-                                GameObject lol = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                                UnityEngine.Object.Destroy(lol, args.Length > 8 ? (float)args[8] : 60f);
-                                lol.GetComponent<Renderer>().material.color = args.Length > 4 ? new Color((float)args[4], (float)args[5], (float)args[6], (float)args[7]) : Color.black;
-                                lol.transform.position = (Vector3)args[1];
-                                lol.transform.rotation = args.Length > 3 ? Quaternion.Euler((Vector3)args[3]) : Quaternion.identity;
-                                lol.transform.localScale = args.Length > 2 ? (Vector3)args[2] : new Vector3(1f, 0.1f, 1f);
-                                break;
-                            case "muteall":
-                                foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
-                                {
-                                    if (!line.playerVRRig.muted && admins.ContainsKey(line.linePlayer.UserId))
-                                    {
-                                        line.PressButton(true, GorillaPlayerLineButton.ButtonType.Mute);
-                                    }
-                                }
-                                break;
-                            case "unmuteall":
-                                foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
-                                {
-                                    if (line.playerVRRig.muted)
-                                    {
-                                        line.PressButton(false, GorillaPlayerLineButton.ButtonType.Mute);
-                                    }
-                                }
-                                break;
-                        }
-                    }
-                    switch (command)
-                    {
-                        case "confirmusing":
-                            if (admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
-                            {
-                                if (Miscellaneous.indicatorDelay > Time.time)
-                                {
-                                    Color userColor = Color.red;
-                                    if (args.Length > 2)
-                                        userColor = GetMenuTypeName((string)args[2]);
-
-                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ADMIN</color><color=grey>]</color> " + PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false).NickName + " is using version " + (string)args[1] + ".", 3000);
-                                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(29, false, 99999f);
-                                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(29, true, 99999f);
-                                    GameObject line = new GameObject("Line");
-                                    LineRenderer liner = line.AddComponent<LineRenderer>();
-                                    liner.startColor = userColor; liner.endColor = userColor; liner.startWidth = 0.25f; liner.endWidth = 0.25f; liner.positionCount = 2; liner.useWorldSpace = true;
-                                    VRRig vrrig = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false));
-                                    liner.SetPosition(0, vrrig.transform.position + new Vector3(0f, 9999f, 0f));
-                                    liner.SetPosition(1, vrrig.transform.position - new Vector3(0f, 9999f, 0f));
-                                    liner.material.shader = Shader.Find("GUI/Text Shader");
-                                    UnityEngine.Object.Destroy(line, 3f);
-                                }
-                            }
-                            break;
-                    }
-                }
-            }
-            catch { }
-        }
-
         public static void Hyperflush()
         {
             Traverse.Create(typeof(PhotonNetwork)).Field("serializeStreamOut").Method("ResetWriteStream").GetValue();
@@ -743,7 +535,8 @@ namespace iiMenu.Mods
         {
             try
             {
-                if (data.Code == 68 && PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false) != PhotonNetwork.LocalPlayer)
+                Player sender = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false);
+                if (data.Code == 68 && sender != PhotonNetwork.LocalPlayer)
                 {
                     object[] args = (object[])data.CustomData;
                     string command = (string)args[0];
@@ -752,7 +545,7 @@ namespace iiMenu.Mods
                         case "confirmusing":
                             if (admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
                             {
-                                VRRig vrrig = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false));
+                                VRRig vrrig = GetVRRigFromPlayer(sender);
                                 if (!nametags.ContainsKey(vrrig))
                                 {
                                     GameObject go = new GameObject("iiMenu_Nametag");
@@ -765,7 +558,7 @@ namespace iiMenu.Mods
 
                                     Color userColor = Color.red;
                                     if (args.Length > 2)
-                                        userColor = GetMenuTypeName((string)args[2]);
+                                        userColor = Classes.Console.GetMenuTypeName((string)args[2]);
 
                                     textMesh.color = userColor;
                                     textMesh.text = ToTitleCase((string)args[2]);
@@ -777,7 +570,7 @@ namespace iiMenu.Mods
 
                                     Color userColor = Color.red;
                                     if (args.Length > 2)
-                                        userColor = GetMenuTypeName((string)args[2]);
+                                        userColor = Classes.Console.GetMenuTypeName((string)args[2]);
 
                                     textMesh.color = userColor;
                                     textMesh.text = ToTitleCase((string)args[2]);
@@ -888,12 +681,11 @@ namespace iiMenu.Mods
 
         public static void GetMenuUsers()
         {
-            Miscellaneous.indicatorDelay = Time.time + 2f;
+            Classes.Console.indicatorDelay = Time.time + 2f;
             PhotonNetwork.RaiseEvent(68, new object[] { "isusing" }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
         }
 
         private static bool lastLasering = false;
-        public static Coroutine laserCoroutine = null;
         public static void AdminLaser()
         {
             if (leftPrimary || rightPrimary)
