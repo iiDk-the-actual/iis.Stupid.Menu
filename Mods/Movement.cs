@@ -734,7 +734,7 @@ namespace iiMenu.Mods
         private static float loaoalsode = 0f;
         private static BalloonHoldable GetTargetBalloon()
         {
-            foreach (BalloonHoldable balloo in GetBalloons())
+            foreach (BalloonHoldable balloo in GetAllType<BalloonHoldable>())
             {
                 if (balloo.IsMyItem())
                 {
@@ -1138,7 +1138,7 @@ namespace iiMenu.Mods
         {
             yield return Fun.CreateGetPiece(1924370326, piece =>
             {
-                BuilderTable.instance.RequestGrabPiece(piece, true, new Vector3(-0.03f, -0.03f, -0.27f), new Quaternion(-0.6f, 0.5f, -0.4f, 0.5f));
+                GetBuilderTable().RequestGrabPiece(piece, true, new Vector3(-0.03f, -0.03f, -0.27f), new Quaternion(-0.6f, 0.5f, -0.4f, 0.5f));
             });
         }
 
@@ -1146,7 +1146,7 @@ namespace iiMenu.Mods
         {
             yield return Fun.CreateGetPiece(1924370326, piece =>
             {
-                BuilderTable.instance.RequestGrabPiece(piece, false, new Vector3(0.03f, -0.03f, -0.27f), new Quaternion(0.5f, -0.6f, -0.5f, 0.4f));
+                GetBuilderTable().RequestGrabPiece(piece, false, new Vector3(0.03f, -0.03f, -0.27f), new Quaternion(0.5f, -0.6f, -0.5f, 0.4f));
             });
         }
 
