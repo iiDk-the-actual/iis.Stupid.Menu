@@ -14,8 +14,6 @@ namespace iiMenu.Mods
 {
     public class Miscellaneous
     {
-        public static float indicatorDelay = 0f;
-
         private static float idgundelay = 0f;
         public static void CopyIDGun()
         {
