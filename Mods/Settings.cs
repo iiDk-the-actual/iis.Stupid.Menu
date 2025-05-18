@@ -314,8 +314,15 @@ namespace iiMenu.Mods
             }
 
             AddButton(33, new ButtonInfo { buttonText = "Open Plugins Folder", method = () => OpenPluginsFolder(), isTogglable = false, toolTip = "Opens a folder containing all of your plugins." });
-            AddButton(33, new ButtonInfo { buttonText = "Reload Plugins", method = () => LoadPlugins(), isTogglable = false, toolTip = "Reloads all of your plugins." });
+            AddButton(33, new ButtonInfo { buttonText = "Reload Plugins", method = () => ReloadPlugins(), isTogglable = false, toolTip = "Reloads all of your plugins." });
             AddButton(33, new ButtonInfo { buttonText = "Get More Plugins", method = () => LoadPluginLibrary(), isTogglable = false, toolTip = "Opens a public plugin library, where you can download your own plugins." });
+        }
+
+        public static void ReloadPlugins()
+        {
+            SavePreferences();
+            LoadPlugins();
+            LoadPreferences();
         }
 
         public static void OpenPluginsFolder()
@@ -2673,12 +2680,12 @@ namespace iiMenu.Mods
                 timeoutCoroutine = CoroutineManager.RunCoroutine(Timeout());
             }
             List<string> rawbuttonnames = new List<string> { "nevermind", "cancel", "never mind", "stop" };
-            Regex notags = new Regex("<.*?>");
+
             foreach (ButtonInfo[] buttonlist in Buttons.buttons)
             {
                 foreach (ButtonInfo v in buttonlist)
                 {
-                    rawbuttonnames.Add(notags.Replace(v.overlapText == null ? v.buttonText : v.overlapText, ""));
+                    rawbuttonnames.Add(NoRichtextTags(v.overlapText == null ? v.buttonText : v.overlapText));
                 }
             }
             modPhrases = new KeywordRecognizer(rawbuttonnames.ToArray());
@@ -2711,14 +2718,13 @@ namespace iiMenu.Mods
             string modTarget = null;
             bool exactMatch = false;
 
-            Regex notags = new Regex("<.*?>");
             foreach (ButtonInfo[] buttonlist in Buttons.buttons)
             {
                 if (exactMatch) { break; }
                 foreach (ButtonInfo v in buttonlist)
                 {
                     if (exactMatch) { break; }
-                    string buttonName = notags.Replace(v.overlapText == null ? v.buttonText : v.overlapText, "");
+                    string buttonName = NoRichtextTags(v.overlapText == null ? v.buttonText : v.overlapText);
                     if (output.ToLower() == buttonName.ToLower())
                     {
                         modTarget = v.buttonText;
@@ -3353,6 +3359,16 @@ namespace iiMenu.Mods
         public static void EnableBoardTextColors()
         {
             disableBoardTextColor = false;
+        }
+
+        public static void HideSettings()
+        {
+            hideSettings = true;
+        }
+
+        public static void ShowSettings()
+        {
+            hideSettings = false;
         }
     }
 }
