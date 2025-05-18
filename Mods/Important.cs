@@ -219,14 +219,26 @@ namespace iiMenu.Mods
         private static GameObject popup = null;
         public static void AcceptTOS()
         {
-            popup = GameObject.Find("Miscellaneous Scripts/PopUpMessage");
-            popup.SetActive(false);
+            try
+            {
+                popup = GameObject.Find("Miscellaneous Scripts/PopUpMessage");
+                popup.SetActive(false);
+            } catch { }
+
+            try
+            {
+                PrivateUIRoom Room = GameObject.Find("Miscellaneous Scripts/PrivateUIRoom_HandRays").GetComponent<PrivateUIRoom>();
+
+                if (Traverse.Create(Room).Field("inOverlay").GetValue<bool>())
+                    typeof(PrivateUIRoom).GetMethod("StopOverlay", BindingFlags.NonPublic | BindingFlags.Static).Invoke(Room, new object[] { });
+            }
+            catch { }
+
             Patches.TOSPatch.enabled = true;
         }
 
         public static void DisableAcceptTOS()
         {
-            popup.SetActive(true);
             Patches.TOSPatch.enabled = false;
         }
 
