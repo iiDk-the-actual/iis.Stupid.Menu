@@ -159,13 +159,15 @@ namespace iiMenu.UI
                     GUILayout.Space(5f);
 
                     List<string> alphabetized = new List<string>();
+
+                    int categoryIndex = 0;
                     foreach (ButtonInfo[] buttonlist in Buttons.buttons)
                     {
                         foreach (ButtonInfo v in buttonlist)
                         {
                             try
                             {
-                                if (v.enabled)
+                                if (v.enabled && (!hideSettings || (hideSettings && !Buttons.categoryNames[categoryIndex].Contains("Settings"))))
                                 {
                                     string toadd = (v.overlapText == null) ? v.buttonText : v.overlapText;
                                     if (translate)
@@ -183,11 +185,12 @@ namespace iiMenu.UI
                                 }
                             } catch { }
                         }
+                        categoryIndex++;
                     }
 
                     Regex notags = new Regex("<.*?>");
                     string[] sortedButtons = alphabetized
-                        .OrderByDescending(s => (notags.Replace(s,"")).Length)
+                        .OrderByDescending(s => NoRichtextTags(s).Length)
                         .ToArray();
 
                     foreach (string v in sortedButtons)
