@@ -6,7 +6,7 @@ using static iiMenu.Menu.Main;
 
 namespace iiMenu.Patches
 {
-    [HarmonyPatch(typeof(LegalAgreements), "PostUpdate")]
+    [HarmonyPatch(typeof(LegalAgreements), "Update")]
     public class TOSPatch
     {
         public static bool enabled = false;
@@ -14,9 +14,9 @@ namespace iiMenu.Patches
         {
             if (enabled)
             {
-                __instance.TurnPage(999);
-                Traverse.Create(__instance).Field("controllerBehaviour").Field("buttonDown").SetValue(true);
-                Traverse.Create(__instance).Field("holdTime").SetValue(0.1f);
+                Traverse.Create(__instance).Field("controllerBehaviour").Field("isDownStick").SetValue(true);
+                Traverse.Create(__instance).Field("scrollSpeed").SetValue(10f);
+                Traverse.Create(__instance).Field("_maxScrollSpeed").SetValue(10f);
                 return false;
             }
             return true;
