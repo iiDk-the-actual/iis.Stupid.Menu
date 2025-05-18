@@ -1,4 +1,6 @@
-﻿using GorillaNetworking;
+﻿using Fusion;
+using GorillaLocomotion.Gameplay;
+using GorillaNetworking;
 using GorillaTag;
 using GorillaTagScripts;
 using GorillaTagScripts.ObstacleCourse;
@@ -9,6 +11,7 @@ using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
+using Photon.Voice;
 using Photon.Voice.Unity;
 using Photon.Voice.Unity.UtilityScripts;
 using PlayFab;
@@ -21,6 +24,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.Rendering;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -77,6 +81,59 @@ namespace iiMenu.Mods
             LightmapSettings.lightmaps = hell;
             GameLightingManager.instance.SetCustomDynamicLightingEnabled(true);
         }
+
+        /*
+        private static Volume Volume;
+        public static void EnableShaders()
+        {
+            if (Volume == null)
+                Volume = GameObject.Find("Main Camera").AddComponent<Volume>();
+
+            UnityEngine.Rendering.Universal.UniversalAdditionalCameraData camData = Camera.main.GetComponent<UnityEngine.Rendering.Universal.UniversalAdditionalCameraData>();
+            camData.renderPostProcessing = true;
+
+            QualitySettings.antiAliasing = 4;
+
+            Volume.isGlobal = true;
+            VolumeProfile profile = ScriptableObject.CreateInstance<VolumeProfile>();
+            Volume.profile = profile;
+
+            UnityEngine.Rendering.Universal.Bloom bloom;
+            if (!profile.TryGet(out bloom))
+                bloom = profile.Add<UnityEngine.Rendering.Universal.Bloom>(true);
+            
+            bloom.intensity.value = 1f;
+            bloom.threshold.value = 1f;
+            bloom.active = true;
+
+            UnityEngine.Rendering.Universal.Tonemapping tonemapping;
+            if (!profile.TryGet(out tonemapping))
+                tonemapping = profile.Add<UnityEngine.Rendering.Universal.Tonemapping>(true);
+            
+            tonemapping.mode.value = UnityEngine.Rendering.Universal.TonemappingMode.ACES;
+            tonemapping.active = true;
+
+            UnityEngine.Rendering.Universal.MotionBlur motionBlur;
+            if (!profile.TryGet(out motionBlur))
+                motionBlur = profile.Add<UnityEngine.Rendering.Universal.MotionBlur>(true);
+            
+            motionBlur.intensity.value = 0.4f;
+            motionBlur.active = true;
+
+            UnityEngine.Rendering.Universal.ColorAdjustments colorAdjust;
+            if (!profile.TryGet(out colorAdjust))
+                colorAdjust = profile.Add<UnityEngine.Rendering.Universal.ColorAdjustments>(true);
+            
+            colorAdjust.saturation.value = 20f;
+            colorAdjust.contrast.value = 15f;
+            colorAdjust.postExposure.value = 0.2f;
+            colorAdjust.active = true;
+        }
+
+        public static void DisableShaders()
+        {
+            UnityEngine.Object.Destroy(Volume);
+        }*/
 
         public static void FixHead()
         {
@@ -682,7 +739,7 @@ namespace iiMenu.Mods
 
         public static void MuteDJSets()
         {
-            foreach (RadioButtonGroupWearable djSet in GetRadios())
+            foreach (RadioButtonGroupWearable djSet in GetAllType<RadioButtonGroupWearable>())
             {
                 if (djSet.enabled)
                     djSet.enabled = false;
@@ -691,7 +748,7 @@ namespace iiMenu.Mods
 
         public static void UnmuteDJSets()
         {
-            foreach (RadioButtonGroupWearable djSet in GetRadios())
+            foreach (RadioButtonGroupWearable djSet in GetAllType<RadioButtonGroupWearable>())
             {
                 if (!djSet.enabled)
                     djSet.enabled = true;
@@ -766,7 +823,7 @@ namespace iiMenu.Mods
             {
                 if (Time.time > stupiddelay)
                 {
-                    foreach (TappableBell stupid in GetBells())
+                    foreach (TappableBell stupid in GetAllType<TappableBell>())
                     {
                         stupid.OnTap(1f);
                         RPCProtection();
@@ -782,7 +839,7 @@ namespace iiMenu.Mods
             {
                 if (Time.time > stupiddelay)
                 {
-                    foreach (GorillaCaveCrystal stupid in GetCrystals())
+                    foreach (GorillaCaveCrystal stupid in GetAllType<GorillaCaveCrystal>())
                     {
                         stupid.OnTap(1f);
                         RPCProtection();
@@ -798,7 +855,7 @@ namespace iiMenu.Mods
             {
                 if (Time.time > stupiddelay)
                 {
-                    foreach (GhostLabButton stupid in GetLabButtons())
+                    foreach (GhostLabButton stupid in GetAllType<GhostLabButton>())
                     {
                         stupid.ButtonActivation();
                         RPCProtection();
@@ -811,7 +868,7 @@ namespace iiMenu.Mods
         private static float hitDelay = 0f;
         public static void AutoHitMoles()
         {   
-            foreach (Mole stupid in GetMoles())
+            foreach (Mole stupid in GetAllType<Mole>())
             {
                 int state = (int)Traverse.Create(stupid).Field("randomMolePickedIndex").GetValue();
                 if (stupid.CanTap() && stupid.moleTypes[state].isHazard == false && Time.time > hitDelay)
@@ -825,7 +882,7 @@ namespace iiMenu.Mods
 
         public static void AutoHitHazards()
         {
-            foreach (Mole stupid in GetMoles())
+            foreach (Mole stupid in GetAllType<Mole>())
             {
                 int state = (int)Traverse.Create(stupid).Field("randomMolePickedIndex").GetValue();
                 if (stupid.CanTap() && stupid.moleTypes[state].isHazard && Time.time > hitDelay)
@@ -842,7 +899,7 @@ namespace iiMenu.Mods
             if (Time.time > stupiddelay)
             {
                 stupiddelay = Time.time + 0.25f;
-                foreach (WhackAMole stupid in GetWAMoles())
+                foreach (WhackAMole stupid in GetAllType<WhackAMole>())
                 {
                     stupid.GetView.RPC("WhackAMoleButtonPressed", RpcTarget.All, new object[] { });
                     RPCProtection();
@@ -855,7 +912,7 @@ namespace iiMenu.Mods
             if (Time.time > stupiddelay)
             {
                 stupiddelay = Time.time + 0.1f;
-                foreach (WhackAMole stupid in GetWAMoles())
+                foreach (WhackAMole stupid in GetAllType<WhackAMole>())
                 {
                     int state = (int)Traverse.Create(stupid).Field("currentState").GetValue();
                     if (state == 0 || state == 4)
@@ -1189,18 +1246,91 @@ namespace iiMenu.Mods
 
         public static void Invincibility()
         {
-            if (!PhotonNetwork.IsMasterClient) { return; }
+            if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
+
             GRPlayer plr = GRPlayer.Get(PhotonNetwork.LocalPlayer.ActorNumber);
+
+            if (plr.State == GRPlayer.GRPlayerState.Ghost)
+                GhostReactorManager.instance.RequestPlayerStateChange(plr, GRPlayer.GRPlayerState.Alive);
+
             Traverse.Create(plr).Field("hp").SetValue(Traverse.Create(plr).Field("maxHp").GetValue<int>());
+        }
+
+        public static void SetPlayerState(Player Target, GRPlayer.GRPlayerState State)
+        {
+            GRPlayer GRPlayer = GRPlayer.Get(Target.ActorNumber);
+
+            if (GRPlayer.State == State)
+                return;
+
+            if ((Target == PhotonNetwork.LocalPlayer && State == GRPlayer.GRPlayerState.Ghost)
+                    || (PhotonNetwork.IsMasterClient && State == GRPlayer.GRPlayerState.Alive)
+                    )
+            {
+                GhostReactorManager.instance.RequestPlayerStateChange(GRPlayer, State);
+                RPCProtection();
+                return;
+            }
+
+            if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
+
+            if (State == GRPlayer.GRPlayerState.Ghost)
+                CoroutineManager.instance.StartCoroutine(KillTarget(Target));
+        }
+
+        public static void SetPlayerState(NetPlayer Target, GRPlayer.GRPlayerState State)
+        {
+            SetPlayerState(NetPlayerToPlayer(Target), State);
+        }
+
+        public static void SetPlayerState(VRRig Target, GRPlayer.GRPlayerState State)
+        {
+            SetPlayerState(NetPlayerToPlayer(GetPlayerFromVRRig(Target)), State);
+        }
+
+        public static IEnumerator KillTarget(Player Target)
+        {
+            GRPlayer GRPlayer = GRPlayer.Get(Target.ActorNumber);
+            VRRig Rig = RigManager.GetVRRigFromPlayer(Target);
+
+            int netId = (int)typeof(GameEntityManager).GetMethod("CreateNetId", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(GameEntityManager.instance, new object[] { });
+
+            GameEntityManager.instance.photonView.RPC("CreateItemRPC", Target, new object[]
+            {
+                new int[] { netId },
+                new int[] { (int)GTZone.ghostReactor },
+                new int[] { 48354877 },
+                new long[] { BitPackUtils.PackWorldPosForNetwork(Rig.transform.position) },
+                new int[] { BitPackUtils.PackQuaternionForNetwork(Rig.transform.rotation) },
+                new long[] { 0L }
+            });
+
+            GameAgentManager.instance.photonView.RPC("ApplyBehaviorRPC", Target, new object[]
+            {
+                new int[] { netId },
+                new byte[] { 6 }
+            });
+
+            GRPlayer.ChangePlayerState(GRPlayer.GRPlayerState.Ghost);
+
+            RPCProtection();
+
+            yield return null;
+            yield return null;
+            yield return null;
+
+            GameEntityManager.instance.photonView.RPC("DestroyItemRPC", Target, new object[]
+            {
+                new int[] { netId }
+            });
+
+            RPCProtection();
         }
 
         private static float killDelay;
         public static void KillSelf()
         {
-            if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
-
-            GRPlayer plr = GRPlayer.Get(PhotonNetwork.LocalPlayer.ActorNumber);
-            plr.ChangePlayerState(GRPlayer.GRPlayerState.Ghost);
+            SetPlayerState(PhotonNetwork.LocalPlayer, GRPlayer.GRPlayerState.Ghost);
         }
 
         public static void KillGun()
@@ -1215,33 +1345,20 @@ namespace iiMenu.Mods
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
-                    {
-                        if (PhotonNetwork.LocalPlayer.IsMasterClient)
-                            GRPlayer.Get(GetPlayerFromVRRig(possibly).ActorNumber).ChangePlayerState(GRPlayer.GRPlayerState.Ghost);
-                        else
-                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-                    }
+                        SetPlayerState(possibly, GRPlayer.GRPlayerState.Ghost);
                 }
             }
         }
 
         public static void KillAll()
         {
-            if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
-
             foreach (Player target in PhotonNetwork.PlayerList)
-            {
-                GRPlayer plr = GRPlayer.Get(target.ActorNumber);
-                plr.ChangePlayerState(GRPlayer.GRPlayerState.Ghost);
-            }
+                SetPlayerState(target, GRPlayer.GRPlayerState.Ghost);
         }
 
         public static void ReviveSelf()
         {
-            if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
-
-            GRPlayer plr = GRPlayer.Get(PhotonNetwork.LocalPlayer.ActorNumber);
-            plr.ChangePlayerState(GRPlayer.GRPlayerState.Alive);
+            SetPlayerState(PhotonNetwork.LocalPlayer, GRPlayer.GRPlayerState.Alive);
         }
 
         public static void ReviveGun()
@@ -1257,10 +1374,7 @@ namespace iiMenu.Mods
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        if (PhotonNetwork.LocalPlayer.IsMasterClient)
-                            GRPlayer.Get(GetPlayerFromVRRig(possibly).ActorNumber).ChangePlayerState(GRPlayer.GRPlayerState.Alive);
-                        else
-                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                        SetPlayerState(possibly, GRPlayer.GRPlayerState.Alive);
                     }
                 }
             }
@@ -1268,12 +1382,9 @@ namespace iiMenu.Mods
 
         public static void ReviveAll()
         {
-            if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
-
             foreach (Player target in PhotonNetwork.PlayerList)
             {
-                GRPlayer plr = GRPlayer.Get(target.ActorNumber);
-                plr.ChangePlayerState(GRPlayer.GRPlayerState.Alive);
+                SetPlayerState(target, GRPlayer.GRPlayerState.Alive);
             }
         }
 
@@ -1282,10 +1393,9 @@ namespace iiMenu.Mods
             if (Time.time > killDelay)
             {
                 killDelay = Time.time + 0.1f;
-                if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
 
                 GRPlayer plr = GRPlayer.Get(PhotonNetwork.LocalPlayer.ActorNumber);
-                plr.ChangePlayerState(plr.State == GRPlayer.GRPlayerState.Alive ? GRPlayer.GRPlayerState.Ghost : GRPlayer.GRPlayerState.Alive);
+                SetPlayerState(PhotonNetwork.LocalPlayer, plr.State == GRPlayer.GRPlayerState.Alive ? GRPlayer.GRPlayerState.Ghost : GRPlayer.GRPlayerState.Alive);
             }
         }
 
@@ -1300,15 +1410,11 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig && Time.time > killDelay)
                     {
-                        if (PhotonNetwork.LocalPlayer.IsMasterClient)
-                        {
-                            GRPlayer plr = GRPlayer.Get(GetPlayerFromVRRig(possibly).ActorNumber);
-                            plr.ChangePlayerState(plr.State == GRPlayer.GRPlayerState.Alive ? GRPlayer.GRPlayerState.Ghost : GRPlayer.GRPlayerState.Alive);
-                        }
-                        else
-                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                        killDelay = Time.time + 0.1f;
+                        GRPlayer plr = GRPlayer.Get(GetPlayerFromVRRig(possibly).ActorNumber);
+                        SetPlayerState(possibly, plr.State == GRPlayer.GRPlayerState.Alive ? GRPlayer.GRPlayerState.Ghost : GRPlayer.GRPlayerState.Alive);
                     }
                 }
             }
@@ -1321,10 +1427,9 @@ namespace iiMenu.Mods
                 foreach (Player target in PhotonNetwork.PlayerList)
                 {
                     killDelay = Time.time + 0.1f;
-                    if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
 
                     GRPlayer plr = GRPlayer.Get(target.ActorNumber);
-                    plr.ChangePlayerState(plr.State == GRPlayer.GRPlayerState.Alive ? GRPlayer.GRPlayerState.Ghost : GRPlayer.GRPlayerState.Alive);
+                    SetPlayerState(target, plr.State == GRPlayer.GRPlayerState.Alive ? GRPlayer.GRPlayerState.Ghost : GRPlayer.GRPlayerState.Alive);
                 }
             }
         }
@@ -1445,7 +1550,7 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true))
                 {
-                    foreach (GliderHoldable glider in GetGliders())
+                    foreach (GliderHoldable glider in GetAllType<GliderHoldable>())
                     {
                         if (glider.GetView.Owner == PhotonNetwork.LocalPlayer)
                         {
@@ -1471,7 +1576,7 @@ namespace iiMenu.Mods
             if (archivepiecesfiltered == null)
             {
                 archivepiecesfiltered = new List<BuilderPiece>() { };
-                foreach (BuilderPiece piece in GetPieces())
+                foreach (BuilderPiece piece in GetAllType<BuilderPiece>())
                 {
                     if (piece.pieceType > 0)
                     {
@@ -1479,7 +1584,7 @@ namespace iiMenu.Mods
                     }
                 }
             }
-            return archivepieces.ToArray();
+            return archivepiecesfiltered.ToArray();
         }
 
         private static int pieceIdSet = -566818631;
@@ -1764,7 +1869,7 @@ namespace iiMenu.Mods
 
         public static void FastGliders()
         {
-            foreach (GliderHoldable glider in GetGliders())
+            foreach (GliderHoldable glider in GetAllType<GliderHoldable>())
             {
                 glider.pullUpLiftBonus = 0.5f;
                 glider.dragVsSpeedDragFactor = 0.5f;
@@ -1773,7 +1878,7 @@ namespace iiMenu.Mods
 
         public static void SlowGliders()
         {
-            foreach (GliderHoldable glider in GetGliders())
+            foreach (GliderHoldable glider in GetAllType<GliderHoldable>())
             {
                 glider.pullUpLiftBonus = 0.05f;
                 glider.dragVsSpeedDragFactor = 0.05f;
@@ -1782,36 +1887,10 @@ namespace iiMenu.Mods
 
         public static void FixGliderSpeed()
         {
-            foreach (GliderHoldable glider in GetGliders())
+            foreach (GliderHoldable glider in GetAllType<GliderHoldable>())
             {
                 glider.pullUpLiftBonus = 0.1f;
                 glider.dragVsSpeedDragFactor = 0.2f;
-            }
-        }
-
-        public static float lastTime = 0f;
-        public static void SpazGliderMaterial()
-        {
-            if (Time.time > lastTime)
-            {
-                lastTime = Time.time + 0.1f;
-                foreach (GliderHoldable glider in GetGliders())
-                {
-                    if (glider.GetView.Owner == PhotonNetwork.LocalPlayer)
-                    {
-                        FieldInfo SyncedStateField = typeof(GliderHoldable).GetField("syncedState", BindingFlags.NonPublic | BindingFlags.Instance);
-                        object SyncedStateValue = SyncedStateField.GetValue(glider);
-
-                        FieldInfo RiderIdField = SyncedStateValue.GetType().GetField("materialIndex", BindingFlags.Public | BindingFlags.Instance);
-                        RiderIdField.SetValue(SyncedStateValue, (byte)UnityEngine.Random.Range(0, 3));
-
-                        SyncedStateField.SetValue(glider, SyncedStateValue);
-                    }
-                    else
-                    {
-                        glider.OnHover(null, null);
-                    }
-                }
             }
         }
 
@@ -1843,7 +1922,7 @@ namespace iiMenu.Mods
         {
             if (rightGrab)
             {
-                foreach (GliderHoldable glider in GetGliders())
+                foreach (GliderHoldable glider in GetAllType<GliderHoldable>())
                 {
                     if (glider.GetView.Owner == PhotonNetwork.LocalPlayer)
                     {
@@ -1883,7 +1962,7 @@ namespace iiMenu.Mods
 
         public static void RespawnGliders()
         {
-            foreach (GliderHoldable glider in GetGliders())
+            foreach (GliderHoldable glider in GetAllType<GliderHoldable>())
             {
                 if (glider.GetView.Owner == PhotonNetwork.LocalPlayer)
                 {
@@ -1902,16 +1981,16 @@ namespace iiMenu.Mods
             if (Time.time > delayer)
             {
                 delayer = Time.time + 1f;
-                archivepieces = null;
+                ClearType<BuilderPiece>();
                 int count = 0;
-                foreach (BuilderPiece piece in GetPieces())
+                foreach (BuilderPiece piece in GetAllType<BuilderPiece>())
                 {
                     if (count > 400)
                         break;
                     if (piece.gameObject.activeSelf)
                     {
                         count++;
-                        BuilderTable.instance.RequestRecyclePiece(piece, true, 2);
+                        GetBuilderTable().RequestRecyclePiece(piece, true, 2);
                     }
                 }
             }
@@ -1944,9 +2023,9 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            BuilderTable.instance.RequestGrabPiece(bullet, true, Vector3.zero, Quaternion.identity);
+            GetBuilderTable().RequestGrabPiece(bullet, true, Vector3.zero, Quaternion.identity);
             yield return null;
-            BuilderTable.instance.RequestDropPiece(bullet, TrueRightHand().position + TrueRightHand().forward * 0.65f + TrueRightHand().right * 0.03f + TrueRightHand().up * 0.05f, TrueRightHand().rotation, TrueRightHand().forward * 19.9f, Vector3.zero);
+            GetBuilderTable().RequestDropPiece(bullet, TrueRightHand().position + TrueRightHand().forward * 0.65f + TrueRightHand().right * 0.03f + TrueRightHand().up * 0.05f, TrueRightHand().rotation, TrueRightHand().forward * 19.9f, Vector3.zero);
             yield return null;
         }
 
@@ -1975,7 +2054,7 @@ namespace iiMenu.Mods
                     BuilderPiece possibly = Ray.collider.GetComponentInParent<BuilderPiece>();
                     if (possibly)
                     {
-                        BuilderTable.instance.RequestRecyclePiece(possibly, true, 2);
+                        GetBuilderTable().RequestRecyclePiece(possibly, true, 2);
                         RPCProtection();
                     }
                 }
@@ -1987,9 +2066,9 @@ namespace iiMenu.Mods
         {
             if (PhotonNetwork.IsMasterClient)
             {
-                int pieceId = BuilderTable.instance.CreatePieceId();
+                int pieceId = GetBuilderTable().CreatePieceId();
 
-                BuilderTableNetworking.instance.photonView.RPC("PieceCreatedByShelfRPC", RpcTarget.All, new object[]
+                GetBuilderTable().builderNetworking.photonView.RPC("PieceCreatedByShelfRPC", RpcTarget.All, new object[]
                 {
                     pieceType,
                     pieceId,
@@ -2035,7 +2114,7 @@ namespace iiMenu.Mods
 
         public static void SpazGliders()
         {
-            foreach (GliderHoldable glider in GetGliders())
+            foreach (GliderHoldable glider in GetAllType<GliderHoldable>())
             {
                 if (glider.GetView.Owner == PhotonNetwork.LocalPlayer)
                 {
@@ -2068,7 +2147,7 @@ namespace iiMenu.Mods
 
         public static void OrbitGliders()
         {
-            GliderHoldable[] them = GetGliders();
+            GliderHoldable[] them = GetAllType<GliderHoldable>();
             int index = 0;
             foreach (GliderHoldable glider in them)
             {
@@ -2171,7 +2250,7 @@ namespace iiMenu.Mods
             }
             yield return null;
 
-            target = BuilderTable.instance.GetPiece(pieceId);
+            target = GetBuilderTable().GetPiece(pieceId);
             pieceId = -1;
             Patches.CreatePatch.enabled = false;
             Patches.CreatePatch.pieceTypeSearch = 0;
@@ -2198,7 +2277,7 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            BuilderTable.instance.RequestGrabPiece(basea, false, Vector3.zero, Quaternion.identity);
+            GetBuilderTable().RequestGrabPiece(basea, false, Vector3.zero, Quaternion.identity);
             yield return null;
             
             BuilderPieceInteractor.instance.handState[1] = BuilderPieceInteractor.HandState.Empty;
@@ -2217,9 +2296,9 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            BuilderTable.instance.RequestGrabPiece(base2a, false, Vector3.zero, Quaternion.identity);
+            GetBuilderTable().RequestGrabPiece(base2a, false, Vector3.zero, Quaternion.identity);
             yield return null;
-            BuilderTable.instance.RequestPlacePiece(base2a, base2a, 0, 0, 0, basea, 1, 0);
+            GetBuilderTable().RequestPlacePiece(base2a, base2a, 0, 0, 0, basea, 1, 0);
             yield return null;
 
             BuilderPiece slopea = null;
@@ -2234,9 +2313,9 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            BuilderTable.instance.RequestGrabPiece(slopea, false, Vector3.zero, Quaternion.identity);
+            GetBuilderTable().RequestGrabPiece(slopea, false, Vector3.zero, Quaternion.identity);
             yield return null;
-            BuilderTable.instance.RequestPlacePiece(slopea, slopea, 0, 0, 2, base2a, 1, 0);
+            GetBuilderTable().RequestPlacePiece(slopea, slopea, 0, 0, 2, base2a, 1, 0);
             yield return null;
 
             BuilderPiece trigger = null;
@@ -2250,9 +2329,9 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            BuilderTable.instance.RequestGrabPiece(trigger, false, Vector3.zero, Quaternion.identity);
+            GetBuilderTable().RequestGrabPiece(trigger, false, Vector3.zero, Quaternion.identity);
             yield return null;
-            BuilderTable.instance.RequestPlacePiece(trigger, trigger, -1, -2, 3, slopea, 1, 0);
+            GetBuilderTable().RequestPlacePiece(trigger, trigger, -1, -2, 3, slopea, 1, 0);
             yield return null;
 
             BuilderPiece slopeb = null;
@@ -2266,9 +2345,9 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            BuilderTable.instance.RequestGrabPiece(slopeb, false, Vector3.zero, Quaternion.identity);
+            GetBuilderTable().RequestGrabPiece(slopeb, false, Vector3.zero, Quaternion.identity);
             yield return null;
-            BuilderTable.instance.RequestPlacePiece(basea, trigger, 0, -2, 3, slopeb, 1, 0);
+            GetBuilderTable().RequestPlacePiece(basea, trigger, 0, -2, 3, slopeb, 1, 0);
             yield return null;
 
             BuilderPiece base2b = null;
@@ -2282,9 +2361,9 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            BuilderTable.instance.RequestGrabPiece(base2b, false, Vector3.zero, Quaternion.identity);
+            GetBuilderTable().RequestGrabPiece(base2b, false, Vector3.zero, Quaternion.identity);
             yield return null;
-            BuilderTable.instance.RequestPlacePiece(slopeb, slopeb, 0, 0, 2, base2b, 1, 0);
+            GetBuilderTable().RequestPlacePiece(slopeb, slopeb, 0, 0, 2, base2b, 1, 0);
             yield return null;
 
             BuilderPiece baseb = null;
@@ -2298,9 +2377,9 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            BuilderTable.instance.RequestGrabPiece(baseb, false, Vector3.zero, Quaternion.identity);
+            GetBuilderTable().RequestGrabPiece(baseb, false, Vector3.zero, Quaternion.identity);
             yield return null;
-            BuilderTable.instance.RequestPlacePiece(base2b, base2b, 0, 0, 0, baseb, 1, 0);
+            GetBuilderTable().RequestPlacePiece(base2b, base2b, 0, 0, 0, baseb, 1, 0);
             yield return null;
 
             BuilderPiece minislopeb = null;
@@ -2314,9 +2393,9 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            BuilderTable.instance.RequestGrabPiece(minislopeb, false, Vector3.zero, Quaternion.identity);
+            GetBuilderTable().RequestGrabPiece(minislopeb, false, Vector3.zero, Quaternion.identity);
             yield return null;
-            BuilderTable.instance.RequestPlacePiece(baseb, slopea, 0, -3, 2, minislopeb, 2, 0);
+            GetBuilderTable().RequestPlacePiece(baseb, slopea, 0, -3, 2, minislopeb, 2, 0);
             yield return null;
 
             BuilderPiece minislopea = null;
@@ -2330,9 +2409,9 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            BuilderTable.instance.RequestGrabPiece(minislopea, false, Vector3.zero, Quaternion.identity);
+            GetBuilderTable().RequestGrabPiece(minislopea, false, Vector3.zero, Quaternion.identity);
             yield return null;
-            BuilderTable.instance.RequestPlacePiece(minislopeb, slopeb, 0, -3, 2, minislopea, 2, 0);
+            GetBuilderTable().RequestPlacePiece(minislopeb, slopeb, 0, -3, 2, minislopea, 2, 0);
             yield return null;
 
             BuilderPiece minislope2a = null;
@@ -2346,9 +2425,9 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            BuilderTable.instance.RequestGrabPiece(minislope2a, false, Vector3.zero, Quaternion.identity);
+            GetBuilderTable().RequestGrabPiece(minislope2a, false, Vector3.zero, Quaternion.identity);
             yield return null;
-            BuilderTable.instance.RequestPlacePiece(minislopea, minislopeb, 0, 0, 2, minislope2a, 1, 0);
+            GetBuilderTable().RequestPlacePiece(minislopea, minislopeb, 0, 0, 2, minislope2a, 1, 0);
             yield return null;
 
             BuilderPiece minislope2b = null;
@@ -2362,9 +2441,9 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            BuilderTable.instance.RequestGrabPiece(minislope2b, false, Vector3.zero, Quaternion.identity);
+            GetBuilderTable().RequestGrabPiece(minislope2b, false, Vector3.zero, Quaternion.identity);
             yield return null;
-            BuilderTable.instance.RequestPlacePiece(minislope2a, minislopea, 0, 0, 2, minislope2b, 1, 0);
+            GetBuilderTable().RequestPlacePiece(minislope2a, minislopea, 0, 0, 2, minislope2b, 1, 0);
             yield return null;
 
             BuilderPiece flatthinga = null;
@@ -2378,9 +2457,9 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            BuilderTable.instance.RequestGrabPiece(flatthinga, false, Vector3.zero, Quaternion.identity);
+            GetBuilderTable().RequestGrabPiece(flatthinga, false, Vector3.zero, Quaternion.identity);
             yield return null;
-            BuilderTable.instance.RequestPlacePiece(minislope2b, minislope2b, 0, -1, 2, flatthinga, 2, 0);
+            GetBuilderTable().RequestPlacePiece(minislope2b, minislope2b, 0, -1, 2, flatthinga, 2, 0);
             yield return null;
 
             BuilderPiece flatthingb = null;
@@ -2394,9 +2473,9 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            BuilderTable.instance.RequestGrabPiece(flatthingb, false, Vector3.zero, Quaternion.identity);
+            GetBuilderTable().RequestGrabPiece(flatthingb, false, Vector3.zero, Quaternion.identity);
             yield return null;
-            BuilderTable.instance.RequestPlacePiece(flatthinga, minislope2a, 0, -1, 2, flatthingb, 2, 0);
+            GetBuilderTable().RequestPlacePiece(flatthinga, minislope2a, 0, -1, 2, flatthingb, 2, 0);
             yield return null;
 
             BuilderPiece connectorthinga = null;
@@ -2410,9 +2489,9 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            BuilderTable.instance.RequestGrabPiece(connectorthinga, false, Vector3.zero, Quaternion.identity);
+            GetBuilderTable().RequestGrabPiece(connectorthinga, false, Vector3.zero, Quaternion.identity);
             yield return null;
-            BuilderTable.instance.RequestPlacePiece(flatthingb, flatthinga, -1, 1, 3, connectorthinga, 1, 0);
+            GetBuilderTable().RequestPlacePiece(flatthingb, flatthinga, -1, 1, 3, connectorthinga, 1, 0);
             yield return null;
 
             BuilderPiece connectorthingb = null;
@@ -2426,9 +2505,9 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            BuilderTable.instance.RequestGrabPiece(connectorthingb, false, Vector3.zero, Quaternion.identity);
+            GetBuilderTable().RequestGrabPiece(connectorthingb, false, Vector3.zero, Quaternion.identity);
             yield return null;
-            BuilderTable.instance.RequestPlacePiece(connectorthinga, connectorthinga, -1, 0, 1, connectorthingb, 1, 0);
+            GetBuilderTable().RequestPlacePiece(connectorthinga, connectorthinga, -1, 0, 1, connectorthingb, 1, 0);
             yield return null;
 
             BuilderPiece connectorthingc = null;
@@ -2442,9 +2521,9 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            BuilderTable.instance.RequestGrabPiece(connectorthingc, false, Vector3.zero, Quaternion.identity);
+            GetBuilderTable().RequestGrabPiece(connectorthingc, false, Vector3.zero, Quaternion.identity);
             yield return null;
-            BuilderTable.instance.RequestPlacePiece(connectorthingb, connectorthinga, 0, 0, 1, connectorthingc, 1, 0);
+            GetBuilderTable().RequestPlacePiece(connectorthingb, connectorthinga, 0, 0, 1, connectorthingc, 1, 0);
             yield return null;
 
             BuilderPiece barrela = null;
@@ -2458,9 +2537,9 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            BuilderTable.instance.RequestGrabPiece(barrela, false, Vector3.zero, Quaternion.identity);
+            GetBuilderTable().RequestGrabPiece(barrela, false, Vector3.zero, Quaternion.identity);
             yield return null;
-            BuilderTable.instance.RequestPlacePiece(connectorthingc, connectorthingb, 0, 0, 1, barrela, 1, 0);
+            GetBuilderTable().RequestPlacePiece(connectorthingc, connectorthingb, 0, 0, 1, barrela, 1, 0);
             yield return null;
 
             BuilderPiece barrelb = null;
@@ -2474,9 +2553,9 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            BuilderTable.instance.RequestGrabPiece(barrelb, false, Vector3.zero, Quaternion.identity);
+            GetBuilderTable().RequestGrabPiece(barrelb, false, Vector3.zero, Quaternion.identity);
             yield return null;
-            BuilderTable.instance.RequestPlacePiece(barrela, barrela, 0, 0, 2, barrelb, 1, 0);
+            GetBuilderTable().RequestPlacePiece(barrela, barrela, 0, 0, 2, barrelb, 1, 0);
             yield return null;
 
             BuilderPiece scope = null;
@@ -2490,14 +2569,14 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            BuilderTable.instance.RequestGrabPiece(scope, false, Vector3.zero, Quaternion.identity);
+            GetBuilderTable().RequestGrabPiece(scope, false, Vector3.zero, Quaternion.identity);
             yield return null;
-            BuilderTable.instance.RequestPlacePiece(barrelb, minislope2a, -2, 1, 3, scope, 1, 0);
+            GetBuilderTable().RequestPlacePiece(barrelb, minislope2a, -2, 1, 3, scope, 1, 0);
             yield return null;
-            BuilderTable.instance.RequestDropPiece(scope, GorillaTagger.Instance.rightHandTransform.position, Quaternion.identity, Vector3.zero, Vector3.zero);
+            GetBuilderTable().RequestDropPiece(scope, GorillaTagger.Instance.rightHandTransform.position, Quaternion.identity, Vector3.zero, Vector3.zero);
             yield return null;
             // pos is forward/back, left/right, up/down
-            BuilderTable.instance.RequestGrabPiece(basea, false, new Vector3(-0.2f, 0.01f, -0.3f), new Quaternion(0f, 0.1f, 0.75f, -0.6f));
+            GetBuilderTable().RequestGrabPiece(basea, false, new Vector3(-0.2f, 0.01f, -0.3f), new Quaternion(0f, 0.1f, 0.75f, -0.6f));
             yield return null;
         }
 
@@ -2534,7 +2613,7 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            BuilderTable.instance.RequestGrabPiece(stupid, false, Vector3.zero, Quaternion.identity);
+            GetBuilderTable().RequestGrabPiece(stupid, false, Vector3.zero, Quaternion.identity);
             yield return new WaitForSeconds(0.7f);
 
             GorillaTagger.Instance.offlineVRRig.sizeManager.currentSizeLayerMaskValue = 13;
@@ -2559,7 +2638,7 @@ namespace iiMenu.Mods
 
         public static void SlowMonsters()
         {
-            foreach (MonkeyeAI monkeyeAI in GetMonsters())
+            foreach (MonkeyeAI monkeyeAI in GetAllType<MonkeyeAI>())
             {
                 if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; } // GetOwnership(monkeyeAI.GetComponent<PhotonView>());
                 monkeyeAI.speed = 0.02f;
@@ -2568,7 +2647,7 @@ namespace iiMenu.Mods
 
         public static void FastMonsters()
         {
-            foreach (MonkeyeAI monkeyeAI in GetMonsters())
+            foreach (MonkeyeAI monkeyeAI in GetAllType<MonkeyeAI>())
             {
                 if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; } // GetOwnership(monkeyeAI.GetComponent<PhotonView>());
                 monkeyeAI.speed = 0.5f;
@@ -2577,7 +2656,7 @@ namespace iiMenu.Mods
 
         public static void FixMonsters()
         {
-            foreach (MonkeyeAI monkeyeAI in GetMonsters())
+            foreach (MonkeyeAI monkeyeAI in GetAllType<MonkeyeAI>())
             {
                 if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; } // GetOwnership(monkeyeAI.GetComponent<PhotonView>());
                 monkeyeAI.speed = 0.1f;
@@ -2588,7 +2667,7 @@ namespace iiMenu.Mods
         {
             if (rightGrab)
             {
-                foreach (MonkeyeAI monkeyeAI in GetMonsters())
+                foreach (MonkeyeAI monkeyeAI in GetAllType<MonkeyeAI>())
                 {
                     if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; } // GetOwnership(monkeyeAI.GetComponent<PhotonView>());
                     monkeyeAI.gameObject.transform.position = GorillaTagger.Instance.rightHandTransform.position;
@@ -2606,7 +2685,7 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true))
                 {
-                    foreach (MonkeyeAI monkeyeAI in GetMonsters())
+                    foreach (MonkeyeAI monkeyeAI in GetAllType<MonkeyeAI>())
                     {
                         if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; } // GetOwnership(monkeyeAI.GetComponent<PhotonView>());
                         monkeyeAI.gameObject.transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
@@ -2617,7 +2696,7 @@ namespace iiMenu.Mods
 
         public static void SpazMonsters()
         {
-            foreach (MonkeyeAI monkeyeAI in GetMonsters())
+            foreach (MonkeyeAI monkeyeAI in GetAllType<MonkeyeAI>())
             {
                 if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; } // GetOwnership(monkeyeAI.GetComponent<PhotonView>());
                 monkeyeAI.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
@@ -2626,9 +2705,9 @@ namespace iiMenu.Mods
 
         public static void OrbitMonsters()
         {
-            MonkeyeAI[] them = GetMonsters();
+            MonkeyeAI[] them = GetAllType<MonkeyeAI>();
             int index = 0;
-            foreach (MonkeyeAI monkeyeAI in GetMonsters())
+            foreach (MonkeyeAI monkeyeAI in GetAllType<MonkeyeAI>())
             {
                 if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; } // GetOwnership(monkeyeAI.GetComponent<PhotonView>());
                 float offset = (360f / (float)them.Length) * index;
@@ -2639,7 +2718,7 @@ namespace iiMenu.Mods
 
         public static void DestroyMonsters()
         {
-            foreach (MonkeyeAI monkeyeAI in GetMonsters())
+            foreach (MonkeyeAI monkeyeAI in GetAllType<MonkeyeAI>())
             {
                 if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; } // GetOwnership(monkeyeAI.GetComponent<PhotonView>());
                 monkeyeAI.gameObject.transform.position = new Vector3(99999f, 99999f, 99999f);
@@ -2668,7 +2747,7 @@ namespace iiMenu.Mods
             {
                 blockDelay = Time.time + 0.25f;
                 int amnt = 0;
-                foreach (BuilderPiece piece in GetPieces())
+                foreach (BuilderPiece piece in GetAllType<BuilderPiece>())
                 {
                     if (Vector3.Distance(piece.transform.position, GorillaTagger.Instance.rightHandTransform.position) < 2.5f)
                     {
@@ -2677,7 +2756,7 @@ namespace iiMenu.Mods
                             amnt++;
                             if (amnt < 8)
                             {
-                                BuilderTable.instance.RequestGrabPiece(piece, false, new Vector3(UnityEngine.Random.Range(-0.5f, 0.5f), UnityEngine.Random.Range(-0.5f, 0.5f), UnityEngine.Random.Range(-0.5f, 0.5f)), Quaternion.identity);
+                                GetBuilderTable().RequestGrabPiece(piece, false, new Vector3(UnityEngine.Random.Range(-0.5f, 0.5f), UnityEngine.Random.Range(-0.5f, 0.5f), UnityEngine.Random.Range(-0.5f, 0.5f)), Quaternion.identity);
                                 potentialgrabbedpieces.Add(piece);
                             }
                         }
@@ -2690,7 +2769,7 @@ namespace iiMenu.Mods
                 blockDelay = Time.time + 0.25f;
                 foreach (BuilderPiece piece in potentialgrabbedpieces)
                 {
-                    BuilderTable.instance.RequestDropPiece(piece, GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, new Vector3(UnityEngine.Random.Range(-19f, 19f), UnityEngine.Random.Range(-19f, 19f), UnityEngine.Random.Range(-19f, 19f)), new Vector3(UnityEngine.Random.Range(-19f, 19f), UnityEngine.Random.Range(-19f, 19f), UnityEngine.Random.Range(-19f, 19f)));
+                    GetBuilderTable().RequestDropPiece(piece, GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, new Vector3(UnityEngine.Random.Range(-19f, 19f), UnityEngine.Random.Range(-19f, 19f), UnityEngine.Random.Range(-19f, 19f)), new Vector3(UnityEngine.Random.Range(-19f, 19f), UnityEngine.Random.Range(-19f, 19f), UnityEngine.Random.Range(-19f, 19f)));
                 }
                 potentialgrabbedpieces.Clear();
                 RPCProtection();
@@ -2729,7 +2808,7 @@ namespace iiMenu.Mods
 
         public static void PopAllBalloons()
         {
-            foreach (BalloonHoldable balloon in GetBalloons())
+            foreach (BalloonHoldable balloon in GetAllType<BalloonHoldable>())
             {
                 typeof(BalloonHoldable).GetMethod("OwnerPopBalloon", BindingFlags.NonPublic | BindingFlags.Static).Invoke(balloon, new object[] { });
                 balloon.PopBalloonRemote();
@@ -2740,7 +2819,7 @@ namespace iiMenu.Mods
         {
             if (rightGrab)
             {
-                foreach (BalloonHoldable balloon in GetBalloons())
+                foreach (BalloonHoldable balloon in GetAllType<BalloonHoldable>())
                 {
                     if (balloon.ownerRig == GorillaTagger.Instance.offlineVRRig)
                     {
@@ -2756,7 +2835,7 @@ namespace iiMenu.Mods
 
         public static void SpazBalloons()
         {
-            foreach (BalloonHoldable balloon in GetBalloons())
+            foreach (BalloonHoldable balloon in GetAllType<BalloonHoldable>())
             {
                 if (balloon.ownerRig == GorillaTagger.Instance.offlineVRRig)
                 {
@@ -2771,13 +2850,13 @@ namespace iiMenu.Mods
 
         public static void OrbitBalloons()
         {
-            BalloonHoldable[] them = GetBalloons();
+            BalloonHoldable[] them = GetAllType<BalloonHoldable>();
             int index = 0;
             foreach (BalloonHoldable balloon in them)
             {
                 if (balloon.ownerRig == GorillaTagger.Instance.offlineVRRig)
                 {
-                    float offset = (360f / (float)them.Length) * index;
+                    float offset = (360f / them.Length) * index;
                     balloon.gameObject.transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)) * 5f, 2, MathF.Sin(offset + ((float)Time.frameCount / 30)) * 5f);
                 }
                 else
@@ -2798,7 +2877,7 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true))
                 {
-                    foreach (BalloonHoldable balloon in GetBalloons())
+                    foreach (BalloonHoldable balloon in GetAllType<BalloonHoldable>())
                     {
                         if (balloon.ownerRig == GorillaTagger.Instance.offlineVRRig)
                         {
@@ -2814,7 +2893,7 @@ namespace iiMenu.Mods
 
         public static void DestroyBalloons()
         {
-            foreach (BalloonHoldable balloon in GetBalloons())
+            foreach (BalloonHoldable balloon in GetAllType<BalloonHoldable>())
             {
                 if (balloon.ownerRig == GorillaTagger.Instance.offlineVRRig)
                 {
@@ -2838,7 +2917,7 @@ namespace iiMenu.Mods
                 GorillaTagger.Instance.offlineVRRig.transform.position = new Vector3(-51.4897f, 16.9286f, -120.1083f);
 
                 bool FoundBalloon = false;
-                foreach (BalloonHoldable Balloon in GetBalloons())
+                foreach (BalloonHoldable Balloon in GetAllType<BalloonHoldable>())
                 {
                     if (Balloon.ownerRig == GorillaTagger.Instance.offlineVRRig && Balloon.gameObject.name.Contains("LMAMI"))
                     {
@@ -2858,7 +2937,7 @@ namespace iiMenu.Mods
                     CosmeticsController.instance.UpdateWornCosmetics(true);
                     RPCProtection();
 
-                    archiveballoons = null;
+                    ClearType<BalloonHoldable>();
                 }
             }
             else
@@ -2870,7 +2949,7 @@ namespace iiMenu.Mods
 
         public static void DestroyGliders()
         {
-            foreach (GliderHoldable glider in GetGliders())
+            foreach (GliderHoldable glider in GetAllType<GliderHoldable>())
             {
                 if (glider.GetView.Owner == PhotonNetwork.LocalPlayer)
                 {
@@ -3396,7 +3475,7 @@ namespace iiMenu.Mods
             if (Time.time > delayonhold)
             {
                 delayonhold = Time.time + 0.1f;
-                foreach (TransferrableObject cosmet in GetTransferrableObjects())
+                foreach (TransferrableObject cosmet in GetAllType<TransferrableObject>())
                 {
                     if (cosmet.IsMyItem())
                     {
@@ -3418,7 +3497,7 @@ namespace iiMenu.Mods
             if (Time.time > delayonhold)
             {
                 delayonhold = Time.time + 0.1f;
-                foreach (TransferrableObject cosmet in GetTransferrableObjects())
+                foreach (TransferrableObject cosmet in GetAllType<TransferrableObject>())
                 {
                     if (cosmet.IsMyItem())
                     {
