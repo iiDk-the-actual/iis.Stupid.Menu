@@ -135,6 +135,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Disable Board Colors", overlapText = "Disable Custom Boards", enableMethod =() => Settings.DisableBoardColors(), disableMethod =() => Settings.EnableBoardColors(), toolTip = "Disables the board colors to look legitimate on screen share."},
                 new ButtonInfo { buttonText = "Disable Custom Text Colors", enableMethod =() => Settings.DisableBoardTextColors(), disableMethod =() => Settings.EnableBoardTextColors(), toolTip = "Disables the text colors on the boards to make them match their original theme."},
                 new ButtonInfo { buttonText = "Hide Text on Camera", overlapText = "Streamer Mode Menu Text", toolTip = "Makes the menu's text only render on VR."},
+                new ButtonInfo { buttonText = "Hide Settings", enableMethod =() => Settings.HideSettings(), disableMethod =() => Settings.ShowSettings(), toolTip = "Hides all settings from the Enabled Mods tab, and all arraylists."},
                 new ButtonInfo { buttonText = "High Quality Text", enableMethod =() => Settings.HighQualityText(), disableMethod =() => Settings.HighQualityTextOff(), toolTip = "Makes the menu's text really high quality."},
 
                 new ButtonInfo { buttonText = "Disable Ghostview", enableMethod =() => Settings.DisableGhostview(), disableMethod =() => Settings.EnableGhostview(), toolTip = "Disables the transparent rig when you're in ghost."},
@@ -893,7 +894,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Kill All", method =() => Fun.KillAll(), isTogglable = false, toolTip = "Turns everyone in the room into a ghost."},
 
                 new ButtonInfo { buttonText = "Revive Self", method =() => Fun.ReviveSelf(), isTogglable = false, toolTip = "Revives you from death."},
-                new ButtonInfo { buttonText = "Revive Gun", method =() => Fun.ReviveGun(), toolTip = "Revives whowever your hand desires from death."},
+                new ButtonInfo { buttonText = "Revive Gun", method =() => Fun.ReviveGun(), toolTip = "Revives whoever your hand desires from death."},
                 new ButtonInfo { buttonText = "Revive All", method =() => Fun.ReviveAll(), isTogglable = false, toolTip = "Revives everyone in the room from death."},
 
                 new ButtonInfo { buttonText = "Spaz Kill Self", method =() => Fun.SpazKillSelf(), toolTip = "Repeatedly kills and revives you."},
@@ -1260,7 +1261,7 @@ namespace iiMenu.Menu
 
             new ButtonInfo[] { // Plugin Settings [33]
                 new ButtonInfo { buttonText = "Exit Plugin Settings", method =() => Settings.EnableSettings(), isTogglable = false, toolTip = "Returns you back to the settings menu."},
-                new ButtonInfo { buttonText = "Reload Plugins", method = () => Settings.LoadPlugins(), isTogglable = false, toolTip = "Reloads all of your plugins." }
+                new ButtonInfo { buttonText = "Reload Plugins", method = () => Settings.ReloadPlugins(), isTogglable = false, toolTip = "Reloads all of your plugins." }
             }
         };
 
@@ -1307,6 +1308,8 @@ namespace iiMenu.Menu
 /*
 The mod cemetary
 Every mod listed below has been removed from the menu, for one reason or another
+
+new ButtonInfo { buttonText = "Shaders", enableMethod =() => Fun.EnableShaders(), disableMethod =() => Fun.DisableShaders(), toolTip = "Adds bloom, motion blur, and slight saturation to the game. Credits to leah / tagmonkevr for the code."},
 
 new ButtonInfo { buttonText = "Barrel Minigun <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.SpamObjectMinigun(-1724683316), toolTip = "Spawns barrels out of your hand."},
 new ButtonInfo { buttonText = "Core Minigun <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.SpamObjectMinigun(166197108), toolTip = "Spawns collectible cores out of your hand."},
