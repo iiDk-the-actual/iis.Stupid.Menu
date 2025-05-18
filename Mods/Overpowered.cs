@@ -216,7 +216,7 @@ namespace iiMenu.Mods
             }
             else
             {
-                foreach (TappableGuardianIdol tgi in GetGuardianIdols())
+                foreach (TappableGuardianIdol tgi in GetAllType<TappableGuardianIdol>())
                 {
                     if (!tgi.isChangingPositions)
                     {
@@ -715,14 +715,14 @@ namespace iiMenu.Mods
                     miniaturedelay = Time.time + 0.022f;
                     for (int i = 0; i < 4; i++)
                     {
-                        BuilderTable.instance.RequestCreatePiece(691844031, new Vector3(-127.6248f, 16.99441f, -217.2094f), Quaternion.identity, 0);
+                        Fun.RequestCreatePiece(691844031, new Vector3(-127.6248f, 16.99441f, -217.2094f), Quaternion.identity, 0);
                     }
                 }
 
                 if (Time.time > lastBeforeClearTime)
                 {
                     RPCProtection();
-                    foreach (BuilderPiece piece in GetPieces())
+                    foreach (BuilderPiece piece in GetAllType<BuilderPiece>())
                     {
                         if (piece.pieceType == 691844031)
                             piece.gameObject.SetActive(false);
@@ -894,7 +894,7 @@ namespace iiMenu.Mods
                 return archiveIncrement;
             }
         }
-        
+
         public static void BetaSpawnSnowball(Vector3 Pos, Vector3 Vel, float Scale, int Mode, Player Target = null, bool NetworkSize = true, int customNetworkedSize = -1)
         {
             try
@@ -2033,7 +2033,7 @@ namespace iiMenu.Mods
 
                 if (isCopying)
                 {
-                    foreach (GliderHoldable glider in GetGliders())
+                    foreach (GliderHoldable glider in GetAllType<GliderHoldable>())
                     {
                         if (glider.GetView.Owner == PhotonNetwork.LocalPlayer)
                         {
@@ -2058,7 +2058,7 @@ namespace iiMenu.Mods
 
         public static void GliderBlindAll()
         {
-            GliderHoldable[] those = GetGliders();
+            GliderHoldable[] those = GetAllType<GliderHoldable>();
             int index = 0;
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
@@ -2140,7 +2140,7 @@ namespace iiMenu.Mods
             if ((Mathf.Abs(joy.x) > 0.05f || Mathf.Abs(joy.y) > 0.05f) && Time.time > RopeDelay)
             {
                 RopeDelay = Time.time + 0.25f;
-                foreach (GorillaRopeSwing rope in GetRopes())
+                foreach (GorillaRopeSwing rope in GetAllType<GorillaRopeSwing>())
                 {
                     RopeSwingManager.instance.photonView.RPC("SetVelocity", RpcTarget.All, new object[] { rope.ropeId, 1, new Vector3(joy.x * 50f, joy.y * 50f, 0f), true, null });
                     RPCProtection();
@@ -2180,7 +2180,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true) && Time.time > RopeDelay)
                 {
                     RopeDelay = Time.time + 0.25f;
-                    foreach (GorillaRopeSwing rope in GetRopes())
+                    foreach (GorillaRopeSwing rope in GetAllType<GorillaRopeSwing>())
                     {
                         RopeSwingManager.instance.photonView.RPC("SetVelocity", RpcTarget.All, new object[] { rope.ropeId, 1, new Vector3(UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f)), true, null });
                         RPCProtection();
@@ -2254,7 +2254,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true) && Time.time > RopeDelay)
                 {
                     RopeDelay = Time.time + 0.25f;
-                    foreach (GorillaRopeSwing rope in GetRopes())
+                    foreach (GorillaRopeSwing rope in GetAllType<GorillaRopeSwing>())
                     {
                         RopeSwingManager.instance.photonView.RPC("SetVelocity", RpcTarget.All, new object[] { rope.ropeId, 1, (NewPointer.transform.position - rope.transform.position).normalized * 50f, true, null });
                         RPCProtection();
