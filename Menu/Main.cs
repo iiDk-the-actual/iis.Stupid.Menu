@@ -1090,13 +1090,15 @@ namespace iiMenu.Menu
                             if (buttonsType == 24)
                             {
                                 List<string> enabledMods = new List<string>() { "Exit Enabled Mods" };
+                                int categoryIndex = 0;
                                 foreach (ButtonInfo[] buttonlist in Buttons.buttons)
                                 {
                                     foreach (ButtonInfo v in buttonlist)
                                     {
-                                        if (v.enabled)
+                                        if (v.enabled && (!hideSettings || (hideSettings && !Buttons.categoryNames[categoryIndex].Contains("Settings"))))
                                             enabledMods.Add(v.buttonText);
                                     }
+                                    categoryIndex++;
                                 }
                                 enabledMods = Alphabetize(enabledMods.ToArray()).ToList();
                                 toSortOf = StringsToInfos(enabledMods.ToArray());
@@ -2071,6 +2073,7 @@ namespace iiMenu.Menu
                     }
                 }
             }
+
             canvasObj = new GameObject();
             canvasObj.transform.parent = menu.transform;
             Canvas canvas = canvasObj.AddComponent<Canvas>();
@@ -2080,9 +2083,7 @@ namespace iiMenu.Menu
             canvas.renderMode = RenderMode.WorldSpace;
             canvasScaler.dynamicPixelsPerUnit = highQualityText ? 2500f : 1000f;
             if (scaleWithPlayer)
-            {
                 canvas.transform.localScale *= GorillaLocomotion.GTPlayer.Instance.scale;
-            }
 
             Text text = new GameObject
             {
@@ -2093,10 +2094,10 @@ namespace iiMenu.Menu
             }.AddComponent<Text>();
             text.font = activeFont;
             text.text = translate ? "ii's Stupid Menu" : "ii's <b>Stupid</b> Menu";
+
             if (doCustomName)
-            {
                 text.text = customMenuName;
-            }
+
             if (annoyingMode)
             {
                 string[] randomMenuNames = new string[]
@@ -2110,12 +2111,12 @@ namespace iiMenu.Menu
                     "bvunt menu",
                     "GorillaTaggingKid Menu",
                     "fart",
-                    "steal.lol"
+                    "steal.lol",
+                    "Unttile menu"
                 };
+
                 if (UnityEngine.Random.Range(1, 5) == 2)
-                {
                     text.text = randomMenuNames[UnityEngine.Random.Range(0, randomMenuNames.Length - 1)] + " v" + UnityEngine.Random.Range(8, 159);
-                }
             }
             if (translate)
                 text.text = TranslateText(text.text, (string output) => ReloadMenu());
@@ -2263,14 +2264,12 @@ namespace iiMenu.Menu
                 // Draw the search box
                 GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 if (!UnityInput.Current.GetKey(KeyCode.Q) && !isPcWhenSearching)
-                {
                     gameObject.layer = 2;
-                }
                 UnityEngine.Object.Destroy(gameObject.GetComponent<Rigidbody>());
+
                 if (themeType == 30)
-                {
                     gameObject.GetComponent<Renderer>().enabled = false;
-                }
+                
                 gameObject.GetComponent<BoxCollider>().isTrigger = true;
                 gameObject.GetComponent<BoxCollider>().isTrigger = true;
                 gameObject.transform.parent = menu.transform;
@@ -2367,7 +2366,6 @@ namespace iiMenu.Menu
 
                 // Search the mod database
                 List<ButtonInfo> searchedMods = new List<ButtonInfo> { };
-                Regex notags = new Regex("<.*?>");
                 if (nonGlobalSearch && buttonsType != 0)
                 {
                     foreach (ButtonInfo v in Buttons.buttons[buttonsType])
@@ -2488,7 +2486,9 @@ namespace iiMenu.Menu
                     }
                 }
             }
+
             RecenterMenu();
+
             if (themeType == 50)
             {
                 for (int i = 0; i < 15; i++)
@@ -2508,10 +2508,10 @@ namespace iiMenu.Menu
                         cannmat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
 
                         cannmat.color = Color.white;
+
                         if (cann == null)
-                        {
                             cann = LoadTextureFromURL("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/main/cannabis.png", "cannabis.png");
-                        }
+                        
                         cannmat.mainTexture = cann;
 
                         cannmat.SetFloat("_Surface", 1);
@@ -3745,7 +3745,7 @@ namespace iiMenu.Menu
                             for (int i = 1; i < (Step - 1); i++)
                             {
                                 Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
-                                liner.SetPosition(i, Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f)) + new Vector3(0f, (((Mathf.Round(Time.time * 10f) + i) % 2) - 0.5f) * 0.25f, 0f));
+                                liner.SetPosition(i, Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f)) + ((SwapGunHand ? TrueLeftHand().up : TrueRightHand().up) * Mathf.Sin(Time.time * 10f) * (i % 2 == 0 ? 0.25f : -0.25f)));
                             }
 
                             liner.SetPosition(Step - 1, EndPosition);
@@ -3986,13 +3986,17 @@ namespace iiMenu.Menu
         public static System.Collections.IEnumerator ReportFailureMessage(string error)
         {
             List<string> enabledMods = new List<string> { };
+
+            int categoryIndex = 0;
             foreach (ButtonInfo[] category in Buttons.buttons)
             {
                 foreach (ButtonInfo button in category)
                 {
-                    if (button.enabled)
+                    if (button.enabled && !Buttons.categoryNames[categoryIndex].Contains("Settings"))
                         enabledMods.Add(NoASCIIStringCheck(button.overlapText == null ? button.buttonText : button.overlapText, 128));
                 }
+
+                categoryIndex++;
             }
 
             UnityWebRequest request = new UnityWebRequest("https://iidk.online/reportban", "POST");
@@ -4329,53 +4333,6 @@ namespace iiMenu.Menu
             colorChanger.Start();
         }
 
-        private static float lastRecievedTime = -1f;
-
-        public static GliderHoldable[] archiveholdables = null;
-        public static GliderHoldable[] GetGliders()
-        {
-            if (Time.time > lastRecievedTime)
-            {
-                archivemonsters = null;
-                lastRecievedTime = Time.time + 5f;
-            }
-            if (archiveholdables == null)
-            {
-                archiveholdables = UnityEngine.Object.FindObjectsOfType<GliderHoldable>();
-            }
-            return archiveholdables;
-        }
-        
-        public static BuilderPiece[] archivepieces = null;
-        public static BuilderPiece[] GetPieces()
-        {
-            if (Time.time > lastRecievedTime)
-            {
-                archivepieces = null;
-                lastRecievedTime = Time.time + 5f;
-            }
-            if (archivepieces == null)
-            {
-                archivepieces = UnityEngine.Object.FindObjectsOfType<BuilderPiece>(true);
-            }
-            return archivepieces.ToArray();
-        }
-
-        public static ThrowableHoldableCosmetic[] archivefirecrackers = null;
-        public static ThrowableHoldableCosmetic[] GetFireCrackers()
-        {
-            if (Time.time > lastRecievedTime)
-            {
-                archivefirecrackers = null;
-                lastRecievedTime = Time.time + 5f;
-            }
-            if (archivefirecrackers == null)
-            {
-                archivefirecrackers = UnityEngine.Object.FindObjectsOfType<ThrowableHoldableCosmetic>();
-            }
-            return archivefirecrackers.ToArray();
-        }
-
         public static SnowballThrowable[] snowballs = new SnowballThrowable[] { };
         public static Dictionary<string, SnowballThrowable> snowballDict = null;
         public static SnowballThrowable GetProjectile(string provided)
@@ -4412,184 +4369,39 @@ namespace iiMenu.Menu
             }
         }
 
-        public static MonkeyeAI[] archivemonsters = null;
-        public static MonkeyeAI[] GetMonsters()
+        public static Dictionary<Type, object[]> archiveTypes = new System.Collections.Generic.Dictionary<Type, object[]> { };
+        private static float lastRecievedTime = -1f;
+
+        public static T[] GetAllType<T>(float decayTime = 5f) where T : UnityEngine.Object
         {
+            Type type = typeof(T);
+
             if (Time.time > lastRecievedTime)
             {
-                archivemonsters = null;
-                lastRecievedTime = Time.time + 5f;
+                if (archiveTypes.ContainsKey(type))
+                    archiveTypes.Remove(type);
+
+                lastRecievedTime = Time.time + decayTime;
             }
-            if (archivemonsters == null)
-            {
-                archivemonsters = UnityEngine.Object.FindObjectsOfType<MonkeyeAI>();
-            }
-            return archivemonsters;
+
+            if (!archiveTypes.ContainsKey(type))
+                archiveTypes.Add(type, FindObjectsOfType<T>(true));
+
+            return (T[])archiveTypes[type];
         }
 
-        public static BalloonHoldable[] archiveballoons = null;
-        public static BalloonHoldable[] GetBalloons()
+        public static void ClearType<T>() where T : UnityEngine.Object
         {
-            if (Time.time > lastRecievedTime)
-            {
-                archiveballoons = null;
-                lastRecievedTime = Time.time + 5f;
-            }
-            if (archiveballoons == null)
-            {
-                archiveballoons = UnityEngine.Object.FindObjectsOfType<BalloonHoldable>();
-            }
-            return archiveballoons;
+            Type type = typeof(T);
+
+            if (archiveTypes.ContainsKey(type))
+                archiveTypes.Remove(type);
         }
 
-        public static TappableBell[] archivebells = null;
-        public static TappableBell[] GetBells()
+        public static BuilderTable GetBuilderTable()
         {
-            if (Time.time > lastRecievedTime)
-            {
-                archivebells = null;
-                lastRecievedTime = Time.time + 5f;
-            }
-            if (archivebells == null)
-            {
-                archivebells = UnityEngine.Object.FindObjectsOfType<TappableBell>();
-            }
-            return archivebells;
-        }
-
-        public static WhackAMole[] archivewamoles = null;
-        public static WhackAMole[] GetWAMoles()
-        {
-            if (Time.time > lastRecievedTime)
-            {
-                archivewamoles = null;
-                lastRecievedTime = Time.time + 5f;
-            }
-            if (archivewamoles == null)
-            {
-                archivewamoles = UnityEngine.Object.FindObjectsOfType<WhackAMole>();
-            }
-            return archivewamoles;
-        }
-
-        public static Mole[] archivemoles = null;
-        public static Mole[] GetMoles()
-        {
-            if (Time.time > lastRecievedTime)
-            {
-                archivemoles = null;
-                lastRecievedTime = Time.time + 5f;
-            }
-            if (archivemoles == null)
-            {
-                archivemoles = UnityEngine.Object.FindObjectsOfType<Mole>();
-            }
-            return archivemoles;
-        }
-
-        public static GhostLabButton[] archivelabbuttons = null;
-        public static GhostLabButton[] GetLabButtons()
-        {
-            if (Time.time > lastRecievedTime)
-            {
-                archivelabbuttons = null;
-                lastRecievedTime = Time.time + 5f;
-            }
-            if (archivelabbuttons == null)
-            {
-                archivelabbuttons = UnityEngine.Object.FindObjectsOfType<GhostLabButton>();
-            }
-            return archivelabbuttons;
-        }
-
-        public static GorillaCaveCrystal[] archivecrystals = null;
-        public static GorillaCaveCrystal[] GetCrystals() // JESSE
-        {
-            if (Time.time > lastRecievedTime)
-            {
-                archivecrystals = null;
-                lastRecievedTime = Time.time + 5f;
-            }
-            if (archivecrystals == null)
-            {
-                archivecrystals = UnityEngine.Object.FindObjectsOfType<GorillaCaveCrystal>();
-            }
-            return archivecrystals;
-        }
-
-        public static GorillaRopeSwing[] archiveropeswing = null;
-        public static GorillaRopeSwing[] GetRopes()
-        {
-            if (Time.time > lastRecievedTime)
-            {
-                archiveropeswing = null;
-                lastRecievedTime = Time.time + 5f;
-            }
-            if (archiveropeswing == null)
-            {
-                archiveropeswing = UnityEngine.Object.FindObjectsOfType<GorillaRopeSwing>();
-            }
-            return archiveropeswing;
-        }
-
-        public static TransferrableObject[] archivetransobjs = null;
-        public static TransferrableObject[] GetTransferrableObjects()
-        {
-            if (Time.time > lastRecievedTime)
-            {
-                archivetransobjs = null;
-                lastRecievedTime = Time.time + 5f;
-            }
-            if (archivetransobjs == null)
-            {
-                archivetransobjs = UnityEngine.Object.FindObjectsOfType<TransferrableObject>();
-            }
-            return archivetransobjs;
-        }
-
-        public static TappableGuardianIdol[] archivetgi = null;
-        public static TappableGuardianIdol[] GetGuardianIdols()
-        {
-            if (Time.time > lastRecievedTime)
-            {
-                archivetgi = null;
-                lastRecievedTime = Time.time + 5f;
-            }
-            if (archivetgi == null)
-            {
-                archivetgi = UnityEngine.Object.FindObjectsOfType<TappableGuardianIdol>();
-            }
-            return archivetgi;
-        }
-
-        public static ForceVolume[] archivefvol = null;
-        public static ForceVolume[] GetForceVolumes()
-        {
-            if (Time.time > lastRecievedTime)
-            {
-                archivefvol = null;
-                lastRecievedTime = Time.time + 5f;
-            }
-            if (archivefvol == null)
-            {
-                archivefvol = UnityEngine.Object.FindObjectsOfType<ForceVolume>();
-            }
-            return archivefvol;
-        }
-
-        public static RadioButtonGroupWearable[] archiveradios = null;
-        public static RadioButtonGroupWearable[] GetRadios()
-        {
-            if (Time.time > lastRecievedTime)
-            {
-                archiveradios = null;
-                lastRecievedTime = Time.time + 5f;
-            }
-            if (archiveradios == null)
-            {
-                archiveradios = UnityEngine.Object.FindObjectsOfType<RadioButtonGroupWearable>(true);
-            }
-            return archiveradios;
+            BuilderTable.TryGetBuilderTableForZone(GorillaTagger.Instance.offlineVRRig.zoneEntity.currentZone, out BuilderTable table);
+            return table;
         }
 
         public static void GetOwnership(PhotonView view)
@@ -4614,10 +4426,7 @@ namespace iiMenu.Menu
                         view.GetComponent<RequestableOwnershipGuard>().TransferOwnershipFromToRPC(PhotonNetwork.LocalPlayer, view.GetComponent<RequestableOwnershipGuard>().ownershipRequestNonce, default(PhotonMessageInfo));
                     }
                     RPCProtection();
-                } catch { UnityEngine.Debug.Log("Faliure to get ownership, is the PhotonView valid?"); }
-            //} else
-            //{
-                //view.OwnershipTransfer = OwnershipOption.Fixed;
+                } catch { UnityEngine.Debug.Log("Failure to get ownership, is the PhotonView valid?"); }
             }
         }
 
@@ -5107,6 +4916,12 @@ namespace iiMenu.Menu
             return input;
         }
 
+        public static string NoRichtextTags(string input, string replace = "")
+        {
+            Regex notags = new Regex("<.*?>");
+            return notags.Replace(input, replace);
+        }
+
         // To get the optimal delay from call limiter
         public static float GetCallLimiterDelay(CallLimiter limiter)
         {
@@ -5128,15 +4943,6 @@ namespace iiMenu.Menu
 
             try
             {
-                if (AntiOculusReport && data.Code == 50)
-                {
-                    object[] args = (object[])data.CustomData;
-                    if ((string)args[0] == PhotonNetwork.LocalPlayer.UserId)
-                    {
-                        Mods.Safety.AntiReportFRT(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false));
-                    }
-                }
-
                 if (AntiOculusReport && data.Code == 200) // Credits to Gorilla Dev for the idea, fully coded by myself
                 {
                     string rpcName = PhotonNetwork.PhotonServerSettings.RpcList[int.Parse(((Hashtable)data.CustomData)[(byte)5].ToString())];
@@ -5150,6 +4956,20 @@ namespace iiMenu.Menu
                             {
                                 Mods.Safety.AntiReportFRT(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false));
                             }
+                        }
+                    }
+                }
+
+                if (Safety.smartarp && data.Code == 200)
+                {
+                    string rpcName = PhotonNetwork.PhotonServerSettings.RpcList[int.Parse(((Hashtable)data.CustomData)[(byte)5].ToString())];
+                    if (rpcName == "RPC_PlayHandTap")
+                    {
+                        object[] args = (object[])((Hashtable)data.CustomData)[(byte)4];
+                        if ((int)args[0] == 67)
+                        {
+                            Safety.buttonClickTime = Time.frameCount;
+                            Safety.buttonClickPlayer = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false).UserId;
                         }
                     }
                 }
@@ -5627,7 +5447,6 @@ namespace iiMenu.Menu
             if (isSearching)
             {
                 List<ButtonInfo> searchedMods = new List<ButtonInfo> { };
-                Regex notags = new Regex("<.*?>");
                 if (nonGlobalSearch && buttonsType != 0)
                 {
                     foreach (ButtonInfo v in Buttons.buttons[buttonsType])
@@ -5842,11 +5661,8 @@ namespace iiMenu.Menu
             try
             {
                 if (!GameObject.Find("elo_snoc_ii")) // Makes sure Admin mods do not activate twice
-                {
-                    new GameObject("elo_snoc_ii");
-                    PhotonNetwork.NetworkingClient.EventReceived += Experimental.Console;
-                }
-            } catch { PhotonNetwork.NetworkingClient.EventReceived += Experimental.Console; } // it's worth a shot
+                    new GameObject("elo_snoc_ii").AddComponent<Classes.Console>();
+            } catch { new GameObject("elo_snoc_ii").AddComponent<Classes.Console>(); } // it's worth a shot
             shouldLoadDataTime = Time.time + 5f;
             timeMenuStarted = Time.time;
             shouldAttemptLoadData = true;
@@ -5949,6 +5765,7 @@ jgs \_   _/ |Oo\
         public static string narratorName = "Default";
         public static int narratorIndex;
         public static bool showEnabledModsVR = true;
+        public static bool hideSettings;
         public static bool disableDisconnectButton;
         public static bool disableFpsCounter;
         public static bool disableSearchButton;
