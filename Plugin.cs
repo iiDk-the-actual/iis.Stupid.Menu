@@ -8,16 +8,25 @@ namespace iiMenu
     [BepInPlugin(PluginInfo.GUID, PluginInfo.Name, PluginInfo.Version)]
     public class Plugin : BaseUnityPlugin
     {
-        private void Start() // To that one dude that uses SMI to inject my menu, it's this method
+        private void Awake()
         {
+            // Set console title
+            Console.Title = "ii's Stupid Menu // Build " + PluginInfo.Version;
+        }
+
+        private void Start()
+        {
+            // Ensure console title remains
             Console.Title = "ii's Stupid Menu // Build " + PluginInfo.Version;
 
-            iiMenu.Patches.Menu.ApplyHarmonyPatches();
-            GameObject Loading = new GameObject("ii");
-            Loading.AddComponent<iiMenu.UI.Main>();
-            Loading.AddComponent<iiMenu.Notifications.NotifiLib>();
-            Loading.AddComponent<iiMenu.Classes.CoroutineManager>();
-            UnityEngine.Object.DontDestroyOnLoad(Loading);
+            Patches.Menu.ApplyHarmonyPatches();
+
+            GameObject Loader = new GameObject("iiMenu_Loader");
+            Loader.AddComponent<UI.Main>();
+            Loader.AddComponent<Notifications.NotifiLib>();
+            Loader.AddComponent<Classes.CoroutineManager>();
+
+            DontDestroyOnLoad(Loader);
         }
     }
 }
