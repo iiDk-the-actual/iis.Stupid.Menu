@@ -188,13 +188,13 @@ namespace iiMenu.Mods
             if (GetIndex("Hidden Labels").enabled) { go.layer = 19; }
             go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
             TextMesh textMesh = go.AddComponent<TextMesh>();
-            textMesh.color = GorillaLocomotion.GTPlayer.Instance.GetComponent<Rigidbody>().velocity.magnitude >= GorillaLocomotion.GTPlayer.Instance.maxJumpSpeed ? Color.green : Color.white;
+            textMesh.color = GorillaTagger.Instance.rigidbody.velocity.magnitude >= GorillaLocomotion.GTPlayer.Instance.maxJumpSpeed ? Color.green : Color.white;
             textMesh.fontSize = 24;
             textMesh.fontStyle = activeFontStyle;
             textMesh.characterSize = 0.1f;
             textMesh.anchor = TextAnchor.MiddleCenter;
             textMesh.alignment = TextAlignment.Center;
-            textMesh.text = string.Format("{0:F1}m/s", GorillaLocomotion.GTPlayer.Instance.GetComponent<Rigidbody>().velocity.magnitude);
+            textMesh.text = string.Format("{0:F1}m/s", GorillaTagger.Instance.rigidbody.velocity.magnitude);
 
             go.transform.position = GorillaTagger.Instance.rightHandTransform.position + new Vector3(0f, 0.1f, 0f);
             go.transform.LookAt(Camera.main.transform.position);
