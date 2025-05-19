@@ -318,7 +318,6 @@ namespace iiMenu.Mods
         {
             GameObject thequitbox = GameObject.Find("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/QuitBox");
             theboxlol = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            UnityEngine.Object.Destroy(theboxlol.GetComponent<Rigidbody>());
             theboxlol.transform.position = thequitbox.transform.position;
             theboxlol.transform.rotation = thequitbox.transform.rotation;
             theboxlol.transform.localScale = thequitbox.transform.localScale;
@@ -328,7 +327,7 @@ namespace iiMenu.Mods
 
         public static void NotPhysicalQuitbox()
         {
-            UnityEngine.Object.Destroy(theboxlol);
+            Object.Destroy(theboxlol);
             GameObject.Find("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/QuitBox").SetActive(true);
         }
 

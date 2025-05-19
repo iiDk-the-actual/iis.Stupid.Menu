@@ -127,7 +127,6 @@ namespace iiMenu.Mods
             }
 
             GameObject a = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            UnityEngine.Object.Destroy(a.GetComponent<Rigidbody>());
             UnityEngine.Object.Destroy(a.GetComponent<BoxCollider>());
             a.transform.position = new Vector3(-54.0404f, 16.2321f, -124.5915f);
             a.transform.localScale = new Vector3(14.0131f, 0.0347f, 15.8359f);
@@ -135,7 +134,6 @@ namespace iiMenu.Mods
             UnityEngine.Object.Destroy(a, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime * 2f);
 
             a = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            UnityEngine.Object.Destroy(a.GetComponent<Rigidbody>());
             UnityEngine.Object.Destroy(a.GetComponent<BoxCollider>());
             a.transform.position = new Vector3(-52.7365f, 17.5233f, -122.333f);
             a.transform.localScale = new Vector3(14.0131f, 6.4907f, 0.0305f);
@@ -143,7 +141,6 @@ namespace iiMenu.Mods
             UnityEngine.Object.Destroy(a, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime * 2f);
 
             a = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            UnityEngine.Object.Destroy(a.GetComponent<Rigidbody>());
             UnityEngine.Object.Destroy(a.GetComponent<BoxCollider>());
             a.transform.position = new Vector3(-51.6623f, 17.5233f, -125.9925f);
             a.transform.localScale = new Vector3(15.5363f, 6.4907f, 0.0305f);
@@ -152,7 +149,6 @@ namespace iiMenu.Mods
             UnityEngine.Object.Destroy(a, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime * 2f);
 
             a = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            UnityEngine.Object.Destroy(a.GetComponent<Rigidbody>());
             UnityEngine.Object.Destroy(a.GetComponent<BoxCollider>());
             a.transform.position = new Vector3(-54.0606f, 18.8161f, -124.6264f);
             a.transform.localScale = new Vector3(14.0131f, 0.0347f, 15.5983f);
@@ -394,8 +390,6 @@ namespace iiMenu.Mods
             visualizerOutline = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             UnityEngine.Object.Destroy(visualizerObject.GetComponent<Collider>());
             UnityEngine.Object.Destroy(visualizerOutline.GetComponent<Collider>());
-            UnityEngine.Object.Destroy(visualizerObject.GetComponent<Rigidbody>());
-            UnityEngine.Object.Destroy(visualizerOutline.GetComponent<Rigidbody>());
         }
 
         public static void AudioVisualizer()
@@ -1215,13 +1209,11 @@ namespace iiMenu.Mods
         public static void StartNoLimb()
         {
             l = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            UnityEngine.Object.Destroy(l.GetComponent<Rigidbody>());
             UnityEngine.Object.Destroy(l.GetComponent<SphereCollider>());
 
             l.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
 
             r = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            UnityEngine.Object.Destroy(r.GetComponent<Rigidbody>());
             UnityEngine.Object.Destroy(r.GetComponent<SphereCollider>());
 
             r.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
