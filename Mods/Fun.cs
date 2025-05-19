@@ -2957,28 +2957,6 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void LowercaseName()
-        {
-            string name = PhotonNetwork.NickName.ToLower();
-            string outputname = "";
-            foreach (char ch in name)
-            {
-                if (superscript.ContainsKey(ch))
-                {
-                    outputname += superscript[ch];
-                } else
-                {
-                    outputname += ch;
-                }
-            }
-            ChangeName(outputname);
-        }
-
-        public static void LongName()
-        {
-            ChangeName("ǄǄǄǄǄǄǄǄǄǄǄǄ");
-        }
-
         public static void RemoveName()
         {
             ChangeName("________");
