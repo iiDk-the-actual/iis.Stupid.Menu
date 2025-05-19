@@ -2316,7 +2316,9 @@ namespace iiMenu.Mods
                 "Wavy",
                 "Blocky",
                 "Zigzag",
-                "Spring"
+                "Spring",
+                "Bouncy",
+                "Audio"
             };
 
             gunVariation++;
@@ -2341,6 +2343,16 @@ namespace iiMenu.Mods
                 GunDirection = 0;
 
             GetIndex("Change Gun Direction").overlapText = "Change Gun Direction <color=grey>[</color><color=green>" + DirectionNames[GunDirection] + "</color><color=grey>]</color>";
+        }
+
+        public static void EnableGunSounds()
+        {
+            GunSounds = true;
+        }
+
+        public static void DisableGunSounds()
+        {
+            GunSounds = true;
         }
 
         public static void EnableSwapGunHand()
@@ -2391,6 +2403,36 @@ namespace iiMenu.Mods
         public static void YesGunLine()
         {
             disableGunLine = false;
+        }
+
+        private static int gunLineQualityIndex;
+        public static void ChangeGunLineQuality()
+        {
+            string[] Names = new string[]
+            {
+                "Potato",
+                "Low",
+                "Normal",
+                "High",
+                "Extreme"
+            };
+
+            int[] Qualities = new int[]
+            {
+                10,
+                25,
+                50,
+                100,
+                250
+            };
+
+            gunLineQualityIndex++;
+
+            if (gunLineQualityIndex >= Names.Length)
+                gunLineQualityIndex = 0;
+
+            GunLineQuality = Qualities[gunLineQualityIndex];
+            GetIndex("Change Gun Line Quality").overlapText = "Change Gun Line Quality <color=grey>[</color><color=green>" + Names[gunLineQualityIndex] + "</color><color=grey>]</color>";
         }
 
         public static void FreezePlayerInMenu()
@@ -2826,41 +2868,74 @@ namespace iiMenu.Mods
         public static string SavePreferencesToText()
         {
             string seperator = ";;";
-            string text = "";
+
+            string enabledtext = "";
             foreach (ButtonInfo[] buttonlist in Buttons.buttons)
             {
                 foreach (ButtonInfo v in buttonlist)
                 {
                     if (v.enabled && v.buttonText != "Save Preferences")
                     {
-                        if (text == "")
-                        {
-                            text += v.buttonText;
-                        }
+                        if (enabledtext == "")
+                            enabledtext += v.buttonText;
                         else
-                        {
-                            text += seperator + v.buttonText;
-                        }
+                            enabledtext += seperator + v.buttonText;
                     }
                 }
             }
 
-            string favz = "";
+            string favoritetext = "";
             foreach (string fav in favorites)
             {
-                if (favz == "")
-                    favz += fav;
+                if (favoritetext == "")
+                    favoritetext += fav;
                 else
-                    favz += seperator + fav;
+                    favoritetext += seperator + fav;
             }
 
-            string ihateyouguys = platformMode + seperator + platformShape + seperator + flySpeedCycle + seperator + longarmCycle + seperator + speedboostCycle + seperator + projmode + seperator + trailmode + seperator + shootCycle + seperator + pointerIndex + seperator + Advantages.tagAuraIndex + seperator + notificationDecayTime + seperator + fontStyleType + seperator + arrowType + seperator + pcbg + seperator + internetTime + seperator + hotkeyButton + seperator + buttonClickIndex + seperator + buttonClickVolume + seperator + Safety.antireportrangeindex + seperator + Advantages.tagRangeIndex + seperator + Sound.BindMode + seperator + Movement.driveInt + seperator + langInd + seperator + inputTextColorInt + seperator + Movement.pullPowerInt + seperator + notificationSoundIndex + seperator + Visuals.PerformanceModeStepIndex + seperator + gunVariation + seperator + GunDirection + seperator + narratorIndex + seperator + Movement.predInt;
+            string[] settings = new string[]
+            {
+                platformMode.ToString(),
+                platformShape.ToString(),
+                flySpeedCycle.ToString(),
+                longarmCycle.ToString(),
+                speedboostCycle.ToString(),
+                projmode.ToString(),
+                trailmode.ToString(),
+                shootCycle.ToString(),
+                pointerIndex.ToString(),
+                Advantages.tagAuraIndex.ToString(),
+                notificationDecayTime.ToString(),
+                fontStyleType.ToString(),
+                arrowType.ToString(),
+                pcbg.ToString(),
+                internetTime.ToString(),
+                hotkeyButton.ToString(),
+                buttonClickIndex.ToString(),
+                buttonClickVolume.ToString(),
+                Safety.antireportrangeindex.ToString(),
+                Advantages.tagRangeIndex.ToString(),
+                Sound.BindMode.ToString(),
+                Movement.driveInt.ToString(),
+                langInd.ToString(),
+                inputTextColorInt.ToString(),
+                Movement.pullPowerInt.ToString(),
+                notificationSoundIndex.ToString(),
+                Visuals.PerformanceModeStepIndex.ToString(),
+                gunVariation.ToString(),
+                GunDirection.ToString(),
+                narratorIndex.ToString(),
+                Movement.predInt.ToString(),
+                gunLineQualityIndex.ToString()
+            };
 
-            string bindsToSave = "";
+            string settingstext = string.Join(seperator, settings);
+
+            string bindingtext = "";
             foreach (KeyValuePair<string, List<string>> Bind in ModBindings)
             {
-                if (bindsToSave != "")
-                    bindsToSave += "~~";
+                if (bindingtext != "")
+                    bindingtext += "~~";
 
                 string toAppend = Bind.Key;
                 foreach (string modName in Bind.Value)
@@ -2868,17 +2943,17 @@ namespace iiMenu.Mods
                     toAppend += seperator + modName;
                 }
 
-                bindsToSave += toAppend;
+                bindingtext += toAppend;
             }
 
             string finaltext =
-                text + "\n" +
-                favz + "\n" +
-                ihateyouguys + "\n" +
+                enabledtext + "\n" +
+                favoritetext + "\n" +
+                settingstext + "\n" +
                 pageButtonType.ToString() + "\n" +
                 themeType.ToString() + "\n" +
-                fontCycle.ToString() + "\n" + 
-                bindsToSave;
+                fontCycle.ToString() + "\n" +
+                bindingtext;
 
             return finaltext;
         }
@@ -2986,73 +3061,102 @@ namespace iiMenu.Mods
             for (int index = 0; index < activebuttons.Length; index++)
                 Toggle(activebuttons[index]);
 
-            string[] favz = textData[1].Split(";;");
+            string[] favoritesarray = textData[1].Split(";;");
             favorites.Clear();
-            foreach (string fav in favz)
-                favorites.Add(fav);
+            foreach (string favorite in favoritesarray)
+                favorites.Add(favorite);
 
             try
             {
                 string[] data = textData[2].Split(";;");
                 platformMode = int.Parse(data[0]) - 1;
                 Movement.ChangePlatformType();
+
                 platformShape = int.Parse(data[1]) - 1;
                 Movement.ChangePlatformShape();
+
                 flySpeedCycle = int.Parse(data[2]) - 1;
                 Movement.ChangeFlySpeed();
+
                 longarmCycle = int.Parse(data[3]) - 1;
                 Movement.ChangeArmLength();
+
                 speedboostCycle = int.Parse(data[4]) - 1;
                 Movement.ChangeSpeedBoostAmount();
+
                 projmode = int.Parse(data[5]) - 1;
                 Projectiles.ChangeProjectile();
+
                 trailmode = int.Parse(data[6]) - 1;
                 Projectiles.ChangeTrail();
+
                 shootCycle = int.Parse(data[7]) - 1;
                 Projectiles.ChangeShootSpeed();
+
                 pointerIndex = int.Parse(data[8]) - 1;
                 ChangePointerPosition();
+
                 Advantages.tagAuraIndex = int.Parse(data[9]) - 1;
                 Advantages.ChangeTagAuraRange();
+
                 notificationDecayTime = int.Parse(data[10]) - 1000;
                 ChangeNotificationTime();
+
                 fontStyleType = int.Parse(data[11]) - 1;
                 ChangeFontStyleType();
+
                 arrowType = int.Parse(data[12]) - 1;
                 ChangeArrowType();
+
                 pcbg = int.Parse(data[13]) - 1;
                 ChangePCUI();
+
                 internetTime = int.Parse(data[14]) - 1;
                 ChangeReconnectTime();
+
                 hotkeyButton = data[15];
                 buttonClickIndex = int.Parse(data[16]) - 1;
                 ChangeButtonSound();
+
                 buttonClickVolume = int.Parse(data[17]) - 1;
                 ChangeButtonVolume();
+
                 Safety.antireportrangeindex = int.Parse(data[18]) - 1;
                 Safety.ChangeAntiReportRange();
+
                 Advantages.tagRangeIndex = int.Parse(data[19]) - 1;
                 Advantages.ChangeTagReachDistance();
+
                 Sound.BindMode = int.Parse(data[20]) - 1;
                 Sound.SoundBindings();
+
                 Movement.driveInt = int.Parse(data[21]) - 1;
                 Movement.ChangeDriveSpeed();
+
                 langInd = int.Parse(data[22]) - 1;
                 ChangeMenuLanguage();
+
                 inputTextColorInt = int.Parse(data[23]) - 1;
                 ChangeInputTextColor();
+
                 Movement.pullPowerInt = int.Parse(data[24]) - 1;
                 Movement.ChangePullModPower();
+
                 notificationSoundIndex = int.Parse(data[25]) - 1;
                 ChangeNotificationSound();
+
                 Visuals.PerformanceModeStepIndex = int.Parse(data[26]) - 1;
                 Visuals.ChangePerformanceModeVisualStep();
+
                 gunVariation = int.Parse(data[27]) - 1;
                 ChangeGunVariation();
+
                 GunDirection = int.Parse(data[28]) - 1;
                 ChangeGunDirection();
+
                 narratorIndex = int.Parse(data[29]) - 1;
                 ChangeNarrationVoice();
+
                 Movement.predInt = int.Parse(data[30]) - 1;
                 Movement.ChangePredictionAmount();
             } catch { UnityEngine.Debug.Log("Save file out of date"); }
