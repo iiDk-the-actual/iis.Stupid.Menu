@@ -20,22 +20,23 @@ namespace iiMenu.Mods.Spammers
 {
     public class Projectiles
     {
-        public static GorillaVelocityEstimator jackshit = null;
+        // This file needs to be rewritten
+        public static GorillaVelocityEstimator VelocityEstimator = null;
 
         public static void BetaFireProjectile(string projectileName, Vector3 position, Vector3 velocity, Color color, bool nodelay = false) // This code is really bad
         {
-            if (jackshit == null)
+            if (VelocityEstimator == null)
             {
                 GameObject thepointless = new GameObject("Blank GVE");
-                jackshit = thepointless.AddComponent<GorillaVelocityEstimator>() as GorillaVelocityEstimator;
+                VelocityEstimator = thepointless.AddComponent<GorillaVelocityEstimator>() as GorillaVelocityEstimator;
             }
-            jackshit.enabled = false;
+            VelocityEstimator.enabled = false;
 
             SnowballThrowable fart = GetProjectile(InternalProjectileNames[Array.IndexOf(ExternalProjectileNames, projectileName)]);
             if (!fart.gameObject.activeSelf)
             {
                 fart.SetSnowballActiveLocal(true);
-                fart.velocityEstimator = jackshit;
+                fart.velocityEstimator = VelocityEstimator;
                 fart.transform.position = GorillaTagger.Instance.leftHandTransform.position;
                 fart.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
             }
@@ -64,7 +65,7 @@ namespace iiMenu.Mods.Spammers
                 } catch (Exception e) { UnityEngine.Debug.Log(e.Message); }
 
                 if (projDebounceType > 0f && !nodelay)
-                    projDebounce = Time.time + projDebounceType + 0.07f;
+                    projDebounce = Time.time + Mathf.Min(projDebounceType, 0.16f);
             }
         }
 
@@ -84,15 +85,10 @@ namespace iiMenu.Mods.Spammers
                 sendEventData[0] = PhotonNetwork.ServerTimestamp;
                 sendEventData[1] = (byte)1;
                 sendEventData[2] = impactSendData;
-                try
-                {
-                    PhotonNetwork.RaiseEvent(3, sendEventData, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendUnreliable);
-                }
-                catch { /*wtf*/ }
+                PhotonNetwork.RaiseEvent(3, sendEventData, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendUnreliable);
+
                 if (projDebounceType > 0f && !noDelay)
-                {
-                    projDebounce = Time.time + projDebounceType;
-                }
+                    projDebounce = Time.time + 0.1f;
             }
         }
 
@@ -521,48 +517,6 @@ namespace iiMenu.Mods.Spammers
             }
         }
 
-        /*
-        public static void DisableProjectileBomb()
-        {
-            if (ProjBombObject != null)
-            {
-                UnityEngine.Object.Destroy(ProjBombObject);
-                ProjBombObject = null;
-            }
-        }*/
-
-        /*
-        public static void RandomColorSnowballs()
-        {
-            GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballRightAnchor").transform.Find("LMACF.").GetComponent<SnowballThrowable>().randomizeColor = true;
-            GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballLeftAnchor").transform.Find("LMACE.").GetComponent<SnowballThrowable>().randomizeColor = true;
-        }
-
-        public static void NoRandomColorSnowballs()
-        {
-            GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballRightAnchor").transform.Find("LMACF.").GetComponent<SnowballThrowable>().randomizeColor = false;
-            GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballLeftAnchor").transform.Find("LMACE.").GetComponent<SnowballThrowable>().randomizeColor = false;
-        }
-
-        public static void BlackSnowballs()
-        {
-            //currentProjectileColor = Color.black;
-            GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballRightAnchor").transform.Find("LMACF.").GetComponent<SnowballThrowable>().randomizeColor = true;
-            GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballRightAnchor").transform.Find("LMACF.").GetComponent<SnowballThrowable>().randomColorHSVRanges = new GTColor.HSVRanges(0f, 0f, 0f, 0f, 0f, 0f);
-            GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballLeftAnchor").transform.Find("LMACE.").GetComponent<SnowballThrowable>().randomizeColor = true;
-            GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballLeftAnchor").transform.Find("LMACE.").GetComponent<SnowballThrowable>().randomColorHSVRanges = new GTColor.HSVRanges(0f, 0f, 0f, 0f, 0f, 0f);
-        }
-
-        public static void FixBlackSnowballs()
-        {
-            //currentProjectileColor = Color.white;
-            GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballRightAnchor").transform.Find("LMACF.").GetComponent<SnowballThrowable>().randomizeColor = false;
-            GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballRightAnchor").transform.Find("LMACF.").GetComponent<SnowballThrowable>().randomColorHSVRanges = new GTColor.HSVRanges(0f, 1f, 0.7f, 1f, 1f, 1f);
-            GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballLeftAnchor").transform.Find("LMACE.").GetComponent<SnowballThrowable>().randomizeColor = true;
-            GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/SnowballLeftAnchor").transform.Find("LMACE.").GetComponent<SnowballThrowable>().randomColorHSVRanges = new GTColor.HSVRanges(0f, 1f, 0.7f, 1f, 1f, 1f);
-        }
-        */
-
         public static void ImpactSpam()
         {
             if ((rightGrab || Mouse.current.leftButton.isPressed) && Time.time > projDebounce)
@@ -784,15 +738,7 @@ namespace iiMenu.Mods.Spammers
         {
             int projIndex = projmode;
             if (GetIndex("Random Projectile").enabled)
-            {
                 projIndex = UnityEngine.Random.Range(0, 4);
-            }
-            if (jackshit == null)
-            {
-                GameObject thepointless = new GameObject("Blank GVE");
-                jackshit = thepointless.AddComponent<GorillaVelocityEstimator>() as GorillaVelocityEstimator;
-            }
-            jackshit.enabled = false;
 
             if (leftGrab)
             {
