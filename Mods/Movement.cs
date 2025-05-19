@@ -183,7 +183,6 @@ namespace iiMenu.Mods
                         break;
                 }
 
-                UnityEngine.Object.Destroy(gameObject.GetComponent<Rigidbody>());
                 UnityEngine.Object.Destroy(gameObject.GetComponent<BoxCollider>());
                 gameObject.transform.parent = platform.transform;
                 gameObject.transform.localPosition = Vector3.zero;
@@ -813,7 +812,6 @@ namespace iiMenu.Mods
                 NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
                 NewPointer.transform.position = Ray.point;
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
                 UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
 
@@ -891,7 +889,6 @@ namespace iiMenu.Mods
                 NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
                 NewPointer.transform.position = Ray.point;
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
                 UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
 
@@ -960,7 +957,6 @@ namespace iiMenu.Mods
                 NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
                 NewPointer.transform.position = Ray.point;
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
                 UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
 
@@ -1026,7 +1022,6 @@ namespace iiMenu.Mods
                 NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
                 NewPointer.transform.position = Ray.point;
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
                 UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
                 UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
 
@@ -1772,7 +1767,6 @@ namespace iiMenu.Mods
                 if (CheckPoint == null)
                 {
                     CheckPoint = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                    UnityEngine.Object.Destroy(CheckPoint.GetComponent<Rigidbody>());
                     UnityEngine.Object.Destroy(CheckPoint.GetComponent<SphereCollider>());
                     CheckPoint.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
                 }
@@ -1823,7 +1817,6 @@ namespace iiMenu.Mods
                 if (!isNearCheckpoint)
                 {
                     GameObject newCheckpoint = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                    UnityEngine.Object.Destroy(newCheckpoint.GetComponent<Rigidbody>());
                     UnityEngine.Object.Destroy(newCheckpoint.GetComponent<SphereCollider>());
                     newCheckpoint.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
                     newCheckpoint.transform.position = GorillaTagger.Instance.rightHandTransform.position;
@@ -1927,7 +1920,6 @@ namespace iiMenu.Mods
                 if (BombObject == null)
                 {
                     BombObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                    UnityEngine.Object.Destroy(BombObject.GetComponent<Rigidbody>());
                     UnityEngine.Object.Destroy(BombObject.GetComponent<SphereCollider>());
                     BombObject.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
                 }
@@ -1971,6 +1963,7 @@ namespace iiMenu.Mods
                 {
                     pearl = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     UnityEngine.Object.Destroy(pearl.GetComponent<Collider>());
+
                     pearl.transform.localScale = new Vector3(0.1f, 0.1f, 0.01f);
                     if (pearlmat == null)
                     {
@@ -1998,10 +1991,10 @@ namespace iiMenu.Mods
                     }
                     pearl.GetComponent<Renderer>().material = pearlmat;
                 }
+
                 if (pearl.GetComponent<Rigidbody>() != null)
-                {
                     UnityEngine.Object.Destroy(pearl.GetComponent<Rigidbody>());
-                }
+                
                 isrighthandedpearl = rightGrab;
                 pearl.transform.position = rightGrab ? GorillaTagger.Instance.rightHandTransform.position : GorillaTagger.Instance.leftHandTransform.position;
             } else
@@ -2038,9 +2031,7 @@ namespace iiMenu.Mods
             {
                 pearl.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
                 if (pearl.GetComponent<Rigidbody>() != null)
-                {
                     pearl.GetComponent<Rigidbody>().AddForce(Vector3.up * (Time.deltaTime * (6.66f / Time.deltaTime)), ForceMode.Acceleration);
-                }
             }
         }
 
@@ -3162,7 +3153,6 @@ namespace iiMenu.Mods
                     Vector3 pointA = vrrig.head.rigTarget.transform.position + new Vector3(0f, 0.16f, 0f);
                     Vector3 pointB = vrrig.head.rigTarget.transform.position - new Vector3(0f, 0.4f, 0f);
                     GameObject bodyCollider = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    UnityEngine.Object.Destroy(bodyCollider.GetComponent<Rigidbody>());
                     bodyCollider.GetComponent<Renderer>().enabled = false;
                     bodyCollider.transform.position = Vector3.Lerp(pointA, pointB, 0.5f);
                     bodyCollider.transform.rotation = vrrig.transform.rotation;
@@ -3174,7 +3164,6 @@ namespace iiMenu.Mods
                         pointA = vrrig.mainSkin.bones[bones[i]].position;
                         pointB = vrrig.mainSkin.bones[bones[i + 1]].position;
                         bodyCollider = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        UnityEngine.Object.Destroy(bodyCollider.GetComponent<Rigidbody>());
                         bodyCollider.GetComponent<Renderer>().enabled = false;
                         bodyCollider.transform.position = Vector3.Lerp(pointA, pointB, 0.5f);
                         bodyCollider.transform.LookAt(pointB);
@@ -3241,7 +3230,6 @@ namespace iiMenu.Mods
                     leftThrow = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     leftThrow.GetComponent<Renderer>().enabled = false;
                     UnityEngine.Object.Destroy(leftThrow.GetComponent<BoxCollider>());
-                    UnityEngine.Object.Destroy(leftThrow.GetComponent<Rigidbody>());
 
                     leftThrow.transform.position = GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.position;
                     leftThrow.transform.rotation = GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.rotation;
@@ -3278,7 +3266,6 @@ namespace iiMenu.Mods
                     rightThrow = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     rightThrow.GetComponent<Renderer>().enabled = false;
                     UnityEngine.Object.Destroy(rightThrow.GetComponent<BoxCollider>());
-                    UnityEngine.Object.Destroy(rightThrow.GetComponent<Rigidbody>());
 
                     rightThrow.transform.position = GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position;
                     rightThrow.transform.rotation = GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.rotation;
@@ -3354,13 +3341,11 @@ namespace iiMenu.Mods
         {
             lvT = GameObject.CreatePrimitive(PrimitiveType.Cube);
             UnityEngine.Object.Destroy(lvT.GetComponent<BoxCollider>());
-            UnityEngine.Object.Destroy(lvT.GetComponent<Rigidbody>());
             lvT.GetComponent<Renderer>().enabled = false;
             lvT.AddComponent<GorillaVelocityTracker>();
 
             rvT = GameObject.CreatePrimitive(PrimitiveType.Cube);
             UnityEngine.Object.Destroy(rvT.GetComponent<BoxCollider>());
-            UnityEngine.Object.Destroy(rvT.GetComponent<Rigidbody>());
             rvT.GetComponent<Renderer>().enabled = false;
             rvT.AddComponent<GorillaVelocityTracker>();
         }

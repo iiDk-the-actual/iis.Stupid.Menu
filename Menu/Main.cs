@@ -191,22 +191,22 @@ namespace iiMenu.Menu
                                     } catch { }
                                 }
 
-                                UnityEngine.Object.Destroy(menu, 5f);
+                                Destroy(menu, 5f);
                                 menu = null;
-                                UnityEngine.Object.Destroy(reference);
+                                Destroy(reference);
                                 reference = null;
                             }
                             else
                             {
-                                UnityEngine.Object.Destroy(menu);
+                                Destroy(menu);
                                 menu = null;
-                                UnityEngine.Object.Destroy(reference);
+                                Destroy(reference);
                                 reference = null;
                             }
                         } else
                         {
                             CoroutineManager.RunCoroutine(ShrinkCoroutine());
-                            UnityEngine.Object.Destroy(reference);
+                            Destroy(reference);
                             reference = null;
                         }
                     }
@@ -668,7 +668,7 @@ namespace iiMenu.Menu
                             {
                                 if (reference != null)
                                 {
-                                    UnityEngine.Object.Destroy(reference);
+                                    Destroy(reference);
                                     reference = null;
                                 }
                             }
@@ -732,18 +732,16 @@ namespace iiMenu.Menu
                             if (legacyGhostview)
                             {
                                 if (GhostRig != null)
-                                    UnityEngine.Object.Destroy(GhostRig.gameObject);
+                                    Destroy(GhostRig.gameObject);
 
                                 GameObject l = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                                UnityEngine.Object.Destroy(l.GetComponent<Rigidbody>());
-                                UnityEngine.Object.Destroy(l.GetComponent<SphereCollider>());
+                                Destroy(l.GetComponent<SphereCollider>());
 
                                 l.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
                                 l.transform.position = TrueLeftHand().position;
 
                                 GameObject r = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                                UnityEngine.Object.Destroy(r.GetComponent<Rigidbody>());
-                                UnityEngine.Object.Destroy(r.GetComponent<SphereCollider>());
+                                Destroy(r.GetComponent<SphereCollider>());
 
                                 r.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
                                 r.transform.position = TrueRightHand().position;
@@ -751,8 +749,8 @@ namespace iiMenu.Menu
                                 l.GetComponent<Renderer>().material.color = GetBGColor(0f);
                                 r.GetComponent<Renderer>().material.color = GetBGColor(0f);
 
-                                UnityEngine.Object.Destroy(l, Time.deltaTime);
-                                UnityEngine.Object.Destroy(r, Time.deltaTime);
+                                Destroy(l, Time.deltaTime);
+                                Destroy(r, Time.deltaTime);
                             }
                             else
                             {
@@ -794,7 +792,7 @@ namespace iiMenu.Menu
                         else
                         {
                             if (GhostRig != null)
-                                UnityEngine.Object.Destroy(GhostRig.gameObject);
+                                Destroy(GhostRig.gameObject);
                         }
                     }
                     catch { }
@@ -818,8 +816,8 @@ namespace iiMenu.Menu
                                                 if (obediantsubject != null)
                                                 {
                                                     GameObject crown = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                                                    UnityEngine.Object.Destroy(crown.GetComponent<Collider>());
-                                                    UnityEngine.Object.Destroy(crown, Time.deltaTime);
+                                                    Destroy(crown.GetComponent<Collider>());
+                                                    Destroy(crown, Time.deltaTime);
                                                     if (crownmat == null)
                                                     {
                                                         crownmat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
@@ -1470,30 +1468,26 @@ namespace iiMenu.Menu
             {
                 GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 if (!UnityInput.Current.GetKey(KeyCode.Q) && !isPcWhenSearching)
-                {
                     gameObject.layer = 2;
-                }
-                UnityEngine.Object.Destroy(gameObject.GetComponent<Rigidbody>());
+
                 if (themeType == 30)
-                {
                     gameObject.GetComponent<Renderer>().enabled = false;
-                }
+                
                 gameObject.GetComponent<BoxCollider>().isTrigger = true;
                 gameObject.transform.parent = menu.transform;
                 gameObject.transform.rotation = Quaternion.identity;
+
                 if (FATMENU)
-                {
                     gameObject.transform.localScale = new Vector3(0.09f, 0.9f, 0.08f);
-                }
                 else
-                {
                     gameObject.transform.localScale = new Vector3(0.09f, 1.3f, 0.08f);
-                }
+                
                 if (longmenu && buttonIndex > (pageSize - 1))
                 {
                     menuBackground.transform.localScale += new Vector3(0f, 0f, 0.1f);
                     menuBackground.transform.localPosition += new Vector3(0f, 0f, -0.05f);
                 }
+
                 gameObject.transform.localPosition = new Vector3(0.56f, 0f, 0.28f - offset);
                 if (checkMode && buttonIndex > -1)
                 {
@@ -1502,14 +1496,11 @@ namespace iiMenu.Menu
                     // 0.08 x Y = 0.102
                     gameObject.transform.localScale = new Vector3(0.09f, 0.102f, 0.08f);
                     if (FATMENU)
-                    {
                         gameObject.transform.localPosition = new Vector3(0.56f, 0.399f, 0.28f - offset);
-                    }
                     else
-                    {
                         gameObject.transform.localPosition = new Vector3(0.56f, 0.599f, 0.28f - offset);
-                    }
                 }
+
                 gameObject.AddComponent<Classes.Button>().relatedText = method.buttonText;
 
                 if (shouldOutline)
@@ -1647,14 +1638,11 @@ namespace iiMenu.Menu
         {
             GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
             if (!UnityInput.Current.GetKey(KeyCode.Q) && !isPcWhenSearching)
-            {
                 gameObject.layer = 2;
-            }
-            UnityEngine.Object.Destroy(gameObject.GetComponent<Rigidbody>());
+
             if (themeType == 30)
-            {
                 gameObject.GetComponent<Renderer>().enabled = false;
-            }
+            
             gameObject.GetComponent<BoxCollider>().isTrigger = true;
             gameObject.transform.parent = menu.transform;
             gameObject.transform.rotation = Quaternion.identity;
@@ -1753,14 +1741,11 @@ namespace iiMenu.Menu
         {
             GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
             if (!UnityInput.Current.GetKey(KeyCode.Q) && !isPcWhenSearching)
-            {
                 gameObject.layer = 2;
-            }
-            UnityEngine.Object.Destroy(gameObject.GetComponent<Rigidbody>());
+
             if (themeType == 30)
-            {
                 gameObject.GetComponent<Renderer>().enabled = false;
-            }
+            
             gameObject.GetComponent<BoxCollider>().isTrigger = true;
             gameObject.transform.parent = menu.transform;
             gameObject.transform.rotation = Quaternion.identity;
@@ -1856,9 +1841,10 @@ namespace iiMenu.Menu
         public static void Draw()
         {
             menu = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            UnityEngine.Object.Destroy(menu.GetComponent<Rigidbody>());
-            UnityEngine.Object.Destroy(menu.GetComponent<BoxCollider>());
-            UnityEngine.Object.Destroy(menu.GetComponent<Renderer>());
+
+            Destroy(menu.GetComponent<BoxCollider>());
+            Destroy(menu.GetComponent<Renderer>());
+
             menu.transform.localScale = new Vector3(0.1f, 0.3f, 0.3825f);
             if (scaleWithPlayer)
             {
@@ -1887,13 +1873,10 @@ namespace iiMenu.Menu
             else
             {
                 menuBackground = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                UnityEngine.Object.Destroy(menuBackground.GetComponent<Rigidbody>());
-                UnityEngine.Object.Destroy(menuBackground.GetComponent<BoxCollider>());
+                Destroy(menuBackground.GetComponent<BoxCollider>());
 
                 if (themeType == 30)
-                {
                     menuBackground.GetComponent<Renderer>().enabled = false;
-                }
 
                 menuBackground.transform.parent = menu.transform;
                 menuBackground.transform.localPosition = new Vector3(0.50f, 0f, 0f);
@@ -1914,8 +1897,7 @@ namespace iiMenu.Menu
                 if (GetIndex("Inner Outline Menu").enabled || themeType == 34)
                 {
                     GameObject outlinepart = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    UnityEngine.Object.Destroy(outlinepart.GetComponent<Rigidbody>());
-                    UnityEngine.Object.Destroy(outlinepart.GetComponent<BoxCollider>());
+                    Destroy(outlinepart.GetComponent<BoxCollider>());
                     outlinepart.transform.parent = menuBackground.transform;
                     outlinepart.transform.rotation = Quaternion.identity;
                     outlinepart.transform.localPosition = new Vector3(0f, -0.4840625f, 0f);
@@ -1939,8 +1921,7 @@ namespace iiMenu.Menu
                     colorChanger.Start();
 
                     outlinepart = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    UnityEngine.Object.Destroy(outlinepart.GetComponent<Rigidbody>());
-                    UnityEngine.Object.Destroy(outlinepart.GetComponent<BoxCollider>());
+                    Destroy(outlinepart.GetComponent<BoxCollider>());
                     outlinepart.transform.parent = menuBackground.transform;
                     outlinepart.transform.rotation = Quaternion.identity;
                     outlinepart.transform.localPosition = new Vector3(0f, 0.4840625f, 0f);
@@ -1964,8 +1945,7 @@ namespace iiMenu.Menu
                     colorChanger.Start();
 
                     outlinepart = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    UnityEngine.Object.Destroy(outlinepart.GetComponent<Rigidbody>());
-                    UnityEngine.Object.Destroy(outlinepart.GetComponent<BoxCollider>());
+                    Destroy(outlinepart.GetComponent<BoxCollider>());
                     outlinepart.transform.parent = menuBackground.transform;
                     outlinepart.transform.rotation = Quaternion.identity;
                     outlinepart.transform.localPosition = new Vector3(0f, 0f, -0.4875f);
@@ -1989,8 +1969,7 @@ namespace iiMenu.Menu
                     colorChanger.Start();
 
                     outlinepart = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    UnityEngine.Object.Destroy(outlinepart.GetComponent<Rigidbody>());
-                    UnityEngine.Object.Destroy(outlinepart.GetComponent<BoxCollider>());
+                    Destroy(outlinepart.GetComponent<BoxCollider>());
                     outlinepart.transform.parent = menuBackground.transform;
                     outlinepart.transform.rotation = Quaternion.identity;
                     outlinepart.transform.localPosition = new Vector3(0f, 0f, 0.4875f);
@@ -2294,7 +2273,6 @@ namespace iiMenu.Menu
                 GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 if (!UnityInput.Current.GetKey(KeyCode.Q) && !isPcWhenSearching)
                     gameObject.layer = 2;
-                UnityEngine.Object.Destroy(gameObject.GetComponent<Rigidbody>());
 
                 if (themeType == 30)
                     gameObject.GetComponent<Renderer>().enabled = false;
@@ -2525,10 +2503,9 @@ namespace iiMenu.Menu
                     GameObject particle = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     particle.transform.position = menuBackground.transform.position;
                     particle.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-                    UnityEngine.Object.Destroy(particle.GetComponent<Rigidbody>());
-                    UnityEngine.Object.Destroy(particle.GetComponent<BoxCollider>());
 
-                    UnityEngine.Object.Destroy(particle, 2f);
+                    Destroy(particle.GetComponent<BoxCollider>());
+                    Destroy(particle, 2f);
 
                     particle.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Lit");
                     particle.GetComponent<Renderer>().material.color = Color.white;
@@ -2746,7 +2723,6 @@ namespace iiMenu.Menu
                 {
                     gameObject.layer = 2;
                 }
-                UnityEngine.Object.Destroy(gameObject.GetComponent<Rigidbody>());
                 gameObject.GetComponent<BoxCollider>().isTrigger = true;
                 gameObject.transform.parent = menu.transform;
                 gameObject.transform.rotation = Quaternion.identity;
@@ -2807,7 +2783,6 @@ namespace iiMenu.Menu
                 {
                     gameObject2.layer = 2;
                 }
-                UnityEngine.Object.Destroy(gameObject2.GetComponent<Rigidbody>());
                 gameObject2.GetComponent<BoxCollider>().isTrigger = true;
                 gameObject2.transform.parent = menu.transform;
                 gameObject2.transform.rotation = Quaternion.identity;
@@ -2883,7 +2858,6 @@ namespace iiMenu.Menu
                 {
                     gameObject.layer = 2;
                 }
-                UnityEngine.Object.Destroy(gameObject.GetComponent<Rigidbody>());
                 gameObject.GetComponent<BoxCollider>().isTrigger = true;
                 gameObject.transform.parent = menu.transform;
                 gameObject.transform.rotation = Quaternion.identity;
@@ -2957,7 +2931,6 @@ namespace iiMenu.Menu
                 {
                     gameObject.layer = 2;
                 }
-                UnityEngine.Object.Destroy(gameObject.GetComponent<Rigidbody>());
                 gameObject.GetComponent<BoxCollider>().isTrigger = true;
                 gameObject.transform.parent = menu.transform;
                 gameObject.transform.rotation = Quaternion.identity;
@@ -3034,7 +3007,6 @@ namespace iiMenu.Menu
                 {
                     gameObject.layer = 2;
                 }
-                UnityEngine.Object.Destroy(gameObject.GetComponent<Rigidbody>());
                 gameObject.GetComponent<BoxCollider>().isTrigger = true;
                 gameObject.transform.parent = menu.transform;
                 gameObject.transform.rotation = Quaternion.identity;
@@ -3108,7 +3080,6 @@ namespace iiMenu.Menu
                 {
                     gameObject.layer = 2;
                 }
-                UnityEngine.Object.Destroy(gameObject.GetComponent<Rigidbody>());
                 gameObject.GetComponent<BoxCollider>().isTrigger = true;
                 gameObject.transform.parent = menu.transform;
                 gameObject.transform.rotation = Quaternion.identity;
@@ -3185,7 +3156,6 @@ namespace iiMenu.Menu
                 {
                     gameObject.layer = 2;
                 }
-                UnityEngine.Object.Destroy(gameObject.GetComponent<Rigidbody>());
                 gameObject.GetComponent<BoxCollider>().isTrigger = true;
                 gameObject.transform.parent = menu.transform;
                 gameObject.transform.rotation = Quaternion.identity;
@@ -3255,7 +3225,6 @@ namespace iiMenu.Menu
                 {
                     gameObject.layer = 2;
                 }
-                UnityEngine.Object.Destroy(gameObject.GetComponent<Rigidbody>());
                 gameObject.GetComponent<BoxCollider>().isTrigger = true;
                 gameObject.transform.parent = menu.transform;
                 gameObject.transform.rotation = Quaternion.identity;
@@ -3324,11 +3293,9 @@ namespace iiMenu.Menu
         {
             GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
             if (themeType == 30)
-            {
                 gameObject.GetComponent<Renderer>().enabled = false;
-            }
-            UnityEngine.Object.Destroy(gameObject.GetComponent<Rigidbody>());
-            UnityEngine.Object.Destroy(gameObject.GetComponent<BoxCollider>());
+            
+            Destroy(gameObject.GetComponent<BoxCollider>());
             gameObject.transform.parent = menu.transform;
             gameObject.transform.rotation = Quaternion.identity;
             gameObject.transform.localPosition = toOut.transform.localPosition;
@@ -3358,11 +3325,9 @@ namespace iiMenu.Menu
         {
             GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
             if (themeType == 30)
-            {
                 gameObject.GetComponent<Renderer>().enabled = false;
-            }
-            UnityEngine.Object.Destroy(gameObject.GetComponent<Rigidbody>());
-            UnityEngine.Object.Destroy(gameObject.GetComponent<BoxCollider>());
+
+            Destroy(gameObject.GetComponent<BoxCollider>());
             gameObject.transform.parent = toOut.transform.parent;
             gameObject.transform.parent = toOut.transform.parent;
             gameObject.transform.rotation = toOut.transform.rotation;
@@ -3395,7 +3360,7 @@ namespace iiMenu.Menu
             Renderer ToRoundRenderer = toRound.GetComponent<Renderer>();
             GameObject BaseA = GameObject.CreatePrimitive(PrimitiveType.Cube);
             BaseA.GetComponent<Renderer>().enabled = ToRoundRenderer.enabled;
-            UnityEngine.Object.Destroy(BaseA.GetComponent<Collider>());
+            Destroy(BaseA.GetComponent<Collider>());
 
             BaseA.transform.parent = menu.transform;
             BaseA.transform.rotation = Quaternion.identity;
@@ -3404,7 +3369,7 @@ namespace iiMenu.Menu
 
             GameObject BaseB = GameObject.CreatePrimitive(PrimitiveType.Cube);
             BaseB.GetComponent<Renderer>().enabled = ToRoundRenderer.enabled;
-            UnityEngine.Object.Destroy(BaseB.GetComponent<Collider>());
+            Destroy(BaseB.GetComponent<Collider>());
 
             BaseB.transform.parent = menu.transform;
             BaseB.transform.rotation = Quaternion.identity;
@@ -3413,7 +3378,7 @@ namespace iiMenu.Menu
 
             GameObject RoundCornerA = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             RoundCornerA.GetComponent<Renderer>().enabled = ToRoundRenderer.enabled;
-            UnityEngine.Object.Destroy(RoundCornerA.GetComponent<Collider>());
+            Destroy(RoundCornerA.GetComponent<Collider>());
 
             RoundCornerA.transform.parent = menu.transform;
             RoundCornerA.transform.rotation = Quaternion.identity * Quaternion.Euler(0f, 0f, 90f);
@@ -3423,7 +3388,7 @@ namespace iiMenu.Menu
 
             GameObject RoundCornerB = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             RoundCornerB.GetComponent<Renderer>().enabled = ToRoundRenderer.enabled;
-            UnityEngine.Object.Destroy(RoundCornerB.GetComponent<Collider>());
+            Destroy(RoundCornerB.GetComponent<Collider>());
 
             RoundCornerB.transform.parent = menu.transform;
             RoundCornerB.transform.rotation = Quaternion.identity * Quaternion.Euler(0f, 0f, 90f);
@@ -3433,7 +3398,7 @@ namespace iiMenu.Menu
 
             GameObject RoundCornerC = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             RoundCornerC.GetComponent<Renderer>().enabled = ToRoundRenderer.enabled;
-            UnityEngine.Object.Destroy(RoundCornerC.GetComponent<Collider>());
+            Destroy(RoundCornerC.GetComponent<Collider>());
 
             RoundCornerC.transform.parent = menu.transform;
             RoundCornerC.transform.rotation = Quaternion.identity * Quaternion.Euler(0f, 0f, 90f);
@@ -3443,7 +3408,7 @@ namespace iiMenu.Menu
 
             GameObject RoundCornerD = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             RoundCornerD.GetComponent<Renderer>().enabled = ToRoundRenderer.enabled;
-            UnityEngine.Object.Destroy(RoundCornerD.GetComponent<Collider>());
+            Destroy(RoundCornerD.GetComponent<Collider>());
 
             RoundCornerD.transform.parent = menu.transform;
             RoundCornerD.transform.rotation = Quaternion.identity * Quaternion.Euler(0f, 0f, 90f);
@@ -3703,14 +3668,12 @@ namespace iiMenu.Menu
             NewPointer.GetComponent<Renderer>().material.color = (isCopying || GetGunInput(true)) ? GetBDColor(0f) : GetBRColor(0f);
             NewPointer.transform.localScale = smallGunPointer ? new Vector3(0.1f, 0.1f, 0.1f) : new Vector3(0.2f, 0.2f, 0.2f);
             NewPointer.transform.position = EndPosition;
+
             if (disableGunPointer)
-            {
                 NewPointer.GetComponent<Renderer>().enabled = false;
-            }
-            UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
-            UnityEngine.Object.Destroy(NewPointer.GetComponent<Rigidbody>());
-            UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
-            UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+            
+            Destroy(NewPointer.GetComponent<Collider>());
+            Destroy(NewPointer, Time.deltaTime);
 
             if (!disableGunLine)
             {
@@ -3725,7 +3688,7 @@ namespace iiMenu.Menu
                 liner.useWorldSpace = true;
                 liner.SetPosition(0, StartPosition);
                 liner.SetPosition(1, EndPosition);
-                UnityEngine.Object.Destroy(line, Time.deltaTime);
+                Destroy(line, Time.deltaTime);
 
                 int Step = GunLineQuality;
                 switch (gunVariation)
@@ -4356,19 +4319,19 @@ namespace iiMenu.Menu
 
         public static System.Collections.IEnumerator ShrinkCoroutine()
         {
-            Transform menuu = menu.transform;
+            Transform menuTransform = menu.transform;
             menu = null;
 
-            Vector3 before = menuu.localScale;
+            Vector3 before = menuTransform.localScale;
             float elapsedTime = 0f;
             while (elapsedTime < 0.05f)
             {
-                menuu.localScale = Vector3.Lerp(before, Vector3.zero, elapsedTime / 0.05f);
+                menuTransform.localScale = Vector3.Lerp(before, Vector3.zero, elapsedTime / 0.05f);
                 elapsedTime += Time.deltaTime;
                 yield return null;
             }
 
-            UnityEngine.Object.Destroy(menuu.gameObject);
+            Destroy(menuTransform.gameObject);
         }
 
         public static System.Collections.IEnumerator ButtonClick(int buttonIndex, string buttonText, Renderer render)
@@ -4813,9 +4776,8 @@ namespace iiMenu.Menu
         public static void VisualizeAura(Vector3 position, float range, Color color)
         {
             GameObject what = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            UnityEngine.Object.Destroy(what, Time.deltaTime);
-            UnityEngine.Object.Destroy(what.GetComponent<Collider>());
-            UnityEngine.Object.Destroy(what.GetComponent<Rigidbody>());
+            Destroy(what, Time.deltaTime);
+            Destroy(what.GetComponent<Collider>());
             what.transform.position = position;
             what.transform.localScale = new Vector3(range, range, range);
             Color clr = color;
@@ -4827,9 +4789,8 @@ namespace iiMenu.Menu
         public static void VisualizeCube(Vector3 position, Quaternion rotation, Vector3 scale, Color color)
         {
             GameObject what = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            UnityEngine.Object.Destroy(what, Visuals.PerformanceVisuals ? Visuals.PerformanceModeStep : Time.deltaTime);
-            UnityEngine.Object.Destroy(what.GetComponent<Collider>());
-            UnityEngine.Object.Destroy(what.GetComponent<Rigidbody>());
+            Destroy(what, Visuals.PerformanceVisuals ? Visuals.PerformanceModeStep : Time.deltaTime);
+            Destroy(what.GetComponent<Collider>());
             what.transform.position = position;
             what.transform.localScale = scale;
             what.transform.rotation = rotation;
@@ -5377,7 +5338,7 @@ namespace iiMenu.Menu
         {
             if (menu != null)
             {
-                UnityEngine.Object.Destroy(menu);
+                Destroy(menu);
                 menu = null;
 
                 Draw();
@@ -5385,7 +5346,7 @@ namespace iiMenu.Menu
 
             if (reference != null)
             {
-                UnityEngine.Object.Destroy(reference);
+                Destroy(reference);
                 reference = null;
 
                 CreateReference();
@@ -5740,7 +5701,7 @@ namespace iiMenu.Menu
                 {
                     GameObject AgencyGO = LoadAsset("agency");
                     agency = AgencyGO.transform.Find("text").gameObject.GetComponent<Text>().font;
-                    UnityEngine.Object.Destroy(AgencyGO);
+                    Destroy(AgencyGO);
                 }
             } catch { }
             PhotonNetwork.NetworkingClient.EventReceived += EventReceived;

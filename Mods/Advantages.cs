@@ -466,27 +466,6 @@ namespace iiMenu.Mods
                         }
 
                         GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = whoCopy.transform.position;
-                        /*
-                        GameObject l = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                        UnityEngine.Object.Destroy(l.GetComponent<Rigidbody>());
-                        UnityEngine.Object.Destroy(l.GetComponent<SphereCollider>());
-
-                        l.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-                        l.transform.position = GorillaTagger.Instance.leftHandTransform.position;
-
-                        GameObject r = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                        UnityEngine.Object.Destroy(r.GetComponent<Rigidbody>());
-                        UnityEngine.Object.Destroy(r.GetComponent<SphereCollider>());
-
-                        r.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-                        r.transform.position = GorillaTagger.Instance.rightHandTransform.position;
-
-                        l.GetComponent<Renderer>().material.color = bgColorA;
-                        r.GetComponent<Renderer>().material.color = bgColorA;
-
-                        UnityEngine.Object.Destroy(l, Time.deltaTime);
-                        UnityEngine.Object.Destroy(r, Time.deltaTime);
-                        */
                     }
                     else
                     {
@@ -559,7 +538,7 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true))
                 {
-                    GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = Ray.point + new Vector3(0f, 0.3f, 0f);
+                    GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = NewPointer.transform.position + new Vector3(0f, 0.1f, 0f);
                 }
             }
         }
