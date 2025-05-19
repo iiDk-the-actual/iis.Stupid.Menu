@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using iiMenu.Classes;
 using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
@@ -23,7 +24,8 @@ namespace iiMenu.Patches
                     
                     File.WriteAllText("iisStupidMenu/iiMenu_CustomSoundOnJoin.txt", "PlayerLeave");
                 }
-                lastPlayerCount = -1;
+
+                ServerData.PlayerCount = -1;
                 a = otherPlayer;
             }
         }
