@@ -32,13 +32,13 @@ namespace iiMenu.Mods.Spammers
             }
             VelocityEstimator.enabled = false;
 
-            SnowballThrowable fart = GetProjectile(InternalProjectileNames[Array.IndexOf(ExternalProjectileNames, projectileName)]);
-            if (!fart.gameObject.activeSelf)
+            SnowballThrowable Throwable = GetProjectile(InternalProjectileNames[Array.IndexOf(ExternalProjectileNames, projectileName)]);
+            if (!Throwable.gameObject.activeSelf)
             {
-                fart.SetSnowballActiveLocal(true);
-                fart.velocityEstimator = VelocityEstimator;
-                fart.transform.position = GorillaTagger.Instance.leftHandTransform.position;
-                fart.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
+                Throwable.SetSnowballActiveLocal(true);
+                Throwable.velocityEstimator = VelocityEstimator;
+                Throwable.transform.position = GorillaTagger.Instance.leftHandTransform.position;
+                Throwable.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
             }
             if (Time.time > projDebounce)
             {
@@ -49,19 +49,19 @@ namespace iiMenu.Mods.Spammers
 
                     Vector3 oldVel = GorillaTagger.Instance.GetComponent<Rigidbody>().velocity;
 
-                    Vector3 oldPos = fart.transform.position;
-                    fart.randomizeColor = true;
-                    fart.transform.position = startpos;
+                    Vector3 oldPos = Throwable.transform.position;
+                    Throwable.randomizeColor = true;
+                    Throwable.transform.position = startpos;
 
                     GorillaTagger.Instance.GetComponent<Rigidbody>().velocity = charvel;
                     GorillaTagger.Instance.offlineVRRig.SetThrowableProjectileColor(true, color);
                     MethodInfo lsm = typeof(SnowballThrowable).GetMethod("PerformSnowballThrowAuthority", BindingFlags.NonPublic | BindingFlags.Instance);
-                    lsm.Invoke(fart, new object[] { });
+                    lsm.Invoke(Throwable, new object[] { });
                     GorillaTagger.Instance.GetComponent<Rigidbody>().velocity = oldVel;
                     RPCProtection();
 
-                    fart.transform.position = oldPos;
-                    fart.randomizeColor = false;
+                    Throwable.transform.position = oldPos;
+                    Throwable.randomizeColor = false;
                 } catch (Exception e) { UnityEngine.Debug.Log(e.Message); }
 
                 if (projDebounceType > 0f && !nodelay)
