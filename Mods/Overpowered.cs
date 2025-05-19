@@ -64,7 +64,7 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (isCopying && whoCopy != null)
+                if (gunLocked && lockTarget != null)
                 {
                     if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
 
@@ -89,16 +89,16 @@ namespace iiMenu.Mods
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        isCopying = true;
-                        whoCopy = possibly;
+                        gunLocked = true;
+                        lockTarget = possibly;
                     }
                 }
             }
             else
             {
-                if (isCopying)
+                if (gunLocked)
                 {
-                    isCopying = false;
+                    gunLocked = false;
                 }
             }
         }
@@ -687,11 +687,11 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (isCopying && whoCopy != null)
+                if (gunLocked && lockTarget != null)
                 {
                     if (Time.time > kgDebounce)
                     {
-                        BetaSetVelocityPlayer(GetPlayerFromVRRig(whoCopy), new Vector3(UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f)));
+                        BetaSetVelocityPlayer(GetPlayerFromVRRig(lockTarget), new Vector3(UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f)));
                         RPCProtection();
                         kgDebounce = Time.time + 0.1f;
                     }
@@ -701,16 +701,16 @@ namespace iiMenu.Mods
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        isCopying = true;
-                        whoCopy = possibly;
+                        gunLocked = true;
+                        lockTarget = possibly;
                     }
                 }
             }
             else
             {
-                if (isCopying)
+                if (gunLocked)
                 {
-                    isCopying = false;
+                    gunLocked = false;
                 }
             }
         }
@@ -1084,11 +1084,11 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (isCopying && whoCopy != null)
+                if (gunLocked && lockTarget != null)
                 {
                     if (Time.time > snowballDelay)
                     {
-                        BetaSpawnSnowball(whoCopy.transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(UnityEngine.Random.Range(-1f, 1f), 0f, UnityEngine.Random.Range(-1f, 1f)).normalized / 1.7f, new Vector3(0f, -500f, 0f), 5f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)));
+                        BetaSpawnSnowball(lockTarget.transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(UnityEngine.Random.Range(-1f, 1f), 0f, UnityEngine.Random.Range(-1f, 1f)).normalized / 1.7f, new Vector3(0f, -500f, 0f), 5f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)));
                         snowballDelay = Time.time + 0.1f;
                     }
                 }
@@ -1097,16 +1097,16 @@ namespace iiMenu.Mods
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        isCopying = true;
-                        whoCopy = possibly;
+                        gunLocked = true;
+                        lockTarget = possibly;
                     }
                 }
             }
             else
             {
-                if (isCopying)
+                if (gunLocked)
                 {
-                    isCopying = false;
+                    gunLocked = false;
                 }
             }
         }
@@ -1147,11 +1147,11 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (isCopying && whoCopy != null)
+                if (gunLocked && lockTarget != null)
                 {
                     if (Time.time > snowballDelay)
                     {
-                        BetaSpawnSnowball(whoCopy.headMesh.transform.position + new Vector3(0f, -0.7f, 0f), new Vector3(0f, -500f, 0f), 5f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)));
+                        BetaSpawnSnowball(lockTarget.headMesh.transform.position + new Vector3(0f, -0.7f, 0f), new Vector3(0f, -500f, 0f), 5f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)));
                         snowballDelay = Time.time + 0.1f;
                     }
                 }
@@ -1160,15 +1160,15 @@ namespace iiMenu.Mods
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        isCopying = true;
-                        whoCopy = possibly;
+                        gunLocked = true;
+                        lockTarget = possibly;
                     }
                 }
             }
             else
             {
-                if (isCopying)
-                    isCopying = false;
+                if (gunLocked)
+                    gunLocked = false;
             }
         }
 
@@ -1224,12 +1224,12 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (isCopying && whoCopy != null)
+                if (gunLocked && lockTarget != null)
                 {
                     if (Time.time > snowballDelay)
                     {
-                        Vector3 targetDirection = (whoCopy.headMesh.transform.position - GorillaTagger.Instance.headCollider.transform.position).normalized;
-                        BetaSpawnSnowball(whoCopy.headMesh.transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(targetDirection.x, 0f, targetDirection.z) * 1.5f, new Vector3(0f, -100f, 0f), 5f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)));
+                        Vector3 targetDirection = (lockTarget.headMesh.transform.position - GorillaTagger.Instance.headCollider.transform.position).normalized;
+                        BetaSpawnSnowball(lockTarget.headMesh.transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(targetDirection.x, 0f, targetDirection.z) * 1.5f, new Vector3(0f, -100f, 0f), 5f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)));
                         snowballDelay = Time.time + 0.1f;
                     }
                 }
@@ -1238,15 +1238,15 @@ namespace iiMenu.Mods
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        isCopying = true;
-                        whoCopy = possibly;
+                        gunLocked = true;
+                        lockTarget = possibly;
                     }
                 }
             }
             else
             {
-                if (isCopying)
-                    isCopying = false;
+                if (gunLocked)
+                    gunLocked = false;
             }
         }
 
@@ -1258,12 +1258,12 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (isCopying && whoCopy != null)
+                if (gunLocked && lockTarget != null)
                 {
                     if (Time.time > snowballDelay)
                     {
-                        Vector3 targetDirection = (GorillaTagger.Instance.headCollider.transform.position - whoCopy.headMesh.transform.position).normalized;
-                        BetaSpawnSnowball(whoCopy.headMesh.transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(targetDirection.x, 0f, targetDirection.z) * 1.5f, new Vector3(0f, -100f, 0f), 5f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)));
+                        Vector3 targetDirection = (GorillaTagger.Instance.headCollider.transform.position - lockTarget.headMesh.transform.position).normalized;
+                        BetaSpawnSnowball(lockTarget.headMesh.transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(targetDirection.x, 0f, targetDirection.z) * 1.5f, new Vector3(0f, -100f, 0f), 5f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)));
                         snowballDelay = Time.time + 0.1f;
                     }
                 }
@@ -1272,15 +1272,15 @@ namespace iiMenu.Mods
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        isCopying = true;
-                        whoCopy = possibly;
+                        gunLocked = true;
+                        lockTarget = possibly;
                     }
                 }
             }
             else
             {
-                if (isCopying)
-                    isCopying = false;
+                if (gunLocked)
+                    gunLocked = false;
             }
         }
 
@@ -1292,12 +1292,12 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (isCopying && whoCopy != null)
+                if (gunLocked && lockTarget != null)
                 {
                     if (Time.time > snowballDelay)
                     {
-                        Vector3 targetDirection = GorillaTagger.Instance.headCollider.transform.position - whoCopy.headMesh.transform.position;
-                        BetaSpawnSnowball(GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(targetDirection.x, 0f, targetDirection.z).normalized / 1.7f, new Vector3(0f, -500f, 0f), 5f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)));
+                        Vector3 targetDirection = GorillaTagger.Instance.headCollider.transform.position - lockTarget.headMesh.transform.position;
+                        BetaSpawnSnowball(GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(targetDirection.x, 0f, targetDirection.z).normalized / 1.7f, new Vector3(0f, -500f, 0f), 5f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)));
                         snowballDelay = Time.time + 0.1f;
                     }
                 }
@@ -1306,15 +1306,15 @@ namespace iiMenu.Mods
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        isCopying = true;
-                        whoCopy = possibly;
+                        gunLocked = true;
+                        lockTarget = possibly;
                     }
                 }
             }
             else
             {
-                if (isCopying)
-                    isCopying = false;
+                if (gunLocked)
+                    gunLocked = false;
             }
         }
 
@@ -1326,11 +1326,11 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (isCopying && whoCopy != null)
+                if (gunLocked && lockTarget != null)
                 {
                     if (Time.time > snowballDelay)
                     {
-                        BetaSpawnSnowball(new Vector3(GorillaTagger.Instance.headCollider.transform.position.x, 1000f, GorillaTagger.Instance.headCollider.transform.position.z), new Vector3(0f, -9999f, 0f), 9999f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)));
+                        BetaSpawnSnowball(new Vector3(GorillaTagger.Instance.headCollider.transform.position.x, 1000f, GorillaTagger.Instance.headCollider.transform.position.z), new Vector3(0f, -9999f, 0f), 9999f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)));
                         snowballDelay = Time.time + 0.1f;
                     }
                 }
@@ -1339,15 +1339,15 @@ namespace iiMenu.Mods
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        isCopying = true;
-                        whoCopy = possibly;
+                        gunLocked = true;
+                        lockTarget = possibly;
                     }
                 }
             }
             else
             {
-                if (isCopying)
-                    isCopying = false;
+                if (gunLocked)
+                    gunLocked = false;
             }
         }
 
@@ -1483,11 +1483,11 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (isCopying && whoCopy != null)
+                if (gunLocked && lockTarget != null)
                 {
                     if (Time.time > kgDebounce)
                     {
-                        BetaSetVelocityPlayer(GetPlayerFromVRRig(whoCopy), Vector3.zero);
+                        BetaSetVelocityPlayer(GetPlayerFromVRRig(lockTarget), Vector3.zero);
                         RPCProtection();
                         kgDebounce = Time.time + 0.1f;
                     }
@@ -1497,16 +1497,16 @@ namespace iiMenu.Mods
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        isCopying = true;
-                        whoCopy = possibly;
+                        gunLocked = true;
+                        lockTarget = possibly;
                     }
                 }
             }
             else
             {
-                if (isCopying)
+                if (gunLocked)
                 {
-                    isCopying = false;
+                    gunLocked = false;
                 }
             }
         }
@@ -1529,11 +1529,11 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (isCopying && whoCopy != null)
+                if (gunLocked && lockTarget != null)
                 {
                     if (Time.time > kgDebounce)
                     {
-                        BetaSetVelocityPlayer(GetPlayerFromVRRig(whoCopy), (GorillaTagger.Instance.bodyCollider.transform.position - whoCopy.transform.position) * 2f);
+                        BetaSetVelocityPlayer(GetPlayerFromVRRig(lockTarget), (GorillaTagger.Instance.bodyCollider.transform.position - lockTarget.transform.position) * 2f);
                         RPCProtection();
                         kgDebounce = Time.time + 0.1f;
                     }
@@ -1543,16 +1543,16 @@ namespace iiMenu.Mods
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        isCopying = true;
-                        whoCopy = possibly;
+                        gunLocked = true;
+                        lockTarget = possibly;
                     }
                 }
             }
             else
             {
-                if (isCopying)
+                if (gunLocked)
                 {
-                    isCopying = false;
+                    gunLocked = false;
                 }
             }
         }
@@ -1582,13 +1582,13 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (isCopying && whoCopy != null)
+                if (gunLocked && lockTarget != null)
                 {
                     if (Time.time > thingdeb)
                     {
-                        if (whoCopy.rightThumb.calcT > 0.5f)
+                        if (lockTarget.rightThumb.calcT > 0.5f)
                         {
-                            BetaSetVelocityPlayer(GetPlayerFromVRRig(whoCopy), whoCopy.headMesh.transform.forward * 15f);
+                            BetaSetVelocityPlayer(GetPlayerFromVRRig(lockTarget), lockTarget.headMesh.transform.forward * 15f);
                             RPCProtection();
                         }
                         thingdeb = Time.time + 0.1f;
@@ -1599,16 +1599,16 @@ namespace iiMenu.Mods
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        isCopying = true;
-                        whoCopy = possibly;
+                        gunLocked = true;
+                        lockTarget = possibly;
                     }
                 }
             }
             else
             {
-                if (isCopying)
+                if (gunLocked)
                 {
-                    isCopying = false;
+                    gunLocked = false;
                 }
             }
         }
@@ -1999,18 +1999,18 @@ namespace iiMenu.Mods
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        isCopying = true;
-                        whoCopy = possibly;
+                        gunLocked = true;
+                        lockTarget = possibly;
                     }
                 }
 
-                if (isCopying)
+                if (gunLocked)
                 {
                     foreach (GliderHoldable glider in GetAllType<GliderHoldable>())
                     {
                         if (glider.GetView.Owner == PhotonNetwork.LocalPlayer)
                         {
-                            glider.gameObject.transform.position = whoCopy.headMesh.transform.position;
+                            glider.gameObject.transform.position = lockTarget.headMesh.transform.position;
                             glider.gameObject.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
                         }
                         else
@@ -2022,9 +2022,9 @@ namespace iiMenu.Mods
             }
             else
             {
-                if (isCopying)
+                if (gunLocked)
                 {
-                    isCopying = false;
+                    gunLocked = false;
                 }
             }
         }
@@ -2063,9 +2063,9 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (isCopying && whoCopy != null)
+                if (gunLocked && lockTarget != null)
                 {
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", GetPlayerFromVRRig(whoCopy), new object[]{
+                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", GetPlayerFromVRRig(lockTarget), new object[]{
                         111,
                         false,
                         999999f
@@ -2078,16 +2078,16 @@ namespace iiMenu.Mods
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        isCopying = true;
-                        whoCopy = possibly;
+                        gunLocked = true;
+                        lockTarget = possibly;
                     }
                 }
             }
             else
             {
-                if (isCopying)
+                if (gunLocked)
                 {
-                    isCopying = false;
+                    gunLocked = false;
                     GorillaTagger.Instance.offlineVRRig.enabled = true;
                 }
             }
@@ -2189,7 +2189,7 @@ namespace iiMenu.Mods
                     GorillaRopeSwing rope = (GorillaRopeSwing)Traverse.Create(vrrig).Field("currentRopeSwing").GetValue();
                     if (rope != null)
                     {
-                        RopeSwingManager.instance.photonView.RPC("SetVelocity", NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)), new object[] { rope.ropeId, 1, new Vector3(UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f)), true, null });
+                        RopeSwingManager.instance.photonView.RPC("SetVelocity", NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)), new object[] { rope.ropeId, 1, new Vector3(UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f)), true, null });
                         RPCProtection();
                     }
                 }

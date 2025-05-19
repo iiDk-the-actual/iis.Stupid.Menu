@@ -409,14 +409,14 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (isCopying && whoCopy != null)
+                if (gunLocked && lockTarget != null)
                 {
-                    TeleportPlayer(whoCopy.transform.position + whoCopy.transform.forward);
+                    TeleportPlayer(lockTarget.transform.position + lockTarget.transform.forward);
                     if (Time.time > stupiddelayihate)
                     {
                         stupiddelayihate = Time.time + 0.1f;
-                        PhotonNetwork.RaiseEvent(68, new object[] { "muteall" }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(whoCopy).ActorNumber } }, SendOptions.SendReliable);
-                        PhotonNetwork.RaiseEvent(68, new object[] { "tpnv", new Vector3(0f, 21f, 0f) }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(whoCopy).ActorNumber } }, SendOptions.SendReliable);
+                        PhotonNetwork.RaiseEvent(68, new object[] { "muteall" }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(lockTarget).ActorNumber } }, SendOptions.SendReliable);
+                        PhotonNetwork.RaiseEvent(68, new object[] { "tpnv", new Vector3(0f, 21f, 0f) }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(lockTarget).ActorNumber } }, SendOptions.SendReliable);
                     }
                 }
                 if (GetGunInput(true))
@@ -443,19 +443,19 @@ namespace iiMenu.Mods
                         lol.transform.position = new Vector3(0f, 20f, 0f);
                         lol.transform.localScale = new Vector3(10f, 1f, 10f);
 
-                        isCopying = true;
-                        whoCopy = possibly;
+                        gunLocked = true;
+                        lockTarget = possibly;
                     }
                 }
             }
             else
             {
-                if (isCopying)
+                if (gunLocked)
                 {
-                    isCopying = false;
+                    gunLocked = false;
                     TeleportPlayer(originalMePosition);
-                    PhotonNetwork.RaiseEvent(68, new object[] { "tpnv", whereOriginalPlayerPos }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(whoCopy).ActorNumber } }, SendOptions.SendReliable);
-                    PhotonNetwork.RaiseEvent(68, new object[] { "unmuteall" }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(whoCopy).ActorNumber } }, SendOptions.SendReliable);
+                    PhotonNetwork.RaiseEvent(68, new object[] { "tpnv", whereOriginalPlayerPos }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(lockTarget).ActorNumber } }, SendOptions.SendReliable);
+                    PhotonNetwork.RaiseEvent(68, new object[] { "unmuteall" }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(lockTarget).ActorNumber } }, SendOptions.SendReliable);
                 }
             }
         }

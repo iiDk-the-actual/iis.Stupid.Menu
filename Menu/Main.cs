@@ -3652,7 +3652,7 @@ namespace iiMenu.Menu
                 Physics.Raycast(ray, out Ray, 512f, NoInvisLayerMask());
             }
 
-            Vector3 EndPosition = isCopying ? whoCopy.transform.position : Ray.point;
+            Vector3 EndPosition = gunLocked ? lockTarget.transform.position : Ray.point;
 
             if (EndPosition == Vector3.zero)
                 EndPosition = StartPosition + (Direction * 512f);
@@ -3665,7 +3665,7 @@ namespace iiMenu.Menu
 
             GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-            NewPointer.GetComponent<Renderer>().material.color = (isCopying || GetGunInput(true)) ? GetBDColor(0f) : GetBRColor(0f);
+            NewPointer.GetComponent<Renderer>().material.color = (gunLocked || GetGunInput(true)) ? GetBDColor(0f) : GetBRColor(0f);
             NewPointer.transform.localScale = smallGunPointer ? new Vector3(0.1f, 0.1f, 0.1f) : new Vector3(0.2f, 0.2f, 0.2f);
             NewPointer.transform.position = EndPosition;
 
@@ -3694,7 +3694,7 @@ namespace iiMenu.Menu
                 switch (gunVariation)
                 {
                     case 1: // Lightning
-                        if (GetGunInput(true) || isCopying)
+                        if (GetGunInput(true) || gunLocked)
                         {
                             liner.positionCount = Step;
                             liner.SetPosition(0, StartPosition);
@@ -3709,7 +3709,7 @@ namespace iiMenu.Menu
                         }
                         break;
                     case 2: // Wavy
-                        if (GetGunInput(true) || isCopying)
+                        if (GetGunInput(true) || gunLocked)
                         {
                             liner.positionCount = Step;
                             liner.SetPosition(0, StartPosition);
@@ -3724,7 +3724,7 @@ namespace iiMenu.Menu
                         }
                         break;
                     case 3: // Blocky
-                        if (GetGunInput(true) || isCopying)
+                        if (GetGunInput(true) || gunLocked)
                         {
                             liner.positionCount = Step;
                             liner.SetPosition(0, StartPosition);
@@ -3741,7 +3741,7 @@ namespace iiMenu.Menu
                     case 4: // Sinewave
                         Step = GunLineQuality / 2;
 
-                        if (GetGunInput(true) || isCopying)
+                        if (GetGunInput(true) || gunLocked)
                         {
                             liner.positionCount = Step;
                             liner.SetPosition(0, StartPosition);
@@ -3756,7 +3756,7 @@ namespace iiMenu.Menu
                         }
                         break;
                     case 5: // Spring
-                        if (GetGunInput(true) || isCopying)
+                        if (GetGunInput(true) || gunLocked)
                         {
                             liner.positionCount = Step;
                             liner.SetPosition(0, StartPosition);
@@ -3771,7 +3771,7 @@ namespace iiMenu.Menu
                         }
                         break;
                     case 6: // Bouncy
-                        if (GetGunInput(true) || isCopying)
+                        if (GetGunInput(true) || gunLocked)
                         {
                             liner.positionCount = Step;
                             liner.SetPosition(0, StartPosition);
@@ -3783,13 +3783,13 @@ namespace iiMenu.Menu
                         }
                         break;
                     case 7: // Audio
-                        if (GetGunInput(true) || isCopying)
+                        if (GetGunInput(true) || gunLocked)
                         {
                             float audioSize = 0f;
 
-                            if (isCopying)
+                            if (gunLocked)
                             {
-                                GorillaSpeakerLoudness targetRecorder = whoCopy.GetComponent<GorillaSpeakerLoudness>();
+                                GorillaSpeakerLoudness targetRecorder = lockTarget.GetComponent<GorillaSpeakerLoudness>();
                                 if (targetRecorder != null)
                                     audioSize += targetRecorder.Loudness * 3f;
                             }
@@ -5960,7 +5960,7 @@ jgs \_   _/ |Oo\
         public static Text fpsCount;
         public static Text searchTextObject;
         public static Text title;
-        public static VRRig whoCopy;
+        public static VRRig lockTarget;
         public static VRRig GhostRig;
         public static Material funnyghostmaterial;
         public static Material searchMat;
@@ -6147,7 +6147,7 @@ jgs \_   _/ |Oo\
         public static bool lastSlingThing;
         public static bool noclip;
 
-        public static bool isCopying;
+        public static bool gunLocked;
 
         public static bool lastInRoom;
         public static bool lastMasterClient;

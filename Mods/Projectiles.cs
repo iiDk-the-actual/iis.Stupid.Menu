@@ -352,7 +352,7 @@ namespace iiMenu.Mods.Spammers
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (isCopying && whoCopy != null)
+                if (gunLocked && lockTarget != null)
                 {
                     int projIndex = projmode;
                     int trailIndex = trailmode;
@@ -363,12 +363,12 @@ namespace iiMenu.Mods.Spammers
                     }
                     string projectilename = ExternalProjectileNames[projIndex];
 
-                    Vector3 startpos = whoCopy.rightHandTransform.position;
+                    Vector3 startpos = lockTarget.rightHandTransform.position;
                     Vector3 charvel = Vector3.zero;
 
                     if (GetIndex("Shoot Projectiles").enabled)
                     {
-                        charvel = (whoCopy.rightHandTransform.transform.forward * ShootStrength);
+                        charvel = (lockTarget.rightHandTransform.transform.forward * ShootStrength);
                     }
 
                     if (GetIndex("Finger Gun Projectiles").enabled)
@@ -390,19 +390,19 @@ namespace iiMenu.Mods.Spammers
 
                     if (GetIndex("Rain Projectiles").enabled)
                     {
-                        startpos = whoCopy.headMesh.transform.position + new Vector3(UnityEngine.Random.Range(-5f, 5f), 5f, UnityEngine.Random.Range(-5f, 5f));
+                        startpos = lockTarget.headMesh.transform.position + new Vector3(UnityEngine.Random.Range(-5f, 5f), 5f, UnityEngine.Random.Range(-5f, 5f));
                         charvel = Vector3.zero;
                     }
 
                     if (GetIndex("Projectile Aura").enabled)
                     {
                         float time = Time.frameCount;
-                        startpos = whoCopy.headMesh.transform.position + new Vector3(MathF.Cos(time / 20), 2, MathF.Sin(time / 20));
+                        startpos = lockTarget.headMesh.transform.position + new Vector3(MathF.Cos(time / 20), 2, MathF.Sin(time / 20));
                     }
 
                     if (GetIndex("Projectile Fountain").enabled)
                     {
-                        startpos = whoCopy.headMesh.transform.position + new Vector3(0, 1, 0);
+                        startpos = lockTarget.headMesh.transform.position + new Vector3(0, 1, 0);
                         charvel = new Vector3(UnityEngine.Random.Range(-10, 10), 15, UnityEngine.Random.Range(-10, 10));
                     }
 
@@ -463,16 +463,16 @@ namespace iiMenu.Mods.Spammers
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        isCopying = true;
-                        whoCopy = possibly;
+                        gunLocked = true;
+                        lockTarget = possibly;
                     }
                 }
             }
             else
             {
-                if (isCopying)
+                if (gunLocked)
                 {
-                    isCopying = false;
+                    gunLocked = false;
                     GorillaTagger.Instance.offlineVRRig.enabled = true;
                 }
             }
@@ -922,7 +922,7 @@ namespace iiMenu.Mods.Spammers
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (isCopying && whoCopy != null)
+                if (gunLocked && lockTarget != null)
                 {
                     GorillaTagger.Instance.offlineVRRig.enabled = false;
                     GorillaTagger.Instance.offlineVRRig.transform.position = new Vector3(-51.4897f, 16.9286f, -120.1083f);
@@ -935,7 +935,7 @@ namespace iiMenu.Mods.Spammers
                         {
                             didThing = true;
                             RubberDuckEvents rde = (RubberDuckEvents)elf.GetType().GetField("_events", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static).GetValue(elf);
-                            rde.Activate.RaiseAll(new object[] { whoCopy.headMesh.transform.position + new Vector3(0f, 20f, 0f), Vector3.down * (ShootStrength / 2f) });
+                            rde.Activate.RaiseAll(new object[] { lockTarget.headMesh.transform.position + new Vector3(0f, 20f, 0f), Vector3.down * (ShootStrength / 2f) });
                             RPCProtection();
                         }
                     }
@@ -951,16 +951,16 @@ namespace iiMenu.Mods.Spammers
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        isCopying = true;
-                        whoCopy = possibly;
+                        gunLocked = true;
+                        lockTarget = possibly;
                     }
                 }
             }
             else
             {
-                if (isCopying)
+                if (gunLocked)
                 {
-                    isCopying = false;
+                    gunLocked = false;
                     GorillaTagger.Instance.offlineVRRig.enabled = true;
                 }
             }
@@ -974,7 +974,7 @@ namespace iiMenu.Mods.Spammers
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (isCopying && whoCopy != null)
+                if (gunLocked && lockTarget != null)
                 {
                     GorillaTagger.Instance.offlineVRRig.enabled = false;
                     GorillaTagger.Instance.offlineVRRig.transform.position = new Vector3(-51.4897f, 16.9286f, -120.1083f);
@@ -987,8 +987,8 @@ namespace iiMenu.Mods.Spammers
                         {
                             didThing = true;
                             RubberDuckEvents rde = (RubberDuckEvents)elf.GetType().GetField("_events", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static).GetValue(elf);
-                            Vector3 position = whoCopy.headMesh.transform.position + new Vector3(UnityEngine.Random.Range(-2f, 2f), 2f, UnityEngine.Random.Range(-2f, 2f));
-                            rde.Activate.RaiseAll(new object[] { position, (whoCopy.headMesh.transform.position - position).normalized * (ShootStrength / 2f) });
+                            Vector3 position = lockTarget.headMesh.transform.position + new Vector3(UnityEngine.Random.Range(-2f, 2f), 2f, UnityEngine.Random.Range(-2f, 2f));
+                            rde.Activate.RaiseAll(new object[] { position, (lockTarget.headMesh.transform.position - position).normalized * (ShootStrength / 2f) });
                             RPCProtection();
                         }
                     }
@@ -1004,16 +1004,16 @@ namespace iiMenu.Mods.Spammers
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        isCopying = true;
-                        whoCopy = possibly;
+                        gunLocked = true;
+                        lockTarget = possibly;
                     }
                 }
             }
             else
             {
-                if (isCopying)
+                if (gunLocked)
                 {
-                    isCopying = false;
+                    gunLocked = false;
                     GorillaTagger.Instance.offlineVRRig.enabled = true;
                 }
             }
@@ -1193,10 +1193,10 @@ namespace iiMenu.Mods.Spammers
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (isCopying && whoCopy != null)
+                if (gunLocked && lockTarget != null)
                 {
-                    Vector3 startpos = whoCopy.transform.position + new Vector3(0f, -0.4f, 0f) + (whoCopy.transform.forward * 0.2f);
-                    Vector3 charvel = whoCopy.transform.forward * 8.33f;
+                    Vector3 startpos = lockTarget.transform.position + new Vector3(0f, -0.4f, 0f) + (lockTarget.transform.forward * 0.2f);
+                    Vector3 charvel = lockTarget.transform.forward * 8.33f;
 
                     BetaFireProjectile("SnowballLeft", startpos, charvel, new Color(255f, 255f, 0f, 1f));
                 }
@@ -1205,16 +1205,16 @@ namespace iiMenu.Mods.Spammers
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        isCopying = true;
-                        whoCopy = possibly;
+                        gunLocked = true;
+                        lockTarget = possibly;
                     }
                 }
             }
             else
             {
-                if (isCopying)
+                if (gunLocked)
                 {
-                    isCopying = false;
+                    gunLocked = false;
                     GorillaTagger.Instance.offlineVRRig.enabled = true;
                 }
             }
@@ -1228,9 +1228,9 @@ namespace iiMenu.Mods.Spammers
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (isCopying && whoCopy != null)
+                if (gunLocked && lockTarget != null)
                 {
-                    Vector3 startpos = whoCopy.transform.position + new Vector3(0f, -0.65f, 0f);
+                    Vector3 startpos = lockTarget.transform.position + new Vector3(0f, -0.65f, 0f);
                     Vector3 charvel = Vector3.zero;
 
                     BetaFireProjectile("SnowballLeft", startpos, charvel, new Color32(99, 43, 0, 255));
@@ -1240,16 +1240,16 @@ namespace iiMenu.Mods.Spammers
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        isCopying = true;
-                        whoCopy = possibly;
+                        gunLocked = true;
+                        lockTarget = possibly;
                     }
                 }
             }
             else
             {
-                if (isCopying)
+                if (gunLocked)
                 {
-                    isCopying = false;
+                    gunLocked = false;
                     GorillaTagger.Instance.offlineVRRig.enabled = true;
                 }
             }
@@ -1263,10 +1263,10 @@ namespace iiMenu.Mods.Spammers
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (isCopying && whoCopy != null)
+                if (gunLocked && lockTarget != null)
                 {
-                    Vector3 startpos = whoCopy.transform.position + new Vector3(0f, -0.4f, 0f) + (whoCopy.transform.forward * 0.2f);
-                    Vector3 charvel = whoCopy.transform.forward * 8.33f;
+                    Vector3 startpos = lockTarget.transform.position + new Vector3(0f, -0.4f, 0f) + (lockTarget.transform.forward * 0.2f);
+                    Vector3 charvel = lockTarget.transform.forward * 8.33f;
 
                     BetaFireProjectile("SnowballLeft", startpos, charvel, new Color(255f, 255f, 255f, 1f));
                 }
@@ -1275,16 +1275,16 @@ namespace iiMenu.Mods.Spammers
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        isCopying = true;
-                        whoCopy = possibly;
+                        gunLocked = true;
+                        lockTarget = possibly;
                     }
                 }
             }
             else
             {
-                if (isCopying)
+                if (gunLocked)
                 {
-                    isCopying = false;
+                    gunLocked = false;
                     GorillaTagger.Instance.offlineVRRig.enabled = true;
                 }
             }
@@ -1298,10 +1298,10 @@ namespace iiMenu.Mods.Spammers
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (isCopying && whoCopy != null)
+                if (gunLocked && lockTarget != null)
                 {
-                    Vector3 startpos = whoCopy.headMesh.transform.position + (whoCopy.headMesh.transform.forward * 0.4f) + (whoCopy.headMesh.transform.up * -0.05f);
-                    Vector3 charvel = whoCopy.headMesh.transform.forward * 8.33f;
+                    Vector3 startpos = lockTarget.headMesh.transform.position + (lockTarget.headMesh.transform.forward * 0.4f) + (lockTarget.headMesh.transform.up * -0.05f);
+                    Vector3 charvel = lockTarget.headMesh.transform.forward * 8.33f;
 
                     BetaFireProjectile("SnowballLeft", startpos, charvel, new Color(0f, 255f, 0f, 1f));
                 }
@@ -1310,16 +1310,16 @@ namespace iiMenu.Mods.Spammers
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        isCopying = true;
-                        whoCopy = possibly;
+                        gunLocked = true;
+                        lockTarget = possibly;
                     }
                 }
             }
             else
             {
-                if (isCopying)
+                if (gunLocked)
                 {
-                    isCopying = false;
+                    gunLocked = false;
                     GorillaTagger.Instance.offlineVRRig.enabled = true;
                 }
             }
@@ -1333,10 +1333,10 @@ namespace iiMenu.Mods.Spammers
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (isCopying && whoCopy != null)
+                if (gunLocked && lockTarget != null)
                 {
-                    Vector3 startpos = whoCopy.headMesh.transform.position + (whoCopy.headMesh.transform.forward * 0.4f) + (whoCopy.headMesh.transform.up * -0.05f);
-                    Vector3 charvel = whoCopy.headMesh.transform.forward * 8.33f;
+                    Vector3 startpos = lockTarget.headMesh.transform.position + (lockTarget.headMesh.transform.forward * 0.4f) + (lockTarget.headMesh.transform.up * -0.05f);
+                    Vector3 charvel = lockTarget.headMesh.transform.forward * 8.33f;
 
                     BetaFireProjectile("SnowballLeft", startpos, charvel, new Color(0f, 255f, 255f, 1f));
                 }
@@ -1345,16 +1345,16 @@ namespace iiMenu.Mods.Spammers
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        isCopying = true;
-                        whoCopy = possibly;
+                        gunLocked = true;
+                        lockTarget = possibly;
                     }
                 }
             }
             else
             {
-                if (isCopying)
+                if (gunLocked)
                 {
-                    isCopying = false;
+                    gunLocked = false;
                     GorillaTagger.Instance.offlineVRRig.enabled = true;
                 }
             }

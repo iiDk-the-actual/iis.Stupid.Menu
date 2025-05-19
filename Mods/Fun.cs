@@ -774,9 +774,9 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (isCopying && whoCopy != null)
+                if (gunLocked && lockTarget != null)
                 {
-                    AudioClip clippy = ((Photon.Voice.Unity.Speaker)Traverse.Create(whoCopy.gameObject.GetComponent<GorillaSpeakerLoudness>()).Field("speaker").GetValue()).gameObject.GetComponent<AudioSource>().clip;
+                    AudioClip clippy = ((Photon.Voice.Unity.Speaker)Traverse.Create(lockTarget.gameObject.GetComponent<GorillaSpeakerLoudness>()).Field("speaker").GetValue()).gameObject.GetComponent<AudioSource>().clip;
                     if (GorillaTagger.Instance.myRecorder.AudioClip != clippy)
                         GorillaTagger.Instance.myRecorder.AudioClip = clippy;
                 }
@@ -785,8 +785,8 @@ namespace iiMenu.Mods
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        isCopying = true;
-                        whoCopy = possibly;
+                        gunLocked = true;
+                        lockTarget = possibly;
                         GorillaTagger.Instance.myRecorder.SourceType = Recorder.InputSourceType.AudioClip;
                         GorillaTagger.Instance.myRecorder.AudioClip = ((Photon.Voice.Unity.Speaker)Traverse.Create(possibly.gameObject.GetComponent<GorillaSpeakerLoudness>()).Field("speaker").GetValue()).gameObject.GetComponent<AudioSource>().clip;
                         GorillaTagger.Instance.myRecorder.RestartRecording(true);
@@ -796,9 +796,9 @@ namespace iiMenu.Mods
             }
             else
             {
-                if (isCopying)
+                if (gunLocked)
                 {
-                    isCopying = false;
+                    gunLocked = false;
                     Sound.FixMicrophone();
                 }
             }
