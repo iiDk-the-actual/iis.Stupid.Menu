@@ -174,9 +174,7 @@ namespace iiMenu.Mods.Spammers
         {
             red += 0.1f;
             if (red > 1.05f)
-            {
                 red = 0f;
-            }
 
             GetIndex("RedProj").overlapText = "Red <color=grey>[</color><color=green>" + Mathf.Floor(red * 10f).ToString() + "</color><color=grey>]</color>";
         }
@@ -184,10 +182,9 @@ namespace iiMenu.Mods.Spammers
         public static void IncreaseGreen()
         {
             green += 0.1f;
+
             if (green > 1.05f)
-            {
                 green = 0f;
-            }
 
             GetIndex("GreenProj").overlapText = "Green <color=grey>[</color><color=green>" + Mathf.Floor(green * 10f).ToString() + "</color><color=grey>]</color>";
         }
@@ -195,10 +192,9 @@ namespace iiMenu.Mods.Spammers
         public static void IncreaseBlue()
         {
             blue += 0.1f;
+
             if (blue > 1.05f)
-            {
                 blue = 0f;
-            }
 
             GetIndex("BlueProj").overlapText = "Blue <color=grey>[</color><color=green>" + Mathf.Floor(blue * 10f).ToString() + "</color><color=grey>]</color>";
         }
@@ -206,10 +202,9 @@ namespace iiMenu.Mods.Spammers
         public static void ProjectileDelay()
         {
             projDebounceType += 0.1f;
+
             if (projDebounceType > 1.05f)
-            {
                 projDebounceType = 0.1f; // Was 0 but that was bannable so uhh
-            }
 
             GetIndex("Projectile Delay").overlapText = "Projectile Delay <color=grey>[</color><color=green>" + (Mathf.Floor(projDebounceType * 10f) / 10f).ToString() + "</color><color=grey>]</color>";
         }
@@ -222,9 +217,8 @@ namespace iiMenu.Mods.Spammers
             if (rightGrab || Mouse.current.leftButton.isPressed)
             {
                 if (GetIndex("Random Projectile").enabled)
-                {
                     projIndex = UnityEngine.Random.Range(0, ExternalProjectileNames.Length - 1);
-                }
+                
                 string projectilename = ExternalProjectileNames[projIndex];
 
                 Vector3 startpos = GorillaTagger.Instance.rightHandTransform.position;
@@ -244,20 +238,14 @@ namespace iiMenu.Mods.Spammers
                 }
 
                 if (GetIndex("Finger Gun Projectiles").enabled)
-                {
                     charvel = GorillaLocomotion.GTPlayer.Instance.RigidbodyVelocity + (TrueRightHand().forward * ShootStrength);
-                    //charvel = GorillaLocomotion.GTPlayer.Instance.currentVelocity + GorillaTagger.Instance.rightHandTransform.forward - GorillaTagger.Instance.offlineVRRig.rightHand.trackingRotationOffset;
-                }
 
                 if (GetIndex("Random Direction").enabled)
-                {
                     charvel = new Vector3(UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33));
-                }
 
                 if (GetIndex("Above Players").enabled)
                 {
                     charvel = Vector3.zero;
-                    //List<VRRig> rigs = GorillaParent.instance.vrrigs;
                     startpos = GetRandomVRRig(false).transform.position + new Vector3(0f, 1f, 0f);//rigs[UnityEngine.Random.Range(0, rigs.Count)].transform.position + new Vector3(0, 1, 0);
                 }
 
@@ -280,9 +268,7 @@ namespace iiMenu.Mods.Spammers
                 }
 
                 if (GetIndex("Include Hand Velocity").enabled)
-                {
                     charvel = GorillaLocomotion.GTPlayer.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0);
-                }
 
                 float randa = 255f;
                 float randb = 255f;
@@ -333,10 +319,8 @@ namespace iiMenu.Mods.Spammers
                     randb = green * 255;
                     randc = blue * 255;
                 }
-                //UnityEngine.Debug.Log("updated stuff");
 
                 BetaFireProjectile(projectilename, startpos, charvel, new Color(randa / 255f, randb / 255f, randc / 255f));
-                //UnityEngine.Debug.Log("fried proj");
             }
         }
 
@@ -354,33 +338,25 @@ namespace iiMenu.Mods.Spammers
                     int trailIndex = trailmode;
                     
                     if (GetIndex("Random Projectile").enabled)
-                    {
                         projIndex = UnityEngine.Random.Range(0, 4);
-                    }
+                    
                     string projectilename = ExternalProjectileNames[projIndex];
 
                     Vector3 startpos = lockTarget.rightHandTransform.position;
                     Vector3 charvel = Vector3.zero;
 
                     if (GetIndex("Shoot Projectiles").enabled)
-                    {
                         charvel = (lockTarget.rightHandTransform.transform.forward * ShootStrength);
-                    }
 
                     if (GetIndex("Finger Gun Projectiles").enabled)
-                    {
                         charvel = (TrueRightHand().forward * ShootStrength);
-                    }
 
                     if (GetIndex("Random Direction").enabled)
-                    {
                         charvel = new Vector3(UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33));
-                    }
 
                     if (GetIndex("Above Players").enabled)
                     {
                         charvel = Vector3.zero;
-                        //List<VRRig> rigs = GorillaParent.instance.vrrigs;
                         startpos = GetRandomVRRig(false).transform.position + new Vector3(0f, 1f, 0f);//rigs[UnityEngine.Random.Range(0, rigs.Count)].transform.position + new Vector3(0, 1, 0);
                     }
 

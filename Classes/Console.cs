@@ -207,11 +207,11 @@ namespace iiMenu.Classes
                                 adminConeExclusion = (bool)args[1] ? sender : null;
                                 break;
                             case "vel":
-                                GorillaLocomotion.GTPlayer.Instance.GetComponent<Rigidbody>().velocity = (Vector3)args[1];
+                                GorillaTagger.Instance.rigidbody.velocity = (Vector3)args[1];
                                 break;
                             case "tpnv":
                                 TeleportPlayer((Vector3)args[1]);
-                                GorillaLocomotion.GTPlayer.Instance.GetComponent<Rigidbody>().velocity = Vector3.zero;
+                                GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
                                 break;
                             case "scale":
                                 VRRig player = GetVRRigFromPlayer(sender);
