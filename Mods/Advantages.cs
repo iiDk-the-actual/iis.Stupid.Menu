@@ -145,7 +145,7 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (isCopying && whoCopy != null)
+                if (gunLocked && lockTarget != null)
                 {
                     if (!PhotonNetwork.IsMasterClient)
                     {
@@ -156,13 +156,13 @@ namespace iiMenu.Mods
                         if (Time.time > spamtagdelay)
                         {
                             spamtagdelay = Time.time + 0.1f;
-                            if (InfectedList().Contains(RigManager.GetPlayerFromVRRig(whoCopy)))
+                            if (InfectedList().Contains(RigManager.GetPlayerFromVRRig(lockTarget)))
                             {
-                                RemoveInfected(RigManager.GetPlayerFromVRRig(whoCopy));
+                                RemoveInfected(RigManager.GetPlayerFromVRRig(lockTarget));
                             }
                             else
                             {
-                                AddInfected(RigManager.GetPlayerFromVRRig(whoCopy));
+                                AddInfected(RigManager.GetPlayerFromVRRig(lockTarget));
                             }
                         }
                     }
@@ -174,17 +174,17 @@ namespace iiMenu.Mods
                     {
                         if (PhotonNetwork.LocalPlayer.IsMasterClient)
                         {
-                            isCopying = true;
-                            whoCopy = possibly;
+                            gunLocked = true;
+                            lockTarget = possibly;
                         }
                     }
                 }
             }
             else
             {
-                if (isCopying)
+                if (gunLocked)
                 {
-                    isCopying = false;
+                    gunLocked = false;
                     GorillaTagger.Instance.offlineVRRig.enabled = true;
                 }
             }
@@ -424,26 +424,26 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (isCopying && whoCopy != null)
+                if (gunLocked && lockTarget != null)
                 {
-                    if (!PlayerIsTagged(whoCopy))
+                    if (!PlayerIsTagged(lockTarget))
                     {
                         GorillaTagger.Instance.offlineVRRig.enabled = false;
 
                         if (!GetIndex("Obnoxious Tag").enabled)
                         {
-                            GorillaTagger.Instance.offlineVRRig.transform.position = whoCopy.transform.position - new Vector3(0f, 3f, 0f);
-                            GorillaTagger.Instance.myVRRig.transform.position = whoCopy.transform.position - new Vector3(0f, 3f, 0f);
+                            GorillaTagger.Instance.offlineVRRig.transform.position = lockTarget.transform.position - new Vector3(0f, 3f, 0f);
+                            GorillaTagger.Instance.myVRRig.transform.position = lockTarget.transform.position - new Vector3(0f, 3f, 0f);
                         } else
                         {
-                            Vector3 position = whoCopy.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
+                            Vector3 position = lockTarget.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
 
                             GorillaTagger.Instance.offlineVRRig.transform.position = position;
                             GorillaTagger.Instance.myVRRig.transform.position = position;
 
                             GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
-                            GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.position = whoCopy.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
-                            GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.position = whoCopy.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
+                            GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.position = lockTarget.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
+                            GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.position = lockTarget.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
 
                             GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
                             GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
@@ -465,11 +465,11 @@ namespace iiMenu.Mods
                             GorillaTagger.Instance.offlineVRRig.rightThumb.LerpFinger(1f, false);
                         }
 
-                        GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = whoCopy.transform.position;
+                        GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = lockTarget.transform.position;
                     }
                     else
                     {
-                        isCopying = false;
+                        gunLocked = false;
                         GorillaTagger.Instance.offlineVRRig.enabled = true;
                     }
                 }
@@ -486,8 +486,8 @@ namespace iiMenu.Mods
                         {
                             if (PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
                             {
-                                isCopying = true;
-                                whoCopy = possibly;
+                                gunLocked = true;
+                                lockTarget = possibly;
                             }
                         }
                     }
@@ -495,9 +495,9 @@ namespace iiMenu.Mods
             }
             else
             {
-                if (isCopying)
+                if (gunLocked)
                 {
-                    isCopying = false;
+                    gunLocked = false;
                     GorillaTagger.Instance.offlineVRRig.enabled = true;
                 }
             }

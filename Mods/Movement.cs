@@ -2834,26 +2834,26 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (isCopying && whoCopy != null)
+                if (gunLocked && lockTarget != null)
                 {
-                    GorillaTagger.Instance.offlineVRRig.headConstraint.LookAt(whoCopy.headMesh.transform.position);
-                    GorillaTagger.Instance.offlineVRRig.head.rigTarget.LookAt(whoCopy.headMesh.transform.position);
+                    GorillaTagger.Instance.offlineVRRig.headConstraint.LookAt(lockTarget.headMesh.transform.position);
+                    GorillaTagger.Instance.offlineVRRig.head.rigTarget.LookAt(lockTarget.headMesh.transform.position);
                 }
                 if (GetGunInput(true))
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        isCopying = true;
-                        whoCopy = possibly;
+                        gunLocked = true;
+                        lockTarget = possibly;
                     }
                 }
             }
             else
             {
-                if (isCopying)
+                if (gunLocked)
                 {
-                    isCopying = false;
+                    gunLocked = false;
                 }
             }
         }
@@ -3577,9 +3577,9 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (isCopying && whoCopy != null)
+                if (gunLocked && lockTarget != null)
                 {
-                    TeleportPlayer(whoCopy.transform.position + new Vector3(0f, 0.5f, 0f));
+                    TeleportPlayer(lockTarget.transform.position + new Vector3(0f, 0.5f, 0f));
                     GorillaLocomotion.GTPlayer.Instance.GetComponent<Rigidbody>().velocity = Vector3.zero;
                 }
                 if (GetGunInput(true))
@@ -3587,16 +3587,16 @@ namespace iiMenu.Mods
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        isCopying = true;
-                        whoCopy = possibly;
+                        gunLocked = true;
+                        lockTarget = possibly;
                     }
                 }
             }
             else
             {
-                if (isCopying)
+                if (gunLocked)
                 {
-                    isCopying = false;
+                    gunLocked = false;
                 }
             }
         }
@@ -3609,52 +3609,52 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (isCopying && whoCopy != null)
+                if (gunLocked && lockTarget != null)
                 {
                     GorillaTagger.Instance.offlineVRRig.enabled = false;
 
-                    GorillaTagger.Instance.offlineVRRig.transform.position = whoCopy.transform.position;
-                    GorillaTagger.Instance.offlineVRRig.transform.rotation = whoCopy.transform.rotation;
+                    GorillaTagger.Instance.offlineVRRig.transform.position = lockTarget.transform.position;
+                    GorillaTagger.Instance.offlineVRRig.transform.rotation = lockTarget.transform.rotation;
 
-                    GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.position = whoCopy.leftHandTransform.position;
-                    GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.position = whoCopy.rightHandTransform.position;
+                    GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.position = lockTarget.leftHandTransform.position;
+                    GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.position = lockTarget.rightHandTransform.position;
 
-                    GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = whoCopy.leftHandTransform.rotation;
-                    GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = whoCopy.rightHandTransform.rotation;
+                    GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = lockTarget.leftHandTransform.rotation;
+                    GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = lockTarget.rightHandTransform.rotation;
 
-                    GorillaTagger.Instance.offlineVRRig.leftIndex.calcT = whoCopy.leftIndex.calcT;
-                    GorillaTagger.Instance.offlineVRRig.leftMiddle.calcT = whoCopy.leftMiddle.calcT;
-                    GorillaTagger.Instance.offlineVRRig.leftThumb.calcT = whoCopy.leftThumb.calcT;
+                    GorillaTagger.Instance.offlineVRRig.leftIndex.calcT = lockTarget.leftIndex.calcT;
+                    GorillaTagger.Instance.offlineVRRig.leftMiddle.calcT = lockTarget.leftMiddle.calcT;
+                    GorillaTagger.Instance.offlineVRRig.leftThumb.calcT = lockTarget.leftThumb.calcT;
 
                     GorillaTagger.Instance.offlineVRRig.leftIndex.LerpFinger(1f, false);
                     GorillaTagger.Instance.offlineVRRig.leftMiddle.LerpFinger(1f, false);
                     GorillaTagger.Instance.offlineVRRig.leftThumb.LerpFinger(1f, false);
 
-                    GorillaTagger.Instance.offlineVRRig.rightIndex.calcT = whoCopy.rightIndex.calcT;
-                    GorillaTagger.Instance.offlineVRRig.rightMiddle.calcT = whoCopy.rightMiddle.calcT;
-                    GorillaTagger.Instance.offlineVRRig.rightThumb.calcT = whoCopy.rightThumb.calcT;
+                    GorillaTagger.Instance.offlineVRRig.rightIndex.calcT = lockTarget.rightIndex.calcT;
+                    GorillaTagger.Instance.offlineVRRig.rightMiddle.calcT = lockTarget.rightMiddle.calcT;
+                    GorillaTagger.Instance.offlineVRRig.rightThumb.calcT = lockTarget.rightThumb.calcT;
 
                     GorillaTagger.Instance.offlineVRRig.rightIndex.LerpFinger(1f, false);
                     GorillaTagger.Instance.offlineVRRig.rightMiddle.LerpFinger(1f, false);
                     GorillaTagger.Instance.offlineVRRig.rightThumb.LerpFinger(1f, false);
 
-                    GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = whoCopy.headMesh.transform.rotation;
+                    GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = lockTarget.headMesh.transform.rotation;
                 }
                 if (GetGunInput(true))
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        isCopying = true;
-                        whoCopy = possibly;
+                        gunLocked = true;
+                        lockTarget = possibly;
                     }
                 }
             }
             else
             {
-                if (isCopying)
+                if (gunLocked)
                 {
-                    isCopying = false;
+                    gunLocked = false;
                     GorillaTagger.Instance.offlineVRRig.enabled = true;
                 }
             }
@@ -3668,11 +3668,11 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (isCopying && whoCopy != null)
+                if (gunLocked && lockTarget != null)
                 {
                     GorillaTagger.Instance.offlineVRRig.enabled = false;
 
-                    Vector3 look = whoCopy.transform.position - GorillaTagger.Instance.offlineVRRig.transform.position;
+                    Vector3 look = lockTarget.transform.position - GorillaTagger.Instance.offlineVRRig.transform.position;
                     look.Normalize();
 
                     Vector3 position = GorillaTagger.Instance.offlineVRRig.transform.position + (look * ((flySpeed / 2f) * Time.deltaTime));
@@ -3683,10 +3683,10 @@ namespace iiMenu.Mods
                         GorillaTagger.Instance.myVRRig.transform.position = position;
                     } catch { }
 
-                    GorillaTagger.Instance.offlineVRRig.transform.LookAt(whoCopy.transform.position);
+                    GorillaTagger.Instance.offlineVRRig.transform.LookAt(lockTarget.transform.position);
                     try
                     {
-                        GorillaTagger.Instance.myVRRig.transform.LookAt(whoCopy.transform.position);
+                        GorillaTagger.Instance.myVRRig.transform.LookAt(lockTarget.transform.position);
                     } catch { }
 
                     GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.offlineVRRig.transform.rotation;
@@ -3719,16 +3719,16 @@ namespace iiMenu.Mods
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        isCopying = true;
-                        whoCopy = possibly;
+                        gunLocked = true;
+                        lockTarget = possibly;
                     }
                 }
             }
             else
             {
-                if (isCopying)
+                if (gunLocked)
                 {
-                    isCopying = false;
+                    gunLocked = false;
                     GorillaTagger.Instance.offlineVRRig.enabled = true;
                 }
             }
@@ -3742,19 +3742,19 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (isCopying && whoCopy != null)
+                if (gunLocked && lockTarget != null)
                 {
                     GorillaTagger.Instance.offlineVRRig.enabled = false;
 
-                    GorillaTagger.Instance.offlineVRRig.transform.position = whoCopy.transform.position + new Vector3(Mathf.Cos((float)Time.frameCount / 20f), 0.5f, Mathf.Sin((float)Time.frameCount / 20f));
+                    GorillaTagger.Instance.offlineVRRig.transform.position = lockTarget.transform.position + new Vector3(Mathf.Cos((float)Time.frameCount / 20f), 0.5f, Mathf.Sin((float)Time.frameCount / 20f));
                     try
                     {
-                        GorillaTagger.Instance.myVRRig.transform.position = whoCopy.transform.position + new Vector3(Mathf.Cos((float)Time.frameCount / 20f), 0.5f, Mathf.Sin((float)Time.frameCount / 20f));
+                        GorillaTagger.Instance.myVRRig.transform.position = lockTarget.transform.position + new Vector3(Mathf.Cos((float)Time.frameCount / 20f), 0.5f, Mathf.Sin((float)Time.frameCount / 20f));
                     } catch { }
-                    GorillaTagger.Instance.offlineVRRig.transform.LookAt(whoCopy.transform.position);
+                    GorillaTagger.Instance.offlineVRRig.transform.LookAt(lockTarget.transform.position);
                     try
                     {
-                        GorillaTagger.Instance.myVRRig.transform.LookAt(whoCopy.transform.position);
+                        GorillaTagger.Instance.myVRRig.transform.LookAt(lockTarget.transform.position);
                     } catch { }
 
                     GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.offlineVRRig.transform.rotation;
@@ -3787,16 +3787,16 @@ namespace iiMenu.Mods
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        isCopying = true;
-                        whoCopy = possibly;
+                        gunLocked = true;
+                        lockTarget = possibly;
                     }
                 }
             }
             else
             {
-                if (isCopying)
+                if (gunLocked)
                 {
-                    isCopying = false;
+                    gunLocked = false;
                     GorillaTagger.Instance.offlineVRRig.enabled = true;
                 }
             }
@@ -3810,17 +3810,17 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (isCopying && whoCopy != null)
+                if (gunLocked && lockTarget != null)
                 {
                     GorillaTagger.Instance.offlineVRRig.enabled = false;
 
-                    GorillaTagger.Instance.offlineVRRig.transform.position = whoCopy.headMesh.transform.position + (whoCopy.headMesh.transform.forward * (UnityEngine.Random.Range(10f, 50f) / 100f));
+                    GorillaTagger.Instance.offlineVRRig.transform.position = lockTarget.headMesh.transform.position + (lockTarget.headMesh.transform.forward * (UnityEngine.Random.Range(10f, 50f) / 100f));
                     try
                     {
-                        GorillaTagger.Instance.myVRRig.transform.position = whoCopy.headMesh.transform.position + (whoCopy.headMesh.transform.forward * (UnityEngine.Random.Range(10f, 50f) / 100f));
+                        GorillaTagger.Instance.myVRRig.transform.position = lockTarget.headMesh.transform.position + (lockTarget.headMesh.transform.forward * (UnityEngine.Random.Range(10f, 50f) / 100f));
                     } catch { }
 
-                    GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.LookAt(whoCopy.headMesh.transform.position);
+                    GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.LookAt(lockTarget.headMesh.transform.position);
                     Quaternion dirLook = GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation;
 
                     GorillaTagger.Instance.offlineVRRig.transform.rotation = dirLook;
@@ -3829,8 +3829,8 @@ namespace iiMenu.Mods
                         GorillaTagger.Instance.myVRRig.transform.rotation = dirLook;
                     } catch { }
 
-                    GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.position = whoCopy.headMesh.transform.position + (whoCopy.headMesh.transform.right * 0.2f);
-                    GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.position = whoCopy.headMesh.transform.position + (whoCopy.headMesh.transform.right * -0.2f);
+                    GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.position = lockTarget.headMesh.transform.position + (lockTarget.headMesh.transform.right * 0.2f);
+                    GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.position = lockTarget.headMesh.transform.position + (lockTarget.headMesh.transform.right * -0.2f);
 
                     GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = dirLook;
 
@@ -3860,16 +3860,16 @@ namespace iiMenu.Mods
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        isCopying = true;
-                        whoCopy = possibly;
+                        gunLocked = true;
+                        lockTarget = possibly;
                     }
                 }
             }
             else
             {
-                if (isCopying)
+                if (gunLocked)
                 {
-                    isCopying = false;
+                    gunLocked = false;
                     GorillaTagger.Instance.offlineVRRig.enabled = true;
                 }
             }
@@ -3883,11 +3883,11 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (isCopying && whoCopy != null)
+                if (gunLocked && lockTarget != null)
                 {
                     GorillaTagger.Instance.offlineVRRig.enabled = false;
 
-                    Vector3 position = whoCopy.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
+                    Vector3 position = lockTarget.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
 
                     GorillaTagger.Instance.offlineVRRig.transform.position = position;
                     try
@@ -3895,15 +3895,15 @@ namespace iiMenu.Mods
                         GorillaTagger.Instance.myVRRig.transform.position = position;
                     } catch { }
 
-                    GorillaTagger.Instance.offlineVRRig.transform.LookAt(whoCopy.transform.position);
+                    GorillaTagger.Instance.offlineVRRig.transform.LookAt(lockTarget.transform.position);
                     try
                     {
-                        GorillaTagger.Instance.myVRRig.transform.LookAt(whoCopy.transform.position);
+                        GorillaTagger.Instance.myVRRig.transform.LookAt(lockTarget.transform.position);
                     } catch { }
 
                     GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
-                    GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.position = whoCopy.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
-                    GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.position = whoCopy.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
+                    GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.position = lockTarget.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
+                    GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.position = lockTarget.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
 
                     GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
                     GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
@@ -3943,16 +3943,16 @@ namespace iiMenu.Mods
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        isCopying = true;
-                        whoCopy = possibly;
+                        gunLocked = true;
+                        lockTarget = possibly;
                     }
                 }
             }
             else
             {
-                if (isCopying)
+                if (gunLocked)
                 {
-                    isCopying = false;
+                    gunLocked = false;
                     GorillaTagger.Instance.offlineVRRig.enabled = true;
                 }
             }
@@ -3966,22 +3966,22 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (isCopying && whoCopy != null)
+                if (gunLocked && lockTarget != null)
                 {
                     GorillaTagger.Instance.offlineVRRig.enabled = false;
 
-                    GorillaTagger.Instance.offlineVRRig.transform.position = whoCopy.transform.position - new Vector3(0f, 2f, 0f);
+                    GorillaTagger.Instance.offlineVRRig.transform.position = lockTarget.transform.position - new Vector3(0f, 2f, 0f);
                     try
                     {
-                        GorillaTagger.Instance.myVRRig.transform.position = whoCopy.transform.position - new Vector3(0f, 2f, 0f);
+                        GorillaTagger.Instance.myVRRig.transform.position = lockTarget.transform.position - new Vector3(0f, 2f, 0f);
                     }
                     catch { }
 
                     if (Time.time > splashDel)
                     {
-                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", GetPlayerFromVRRig(whoCopy), new object[]
+                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", GetPlayerFromVRRig(lockTarget), new object[]
                         {
-                            whoCopy.transform.position + new Vector3(UnityEngine.Random.Range(-0.5f, 0.5f),UnityEngine.Random.Range(-0.5f, 0.5f),UnityEngine.Random.Range(-0.5f, 0.5f)),
+                            lockTarget.transform.position + new Vector3(UnityEngine.Random.Range(-0.5f, 0.5f),UnityEngine.Random.Range(-0.5f, 0.5f),UnityEngine.Random.Range(-0.5f, 0.5f)),
                             Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0,360), UnityEngine.Random.Range(0,360), UnityEngine.Random.Range(0,360))),
                             4f,
                             100f,
@@ -3997,16 +3997,16 @@ namespace iiMenu.Mods
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        isCopying = true;
-                        whoCopy = possibly;
+                        gunLocked = true;
+                        lockTarget = possibly;
                     }
                 }
             }
             else
             {
-                if (isCopying)
+                if (gunLocked)
                 {
-                    isCopying = false;
+                    gunLocked = false;
                     GorillaTagger.Instance.offlineVRRig.enabled = true;
                 }
             }
@@ -4020,50 +4020,50 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (isCopying && whoCopy != null)
+                if (gunLocked && lockTarget != null)
                 {
                     GorillaTagger.Instance.offlineVRRig.enabled = false;
 
                     if (!GetIndex("Reverse Intercourse").enabled)
                     {
-                        GorillaTagger.Instance.offlineVRRig.transform.position = whoCopy.transform.position + (whoCopy.transform.forward * -(0.2f + (Mathf.Sin(Time.frameCount / 8f) * 0.1f)));
+                        GorillaTagger.Instance.offlineVRRig.transform.position = lockTarget.transform.position + (lockTarget.transform.forward * -(0.2f + (Mathf.Sin(Time.frameCount / 8f) * 0.1f)));
                         try
                         {
-                            GorillaTagger.Instance.myVRRig.transform.position = whoCopy.transform.position + (whoCopy.transform.forward * -(0.2f + (Mathf.Sin(Time.frameCount / 8f) * 0.1f)));
+                            GorillaTagger.Instance.myVRRig.transform.position = lockTarget.transform.position + (lockTarget.transform.forward * -(0.2f + (Mathf.Sin(Time.frameCount / 8f) * 0.1f)));
                         } catch { }
 
-                        GorillaTagger.Instance.offlineVRRig.transform.rotation = whoCopy.transform.rotation;
+                        GorillaTagger.Instance.offlineVRRig.transform.rotation = lockTarget.transform.rotation;
                         try
                         {
-                            GorillaTagger.Instance.myVRRig.transform.rotation = whoCopy.transform.rotation;
+                            GorillaTagger.Instance.myVRRig.transform.rotation = lockTarget.transform.rotation;
                         } catch { }
 
-                        GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.position = (whoCopy.transform.position + whoCopy.transform.right * -0.2f) + whoCopy.transform.up * -0.4f;
-                        GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.position = (whoCopy.transform.position + whoCopy.transform.right * 0.2f) + whoCopy.transform.up * -0.4f;
+                        GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.position = (lockTarget.transform.position + lockTarget.transform.right * -0.2f) + lockTarget.transform.up * -0.4f;
+                        GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.position = (lockTarget.transform.position + lockTarget.transform.right * 0.2f) + lockTarget.transform.up * -0.4f;
 
-                        GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = whoCopy.transform.rotation;
-                        GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = whoCopy.transform.rotation;
+                        GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = lockTarget.transform.rotation;
+                        GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = lockTarget.transform.rotation;
                     } else
                     {
-                        GorillaTagger.Instance.offlineVRRig.transform.position = whoCopy.transform.position + (whoCopy.transform.forward * (0.2f + (Mathf.Sin(Time.frameCount / 8f) * 0.1f)));
+                        GorillaTagger.Instance.offlineVRRig.transform.position = lockTarget.transform.position + (lockTarget.transform.forward * (0.2f + (Mathf.Sin(Time.frameCount / 8f) * 0.1f)));
                         try
                         {
-                            GorillaTagger.Instance.myVRRig.transform.position = whoCopy.transform.position + (whoCopy.transform.forward * (0.2f + (Mathf.Sin(Time.frameCount / 8f) * 0.1f)));
+                            GorillaTagger.Instance.myVRRig.transform.position = lockTarget.transform.position + (lockTarget.transform.forward * (0.2f + (Mathf.Sin(Time.frameCount / 8f) * 0.1f)));
                         } catch { }
 
-                        GorillaTagger.Instance.offlineVRRig.transform.rotation = whoCopy.transform.rotation;
+                        GorillaTagger.Instance.offlineVRRig.transform.rotation = lockTarget.transform.rotation;
                         try
                         {
-                            GorillaTagger.Instance.myVRRig.transform.rotation = whoCopy.transform.rotation;
+                            GorillaTagger.Instance.myVRRig.transform.rotation = lockTarget.transform.rotation;
                         } catch { }
 
-                        GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.position = (whoCopy.transform.position + whoCopy.transform.right * -0.2f) + whoCopy.transform.up * -0.4f;
-                        GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.position = (whoCopy.transform.position + whoCopy.transform.right * 0.2f) + whoCopy.transform.up * -0.4f;
+                        GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.position = (lockTarget.transform.position + lockTarget.transform.right * -0.2f) + lockTarget.transform.up * -0.4f;
+                        GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.position = (lockTarget.transform.position + lockTarget.transform.right * 0.2f) + lockTarget.transform.up * -0.4f;
 
-                        GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(whoCopy.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
-                        GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(whoCopy.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
+                        GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(lockTarget.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
+                        GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(lockTarget.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
 
-                        GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = whoCopy.transform.rotation;
+                        GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = lockTarget.transform.rotation;
                     }
 
                     FixRigHandRotation();
@@ -4084,7 +4084,7 @@ namespace iiMenu.Mods
                     GorillaTagger.Instance.offlineVRRig.rightMiddle.LerpFinger(1f, false);
                     GorillaTagger.Instance.offlineVRRig.rightThumb.LerpFinger(1f, false);
 
-                    GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = whoCopy.transform.rotation;
+                    GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = lockTarget.transform.rotation;
 
                     if ((Time.frameCount % 45) == 0)
                     {
@@ -4108,16 +4108,16 @@ namespace iiMenu.Mods
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        isCopying = true;
-                        whoCopy = possibly;
+                        gunLocked = true;
+                        lockTarget = possibly;
                     }
                 }
             }
             else
             {
-                if (isCopying)
+                if (gunLocked)
                 {
-                    isCopying = false;
+                    gunLocked = false;
                     GorillaTagger.Instance.offlineVRRig.enabled = true;
                 }
             }
@@ -4131,29 +4131,29 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (isCopying && whoCopy != null)
+                if (gunLocked && lockTarget != null)
                 {
                     GorillaTagger.Instance.offlineVRRig.enabled = false;
 
-                    GorillaTagger.Instance.offlineVRRig.transform.position = whoCopy.transform.position + (whoCopy.transform.forward * (0.2f + (Mathf.Sin(Time.frameCount / 8f) * 0.1f))) + (whoCopy.transform.up * -0.4f);
+                    GorillaTagger.Instance.offlineVRRig.transform.position = lockTarget.transform.position + (lockTarget.transform.forward * (0.2f + (Mathf.Sin(Time.frameCount / 8f) * 0.1f))) + (lockTarget.transform.up * -0.4f);
                     try
                     {
-                        GorillaTagger.Instance.myVRRig.transform.position = whoCopy.transform.position + (whoCopy.transform.forward * (0.2f + (Mathf.Sin(Time.frameCount / 8f) * 0.1f))) + (whoCopy.transform.up * -0.4f);
+                        GorillaTagger.Instance.myVRRig.transform.position = lockTarget.transform.position + (lockTarget.transform.forward * (0.2f + (Mathf.Sin(Time.frameCount / 8f) * 0.1f))) + (lockTarget.transform.up * -0.4f);
                     } catch { }
 
-                    GorillaTagger.Instance.offlineVRRig.transform.rotation = Quaternion.Euler(whoCopy.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
+                    GorillaTagger.Instance.offlineVRRig.transform.rotation = Quaternion.Euler(lockTarget.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
                     try
                     {
-                        GorillaTagger.Instance.myVRRig.transform.rotation = Quaternion.Euler(whoCopy.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
+                        GorillaTagger.Instance.myVRRig.transform.rotation = Quaternion.Euler(lockTarget.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
                     } catch { }
 
-                    GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.position = (whoCopy.transform.position + whoCopy.transform.right * 0.2f) + whoCopy.transform.up * -0.4f;
-                    GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.position = (whoCopy.transform.position + whoCopy.transform.right * -0.2f) + whoCopy.transform.up * -0.4f;
+                    GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.position = (lockTarget.transform.position + lockTarget.transform.right * 0.2f) + lockTarget.transform.up * -0.4f;
+                    GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.position = (lockTarget.transform.position + lockTarget.transform.right * -0.2f) + lockTarget.transform.up * -0.4f;
 
-                    GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(whoCopy.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
-                    GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(whoCopy.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
+                    GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(lockTarget.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
+                    GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(lockTarget.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
 
-                    GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = Quaternion.Euler(whoCopy.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
+                    GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = Quaternion.Euler(lockTarget.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
 
                     GorillaTagger.Instance.offlineVRRig.leftIndex.calcT = 0f;
                     GorillaTagger.Instance.offlineVRRig.leftMiddle.calcT = 0f;
@@ -4195,16 +4195,16 @@ namespace iiMenu.Mods
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
                     if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
                     {
-                        isCopying = true;
-                        whoCopy = possibly;
+                        gunLocked = true;
+                        lockTarget = possibly;
                     }
                 }
             }
             else
             {
-                if (isCopying)
+                if (gunLocked)
                 {
-                    isCopying = false;
+                    gunLocked = false;
                     GorillaTagger.Instance.offlineVRRig.enabled = true;
                 }
             }
@@ -4212,8 +4212,8 @@ namespace iiMenu.Mods
 
         public static void RemoveCopy()
         {
-            isCopying = false;
-            whoCopy = null;
+            gunLocked = false;
+            lockTarget = null;
             GorillaTagger.Instance.offlineVRRig.enabled = true;
         }
 
