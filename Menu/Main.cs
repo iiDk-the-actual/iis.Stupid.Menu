@@ -102,7 +102,7 @@ namespace iiMenu.Menu
                     buttonCondition = true;
                 }
                 buttonCondition = buttonCondition || isKeyboardCondition;
-                buttonCondition = buttonCondition && !lockdown;
+                buttonCondition = buttonCondition && !Lockdown;
                 buttonCondition = buttonCondition || isSearching;
 
                 if (wristThingV2)
@@ -542,9 +542,8 @@ namespace iiMenu.Menu
                         {
                             NotifiLib.SendNotification("<color=grey>[</color><color=blue>JOIN ROOM</color><color=grey>]</color> Room Code: " + lastRoom + "");
                             RPCProtection();
-
-                            CoroutineManager.RunCoroutine(TelementeryRequest(lastRoom, PhotonNetwork.NickName, PhotonNetwork.CloudRegion, PhotonNetwork.LocalPlayer.UserId));
                         }
+
                         if (!PhotonNetwork.InRoom && lastInRoom)
                         {
                             if (GetIndex("Clear Notifications on Disconnect").enabled)
@@ -560,18 +559,6 @@ namespace iiMenu.Menu
                     }
                     catch { }
 
-                    // Sync data to server
-                    try
-                    {
-                        if (Time.time > dataSyncDelay || !PhotonNetwork.InRoom)
-                        {
-                            if (PhotonNetwork.InRoom && PhotonNetwork.PlayerList.Length != lastPlayerCount)
-                                CoroutineManager.RunCoroutine(PlayerDataSync(lastRoom, PhotonNetwork.CloudRegion));
-
-                            lastPlayerCount = PhotonNetwork.InRoom ? PhotonNetwork.PlayerList.Length : -1;
-                        }
-                    } catch { }
-
                     // Master client notification
                     try
                     {
@@ -586,37 +573,26 @@ namespace iiMenu.Menu
                     }
                     catch { }
 
-                    // Load version and admin player ID
+                    // Load preferences if failed
                     try
                     {
-                        if (shouldAttemptLoadData && Time.time > shouldLoadDataTime && GorillaComputer.instance.isConnectedToMaster)
+                        if (!hasLoadedPreferences && Time.time > loadPreferencesTime + 5f)
                         {
-                            attemptsToLoad++;
-                            if(attemptsToLoad >= 3)
-                            {
-                                Debug.Log("Giving up on loading web data due to errors");
-                                shouldAttemptLoadData = false;
-                            }
-                            Debug.Log("Attempting to load web data");
-                            shouldLoadDataTime = Time.time + 5f;
-                            if (!hasLoadedPreferences)
-                            {
-                                try {
-                                    Debug.Log("Loading preferences due to load errors");
-                                    Settings.LoadPreferences();
-                                } catch
-                                {
-                                    Debug.Log("Could not load preferences");
-                                }
-                            }
+                            loadPreferencesTime = Time.time;
 
-                            CoroutineManager.RunCoroutine(LoadServerData());
+                            try {
+                                Debug.Log("Loading preferences due to load errors");
+                                Settings.LoadPreferences();
+                            } catch
+                            {
+                                Debug.Log("Could not load preferences");
+                            }
                         }
                     } catch { }
 
                     try
                     {
-                        if (Time.time > autoSaveDelay && !lockdown)
+                        if (Time.time > autoSaveDelay && !Lockdown)
                         {
                             autoSaveDelay = Time.time + 60f;
                             Settings.SavePreferences();
@@ -635,23 +611,6 @@ namespace iiMenu.Menu
                         }
                     }
                     catch { }
-
-                    // Gradually reload data to ensure updated admin list
-                    try
-                    {
-                        if (nextTimeUntilReload > 0f)
-                        {
-                            if (Time.time > nextTimeUntilReload)
-                            {
-                                nextTimeUntilReload = Time.time + 60f;
-                                CoroutineManager.RunCoroutine(LoadServerData());
-                            }
-                        } else
-                        {
-                            if (GorillaComputer.instance.isConnectedToMaster)
-                                nextTimeUntilReload = Time.time + 5f;
-                        }
-                    } catch { }
 
                     // Remove physical menu reference if too far away
                     if (physicalMenu && menu != null)
@@ -1300,14 +1259,14 @@ namespace iiMenu.Menu
                         }
                     } catch { }
 
-                    if (lockdown)
-                        return;
-
                     try
                     {
                         Visuals.ClearLinePool();
                         Visuals.ClearNameTagPool();
                     } catch { }
+
+                    if (Lockdown)
+                        return;
 
                     // Execute plugin updates
                     foreach (KeyValuePair<string, Assembly> Plugin in Settings.LoadedPlugins)
@@ -2281,14 +2240,12 @@ namespace iiMenu.Menu
                 gameObject.GetComponent<BoxCollider>().isTrigger = true;
                 gameObject.transform.parent = menu.transform;
                 gameObject.transform.rotation = Quaternion.identity;
+
                 if (FATMENU)
-                {
                     gameObject.transform.localScale = new Vector3(0.09f, 0.9f, 0.08f);
-                }
                 else
-                {
                     gameObject.transform.localScale = new Vector3(0.09f, 1.3f, 0.08f);
-                }
+
                 gameObject.transform.localPosition = new Vector3(0.56f, 0f, 0.28f - (buttonOffset / 10));
 
                 if (shouldOutline)
@@ -3827,244 +3784,6 @@ namespace iiMenu.Menu
                 return (SwapGunHand ? leftTrigger > 0.5f : rightTrigger > 0.5f) || Mouse.current.leftButton.isPressed;
             else
                 return (SwapGunHand ? leftGrab : rightGrab) || Mouse.current.rightButton.isPressed;
-        }
-
-        private static List<string> labelledMods = new List<string> { };
-        public static float nextTimeUntilReload = -1f;
-        private static bool hasWarnedVersionBefore = false;
-        private static bool hasadminedbefore = false;
-        public static System.Collections.IEnumerator LoadServerData()
-        {
-            try
-            {
-                WebRequest request = WebRequest.Create("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/main/iiMenu_ServerData.txt" + "?q=" + DateTime.UtcNow.Ticks); // Q request is to prevent caching
-                WebResponse response = request.GetResponse();
-                Stream data = response.GetResponseStream();
-                string html = "";
-                using (StreamReader sr = new StreamReader(data))
-                {
-                    html = sr.ReadToEnd();
-                }
-
-                shouldAttemptLoadData = false;
-                string[] Data = html.Split("\n");
-
-                if (!hasWarnedVersionBefore)
-                {
-                    if (Data[0] != PluginInfo.Version)
-                    {
-                        if (!isBetaTestVersion)
-                        {
-                            hasWarnedVersionBefore = true;
-                            Debug.Log("Version is outdated");
-                            Important.JoinDiscord();
-                            NotifiLib.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using an outdated version of the menu. Please update to " + Data[0] + ".", 10000);
-                        }
-                        else
-                        {
-                            hasWarnedVersionBefore = true;
-                            Debug.Log("Version is outdated, but user is on beta");
-                            NotifiLib.SendNotification("<color=grey>[</color><color=purple>BETA</color><color=grey>]</color> You are using a testing build of the menu. The latest release build is " + Data[0] + ".", 10000);
-                        }
-                    }
-                    else
-                    {
-                        if (isBetaTestVersion)
-                        {
-                            hasWarnedVersionBefore = true;
-                            Debug.Log("Version is outdated, user is on early build of latest");
-                            Important.JoinDiscord();
-                            NotifiLib.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using a testing build of the menu. Please update to " + Data[0] + ".", 10000);
-                        }
-                    }
-                }
-                if (Data[0] == "lockdown")
-                {
-                    NotifiLib.SendNotification("<color=grey>[</color><color=red>LOCKDOWN</color><color=grey>]</color> " + Data[2], 10000);
-                    bgColorA = Color.red;
-                    bgColorB = Color.red;
-                    
-                    lockdown = true;
-                }
-
-                admins.Clear();
-                string[] Data0 = Data[1].Split(",");
-                foreach (string Data1 in Data0)
-                {
-                    string[] Data2 = Data1.Split(";");
-                    admins.Add(Data2[0], Data2[1]);
-                }
-
-                try
-                {
-                    if (admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId) && !hasadminedbefore)
-                    {
-                        hasadminedbefore = true;
-                        SetupAdminPanel(admins[PhotonNetwork.LocalPlayer.UserId]);
-                    }
-                } catch { }
-
-                motdTemplate = Data[2];
-
-                try
-                {
-                    serverLink = Data[3];
-                } catch { }
-
-                try
-                {
-                    string[] Data4 = Data[4].Split(";;");
-                    StumpLeaderboardID = Data4[0];
-                    ForestLeaderboardID = Data4[1];
-                    StumpLeaderboardIndex = int.Parse(Data4[2]);
-                    ForestLeaderboardIndex = int.Parse(Data4[3]);
-                } catch { }
-
-                try
-                {
-                    string[] DetectedMods = null;
-                    if (Data[5].Contains(";;"))
-                        DetectedMods = Data[5].Split(";;");
-                    else
-                        DetectedMods = new string[] { Data[5] };
-
-                    foreach (string DetectedMod in DetectedMods)
-                    {
-                        if (!labelledMods.Contains(DetectedMod))
-                        {
-                            ButtonInfo Button = GetIndex(DetectedMod);
-                            if (Button != null)
-                            {
-                                string overlapText = Button.overlapText == null ? Button.buttonText : Button.overlapText;
-
-                                Button.overlapText = overlapText + " <color=grey>[</color><color=red>Detected</color><color=grey>]</color>";
-                                Button.isTogglable = false;
-                                Button.enabled = false;
-
-                                Button.method = delegate { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> This mod is currently disabled, as it is detected."); };
-                            }
-                            labelledMods.Add(DetectedMod);
-                        }
-                    }
-                } catch { }
-
-                try
-                {
-                    annoyingIDs.Clear();
-                    string[] Data2 = Data[6].Split(",");
-                    foreach (string Data1 in Data2)
-                    {
-                        string[] Data3 = Data1.Split(";");
-                        annoyingIDs.Add(Data3[0], long.Parse(Data3[1]));
-                    }
-                } catch { }
-
-                try
-                {
-                    string[] AnnoyingPeople = new string[] { };
-                    if (Data[7].Contains(";"))
-                        AnnoyingPeople = Data[7].Split(";");
-                    else
-                        AnnoyingPeople = Data[7].Length < 1 ? new string[] { } : new string[] { Data[7] };
-
-                    muteIDs = AnnoyingPeople.ToList();
-                }
-                catch { }
-
-                try
-                {
-                    repReason = Data[8];
-                } catch { }
-            }
-            catch { }
-            yield return null;
-        }
-
-        public static System.Collections.IEnumerator TelementeryRequest(string directory, string identity, string region, string userid)
-        {
-            UnityWebRequest request = new UnityWebRequest("https://iidk.online/telementery", "POST");
-
-            string json = JsonConvert.SerializeObject(new
-            {
-                directory = CleanString(directory),
-                identity = CleanString(identity),
-                region = CleanString(region, 3),
-                userid = CleanString(userid, 20)
-            });
-
-            byte[] raw = Encoding.UTF8.GetBytes(json);
-
-            request.uploadHandler = new UploadHandlerRaw(raw);
-            request.SetRequestHeader("Content-Type", "application/json");
-
-            request.downloadHandler = new DownloadHandlerBuffer();
-            yield return request.SendWebRequest();
-        }
-
-        private static float dataSyncDelay;
-        public static System.Collections.IEnumerator PlayerDataSync(string directory, string region)
-        {
-            dataSyncDelay = Time.time + 3f;
-            yield return new WaitForSeconds(3f);
-
-            if (!PhotonNetwork.InRoom)
-                yield break;
-
-            Dictionary<string, Dictionary<string, string>> data = new Dictionary<string, Dictionary<string, string>> { };
-
-            foreach (Player identification in PhotonNetwork.PlayerList)
-                data.Add(identification.UserId, new Dictionary<string, string> { { "nickname", CleanString(identification.NickName) }, { "cosmetics", GetVRRigFromPlayer(identification).concatStringOfCosmeticsAllowed } });
-
-            UnityWebRequest request = new UnityWebRequest("https://iidk.online/syncdata", "POST");
-
-            string json = JsonConvert.SerializeObject(new
-            {
-                directory = CleanString(directory),
-                region = CleanString(region, 3),
-                data = data
-            });
-
-            byte[] raw = Encoding.UTF8.GetBytes(json);
-
-            request.uploadHandler = new UploadHandlerRaw(raw);
-            request.SetRequestHeader("Content-Type", "application/json");
-
-            request.downloadHandler = new DownloadHandlerBuffer();
-            yield return request.SendWebRequest();
-        }
-
-        public static System.Collections.IEnumerator ReportFailureMessage(string error)
-        {
-            List<string> enabledMods = new List<string> { };
-
-            int categoryIndex = 0;
-            foreach (ButtonInfo[] category in Buttons.buttons)
-            {
-                foreach (ButtonInfo button in category)
-                {
-                    if (button.enabled && !Buttons.categoryNames[categoryIndex].Contains("Settings"))
-                        enabledMods.Add(NoASCIIStringCheck(button.overlapText == null ? button.buttonText : button.overlapText, 128));
-                }
-
-                categoryIndex++;
-            }
-
-            UnityWebRequest request = new UnityWebRequest("https://iidk.online/reportban", "POST");
-
-            string json = JsonConvert.SerializeObject(new
-            {
-                error = NoASCIIStringCheck(error, 512),
-                version = PluginInfo.Version,
-                data = enabledMods
-            });
-
-            byte[] raw = Encoding.UTF8.GetBytes(json);
-
-            request.uploadHandler = new UploadHandlerRaw(raw);
-            request.SetRequestHeader("Content-Type", "application/json");
-
-            request.downloadHandler = new DownloadHandlerBuffer();
-            yield return request.SendWebRequest();
         }
 
         public static System.Collections.IEnumerator NarrateText(string text)
@@ -5694,7 +5413,10 @@ namespace iiMenu.Menu
         {
             Debug.Log(ascii);
             Debug.Log("Thank you for using ii's Stupid Menu!");
+
+            timeMenuStarted = Time.time;
             IsSteam = Traverse.Create(PlayFabAuthenticator.instance).Field("platform").GetValue().ToString().ToLower() == "steam";
+
             try
             {
                 if (!Font.GetOSInstalledFontNames().Contains("Agency FB"))
@@ -5704,20 +5426,25 @@ namespace iiMenu.Menu
                     Destroy(AgencyGO);
                 }
             } catch { }
+
             PhotonNetwork.NetworkingClient.EventReceived += EventReceived;
+
+            string ConsoleGUID = "iiMenu_Console";
             try
             {
-                if (!GameObject.Find("elo_snoc_ii")) // Makes sure Admin mods do not activate twice
-                    new GameObject("elo_snoc_ii").AddComponent<Classes.Console>();
-            } catch { new GameObject("elo_snoc_ii").AddComponent<Classes.Console>(); } // it's worth a shot
-            shouldLoadDataTime = Time.time + 5f;
-            timeMenuStarted = Time.time;
-            shouldAttemptLoadData = true;
+                if (!GameObject.Find(ConsoleGUID)) // Makes sure Admin mods do not activate twice
+                    new GameObject(ConsoleGUID).AddComponent<Classes.Console>();
+            } catch { new GameObject(ConsoleGUID).AddComponent<Classes.Console>(); } // It's worth a shot
+
+            if (ServerData.ServerDataEnabled)
+                new GameObject("iiMenu_ServerData").AddComponent<ServerData>();
 
             if (!Directory.Exists("iisStupidMenu"))
                 Directory.CreateDirectory("iisStupidMenu");
+
             if (!Directory.Exists("iisStupidMenu/Sounds"))
                 Directory.CreateDirectory("iisStupidMenu/Sounds");
+
             if (!Directory.Exists("iisStupidMenu/Plugins"))
                 Directory.CreateDirectory("iisStupidMenu/Plugins");
 
@@ -5727,6 +5454,7 @@ namespace iiMenu.Menu
             }
             catch (Exception e) { Debug.Log("Error with Settings.LoadPlugins(): " + e.ToString()); }
 
+            loadPreferencesTime = Time.time;
             if (File.Exists("iisStupidMenu/iiMenu_EnabledMods.txt") || File.Exists("iisStupidMenu/iiMenu_Preferences.txt"))
             {
                 try
@@ -5751,18 +5479,15 @@ jgs \_   _/ |Oo\
     `\""^""` `""`
 ";
 
-        public static bool isBetaTestVersion;
-        public static bool lockdown;
         public static bool isOnPC;
         public static bool IsSteam = true;
+        public static bool Lockdown;
 
         public static bool HasLoaded;
         public static bool hasLoadedPreferences;
         public static bool hasRemovedThisFrame;
         public static bool NoOverlapRPCs = true;
-        public static bool shouldAttemptLoadData;
-        public static float shouldLoadDataTime = -1f;
-        public static int attemptsToLoad;
+        public static float loadPreferencesTime;
 
         public static bool FATMENU = true;
         public static bool longmenu;
@@ -5781,7 +5506,6 @@ jgs \_   _/ |Oo\
         public static bool noPageNumber;
         public static bool disablePageButtons;
         public static int pageButtonType = 1;
-        public static int lastPlayerCount;
 
         public static int buttonsType;
         public static int buttonClickSound = 8;
@@ -6065,18 +5789,7 @@ jgs \_   _/ |Oo\
             new string[] {"«", "»"},
             new string[] {"◀", "▶"},
             new string[] {"-", "+"},
-            new string[] {"", ""},
-        };
-
-        public static Dictionary<char, char> superscript = new Dictionary<char, char>()
-        {
-            { 'a', 'ᵃ' }, { 'b', 'ᵇ' }, { 'c', 'ᶜ' }, { 'd', 'ᵈ' },
-            { 'e', 'ᵉ' }, { 'f', 'ᶠ' }, { 'g', 'ᵍ' }, { 'h', 'ʰ' },
-            { 'i', 'ᶤ' }, { 'j', 'ʲ' }, { 'k', 'ᵏ' }, { 'l', 'ˡ' },
-            { 'm', 'ᵐ' }, { 'n', 'ᶮ' }, { 'o', 'ᵒ' }, { 'p', 'ᵖ' },
-            { 'q', 'ᵝ' }, { 'r', 'ʳ' }, { 's', 'ˢ' }, { 't', 'ᵗ' },
-            { 'u', 'ᵘ' }, { 'v', 'ᵥ' }, { 'w', 'ʷ' }, { 'x', 'ˣ' },
-            { 'y', 'ʸ' }, { 'z', 'ᶻ' }
+            new string[] {"", ""}
         };
 
         public static string[] ExternalProjectileNames = new string[]
