@@ -1,11 +1,8 @@
 ﻿using BepInEx;
 using ExitGames.Client.Photon;
 using GorillaExtensions;
-using GorillaLocomotion.Gameplay;
 using GorillaNetworking;
-using GorillaTag.Cosmetics;
 using GorillaTagScripts;
-using GorillaTagScripts.ObstacleCourse;
 using HarmonyLib;
 using iiMenu.Classes;
 using iiMenu.Mods;
@@ -224,7 +221,7 @@ namespace iiMenu.Menu
                     {
                         try
                         {
-                            //UnityEngine.Debug.Log("Looking for boards");
+                            //Debug.Log("Looking for boards");
                             bool found = false;
                             int indexOfThatThing = 0;
                             for (int i = 0; i < GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.childCount; i++)
@@ -313,9 +310,7 @@ namespace iiMenu.Menu
                                         }
                                     }
                                     else
-                                    {
-                                        UnityEngine.Debug.Log("Could not find " + lol);
-                                    }
+                                        Debug.Log("Could not find " + lol);
                                 }
 
                                 Transform targettransform = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/ForestScoreboardAnchor/GorillaScoreBoard").transform;
@@ -326,19 +321,17 @@ namespace iiMenu.Menu
                                     {
                                         TextMeshPro text = v.GetComponent<TextMeshPro>();
                                         if (!udTMP.Contains(text))
-                                        {
                                             udTMP.Add(text);
-                                        }
                                     }
                                 }
 
                                 hasFoundAllBoards = true;
-                                UnityEngine.Debug.Log("Found all boards");
+                                Debug.Log("Found all boards");
                             }
                         }
                         catch (Exception exception)
                         {
-                            UnityEngine.Debug.LogError(string.Format("iiMenu <b>COLOR ERROR</b> {1} - {0}", exception.Message, exception.StackTrace));
+                            Debug.LogError(string.Format("iiMenu <b>COLOR ERROR</b> {1} - {0}", exception.Message, exception.StackTrace));
                             hasFoundAllBoards = false;
                         }
                     }
@@ -355,12 +348,9 @@ namespace iiMenu.Menu
                     try
                     {
                         if (!disableBoardColor)
-                        {
                             OrangeUI.color = GetBGColor(0f);
-                        } else
-                        {
+                        else
                             OrangeUI.color = new Color32(0, 59, 4, 255);
-                        }
 
                         if (motd == null)
                         {
@@ -368,26 +358,24 @@ namespace iiMenu.Menu
                             motd = UnityEngine.Object.Instantiate(motdThing, motdThing.transform.parent);
                             motdThing.SetActive(false);
                         }
+
                         TextMeshPro motdTC = motd.GetComponent<TextMeshPro>();
                         if (!udTMP.Contains(motdTC))
-                        {
                             udTMP.Add(motdTC);
-                        }
+
                         motdTC.richText = true;
                         motdTC.fontSize = 70;
                         motdTC.text = "Thanks for using ii's <b>Stupid</b> Menu!";
+
                         if (doCustomName)
-                        {
                             motdTC.text = "Thanks for using " + customMenuName + "!";
-                        }
+                        
                         if (translate)
-                        {
                             motdTC.text = TranslateText(motdTC.text);
-                        }
+                        
                         if (lowercaseMode)
-                        {
                             motdTC.text = motdTC.text.ToLower();
-                        }
+                        
                         motdTC.color = titleColor;
                         motdTC.overflowMode = TextOverflowModes.Overflow;
 
@@ -399,11 +387,11 @@ namespace iiMenu.Menu
 
                             motdText.GetComponent<PlayFabTitleDataTextDisplay>().enabled = false;
                         }
+
                         TextMeshPro motdTextB = motdText.GetComponent<TextMeshPro>();
                         if (!udTMP.Contains(motdTextB))
-                        {
                             udTMP.Add(motdTextB);
-                        }
+
                         motdTextB.richText = true;
                         motdTextB.fontSize = 100;
                         motdTextB.color = titleColor;
@@ -412,33 +400,27 @@ namespace iiMenu.Menu
                         {
                             fullModAmount = 0;
                             foreach (ButtonInfo[] buttons in Buttons.buttons)
-                            {
                                 fullModAmount += buttons.Length;
-                            }
                         }
+
                         motdTextB.text = string.Format(motdTemplate, PluginInfo.Version, fullModAmount);
+
                         if (translate)
-                        {
                             motdTextB.text = TranslateText(motdTextB.text);
-                        }
+                        
                         if (lowercaseMode)
-                        {
                             motdTextB.text = motdTextB.text.ToLower();
-                        }
                     } catch { }
 
                     try
                     {
                         Color targetColor = titleColor;
+
                         if (disableBoardColor || disableBoardTextColor)
-                        {
                             targetColor = Color.white;
-                        }
 
                         foreach (TextMeshPro txt in udTMP)
-                        {
                             txt.color = targetColor;
-                        }
                     } catch { }
 
                     // Search key press detector
@@ -450,15 +432,13 @@ namespace iiMenu.Menu
                             if (UnityInput.Current.GetKey(keyCode))
                             {
                                 if (keyCode != KeyCode.Backspace)
-                                {
                                     keysPressed.Add(keyCode);
-                                }
+                                
                                 if (!lastPressedKeys.Contains(keyCode))
                                 {
                                     if (keyCode == KeyCode.Space)
-                                    {
                                         searchText += " ";
-                                    }
+                                    
                                     else
                                     {
                                         if (keyCode == KeyCode.Backspace)
@@ -614,19 +594,19 @@ namespace iiMenu.Menu
                             attemptsToLoad++;
                             if(attemptsToLoad >= 3)
                             {
-                                UnityEngine.Debug.Log("Giving up on loading web data due to errors");
+                                Debug.Log("Giving up on loading web data due to errors");
                                 shouldAttemptLoadData = false;
                             }
-                            UnityEngine.Debug.Log("Attempting to load web data");
+                            Debug.Log("Attempting to load web data");
                             shouldLoadDataTime = Time.time + 5f;
                             if (!hasLoadedPreferences)
                             {
                                 try {
-                                    UnityEngine.Debug.Log("Loading preferences due to load errors");
+                                    Debug.Log("Loading preferences due to load errors");
                                     Settings.LoadPreferences();
                                 } catch
                                 {
-                                    UnityEngine.Debug.Log("Could not load preferences");
+                                    Debug.Log("Could not load preferences");
                                 }
                             }
 
@@ -640,7 +620,7 @@ namespace iiMenu.Menu
                         {
                             autoSaveDelay = Time.time + 60f;
                             Settings.SavePreferences();
-                            UnityEngine.Debug.Log("Automatically saved preferences");
+                            Debug.Log("Automatically saved preferences");
 
                             if (BackupPreferences)
                             {
@@ -694,6 +674,55 @@ namespace iiMenu.Menu
                             }
                         } catch { }
                     }
+
+                    // Gun sounds
+                    try
+                    {
+                        if (GunSounds)
+                        {
+                            if (GunSpawned)
+                            {
+                                if (!lastGunSpawned)
+                                {
+                                    AudioSource audioSource = SwapGunHand ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
+                                    audioSource.volume = buttonClickVolume / 10f;
+                                    audioSource.PlayOneShot(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/grip-press.wav", "grip-press.wav"));
+                                }
+
+                                if (GetGunInput(true) && !lastGunTrigger)
+                                {
+                                    AudioSource audioSource = SwapGunHand ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
+                                    audioSource.volume = buttonClickVolume / 10f;
+                                    audioSource.PlayOneShot(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/trigger-press.wav", "trigger-press.wav"));
+
+                                    PlayHandAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/trigger-hold.wav", "trigger-hold.wav"), buttonClickVolume / 10f, SwapGunHand);
+                                }
+
+                                if (!GetGunInput(true) && lastGunTrigger)
+                                {
+                                    AudioSource audioSource = SwapGunHand ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
+                                    audioSource.volume = buttonClickVolume / 10f;
+                                    audioSource.PlayOneShot(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/trigger-release.wav", "trigger-release.wav"));
+
+                                    if (audiomgrhand != null)
+                                        audiomgrhand.GetComponent<AudioSource>().Stop();
+                                }
+                            } else
+                            {
+                                if (lastGunSpawned)
+                                {
+                                    AudioSource audioSource = SwapGunHand ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
+                                    audioSource.volume = buttonClickVolume / 10f;
+                                    audioSource.PlayOneShot(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/grip-release.wav", "grip-release.wav"));
+                                }
+                            }
+
+                            lastGunSpawned = GunSpawned;
+                            lastGunTrigger = GetGunInput(true);
+                        }
+                    } catch { }
+
+                    GunSpawned = false;
 
                     // Ghostview
                     try
@@ -1161,7 +1190,7 @@ namespace iiMenu.Menu
                     {
                         if (rejRoom != null && Time.time > rejDebounce/* && PhotonNetwork.NetworkingClient.State == ClientState.Disconnected*/)
                         {
-                            UnityEngine.Debug.Log("Attempting rejoin");
+                            Debug.Log("Attempting rejoin");
                             PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(rejRoom, JoinType.Solo);
                             rejDebounce = Time.time + (float)internetTime;
                         }
@@ -1182,7 +1211,7 @@ namespace iiMenu.Menu
                         {
                             if (partyLastCode != null && Time.time > partyTime && (waitForPlayerJoin ? PhotonNetwork.PlayerListOthers.Length > 0 : true))
                             {
-                                UnityEngine.Debug.Log("Attempting rejoin");
+                                Debug.Log("Attempting rejoin");
                                 PhotonNetwork.Disconnect();
                                 phaseTwo = true;
                             }
@@ -1193,7 +1222,7 @@ namespace iiMenu.Menu
                         {
                             if (partyLastCode != null && Time.time > partyTime && (waitForPlayerJoin ? PhotonNetwork.PlayerListOthers.Length > 0 : true))
                             {
-                                UnityEngine.Debug.Log("Attempting rejoin");
+                                Debug.Log("Attempting rejoin");
                                 PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(partyLastCode, JoinType.Solo);
                                 partyTime = Time.time + (float)internetTime;
                             }
@@ -1290,7 +1319,7 @@ namespace iiMenu.Menu
                             if (!Settings.disabledPlugins.Contains(Plugin.Key))
                                 PluginUpdate(Plugin.Value);
                         }
-                        catch (Exception e) { UnityEngine.Debug.Log("Error with UPDATE plugin " + Plugin.Key + ": " + e.ToString()); }
+                        catch (Exception e) { Debug.Log("Error with UPDATE plugin " + Plugin.Key + ": " + e.ToString()); }
                     }
 
                     // Execute mods
@@ -1310,7 +1339,7 @@ namespace iiMenu.Menu
                                         }
                                         catch (Exception exc)
                                         {
-                                            UnityEngine.Debug.LogError(string.Format("{0} // Error with mod {1} at {2}: {3}", PluginInfo.Name, v.buttonText, exc.StackTrace, exc.Message));
+                                            Debug.LogError(string.Format("{0} // Error with mod {1} at {2}: {3}", PluginInfo.Name, v.buttonText, exc.StackTrace, exc.Message));
                                         }
                                     }
                                 }
@@ -1321,7 +1350,7 @@ namespace iiMenu.Menu
             }
             catch (Exception exception)
             {
-                UnityEngine.Debug.LogError(string.Format("iiMenu <b>FATAL ERROR</b> {1} - {0}", exception.Message, exception.StackTrace));
+                Debug.LogError(string.Format("iiMenu <b>FATAL ERROR</b> {1} - {0}", exception.Message, exception.StackTrace));
             }
         }
 
@@ -2009,7 +2038,7 @@ namespace iiMenu.Menu
                                 menuBackground.GetComponent<Renderer>().material.SetFloat("_Metallic", 0f);
                                 menuBackground.GetComponent<Renderer>().material.color = Color.white;
                                 menuBackground.GetComponent<Renderer>().material.mainTexture = pride;
-                                UnityEngine.Debug.Log("gayed the texture");
+                                Debug.Log("gayed the texture");
                                 break;
                             case 26:
                                 if (trans == null)
@@ -2039,7 +2068,7 @@ namespace iiMenu.Menu
                                 break;
                         }
                     }
-                    catch (Exception exception) { UnityEngine.Debug.LogError(string.Format("iiMenu <b>TEXTURE ERROR</b> {1} - {0}", exception.Message, exception.StackTrace)); }
+                    catch (Exception exception) { Debug.LogError(string.Format("iiMenu <b>TEXTURE ERROR</b> {1} - {0}", exception.Message, exception.StackTrace)); }
                 }
                 else
                 {
@@ -3522,7 +3551,7 @@ namespace iiMenu.Menu
             
             if (!File.Exists("iisStupidMenu/" + fileName))
             {
-                UnityEngine.Debug.Log("Downloading " + fileName);
+                Debug.Log("Downloading " + fileName);
                 WebClient stream = new WebClient();
                 stream.DownloadFile(resourcePath, "iisStupidMenu/" + fileName);
             }
@@ -3558,7 +3587,7 @@ namespace iiMenu.Menu
             }
             if (!File.Exists("iisStupidMenu/" + fileName))
             {
-                UnityEngine.Debug.Log("Downloading " + fileName);
+                Debug.Log("Downloading " + fileName);
                 WebClient stream = new WebClient();
                 stream.DownloadFile(resourcePath, "iisStupidMenu/" + fileName);
             }
@@ -3612,7 +3641,7 @@ namespace iiMenu.Menu
 
                     PhotonNetwork.SendAllOutgoingCommands();
                 }
-            } catch { UnityEngine.Debug.Log("RPC protection failed, are you in a lobby?"); }
+            } catch { Debug.Log("RPC protection failed, are you in a lobby?"); }
         }
 
         public static string GetHttp(string url)
@@ -3628,9 +3657,11 @@ namespace iiMenu.Menu
             return html;
         }
 
+        private static List<float> volumeArchive = new List<float> { };
         private static Vector3 GunPositionSmoothed = Vector3.zero;
         public static (RaycastHit Ray, GameObject NewPointer) RenderGun(int overrideLayerMask = -1)
         {
+            GunSpawned = true;
             Transform GunTransform = SwapGunHand ? GorillaTagger.Instance.leftHandTransform : GorillaTagger.Instance.rightHandTransform;
 
             Vector3 StartPosition = GunTransform.position;
@@ -3655,7 +3686,11 @@ namespace iiMenu.Menu
                 Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
                 Physics.Raycast(ray, out Ray, 512f, NoInvisLayerMask());
             }
+
             Vector3 EndPosition = isCopying ? whoCopy.transform.position : Ray.point;
+
+            if (EndPosition == Vector3.zero)
+                EndPosition = StartPosition + (Direction * 512f);
 
             if (SmoothGunPointer)
             {
@@ -3692,7 +3727,7 @@ namespace iiMenu.Menu
                 liner.SetPosition(1, EndPosition);
                 UnityEngine.Object.Destroy(line, Time.deltaTime);
 
-                int Step = 50;
+                int Step = GunLineQuality;
                 switch (gunVariation)
                 {
                     case 1: // Lightning
@@ -3702,7 +3737,10 @@ namespace iiMenu.Menu
                             liner.SetPosition(0, StartPosition);
 
                             for (int i = 1; i < (Step - 1); i++)
-                                liner.SetPosition(i, Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f)) + (UnityEngine.Random.Range(0f, 1f) > 0.75f ? new Vector3(UnityEngine.Random.Range(-0.1f, 0.1f), UnityEngine.Random.Range(-0.1f, 0.1f), UnityEngine.Random.Range(-0.1f, 0.1f)) : Vector3.zero));
+                            {
+                                Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
+                                    liner.SetPosition(i, Position + (UnityEngine.Random.Range(0f, 1f) > 0.75f ? new Vector3(UnityEngine.Random.Range(-0.1f, 0.1f), UnityEngine.Random.Range(-0.1f, 0.1f), UnityEngine.Random.Range(-0.1f, 0.1f)) : Vector3.zero));
+                                }
 
                             liner.SetPosition(Step - 1, EndPosition);
                         }
@@ -3714,7 +3752,10 @@ namespace iiMenu.Menu
                             liner.SetPosition(0, StartPosition);
 
                             for (int i = 1; i < (Step - 1); i++)
-                                liner.SetPosition(i, Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f)) + ((SwapGunHand ? TrueLeftHand().up : TrueRightHand().up) * Mathf.Sin((Time.time * -10f) + i) * 0.05f));
+                            {
+                                Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
+                                liner.SetPosition(i, Position + ((SwapGunHand ? TrueLeftHand().up : TrueRightHand().up) * Mathf.Sin((Time.time * -10f) + i) * 0.1f));
+                            }
 
                             liner.SetPosition(Step - 1, EndPosition);
                         }
@@ -3735,7 +3776,7 @@ namespace iiMenu.Menu
                         }
                         break;
                     case 4: // Sinewave
-                        Step = 25;
+                        Step = GunLineQuality / 2;
 
                         if (GetGunInput(true) || isCopying)
                         {
@@ -3745,22 +3786,68 @@ namespace iiMenu.Menu
                             for (int i = 1; i < (Step - 1); i++)
                             {
                                 Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
-                                liner.SetPosition(i, Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f)) + ((SwapGunHand ? TrueLeftHand().up : TrueRightHand().up) * Mathf.Sin(Time.time * 10f) * (i % 2 == 0 ? 0.25f : -0.25f)));
+                                liner.SetPosition(i, Position + ((SwapGunHand ? TrueLeftHand().up : TrueRightHand().up) * Mathf.Sin(Time.time * 10f) * (i % 2 == 0 ? 0.1f : -0.1f)));
                             }
 
                             liner.SetPosition(Step - 1, EndPosition);
                         }
                         break;
                     case 5: // Spring
-                        Step = 50;
-
                         if (GetGunInput(true) || isCopying)
                         {
                             liner.positionCount = Step;
                             liner.SetPosition(0, StartPosition);
 
                             for (int i = 1; i < (Step - 1); i++)
-                                liner.SetPosition(i, Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f)) + ((SwapGunHand ? TrueLeftHand().right : TrueRightHand().right) * Mathf.Cos((Time.time * -10f) + i) * 0.05f) + ((SwapGunHand ? TrueLeftHand().up : TrueRightHand().up) * Mathf.Sin((Time.time * -10f) + i) * 0.05f));
+                            {
+                                Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
+                                liner.SetPosition(i, Position + ((SwapGunHand ? TrueLeftHand().right : TrueRightHand().right) * Mathf.Cos((Time.time * -10f) + i) * 0.1f) + ((SwapGunHand ? TrueLeftHand().up : TrueRightHand().up) * Mathf.Sin((Time.time * -10f) + i) * 0.1f));
+                            }
+
+                            liner.SetPosition(Step - 1, EndPosition);
+                        }
+                        break;
+                    case 6: // Bouncy
+                        if (GetGunInput(true) || isCopying)
+                        {
+                            liner.positionCount = Step;
+                            liner.SetPosition(0, StartPosition);
+
+                            for (int i = 1; i < (Step - 1); i++)
+                                liner.SetPosition(i, Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f)) + ((SwapGunHand ? TrueLeftHand().up : TrueRightHand().up) * Mathf.Abs(Mathf.Sin((Time.time * -10f) + i)) * 0.4f));
+
+                            liner.SetPosition(Step - 1, EndPosition);
+                        }
+                        break;
+                    case 7: // Audio
+                        if (GetGunInput(true) || isCopying)
+                        {
+                            float audioSize = 0f;
+
+                            if (isCopying)
+                            {
+                                GorillaSpeakerLoudness targetRecorder = whoCopy.GetComponent<GorillaSpeakerLoudness>();
+                                if (targetRecorder != null)
+                                    audioSize += targetRecorder.Loudness * 3f;
+                            }
+
+                            GorillaSpeakerLoudness localRecorder = GorillaTagger.Instance.offlineVRRig.GetComponent<GorillaSpeakerLoudness>();
+                            if (localRecorder != null)
+                                audioSize += localRecorder.Loudness * 3f;
+
+                            volumeArchive.Insert(0, volumeArchive.Count == 0 ? 0 : (audioSize - volumeArchive[0] * 0.1f));
+
+                            if (volumeArchive.Count > Step)
+                                volumeArchive.Remove(Step);
+
+                            liner.positionCount = Step;
+                            liner.SetPosition(0, StartPosition);
+
+                            for (int i = 1; i < (Step - 1); i++)
+                            {
+                                Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
+                                liner.SetPosition(i, Position + ((SwapGunHand ? TrueLeftHand().up : TrueRightHand().up) * (i >= volumeArchive.Count ? 0 : volumeArchive[i]) * (i % 2 == 0 ? 1f : -1f)));
+                            }
 
                             liner.SetPosition(Step - 1, EndPosition);
                         }
@@ -3806,14 +3893,14 @@ namespace iiMenu.Menu
                         if (!isBetaTestVersion)
                         {
                             hasWarnedVersionBefore = true;
-                            UnityEngine.Debug.Log("Version is outdated");
+                            Debug.Log("Version is outdated");
                             Important.JoinDiscord();
                             NotifiLib.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using an outdated version of the menu. Please update to " + Data[0] + ".", 10000);
                         }
                         else
                         {
                             hasWarnedVersionBefore = true;
-                            UnityEngine.Debug.Log("Version is outdated, but user is on beta");
+                            Debug.Log("Version is outdated, but user is on beta");
                             NotifiLib.SendNotification("<color=grey>[</color><color=purple>BETA</color><color=grey>]</color> You are using a testing build of the menu. The latest release build is " + Data[0] + ".", 10000);
                         }
                     }
@@ -3822,7 +3909,7 @@ namespace iiMenu.Menu
                         if (isBetaTestVersion)
                         {
                             hasWarnedVersionBefore = true;
-                            UnityEngine.Debug.Log("Version is outdated, user is on early build of latest");
+                            Debug.Log("Version is outdated, user is on early build of latest");
                             Important.JoinDiscord();
                             NotifiLib.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using a testing build of the menu. Please update to " + Data[0] + ".", 10000);
                         }
@@ -4053,7 +4140,7 @@ namespace iiMenu.Menu
 
                             if (request.result != UnityWebRequest.Result.Success)
                             {
-                                UnityEngine.Debug.LogError("Error downloading TTS: " + request.error);
+                                Debug.LogError("Error downloading TTS: " + request.error);
                                 yield break;
                             }
 
@@ -4115,7 +4202,7 @@ namespace iiMenu.Menu
 
                             if (request.result != UnityWebRequest.Result.Success)
                             {
-                                UnityEngine.Debug.LogError("Error downloading TTS: " + request.error);
+                                Debug.LogError("Error downloading TTS: " + request.error);
                                 yield break;
                             }
 
@@ -4348,14 +4435,14 @@ namespace iiMenu.Menu
                     {
                         if (GetFullPath(lol.transform.parent).ToLower() == "player objects/local vrrig/local gorilla player/holdables" || GetFullPath(lol.transform.parent).ToLower().Contains("player objects/local vrrig/local gorilla player/riganchor/rig/body/shoulder.l/upper_arm.l/forearm.l/hand.l/palm.01.l/transferrableitemlefthand") || GetFullPath(lol.transform.parent).ToLower().Contains("player objects/local vrrig/local gorilla player/riganchor/rig/body/shoulder.r/upper_arm.r/forearm.r/hand.r/palm.01.r/transferrableitemrighthand"))
                         {
-                            UnityEngine.Debug.Log("Projectile " + lol.gameObject.name + " logged");
+                            Debug.Log("Projectile " + lol.gameObject.name + " logged");
                             snowballDict.Add(lol.gameObject.name, lol);
                         }
                     } catch { }
                 }
                 if (snowballDict.Count < 18)
                 {
-                    UnityEngine.Debug.Log("Projectile dictionary unfinished ("+snowballDict.Count+"/18)");
+                    Debug.Log("Projectile dictionary unfinished ("+snowballDict.Count+"/18)");
                     snowballDict = null;
                 }
             }
@@ -4364,7 +4451,7 @@ namespace iiMenu.Menu
                 return snowballDict[provided];
             } else
             {
-                UnityEngine.Debug.Log("No key found for " + provided);
+                Debug.Log("No key found for " + provided);
                 return null;
             }
         }
@@ -4426,7 +4513,7 @@ namespace iiMenu.Menu
                         view.GetComponent<RequestableOwnershipGuard>().TransferOwnershipFromToRPC(PhotonNetwork.LocalPlayer, view.GetComponent<RequestableOwnershipGuard>().ownershipRequestNonce, default(PhotonMessageInfo));
                     }
                     RPCProtection();
-                } catch { UnityEngine.Debug.Log("Failure to get ownership, is the PhotonView valid?"); }
+                } catch { Debug.Log("Failure to get ownership, is the PhotonView valid?"); }
             }
         }
 
@@ -4764,6 +4851,22 @@ namespace iiMenu.Menu
             AudioSource ausrc = audiomgr.GetComponent<AudioSource>();
             ausrc.volume = volume;
             ausrc.PlayOneShot(sound);
+        }
+
+        private static GameObject audiomgrhand = null;
+        public static void PlayHandAudio(AudioClip sound, float volume, bool left)
+        {
+            if (audiomgrhand == null)
+            {
+                audiomgrhand = new GameObject("2DAudioMgr-hand");
+                AudioSource temp = audiomgrhand.AddComponent<AudioSource>();
+            }
+            audiomgrhand.transform.parent = left ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer.gameObject.transform : GorillaTagger.Instance.offlineVRRig.rightHandPlayer.gameObject.transform;
+
+            AudioSource ausrc = audiomgrhand.GetComponent<AudioSource>();
+            ausrc.clip = sound;
+            ausrc.loop = true;
+            ausrc.Play();
         }
 
         public static string ToTitleCase(string text)
@@ -5426,9 +5529,8 @@ namespace iiMenu.Menu
 
             int lastPage = ((Buttons.buttons[buttonsType].Length + pageSize - 1) / pageSize) - 1;
             if (buttonsType == 19)
-            {
                 lastPage = ((favorites.Count + pageSize - 1) / pageSize) - 1;
-            }
+            
             if (buttonsType == 24)
             {
                 List<string> enabledMods = new List<string>() { "Exit Enabled Mods" };
@@ -5437,9 +5539,7 @@ namespace iiMenu.Menu
                     foreach (ButtonInfo v in buttonlist)
                     {
                         if (v.enabled)
-                        {
                             enabledMods.Add(v.buttonText);
-                        }
                     }
                 }
                 lastPage = ((enabledMods.Count + pageSize - 1) / pageSize) - 1;
@@ -5455,14 +5555,10 @@ namespace iiMenu.Menu
                         {
                             string buttonTextt = v.buttonText;
                             if (v.overlapText != null)
-                            {
                                 buttonTextt = v.overlapText;
-                            }
 
                             if (buttonTextt.Replace(" ", "").ToLower().Contains(searchText.Replace(" ", "").ToLower()))
-                            {
                                 searchedMods.Add(v);
-                            }
                         }
                         catch { }
                     }
@@ -5477,14 +5573,10 @@ namespace iiMenu.Menu
                             {
                                 string buttonTextt = v.buttonText;
                                 if (v.overlapText != null)
-                                {
                                     buttonTextt = v.overlapText;
-                                }
 
                                 if (buttonTextt.Replace(" ", "").ToLower().Contains(searchText.Replace(" ", "").ToLower()))
-                                {
                                     searchedMods.Add(v);
-                                }
                             }
                             catch { }
                         }
@@ -5496,11 +5588,10 @@ namespace iiMenu.Menu
             {
                 if (dynamicAnimations)
                     lastClickedName = "PreviousPage";
+
                 pageNumber--;
                 if (pageNumber < 0)
-                {
                     pageNumber = lastPage;
-                }
             }
             else
             {
@@ -5508,11 +5599,10 @@ namespace iiMenu.Menu
                 {
                     if (dynamicAnimations)
                         lastClickedName = "NextPage";
+
                     pageNumber++;
                     if (pageNumber > lastPage)
-                    {
                         pageNumber = 0;
-                    }
                 }
                 else
                 {
@@ -5593,28 +5683,24 @@ namespace iiMenu.Menu
                                     {
                                         NotifiLib.SendNotification("<color=grey>[</color><color=green>ENABLE</color><color=grey>]</color> " + target.toolTip);
                                         if (target.enableMethod != null)
-                                        {
-                                            try { target.enableMethod.Invoke(); } catch (Exception exc) { UnityEngine.Debug.LogError(string.Format("{0} // Error with mod enableMethod {1} at {2}: {3}", PluginInfo.Name, target.buttonText, exc.StackTrace, exc.Message)); }
-                                        }
+                                            try { target.enableMethod.Invoke(); } catch (Exception exc) { Debug.LogError(string.Format("{0} // Error with mod enableMethod {1} at {2}: {3}", PluginInfo.Name, target.buttonText, exc.StackTrace, exc.Message)); }
                                     }
                                     else
                                     {
                                         NotifiLib.SendNotification("<color=grey>[</color><color=red>DISABLE</color><color=grey>]</color> " + target.toolTip);
                                         if (target.disableMethod != null)
-                                        {
-                                            try { target.disableMethod.Invoke(); } catch (Exception exc) { UnityEngine.Debug.LogError(string.Format("{0} // Error with mod disableMethod {1} at {2}: {3}", PluginInfo.Name, target.buttonText, exc.StackTrace, exc.Message)); }
-                                        }
+                                            try { target.disableMethod.Invoke(); } catch (Exception exc) { Debug.LogError(string.Format("{0} // Error with mod disableMethod {1} at {2}: {3}", PluginInfo.Name, target.buttonText, exc.StackTrace, exc.Message)); }
                                     }
                                 }
                                 else
                                 {
                                     if (dynamicAnimations)
                                         lastClickedName = target.buttonText;
+
                                     NotifiLib.SendNotification("<color=grey>[</color><color=green>ENABLE</color><color=grey>]</color> " + target.toolTip);
+
                                     if (target.method != null)
-                                    {
-                                        try { target.method.Invoke(); } catch (Exception exc) { UnityEngine.Debug.LogError(string.Format("{0} // Error with mod {1} at {2}: {3}", PluginInfo.Name, target.buttonText, exc.StackTrace, exc.Message)); }
-                                    }
+                                        try { target.method.Invoke(); } catch (Exception exc) { Debug.LogError(string.Format("{0} // Error with mod {1} at {2}: {3}", PluginInfo.Name, target.buttonText, exc.StackTrace, exc.Message)); }
                                 }
                                 try
                                 {
@@ -5630,7 +5716,7 @@ namespace iiMenu.Menu
                     }
                     else
                     {
-                        UnityEngine.Debug.LogError(buttonText + " does not exist");
+                        Debug.LogError(buttonText + " does not exist");
                     }
                 }
             }
@@ -5645,16 +5731,16 @@ namespace iiMenu.Menu
 
         public static void OnLaunch()
         {
-            UnityEngine.Debug.Log(ascii);
-            UnityEngine.Debug.Log("Thank you for using ii's Stupid Menu!");
+            Debug.Log(ascii);
+            Debug.Log("Thank you for using ii's Stupid Menu!");
             IsSteam = Traverse.Create(PlayFabAuthenticator.instance).Field("platform").GetValue().ToString().ToLower() == "steam";
             try
             {
                 if (!Font.GetOSInstalledFontNames().Contains("Agency FB"))
                 {
-                    GameObject fart = LoadAsset("agency");
-                    agency = fart.transform.Find("text").gameObject.GetComponent<Text>().font;
-                    UnityEngine.Object.Destroy(fart);
+                    GameObject AgencyGO = LoadAsset("agency");
+                    agency = AgencyGO.transform.Find("text").gameObject.GetComponent<Text>().font;
+                    UnityEngine.Object.Destroy(AgencyGO);
                 }
             } catch { }
             PhotonNetwork.NetworkingClient.EventReceived += EventReceived;
@@ -5678,7 +5764,7 @@ namespace iiMenu.Menu
             {
                 Settings.LoadPlugins();
             }
-            catch (Exception e) { UnityEngine.Debug.Log("Error with Settings.LoadPlugins(): " + e.ToString()); }
+            catch (Exception e) { Debug.Log("Error with Settings.LoadPlugins(): " + e.ToString()); }
 
             if (File.Exists("iisStupidMenu/iiMenu_EnabledMods.txt") || File.Exists("iisStupidMenu/iiMenu_Preferences.txt"))
             {
@@ -5783,8 +5869,11 @@ jgs \_   _/ |Oo\
         public static bool disableGunPointer;
         public static bool disableGunLine;
         public static bool SwapGunHand;
+        public static bool GunSpawned;
+        public static bool GunSounds;
         public static int gunVariation;
         public static int GunDirection;
+        public static int GunLineQuality = 50;
 
         public static int fontCycle;
         public static int fontStyleType = 2;
@@ -5813,6 +5902,9 @@ jgs \_   _/ |Oo\
         public static bool dynamicAnimations;
         public static bool dynamicGradients;
         public static string lastClickedName = "";
+
+        public static bool lastGunSpawned;
+        public static bool lastGunTrigger;
 
         public static string ascii = 
 @"  _ _ _       ____  _               _     _   __  __                  
