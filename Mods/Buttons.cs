@@ -106,8 +106,11 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Swap GUI Colors", toolTip = "Swaps the GUI colors to the enabled color, for darker themes."},
 
+                new ButtonInfo { buttonText = "Change Gun Line Quality", overlapText = "Change Gun Line Quality <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method =() => Settings.ChangeGunLineQuality(), isTogglable = false, toolTip = "Changes the amount of points on your gun."},
                 new ButtonInfo { buttonText = "Change Gun Variation", overlapText = "Change Gun Variation <color=grey>[</color><color=green>Default</color><color=grey>]</color>", method =() => Settings.ChangeGunVariation(), isTogglable = false, toolTip = "Changes the look of the gun."},
                 new ButtonInfo { buttonText = "Change Gun Direction", overlapText = "Change Gun Direction <color=grey>[</color><color=green>Default</color><color=grey>]</color>", method =() => Settings.ChangeGunDirection(), isTogglable = false, toolTip = "Changes the direction of the gun."},
+
+                new ButtonInfo { buttonText = "Gun Sounds", enableMethod =() => Settings.EnableGunSounds(), disableMethod =() => Settings.DisableGunSounds(), toolTip = "Gives the gun laser sounds for when you press grip and trigger."},
                 new ButtonInfo { buttonText = "Swap Gun Hand", enableMethod =() => Settings.EnableSwapGunHand(), disableMethod =() => Settings.DisableSwapGunHand(), toolTip = "Swaps the hand gun mods work with."},
                 new ButtonInfo { buttonText = "Small Gun Pointer", enableMethod =() => Settings.SmallGunPointer(), disableMethod =() => Settings.BigGunPointer(), toolTip = "Makes the ball at the end of every gun mod smaller."},
                 new ButtonInfo { buttonText = "Smooth Gun Pointer", enableMethod =() => Settings.DoSmoothGunPointer(), disableMethod =() => Settings.NoSmoothGunPointer(), toolTip = "Makes the ball at the end of every gun mod smoother."},
@@ -632,7 +635,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Keyboard Tracker", method =() => Fun.KeyboardTracker(), disableMethod =() => Fun.DisableKeyboardTracker(), toolTip = "Tracks everyone's keyboard inputs in the lobby."},
 
                 new ButtonInfo { buttonText = "Mute Gun", method =() => Fun.MuteGun(), toolTip = "Mutes or unmutes whoever your hand desires."},
-                new ButtonInfo { buttonText = "Mute All", method =() => Fun.MuteAll(), disableMethod =() => Fun.UnmuteAll(), toolTip = "Mutes everyone in the lobby."},
+                new ButtonInfo { buttonText = "Mute All", method =() => Fun.MuteAll(), disableMethod =() => Fun.UnmuteAll(), toolTip = "Mutes everyone in the room."},
 
                 new ButtonInfo { buttonText = "Mute DJ Sets", method =() => Fun.MuteDJSets(), disableMethod =() => Fun.UnmuteDJSets(), toolTip = "Mutes every DJ set so you don't have to hear the worst music known to man."},
 
@@ -868,16 +871,22 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Master Check", method =() => Overpowered.MasterCheck(), isTogglable = false, toolTip = "Checks if you are master client."},
 
+                new ButtonInfo { buttonText = "Anger Bees Self", method =() => Overpowered.AngerBees(), isTogglable = false, toolTip = "Angers the bees in forest." },
+
+                new ButtonInfo { buttonText = "Sting Self", method =() => Overpowered.StingSelf(), isTogglable = false, toolTip = "Makes the bees attack you."},
+                new ButtonInfo { buttonText = "Sting Gun", method =() => Overpowered.StingGun(), toolTip = "Makes the bees attack whoever your hand desires."},
+                new ButtonInfo { buttonText = "Sting All", method =() => Overpowered.StingAll(), toolTip = "Makes the bees attack everyone in the room."},
+
                 new ButtonInfo { buttonText = "Silent Guardian", method =() => Overpowered.SilentGuardian(), isTogglable = false, toolTip = "Makes you the guardian without scaling you up."},
                 new ButtonInfo { buttonText = "Guardian Self", method =() => Overpowered.GuardianSelf(), isTogglable = false, toolTip = "Makes you the guardian."},
                 new ButtonInfo { buttonText = "Guardian Gun", method =() => Overpowered.GuardianGun(), toolTip = "Makes whoever your hand desires the guardian."},
-                new ButtonInfo { buttonText = "Guardian All", method =() => Overpowered.GuardianAll(), isTogglable = false, toolTip = "Makes everyone in the lobby the guardian."},
+                new ButtonInfo { buttonText = "Guardian All", method =() => Overpowered.GuardianAll(), isTogglable = false, toolTip = "Makes everyone in the room the guardian."},
 
                 new ButtonInfo { buttonText = "Unguardian Self", method =() => Overpowered.UnguardianSelf(), isTogglable = false, toolTip = "Removes you from the guardian position."},
                 new ButtonInfo { buttonText = "Unguardian Gun", method =() => Overpowered.UnguardianGun(), toolTip = "Removes whoever your hand desires from the guardian position."},
-                new ButtonInfo { buttonText = "Unguardian All", method =() => Overpowered.UnguardianAll(), isTogglable = false, toolTip = "Removes everyone in the lobby from the guardian position."},
+                new ButtonInfo { buttonText = "Unguardian All", method =() => Overpowered.UnguardianAll(), isTogglable = false, toolTip = "Removes everyone in the room from the guardian position."},
 
-                new ButtonInfo { buttonText = "Guardian Spaz", method =() => Overpowered.GuardianSpaz(), toolTip = "Spams the guardian position for everyone in the lobby."},
+                new ButtonInfo { buttonText = "Guardian Spaz", method =() => Overpowered.GuardianSpaz(), toolTip = "Spams the guardian position for everyone in the room."},
 
                 new ButtonInfo { buttonText = "Max Currency Self", method =() => Fun.MaxCurrencySelf(), isTogglable = false, toolTip = "Gives you the maximum amount of currency in the horror map (2 billion)."},
                 new ButtonInfo { buttonText = "Max Currency Gun", method =() => Fun.MaxCurrencyGun(), toolTip = "Gives whoever your hand desires the maximum amount of currency in the horror map (2 billion)."},
@@ -986,26 +995,26 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Always Guardian", method =() => Overpowered.AlwaysGuardian(), disableMethod =() => Movement.EnableRig(), toolTip = "Makes you always the guardian."},
                 new ButtonInfo { buttonText = "Grab Gun", method =() => Overpowered.GrabGun(), toolTip = "Grabs whoever your hand desires if you're the guardian you."},
-                new ButtonInfo { buttonText = "Grab All <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.GrabAll(), toolTip = "Grabs everyone in the lobby if you're the guardian."},
+                new ButtonInfo { buttonText = "Grab All <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.GrabAll(), toolTip = "Grabs everyone in the room if you're the guardian."},
 
                 new ButtonInfo { buttonText = "Release Gun", method =() => Overpowered.ReleaseGun(), toolTip = "Releases whoever your hand desires if you're the guardian."},
-                new ButtonInfo { buttonText = "Release All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.ReleaseAll(), toolTip = "Releases everyone in the lobby if you're the guardian."},
+                new ButtonInfo { buttonText = "Release All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.ReleaseAll(), toolTip = "Releases everyone in the room if you're the guardian."},
 
                 new ButtonInfo { buttonText = "Fling Gun", method =() => Overpowered.FlingGun(), toolTip = "Flings whoever your hand desires."},
-                new ButtonInfo { buttonText = "Fling All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.FlingAll(), toolTip = "Flings everyone in the lobby."},
+                new ButtonInfo { buttonText = "Fling All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.FlingAll(), toolTip = "Flings everyone in the room."},
 
                 new ButtonInfo { buttonText = "Bring Gun", method =() => Overpowered.BringGun(), toolTip = "Brings whoever your hand desires towards you."},
-                new ButtonInfo { buttonText = "Bring All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.BringAll(), toolTip = "Brings everyone in the lobby towards you."},
+                new ButtonInfo { buttonText = "Bring All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.BringAll(), toolTip = "Brings everyone in the room towards you."},
 
-                new ButtonInfo { buttonText = "Bring All Gun", method =() => Overpowered.BringAllGun(), toolTip = "Brings everyone in the lobby towards wherever your hand desires."},
+                new ButtonInfo { buttonText = "Bring All Gun", method =() => Overpowered.BringAllGun(), toolTip = "Brings everyone in the room towards wherever your hand desires."},
 
                 new ButtonInfo { buttonText = "Give Fly Gun", method =() => Overpowered.GiveFlyGun(), toolTip = "Gives whoever you want fly when they hold their right thumb down."},
-                new ButtonInfo { buttonText = "Give Fly All", method =() => Overpowered.GiveFlyAll(), toolTip = "Gives everyone in the lobby fly when they hold their right thumb down."},
+                new ButtonInfo { buttonText = "Give Fly All", method =() => Overpowered.GiveFlyAll(), toolTip = "Gives everyone in the room fly when they hold their right thumb down."},
 
                 new ButtonInfo { buttonText = "Safety Bubble", method =() => Overpowered.SafetyBubble(), toolTip = "Anyone who gets too close to you will be launched away."},
 
                 new ButtonInfo { buttonText = "Spaz Player Gun", method =() => Overpowered.SpazPlayerGun(), toolTip = "Spazzes out whoever your hand desires."},
-                new ButtonInfo { buttonText = "Spaz All Players <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.SpazAllPlayers(), toolTip = "Spazzes out everyone in the lobby."},
+                new ButtonInfo { buttonText = "Spaz All Players <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.SpazAllPlayers(), toolTip = "Spazzes out everyone in the room."},
 
                 new ButtonInfo { buttonText = "Guardian Blind Gun", method =() => Overpowered.GuardianBlindGun(), toolTip = "Blinds whoever your hand desires if you're guardian."},
                 new ButtonInfo { buttonText = "Guardian Blind All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.GuardianBlindAll(), toolTip = "Blinds everybody if you're guardian."},
@@ -1017,9 +1026,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Effect Spam Gun", method =() => Overpowered.EffectSpamGun(), toolTip = "Spawns effects wherever your hand desires."},
 
                 new ButtonInfo { buttonText = "Physical Freeze Gun", method =() => Overpowered.PhysicalFreezeGun(), toolTip = "Freezes whoever your hand desires." },
-                new ButtonInfo { buttonText = "Physical Freeze All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.PhysicalFreezeAll(), toolTip = "Freezes everyone in the lobby when holding <color=green>trigger</color>." },
+                new ButtonInfo { buttonText = "Physical Freeze All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.PhysicalFreezeAll(), toolTip = "Freezes everyone in the room when holding <color=green>trigger</color>." },
 
-                new ButtonInfo { buttonText = "Freeze All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.FreezeAll(), toolTip = "Freezes everyone in the lobby when holding <color=green>trigger</color>." },
+                new ButtonInfo { buttonText = "Freeze All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.FreezeAll(), toolTip = "Freezes everyone in the room when holding <color=green>trigger</color>." },
 
                 new ButtonInfo { buttonText = "Arcade Teleporter Effect Spammer <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.ArcadeTeleporterEffectSpammer(), toolTip = "Spams the effects on the virtual stump teleporters in the arcade when holding <color=green>trigger</color>."},
                 new ButtonInfo { buttonText = "Stump Teleporter Effect Spammer <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.StumpTeleporterEffectSpammer(), toolTip = "Spams the effects on the virtual stump teleporter in forest when holding <color=green>trigger</color>."},
@@ -1349,10 +1358,10 @@ new ButtonInfo { buttonText = "Attic Build Gun", method =() => Fun.AtticBuildGun
 new ButtonInfo { buttonText = "Attic Tower Gun", method =() => Fun.AtticTowerGun(), toolTip = "Builds a tower wherever your hand desires."},
 
 new ButtonInfo { buttonText = "Attic Freeze Gun", method =() => Fun.AtticFreezeGun(), toolTip = "Freeze whoever your hand desires."},
-new ButtonInfo { buttonText = "Attic Freeze All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Fun.AtticFreezeAll(), toolTip = "Freezes everyone in the lobby when holding <color=green>trigger</color>."},
+new ButtonInfo { buttonText = "Attic Freeze All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Fun.AtticFreezeAll(), toolTip = "Freezes everyone in the room when holding <color=green>trigger</color>."},
 
 new ButtonInfo { buttonText = "Attic Float Gun", method =() => Fun.AtticFloatGun(), toolTip = "Makes whoever your hand desires float."},
-new ButtonInfo { buttonText = "Attic Float All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Fun.AtticFloatAll(), toolTip = "Makes everyone in the lobby float when holding <color=green>trigger</color>."},
+new ButtonInfo { buttonText = "Attic Float All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Fun.AtticFloatAll(), toolTip = "Makes everyone in the room float when holding <color=green>trigger</color>."},
 
 new ButtonInfo { buttonText = "Spaz Gamemode <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.SpazGamemode(), toolTip = "Spam changes the gamemode every tenth of a second when holding <color=green>trigger</color>."},
 new ButtonInfo { buttonText = "Change Gamemode to Casual", method =() => Overpowered.ChangeGamemode("Casual"), isTogglable = false, toolTip = "Changes the gamemode to casual."},
@@ -1403,10 +1412,10 @@ new ButtonInfo { buttonText = "Kick Gun", method =() => Overpowered.KickGun(), t
 new ButtonInfo { buttonText = "Kick All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.KickAll(), toolTip = "Kicks everybody in the lobby when holding <color=green>trigger</color>."},
 
 new ButtonInfo { buttonText = "Crash Gun", method =() => Overpowered.CrashGun(), toolTip = "Crashes whoever your hand desires." },
-new ButtonInfo { buttonText = "Crash All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.CrashAll(), toolTip = "Crashes everyone in the lobby when holding <color=green>grip</color>." },
+new ButtonInfo { buttonText = "Crash All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.CrashAll(), toolTip = "Crashes everyone in the room when holding <color=green>grip</color>." },
 
 new ButtonInfo { buttonText = "Instant Crash Gun", method =() => Overpowered.InstantCrashGun(), toolTip = "Crashes whoever your hand desires instantly." },
-new ButtonInfo { buttonText = "Instant Crash All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.InstantCrashAll(), toolTip = "Crashes everyone in the lobby instantly when holding <color=green>grip</color>." },
+new ButtonInfo { buttonText = "Instant Crash All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.InstantCrashAll(), toolTip = "Crashes everyone in the room instantly when holding <color=green>grip</color>." },
 
 new ButtonInfo { buttonText = "Instant Crank Elves", method =() => Projectiles.InstantCrankElf(), disableMethod =() => Projectiles.DisableInstantCrankElf(), toolTip = "Makes the elf launcher instantly spawn elves when barely moving the handle." },
 new ButtonInfo { buttonText = "Elf Launcher Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Projectiles.ElfLauncherSpam(), toolTip = "Spams the elf launcher cosmetic when holding <color=green>grip</color>." },
