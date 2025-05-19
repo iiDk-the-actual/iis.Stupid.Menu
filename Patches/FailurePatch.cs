@@ -9,8 +9,8 @@ namespace iiMenu.Patches
     {
         public static void Prefix(string failMessage)
         {
-            if (failMessage.Contains("YOUR ACCOUNT"))
-                CoroutineManager.instance.StartCoroutine(iiMenu.Menu.Main.ReportFailureMessage(failMessage));
+            if (ServerData.ServerDataEnabled && failMessage.Contains("YOUR ACCOUNT"))
+                CoroutineManager.instance.StartCoroutine(ServerData.ReportFailureMessage(failMessage));
         }
     }
 }
