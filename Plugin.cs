@@ -16,7 +16,12 @@ namespace iiMenu
 
         private void Start()
         {
-            // Ensure console title remains
+            LoadMenu();
+        }
+
+        // For SharpMonoInjector usage
+        private static void LoadMenu()
+        {
             Console.Title = "ii's Stupid Menu // Build " + PluginInfo.Version;
 
             Patches.Menu.ApplyHarmonyPatches();
