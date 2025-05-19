@@ -2,7 +2,6 @@
 using GorillaExtensions;
 using GorillaGameModes;
 using GorillaLocomotion.Gameplay;
-using GorillaTagScripts;
 using HarmonyLib;
 using iiMenu.Classes;
 using iiMenu.Notifications;
@@ -14,7 +13,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
-using UnityEngine.ProBuilder.Shapes;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -31,6 +29,104 @@ namespace iiMenu.Mods
             else
             {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+            }
+        }
+
+        public static void AngerBees()
+        {
+            if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
+
+            TappableBeeHive BeeHive = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/2025_SharedBlocks_Forest/Bee Hives /Beehive_Prefab").GetComponent<TappableBeeHive>();
+            BeeHive.OnTap(1f);
+        }
+
+        public static void StingSelf()
+        {
+            if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
+
+            AngryBeeSwarm Bees = GameObject.Find("Environment Objects/05Maze_PersistentObjects/AngryBeeSwarm/FloatingChaseBeeSwarm").GetComponent<AngryBeeSwarm>();
+
+            Traverse.Create(Bees).Field("grabTimestamp").SetValue(Time.time);
+            Traverse.Create(Bees).Field("emergeStartedTimestamp").SetValue(Time.time);
+
+            Bees.targetPlayer = PhotonNetwork.LocalPlayer;
+            Bees.grabbedPlayer = PhotonNetwork.LocalPlayer;
+
+            Bees.lastState = AngryBeeSwarm.ChaseState.Chasing;
+            Bees.currentState = AngryBeeSwarm.ChaseState.Grabbing;
+        }
+
+        public static void StingGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (isCopying && whoCopy != null)
+                {
+                    if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
+
+                    AngryBeeSwarm Bees = GameObject.Find("Environment Objects/05Maze_PersistentObjects/AngryBeeSwarm/FloatingChaseBeeSwarm").GetComponent<AngryBeeSwarm>();
+                    float grabTimestamp = Traverse.Create(Bees).Field("grabTimestamp").GetValue<float>();
+
+                    if (Bees.currentState != AngryBeeSwarm.ChaseState.Grabbing && Time.time > grabTimestamp + 5.1f)
+                    {
+                        Traverse.Create(Bees).Field("grabTimestamp").SetValue(Time.time);
+                        Traverse.Create(Bees).Field("emergeStartedTimestamp").SetValue(Time.time);
+
+                        Bees.targetPlayer = PhotonNetwork.LocalPlayer;
+                        Bees.grabbedPlayer = PhotonNetwork.LocalPlayer;
+
+                        Bees.lastState = AngryBeeSwarm.ChaseState.Chasing;
+                        Bees.currentState = AngryBeeSwarm.ChaseState.Grabbing;
+                    }
+                }
+
+                if (GetGunInput(true))
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        isCopying = true;
+                        whoCopy = possibly;
+                    }
+                }
+            }
+            else
+            {
+                if (isCopying)
+                {
+                    isCopying = false;
+                }
+            }
+        }
+
+        private static float beedelay;
+        public static void StingAll()
+        {
+            if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
+
+            AngryBeeSwarm Bees = GameObject.Find("Environment Objects/05Maze_PersistentObjects/AngryBeeSwarm/FloatingChaseBeeSwarm").GetComponent<AngryBeeSwarm>();
+            float grabTimestamp = Traverse.Create(Bees).Field("grabTimestamp").GetValue<float>();
+
+            if (Bees.currentState != AngryBeeSwarm.ChaseState.Grabbing && Time.time > grabTimestamp + 5.1f)
+            {
+                Traverse.Create(Bees).Field("grabTimestamp").SetValue(Time.time);
+                Traverse.Create(Bees).Field("emergeStartedTimestamp").SetValue(Time.time);
+
+                Bees.lastState = AngryBeeSwarm.ChaseState.Chasing;
+                Bees.currentState = AngryBeeSwarm.ChaseState.Grabbing;
+            }
+
+            if (Time.time > beedelay)
+            {
+                beedelay = Time.time + 0.1f;
+
+                Player player = GetRandomPlayer(false);
+                Bees.targetPlayer = player;
+                Bees.grabbedPlayer = player;
             }
         }
 
@@ -731,129 +827,6 @@ namespace iiMenu.Mods
                 }
             }
         }
-
-        /*
-        private static float scDelay = 0f;
-        public static void SizeChanger()
-        {
-            sizeScale = Mathf.Clamp(sizeScale, 0.1f, 10f);
-            Movement.SizeChanger();
-            sizeScale = Mathf.Clamp(sizeScale, 0.1f, 10f);
-
-            if (Time.time > scDelay)
-            {
-                scDelay = Time.time + 1.01f;
-
-                GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateNativeSize", RpcTarget.Others, new object[] { sizeScale });
-            }
-        }
-        public static void DisableSizeChanger()
-        {
-            Movement.DisableSizeChanger();
-
-            GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateNativeSize", RpcTarget.Others, new object[] { 1f });
-        }*/
-
-        /*// Shoutouts 2 the one guy that said "GET THIS PATCHED"
-        public static void LagGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-                if (isCopying && whoCopy != null)
-                {
-                    if (Time.time > delaything)
-                    {
-                        delaything = Time.time + 0.6f;
-                        for (int i = 0; i < 250; i++)
-                            FriendshipGroupDetection.Instance.photonView.RPC("NotifyPartyGameModeChanged", NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)), new object[] { "Infection" } );
-                        RPCProtection();
-                    }
-                }
-                if (GetGunInput(true))
-                {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
-                    {
-                        isCopying = true;
-                        whoCopy = possibly;
-                    }
-                }
-            }
-            else
-            {
-                if (isCopying)
-                {
-                    isCopying = false;
-                }
-            }
-        }
-
-        public static void LagAll()
-        {
-            if (rightTrigger > 0.5f)
-            {
-                if (Time.time > delaything)
-                {
-                    delaything = Time.time + 0.6f;
-                    for (int i = 0; i < 250; i++)
-                        FriendshipGroupDetection.Instance.photonView.RPC("NotifyPartyGameModeChanged", RpcTarget.Others, new object[] { "Infection" } );
-                    RPCProtection();
-                }
-            }
-        }
-
-        public static void LagSpikeGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-                if (isCopying && whoCopy != null)
-                {
-                    if (Time.time > delaything)
-                    {
-                        delaything = Time.time + 2.5f;
-                        for (int i = 0; i < 1200; i++)
-                            FriendshipGroupDetection.Instance.photonView.RPC("NotifyPartyGameModeChanged", NetPlayerToPlayer(GetPlayerFromVRRig(whoCopy)), new object[] { "Infection" } );
-                        RPCProtection();
-                    }
-                }
-                if (GetGunInput(true))
-                {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
-                    {
-                        isCopying = true;
-                        whoCopy = possibly;
-                    }
-                }
-            }
-            else
-            {
-                if (isCopying)
-                {
-                    isCopying = false;
-                }
-            }
-        }
-
-        public static void LagSpikeAll()
-        {
-            if (rightTrigger > 0.5f)
-            {
-                if (Time.time > delaything)
-                {
-                    delaything = Time.time + 2.5f;
-                    for (int i = 0; i < 1200; i++)
-                        FriendshipGroupDetection.Instance.photonView.RPC("NotifyPartyGameModeChanged", RpcTarget.Others, new object[] { "Infection" } );
-                    RPCProtection();
-                }
-            }
-        }*/
 
         public static Coroutine DisableCoroutine;
         public static IEnumerator DisableSnowball(bool rigDisabled)
