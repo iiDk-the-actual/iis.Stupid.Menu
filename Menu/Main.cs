@@ -4441,35 +4441,32 @@ namespace iiMenu.Menu
                 GameObject side = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 try
                 {
-                    if (platformMode == 5)
+                    switch (platformMode)
                     {
-                        side.AddComponent<GorillaSurfaceOverride>().overrideIndex = 29;
+                        case 5:
+                            side.AddComponent<GorillaSurfaceOverride>().overrideIndex = 29;
+                            break;
+                        case 6:
+                            side.AddComponent<GorillaSurfaceOverride>().overrideIndex = 32;
+                            break;
+                        case 7:
+                            side.AddComponent<GorillaSurfaceOverride>().overrideIndex = 204;
+                            break;
+                        case 8:
+                            side.AddComponent<GorillaSurfaceOverride>().overrideIndex = 231;
+                            break;
+                        case 9:
+                            side.AddComponent<GorillaSurfaceOverride>().overrideIndex = 240;
+                            break;
+                        case 10:
+                            side.AddComponent<GorillaSurfaceOverride>().overrideIndex = 249;
+                            break;
+                        case 11:
+                            side.AddComponent<GorillaSurfaceOverride>().overrideIndex = 252;
+                            break;
                     }
-                    if (platformMode == 6)
-                    {
-                        side.AddComponent<GorillaSurfaceOverride>().overrideIndex = 32;
-                    }
-                    if (platformMode == 7)
-                    {
-                        side.AddComponent<GorillaSurfaceOverride>().overrideIndex = 204;
-                    }
-                    if (platformMode == 8)
-                    {
-                        side.AddComponent<GorillaSurfaceOverride>().overrideIndex = 231;
-                    }
-                    if (platformMode == 9)
-                    {
-                        side.AddComponent<GorillaSurfaceOverride>().overrideIndex = 240;
-                    }
-                    if (platformMode == 10)
-                    {
-                        side.AddComponent<GorillaSurfaceOverride>().overrideIndex = 249;
-                    }
-                    if (platformMode == 11)
-                    {
-                        side.AddComponent<GorillaSurfaceOverride>().overrideIndex = 252;
-                    }
-                } catch { }
+                }
+                catch { }
                 float size = 0.025f;
                 side.transform.SetParent(platform.transform);
                 side.transform.position = localPositions[i] * (size / 2);
@@ -4481,29 +4478,29 @@ namespace iiMenu.Menu
 
         public static void VisualizeAura(Vector3 position, float range, Color color)
         {
-            GameObject what = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            Destroy(what, Time.deltaTime);
-            Destroy(what.GetComponent<Collider>());
-            what.transform.position = position;
-            what.transform.localScale = new Vector3(range, range, range);
+            GameObject visualizeGO = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            Destroy(visualizeGO, Time.deltaTime);
+            Destroy(visualizeGO.GetComponent<Collider>());
+            visualizeGO.transform.position = position;
+            visualizeGO.transform.localScale = new Vector3(range, range, range);
             Color clr = color;
             clr.a = 0.25f;
-            what.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-            what.GetComponent<Renderer>().material.color = clr;
+            visualizeGO.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+            visualizeGO.GetComponent<Renderer>().material.color = clr;
         }
 
         public static void VisualizeCube(Vector3 position, Quaternion rotation, Vector3 scale, Color color)
         {
-            GameObject what = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            Destroy(what, Visuals.PerformanceVisuals ? Visuals.PerformanceModeStep : Time.deltaTime);
-            Destroy(what.GetComponent<Collider>());
-            what.transform.position = position;
-            what.transform.localScale = scale;
-            what.transform.rotation = rotation;
+            GameObject visualizeGO = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            Destroy(visualizeGO, Visuals.PerformanceVisuals ? Visuals.PerformanceModeStep : Time.deltaTime);
+            Destroy(visualizeGO.GetComponent<Collider>());
+            visualizeGO.transform.position = position;
+            visualizeGO.transform.localScale = scale;
+            visualizeGO.transform.rotation = rotation;
             Color clr = color;
             clr.a = 0.25f;
-            what.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-            what.GetComponent<Renderer>().material.color = clr;
+            visualizeGO.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+            visualizeGO.GetComponent<Renderer>().material.color = clr;
         }
 
         private static GameObject audiomgr = null;
@@ -4645,13 +4642,14 @@ namespace iiMenu.Menu
             using (SHA256 sha256 = SHA256.Create())
             {
                 byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(input));
-                StringBuilder stringy = new StringBuilder();
-                foreach (byte by in bytes)
+                StringBuilder stringBuilder = new StringBuilder();
+
+                foreach (byte b in bytes)
                 {
-                    stringy.Append(by.ToString("x2"));
+                    stringBuilder.Append(b.ToString("x2"));
                 }
 
-                return stringy.ToString();
+                return stringBuilder.ToString();
             }
         }
 
@@ -4723,9 +4721,7 @@ namespace iiMenu.Menu
                         {
                             VRRig target = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false));
                             if (Vector3.Distance(target.leftHandTransform.position, target.rightHandTransform.position) < 0.1f)
-                            {
-                                Mods.Safety.AntiReportFRT(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false));
-                            }
+                                Safety.AntiReportFRT(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false));
                         }
                     }
                 }
@@ -5382,9 +5378,7 @@ namespace iiMenu.Menu
                         }
                     }
                     else
-                    {
                         Debug.LogError(buttonText + " does not exist");
-                    }
                 }
             }
             ReloadMenu();
