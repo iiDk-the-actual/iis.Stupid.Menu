@@ -3589,15 +3589,23 @@ namespace iiMenu.Menu
             Vector3 StartPosition = GunTransform.position;
             Vector3 Direction = GunTransform.forward;
 
+            Vector3 Up = -GunTransform.up;
+            Vector3 Right = GunTransform.right;
+
             switch (GunDirection)
             {
                 case 1:
+                    Up = GunTransform.forward;
                     Direction = -GunTransform.up;
                     break;
                 case 2:
+                    Up = GunTransform.forward;
+                    Right = -GunTransform.up;
                     Direction = GunTransform.right * (SwapGunHand ? 1f : -1f);
                     break;
                 case 3:
+                    Up = SwapGunHand ? TrueLeftHand().up : TrueRightHand().up;
+                    Right = SwapGunHand ? TrueLeftHand().right : TrueRightHand().right;
                     Direction = SwapGunHand ? TrueLeftHand().forward : TrueRightHand().forward;
                     break;
             }
@@ -3634,17 +3642,17 @@ namespace iiMenu.Menu
 
             if (!disableGunLine)
             {
-                GameObject line = new GameObject("Line");
-                LineRenderer liner = line.AddComponent<LineRenderer>();
-                liner.material.shader = Shader.Find("GUI/Text Shader");
-                liner.startColor = GetBGColor(0f);
-                liner.endColor = GetBGColor(0.5f);
-                liner.startWidth = 0.025f;
-                liner.endWidth = 0.025f;
-                liner.positionCount = 2;
-                liner.useWorldSpace = true;
-                liner.SetPosition(0, StartPosition);
-                liner.SetPosition(1, EndPosition);
+                GameObject line = new GameObject("iiMenu_GunLine");
+                LineRenderer lineRenderer = line.AddComponent<LineRenderer>();
+                lineRenderer.material.shader = Shader.Find("GUI/Text Shader");
+                lineRenderer.startColor = GetBGColor(0f);
+                lineRenderer.endColor = GetBGColor(0.5f);
+                lineRenderer.startWidth = 0.025f;
+                lineRenderer.endWidth = 0.025f;
+                lineRenderer.positionCount = 2;
+                lineRenderer.useWorldSpace = true;
+                lineRenderer.SetPosition(0, StartPosition);
+                lineRenderer.SetPosition(1, EndPosition);
                 Destroy(line, Time.deltaTime);
 
                 int Step = GunLineQuality;
@@ -3653,46 +3661,48 @@ namespace iiMenu.Menu
                     case 1: // Lightning
                         if (GetGunInput(true) || gunLocked)
                         {
-                            liner.positionCount = Step;
-                            liner.SetPosition(0, StartPosition);
+                            lineRenderer.positionCount = Step;
+                            lineRenderer.SetPosition(0, StartPosition);
 
                             for (int i = 1; i < (Step - 1); i++)
                             {
                                 Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
-                                    liner.SetPosition(i, Position + (UnityEngine.Random.Range(0f, 1f) > 0.75f ? new Vector3(UnityEngine.Random.Range(-0.1f, 0.1f), UnityEngine.Random.Range(-0.1f, 0.1f), UnityEngine.Random.Range(-0.1f, 0.1f)) : Vector3.zero));
+                                    lineRenderer.SetPosition(i, Position + (UnityEngine.Random.Range(0f, 1f) > 0.75f ? new Vector3(UnityEngine.Random.Range(-0.1f, 0.1f), UnityEngine.Random.Range(-0.1f, 0.1f), UnityEngine.Random.Range(-0.1f, 0.1f)) : Vector3.zero));
                                 }
 
-                            liner.SetPosition(Step - 1, EndPosition);
+                            lineRenderer.SetPosition(Step - 1, EndPosition);
                         }
                         break;
                     case 2: // Wavy
                         if (GetGunInput(true) || gunLocked)
                         {
-                            liner.positionCount = Step;
-                            liner.SetPosition(0, StartPosition);
+                            lineRenderer.positionCount = Step;
+                            lineRenderer.SetPosition(0, StartPosition);
 
                             for (int i = 1; i < (Step - 1); i++)
                             {
+                                float value = ((float)i / (float)Step) * 50f;
+
                                 Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
-                                liner.SetPosition(i, Position + ((SwapGunHand ? TrueLeftHand().up : TrueRightHand().up) * Mathf.Sin((Time.time * -10f) + i) * 0.1f));
+                                lineRenderer.SetPosition(i, Position + (Up * Mathf.Sin((Time.time * -10f) + value) * 0.1f));
                             }
 
-                            liner.SetPosition(Step - 1, EndPosition);
+                            lineRenderer.SetPosition(Step - 1, EndPosition);
                         }
                         break;
                     case 3: // Blocky
                         if (GetGunInput(true) || gunLocked)
                         {
-                            liner.positionCount = Step;
-                            liner.SetPosition(0, StartPosition);
+                            lineRenderer.positionCount = Step;
+                            lineRenderer.SetPosition(0, StartPosition);
 
                             for (int i = 1; i < (Step - 1); i++)
                             {
                                 Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
-                                liner.SetPosition(i, new Vector3(Mathf.Round(Position.x * 25f) / 25f, Mathf.Round(Position.y * 25f) / 25f, Mathf.Round(Position.z * 25f) / 25f));
+                                lineRenderer.SetPosition(i, new Vector3(Mathf.Round(Position.x * 25f) / 25f, Mathf.Round(Position.y * 25f) / 25f, Mathf.Round(Position.z * 25f) / 25f));
                             }
 
-                            liner.SetPosition(Step - 1, EndPosition);
+                            lineRenderer.SetPosition(Step - 1, EndPosition);
                         }
                         break;
                     case 4: // Sinewave
@@ -3700,43 +3710,48 @@ namespace iiMenu.Menu
 
                         if (GetGunInput(true) || gunLocked)
                         {
-                            liner.positionCount = Step;
-                            liner.SetPosition(0, StartPosition);
+                            lineRenderer.positionCount = Step;
+                            lineRenderer.SetPosition(0, StartPosition);
 
                             for (int i = 1; i < (Step - 1); i++)
                             {
                                 Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
-                                liner.SetPosition(i, Position + ((SwapGunHand ? TrueLeftHand().up : TrueRightHand().up) * Mathf.Sin(Time.time * 10f) * (i % 2 == 0 ? 0.1f : -0.1f)));
+                                lineRenderer.SetPosition(i, Position + (Up * Mathf.Sin(Time.time * 10f) * (i % 2 == 0 ? 0.1f : -0.1f)));
                             }
 
-                            liner.SetPosition(Step - 1, EndPosition);
+                            lineRenderer.SetPosition(Step - 1, EndPosition);
                         }
                         break;
                     case 5: // Spring
                         if (GetGunInput(true) || gunLocked)
                         {
-                            liner.positionCount = Step;
-                            liner.SetPosition(0, StartPosition);
+                            lineRenderer.positionCount = Step;
+                            lineRenderer.SetPosition(0, StartPosition);
 
                             for (int i = 1; i < (Step - 1); i++)
                             {
+                                float value = ((float)i / (float)Step) * 50f;
+
                                 Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
-                                liner.SetPosition(i, Position + ((SwapGunHand ? TrueLeftHand().right : TrueRightHand().right) * Mathf.Cos((Time.time * -10f) + i) * 0.1f) + ((SwapGunHand ? TrueLeftHand().up : TrueRightHand().up) * Mathf.Sin((Time.time * -10f) + i) * 0.1f));
+                                lineRenderer.SetPosition(i, Position + (Right * Mathf.Cos((Time.time * -10f) + value) * 0.1f) + (Up * Mathf.Sin((Time.time * -10f) + value) * 0.1f));
                             }
 
-                            liner.SetPosition(Step - 1, EndPosition);
+                            lineRenderer.SetPosition(Step - 1, EndPosition);
                         }
                         break;
                     case 6: // Bouncy
                         if (GetGunInput(true) || gunLocked)
                         {
-                            liner.positionCount = Step;
-                            liner.SetPosition(0, StartPosition);
+                            lineRenderer.positionCount = Step;
+                            lineRenderer.SetPosition(0, StartPosition);
 
                             for (int i = 1; i < (Step - 1); i++)
-                                liner.SetPosition(i, Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f)) + ((SwapGunHand ? TrueLeftHand().up : TrueRightHand().up) * Mathf.Abs(Mathf.Sin((Time.time * -10f) + i)) * 0.4f));
+                            {
+                                float value = i / Step * 50f;
+                                lineRenderer.SetPosition(i, Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f)) + (Up * Mathf.Abs(Mathf.Sin((Time.time * -10f) + value)) * 0.4f));
+                            }
 
-                            liner.SetPosition(Step - 1, EndPosition);
+                            lineRenderer.SetPosition(Step - 1, EndPosition);
                         }
                         break;
                     case 7: // Audio
@@ -3760,16 +3775,16 @@ namespace iiMenu.Menu
                             if (volumeArchive.Count > Step)
                                 volumeArchive.Remove(Step);
 
-                            liner.positionCount = Step;
-                            liner.SetPosition(0, StartPosition);
+                            lineRenderer.positionCount = Step;
+                            lineRenderer.SetPosition(0, StartPosition);
 
                             for (int i = 1; i < (Step - 1); i++)
                             {
                                 Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
-                                liner.SetPosition(i, Position + ((SwapGunHand ? TrueLeftHand().up : TrueRightHand().up) * (i >= volumeArchive.Count ? 0 : volumeArchive[i]) * (i % 2 == 0 ? 1f : -1f)));
+                                lineRenderer.SetPosition(i, Position + (Up * (i >= volumeArchive.Count ? 0 : volumeArchive[i]) * (i % 2 == 0 ? 1f : -1f)));
                             }
 
-                            liner.SetPosition(Step - 1, EndPosition);
+                            lineRenderer.SetPosition(Step - 1, EndPosition);
                         }
                         break;
                 }
