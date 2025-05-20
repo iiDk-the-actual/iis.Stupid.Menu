@@ -282,9 +282,7 @@ namespace iiMenu.Menu
 
                                         TextMeshPro text = (TextMeshPro)Traverse.Create(ui).Field("screenText").GetValue();
                                         if (!udTMP.Contains(text))
-                                        {
                                             udTMP.Add(text);
-                                        }
                                     }
                                     catch { }
                                 }
@@ -304,9 +302,7 @@ namespace iiMenu.Menu
                                     {
                                         TextMeshPro text = obj.GetComponent<TextMeshPro>();
                                         if (!udTMP.Contains(text))
-                                        {
                                             udTMP.Add(text);
-                                        }
                                     }
                                     else
                                         Debug.Log("Could not find " + lol);
@@ -339,9 +335,7 @@ namespace iiMenu.Menu
                     {
                         GameObject computerMonitor = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/GorillaComputerObject/ComputerUI/monitor/monitorScreen");
                         if (computerMonitor != null)
-                        {
                             computerMonitor.GetComponent<Renderer>().material = OrangeUI;
-                        }
                     } catch { }
 
                     try
