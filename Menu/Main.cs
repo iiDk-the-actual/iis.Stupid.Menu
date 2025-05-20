@@ -3747,8 +3747,8 @@ namespace iiMenu.Menu
 
                             for (int i = 1; i < (Step - 1); i++)
                             {
-                                float value = i / Step * 50f;
-                                lineRenderer.SetPosition(i, Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f)) + (Up * Mathf.Abs(Mathf.Sin((Time.time * -10f) + value)) * 0.4f));
+                                float value = ((float)i / (float)Step) * 15f;
+                                lineRenderer.SetPosition(i, Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f)) + (Up * Mathf.Abs(Mathf.Sin((Time.time * -10f) + value)) * 0.3f));
                             }
 
                             lineRenderer.SetPosition(Step - 1, EndPosition);
