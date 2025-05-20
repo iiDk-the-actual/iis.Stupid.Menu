@@ -4215,7 +4215,7 @@ namespace iiMenu.Menu
 
         public static bool PlayerIsLocal(VRRig Player)
         {
-            return Player != GorillaTagger.Instance.offlineVRRig && Player != GhostRig;
+            return Player == GorillaTagger.Instance.offlineVRRig || Player == GhostRig;
         }
 
         public static List<NetPlayer> InfectedList()
