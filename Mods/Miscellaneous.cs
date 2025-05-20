@@ -25,11 +25,11 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true) && Time.time > idgundelay)
                 {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
                     {
                         idgundelay = Time.time + 0.5f;
-                        string id = GetPlayerFromVRRig(possibly).UserId;
+                        string id = GetPlayerFromVRRig(gunTarget).UserId;
                         NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> " + id, 5000);
                         GUIUtility.systemCopyBuffer = id;
                     }
@@ -54,11 +54,11 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true) && Time.time > idgundelay)
                 {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
                     {
                         idgundelay = Time.time + 0.5f;
-                        CoroutineManager.RunCoroutine(SpeakText("Name: " + GetPlayerFromVRRig(possibly).NickName + ". I D: " + GetPlayerFromVRRig(possibly).UserId));
+                        CoroutineManager.RunCoroutine(SpeakText("Name: " + GetPlayerFromVRRig(gunTarget).NickName + ". I D: " + GetPlayerFromVRRig(gunTarget).UserId));
                     }
                 }
             }
@@ -80,11 +80,11 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true))
                 {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig && Time.time > cgdgd)
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig && Time.time > cgdgd)
                     {
                         cgdgd = Time.time + 0.5f;
-                        PlayFabClientAPI.GetAccountInfo(new GetAccountInfoRequest { PlayFabId = GetPlayerFromVRRig(possibly).UserId }, delegate (GetAccountInfoResult result) // Who designed this
+                        PlayFabClientAPI.GetAccountInfo(new GetAccountInfoRequest { PlayFabId = GetPlayerFromVRRig(gunTarget).UserId }, delegate (GetAccountInfoResult result) // Who designed this
                         {
                             string date = result.AccountInfo.Created.ToString("MMMM dd, yyyy h:mm tt");
                             NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> " + date, 5000);

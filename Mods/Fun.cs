@@ -698,12 +698,12 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true) && Time.time > muteDelay)
                 {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
                     {
                         foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
                         {
-                            if (line.linePlayer == GetPlayerFromVRRig(possibly))
+                            if (line.linePlayer == GetPlayerFromVRRig(gunTarget))
                             {
                                 muteDelay = Time.time + 0.5f;
                                 line.PressButton(!line.muteButton.isOn, GorillaPlayerLineButton.ButtonType.Mute);
@@ -782,13 +782,13 @@ namespace iiMenu.Mods
                 }
                 if (GetGunInput(true))
                 {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
                     {
                         gunLocked = true;
-                        lockTarget = possibly;
+                        lockTarget = gunTarget;
                         GorillaTagger.Instance.myRecorder.SourceType = Recorder.InputSourceType.AudioClip;
-                        GorillaTagger.Instance.myRecorder.AudioClip = ((Photon.Voice.Unity.Speaker)Traverse.Create(possibly.gameObject.GetComponent<GorillaSpeakerLoudness>()).Field("speaker").GetValue()).gameObject.GetComponent<AudioSource>().clip;
+                        GorillaTagger.Instance.myRecorder.AudioClip = ((Photon.Voice.Unity.Speaker)Traverse.Create(gunTarget.gameObject.GetComponent<GorillaSpeakerLoudness>()).Field("speaker").GetValue()).gameObject.GetComponent<AudioSource>().clip;
                         GorillaTagger.Instance.myRecorder.RestartRecording(true);
                         GorillaTagger.Instance.myRecorder.DebugEchoMode = true;
                     }
@@ -1177,11 +1177,11 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true))
                 {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
                     {
                         if (PhotonNetwork.LocalPlayer.IsMasterClient)
-                            GRPlayer.Get(GetPlayerFromVRRig(possibly).ActorNumber).currency = int.MaxValue;
+                            GRPlayer.Get(GetPlayerFromVRRig(gunTarget).ActorNumber).currency = int.MaxValue;
                         else
                             NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
                     }
@@ -1216,11 +1216,11 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true))
                 {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
                     {
                         if (PhotonNetwork.LocalPlayer.IsMasterClient)
-                            GRPlayer.Get(GetPlayerFromVRRig(possibly).ActorNumber).currency = 0;
+                            GRPlayer.Get(GetPlayerFromVRRig(gunTarget).ActorNumber).currency = 0;
                         else
                             NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
                     }
@@ -1338,9 +1338,9 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true))
                 {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
-                        SetPlayerState(possibly, GRPlayer.GRPlayerState.Ghost);
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
+                        SetPlayerState(gunTarget, GRPlayer.GRPlayerState.Ghost);
                 }
             }
         }
@@ -1366,10 +1366,10 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true))
                 {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
                     {
-                        SetPlayerState(possibly, GRPlayer.GRPlayerState.Alive);
+                        SetPlayerState(gunTarget, GRPlayer.GRPlayerState.Alive);
                     }
                 }
             }
@@ -1404,12 +1404,12 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true))
                 {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig && Time.time > killDelay)
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig && Time.time > killDelay)
                     {
                         killDelay = Time.time + 0.1f;
-                        GRPlayer plr = GRPlayer.Get(GetPlayerFromVRRig(possibly).ActorNumber);
-                        SetPlayerState(possibly, plr.State == GRPlayer.GRPlayerState.Alive ? GRPlayer.GRPlayerState.Ghost : GRPlayer.GRPlayerState.Alive);
+                        GRPlayer plr = GRPlayer.Get(GetPlayerFromVRRig(gunTarget).ActorNumber);
+                        SetPlayerState(gunTarget, plr.State == GRPlayer.GRPlayerState.Alive ? GRPlayer.GRPlayerState.Ghost : GRPlayer.GRPlayerState.Alive);
                     }
                 }
             }
@@ -1611,12 +1611,12 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true))
                 {
-                    BuilderPiece possibly = Ray.collider.GetComponentInParent<BuilderPiece>();
-                    if (possibly && Time.time > gbgd)
+                    BuilderPiece gunTarget = Ray.collider.GetComponentInParent<BuilderPiece>();
+                    if (gunTarget && Time.time > gbgd)
                     {
                         gbgd = Time.time + 0.1f;
-                        pieceIdSet = possibly.pieceType;
-                        NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully selected piece " + possibly.name.Replace("(Clone)", "") + "!");
+                        pieceIdSet = gunTarget.pieceType;
+                        NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully selected piece " + gunTarget.name.Replace("(Clone)", "") + "!");
                         RPCProtection();
                     }
                 }
@@ -2046,10 +2046,10 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true))
                 {
-                    BuilderPiece possibly = Ray.collider.GetComponentInParent<BuilderPiece>();
-                    if (possibly)
+                    BuilderPiece gunTarget = Ray.collider.GetComponentInParent<BuilderPiece>();
+                    if (gunTarget)
                     {
-                        GetBuilderTable().RequestRecyclePiece(possibly, true, 2);
+                        GetBuilderTable().RequestRecyclePiece(gunTarget, true, 2);
                         RPCProtection();
                     }
                 }
@@ -3216,11 +3216,11 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true) && Time.time > stealIdentityDelay)
                 {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
                     {
-                        ChangeName(GetPlayerFromVRRig(possibly).NickName);
-                        ChangeColor(possibly.playerColor);
+                        ChangeName(GetPlayerFromVRRig(gunTarget).NickName);
+                        ChangeColor(gunTarget.playerColor);
                         stealIdentityDelay = Time.time + 0.5f;
                     }
                 }

@@ -2837,11 +2837,11 @@ namespace iiMenu.Mods
                 }
                 if (GetGunInput(true))
                 {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
                     {
                         gunLocked = true;
-                        lockTarget = possibly;
+                        lockTarget = gunTarget;
                     }
                 }
             }
@@ -3098,8 +3098,8 @@ namespace iiMenu.Mods
                                 Vector3 dir = vrrig.transform.Find("RigAnchor/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R").up;
                                 Physics.SphereCast(vrrig.rightHandTransform.position + (dir * 0.1f), 0.3f, dir, out var Ray, 512f, NoInvisLayerMask());
                                 {
-                                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                                    if (possibly && possibly == GorillaTagger.Instance.offlineVRRig)
+                                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                                    if (gunTarget && gunTarget == GorillaTagger.Instance.offlineVRRig)
                                     {
                                         sithlord = vrrig;
                                         sithright = true;
@@ -3112,8 +3112,8 @@ namespace iiMenu.Mods
                                 Vector3 dir = vrrig.transform.Find("RigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L").up;
                                 Physics.SphereCast(vrrig.leftHandTransform.position + (dir * 0.1f), 0.3f, dir, out var Ray, 512f, NoInvisLayerMask());
                                 {
-                                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                                    if (possibly && possibly == GorillaTagger.Instance.offlineVRRig)
+                                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                                    if (gunTarget && gunTarget == GorillaTagger.Instance.offlineVRRig)
                                     {
                                         sithlord = vrrig;
                                         sithright = false;
@@ -3580,11 +3580,11 @@ namespace iiMenu.Mods
                 }
                 if (GetGunInput(true))
                 {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
                     {
                         gunLocked = true;
-                        lockTarget = possibly;
+                        lockTarget = gunTarget;
                     }
                 }
             }
@@ -3638,11 +3638,11 @@ namespace iiMenu.Mods
                 }
                 if (GetGunInput(true))
                 {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
                     {
                         gunLocked = true;
-                        lockTarget = possibly;
+                        lockTarget = gunTarget;
                     }
                 }
             }
@@ -3712,11 +3712,11 @@ namespace iiMenu.Mods
                 }
                 if (GetGunInput(true))
                 {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
                     {
                         gunLocked = true;
-                        lockTarget = possibly;
+                        lockTarget = gunTarget;
                     }
                 }
             }
@@ -3780,11 +3780,11 @@ namespace iiMenu.Mods
                 }
                 if (GetGunInput(true))
                 {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
                     {
                         gunLocked = true;
-                        lockTarget = possibly;
+                        lockTarget = gunTarget;
                     }
                 }
             }
@@ -3853,11 +3853,11 @@ namespace iiMenu.Mods
                 }
                 if (GetGunInput(true))
                 {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
                     {
                         gunLocked = true;
-                        lockTarget = possibly;
+                        lockTarget = gunTarget;
                     }
                 }
             }
@@ -3936,11 +3936,11 @@ namespace iiMenu.Mods
                 }
                 if (GetGunInput(true))
                 {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
                     {
                         gunLocked = true;
-                        lockTarget = possibly;
+                        lockTarget = gunTarget;
                     }
                 }
             }
@@ -3990,11 +3990,11 @@ namespace iiMenu.Mods
                 }
                 if (GetGunInput(true))
                 {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
                     {
                         gunLocked = true;
-                        lockTarget = possibly;
+                        lockTarget = gunTarget;
                     }
                 }
             }
@@ -4101,11 +4101,11 @@ namespace iiMenu.Mods
                 }
                 if (GetGunInput(true))
                 {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
                     {
                         gunLocked = true;
-                        lockTarget = possibly;
+                        lockTarget = gunTarget;
                     }
                 }
             }
@@ -4188,11 +4188,11 @@ namespace iiMenu.Mods
                 }
                 if (GetGunInput(true))
                 {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
                     {
                         gunLocked = true;
-                        lockTarget = possibly;
+                        lockTarget = gunTarget;
                     }
                 }
             }
