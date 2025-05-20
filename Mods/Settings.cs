@@ -2405,7 +2405,7 @@ namespace iiMenu.Mods
             disableGunLine = false;
         }
 
-        private static int gunLineQualityIndex;
+        private static int gunLineQualityIndex = 2;
         public static void ChangeGunLineQuality()
         {
             string[] Names = new string[]
@@ -3159,6 +3159,9 @@ namespace iiMenu.Mods
 
                 Movement.predInt = int.Parse(data[30]) - 1;
                 Movement.ChangePredictionAmount();
+
+                gunLineQualityIndex = int.Parse(data[31]) - 1;
+                ChangeGunLineQuality();
             } catch { UnityEngine.Debug.Log("Save file out of date"); }
 
             pageButtonType = int.Parse(textData[3]) - 1;
