@@ -169,13 +169,13 @@ namespace iiMenu.Mods
                 }
                 if (GetGunInput(true))
                 {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig && !PlayerIsTagged(possibly))
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig && !PlayerIsTagged(gunTarget))
                     {
                         if (PhotonNetwork.LocalPlayer.IsMasterClient)
                         {
                             gunLocked = true;
-                            lockTarget = possibly;
+                            lockTarget = gunTarget;
                         }
                     }
                 }
@@ -475,19 +475,19 @@ namespace iiMenu.Mods
                 }
                 if (GetGunInput(true))
                 {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig && !PlayerIsTagged(possibly))
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig && !PlayerIsTagged(gunTarget))
                     {
                         if (PhotonNetwork.LocalPlayer.IsMasterClient)
                         {
-                            AddInfected(RigManager.GetPlayerFromVRRig(possibly));
+                            AddInfected(RigManager.GetPlayerFromVRRig(gunTarget));
                         }
                         else
                         {
                             if (PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
                             {
                                 gunLocked = true;
-                                lockTarget = possibly;
+                                lockTarget = gunTarget;
                             }
                         }
                     }
@@ -513,12 +513,12 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true))
                 {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig && PlayerIsTagged(possibly))
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig && PlayerIsTagged(gunTarget))
                     {
                         if (PhotonNetwork.LocalPlayer.IsMasterClient)
                         {
-                            RemoveInfected(RigManager.GetPlayerFromVRRig(possibly));
+                            RemoveInfected(RigManager.GetPlayerFromVRRig(gunTarget));
                         } else
                         {
                             NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
@@ -850,10 +850,10 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true))
                 {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
                     {
-                        NetPlayer owner = RigManager.GetPlayerFromVRRig(possibly);
+                        NetPlayer owner = RigManager.GetPlayerFromVRRig(gunTarget);
                         if (!PhotonNetwork.IsMasterClient)
                         {
                             NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
@@ -907,10 +907,10 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true))
                 {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
                     {
-                        NetPlayer owner = RigManager.GetPlayerFromVRRig(possibly);
+                        NetPlayer owner = RigManager.GetPlayerFromVRRig(gunTarget);
                         if (!PhotonNetwork.IsMasterClient)
                         {
                             NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
