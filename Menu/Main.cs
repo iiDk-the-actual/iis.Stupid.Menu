@@ -3572,10 +3572,10 @@ namespace iiMenu.Menu
             WebResponse response = request.GetResponse();
             Stream data = response.GetResponseStream();
             string html = "";
+
             using (StreamReader sr = new StreamReader(data))
-            {
                 html = sr.ReadToEnd();
-            }
+
             return html;
         }
 
