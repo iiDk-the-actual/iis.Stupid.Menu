@@ -4214,11 +4214,15 @@ namespace iiMenu.Menu
             }
         }
 
-        public static bool PlayerIsTagged(VRRig who)
+        public static bool PlayerIsTagged(VRRig Player)
         {
-            string name = who.mainSkin.material.name.ToLower();
-            return name.Contains("fected") || name.Contains("it") || name.Contains("stealth") || name.Contains("ice") || !who.nameTagAnchor.activeSelf;
-            //return PlayerIsTagged(GorillaTagger.Instance.offlineVRRig);
+            string name = Player.mainSkin.material.name.ToLower();
+            return name.Contains("fected") || name.Contains("it") || name.Contains("stealth") || name.Contains("ice") || !Player.nameTagAnchor.activeSelf;
+        }
+
+        public static bool PlayerIsLocal(VRRig Player)
+        {
+            return Player != GorillaTagger.Instance.offlineVRRig && Player != GhostRig;
         }
 
         public static List<NetPlayer> InfectedList()

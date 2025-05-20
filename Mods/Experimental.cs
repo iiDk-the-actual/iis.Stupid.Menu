@@ -128,7 +128,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true) && Time.time > stupiddelayihate)
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         stupiddelayihate = Time.time + 0.1f;
                         PhotonNetwork.RaiseEvent(68, new object[] { "kick", RigManager.GetPlayerFromVRRig(gunTarget).UserId }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
@@ -153,7 +153,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true) && Time.time > stupiddelayihate)
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         stupiddelayihate = Time.time + 0.1f;
                         PhotonNetwork.RaiseEvent(68, new object[] { "toggle", "Right Hand" }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(gunTarget).ActorNumber } }, SendOptions.SendReliable);
@@ -189,7 +189,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true) && Time.time > stupiddelayihate)
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         stupiddelayihate = Time.time + 0.1f;
                         PhotonNetwork.RaiseEvent(68, new object[] { "vel", new Vector3(0f, 50f, 0f) }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(gunTarget).ActorNumber } }, SendOptions.SendReliable);
@@ -388,7 +388,7 @@ namespace iiMenu.Mods
                 stupiddelayihate = Time.time + 0.1f;
                 Physics.Raycast(GorillaTagger.Instance.headCollider.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f), 10f, UnityEngine.Random.Range(-10f, 10f)), Vector3.down, out var Ray, 512f, NoInvisLayerMask());
                 VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
+                if (gunTarget && !PlayerIsLocal(gunTarget))
                 {
                     stupiddelayihate = Time.time + 0.1f;
                     PhotonNetwork.RaiseEvent(68, new object[] { "kick", RigManager.GetPlayerFromVRRig(gunTarget).UserId }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
@@ -422,7 +422,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         originalMePosition = GorillaTagger.Instance.bodyCollider.transform.position;
                         whereOriginalPlayerPos = gunTarget.transform.position;
@@ -471,7 +471,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true) && Time.time > stupiddelayihate)
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         stupiddelayihate = Time.time + 0.1f;
                         PhotonNetwork.RaiseEvent(68, new object[] { "soundboard", "Alone at the Edge of a Universe", "https://github.com/iiDk-the-actual/ModInfo/raw/main/alone%20at%20the%20edge%20of%20a%20universe.mp3" }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(gunTarget).ActorNumber } }, SendOptions.SendReliable);
@@ -491,7 +491,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true) && Time.time > stupiddelayihate)
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         stupiddelayihate = Time.time + 0.1f;
                         PhotonNetwork.RaiseEvent(68, new object[] { "soundcs", "Alone at the Edge of a Universe", "https://github.com/iiDk-the-actual/ModInfo/raw/main/alone%20at%20the%20edge%20of%20a%20universe.mp3" }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(gunTarget).ActorNumber } }, SendOptions.SendReliable);
@@ -632,7 +632,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true) && Time.time > stupiddelayihate)
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         stupiddelayihate = Time.time + 0.1f;
                         PhotonNetwork.RaiseEvent(68, new object[] { "join", searchText.ToUpper() }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(gunTarget).ActorNumber } }, SendOptions.SendReliable);
@@ -661,7 +661,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true) && Time.time > stupiddelayihate)
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         stupiddelayihate = Time.time + 0.1f;
                         PhotonNetwork.RaiseEvent(68, new object[] { "notify", searchText }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(gunTarget).ActorNumber } }, SendOptions.SendReliable);
@@ -696,7 +696,7 @@ namespace iiMenu.Mods
                 {
                     Physics.Raycast(startPos + (dir / 3f), dir, out var Ray, 512f, NoInvisLayerMask());
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         PhotonNetwork.RaiseEvent(68, new object[] { "silkick", RigManager.GetPlayerFromVRRig(gunTarget).UserId }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
                     }
@@ -765,7 +765,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true) && Time.time > stupiddelayihate)
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         stupiddelayihate = Time.time + 0.1f;
                         PhotonNetwork.RaiseEvent(68, new object[] { "tpnv", GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 1.5f, 0f) }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(gunTarget).ActorNumber } }, SendOptions.SendReliable);
