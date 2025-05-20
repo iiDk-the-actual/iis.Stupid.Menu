@@ -459,7 +459,8 @@ namespace iiMenu.Mods.Spammers
                 yay.itemState = TransferrableObject.ItemStates.State2;
             }
         }
-        
+
+        public static bool lastSlingThing;
         public static void RapidFireSlingshot()
         {
             if (rightPrimary)
@@ -469,7 +470,7 @@ namespace iiMenu.Mods.Spammers
                 {
                     Slingshot yay = slingy.GetComponent<Slingshot>();
                     yay.itemState = TransferrableObject.ItemStates.State2;
-                    System.Type type = yay.GetType();
+                    Type type = yay.GetType();
                     FieldInfo fieldInfo = type.GetField("minTimeToLaunch", BindingFlags.NonPublic | BindingFlags.Instance);
                     fieldInfo.SetValue(yay, -1f);
                     ControllerInputPoller.instance.rightControllerIndexFloat = lastSlingThing ? 1f : 0f;
