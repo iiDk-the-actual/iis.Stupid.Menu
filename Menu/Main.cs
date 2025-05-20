@@ -28,7 +28,6 @@ using UnityEngine.Networking;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
 using UnityEngine.XR;
-using Valve.Newtonsoft.Json;
 using Valve.VR;
 using static iiMenu.Classes.RigManager;
 
@@ -5136,9 +5135,7 @@ namespace iiMenu.Menu
                         if (button != null)
                         {
                             if (button.isTogglable)
-                            {
                                 namesToIds[6] = button.enabled ? "leverup" : "leverdown";
-                            }
                         }
                     }
                     catch { }
@@ -5535,11 +5532,17 @@ jgs \_   _/ |Oo\
         public static bool disableGunPointer;
         public static bool disableGunLine;
         public static bool SwapGunHand;
-        public static bool GunSpawned;
         public static bool GunSounds;
         public static int gunVariation;
         public static int GunDirection;
         public static int GunLineQuality = 50;
+
+        public static bool GunSpawned;
+        public static bool gunLocked;
+        public static VRRig lockTarget;
+
+        public static bool lastGunSpawned;
+        public static bool lastGunTrigger;
 
         public static int fontCycle;
         public static int fontStyleType = 2;
@@ -5568,9 +5571,6 @@ jgs \_   _/ |Oo\
         public static bool dynamicAnimations;
         public static bool dynamicGradients;
         public static string lastClickedName = "";
-
-        public static bool lastGunSpawned;
-        public static bool lastGunTrigger;
 
         public static string ascii = 
 @"  _ _ _       ____  _               _     _   __  __                  
@@ -5665,7 +5665,6 @@ jgs \_   _/ |Oo\
         public static Text fpsCount;
         public static Text searchTextObject;
         public static Text title;
-        public static VRRig lockTarget;
         public static VRRig GhostRig;
         public static Material funnyghostmaterial;
         public static Material searchMat;
@@ -5837,11 +5836,6 @@ jgs \_   _/ |Oo\
 
         public static Vector3 pointerOffset = new Vector3(0f, -0.1f, 0f);
         public static int pointerIndex;
-
-        public static bool lastSlingThing;
-        public static bool noclip;
-
-        public static bool gunLocked;
 
         public static bool lastInRoom;
         public static bool lastMasterClient;

@@ -513,6 +513,7 @@ namespace iiMenu.Mods
             }
         }
 
+        public static bool noclip;
         public static void NoclipFly()
         {
             if (rightPrimary)
