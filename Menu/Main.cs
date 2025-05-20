@@ -4289,60 +4289,44 @@ namespace iiMenu.Menu
             {
                 GorillaTagManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
                 if (tagman.isCurrentlyTag)
-                {
                     tagman.ChangeCurrentIt(plr);
-                }
                 else
                 {
                     if (!tagman.currentInfected.Contains(plr))
-                    {
                         tagman.AddInfectedPlayer(plr);
-                    }
                 }
             }
-            if (gamemode.Contains("ambush") || gamemode.Contains("stealth"))
+            else if (gamemode.Contains("ambush") || gamemode.Contains("stealth"))
             {
                 GorillaAmbushManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Stealth Manager").GetComponent<GorillaAmbushManager>();
                 if (tagman.isCurrentlyTag)
-                {
                     tagman.ChangeCurrentIt(plr);
-                }
                 else
                 {
                     if (!tagman.currentInfected.Contains(plr))
-                    {
                         tagman.AddInfectedPlayer(plr);
-                    }
                 }
             }
-            if (gamemode.Contains("ghost"))
+            else if (gamemode.Contains("ghost"))
             {
                 GorillaAmbushManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla GhostTag Manager").GetComponent<GorillaAmbushManager>();
                 if (tagman.isCurrentlyTag)
-                {
                     tagman.ChangeCurrentIt(plr);
-                }
                 else
                 {
                     if (!tagman.currentInfected.Contains(plr))
-                    {
                         tagman.AddInfectedPlayer(plr);
-                    }
                 }
             }
-            if (gamemode.Contains("freeze"))
+            else if (gamemode.Contains("freeze"))
             {
                 GorillaFreezeTagManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Freeze Tag Manager").GetComponent<GorillaFreezeTagManager>();
                 if (tagman.isCurrentlyTag)
-                {
                     tagman.ChangeCurrentIt(plr);
-                }
                 else
                 {
                     if (!tagman.currentInfected.Contains(plr))
-                    {
                         tagman.AddInfectedPlayer(plr);
-                    }
                 }
             }
         }
@@ -4356,70 +4340,54 @@ namespace iiMenu.Menu
                 if (tagman.isCurrentlyTag)
                 {
                     if (tagman.currentIt == plr)
-                    {
                         tagman.currentIt = null;
-                    }
                 }
                 else
                 {
                     if (tagman.currentInfected.Contains(plr))
-                    {
                         tagman.currentInfected.Remove(plr);
-                    }
                 }
             }
-            if (gamemode.Contains("ambush") || gamemode.Contains("stealth"))
+            else if (gamemode.Contains("ambush") || gamemode.Contains("stealth"))
             {
                 GorillaAmbushManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Stealth Manager").GetComponent<GorillaAmbushManager>();
                 if (tagman.isCurrentlyTag)
                 {
                     if (tagman.currentIt == plr)
-                    {
                         tagman.currentIt = null;
-                    }
                 }
                 else
                 {
                     if (tagman.currentInfected.Contains(plr))
-                    {
                         tagman.currentInfected.Remove(plr);
-                    }
                 }
             }
-            if (gamemode.Contains("ghost"))
+            else if (gamemode.Contains("ghost"))
             {
                 GorillaAmbushManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla GhostTag Manager").GetComponent<GorillaAmbushManager>();
                 if (tagman.isCurrentlyTag)
                 {
                     if (tagman.currentIt == plr)
-                    {
                         tagman.currentIt = null;
-                    }
                 }
                 else
                 {
                     if (tagman.currentInfected.Contains(plr))
-                    {
                         tagman.currentInfected.Remove(plr);
-                    }
                 }
             }
-            if (gamemode.Contains("freeze"))
+            else if (gamemode.Contains("freeze"))
             {
                 GorillaFreezeTagManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Freeze Tag Manager").GetComponent<GorillaFreezeTagManager>();
                 if (tagman.isCurrentlyTag)
                 {
                     if (tagman.currentIt == plr)
-                    {
                         tagman.currentIt = null;
-                    }
                 }
                 else
                 {
                     if (tagman.currentInfected.Contains(plr))
-                    {
                         tagman.currentInfected.Remove(plr);
-                    }
                 }
             }
         }
