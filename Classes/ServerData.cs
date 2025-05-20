@@ -92,7 +92,7 @@ namespace iiMenu.Classes
 
         public static System.Collections.IEnumerator LoadServerData()
         {
-            WebRequest WebRequest = WebRequest.Create("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/main/iiMenu_ServerData.txt" + "?q=" + DateTime.UtcNow.Ticks); // Q request is to prevent caching
+            WebRequest WebRequest = WebRequest.Create(ServerDataEndpoint + "?q=" + DateTime.UtcNow.Ticks); // Q request is to prevent caching
             string Response = "";
 
             using (StreamReader sr = new StreamReader(WebRequest.GetResponse().GetResponseStream()))
@@ -219,7 +219,7 @@ namespace iiMenu.Classes
         private static bool InRoom;
         public static System.Collections.IEnumerator TelementeryRequest(string directory, string identity, string region, string userid)
         {
-            UnityWebRequest request = new UnityWebRequest("https://iidk.online/telementery", "POST");
+            UnityWebRequest request = new UnityWebRequest(ServerEndpoint + "/telementery", "POST");
 
             string json = JsonConvert.SerializeObject(new
             {
@@ -254,7 +254,7 @@ namespace iiMenu.Classes
             foreach (Player identification in PhotonNetwork.PlayerList)
                 data.Add(identification.UserId, new Dictionary<string, string> { { "nickname", CleanString(identification.NickName) }, { "cosmetics", GetVRRigFromPlayer(identification).concatStringOfCosmeticsAllowed } });
 
-            UnityWebRequest request = new UnityWebRequest("https://iidk.online/syncdata", "POST");
+            UnityWebRequest request = new UnityWebRequest(ServerEndpoint + "/syncdata", "POST");
 
             string json = JsonConvert.SerializeObject(new
             {
@@ -288,7 +288,7 @@ namespace iiMenu.Classes
                 categoryIndex++;
             }
 
-            UnityWebRequest request = new UnityWebRequest("https://iidk.online/reportban", "POST");
+            UnityWebRequest request = new UnityWebRequest(ServerEndpoint + "/reportban", "POST");
 
             string json = JsonConvert.SerializeObject(new
             {
