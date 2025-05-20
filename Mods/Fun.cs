@@ -699,7 +699,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true) && Time.time > muteDelay)
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
                         {
@@ -783,7 +783,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;
@@ -1178,7 +1178,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         if (PhotonNetwork.LocalPlayer.IsMasterClient)
                             GRPlayer.Get(GetPlayerFromVRRig(gunTarget).ActorNumber).currency = int.MaxValue;
@@ -1217,7 +1217,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         if (PhotonNetwork.LocalPlayer.IsMasterClient)
                             GRPlayer.Get(GetPlayerFromVRRig(gunTarget).ActorNumber).currency = 0;
@@ -1339,7 +1339,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
                         SetPlayerState(gunTarget, GRPlayer.GRPlayerState.Ghost);
                 }
             }
@@ -1367,7 +1367,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         SetPlayerState(gunTarget, GRPlayer.GRPlayerState.Alive);
                     }
@@ -1405,7 +1405,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig && Time.time > killDelay)
+                    if (gunTarget && !PlayerIsLocal(gunTarget) && Time.time > killDelay)
                     {
                         killDelay = Time.time + 0.1f;
                         GRPlayer plr = GRPlayer.Get(GetPlayerFromVRRig(gunTarget).ActorNumber);
@@ -3217,7 +3217,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true) && Time.time > stealIdentityDelay)
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         ChangeName(GetPlayerFromVRRig(gunTarget).NickName);
                         ChangeColor(gunTarget.playerColor);

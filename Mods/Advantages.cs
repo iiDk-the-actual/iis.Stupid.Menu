@@ -170,7 +170,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig && !PlayerIsTagged(gunTarget))
+                    if (gunTarget && !PlayerIsLocal(gunTarget) && !PlayerIsTagged(gunTarget))
                     {
                         if (PhotonNetwork.LocalPlayer.IsMasterClient)
                         {
@@ -476,7 +476,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig && !PlayerIsTagged(gunTarget))
+                    if (gunTarget && !PlayerIsLocal(gunTarget) && !PlayerIsTagged(gunTarget))
                     {
                         if (PhotonNetwork.LocalPlayer.IsMasterClient)
                         {
@@ -514,7 +514,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig && PlayerIsTagged(gunTarget))
+                    if (gunTarget && !PlayerIsLocal(gunTarget) && PlayerIsTagged(gunTarget))
                     {
                         if (PhotonNetwork.LocalPlayer.IsMasterClient)
                         {
@@ -851,7 +851,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         NetPlayer owner = RigManager.GetPlayerFromVRRig(gunTarget);
                         if (!PhotonNetwork.IsMasterClient)
@@ -908,7 +908,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         NetPlayer owner = RigManager.GetPlayerFromVRRig(gunTarget);
                         if (!PhotonNetwork.IsMasterClient)

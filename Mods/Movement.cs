@@ -2838,7 +2838,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;
@@ -3581,7 +3581,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;
@@ -3639,7 +3639,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;
@@ -3713,7 +3713,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;
@@ -3781,7 +3781,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;
@@ -3854,7 +3854,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;
@@ -3937,7 +3937,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;
@@ -3991,7 +3991,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;
@@ -4102,7 +4102,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;
@@ -4189,7 +4189,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         gunLocked = true;
                         lockTarget = gunTarget;

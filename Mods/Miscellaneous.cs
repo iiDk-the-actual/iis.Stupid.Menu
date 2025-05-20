@@ -26,7 +26,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true) && Time.time > idgundelay)
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         idgundelay = Time.time + 0.5f;
                         string id = GetPlayerFromVRRig(gunTarget).UserId;
@@ -55,7 +55,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true) && Time.time > idgundelay)
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig)
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         idgundelay = Time.time + 0.5f;
                         CoroutineManager.RunCoroutine(SpeakText("Name: " + GetPlayerFromVRRig(gunTarget).NickName + ". I D: " + GetPlayerFromVRRig(gunTarget).UserId));
@@ -81,7 +81,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && gunTarget != GorillaTagger.Instance.offlineVRRig && Time.time > cgdgd)
+                    if (gunTarget && !PlayerIsLocal(gunTarget) && Time.time > cgdgd)
                     {
                         cgdgd = Time.time + 0.5f;
                         PlayFabClientAPI.GetAccountInfo(new GetAccountInfoRequest { PlayFabId = GetPlayerFromVRRig(gunTarget).UserId }, delegate (GetAccountInfoResult result) // Who designed this
