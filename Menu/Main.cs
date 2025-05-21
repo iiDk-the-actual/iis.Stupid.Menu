@@ -641,7 +641,7 @@ namespace iiMenu.Menu
                                     audioSource.PlayOneShot(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/grip-press.wav", "grip-press.wav"));
                                 }
 
-                                if (GetGunInput(true) && !lastGunTrigger)
+                                if (GetGunInput(true) && (!lastGunTrigger || (audiomgrhand != null && !audiomgrhand.GetComponent<AudioSource>().isPlaying)))
                                 {
                                     AudioSource audioSource = SwapGunHand ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
                                     audioSource.volume = buttonClickVolume / 10f;
@@ -666,6 +666,15 @@ namespace iiMenu.Menu
                                     AudioSource audioSource = SwapGunHand ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
                                     audioSource.volume = buttonClickVolume / 10f;
                                     audioSource.PlayOneShot(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/grip-release.wav", "grip-release.wav"));
+                                }
+
+                                if (audiomgrhand != null && audiomgrhand.GetComponent<AudioSource>().isPlaying)
+                                {
+                                    audiomgrhand.GetComponent<AudioSource>().Stop();
+
+                                    AudioSource audioSource = SwapGunHand ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
+                                    audioSource.volume = buttonClickVolume / 10f;
+                                    audioSource.PlayOneShot(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/trigger-release.wav", "trigger-release.wav"));
                                 }
                             }
 
