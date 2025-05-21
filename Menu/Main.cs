@@ -2224,9 +2224,7 @@ namespace iiMenu.Menu
             }
 
             if (!disablePageButtons)
-            {
                 AddPageButtons();
-            }
 
             if (isSearching)
             {
@@ -2670,582 +2668,128 @@ namespace iiMenu.Menu
             array[2].color = buttonDefaultA;
             array[2].time = 1f;
 
-            if (pageButtonType == 1)
+            switch (pageButtonType)
             {
-                float num4 = 0f;
-                GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                if (themeType == 30)
-                {
-                    gameObject.GetComponent<Renderer>().enabled = false;
-                }
-                if (!UnityInput.Current.GetKey(KeyCode.Q) && !(isSearching && isPcWhenSearching))
-                {
-                    gameObject.layer = 2;
-                }
-                gameObject.GetComponent<BoxCollider>().isTrigger = true;
-                gameObject.transform.parent = menu.transform;
-                gameObject.transform.rotation = Quaternion.identity;
-                if (FATMENU)
-                {
-                    gameObject.transform.localScale = new Vector3(0.09f, 0.9f, 0.08f);
-                }
-                else
-                {
-                    gameObject.transform.localScale = new Vector3(0.09f, 1.3f, 0.08f);
-                }
-                gameObject.transform.localPosition = new Vector3(0.56f, 0f, 0.28f - num4);
-                gameObject.AddComponent<Classes.Button>().relatedText = "PreviousPage";
-                gameObject.GetComponent<Renderer>().material.color = buttonDefaultA;
-                if (lastClickedName != "PreviousPage")
-                {
-                    ColorChanger colorChanger = gameObject.AddComponent<ColorChanger>();
-                    colorChanger.colors = new Gradient
-                    {
-                        colorKeys = array
-                    };
-                    colorChanger.Start();
-                } else
-                {
-                    CoroutineManager.RunCoroutine(ButtonClick(-99, "PreviousPage", gameObject.GetComponent<Renderer>()));
-                }
-                
-                Text text = new GameObject
-                {
-                    transform =
-                    {
-                        parent = canvasObj.transform
-                    }
-                }.AddComponent<Text>();
-                text.font = activeFont;
-                text.text = arrowTypes[arrowType][0];
-                text.fontSize = 1;
-                text.color = textColor;
-                text.alignment = TextAnchor.MiddleCenter;
-                text.resizeTextForBestFit = true;
-                text.resizeTextMinSize = 0;
-                RectTransform component = text.GetComponent<RectTransform>();
-                component.localPosition = Vector3.zero;
-                component.sizeDelta = new Vector2(0.2f, 0.03f);
-                if (NoAutoSizeText)
-                {
-                    component.sizeDelta = new Vector2(9f, 0.015f);
-                }
-                component.localPosition = new Vector3(0.064f, 0f, 0.109f - num4 / 2.55f);
-                component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
-                num4 = 0.1f;
-                GameObject gameObject2 = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                if (themeType == 30)
-                {
-                    gameObject2.GetComponent<Renderer>().enabled = false;
-                }
-                if (!UnityInput.Current.GetKey(KeyCode.Q) && !(isSearching && isPcWhenSearching))
-                {
-                    gameObject2.layer = 2;
-                }
-                gameObject2.GetComponent<BoxCollider>().isTrigger = true;
-                gameObject2.transform.parent = menu.transform;
-                gameObject2.transform.rotation = Quaternion.identity;
-                if (FATMENU)
-                {
-                    gameObject2.transform.localScale = new Vector3(0.09f, 0.9f, 0.08f);
-                }
-                else
-                {
-                    gameObject2.transform.localScale = new Vector3(0.09f, 1.3f, 0.08f);
-                }
-                gameObject2.transform.localPosition = new Vector3(0.56f, 0f, 0.28f - num4);
-                gameObject2.AddComponent<Classes.Button>().relatedText = "NextPage";
-                gameObject2.GetComponent<Renderer>().material.color = buttonDefaultA;
-                if (lastClickedName != "NextPage")
-                {
-                    ColorChanger colorChanger = gameObject2.AddComponent<ColorChanger>();
-                    colorChanger.colors = new Gradient
-                    {
-                        colorKeys = array
-                    };
-                    colorChanger.Start();
-                }
-                else
-                {
-                    CoroutineManager.RunCoroutine(ButtonClick(-99, "NextPage", gameObject2.GetComponent<Renderer>()));
-                }
-                Text text2 = new GameObject
-                {
-                    transform =
-                    {
-                        parent = canvasObj.transform
-                    }
-                }.AddComponent<Text>();
-                text2.font = activeFont;
-                text2.text = arrowTypes[arrowType][1];
-                text2.fontSize = 1;
-                text2.color = textColor;
-                text2.alignment = TextAnchor.MiddleCenter;
-                text2.resizeTextForBestFit = true;
-                text2.resizeTextMinSize = 0;
-                RectTransform component2 = text2.GetComponent<RectTransform>();
-                component2.localPosition = Vector3.zero;
-                component2.sizeDelta = new Vector2(0.2f, 0.03f);
-                if (NoAutoSizeText)
-                {
-                    component2.sizeDelta = new Vector2(9f, 0.015f);
-                }
-                component2.localPosition = new Vector3(0.064f, 0f, 0.109f - num4 / 2.55f);
-                component2.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+                case 1:
+                    CreatePageButtonPair(
+                        "PreviousPage", "NextPage",
+                        new Vector3(0.09f, FATMENU ? 0.9f : 1.3f, 0.08f),
+                        new Vector3(0.56f, 0f, 0.28f),
+                        new Vector3(0.56f, 0f, 0.28f - 0.1f),
+                        new Vector3(0.064f, 0f, 0.109f),
+                        new Vector3(0.064f, 0f, 0.109f - 0.1f / 2.55f),
+                        array
+                    );
+                    break;
 
-                if (shouldOutline)
-                {
-                    OutlineObj(gameObject, true);
-                    OutlineObj(gameObject2, true);
-                }
+                case 2:
+                    CreatePageButtonPair(
+                        "PreviousPage", "NextPage",
+                        new Vector3(0.09f, 0.2f, 0.9f),
+                        new Vector3(0.56f, FATMENU ? 0.65f : 0.9f, 0f),
+                        new Vector3(0.56f, FATMENU ? -0.65f : -0.9f, 0f),
+                        new Vector3(0.064f, FATMENU ? 0.195f : 0.267f, 0f),
+                        new Vector3(0.064f, FATMENU ? -0.195f : -0.267f, 0f),
+                        array
+                    );
+                    break;
 
-                if (shouldRound)
-                {
-                    RoundObj(gameObject);
-                    RoundObj(gameObject2);
-                }
+                case 5:
+                    CreatePageButtonPair(
+                        "PreviousPage", "NextPage",
+                        new Vector3(0.09f, 0.3f, 0.05f),
+                        new Vector3(0.56f, FATMENU ? 0.299f : 0.499f, 0.355f),
+                        new Vector3(0.56f, FATMENU ? -0.299f : -0.499f, 0.355f),
+                        new Vector3(0.064f, FATMENU ? 0.09f : 0.15f, 0.135f),
+                        new Vector3(0.064f, FATMENU ? -0.09f : -0.15f, 0.135f),
+                        array
+                    );
+                    break;
+
+                case 6:
+                    CreatePageButtonPair(
+                        "PreviousPage", "NextPage",
+                        new Vector3(0.09f, 0.102f, 0.08f),
+                        new Vector3(0.56f, FATMENU ? 0.450f : 0.7f, -0.58f),
+                        new Vector3(0.56f, FATMENU ? 0.450f : 0.7f, -0.58f) - new Vector3(0f, 0.16f, 0f),
+                        new Vector3(0.064f, FATMENU ? 0.35f / 2.6f : 0.54444444444f / 2.6f, -0.58f / 2.7f),
+                        new Vector3(0.064f, FATMENU ? 0.35f / 2.6f : 0.54444444444f / 2.6f, -0.58f / 2.7f) - new Vector3(0f, 0.0475f, 0f),
+                        array,
+                        new Vector2(0.03f, 0.03f)
+                    );
+                    break;
             }
+        }
 
-            if (pageButtonType == 2)
+        private static void CreatePageButtonPair(string prevButtonName, string nextButtonName, Vector3 buttonScale, Vector3 prevButtonPos, Vector3 nextButtonPos, Vector3 prevTextPos, Vector3 nextTextPos, GradientColorKey[] colorKeys, Vector2? textSize = null)
+        {
+            GameObject prevButton = CreatePageButton(prevButtonName, buttonScale, prevButtonPos, prevTextPos, colorKeys, textSize, 0);
+
+            GameObject nextButton = CreatePageButton(nextButtonName, buttonScale, nextButtonPos, nextTextPos, colorKeys, textSize, 1);
+
+            if (shouldOutline)
             {
-                GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                if (themeType == 30)
-                {
-                    gameObject.GetComponent<Renderer>().enabled = false;
-                }
-                if (!UnityInput.Current.GetKey(KeyCode.Q) && !(isSearching && isPcWhenSearching))
-                {
-                    gameObject.layer = 2;
-                }
-                gameObject.GetComponent<BoxCollider>().isTrigger = true;
-                gameObject.transform.parent = menu.transform;
-                gameObject.transform.rotation = Quaternion.identity;
-                gameObject.transform.localScale = new Vector3(0.09f, 0.2f, 0.9f);
-                if (FATMENU)
-                {
-                    gameObject.transform.localPosition = new Vector3(0.56f, 0.65f, 0);
-                }
-                else
-                {
-                    gameObject.transform.localPosition = new Vector3(0.56f, 0.9f, 0);
-                }
-                gameObject.AddComponent<Classes.Button>().relatedText = "PreviousPage";
-                gameObject.GetComponent<Renderer>().material.color = buttonDefaultA;
-                if (lastClickedName != "PreviousPage")
-                {
-                    ColorChanger colorChanger = gameObject.AddComponent<ColorChanger>();
-                    colorChanger.colors = new Gradient
-                    {
-                        colorKeys = array
-                    };
-                    colorChanger.Start();
-                }
-                else
-                {
-                    CoroutineManager.RunCoroutine(ButtonClick(-99, "PreviousPage", gameObject.GetComponent<Renderer>()));
-                }
-                Text text = new GameObject
-                {
-                    transform =
-                    {
-                        parent = canvasObj.transform
-                    }
-                }.AddComponent<Text>();
-                text.font = activeFont;
-                text.text = arrowTypes[arrowType][0];
-                text.fontSize = 1;
-                text.color = textColor;
-                text.alignment = TextAnchor.MiddleCenter;
-                text.resizeTextForBestFit = true;
-                text.resizeTextMinSize = 0;
-                RectTransform component = text.GetComponent<RectTransform>();
-                component.localPosition = Vector3.zero;
-                component.sizeDelta = new Vector2(0.2f, 0.03f);
-                if (NoAutoSizeText)
-                {
-                    component.sizeDelta = new Vector2(9f, 0.015f);
-                }
-                if (FATMENU)
-                {
-                    component.localPosition = new Vector3(0.064f, 0.195f, 0f);
-                }
-                else
-                {
-                    component.localPosition = new Vector3(0.064f, 0.267f, 0f);
-                }
-                component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
-
-                if (shouldOutline)
-                    OutlineObj(gameObject, true);
-
-                if (shouldRound)
-                    RoundObj(gameObject);
-
-                gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                if (themeType == 30)
-                {
-                    gameObject.GetComponent<Renderer>().enabled = false;
-                }
-                if (!UnityInput.Current.GetKey(KeyCode.Q) && !(isSearching && isPcWhenSearching))
-                {
-                    gameObject.layer = 2;
-                }
-                gameObject.GetComponent<BoxCollider>().isTrigger = true;
-                gameObject.transform.parent = menu.transform;
-                gameObject.transform.rotation = Quaternion.identity;
-                gameObject.transform.localScale = new Vector3(0.09f, 0.2f, 0.9f);
-                if (FATMENU)
-                {
-                    gameObject.transform.localPosition = new Vector3(0.56f, -0.65f, 0);
-                }
-                else
-                {
-                    gameObject.transform.localPosition = new Vector3(0.56f, -0.9f, 0);
-                }
-                gameObject.AddComponent<Classes.Button>().relatedText = "NextPage";
-                gameObject.GetComponent<Renderer>().material.color = buttonDefaultA;
-                if (lastClickedName != "NextPage")
-                {
-                    ColorChanger colorChanger = gameObject.AddComponent<ColorChanger>();
-                    colorChanger.colors = new Gradient
-                    {
-                        colorKeys = array
-                    };
-                    colorChanger.Start();
-                }
-                else
-                {
-                    CoroutineManager.RunCoroutine(ButtonClick(-99, "NextPage", gameObject.GetComponent<Renderer>()));
-                }
-                text = new GameObject
-                {
-                    transform =
-                    {
-                        parent = canvasObj.transform
-                    }
-                }.AddComponent<Text>();
-                text.font = activeFont;
-                text.text = arrowTypes[arrowType][1];
-                text.fontSize = 1;
-                text.color = textColor;
-                text.alignment = TextAnchor.MiddleCenter;
-                text.resizeTextForBestFit = true;
-                text.resizeTextMinSize = 0;
-                component = text.GetComponent<RectTransform>();
-                component.localPosition = Vector3.zero;
-                component.sizeDelta = new Vector2(0.2f, 0.03f);
-                if (NoAutoSizeText)
-                {
-                    component.sizeDelta = new Vector2(9f, 0.015f);
-                }
-                if (FATMENU)
-                {
-                    component.localPosition = new Vector3(0.064f, -0.195f, 0f);
-                }
-                else
-                {
-                    component.localPosition = new Vector3(0.064f, -0.267f, 0f);
-                }
-                component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
-                
-                if (shouldOutline)
-                    OutlineObj(gameObject, true);
-
-                if (shouldRound)
-                    RoundObj(gameObject);
+                OutlineObj(prevButton, true);
+                OutlineObj(nextButton, true);
             }
 
-            if (pageButtonType == 5)
+            if (shouldRound)
             {
-                GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                if (themeType == 30)
-                {
-                    gameObject.GetComponent<Renderer>().enabled = false;
-                }
-                if (!UnityInput.Current.GetKey(KeyCode.Q) && !(isSearching && isPcWhenSearching))
-                {
-                    gameObject.layer = 2;
-                }
-                gameObject.GetComponent<BoxCollider>().isTrigger = true;
-                gameObject.transform.parent = menu.transform;
-                gameObject.transform.rotation = Quaternion.identity;
-                gameObject.transform.localScale = new Vector3(0.09f, 0.3f, 0.05f);
-                if (FATMENU)
-                {
-                    gameObject.transform.localPosition = new Vector3(0.56f, 0.299f, 0.355f);
-                }
-                else
-                {
-                    gameObject.transform.localPosition = new Vector3(0.56f, 0.499f, 0.355f);
-                }
-                gameObject.AddComponent<Classes.Button>().relatedText = "PreviousPage";
-                gameObject.GetComponent<Renderer>().material.color = buttonDefaultA;
-                if (lastClickedName != "PreviousPage")
-                {
-                    ColorChanger colorChanger = gameObject.AddComponent<ColorChanger>();
-                    colorChanger.colors = new Gradient
-                    {
-                        colorKeys = array
-                    };
-                    colorChanger.Start();
-                }
-                else
-                {
-                    CoroutineManager.RunCoroutine(ButtonClick(-99, "PreviousPage", gameObject.GetComponent<Renderer>()));
-                }
-                Text text = new GameObject
-                {
-                    transform =
-                    {
-                        parent = canvasObj.transform
-                    }
-                }.AddComponent<Text>();
-                text.font = activeFont;
-                text.text = arrowTypes[arrowType][0];
-                text.fontSize = 1;
-                text.color = textColor;
-                text.alignment = TextAnchor.MiddleCenter;
-                text.resizeTextForBestFit = true;
-                text.resizeTextMinSize = 0;
-                RectTransform component = text.GetComponent<RectTransform>();
-                component.localPosition = Vector3.zero;
-                component.sizeDelta = new Vector2(0.2f, 0.03f);
-                if (NoAutoSizeText)
-                {
-                    component.sizeDelta = new Vector2(9f, 0.015f);
-                }
-                if (FATMENU)
-                {
-                    component.localPosition = new Vector3(0.064f, 0.09f, 0.135f);
-                }
-                else
-                {
-                    component.localPosition = new Vector3(0.064f, 0.15f, 0.135f);
-                }
-                component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
-                
-                if (shouldOutline)
-                    OutlineObj(gameObject, true);
+                RoundObj(prevButton);
+                RoundObj(nextButton);
+            }
+        }
 
-                if (shouldRound)
-                    RoundObj(gameObject);
+        private static GameObject CreatePageButton(string buttonName, Vector3 scale, Vector3 position, Vector3 textPosition, GradientColorKey[] colorKeys, Vector2? textSize, int arrowIndex)
+        {
+            GameObject button = GameObject.CreatePrimitive(PrimitiveType.Cube);
 
-                gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                if (themeType == 30)
-                {
-                    gameObject.GetComponent<Renderer>().enabled = false;
-                }
-                if (!UnityInput.Current.GetKey(KeyCode.Q) && !(isSearching && isPcWhenSearching))
-                {
-                    gameObject.layer = 2;
-                }
-                gameObject.GetComponent<BoxCollider>().isTrigger = true;
-                gameObject.transform.parent = menu.transform;
-                gameObject.transform.rotation = Quaternion.identity;
-                gameObject.transform.localScale = new Vector3(0.09f, 0.3f, 0.05f);
-                if (FATMENU)
-                {
-                    gameObject.transform.localPosition = new Vector3(0.56f, -0.299f, 0.355f);
-                }
-                else
-                {
-                    gameObject.transform.localPosition = new Vector3(0.56f, -0.499f, 0.355f);
-                }
-                gameObject.AddComponent<Classes.Button>().relatedText = "NextPage";
-                gameObject.GetComponent<Renderer>().material.color = buttonDefaultA;
-                if (lastClickedName != "NextPage")
-                {
-                    ColorChanger colorChanger = gameObject.AddComponent<ColorChanger>();
-                    colorChanger.colors = new Gradient
-                    {
-                        colorKeys = array
-                    };
-                    colorChanger.Start();
-                }
-                else
-                {
-                    CoroutineManager.RunCoroutine(ButtonClick(-99, "NextPage", gameObject.GetComponent<Renderer>()));
-                }
-                text = new GameObject
-                {
-                    transform =
-                    {
-                        parent = canvasObj.transform
-                    }
-                }.AddComponent<Text>();
-                text.font = activeFont;
-                text.text = arrowTypes[arrowType][1];
-                text.fontSize = 1;
-                text.color = textColor;
-                text.alignment = TextAnchor.MiddleCenter;
-                text.resizeTextForBestFit = true;
-                text.resizeTextMinSize = 0;
-                component = text.GetComponent<RectTransform>();
-                component.localPosition = Vector3.zero;
-                component.sizeDelta = new Vector2(0.2f, 0.03f);
-                if (NoAutoSizeText)
-                {
-                    component.sizeDelta = new Vector2(9f, 0.015f);
-                }
-                if (FATMENU)
-                {
-                    component.localPosition = new Vector3(0.064f, -0.09f, 0.135f);
-                }
-                else
-                {
-                    component.localPosition = new Vector3(0.064f, -0.15f, 0.135f);
-                }
-                component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
-                
-                if (shouldOutline)
-                    OutlineObj(gameObject, true);
+            if (themeType == 30)
+                button.GetComponent<Renderer>().enabled = false;
 
-                if (shouldRound)
-                    RoundObj(gameObject);
+            if (!UnityInput.Current.GetKey(KeyCode.Q) && !(isSearching && isPcWhenSearching))
+                button.layer = 2;
+
+            button.GetComponent<BoxCollider>().isTrigger = true;
+            button.transform.parent = menu.transform;
+            button.transform.rotation = Quaternion.identity;
+            button.transform.localScale = scale;
+            button.transform.localPosition = position;
+
+            button.AddComponent<Classes.Button>().relatedText = buttonName;
+            button.GetComponent<Renderer>().material.color = buttonDefaultA;
+
+            if (lastClickedName != buttonName)
+            {
+                ColorChanger colorChanger = button.AddComponent<ColorChanger>();
+                colorChanger.colors = new Gradient { colorKeys = colorKeys };
+                colorChanger.Start();
+            }
+            else
+            {
+                CoroutineManager.RunCoroutine(ButtonClick(-99, buttonName, button.GetComponent<Renderer>()));
             }
 
-            if (pageButtonType == 6)
-            { // Inverse of the search button
-                GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                if (themeType == 30)
-                {
-                    gameObject.GetComponent<Renderer>().enabled = false;
-                }
-                if (!UnityInput.Current.GetKey(KeyCode.Q) && !(isSearching && isPcWhenSearching))
-                {
-                    gameObject.layer = 2;
-                }
-                gameObject.GetComponent<BoxCollider>().isTrigger = true;
-                gameObject.transform.parent = menu.transform;
-                gameObject.transform.rotation = Quaternion.identity;
-                gameObject.transform.localScale = new Vector3(0.09f, 0.102f, 0.08f);
-                if (FATMENU)
-                {
-                    gameObject.transform.localPosition = new Vector3(0.56f, 0.450f, -0.58f);
-                }
-                else
-                {
-                    gameObject.transform.localPosition = new Vector3(0.56f, 0.7f, -0.58f);
-                }
-                gameObject.AddComponent<Classes.Button>().relatedText = "PreviousPage";
-                gameObject.GetComponent<Renderer>().material.color = buttonDefaultA;
-                if (lastClickedName != "PreviousPage")
-                {
-                    ColorChanger colorChanger = gameObject.AddComponent<ColorChanger>();
-                    colorChanger.colors = new Gradient
-                    {
-                        colorKeys = array
-                    };
-                    colorChanger.Start();
-                }
-                else
-                {
-                    CoroutineManager.RunCoroutine(ButtonClick(-99, "PreviousPage", gameObject.GetComponent<Renderer>()));
-                }
-                Text text = new GameObject
-                {
-                    transform =
-                    {
-                        parent = canvasObj.transform
-                    }
-                }.AddComponent<Text>();
-                text.font = activeFont;
-                text.text = arrowTypes[arrowType][0];
-                text.fontSize = 1;
-                text.color = textColor;
-                text.alignment = TextAnchor.MiddleCenter;
-                text.resizeTextForBestFit = true;
-                text.resizeTextMinSize = 0;
-                RectTransform component = text.GetComponent<RectTransform>();
-                component.localPosition = Vector3.zero;
-                component.sizeDelta = new Vector2(.03f, .03f);
-                if (FATMENU)
-                {
-                    component.localPosition = new Vector3(.064f, 0.35f / 2.6f, -0.58f / 2.7f);
-                }
-                else
-                {
-                    component.localPosition = new Vector3(.064f, 0.54444444444f / 2.6f, -0.58f / 2.7f);
-                }
-                component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
-                
-                if (shouldOutline)
-                    OutlineObj(gameObject, true);
+            Text text = new GameObject { transform = { parent = canvasObj.transform } }.AddComponent<Text>();
+            text.font = activeFont;
+            text.text = arrowTypes[arrowType][arrowIndex];
+            text.fontSize = 1;
+            text.color = textColor;
+            text.alignment = TextAnchor.MiddleCenter;
+            text.resizeTextForBestFit = true;
+            text.resizeTextMinSize = 0;
 
-                if (shouldRound)
-                    RoundObj(gameObject);
+            RectTransform textRect = text.GetComponent<RectTransform>();
+            textRect.localPosition = Vector3.zero;
+            textRect.sizeDelta = textSize ?? new Vector2(0.2f, 0.03f);
 
-                gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                if (themeType == 30)
-                {
-                    gameObject.GetComponent<Renderer>().enabled = false;
-                }
-                if (!UnityInput.Current.GetKey(KeyCode.Q) && !(isSearching && isPcWhenSearching))
-                {
-                    gameObject.layer = 2;
-                }
-                gameObject.GetComponent<BoxCollider>().isTrigger = true;
-                gameObject.transform.parent = menu.transform;
-                gameObject.transform.rotation = Quaternion.identity;
-                gameObject.transform.localScale = new Vector3(0.09f, 0.102f, 0.08f);
-                if (FATMENU)
-                {
-                    gameObject.transform.localPosition = new Vector3(0.56f, 0.450f, -0.58f);
-                }
-                else
-                {
-                    gameObject.transform.localPosition = new Vector3(0.56f, 0.7f, -0.58f);
-                }
-                gameObject.transform.localPosition -= new Vector3(0f, 0.16f, 0f);
-                gameObject.AddComponent<Classes.Button>().relatedText = "NextPage";
-                gameObject.GetComponent<Renderer>().material.color = buttonDefaultA;
-                if (lastClickedName != "NextPage")
-                {
-                    ColorChanger colorChanger = gameObject.AddComponent<ColorChanger>();
-                    colorChanger.colors = new Gradient
-                    {
-                        colorKeys = array
-                    };
-                    colorChanger.Start();
-                }
-                else
-                {
-                    CoroutineManager.RunCoroutine(ButtonClick(-99, "NextPage", gameObject.GetComponent<Renderer>()));
-                }
-                text = new GameObject
-                {
-                    transform =
-                    {
-                        parent = canvasObj.transform
-                    }
-                }.AddComponent<Text>();
-                text.font = activeFont;
-                text.text = arrowTypes[arrowType][1];
-                text.fontSize = 1;
-                text.color = textColor;
-                text.alignment = TextAnchor.MiddleCenter;
-                text.resizeTextForBestFit = true;
-                text.resizeTextMinSize = 0;
-                component = text.GetComponent<RectTransform>();
-                component.localPosition = Vector3.zero;
-                component.sizeDelta = new Vector2(.03f, .03f);
-                if (FATMENU)
-                {
-                    component.localPosition = new Vector3(.064f, 0.35f / 2.6f, -0.58f / 2.7f);
-                }
-                else
-                {
-                    component.localPosition = new Vector3(.064f, 0.54444444444f / 2.6f, -0.58f / 2.7f);
-                }
-                component.localPosition -= new Vector3(0f, 0.0475f, 0f);
-                component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
-                
-                if (shouldOutline)
-                    OutlineObj(gameObject, true);
+            if (NoAutoSizeText)
+                textRect.sizeDelta = new Vector2(9f, 0.015f);
 
-                if (shouldRound)
-                    RoundObj(gameObject);
-            }
+            textRect.localPosition = textPosition;
+            textRect.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+
+            return button;
         }
 
         public static void OutlineObj(GameObject toOut, bool shouldBeEnabled)
