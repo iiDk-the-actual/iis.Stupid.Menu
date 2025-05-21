@@ -4517,8 +4517,13 @@ namespace iiMenu.Menu
             {
                 audiomgrhand = new GameObject("2DAudioMgr-hand");
                 AudioSource temp = audiomgrhand.AddComponent<AudioSource>();
+                temp.spatialBlend = 1f;
+                temp.rolloffMode = AudioRolloffMode.Logarithmic;
+                temp.minDistance = 1f;
+                temp.maxDistance = 15f;
+                temp.spatialize = true;
             }
-            audiomgrhand.transform.parent = left ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer.gameObject.transform : GorillaTagger.Instance.offlineVRRig.rightHandPlayer.gameObject.transform;
+            audiomgrhand.transform.SetParent(left ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer.gameObject.transform : GorillaTagger.Instance.offlineVRRig.rightHandPlayer.gameObject.transform, false);
 
             AudioSource ausrc = audiomgrhand.GetComponent<AudioSource>();
             ausrc.clip = sound;
