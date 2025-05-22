@@ -790,44 +790,13 @@ namespace iiMenu.Mods
             }
         }
 
-        /*public static void EnableRemoveLeaves()
-        {
-            foreach (GameObject g in Resources.FindObjectsOfTypeAll<GameObject>())
-            {
-                if (g.activeSelf && g.name.Contains("smallleaves"))
-                {
-                    g.SetActive(false);
-                    leaves.Add(g);
-                }
-            }
-        }
-
-        public static void DisableRemoveLeaves()
-        {
-            foreach (GameObject l in leaves)
-            {
-                l.SetActive(true);
-            }
-            leaves.Clear();
-        }*/
         public static List<GameObject> leaves = new List<GameObject> { };
         public static void EnableRemoveLeaves()
         {
-            /*
-            foreach (GameObject g in Resources.FindObjectsOfTypeAll<GameObject>())
-            {
-                if (g.activeSelf && (g.name.Contains("leaves_green") || g.name.Contains("fallleaves")))
-                {
-                    g.SetActive(false);
-                    leaves.Add(g);
-                }
-            }
-            */
-
             for (int i = 0; i < GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest").transform.childCount; i++)
             {
                 GameObject v = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest").transform.GetChild(i).gameObject;
-                if (v.name.Contains("UnityTempFile-534c0d217dd0c5744a13cda2870433cf"))
+                if (v.name.Contains("UnityTempFile-67c94816a57a42c4695bbba0963f8bc6"))
                 {
                     v.SetActive(false);
                     leaves.Add(v);
@@ -846,21 +815,10 @@ namespace iiMenu.Mods
 
         public static void EnableStreamerRemoveLeaves()
         {
-            /*
-            foreach (GameObject g in Resources.FindObjectsOfTypeAll<GameObject>())
-            {
-                if (g.activeSelf && (g.name.Contains("leaves_green") || g.name.Contains("fallleaves")))
-                {
-                    g.layer = 16;
-                    leaves.Add(g);
-                }
-            }
-            */
-
             for (int i = 0; i < GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest").transform.childCount; i++)
             {
                 GameObject v = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest").transform.GetChild(i).gameObject;
-                if (v.name.Contains("UnityTempFile-534c0d217dd0c5744a13cda2870433cf"))
+                if (v.name.Contains("UnityTempFile-67c94816a57a42c4695bbba0963f8bc6"))
                 {
                     v.layer = 16;
                     leaves.Add(v);
@@ -876,18 +834,6 @@ namespace iiMenu.Mods
             }
             leaves.Clear();
         }
-
-        /*
-        public static void EnableRemoveCherryBlossoms()
-        {
-            GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/UnityTempFile-27660f060fbe5c449995964e7f219762 (combined by EdMeshCombiner)").SetActive(false);
-        }
-
-        public static void DisableRemoveCherryBlossoms()
-        {
-            GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/UnityTempFile-27660f060fbe5c449995964e7f219762 (combined by EdMeshCombiner)").SetActive(true);
-        }
-        */
 
         public static List<GameObject> cosmetics = new List<GameObject> { };
         public static void DisableCosmetics()
