@@ -523,7 +523,6 @@ namespace iiMenu.Mods
             }
         }
 
-
         private static bool lastlhboop = false;
         private static bool lastrhboop = false;
         public static void Boop()

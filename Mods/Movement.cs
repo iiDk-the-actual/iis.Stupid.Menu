@@ -3920,20 +3920,6 @@ namespace iiMenu.Mods
                     GorillaTagger.Instance.offlineVRRig.rightIndex.LerpFinger(1f, false);
                     GorillaTagger.Instance.offlineVRRig.rightMiddle.LerpFinger(1f, false);
                     GorillaTagger.Instance.offlineVRRig.rightThumb.LerpFinger(1f, false);
-
-                    /*if (PhotonNetwork.InRoom)
-                    {
-                        GorillaTagger.Instance.myVRRig.RPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
-                            91,
-                            false,
-                            999999f
-                        });
-                        RPCProtection();
-                    }
-                    else
-                    {
-                        GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(91, false, 999999f);
-                    }*/
                 }
                 if (GetGunInput(true))
                 {
