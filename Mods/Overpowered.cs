@@ -543,7 +543,7 @@ namespace iiMenu.Mods
                         GorillaGuardianManager gman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Guardian Manager").GetComponent<GorillaGuardianManager>();
                         if (gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
                         {
-                            RigManager.GetNetworkViewFromVRRig(gunTarget).SendRPC("GrabbedByPlayer", RpcTarget.Others, new object[] { true, false, false });
+                            GetNetworkViewFromVRRig(gunTarget).SendRPC("GrabbedByPlayer", RpcTarget.Others, new object[] { true, false, false });
                             RPCProtection();
                         }
                         else
@@ -568,7 +568,7 @@ namespace iiMenu.Mods
                     {
                         if (plr != GorillaTagger.Instance.offlineVRRig)
                         {
-                            RigManager.GetNetworkViewFromVRRig(plr).SendRPC("GrabbedByPlayer", RpcTarget.Others, new object[] { true, false, false });
+                            GetNetworkViewFromVRRig(plr).SendRPC("GrabbedByPlayer", RpcTarget.Others, new object[] { true, false, false });
                             RPCProtection();
                         }
                     }
@@ -596,7 +596,7 @@ namespace iiMenu.Mods
                         GorillaGuardianManager gman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Guardian Manager").GetComponent<GorillaGuardianManager>();
                         if (gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
                         {
-                            RigManager.GetNetworkViewFromVRRig(gunTarget).SendRPC("DroppedByPlayer", RpcTarget.Others, new object[] { new Vector3(0f, 0f, 0f) });
+                            GetNetworkViewFromVRRig(gunTarget).SendRPC("DroppedByPlayer", RpcTarget.Others, new object[] { new Vector3(0f, 0f, 0f) });
                             RPCProtection();
                         }
                         else
@@ -621,7 +621,7 @@ namespace iiMenu.Mods
                     {
                         if (plr != GorillaTagger.Instance.offlineVRRig)
                         {
-                            RigManager.GetNetworkViewFromVRRig(plr).SendRPC("DroppedByPlayer", RpcTarget.Others, new object[] { new Vector3(0f, 0f, 0f) });
+                            GetNetworkViewFromVRRig(plr).SendRPC("DroppedByPlayer", RpcTarget.Others, new object[] { new Vector3(0f, 0f, 0f) });
                             RPCProtection();
                         }
                     }
@@ -733,8 +733,8 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         delaything = Time.time + 0.1f;
-                        RigManager.GetNetworkViewFromVRRig(gunTarget).SendRPC("GrabbedByPlayer", GetPlayerFromVRRig(gunTarget), new object[] { true, false, false });
-                        RigManager.GetNetworkViewFromVRRig(gunTarget).SendRPC("DroppedByPlayer", GetPlayerFromVRRig(gunTarget), new object[] { new Vector3(0f, float.NaN, 0f) });
+                        GetNetworkViewFromVRRig(gunTarget).SendRPC("GrabbedByPlayer", GetPlayerFromVRRig(gunTarget), new object[] { true, false, false });
+                        GetNetworkViewFromVRRig(gunTarget).SendRPC("DroppedByPlayer", GetPlayerFromVRRig(gunTarget), new object[] { new Vector3(0f, float.NaN, 0f) });
                     }
                 }
             }
@@ -749,8 +749,8 @@ namespace iiMenu.Mods
                     delaything = Time.time + 0.1f;
                     foreach (VRRig player in GorillaParent.instance.vrrigs)
                     {
-                        RigManager.GetNetworkViewFromVRRig(player).SendRPC("GrabbedByPlayer", RpcTarget.Others, new object[] { true, false, false });
-                        RigManager.GetNetworkViewFromVRRig(player).SendRPC("DroppedByPlayer", RpcTarget.Others, new object[] { new Vector3(0f, float.NaN, 0f) });
+                        GetNetworkViewFromVRRig(player).SendRPC("GrabbedByPlayer", RpcTarget.Others, new object[] { true, false, false });
+                        GetNetworkViewFromVRRig(player).SendRPC("DroppedByPlayer", RpcTarget.Others, new object[] { new Vector3(0f, float.NaN, 0f) });
                     }
                 }
             }
@@ -770,8 +770,8 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         delaything = Time.time + 0.1f;
-                        RigManager.GetNetworkViewFromVRRig(gunTarget).SendRPC("GrabbedByPlayer", GetPlayerFromVRRig(gunTarget), new object[] { true, false, false });
-                        RigManager.GetNetworkViewFromVRRig(gunTarget).SendRPC("DroppedByPlayer", GetPlayerFromVRRig(gunTarget), new object[] { new Vector3(0f, float.MinValue, 0f) });
+                        GetNetworkViewFromVRRig(gunTarget).SendRPC("GrabbedByPlayer", GetPlayerFromVRRig(gunTarget), new object[] { true, false, false });
+                        GetNetworkViewFromVRRig(gunTarget).SendRPC("DroppedByPlayer", GetPlayerFromVRRig(gunTarget), new object[] { new Vector3(0f, float.MinValue, 0f) });
                     }
                 }
             }
@@ -786,8 +786,8 @@ namespace iiMenu.Mods
                     delaything = Time.time + 0.1f;
                     foreach (VRRig player in GorillaParent.instance.vrrigs)
                     {
-                        RigManager.GetNetworkViewFromVRRig(player).SendRPC("GrabbedByPlayer", RpcTarget.Others, new object[] { true, false, false });
-                        RigManager.GetNetworkViewFromVRRig(player).SendRPC("DroppedByPlayer", RpcTarget.Others, new object[] { new Vector3(0f, float.MinValue, 0f) });
+                        GetNetworkViewFromVRRig(player).SendRPC("GrabbedByPlayer", RpcTarget.Others, new object[] { true, false, false });
+                        GetNetworkViewFromVRRig(player).SendRPC("DroppedByPlayer", RpcTarget.Others, new object[] { new Vector3(0f, float.MinValue, 0f) });
                     }
                 }
             }
