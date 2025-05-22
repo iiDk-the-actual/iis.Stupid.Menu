@@ -2352,7 +2352,7 @@ namespace iiMenu.Mods
 
         public static void DisableGunSounds()
         {
-            GunSounds = true;
+            GunSounds = false;
         }
 
         public static void EnableSwapGunHand()
