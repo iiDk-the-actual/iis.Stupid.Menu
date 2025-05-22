@@ -490,7 +490,7 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void ActiveNetworkHandlerRPC(string rpc, Photon.Realtime.Player target, object[] args)
+        public static void ActiveNetworkHandlerRPC(string rpc, Player target, object[] args)
         {
             NetworkView netView = (NetworkView)Traverse.Create(typeof(GameMode)).Field("activeNetworkHandler").Field("netView").GetValue();
             netView.GetView.RPC(rpc, target, args);
@@ -1854,7 +1854,7 @@ namespace iiMenu.Mods
 
         public static void DestroyAll()
         {
-            foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerListOthers)
+            foreach (Player player in PhotonNetwork.PlayerListOthers)
             {
                 PhotonNetwork.OpRemoveCompleteCacheOfPlayer(player.ActorNumber);
             }
