@@ -510,13 +510,9 @@ namespace iiMenu.Mods
 
             GorillaGuardianManager gman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Guardian Manager").GetComponent<GorillaGuardianManager>();
             if (gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
-            {
                 ActiveNetworkHandlerRPC("GuardianLaunchPlayer", NetPlayerToPlayer(victim), new object[] { velocity });
-            }
             else
-            {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be guardian.</color>");
-            }
         }
         public static void BetaSetVelocityTargetGroup(RpcTarget victim, Vector3 velocity)
         {
@@ -525,13 +521,10 @@ namespace iiMenu.Mods
 
             GorillaGuardianManager gman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Guardian Manager").GetComponent<GorillaGuardianManager>();
             if (gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
-            {
                 ActiveNetworkHandlerRPC("GuardianLaunchPlayer", victim, new object[] { velocity });
-            }
             else
-            {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be guardian.</color>");
-            }
+
         }
 
         public static void GrabGun()
