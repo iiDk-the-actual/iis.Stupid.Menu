@@ -296,7 +296,7 @@ namespace iiMenu.Mods
                         string PluginName = File.Replace("iisStupidMenu/Plugins/", "");
                         LoadedPlugins.Add(PluginName, GetAssembly(File));
                     }
-                } catch (Exception e) { UnityEngine.Debug.Log("Error with loading plugin " + File + ": " + e.ToString()); }
+                } catch (Exception e) { LogManager.Log("Error with loading plugin " + File + ": " + e.ToString()); }
             }
 
             foreach (KeyValuePair<string, Assembly> Plugin in LoadedPlugins)
@@ -310,7 +310,7 @@ namespace iiMenu.Mods
                         EnablePlugin(Plugin.Value);
                     }
                 }
-                catch (Exception e) { UnityEngine.Debug.Log("Error with enabling plugin " + Plugin.Key + ": " + e.ToString()); }
+                catch (Exception e) { LogManager.Log("Error with enabling plugin " + Plugin.Key + ": " + e.ToString()); }
             }
 
             AddButton(33, new ButtonInfo { buttonText = "Open Plugins Folder", method = () => OpenPluginsFolder(), isTogglable = false, toolTip = "Opens a folder containing all of your plugins." });
@@ -3162,7 +3162,7 @@ namespace iiMenu.Mods
 
                 gunLineQualityIndex = int.Parse(data[31]) - 1;
                 ChangeGunLineQuality();
-            } catch { UnityEngine.Debug.Log("Save file out of date"); }
+            } catch { LogManager.Log("Save file out of date"); }
 
             pageButtonType = int.Parse(textData[3]) - 1;
             Toggle("Change Page Type");
@@ -3221,7 +3221,7 @@ namespace iiMenu.Mods
                         LoadPreferencesFromText(text);
                     }
                 }
-            } catch (Exception e) { UnityEngine.Debug.Log("Error loading preferences: " + e.Message); }
+            } catch (Exception e) { LogManager.Log("Error loading preferences: " + e.Message); }
         }
 
         public static void NoAutoSave()

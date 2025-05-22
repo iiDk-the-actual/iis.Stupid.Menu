@@ -220,7 +220,7 @@ namespace iiMenu.Menu
                     {
                         try
                         {
-                            //Debug.Log("Looking for boards");
+                            //LogManager.Log("Looking for boards");
                             bool found = false;
                             int indexOfThatThing = 0;
                             for (int i = 0; i < GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.childCount; i++)
@@ -305,7 +305,7 @@ namespace iiMenu.Menu
                                             udTMP.Add(text);
                                     }
                                     else
-                                        Debug.Log("Could not find " + lol);
+                                        LogManager.Log("Could not find " + lol);
                                 }
 
                                 Transform targettransform = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/ForestScoreboardAnchor/GorillaScoreBoard").transform;
@@ -321,12 +321,12 @@ namespace iiMenu.Menu
                                 }
 
                                 hasFoundAllBoards = true;
-                                Debug.Log("Found all boards");
+                                LogManager.Log("Found all boards");
                             }
                         }
                         catch (Exception exception)
                         {
-                            Debug.LogError(string.Format("iiMenu <b>COLOR ERROR</b> {1} - {0}", exception.Message, exception.StackTrace));
+                            LogManager.LogError(string.Format("iiMenu <b>COLOR ERROR</b> {1} - {0}", exception.Message, exception.StackTrace));
                             hasFoundAllBoards = false;
                         }
                     }
@@ -574,11 +574,11 @@ namespace iiMenu.Menu
                             loadPreferencesTime = Time.time;
 
                             try {
-                                Debug.Log("Loading preferences due to load errors");
+                                LogManager.Log("Loading preferences due to load errors");
                                 Settings.LoadPreferences();
                             } catch
                             {
-                                Debug.Log("Could not load preferences");
+                                LogManager.Log("Could not load preferences");
                             }
                         }
                     } catch { }
@@ -589,7 +589,7 @@ namespace iiMenu.Menu
                         {
                             autoSaveDelay = Time.time + 60f;
                             Settings.SavePreferences();
-                            Debug.Log("Automatically saved preferences");
+                            LogManager.Log("Automatically saved preferences");
 
                             if (BackupPreferences)
                             {
@@ -1149,7 +1149,7 @@ namespace iiMenu.Menu
                     {
                         if (rejRoom != null && Time.time > rejDebounce/* && PhotonNetwork.NetworkingClient.State == ClientState.Disconnected*/)
                         {
-                            Debug.Log("Attempting rejoin");
+                            LogManager.Log("Attempting rejoin");
                             PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(rejRoom, JoinType.Solo);
                             rejDebounce = Time.time + (float)internetTime;
                         }
@@ -1170,7 +1170,7 @@ namespace iiMenu.Menu
                         {
                             if (partyLastCode != null && Time.time > partyTime && (waitForPlayerJoin ? PhotonNetwork.PlayerListOthers.Length > 0 : true))
                             {
-                                Debug.Log("Attempting rejoin");
+                                LogManager.Log("Attempting rejoin");
                                 PhotonNetwork.Disconnect();
                                 phaseTwo = true;
                             }
@@ -1181,7 +1181,7 @@ namespace iiMenu.Menu
                         {
                             if (partyLastCode != null && Time.time > partyTime && (waitForPlayerJoin ? PhotonNetwork.PlayerListOthers.Length > 0 : true))
                             {
-                                Debug.Log("Attempting rejoin");
+                                LogManager.Log("Attempting rejoin");
                                 PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(partyLastCode, JoinType.Solo);
                                 partyTime = Time.time + (float)internetTime;
                             }
@@ -1278,7 +1278,7 @@ namespace iiMenu.Menu
                             if (!Settings.disabledPlugins.Contains(Plugin.Key))
                                 PluginUpdate(Plugin.Value);
                         }
-                        catch (Exception e) { Debug.Log("Error with UPDATE plugin " + Plugin.Key + ": " + e.ToString()); }
+                        catch (Exception e) { LogManager.Log("Error with UPDATE plugin " + Plugin.Key + ": " + e.ToString()); }
                     }
 
                     // Execute mods
@@ -1298,7 +1298,7 @@ namespace iiMenu.Menu
                                         }
                                         catch (Exception exc)
                                         {
-                                            Debug.LogError(string.Format("{0} // Error with mod {1} at {2}: {3}", PluginInfo.Name, v.buttonText, exc.StackTrace, exc.Message));
+                                            LogManager.LogError(string.Format("{0} // Error with mod {1} at {2}: {3}", PluginInfo.Name, v.buttonText, exc.StackTrace, exc.Message));
                                         }
                                     }
                                 }
@@ -1309,7 +1309,7 @@ namespace iiMenu.Menu
             }
             catch (Exception exception)
             {
-                Debug.LogError(string.Format("iiMenu <b>FATAL ERROR</b> {1} - {0}", exception.Message, exception.StackTrace));
+                LogManager.LogError(string.Format("iiMenu <b>FATAL ERROR</b> {1} - {0}", exception.Message, exception.StackTrace));
             }
         }
 
@@ -1978,7 +1978,7 @@ namespace iiMenu.Menu
                                 menuBackground.GetComponent<Renderer>().material.SetFloat("_Metallic", 0f);
                                 menuBackground.GetComponent<Renderer>().material.color = Color.white;
                                 menuBackground.GetComponent<Renderer>().material.mainTexture = pride;
-                                Debug.Log("gayed the texture");
+                                LogManager.Log("gayed the texture");
                                 break;
                             case 26:
                                 if (trans == null)
@@ -2008,7 +2008,7 @@ namespace iiMenu.Menu
                                 break;
                         }
                     }
-                    catch (Exception exception) { Debug.LogError(string.Format("iiMenu <b>TEXTURE ERROR</b> {1} - {0}", exception.Message, exception.StackTrace)); }
+                    catch (Exception exception) { LogManager.LogError(string.Format("iiMenu <b>TEXTURE ERROR</b> {1} - {0}", exception.Message, exception.StackTrace)); }
                 }
                 else
                 {
@@ -2946,7 +2946,7 @@ namespace iiMenu.Menu
             if (stream != null)
                 assetBundle = AssetBundle.LoadFromStream(stream);
             else
-                Debug.LogError("Failed to load assetbundle");
+                LogManager.LogError("Failed to load assetbundle");
         }
 
         public static GameObject LoadAsset(string assetName)
@@ -3019,7 +3019,7 @@ namespace iiMenu.Menu
             
             if (!File.Exists("iisStupidMenu/" + fileName))
             {
-                Debug.Log("Downloading " + fileName);
+                LogManager.Log("Downloading " + fileName);
                 WebClient stream = new WebClient();
                 stream.DownloadFile(resourcePath, "iisStupidMenu/" + fileName);
             }
@@ -3040,7 +3040,7 @@ namespace iiMenu.Menu
             }
             else
             {
-                Debug.LogError("Failed to load texture from resource: " + resourcePath);
+                LogManager.LogError("Failed to load texture from resource: " + resourcePath);
             }
             return texture;
         }
@@ -3055,7 +3055,7 @@ namespace iiMenu.Menu
             }
             if (!File.Exists("iisStupidMenu/" + fileName))
             {
-                Debug.Log("Downloading " + fileName);
+                LogManager.Log("Downloading " + fileName);
                 WebClient stream = new WebClient();
                 stream.DownloadFile(resourcePath, "iisStupidMenu/" + fileName);
             }
@@ -3109,7 +3109,7 @@ namespace iiMenu.Menu
 
                     PhotonNetwork.SendAllOutgoingCommands();
                 }
-            } catch { Debug.Log("RPC protection failed, are you in a lobby?"); }
+            } catch { LogManager.Log("RPC protection failed, are you in a lobby?"); }
         }
 
         public static string GetHttp(string url)
@@ -3383,7 +3383,7 @@ namespace iiMenu.Menu
 
                             if (request.result != UnityWebRequest.Result.Success)
                             {
-                                Debug.LogError("Error downloading TTS: " + request.error);
+                                LogManager.LogError("Error downloading TTS: " + request.error);
                                 yield break;
                             }
 
@@ -3397,7 +3397,7 @@ namespace iiMenu.Menu
                             yield return request.SendWebRequest();
 
                             if (request.result != UnityWebRequest.Result.Success)
-                                Debug.LogError("Error downloading TTS: " + request.error);
+                                LogManager.LogError("Error downloading TTS: " + request.error);
                             else
                                 File.WriteAllBytes(filePath, request.downloadHandler.data);
                         }
@@ -3445,7 +3445,7 @@ namespace iiMenu.Menu
 
                             if (request.result != UnityWebRequest.Result.Success)
                             {
-                                Debug.LogError("Error downloading TTS: " + request.error);
+                                LogManager.LogError("Error downloading TTS: " + request.error);
                                 yield break;
                             }
 
@@ -3460,7 +3460,7 @@ namespace iiMenu.Menu
                             yield return request.SendWebRequest();
 
                             if (request.result != UnityWebRequest.Result.Success)
-                                Debug.LogError("Error downloading TTS: " + request.error);
+                                LogManager.LogError("Error downloading TTS: " + request.error);
                             else
                                 File.WriteAllBytes(filePath, request.downloadHandler.data);
                         }
@@ -3678,14 +3678,14 @@ namespace iiMenu.Menu
                     {
                         if (GetFullPath(lol.transform.parent).ToLower() == "player objects/local vrrig/local gorilla player/holdables" || GetFullPath(lol.transform.parent).ToLower().Contains("player objects/local vrrig/local gorilla player/riganchor/rig/body/shoulder.l/upper_arm.l/forearm.l/hand.l/palm.01.l/transferrableitemlefthand") || GetFullPath(lol.transform.parent).ToLower().Contains("player objects/local vrrig/local gorilla player/riganchor/rig/body/shoulder.r/upper_arm.r/forearm.r/hand.r/palm.01.r/transferrableitemrighthand"))
                         {
-                            Debug.Log("Projectile " + lol.gameObject.name + " logged");
+                            LogManager.Log("Projectile " + lol.gameObject.name + " logged");
                             snowballDict.Add(lol.gameObject.name, lol);
                         }
                     } catch { }
                 }
                 if (snowballDict.Count < 18)
                 {
-                    Debug.Log("Projectile dictionary unfinished ("+snowballDict.Count+"/18)");
+                    LogManager.Log("Projectile dictionary unfinished ("+snowballDict.Count+"/18)");
                     snowballDict = null;
                 }
             }
@@ -3694,7 +3694,7 @@ namespace iiMenu.Menu
                 return snowballDict[provided];
             } else
             {
-                Debug.Log("No key found for " + provided);
+                LogManager.Log("No key found for " + provided);
                 return null;
             }
         }
@@ -3756,7 +3756,7 @@ namespace iiMenu.Menu
                         view.GetComponent<RequestableOwnershipGuard>().TransferOwnershipFromToRPC(PhotonNetwork.LocalPlayer, view.GetComponent<RequestableOwnershipGuard>().ownershipRequestNonce, default(PhotonMessageInfo));
                     }
                     RPCProtection();
-                } catch { Debug.Log("Failure to get ownership, is the PhotonView valid?"); }
+                } catch { LogManager.Log("Failure to get ownership, is the PhotonView valid?"); }
             }
         }
 
@@ -4895,13 +4895,13 @@ namespace iiMenu.Menu
                                     {
                                         NotifiLib.SendNotification("<color=grey>[</color><color=green>ENABLE</color><color=grey>]</color> " + target.toolTip);
                                         if (target.enableMethod != null)
-                                            try { target.enableMethod.Invoke(); } catch (Exception exc) { Debug.LogError(string.Format("{0} // Error with mod enableMethod {1} at {2}: {3}", PluginInfo.Name, target.buttonText, exc.StackTrace, exc.Message)); }
+                                            try { target.enableMethod.Invoke(); } catch (Exception exc) { LogManager.LogError(string.Format("{0} // Error with mod enableMethod {1} at {2}: {3}", PluginInfo.Name, target.buttonText, exc.StackTrace, exc.Message)); }
                                     }
                                     else
                                     {
                                         NotifiLib.SendNotification("<color=grey>[</color><color=red>DISABLE</color><color=grey>]</color> " + target.toolTip);
                                         if (target.disableMethod != null)
-                                            try { target.disableMethod.Invoke(); } catch (Exception exc) { Debug.LogError(string.Format("{0} // Error with mod disableMethod {1} at {2}: {3}", PluginInfo.Name, target.buttonText, exc.StackTrace, exc.Message)); }
+                                            try { target.disableMethod.Invoke(); } catch (Exception exc) { LogManager.LogError(string.Format("{0} // Error with mod disableMethod {1} at {2}: {3}", PluginInfo.Name, target.buttonText, exc.StackTrace, exc.Message)); }
                                     }
                                 }
                                 else
@@ -4912,7 +4912,7 @@ namespace iiMenu.Menu
                                     NotifiLib.SendNotification("<color=grey>[</color><color=green>ENABLE</color><color=grey>]</color> " + target.toolTip);
 
                                     if (target.method != null)
-                                        try { target.method.Invoke(); } catch (Exception exc) { Debug.LogError(string.Format("{0} // Error with mod {1} at {2}: {3}", PluginInfo.Name, target.buttonText, exc.StackTrace, exc.Message)); }
+                                        try { target.method.Invoke(); } catch (Exception exc) { LogManager.LogError(string.Format("{0} // Error with mod {1} at {2}: {3}", PluginInfo.Name, target.buttonText, exc.StackTrace, exc.Message)); }
                                 }
                                 try
                                 {
@@ -4927,7 +4927,7 @@ namespace iiMenu.Menu
                         }
                     }
                     else
-                        Debug.LogError(buttonText + " does not exist");
+                        LogManager.LogError(buttonText + " does not exist");
                 }
             }
             ReloadMenu();
@@ -4941,8 +4941,8 @@ namespace iiMenu.Menu
 
         public static void OnLaunch()
         {
-            Debug.Log(ascii);
-            Debug.Log("Thank you for using ii's Stupid Menu!");
+            LogManager.Log(ascii);
+            LogManager.Log("Thank you for using ii's Stupid Menu!");
 
             timeMenuStarted = Time.time;
             IsSteam = Traverse.Create(PlayFabAuthenticator.instance).Field("platform").GetValue().ToString().ToLower() == "steam";
@@ -4982,7 +4982,7 @@ namespace iiMenu.Menu
             {
                 Settings.LoadPlugins();
             }
-            catch (Exception e) { Debug.Log("Error with Settings.LoadPlugins(): " + e.ToString()); }
+            catch (Exception e) { LogManager.Log("Error with Settings.LoadPlugins(): " + e.ToString()); }
 
             loadPreferencesTime = Time.time;
             if (File.Exists("iisStupidMenu/iiMenu_EnabledMods.txt") || File.Exists("iisStupidMenu/iiMenu_Preferences.txt"))

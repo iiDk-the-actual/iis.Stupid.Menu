@@ -20,7 +20,7 @@ namespace iiMenu.Notifications
     {
         private void Start()
         {
-            UnityEngine.Debug.Log("Notifications loaded");
+            LogManager.Log("Notifications loaded");
         }
 
         private void Init()
@@ -223,7 +223,7 @@ namespace iiMenu.Notifications
                 }
                 catch
                 {
-                    UnityEngine.Debug.LogError("Notification failed, object probably nil due to third person ; " + NotificationText);
+                    LogManager.LogError("Notification failed, object probably nil due to third person ; " + NotificationText);
                 }
             }
         }

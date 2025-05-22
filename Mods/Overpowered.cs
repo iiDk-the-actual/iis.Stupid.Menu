@@ -854,7 +854,7 @@ namespace iiMenu.Mods
                 return Data;
             } catch
             {
-                UnityEngine.Debug.Log("Falling back to archiveIncrement");
+                LogManager.Log("Falling back to archiveIncrement");
 
                 archiveIncrement++;
                 return archiveIncrement;

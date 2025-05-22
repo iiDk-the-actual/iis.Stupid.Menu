@@ -1,4 +1,5 @@
 using BepInEx;
+using BepInEx.Logging;
 using System;
 using UnityEngine;
 
@@ -8,10 +9,14 @@ namespace iiMenu
     [BepInPlugin(PluginInfo.GUID, PluginInfo.Name, PluginInfo.Version)]
     public class Plugin : BaseUnityPlugin
     {
+        public static Plugin instance;
+        public static ManualLogSource PluginLogger => instance.Logger;
+
         private void Awake()
         {
             // Set console title
             Console.Title = "ii's Stupid Menu // Build " + PluginInfo.Version;
+            instance = this;
         }
 
         private void Start()

@@ -62,7 +62,7 @@ namespace iiMenu.Mods.Spammers
 
                     Throwable.transform.position = oldPos;
                     Throwable.randomizeColor = false;
-                } catch (Exception e) { UnityEngine.Debug.Log(e.Message); }
+                } catch (Exception e) { LogManager.Log(e.Message); }
 
                 if (projDebounceType > 0f && !nodelay)
                     projDebounce = Time.time + Mathf.Min(projDebounceType, 0.16f);

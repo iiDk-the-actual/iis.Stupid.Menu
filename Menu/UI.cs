@@ -208,7 +208,7 @@ namespace iiMenu.UI
                         if (!Settings.disabledPlugins.Contains(Plugin.Key))
                             PluginOnGUI(Plugin.Value);
                     }
-                    catch (Exception e) { UnityEngine.Debug.Log("Error with ONGUI plugin " + Plugin.Key + ": " + e.ToString()); }
+                    catch (Exception e) { LogManager.Log("Error with ONGUI plugin " + Plugin.Key + ": " + e.ToString()); }
                 }
             }
         }
