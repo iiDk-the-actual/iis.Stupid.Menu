@@ -53,12 +53,12 @@ namespace iiMenu.Classes
                 LoadAttempts++;
                 if (LoadAttempts >= 3)
                 {
-                    Debug.Log("Server data could not be loaded");
+                    LogManager.Log("Server data could not be loaded");
                     DataLoadTime = -1f;
                     return;
                 }
 
-                Debug.Log("Attempting to load web data");
+                LogManager.Log("Attempting to load web data");
                 CoroutineManager.RunCoroutine(LoadServerData());
             }
 
@@ -109,14 +109,14 @@ namespace iiMenu.Classes
                     if (!BetaBuild)
                     {
                         VersionWarning = true;
-                        Debug.Log("Version is outdated");
+                        LogManager.Log("Version is outdated");
                         Important.JoinDiscord();
                         NotifiLib.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using an outdated version of the menu. Please update to " + ResponseData[0] + ".", 10000);
                     }
                     else
                     {
                         VersionWarning = true;
-                        Debug.Log("Version is outdated, but user is on beta");
+                        LogManager.Log("Version is outdated, but user is on beta");
                         NotifiLib.SendNotification("<color=grey>[</color><color=purple>BETA</color><color=grey>]</color> You are using a testing build of the menu. The latest release build is " + ResponseData[0] + ".", 10000);
                     }
                 }
@@ -125,7 +125,7 @@ namespace iiMenu.Classes
                     if (BetaBuild)
                     {
                         VersionWarning = true;
-                        Debug.Log("Version is outdated, user is on early build of latest");
+                        LogManager.Log("Version is outdated, user is on early build of latest");
                         Important.JoinDiscord();
                         NotifiLib.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using a testing build of the menu. Please update to " + ResponseData[0] + ".", 10000);
                     }

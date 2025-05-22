@@ -1,6 +1,7 @@
 ﻿using iiMenu.Menu;
 using iiMenu.Notifications;
 using System.IO;
+using iiMenu.Classes;
 using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods
@@ -88,7 +89,7 @@ namespace iiMenu.Mods
                 if (Directory.Exists("iisStupidMenu/SavedPresets"))
                 {
                     string text = File.ReadAllText("iisStupidMenu/SavedPresets/Preset_" + id.ToString() + ".txt");
-                    UnityEngine.Debug.Log(text);
+                    LogManager.Log(text);
                     Settings.LoadPreferencesFromText(text);
                 }
             }

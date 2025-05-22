@@ -97,7 +97,7 @@ namespace iiMenu.Patches
     {
         private static bool Prefix(PhotonMessageInfoWrapped infoWrapped, string rpcFunction)
         {
-            // Debug.Log(info.Sender.NickName + " sent rpc: " + rpcFunction);
+            // LogManager.Log(info.Sender.NickName + " sent rpc: " + rpcFunction);
             return false;
         }
     }

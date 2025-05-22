@@ -354,7 +354,7 @@ namespace iiMenu.Mods
                                 g = plr.playerColor.r * 255;
                                 b = plr.playerColor.r * 255;
                             }
-                            catch { UnityEngine.Debug.Log("Failed to log colors, rig most likely nonexistent"); }
+                            catch { LogManager.Log("Failed to log colors, rig most likely nonexistent"); }
 
                             try
                             {
@@ -374,7 +374,7 @@ namespace iiMenu.Mods
                                     ")"
                                 });
                             }
-                            catch { UnityEngine.Debug.Log("Failed to log player"); }
+                            catch { LogManager.Log("Failed to log player"); }
 
                             text += "\n====================================\n";
                             text += "Text file generated with ii's Stupid Menu";

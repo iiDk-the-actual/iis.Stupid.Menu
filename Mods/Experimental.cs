@@ -105,7 +105,7 @@ namespace iiMenu.Mods
                         replacement.color = v.material.color;
                         v.material = replacement;
                     }
-                } catch (System.Exception exception) { UnityEngine.Debug.LogError(string.Format("mat error {1} - {0}", exception.Message, exception.StackTrace)); }
+                } catch (System.Exception exception) { LogManager.LogError(string.Format("mat error {1} - {0}", exception.Message, exception.StackTrace)); }
             }
         }
         public static void DisableBetterFPSBoost()

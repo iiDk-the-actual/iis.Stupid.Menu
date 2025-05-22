@@ -122,7 +122,7 @@ namespace iiMenu.Mods
                     b = plr.playerColor.b * 255;
                     cosmetics = plr.concatStringOfCosmeticsAllowed;
                 }
-                catch { UnityEngine.Debug.Log("Failed to log colors, rig most likely nonexistent"); }
+                catch { LogManager.Log("Failed to log colors, rig most likely nonexistent"); }
                 try
                 {
                     text += "\n====================================\n";
@@ -142,7 +142,7 @@ namespace iiMenu.Mods
                         cosmetics
                     });
                 }
-                catch { UnityEngine.Debug.Log("Failed to log player"); }
+                catch { LogManager.Log("Failed to log player"); }
             }
             text += "\n====================================\n";
             text += "Text file generated with ii's Stupid Menu";
@@ -167,7 +167,7 @@ namespace iiMenu.Mods
             }
             catch
             {
-                UnityEngine.Debug.Log("Could not open process " + filePath);
+                LogManager.Log("Could not open process " + filePath);
             }
         }
 
@@ -182,7 +182,7 @@ namespace iiMenu.Mods
                     text += "\n====================================\n";
                     text += i.ToString() + " ; " + oneshot.matName + " ; " + oneshot.slidePercent.ToString() + "% ; " + (oneshot.audio == null ? "none" : oneshot.audio.name);
                 }
-                catch { UnityEngine.Debug.Log("Failed to log sound"); }
+                catch { LogManager.Log("Failed to log sound"); }
                 i++;
             }
             text += "\n====================================\n";
@@ -204,7 +204,7 @@ namespace iiMenu.Mods
             }
             catch
             {
-                UnityEngine.Debug.Log("Could not open process " + filePath);
+                LogManager.Log("Could not open process " + filePath);
             }
         }
 
@@ -219,7 +219,7 @@ namespace iiMenu.Mods
                     text += "\n====================================\n";
                     text += hat.itemName + " ; " + hat.displayName + " (override " + hat.overrideDisplayName + ") ; " + hat.cost.ToString() + "SR ; canTryOn = " + hat.canTryOn.ToString();
                 }
-                catch { UnityEngine.Debug.Log("Failed to log hat"); }
+                catch { LogManager.Log("Failed to log hat"); }
                 i++;
             }
             text += "\n====================================\n";
@@ -241,7 +241,7 @@ namespace iiMenu.Mods
             }
             catch
             {
-                UnityEngine.Debug.Log("Could not open process " + filePath);
+                LogManager.Log("Could not open process " + filePath);
             }
         }
 
@@ -255,7 +255,7 @@ namespace iiMenu.Mods
                 {
                     text += hat.itemName + ";;" + hat.overrideDisplayName + ";;" + hat.cost.ToString() + "\n";
                 }
-                catch { UnityEngine.Debug.Log("Failed to log hat"); }
+                catch { LogManager.Log("Failed to log hat"); }
                 i++;
             }
             string fileName = "iisStupidMenu/DecryptableCosmeticData.txt";
@@ -275,7 +275,7 @@ namespace iiMenu.Mods
             }
             catch
             {
-                UnityEngine.Debug.Log("Could not open process " + filePath);
+                LogManager.Log("Could not open process " + filePath);
             }
         }
 
@@ -290,7 +290,7 @@ namespace iiMenu.Mods
                     text += "\n====================================\n";
                     text += i.ToString() + " ; " + name;
                 }
-                catch { UnityEngine.Debug.Log("Failed to log RPC"); }
+                catch { LogManager.Log("Failed to log RPC"); }
                 i++;
             }
             text += "\n====================================\n";
@@ -312,7 +312,7 @@ namespace iiMenu.Mods
             }
             catch
             {
-                UnityEngine.Debug.Log("Could not open process " + filePath);
+                LogManager.Log("Could not open process " + filePath);
             }
         }
     }

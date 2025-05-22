@@ -3349,8 +3349,8 @@ namespace iiMenu.Mods
 
         public static void DestroyVelocityTrackers()
         {
-            UnityEngine.Debug.Log(lvT);
-            UnityEngine.Debug.Log(rvT);
+            LogManager.Log(lvT);
+            LogManager.Log(rvT);
         }
 
         public static float predCount = 0.0125f;
