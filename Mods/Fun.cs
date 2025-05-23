@@ -1697,6 +1697,16 @@ namespace iiMenu.Mods
             Patches.KnockbackPatch.enabled = false;
         }
 
+        public static void AntiSting()
+        {
+            Patches.BeesPatch.enabled = true;
+        }
+
+        public static void AntiStingDisabled()
+        {
+            Patches.BeesPatch.enabled = false;
+        }
+
         public static void LargeSnowballs()
         {
             Patches.EnablePatch.enabled = true;
