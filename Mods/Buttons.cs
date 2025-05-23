@@ -684,6 +684,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "No Respawn Gliders", enableMethod =() => Fun.NoRespawnGliders(), disableMethod =() => Fun.PleaseRespawnGliders(), toolTip = "Doesn't respawn gliders that go too far outside the bounds of clouds."},
 
                 new ButtonInfo { buttonText = "Anti Grab", enableMethod =() => Fun.AntiGrab(), disableMethod =() => Fun.AntiGrabDisabled(), toolTip = "Prevents players from picking you up in guardian."},
+                new ButtonInfo { buttonText = "Anti Sting", enableMethod =() => Fun.AntiSting(), disableMethod =() => Fun.AntiStingDisabled(), toolTip = "Prevents the bees from making you float."},
                 new ButtonInfo { buttonText = "Anti Noclip", enableMethod =() => Fun.AntiNoclip(), disableMethod =() => Fun.AntiNoclipDisabled(), toolTip = "Prevents the second look skeleton from picking you up."},
                 new ButtonInfo { buttonText = "Anti Knockback", enableMethod =() => Fun.AntiKnockback(), disableMethod =() => Fun.AntiKnockbackDisabled(), toolTip = "Prevents players from knocking you back with snowballs."},
 
