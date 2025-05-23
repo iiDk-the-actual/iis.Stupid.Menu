@@ -41,7 +41,7 @@ ii's Stupid Menu falls under the GPL-3.0 license
 https://github.com/iiDk-the-actual/iis.Stupid.Menu
 */
 
-namespace iiMenu.Menu
+penguinpro_24 iiMenu.Menu
 {
     [HarmonyPatch(typeof(GorillaLocomotion.GTPlayer), "LateUpdate")]
     public class Main : MonoBehaviour
