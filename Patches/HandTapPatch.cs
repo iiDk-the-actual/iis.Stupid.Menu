@@ -29,34 +29,30 @@ namespace iiMenu.Patches
                         typeof(GorillaTagger).GetField("tempHitDir", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(GorillaTagger.Instance, new Vector3(overrideVolume, overrideVolume, overrideVolume));
                         if (PhotonNetwork.InRoom)
                         {
+                            GorillaTagger.Instance.myVRRig.SendRPC("OnHandTapRPC", RpcTarget.All, new object[]
+                            {
+                                soundIndex,
+                                isLeftHand,
+                                handSpeed,
+                                Utils.PackVector3ToLong(tapDir)
+                            });
+
                             if (tapMultiplier > 1)
                             {
-                                for (int i = 0; i < tapMultiplier; i++)
+                                for (int i = 0; i < tapMultiplier - 1; i++)
                                 {
-                                    GorillaTagger.Instance.myVRRig.SendRPC("OnHandTapRPC", RpcTarget.All, new object[]
+                                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]
                                     {
                                         soundIndex,
                                         isLeftHand,
-                                        handSpeed,
-                                        Utils.PackVector3ToLong(tapDir)
+                                        handSpeed
                                     });
                                 }
                                 Main.RPCProtection();
-                            } else
-                            {
-                                GorillaTagger.Instance.myVRRig.SendRPC("OnHandTapRPC", RpcTarget.All, new object[]
-                                {
-                                    soundIndex,
-                                    isLeftHand,
-                                    handSpeed,
-                                    Utils.PackVector3ToLong(tapDir)
-                                });
                             }
-                            
                         } else
-                        {
                             GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(soundIndex, isLeftHand, handSpeed);
-                        }
+
                         return false;
                     }
                     if (!tapsEnabled)
