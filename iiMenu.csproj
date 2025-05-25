@@ -32,13 +32,13 @@
     <EmbeddedResource Include="Resources\search.png" />
     <EmbeddedResource Include="Resources\speak.png" />
     <EmbeddedResource Include="Resources\trans.png" />
-  </ItemGroup>
-  
-  <ItemGroup>
     <EmbeddedResource Include="Resources\pearl.png" />
   </ItemGroup>
   
   <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(GameAssemblyPath)\Assembly-CSharp.dll</HintPath>
+    </Reference>
     <Reference Include="0Harmony">
       <HintPath>$(BepInExAssemblyPath)\0Harmony.dll</HintPath>
     </Reference>
@@ -50,9 +50,6 @@
     </Reference>
     <Reference Include="andywiecko.BurstTriangulator">
       <HintPath>$(GameAssemblyPath)\andywiecko.BurstTriangulator.dll</HintPath>
-    </Reference>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>$(GameAssemblyPath)\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>$(GameAssemblyPath)\Assembly-CSharp-firstpass.dll</HintPath>
