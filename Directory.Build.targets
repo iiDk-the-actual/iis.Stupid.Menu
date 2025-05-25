@@ -24,4 +24,9 @@
         Encoding="UTF-8"
         WriteOnlyWhenDifferent="true"/>
   </Target>
+
+  <Target Name="CopyToPlugins" AfterTargets="Build">
+    <Copy SourceFiles="$(TargetPath)" DestinationFiles="$(PluginsPath)\$(TargetFileName)" />
+    <Message Text="Copied to Plugins" Importance="high"/>
+  </Target>
 </Project>
