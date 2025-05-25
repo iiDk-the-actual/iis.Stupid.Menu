@@ -273,15 +273,15 @@ namespace iiMenu.Mods
             {
                 instantPartyDelay = Time.time + 0.1f;
 
-                Traverse.Create(FriendshipGroupDetection.Instance).Field("suppressPartyCreationUntilTimestamp").SetValue(0f);
-                Traverse.Create(FriendshipGroupDetection.Instance).Field("groupCreateAfterTimestamp").SetValue(0f);
+                FriendshipGroupDetection.Instance.suppressPartyCreationUntilTimestamp = 0f;
+                FriendshipGroupDetection.Instance.groupCreateAfterTimestamp = 0f;
 
-                List<int> provisionalMembers = (List<int>)Traverse.Create(FriendshipGroupDetection.Instance).Field("playersInProvisionalGroup").GetValue();
+                List<int> provisionalMembers = FriendshipGroupDetection.Instance.playersInProvisionalGroup;
 
                 if (provisionalMembers.Count > 0)
                 {
-                    Color targetColor = GTColor.RandomHSV((GTColor.HSVRanges)Traverse.Create(FriendshipGroupDetection.Instance).Field("braceletRandomColorHSVRanges").GetValue());
-                    Traverse.Create(FriendshipGroupDetection.Instance).Field("myBraceletColor").SetValue(targetColor);
+                    Color targetColor = GTColor.RandomHSV(FriendshipGroupDetection.Instance.braceletRandomColorHSVRanges);
+                    FriendshipGroupDetection.Instance.myBraceletColor = targetColor;
 
                     List<int> members = new List<int> { PhotonNetwork.LocalPlayer.ActorNumber };
                     foreach (Player player in PhotonNetwork.PlayerListOthers)
@@ -289,7 +289,7 @@ namespace iiMenu.Mods
                         if (FriendshipGroupDetection.Instance.IsInMyGroup(player.UserId) || provisionalMembers.Contains(player.ActorNumber))
                             members.Add(player.ActorNumber);
                     }
-                    typeof(FriendshipGroupDetection).GetMethod("SendPartyFormedRPC", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(FriendshipGroupDetection.Instance, new object[] { FriendshipGroupDetection.PackColor(targetColor), members.ToArray(), false });
+                    FriendshipGroupDetection.Instance.SendPartyFormedRPC(FriendshipGroupDetection.PackColor(targetColor), members.ToArray(), false);
                     RPCProtection();
                 }
             }
@@ -306,10 +306,10 @@ namespace iiMenu.Mods
             {
                 partyLastCode = PhotonNetwork.CurrentRoom.Name;
                 waitForPlayerJoin = false;
-                PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(Important.RandomRoomName(), JoinType.ForceJoinWithParty);
+                PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(Important.RandomRoomName(), GorillaNetworking.JoinType.ForceJoinWithParty);
                 partyTime = Time.time + 0.25f;
                 phaseTwo = false;
-                amountPartying = ((List<string>)typeof(FriendshipGroupDetection).GetField("myPartyMemberIDs", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(FriendshipGroupDetection.Instance)).Count - 1;
+                amountPartying = FriendshipGroupDetection.Instance.myPartyMemberIDs.Count - 1;
                 NotifiLib.SendNotification("<color=grey>[</color><color=purple>PARTY</color><color=grey>]</color> <color=white>Kicking " + amountPartying.ToString() + " party members, this may take a second...</color>");
             }
             else
@@ -324,10 +324,10 @@ namespace iiMenu.Mods
             {
                 partyLastCode = PhotonNetwork.CurrentRoom.Name;
                 waitForPlayerJoin = true;
-                PhotonNetworkController.Instance.AttemptToJoinSpecificRoom("KKK", JoinType.ForceJoinWithParty);
+                PhotonNetworkController.Instance.AttemptToJoinSpecificRoom("KKK", GorillaNetworking.JoinType.ForceJoinWithParty);
                 partyTime = Time.time + 0.25f;
                 phaseTwo = false;
-                amountPartying = ((List<string>)typeof(FriendshipGroupDetection).GetField("myPartyMemberIDs", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(FriendshipGroupDetection.Instance)).Count - 1;
+                amountPartying = FriendshipGroupDetection.Instance.myPartyMemberIDs.Count - 1;
                 NotifiLib.SendNotification("<color=grey>[</color><color=purple>PARTY</color><color=grey>]</color> <color=white>Banning " + amountPartying.ToString() + " party members, this may take a second...</color>");
             }
             else
@@ -490,8 +490,7 @@ namespace iiMenu.Mods
             {
                 if (GorillaLocomotion.GTPlayer.Instance.IsHandTouching(true))
                 {
-                    FieldInfo fieldInfo = typeof(GorillaLocomotion.GTPlayer).GetField("lastHitInfoHand", BindingFlags.NonPublic | BindingFlags.Instance);
-                    RaycastHit ray = (RaycastHit)fieldInfo.GetValue(GorillaLocomotion.GTPlayer.Instance);
+                    RaycastHit ray = GorillaLocomotion.GTPlayer.Instance.lastHitInfoHand;
                     GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", RpcTarget.All, new object[]
                     {
                         GorillaTagger.Instance.leftHandTransform.position,
@@ -506,8 +505,7 @@ namespace iiMenu.Mods
                 }
                 if (GorillaLocomotion.GTPlayer.Instance.IsHandTouching(false))
                 {
-                    FieldInfo fieldInfo = typeof(GorillaLocomotion.GTPlayer).GetField("lastHitInfoHand", BindingFlags.NonPublic | BindingFlags.Instance);
-                    RaycastHit ray = (RaycastHit)fieldInfo.GetValue(GorillaLocomotion.GTPlayer.Instance);
+                    RaycastHit ray = GorillaLocomotion.GTPlayer.Instance.lastHitInfoHand;
                     GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", RpcTarget.All, new object[]
                     {
                         GorillaTagger.Instance.rightHandTransform.position,
@@ -525,7 +523,7 @@ namespace iiMenu.Mods
 
         private static bool lastlhboop = false;
         private static bool lastrhboop = false;
-        public static void Boop()
+        public static void Boop(int sound = 84)
         {
             bool isBoopLeft = false;
             bool isBoopRight = false;
@@ -539,13 +537,10 @@ namespace iiMenu.Mods
                     float threshold = 0.275f;
 
                     if (!isBoopLeft)
-                    {
                         isBoopLeft = D1 < threshold;
-                    }
+
                     if (!isBoopRight)
-                    {
                         isBoopRight = D2 < threshold;
-                    }
                 }
             }
             if (isBoopLeft && !lastlhboop)
@@ -553,7 +548,7 @@ namespace iiMenu.Mods
                 if (PhotonNetwork.InRoom)
                 {
                     GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
-                        84,
+                        sound,
                         true,
                         999999f
                     });
@@ -561,7 +556,7 @@ namespace iiMenu.Mods
                 }
                 else
                 {
-                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(84, true, 999999f);
+                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(sound, true, 999999f);
                 }
             }
             if (isBoopRight && !lastrhboop)
@@ -569,7 +564,7 @@ namespace iiMenu.Mods
                 if (PhotonNetwork.InRoom)
                 {
                     GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
-                        84,
+                        sound,
                         false,
                         999999f
                     });
@@ -577,66 +572,7 @@ namespace iiMenu.Mods
                 }
                 else
                 {
-                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(84, false, 999999f);
-                }
-            }
-            lastlhboop = isBoopLeft;
-            lastrhboop = isBoopRight;
-        }
-
-        public static void Slap()
-        {
-            bool isBoopLeft = false;
-            bool isBoopRight = false;
-            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-            {
-                if (vrrig != GorillaTagger.Instance.offlineVRRig)
-                {
-                    float D1 = Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position, vrrig.headMesh.transform.position);
-                    float D2 = Vector3.Distance(GorillaTagger.Instance.rightHandTransform.position, vrrig.headMesh.transform.position);
-
-                    float threshold = 0.275f;
-
-                    if (!isBoopLeft)
-                    {
-                        isBoopLeft = D1 < threshold;
-                    }
-                    if (!isBoopRight)
-                    {
-                        isBoopRight = D2 < threshold;
-                    }
-                }
-            }
-            if (isBoopLeft && !lastlhboop)
-            {
-                if (PhotonNetwork.InRoom)
-                {
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
-                        248,
-                        true,
-                        999999f
-                    });
-                    RPCProtection();
-                }
-                else
-                {
-                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(248, true, 999999f);
-                }
-            }
-            if (isBoopRight && !lastrhboop)
-            {
-                if (PhotonNetwork.InRoom)
-                {
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
-                        248,
-                        false,
-                        999999f
-                    });
-                    RPCProtection();
-                }
-                else
-                {
-                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(248, false, 999999f);
+                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(sound, false, 999999f);
                 }
             }
             lastlhboop = isBoopLeft;
@@ -775,7 +711,7 @@ namespace iiMenu.Mods
 
                 if (gunLocked && lockTarget != null)
                 {
-                    AudioClip clippy = ((Photon.Voice.Unity.Speaker)Traverse.Create(lockTarget.gameObject.GetComponent<GorillaSpeakerLoudness>()).Field("speaker").GetValue()).gameObject.GetComponent<AudioSource>().clip;
+                    AudioClip clippy = lockTarget.gameObject.GetComponent<GorillaSpeakerLoudness>().speaker.gameObject.GetComponent<AudioSource>().clip;
                     if (GorillaTagger.Instance.myRecorder.AudioClip != clippy)
                         GorillaTagger.Instance.myRecorder.AudioClip = clippy;
                 }
@@ -787,7 +723,7 @@ namespace iiMenu.Mods
                         gunLocked = true;
                         lockTarget = gunTarget;
                         GorillaTagger.Instance.myRecorder.SourceType = Recorder.InputSourceType.AudioClip;
-                        GorillaTagger.Instance.myRecorder.AudioClip = ((Photon.Voice.Unity.Speaker)Traverse.Create(gunTarget.gameObject.GetComponent<GorillaSpeakerLoudness>()).Field("speaker").GetValue()).gameObject.GetComponent<AudioSource>().clip;
+                        GorillaTagger.Instance.myRecorder.AudioClip = lockTarget.gameObject.GetComponent<GorillaSpeakerLoudness>().speaker.gameObject.GetComponent<AudioSource>().clip;
                         GorillaTagger.Instance.myRecorder.RestartRecording(true);
                         GorillaTagger.Instance.myRecorder.DebugEchoMode = true;
                     }
@@ -810,19 +746,19 @@ namespace iiMenu.Mods
             GorillaTagger.Instance.offlineVRRig.localUseReplacementVoice = rightPrimary;
         }*/
 
-        private static float stupiddelay = 0f;
+        private static float tapDelay = 0f;
         public static void TapAllBells()
         {
             if (rightGrab)
             {
-                if (Time.time > stupiddelay)
+                if (Time.time > tapDelay)
                 {
-                    foreach (TappableBell stupid in GetAllType<TappableBell>())
+                    foreach (TappableBell bell in GetAllType<TappableBell>())
                     {
-                        stupid.OnTap(1f);
+                        bell.OnTap(1f);
                         RPCProtection();
                     }
-                    stupiddelay = Time.time + 0.1f;
+                    tapDelay = Time.time + 0.1f;
                 }
             }
         }
@@ -831,30 +767,31 @@ namespace iiMenu.Mods
         {
             if (rightGrab)
             {
-                if (Time.time > stupiddelay)
+                if (Time.time > tapDelay)
                 {
-                    foreach (GorillaCaveCrystal stupid in GetAllType<GorillaCaveCrystal>())
+                    foreach (GorillaCaveCrystal bell in GetAllType<GorillaCaveCrystal>())
                     {
-                        stupid.OnTap(1f);
+                        bell.OnTap(1f);
                         RPCProtection();
                     }
-                    stupiddelay = Time.time + 0.1f;
+                    tapDelay = Time.time + 0.1f;
                 }
             }
         }
 
+        private static float buttonDelay;
         public static void ActivateAllDoors()
         {
             if (rightGrab)
             {
-                if (Time.time > stupiddelay)
+                if (Time.time > buttonDelay)
                 {
-                    foreach (GhostLabButton stupid in GetAllType<GhostLabButton>())
+                    foreach (GhostLabButton button in GetAllType<GhostLabButton>())
                     {
-                        stupid.ButtonActivation();
+                        button.ButtonActivation();
                         RPCProtection();
                     }
-                    stupiddelay = Time.time + 0.1f;
+                    buttonDelay = Time.time + 0.1f;
                 }
             }
         }
@@ -862,13 +799,14 @@ namespace iiMenu.Mods
         private static float hitDelay = 0f;
         public static void AutoHitMoles()
         {   
-            foreach (Mole stupid in GetAllType<Mole>())
+            foreach (Mole mole in GetAllType<Mole>())
             {
-                int state = (int)Traverse.Create(stupid).Field("randomMolePickedIndex").GetValue();
-                if (stupid.CanTap() && stupid.moleTypes[state].isHazard == false && Time.time > hitDelay)
+                int state = mole.randomMolePickedIndex;
+                if (mole.CanTap() && mole.moleTypes[state].isHazard == false && Time.time > hitDelay)
                 {
                     hitDelay = Time.time + 0.1f;
-                    stupid.OnTap(1f);
+
+                    mole.OnTap(1f);
                     RPCProtection();
                 }
             }
@@ -876,26 +814,27 @@ namespace iiMenu.Mods
 
         public static void AutoHitHazards()
         {
-            foreach (Mole stupid in GetAllType<Mole>())
+            foreach (Mole mole in GetAllType<Mole>())
             {
-                int state = (int)Traverse.Create(stupid).Field("randomMolePickedIndex").GetValue();
-                if (stupid.CanTap() && stupid.moleTypes[state].isHazard && Time.time > hitDelay)
+                int state = mole.randomMolePickedIndex;
+                if (mole.CanTap() && mole.moleTypes[state].isHazard && Time.time > hitDelay)
                 {
                     hitDelay = Time.time + 0.1f;
-                    stupid.OnTap(1f);
+                    mole.OnTap(1f);
                     RPCProtection();
                 }
             }
         }
 
+        private static float moleMachineDelay;
         public static void SpazMoleMachines()
         {
-            if (Time.time > stupiddelay)
+            if (Time.time > moleMachineDelay)
             {
-                stupiddelay = Time.time + 0.25f;
-                foreach (WhackAMole stupid in GetAllType<WhackAMole>())
+                moleMachineDelay = Time.time + 0.25f;
+                foreach (WhackAMole moleMachine in GetAllType<WhackAMole>())
                 {
-                    stupid.GetView.RPC("WhackAMoleButtonPressed", RpcTarget.All, new object[] { });
+                    moleMachine.GetView.RPC("WhackAMoleButtonPressed", RpcTarget.All, new object[] { });
                     RPCProtection();
                 }
             }
@@ -903,22 +842,21 @@ namespace iiMenu.Mods
 
         public static void AutoStartMoles()
         {
-            if (Time.time > stupiddelay)
+            if (Time.time > moleMachineDelay)
             {
-                stupiddelay = Time.time + 0.1f;
-                foreach (WhackAMole stupid in GetAllType<WhackAMole>())
+                moleMachineDelay = Time.time + 0.1f;
+                foreach (WhackAMole moleMachine in GetAllType<WhackAMole>())
                 {
-                    int state = (int)Traverse.Create(stupid).Field("currentState").GetValue();
-                    if (state == 0 || state == 4)
+                    if (moleMachine.currentState == WhackAMole.GameState.Off || moleMachine.currentState == WhackAMole.GameState.TimesUp)
                     {
-                        stupid.GetView.RPC("WhackAMoleButtonPressed", RpcTarget.All, new object[] { });
+                        moleMachine.GetView.RPC("WhackAMoleButtonPressed", RpcTarget.All, new object[] { });
                         RPCProtection();
                     }
                 }
             }
         }
 
-        public static void GetHoneyComb()
+        public static void GetBracelet()
         {
             if (leftGrab)
             {
@@ -950,18 +888,18 @@ namespace iiMenu.Mods
             }
         }
 
-        private static bool shouldThingIdk = true;
-        public static void HoneycombSpam()
+        private static bool braceletState;
+        public static void BraceletSpam()
         {
             if (rightGrab)
             {
                 GorillaTagger.Instance.myVRRig.SendRPC("EnableNonCosmeticHandItemRPC", RpcTarget.All, new object[]
                 {
-                    shouldThingIdk,
+                    braceletState,
                     false
                 });
                 RPCProtection();
-                shouldThingIdk = !shouldThingIdk;
+                braceletState = !braceletState;
             }
         }
 
@@ -1071,7 +1009,7 @@ namespace iiMenu.Mods
         public static void EverythingGrabbable()
         {
             GamePlayerLocal.instance.gamePlayer.DisableGrabbing(false);
-            foreach (GameEntity entity in Traverse.Create(GameEntityManager.instance).Field("entities").GetValue<List<GameEntity>>())
+            foreach (GameEntity entity in GameEntityManager.instance.entities)
             {
                 if (entity != null)
                 {
@@ -1104,7 +1042,7 @@ namespace iiMenu.Mods
                 {
                     foreach (GRBadge grBadge in GameObject.Find("GhostReactorRoot/GhostReactorZone/GhostReactorEmployeeBadges").GetComponent<GRUIStationEmployeeBadges>().registeredBadges)
                     {
-                        GameEntity entity = Traverse.Create(grBadge).Field("gameEntity").GetValue<GameEntity>();
+                        GameEntity entity = grBadge.gameEntity;
                         if (entity.onlyGrabActorNumber == PhotonNetwork.LocalPlayer.ActorNumber)
                         {
                             GorillaTagger.Instance.offlineVRRig.enabled = false;
@@ -1130,7 +1068,7 @@ namespace iiMenu.Mods
 
                 if (!plr.IsHoldingEntity(false))
                 {
-                    foreach (GameEntity entity in Traverse.Create(GameEntityManager.instance).Field("entities").GetValue<List<GameEntity>>())
+                    foreach (GameEntity entity in GameEntityManager.instance.entities)
                     {
                         if (entity.gameObject.name.Contains("BreakableCrate"))
                         {
@@ -1247,7 +1185,7 @@ namespace iiMenu.Mods
             if (plr.State == GRPlayer.GRPlayerState.Ghost)
                 GhostReactorManager.instance.RequestPlayerStateChange(plr, GRPlayer.GRPlayerState.Alive);
 
-            Traverse.Create(plr).Field("hp").SetValue(Traverse.Create(plr).Field("maxHp").GetValue<int>());
+            plr.hp = plr.maxHp;
         }
 
         public static void SetPlayerState(Player Target, GRPlayer.GRPlayerState State)
@@ -1287,7 +1225,7 @@ namespace iiMenu.Mods
             GRPlayer GRPlayer = GRPlayer.Get(Target.ActorNumber);
             VRRig Rig = RigManager.GetVRRigFromPlayer(Target);
 
-            int netId = (int)typeof(GameEntityManager).GetMethod("CreateNetId", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(GameEntityManager.instance, new object[] { });
+            int netId = GameEntityManager.instance.CreateNetId();
 
             GameEntityManager.instance.photonView.RPC("CreateItemRPC", Target, new object[]
             {
@@ -1752,29 +1690,26 @@ namespace iiMenu.Mods
 
         public static void FastHoverboard()
         {
-            Traverse hover = Traverse.Create(GorillaLocomotion.GTPlayer.Instance);
-            hover.Field("hoverboardPaddleBoostMax").SetValue(99999f);
-            hover.Field("hoverboardPaddleBoostMultiplier").SetValue(5f);
-            hover.Field("hoverboardBoostGracePeriod").SetValue(0f);
-            hover.Field("hoverTiltAdjustsForwardFactor").SetValue(1f);
+            GorillaLocomotion.GTPlayer.Instance.hoverboardPaddleBoostMax = float.MaxValue;
+            GorillaLocomotion.GTPlayer.Instance.hoverboardPaddleBoostMultiplier = 5f;
+            GorillaLocomotion.GTPlayer.Instance.hoverboardBoostGracePeriod = 0f;
+            GorillaLocomotion.GTPlayer.Instance.hoverTiltAdjustsForwardFactor = 1f;
         }
 
         public static void SlowHoverboard()
         {
-            Traverse hover = Traverse.Create(GorillaLocomotion.GTPlayer.Instance);
-            hover.Field("hoverboardPaddleBoostMax").SetValue(3.5f);
-            hover.Field("hoverboardPaddleBoostMultiplier").SetValue(0.025f);
-            hover.Field("hoverboardBoostGracePeriod").SetValue(3f);
-            hover.Field("hoverTiltAdjustsForwardFactor").SetValue(0.1f);
+            GorillaLocomotion.GTPlayer.Instance.hoverboardPaddleBoostMax = 3.5f;
+            GorillaLocomotion.GTPlayer.Instance.hoverboardPaddleBoostMultiplier = 0.025f;
+            GorillaLocomotion.GTPlayer.Instance.hoverboardBoostGracePeriod = 3f;
+            GorillaLocomotion.GTPlayer.Instance.hoverTiltAdjustsForwardFactor = 0.1f;
         }
 
         public static void FixHoverboard()
         {
-            Traverse hover = Traverse.Create(GorillaLocomotion.GTPlayer.Instance);
-            hover.Field("hoverboardPaddleBoostMax").SetValue(10f);
-            hover.Field("hoverboardPaddleBoostMultiplier").SetValue(0.1f);
-            hover.Field("hoverboardBoostGracePeriod").SetValue(1f);
-            hover.Field("hoverTiltAdjustsForwardFactor").SetValue(0.2f);
+            GorillaLocomotion.GTPlayer.Instance.hoverboardPaddleBoostMax = 10f;
+            GorillaLocomotion.GTPlayer.Instance.hoverboardPaddleBoostMultiplier = 0.1f;
+            GorillaLocomotion.GTPlayer.Instance.hoverboardBoostGracePeriod = 1f;
+            GorillaLocomotion.GTPlayer.Instance.hoverTiltAdjustsForwardFactor = 0.2f;
         }
 
         private static bool hasGrabbedHoverboard;
@@ -1805,7 +1740,7 @@ namespace iiMenu.Mods
             if (GorillaTagger.Instance.offlineVRRig.hoverboardVisual != null && GorillaTagger.Instance.offlineVRRig.hoverboardVisual.IsHeld)
             {
                 float h = (Time.frameCount / 180f) % 1f;
-                Color rgbColor = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
+                Color rgbColor = Color.HSVToRGB(h, 1f, 1f);
                 GorillaTagger.Instance.offlineVRRig.hoverboardVisual.SetIsHeld(GorillaTagger.Instance.offlineVRRig.hoverboardVisual.IsLeftHanded, GorillaTagger.Instance.offlineVRRig.hoverboardVisual.NominalLocalPosition, GorillaTagger.Instance.offlineVRRig.hoverboardVisual.NominalLocalRotation, rgbColor);
             }
         }
@@ -1847,10 +1782,10 @@ namespace iiMenu.Mods
 
         public static void StartAllRaces()
         {
-            foreach (object race in Traverse.Create(RacingManager.instance).Field("races").GetValue<object[]>())
+            foreach (RacingManager.Race race in RacingManager.instance.races)
             {
-                if (Traverse.Create(race).Field("racingState").GetValue<int>() == 0)
-                    race.GetType().GetMethod("Button_StartRace", BindingFlags.Public | BindingFlags.Instance).Invoke(race, new object[] { 5 });
+                if (race.racingState == RacingManager.RacingState.Inactive)
+                    race.Button_StartRace(5);
             }
         }
 
@@ -2772,51 +2707,17 @@ namespace iiMenu.Mods
             {
                 blockDelay = Time.time + 0.25f;
                 foreach (BuilderPiece piece in potentialgrabbedpieces)
-                {
                     GetBuilderTable().RequestDropPiece(piece, GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, new Vector3(UnityEngine.Random.Range(-19f, 19f), UnityEngine.Random.Range(-19f, 19f), UnityEngine.Random.Range(-19f, 19f)), new Vector3(UnityEngine.Random.Range(-19f, 19f), UnityEngine.Random.Range(-19f, 19f), UnityEngine.Random.Range(-19f, 19f)));
-                }
+                
                 potentialgrabbedpieces.Clear();
                 RPCProtection();
             }
         }
 
-        /*
-        public static void StealBug()
-        {
-            if (rightGrab)
-            {
-                GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
-                ThrowableBug bug = GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>();
-                bug.currentState = TransferrableObject.PositionState.Dropped;
-                System.Type type = bug.GetType();
-                FieldInfo fieldInfo = type.GetField("locked", BindingFlags.NonPublic | BindingFlags.Instance);
-                fieldInfo.SetValue(bug, false);
-                GameObject.Find("Floating Bug Holdable").transform.position = GorillaTagger.Instance.rightHandTransform.position;
-            }
-        }
-
-        public static void StealBat()
-        {
-            if (rightGrab)
-            {
-                GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().WorldShareableRequestOwnership();
-                ThrowableBug bug = GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>();
-                bug.currentState = TransferrableObject.PositionState.Dropped;
-                System.Type type = bug.GetType();
-                FieldInfo fieldInfo = type.GetField("locked", BindingFlags.NonPublic | BindingFlags.Instance);
-                fieldInfo.SetValue(bug, false);
-                GameObject.Find("Cave Bat Holdable").transform.position = GorillaTagger.Instance.rightHandTransform.position;
-            }
-        }
-        */
-
         public static void PopAllBalloons()
         {
             foreach (BalloonHoldable balloon in GetAllType<BalloonHoldable>())
-            {
-                typeof(BalloonHoldable).GetMethod("OwnerPopBalloon", BindingFlags.NonPublic | BindingFlags.Static).Invoke(balloon, new object[] { });
-                balloon.PopBalloonRemote();
-            }
+                balloon.OwnerPopBalloon();
         }
 
         public static void GrabBalloons()
@@ -2826,13 +2727,9 @@ namespace iiMenu.Mods
                 foreach (BalloonHoldable balloon in GetAllType<BalloonHoldable>())
                 {
                     if (balloon.ownerRig == GorillaTagger.Instance.offlineVRRig)
-                    {
                         balloon.gameObject.transform.position = GorillaTagger.Instance.rightHandTransform.position;
-                    }
                     else
-                    {
                         balloon.WorldShareableRequestOwnership();
-                    }
                 }
             }
         }
@@ -2842,13 +2739,9 @@ namespace iiMenu.Mods
             foreach (BalloonHoldable balloon in GetAllType<BalloonHoldable>())
             {
                 if (balloon.ownerRig == GorillaTagger.Instance.offlineVRRig)
-                {
-                    balloon.gameObject.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360))); ;
-                }
+                    balloon.gameObject.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
                 else
-                {
                     balloon.WorldShareableRequestOwnership();
-                }
             }
         }
 
@@ -2864,9 +2757,8 @@ namespace iiMenu.Mods
                     balloon.gameObject.transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)) * 5f, 2, MathF.Sin(offset + ((float)Time.frameCount / 30)) * 5f);
                 }
                 else
-                {
                     balloon.WorldShareableRequestOwnership();
-                }
+                
                 index++;
             }
         }
@@ -2884,12 +2776,9 @@ namespace iiMenu.Mods
                     foreach (BalloonHoldable balloon in GetAllType<BalloonHoldable>())
                     {
                         if (balloon.ownerRig == GorillaTagger.Instance.offlineVRRig)
-                        {
                             balloon.gameObject.transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
-                        } else
-                        {
+                        else
                             balloon.WorldShareableRequestOwnership();
-                        }
                     }
                 }
             }
@@ -2927,7 +2816,7 @@ namespace iiMenu.Mods
                     {
                         FoundBalloon = true;
 
-                        Traverse.Create(Balloon).Field("maxDistanceFromOwner").SetValue(float.MaxValue);
+                        Balloon.maxDistanceFromOwner = float.MaxValue;
                         Balloon.currentState = TransferrableObject.PositionState.Dropped;
 
                         Balloon.gameObject.transform.position = GorillaTagger.Instance.headCollider.transform.position + (GorillaTagger.Instance.headCollider.transform.up * - 1f);
@@ -3132,7 +3021,7 @@ namespace iiMenu.Mods
             {
                 colorChangerDelay = Time.time + 0.1f;
                 float h = (Time.frameCount / 180f) % 1f;
-                ChangeColor(UnityEngine.Color.HSVToRGB(h, 1f, 1f));
+                ChangeColor(Color.HSVToRGB(h, 1f, 1f));
             }
         }
 

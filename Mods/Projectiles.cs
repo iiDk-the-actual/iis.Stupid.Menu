@@ -55,8 +55,8 @@ namespace iiMenu.Mods.Spammers
 
                     GorillaTagger.Instance.GetComponent<Rigidbody>().velocity = charvel;
                     GorillaTagger.Instance.offlineVRRig.SetThrowableProjectileColor(true, color);
-                    MethodInfo lsm = typeof(SnowballThrowable).GetMethod("PerformSnowballThrowAuthority", BindingFlags.NonPublic | BindingFlags.Instance);
-                    lsm.Invoke(Throwable, new object[] { });
+                    Throwable.PerformSnowballThrowAuthority();
+
                     GorillaTagger.Instance.GetComponent<Rigidbody>().velocity = oldVel;
                     RPCProtection();
 
@@ -460,21 +460,20 @@ namespace iiMenu.Mods.Spammers
             }
         }
 
-        public static bool lastSlingThing;
+        public static bool isFiring;
         public static void RapidFireSlingshot()
         {
             if (rightPrimary)
             {
-                GameObject slingy = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/palm.01.L/TransferrableItemLeftHand/Slingshot Anchor/Slingshot");
-                if (slingy != null)
+                GameObject slingshotObject = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/palm.01.L/TransferrableItemLeftHand/Slingshot Anchor/Slingshot");
+                if (slingshotObject != null)
                 {
-                    Slingshot yay = slingy.GetComponent<Slingshot>();
-                    yay.itemState = TransferrableObject.ItemStates.State2;
-                    Type type = yay.GetType();
-                    FieldInfo fieldInfo = type.GetField("minTimeToLaunch", BindingFlags.NonPublic | BindingFlags.Instance);
-                    fieldInfo.SetValue(yay, -1f);
-                    ControllerInputPoller.instance.rightControllerIndexFloat = lastSlingThing ? 1f : 0f;
-                    lastSlingThing = !lastSlingThing;
+                    Slingshot slingshot = slingshotObject.GetComponent<Slingshot>();
+                    slingshot.itemState = TransferrableObject.ItemStates.State2;
+                    slingshot.minTimeToLaunch = -1f;
+
+                    ControllerInputPoller.instance.rightControllerIndexFloat = isFiring ? 1f : 0f;
+                    isFiring = !isFiring;
                 }
             }
         }
@@ -719,274 +718,25 @@ namespace iiMenu.Mods.Spammers
 
             if (leftGrab)
             {
-                SnowballThrowable fart = GetProjectile(InternalProjectileNames[projIndex]);
-                if (!fart.gameObject.activeSelf)
+                SnowballThrowable Projectile = GetProjectile(InternalProjectileNames[projIndex]);
+                if (!Projectile.gameObject.activeSelf)
                 {
-                    fart.SetSnowballActiveLocal(true);
-                    fart.velocityEstimator = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").GetComponent<GorillaVelocityEstimator>();
-                    fart.transform.position = GorillaTagger.Instance.leftHandTransform.position;
-                    fart.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
+                    Projectile.SetSnowballActiveLocal(true);
+                    Projectile.velocityEstimator = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").GetComponent<GorillaVelocityEstimator>();
+                    Projectile.transform.position = GorillaTagger.Instance.leftHandTransform.position;
+                    Projectile.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
                 }
             }
 
             if (rightGrab)
             {
-                string lol = InternalProjectileNamesRight[projIndex];
-                
-                SnowballThrowable fart = GetProjectile(lol);
-                if (!fart.gameObject.activeSelf)
+                SnowballThrowable Projectile = GetProjectile(InternalProjectileNamesRight[projIndex]);
+                if (!Projectile.gameObject.activeSelf)
                 {
-                    fart.SetSnowballActiveLocal(true);
-                    fart.velocityEstimator = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").GetComponent<GorillaVelocityEstimator>();
-                    fart.transform.position = GorillaTagger.Instance.rightHandTransform.position;
-                    fart.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
-                }
-            }
-        }
-        /*
-        public static void InstantCrankElf()
-        {
-            foreach (ElfLauncher elf in GetElves())
-            {
-                TransferrableObject transobj = (TransferrableObject)Traverse.Create(elf).Field("parentHoldable").GetValue();
-                if (transobj.IsLocalObject())
-                {
-                    elf.GetType().GetField("crankShootThreshold", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static).SetValue(elf, 0f);
-                }
-            }
-        }
-
-        public static void DisableInstantCrankElf()
-        {
-            foreach (ElfLauncher elf in GetElves())
-            {
-                TransferrableObject transobj = (TransferrableObject)Traverse.Create(elf).Field("parentHoldable").GetValue();
-                if (transobj.IsLocalObject())
-                {
-                    elf.GetType().GetField("crankShootThreshold", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static).SetValue(elf, 360f);
-                }
-            }
-        }
-
-        public static void ElfLauncherSpam()
-        {
-            if (rightGrab)
-            {
-                GorillaTagger.Instance.offlineVRRig.enabled = false;
-                GorillaTagger.Instance.offlineVRRig.transform.position = new Vector3(-51.4897f, 16.9286f, -120.1083f);
-
-                bool didThing = false;
-                foreach (ElfLauncher elf in GetElves())
-                {
-                    TransferrableObject transobj = (TransferrableObject)Traverse.Create(elf).Field("parentHoldable").GetValue();
-                    if (transobj.IsLocalObject())
-                    {
-                        didThing = true;
-                        RubberDuckEvents rde = (RubberDuckEvents)elf.GetType().GetField("_events", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static).GetValue(elf);
-                        rde.Activate.RaiseAll(new object[] { GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward * (ShootStrength / 2f) });
-                        RPCProtection();
-                    }
-                }
-                if (!didThing)
-                {
-                    CosmeticsController.instance.ApplyCosmeticItemToSet(GorillaTagger.Instance.offlineVRRig.tryOnSet, CosmeticsController.instance.GetItemFromDict("LMANE."), true, false);
-                    CosmeticsController.instance.UpdateWornCosmetics(true);
-                    archiveelves = null;
-                }
-            } else
-            {
-                GorillaTagger.Instance.offlineVRRig.enabled = true;
-            }
-        }
-
-        public static void ElfGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (GetGunInput(true))
-                {
-                    GorillaTagger.Instance.offlineVRRig.enabled = false;
-                    GorillaTagger.Instance.offlineVRRig.transform.position = new Vector3(-51.4897f, 16.9286f, -120.1083f);
-
-                    bool didThing = false;
-                    foreach (ElfLauncher elf in GetElves())
-                    {
-                        TransferrableObject transobj = (TransferrableObject)Traverse.Create(elf).Field("parentHoldable").GetValue();
-                        if (transobj.IsLocalObject())
-                        {
-                            didThing = true;
-                            RubberDuckEvents rde = (RubberDuckEvents)elf.GetType().GetField("_events", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static).GetValue(elf);
-                            rde.Activate.RaiseAll(new object[] { NewPointer.transform.position + new Vector3(0f, 1f, 0f), Vector3.zero });
-                            RPCProtection();
-                        }
-                    }
-                    if (!didThing)
-                    {
-                        CosmeticsController.instance.ApplyCosmeticItemToSet(GorillaTagger.Instance.offlineVRRig.tryOnSet, CosmeticsController.instance.GetItemFromDict("LMANE."), true, false);
-                        CosmeticsController.instance.UpdateWornCosmetics(true);
-                        archiveelves = null;
-                    }
-                } else
-                {
-                    GorillaTagger.Instance.offlineVRRig.enabled = true;
-                }
-            }
-        }
-
-        public static void ElfAirstrikeGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (gunLocked && lockTarget != null)
-                {
-                    GorillaTagger.Instance.offlineVRRig.enabled = false;
-                    GorillaTagger.Instance.offlineVRRig.transform.position = new Vector3(-51.4897f, 16.9286f, -120.1083f);
-
-                    bool didThing = false;
-                    foreach (ElfLauncher elf in GetElves())
-                    {
-                        TransferrableObject transobj = (TransferrableObject)Traverse.Create(elf).Field("parentHoldable").GetValue();
-                        if (transobj.IsLocalObject())
-                        {
-                            didThing = true;
-                            RubberDuckEvents rde = (RubberDuckEvents)elf.GetType().GetField("_events", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static).GetValue(elf);
-                            rde.Activate.RaiseAll(new object[] { lockTarget.headMesh.transform.position + new Vector3(0f, 20f, 0f), Vector3.down * (ShootStrength / 2f) });
-                            RPCProtection();
-                        }
-                    }
-                    if (!didThing)
-                    {
-                        CosmeticsController.instance.ApplyCosmeticItemToSet(GorillaTagger.Instance.offlineVRRig.tryOnSet, CosmeticsController.instance.GetItemFromDict("LMANE."), true, false);
-                        CosmeticsController.instance.UpdateWornCosmetics(true);
-                        archiveelves = null;
-                    }
-                }
-                if (GetGunInput(true))
-                {
-                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
-                    {
-                        gunLocked = true;
-                        lockTarget = gunTarget;
-                    }
-                }
-            }
-            else
-            {
-                if (gunLocked)
-                {
-                    gunLocked = false;
-                    GorillaTagger.Instance.offlineVRRig.enabled = true;
-                }
-            }
-        }
-
-        public static void ElfAnnoyGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (gunLocked && lockTarget != null)
-                {
-                    GorillaTagger.Instance.offlineVRRig.enabled = false;
-                    GorillaTagger.Instance.offlineVRRig.transform.position = new Vector3(-51.4897f, 16.9286f, -120.1083f);
-                    
-                    bool didThing = false;
-                    foreach (ElfLauncher elf in GetElves())
-                    {
-                        TransferrableObject transobj = (TransferrableObject)Traverse.Create(elf).Field("parentHoldable").GetValue();
-                        if (transobj.IsLocalObject())
-                        {
-                            didThing = true;
-                            RubberDuckEvents rde = (RubberDuckEvents)elf.GetType().GetField("_events", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static).GetValue(elf);
-                            Vector3 position = lockTarget.headMesh.transform.position + new Vector3(UnityEngine.Random.Range(-2f, 2f), 2f, UnityEngine.Random.Range(-2f, 2f));
-                            rde.Activate.RaiseAll(new object[] { position, (lockTarget.headMesh.transform.position - position).normalized * (ShootStrength / 2f) });
-                            RPCProtection();
-                        }
-                    }
-                    if (!didThing)
-                    {
-                        CosmeticsController.instance.ApplyCosmeticItemToSet(GorillaTagger.Instance.offlineVRRig.tryOnSet, CosmeticsController.instance.GetItemFromDict("LMANE."), true, false);
-                        CosmeticsController.instance.UpdateWornCosmetics(true);
-                        archiveelves = null;
-                    }
-                }
-                if (GetGunInput(true))
-                {
-                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
-                    {
-                        gunLocked = true;
-                        lockTarget = gunTarget;
-                    }
-                }
-            }
-            else
-            {
-                if (gunLocked)
-                {
-                    gunLocked = false;
-                    GorillaTagger.Instance.offlineVRRig.enabled = true;
-                }
-            }
-        }*/
-
-        public static void PaperPlaneSpam()
-        {
-            if (rightGrab)
-            {
-                PaperPlaneThrowable funnyplane = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/TransferrableItemLeftArm/DropZoneAnchor/PaperAirplaneAnchor(Clone)/LMAHY.").GetComponent<PaperPlaneThrowable>();
-                if (Time.time > projDebounce)
-                {
-                    projDebounce = Time.time + projDebounceType;
-                    Vector3 position = GorillaTagger.Instance.rightHandTransform.position;
-                    Quaternion rotation = GorillaTagger.Instance.rightHandTransform.rotation;
-                    Vector3 velocity = GorillaTagger.Instance.rightHandTransform.forward * (ShootStrength * 2f);
-
-                    ((PhotonEvent)Traverse.Create(funnyplane).Field("gLaunchRPC").GetValue()).RaiseAll(new object[]
-                    {
-                        GorillaTagger.Instance.myVRRig.ViewID,
-                        position,
-                        rotation,
-                        velocity
-                    });
-                }
-            }
-        }
-
-        public static void FireballSpam()
-        {
-            if (rightGrab)
-            {
-                PaperPlaneThrowable funnyplane = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/TransferrableItemLeftArm/DropZoneAnchor/FireballAnchor(Clone)/LMAJM.").GetComponent<PaperPlaneThrowable>();
-                if (Time.time > projDebounce)
-                {
-                    projDebounce = Time.time + projDebounceType;
-                    Vector3 position = GorillaTagger.Instance.rightHandTransform.position;
-                    Quaternion rotation = GorillaTagger.Instance.rightHandTransform.rotation;
-                    Vector3 velocity = GorillaTagger.Instance.rightHandTransform.forward * (ShootStrength * 2f);
-
-                    typeof(PaperPlaneThrowable).GetMethod("LaunchProjectile", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(funnyplane, new object[] { position, rotation, velocity });
-                    FieldInfo lol = typeof(PaperPlaneThrowable).GetField("gLaunchRPC", BindingFlags.NonPublic | BindingFlags.Static);
-                    PhotonEvent lol2 = (PhotonEvent)lol.GetValue(funnyplane);
-                    lol2.RaiseOthers(new object[]
-                    {
-                        Traverse.Create(typeof(PaperPlaneThrowable)).Method("FetchViewID").GetValue(funnyplane),
-                        position,
-                        rotation,
-                        velocity
-                    });
+                    Projectile.SetSnowballActiveLocal(true);
+                    Projectile.velocityEstimator = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").GetComponent<GorillaVelocityEstimator>();
+                    Projectile.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                    Projectile.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
                 }
             }
         }
@@ -1081,7 +831,7 @@ namespace iiMenu.Mods.Spammers
                 }
                 else
                 {
-                    VRRig vrrig = GetRandomVRRig(false);// GorillaParent.instance.vrrigs[UnityEngine.Random.Range(0, GorillaParent.instance.vrrigs.Count - 1)];
+                    VRRig vrrig = GetRandomVRRig(false);
                     if (!PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
                     {
                         Vector3 startpos = GorillaTagger.Instance.rightHandTransform.position;
@@ -1095,7 +845,7 @@ namespace iiMenu.Mods.Spammers
             }
             else
             {
-                VRRig vrrig = GetRandomVRRig(false);//GorillaParent.instance.vrrigs[UnityEngine.Random.Range(0, GorillaParent.instance.vrrigs.Count - 1)];
+                VRRig vrrig = GetRandomVRRig(false);
                 if (vrrig != GorillaTagger.Instance.offlineVRRig)
                 {
                     Vector3 startpos = GorillaTagger.Instance.rightHandTransform.position;

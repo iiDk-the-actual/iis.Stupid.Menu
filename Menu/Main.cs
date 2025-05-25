@@ -264,12 +264,12 @@ namespace iiMenu.Menu
                                 if (vr != null)
                                     vr.GetComponent<Renderer>().material = OrangeUI;
 
-                                foreach (GorillaNetworkJoinTrigger v in (List<GorillaNetworkJoinTrigger>)typeof(PhotonNetworkController).GetField("allJoinTriggers", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(PhotonNetworkController.Instance))
+                                foreach (GorillaNetworkJoinTrigger joinTrigger in PhotonNetworkController.Instance.allJoinTriggers)
                                 {
                                     try
                                     {
-                                        JoinTriggerUI ui = (JoinTriggerUI)typeof(GorillaNetworkJoinTrigger).GetField("ui", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(v);
-                                        JoinTriggerUITemplate temp = (JoinTriggerUITemplate)typeof(JoinTriggerUI).GetField("template", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(ui);
+                                        JoinTriggerUI ui = joinTrigger.ui;
+                                        JoinTriggerUITemplate temp = ui.template;
 
                                         temp.ScreenBG_AbandonPartyAndSoloJoin = OrangeUI;
                                         temp.ScreenBG_AlreadyInRoom = OrangeUI;
@@ -280,7 +280,7 @@ namespace iiMenu.Menu
                                         temp.ScreenBG_LeaveRoomAndSoloJoin = OrangeUI;
                                         temp.ScreenBG_NotConnectedSoloJoin = OrangeUI;
 
-                                        TextMeshPro text = (TextMeshPro)Traverse.Create(ui).Field("screenText").GetValue();
+                                        TextMeshPro text = ui.screenText;
                                         if (!udTMP.Contains(text))
                                             udTMP.Add(text);
                                     }
@@ -295,9 +295,9 @@ namespace iiMenu.Menu
                                     "Environment Objects/LocalObjects_Prefab/TreeRoom/Data",
                                     "Environment Objects/LocalObjects_Prefab/TreeRoom/FunctionSelect"
                                 };
-                                foreach (string lol in objectsWithTMPro)
+                                foreach (string objectName in objectsWithTMPro)
                                 {
-                                    GameObject obj = GameObject.Find(lol);
+                                    GameObject obj = GameObject.Find(objectName);
                                     if (obj != null)
                                     {
                                         TextMeshPro text = obj.GetComponent<TextMeshPro>();
@@ -305,13 +305,13 @@ namespace iiMenu.Menu
                                             udTMP.Add(text);
                                     }
                                     else
-                                        LogManager.Log("Could not find " + lol);
+                                        LogManager.Log("Could not find " + objectName);
                                 }
 
-                                Transform targettransform = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/ForestScoreboardAnchor/GorillaScoreBoard").transform;
-                                for (int i = 0; i < targettransform.transform.childCount; i++)
+                                Transform forestTransform = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/ForestScoreboardAnchor/GorillaScoreBoard").transform;
+                                for (int i = 0; i < forestTransform.transform.childCount; i++)
                                 {
-                                    GameObject v = targettransform.GetChild(i).gameObject;
+                                    GameObject v = forestTransform.GetChild(i).gameObject;
                                     if ((v.name.Contains("Board Text") || v.name.Contains("Scoreboard_OfflineText")) && v.activeSelf)
                                     {
                                         TextMeshPro text = v.GetComponent<TextMeshPro>();
@@ -347,9 +347,9 @@ namespace iiMenu.Menu
 
                         if (motd == null)
                         {
-                            GameObject motdThing = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/motd (1)");
-                            motd = UnityEngine.Object.Instantiate(motdThing, motdThing.transform.parent);
-                            motdThing.SetActive(false);
+                            GameObject motdObject = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/motd (1)");
+                            motd = Instantiate(motdObject, motdObject.transform.parent);
+                            motdObject.SetActive(false);
                         }
 
                         TextMeshPro motdTC = motd.GetComponent<TextMeshPro>();
@@ -374,9 +374,9 @@ namespace iiMenu.Menu
 
                         if (motdText == null)
                         {
-                            GameObject motdThing = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/motdtext");
-                            motdText = UnityEngine.Object.Instantiate(motdThing, motdThing.transform.parent);
-                            motdThing.SetActive(false);
+                            GameObject motdObject = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/motdtext");
+                            motdText = Instantiate(motdObject, motdObject.transform.parent);
+                            motdObject.SetActive(false);
 
                             motdText.GetComponent<PlayFabTitleDataTextDisplay>().enabled = false;
                         }
@@ -717,7 +717,7 @@ namespace iiMenu.Menu
                             {
                                 if (GhostRig == null)
                                 {
-                                    GhostRig = UnityEngine.Object.Instantiate<VRRig>(GorillaTagger.Instance.offlineVRRig, GorillaLocomotion.GTPlayer.Instance.transform.position, GorillaLocomotion.GTPlayer.Instance.transform.rotation);
+                                    GhostRig = Instantiate<VRRig>(GorillaTagger.Instance.offlineVRRig, GorillaLocomotion.GTPlayer.Instance.transform.position, GorillaLocomotion.GTPlayer.Instance.transform.rotation);
                                     GhostRig.headBodyOffset = Vector3.zero;
                                     GhostRig.enabled = true;
 
@@ -1150,7 +1150,7 @@ namespace iiMenu.Menu
                         if (rejRoom != null && Time.time > rejDebounce/* && PhotonNetwork.NetworkingClient.State == ClientState.Disconnected*/)
                         {
                             LogManager.Log("Attempting rejoin");
-                            PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(rejRoom, JoinType.Solo);
+                            PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(rejRoom, GorillaNetworking.JoinType.Solo);
                             rejDebounce = Time.time + (float)internetTime;
                         }
                     }
@@ -1182,7 +1182,7 @@ namespace iiMenu.Menu
                             if (partyLastCode != null && Time.time > partyTime && (waitForPlayerJoin ? PhotonNetwork.PlayerListOthers.Length > 0 : true))
                             {
                                 LogManager.Log("Attempting rejoin");
-                                PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(partyLastCode, JoinType.Solo);
+                                PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(partyLastCode, GorillaNetworking.JoinType.Solo);
                                 partyTime = Time.time + (float)internetTime;
                             }
                         }
@@ -2956,7 +2956,7 @@ namespace iiMenu.Menu
             if (assetBundle == null)
                 LoadAssetBundle();
             
-            gameObject = UnityEngine.Object.Instantiate(assetBundle.LoadAsset<GameObject>(assetName));
+            gameObject = Instantiate(assetBundle.LoadAsset<GameObject>(assetName));
             
             return gameObject;
         }
@@ -3671,7 +3671,7 @@ namespace iiMenu.Menu
             {
                 snowballDict = new Dictionary<string, SnowballThrowable>();
 
-                snowballs = UnityEngine.Object.FindObjectsOfType<SnowballThrowable>(true);
+                snowballs = FindObjectsOfType<SnowballThrowable>(true);
                 foreach (SnowballThrowable lol in snowballs)
                 {
                     try
@@ -4244,7 +4244,7 @@ namespace iiMenu.Menu
         // To get the optimal delay from call limiter
         public static float GetCallLimiterDelay(CallLimiter limiter)
         {
-            return ((float)Traverse.Create(limiter).Field("timeCooldown").GetValue() / (int)Traverse.Create(limiter).Field("callHistoryLength").GetValue()); // + (Time.deltaTime * 1.5f)
+            return limiter.timeCooldown / limiter.callHistoryLength;
         }
 
         public static void EventReceived(EventData data)
@@ -4942,7 +4942,7 @@ namespace iiMenu.Menu
         public static void OnLaunch()
         {
             timeMenuStarted = Time.time;
-            IsSteam = Traverse.Create(PlayFabAuthenticator.instance).Field("platform").GetValue().ToString().ToLower() == "steam";
+            IsSteam = PlayFabAuthenticator.instance.platform;
 
             try
             {

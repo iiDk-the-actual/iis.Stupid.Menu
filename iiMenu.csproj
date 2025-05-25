@@ -35,8 +35,16 @@
     <EmbeddedResource Include="Resources\pearl.png" />
   </ItemGroup>
   
+  <!-- AssemblyPublicizer usage inspired from GorillaShirts -->
   <ItemGroup>
-    <Reference Include="Assembly-CSharp">
+	  <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.3">
+	    <PrivateAssets>all</PrivateAssets>
+	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
+	</ItemGroup>
+  
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp" Publicize="true">
       <HintPath>$(GameAssemblyPath)\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="0Harmony">
@@ -246,10 +254,10 @@
     <Reference Include="Photon3Unity3D">
       <HintPath>$(GameAssemblyPath)\Photon3Unity3D.dll</HintPath>
     </Reference>
-    <Reference Include="PhotonRealtime">
+    <Reference Include="PhotonRealtime" Publicize="true">
       <HintPath>$(GameAssemblyPath)\PhotonRealtime.dll</HintPath>
     </Reference>
-    <Reference Include="PhotonUnityNetworking">
+    <Reference Include="PhotonUnityNetworking" Publicize="true">
       <HintPath>$(GameAssemblyPath)\PhotonUnityNetworking.dll</HintPath>
     </Reference>
     <Reference Include="PhotonUnityNetworking.Utilities">

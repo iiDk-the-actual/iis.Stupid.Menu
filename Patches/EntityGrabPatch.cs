@@ -13,7 +13,7 @@ namespace iiMenu.Patches
         {
             if (enabled)
             {
-                List<GameEntity> entities = Traverse.Create(GameEntityManager.instance).Field("entities").GetValue<List<GameEntity>>();
+                List<GameEntity> entities = GameEntityManager.instance.entities;
 
                 GameEntityId gameEntityId = GameEntityId.Invalid;
                 float closestDist = float.MaxValue;

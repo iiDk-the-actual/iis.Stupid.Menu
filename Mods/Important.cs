@@ -7,6 +7,7 @@ using Photon.Pun;
 using System.Collections;
 using System.Diagnostics;
 using System.Reflection;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static iiMenu.Menu.Main;
@@ -82,10 +83,8 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void CreateRoom(string roomName, bool isPublic) // Once again thanks to Shiny for discovering a thing that doesn't work anymore
+        public static void CreateRoom(string roomName, bool isPublic)
         {
-            //PhotonNetworkController.Instance.currentJoinTrigger = GorillaComputer.instance.GetJoinTriggerForZone("forest");
-            LogManager.Log((string)typeof(PhotonNetworkController).GetField("platformTag", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(PhotonNetworkController.Instance));
             RoomConfig roomConfig = new RoomConfig()
             {
                 createIfMissing = true,
@@ -95,7 +94,7 @@ namespace iiMenu.Mods
                 CustomProps = new ExitGames.Client.Photon.Hashtable()
                 {
                     { "gameMode", PhotonNetworkController.Instance.currentJoinTrigger.GetFullDesiredGameModeString() },
-                    { "platform", (string)typeof(PhotonNetworkController).GetField("platformTag", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(PhotonNetworkController.Instance) },
+                    { "platform", PlayFabAuthenticator.instance.platform },
                     { "queueName", GorillaComputer.instance.currentQueue }
                 }
             };
@@ -202,21 +201,21 @@ namespace iiMenu.Mods
             GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").SetActive(true);
         }
 
-        private static bool lastreportmenubooltogglelaaaa = false;
+        private static bool reportMenuToggle;
         public static void OculusReportMenu()
         {
-            if (leftPrimary && !lastreportmenubooltogglelaaaa)
+            if (leftPrimary && !reportMenuToggle)
             {
-                GorillaMetaReport gr = GameObject.Find("Miscellaneous Scripts").transform.Find("MetaReporting").GetComponent<GorillaMetaReport>();
-                gr.gameObject.SetActive(true);
-                gr.enabled = true;
-                MethodInfo inf = typeof(GorillaMetaReport).GetMethod("StartOverlay", BindingFlags.NonPublic | BindingFlags.Instance);
-                inf.Invoke(gr, null);
+                GorillaMetaReport metaReporting = GameObject.Find("Miscellaneous Scripts").transform.Find("MetaReporting").GetComponent<GorillaMetaReport>();
+                metaReporting.gameObject.SetActive(true);
+                metaReporting.enabled = true;
+
+                metaReporting.StartOverlay();
             }
-            lastreportmenubooltogglelaaaa = leftPrimary;
+            reportMenuToggle = leftPrimary;
         }
 
-        private static GameObject popup = null;
+        private static GameObject popup;
         public static void AcceptTOS()
         {
             try
@@ -229,8 +228,8 @@ namespace iiMenu.Mods
             {
                 PrivateUIRoom Room = GameObject.Find("Miscellaneous Scripts/PrivateUIRoom_HandRays").GetComponent<PrivateUIRoom>();
 
-                if (Traverse.Create(Room).Field("inOverlay").GetValue<bool>())
-                    typeof(PrivateUIRoom).GetMethod("StopOverlay", BindingFlags.NonPublic | BindingFlags.Static).Invoke(Room, new object[] { });
+                if (Room.inOverlay)
+                    PrivateUIRoom.StopOverlay();
             }
             catch { }
 
@@ -348,7 +347,7 @@ namespace iiMenu.Mods
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
                 if (vrrig != GorillaTagger.Instance.offlineVRRig)
-                    ((Photon.Voice.Unity.Speaker)Traverse.Create(vrrig.gameObject.GetComponent<GorillaSpeakerLoudness>()).Field("speaker").GetValue()).SetPlaybackDelaySettings(new Photon.Voice.Unity.PlaybackDelaySettings() { MinDelaySoft = 0, MaxDelaySoft = 400, MaxDelayHard = 100 });
+                    vrrig.GetComponent<GorillaSpeakerLoudness>().speaker.SetPlaybackDelaySettings(new Photon.Voice.Unity.PlaybackDelaySettings() { MinDelaySoft = 0, MaxDelaySoft = 400, MaxDelayHard = 100 });
             } 
         }
 
@@ -357,7 +356,7 @@ namespace iiMenu.Mods
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
                 if (vrrig != GorillaTagger.Instance.offlineVRRig)
-                    ((Photon.Voice.Unity.Speaker)Traverse.Create(vrrig.gameObject.GetComponent<GorillaSpeakerLoudness>()).Field("speaker").GetValue()).SetPlaybackDelaySettings(new Photon.Voice.Unity.PlaybackDelaySettings() { MinDelaySoft = 200, MaxDelaySoft = 400, MaxDelayHard = 100 });
+                    vrrig.GetComponent<GorillaSpeakerLoudness>().speaker.SetPlaybackDelaySettings(new Photon.Voice.Unity.PlaybackDelaySettings() { MinDelaySoft = 200, MaxDelaySoft = 400, MaxDelayHard = 100 });
             }
         }
 
@@ -373,15 +372,13 @@ namespace iiMenu.Mods
 
         public static void ForceLagGame()
         {
-            foreach (GameObject g in Object.FindObjectsByType<GameObject>(0)) { }
+            Task.Delay(50);
         }
 
         public static void GripForceLagGame()
         {
             if (rightGrab)
-            {
-                foreach (GameObject g in Object.FindObjectsByType<GameObject>(0)) { }
-            }
+                Task.Delay(50);
         }
 
         public static void UncapFPS()
@@ -442,7 +439,7 @@ namespace iiMenu.Mods
         {
             if (PhotonNetwork.InRoom && !PhotonNetwork.IsMasterClient)
             {
-                if (Quaternion.Angle(Classes.RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).headMesh.transform.rotation, lastHeadQuat) <= 0.01f && Quaternion.Angle(Classes.RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).leftHandTransform.rotation, lastLHQuat) <= 0.01f && Quaternion.Angle(Classes.RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).rightHandTransform.rotation, lastRHQuat) <= 0.01f)
+                if (Quaternion.Angle(RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).headMesh.transform.rotation, lastHeadQuat) <= 0.01f && Quaternion.Angle(RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).leftHandTransform.rotation, lastLHQuat) <= 0.01f && Quaternion.Angle(RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).rightHandTransform.rotation, lastRHQuat) <= 0.01f)
                 {
                     tagLagFrames++;
                 } else
@@ -450,9 +447,9 @@ namespace iiMenu.Mods
                     tagLagFrames = 0;
                 }
 
-                lastLHQuat = Classes.RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).leftHandTransform.rotation;
-                lastRHQuat = Classes.RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).rightHandTransform.rotation;
-                lastHeadQuat = Classes.RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).headMesh.transform.rotation;
+                lastLHQuat = RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).leftHandTransform.rotation;
+                lastRHQuat = RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).rightHandTransform.rotation;
+                lastHeadQuat = RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).headMesh.transform.rotation;
 
                 bool thereIsTagLag = tagLagFrames > 512;
                 if (thereIsTagLag && !lastTagLag)

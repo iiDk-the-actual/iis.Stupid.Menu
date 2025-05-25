@@ -26,7 +26,8 @@ namespace iiMenu.Patches
                         handSpeed = overrideVolume;
                         tapDir = new Vector3(overrideVolume, overrideVolume, overrideVolume);
                         GorillaTagger.Instance.handTapVolume = overrideVolume;
-                        typeof(GorillaTagger).GetField("tempHitDir", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(GorillaTagger.Instance, new Vector3(overrideVolume, overrideVolume, overrideVolume));
+                        GorillaTagger.Instance.tempHitDir = new Vector3(overrideVolume, overrideVolume, overrideVolume);
+                        
                         if (PhotonNetwork.InRoom)
                         {
                             GorillaTagger.Instance.myVRRig.SendRPC("OnHandTapRPC", RpcTarget.All, new object[]
@@ -59,7 +60,7 @@ namespace iiMenu.Patches
                     {
                         handSpeed = 0f;
                         GorillaTagger.Instance.handTapVolume = 0f;
-                        typeof(GorillaTagger).GetField("tempInt", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(GorillaTagger.Instance, (int)-1);
+                        GorillaTagger.Instance.tempInt = -1;
                         soundIndex = -1;
                         return false;
                     }

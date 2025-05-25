@@ -45,7 +45,7 @@ namespace iiMenu.Classes
 
         public static NetworkView GetNetworkViewFromVRRig(VRRig p)
         {
-            return (NetworkView)Traverse.Create(p).Field("netView").GetValue();
+            return p.netView;
         }
 
         public static Photon.Realtime.Player GetRandomPlayer(bool includeSelf)
@@ -63,7 +63,6 @@ namespace iiMenu.Classes
 
         public static NetPlayer GetPlayerFromVRRig(VRRig p)
         {
-            //return GetPhotonViewFromVRRig(p).Owner;
             return p.Creator;
         }
 

@@ -15,13 +15,14 @@ namespace iiMenu.Patches
         {
             if (enabled)
             {
-                GorillaSnapTurn GorillaSnapTurningComp = (GorillaSnapTurn)Traverse.Create(GorillaTagger.Instance).Field("GorillaSnapTurningComp").GetValue();
+                GorillaSnapTurn GorillaSnapTurningComp = GorillaTagger.Instance.offlineVRRig.GorillaSnapTurningComp;
 
                 int turnTypeInt = 0;
                 if (GorillaSnapTurningComp != null)
                 {
-                    Traverse.Create(GorillaTagger.Instance).Field("turnFactor").SetValue(GorillaSnapTurningComp.turnFactor);
-                    Traverse.Create(GorillaTagger.Instance).Field("turnType").SetValue(GorillaSnapTurningComp.turnType);
+                    GorillaTagger.Instance.offlineVRRig.turnFactor = GorillaSnapTurningComp.turnFactor;
+                    GorillaTagger.Instance.offlineVRRig.turnType = GorillaSnapTurningComp.turnType;
+
                     if (!(GorillaSnapTurningComp.turnType == "SNAP"))
                     {
                         if (GorillaSnapTurningComp.turnType == "SMOOTH")
