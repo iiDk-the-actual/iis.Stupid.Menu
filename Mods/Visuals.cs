@@ -612,7 +612,7 @@ namespace iiMenu.Mods
                         }
 
                         GameObject nameTag = FPSnametags[vrrig];
-                        nameTag.GetComponent<TextMesh>().text = Traverse.Create(vrrig).Field("fps").GetValue().ToString() + " FPS";
+                        nameTag.GetComponent<TextMesh>().text = $"{vrrig.fps} FPS";
                         nameTag.GetComponent<TextMesh>().color = vrrig.playerColor;
                         nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
 
@@ -663,8 +663,8 @@ namespace iiMenu.Mods
                             turnNameTags.Add(vrrig, go);
                         }
 
-                        string turnType = (string)Traverse.Create(vrrig).Field("turnType").GetValue();
-                        int turnFactor = (int)Traverse.Create(vrrig).Field("turnFactor").GetValue();
+                        string turnType = vrrig.turnType;
+                        int turnFactor = vrrig.turnFactor;
 
                         GameObject nameTag = turnNameTags[vrrig];
                         nameTag.GetComponent<TextMesh>().text = turnType == "NONE" ? "None" : ToTitleCase(turnType) + " " + turnFactor.ToString();
@@ -722,7 +722,7 @@ namespace iiMenu.Mods
                         GameObject nameTag = taggedNameTags[vrrig];
                         if (PlayerIsTagged(vrrig))
                         {
-                            int taggedById = (int)Traverse.Create(vrrig).Field("taggedById").GetValue();
+                            int taggedById = vrrig.taggedById;
                             NetPlayer tagger = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(taggedById, false);
 
                             if (tagger != null)

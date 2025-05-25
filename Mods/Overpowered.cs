@@ -46,8 +46,8 @@ namespace iiMenu.Mods
 
             AngryBeeSwarm Bees = GameObject.Find("Environment Objects/05Maze_PersistentObjects/AngryBeeSwarm/FloatingChaseBeeSwarm").GetComponent<AngryBeeSwarm>();
 
-            Traverse.Create(Bees).Field("grabTimestamp").SetValue(Time.time);
-            Traverse.Create(Bees).Field("emergeStartedTimestamp").SetValue(Time.time);
+            Bees.grabTimestamp = Time.time;
+            Bees.emergeStartedTimestamp = Time.time;
 
             Bees.targetPlayer = PhotonNetwork.LocalPlayer;
             Bees.grabbedPlayer = PhotonNetwork.LocalPlayer;
@@ -69,12 +69,12 @@ namespace iiMenu.Mods
                     if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
 
                     AngryBeeSwarm Bees = GameObject.Find("Environment Objects/05Maze_PersistentObjects/AngryBeeSwarm/FloatingChaseBeeSwarm").GetComponent<AngryBeeSwarm>();
-                    float grabTimestamp = Traverse.Create(Bees).Field("grabTimestamp").GetValue<float>();
+                    float grabTimestamp = Bees.grabTimestamp;
 
                     if (Bees.currentState != AngryBeeSwarm.ChaseState.Grabbing && Time.time > grabTimestamp + 5.1f)
                     {
-                        Traverse.Create(Bees).Field("grabTimestamp").SetValue(Time.time);
-                        Traverse.Create(Bees).Field("emergeStartedTimestamp").SetValue(Time.time);
+                        Bees.grabTimestamp = Time.time;
+                        Bees.emergeStartedTimestamp = Time.time;
 
                         Bees.targetPlayer = PhotonNetwork.LocalPlayer;
                         Bees.grabbedPlayer = PhotonNetwork.LocalPlayer;
@@ -109,12 +109,12 @@ namespace iiMenu.Mods
             if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
 
             AngryBeeSwarm Bees = GameObject.Find("Environment Objects/05Maze_PersistentObjects/AngryBeeSwarm/FloatingChaseBeeSwarm").GetComponent<AngryBeeSwarm>();
-            float grabTimestamp = Traverse.Create(Bees).Field("grabTimestamp").GetValue<float>();
+            float grabTimestamp = Bees.grabTimestamp;
 
             if (Bees.currentState != AngryBeeSwarm.ChaseState.Grabbing && Time.time > grabTimestamp + 5.1f)
             {
-                Traverse.Create(Bees).Field("grabTimestamp").SetValue(Time.time);
-                Traverse.Create(Bees).Field("emergeStartedTimestamp").SetValue(Time.time);
+                Bees.grabTimestamp = Time.time;
+                Bees.emergeStartedTimestamp = Time.time;
 
                 Bees.lastState = AngryBeeSwarm.ChaseState.Chasing;
                 Bees.currentState = AngryBeeSwarm.ChaseState.Grabbing;
@@ -139,9 +139,7 @@ namespace iiMenu.Mods
                     if (gorillaGuardianZoneManager.enabled)
                     {
                         if (gorillaGuardianZoneManager.CurrentGuardian != NetworkSystem.Instance.LocalPlayer)
-                        {
-                            Traverse.Create(gorillaGuardianZoneManager).Field("guardianPlayer").SetValue(NetworkSystem.Instance.LocalPlayer);
-                        }
+                            gorillaGuardianZoneManager.guardianPlayer = NetworkSystem.Instance.LocalPlayer;
                     }
                 }
             }
@@ -155,9 +153,7 @@ namespace iiMenu.Mods
                 foreach (GorillaGuardianZoneManager gorillaGuardianZoneManager in GorillaGuardianZoneManager.zoneManagers)
                 {
                     if (gorillaGuardianZoneManager.enabled)
-                    {
                         gorillaGuardianZoneManager.SetGuardian(NetworkSystem.Instance.LocalPlayer);
-                    }
                 }
             }
             else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
@@ -181,9 +177,7 @@ namespace iiMenu.Mods
                             foreach (GorillaGuardianZoneManager gorillaGuardianZoneManager in GorillaGuardianZoneManager.zoneManagers)
                             {
                                 if (gorillaGuardianZoneManager.enabled)
-                                {
                                     gorillaGuardianZoneManager.SetGuardian(GetPlayerFromVRRig(gunTarget));
-                                }
                             }
                         }
                         else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
@@ -219,9 +213,7 @@ namespace iiMenu.Mods
                     if (gorillaGuardianZoneManager.enabled)
                     {
                         if (gorillaGuardianZoneManager.CurrentGuardian == NetworkSystem.Instance.LocalPlayer)
-                        {
                             gorillaGuardianZoneManager.SetGuardian(null);
-                        }
                     }
                 }
             }
@@ -248,9 +240,7 @@ namespace iiMenu.Mods
                                 if (gorillaGuardianZoneManager.enabled)
                                 {
                                     if (gorillaGuardianZoneManager.CurrentGuardian == GetPlayerFromVRRig(gunTarget))
-                                    {
                                         gorillaGuardianZoneManager.SetGuardian(null);
-                                    }
                                 }
                             }
                         }
@@ -268,23 +258,21 @@ namespace iiMenu.Mods
                 foreach (GorillaGuardianZoneManager gorillaGuardianZoneManager in GorillaGuardianZoneManager.zoneManagers)
                 {
                     if (gorillaGuardianZoneManager.enabled)
-                    {
                         gorillaGuardianZoneManager.SetGuardian(null);
-                    }
                 }
             }
             else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
         }
 
-        private static float guardianspazdelay = 0f;
-        private static bool lastGuardianThing = false;
+        private static float guardianSpazDelay = 0f;
+        private static bool guardianSpazToggle = false;
         public static void GuardianSpaz()
         {
-            if (Time.time > guardianspazdelay)
+            if (Time.time > guardianSpazDelay)
             {
-                guardianspazdelay = Time.time + 0.1f;
-                lastGuardianThing = !lastGuardianThing;
-                if (lastGuardianThing)
+                guardianSpazDelay = Time.time + 0.1f;
+                guardianSpazToggle = !guardianSpazToggle;
+                if (guardianSpazToggle)
                     GuardianAll();
                 else
                     UnguardianAll();
@@ -296,16 +284,14 @@ namespace iiMenu.Mods
             if (PhotonNetwork.IsMasterClient)
             {
                 GorillaGuardianManager gman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Guardian Manager").GetComponent<GorillaGuardianManager>();
-                if (!gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer)) // gzm.enabled && 
+                if (!gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
                 {
                     foreach (GorillaGuardianZoneManager gorillaGuardianZoneManager in GorillaGuardianZoneManager.zoneManagers)
                     {
                         if (gorillaGuardianZoneManager.enabled)
                         {
                             if (gorillaGuardianZoneManager.CurrentGuardian != NetworkSystem.Instance.LocalPlayer)
-                            {
                                 gorillaGuardianZoneManager.SetGuardian(NetworkSystem.Instance.LocalPlayer);
-                            }
                         }
                     }
                 }
@@ -341,7 +327,7 @@ namespace iiMenu.Mods
         {
             if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
 
-            int netId = (int)typeof(GameEntityManager).GetMethod("CreateNetId", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(GameEntityManager.instance, new object[] { });
+            int netId = GameEntityManager.instance.CreateNetId();
 
             if (target is NetPlayer)
                 target = NetPlayerToPlayer((NetPlayer)target);
@@ -466,8 +452,7 @@ namespace iiMenu.Mods
                         GameEntityId gameEntityId = GameEntityId.Invalid;
                         float closestDist = float.MaxValue;
 
-                        List<GameEntity> entities = Traverse.Create(GameEntityManager.instance).Field("entities").GetValue<List<GameEntity>>();
-                        foreach (GameEntity entity in entities)
+                        foreach (GameEntity entity in GameEntityManager.instance.entities)
                         {
                             if (entity != null)
                             {
@@ -492,14 +477,12 @@ namespace iiMenu.Mods
 
         public static void ActiveNetworkHandlerRPC(string rpc, Player target, object[] args)
         {
-            NetworkView netView = (NetworkView)Traverse.Create(typeof(GameMode)).Field("activeNetworkHandler").Field("netView").GetValue();
-            netView.GetView.RPC(rpc, target, args);
+            GameMode.activeNetworkHandler.netView.GetView.RPC(rpc, target, args);
             RPCProtection();
         }
         public static void ActiveNetworkHandlerRPC(string rpc, RpcTarget target, object[] args)
         {
-            NetworkView netView = (NetworkView)Traverse.Create(typeof(GameMode)).Field("activeNetworkHandler").Field("netView").GetValue();
-            netView.GetView.RPC(rpc, target, args);
+            GameMode.activeNetworkHandler.netView.GetView.RPC(rpc, target, args);
             RPCProtection();
         }
 
@@ -841,14 +824,10 @@ namespace iiMenu.Mods
                 GameObject SlingshotProjectileGameObject = new GameObject("SlingshotProjectileHolder");
                 SlingshotProjectile SlingshotProjectile = SlingshotProjectileGameObject.AddComponent<SlingshotProjectile>();
 
-                Type ProjectileTracker = typeof(GorillaLocomotion.GTPlayer).Assembly.GetType("ProjectileTracker");
-                Type ProjectileInfo = ProjectileTracker.GetNestedType("ProjectileInfo", BindingFlags.Public | BindingFlags.Instance);
-                object LocalProjectileInfo = Activator.CreateInstance(ProjectileInfo, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, new object[] { PhotonNetwork.Time, Velocity, Position, Scale, SlingshotProjectile }, null);
+                ProjectileTracker.ProjectileInfo LocalProjectileInfo = new ProjectileTracker.ProjectileInfo(PhotonNetwork.Time, Velocity, Position, Scale, SlingshotProjectile);
 
-                object m_localProjectiles = ProjectileTracker.GetField("m_localProjectiles", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null);
-
-                MethodInfo AddAndIncrement = m_localProjectiles.GetType().GetMethod("AddAndIncrement", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-                int Data = (int)AddAndIncrement.Invoke(m_localProjectiles, new object[] { LocalProjectileInfo });
+                int Data = ProjectileTracker.m_localProjectiles.AddAndIncrement(LocalProjectileInfo);
+                archiveIncrement = Data;
 
                 UnityEngine.Object.Destroy(SlingshotProjectileGameObject);
                 return Data;
@@ -887,13 +866,10 @@ namespace iiMenu.Mods
                 DisableCoroutine = CoroutineManager.RunCoroutine(DisableSnowball(isTooFar));
 
                 GrowingSnowballThrowable GrowingSnowball = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/GrowingSnowballRightAnchor(Clone)/LMACF. RIGHT.").GetComponent<GrowingSnowballThrowable>();
-                PhotonEvent Event = (PhotonEvent)Traverse.Create(GrowingSnowball).Field("snowballThrowEvent").GetValue();
+                PhotonEvent Event = GrowingSnowball.snowballThrowEvent;
 
                 if (NetworkSize)
-                {
-                    PhotonEvent Event2 = (PhotonEvent)Traverse.Create(GrowingSnowball).Field("changeSizeEvent").GetValue();
-                    Event2.RaiseAll(customNetworkedSize > 0 ? customNetworkedSize : (int)Scale);
-                }
+                    GrowingSnowball.changeSizeEvent.RaiseAll(customNetworkedSize > 0 ? customNetworkedSize : (int)Scale);
                 
                 switch (Mode)
                 {
@@ -906,7 +882,7 @@ namespace iiMenu.Mods
                     case 2:
                         PhotonNetwork.RaiseEvent(176, new object[]
                         {
-                            (int)Traverse.Create(Event).Field("_eventId").GetValue(),
+                            Event._eventId,
                             Pos,
                             Vel,
                             GetProjectileIncrement(Pos, Vel, Scale)
@@ -1393,11 +1369,11 @@ namespace iiMenu.Mods
             catch { } // Not connected
         }
 
-        public static bool SpedRPC(PhotonView photonView, string method, Player player, object[] parameters)
+        public static bool SpecialTargetRPC(PhotonView photonView, string method, int[] targetActors, object[] parameters)
         {
             if (photonView != null && parameters != null && !string.IsNullOrEmpty(method))
             {
-                var rpcHash = new ExitGames.Client.Photon.Hashtable
+                ExitGames.Client.Photon.Hashtable rpcData = new ExitGames.Client.Photon.Hashtable
                 {
                     { 0, photonView.ViewID },
                     { 2, (int)(PhotonNetwork.ServerTimestamp + -int.MaxValue) },
@@ -1407,27 +1383,21 @@ namespace iiMenu.Mods
 
                 if (photonView.Prefix > 0)
                 {
-                    rpcHash[1] = (short)photonView.Prefix;
+                    rpcData[1] = (short)photonView.Prefix;
                 }
                 if (PhotonNetwork.PhotonServerSettings.RpcList.Contains(method))
                 {
-                    rpcHash[5] = (byte)PhotonNetwork.PhotonServerSettings.RpcList.IndexOf(method);
+                    rpcData[5] = (byte)PhotonNetwork.PhotonServerSettings.RpcList.IndexOf(method);
                 }
-                if (PhotonNetwork.NetworkingClient.LocalPlayer.ActorNumber == player.ActorNumber)
+                if (targetActors.Contains(PhotonNetwork.LocalPlayer.ActorNumber))
                 {
-                    typeof(PhotonNetwork).GetMethod("ExecuteRpc", BindingFlags.Static | BindingFlags.NonPublic).Invoke(typeof(PhotonNetwork), new object[]
-                    {
-                        (ExitGames.Client.Photon.Hashtable)rpcHash, (Player)PhotonNetwork.LocalPlayer
-                    });
+                    PhotonNetwork.ExecuteRpc(rpcData, PhotonNetwork.LocalPlayer);
                 }
                 else
                 {
-                    PhotonNetwork.NetworkingClient.LoadBalancingPeer.OpRaiseEvent(200, rpcHash, new RaiseEventOptions
+                    PhotonNetwork.NetworkingClient.LoadBalancingPeer.OpRaiseEvent(200, rpcData, new RaiseEventOptions
                     {
-                        TargetActors = new int[]
-                        {
-                            player.ActorNumber,
-                        }
+                        TargetActors = targetActors
                     }, new SendOptions
                     {
                         Reliability = true,
@@ -1439,9 +1409,6 @@ namespace iiMenu.Mods
             return false;
         }
 
-        // Hi skids :3
-        // If you take this code you like giving sloppy wet kisses to cute boys >_<
-        // I gotta stop
         private static float delay;
         private static bool returnOrTeleport;
         public static void ArcadeTeleporterEffectSpammer()
@@ -1859,7 +1826,7 @@ namespace iiMenu.Mods
             {
                 foreach (HitTargetNetworkState hitTargetNetworkState in Resources.FindObjectsOfTypeAll<HitTargetNetworkState>())
                 {
-                    Traverse.Create(hitTargetNetworkState).Field("hitCooldownTime").SetValue(0);
+                    hitTargetNetworkState.hitCooldownTime = 0;
                     hitTargetNetworkState.TargetHit(Vector3.zero, Vector3.zero);
                 }
             } else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
@@ -2162,7 +2129,7 @@ namespace iiMenu.Mods
                 RopeDelay = Time.time + 0.1f;
                 foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                 {
-                    GorillaRopeSwing rope = (GorillaRopeSwing)Traverse.Create(vrrig).Field("currentRopeSwing").GetValue();
+                    GorillaRopeSwing rope = vrrig.currentRopeSwing;
                     if (rope != null)
                     {
                         RopeSwingManager.instance.photonView.RPC("SetVelocity", RpcTarget.All, new object[] { rope.ropeId, 1, new Vector3(UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f)), true, null });
@@ -2179,7 +2146,7 @@ namespace iiMenu.Mods
                 RopeDelay = Time.time + 0.1f;
                 foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                 {
-                    GorillaRopeSwing rope = (GorillaRopeSwing)Traverse.Create(vrrig).Field("currentRopeSwing").GetValue();
+                    GorillaRopeSwing rope = vrrig.currentRopeSwing;
                     if (rope != null)
                     {
                         RopeSwingManager.instance.photonView.RPC("SetVelocity", NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)), new object[] { rope.ropeId, 1, new Vector3(UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f)), true, null });

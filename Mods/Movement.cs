@@ -1055,54 +1055,51 @@ namespace iiMenu.Mods
                 if (isLeftGrappling || isRightGrappling)
                 {
                     BalloonHoldable tb = GetTargetBalloon();
-                    Traverse.Create(tb).Field("balloonState").SetValue(0);
-                    Traverse.Create(tb).Field("maxDistanceFromOwner").SetValue(float.MaxValue);
+
+                    tb.balloonState = BalloonHoldable.BalloonStates.Normal;
+                    tb.maxDistanceFromOwner = float.MaxValue;
+
                     tb.rigidbodyInstance.isKinematic = true;
                     tb.gameObject.GetComponent<BalloonDynamics>().stringLength = 512f;
                     tb.gameObject.GetComponent<BalloonDynamics>().stringStrength = 512f;
-                    Traverse.Create(tb.gameObject.GetComponent<BalloonDynamics>()).Field("enableDynamics").SetValue(false);
+                    tb.gameObject.GetComponent<BalloonDynamics>().enableDynamics = false;
+
                     if (tb != null)
                     {
+                        if (isLeftGrappling || isRightGrappling)
+                        {
+                            if (!tb.lineRenderer.enabled)
+                                tb.currentState = TransferrableObject.PositionState.InLeftHand;
+                        }
+
                         if (isLeftGrappling)
                         {
-                            if (!((LineRenderer)Traverse.Create(tb).Field("lineRenderer").GetValue()).enabled)
-                            {
-                                tb.currentState = TransferrableObject.PositionState.InLeftHand;
-                            }
                             tb.transform.position = leftgrapplePoint;
                             tb.transform.LookAt(GorillaTagger.Instance.leftHandTransform.position);
                         }
                         else
                         {
-                            if (isRightGrappling)
-                            {
-                                if (!((LineRenderer)Traverse.Create(tb).Field("lineRenderer").GetValue()).enabled)
-                                {
-                                    tb.currentState = TransferrableObject.PositionState.InRightHand;
-                                }
-                                tb.transform.position = rightgrapplePoint;
-                                tb.transform.LookAt(GorillaTagger.Instance.rightHandTransform.position);
-                                tb.transform.Rotate(Vector3.left, 90f, Space.Self);
-                            }
+                            tb.transform.position = rightgrapplePoint;
+                            tb.transform.LookAt(GorillaTagger.Instance.rightHandTransform.position);
+                            tb.transform.Rotate(Vector3.left, 90f, Space.Self);
                         }
                     }
                 }
                 else
                 {
                     BalloonHoldable tb = GetTargetBalloon();
-                    int balloonState = (int)Traverse.Create(tb).Field("balloonState").GetValue();
-                    if (balloonState != 1 && balloonState != 2 && balloonState != 5 && balloonState != 6)
-                    {
-                        Traverse.Create(tb).Field("balloonState").SetValue(0);
-                    }
+                    BalloonHoldable.BalloonStates balloonState = tb.balloonState;
+
+                    if (balloonState != BalloonHoldable.BalloonStates.Pop && balloonState != BalloonHoldable.BalloonStates.Waiting && balloonState != BalloonHoldable.BalloonStates.Refilling && balloonState != BalloonHoldable.BalloonStates.Returning)
+                        tb.balloonState = BalloonHoldable.BalloonStates.Normal;
+                    
                     tb.rigidbodyInstance.isKinematic = false;
                     tb.gameObject.GetComponent<BalloonDynamics>().stringLength = 0.5f;
                     tb.gameObject.GetComponent<BalloonDynamics>().stringStrength = 0.9f;
-                    Traverse.Create(tb.gameObject.GetComponent<BalloonDynamics>()).Field("enableDynamics").SetValue(true);
+                    tb.gameObject.GetComponent<BalloonDynamics>().enableDynamics = true;
+
                     if (tb != null)
-                    {
                         tb.currentState = TransferrableObject.PositionState.Dropped;
-                    }
                 }
             }
         }
@@ -1474,15 +1471,13 @@ namespace iiMenu.Mods
         {
             if (GorillaLocomotion.GTPlayer.Instance.IsHandTouching(true) || GorillaLocomotion.GTPlayer.Instance.IsHandTouching(false))
             {
-                FieldInfo fieldInfo = typeof(GorillaLocomotion.GTPlayer).GetField("lastHitInfoHand", BindingFlags.NonPublic | BindingFlags.Instance);
-                RaycastHit ray = (RaycastHit)fieldInfo.GetValue(GorillaLocomotion.GTPlayer.Instance);
+                RaycastHit ray = GorillaLocomotion.GTPlayer.Instance.lastHitInfoHand;
                 walkPos = ray.point;
                 walkNormal = ray.normal;
             }
 
             if (walkPos != Vector3.zero && rightGrab)
             {
-                //GorillaTagger.Instance.rigidbody.AddForce(walkNormal * -10, ForceMode.Acceleration);
                 GorillaTagger.Instance.rigidbody.AddForce(walkNormal * -9.81f, ForceMode.Acceleration);
                 ZeroGravity();
             }
@@ -1492,15 +1487,13 @@ namespace iiMenu.Mods
         {
             if (GorillaLocomotion.GTPlayer.Instance.IsHandTouching(true) || GorillaLocomotion.GTPlayer.Instance.IsHandTouching(false))
             {
-                FieldInfo fieldInfo = typeof(GorillaLocomotion.GTPlayer).GetField("lastHitInfoHand", BindingFlags.NonPublic | BindingFlags.Instance);
-                RaycastHit ray = (RaycastHit)fieldInfo.GetValue(GorillaLocomotion.GTPlayer.Instance);
+                RaycastHit ray = GorillaLocomotion.GTPlayer.Instance.lastHitInfoHand;
                 walkPos = ray.point;
                 walkNormal = ray.normal;
             }
 
             if (walkPos != Vector3.zero && rightGrab)
             {
-                //GorillaTagger.Instance.rigidbody.AddForce(walkNormal * -10, ForceMode.Acceleration);
                 GorillaTagger.Instance.rigidbody.AddForce(walkNormal * -5f, ForceMode.Acceleration);
                 ZeroGravity();
             }
@@ -1510,15 +1503,13 @@ namespace iiMenu.Mods
         {
             if (GorillaLocomotion.GTPlayer.Instance.IsHandTouching(true) || GorillaLocomotion.GTPlayer.Instance.IsHandTouching(false))
             {
-                FieldInfo fieldInfo = typeof(GorillaLocomotion.GTPlayer).GetField("lastHitInfoHand", BindingFlags.NonPublic | BindingFlags.Instance);
-                RaycastHit ray = (RaycastHit)fieldInfo.GetValue(GorillaLocomotion.GTPlayer.Instance);
+                RaycastHit ray = GorillaLocomotion.GTPlayer.Instance.lastHitInfoHand;
                 walkPos = ray.point;
                 walkNormal = ray.normal;
             }
 
             if (walkPos != Vector3.zero && rightGrab)
             {
-                //GorillaTagger.Instance.rigidbody.AddForce(walkNormal * -10, ForceMode.Acceleration);
                 GorillaTagger.Instance.rigidbody.AddForce(walkNormal * -50f, ForceMode.Acceleration);
                 ZeroGravity();
             }
@@ -1532,24 +1523,18 @@ namespace iiMenu.Mods
 
             if (leftGrab)
             {
-                FieldInfo fieldInfo = typeof(GorillaLocomotion.GTPlayer).GetField("lastHitInfoHand", BindingFlags.NonPublic | BindingFlags.Instance);
-                RaycastHit ray = (RaycastHit)fieldInfo.GetValue(GorillaLocomotion.GTPlayer.Instance);
+                RaycastHit ray = GorillaLocomotion.GTPlayer.Instance.lastHitInfoHand;
 
                 if (Physics.Raycast(TrueLeftHand().position, -ray.normal, out var Ray, range, GorillaLocomotion.GTPlayer.Instance.locomotionEnabledLayers))
-                {
                     GorillaTagger.Instance.rigidbody.AddForce(Ray.normal * power, ForceMode.Acceleration);
-                }
             }
 
             if (rightGrab)
             {
-                FieldInfo fieldInfo = typeof(GorillaLocomotion.GTPlayer).GetField("lastHitInfoHand", BindingFlags.NonPublic | BindingFlags.Instance);
-                RaycastHit ray = (RaycastHit)fieldInfo.GetValue(GorillaLocomotion.GTPlayer.Instance);
+                RaycastHit ray = GorillaLocomotion.GTPlayer.Instance.lastHitInfoHand;
 
                 if (Physics.Raycast(TrueRightHand().position, -ray.normal, out var Ray, range, GorillaLocomotion.GTPlayer.Instance.locomotionEnabledLayers))
-                {
                     GorillaTagger.Instance.rigidbody.AddForce(Ray.normal * power, ForceMode.Acceleration);
-                }
             }
         }
 
@@ -1557,8 +1542,7 @@ namespace iiMenu.Mods
         {
             if (GorillaLocomotion.GTPlayer.Instance.IsHandTouching(true) || GorillaLocomotion.GTPlayer.Instance.IsHandTouching(false))
             {
-                FieldInfo fieldInfo = typeof(GorillaLocomotion.GTPlayer).GetField("lastHitInfoHand", BindingFlags.NonPublic | BindingFlags.Instance);
-                RaycastHit ray = (RaycastHit)fieldInfo.GetValue(GorillaLocomotion.GTPlayer.Instance);
+                RaycastHit ray = GorillaLocomotion.GTPlayer.Instance.lastHitInfoHand;
                 walkPos = ray.point;
                 walkNormal = ray.normal;
             }
@@ -2923,7 +2907,7 @@ namespace iiMenu.Mods
 
             GorillaTagger.Instance.offlineVRRig.transform.localScale = Vector3.one * sizeScale;
             GorillaTagger.Instance.offlineVRRig.NativeScale = sizeScale;
-            typeof(GorillaLocomotion.GTPlayer).GetField("nativeScale", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(GorillaLocomotion.GTPlayer.Instance, sizeScale);
+            GorillaLocomotion.GTPlayer.Instance.nativeScale = sizeScale;
         }
 
         public static void DisableSizeChanger()
@@ -2932,7 +2916,7 @@ namespace iiMenu.Mods
 
             GorillaTagger.Instance.offlineVRRig.transform.localScale = Vector3.one * sizeScale;
             GorillaTagger.Instance.offlineVRRig.NativeScale = sizeScale;
-            typeof(GorillaLocomotion.GTPlayer).GetField("nativeScale", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(GorillaLocomotion.GTPlayer.Instance, sizeScale);
+            GorillaLocomotion.GTPlayer.Instance.nativeScale = sizeScale;
         }
 
         public static void EnableSlipperyHands()

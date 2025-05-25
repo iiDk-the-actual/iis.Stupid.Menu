@@ -3374,12 +3374,12 @@ namespace iiMenu.Mods
         public static Material screenBlack = null;
         public static void DisableBoardColors()
         {
-            foreach (GorillaNetworkJoinTrigger v in (List<GorillaNetworkJoinTrigger>)typeof(PhotonNetworkController).GetField("allJoinTriggers", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(PhotonNetworkController.Instance))
+            foreach (GorillaNetworkJoinTrigger joinTrigger in PhotonNetworkController.Instance.allJoinTriggers)
             {
                 try
                 {
-                    JoinTriggerUI ui = (JoinTriggerUI)typeof(GorillaNetworkJoinTrigger).GetField("ui", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(v);
-                    JoinTriggerUITemplate temp = (JoinTriggerUITemplate)typeof(JoinTriggerUI).GetField("template", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(ui);
+                    JoinTriggerUI ui = joinTrigger.ui;
+                    JoinTriggerUITemplate temp = ui.template;
 
                     if (screenRed == null)
                     {
@@ -3405,26 +3405,26 @@ namespace iiMenu.Mods
             GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/motd (1)").SetActive(true);
             GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/motdtext").SetActive(true);
 
-            int indexOfThatThing = 0;
+            int boardIndex = 0;
             for (int i = 0; i < GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.childCount; i++)
             {
                 GameObject v = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.GetChild(i).gameObject;
                 if (v.name.Contains(StumpLeaderboardID))
                 {
-                    indexOfThatThing++;
-                    if (indexOfThatThing == StumpLeaderboardIndex)
+                    boardIndex++;
+                    if (boardIndex == StumpLeaderboardIndex)
                         v.GetComponent<Renderer>().material = StumpMat;
                 }
             }
 
-            indexOfThatThing = 0;
+            boardIndex = 0;
             for (int i = 0; i < GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest").transform.childCount; i++)
             {
                 GameObject v = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest").transform.GetChild(i).gameObject;
                 if (v.name.Contains(ForestLeaderboardID))
                 {
-                    indexOfThatThing++;
-                    if (indexOfThatThing == ForestLeaderboardIndex)
+                    boardIndex++;
+                    if (boardIndex == ForestLeaderboardIndex)
                         v.GetComponent<Renderer>().material = ForestMat;
                 }
             }
@@ -3432,12 +3432,12 @@ namespace iiMenu.Mods
 
         public static void EnableBoardColors()
         {
-            foreach (GorillaNetworkJoinTrigger v in (List<GorillaNetworkJoinTrigger>)typeof(PhotonNetworkController).GetField("allJoinTriggers", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(PhotonNetworkController.Instance))
+            foreach (GorillaNetworkJoinTrigger joinTrigger in PhotonNetworkController.Instance.allJoinTriggers)
             {
                 try
                 {
-                    JoinTriggerUI ui = (JoinTriggerUI)typeof(GorillaNetworkJoinTrigger).GetField("ui", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(v);
-                    JoinTriggerUITemplate temp = (JoinTriggerUITemplate)typeof(JoinTriggerUI).GetField("template", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(ui);
+                    JoinTriggerUI ui = joinTrigger.ui;
+                    JoinTriggerUITemplate temp = ui.template;
 
                     temp.ScreenBG_AbandonPartyAndSoloJoin = OrangeUI;
                     temp.ScreenBG_AlreadyInRoom = OrangeUI;

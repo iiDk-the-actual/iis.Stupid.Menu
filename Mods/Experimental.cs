@@ -21,7 +21,7 @@ namespace iiMenu.Mods
     {
         public static void Hyperflush()
         {
-            Traverse.Create(typeof(PhotonNetwork)).Field("serializeStreamOut").Method("ResetWriteStream").GetValue();
+            PhotonNetwork.serializeStreamOut.writeData.Clear();
         }
 
         public static void FixDuplicateButtons()
@@ -53,42 +53,6 @@ namespace iiMenu.Mods
         public static void DisableOverlapRPCs()
         {
             NoOverlapRPCs = true;
-        }
-
-        // Damn sure this does jack shit, idk who sent this to me
-        public static void AntiRPCBan()
-        {
-            GorillaGameManager.instance.OnPlayerLeftRoom(PhotonNetwork.LocalPlayer);
-            GorillaGameManager.instance.OnPlayerLeftRoom(PhotonNetwork.LocalPlayer);
-            GorillaGameManager.instance.OnPlayerLeftRoom(PhotonNetwork.LocalPlayer);
-
-            GorillaGameManager.instance.OnMasterClientSwitched(PhotonNetwork.LocalPlayer);
-            GorillaGameManager.instance.OnMasterClientSwitched(PhotonNetwork.LocalPlayer);
-            GorillaGameManager.instance.OnMasterClientSwitched(PhotonNetwork.LocalPlayer);
-
-            try
-            {
-                GorillaNot.instance.OnPlayerLeftRoom(PhotonNetwork.LocalPlayer);
-                //GorillaNot.instance.OnMasterClientSwitched(PhotonNetwork.LocalPlayer);
-                //GorillaNot.instance.OnLeftRoom();
-                //GorillaNot.instance.OnPreLeavingRoom();
-                if (GorillaNot.instance != null)
-                {
-                    FieldInfo report = typeof(GorillaNot).GetField("sendReport", BindingFlags.NonPublic);
-                    if (report != null)
-                    {
-                        report.SetValue(GorillaNot.instance, false);
-                    }
-                    report = typeof(GorillaNot).GetField("_sendReport", BindingFlags.NonPublic);
-                    if (report != null)
-                    {
-                        report.SetValue(GorillaNot.instance, false);
-                    }
-                }
-            }
-            catch { }
-            RPCProtection();
-            //GorillaNot.instance.OnLeftRoom();
         }
 
         private static Dictionary<Renderer, Material> oldMats = new Dictionary<Renderer, Material> { };

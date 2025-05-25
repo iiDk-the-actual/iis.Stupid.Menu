@@ -230,7 +230,6 @@ namespace iiMenu.Notifications
 
         public static void ClearAllNotifications()
         {
-            //NotifiText.text = "<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Notifications cleared.</color>" + Environment.NewLine;
             NotifiText.text = "";
         }
 

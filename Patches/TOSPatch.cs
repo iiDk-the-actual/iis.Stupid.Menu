@@ -14,9 +14,9 @@ namespace iiMenu.Patches
         {
             if (enabled)
             {
-                Traverse.Create(__instance).Field("controllerBehaviour").Field("isDownStick").SetValue(true);
-                Traverse.Create(__instance).Field("scrollSpeed").SetValue(10f);
-                Traverse.Create(__instance).Field("_maxScrollSpeed").SetValue(10f);
+                __instance.controllerBehaviour.isDownStick = true;
+                __instance.scrollSpeed = 10f;
+                __instance._maxScrollSpeed = 10f;
                 return false;
             }
             return true;
@@ -31,8 +31,8 @@ namespace iiMenu.Patches
             if (TOSPatch.enabled)
             {
                 __instance.TurnPage(999);
-                Traverse.Create(__instance).Field("controllerBehaviour").Field("buttonDown").SetValue(true);
-                Traverse.Create(__instance).Field("holdTime").SetValue(0.1f);
+                __instance.controllerBehaviour.isDownStick = true;
+                __instance.holdTime = 0.1f;
                 return false;
             }
             return true;
@@ -47,8 +47,8 @@ namespace iiMenu.Patches
         {
             if (enabled)
             {
-                Traverse.Create(__instance).Field("controllerBehaviour").Field("buttonDown").SetValue((float)Traverse.Create(__instance).Field("_currentAge").GetValue() > 21);
-                Traverse.Create(__instance).Field("holdTime").SetValue(0.1f);
+                __instance.controllerBehaviour.buttonDown = true;
+                __instance.holdTime = 0.1f;
                 return false;
             }
             return true;

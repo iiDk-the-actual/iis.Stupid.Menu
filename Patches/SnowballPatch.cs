@@ -25,7 +25,7 @@ namespace iiMenu.Patches
                     return false;
                 }
                 __result = __instance.localModels.Count - minusIndex;
-                Traverse.Create(__instance).Field("randModelIndex").SetValue(__instance.localModels.Count - minusIndex);
+                __instance.randModelIndex = __instance.localModels.Count - minusIndex;
                 return false;
             }
             return true;
