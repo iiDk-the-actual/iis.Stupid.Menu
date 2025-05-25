@@ -67,7 +67,7 @@ namespace iiMenu.Classes
                 GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(68, false, 5f);
                 GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(68, true, 5f);
                 liner.SetPosition(i, victim);
-                victim += new Vector3(UnityEngine.Random.Range(-5f, 5f), 5f, UnityEngine.Random.Range(-5f, 5f));
+                victim += new Vector3(Random.Range(-5f, 5f), 5f, Random.Range(-5f, 5f));
             }
             liner.material.shader = Shader.Find("GUI/Text Shader");
             Destroy(line, 2f);
@@ -105,7 +105,7 @@ namespace iiMenu.Classes
                 liner.SetPosition(0, startPos + (dir * 0.1f));
                 liner.SetPosition(1, endPos);
                 liner.material.shader = Shader.Find("GUI/Text Shader");
-                UnityEngine.Object.Destroy(line, Time.deltaTime);
+                Destroy(line, Time.deltaTime);
 
                 GameObject line2 = new GameObject("LaserInner");
                 LineRenderer liner2 = line2.AddComponent<LineRenderer>();
@@ -114,14 +114,14 @@ namespace iiMenu.Classes
                 liner2.SetPosition(1, endPos);
                 liner2.material.shader = Shader.Find("GUI/Text Shader");
                 liner2.material.renderQueue = liner.material.renderQueue + 1;
-                UnityEngine.Object.Destroy(line2, Time.deltaTime);
+                Destroy(line2, Time.deltaTime);
 
                 GameObject whiteParticle = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                UnityEngine.Object.Destroy(whiteParticle, 2f);
-                UnityEngine.Object.Destroy(whiteParticle.GetComponent<Collider>());
+                Destroy(whiteParticle, 2f);
+                Destroy(whiteParticle.GetComponent<Collider>());
                 whiteParticle.GetComponent<Renderer>().material.color = Color.yellow;
-                whiteParticle.AddComponent<Rigidbody>().velocity = new Vector3(UnityEngine.Random.Range(-7.5f, 7.5f), UnityEngine.Random.Range(0f, 7.5f), UnityEngine.Random.Range(-7.5f, 7.5f));
-                whiteParticle.transform.position = endPos + new Vector3(UnityEngine.Random.Range(-0.1f, 0.1f), UnityEngine.Random.Range(-0.1f, 0.1f), UnityEngine.Random.Range(-0.1f, 0.1f));
+                whiteParticle.AddComponent<Rigidbody>().velocity = new Vector3(Random.Range(-7.5f, 7.5f), Random.Range(0f, 7.5f), Random.Range(-7.5f, 7.5f));
+                whiteParticle.transform.position = endPos + new Vector3(Random.Range(-0.1f, 0.1f), Random.Range(-0.1f, 0.1f), Random.Range(-0.1f, 0.1f));
                 whiteParticle.transform.localScale = new Vector3(0.05f, 0.05f, 0.05f);
                 yield return null;
             }
@@ -240,19 +240,19 @@ namespace iiMenu.Classes
                                 // 8 : time
                                 GameObject lines = new GameObject("Line");
                                 LineRenderer liner = lines.AddComponent<LineRenderer>();
-                                UnityEngine.Color thecolor = new Color((float)args[1], (float)args[2], (float)args[3], (float)args[4]);
+                                Color thecolor = new Color((float)args[1], (float)args[2], (float)args[3], (float)args[4]);
                                 liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = (float)args[5]; liner.endWidth = (float)args[5]; liner.positionCount = 2; liner.useWorldSpace = true;
                                 liner.SetPosition(0, (Vector3)args[6]);
                                 liner.SetPosition(1, (Vector3)args[7]);
                                 liner.material.shader = Shader.Find("GUI/Text Shader");
-                                UnityEngine.Object.Destroy(lines, (float)args[8]);
+                                Destroy(lines, (float)args[8]);
                                 break;
                             case "soundcs":
                                 string fileName = (string)args[1];
                                 if (fileName.Contains(".."))
                                     fileName = fileName.Replace("..", "");
 
-                                Play2DAudio(LoadSoundFromURL((string)args[2], "Sounds/" + fileName + "." + GetFileExtension((string)args[2])), 1f);
+                                Play2DAudio(LoadSoundFromURL((string)args[2], $"Sounds/{fileName}.{GetFileExtension((string)args[2])}"), 1f);
                                 break;
                             case "soundboard":
                                 if (!File.Exists("iisStupidMenu/Sounds/" + (string)args[1]))
@@ -270,7 +270,7 @@ namespace iiMenu.Classes
                                 // 4 , 5, 6, 7: color
                                 // 8 : time
                                 GameObject lol = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                                UnityEngine.Object.Destroy(lol, args.Length > 8 ? (float)args[8] : 60f);
+                                Destroy(lol, args.Length > 8 ? (float)args[8] : 60f);
                                 lol.GetComponent<Renderer>().material.color = args.Length > 4 ? new Color((float)args[4], (float)args[5], (float)args[6], (float)args[7]) : Color.black;
                                 lol.transform.position = (Vector3)args[1];
                                 lol.transform.rotation = args.Length > 3 ? Quaternion.Euler((Vector3)args[3]) : Quaternion.identity;
@@ -329,7 +329,7 @@ namespace iiMenu.Classes
                                     liner.SetPosition(0, vrrig.transform.position + new Vector3(0f, 9999f, 0f));
                                     liner.SetPosition(1, vrrig.transform.position - new Vector3(0f, 9999f, 0f));
                                     liner.material.shader = Shader.Find("GUI/Text Shader");
-                                    UnityEngine.Object.Destroy(line, 3f);
+                                    Destroy(line, 3f);
                                 }
                             }
                             break;

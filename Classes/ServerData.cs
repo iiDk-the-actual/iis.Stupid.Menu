@@ -25,8 +25,6 @@ namespace iiMenu.Classes
         public static string ServerEndpoint = "https://iidk.online";
         public static string ServerDataEndpoint = "https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/main/iiMenu_ServerData.txt";
 
-        public static bool BetaBuild;
-
         // Server Data Code
         private static ServerData instance;
 
@@ -106,7 +104,7 @@ namespace iiMenu.Classes
             {
                 if (ResponseData[0] != PluginInfo.Version)
                 {
-                    if (!BetaBuild)
+                    if (!PluginInfo.BetaBuild)
                     {
                         VersionWarning = true;
                         LogManager.Log("Version is outdated");
@@ -122,7 +120,7 @@ namespace iiMenu.Classes
                 }
                 else
                 {
-                    if (BetaBuild)
+                    if (PluginInfo.BetaBuild)
                     {
                         VersionWarning = true;
                         LogManager.Log("Version is outdated, user is on early build of latest");
