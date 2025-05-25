@@ -15,7 +15,7 @@ namespace iiMenu
         private void Awake()
         {
             // Set console title
-            Console.Title = "ii's Stupid Menu // Build " + PluginInfo.Version;
+            Console.Title = $"ii's Stupid Menu // Build {PluginInfo.Version}";
             instance = this;
 
             Classes.LogManager.Log($@"
@@ -25,7 +25,8 @@ namespace iiMenu
 | | | \__ \  ___) | |_| |_| | |_) | | (_| | | |  | |  __/ | | | |_| |
 |_|_| |___/ |____/ \__|\__,_| .__/|_|\__,_| |_|  |_|\___|_| |_|\__,_|
                             |_|                                     
-        ii's Stupid Menu // Build {PluginInfo.Version},
+ii's Stupid Menu Build {PluginInfo.Version}
+Compiled {PluginInfo.BuildTimestamp}
 ");
         }
 
@@ -37,7 +38,7 @@ namespace iiMenu
         // For SharpMonoInjector usage
         private static void LoadMenu()
         {
-            Console.Title = "ii's Stupid Menu // Build " + PluginInfo.Version;
+            Console.Title = $"ii's Stupid Menu // Build {PluginInfo.Version}";
 
             Patches.Menu.ApplyHarmonyPatches();
 
