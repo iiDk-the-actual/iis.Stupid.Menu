@@ -4941,9 +4941,6 @@ namespace iiMenu.Menu
 
         public static void OnLaunch()
         {
-            LogManager.Log(ascii);
-            LogManager.Log("Thank you for using ii's Stupid Menu!");
-
             timeMenuStarted = Time.time;
             IsSteam = Traverse.Create(PlayFabAuthenticator.instance).Field("platform").GetValue().ToString().ToLower() == "steam";
 
@@ -5123,15 +5120,6 @@ jgs \_   _/ |Oo\
         public static bool dynamicAnimations;
         public static bool dynamicGradients;
         public static string lastClickedName = "";
-
-        public static string ascii = 
-@"  _ _ _       ____  _               _     _   __  __                  
- (_|_| )___  / ___|| |_ _   _ _ __ (_) __| | |  \/  | ___ _ __  _   _ 
- | | |// __| \___ \| __| | | | '_ \| |/ _` | | |\/| |/ _ \ '_ \| | | |
- | | | \__ \  ___) | |_| |_| | |_) | | (_| | | |  | |  __/ | | | |_| |
- |_|_| |___/ |____/ \__|\__,_| .__/|_|\__,_| |_|  |_|\___|_| |_|\__,_|
-                             |_|                                     
-";
 
         public static string motdTemplate = "You are using build {0}. This menu was created by iiDk (@goldentrophy) on discord. " +
         "This menu is completely free and open sourced, if you paid for this menu you have been scammed. " +
