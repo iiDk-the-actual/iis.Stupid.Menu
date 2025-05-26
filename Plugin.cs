@@ -29,17 +29,21 @@ namespace iiMenu
     Compiled {PluginInfo.BuildTimestamp}
 ");
 
-            if (!Directory.Exists("iisStupidMenu"))
-                Directory.CreateDirectory("iisStupidMenu");
+            string[] ExistingDirectories = new string[]
+            {
+                "iisStupidMenu",
+                "iisStupidMenu/Sounds",
+                "iisStupidMenu/Plugins",
+                "iisStupidMenu/Backups",
+                "iisStupidMenu/TTS",
+                "iisStupidMenu/PlayerInfo"
+            };
 
-            if (!Directory.Exists("iisStupidMenu/Sounds"))
-                Directory.CreateDirectory("iisStupidMenu/Sounds");
-
-            if (!Directory.Exists("iisStupidMenu/Plugins"))
-                Directory.CreateDirectory("iisStupidMenu/Plugins");
-
-            if (!Directory.Exists("iisStupidMenu/Backups"))
-                Directory.CreateDirectory("iisStupidMenu/Backups");
+            foreach (string DirectoryString in ExistingDirectories)
+            {
+                if (!Directory.Exists(DirectoryString))
+                    Directory.CreateDirectory(DirectoryString);
+            }
         }
 
         private void Start() => LoadMenu();
