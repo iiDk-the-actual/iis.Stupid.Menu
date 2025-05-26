@@ -3466,8 +3466,6 @@ namespace iiMenu.Menu
 
         public static System.Collections.IEnumerator KeyboardClick(GameObject targetKey)
         {
-            lastClickedName = "";
-
             Renderer render = targetKey.GetComponent<Renderer>();
             ColorChanger colorChanger = targetKey.GetComponent<ColorChanger>();
 

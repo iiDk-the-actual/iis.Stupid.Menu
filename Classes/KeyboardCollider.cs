@@ -13,11 +13,13 @@ namespace iiMenu.Classes
 			if ((collider == lKeyCollider || collider == rKeyCollider) && menu != null)
 			{
 				if (doButtonsVibrate)
-				{
 					GorillaTagger.Instance.StartVibration(collider == lKeyCollider, GorillaTagger.Instance.tagHapticStrength / 2f, GorillaTagger.Instance.tagHapticDuration / 2f);
-				}
+				
                 GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(66, collider == lKeyCollider, buttonClickVolume / 10f);
 				PressKeyboardKey(key);
+
+				if (dynamicAnimations)
+					CoroutineManager.instance.StartCoroutine(KeyboardClick(gameObject));
             }
 		}
 	}
