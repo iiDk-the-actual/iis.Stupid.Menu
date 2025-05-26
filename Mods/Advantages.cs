@@ -90,27 +90,19 @@ namespace iiMenu.Mods
             if (PhotonNetwork.InRoom)
             {
                 if (PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
-                {
                     UntagSelf();
-                }
             } else
-            {
                 NoTagOnJoin();
-            }
         }
 
         public static void UntagAll()
         {
             if (!PhotonNetwork.IsMasterClient)
-            {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-            }
             else
             {
                 foreach (Photon.Realtime.Player v in PhotonNetwork.PlayerList)
-                {
                     RemoveInfected(v);
-                }
             }
         }
 
@@ -118,21 +110,16 @@ namespace iiMenu.Mods
         public static void SpamTagSelf()
         {
             if (!PhotonNetwork.IsMasterClient)
-            {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-            }
             else
             {
                 if (Time.time > spamtagdelay)
                 {
                     spamtagdelay = Time.time + 0.1f;
                     if (InfectedList().Contains(PhotonNetwork.LocalPlayer))
-                    {
                         RemoveInfected(PhotonNetwork.LocalPlayer);
-                    } else
-                    {
+                    else
                         AddInfected(PhotonNetwork.LocalPlayer);
-                    }
                 }
             }
         }
@@ -148,22 +135,16 @@ namespace iiMenu.Mods
                 if (gunLocked && lockTarget != null)
                 {
                     if (!PhotonNetwork.IsMasterClient)
-                    {
                         NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-                    }
                     else
                     {
                         if (Time.time > spamtagdelay)
                         {
                             spamtagdelay = Time.time + 0.1f;
                             if (InfectedList().Contains(RigManager.GetPlayerFromVRRig(lockTarget)))
-                            {
                                 RemoveInfected(RigManager.GetPlayerFromVRRig(lockTarget));
-                            }
                             else
-                            {
                                 AddInfected(RigManager.GetPlayerFromVRRig(lockTarget));
-                            }
                         }
                     }
                 }
@@ -204,49 +185,27 @@ namespace iiMenu.Mods
                     foreach (Photon.Realtime.Player v in PhotonNetwork.PlayerList)
                     {
                         if (InfectedList().Contains(v))
-                        {
                             AddInfected(v);
-                        } else
-                        {
+                        else
                             RemoveInfected(v);
-                        }
                     }
                 }
             }
         }
 
-        public static void TagLag()
+        public static void SetTagCooldown(float value)
         {
             if (!PhotonNetwork.IsMasterClient)
-            {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-            }
             else
             {
                 GorillaTagManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
                 GorillaAmbushManager ambman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Stealth Manager").GetComponent<GorillaAmbushManager>();
+                
                 if (GorillaGameManager.instance.GameModeName().ToLower().Contains("ambush") || GorillaGameManager.instance.GameModeName().ToLower().Contains("stealth"))
-                {
-                    ambman.tagCoolDown = 2147483647f;
-                }
+                    ambman.tagCoolDown = value;
                 else
-                {
-                    tagman.tagCoolDown = 2147483647f;
-                }
-            }
-        }
-
-        public static void NahTagLag()
-        {
-            GorillaTagManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
-            GorillaAmbushManager ambman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Stealth Manager").GetComponent<GorillaAmbushManager>();
-            if (GorillaGameManager.instance.GameModeName().ToLower().Contains("ambush") || GorillaGameManager.instance.GameModeName().ToLower().Contains("stealth"))
-            {
-                ambman.tagCoolDown = 5f;
-            }
-            else
-            {
-                tagman.tagCoolDown = 5f;
+                    tagman.tagCoolDown = value;
             }
         }
 
