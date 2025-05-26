@@ -77,18 +77,6 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void EnableAntiHandTap()
-        {
-            //GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools").SetActive(false);
-            AntiSoundToggle = true;
-        }
-
-        public static void DisableAntiHandTap()
-        {
-            //GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools").SetActive(true);
-            AntiSoundToggle = false;
-        }
-
         public static int antireportrangeindex = 0;
         public static float threshold = 0.35f;
 
@@ -379,10 +367,7 @@ namespace iiMenu.Mods
                             text += "\n====================================\n";
                             text += "Text file generated with ii's Stupid Menu";
                             string fileName = "iisStupidMenu/" + player.NickName + " - Anti Moderator.txt";
-                            if (!Directory.Exists("iisStupidMenu"))
-                            {
-                                Directory.CreateDirectory("iisStupidMenu");
-                            }
+
                             File.WriteAllText(fileName, text);
                         }
                     }
@@ -391,46 +376,6 @@ namespace iiMenu.Mods
                     NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-MODERATOR</color><color=grey>]</color> There was a moderator in your lobby, you have been disconnected. Their Player ID and Room Code have been saved to a file.");
                 }
             }
-        }
-
-        public static void EnableACReportSelf()
-        {
-            AntiCheatSelf = true;
-        }
-
-        public static void DisableACReportSelf()
-        {
-            AntiCheatSelf = false;
-        }
-
-        public static void AntiOculusReportOn()
-        {
-            AntiOculusReport = true;
-        }
-
-        public static void AntiOculusReportOff()
-        {
-            AntiOculusReport = false;
-        }
-
-        public static void AntiACReportOn()
-        {
-            AntiACReport = true;
-        }
-
-        public static void AntiACReportOff()
-        {
-            AntiACReport = false;
-        }
-
-        public static void EnableACReportAll()
-        {
-            AntiCheatAll = true;
-        }
-
-        public static void DisableACReportAll()
-        {
-            AntiCheatAll = false;
         }
 
         public static void ChangeIdentity()
@@ -451,7 +396,7 @@ namespace iiMenu.Mods
 
         public static void ChangeIdentityRegular()
         {
-            SpoofName();
+            ChangeName(names[Random.Range(0, names.Length - 1)]);
 
             Color[] colors = new Color[]
             {
@@ -479,25 +424,22 @@ namespace iiMenu.Mods
         public static void ChangeIdentityOnDisconnect()
         {
             if (!PhotonNetwork.InRoom && lastinlobbyagain)
-            {
                 ChangeIdentity();
-            }
+            
             lastinlobbyagain = PhotonNetwork.InRoom;
         }
         public static void ChangeIdentityRegularOnDisconnect()
         {
             if (!PhotonNetwork.InRoom && lastinlobbyagain)
-            {
                 ChangeIdentityRegular();
-            }
+            
             lastinlobbyagain = PhotonNetwork.InRoom;
         }
         public static void ChangeIdentityMinigamesOnDisconnect()
         {
             if (!PhotonNetwork.InRoom && lastinlobbyagain)
-            {
                 Fun.BecomeMinigamesKid();
-            }
+            
             lastinlobbyagain = PhotonNetwork.InRoom;
         }
 
@@ -505,21 +447,6 @@ namespace iiMenu.Mods
         {
             Patches.FPSPatch.enabled = true;
             Patches.FPSPatch.spoofFPSValue = UnityEngine.Random.Range(88, 92); //  - (UnityEngine.Random.Range(0, 400) > 399 ? UnityEngine.Random.Range(15, 60) : 0)
-        }
-
-        public static void NoFPSSpoof()
-        {
-            Patches.FPSPatch.enabled = false;
-        }
-
-        public static void NameSpoofEnabled()
-        {
-            iiMenu.Patches.ColorPatch.nameSpoofEnabled = true;
-        }
-
-        public static void NameSpoofDisabled()
-        {
-            iiMenu.Patches.ColorPatch.nameSpoofEnabled = false;
         }
 
         public static string[] names = new string[]
@@ -534,21 +461,5 @@ namespace iiMenu.Mods
             "BLUE", "RED", "GREEN", "PURPLE", "YELLOW", "BLACK", "WHITE", "BROWN", "CYAN", "GRAY",
             "GREY", "OG", "BANNED", "LEMON", "PLUSHIE", "CHEETO", "TIKTOK", "YOUTUBE", "TWITCH", "DISCORD"
         };
-
-
-        public static void SpoofName()
-        {
-            ChangeName(names[UnityEngine.Random.Range(0, names.Length - 1)]);
-        }
-
-        public static void ColorSpoof()
-        {
-            iiMenu.Patches.ColorPatch.patchEnabled = true;
-        }
-
-        public static void NoColorSpoof()
-        {
-            iiMenu.Patches.ColorPatch.patchEnabled = false;
-        }
     }
 }

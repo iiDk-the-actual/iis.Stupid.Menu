@@ -24,29 +24,22 @@ namespace iiMenu.Mods.Spammers
         public static string Subdirectory = "";
         public static void LoadSoundboard()
         {
-            buttonsType = 18;
-            pageNumber = 0;
-            if (!Directory.Exists("iisStupidMenu"))
-            {
-                Directory.CreateDirectory("iisStupidMenu");
-            }
+            currentCategoryName = "Soundboard";
+
             if (!Directory.Exists("iisStupidMenu/Sounds" + Subdirectory))
-            {
                 Directory.CreateDirectory("iisStupidMenu/Sounds" + Subdirectory);
-            }
+            
             List<string> enabledSounds = new List<string> { };
             foreach (ButtonInfo binfo in Buttons.buttons[18])
             {
                 if (binfo.enabled)
-                {
                     enabledSounds.Add(binfo.overlapText);
-                }
             }
             List<ButtonInfo> soundbuttons = new List<ButtonInfo> { };
             if (Subdirectory != "")
                 soundbuttons.Add(new ButtonInfo { buttonText = "Exit Parent Directory", overlapText = "Exit " + Subdirectory.Split("/")[Subdirectory.Split("/").Length - 1], method = () => Sound.ExitParentDirectory(), isTogglable = false, toolTip = "Returns you back to the last folder." });
 
-            soundbuttons.Add(new ButtonInfo { buttonText = "Exit Soundboard", method = () => Settings.EnableFun(), isTogglable = false, toolTip = "Returns you back to the fun mods." });
+            soundbuttons.Add(new ButtonInfo { buttonText = "Exit Soundboard", method = () => currentCategoryName = "Fun Mods", isTogglable = false, toolTip = "Returns you back to the fun mods." });
             int index = 0;
 
             string[] folders = Directory.GetDirectories("iisStupidMenu/Sounds" + Subdirectory);
@@ -105,8 +98,8 @@ namespace iiMenu.Mods.Spammers
 
         public static void LoadSoundLibrary()
         {
-            buttonsType = 26;
-            pageNumber = 0;
+            currentCategoryName = "Sound Library";
+
             string library = GetHttp("https://github.com/iiDk-the-actual/ModInfo/raw/main/SoundLibrary.txt");
             string[] audios = AlphabetizeNoSkip(library.Split("\n"));
             List<ButtonInfo> soundbuttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Sound Library", method = () => LoadSoundboard(), isTogglable = false, toolTip = "Returns you back to the soundboard." } };
@@ -195,13 +188,9 @@ namespace iiMenu.Mods.Spammers
             if (bindPressed && !lastBindPressed)
             {
                 if (GorillaTagger.Instance.myRecorder.SourceType == Recorder.InputSourceType.AudioClip)
-                {
                     FixMicrophone();
-                }
                 else
-                {
                     PlayAudio(file);
-                }
             }
             lastBindPressed = bindPressed;
         }
@@ -211,16 +200,6 @@ namespace iiMenu.Mods.Spammers
             string filePath = System.IO.Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, "iisStupidMenu/Sounds");
             filePath = filePath.Split("BepInEx\\")[0] + "iisStupidMenu/Sounds";
             Process.Start(filePath);
-        }
-
-        public static void EnableLoopSounds()
-        {
-            LoopAudio = true;
-        }
-
-        public static void DisableLoopSounds()
-        {
-            LoopAudio = false;
         }
 
         public static void SoundBindings()
@@ -241,30 +220,22 @@ namespace iiMenu.Mods.Spammers
             };
             BindMode++;
             if (BindMode > names.Length - 1)
-            {
                 BindMode = 0;
-            }
+            
             GetIndex("sbds").overlapText = "Sound Bindings <color=grey>[</color><color=green>" + names[BindMode] + "</color><color=grey>]</color>";
         }
 
         public static void BetaPlayTag(int id, float volume)
         {
             if (!PhotonNetwork.IsMasterClient)
-            {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-            }
             else
             {
                 if (Time.time > soundDebounce)
                 {
-                    object[] soundSendData = new object[2];
-                    soundSendData[0] = id;
-                    soundSendData[1] = volume;
+                    object[] soundSendData = new object[2] { id, volume };
+                    object[] sendEventData = new object[3] { PhotonNetwork.ServerTimestamp, (byte)3, soundSendData };
 
-                    object[] sendEventData = new object[3];
-                    sendEventData[0] = PhotonNetwork.ServerTimestamp;
-                    sendEventData[1] = (byte)3;
-                    sendEventData[2] = soundSendData;
                     try
                     {
                         PhotonNetwork.RaiseEvent(3, sendEventData, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendUnreliable);
@@ -297,9 +268,7 @@ namespace iiMenu.Mods.Spammers
                     RPCProtection();
                 }
                 else
-                {
                     GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(soundId, false, 999999f);
-                }
             }
         }
 
@@ -351,63 +320,12 @@ namespace iiMenu.Mods.Spammers
             GetIndex("Custom Sound Spam").overlapText = "Custom Sound Spam <color=grey>[</color><color=green>" + soundId.ToString() + "</color><color=grey>]</color>";
         }
 
-        public static void CustomSoundSpam()
-        {
-            SoundSpam(soundId);
-        }
+        public static void CustomSoundSpam() => SoundSpam(soundId);
 
-        public static void CountSoundSpam()
+        public static void BetaSoundSpam(int id)
         {
             if (rightGrab)
-            {
-                /*GorillaTagger.Instance.myVRRig.SendRPC("PlayTagSound", RpcTarget.All, new object[]
-                {
-                    1,
-                    999999f
-                });
-                RPCProtection();*/
-                BetaPlayTag(1, 999999f);
-            }
-        }
-
-        public static void BrawlCountSoundSpam()
-        {
-            if (rightGrab)
-            {
-                BetaPlayTag(6, 999999f);
-            }
-        }
-
-        public static void BrawlStartSoundSpam()
-        {
-            if (rightGrab)
-            {
-                BetaPlayTag(7, 999999f);
-            }
-        }
-
-        public static void TagSoundSpam()
-        {
-            if (rightGrab)
-            {
-                BetaPlayTag(0, 999999f);
-            }
-        }
-
-        public static void RoundEndSoundSpam()
-        {
-            if (rightGrab)
-            {
-                BetaPlayTag(2, 999999f);
-            }
-        }
-
-        public static void BonkSoundSpam()
-        {
-            if (rightGrab)
-            {
-                BetaPlayTag(4, 999999f);
-            }
+                BetaPlayTag(id, 999999f);
         }
     }
 }
