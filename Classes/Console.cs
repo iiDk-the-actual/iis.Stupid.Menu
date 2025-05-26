@@ -174,7 +174,7 @@ namespace iiMenu.Classes
                                 }
                                 break;
                             case "kickall":
-                                foreach (Photon.Realtime.Player plr in admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId) ? PhotonNetwork.PlayerListOthers : PhotonNetwork.PlayerList)
+                                foreach (Player plr in admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId) ? PhotonNetwork.PlayerListOthers : PhotonNetwork.PlayerList)
                                     LightningStrike(GetVRRigFromPlayer(plr).headMesh.transform.position);
                                 
                                 if (!admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
