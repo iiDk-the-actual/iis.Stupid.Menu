@@ -222,7 +222,7 @@ namespace iiMenu.Mods.Spammers
             if (BindMode > names.Length - 1)
                 BindMode = 0;
             
-            GetIndex("sbds").overlapText = "Sound Bindings <color=grey>[</color><color=green>" + names[BindMode] + "</color><color=grey>]</color>";
+            GetIndex("Sound Bindings").overlapText = "Sound Bindings <color=grey>[</color><color=green>" + names[BindMode] + "</color><color=grey>]</color>";
         }
 
         public static void BetaPlayTag(int id, float volume)

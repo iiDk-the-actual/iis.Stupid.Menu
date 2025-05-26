@@ -92,6 +92,9 @@ namespace iiMenu.Mods.Spammers
             }
         }
 
+        public static int projmode;
+        public static int trailmode;
+
         public static void ChangeProjectile()
         {
             string[] shortProjectileNames = new string[] {
@@ -110,9 +113,7 @@ namespace iiMenu.Mods.Spammers
 
             projmode++;
             if (projmode > (shortProjectileNames.Length - 1))
-            {
                 projmode = 0;
-            }
 
             SnowballPatch.enabled = projmode == 8 || projmode == 9;
             SnowballPatch.minusIndex = projmode == 9 ? 2 : 1;
@@ -142,13 +143,12 @@ namespace iiMenu.Mods.Spammers
             };
         }
 
+        public static int shootCycle = 1;
         public static void ChangeShootSpeed()
         {
             shootCycle++;
             if (shootCycle > 3)
-            {
                 shootCycle = 0;
-            }
 
             float[] ShootStrengthTypes = new float[]
             {

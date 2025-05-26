@@ -55,7 +55,7 @@ namespace iiMenu.Menu
                 if (rightHand)
                     buttonCondition = ControllerInputPoller.instance.rightControllerSecondaryButton;
 
-                if (likebark)
+                if (oneHand)
                     buttonCondition = rightHand ? ControllerInputPoller.instance.leftControllerSecondaryButton : ControllerInputPoller.instance.rightControllerSecondaryButton;
                 
                 if (bothHands)
@@ -719,14 +719,13 @@ namespace iiMenu.Menu
                                     //GhostPatch.Prefix(GorillaTagger.Instance.offlineVRRig);
                                 }
 
-                                if (funnyghostmaterial == null)
-                                {
-                                    funnyghostmaterial = new Material(Shader.Find("GUI/Text Shader"));
-                                }
+                                if (GhostMaterial == null)
+                                    GhostMaterial = new Material(Shader.Find("GUI/Text Shader"));
+
                                 Color ghm = GetBGColor(0f);
                                 ghm.a = 0.5f;
-                                funnyghostmaterial.color = ghm;
-                                GhostRig.mainSkin.material = funnyghostmaterial;
+                                GhostMaterial.color = ghm;
+                                GhostRig.mainSkin.material = GhostMaterial;
 
                                 GhostRig.headConstraint.transform.position = GorillaLocomotion.GTPlayer.Instance.headCollider.transform.position;
                                 GhostRig.headConstraint.transform.rotation = GorillaLocomotion.GTPlayer.Instance.headCollider.transform.rotation;
@@ -1083,11 +1082,11 @@ namespace iiMenu.Menu
                                 toSortOf = StringsToInfos(enabledMods.ToArray());
                             }
 
-                            watchText.GetComponent<Text>().text = toSortOf[currentSelectedModThing].buttonText;
-                            if (toSortOf[currentSelectedModThing].overlapText != null)
-                                watchText.GetComponent<Text>().text = toSortOf[currentSelectedModThing].overlapText;
+                            watchText.GetComponent<Text>().text = toSortOf[watchMenuIndex].buttonText;
+                            if (toSortOf[watchMenuIndex].overlapText != null)
+                                watchText.GetComponent<Text>().text = toSortOf[watchMenuIndex].overlapText;
                             
-                            watchText.GetComponent<Text>().text += "\n<color=grey>[" + (currentSelectedModThing + 1).ToString() + "/" + toSortOf.Length.ToString() + "]\n" + DateTime.Now.ToString("hh:mm tt") + "</color>";
+                            watchText.GetComponent<Text>().text += $"\n<color=grey>[{(watchMenuIndex + 1)}/{toSortOf.Length}]\n{DateTime.Now.ToString("hh:mm tt")}</color>";
                             watchText.GetComponent<Text>().color = titleColor;
 
                             if (lowercaseMode)
@@ -1096,7 +1095,7 @@ namespace iiMenu.Menu
                             if (watchIndicatorMat == null)
                                 watchIndicatorMat = new Material(Shader.Find("GorillaTag/UberShader"));
                             
-                            watchIndicatorMat.color = toSortOf[currentSelectedModThing].enabled ? GetBDColor(0f) : GetBRColor(0f);
+                            watchIndicatorMat.color = toSortOf[watchMenuIndex].enabled ? GetBDColor(0f) : GetBRColor(0f);
                             watchEnabledIndicator.GetComponent<Image>().material = watchIndicatorMat;
 
                             Vector2 js = rightHand ? rightJoystick : leftJoystick;
@@ -1104,26 +1103,26 @@ namespace iiMenu.Menu
                             {
                                 if (js.x > 0.5f || (rightHand ? (js.y < -0.5f) : (js.y > 0.5f)))
                                 {
-                                    currentSelectedModThing++;
-                                    if (currentSelectedModThing > toSortOf.Length - 1)
-                                        currentSelectedModThing = 0;
+                                    watchMenuIndex++;
+                                    if (watchMenuIndex > toSortOf.Length - 1)
+                                        watchMenuIndex = 0;
                                     
                                     wristMenuDelay = Time.time + 0.2f;
                                 }
                                 if (js.x < -0.5f || (rightHand ? (js.y > 0.5f) : (js.y < -0.5f)))
                                 {
-                                    currentSelectedModThing--;
-                                    if (currentSelectedModThing < 0)
-                                        currentSelectedModThing = toSortOf.Length - 1;
+                                    watchMenuIndex--;
+                                    if (watchMenuIndex < 0)
+                                        watchMenuIndex = toSortOf.Length - 1;
 
                                     wristMenuDelay = Time.time + 0.2f;
                                 }
                                 if (rightHand ? rightJoystickClick : leftJoystickClick)
                                 {
                                     int archive = currentCategoryIndex;
-                                    Toggle(toSortOf[currentSelectedModThing].buttonText, true);
+                                    Toggle(toSortOf[watchMenuIndex].buttonText, true);
                                     if (currentCategoryIndex != archive)
-                                        currentSelectedModThing = 0;
+                                        watchMenuIndex = 0;
                                     
                                     wristMenuDelay = Time.time + 0.2f;
                                 }
@@ -2381,7 +2380,7 @@ namespace iiMenu.Menu
             {
                 if (!wristMenu)
                 {
-                    if (likebark)
+                    if (oneHand)
                     {
                         menu.transform.position = GorillaTagger.Instance.headCollider.transform.position + GorillaTagger.Instance.headCollider.transform.forward * 0.5f + GorillaTagger.Instance.headCollider.transform.up * -0.1f;
                         menu.transform.LookAt(GorillaTagger.Instance.headCollider.transform);
@@ -3804,7 +3803,7 @@ namespace iiMenu.Menu
                 GameObject side = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 try
                 {
-                    switch (platformMode)
+                    switch (Movement.platformMode)
                     {
                         case 5:
                             side.AddComponent<GorillaSurfaceOverride>().overrideIndex = 29;
@@ -4464,7 +4463,7 @@ namespace iiMenu.Menu
                 if (buttonClickIndex <= 3 || buttonClickIndex == 11)
                 {
                     GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(buttonClickSound, rightHand, buttonClickVolume / 10f);
-                    if (PhotonNetwork.InRoom && GetIndex("Serversided Button Sounds").enabled)
+                    if (PhotonNetwork.InRoom && serversidedButtonSounds)
                     {
                         GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.Others, new object[] {
                             buttonClickSound,
@@ -4818,7 +4817,7 @@ jgs \_   _/ |Oo\
         public static bool shouldRound;
         public static bool lastclicking;
         public static bool openedwithright;
-        public static bool likebark;
+        public static bool oneHand;
 
         public static int pageSize = 6;
         public static int pageNumber;
@@ -4858,6 +4857,7 @@ jgs \_   _/ |Oo\
         public static int buttonClickVolume = 4;
         public static float buttonOffset = 2;
         public static bool doButtonsVibrate = true;
+        public static bool serversidedButtonSounds;
 
         public static bool joystickMenu;
         public static bool physicalMenu;
@@ -4866,7 +4866,7 @@ jgs \_   _/ |Oo\
         public static bool joystickOpen;
         public static int joystickButtonSelected;
         public static string joystickSelectedButton = "";
-        public static float joystickDelay = -1f;
+        public static float joystickDelay;
 
         public static bool rightHand;
         public static bool isRightHand;
@@ -4874,7 +4874,7 @@ jgs \_   _/ |Oo\
         public static bool wristMenu;
         public static bool watchMenu;
         public static bool wristOpen;
-        public static float wristMenuDelay = -1f;
+        public static float wristMenuDelay;
 
         public static bool disableNotifications;
         public static bool narrateNotifications;
@@ -5024,10 +5024,9 @@ jgs \_   _/ |Oo\
         public static Text searchTextObject;
         public static Text title;
         public static VRRig GhostRig;
-        public static Material funnyghostmaterial;
+        public static Material GhostMaterial;
         public static Material searchMat;
         public static Material returnMat;
-        public static Material fixMat;
 
         public static Font agency = Font.CreateDynamicFontFromOSFont("Agency FB", 24);
         public static Font Arial = Resources.GetBuiltinResource(typeof(Font), "Arial.ttf") as Font;
@@ -5055,7 +5054,7 @@ jgs \_   _/ |Oo\
         public static GameObject watchShell;
         public static GameObject watchEnabledIndicator;
         public static Material watchIndicatorMat;
-        public static int currentSelectedModThing;
+        public static int watchMenuIndex;
 
         public static GameObject regwatchobject;
         public static GameObject regwatchText;
@@ -5084,7 +5083,7 @@ jgs \_   _/ |Oo\
         public static List<string> favorites = new List<string> { "Exit Favorite Mods" };
 
         public static List<GorillaNetworkJoinTrigger> triggers = new List<GorillaNetworkJoinTrigger> { };
-        public static List<TMPro.TextMeshPro> udTMP = new List<TMPro.TextMeshPro> { };
+        public static List<TextMeshPro> udTMP = new List<TextMeshPro> { };
 
         public static string StumpLeaderboardID = "UnityTempFile";
         public static string ForestLeaderboardID = "UnityTempFile";
@@ -5199,9 +5198,6 @@ jgs \_   _/ |Oo\
         public static bool lastMasterClient;
         public static string lastRoom = "";
 
-        public static int platformMode;
-        public static int platformShape;
-
         public static string rejRoom;
         public static float rejDebounce;
 
@@ -5233,9 +5229,6 @@ jgs \_   _/ |Oo\
         public static float autoSaveDelay = Time.time + 60f;
         public static bool BackupPreferences;
 
-        public static int projmode;
-        public static int trailmode;
-
         public static int notificationDecayTime = 1000;
         public static int notificationSoundIndex;
 
@@ -5254,18 +5247,7 @@ jgs \_   _/ |Oo\
         public static string inputText = "";
         public static string lastCommand = "";
 
-        public static int shootCycle = 1;
         public static float ShootStrength = 19.44f;
-
-        public static int flySpeedCycle = 1;
-        public static float flySpeed = 10f;
-
-        public static int speedboostCycle = 1;
-        public static float jspeed = 7.5f;
-        public static float jmulti = 1.25f;
-
-        public static int longarmCycle = 2;
-        public static float armlength = 1.25f;
 
         public static int nameCycleIndex;
 

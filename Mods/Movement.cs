@@ -25,6 +25,7 @@ namespace iiMenu.Mods
 {
     public class Movement
     {
+        public static int platformMode;
         public static void ChangePlatformType()
         {
             platformMode++;
@@ -51,6 +52,7 @@ namespace iiMenu.Mods
             GetIndex("Change Platform Type").overlapText = "Change Platform Type <color=grey>[</color><color=green>" + platformNames[platformMode] + "</color><color=grey>]</color>";
         }
 
+        public static int platformShape;
         public static void ChangePlatformShape()
         {
             platformShape++;
@@ -204,6 +206,16 @@ namespace iiMenu.Mods
             }
             return platform;
         }
+
+        public static int flySpeedCycle = 1;
+        public static float flySpeed = 10f;
+
+        public static int speedboostCycle = 1;
+        public static float jspeed = 7.5f;
+        public static float jmulti = 1.25f;
+
+        public static int longarmCycle = 2;
+        public static float armlength = 1.25f;
 
         public static GameObject leftplat = null;
         public static GameObject rightplat = null;
