@@ -796,7 +796,7 @@ namespace iiMenu.Mods
             for (int i = 0; i < GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest").transform.childCount; i++)
             {
                 GameObject v = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest").transform.GetChild(i).gameObject;
-                if (v.name.Contains("UnityTempFile-67c94816a57a42c4695bbba0963f8bc6"))
+                if (v.name.Contains("UnityTempFile-4f6bc14644d5bb94bb5bd62b808a44e0"))
                 {
                     v.SetActive(false);
                     leaves.Add(v);
@@ -818,7 +818,7 @@ namespace iiMenu.Mods
             for (int i = 0; i < GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest").transform.childCount; i++)
             {
                 GameObject v = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest").transform.GetChild(i).gameObject;
-                if (v.name.Contains("UnityTempFile-67c94816a57a42c4695bbba0963f8bc6"))
+                if (v.name.Contains("UnityTempFile-4f6bc14644d5bb94bb5bd62b808a44e0"))
                 {
                     v.layer = 16;
                     leaves.Add(v);
