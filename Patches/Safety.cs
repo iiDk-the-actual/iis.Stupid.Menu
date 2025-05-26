@@ -20,6 +20,9 @@ namespace iiMenu.Patches
     {
         private static bool Prefix(string susReason, string susId, string susNick)
         {
+            if (susReason.ToLower() == "empty rig")
+                return false;
+
             if (AntiCheatSelf || AntiCheatAll)
             {
                 if (susId == PhotonNetwork.LocalPlayer.UserId)
@@ -37,12 +40,10 @@ namespace iiMenu.Patches
             }
             if (AntiACReport)
             {
-                if (susReason.ToLower() == "empty rig")
-                    return false;
-
                 Mods.Safety.AntiReportFRT(null, false);
                 NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>The anti cheat attempted to report you, you have been disconnected.</color>");
             }
+
             return false;
         }
     }
