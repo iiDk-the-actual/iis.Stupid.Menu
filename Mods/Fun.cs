@@ -1941,13 +1941,6 @@ namespace iiMenu.Mods
             BuilderPieceInteractor.instance.heldPiece[1] = null;
         }
 
-        /*
-        public static void PieceNameHelper()
-        {
-            if (BuilderPieceInteractor.instance.handState[1] == BuilderPieceInteractor.HandState.Grabbed)
-                NotifiLib.SendNotification(BuilderPieceInteractor.instance.heldPiece[1].name + " type " + BuilderPieceInteractor.instance.heldPiece[1].pieceType);
-        }*/
-
         public static int pieceId = -1;
         public static IEnumerator CreateGetPiece(int pieceType, Action<BuilderPiece> onComplete)
         {
@@ -2655,29 +2648,9 @@ namespace iiMenu.Mods
         public static void EnableCustomNameCycle()
         {
             if (File.Exists("iisStupidMenu/iiMenu_CustomNameCycle.txt"))
-            {
                 names = File.ReadAllText("iisStupidMenu/iiMenu_CustomNameCycle.txt").Split('\n');
-            }
             else
-            {
                 File.WriteAllText("iisStupidMenu/iiMenu_CustomNameCycle.txt","YOUR\nTEXT\nHERE");
-            }
-        }
-
-        public static void CustomNameCycle()
-        {
-            if (Time.time > nameCycleDelay)
-            {
-                nameCycleIndex++;
-                if (nameCycleIndex > names.Length)
-                {
-                    nameCycleIndex = 1;
-                }
-
-                ChangeName(names[nameCycleIndex-1]);
-
-                nameCycleDelay = Time.time + 1f;
-            }
         }
 
         public static void StrobeColor()
