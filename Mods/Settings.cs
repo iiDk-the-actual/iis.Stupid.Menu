@@ -34,8 +34,6 @@ namespace iiMenu.Mods
                 {
                     if (VRKeyboard == null)
                     {
-                        List<GameObject> archiveObjects = new List<GameObject> { };
-                        GameObject background = null;
                         VRKeyboard = LoadAsset<GameObject>("keyboard");
                         VRKeyboard.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
                         VRKeyboard.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
@@ -43,77 +41,51 @@ namespace iiMenu.Mods
                         menuSpawnPosition = VRKeyboard.transform.Find("MenuSpawnPosition").gameObject;
                         VRKeyboard.transform.Find("Canvas/Text").GetComponent<Text>().color = textColor;
 
-
-
                         for (int i = 0; i < VRKeyboard.transform.childCount; i++)
                         {
                             GameObject v = VRKeyboard.transform.GetChild(i).gameObject;
-                            if (v.name == "Canvas")
+                            if (v.name != "Canvas" && v.name != "MenuSpawnPosition")
                             {
-                                for (int j = 0; j < v.transform.childCount; j++)
+                                if (v.name == "Background")
                                 {
-                                    Text lol = v.transform.GetChild(j).gameObject.GetComponent<Text>();
-                                    lol.color = textColor;
-                                }
-                            } else
-                            {
-                                if (v.name == "MenuSpawnPosition")
-                                {
-                                    menuSpawnPosition = v;
-                                } else
-                                {
-                                    if (v.name == "Background")
+                                    ColorChanger colorChanger = v.AddComponent<ColorChanger>();
+                                    colorChanger.colors = new Gradient
                                     {
-                                        GradientColorKey[] array = new GradientColorKey[3];
-                                        array[0].color = bgColorA;
-                                        array[0].time = 0f;
-                                        array[1].color = bgColorB;
-                                        array[1].time = 0.5f;
-                                        array[2].color = bgColorA;
-                                        array[2].time = 1f;
-                                        ColorChanger colorChanger = v.AddComponent<ColorChanger>();
-                                        colorChanger.colors = new Gradient
+                                        colorKeys = new[]
                                         {
-                                            colorKeys = array
-                                        };
-                                        colorChanger.isRainbow = themeType == 6;
-                                        colorChanger.isEpileptic = themeType == 47;
-                                        colorChanger.isMonkeColors = themeType == 8;
-                                        colorChanger.Start();
-                                        background = v;
-                                    }
-                                    else
-                                    {
-                                        GradientColorKey[] array = new GradientColorKey[3];
-                                        array[0].color = buttonDefaultA;
-                                        array[0].time = 0f;
-                                        array[1].color = buttonDefaultB;
-                                        array[1].time = 0.5f;
-                                        array[2].color = buttonDefaultA;
-                                        array[2].time = 1f;
-                                        ColorChanger colorChanger = v.AddComponent<ColorChanger>();
-                                        colorChanger.colors = new Gradient
-                                        {
-                                            colorKeys = array
-                                        };
-                                        colorChanger.isRainbow = false;
-                                        colorChanger.isEpileptic = false;
-                                        colorChanger.isMonkeColors = false;
-                                        colorChanger.Start();
-                                        v.AddComponent<KeyboardKey>().key = v.name;
-                                        v.layer = 2;
-                                        archiveObjects.Add(v);
-                                    }
+                                            new GradientColorKey(bgColorA, 0f),
+                                            new GradientColorKey(bgColorB, 0.5f),
+                                            new GradientColorKey(bgColorA, 1f)
+                                        }
+                                    };
+                                    colorChanger.isRainbow = themeType == 6;
+                                    colorChanger.isEpileptic = themeType == 47;
+                                    colorChanger.isMonkeColors = themeType == 8;
+                                    colorChanger.Start();
                                 }
+                                else
+                                {
+                                    ColorChanger colorChanger = v.AddComponent<ColorChanger>();
+                                    colorChanger.colors = new Gradient
+                                    {
+                                        colorKeys = new[]
+                                        {
+                                            new GradientColorKey(buttonDefaultA, 0f),
+                                            new GradientColorKey(buttonDefaultB, 0.5f),
+                                            new GradientColorKey(buttonDefaultA, 1f)
+                                        }
+                                    };
+                                    colorChanger.isRainbow = false;
+                                    colorChanger.isEpileptic = false;
+                                    colorChanger.isMonkeColors = false;
+                                    colorChanger.Start();
+                                    v.AddComponent<KeyboardKey>().key = v.name;
+                                    v.layer = 2;
+                                }
+
+                                if (shouldOutline)
+                                    OutlineObjNonMenu(v, v.name == "Background");
                             }
-                        }
-                        if (shouldOutline)
-                        {
-                            foreach (GameObject key in archiveObjects)
-                            {
-                                OutlineObjNonMenu(key, true);
-                            }
-                            OutlineObjNonMenu(background, false);
                         }
                     }
                 }
