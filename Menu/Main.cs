@@ -1518,6 +1518,7 @@ namespace iiMenu.Menu
                     }
                 }
                 else
+                    CoroutineManager.RunCoroutine(ButtonClick(buttonIndex, buttonObject.GetComponent<Renderer>()));
 
                 if (shouldRound)
                     RoundObj(buttonObject);
@@ -2145,12 +2146,12 @@ namespace iiMenu.Menu
             if (!disablePageButtons)
                 AddPageButtons();
 
+            // Button render code
             int buttonIndexOffset = 0;
             ButtonInfo[] renderButtons = new ButtonInfo[] { };
 
             if (isSearching)
             {
-                // Draw the search box
                 GameObject searchBoxObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 if (!UnityInput.Current.GetKey(KeyCode.Q) && !isPcWhenSearching)
                     searchBoxObject.layer = 2;
@@ -2233,8 +2234,32 @@ namespace iiMenu.Menu
 
                 textTransform.localPosition = new Vector3(.064f, 0, .111f - (buttonOffset / 10) / 2.6f);
                 textTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+            }
 
-                // Search the mod database
+            if (annoyingMode && UnityEngine.Random.Range(1, 5) == 3)
+            {
+                ButtonInfo disconnectButton = GetIndex("Disconnect");
+                renderButtons = Enumerable.Repeat(disconnectButton, 10).ToArray();
+            }
+            else if (currentCategoryName == "Favorite Mods")
+            {
+                foreach (string favoriteMod in favorites)
+                {
+                    if (GetIndex(favoriteMod) == null)
+                        favorites.Remove(favoriteMod);
+                }
+
+                renderButtons = StringsToInfos(favorites.ToArray());
+            }
+            else if (currentCategoryName == "Enabled Mods")
+            {
+                List<ButtonInfo> enabledMods = new List<ButtonInfo>() { GetIndex("Exit Enabled Mods") };
+                enabledMods.AddRange(Buttons.buttons.SelectMany(buttonlist => buttonlist).Where(v => v.enabled));
+
+                renderButtons = enabledMods.ToArray();
+            }
+            else if (isSearching)
+            {
                 List<ButtonInfo> searchedMods = new List<ButtonInfo> { };
                 if (nonGlobalSearch && currentCategoryName != "Main")
                 {
@@ -2262,14 +2287,10 @@ namespace iiMenu.Menu
                             {
                                 string buttonText = v.buttonText;
                                 if (v.overlapText != null)
-                                {
                                     buttonText = v.overlapText;
-                                }
 
                                 if (buttonText.Replace(" ", "").ToLower().Contains(searchText.Replace(" ", "").ToLower()))
-                                {
                                     searchedMods.Add(v);
-                                }
                             }
                             catch { }
                         }
@@ -2278,44 +2299,20 @@ namespace iiMenu.Menu
 
                 buttonIndexOffset = 1;
                 renderButtons = searchedMods.ToArray();
-            }
-
-            if (annoyingMode && UnityEngine.Random.Range(1, 5) == 3)
-            {
-                ButtonInfo disconnectButton = GetIndex("Disconnect");
-                renderButtons = Enumerable.Repeat(disconnectButton, 10).ToArray();
-            }
-            else if (currentCategoryName == "Favorite Mods")
-            {
-                foreach (string favoriteMod in favorites)
-                {
-                    if (GetIndex(favoriteMod) == null)
-                        favorites.Remove(favoriteMod);
-                }
-
-                renderButtons = StringsToInfos(favorites.ToArray());
-            }
-            else if (currentCategoryName == "Enabled Mods")
-            {
-                List<ButtonInfo> enabledMods = new List<ButtonInfo>() { GetIndex("Exit Enabled Mods") };
-                enabledMods.AddRange(Buttons.buttons.SelectMany(buttonlist => buttonlist).Where(v => v.enabled));
-
-                renderButtons = enabledMods.ToArray();
-            }
-            else
+            } else
                 renderButtons = Buttons.buttons[currentCategoryIndex];
 
             if (GetIndex("Alphabetize Menu").enabled || isSearching)
-                renderButtons = StringsToInfos(Alphabetize(InfosToStrings(Buttons.buttons[currentCategoryIndex])));
+                renderButtons = StringsToInfos(Alphabetize(InfosToStrings(renderButtons)));
 
             if (!longmenu)
                 renderButtons = renderButtons
-                    .Skip(pageNumber * pageSize - buttonIndexOffset)
-                    .Take(pageSize)
+                    .Skip(pageNumber * (pageSize - buttonIndexOffset))
+                    .Take(pageSize - buttonIndexOffset)
                     .ToArray();
 
             for (int i = 0; i < renderButtons.Length; i++)
-                AddButton(i * 0.1f + (buttonOffset / 10), i, renderButtons[i]);
+                AddButton((i + buttonIndexOffset) * 0.1f + (buttonOffset / 10), i, renderButtons[i]);
 
             RecenterMenu();
 
