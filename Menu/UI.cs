@@ -77,12 +77,8 @@ namespace iiMenu.UI
                 } catch { }
                 GUI.Label(new Rect(10, Screen.height - 35, Screen.width, 40), roomText);
                 
-                try
-                {
-                    if (icon == null)
-                        icon = LoadTextureFromResource("iiMenu.Resources.icon.png");
-                }
-                catch { }
+                if (icon == null)
+                    icon = LoadTextureFromResource("iiMenu.Resources.icon.png");
 
                 try
                 {
@@ -196,7 +192,7 @@ namespace iiMenu.UI
                         if (!Settings.disabledPlugins.Contains(Plugin.Key))
                             PluginOnGUI(Plugin.Value);
                     }
-                    catch (Exception e) { LogManager.Log("Error with ONGUI plugin " + Plugin.Key + ": " + e.ToString()); }
+                    catch (Exception e) { LogManager.Log("Error with OnGUI plugin " + Plugin.Key + ": " + e.ToString()); }
                 }
             }
         }
