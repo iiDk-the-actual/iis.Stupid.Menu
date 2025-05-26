@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace iiMenu.Patches
 {
-    public class Menu : MonoBehaviour
+    public class Menu
     {
         public static bool IsPatched { get; private set; }
         //public static GameObject pointer { get; internal set; }
@@ -14,9 +14,8 @@ namespace iiMenu.Patches
             if (!IsPatched)
             {
                 if (instance == null)
-                {
                     instance = new Harmony(PluginInfo.GUID);
-                }
+                
                 instance.PatchAll(Assembly.GetExecutingAssembly());
                 IsPatched = true;
             }
@@ -25,9 +24,7 @@ namespace iiMenu.Patches
         internal static void RemoveHarmonyPatches()
         {
             if (instance != null && IsPatched)
-            {
                 IsPatched = false;
-            }
         }
 
         private static Harmony instance;
