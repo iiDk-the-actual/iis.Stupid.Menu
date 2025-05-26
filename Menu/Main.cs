@@ -942,7 +942,7 @@ namespace iiMenu.Menu
                                 leftJoystick = Direction;
                         }
 
-                        if (UnityInput.Current.GetKey(KeyCode.End))
+                        if (UnityInput.Current.GetKey(KeyCode.Return))
                         {
                             if (UnityInput.Current.GetKey(KeyCode.LeftAlt))
                                 rightJoystickClick = true;
@@ -1486,6 +1486,20 @@ namespace iiMenu.Menu
                     };
 
                     ColorChanger colorChanger = buttonObject.AddComponent<ColorChanger>();
+
+                    if (joystickMenu && buttonIndex == joystickButtonSelected)
+                    {
+                        joystickSelectedButton = method.buttonText;
+
+                        colorChanger.isRainbow = false;
+                        colorChanger.isMonkeColors = false;
+                        colorChanger.isEpileptic = false;
+                        colorChanger.isMonkeColors = false;
+
+                        releasedColors[0].color = Color.red;
+                        releasedColors[2].color = Color.red;
+                    }
+
                     if (method.enabled)
                     {
                         colorChanger.isRainbow = themeType == 6;
@@ -1503,18 +1517,6 @@ namespace iiMenu.Menu
                         {
                             colorKeys = releasedColors
                         };
-                    }
-                    if (joystickMenu && buttonIndex == joystickButtonSelected)
-                    {
-                        joystickSelectedButton = method.buttonText;
-
-                        colorChanger.isRainbow = false;
-                        colorChanger.isMonkeColors = false;
-                        colorChanger.isEpileptic = false;
-                        colorChanger.isMonkeColors = false;
-
-                        colorChanger.colors.colorKeys[0].color = Color.red;
-                        colorChanger.colors.colorKeys[2].color = Color.red;
                     }
                 }
                 else
