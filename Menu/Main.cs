@@ -151,7 +151,7 @@ namespace iiMenu.Menu
                                 {
                                     Rigidbody comp = menu.AddComponent(typeof(Rigidbody)) as Rigidbody;
 
-                                    if (GetIndex("Zero Gravity Menu").enabled)
+                                    if (zeroGravityMenu)
                                         comp.useGravity = false;
 
                                     if (rightHand || (bothHands && openedwithright))
@@ -538,10 +538,9 @@ namespace iiMenu.Menu
 
                         if (!PhotonNetwork.InRoom && lastInRoom)
                         {
-                            if (GetIndex("Clear Notifications on Disconnect").enabled)
-                            {
+                            if (clearNotificationsOnDisconnect)
                                 NotifiLib.ClearAllNotifications();
-                            }
+                            
                             NotifiLib.SendNotification("<color=grey>[</color><color=blue>LEAVE ROOM</color><color=grey>]</color> Room Code: " + lastRoom + "");
                             RPCProtection();
                             lastMasterClient = false;
@@ -1979,7 +1978,8 @@ namespace iiMenu.Menu
             canvasObj.transform.parent = menu.transform;
 
             Canvas canvas = canvasObj.AddComponent<Canvas>();
-            if (GetIndex("Hide Text on Camera").enabled) { canvasObj.layer = 19; }
+            if (hideTextOnCamera) 
+                canvasObj.layer = 19;
 
             CanvasScaler canvasScaler = canvasObj.AddComponent<CanvasScaler>();
             canvas.renderMode = RenderMode.WorldSpace;
@@ -2449,17 +2449,14 @@ namespace iiMenu.Menu
                 {
                     isOnPC = true;
                     if (joystickMenu)
-                    {
                         Toggle("Joystick Menu");
-                    }
+                    
                     if (watchMenu)
-                    {
                         Toggle("Watch Menu");
-                    }
+                    
                     if (GetIndex("First Person Camera").enabled)
-                    {
                         Toggle("First Person Camera");
-                    }
+
                     Vector3[] pcpositions = new Vector3[]
                     {
                         new Vector3(10f, 10f, 10f),
@@ -4811,6 +4808,7 @@ jgs \_   _/ |Oo\
         public static bool disorganized;
         public static bool flipMenu;
         public static bool shinymenu;
+        public static bool zeroGravityMenu;
         public static bool dropOnRemove = true;
         public static bool shouldOutline;
         public static bool innerOutline;
@@ -4878,10 +4876,12 @@ jgs \_   _/ |Oo\
 
         public static bool disableNotifications;
         public static bool narrateNotifications;
+        public static bool clearNotificationsOnDisconnect;
         public static string narratorName = "Default";
         public static int narratorIndex;
         public static bool showEnabledModsVR = true;
         public static bool hideSettings;
+        public static bool hideTextOnCamera;
         public static bool disableDisconnectButton;
         public static bool disableFpsCounter;
         public static bool disableSearchButton;
@@ -5233,7 +5233,6 @@ jgs \_   _/ |Oo\
         public static int notificationSoundIndex;
 
         public static float oldSlide;
-
 
         public static int soundId;
 
