@@ -75,9 +75,7 @@ namespace iiMenu.Mods
         public static void DisableBetterFPSBoost()
         {
             foreach (KeyValuePair<Renderer, Material> v in oldMats)
-            {
                 v.Key.material = v.Value;
-            }
         }
 
         private static float adminEventDelay;
