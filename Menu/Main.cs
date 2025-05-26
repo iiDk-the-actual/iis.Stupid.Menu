@@ -324,9 +324,9 @@ namespace iiMenu.Menu
                                 LogManager.Log("Found all boards");
                             }
                         }
-                        catch (Exception exception)
+                        catch (Exception exc)
                         {
-                            LogManager.LogError(string.Format("iiMenu <b>COLOR ERROR</b> {1} - {0}", exception.Message, exception.StackTrace));
+                            LogManager.LogError(string.Format("Error with board colors at {0}: {1}", exc.StackTrace, exc.Message));
                             hasFoundAllBoards = false;
                         }
                     }
@@ -1288,7 +1288,7 @@ namespace iiMenu.Menu
                                         }
                                         catch (Exception exc)
                                         {
-                                            LogManager.LogError(string.Format("{0} // Error with mod {1} at {2}: {3}", PluginInfo.Name, v.buttonText, exc.StackTrace, exc.Message));
+                                            LogManager.LogError(string.Format("Error with mod method {0} at {1}: {2}", v.buttonText, exc.StackTrace, exc.Message));
                                         }
                                     }
                                 }
@@ -1297,9 +1297,9 @@ namespace iiMenu.Menu
                     }
                 }
             }
-            catch (Exception exception)
+            catch (Exception exc)
             {
-                LogManager.LogError(string.Format("iiMenu <b>FATAL ERROR</b> {1} - {0}", exception.Message, exception.StackTrace));
+                LogManager.LogError(string.Format("Error with prefix at {0}: {1}", exc.StackTrace, exc.Message));
             }
         }
 
@@ -4707,13 +4707,13 @@ namespace iiMenu.Menu
                                     {
                                         NotifiLib.SendNotification("<color=grey>[</color><color=green>ENABLE</color><color=grey>]</color> " + target.toolTip);
                                         if (target.enableMethod != null)
-                                            try { target.enableMethod.Invoke(); } catch (Exception exc) { LogManager.LogError(string.Format("{0} // Error with mod enableMethod {1} at {2}: {3}", PluginInfo.Name, target.buttonText, exc.StackTrace, exc.Message)); }
+                                            try { target.enableMethod.Invoke(); } catch (Exception exc) { LogManager.LogError(string.Format("Error with mod enableMethod {0} at {1}: {2}", target.buttonText, exc.StackTrace, exc.Message)); }
                                     }
                                     else
                                     {
                                         NotifiLib.SendNotification("<color=grey>[</color><color=red>DISABLE</color><color=grey>]</color> " + target.toolTip);
                                         if (target.disableMethod != null)
-                                            try { target.disableMethod.Invoke(); } catch (Exception exc) { LogManager.LogError(string.Format("{0} // Error with mod disableMethod {1} at {2}: {3}", PluginInfo.Name, target.buttonText, exc.StackTrace, exc.Message)); }
+                                            try { target.disableMethod.Invoke(); } catch (Exception exc) { LogManager.LogError(string.Format("Error with mod disableMethod {0} at {1}: {2}", target.buttonText, exc.StackTrace, exc.Message)); }
                                     }
                                 }
                                 else
@@ -4724,7 +4724,7 @@ namespace iiMenu.Menu
                                     NotifiLib.SendNotification("<color=grey>[</color><color=green>ENABLE</color><color=grey>]</color> " + target.toolTip);
 
                                     if (target.method != null)
-                                        try { target.method.Invoke(); } catch (Exception exc) { LogManager.LogError(string.Format("{0} // Error with mod {1} at {2}: {3}", PluginInfo.Name, target.buttonText, exc.StackTrace, exc.Message)); }
+                                        try { target.method.Invoke(); } catch (Exception exc) { LogManager.LogError(string.Format("Error with mod {0} at {1}: {2}", target.buttonText, exc.StackTrace, exc.Message)); }
                                 }
                                 try
                                 {
@@ -4778,10 +4778,10 @@ namespace iiMenu.Menu
             {
                 Settings.LoadPlugins();
             }
-            catch (Exception e) { LogManager.Log("Error with Settings.LoadPlugins(): " + e.ToString()); }
+            catch (Exception exc) { LogManager.LogError(string.Format("Error with Settings.LoadPlugins at {0}: {1}", exc.StackTrace, exc.Message)); }
 
             loadPreferencesTime = Time.time;
-            if (File.Exists("iisStupidMenu/iiMenu_EnabledMods.txt") || File.Exists("iisStupidMenu/iiMenu_Preferences.txt"))
+            if (File.Exists("iisStupidMenu/iiMenu_Preferences.txt"))
             {
                 try
                 {
@@ -4848,10 +4848,10 @@ jgs \_   _/ |Oo\
 
         public static string currentCategoryName
         {
-            get => Buttons.categoryNames[_currentCategoryIndex];
+            get => Buttons.categoryNames[currentCategoryIndex];
             set
             {
-                _currentCategoryIndex = GetCategory(value);
+                currentCategoryIndex = GetCategory(value);
             }
         }
 
