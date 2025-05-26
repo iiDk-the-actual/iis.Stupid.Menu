@@ -3433,33 +3433,33 @@ namespace iiMenu.Menu
             }
         }
 
-        public static Dictionary<Type, object[]> archiveTypes = new System.Collections.Generic.Dictionary<Type, object[]> { };
-        private static float lastRecievedTime = -1f;
+        public static Dictionary<Type, object[]> typePool = new Dictionary<Type, object[]> { };
+        private static float receiveTypeDelay = -1f;
 
         public static T[] GetAllType<T>(float decayTime = 5f) where T : UnityEngine.Object
         {
             Type type = typeof(T);
 
-            if (Time.time > lastRecievedTime)
+            if (Time.time > receiveTypeDelay)
             {
-                if (archiveTypes.ContainsKey(type))
-                    archiveTypes.Remove(type);
+                if (typePool.ContainsKey(type))
+                    typePool.Remove(type);
 
-                lastRecievedTime = Time.time + decayTime;
+                receiveTypeDelay = Time.time + decayTime;
             }
 
-            if (!archiveTypes.ContainsKey(type))
-                archiveTypes.Add(type, FindObjectsOfType<T>(true));
+            if (!typePool.ContainsKey(type))
+                typePool.Add(type, FindObjectsOfType<T>(true));
 
-            return (T[])archiveTypes[type];
+            return (T[])typePool[type];
         }
 
         public static void ClearType<T>() where T : UnityEngine.Object
         {
             Type type = typeof(T);
 
-            if (archiveTypes.ContainsKey(type))
-                archiveTypes.Remove(type);
+            if (typePool.ContainsKey(type))
+                typePool.Remove(type);
         }
 
         public static BuilderTable GetBuilderTable()
@@ -4658,7 +4658,7 @@ namespace iiMenu.Menu
                         }
                     }
                     else
-                        LogManager.LogError(buttonText + " does not exist");
+                        LogManager.LogError($"{buttonText} does not exist");
                 }
             }
             ReloadMenu();
@@ -4675,29 +4675,22 @@ namespace iiMenu.Menu
             timeMenuStarted = Time.time;
             IsSteam = PlayFabAuthenticator.instance.platform;
 
-            try
-            {
-                if (!Font.GetOSInstalledFontNames().Contains("Agency FB"))
-                    agency = LoadAsset<Font>("Agency");
-            } catch { }
+            if (!Font.GetOSInstalledFontNames().Contains("Agency FB"))
 
             PhotonNetwork.NetworkingClient.EventReceived += EventReceived;
 
-            string ConsoleGUID = "iiMenu_Console";
-            try
-            {
-                if (!GameObject.Find(ConsoleGUID)) // Makes sure Admin mods do not activate twice
-                    new GameObject(ConsoleGUID).AddComponent<Classes.Console>();
-            } catch { new GameObject(ConsoleGUID).AddComponent<Classes.Console>(); } // It's worth a shot
+            string ConsoleGUID = "goldentrophy_Console";
+            if (!GameObject.Find(ConsoleGUID))
+                new GameObject(ConsoleGUID).AddComponent<Classes.Console>();
 
             if (ServerData.ServerDataEnabled)
-                new GameObject("iiMenu_ServerData").AddComponent<ServerData>();
+                Classes.Console.instance.AddComponent<ServerData>();
 
             try
             {
                 Settings.LoadPlugins();
             }
-            catch (Exception exc) { LogManager.LogError(string.Format("Error with Settings.LoadPlugins at {0}: {1}", exc.StackTrace, exc.Message)); }
+            catch (Exception exc) { LogManager.LogError(string.Format("Error with Settings.LoadPlugins() at {0}: {1}", exc.StackTrace, exc.Message)); }
 
             loadPreferencesTime = Time.time;
             if (File.Exists("iisStupidMenu/iiMenu_Preferences.txt"))
