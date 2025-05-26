@@ -5234,8 +5234,6 @@ jgs \_   _/ |Oo\
 
         public static float oldSlide;
 
-        public static int accessoryType;
-        public static int hat;
 
         public static int soundId;
 
