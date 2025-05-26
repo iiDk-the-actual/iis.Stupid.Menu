@@ -688,17 +688,13 @@ namespace iiMenu.Mods
         public static void MicrophoneFeedback()
         {
             if (!GorillaTagger.Instance.myRecorder.DebugEchoMode)
-            {
                 GorillaTagger.Instance.myRecorder.DebugEchoMode = true;
-            }
         }
 
         public static void DisableMicrophoneFeedback()
         {
             if (GorillaTagger.Instance.myRecorder.DebugEchoMode)
-            {
                 GorillaTagger.Instance.myRecorder.DebugEchoMode = false;
-            }
         }
 
         public static void CopyVoiceGun()
