@@ -1,6 +1,7 @@
 using BepInEx;
 using BepInEx.Logging;
 using System;
+using System.IO;
 using UnityEngine;
 
 namespace iiMenu
@@ -25,15 +26,24 @@ namespace iiMenu
 | | | \__ \  ___) | |_| |_| | |_) | | (_| | | |  | |  __/ | | | |_| |
 |_|_| |___/ |____/ \__|\__,_| .__/|_|\__,_| |_|  |_|\___|_| |_|\__,_|
                             |_|                                      
-    ii's Stupid Menu Build {PluginInfo.Version}
+    ii's Stupid Menu {(PluginInfo.BetaBuild ? "Beta" : "")} Build {PluginInfo.Version}
     Compiled {PluginInfo.BuildTimestamp}
 ");
+
+            if (!Directory.Exists("iisStupidMenu"))
+                Directory.CreateDirectory("iisStupidMenu");
+
+            if (!Directory.Exists("iisStupidMenu/Sounds"))
+                Directory.CreateDirectory("iisStupidMenu/Sounds");
+
+            if (!Directory.Exists("iisStupidMenu/Plugins"))
+                Directory.CreateDirectory("iisStupidMenu/Plugins");
+
+            if (!Directory.Exists("iisStupidMenu/Backups"))
+                Directory.CreateDirectory("iisStupidMenu/Backups");
         }
 
-        private void Start()
-        {
-            LoadMenu();
-        }
+        private void Start() => LoadMenu();
 
         // For SharpMonoInjector usage
         private static void LoadMenu()

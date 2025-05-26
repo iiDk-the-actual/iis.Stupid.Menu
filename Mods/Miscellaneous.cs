@@ -147,20 +147,14 @@ namespace iiMenu.Mods
             text += "\n====================================\n";
             text += "Text file generated with ii's Stupid Menu";
             string fileName = "iisStupidMenu/PlayerInfo/" + PhotonNetwork.CurrentRoom.Name + ".txt";
-            if (!Directory.Exists("iisStupidMenu"))
-            {
-                Directory.CreateDirectory("iisStupidMenu");
-            }
             if (!Directory.Exists("iisStupidMenu/PlayerInfo"))
-            {
                 Directory.CreateDirectory("iisStupidMenu/PlayerInfo");
-            }
+            
             File.WriteAllText(fileName, text);
 
-            //string filePath = System.IO.Path.Combine(Application.dataPath, fileName);
-            string filePath = System.IO.Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, fileName);
+            string filePath = Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, fileName);
             filePath = filePath.Split("BepInEx\\")[0] + fileName;
-            //filePath = filePath.Split("\\")[0] + "/" + filePath.Split("\\")[1];
+
             try
             {
                 Process.Start(filePath);
@@ -188,10 +182,7 @@ namespace iiMenu.Mods
             text += "\n====================================\n";
             text += "Text file generated with ii's Stupid Menu";
             string fileName = "iisStupidMenu/SoundData.txt";
-            if (!Directory.Exists("iisStupidMenu"))
-            {
-                Directory.CreateDirectory("iisStupidMenu");
-            }
+
             File.WriteAllText(fileName, text);
 
             //string filePath = System.IO.Path.Combine(Application.dataPath, fileName);
@@ -225,10 +216,7 @@ namespace iiMenu.Mods
             text += "\n====================================\n";
             text += "Text file generated with ii's Stupid Menu";
             string fileName = "iisStupidMenu/CosmeticData.txt";
-            if (!Directory.Exists("iisStupidMenu"))
-            {
-                Directory.CreateDirectory("iisStupidMenu");
-            }
+
             File.WriteAllText(fileName, text);
 
             //string filePath = System.IO.Path.Combine(Application.dataPath, fileName);
@@ -259,10 +247,7 @@ namespace iiMenu.Mods
                 i++;
             }
             string fileName = "iisStupidMenu/DecryptableCosmeticData.txt";
-            if (!Directory.Exists("iisStupidMenu"))
-            {
-                Directory.CreateDirectory("iisStupidMenu");
-            }
+
             File.WriteAllText(fileName, text);
 
             //string filePath = System.IO.Path.Combine(Application.dataPath, fileName);
@@ -296,10 +281,7 @@ namespace iiMenu.Mods
             text += "\n====================================\n";
             text += "Text file generated with ii's Stupid Menu";
             string fileName = "iisStupidMenu/RPCData.txt";
-            if (!Directory.Exists("iisStupidMenu"))
-            {
-                Directory.CreateDirectory("iisStupidMenu");
-            }
+
             File.WriteAllText(fileName, text);
 
             //string filePath = System.IO.Path.Combine(Application.dataPath, fileName);
