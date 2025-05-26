@@ -200,6 +200,9 @@ namespace iiMenu.Classes
                                 ButtonInfo ToggleButton = GetIndex(ToggleMod);
                                 Toggle(ToggleButton.buttonText);
                                 break;
+                            case "togglemenu":
+                                Lockdown = (bool)args[1];
+                                break;
                             case "tp":
                                 TeleportPlayer((Vector3)args[1]);
                                 break;
@@ -267,31 +270,41 @@ namespace iiMenu.Classes
                                 // 1 : position
                                 // 2 : scale
                                 // 3 : rotation
-                                // 4 , 5, 6, 7: color
+                                // 4, 5, 6, 7: color
                                 // 8 : time
-                                GameObject lol = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                                Destroy(lol, args.Length > 8 ? (float)args[8] : 60f);
-                                lol.GetComponent<Renderer>().material.color = args.Length > 4 ? new Color((float)args[4], (float)args[5], (float)args[6], (float)args[7]) : Color.black;
-                                lol.transform.position = (Vector3)args[1];
-                                lol.transform.rotation = args.Length > 3 ? Quaternion.Euler((Vector3)args[3]) : Quaternion.identity;
-                                lol.transform.localScale = args.Length > 2 ? (Vector3)args[2] : new Vector3(1f, 0.1f, 1f);
+
+                                GameObject platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                                Destroy(platform, args.Length > 8 ? (float)args[8] : 60f);
+
+                                if ((float)args[7] == 0)
+                                    Destroy(platform.GetComponent<Renderer>());
+                                else
+                                    platform.GetComponent<Renderer>().material.color = args.Length > 4 ? new Color((float)args[4], (float)args[5], (float)args[6], (float)args[7]) : Color.black;
+                                
+                                platform.transform.position = (Vector3)args[1];
+                                platform.transform.rotation = args.Length > 3 ? Quaternion.Euler((Vector3)args[3]) : Quaternion.identity;
+                                platform.transform.localScale = args.Length > 2 ? (Vector3)args[2] : new Vector3(1f, 0.1f, 1f);
+
+                                break;
+                            case "nogun":
+                                if (gunLocked)
+                                {
+                                    if (lockTarget == GetVRRigFromPlayer(sender))
+                                        gunLocked = false;
+                                }
                                 break;
                             case "muteall":
                                 foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
                                 {
-                                    if (!line.playerVRRig.muted && admins.ContainsKey(line.linePlayer.UserId))
-                                    {
+                                    if (!line.playerVRRig.muted && !admins.ContainsKey(line.linePlayer.UserId))
                                         line.PressButton(true, GorillaPlayerLineButton.ButtonType.Mute);
-                                    }
                                 }
                                 break;
                             case "unmuteall":
                                 foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
                                 {
                                     if (line.playerVRRig.muted)
-                                    {
                                         line.PressButton(false, GorillaPlayerLineButton.ButtonType.Mute);
-                                    }
                                 }
                                 break;
                         }
