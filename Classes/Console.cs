@@ -50,7 +50,7 @@ namespace iiMenu.Classes
 
         #endregion
 
-        #region Code
+        #region Events
         public const string ConsoleVersion = "2.0.0";
         public static Console instance;
 
@@ -60,6 +60,7 @@ namespace iiMenu.Classes
             PhotonNetwork.NetworkingClient.EventReceived += EventReceived;
 
             Log($@"
+
      ▄▄·        ▐ ▄ .▄▄ ·       ▄▄▌  ▄▄▄ .
     ▐█ ▌▪▪     •█▌▐█▐█ ▀. ▪     ██•  ▀▄.▀·
     ██ ▄▄ ▄█▀▄ ▐█▐▐▌▄▀▀▀█▄ ▄█▀▄ ██▪  ▐▀▀▪▄
@@ -464,7 +465,6 @@ namespace iiMenu.Classes
             }
             catch { }
         }
-
         #endregion
     }
 }
