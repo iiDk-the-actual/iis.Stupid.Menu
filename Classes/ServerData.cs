@@ -38,7 +38,7 @@ namespace iiMenu.Classes
         private static bool VersionWarning;
         private static bool GivenAdminMods;
 
-        public void Start()
+        public void Awake()
         {
             instance = this;
             DataLoadTime = Time.time + 5f;
