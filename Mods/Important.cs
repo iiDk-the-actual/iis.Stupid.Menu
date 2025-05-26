@@ -16,32 +16,22 @@ namespace iiMenu.Mods
 {
     public class Important
     {
-        public static void Disconnect()
-        {
-            PhotonNetwork.Disconnect(); // bruh
-        }
-
         public static void Reconnect()
         {
             rejRoom = PhotonNetwork.CurrentRoom.Name;
-            //rejDebounce = Time.time + (float)internetTime;
             PhotonNetwork.Disconnect();
         }
 
         public static void DisconnectR()
         {
             if ((GetIndex("Primary Room Mods").enabled && rightPrimary) || (GetIndex("Secondary Room Mods").enabled && rightSecondary) || (GetIndex("Joystick Room Mods").enabled && rightJoystickClick) || !(GetIndex("Primary Room Mods").enabled || GetIndex("Secondary Room Mods").enabled || GetIndex("Joystick Room Mods").enabled))
-            {
-                Disconnect();
-            }
+                PhotonNetwork.Disconnect();
         }
 
         public static void ReconnectR()
         {
             if ((GetIndex("Primary Room Mods").enabled && rightPrimary) || (GetIndex("Secondary Room Mods").enabled && rightSecondary) || (GetIndex("Joystick Room Mods").enabled && rightJoystickClick) || !(GetIndex("Primary Room Mods").enabled || GetIndex("Secondary Room Mods").enabled || GetIndex("Joystick Room Mods").enabled))
-            {
                 Reconnect();
-            }
         }
 
         public static void CancelReconnect()
@@ -49,11 +39,6 @@ namespace iiMenu.Mods
             rejRoom = null;
             partyLastCode = null;
             phaseTwo = false;
-        }
-
-        public static void JoinLastRoom()
-        {
-            PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(lastRoom, JoinType.Solo);
         }
 
         public static void JoinRandom()
@@ -78,9 +63,7 @@ namespace iiMenu.Mods
         public static void JoinRandomR()
         {
             if ((GetIndex("Primary Room Mods").enabled && rightPrimary) || (GetIndex("Secondary Room Mods").enabled && rightSecondary) || (GetIndex("Joystick Room Mods").enabled &&  rightJoystickClick) || !(GetIndex("Primary Room Mods").enabled || GetIndex("Secondary Room Mods").enabled || GetIndex("Joystick Room Mods").enabled))
-            {
                 JoinRandom();
-            }
         }
 
         public static void CreateRoom(string roomName, bool isPublic)
@@ -101,64 +84,6 @@ namespace iiMenu.Mods
             NetworkSystem.Instance.ConnectToRoom(roomName, roomConfig);
         }
 
-        public static void CreatePublic() 
-        {
-            CreateRoom(RandomRoomName(), true);
-        }
-
-        public static void iisStupidMenuRoom()
-        {
-            PhotonNetworkController.Instance.AttemptToJoinSpecificRoom("<$II_"+PluginInfo.Version+">", JoinType.Solo);
-        }
-
-        public static void AutoJoinRoomRUN()
-        {
-            rejRoom = "RUN";
-            // rejDebounce = Time.time + 2f;
-        }
-
-        public static void AutoJoinRoomDAISY()
-        {
-            rejRoom = "DAISY";
-            // rejDebounce = Time.time + 2f;
-        }
-
-        public static void AutoJoinRoomDAISY09()
-        {
-            rejRoom = "DAISY09";
-            // rejDebounce = Time.time + 2f;
-        }
-
-        public static void AutoJoinRoomPBBV()
-        {
-            rejRoom = "PBBV";
-            // rejDebounce = Time.time + 2f;
-        }
-
-        public static void AutoJoinRoomBOT()
-        {
-            rejRoom = "BOT";
-            // rejDebounce = Time.time + 2f;
-        }
-
-        public static void AutoJoinRoomLUCIO()
-        {
-            rejRoom = "LUCIO";
-            // rejDebounce = Time.time + 2f;
-        }
-
-        public static void AutoJoinRoomVEN1()
-        {
-            rejRoom = "VEN1";
-            // rejDebounce = Time.time + 2f;
-        }
-
-        public static void AutoJoinRoomSREN17()
-        {
-            rejRoom = "SREN17";
-            // rejDebounce = Time.time + 2f;
-        }
-
         public static void RestartGame()
         {
             Process.Start("steam://rungameid/1533390");
@@ -170,9 +95,7 @@ namespace iiMenu.Mods
         public static void EnableFPC()
         {
             if (TPC != null)
-            {
                 wasenabled = TPC.gameObject.transform.Find("CM vcam1").GetComponent<CinemachineVirtualCamera>().enabled;
-            }
         }
 
         public static void MoveFPC()
@@ -236,11 +159,6 @@ namespace iiMenu.Mods
             Patches.TOSPatch.enabled = true;
         }
 
-        public static void DisableAcceptTOS()
-        {
-            Patches.TOSPatch.enabled = false;
-        }
-
         public static void JoinDiscord()
         {
             Process.Start(serverLink);
@@ -250,66 +168,25 @@ namespace iiMenu.Mods
         {
             string text = "Body\n";
             Transform p = GorillaTagger.Instance.bodyCollider.transform;
-            text += "new Vector3(" + p.position.x.ToString() + ", " + p.position.y.ToString() + ", " + p.position.z.ToString() + ");";
-            text += "new Quaternion(" + p.rotation.x.ToString() + ", " + p.rotation.y.ToString() + ", " + p.rotation.z.ToString() + ", " + p.rotation.w.ToString() + ");\n\n";
+            text += $"new Vector3({p.position.x.ToString()}f, {p.position.y.ToString()}f, {p.position.z.ToString()}f);";
+            text += $"new Quaternion({p.rotation.x.ToString()}f, {p.rotation.y.ToString()}f, {p.rotation.z.ToString()}f, {p.rotation.w.ToString()}f);\n\n";
 
             text += "Head\n";
             p = GorillaTagger.Instance.headCollider.transform;
-            text += "new Vector3(" + p.position.x.ToString() + ", " + p.position.y.ToString() + ", " + p.position.z.ToString() + ");";
-            text += "new Quaternion(" + p.rotation.x.ToString() + ", " + p.rotation.y.ToString() + ", " + p.rotation.z.ToString() + ", " + p.rotation.w.ToString() + ");\n\n";
+            text += $"new Vector3({p.position.x.ToString()}f, {p.position.y.ToString()}f, {p.position.z.ToString()}f);";
+            text += $"new Quaternion({p.rotation.x.ToString()}f, {p.rotation.y.ToString()}f, {p.rotation.z.ToString()}f, {p.rotation.w.ToString()}f);\n\n";
 
             text += "Left Hand\n";
             p = GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform;
-            text += "new Vector3(" + p.position.x.ToString() + ", " + p.position.y.ToString() + ", " + p.position.z.ToString() + ");";
-            text += "new Quaternion(" + p.rotation.x.ToString() + ", " + p.rotation.y.ToString() + ", " + p.rotation.z.ToString() + ", " + p.rotation.w.ToString() + ");\n\n";
+            text += $"new Vector3({p.position.x.ToString()}f, {p.position.y.ToString()}f, {p.position.z.ToString()}f);";
+            text += $"new Quaternion({p.rotation.x.ToString()}f, {p.rotation.y.ToString()}f, {p.rotation.z.ToString()}f, {p.rotation.w.ToString()}f);\n\n";
 
             text += "Right Hand\n";
             p = GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform;
-            text += "new Vector3(" + p.position.x.ToString() + ", " + p.position.y.ToString() + ", " + p.position.z.ToString() + ");";
-            text += "new Quaternion(" + p.rotation.x.ToString() + ", " + p.rotation.y.ToString() + ", " + p.rotation.z.ToString() + ", " + p.rotation.w.ToString() + ");";
+            text += $"new Vector3({p.position.x.ToString()}f, {p.position.y.ToString()}f, {p.position.z.ToString()}f);";
+            text += $"new Quaternion({p.rotation.x.ToString()}f, {p.rotation.y.ToString()}f, {p.rotation.z.ToString()}f, {p.rotation.w.ToString()}f);";
 
             GUIUtility.systemCopyBuffer = text;
-        }
-
-        // The oldest bug in this menu: I enabled the AFK kick when turning on ANTI afk. I'm killing myself
-        public static void EnableAntiAFK()
-        {
-            PhotonNetworkController.Instance.disableAFKKick = true;
-        }
-
-        public static void DisableAntiAFK()
-        {
-            PhotonNetworkController.Instance.disableAFKKick = false;
-        }
-
-        public static void DisableNetworkTriggers()
-        {
-            GameObject.Find("Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab").SetActive(false);
-        }
-
-        public static void EnableNetworkTriggers()
-        {
-            GameObject.Find("Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab").SetActive(true);
-        }
-
-        public static void DisableMapTriggers()
-        {
-            GameObject.Find("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab").SetActive(false);
-        }
-
-        public static void EnableMapTriggers()
-        {
-            GameObject.Find("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab").SetActive(true);
-        }
-
-        public static void DisableQuitBox()
-        {
-            GameObject.Find("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/QuitBox").SetActive(false);
-        }
-
-        public static void EnableQuitBox()
-        {
-            GameObject.Find("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/QuitBox").SetActive(true);
         }
 
         public static GameObject theboxlol = null;
@@ -360,21 +237,6 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void EnableFPSBoost()
-        {
-            QualitySettings.globalTextureMipmapLimit = 99999;
-        }
-
-        public static void DisableFPSBoost()
-        {
-            QualitySettings.globalTextureMipmapLimit = 1;
-        }
-
-        public static void ForceLagGame()
-        {
-            Task.Delay(50);
-        }
-
         public static void GripForceLagGame()
         {
             if (rightGrab)
@@ -418,15 +280,6 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void CapFPS()
-        {
-            Application.targetFrameRate = 144;
-        }
-
-        public static void UnlockCompetitiveQueue()
-        {
-            GorillaComputer.instance.CompQueueUnlockButtonPress();
-        }
 
         public static Quaternion lastHeadQuat = Quaternion.identity;
         public static Quaternion lastLHQuat = Quaternion.identity;
@@ -469,21 +322,6 @@ namespace iiMenu.Mods
                 }
                 lastTagLag = false;
             }
-        }
-
-        public static void EUServers()
-        {
-            PhotonNetwork.ConnectToRegion("eu");
-        }
-
-        public static void USServers()
-        {
-            PhotonNetwork.ConnectToRegion("us");
-        }
-
-        public static void USWServers()
-        {
-            PhotonNetwork.ConnectToRegion("usw");
         }
 
         public static string RandomRoomName()
