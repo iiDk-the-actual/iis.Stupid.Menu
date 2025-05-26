@@ -3411,8 +3411,8 @@ namespace iiMenu.Mods
         public static void CosmeticBrowser()
         {
             rememberdirectory = pageNumber;
-            buttonsType = 29;
-            pageNumber = 0;
+            currentCategoryName = "Temporary Category";
+
             List<ButtonInfo> cosmeticbuttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Cosmetic Browser", method = () => RemoveCosmeticBrowser(), isTogglable = false, toolTip = "Returns you back to the fun mods." } };
             foreach (GorillaNetworking.CosmeticsController.CosmeticItem hat in GorillaNetworking.CosmeticsController.instance.allCosmetics)
             {
@@ -3426,7 +3426,7 @@ namespace iiMenu.Mods
 
         public static void RemoveCosmeticBrowser()
         {
-            Settings.EnableFun();
+            currentCategoryName = "Fun Mods";
             pageNumber = rememberdirectory;
         }
 
