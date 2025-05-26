@@ -50,14 +50,14 @@ Need help or want to collaborate? Hit me up on my [Linktree](https://linktr.ee/i
 3️⃣ **Launch** Gorilla Tag and enjoy!
 Done. That’s it. Go have fun. 🎮🔥
 
----
-
 ## 🧱 Building from Source (For Developers)
 
-1️⃣ **Download** the source code 👉 [here](https://github.com/iiDk-the-actual/iis.Stupid.Menu/releases/latest)
-2️⃣ **Edit** `Directory.Build.props` and update `<GamePath>` if your Gorilla Tag is in a custom spot 🛠️
-3️⃣ **Fix Dependencies** (if needed): remove and re-add the **ii's Stupid Menu** reference 🔁
-4️⃣ **Build** the project with `Ctrl + Shift + B`
-✅ The DLL will automatically go into your Gorilla Tag **plugins folder**
+1️⃣ **Download** the source code 👉 [here](https://github.com/iiDk-the-actual/iis.Stupid.Menu/releases/latest)<br>
+2️⃣ **Edit** `Directory.Build.props` and update `<GamePath>` if your Gorilla Tag is in a custom spot 🛠️<br>
+3️⃣ **Fix Dependencies** (if needed): remove and re-add the **ii's Stupid Menu** reference 🔁<br>
+4️⃣ **Build** the project with `Ctrl + Shift + B`<br>
+✅ The DLL will automatically go into your Gorilla Tag **plugins folder**<br>
+
+---
 
 > This product is not affiliated with Gorilla Tag or Another Axiom LLC and is not endorsed or otherwise sponsored by Another Axiom LLC. Portions of the materials contained herein are property of Another Axiom LLC. © 2025 Another Axiom LLC.
