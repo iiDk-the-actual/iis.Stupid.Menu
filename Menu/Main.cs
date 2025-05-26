@@ -3586,10 +3586,8 @@ namespace iiMenu.Menu
             return name.Contains("fected") || name.Contains("it") || name.Contains("stealth") || name.Contains("ice") || !Player.nameTagAnchor.activeSelf;
         }
 
-        public static bool PlayerIsLocal(VRRig Player)
-        {
-            return Player == GorillaTagger.Instance.offlineVRRig || Player == GhostRig;
-        }
+        public static bool PlayerIsLocal(VRRig Player) => 
+            Player == GorillaTagger.Instance.offlineVRRig || Player == GhostRig;
 
         public static List<NetPlayer> InfectedList()
         {
@@ -3758,10 +3756,9 @@ namespace iiMenu.Menu
             }
         }
 
-        public static Vector3 World2Player(Vector3 world) // SteamVR bug causes teleporting of the player to the center of your playspace
-        {
-            return world - GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.transform.position;
-        }
+        // SteamVR bug causes teleporting of the player to the center of your playspace
+        public static Vector3 World2Player(Vector3 world) => 
+            world - GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.transform.position;
 
         // True left and right hand get the exact position and rotation of the middle of the hand
         public static (Vector3 position, Quaternion rotation, Vector3 up, Vector3 forward, Vector3 right) TrueLeftHand()
@@ -3904,10 +3901,8 @@ namespace iiMenu.Menu
             ausrc.Play();
         }
 
-        public static string ToTitleCase(string text)
-        {
-            return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(text.ToLower());
-        }
+        public static string ToTitleCase(string text) =>
+            CultureInfo.CurrentCulture.TextInfo.ToTitleCase(text.ToLower());
 
         public static Dictionary<string, float> waitingForTranslate = new Dictionary<string, float> { };
         public static Dictionary<string, string> translateCache = new Dictionary<string, string> { };
@@ -4027,10 +4022,8 @@ namespace iiMenu.Menu
             return utcNow.ToString("o");
         }
 
-        public static string ColorToHex(Color color) 
-        {
-            return ColorUtility.ToHtmlStringRGB(color);
-        }
+        public static string ColorToHex(Color color) =>
+            ColorUtility.ToHtmlStringRGB(color);
 
         public static string CleanString(string input, int maxLength = 12)
         {
@@ -4059,10 +4052,8 @@ namespace iiMenu.Menu
         }
 
         // To get the optimal delay from call limiter
-        public static float GetCallLimiterDelay(CallLimiter limiter)
-        {
-            return limiter.timeCooldown / limiter.callHistoryLength;
-        }
+        public static float GetCallLimiterDelay(CallLimiter limiter) =>
+            limiter.timeCooldown / limiter.callHistoryLength;
 
         public static void EventReceived(EventData data)
         {
@@ -4227,10 +4218,8 @@ namespace iiMenu.Menu
             return null;
         }
 
-        public static int GetCategory(string categoryName)
-        {
-            return Buttons.categoryNames.ToList().IndexOf(categoryName);
-        }
+        public static int GetCategory(string categoryName) =>
+            Buttons.categoryNames.ToList().IndexOf(categoryName);
 
         public static int AddCategory(string categoryName)
         {
@@ -4520,9 +4509,7 @@ namespace iiMenu.Menu
         public static void PressKeyboardKey(string key)
         {
             if (key == "Space")
-            {
                 searchText += " ";
-            }
             else
             {
                 if (key == "Backspace")
@@ -4531,9 +4518,7 @@ namespace iiMenu.Menu
                         searchText = searchText.Substring(0, searchText.Length - 1);
                 }
                 else
-                {
                     searchText += key.ToLower();
-                }
             }
             GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(66, false, buttonClickVolume / 10f);
             pageNumber = 0;
