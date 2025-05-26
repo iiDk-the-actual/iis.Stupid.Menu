@@ -1142,52 +1142,37 @@ namespace iiMenu.Mods
         public static void UpAndDown()
         {
             if ((rightTrigger > 0.5f) || rightGrab)
-            {
                 ZeroGravity();
-            }
+            
             if (rightTrigger > 0.5f)
-            {
                 GorillaTagger.Instance.rigidbody.velocity += Vector3.up * Time.deltaTime * flySpeed * 3f;
-            }
 
             if (rightGrab)
-            {
                 GorillaTagger.Instance.rigidbody.velocity += Vector3.up * Time.deltaTime * flySpeed * -3f;
-            }
         }
 
         public static void LeftAndRight()
         {
             if ((rightTrigger > 0.5f) || rightGrab)
-            {
                 ZeroGravity();
-            }
+
             if (rightTrigger > 0.5f)
-            {
                 GorillaTagger.Instance.rigidbody.velocity += GorillaTagger.Instance.bodyCollider.transform.right * Time.deltaTime * flySpeed * -3f;
-            }
 
             if (rightGrab)
-            {
                 GorillaTagger.Instance.rigidbody.velocity += GorillaTagger.Instance.bodyCollider.transform.right * Time.deltaTime * flySpeed * 3f;
-            }
         }
 
         public static void ForwardsAndBackwards()
         {
             if ((rightTrigger > 0.5f) || rightGrab)
-            {
                 ZeroGravity();
-            }
+            
             if (rightTrigger > 0.5f)
-            {
                 GorillaTagger.Instance.rigidbody.velocity += GorillaTagger.Instance.bodyCollider.transform.forward * Time.deltaTime * flySpeed * 3f;
-            }
 
             if (rightGrab)
-            {
                 GorillaTagger.Instance.rigidbody.velocity += GorillaTagger.Instance.bodyCollider.transform.forward * Time.deltaTime * flySpeed * -3f;
-            }
         }
 
         public static void AutoWalk()
@@ -1198,9 +1183,7 @@ namespace iiMenu.Mods
             float animSpeed = 9f;
 
             if (leftJoystickClick)
-            {
                 animSpeed *= 1.5f;
-            }
 
             if (Mathf.Abs(joy.y) > 0.05f || Mathf.Abs(joy.x) > 0.05f)
             {
@@ -1459,10 +1442,7 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void ClearRewind()
-        {
-            playerPositions.Clear();
-        }
+        public static void ClearRewind() => playerPositions.Clear();
 
         private static Vector3 walkPos;
         private static Vector3 walkNormal;
@@ -1562,42 +1542,39 @@ namespace iiMenu.Mods
             GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
         }
 
-        private static int rememberPageNumber = 0;
+        private static int rememberPageNumber;
         public static void EnterTeleportToPlayer()
         {
             rememberPageNumber = pageNumber;
-            buttonsType = 29;
-            pageNumber = 0;
+            currentCategoryName = "Temporary Category";
+
             List<ButtonInfo> tpbuttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Teleport to Player", method = () => ExitTeleportToPlayer(), isTogglable = false, toolTip = "Returns you back to the movement mods." } };
             foreach (Player plr in PhotonNetwork.PlayerListOthers)
             {
-                string clrtxt = "#ffffff";
+                string playerColor = "#ffffff";
                 try
                 {
-                    clrtxt = ColorToHex(GetVRRigFromPlayer(plr).playerColor);
+                    playerColor = $"#{ColorToHex(GetVRRigFromPlayer(plr).playerColor)}";
                 }
                 catch { }
-                tpbuttons.Add(new ButtonInfo { buttonText = "TeleportPlayer"+tpbuttons.Count.ToString(), overlapText = "<color="+clrtxt+">"+ToTitleCase(plr.NickName)+"</color>", method = () => TeleportToPlayer(plr), isTogglable = false, toolTip = "Teleports you to " + ToTitleCase(plr.NickName) + "." });
+                tpbuttons.Add(new ButtonInfo { buttonText = "TeleportPlayer" + tpbuttons.Count.ToString(), overlapText = $"<color={playerColor}>" + ToTitleCase(plr.NickName) + "</color>", method = () => TeleportToPlayer(plr), isTogglable = false, toolTip = $"Teleports you to {ToTitleCase(plr.NickName)}." });
             }
             Buttons.buttons[29] = tpbuttons.ToArray();
         }
 
-        public static void TeleportToPlayer(Player plr)
-        {
-            TeleportPlayer(GetVRRigFromPlayer(plr).headMesh.transform.position);
-        }
+        public static void TeleportToPlayer(Player plr) => TeleportPlayer(GetVRRigFromPlayer(plr).headMesh.transform.position);
 
         public static void ExitTeleportToPlayer()
         {
-            Settings.EnableMovement();
+            currentCategoryName = "Movement Mods";
             pageNumber = rememberPageNumber;
         }
 
         public static void EnterTeleportToMap() // Credits to Malachi for the positions
         {
             rememberPageNumber = pageNumber;
-            buttonsType = 29;
-            pageNumber = 0;
+            currentCategoryName = "Temporary Category";
+
             List<ButtonInfo> tpbuttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Teleport to Map", method = () => ExitTeleportToPlayer(), isTogglable = false, toolTip = "Returns you back to the movement mods." } };
             string[][] mapData = new string[][]
             {
@@ -2408,11 +2385,6 @@ namespace iiMenu.Mods
             GorillaLocomotion.GTPlayer.Instance.inOverlay = leftPrimary;
         }
 
-        public static void EnableFakeBrokenController()
-        {
-            GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHandTriggerCollider").GetComponent<Collider>().enabled = false;
-        }
-
         public static void FakeBrokenController()
         {
             Vector3 Position = leftPrimary ? GorillaTagger.Instance.leftHandTransform.position : GorillaTagger.Instance.rightHandTransform.position;
@@ -2424,11 +2396,6 @@ namespace iiMenu.Mods
             GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.rotation = Rotation;
 
             Safety.NoFinger();
-        }
-
-        public static void DisableFakeBrokenController()
-        {
-            GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHandTriggerCollider").GetComponent<Collider>().enabled = true;
         }
 
         public static Vector3 deadPosition = Vector3.zero;
