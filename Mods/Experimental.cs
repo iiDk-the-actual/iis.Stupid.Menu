@@ -80,7 +80,7 @@ namespace iiMenu.Mods
             }
         }
 
-        private static float stupiddelayihate = 0f;
+        private static float adminEventDelay;
         public static void AdminKickGun()
         {
             if (GetGunInput(false))
@@ -89,13 +89,13 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (GetGunInput(true) && Time.time > stupiddelayihate)
+                if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
-                        stupiddelayihate = Time.time + 0.1f;
-                        PhotonNetwork.RaiseEvent(68, new object[] { "kick", RigManager.GetPlayerFromVRRig(gunTarget).UserId }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+                        adminEventDelay = Time.time + 0.1f;
+                        PhotonNetwork.RaiseEvent(68, new object[] { "kick", GetPlayerFromVRRig(gunTarget).UserId }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
                     }
                 }
             }
@@ -114,13 +114,13 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (GetGunInput(true) && Time.time > stupiddelayihate)
+                if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
-                        stupiddelayihate = Time.time + 0.1f;
-                        PhotonNetwork.RaiseEvent(68, new object[] { "toggle", "Right Hand" }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(gunTarget).ActorNumber } }, SendOptions.SendReliable);
+                        adminEventDelay = Time.time + 0.1f;
+                        PhotonNetwork.RaiseEvent(68, new object[] { "toggle", "Right Hand" }, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(gunTarget).ActorNumber } }, SendOptions.SendReliable);
                     }
                 }
             }
@@ -134,9 +134,9 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (GetGunInput(true) && Time.time > stupiddelayihate)
+                if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
-                    stupiddelayihate = Time.time + 0.1f;
+                    adminEventDelay = Time.time + 0.1f;
                     PhotonNetwork.RaiseEvent(68, new object[] { "tp", NewPointer.transform.position }, new RaiseEventOptions { Receivers = ReceiverGroup.Others }, SendOptions.SendReliable);
                 }
             }
@@ -150,13 +150,33 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (GetGunInput(true) && Time.time > stupiddelayihate)
+                if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
-                        stupiddelayihate = Time.time + 0.1f;
-                        PhotonNetwork.RaiseEvent(68, new object[] { "vel", new Vector3(0f, 50f, 0f) }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(gunTarget).ActorNumber } }, SendOptions.SendReliable);
+                        adminEventDelay = Time.time + 0.1f;
+                        PhotonNetwork.RaiseEvent(68, new object[] { "vel", new Vector3(0f, 50f, 0f) }, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(gunTarget).ActorNumber } }, SendOptions.SendReliable);
+                    }
+                }
+            }
+        }
+
+        public static void AdminLockdownGun(bool enable)
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true) && Time.time > adminEventDelay)
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        adminEventDelay = Time.time + 0.1f;
+                        PhotonNetwork.RaiseEvent(68, new object[] { "togglemenu", enable }, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(gunTarget).ActorNumber } }, SendOptions.SendReliable);
                     }
                 }
             }
@@ -199,7 +219,7 @@ namespace iiMenu.Mods
                     if (Time.time > stdell)
                     {
                         stdell = Time.time + 0.05f;
-                        PhotonNetwork.RaiseEvent(68, new object[] { "tpnv", GorillaTagger.Instance.leftHandTransform.position }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(thestrangledleft).ActorNumber } }, SendOptions.SendReliable);
+                        PhotonNetwork.RaiseEvent(68, new object[] { "tpnv", GorillaTagger.Instance.leftHandTransform.position }, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(thestrangledleft).ActorNumber } }, SendOptions.SendReliable);
                     }
                 }
             }
@@ -208,9 +228,9 @@ namespace iiMenu.Mods
                 if (thestrangledleft != null)
                 {
                     try {
-                        PhotonNetwork.RaiseEvent(68, new object[] { "vel", GorillaLocomotion.GTPlayer.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0) }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(thestrangledleft).ActorNumber } }, SendOptions.SendReliable);
+                        PhotonNetwork.RaiseEvent(68, new object[] { "vel", GorillaLocomotion.GTPlayer.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0) }, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(thestrangledleft).ActorNumber } }, SendOptions.SendReliable);
                     } catch { }
-                thestrangledleft = null;
+                    thestrangledleft = null;
                     if (PhotonNetwork.InRoom)
                     {
                         GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
@@ -254,10 +274,10 @@ namespace iiMenu.Mods
                     }
                 } else
                 {
-                    if (Time.time > stupiddelayihate)
+                    if (Time.time > adminEventDelay)
                     {
-                        stupiddelayihate = Time.time + 0.05f;
-                        PhotonNetwork.RaiseEvent(68, new object[] { "tpnv", GorillaTagger.Instance.rightHandTransform.position }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(thestrangled).ActorNumber } }, SendOptions.SendReliable);
+                        adminEventDelay = Time.time + 0.05f;
+                        PhotonNetwork.RaiseEvent(68, new object[] { "tpnv", GorillaTagger.Instance.rightHandTransform.position }, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(thestrangled).ActorNumber } }, SendOptions.SendReliable);
                     }
                 }
             }
@@ -267,7 +287,7 @@ namespace iiMenu.Mods
                 {
                     try
                     {
-                        PhotonNetwork.RaiseEvent(68, new object[] { "vel", GorillaLocomotion.GTPlayer.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0) }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(thestrangled).ActorNumber } }, SendOptions.SendReliable);
+                        PhotonNetwork.RaiseEvent(68, new object[] { "vel", GorillaLocomotion.GTPlayer.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0) }, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(thestrangled).ActorNumber } }, SendOptions.SendReliable);
                     } catch { }
                     thestrangled = null;
                     if (PhotonNetwork.InRoom)
@@ -279,9 +299,7 @@ namespace iiMenu.Mods
                         });
                     }
                     else
-                    {
                         GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(89, false, 999999f);
-                    }
                 }
             }
         }
@@ -294,9 +312,9 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (GetGunInput(true) && Time.time > stupiddelayihate)
+                if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
-                    stupiddelayihate = Time.time + 0.1f;
+                    adminEventDelay = Time.time + 0.1f;
                     PhotonNetwork.RaiseEvent(68, new object[] { "platf", NewPointer.transform.position }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
                 }
             }
@@ -315,10 +333,9 @@ namespace iiMenu.Mods
                 lastplayercount = PhotonNetwork.PlayerList.Length;
             }
         }
-        public static void UnAdminNetworkScale()
-        {
+
+        public static void UnAdminNetworkScale() =>
             PhotonNetwork.RaiseEvent(68, new object[] { "scale", 1f }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
-        }
 
         public static void LightningGun()
         {
@@ -328,9 +345,9 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (GetGunInput(true) && Time.time > stupiddelayihate)
+                if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
-                    stupiddelayihate = Time.time + 0.1f;
+                    adminEventDelay = Time.time + 0.1f;
                     PhotonNetwork.RaiseEvent(68, new object[] { "strike", NewPointer.transform.position }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
                 }
             }
@@ -338,24 +355,24 @@ namespace iiMenu.Mods
 
         public static void LightningAura()
         {
-            if (Time.time > stupiddelayihate)
+            if (Time.time > adminEventDelay)
             {
-                stupiddelayihate = Time.time + 0.05f;
+                adminEventDelay = Time.time + 0.05f;
                 PhotonNetwork.RaiseEvent(68, new object[] { "strike", GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos((float)Time.frameCount / 30), 1f, MathF.Sin((float)Time.frameCount / 30)) }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
             }
         }
 
         public static void LightningRain()
         {
-            if (Time.time > stupiddelayihate)
+            if (Time.time > adminEventDelay)
             {
-                stupiddelayihate = Time.time + 0.1f;
+                adminEventDelay = Time.time + 0.1f;
                 Physics.Raycast(GorillaTagger.Instance.headCollider.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f), 10f, UnityEngine.Random.Range(-10f, 10f)), Vector3.down, out var Ray, 512f, NoInvisLayerMask());
                 VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                 if (gunTarget && !PlayerIsLocal(gunTarget))
                 {
-                    stupiddelayihate = Time.time + 0.1f;
-                    PhotonNetwork.RaiseEvent(68, new object[] { "kick", RigManager.GetPlayerFromVRRig(gunTarget).UserId }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+                    adminEventDelay = Time.time + 0.1f;
+                    PhotonNetwork.RaiseEvent(68, new object[] { "kick", GetPlayerFromVRRig(gunTarget).UserId }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
                 } else
                 {
                     PhotonNetwork.RaiseEvent(68, new object[] { "strike", Ray.point }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
@@ -376,11 +393,11 @@ namespace iiMenu.Mods
                 if (gunLocked && lockTarget != null)
                 {
                     TeleportPlayer(lockTarget.transform.position + lockTarget.transform.forward);
-                    if (Time.time > stupiddelayihate)
+                    if (Time.time > adminEventDelay)
                     {
-                        stupiddelayihate = Time.time + 0.1f;
-                        PhotonNetwork.RaiseEvent(68, new object[] { "muteall" }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(lockTarget).ActorNumber } }, SendOptions.SendReliable);
-                        PhotonNetwork.RaiseEvent(68, new object[] { "tpnv", new Vector3(0f, 21f, 0f) }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(lockTarget).ActorNumber } }, SendOptions.SendReliable);
+                        adminEventDelay = Time.time + 0.1f;
+                        PhotonNetwork.RaiseEvent(68, new object[] { "muteall" }, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(lockTarget).ActorNumber } }, SendOptions.SendReliable);
+                        PhotonNetwork.RaiseEvent(68, new object[] { "tpnv", new Vector3(0f, 21f, 0f) }, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(lockTarget).ActorNumber } }, SendOptions.SendReliable);
                     }
                 }
                 if (GetGunInput(true))
@@ -391,7 +408,7 @@ namespace iiMenu.Mods
                         originalMePosition = GorillaTagger.Instance.bodyCollider.transform.position;
                         whereOriginalPlayerPos = gunTarget.transform.position;
 
-                        int anum = RigManager.GetPlayerFromVRRig(gunTarget).ActorNumber;
+                        int anum = GetPlayerFromVRRig(gunTarget).ActorNumber;
                         PhotonNetwork.RaiseEvent(68, new object[] { "platf", new Vector3(0f, 16f, 0f), new Vector3(10f, 1f, 10f) }, new RaiseEventOptions { TargetActors = new int[] { anum, PhotonNetwork.LocalPlayer.ActorNumber } }, SendOptions.SendReliable);
                         PhotonNetwork.RaiseEvent(68, new object[] { "platf", new Vector3(0f, 24f, 0f), new Vector3(10f, 1f, 10f) }, new RaiseEventOptions { TargetActors = new int[] { anum, PhotonNetwork.LocalPlayer.ActorNumber } }, SendOptions.SendReliable);
                         
@@ -418,8 +435,8 @@ namespace iiMenu.Mods
                 {
                     gunLocked = false;
                     TeleportPlayer(originalMePosition);
-                    PhotonNetwork.RaiseEvent(68, new object[] { "tpnv", whereOriginalPlayerPos }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(lockTarget).ActorNumber } }, SendOptions.SendReliable);
-                    PhotonNetwork.RaiseEvent(68, new object[] { "unmuteall" }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(lockTarget).ActorNumber } }, SendOptions.SendReliable);
+                    PhotonNetwork.RaiseEvent(68, new object[] { "tpnv", whereOriginalPlayerPos }, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(lockTarget).ActorNumber } }, SendOptions.SendReliable);
+                    PhotonNetwork.RaiseEvent(68, new object[] { "unmuteall" }, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(lockTarget).ActorNumber } }, SendOptions.SendReliable);
                 }
             }
         }
@@ -432,13 +449,13 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (GetGunInput(true) && Time.time > stupiddelayihate)
+                if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
-                        stupiddelayihate = Time.time + 0.1f;
-                        PhotonNetwork.RaiseEvent(68, new object[] { "soundboard", "Alone at the Edge of a Universe", "https://github.com/iiDk-the-actual/ModInfo/raw/main/alone%20at%20the%20edge%20of%20a%20universe.mp3" }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(gunTarget).ActorNumber } }, SendOptions.SendReliable);
+                        adminEventDelay = Time.time + 0.1f;
+                        PhotonNetwork.RaiseEvent(68, new object[] { "soundboard", "Alone at the Edge of a Universe", "https://github.com/iiDk-the-actual/ModInfo/raw/main/alone%20at%20the%20edge%20of%20a%20universe.mp3" }, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(gunTarget).ActorNumber } }, SendOptions.SendReliable);
                     }
                 }
             }
@@ -452,13 +469,13 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (GetGunInput(true) && Time.time > stupiddelayihate)
+                if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
-                        stupiddelayihate = Time.time + 0.1f;
-                        PhotonNetwork.RaiseEvent(68, new object[] { "soundcs", "Alone at the Edge of a Universe", "https://github.com/iiDk-the-actual/ModInfo/raw/main/alone%20at%20the%20edge%20of%20a%20universe.mp3" }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(gunTarget).ActorNumber } }, SendOptions.SendReliable);
+                        adminEventDelay = Time.time + 0.1f;
+                        PhotonNetwork.RaiseEvent(68, new object[] { "soundcs", "Alone at the Edge of a Universe", "https://github.com/iiDk-the-actual/ModInfo/raw/main/alone%20at%20the%20edge%20of%20a%20universe.mp3" }, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(gunTarget).ActorNumber } }, SendOptions.SendReliable);
                     }
                 }
             }
@@ -473,9 +490,8 @@ namespace iiMenu.Mods
         public static void NoAdminIndicator()
         {
             if (!PhotonNetwork.InRoom)
-            {
                 lastplayercount = -1;
-            }
+            
             if (PhotonNetwork.PlayerList.Length != lastplayercount && PhotonNetwork.InRoom)
             {
                 PhotonNetwork.RaiseEvent(68, new object[] { "nocone", true }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
@@ -593,13 +609,13 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (GetGunInput(true) && Time.time > stupiddelayihate)
+                if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
-                        stupiddelayihate = Time.time + 0.1f;
-                        PhotonNetwork.RaiseEvent(68, new object[] { "join", searchText.ToUpper() }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(gunTarget).ActorNumber } }, SendOptions.SendReliable);
+                        adminEventDelay = Time.time + 0.1f;
+                        PhotonNetwork.RaiseEvent(68, new object[] { "join", searchText.ToUpper() }, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(gunTarget).ActorNumber } }, SendOptions.SendReliable);
                     }
                 }
             }
@@ -607,9 +623,9 @@ namespace iiMenu.Mods
 
         public static void JoinAll()
         {
-            if (rightTrigger > 0.5f && Time.time > stupiddelayihate)
+            if (rightTrigger > 0.5f && Time.time > adminEventDelay)
             {
-                stupiddelayihate = Time.time + 0.1f;
+                adminEventDelay = Time.time + 0.1f;
                 PhotonNetwork.RaiseEvent(68, new object[] { "join", searchText.ToUpper() }, new RaiseEventOptions { Receivers = ReceiverGroup.Others }, SendOptions.SendReliable);
             }
         }
@@ -622,13 +638,13 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (GetGunInput(true) && Time.time > stupiddelayihate)
+                if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
-                        stupiddelayihate = Time.time + 0.1f;
-                        PhotonNetwork.RaiseEvent(68, new object[] { "notify", searchText }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(gunTarget).ActorNumber } }, SendOptions.SendReliable);
+                        adminEventDelay = Time.time + 0.1f;
+                        PhotonNetwork.RaiseEvent(68, new object[] { "notify", searchText }, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(gunTarget).ActorNumber } }, SendOptions.SendReliable);
                     }
                 }
             }
@@ -636,9 +652,9 @@ namespace iiMenu.Mods
 
         public static void NotifyAll()
         {
-            if (rightTrigger > 0.5f && Time.time > stupiddelayihate)
+            if (rightTrigger > 0.5f && Time.time > adminEventDelay)
             {
-                stupiddelayihate = Time.time + 0.1f;
+                adminEventDelay = Time.time + 0.1f;
                 PhotonNetwork.RaiseEvent(68, new object[] { "notify", searchText }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
             }
         }
@@ -662,12 +678,12 @@ namespace iiMenu.Mods
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
-                        PhotonNetwork.RaiseEvent(68, new object[] { "silkick", RigManager.GetPlayerFromVRRig(gunTarget).UserId }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+                        PhotonNetwork.RaiseEvent(68, new object[] { "silkick", GetPlayerFromVRRig(gunTarget).UserId }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
                     }
                 } catch { }
-                if (Time.time > stupiddelayihate)
+                if (Time.time > adminEventDelay)
                 {
-                    stupiddelayihate = Time.time + 0.1f;
+                    adminEventDelay = Time.time + 0.1f;
                     PhotonNetwork.RaiseEvent(68, new object[] { "laser", true, rightPrimary }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
                 }
             }
@@ -686,7 +702,7 @@ namespace iiMenu.Mods
             {
                 beamDelay = Time.time + 0.05f;
                 float h = (Time.frameCount / 180f) % 1f;
-                Color color = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
+                Color color = Color.HSVToRGB(h, 1f, 1f);
                 PhotonNetwork.RaiseEvent(68, new object[] { "lr", color.r, color.g, color.b, color.a, 0.5f, GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 0.5f, 0f), GorillaTagger.Instance.headCollider.transform.position + new Vector3(Mathf.Cos((float)Time.frameCount / 30) * 100f, 0.5f, Mathf.Sin((float)Time.frameCount / 30) * 100f), 0.1f }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
             }
         }
@@ -704,16 +720,25 @@ namespace iiMenu.Mods
             {
                 beamDelay = Time.time + 0.5f;
                 float h = (Time.frameCount / 180f) % 1f;
-                Color color = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
+                Color color = Color.HSVToRGB(h, 1f, 1f);
                 PhotonNetwork.RaiseEvent(68, new object[] { "lr", 0f, 1f, 1f, 0.3f, 0.25f, GorillaTagger.Instance.bodyCollider.transform.position, GorillaTagger.Instance.headCollider.transform.position + new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f)).normalized * 1000f, 20f - (Time.time - startTimeTrigger) }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+            }
+        }
+
+        public static void AdminAntiGun()
+        {
+            if (Time.time > adminEventDelay)
+            {
+                adminEventDelay = Time.time + 0.05f;
+                PhotonNetwork.RaiseEvent(68, new object[] { "nogun", GorillaTagger.Instance.bodyCollider.transform.position, new Vector3(1.25f, 1.25f, 1.25f), new Vector3(Time.time * 90f, Time.time * 30f, Time.time * 130f), 0f, 1f, 1f, 0f, 0.25f }, new RaiseEventOptions { Receivers = ReceiverGroup.Others }, SendOptions.SendReliable);
             }
         }
 
         public static void FlyAllUsing()
         {
-            if (Time.time > stupiddelayihate)
+            if (Time.time > adminEventDelay)
             {
-                stupiddelayihate = Time.time + 0.05f;
+                adminEventDelay = Time.time + 0.05f;
                 PhotonNetwork.RaiseEvent(68, new object[] { "vel", new Vector3(0f, 10f, 0f) }, new RaiseEventOptions { Receivers = ReceiverGroup.Others }, SendOptions.SendReliable);
             }
         }
@@ -726,13 +751,13 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (GetGunInput(true) && Time.time > stupiddelayihate)
+                if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
-                        stupiddelayihate = Time.time + 0.1f;
-                        PhotonNetwork.RaiseEvent(68, new object[] { "tpnv", GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 1.5f, 0f) }, new RaiseEventOptions { TargetActors = new int[] { RigManager.GetPlayerFromVRRig(gunTarget).ActorNumber } }, SendOptions.SendReliable);
+                        adminEventDelay = Time.time + 0.1f;
+                        PhotonNetwork.RaiseEvent(68, new object[] { "tpnv", GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 1.5f, 0f) }, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(gunTarget).ActorNumber } }, SendOptions.SendReliable);
                     }
                 }
             }
@@ -740,36 +765,36 @@ namespace iiMenu.Mods
 
         public static void BringAllUsing()
         {
-            if (Time.time > stupiddelayihate)
+            if (Time.time > adminEventDelay)
             {
-                stupiddelayihate = Time.time + 0.05f;
+                adminEventDelay = Time.time + 0.05f;
                 PhotonNetwork.RaiseEvent(68, new object[] { "tpnv", GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 1.5f, 0f) }, new RaiseEventOptions { Receivers = ReceiverGroup.Others }, SendOptions.SendReliable);
             }
         }
 
         public static void BringHandAllUsing()
         {
-            if (Time.time > stupiddelayihate)
+            if (Time.time > adminEventDelay)
             {
-                stupiddelayihate = Time.time + 0.05f;
+                adminEventDelay = Time.time + 0.05f;
                 PhotonNetwork.RaiseEvent(68, new object[] { "tpnv", TrueRightHand().position + TrueRightHand().forward }, new RaiseEventOptions { Receivers = ReceiverGroup.Others }, SendOptions.SendReliable);
             }
         }
 
         public static void BringHeadAllUsing()
         {
-            if (Time.time > stupiddelayihate)
+            if (Time.time > adminEventDelay)
             {
-                stupiddelayihate = Time.time + 0.05f;
+                adminEventDelay = Time.time + 0.05f;
                 PhotonNetwork.RaiseEvent(68, new object[] { "tpnv", GorillaTagger.Instance.headCollider.transform.position + GorillaTagger.Instance.headCollider.transform.forward }, new RaiseEventOptions { Receivers = ReceiverGroup.Others }, SendOptions.SendReliable);
             }
         }
 
         public static void OrbitAllUsing()
         {
-            if (Time.time > stupiddelayihate)
+            if (Time.time > adminEventDelay)
             {
-                stupiddelayihate = Time.time + 0.05f;
+                adminEventDelay = Time.time + 0.05f;
                 PhotonNetwork.RaiseEvent(68, new object[] { "tpnv", GorillaTagger.Instance.headCollider.transform.position + new Vector3(Mathf.Cos(Time.frameCount / 20f), 0.5f, Mathf.Sin(Time.frameCount / 20f)) }, new RaiseEventOptions { Receivers = ReceiverGroup.Others }, SendOptions.SendReliable);
             }
         }
