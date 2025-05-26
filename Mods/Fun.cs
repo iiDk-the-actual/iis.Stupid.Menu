@@ -3125,27 +3125,30 @@ namespace iiMenu.Mods
             }
         }
 
+        public static int accessoryType;
+        public static int hat;
         public static void ChangeAccessories()
         {
             if (leftGrab && !lastHitL)
             {
                 hat--;
                 if (hat < 1)
-                {
                     hat = 3;
-                }
 
-                if (hat == 1)
+                switch (hat)
                 {
-                    GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeItemButton").GetComponent<GorillaPressableButton>().ButtonActivationWithHand(false);
-                }
-                if (hat == 2)
-                {
-                    GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeItemButton (1)").GetComponent<GorillaPressableButton>().ButtonActivationWithHand(false);
-                }
-                if (hat == 3)
-                {
-                    GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeItemButton (2)").GetComponent<GorillaPressableButton>().ButtonActivationWithHand(false);
+                    case 1:
+                        GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeItemButton")
+                            .GetComponent<GorillaPressableButton>().ButtonActivationWithHand(false);
+                        break;
+                    case 2:
+                        GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeItemButton (1)")
+                            .GetComponent<GorillaPressableButton>().ButtonActivationWithHand(false);
+                        break;
+                    case 3:
+                        GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeItemButton (2)")
+                            .GetComponent<GorillaPressableButton>().ButtonActivationWithHand(false);
+                        break;
                 }
             }
             lastHitL = leftGrab;
@@ -3153,38 +3156,37 @@ namespace iiMenu.Mods
             {
                 hat++;
                 if (hat > 3)
-                {
                     hat = 1;
+
+                switch (hat)
+                {
+                    case 1:
+                        GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeItemButton").GetComponent<GorillaPressableButton>().ButtonActivationWithHand(false);
+                        break;
+                    case 2:
+                        GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeItemButton (1)").GetComponent<GorillaPressableButton>().ButtonActivationWithHand(false);
+                        break;
+                    case 3:
+                        GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeItemButton (2)").GetComponent<GorillaPressableButton>().ButtonActivationWithHand(false);
+                        break;
                 }
 
-                if (hat == 1)
-                {
-                    GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeItemButton").GetComponent<GorillaPressableButton>().ButtonActivationWithHand(false);
-                }
-                if (hat == 2)
-                {
-                    GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeItemButton (1)").GetComponent<GorillaPressableButton>().ButtonActivationWithHand(false);
-                }
-                if (hat == 3)
-                {
-                    GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeItemButton (2)").GetComponent<GorillaPressableButton>().ButtonActivationWithHand(false);
-                }
             }
             lastHitR = rightGrab;
             if (leftPrimary && !lastHitLP)
             {
                 GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeLeftButton").GetComponent<WardrobeFunctionButton>().ButtonActivation();
-                if (hat == 1)
+                switch (hat)
                 {
-                    GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeItemButton").GetComponent<GorillaPressableButton>().ButtonActivationWithHand(false);
-                }
-                if (hat == 2)
-                {
-                    GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeItemButton (1)").GetComponent<GorillaPressableButton>().ButtonActivationWithHand(false);
-                }
-                if (hat == 3)
-                {
-                    GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeItemButton (2)").GetComponent<GorillaPressableButton>().ButtonActivationWithHand(false);
+                    case 1:
+                        GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeItemButton").GetComponent<GorillaPressableButton>().ButtonActivationWithHand(false);
+                        break;
+                    case 2:
+                        GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeItemButton (1)").GetComponent<GorillaPressableButton>().ButtonActivationWithHand(false);
+                        break;
+                    case 3:
+                        GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeItemButton (2)").GetComponent<GorillaPressableButton>().ButtonActivationWithHand(false);
+                        break;
                 }
             }
             lastHitLP = leftPrimary;
@@ -3192,17 +3194,17 @@ namespace iiMenu.Mods
             if (rightPrimary && !lastHitRP)
             {
                 GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeRightItem").GetComponent<WardrobeFunctionButton>().ButtonActivation();
-                if (hat == 1)
+                switch (hat)
                 {
-                    GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeItemButton").GetComponent<GorillaPressableButton>().ButtonActivationWithHand(false);
-                }
-                if (hat == 2)
-                {
-                    GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeItemButton (1)").GetComponent<GorillaPressableButton>().ButtonActivationWithHand(false);
-                }
-                if (hat == 3)
-                {
-                    GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeItemButton (2)").GetComponent<GorillaPressableButton>().ButtonActivationWithHand(false);
+                    case 1:
+                        GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeItemButton").GetComponent<GorillaPressableButton>().ButtonActivationWithHand(false);
+                        break;
+                    case 2:
+                        GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeItemButton (1)").GetComponent<GorillaPressableButton>().ButtonActivationWithHand(false);
+                        break;
+                    case 3:
+                        GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeItemButton (2)").GetComponent<GorillaPressableButton>().ButtonActivationWithHand(false);
+                        break;
                 }
             }
             lastHitRP = rightPrimary;
@@ -3211,24 +3213,22 @@ namespace iiMenu.Mods
             {
                 accessoryType++;
                 if (accessoryType > 4)
-                {
                     accessoryType = 1;
-                }
-                if (accessoryType == 1)
+                
+                switch (accessoryType)
                 {
-                    GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardobeHatButton").GetComponent<WardrobeFunctionButton>().ButtonActivation();
-                }
-                if (accessoryType == 2)
-                {
-                    GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeFaceButton").GetComponent<WardrobeFunctionButton>().ButtonActivation();
-                }
-                if (accessoryType == 3)
-                {
-                    GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeBadgeButton").GetComponent<WardrobeFunctionButton>().ButtonActivation();
-                }
-                if (accessoryType == 4)
-                {
-                    GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeHoldableButton").GetComponent<WardrobeFunctionButton>().ButtonActivation();
+                    case 1:
+                        GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardobeHatButton").GetComponent<WardrobeFunctionButton>().ButtonActivation();
+                        break;
+                    case 2:
+                        GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeFaceButton").GetComponent<WardrobeFunctionButton>().ButtonActivation();
+                        break;
+                    case 3:
+                        GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeBadgeButton").GetComponent<WardrobeFunctionButton>().ButtonActivation();
+                        break;
+                    case 4:
+                        GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/Wardrobe/WardrobeHoldableButton").GetComponent<WardrobeFunctionButton>().ButtonActivation();
+                        break;
                 }
             }
             lastHitRS = rightSecondary;
@@ -3271,9 +3271,7 @@ namespace iiMenu.Mods
                 foreach (CosmeticsController.CosmeticItem dearlord in CosmeticsController.instance.allCosmetics)
                 {
                     if (dearlord.canTryOn)
-                    {
                         tryonarchive.Add(dearlord.itemName);
-                    }
                 }
             }
             return tryonarchive.ToArray();
@@ -3291,9 +3289,8 @@ namespace iiMenu.Mods
                 {
                     List<string> holyshit = new List<string> { };
                     for (int i = 0; i <= amnt; i++)
-                    {
                         holyshit.Add(owned[UnityEngine.Random.Range(0, owned.Length - 1)]);
-                    }
+                    
                     if (GorillaTagger.Instance.offlineVRRig.inTryOnRoom)
                     {
                         CosmeticsController.instance.tryOnSet = new CosmeticsController.CosmeticSet(holyshit.ToArray(), CosmeticsController.instance);
