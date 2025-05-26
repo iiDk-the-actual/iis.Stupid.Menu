@@ -64,7 +64,7 @@ namespace iiMenu.Menu
                     if (buttonCondition)
                         openedwithright = ControllerInputPoller.instance.rightControllerSecondaryButton;
                 }
-                if (wristThing)
+                if (wristMenu)
                 {
                     bool shouldOpen = Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position - (GorillaTagger.Instance.leftHandTransform.forward * 0.1f), TrueRightHand().position) < 0.1f;
                     if (rightHand)
@@ -2379,7 +2379,7 @@ namespace iiMenu.Menu
             }
             else
             {
-                if (!wristThing)
+                if (!wristMenu)
                 {
                     if (likebark)
                     {
@@ -4871,7 +4871,7 @@ jgs \_   _/ |Oo\
         public static bool rightHand;
         public static bool isRightHand;
         public static bool bothHands;
-        public static bool wristThing;
+        public static bool wristMenu;
         public static bool watchMenu;
         public static bool wristOpen;
         public static float wristMenuDelay = -1f;

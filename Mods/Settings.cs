@@ -391,17 +391,6 @@ namespace iiMenu.Mods
             bothHands = false;
         }
 
-        public static void WristThingOn()
-        {
-            wristThing = true;
-        }
-
-        public static void WristThingOff()
-        {
-            wristThing = false;
-            wristOpen = false;
-        }
-
         public static void JoystickMenuOn()
         {
             joystickMenu = true;
