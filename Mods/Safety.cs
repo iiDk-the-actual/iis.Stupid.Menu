@@ -101,7 +101,7 @@ namespace iiMenu.Mods
             }
 
             threshold = distances[antireportrangeindex];
-            GetIndex("carrg").overlapText = "Change Anti Report Distance <color=grey>[</color><color=green>" + names[antireportrangeindex] + "</color><color=grey>]</color>";
+            GetIndex("Change Anti Report Distance").overlapText = "Change Anti Report Distance <color=grey>[</color><color=green>" + names[antireportrangeindex] + "</color><color=grey>]</color>";
         }
 
         public static bool smartarp = false;

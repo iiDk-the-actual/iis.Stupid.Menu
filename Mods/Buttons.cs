@@ -59,7 +59,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Right Hand", enableMethod =() => Settings.RightHand(), disableMethod =() => Settings.LeftHand(), toolTip = "Puts the menu on your right hand."},
                 new ButtonInfo { buttonText = "Both Hands", enableMethod =() => Settings.BothHandsOn(), disableMethod =() => Settings.BothHandsOff(), toolTip = "Puts the menu on your both of your hands."},
 
-                new ButtonInfo { buttonText = "One Handed Menu", enableMethod =() => Settings.BarkMenuOn(), disableMethod =() => Settings.BarkMenuOff(), toolTip = "Makes the menu open in front of you, so you can use it with one hand."},
+                new ButtonInfo { buttonText = "One Handed Menu", enableMethod =() => oneHand = true, disableMethod =() => oneHand = false, toolTip = "Makes the menu open in front of you, so you can use it with one hand."},
                 new ButtonInfo { buttonText = "Joystick Menu", enableMethod =() => Settings.JoystickMenuOn(), disableMethod =() => Settings.JoystickMenuOff(), toolTip = "Makes the menu into something like Colossal, click your joysticks to open, joysticks to move between mods and pages, and click your left joystick to toggle a mod."},
                 new ButtonInfo { buttonText = "Physical Menu", enableMethod =() => Settings.PhysicalMenuOn(), disableMethod =() => Settings.PhysicalMenuOff(), toolTip = "Freezes the menu in world space."},
                 new ButtonInfo { buttonText = "Wrist Menu", enableMethod =() => wristMenu = true, disableMethod =() => wristMenu = false, toolTip = "Turns the menu into a weird wrist watch, click your hand to open it."},
@@ -121,9 +121,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Disable Gun Line", enableMethod =() => Settings.NoGunLine(), disableMethod =() => Settings.YesGunLine(), toolTip = "Disables the gun from your hand to the end of every gun mod."},
 
                 new ButtonInfo { buttonText = "Checkbox Buttons", enableMethod =() => Settings.CheckboxButtons(), disableMethod =() => Settings.CheckboxButtonsOff(), toolTip = "Turns the buttons into checkboxes."},
-                new ButtonInfo { buttonText = "cbsound", overlapText  = "Change Button Sound <color=grey>[</color><color=green>Wood</color><color=grey>]</color>", method =() => Settings.ChangeButtonSound(), isTogglable = false, toolTip = "Changes the button click sound."},
-                new ButtonInfo { buttonText = "cbvol", overlapText  = "Change Button Volume <color=grey>[</color><color=green>4</color><color=grey>]</color>", method =() => Settings.ChangeButtonVolume(), isTogglable = false, toolTip = "Changes the volume of the buttons."},
-                new ButtonInfo { buttonText = "Serversided Button Sounds", toolTip = "Lets everyone in the the room hear the buttons."},
+                new ButtonInfo { buttonText = "Change Button Sound", overlapText = "Change Button Sound <color=grey>[</color><color=green>Wood</color><color=grey>]</color>", method =() => Settings.ChangeButtonSound(), isTogglable = false, toolTip = "Changes the button click sound."},
+                new ButtonInfo { buttonText = "Change Button Volume", overlapText = "Change Button Volume <color=grey>[</color><color=green>4</color><color=grey>]</color>", method =() => Settings.ChangeButtonVolume(), isTogglable = false, toolTip = "Changes the volume of the buttons."},
+                new ButtonInfo { buttonText = "Serversided Button Sounds", enableMethod =() => serversidedButtonSounds = true, disableMethod =() => serversidedButtonSounds = false, toolTip = "Lets everyone in the the room hear the buttons."},
                 new ButtonInfo { buttonText = "Disable Button Vibration", enableMethod =() => Settings.DisableButtonVibration(), disableMethod =() => Settings.EnableButtonVibration(), toolTip = "Disables the slight vibration that happens when you click a button."},
 
                 new ButtonInfo { buttonText = "Clear Notifications on Disconnect", toolTip = "Clears all notifications on disconnect."},
@@ -1228,7 +1228,7 @@ namespace iiMenu.Menu
             new ButtonInfo[] { // Safety Settings [28]
                 new ButtonInfo { buttonText = "Exit Safety Settings", method =() => currentCategoryName = "Settings", isTogglable = false, toolTip = "Returns you back to the settings menu."},
 
-                new ButtonInfo { buttonText = "carrg", overlapText = "Change Anti Report Distance <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method =() => Safety.ChangeAntiReportRange(), isTogglable = false, toolTip = "Changes the distance threshold for the anti report mods."},
+                new ButtonInfo { buttonText = "Change Anti Report Distance", overlapText = "Change Anti Report Distance <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method =() => Safety.ChangeAntiReportRange(), isTogglable = false, toolTip = "Changes the distance threshold for the anti report mods."},
                 new ButtonInfo { buttonText = "Visualize Anti Report", toolTip = "Visualizes the distance threshold for the anti report mods."},
                 new ButtonInfo { buttonText = "Smart Anti Report", enableMethod =() => Safety.SmartAntiReport(), disableMethod =() => Safety.StupidAntiReport(), toolTip = "Makes the anti report mods only activate in non-modded public lobbies."}
             },
@@ -1241,7 +1241,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Exit Soundboard Settings", method =() => currentCategoryName = "Settings", isTogglable = false, toolTip = "Returns you back to the settings menu."},
 
                 new ButtonInfo { buttonText = "Loop Sounds", enableMethod =() => Sound.LoopAudio = true, disableMethod =() => Sound.LoopAudio = false, toolTip = "Makes sounds loop forever until stopped."},
-                new ButtonInfo { buttonText = "sbds", overlapText = "Sound Bindings <color=grey>[</color><color=green>None</color><color=grey>]</color>", method =() => Sound.SoundBindings(), isTogglable = false, toolTip = "Changes the button used to play sounds on the soundboard."},
+                new ButtonInfo { buttonText = "Sound Bindings", overlapText = "Sound Bindings <color=grey>[</color><color=green>None</color><color=grey>]</color>", method =() => Sound.SoundBindings(), isTogglable = false, toolTip = "Changes the button used to play sounds on the soundboard."},
             },
 
             new ButtonInfo[] { // Overpowered Settings [31]
@@ -1251,19 +1251,19 @@ namespace iiMenu.Menu
             new ButtonInfo[] { // Keybind Settings [32]
                 new ButtonInfo { buttonText = "Exit Keybind Settings", method =() => currentCategoryName = "Settings", isTogglable = false, toolTip = "Returns you back to the settings menu."},
 
-                new ButtonInfo { buttonText = "Non-Toggle Keybinds", enableMethod =() => Settings.NonToggleKeybinds(), disableMethod =() => Settings.ToggleKeybinds(), toolTip = "Enables mods while holding down the button, instead of toggling them."},
+                new ButtonInfo { buttonText = "Non-Toggle Keybinds", enableMethod =() => ToggleBindings = false, disableMethod =() => ToggleBindings = true, toolTip = "Enables mods while holding down the button, instead of toggling them."},
                 new ButtonInfo { buttonText = "Clear All Keybinds", method =() => Settings.ClearAllKeybinds(), isTogglable = false, toolTip = "Enables mods while holding down the button, instead of toggling them."},
 
-                new ButtonInfo { buttonText = "Keybind A", enableMethod =() => Settings.StartBind("A"), disableMethod =() => Settings.CancelBind(), toolTip = "Enables binding mode, letting you bind a mod to a button."},
-                new ButtonInfo { buttonText = "Keybind B", enableMethod =() => Settings.StartBind("B"), disableMethod =() => Settings.CancelBind(), toolTip = "Enables binding mode, letting you bind a mod to a button."},
-                new ButtonInfo { buttonText = "Keybind X", enableMethod =() => Settings.StartBind("X"), disableMethod =() => Settings.CancelBind(), toolTip = "Enables binding mode, letting you bind a mod to a button."},
-                new ButtonInfo { buttonText = "Keybind Y", enableMethod =() => Settings.StartBind("Y"), disableMethod =() => Settings.CancelBind(), toolTip = "Enables binding mode, letting you bind a mod to a button."},
-                new ButtonInfo { buttonText = "Keybind Left Grip", enableMethod =() => Settings.StartBind("LG"), disableMethod =() => Settings.CancelBind(), toolTip = "Enables binding mode, letting you bind a mod to a button."},
-                new ButtonInfo { buttonText = "Keybind Right Grip", enableMethod =() => Settings.StartBind("RG"), disableMethod =() => Settings.CancelBind(), toolTip = "Enables binding mode, letting you bind a mod to a button."},
-                new ButtonInfo { buttonText = "Keybind Left Trigger", enableMethod =() => Settings.StartBind("LT"), disableMethod =() => Settings.CancelBind(), toolTip = "Enables binding mode, letting you bind a mod to a button."},
-                new ButtonInfo { buttonText = "Keybind Right Trigger", enableMethod =() => Settings.StartBind("RT"), disableMethod =() => Settings.CancelBind(), toolTip = "Enables binding mode, letting you bind a mod to a button."},
-                new ButtonInfo { buttonText = "Keybind Left Joystick", enableMethod =() => Settings.StartBind("LJ"), disableMethod =() => Settings.CancelBind(), toolTip = "Enables binding mode, letting you bind a mod to a button."},
-                new ButtonInfo { buttonText = "Keybind Right Joystick", enableMethod =() => Settings.StartBind("RJ"), disableMethod =() => Settings.CancelBind(), toolTip = "Enables binding mode, letting you bind a mod to a button."},
+                new ButtonInfo { buttonText = "Keybind A", enableMethod =() => Settings.StartBind("A"), disableMethod =() => IsBinding = false, toolTip = "Enables binding mode, letting you bind a mod to a button."},
+                new ButtonInfo { buttonText = "Keybind B", enableMethod =() => Settings.StartBind("B"), disableMethod =() => IsBinding = false, toolTip = "Enables binding mode, letting you bind a mod to a button."},
+                new ButtonInfo { buttonText = "Keybind X", enableMethod =() => Settings.StartBind("X"), disableMethod =() => IsBinding = false, toolTip = "Enables binding mode, letting you bind a mod to a button."},
+                new ButtonInfo { buttonText = "Keybind Y", enableMethod =() => Settings.StartBind("Y"), disableMethod =() => IsBinding = false, toolTip = "Enables binding mode, letting you bind a mod to a button."},
+                new ButtonInfo { buttonText = "Keybind Left Grip", enableMethod =() => Settings.StartBind("LG"), disableMethod =() => IsBinding = false, toolTip = "Enables binding mode, letting you bind a mod to a button."},
+                new ButtonInfo { buttonText = "Keybind Right Grip", enableMethod =() => Settings.StartBind("RG"), disableMethod =() => IsBinding = false, toolTip = "Enables binding mode, letting you bind a mod to a button."},
+                new ButtonInfo { buttonText = "Keybind Left Trigger", enableMethod =() => Settings.StartBind("LT"), disableMethod =() => IsBinding = false, toolTip = "Enables binding mode, letting you bind a mod to a button."},
+                new ButtonInfo { buttonText = "Keybind Right Trigger", enableMethod =() => Settings.StartBind("RT"), disableMethod =() => IsBinding = false, toolTip = "Enables binding mode, letting you bind a mod to a button."},
+                new ButtonInfo { buttonText = "Keybind Left Joystick", enableMethod =() => Settings.StartBind("LJ"), disableMethod =() => IsBinding = false, toolTip = "Enables binding mode, letting you bind a mod to a button."},
+                new ButtonInfo { buttonText = "Keybind Right Joystick", enableMethod =() => Settings.StartBind("RJ"), disableMethod =() => IsBinding = false, toolTip = "Enables binding mode, letting you bind a mod to a button."},
             },
 
             new ButtonInfo[] { // Plugin Settings [33]

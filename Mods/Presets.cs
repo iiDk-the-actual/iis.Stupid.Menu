@@ -54,17 +54,16 @@ namespace iiMenu.Mods
                 "Steam Long Arms",
                 "Break Audio Gun",
                 "No Finger Movement",
-                "Platforms"
+                "Platforms",
+                "Change Arm Length"
             };
 
-            longarmCycle = 3;
-            armlength = 1.5f;
+            Movement.longarmCycle = 2;
             
             Settings.Panic();
             foreach (string mod in presetMods)
-            {
                 Main.Toggle(mod);
-            }
+            
             NotifiLib.ClearAllNotifications();
             NotifiLib.SendNotification("<color=grey>[</color><color=purple>PRESET</color><color=grey>]</color> Ghost preset enabled successfully.");
         }
