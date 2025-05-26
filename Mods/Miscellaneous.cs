@@ -147,8 +147,6 @@ namespace iiMenu.Mods
             text += "\n====================================\n";
             text += "Text file generated with ii's Stupid Menu";
             string fileName = "iisStupidMenu/PlayerInfo/" + PhotonNetwork.CurrentRoom.Name + ".txt";
-            if (!Directory.Exists("iisStupidMenu/PlayerInfo"))
-                Directory.CreateDirectory("iisStupidMenu/PlayerInfo");
             
             File.WriteAllText(fileName, text);
 
