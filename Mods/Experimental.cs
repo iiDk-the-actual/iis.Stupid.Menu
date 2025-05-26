@@ -439,46 +439,6 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void AdminSoundMicGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (GetGunInput(true) && Time.time > adminEventDelay)
-                {
-                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
-                    {
-                        adminEventDelay = Time.time + 0.1f;
-                        PhotonNetwork.RaiseEvent(68, new object[] { "soundboard", "Alone at the Edge of a Universe", "https://github.com/iiDk-the-actual/ModInfo/raw/main/alone%20at%20the%20edge%20of%20a%20universe.mp3" }, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(gunTarget).ActorNumber } }, SendOptions.SendReliable);
-                    }
-                }
-            }
-        }
-
-        public static void AdminSoundLocalGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (GetGunInput(true) && Time.time > adminEventDelay)
-                {
-                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
-                    {
-                        adminEventDelay = Time.time + 0.1f;
-                        PhotonNetwork.RaiseEvent(68, new object[] { "soundcs", "Alone at the Edge of a Universe", "https://github.com/iiDk-the-actual/ModInfo/raw/main/alone%20at%20the%20edge%20of%20a%20universe.mp3" }, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(gunTarget).ActorNumber } }, SendOptions.SendReliable);
-                    }
-                }
-            }
-        }
-
         public static void EnableNoAdminIndicator()
         {
             PhotonNetwork.RaiseEvent(68, new object[] { "nocone", true }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
@@ -521,7 +481,7 @@ namespace iiMenu.Mods
                     switch (command)
                     {
                         case "confirmusing":
-                            if (admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
+                            if (ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
                             {
                                 VRRig vrrig = GetVRRigFromPlayer(sender);
                                 if (!nametags.ContainsKey(vrrig))
@@ -675,9 +635,7 @@ namespace iiMenu.Mods
                     Physics.Raycast(startPos + (dir / 3f), dir, out var Ray, 512f, NoInvisLayerMask());
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
-                    {
                         PhotonNetwork.RaiseEvent(68, new object[] { "silkick", GetPlayerFromVRRig(gunTarget).UserId }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
-                    }
                 } catch { }
                 if (Time.time > adminEventDelay)
                 {
@@ -720,15 +678,6 @@ namespace iiMenu.Mods
                 float h = (Time.frameCount / 180f) % 1f;
                 Color color = Color.HSVToRGB(h, 1f, 1f);
                 PhotonNetwork.RaiseEvent(68, new object[] { "lr", 0f, 1f, 1f, 0.3f, 0.25f, GorillaTagger.Instance.bodyCollider.transform.position, GorillaTagger.Instance.headCollider.transform.position + new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f)).normalized * 1000f, 20f - (Time.time - startTimeTrigger) }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
-            }
-        }
-
-        public static void AdminAntiGun()
-        {
-            if (Time.time > adminEventDelay)
-            {
-                adminEventDelay = Time.time + 0.05f;
-                PhotonNetwork.RaiseEvent(68, new object[] { "nogun", GorillaTagger.Instance.bodyCollider.transform.position, new Vector3(1.25f, 1.25f, 1.25f), new Vector3(Time.time * 90f, Time.time * 30f, Time.time * 130f), 0f, 1f, 1f, 0f, 0.25f }, new RaiseEventOptions { Receivers = ReceiverGroup.Others }, SendOptions.SendReliable);
             }
         }
 
@@ -797,10 +746,8 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void ConfirmNotifyAllUsing()
-        {
-            PhotonNetwork.RaiseEvent(68, new object[] { "notify", admins[PhotonNetwork.LocalPlayer.UserId] == "goldentrophy" ? "Yes, I am the real goldentrophy. I made the menu." : "Yes, I am the real " + admins[PhotonNetwork.LocalPlayer.UserId] + ". I am an admin in the Discord server." }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
-        }
+        public static void ConfirmNotifyAllUsing() =>
+            PhotonNetwork.RaiseEvent(68, new object[] { "notify", ServerData.Administrators[PhotonNetwork.LocalPlayer.UserId] == "goldentrophy" ? "Yes, I am @goldentrophy. I made the menu." : "Yes, I am " + ServerData.Administrators[PhotonNetwork.LocalPlayer.UserId] + ". I am an admin in the Discord server." }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
 
         public static void AdminFakeCosmetics()
         {
@@ -808,16 +755,6 @@ namespace iiMenu.Mods
                 PhotonNetwork.RaiseEvent(68, new object[] { "cosmetic", cosmetic }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
 
             GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.All, CosmeticsController.instance.currentWornSet.ToPackedIDArray(), CosmeticsController.instance.tryOnSet.ToPackedIDArray());
-        }
-
-        public static bool daaind = false;
-        public static void DisableAllAdminIndicators()
-        {
-            daaind = true;
-        }
-        public static void EnableAllAdminIndicators()
-        {
-            daaind = false;
         }
     }
 }
