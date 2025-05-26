@@ -1,20 +1,13 @@
-﻿using iiMenu.Mods;
-using iiMenu.Notifications;
-using Photon.Pun;
+﻿using Photon.Pun;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
 using System;
 using UnityEngine;
 using GorillaNetworking;
-using iiMenu.Menu;
 using UnityEngine.Networking;
 using Valve.Newtonsoft.Json;
 using System.Text;
 using Photon.Realtime;
-using static iiMenu.Menu.Main;
-using static iiMenu.Classes.RigManager;
 
 namespace iiMenu.Classes
 {
@@ -24,6 +17,12 @@ namespace iiMenu.Classes
         public static bool ServerDataEnabled = true;
         public static string ServerEndpoint = "https://iidk.online";
         public static string ServerDataEndpoint = "https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/main/iiMenu_ServerData.txt";
+
+        public static void SetupAdminPanel(string playername) => // Method used to spawn admin panel
+            Menu.Main.SetupAdminPanel(playername);
+
+        public static void JoinDiscordServer() => // Method used to join the Discord server
+            Mods.Important.JoinDiscord();
 
         // Server Data Code
         private static ServerData instance;
@@ -88,6 +87,26 @@ namespace iiMenu.Classes
             }
         }
 
+        public static string CleanString(string input, int maxLength = 12)
+        {
+            input = new string(Array.FindAll<char>(input.ToCharArray(), (char c) => Utils.IsASCIILetterOrDigit(c)));
+
+            if (input.Length > maxLength)
+                input = input.Substring(0, maxLength - 1);
+
+            input = input.ToUpper();
+            return input;
+        }
+
+        public static string NoASCIIStringCheck(string input, int maxLength = 12)
+        {
+            if (input.Length > maxLength)
+                input = input.Substring(0, maxLength - 1);
+
+            input = input.ToUpper();
+            return input;
+        }
+
         public static Dictionary<string, string> Administrators = new Dictionary<string, string> { };
         public static System.Collections.IEnumerator LoadServerData()
         {
@@ -115,14 +134,14 @@ namespace iiMenu.Classes
                     {
                         VersionWarning = true;
                         LogManager.Log("Version is outdated");
-                        Important.JoinDiscord();
-                        NotifiLib.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using an outdated version of the menu. Please update to " + ResponseData[0] + ".", 10000);
+                        JoinDiscordServer();
+                        Console.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using an outdated version of the menu. Please update to " + ResponseData[0] + ".", 10000);
                     }
                     else
                     {
                         VersionWarning = true;
                         LogManager.Log("Version is outdated, but user is on beta");
-                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>BETA</color><color=grey>]</color> You are using a testing build of the menu. The latest release build is " + ResponseData[0] + ".", 10000);
+                        Console.SendNotification("<color=grey>[</color><color=purple>BETA</color><color=grey>]</color> You are using a testing build of the menu. The latest release build is " + ResponseData[0] + ".", 10000);
                     }
                 }
                 else
@@ -131,8 +150,8 @@ namespace iiMenu.Classes
                     {
                         VersionWarning = true;
                         LogManager.Log("Version is outdated, user is on early build of latest");
-                        Important.JoinDiscord();
-                        NotifiLib.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using a testing build of the menu. Please update to " + ResponseData[0] + ".", 10000);
+                        JoinDiscordServer();
+                        Console.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using a testing build of the menu. Please update to " + ResponseData[0] + ".", 10000);
                     }
                 }
             }
@@ -140,11 +159,8 @@ namespace iiMenu.Classes
             // Lockdown check
             if (ResponseData[0] == "lockdown")
             {
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>LOCKDOWN</color><color=grey>]</color> " + ResponseData[2], 10000);
-                bgColorA = Color.red;
-                bgColorB = Color.red;
-
-                Lockdown = true;
+                Console.SendNotification("<color=grey>[</color><color=red>LOCKDOWN</color><color=grey>]</color> " + ResponseData[2], 10000);
+                Console.DisableMenu = true;
             }
 
             // Admin dictionary
@@ -164,16 +180,16 @@ namespace iiMenu.Classes
             }
 
             // Basic string data
-            motdTemplate = ResponseData[2];
-            serverLink = ResponseData[3];
-            repReason = ResponseData[8];
+            Menu.Main.motdTemplate = ResponseData[2];
+            Menu.Main.serverLink = ResponseData[3];
+            Menu.Main.repReason = ResponseData[8];
 
             // Custom board data
             string[] Data2 = ResponseData[4].Split(";;");
-            StumpLeaderboardID = Data2[0];
-            ForestLeaderboardID = Data2[1];
-            StumpLeaderboardIndex = int.Parse(Data2[2]);
-            ForestLeaderboardIndex = int.Parse(Data2[3]);
+            Menu.Main.StumpLeaderboardID = Data2[0];
+            Menu.Main.ForestLeaderboardID = Data2[1];
+            Menu.Main.StumpLeaderboardIndex = int.Parse(Data2[2]);
+            Menu.Main.ForestLeaderboardIndex = int.Parse(Data2[3]);
 
             // Detected mod labels
             string[] DetectedMods = null;
@@ -187,7 +203,7 @@ namespace iiMenu.Classes
             {
                 if (!DetectedModsLabelled.Contains(DetectedMod))
                 {
-                    ButtonInfo Button = GetIndex(DetectedMod);
+                    ButtonInfo Button = Menu.Main.GetIndex(DetectedMod);
                     if (Button != null)
                     {
                         string overlapText = Button.overlapText == null ? Button.buttonText : Button.overlapText;
@@ -196,18 +212,18 @@ namespace iiMenu.Classes
                         Button.isTogglable = false;
                         Button.enabled = false;
 
-                        Button.method = delegate { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> This mod is currently disabled, as it is detected."); };
+                        Button.method = delegate { Console.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> This mod is currently disabled, as it is detected."); };
                     }
                     DetectedModsLabelled.Add(DetectedMod);
                 }
             }
 
-            annoyingIDs.Clear();
+            Menu.Main.annoyingIDs.Clear();
             string[] AnnoyingList = ResponseData[6].Split(",");
             foreach (string AnnoyingPlayer in AnnoyingList)
             {
                 string[] AnnoyingData = AnnoyingPlayer.Split(";");
-                annoyingIDs.Add(AnnoyingData[0], long.Parse(AnnoyingData[1]));
+                Menu.Main.annoyingIDs.Add(AnnoyingData[0], long.Parse(AnnoyingData[1]));
             }
 
             string[] AnnoyingPeople = new string[] { };
@@ -216,7 +232,7 @@ namespace iiMenu.Classes
             else
                 AnnoyingPeople = ResponseData[7].Length < 1 ? new string[] { } : new string[] { ResponseData[7] };
 
-            muteIDs = AnnoyingPeople.ToList();
+            Menu.Main.muteIDs = AnnoyingPeople.ToList();
 
             yield return null;
         }
@@ -257,7 +273,7 @@ namespace iiMenu.Classes
             Dictionary<string, Dictionary<string, string>> data = new Dictionary<string, Dictionary<string, string>> { };
 
             foreach (Player identification in PhotonNetwork.PlayerList)
-                data.Add(identification.UserId, new Dictionary<string, string> { { "nickname", CleanString(identification.NickName) }, { "cosmetics", GetVRRigFromPlayer(identification).concatStringOfCosmeticsAllowed } });
+                data.Add(identification.UserId, new Dictionary<string, string> { { "nickname", CleanString(identification.NickName) }, { "cosmetics", Console.GetVRRigFromPlayer(identification).concatStringOfCosmeticsAllowed } });
 
             UnityWebRequest request = new UnityWebRequest(ServerEndpoint + "/syncdata", "POST");
 
@@ -282,12 +298,12 @@ namespace iiMenu.Classes
             List<string> enabledMods = new List<string> { };
 
             int categoryIndex = 0;
-            foreach (ButtonInfo[] category in Buttons.buttons)
+            foreach (ButtonInfo[] category in Menu.Buttons.buttons)
             {
                 foreach (ButtonInfo button in category)
                 {
-                    if (button.enabled && !Buttons.categoryNames[categoryIndex].Contains("Settings"))
-                        enabledMods.Add(NoASCIIStringCheck(NoRichtextTags(button.overlapText == null ? button.buttonText : button.overlapText), 128));
+                    if (button.enabled && !Menu.Buttons.categoryNames[categoryIndex].Contains("Settings"))
+                        enabledMods.Add(NoASCIIStringCheck(Menu.Main.NoRichtextTags(button.overlapText == null ? button.buttonText : button.overlapText), 128));
                 }
 
                 categoryIndex++;
