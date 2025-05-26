@@ -17,13 +17,6 @@ namespace iiMenu.Patches
             if (newPlayer != oldnewplayer)
             {
                 NotifiLib.SendNotification("<color=grey>[</color><color=green>JOIN</color><color=grey>] </color><color=white>Name: " + newPlayer.NickName + "</color>");
-                if (customSoundOnJoin)
-                {
-                    if (!Directory.Exists("iisStupidMenu"))
-                        Directory.CreateDirectory("iisStupidMenu");
-
-                    File.WriteAllText("iisStupidMenu/iiMenu_CustomSoundOnJoin.txt", "PlayerJoin");
-                }
 
                 ServerData.PlayerCount = -1;
                 oldnewplayer = newPlayer;

@@ -17,13 +17,6 @@ namespace iiMenu.Patches
             if (otherPlayer != PhotonNetwork.LocalPlayer && otherPlayer != a)
             {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>LEAVE</color><color=grey>]</color> <color=white>Name: " + otherPlayer.NickName + "</color>");
-                if (customSoundOnJoin)
-                {
-                    if (!Directory.Exists("iisStupidMenu"))
-                        Directory.CreateDirectory("iisStupidMenu");
-                    
-                    File.WriteAllText("iisStupidMenu/iiMenu_CustomSoundOnJoin.txt", "PlayerLeave");
-                }
 
                 ServerData.PlayerCount = -1;
                 a = otherPlayer;
