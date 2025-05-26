@@ -1977,7 +1977,10 @@ namespace iiMenu.Mods
                 "Discord",
                 "Whatsapp",
                 "Grindr",
-                "iOS"
+                "iOS",
+                "XP Notify",
+                "XP Ding",
+                "XP Error"
             };
 
             notificationSoundIndex++;
