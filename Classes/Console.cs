@@ -54,7 +54,7 @@ namespace iiMenu.Classes
         public const string ConsoleVersion = "2.0.0";
         public static Console instance;
 
-        public void Start()
+        public void Awake()
         {
             instance = this;
             PhotonNetwork.NetworkingClient.EventReceived += EventReceived;
@@ -66,7 +66,7 @@ namespace iiMenu.Classes
     ██ ▄▄ ▄█▀▄ ▐█▐▐▌▄▀▀▀█▄ ▄█▀▄ ██▪  ▐▀▀▪▄
     ▐███▌▐█▌.▐▌██▐█▌▐█▄▪▐█▐█▌.▐▌▐█▌▐▌▐█▄▄▌
     ·▀▀▀  ▀█▄▀▪▀▀ █▪ ▀▀▀▀  ▀█▄▀▪.▀▀▀  ▀▀▀       
-           Console Portable 2.0.0
+           Console Portable {ConsoleVersion}
      Developed by goldentrophy & Twigcore
 ");
         }
