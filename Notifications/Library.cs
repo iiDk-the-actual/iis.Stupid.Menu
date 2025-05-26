@@ -177,7 +177,7 @@ namespace iiMenu.Notifications
                             }
                         }
 
-                        if (notificationSoundIndex != 0)
+                        if (notificationSoundIndex != 0 && (Time.time > (timeMenuStarted + 5f)))
                         {
                             string[] notificationServerNames = new string[]
                             {
@@ -188,7 +188,10 @@ namespace iiMenu.Notifications
                                 "discord",
                                 "whatsapp",
                                 "grindr",
-                                "ios"
+                                "ios",
+                                "xpnotify",
+                                "xpding",
+                                "xperror"
                             };
                             Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/" + notificationServerNames[notificationSoundIndex] + ".wav", notificationServerNames[notificationSoundIndex] + ".wav"), buttonClickVolume / 10f);
                         }
