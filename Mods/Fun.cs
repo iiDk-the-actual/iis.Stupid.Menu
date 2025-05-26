@@ -1,8 +1,7 @@
-﻿using GorillaNetworking;
+﻿using GorillaExtensions;
+using GorillaNetworking;
 using GorillaTag;
 using GorillaTagScripts;
-using GorillaTagScripts.ObstacleCourse;
-using HarmonyLib;
 using iiMenu.Classes;
 using iiMenu.Menu;
 using iiMenu.Mods.Spammers;
@@ -18,7 +17,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using UnityEngine;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
@@ -685,16 +683,10 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void MicrophoneFeedback()
+        public static void SetDebugEchoMode(bool value)
         {
             if (!GorillaTagger.Instance.myRecorder.DebugEchoMode)
-                GorillaTagger.Instance.myRecorder.DebugEchoMode = true;
-        }
-
-        public static void DisableMicrophoneFeedback()
-        {
-            if (GorillaTagger.Instance.myRecorder.DebugEchoMode)
-                GorillaTagger.Instance.myRecorder.DebugEchoMode = false;
+                GorillaTagger.Instance.myRecorder.DebugEchoMode = value;
         }
 
         public static void CopyVoiceGun()
@@ -1005,13 +997,13 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void MaxCurrencySelf()
+        public static void SetCurrencySelf(int currency = 0)
         {
             if (!PhotonNetwork.IsMasterClient) { return; }
-            GRPlayer.Get(PhotonNetwork.LocalPlayer.ActorNumber).currency = int.MaxValue;
+            GRPlayer.Get(PhotonNetwork.LocalPlayer.ActorNumber).currency = currency;
         }
 
-        public static void MaxCurrencyGun()
+        public static void SetCurrencyGun(int currency = 0)
         {
             if (GetGunInput(false))
             {
@@ -1025,7 +1017,7 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         if (PhotonNetwork.LocalPlayer.IsMasterClient)
-                            GRPlayer.Get(GetPlayerFromVRRig(gunTarget).ActorNumber).currency = int.MaxValue;
+                            GRPlayer.Get(GetPlayerFromVRRig(gunTarget).ActorNumber).currency = currency;
                         else
                             NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
                     }
@@ -1033,14 +1025,14 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void MaxCurrencyAll()
+        public static void SetCurrencyAll(int currency = 0)
         {
             if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
 
             foreach (Player target in PhotonNetwork.PlayerList)
             {
                 GRPlayer plr = GRPlayer.Get(target.ActorNumber);
-                plr.currency = int.MaxValue;
+                plr.currency = currency;
             }
         }
 
@@ -1117,15 +1109,11 @@ namespace iiMenu.Mods
                 CoroutineManager.instance.StartCoroutine(KillTarget(Target));
         }
 
-        public static void SetPlayerState(NetPlayer Target, GRPlayer.GRPlayerState State)
-        {
+        public static void SetPlayerState(NetPlayer Target, GRPlayer.GRPlayerState State) =>
             SetPlayerState(NetPlayerToPlayer(Target), State);
-        }
 
-        public static void SetPlayerState(VRRig Target, GRPlayer.GRPlayerState State)
-        {
+        public static void SetPlayerState(VRRig Target, GRPlayer.GRPlayerState State) =>
             SetPlayerState(NetPlayerToPlayer(GetPlayerFromVRRig(Target)), State);
-        }
 
         public static IEnumerator KillTarget(Player Target)
         {
@@ -1167,12 +1155,16 @@ namespace iiMenu.Mods
         }
 
         private static float killDelay;
-        public static void KillSelf()
+        public static void SetStateSelf(int state) =>
+            SetPlayerState(PhotonNetwork.LocalPlayer, (GRPlayer.GRPlayerState)state);
+
+        public static void SetStateAll(int state)
         {
-            SetPlayerState(PhotonNetwork.LocalPlayer, GRPlayer.GRPlayerState.Ghost);
+            foreach (Player target in PhotonNetwork.PlayerList)
+                SetPlayerState(target, (GRPlayer.GRPlayerState)state);
         }
 
-        public static void KillGun()
+        public static void SetStateGun(int state)
         {
             if (GetGunInput(false))
             {
@@ -1184,46 +1176,8 @@ namespace iiMenu.Mods
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
-                        SetPlayerState(gunTarget, GRPlayer.GRPlayerState.Ghost);
+                        SetPlayerState(gunTarget, (GRPlayer.GRPlayerState)state);
                 }
-            }
-        }
-
-        public static void KillAll()
-        {
-            foreach (Player target in PhotonNetwork.PlayerList)
-                SetPlayerState(target, GRPlayer.GRPlayerState.Ghost);
-        }
-
-        public static void ReviveSelf()
-        {
-            SetPlayerState(PhotonNetwork.LocalPlayer, GRPlayer.GRPlayerState.Alive);
-        }
-
-        public static void ReviveGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (GetGunInput(true))
-                {
-                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
-                    {
-                        SetPlayerState(gunTarget, GRPlayer.GRPlayerState.Alive);
-                    }
-                }
-            }
-        }
-
-        public static void ReviveAll()
-        {
-            foreach (Player target in PhotonNetwork.PlayerList)
-            {
-                SetPlayerState(target, GRPlayer.GRPlayerState.Alive);
             }
         }
 
@@ -1282,57 +1236,35 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void LowQualityMicrophone()
+        public static void SetMicrophoneQuality(int bitrate, int samplingRate)
         {
-            Photon.Voice.Unity.Recorder mic = GorillaTagger.Instance.myRecorder;
-            mic.SamplingRate = SamplingRate.Sampling08000;
-            mic.Bitrate = 5;
+            Recorder mic = GorillaTagger.Instance.myRecorder;
+            mic.SamplingRate = (SamplingRate)samplingRate;
+            mic.Bitrate = bitrate;
 
             mic.RestartRecording(true);
         }
 
-        public static void HighQualityMicrophone()
+        public static void SetMicrophoneAmplification(bool amplify)
         {
-            Photon.Voice.Unity.Recorder mic = GorillaTagger.Instance.myRecorder;
-            mic.SamplingRate = SamplingRate.Sampling16000;
-            mic.Bitrate = 20000;
+            Recorder mic = GorillaTagger.Instance.myRecorder;
 
-            mic.RestartRecording(true);
-        }
-
-        public static void LoudMicrophone()
-        {
-            Photon.Voice.Unity.Recorder mic = GorillaTagger.Instance.myRecorder;
-
-            if (!mic.gameObject.GetComponent<MicAmplifier>())
+            if (amplify)
             {
-                mic.gameObject.AddComponent<MicAmplifier>();
-            }
-
-            MicAmplifier loudman = mic.gameObject.GetComponent<MicAmplifier>();
-            loudman.AmplificationFactor = 16;
-            loudman.BoostValue = 16;
-
-            mic.RestartRecording(true);
-        }
-
-        public static void NotLoudMicrophone()
-        {
-            Photon.Voice.Unity.Recorder mic = GorillaTagger.Instance.myRecorder;
-
-            if (mic.gameObject.GetComponent<MicAmplifier>())
+                MicAmplifier microphoneAmplifier = mic.gameObject.GetOrAddComponent<MicAmplifier>();
+                microphoneAmplifier.AmplificationFactor = 16;
+                microphoneAmplifier.BoostValue = 16;
+            } else
             {
-                UnityEngine.Object.Destroy(mic.gameObject.GetComponent<MicAmplifier>());
+                if (mic.gameObject.GetComponent<MicAmplifier>())
+                    UnityEngine.Object.Destroy(mic.gameObject.GetComponent<MicAmplifier>());
             }
 
             mic.RestartRecording(true);
         }
 
-        public static void ReloadMicrophone()
-        {
-            Photon.Voice.Unity.Recorder mic = GameObject.Find("Photon Manager").GetComponent<Photon.Voice.Unity.Recorder>();
-            mic.RestartRecording(true);
-        }
+        public static void ReloadMicrophone() =>
+            GameObject.Find("Photon Manager").GetComponent<Recorder>().RestartRecording(true);
 
         public static void ObjectToPointGun(string objectName)
         {
@@ -2695,34 +2627,10 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void BecomeGoldentrophy()
+        public static void BecomePlayer(string name, Color color)
         {
-            ChangeName("goldentrophy");
-            ChangeColor(new Color32(255, 128, 0, 255));
-        }
-
-        public static void BecomePBBV()
-        {
-            ChangeName("PBBV");
-            ChangeColor(new Color32(230, 127, 102, 255));
-        }
-
-        public static void BecomeJ3VU()
-        {
-            ChangeName("J3VU");
-            ChangeColor(Color.green);
-        }
-
-        public static void BecomeECHO()
-        {
-            ChangeName("ECHO");
-            ChangeColor(new Color32(0, 150, 255, 255));
-        }
-
-        public static void BecomeDAISY09()
-        {
-            ChangeName("DAISY09");
-            ChangeColor(new Color32(255, 81, 231, 255));
+            ChangeName(name);
+            ChangeColor(color);
         }
 
         public static void BecomeMinigamesKid()
@@ -2743,13 +2651,7 @@ namespace iiMenu.Mods
                 Color.magenta
             };
 
-            ChangeName(names[UnityEngine.Random.Range(0, names.Length - 1)]);
-            ChangeColor(colors[UnityEngine.Random.Range(0, colors.Length - 1)]);
-        }
-
-        public static void BecomeHiddenOnLeaderboard() {
-            ChangeName("________");
-            ChangeColor(new Color32(0, 53, 2, 255));
+            BecomePlayer(names[UnityEngine.Random.Range(0, names.Length - 1)], colors[UnityEngine.Random.Range(0, colors.Length - 1)]);
         }
 
         public static void CopyIdentityGun()

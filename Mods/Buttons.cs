@@ -643,11 +643,11 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Mute DJ Sets", method =() => Fun.MuteDJSets(), disableMethod =() => Fun.UnmuteDJSets(), toolTip = "Mutes every DJ set so you don't have to hear the worst music known to man."},
 
-                new ButtonInfo { buttonText = "Low Quality Microphone", enableMethod =() => Fun.LowQualityMicrophone(), disableMethod =() => Fun.HighQualityMicrophone(), toolTip = "Makes your microphone have really bad quality."},
-                new ButtonInfo { buttonText = "Loud Microphone", enableMethod =() => Fun.LoudMicrophone(), disableMethod =() => Fun.NotLoudMicrophone(), toolTip = "Makes your microphone really loud."},
+                new ButtonInfo { buttonText = "Low Quality Microphone", enableMethod =() => Fun.SetMicrophoneQuality(5, 08000), disableMethod =() => Fun.SetMicrophoneQuality(20000, 16000), toolTip = "Makes your microphone have really bad quality."},
+                new ButtonInfo { buttonText = "Loud Microphone", enableMethod =() => Fun.SetMicrophoneAmplification(true), disableMethod =() => Fun.SetMicrophoneAmplification(false), toolTip = "Makes your microphone really loud."},
                 new ButtonInfo { buttonText = "Reload Microphone", method =() => Fun.ReloadMicrophone(), isTogglable = false,  toolTip = "Reloads / fixes your microphone."},
 
-                new ButtonInfo { buttonText = "Microphone Feedback", method =() => Fun.MicrophoneFeedback(), disableMethod =() => Fun.DisableMicrophoneFeedback(), toolTip = "Plays sound coming through your microphone back to your speakers."},
+                new ButtonInfo { buttonText = "Microphone Feedback", method =() => Fun.SetDebugEchoMode(true), disableMethod =() => Fun.SetDebugEchoMode(false), toolTip = "Plays sound coming through your microphone back to your speakers."},
                 new ButtonInfo { buttonText = "Copy Voice Gun", method =() => Fun.CopyVoiceGun(), toolTip = "Copies the voice of whoever your hand desires."},
 
                 new ButtonInfo { buttonText = "Activate All Doors <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.ActivateAllDoors(), toolTip = "Activates all doors when holding <color=green>grip</color>."},
@@ -777,14 +777,14 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Rainbow Color", method =() => Fun.RainbowColor(), toolTip = "Makes your character rainbow." },
                 new ButtonInfo { buttonText = "Hard Rainbow Color", method =() => Fun.HardRainbowColor(), toolTip = "Makes your character flash from red, green, blue, and magenta." },
 
-                new ButtonInfo { buttonText = "Become \"goldentrophy\"", method =() => Fun.BecomeGoldentrophy(), isTogglable = false, toolTip = "Sets your name to \"goldentrophy\" and color to orange." },
-                new ButtonInfo { buttonText = "Become \"PBBV\"", method =() => Fun.BecomePBBV(), isTogglable = false, toolTip = "Sets your name to \"PBBV\" and color to sky blue." },
-                new ButtonInfo { buttonText = "Become \"J3VU\"", method =() => Fun.BecomeJ3VU(), isTogglable = false, toolTip = "Sets your name to \"J3VU\" and color to green." },
-                new ButtonInfo { buttonText = "Become \"ECHO\"", method =() => Fun.BecomeECHO(), isTogglable = false, toolTip = "Sets your name to \"ECHO\" and color to salmon." },
-                new ButtonInfo { buttonText = "Become \"DAISY09\"", method =() => Fun.BecomeDAISY09(), isTogglable = false, toolTip = "Sets your name to \"DAISY09\" and color to a light pink." },
+                new ButtonInfo { buttonText = "Become \"goldentrophy\"", method =() => Fun.BecomePlayer("goldentrophy", new Color32(255, 128, 0, 255)), isTogglable = false, toolTip = "Sets your name to \"goldentrophy\" and color to orange." },
+                new ButtonInfo { buttonText = "Become \"PBBV\"", method =() => Fun.BecomePlayer("PBBV", new Color32(230, 127, 102, 255)), isTogglable = false, toolTip = "Sets your name to \"PBBV\" and color to sky blue." },
+                new ButtonInfo { buttonText = "Become \"J3VU\"", method =() => Fun.BecomePlayer("J3VU", Color.green), isTogglable = false, toolTip = "Sets your name to \"J3VU\" and color to green." },
+                new ButtonInfo { buttonText = "Become \"ECHO\"", method =() => Fun.BecomePlayer("ECHO", new Color32(0, 150, 255, 255)), isTogglable = false, toolTip = "Sets your name to \"ECHO\" and color to salmon." },
+                new ButtonInfo { buttonText = "Become \"DAISY09\"", method =() => Fun.BecomePlayer("DAISY09", new Color32(255, 81, 231, 255)), isTogglable = false, toolTip = "Sets your name to \"DAISY09\" and color to a light pink." },
                 new ButtonInfo { buttonText = "Become Child", method =() => Fun.BecomeMinigamesKid(), isTogglable = false, toolTip = "Sets your name and color to something a child would pick." },
 
-                new ButtonInfo { buttonText = "Become Hidden on Leaderboard", method =() => Fun.BecomeHiddenOnLeaderboard(), isTogglable = false, toolTip = "Sets your name to nothing and your color to a dark red, matching the leaderboard." },
+                new ButtonInfo { buttonText = "Become Hidden on Leaderboard", method =() => Fun.BecomePlayer("________", new Color32(0, 53, 2, 255)), isTogglable = false, toolTip = "Sets your name to nothing and your color to a dark red, matching the leaderboard." },
                 new ButtonInfo { buttonText = "Copy Identity Gun", method =() => Fun.CopyIdentityGun(), toolTip = "Steals the identity of whoever your hand desires." },
 
                 new ButtonInfo { buttonText = "Change Accessories", overlapText = "Change Cosmetics", method =() => Fun.ChangeAccessories(), toolTip = "Use your grips to change what hat you're wearing." },
@@ -880,7 +880,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Sting Gun", method =() => Overpowered.StingGun(), toolTip = "Makes the bees attack whoever your hand desires."},
                 new ButtonInfo { buttonText = "Sting All", method =() => Overpowered.StingAll(), toolTip = "Makes the bees attack everyone in the room."},
 
-                new ButtonInfo { buttonText = "Silent Guardian", method =() => Overpowered.SilentGuardian(), isTogglable = false, toolTip = "Makes you the guardian without scaling you up."},
                 new ButtonInfo { buttonText = "Guardian Self", method =() => Overpowered.GuardianSelf(), isTogglable = false, toolTip = "Makes you the guardian."},
                 new ButtonInfo { buttonText = "Guardian Gun", method =() => Overpowered.GuardianGun(), toolTip = "Makes whoever your hand desires the guardian."},
                 new ButtonInfo { buttonText = "Guardian All", method =() => Overpowered.GuardianAll(), isTogglable = false, toolTip = "Makes everyone in the room the guardian."},
@@ -891,23 +890,23 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Guardian Spaz", method =() => Overpowered.GuardianSpaz(), toolTip = "Spams the guardian position for everyone in the room."},
 
-                new ButtonInfo { buttonText = "Max Currency Self", method =() => Fun.MaxCurrencySelf(), isTogglable = false, toolTip = "Gives you the maximum amount of currency in the horror map (2 billion)."},
-                new ButtonInfo { buttonText = "Max Currency Gun", method =() => Fun.MaxCurrencyGun(), toolTip = "Gives whoever your hand desires the maximum amount of currency in the horror map (2 billion)."},
-                new ButtonInfo { buttonText = "Max Currency All", method =() => Fun.MaxCurrencyAll(), isTogglable = false, toolTip = "Gives everyone in the room the maximum amount of currency in the horror map (2 billion)."},
+                new ButtonInfo { buttonText = "Max Currency Self", method =() => Fun.SetCurrencySelf(int.MaxValue), isTogglable = false, toolTip = "Gives you the maximum amount of currency in the horror map (2 billion)."},
+                new ButtonInfo { buttonText = "Max Currency Gun", method =() => Fun.SetCurrencyGun(int.MaxValue), toolTip = "Gives whoever your hand desires the maximum amount of currency in the horror map (2 billion)."},
+                new ButtonInfo { buttonText = "Max Currency All", method =() => Fun.SetCurrencyAll(int.MaxValue), isTogglable = false, toolTip = "Gives everyone in the room the maximum amount of currency in the horror map (2 billion)."},
 
-                new ButtonInfo { buttonText = "Remove Currency Self", method =() => Fun.RemoveCurrencySelf(), isTogglable = false, toolTip = "Removes all currency in the horror map from yourself."},
-                new ButtonInfo { buttonText = "Remove Currency Gun", method =() => Fun.RemoveCurrencyGun(), toolTip = "Removes all currency in the horror map from whoever your hand desires."},
-                new ButtonInfo { buttonText = "Remove Currency All", method =() => Fun.RemoveCurrencyAll(), isTogglable = false, toolTip = "Removes all currency in the horror map from everyone in the room."},
+                new ButtonInfo { buttonText = "Remove Currency Self", method =() => Fun.SetCurrencySelf(), isTogglable = false, toolTip = "Removes all currency in the horror map from yourself."},
+                new ButtonInfo { buttonText = "Remove Currency Gun", method =() => Fun.SetCurrencyGun(), toolTip = "Removes all currency in the horror map from whoever your hand desires."},
+                new ButtonInfo { buttonText = "Remove Currency All", method =() => Fun.SetCurrencyAll(), isTogglable = false, toolTip = "Removes all currency in the horror map from everyone in the room."},
 
                 new ButtonInfo { buttonText = "Invincibility", method =() => Fun.Invincibility(), toolTip = "Makes you unable to die in the horror map."},
 
-                new ButtonInfo { buttonText = "Kill Self", method =() => Fun.KillSelf(), isTogglable = false, toolTip = "Turns you into a ghost."},
-                new ButtonInfo { buttonText = "Kill Gun", method =() => Fun.KillGun(), toolTip = "Turns whoever your hand desires into a ghost."},
-                new ButtonInfo { buttonText = "Kill All", method =() => Fun.KillAll(), isTogglable = false, toolTip = "Turns everyone in the room into a ghost."},
+                new ButtonInfo { buttonText = "Kill Self", method =() => Fun.SetStateSelf(1), isTogglable = false, toolTip = "Turns you into a ghost."},
+                new ButtonInfo { buttonText = "Kill Gun", method =() => Fun.SetStateGun(1), toolTip = "Turns whoever your hand desires into a ghost."},
+                new ButtonInfo { buttonText = "Kill All", method =() => Fun.SetStateAll(1), isTogglable = false, toolTip = "Turns everyone in the room into a ghost."},
 
-                new ButtonInfo { buttonText = "Revive Self", method =() => Fun.ReviveSelf(), isTogglable = false, toolTip = "Revives you from death."},
-                new ButtonInfo { buttonText = "Revive Gun", method =() => Fun.ReviveGun(), toolTip = "Revives whoever your hand desires from death."},
-                new ButtonInfo { buttonText = "Revive All", method =() => Fun.ReviveAll(), isTogglable = false, toolTip = "Revives everyone in the room from death."},
+                new ButtonInfo { buttonText = "Revive Self", method =() => Fun.SetStateSelf(0), isTogglable = false, toolTip = "Revives you from death."},
+                new ButtonInfo { buttonText = "Revive Gun", method =() => Fun.SetStateGun(0), toolTip = "Revives whoever your hand desires from death."},
+                new ButtonInfo { buttonText = "Revive All", method =() => Fun.SetStateAll(0), isTogglable = false, toolTip = "Revives everyone in the room from death."},
 
                 new ButtonInfo { buttonText = "Spaz Kill Self", method =() => Fun.SpazKillSelf(), toolTip = "Repeatedly kills and revives you."},
                 new ButtonInfo { buttonText = "Spaz Kill Gun", method =() => Fun.SpazKillGun(), toolTip = "Repeatedly kills and revives whoever your hand desires."},
@@ -1172,7 +1171,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Admin Laser", method =() => Experimental.AdminLaser(), toolTip = "Shines a red laser out of your hand when holding <color=green>A</color> or <color=green>X</color>."},
                 new ButtonInfo { buttonText = "Admin Beam <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Experimental.AdminBeam(), toolTip = "Shines a rainbow spinning laser out of your head when holding <color=green>trigger</color>."},
                 new ButtonInfo { buttonText = "Admin Fractals <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Experimental.AdminFractals(), toolTip = "Shines white lines out of your body when holding <color=green>trigger</color>."},
-                new ButtonInfo { buttonText = "Admin Anti Gun", method =() => Experimental.AdminAntiGun(), toolTip = "Prevents other menu users from shooting you with any gun."},
 
                 new ButtonInfo { buttonText = "Admin Fear Gun", method =() => Experimental.AdminFearGun(), toolTip = "Sends a person into pure fear and scarefulness."},
                 new ButtonInfo { buttonText = "Admin Object Gun", method =() => Experimental.AdminObjectGun(), toolTip = "Spawns an object wherever your hand desires."},
@@ -1190,9 +1188,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Admin Bring Hand All", method =() => Experimental.BringHandAllUsing(), toolTip = "Brings everyone using the menu to your hand."},
                 new ButtonInfo { buttonText = "Admin Bring Head All", method =() => Experimental.BringHeadAllUsing(), toolTip = "Brings everyone using the menu to your head."},
                 new ButtonInfo { buttonText = "Admin Orbit All", method =() => Experimental.OrbitAllUsing(), toolTip = "Makes everyone using the menu orbit you."},
-
-                new ButtonInfo { buttonText = "Admin Force Soundboard", method =() => Experimental.AdminSoundMicGun(), toolTip = "Plays a sound through whoever your hand desires' microphone if they're using the menu."},
-                new ButtonInfo { buttonText = "Admin Force Local Sound", method =() => Experimental.AdminSoundLocalGun(), toolTip = "Plays a sound through whoever your hand desires' headset if they're using the menu."},
 
                 new ButtonInfo { buttonText = "No Admin Indicator", enableMethod =() => Experimental.EnableNoAdminIndicator(), method =() => Experimental.NoAdminIndicator(), disableMethod =() => Experimental.AdminIndicatorBack(), toolTip = "Disables the cone that appears above your head to others with the menu."},
             },

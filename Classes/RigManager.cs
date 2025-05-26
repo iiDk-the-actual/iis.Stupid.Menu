@@ -1,16 +1,29 @@
 ﻿using HarmonyLib;
 using Photon.Pun;
 using Photon.Realtime;
+using System.Linq;
 using UnityEngine;
 
 namespace iiMenu.Classes
 {
     public class RigManager
     {
-        public static VRRig GetVRRigFromPlayer(NetPlayer p)
-        {
-            return GorillaGameManager.instance.FindPlayerVRRig(p);
-        }
+        public static VRRig GetVRRigFromPlayer(NetPlayer p) =>
+            GorillaGameManager.instance.FindPlayerVRRig(p);
+
+        public static NetPlayer GetPlayerFromVRRig(VRRig p) =>
+            p.Creator;
+
+        public static NetPlayer GetPlayerFromID(string id) =>
+            PhotonNetwork.PlayerList.FirstOrDefault(player => player.UserId == id);
+
+        public static Player NetPlayerToPlayer(NetPlayer p) =>
+            p.GetPlayerRef();
+
+        public static Player GetRandomPlayer(bool includeSelf) =>
+            includeSelf ?
+            PhotonNetwork.PlayerList[Random.Range(0, PhotonNetwork.PlayerList.Length - 1)] :
+            PhotonNetwork.PlayerListOthers[UnityEngine.Random.Range(0, PhotonNetwork.PlayerListOthers.Length - 1)];
 
         public static VRRig GetRandomVRRig(bool includeSelf)
         {
@@ -22,6 +35,12 @@ namespace iiMenu.Classes
             
             return GetVRRigFromPlayer(randomPlayer);
         }
+
+        public static NetworkView GetNetworkViewFromVRRig(VRRig p) =>
+            p.netView;
+
+        public static PhotonView GetPhotonViewFromVRRig(VRRig p) =>
+            GetNetworkViewFromVRRig(p).GetView;
 
         public static VRRig GetClosestVRRig()
         {
@@ -36,48 +55,6 @@ namespace iiMenu.Classes
                 }
             }
             return outRig;
-        }
-
-        public static PhotonView GetPhotonViewFromVRRig(VRRig p)
-        {
-            return GetNetworkViewFromVRRig(p).GetView;
-        }
-
-        public static NetworkView GetNetworkViewFromVRRig(VRRig p)
-        {
-            return p.netView;
-        }
-
-        public static Photon.Realtime.Player GetRandomPlayer(bool includeSelf)
-        {
-            if (includeSelf)
-                return PhotonNetwork.PlayerList[UnityEngine.Random.Range(0, PhotonNetwork.PlayerList.Length - 1)];
-            else
-                return PhotonNetwork.PlayerListOthers[UnityEngine.Random.Range(0, PhotonNetwork.PlayerListOthers.Length - 1)];
-        }
-
-        public static Player NetPlayerToPlayer(NetPlayer p)
-        {
-            return p.GetPlayerRef();
-        }
-
-        public static NetPlayer GetPlayerFromVRRig(VRRig p)
-        {
-            return p.Creator;
-        }
-
-        public static NetPlayer GetPlayerFromID(string id)
-        {
-            NetPlayer found = null;
-            foreach (Photon.Realtime.Player target in PhotonNetwork.PlayerList)
-            {
-                if (target.UserId == id)
-                {
-                    found = target;
-                    break;
-                }
-            }
-            return found;
         }
     }
 }

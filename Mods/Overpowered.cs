@@ -40,21 +40,26 @@ namespace iiMenu.Mods
             BeeHive.OnTap(1f);
         }
 
-        public static void StingSelf()
+        public static void StingTarget(NetPlayer Target)
         {
             if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
 
             AngryBeeSwarm Bees = GameObject.Find("Environment Objects/05Maze_PersistentObjects/AngryBeeSwarm/FloatingChaseBeeSwarm").GetComponent<AngryBeeSwarm>();
+            if (Bees.currentState != AngryBeeSwarm.ChaseState.Grabbing && Time.time > Bees.grabTimestamp + 5.1f)
+            {
+                Bees.grabTimestamp = Time.time;
+                Bees.emergeStartedTimestamp = Time.time;
 
-            Bees.grabTimestamp = Time.time;
-            Bees.emergeStartedTimestamp = Time.time;
+                Bees.targetPlayer = PhotonNetwork.LocalPlayer;
+                Bees.grabbedPlayer = PhotonNetwork.LocalPlayer;
 
-            Bees.targetPlayer = PhotonNetwork.LocalPlayer;
-            Bees.grabbedPlayer = PhotonNetwork.LocalPlayer;
-
-            Bees.lastState = AngryBeeSwarm.ChaseState.Chasing;
-            Bees.currentState = AngryBeeSwarm.ChaseState.Grabbing;
+                Bees.lastState = AngryBeeSwarm.ChaseState.Chasing;
+                Bees.currentState = AngryBeeSwarm.ChaseState.Grabbing;
+            }
         }
+
+        public static void StingSelf() =>
+            StingTarget(PhotonNetwork.LocalPlayer);
 
         public static void StingGun()
         {
@@ -65,24 +70,7 @@ namespace iiMenu.Mods
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
-                {
-                    if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
-
-                    AngryBeeSwarm Bees = GameObject.Find("Environment Objects/05Maze_PersistentObjects/AngryBeeSwarm/FloatingChaseBeeSwarm").GetComponent<AngryBeeSwarm>();
-                    float grabTimestamp = Bees.grabTimestamp;
-
-                    if (Bees.currentState != AngryBeeSwarm.ChaseState.Grabbing && Time.time > grabTimestamp + 5.1f)
-                    {
-                        Bees.grabTimestamp = Time.time;
-                        Bees.emergeStartedTimestamp = Time.time;
-
-                        Bees.targetPlayer = PhotonNetwork.LocalPlayer;
-                        Bees.grabbedPlayer = PhotonNetwork.LocalPlayer;
-
-                        Bees.lastState = AngryBeeSwarm.ChaseState.Chasing;
-                        Bees.currentState = AngryBeeSwarm.ChaseState.Grabbing;
-                    }
-                }
+                    StingTarget(GetPlayerFromVRRig(lockTarget));
 
                 if (GetGunInput(true))
                 {
@@ -97,67 +85,25 @@ namespace iiMenu.Mods
             else
             {
                 if (gunLocked)
-                {
                     gunLocked = false;
-                }
             }
         }
 
-        private static float beedelay;
-        public static void StingAll()
+        public static void StingAll() =>
+            StingTarget(GetRandomPlayer(false));
+
+        public static void SetGuardianTarget(NetPlayer target)
         {
             if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
-
-            AngryBeeSwarm Bees = GameObject.Find("Environment Objects/05Maze_PersistentObjects/AngryBeeSwarm/FloatingChaseBeeSwarm").GetComponent<AngryBeeSwarm>();
-            float grabTimestamp = Bees.grabTimestamp;
-
-            if (Bees.currentState != AngryBeeSwarm.ChaseState.Grabbing && Time.time > grabTimestamp + 5.1f)
+            foreach (GorillaGuardianZoneManager zoneManager in GorillaGuardianZoneManager.zoneManagers)
             {
-                Bees.grabTimestamp = Time.time;
-                Bees.emergeStartedTimestamp = Time.time;
-
-                Bees.lastState = AngryBeeSwarm.ChaseState.Chasing;
-                Bees.currentState = AngryBeeSwarm.ChaseState.Grabbing;
-            }
-
-            if (Time.time > beedelay)
-            {
-                beedelay = Time.time + 0.1f;
-
-                Player player = GetRandomPlayer(false);
-                Bees.targetPlayer = player;
-                Bees.grabbedPlayer = player;
+                if (zoneManager.enabled)
+                    zoneManager.SetGuardian(NetworkSystem.Instance.LocalPlayer);
             }
         }
 
-        public static void SilentGuardian()
-        {
-            if (PhotonNetwork.IsMasterClient)
-            {
-                foreach (GorillaGuardianZoneManager gorillaGuardianZoneManager in GorillaGuardianZoneManager.zoneManagers)
-                {
-                    if (gorillaGuardianZoneManager.enabled)
-                    {
-                        if (gorillaGuardianZoneManager.CurrentGuardian != NetworkSystem.Instance.LocalPlayer)
-                            gorillaGuardianZoneManager.guardianPlayer = NetworkSystem.Instance.LocalPlayer;
-                    }
-                }
-            }
-            else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
-        }
-
-        public static void GuardianSelf()
-        {
-            if (PhotonNetwork.IsMasterClient)
-            {
-                foreach (GorillaGuardianZoneManager gorillaGuardianZoneManager in GorillaGuardianZoneManager.zoneManagers)
-                {
-                    if (gorillaGuardianZoneManager.enabled)
-                        gorillaGuardianZoneManager.SetGuardian(NetworkSystem.Instance.LocalPlayer);
-                }
-            }
-            else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
-        }
+        public static void GuardianSelf() =>
+            SetGuardianTarget(PhotonNetwork.LocalPlayer);
 
         public static void GuardianGun()
         {
@@ -172,15 +118,7 @@ namespace iiMenu.Mods
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
-                        if (PhotonNetwork.IsMasterClient)
-                        {
-                            foreach (GorillaGuardianZoneManager gorillaGuardianZoneManager in GorillaGuardianZoneManager.zoneManagers)
-                            {
-                                if (gorillaGuardianZoneManager.enabled)
-                                    gorillaGuardianZoneManager.SetGuardian(GetPlayerFromVRRig(gunTarget));
-                            }
-                        }
-                        else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
+                        SetGuardianTarget(GetPlayerFromVRRig(gunTarget));
                         kgDebounce = Time.time + 0.1f;
                     }
                 }
@@ -284,17 +222,8 @@ namespace iiMenu.Mods
             if (PhotonNetwork.IsMasterClient)
             {
                 GorillaGuardianManager gman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Guardian Manager").GetComponent<GorillaGuardianManager>();
-                if (!gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
-                {
-                    foreach (GorillaGuardianZoneManager gorillaGuardianZoneManager in GorillaGuardianZoneManager.zoneManagers)
-                    {
-                        if (gorillaGuardianZoneManager.enabled)
-                        {
-                            if (gorillaGuardianZoneManager.CurrentGuardian != NetworkSystem.Instance.LocalPlayer)
-                                gorillaGuardianZoneManager.SetGuardian(NetworkSystem.Instance.LocalPlayer);
-                        }
-                    }
-                }
+                if (!gman.IsPlayerGuardian(PhotonNetwork.LocalPlayer))
+                    SetGuardianTarget(PhotonNetwork.LocalPlayer);
             }
             else
             {
