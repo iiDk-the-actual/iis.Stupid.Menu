@@ -3954,26 +3954,6 @@ namespace iiMenu.Menu
         public static string ColorToHex(Color color) =>
             ColorUtility.ToHtmlStringRGB(color);
 
-        public static string CleanString(string input, int maxLength = 12)
-        {
-            input = new string(Array.FindAll<char>(input.ToCharArray(), (char c) => Utils.IsASCIILetterOrDigit(c)));
-
-            if (input.Length > maxLength)
-                input = input.Substring(0, maxLength - 1);
-
-            input = input.ToUpper();
-            return input;
-        }
-
-        public static string NoASCIIStringCheck(string input, int maxLength = 12)
-        {
-            if (input.Length > maxLength)
-                input = input.Substring(0, maxLength - 1);
-
-            input = input.ToUpper();
-            return input;
-        }
-
         public static string NoRichtextTags(string input, string replace = "")
         {
             Regex notags = new Regex("<.*?>");
