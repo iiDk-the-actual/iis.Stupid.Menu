@@ -280,11 +280,7 @@ namespace iiMenu.Patches
     {
         public static void Prefix(ref UpdateUserTitleDisplayNameRequest request, Action<UpdateUserTitleDisplayNameResult> resultCallback, Action<PlayFabError> errorCallback, object customData = null, Dictionary<string, string> extraHeaders = null)
         {
-            string random = "";
-            for (int i = 0; i < 8; i++)
-                random += letters[UnityEngine.Random.Range(0, letters.Length - 1)];
-            
-            request.DisplayName = random;
+            request.DisplayName = GenerateRandomString(8);
         }
     }
 

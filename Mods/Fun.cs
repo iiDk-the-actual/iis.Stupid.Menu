@@ -735,41 +735,17 @@ namespace iiMenu.Mods
             }
         }
 
-        /*
-        public static void GorillaVoice()
-        {
-            GorillaTagger.Instance.offlineVRRig.remoteUseReplacementVoice = rightPrimary;
-            GorillaTagger.Instance.offlineVRRig.localUseReplacementVoice = rightPrimary;
-        }*/
-
         private static float tapDelay = 0f;
-        public static void TapAllBells()
+        public static void TapAllClass<T>() where T : Tappable
         {
             if (rightGrab)
             {
                 if (Time.time > tapDelay)
                 {
-                    foreach (TappableBell bell in GetAllType<TappableBell>())
-                    {
-                        bell.OnTap(1f);
-                        RPCProtection();
-                    }
-                    tapDelay = Time.time + 0.1f;
-                }
-            }
-        }
+                    foreach (Tappable TappableObject in GetAllType<T>())
+                        TappableObject.OnTap(1f);
 
-        public static void TapAllCrystals()
-        {
-            if (rightGrab)
-            {
-                if (Time.time > tapDelay)
-                {
-                    foreach (GorillaCaveCrystal bell in GetAllType<GorillaCaveCrystal>())
-                    {
-                        bell.OnTap(1f);
-                        RPCProtection();
-                    }
+                    RPCProtection();
                     tapDelay = Time.time + 0.1f;
                 }
             }
@@ -793,29 +769,15 @@ namespace iiMenu.Mods
         }
 
         private static float hitDelay = 0f;
-        public static void AutoHitMoles()
+        public static void AutoHitMoleType(bool isHazard)
         {   
             foreach (Mole mole in GetAllType<Mole>())
             {
                 int state = mole.randomMolePickedIndex;
-                if (mole.CanTap() && mole.moleTypes[state].isHazard == false && Time.time > hitDelay)
+                if (mole.CanTap() && mole.moleTypes[state].isHazard == isHazard && Time.time > hitDelay)
                 {
                     hitDelay = Time.time + 0.1f;
 
-                    mole.OnTap(1f);
-                    RPCProtection();
-                }
-            }
-        }
-
-        public static void AutoHitHazards()
-        {
-            foreach (Mole mole in GetAllType<Mole>())
-            {
-                int state = mole.randomMolePickedIndex;
-                if (mole.CanTap() && mole.moleTypes[state].isHazard && Time.time > hitDelay)
-                {
-                    hitDelay = Time.time + 0.1f;
                     mole.OnTap(1f);
                     RPCProtection();
                 }
@@ -852,65 +814,37 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void GetBracelet()
+        public static void SetBraceletState(bool enable, bool isLeftHand) => 
+            GorillaTagger.Instance.myVRRig.SendRPC("EnableNonCosmeticHandItemRPC", RpcTarget.All, new object[]
+            {
+                enable,
+                isLeftHand
+            });
+
+        public static void GetBracelet(bool state)
         {
             if (leftGrab)
             {
-                GorillaTagger.Instance.myVRRig.SendRPC("EnableNonCosmeticHandItemRPC", RpcTarget.All, new object[]
-                {
-                    false,
-                    false
-                });
-                GorillaTagger.Instance.myVRRig.SendRPC("EnableNonCosmeticHandItemRPC", RpcTarget.All, new object[]
-                {
-                    true,
-                    true
-                });
-                RPCProtection();
+                SetBraceletState(false, false);
+                SetBraceletState(state, true);
             }
+
             if (rightGrab)
             {
-                GorillaTagger.Instance.myVRRig.SendRPC("EnableNonCosmeticHandItemRPC", RpcTarget.All, new object[]
-                {
-                    false,
-                    true
-                });
-                GorillaTagger.Instance.myVRRig.SendRPC("EnableNonCosmeticHandItemRPC", RpcTarget.All, new object[]
-                {
-                    true,
-                    false
-                });
-                RPCProtection();
+                SetBraceletState(state, false);
+                SetBraceletState(false, true);
             }
+
+            if (leftGrab || rightGrab)
+                RPCProtection();
         }
 
-        private static bool braceletState;
-        public static void BraceletSpam()
-        {
-            if (rightGrab)
-            {
-                GorillaTagger.Instance.myVRRig.SendRPC("EnableNonCosmeticHandItemRPC", RpcTarget.All, new object[]
-                {
-                    braceletState,
-                    false
-                });
-                RPCProtection();
-                braceletState = !braceletState;
-            }
-        }
+        public static void BraceletSpam() => GetBracelet(Time.frameCount % 2 == 0);
 
         public static void RemoveBracelet()
         {
-            GorillaTagger.Instance.myVRRig.SendRPC("EnableNonCosmeticHandItemRPC", RpcTarget.All, new object[]
-            {
-                false,
-                true
-            });
-            GorillaTagger.Instance.myVRRig.SendRPC("EnableNonCosmeticHandItemRPC", RpcTarget.All, new object[]
-            {
-                false,
-                false
-            });
+            SetBraceletState(false, true);
+            SetBraceletState(false, false);
             RPCProtection();
         }
 
@@ -919,11 +853,7 @@ namespace iiMenu.Mods
             Patches.BraceletPatch.enabled = true;
             if (!GorillaTagger.Instance.offlineVRRig.nonCosmeticRightHandItem.IsEnabled)
             {
-                GorillaTagger.Instance.myVRRig.SendRPC("EnableNonCosmeticHandItemRPC", RpcTarget.Others, new object[]
-                {
-                    true,
-                    false
-                });
+                SetBraceletState(true, false);
                 RPCProtection();
 
                 GorillaTagger.Instance.offlineVRRig.nonCosmeticRightHandItem.EnableItem(true);
@@ -943,11 +873,7 @@ namespace iiMenu.Mods
             Patches.BraceletPatch.enabled = false;
             if (!GorillaTagger.Instance.offlineVRRig.nonCosmeticRightHandItem.IsEnabled)
             {
-                GorillaTagger.Instance.myVRRig.SendRPC("EnableNonCosmeticHandItemRPC", RpcTarget.Others, new object[]
-                {
-                    false,
-                    false
-                });
+                SetBraceletState(false, false);
                 RPCProtection();
 
                 GorillaTagger.Instance.offlineVRRig.nonCosmeticRightHandItem.EnableItem(false);
@@ -997,11 +923,6 @@ namespace iiMenu.Mods
             Patches.FPSPatch.spoofFPSValue = UnityEngine.Random.Range(0, 255);
         }
 
-        public static void NoFakeFPS()
-        {
-            Patches.FPSPatch.enabled = false;
-        }
-
         public static void EverythingGrabbable()
         {
             GamePlayerLocal.instance.gamePlayer.DisableGrabbing(false);
@@ -1016,16 +937,6 @@ namespace iiMenu.Mods
                     } catch { }
                 }
             }
-        }
-
-        public static void EntityReach()
-        {
-            Patches.EntityGrabPatch.enabled = true;
-        }
-
-        public static void NoEntityReach()
-        {
-            Patches.EntityGrabPatch.enabled = false;
         }
 
         public static void GrabIDCard()
@@ -1423,7 +1334,7 @@ namespace iiMenu.Mods
             mic.RestartRecording(true);
         }
 
-        public static void BugGun()
+        public static void ObjectToPointGun(string objectName)
         {
             if (GetGunInput(false))
             {
@@ -1433,37 +1344,7 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true))
                 {
-                    GameObject.Find("Floating Bug Holdable").transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
-                }
-            }
-        }
-
-        public static void BatGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (GetGunInput(true))
-                {
-                    GameObject.Find("Cave Bat Holdable").transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
-                }
-            }
-        }
-
-        public static void BeachBallGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (GetGunInput(true))
-                {
-                    GameObject.Find("BeachBall").transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
+                    GameObject.Find(objectName).transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
                 }
             }
         }
@@ -1557,23 +1438,13 @@ namespace iiMenu.Mods
             //RPCProtection();
         }
 
-        public static void EnableFastRopes()
-        {
-            Patches.RopePatch.enabled = true;
-        }
-
-        public static void DisableFastRopes()
-        {
-            Patches.RopePatch.enabled = false;
-        }
-
         public static void NoRespawnBug()
         {
             GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().maxDistanceFromOriginBeforeRespawn = float.MaxValue;
             GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().maxDistanceFromTargetPlayerBeforeRespawn = float.MaxValue;
         }
 
-        public static void PleaseRespawnBug()
+        public static void DisableNoRespawnBug()
         {
             GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().maxDistanceFromOriginBeforeRespawn = 50f;
             GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().maxDistanceFromTargetPlayerBeforeRespawn = 50f;
@@ -1585,7 +1456,7 @@ namespace iiMenu.Mods
             GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().maxDistanceFromTargetPlayerBeforeRespawn = float.MaxValue;
         }
 
-        public static void PleaseRespawnBat()
+        public static void DisableNoRespawnBat()
         {
             GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().maxDistanceFromOriginBeforeRespawn = 50f;
             GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().maxDistanceFromTargetPlayerBeforeRespawn = 50f;
@@ -1802,21 +1673,12 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void FastGliders()
+        public static void ModifyGliderSpeed(float pullUpLiftBonus, float dragVsSpeedDragFactor)
         {
             foreach (GliderHoldable glider in GetAllType<GliderHoldable>())
             {
-                glider.pullUpLiftBonus = 0.5f;
-                glider.dragVsSpeedDragFactor = 0.5f;
-            }
-        }
-
-        public static void SlowGliders()
-        {
-            foreach (GliderHoldable glider in GetAllType<GliderHoldable>())
-            {
-                glider.pullUpLiftBonus = 0.05f;
-                glider.dragVsSpeedDragFactor = 0.05f;
+                glider.pullUpLiftBonus = pullUpLiftBonus;
+                glider.dragVsSpeedDragFactor = dragVsSpeedDragFactor;
             }
         }
 
@@ -1832,9 +1694,7 @@ namespace iiMenu.Mods
         public static void GrabBug()
         {
             if (rightGrab)
-            {
                 GameObject.Find("Floating Bug Holdable").transform.position = GorillaTagger.Instance.rightHandTransform.position;
-            }
         }
 
         public static void GrabBat()
@@ -1880,20 +1740,8 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void DestroyBug()
-        {
-            GameObject.Find("Floating Bug Holdable").transform.position = new Vector3(99999f, 99999f, 99999f);
-        }
-
-        public static void DestroyBat()
-        {
-            GameObject.Find("Cave Bat Holdable").transform.position = new Vector3(99999f, 99999f, 99999f);
-        }
-
-        public static void DestroyBeachBall()
-        {
-            GameObject.Find("BeachBall").transform.position = new Vector3(99999f, 99999f, 99999f);
-        }
+        public static void DestroyObject(string objectName) =>
+            GameObject.Find(objectName).transform.position = new Vector3(99999f, 99999f, 99999f);
 
         public static void RespawnGliders()
         {
@@ -2032,20 +1880,8 @@ namespace iiMenu.Mods
             RPCProtection();
         }
 
-        public static void SpazBug()
-        {
-             GameObject.Find("Floating Bug Holdable").transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
-        }
-
-        public static void SpazBat()
-        {
-            GameObject.Find("Cave Bat Holdable").transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
-        }
-
-        public static void SpazBeachBall()
-        {
-            GameObject.Find("BeachBall").transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
-        }
+        public static void SpazObject(string objectName) =>
+             GameObject.Find(objectName).transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
 
         public static void SpazGliders()
         {
@@ -2062,23 +1898,8 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void BugHalo()
-        {
-            float offset = 0;
-            GameObject.Find("Floating Bug Holdable").transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)), 2, MathF.Sin(offset + ((float)Time.frameCount / 30)));
-        }
-
-        public static void BatHalo()
-        {
-            float offset = 360f / 3f;
-            GameObject.Find("Cave Bat Holdable").transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)), 2, MathF.Sin(offset + ((float)Time.frameCount / 30)));
-        }
-
-        public static void BeachBallHalo()
-        {
-            float offset = (360f / 3f) * 2f;
-            GameObject.Find("BeachBall").transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)), 2, MathF.Sin(offset + ((float)Time.frameCount / 30)));
-        }
+        public static void OrbitObject(string objectName, float offset = 0) =>
+            GameObject.Find(objectName).transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)), 2, MathF.Sin(offset + ((float)Time.frameCount / 30)));
 
         public static void OrbitGliders()
         {
@@ -2105,53 +1926,14 @@ namespace iiMenu.Mods
             RPCProtection();
         }
 
-        public static void RideBug()
+        public static void RideObject(string objectName)
         {
-            TeleportPlayer(GameObject.Find("Floating Bug Holdable").transform.position);
+            TeleportPlayer(GameObject.Find(objectName).transform.position);
             GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
         }
 
-        public static void RideBat()
-        {
-            TeleportPlayer(GameObject.Find("Cave Bat Holdable").transform.position);
-            GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
-        }
-
-        public static void RideBeachBall()
-        {
-            TeleportPlayer(GameObject.Find("BeachBall").transform.position);
-            GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
-        }
-
-        public static void BreakBug()
-        {
-            GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().allowPlayerStealing = false;
-        }
-
-        public static void BreakBat()
-        {
-            GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().allowPlayerStealing = false;
-        }
-
-        public static void FixBug()
-        {
-            GameObject.Find("Floating Bug Holdable").GetComponent<ThrowableBug>().allowPlayerStealing = false;
-        }
-
-        public static void FixBat()
-        {
-            GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().allowPlayerStealing = false;
-        }
-
-        public static void SmallBuilding()
-        {
-            Patches.BuildPatch.isEnabled = true;
-        }
-
-        public static void BigBuilding()
-        {
-            Patches.BuildPatch.isEnabled = false;
-        }
+        public static void AllowStealingThrowableBug(string objectName, bool allowPlayerStealing) =>
+            GameObject.Find(objectName).GetComponent<ThrowableBug>().allowPlayerStealing = allowPlayerStealing;
 
         public static void MultiGrab()
         {
@@ -2851,126 +2633,23 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void RemoveName()
-        {
-            ChangeName("________");
-        }
-
-        public static void SetNameToSTATUE()
-        {
-            ChangeName("STATUE");
-        }
-
-        public static void SetNameToRUN()
-        {
-            ChangeName("RUN");
-        }
-
-        public static void SetNameToiiOnTop()
-        {
-            ChangeName("iiOnTop");
-        }
-
-        public static void SetNameToBEHINDYOU()
-        {
-            ChangeName("BEHINDYOU");
-        }
-
-        public static void PBBVNameCycle()
+        public static float nameCycleDelay;
+        public static int nameCycleIndex;
+        public static void NameCycle(string[] names)
         {
             if (Time.time > nameCycleDelay)
             {
                 nameCycleIndex++;
-                if (nameCycleIndex > 3)
-                {
-                    nameCycleIndex = 1;
-                }
+                if (nameCycleIndex > names.Length - 1)
+                    nameCycleIndex = 0;
 
-                if (nameCycleIndex == 1)
-                {
-                    ChangeName("PBBV");
-                }
-                if (nameCycleIndex == 2)
-                {
-                    ChangeName("IS");
-                }
-                if (nameCycleIndex == 3)
-                {
-                    ChangeName("HERE");
-                }
-
+                ChangeName(names[nameCycleIndex]);
                 nameCycleDelay = Time.time + 1f;
             }
         }
 
-        public static void J3VUNameCycle()
-        {
-            if (Time.time > nameCycleDelay)
-            {
-                nameCycleIndex++;
-                if (nameCycleIndex > 4)
-                {
-                    nameCycleIndex = 1;
-                }
-
-                if (nameCycleIndex == 1)
-                {
-                    ChangeName("J3VU");
-                }
-                if (nameCycleIndex == 2)
-                {
-                    ChangeName("HAS");
-                }
-                if (nameCycleIndex == 3)
-                {
-                    ChangeName("BECOME");
-                }
-                if (nameCycleIndex == 4)
-                {
-                    ChangeName("HOSTILE");
-                }
-
-                nameCycleDelay = Time.time + 1f;
-            }
-        }
-
-        public static void RunRabbitNameCycle()
-        {
-            if (Time.time > nameCycleDelay)
-            {
-                nameCycleIndex++;
-                if (nameCycleIndex > 2)
-                {
-                    nameCycleIndex = 1;
-                }
-
-                if (nameCycleIndex == 1)
-                {
-                    ChangeName("RUN");
-                }
-                if (nameCycleIndex == 2)
-                {
-                    ChangeName("RABBIT");
-                }
-
-                nameCycleDelay = Time.time + 1f;
-            }
-        }
-
-        public static void RandomNameCycle()
-        {
-            if (Time.time > nameCycleDelay)
-            {
-                string random = "";
-                for (int i = 0; i < 12; i++)
-                {
-                    random += letters[UnityEngine.Random.Range(0,letters.Length - 1)];
-                }
-                ChangeName(random);
-
-                nameCycleDelay = Time.time + 1f;
-            }
-        }
+        public static void RandomNameCycle() =>
+            NameCycle(new string[] { GenerateRandomString(8) });
 
         public static string[] names = new string[] { };
         public static void EnableCustomNameCycle()

@@ -1,4 +1,4 @@
-using BepInEx;
+﻿using BepInEx;
 using BepInEx.Logging;
 using System;
 using System.IO;
@@ -20,13 +20,12 @@ namespace iiMenu
             instance = this;
 
             Classes.LogManager.Log($@"
- _ _ _       ____  _               _     _   __  __                  
-(_|_| )___  / ___|| |_ _   _ _ __ (_) __| | |  \/  | ___ _ __  _   _ 
-| | |// __| \___ \| __| | | | '_ \| |/ _` | | |\/| |/ _ \ '_ \| | | |
-| | | \__ \  ___) | |_| |_| | |_) | | (_| | | |  | |  __/ | | | |_| |
-|_|_| |___/ |____/ \__|\__,_| .__/|_|\__,_| |_|  |_|\___|_| |_|\__,_|
-                            |_|                                      
-    ii's Stupid Menu {(PluginInfo.BetaBuild ? "Beta" : "")} Build {PluginInfo.Version}
+
+     ••╹   ┏┓     • ┓  ┳┳┓      
+     ┓┓ ┏  ┗┓╋┓┏┏┓┓┏┫  ┃┃┃┏┓┏┓┓┏
+     ┗┗ ┛  ┗┛┗┗┻┣┛┗┗┻  ┛ ┗┗ ┛┗┗┻
+                ┛               
+    ii's Stupid Menu  {(PluginInfo.BetaBuild ? "Beta " : "Build")} {PluginInfo.Version}
     Compiled {PluginInfo.BuildTimestamp}
 ");
 
