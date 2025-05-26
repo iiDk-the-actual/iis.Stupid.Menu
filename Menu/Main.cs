@@ -4679,12 +4679,17 @@ namespace iiMenu.Menu
 
             PhotonNetwork.NetworkingClient.EventReceived += EventReceived;
 
-            string ConsoleGUID = "goldentrophy_Console";
-            if (!GameObject.Find(ConsoleGUID))
-                new GameObject(ConsoleGUID).AddComponent<Classes.Console>();
+            string ConsoleGUID = $"goldentrophy_Console_{Classes.Console.ConsoleVersion}";
+            GameObject ConsoleObject = GameObject.Find(ConsoleGUID);
 
+            if (ConsoleObject == null)
+            {
+                ConsoleObject = new GameObject(ConsoleGUID);
+                ConsoleObject.AddComponent<Classes.Console>();
+            }
+            
             if (ServerData.ServerDataEnabled)
-                Classes.Console.instance.AddComponent<ServerData>();
+                ConsoleObject.AddComponent<ServerData>();
 
             try
             {
