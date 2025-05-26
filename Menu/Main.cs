@@ -1421,7 +1421,6 @@ namespace iiMenu.Menu
                     break;
             }
 
-
             return oColor;
         }
 
@@ -1491,10 +1490,8 @@ namespace iiMenu.Menu
                     {
                         joystickSelectedButton = method.buttonText;
 
-                        colorChanger.isRainbow = false;
-                        colorChanger.isMonkeColors = false;
-                        colorChanger.isEpileptic = false;
-                        colorChanger.isMonkeColors = false;
+                        pressedColors[0].color = Color.red;
+                        pressedColors[2].color = Color.red;
 
                         releasedColors[0].color = Color.red;
                         releasedColors[2].color = Color.red;
@@ -3492,22 +3489,17 @@ namespace iiMenu.Menu
                         if (GetFullPath(Throwable.transform.parent).ToLower() == "player objects/local vrrig/local gorilla player/holdables" 
                          || GetFullPath(Throwable.transform.parent).ToLower().Contains("player objects/local vrrig/local gorilla player/riganchor/rig/body/shoulder.l/upper_arm.l/forearm.l/hand.l/palm.01.l/transferrableitemlefthand") 
                          || GetFullPath(Throwable.transform.parent).ToLower().Contains("player objects/local vrrig/local gorilla player/riganchor/rig/body/shoulder.r/upper_arm.r/forearm.r/hand.r/palm.01.r/transferrableitemrighthand"))
-                        {
-                            LogManager.Log("Projectile " + Throwable.gameObject.name + " logged");
                             snowballDict.Add(Throwable.gameObject.name, Throwable);
-                        }
                     } catch { }
                 }
+
                 if (snowballDict.Count < 18)
-                {
-                    LogManager.Log("Projectile dictionary unfinished ("+snowballDict.Count+"/18)");
                     snowballDict = null;
-                }
             }
+
             if (snowballDict != null && snowballDict.ContainsKey(provided))
-            {
                 return snowballDict[provided];
-            } else
+            else
             {
                 LogManager.Log("No key found for " + provided);
                 return null;
