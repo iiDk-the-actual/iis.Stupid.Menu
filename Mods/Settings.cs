@@ -36,9 +36,15 @@ namespace iiMenu.Mods
                     {
                         List<GameObject> archiveObjects = new List<GameObject> { };
                         GameObject background = null;
-                        VRKeyboard = LoadAsset("keyboard");
+                        VRKeyboard = LoadAsset<GameObject>("keyboard");
                         VRKeyboard.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
                         VRKeyboard.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
+
+                        menuSpawnPosition = VRKeyboard.transform.Find("MenuSpawnPosition").gameObject;
+                        VRKeyboard.transform.Find("Canvas/Text").GetComponent<Text>().color = textColor;
+
+
+
                         for (int i = 0; i < VRKeyboard.transform.childCount; i++)
                         {
                             GameObject v = VRKeyboard.transform.GetChild(i).gameObject;
@@ -58,7 +64,6 @@ namespace iiMenu.Mods
                                 {
                                     if (v.name == "Background")
                                     {
-
                                         GradientColorKey[] array = new GradientColorKey[3];
                                         array[0].color = bgColorA;
                                         array[0].time = 0f;
@@ -193,68 +198,14 @@ namespace iiMenu.Mods
         public static void GlobalReturn()
         {
             NotifiLib.ClearAllNotifications();
-            Toggle(Buttons.buttons[buttonsType][0].buttonText);
-        }
-
-        public static void EnableSettings()
-        {
-            buttonsType = 1;
-            pageNumber = 0;
-        }
-
-        public static void ReturnToMain()
-        {
-            buttonsType = 0;
-            pageNumber = 0;
-        }
-
-        public static void EnableMenuSettings()
-        {
-            buttonsType = 2;
-            pageNumber = 0;
-        }
-
-        public static void EnableRoomSettings()
-        {
-            buttonsType = 3;
-            pageNumber = 0;
-        }
-
-        public static void EnableSafetySettings()
-        {
-            buttonsType = 28;
-            pageNumber = 0;
-        }
-
-        public static void EnableMovementSettings()
-        {
-            buttonsType = 4;
-            pageNumber = 0;
-        }
-
-        public static void EnableProjectileSettings()
-        {
-            buttonsType = 5;
-            pageNumber = 0;
-        }
-
-        public static void EnableKeybindSettings()
-        {
-            buttonsType = 32;
-            pageNumber = 0;
-        }
-
-        public static void EnablePluginSettings()
-        {
-            buttonsType = 33;
-            pageNumber = 0;
+            Toggle(Buttons.buttons[currentCategoryIndex][0].buttonText);
         }
 
         public static Dictionary<string, Assembly> LoadedPlugins = new Dictionary<string, Assembly> { };
         public static List<string> disabledPlugins = new List<string> { };
         public static void LoadPlugins()
         {
-            Buttons.buttons[33] = new ButtonInfo[] { new ButtonInfo { buttonText = "Exit Plugin Settings", method = () => Settings.EnableSettings(), isTogglable = false, toolTip = "Returns you back to the settings menu." } };
+            Buttons.buttons[GetCategory("Plugin Settings")] = new ButtonInfo[] { new ButtonInfo { buttonText = "Exit Plugin Settings", method = () => currentCategoryName = "Settings", isTogglable = false, toolTip = "Returns you back to the settings menu." } };
 
             if (LoadedPlugins.Count > 0)
             {
@@ -272,8 +223,6 @@ namespace iiMenu.Mods
 
             LoadedPlugins.Clear();
 
-            if (!Directory.Exists("iisStupidMenu"))
-                Directory.CreateDirectory("iisStupidMenu");
             if (!Directory.Exists("iisStupidMenu/Plugins"))
                 Directory.CreateDirectory("iisStupidMenu/Plugins");
 
@@ -334,12 +283,14 @@ namespace iiMenu.Mods
 
         public static void LoadPluginLibrary()
         {
-            buttonsType = 26;
-            pageNumber = 0;
+            currentCategoryName = "Sound Library";
+
             string library = GetHttp("https://github.com/iiDk-the-actual/ModInfo/raw/main/Plugins/PluginLibrary.txt");
             string[] plugins = AlphabetizeNoSkip(library.Split("\n"));
-            List<ButtonInfo> pluginbuttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Plugin Library", method = () => EnablePluginSettings(), isTogglable = false, toolTip = "Returns you back to the plugin settings." } };
+
+            List<ButtonInfo> pluginbuttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Plugin Library", method = () => currentCategoryName = "Plugin Settings", isTogglable = false, toolTip = "Returns you back to the plugin settings." } };
             int index = 0;
+
             foreach (string plugin in plugins)
             {
                 if (plugin.Length > 2)
@@ -349,7 +300,7 @@ namespace iiMenu.Mods
                     pluginbuttons.Add(new ButtonInfo { buttonText = "PluginDownload" + index.ToString(), overlapText = Data[0], method =() => DownloadPlugin(Data[0], Data[2]), isTogglable = false, toolTip = Data[1] });
                 }
             }
-            Buttons.buttons[26] = pluginbuttons.ToArray();
+            Buttons.buttons[GetCategory("Sound Library")] = pluginbuttons.ToArray();
         }
 
         public static void DownloadPlugin(string name, string url)
@@ -391,149 +342,11 @@ namespace iiMenu.Mods
 
             GetIndex(Plugin.Key).overlapText = (disabledPlugins.Contains(Plugin.Key) ? "<color=grey>[</color><color=red>OFF</color><color=grey>]</color>" : "<color=grey>[</color><color=green>ON</color><color=grey>]</color>") + " " + GetPluginInfo(Plugin.Value)[0];
         }
-
-        public static void EnableSoundboardSettings()
-        {
-            buttonsType = 30;
-            pageNumber = 0;
-        }
-
-        public static void EnableRoom()
-        {
-            buttonsType = 6;
-            pageNumber = 0;
-        }
-
-        public static void EnableImportant()
-        {
-            buttonsType = 7;
-            pageNumber = 0;
-        }
-
-        public static void EnableSafety()
-        {
-            buttonsType = 8;
-            pageNumber = 0;
-        }
-
-        public static void EnableMovement()
-        {
-            buttonsType = 9;
-            pageNumber = 0;
-        }
-
-        public static void EnableAdvantage()
-        {
-            buttonsType = 10;
-            pageNumber = 0;
-        }
-
-        public static void EnableVisual()
-        {
-            buttonsType = 11;
-            pageNumber = 0;
-        }
-
-        public static void EnableFun()
-        {
-            buttonsType = 12;
-            pageNumber = 0;
-        }
-
-        public static void EnableSpam()
-        {
-            buttonsType = 13;
-            pageNumber = 0;
-        }
-
-        public static void EnableSoundSpam()
-        {
-            buttonsType = 14;
-            pageNumber = 0;
-        }
-
-        public static void EnableProjectileSpam()
-        {
-            buttonsType = 15;
-            pageNumber = 0;
-        }
-
-        public static void EnableMaster()
-        {
-            buttonsType = 16;
-            pageNumber = 0;
-        }
-
-        public static void EnableOverpowered()
-        {
-            buttonsType = 17;
-            pageNumber = 0;
-        }
-
-        public static void EnableExperimental()
-        {
-            buttonsType = 18;
-            pageNumber = 0;
-        }
-
-        public static void EnableRisky()
-        {
-            buttonsType = 26;
-            pageNumber = 0;
-        }
-
-        public static void EnableBuggy()
-        {
-            buttonsType = 27;
-            pageNumber = 0;
-        }
-
-        public static void EnableFavorites()
-        {
-            buttonsType = 19;
-            pageNumber = 0;
-        }
-
-        public static void EnableMenuPresets()
-        {
-            buttonsType = 20;
-            pageNumber = 0;
-        }
-
-        public static void EnableAdvantageSettings()
-        {
-            buttonsType = 21;
-            pageNumber = 0;
-        }
-
-        public static void EnableVisualSettings()
-        {
-            buttonsType = 22;
-            pageNumber = 0;
-        }
-
-        public static void EnableOverpoweredSettings()
-        {
-            buttonsType = 31;
-            pageNumber = 0;
-        }
-
-        public static void EnableAdmin()
-        {
-            buttonsType = 23;
-            pageNumber = 0;
-        }
-
-        public static void EnableEnabled()
-        {
-            buttonsType = 24;
-            pageNumber = 0;
-        }
-
+        
         public static void RightHand()
         {
             rightHand = true;
-            if (wristThingV2)
+            if (watchMenu)
             {
                 Toggle("Watch Menu");
                 Toggle("Watch Menu");
@@ -550,7 +363,7 @@ namespace iiMenu.Mods
         public static void LeftHand()
         {
             rightHand = false;
-            if (wristThingV2)
+            if (watchMenu)
             {
                 Toggle("Watch Menu");
                 Toggle("Watch Menu");
@@ -648,6 +461,16 @@ namespace iiMenu.Mods
             shouldOutline = false;
         }
 
+        public static void InnerOutlineMenuOn()
+        {
+            innerOutline = true;
+        }
+
+        public static void InnerOutlineMenuOff()
+        {
+            innerOutline = false;
+        }
+
         public static void PhysicalMenuOn()
         {
             physicalMenu = true;
@@ -662,7 +485,7 @@ namespace iiMenu.Mods
 
         public static void WatchMenuOn()
         {
-            wristThingV2 = true;
+            watchMenu = true;
             GameObject mainwatch = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/huntcomputer (1)");
             watchobject = UnityEngine.Object.Instantiate(mainwatch, rightHand ? GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R").transform : GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L").transform, false); // See cause unlike skid.lol I actually clone the watch
             UnityEngine.Object.Destroy(watchobject.GetComponent<GorillaHuntComputer>());
@@ -692,7 +515,7 @@ namespace iiMenu.Mods
 
         public static void WatchMenuOff()
         {
-            wristThingV2 = false;
+            watchMenu = false;
             UnityEngine.Object.Destroy(watchobject);
         }
 
@@ -881,7 +704,7 @@ namespace iiMenu.Mods
                     textColor = new Color32(255, 190, 125, 255);
                     textClicked = new Color32(255, 190, 125, 255);
                     GetIndex("Thin Menu").enabled = true;
-                    FATMENU = true;
+                    thinMenu = true;
                     break;
                 case 8: // Player Material
                     bgColorA = Color.black;
@@ -1756,14 +1579,9 @@ namespace iiMenu.Mods
         private static int rememberdirectory = 0;
         public static void CustomMenuTheme()
         {
-            if (!Directory.Exists("iisStupidMenu"))
-            {
-                Directory.CreateDirectory("iisStupidMenu");
-            }
             if (!File.Exists("iisStupidMenu/iiMenu_CustomThemeColor.txt"))
-            {
                 UpdateWriteCustomTheme();
-            }
+            
             UpdateReadCustomTheme();
         }
 
@@ -1775,8 +1593,7 @@ namespace iiMenu.Mods
 
         public static void CustomMenuThemePage()
         {
-            buttonsType = 29;
-            pageNumber = 0;
+            currentCategoryName = "Temporary Category";
 
             List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit Custom Menu Theme", method = () => ExitCustomMenuTheme(), isTogglable = false, toolTip = "Returns you back to the settings menu." },
@@ -1790,8 +1607,7 @@ namespace iiMenu.Mods
 
         public static void CMTBackground()
         {
-            buttonsType = 29;
-            pageNumber = 0;
+            currentCategoryName = "Temporary Category";
 
             List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit Background", method = () => CustomMenuThemePage(), isTogglable = false, toolTip = "Returns you back to the customize menu." },
@@ -1804,8 +1620,7 @@ namespace iiMenu.Mods
         public static void CMTBackgroundFirst()
         {
             modifyWhatId = 0;
-            buttonsType = 29;
-            pageNumber = 0;
+            currentCategoryName = "Temporary Category";
 
             List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit First Color", method = () => CMTBackground(), isTogglable = false, toolTip = "Returns you back to the background menu." },
@@ -1820,8 +1635,7 @@ namespace iiMenu.Mods
         public static void CMTBackgroundSecond()
         {
             modifyWhatId = 1;
-            buttonsType = 29;
-            pageNumber = 0;
+            currentCategoryName = "Temporary Category";
 
             List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit Second Color", method = () => CMTBackground(), isTogglable = false, toolTip = "Returns you back to the background menu." },
@@ -1836,8 +1650,7 @@ namespace iiMenu.Mods
 
         public static void CMTButton()
         {
-            buttonsType = 29;
-            pageNumber = 0;
+            currentCategoryName = "Temporary Category";
 
             List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit Buttons", method = () => CustomMenuThemePage(), isTogglable = false, toolTip = "Returns you back to the customize menu." },
@@ -1849,8 +1662,7 @@ namespace iiMenu.Mods
         }
         public static void CMTButtonEnabled()
         {
-            buttonsType = 29;
-            pageNumber = 0;
+            currentCategoryName = "Temporary Category";
 
             List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit Enabled", method = () => CMTButton(), isTogglable = false, toolTip = "Returns you back to the customize menu." },
@@ -1862,8 +1674,7 @@ namespace iiMenu.Mods
         }
         public static void CMTButtonDisabled()
         {
-            buttonsType = 29;
-            pageNumber = 0;
+            currentCategoryName = "Temporary Category";
 
             List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit Enabled", method = () => CMTButton(), isTogglable = false, toolTip = "Returns you back to the customize menu." },
@@ -1876,8 +1687,7 @@ namespace iiMenu.Mods
         public static void CMTButtonEnabledFirst()
         {
             modifyWhatId = 4;
-            buttonsType = 29;
-            pageNumber = 0;
+            currentCategoryName = "Temporary Category";
 
             List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit First Color", method = () => CMTButtonEnabled(), isTogglable = false, toolTip = "Returns you back to the enabled button menu." },
@@ -1892,8 +1702,7 @@ namespace iiMenu.Mods
         public static void CMTButtonEnabledSecond()
         {
             modifyWhatId = 5;
-            buttonsType = 29;
-            pageNumber = 0;
+            currentCategoryName = "Temporary Category";
 
             List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit Second Color", method = () => CMTButtonEnabled(), isTogglable = false, toolTip = "Returns you back to the enabled button menu." },
@@ -1908,8 +1717,7 @@ namespace iiMenu.Mods
         public static void CMTButtonDisabledFirst()
         {
             modifyWhatId = 2;
-            buttonsType = 29;
-            pageNumber = 0;
+            currentCategoryName = "Temporary Category";
 
             List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit First Color", method = () => CMTButtonDisabled(), isTogglable = false, toolTip = "Returns you back to the disabled button menu." },
@@ -1924,8 +1732,7 @@ namespace iiMenu.Mods
         public static void CMTButtonDisabledSecond()
         {
             modifyWhatId = 3;
-            buttonsType = 29;
-            pageNumber = 0;
+            currentCategoryName = "Temporary Category";
 
             List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit Second Color", method = () => CMTButtonDisabled(), isTogglable = false, toolTip = "Returns you back to the disabled button menu." },
@@ -1940,8 +1747,7 @@ namespace iiMenu.Mods
 
         public static void CMTText()
         {
-            buttonsType = 29;
-            pageNumber = 0;
+            currentCategoryName = "Temporary Category";
 
             List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit Text", method = () => CustomMenuThemePage(), isTogglable = false, toolTip = "Returns you back to the customize menu." },
@@ -1955,8 +1761,7 @@ namespace iiMenu.Mods
         public static void CMTTextTitle()
         {
             modifyWhatId = 6;
-            buttonsType = 29;
-            pageNumber = 0;
+            currentCategoryName = "Temporary Category";
 
             List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit Title", method = () => CMTText(), isTogglable = false, toolTip = "Returns you back to the text menu." },
@@ -1971,8 +1776,7 @@ namespace iiMenu.Mods
         public static void CMTTextEnabled()
         {
             modifyWhatId = 8;
-            buttonsType = 29;
-            pageNumber = 0;
+            currentCategoryName = "Temporary Category";
 
             List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit Second Color", method = () => CMTText(), isTogglable = false, toolTip = "Returns you back to the text menu." },
@@ -1987,8 +1791,7 @@ namespace iiMenu.Mods
         public static void CMTTextDisabled()
         {
             modifyWhatId = 7;
-            buttonsType = 29;
-            pageNumber = 0;
+            currentCategoryName = "Temporary Category";
 
             List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit Second Color", method = () => CMTText(), isTogglable = false, toolTip = "Returns you back to the text menu." },
@@ -2003,7 +1806,7 @@ namespace iiMenu.Mods
 
         public static void ExitCustomMenuTheme()
         {
-            Settings.EnableMenuSettings();
+            currentCategoryName = "Menu Settings";
             pageNumber = rememberdirectory;
         }
 
@@ -2036,10 +1839,6 @@ namespace iiMenu.Mods
 
         public static void UpdateWriteCustomTheme()
         {
-            if (!Directory.Exists("iisStupidMenu"))
-            {
-                Directory.CreateDirectory("iisStupidMenu");
-            }
             Color[] clrs = new Color[]
             {
                 bgColorA,
@@ -2072,19 +1871,12 @@ namespace iiMenu.Mods
 
         public static void CustomMenuBackground()
         {
-            if (!Directory.Exists("iisStupidMenu"))
-            {
-                Directory.CreateDirectory("iisStupidMenu");
-            }
             if (!File.Exists("iisStupidMenu/iiMenu_CustomMenuBackground.txt"))
-            {
                 File.WriteAllText("iisStupidMenu/iiMenu_CustomMenuBackground.txt", "");
-            }
 
             if (File.Exists("iisStupidMenu/MenuBG.png"))
-            {
                 File.Delete("iisStupidMenu/MenuBG.png");
-            }
+            
             doCustomMenuBackground = true;
             customMenuBackgroundImage = LoadTextureFromURL(File.ReadAllText("iisStupidMenu/iiMenu_CustomMenuBackground.txt"), "MenuBG.png");
             ReloadMenu();
@@ -2100,9 +1892,7 @@ namespace iiMenu.Mods
         {
             pageButtonType++;
             if (pageButtonType > 6)
-            {
                 pageButtonType = 1;
-            }
 
             if (pageButtonType == 1)
             {
@@ -2120,18 +1910,14 @@ namespace iiMenu.Mods
         {
             arrowType++;
             if (arrowType > arrowTypes.Length - 1)
-            {
                 arrowType = 0;
-            }
         }
 
         public static void ChangeFontType() // Say goodbye to daily lagspikes and dirty if spam with new switch (x) { }
         {
             fontCycle++;
             if (fontCycle > 8)
-            {
                 fontCycle = 0;
-            }
 
             switch (fontCycle) {
                 case 0:
@@ -2145,11 +1931,8 @@ namespace iiMenu.Mods
                     return;
                 case 3:
                     if (gtagfont == null)
-                    {
-                        GameObject fart = LoadAsset("gtag");
-                        gtagfont = fart.transform.Find("text").gameObject.GetComponent<Text>().font;
-                        UnityEngine.Object.Destroy(fart);
-                    }
+                        gtagfont = LoadAsset<Font>("Utopium");
+
                     activeFont = gtagfont;
                     return;
                 case 4:
@@ -2174,9 +1957,7 @@ namespace iiMenu.Mods
         {
             fontStyleType++;
             if (fontStyleType > 3)
-            {
                 fontStyleType = 0;
-            }
 
             activeFontStyle = (FontStyle)fontStyleType;
         }
@@ -2214,32 +1995,28 @@ namespace iiMenu.Mods
                 "black",
                 "#ff005d"
             };
+
             inputTextColorInt++;
             if (inputTextColorInt > realinputcolor.Length - 1)
-            {
                 inputTextColorInt = 0;
-            }
 
             inputTextColor = realinputcolor[inputTextColorInt];
-            GetIndex("Change Input Text Color").overlapText = "Change Input Text Color <color=grey>[</color><color=green>" + textColors[inputTextColorInt] + "</color><color=grey>]</color>";
+            GetIndex("Change Input Text Color").overlapText = $"Change Input Text Color <color=grey>[</color><color=green>{textColors[inputTextColorInt]}</color><color=grey>]</color>";
         }
 
         public static void ChangePCUI()
         {
             pcbg++;
             if (pcbg > 3)
-            {
                 pcbg = 0;
-            }
         }
 
         public static void ChangeNotificationTime()
         {
             notificationDecayTime += 1000;
             if (notificationDecayTime > 5500)
-            {
                 notificationDecayTime = 1000;
-            }
+            
             GetIndex("Change Notification Time").overlapText = "Change Notification Time <color=grey>[</color><color=green>" + (notificationDecayTime / 1000).ToString() + "</color><color=grey>]</color>";
         }
 
@@ -2645,14 +2422,9 @@ namespace iiMenu.Mods
         public static void CustomMenuName()
         {
             doCustomName = true;
-            if (!Directory.Exists("iisStupidMenu"))
-            {
-                Directory.CreateDirectory("iisStupidMenu");
-            }
             if (!File.Exists("iisStupidMenu/iiMenu_CustomMenuName.txt"))
-            {
                 File.WriteAllText("iisStupidMenu/iiMenu_CustomMenuName.txt", "Your Text Here");
-            }
+            
             customMenuName = File.ReadAllText("iisStupidMenu/iiMenu_CustomMenuName.txt");
         }
 
@@ -2960,10 +2732,6 @@ namespace iiMenu.Mods
 
         public static void SavePreferences()
         {
-            if (!Directory.Exists("iisStupidMenu"))
-            {
-                Directory.CreateDirectory("iisStupidMenu");
-            }
             File.WriteAllText("iisStupidMenu/iiMenu_Preferences.txt", SavePreferencesToText());
         }
 
@@ -3202,24 +2970,21 @@ namespace iiMenu.Mods
         {
             try
             {
-                if (Directory.Exists("iisStupidMenu"))
+                if (File.Exists("iisStupidMenu/iiMenu_EnabledMods.txt"))
                 {
-                    if (File.Exists("iisStupidMenu/iiMenu_EnabledMods.txt"))
-                    {
-                        LegacyLoadPreferences();
-                        File.Delete("iisStupidMenu/iiMenu_EnabledMods.txt");
-                        File.Delete("iisStupidMenu/iiMenu_FavoriteMods.txt");
-                        File.Delete("iisStupidMenu/iiMenu_ModData.txt");
-                        File.Delete("iisStupidMenu/iiMenu_PageType.txt");
-                        File.Delete("iisStupidMenu/iiMenu_Theme.txt");
-                        File.Delete("iisStupidMenu/iiMenu_Font.txt");
-                        SavePreferences();
-                    }
-                    else
-                    {
-                        string text = File.ReadAllText("iisStupidMenu/iiMenu_Preferences.txt");
-                        LoadPreferencesFromText(text);
-                    }
+                    LegacyLoadPreferences();
+                    File.Delete("iisStupidMenu/iiMenu_EnabledMods.txt");
+                    File.Delete("iisStupidMenu/iiMenu_FavoriteMods.txt");
+                    File.Delete("iisStupidMenu/iiMenu_ModData.txt");
+                    File.Delete("iisStupidMenu/iiMenu_PageType.txt");
+                    File.Delete("iisStupidMenu/iiMenu_Theme.txt");
+                    File.Delete("iisStupidMenu/iiMenu_Font.txt");
+                    SavePreferences();
+                }
+                else
+                {
+                    string text = File.ReadAllText("iisStupidMenu/iiMenu_Preferences.txt");
+                    LoadPreferencesFromText(text);
                 }
             } catch (Exception e) { LogManager.Log("Error loading preferences: " + e.Message); }
         }
@@ -3257,12 +3022,12 @@ namespace iiMenu.Mods
 
         public static void ThinMenuOn()
         {
-            FATMENU = false;
+            thinMenu = false;
         }
 
         public static void ThinMenuOff()
         {
-            FATMENU = true;
+            thinMenu = true;
         }
 
         public static void BarkMenuOn()
