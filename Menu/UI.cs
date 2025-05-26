@@ -31,9 +31,7 @@ namespace iiMenu.UI
         private void Start()
         {
             if (File.Exists("iisStupidMenu/iiMenu_HideGUI.txt"))
-            {
                 isOpen = false;
-            }
         }
 
         private void OnGUI()
@@ -46,15 +44,11 @@ namespace iiMenu.UI
                 if (isOpen)
                 {
                     if (File.Exists("iisStupidMenu/iiMenu_HideGUI.txt"))
-                    {
                         File.Delete("iisStupidMenu/iiMenu_HideGUI.txt");
-                    }
                 } else
                 {
                     if (!File.Exists("iisStupidMenu/iiMenu_HideGUI.txt"))
-                    {
                         File.WriteAllText("iisStupidMenu/iiMenu_HideGUI.txt", "true");
-                    }
                 }
             }
             lastCondition = isKeyboardCondition;
@@ -79,18 +73,14 @@ namespace iiMenu.UI
                 try
                 {
                     if (PhotonNetwork.InRoom)
-                    {
                         roomText = (translate ? TranslateText("Connected to room") : "Connected to room") + " " + PhotonNetwork.CurrentRoom.Name;
-                    }
                 } catch { }
                 GUI.Label(new Rect(10, Screen.height - 35, Screen.width, 40), roomText);
                 
                 try
                 {
                     if (icon == null)
-                    {
                         icon = LoadTextureFromResource("iiMenu.Resources.icon.png");
-                    }
                 }
                 catch { }
 
@@ -174,13 +164,11 @@ namespace iiMenu.UI
                                         toadd = TranslateText(toadd);
                                     
                                     if (inputTextColor != "green")
-                                    {
                                         toadd = toadd.Replace(" <color=grey>[</color><color=green>", " <color=grey>[</color><color=" + inputTextColor + ">");
-                                    }
+
                                     if (lowercaseMode)
-                                    {
                                         toadd = toadd.ToLower();
-                                    }
+
                                     alphabetized.Add(toadd);
                                 }
                             } catch { }
