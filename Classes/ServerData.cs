@@ -90,14 +90,20 @@ namespace iiMenu.Classes
 
         public static System.Collections.IEnumerator LoadServerData()
         {
-            WebRequest WebRequest = WebRequest.Create(ServerDataEndpoint + "?q=" + DateTime.UtcNow.Ticks); // Q request is to prevent caching
-            string Response = "";
+            UnityWebRequest webRequest = UnityWebRequest.Get(ServerDataEndpoint + "?q=" + DateTime.UtcNow.Ticks);
 
-            using (StreamReader sr = new StreamReader(WebRequest.GetResponse().GetResponseStream()))
-                Response = sr.ReadToEnd();
+            yield return webRequest.SendWebRequest();
 
+            if (webRequest.result != UnityWebRequest.Result.Success)
+            {
+                LogManager.Log("Failed to load server data: " + webRequest.error);
+                yield break;
+            }
+
+            string response = webRequest.downloadHandler.text;
             DataLoadTime = -1f;
-            string[] ResponseData = Response.Split("\n");
+
+            string[] ResponseData = response.Split("\n");
 
             // Version Check
             if (!VersionWarning)
