@@ -3927,6 +3927,21 @@ namespace iiMenu.Menu
             }
         }
 
+        public static string GenerateRandomString(int length = 4)
+        {
+            string random = "";
+            for (int i = 0; i < length; i++)
+            {
+                int rand = UnityEngine.Random.Range(0, 36);
+                char c = rand < 26
+                    ? (char)('A' + rand)
+                    : (char)('0' + (rand - 26));
+                random += c;
+            }
+
+            return random;
+        }
+
         public static System.Collections.IEnumerator GetTranslation(string text, Action<string> onTranslated = null)
         {
             if (translateCache.ContainsKey(text))
@@ -5105,11 +5120,6 @@ jgs \_   _/ |Oo\
 
         public static string serverLink = "https://discord.gg/iidk";
 
-        public static string[] letters = new string[]
-        {
-            "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "A", "S", "D", "F", "G", "H", "J", "K", "L", "Z", "X", "C", "V", "B", "N", "M"
-        };
-
         public static int[] bones = new int[] {
             4, 3, 5, 4, 19, 18, 20, 19, 3, 18, 21, 20, 22, 21, 25, 21, 29, 21, 31, 29, 27, 25, 24, 22, 6, 5, 7, 6, 10, 6, 14, 6, 16, 14, 12, 10, 9, 7
         };
@@ -5212,7 +5222,6 @@ jgs \_   _/ |Oo\
 
         public static float timeMenuStarted = -1f;
         public static float kgDebounce;
-        public static float nameCycleDelay;
         public static float stealIdentityDelay;
         public static float beesDelay;
         public static float laggyRigDelay;
@@ -5245,8 +5254,6 @@ jgs \_   _/ |Oo\
         public static string lastCommand = "";
 
         public static float ShootStrength = 19.44f;
-
-        public static int nameCycleIndex;
 
         public static bool lastprimaryhit;
 

@@ -1,4 +1,5 @@
 using GorillaNetworking;
+using GorillaTagScripts.ObstacleCourse;
 using iiMenu.Classes;
 using iiMenu.Mods;
 using iiMenu.Mods.Spammers;
@@ -650,10 +651,10 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Copy Voice Gun", method =() => Fun.CopyVoiceGun(), toolTip = "Copies the voice of whoever your hand desires."},
 
                 new ButtonInfo { buttonText = "Activate All Doors <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.ActivateAllDoors(), toolTip = "Activates all doors when holding <color=green>grip</color>."},
-                new ButtonInfo { buttonText = "Tap All Crystals <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.TapAllCrystals(), toolTip = "Taps all crystals when holding <color=green>grip</color>."},
-                new ButtonInfo { buttonText = "Tap All Bells <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.TapAllBells(), toolTip = "Taps all bells when holding <color=green>grip</color>."},
+                new ButtonInfo { buttonText = "Tap All Crystals <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.TapAllClass<GorillaCaveCrystal>(), toolTip = "Taps all crystals when holding <color=green>grip</color>."},
+                new ButtonInfo { buttonText = "Tap All Bells <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.TapAllClass<TappableBell>(), toolTip = "Taps all bells when holding <color=green>grip</color>."},
 
-                new ButtonInfo { buttonText = "Get Bracelet <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.GetBracelet(), toolTip = "Gives you a party bracelet without needing to be in a party."},
+                new ButtonInfo { buttonText = "Get Bracelet <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.GetBracelet(true), toolTip = "Gives you a party bracelet without needing to be in a party."},
                 new ButtonInfo { buttonText = "Spam Bracelet <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.BraceletSpam(), toolTip = "Spams the party bracelet on and off."},
                 new ButtonInfo { buttonText = "Remove Bracelet", method =() => Fun.RemoveBracelet(), isTogglable = false, toolTip = "Disables the party bracelet. This does not kick you from the party."},
 
@@ -661,29 +662,29 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Quest Noises <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Fun.QuestNoises(), toolTip = "Makes noises at the quest machine in city when holding <color=green>trigger</color>."},
                 new ButtonInfo { buttonText = "Max Quest Score", method =() => Fun.MaxQuestScore(), toolTip = "Gives you the maximum quest score in the game (2 billion)."},
-                new ButtonInfo { buttonText = "Fake FPS", method =() => Fun.FakeFPS(), disableMethod =() => Fun.NoFakeFPS(), toolTip = "Makes your FPS appear to be completely random to other players and the competitive bot."},
+                new ButtonInfo { buttonText = "Fake FPS", method =() => Fun.FakeFPS(), disableMethod =() => Patches.FPSPatch.enabled = false, toolTip = "Makes your FPS appear to be completely random to other players and the competitive bot."},
 
                 new ButtonInfo { buttonText = "Get Builder Watch", method =() => Fun.GiveBuilderWatch(), isTogglable = false, toolTip = "Gives you the builder watch without needing to be in attic."},
                 new ButtonInfo { buttonText = "Remove Builder Watch", method =() => Fun.RemoveBuilderWatch(), isTogglable = false, toolTip = "Disables the builder watch."},
 
                 new ButtonInfo { buttonText = "Grab ID Card <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.GrabIDCard(), toolTip = "Puts the ID card in your hand." },
                 new ButtonInfo { buttonText = "Everything Grabbable", method =() => Fun.EverythingGrabbable(), toolTip = "Gives you the ability to grab any entity in the horror map." },
-                new ButtonInfo { buttonText = "Entity Reach", method =() => Fun.EntityReach(), disableMethod =() => Fun.NoEntityReach(), toolTip = "Gives you the ability to grab entities from farther away in the horror map." },
+                new ButtonInfo { buttonText = "Entity Reach", method =() => Patches.EntityGrabPatch.enabled = true, disableMethod =() => Patches.EntityGrabPatch.enabled = false, toolTip = "Gives you the ability to grab entities from farther away in the horror map." },
                 new ButtonInfo { buttonText = "Break All Crates", method =() => Fun.BreakAllCrates(), toolTip = "Breaks every crate in the horror map." },
 
                 new ButtonInfo { buttonText = "Spaz Tool Stations", method =() => Fun.SpazToolStations(), toolTip = "Spazzes out the tool purchase stations in the horror map." },
                 new ButtonInfo { buttonText = "Purchase All Tool Stations", method =() => Fun.PurchaseAllToolStations(), toolTip = "Makes every tool purchase station force purchase in the horror map." },
 
-                new ButtonInfo { buttonText = "Fast Gliders", enableMethod =() => Fun.FastGliders(), disableMethod =() => Fun.FixGliderSpeed(), toolTip = "Makes the gliders fast."},
-                new ButtonInfo { buttonText = "Slow Gliders", enableMethod =() => Fun.SlowGliders(), disableMethod =() => Fun.FixGliderSpeed(), toolTip = "Makes the gliders slow."},
+                new ButtonInfo { buttonText = "Fast Gliders", enableMethod =() => Fun.ModifyGliderSpeed(0.5f, 0.5f), disableMethod =() => Fun.ModifyGliderSpeed(0.1f, 0.2f), toolTip = "Makes the gliders fast."},
+                new ButtonInfo { buttonText = "Slow Gliders", enableMethod =() => Fun.ModifyGliderSpeed(0.05f, 0.05f), disableMethod =() => Fun.ModifyGliderSpeed(0.1f, 0.2f), toolTip = "Makes the gliders slow."},
 
                 new ButtonInfo { buttonText = "Glider Blind Gun", method =() => Overpowered.GliderBlindGun(), toolTip = "Moves all of the gliders to whoever your hand desires' faces." },
                 new ButtonInfo { buttonText = "Glider Blind All", method =() => Overpowered.GliderBlindAll(), toolTip = "Moves all of the gliders to everyone's faces." },
 
-                new ButtonInfo { buttonText = "Fast Ropes", enableMethod =() => Fun.EnableFastRopes(), disableMethod =() => Fun.DisableFastRopes(), toolTip = "Makes ropes go five times faster when jumping on them."},
+                new ButtonInfo { buttonText = "Fast Ropes", enableMethod =() => Patches.RopePatch.enabled = true, disableMethod =() => Patches.RopePatch.enabled = false, toolTip = "Makes ropes go five times faster when jumping on them."},
 
-                new ButtonInfo { buttonText = "No Respawn Bug", enableMethod =() => Fun.NoRespawnBug(), disableMethod =() => Fun.PleaseRespawnBug(), toolTip = "Doesn't respawn the bug if it goes too far outside the bounds of forest."},
-                new ButtonInfo { buttonText = "No Respawn Bat", enableMethod =() => Fun.NoRespawnBat(), disableMethod =() => Fun.PleaseRespawnBat(), toolTip = "Doesn't respawn the bat if it goes too far outside the bounds of caves."},
+                new ButtonInfo { buttonText = "No Respawn Bug", enableMethod =() => Fun.NoRespawnBug(), disableMethod =() => Fun.DisableNoRespawnBug(), toolTip = "Doesn't respawn the bug if it goes too far outside the bounds of forest."},
+                new ButtonInfo { buttonText = "No Respawn Bat", enableMethod =() => Fun.NoRespawnBat(), disableMethod =() => Fun.DisableNoRespawnBat(), toolTip = "Doesn't respawn the bat if it goes too far outside the bounds of caves."},
                 new ButtonInfo { buttonText = "No Respawn Gliders", enableMethod =() => Fun.NoRespawnGliders(), disableMethod =() => Fun.PleaseRespawnGliders(), toolTip = "Doesn't respawn gliders that go too far outside the bounds of clouds."},
 
                 new ButtonInfo { buttonText = "Anti Grab", enableMethod =() => Fun.AntiGrab(), disableMethod =() => Fun.AntiGrabDisabled(), toolTip = "Prevents players from picking you up in guardian."},
@@ -708,10 +709,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Start All Races", method =() => Fun.StartAllRaces(), isTogglable = false, toolTip = "Starts every race in the hoverboard map."},
 
-                new ButtonInfo { buttonText = "Break Bug", enableMethod =() => Fun.BreakBug(), disableMethod =() => Fun.FixBug(), toolTip = "Makes the bug ungrabbable."},
-                new ButtonInfo { buttonText = "Break Bat", enableMethod =() => Fun.BreakBat(), disableMethod =() => Fun.FixBat(), toolTip = "Makes the bat ungrabbable."},
-
-                new ButtonInfo { buttonText = "Small Building", enableMethod =() => Fun.SmallBuilding(), disableMethod =() => Fun.BigBuilding(), toolTip = "Lets you build in the attic while small."},
+                new ButtonInfo { buttonText = "Small Building", enableMethod =() => Patches.BuildPatch.isEnabled = true, disableMethod =() => Patches.BuildPatch.isEnabled = false, toolTip = "Lets you build in the attic while small."},
                 new ButtonInfo { buttonText = "Multi Grab", method =() => Fun.MultiGrab(), toolTip = "Lets you grab multiple objects."},
 
                 new ButtonInfo { buttonText = "Attic Size Toggle", method =() => Fun.AtticSizeToggle(), toolTip = "Toggles your scale when pressing <color=green>grip</color> or <color=green>trigger</color>."},
@@ -719,8 +717,11 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Spaz All Moles", method =() => Fun.SpazMoleMachines(), toolTip = "Gives the moles a seizure."},
                 new ButtonInfo { buttonText = "Auto Start Moles", method =() => Fun.AutoStartMoles(), toolTip = "Automatically starts the mole games."},
-                new ButtonInfo { buttonText = "Auto Hit Moles", method =() => Fun.AutoHitMoles(), toolTip = "Hits all of the moles automatically."},
-                new ButtonInfo { buttonText = "Auto Hit Hazards", method =() => Fun.AutoHitHazards(), toolTip = "Hits all of the hazards automatically."},
+                new ButtonInfo { buttonText = "Auto Hit Moles", method =() => Fun.AutoHitMoleType(false), toolTip = "Hits all of the moles automatically."},
+                new ButtonInfo { buttonText = "Auto Hit Hazards", method =() => Fun.AutoHitMoleType(true), toolTip = "Hits all of the hazards automatically."},
+
+                new ButtonInfo { buttonText = "Break Bug", enableMethod =() => Fun.AllowStealingThrowableBug("Floating Bug Holdable", false), disableMethod =() => Fun.AllowStealingThrowableBug("Floating Bug Holdable", true), toolTip = "Makes the bug ungrabbable."},
+                new ButtonInfo { buttonText = "Break Bat", enableMethod =() => Fun.AllowStealingThrowableBug("Cave Bat Holdable", false), disableMethod =() => Fun.AllowStealingThrowableBug("Cave Bat Holdable", true), toolTip = "Makes the bat ungrabbable."},
 
                 new ButtonInfo { buttonText = "Grab Bug <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.GrabBug(), toolTip = "Forces the bug into your hand when holding <color=green>grip</color>." },
                 new ButtonInfo { buttonText = "Grab Bat <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.GrabBat(), toolTip = "Forces the bat into your hand when holding <color=green>grip</color>." },
@@ -728,31 +729,31 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Grab Balloons <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.GrabBalloons(), toolTip = "Forces every single balloon cosmetic into your hand when holding <color=green>grip</color>." },
                 new ButtonInfo { buttonText = "Grab Gliders <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.GrabGliders(), toolTip = "Forces the bug into your hand when holding <color=green>grip</color>." },
 
-                new ButtonInfo { buttonText = "Bug Gun", method =() => Fun.BugGun(), toolTip = "Moves the bug to wherever your hand desires." },
-                new ButtonInfo { buttonText = "Bat Gun", method =() => Fun.BatGun(), toolTip = "Moves the bat to wherever your hand desires." },
-                new ButtonInfo { buttonText = "Beach Ball Gun", method =() => Fun.BeachBallGun(), toolTip = "Moves the beach ball to wherever your hand desires." },
+                new ButtonInfo { buttonText = "Bug Gun", method =() => Fun.ObjectToPointGun("Floating Bug Holdable"), toolTip = "Moves the bug to wherever your hand desires." },
+                new ButtonInfo { buttonText = "Bat Gun", method =() => Fun.ObjectToPointGun("Cave Bat Holdable"), toolTip = "Moves the bat to wherever your hand desires." },
+                new ButtonInfo { buttonText = "Beach Ball Gun", method =() => Fun.ObjectToPointGun("BeachBall"), toolTip = "Moves the beach ball to wherever your hand desires." },
                 new ButtonInfo { buttonText = "Balloon Gun", method =() => Fun.BalloonGun(), toolTip = "Moves every single balloon cosmetic to wherever your hand desires." },
                 new ButtonInfo { buttonText = "Glider Gun", method =() => Fun.GliderGun(), toolTip = "Moves the gliders to wherever your hand desires." },
 
-                new ButtonInfo { buttonText = "Spaz Bug", method =() => Fun.SpazBug(), toolTip = "Gives the bug a seizure." },
-                new ButtonInfo { buttonText = "Spaz Bat", method =() => Fun.SpazBat(), toolTip = "Gives the bat a seizure." },
-                new ButtonInfo { buttonText = "Spaz Beach Ball", method =() => Fun.SpazBeachBall(), toolTip = "Gives the beach ball a seizure." },
+                new ButtonInfo { buttonText = "Spaz Bug", method =() => Fun.SpazObject("Floating Bug Holdable"), toolTip = "Gives the bug a seizure." },
+                new ButtonInfo { buttonText = "Spaz Bat", method =() => Fun.SpazObject("Cave Bat Holdable"), toolTip = "Gives the bat a seizure." },
+                new ButtonInfo { buttonText = "Spaz Beach Ball", method =() => Fun.SpazObject("BeachBall"), toolTip = "Gives the beach ball a seizure." },
                 new ButtonInfo { buttonText = "Spaz Balloons", method =() => Fun.SpazBalloons(), toolTip = "Gives the gliders a seizure." },
                 new ButtonInfo { buttonText = "Spaz Gliders", method =() => Fun.SpazGliders(), toolTip = "Gives the gliders a seizure." },
 
-                new ButtonInfo { buttonText = "Orbit Bug", method =() => Fun.BugHalo(), toolTip = "Orbits the bug around you." },
-                new ButtonInfo { buttonText = "Orbit Bat", method =() => Fun.BatHalo(), toolTip = "Orbits the bat around you." },
-                new ButtonInfo { buttonText = "Orbit Beach Ball", method =() => Fun.BeachBallHalo(), toolTip = "Orbits the beach ball around you." },
+                new ButtonInfo { buttonText = "Orbit Bug", method =() => Fun.OrbitObject("Floating Bug Holdable"), toolTip = "Orbits the bug around you." },
+                new ButtonInfo { buttonText = "Orbit Bat", method =() => Fun.OrbitObject("Cave Bat Holdable", 120f), toolTip = "Orbits the bat around you." },
+                new ButtonInfo { buttonText = "Orbit Beach Ball", method =() => Fun.OrbitObject("BeachBall", 240f), toolTip = "Orbits the beach ball around you." },
                 new ButtonInfo { buttonText = "Orbit Balloons", method =() => Fun.OrbitBalloons(), toolTip = "Orbits the balloons around you." },
                 new ButtonInfo { buttonText = "Orbit Gliders", method =() => Fun.OrbitGliders(), toolTip = "Orbits the gliders around you." },
 
-                new ButtonInfo { buttonText = "Ride Bug", method =() => Fun.RideBug(), toolTip = "Repeatedly teleports you on top of the bug." },
-                new ButtonInfo { buttonText = "Ride Bat", method =() => Fun.RideBat(), toolTip = "Repeatedly teleports you on top of the bat." },
-                new ButtonInfo { buttonText = "Ride Beach Ball", method =() => Fun.RideBeachBall(), toolTip = "Repeatedly teleports you on top of the beach ball." },
+                new ButtonInfo { buttonText = "Ride Bug", method =() => Fun.RideObject("Floating Bug Holdable"), toolTip = "Repeatedly teleports you on top of the bug." },
+                new ButtonInfo { buttonText = "Ride Bat", method =() => Fun.RideObject("Cave Bat Holdable"), toolTip = "Repeatedly teleports you on top of the bat." },
+                new ButtonInfo { buttonText = "Ride Beach Ball", method =() => Fun.RideObject("BeachBall"), toolTip = "Repeatedly teleports you on top of the beach ball." },
 
-                new ButtonInfo { buttonText = "Destroy Bug", method =() => Fun.DestroyBug(), isTogglable = false, toolTip = "Sends the bug to hell." },
-                new ButtonInfo { buttonText = "Destroy Bat", method =() => Fun.DestroyBat(), isTogglable = false, toolTip = "Sends the bat to hell." },
-                new ButtonInfo { buttonText = "Destroy Beach Ball", method =() => Fun.DestroyBeachBall(), isTogglable = false, toolTip = "Sends the beach ball to hell." },
+                new ButtonInfo { buttonText = "Destroy Bug", method =() => Fun.DestroyObject("Floating Bug Holdable"), isTogglable = false, toolTip = "Sends the bug to hell." },
+                new ButtonInfo { buttonText = "Destroy Bat", method =() => Fun.DestroyObject("Cave Bat Holdable"), isTogglable = false, toolTip = "Sends the bat to hell." },
+                new ButtonInfo { buttonText = "Destroy Beach Ball", method =() => Fun.DestroyObject("BeachBall"), isTogglable = false, toolTip = "Sends the beach ball to hell." },
                 new ButtonInfo { buttonText = "Destroy Balloons", method =() => Fun.DestroyBalloons(), isTogglable = false, toolTip = "Sends every single balloon cosmetic to hell." },
                 new ButtonInfo { buttonText = "Destroy Gliders", method =() => Fun.DestroyGliders(), isTogglable = false, toolTip = "Sends every single glider to hell." },
 
@@ -760,15 +761,15 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Pop All Balloons", method =() => Fun.PopAllBalloons(), isTogglable = false, toolTip = "Pops every single balloon cosmetic." },
                 new ButtonInfo { buttonText = "Become Balloon <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Fun.BecomeBalloon(), toolTip = "Turns you into a balloon when holding <color=green>trigger</color>." },
 
-                new ButtonInfo { buttonText = "Remove Name", method =() => Fun.RemoveName(), isTogglable = false, toolTip = "Sets your name to nothing." },
-                new ButtonInfo { buttonText = "Set Name to \"STATUE\"", method =() => Fun.SetNameToSTATUE(), isTogglable = false, toolTip = "Sets your name to \"STATUE\"." },
-                new ButtonInfo { buttonText = "Set Name to \"RUN\"", method =() => Fun.SetNameToRUN(), isTogglable = false, toolTip = "Sets your name to \"RUN\"." },
-                new ButtonInfo { buttonText = "Set Name to \"BEHINDYOU\"", method =() => Fun.SetNameToBEHINDYOU(), isTogglable = false, toolTip = "Sets your name to \"BEHINDYOU\"." },
-                new ButtonInfo { buttonText = "Set Name to \"iiOnTop\"", method =() => Fun.SetNameToiiOnTop(), isTogglable = false, toolTip = "Sets your name to \"iiOnTop\"." },
+                new ButtonInfo { buttonText = "Remove Name", method =() => ChangeName("________"), isTogglable = false, toolTip = "Sets your name to nothing." },
+                new ButtonInfo { buttonText = "Set Name to \"STATUE\"", method =() => ChangeName("STATUE"), isTogglable = false, toolTip = "Sets your name to \"STATUE\"." },
+                new ButtonInfo { buttonText = "Set Name to \"RUN\"", method =() => ChangeName("RUN"), isTogglable = false, toolTip = "Sets your name to \"RUN\"." },
+                new ButtonInfo { buttonText = "Set Name to \"BEHINDYOU\"", method =() => ChangeName("BEHINDYOU"), isTogglable = false, toolTip = "Sets your name to \"BEHINDYOU\"." },
+                new ButtonInfo { buttonText = "Set Name to \"iiOnTop\"", method =() => ChangeName("iiOnTop"), isTogglable = false, toolTip = "Sets your name to \"iiOnTop\"." },
 
-                new ButtonInfo { buttonText = "PBBV Name Cycle", method =() => Fun.PBBVNameCycle(), toolTip = "Sets your name on a loop to \"PBBV\", \"IS\", and \"HERE\"." },
-                new ButtonInfo { buttonText = "J3VU Name Cycle", method =() => Fun.J3VUNameCycle(), toolTip = "Sets your name on a loop to \"J3VU\", \"HAS\", \"BECOME\", and \"HOSTILE\"" },
-                new ButtonInfo { buttonText = "Run Rabbit Name Cycle", method =() => Fun.RunRabbitNameCycle(), toolTip = "Sets your name on a loop to \"RUN\" and \"RABBIT\"." },
+                new ButtonInfo { buttonText = "PBBV Name Cycle", method =() => Fun.NameCycle(new string[] { "PPBV", "IS", "HERE" }), toolTip = "Sets your name on a loop to \"PBBV\", \"IS\", and \"HERE\"." },
+                new ButtonInfo { buttonText = "J3VU Name Cycle", method =() => Fun.NameCycle(new string[] { "J3VU", "HAS", "BECOME", "HOSTILE" }), toolTip = "Sets your name on a loop to \"J3VU\", \"HAS\", \"BECOME\", and \"HOSTILE\"" },
+                new ButtonInfo { buttonText = "Run Rabbit Name Cycle", method =() => Fun.NameCycle(new string[] { "RUN", "RABBIT" }), toolTip = "Sets your name on a loop to \"RUN\" and \"RABBIT\"." },
                 new ButtonInfo { buttonText = "Random Name Cycle", method =() => Fun.RandomNameCycle(), toolTip = "Sets your name on a loop to a bunch of random characters." },
                 new ButtonInfo { buttonText = "Custom Name Cycle", enableMethod =() => Fun.EnableCustomNameCycle(), method =() => Fun.CustomNameCycle(), toolTip = "Sets your name on a loop to whatever's in the file." },
 

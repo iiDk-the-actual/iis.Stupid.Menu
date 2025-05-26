@@ -1974,9 +1974,7 @@ namespace iiMenu.Mods
                             glider.gameObject.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
                         }
                         else
-                        {
                             glider.OnHover(null, null);
-                        }
                     }
                 }
             }
@@ -2006,9 +2004,7 @@ namespace iiMenu.Mods
                             glider.gameObject.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
                         }
                         else
-                        {
                             glider.OnHover(null, null);
-                        }
                     } catch { }
                     index++;
                 }
@@ -2029,7 +2025,6 @@ namespace iiMenu.Mods
                         111,
                         false,
                         999999f
-                        //0.01f
                     });
                     RPCProtection();
                 }

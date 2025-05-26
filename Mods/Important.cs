@@ -326,15 +326,11 @@ namespace iiMenu.Mods
 
         public static string RandomRoomName()
         {
-            string text = "";
-            for (int i = 0; i < 4; i++)
-            {
-                text += NetworkSystem.roomCharacters.Substring(Random.Range(0, NetworkSystem.roomCharacters.Length), 1);
-            }
+            string text = GenerateRandomString(4);
+
             if (GorillaComputer.instance.CheckAutoBanListForName(text))
-            {
                 return text;
-            }
+            
             return RandomRoomName();
         }
     }
