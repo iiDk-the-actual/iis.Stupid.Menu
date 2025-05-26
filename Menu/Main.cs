@@ -104,7 +104,7 @@ namespace iiMenu.Menu
                 buttonCondition = buttonCondition && !Lockdown;
                 buttonCondition = buttonCondition || isSearching;
 
-                if (wristThingV2)
+                if (watchMenu)
                     buttonCondition = isKeyboardCondition;
 
                 isMenuButtonHeld = buttonCondition;
@@ -457,9 +457,8 @@ namespace iiMenu.Menu
                                     if (Time.time > lastBackspaceTime)
                                     {
                                         if (keyCode == KeyCode.Backspace)
-                                        {
                                             lastBackspaceTime = Time.time + 0.1f;
-                                        }
+                                        
                                         GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(66, false, buttonClickVolume / 10f);
                                         pageNumber = 0;
                                         ReloadMenu();
@@ -512,9 +511,9 @@ namespace iiMenu.Menu
                     }
 
                     // Fix for disorganized
-                    if (disorganized && buttonsType != 0)
+                    if (disorganized && currentCategoryName != "Main")
                     {
-                        buttonsType = 0;
+                        currentCategoryName = "Main";
                         ReloadMenu();
                     }
 
@@ -592,15 +591,7 @@ namespace iiMenu.Menu
                             LogManager.Log("Automatically saved preferences");
 
                             if (BackupPreferences)
-                            {
-                                if (!Directory.Exists("iisStupidMenu"))
-                                    Directory.CreateDirectory("iisStupidMenu");
-
-                                if (!Directory.Exists("iisStupidMenu/Backups"))
-                                    Directory.CreateDirectory("iisStupidMenu/Backups");
-
                                 File.WriteAllText("iisStupidMenu/Backups/" + ISO8601().Replace(":", ".") + ".txt", Settings.SavePreferencesToText());
-                            }
                         }
                     }
                     catch { }
@@ -1067,15 +1058,15 @@ namespace iiMenu.Menu
 
                     try
                     {
-                        if (wristThingV2)
+                        if (watchMenu)
                         {
                             watchShell.GetComponent<Renderer>().material = OrangeUI;
-                            ButtonInfo[] toSortOf = Buttons.buttons[buttonsType];
-                            if (buttonsType == 19)
-                            {
+                            ButtonInfo[] toSortOf = Buttons.buttons[currentCategoryIndex];
+
+                            if (currentCategoryName == "Favorite Mods")
                                 toSortOf = StringsToInfos(favorites.ToArray());
-                            }
-                            if (buttonsType == 24)
+                            
+                            if (currentCategoryName == "Enabled Mods")
                             {
                                 List<string> enabledMods = new List<string>() { "Exit Enabled Mods" };
                                 int categoryIndex = 0;
@@ -1091,6 +1082,7 @@ namespace iiMenu.Menu
                                 enabledMods = Alphabetize(enabledMods.ToArray()).ToList();
                                 toSortOf = StringsToInfos(enabledMods.ToArray());
                             }
+
                             watchText.GetComponent<Text>().text = toSortOf[currentSelectedModThing].buttonText;
                             if (toSortOf[currentSelectedModThing].overlapText != null)
                                 watchText.GetComponent<Text>().text = toSortOf[currentSelectedModThing].overlapText;
@@ -1128,9 +1120,9 @@ namespace iiMenu.Menu
                                 }
                                 if (rightHand ? rightJoystickClick : leftJoystickClick)
                                 {
-                                    int archive = buttonsType;
+                                    int archive = currentCategoryIndex;
                                     Toggle(toSortOf[currentSelectedModThing].buttonText, true);
-                                    if (buttonsType != archive)
+                                    if (currentCategoryIndex != archive)
                                         currentSelectedModThing = 0;
                                     
                                     wristMenuDelay = Time.time + 0.2f;
@@ -1316,43 +1308,50 @@ namespace iiMenu.Menu
         public static Color GetBGColor(float offset)
         {
             Color oColor = bgColorA;
-            GradientColorKey[] array = new GradientColorKey[3];
-            array[0].color = bgColorA;
-            array[0].time = 0f;
-            array[1].color = bgColorB;
-            array[1].time = 0.5f;
-            array[2].color = bgColorA;
-            array[2].time = 1f;
 
             Gradient bg = new Gradient
             {
-                colorKeys = array
+                colorKeys = new[]
+                {
+                    new GradientColorKey(bgColorA, 0f),
+                    new GradientColorKey(bgColorB, 0.5f),
+                    new GradientColorKey(bgColorA, 1f)
+                }
             };
             oColor = bg.Evaluate(((Time.time / 2f) + offset) % 1f);
-            if (themeType == 6)
+
+            switch (themeType)
             {
-                float h = ((Time.frameCount / 180f) + offset) % 1f;
-                oColor = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
-            }
-            if (themeType == 47)
-            {
-                oColor = new Color32((byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), 255);
-            }
-            if (themeType == 51)
-            {
-                float h = (Time.frameCount / 180f) % 1f;
-                oColor = UnityEngine.Color.HSVToRGB(h, 0.3f, 1f);
-            }
-             if (themeType == 8)
-            {
-                if (!Menu.Main.PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
-                {
-                    oColor = GorillaTagger.Instance.offlineVRRig.mainSkin.material.color;
-                }
-                else
-                {
-                    oColor = new Color32(255, 111, 0, 255);
-                }
+                case 6:
+                    {
+                        float h = ((Time.frameCount / 180f) + offset) % 1f;
+                        oColor = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
+                        break;
+                    }
+                case 47:
+                    {
+                        oColor = new Color32(
+                            (byte)UnityEngine.Random.Range(0, 255),
+                            (byte)UnityEngine.Random.Range(0, 255),
+                            (byte)UnityEngine.Random.Range(0, 255),
+                            255);
+                        break;
+                    }
+                case 51:
+                    {
+                        float h = (Time.frameCount / 180f) % 1f;
+                        oColor = UnityEngine.Color.HSVToRGB(h, 0.3f, 1f);
+                        break;
+                    }
+                case 8:
+                    {
+                        if (!Menu.Main.PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
+                            oColor = GorillaTagger.Instance.offlineVRRig.mainSkin.material.color;
+                        else
+                            oColor = new Color32(255, 111, 0, 255);
+
+                        break;
+                    }
             }
 
             return oColor;
@@ -1361,17 +1360,15 @@ namespace iiMenu.Menu
         public static Color GetBRColor(float offset)
         {
             Color oColor = buttonDefaultA;
-            GradientColorKey[] array = new GradientColorKey[3];
-            array[0].color = buttonDefaultA;
-            array[0].time = 0f;
-            array[1].color = buttonDefaultB;
-            array[1].time = 0.5f;
-            array[2].color = buttonDefaultA;
-            array[2].time = 1f;
 
             Gradient bg = new Gradient
             {
-                colorKeys = array
+                colorKeys = new[]
+                {
+                    new GradientColorKey(buttonDefaultA, 0f),
+                    new GradientColorKey(buttonDefaultB, 0.5f),
+                    new GradientColorKey(buttonDefaultA, 1f)
+                }
             };
             oColor = bg.Evaluate(((Time.time / 2f) + offset) % 1f);
 
@@ -1381,44 +1378,51 @@ namespace iiMenu.Menu
         public static Color GetBDColor(float offset)
         {
             Color oColor = buttonClickedA;
-            GradientColorKey[] array = new GradientColorKey[3];
-            array[0].color = buttonClickedA;
-            array[0].time = 0f;
-            array[1].color = buttonClickedB;
-            array[1].time = 0.5f;
-            array[2].color = buttonClickedA;
-            array[2].time = 1f;
 
             Gradient bg = new Gradient
             {
-                colorKeys = array
+                colorKeys = new[]
+                {
+                    new GradientColorKey(buttonClickedA, 0f),
+                    new GradientColorKey(buttonClickedB, 0.5f),
+                    new GradientColorKey(buttonClickedA, 1f)
+                }
             };
             oColor = bg.Evaluate(((Time.time / 2f) + offset) % 1f);
-            if (themeType == 6)
+
+            switch (themeType)
             {
-                float h = ((Time.frameCount / 180f) + offset) % 1f;
-                oColor = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
+                case 6:
+                    {
+                        float h = ((Time.frameCount / 180f) + offset) % 1f;
+                        oColor = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
+                        break;
+                    }
+                case 47:
+                    oColor = new Color32(
+                        (byte)UnityEngine.Random.Range(0, 255),
+                        (byte)UnityEngine.Random.Range(0, 255),
+                        (byte)UnityEngine.Random.Range(0, 255),
+                        255);
+                    break;
+                case 51:
+                    {
+                        float h = (Time.frameCount / 180f) % 1f;
+                        oColor = UnityEngine.Color.HSVToRGB(h, 0.3f, 1f);
+                        break;
+                    }
+                case 8:
+                    if (!Menu.Main.PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
+                    {
+                        oColor = GorillaTagger.Instance.offlineVRRig.mainSkin.material.color;
+                    }
+                    else
+                    {
+                        oColor = new Color32(255, 111, 0, 255);
+                    }
+                    break;
             }
-            if (themeType == 47)
-            {
-                oColor = new Color32((byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), 255);
-            }
-            if (themeType == 51)
-            {
-                float h = (Time.frameCount / 180f) % 1f;
-                oColor = UnityEngine.Color.HSVToRGB(h, 0.3f, 1f);
-            }
-            if (themeType == 8)
-            {
-                if (!Menu.Main.PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
-                {
-                    oColor = GorillaTagger.Instance.offlineVRRig.mainSkin.material.color;
-                }
-                else
-                {
-                    oColor = new Color32(255, 111, 0, 255);
-                }
-            }
+
 
             return oColor;
         }
@@ -1427,21 +1431,21 @@ namespace iiMenu.Menu
         {
             if (!method.label)
             {
-                GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                GameObject buttonObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 if (!UnityInput.Current.GetKey(KeyCode.Q) && !isPcWhenSearching)
-                    gameObject.layer = 2;
+                    buttonObject.layer = 2;
 
                 if (themeType == 30)
-                    gameObject.GetComponent<Renderer>().enabled = false;
-                
-                gameObject.GetComponent<BoxCollider>().isTrigger = true;
-                gameObject.transform.parent = menu.transform;
-                gameObject.transform.rotation = Quaternion.identity;
+                    buttonObject.GetComponent<Renderer>().enabled = false;
 
-                if (FATMENU)
-                    gameObject.transform.localScale = new Vector3(0.09f, 0.9f, 0.08f);
+                buttonObject.GetComponent<BoxCollider>().isTrigger = true;
+                buttonObject.transform.parent = menu.transform;
+                buttonObject.transform.rotation = Quaternion.identity;
+
+                if (thinMenu)
+                    buttonObject.transform.localScale = new Vector3(0.09f, 0.9f, 0.08f);
                 else
-                    gameObject.transform.localScale = new Vector3(0.09f, 1.3f, 0.08f);
+                    buttonObject.transform.localScale = new Vector3(0.09f, 1.3f, 0.08f);
                 
                 if (longmenu && buttonIndex > (pageSize - 1))
                 {
@@ -1449,51 +1453,41 @@ namespace iiMenu.Menu
                     menuBackground.transform.localPosition += new Vector3(0f, 0f, -0.05f);
                 }
 
-                gameObject.transform.localPosition = new Vector3(0.56f, 0f, 0.28f - offset);
+                buttonObject.transform.localPosition = new Vector3(0.56f, 0f, 0.28f - offset);
                 if (checkMode && buttonIndex > -1)
                 {
                     // The Checkbox Theorem ; TO BE THE SQUARE, YOU MUST circumvent the inconvenient menu localScale parameter
                     // Variable calculations: (menu scale y)0.3825 / (menu scale z)0.3 = 1.275 = Y
                     // 0.08 x Y = 0.102
-                    gameObject.transform.localScale = new Vector3(0.09f, 0.102f, 0.08f);
-                    if (FATMENU)
-                        gameObject.transform.localPosition = new Vector3(0.56f, 0.399f, 0.28f - offset);
+                    buttonObject.transform.localScale = new Vector3(0.09f, 0.102f, 0.08f);
+                    if (thinMenu)
+                        buttonObject.transform.localPosition = new Vector3(0.56f, 0.399f, 0.28f - offset);
                     else
-                        gameObject.transform.localPosition = new Vector3(0.56f, 0.599f, 0.28f - offset);
+                        buttonObject.transform.localPosition = new Vector3(0.56f, 0.599f, 0.28f - offset);
                 }
 
-                gameObject.AddComponent<Classes.Button>().relatedText = method.buttonText;
+                buttonObject.AddComponent<Classes.Button>().relatedText = method.buttonText;
 
                 if (shouldOutline)
-                    OutlineObj(gameObject, !method.enabled);
+                    OutlineObj(buttonObject, !method.enabled);
 
                 if (lastClickedName != method.buttonText)
                 {
-                    GradientColorKey[] pressedColors = new GradientColorKey[3];
-                    pressedColors[0].color = buttonClickedA;
-                    pressedColors[0].time = 0f;
-                    pressedColors[1].color = buttonClickedB;
-                    pressedColors[1].time = 0.5f;
-                    pressedColors[2].color = buttonClickedA;
-                    pressedColors[2].time = 1f;
+                    GradientColorKey[] pressedColors = new[]
+                    {
+                        new GradientColorKey(buttonClickedA, 0f),
+                        new GradientColorKey(buttonClickedB, 0.5f),
+                        new GradientColorKey(buttonClickedA, 1f)
+                    };
 
-                    GradientColorKey[] releasedColors = new GradientColorKey[3];
-                    releasedColors[0].color = buttonDefaultA;
-                    releasedColors[0].time = 0f;
-                    releasedColors[1].color = buttonDefaultB;
-                    releasedColors[1].time = 0.5f;
-                    releasedColors[2].color = buttonDefaultA;
-                    releasedColors[2].time = 1f;
+                    GradientColorKey[] releasedColors = new[]
+                    {
+                        new GradientColorKey(buttonDefaultA, 0f),
+                        new GradientColorKey(buttonDefaultB, 0.5f),
+                        new GradientColorKey(buttonDefaultA, 1f)
+                    };
 
-                    GradientColorKey[] selectedColors = new GradientColorKey[3];
-                    selectedColors[0].color = Color.red;
-                    selectedColors[0].time = 0f;
-                    selectedColors[1].color = buttonDefaultB;
-                    selectedColors[1].time = 0.5f;
-                    selectedColors[2].color = Color.red;
-                    selectedColors[2].time = 1f;
-
-                    ColorChanger colorChanger = gameObject.AddComponent<ColorChanger>();
+                    ColorChanger colorChanger = buttonObject.AddComponent<ColorChanger>();
                     if (method.enabled)
                     {
                         colorChanger.isRainbow = themeType == 6;
@@ -1507,10 +1501,6 @@ namespace iiMenu.Menu
                     }
                     else
                     {
-                        colorChanger.isRainbow = false;
-                        colorChanger.isPastelRainbow = false;
-                        colorChanger.isEpileptic = false;
-                        colorChanger.isMonkeColors = false;
                         colorChanger.colors = new Gradient
                         {
                             colorKeys = releasedColors
@@ -1519,29 +1509,27 @@ namespace iiMenu.Menu
                     if (joystickMenu && buttonIndex == joystickButtonSelected)
                     {
                         joystickSelectedButton = method.buttonText;
+
                         colorChanger.isRainbow = false;
                         colorChanger.isMonkeColors = false;
-                        if (method.enabled)
-                        {
-                            selectedColors[1].color = buttonClickedB;
-                        }
-                        colorChanger.colors = new Gradient
-                        {
-                            colorKeys = selectedColors
-                        };
+                        colorChanger.isEpileptic = false;
+                        colorChanger.isMonkeColors = false;
+
+                        colorChanger.colors.colorKeys[0].color = Color.red;
+                        colorChanger.colors.colorKeys[2].color = Color.red;
                     }
                     colorChanger.Start();
                 }
                 else
                 {
-                    CoroutineManager.RunCoroutine(ButtonClick(buttonIndex, method.buttonText, gameObject.GetComponent<Renderer>()));
+                    CoroutineManager.RunCoroutine(ButtonClick(buttonIndex, method.buttonText, buttonObject.GetComponent<Renderer>()));
                 }
 
                 if (shouldRound)
-                    RoundObj(gameObject);
+                    RoundObj(buttonObject);
             }
 
-            Text text2 = new GameObject
+            Text buttonText = new GameObject
             {
                 transform =
                 {
@@ -1549,98 +1537,98 @@ namespace iiMenu.Menu
                 }
             }.AddComponent<Text>();
 
-            text2.font = activeFont;
-            text2.text = method.buttonText;
+            buttonText.font = activeFont;
+            buttonText.text = method.buttonText;
 
             if (method.overlapText != null)
-                text2.text = method.overlapText;
+                buttonText.text = method.overlapText;
             
             if (translate)
-                text2.text = TranslateText(text2.text, (string output) => ReloadMenu());
+                buttonText.text = TranslateText(buttonText.text, (string output) => ReloadMenu());
 
             if (method.customBind != null)
             {
-                if (text2.text.Contains("</color><color=grey>]</color>"))
-                    text2.text = text2.text.Replace("</color><color=grey>]</color>", "/" + method.customBind + "</color><color=grey>]</color>");
+                if (buttonText.text.Contains("</color><color=grey>]</color>"))
+                    buttonText.text = buttonText.text.Replace("</color><color=grey>]</color>", $"/{method.customBind}</color><color=grey>]</color>");
                 else
-                    text2.text += " <color=grey>[</color><color=green>" + method.customBind + "</color><color=grey>]</color>";
+                    buttonText.text += $" <color=grey>[</color><color=green>{method.customBind}</color><color=grey>]</color>";
             }
 
             if (inputTextColor != "green")
-                text2.text = text2.text.Replace(" <color=grey>[</color><color=green>", " <color=grey>[</color><color="+inputTextColor+">");
+                buttonText.text = buttonText.text.Replace(" <color=grey>[</color><color=green>", $" <color=grey>[</color><color={inputTextColor}>");
             
             if (lowercaseMode)
-                text2.text = text2.text.ToLower();
+                buttonText.text = buttonText.text.ToLower();
             
             if (favorites.Contains(method.buttonText))
-                text2.text += " ✦";
-            
-            text2.supportRichText = true;
-            text2.fontSize = 1;
-            text2.color = method.enabled ? textClicked : textColor;
-            if (joystickMenu && buttonIndex == joystickButtonSelected && themeType == 30)
-                    text2.color = Color.red;
+                buttonText.text += " ✦";
 
-            text2.alignment = TextAnchor.MiddleCenter;
-            text2.fontStyle = activeFontStyle;
-            text2.resizeTextForBestFit = true;
-            text2.resizeTextMinSize = 0;
-            RectTransform component = text2.GetComponent<RectTransform>();
-            component.localPosition = Vector3.zero;
-            component.sizeDelta = new Vector2(.2f, .03f);
+            buttonText.supportRichText = true;
+            buttonText.fontSize = 1;
+            buttonText.color = method.enabled ? textClicked : textColor;
+
+            if (joystickMenu && buttonIndex == joystickButtonSelected && themeType == 30)
+                buttonText.color = Color.red;
+
+            buttonText.alignment = TextAnchor.MiddleCenter;
+            buttonText.fontStyle = activeFontStyle;
+            buttonText.resizeTextForBestFit = true;
+            buttonText.resizeTextMinSize = 0;
+
+            RectTransform textTransform = buttonText.GetComponent<RectTransform>();
+            textTransform.localPosition = Vector3.zero;
+            textTransform.sizeDelta = new Vector2(.2f, .03f);
             if (NoAutoSizeText)
-                component.sizeDelta = new Vector2(9f, 0.015f);
-            
-            component.localPosition = new Vector3(.064f, 0, .111f - offset / 2.6f);
-            component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+                textTransform.sizeDelta = new Vector2(9f, 0.015f);
+
+            textTransform.localPosition = new Vector3(.064f, 0, .111f - offset / 2.6f);
+            textTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
         }
+
+        private static void AddButton(float offset, int buttonIndex, string method) => AddButton(offset, buttonIndex, GetIndex(method));
 
         private static void AddSearchButton()
         {
-            GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            GameObject buttonObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
             if (!UnityInput.Current.GetKey(KeyCode.Q) && !isPcWhenSearching)
-                gameObject.layer = 2;
+                buttonObject.layer = 2;
 
             if (themeType == 30)
-                gameObject.GetComponent<Renderer>().enabled = false;
-            
-            gameObject.GetComponent<BoxCollider>().isTrigger = true;
-            gameObject.transform.parent = menu.transform;
-            gameObject.transform.rotation = Quaternion.identity;
-            
-            gameObject.transform.localScale = new Vector3(0.09f, 0.102f, 0.08f);
+                buttonObject.GetComponent<Renderer>().enabled = false;
+
+            buttonObject.GetComponent<BoxCollider>().isTrigger = true;
+            buttonObject.transform.parent = menu.transform;
+            buttonObject.transform.rotation = Quaternion.identity;
+
+            buttonObject.transform.localScale = new Vector3(0.09f, 0.102f, 0.08f);
             // Fat menu theorem
             // To get the fat position of a button:
             // original x * (0.7 / 0.45) or 1.555555556
-            if (FATMENU)
-            {
-                gameObject.transform.localPosition = new Vector3(0.56f, -0.450f, -0.58f);
-            } else
-            {
-                gameObject.transform.localPosition = new Vector3(0.56f, -0.7f, -0.58f);
-            }
-            gameObject.AddComponent<Classes.Button>().relatedText = "Search";
+            if (thinMenu)
+                buttonObject.transform.localPosition = new Vector3(0.56f, -0.450f, -0.58f);
+            else
+                buttonObject.transform.localPosition = new Vector3(0.56f, -0.7f, -0.58f);
+
+            buttonObject.AddComponent<Classes.Button>().relatedText = "Search";
 
             if (shouldOutline)
-                OutlineObj(gameObject, !isSearching);
-            
-            GradientColorKey[] pressedColors = new GradientColorKey[3];
-            pressedColors[0].color = buttonClickedA;
-            pressedColors[0].time = 0f;
-            pressedColors[1].color = buttonClickedB;
-            pressedColors[1].time = 0.5f;
-            pressedColors[2].color = buttonClickedA;
-            pressedColors[2].time = 1f;
+                OutlineObj(buttonObject, !isSearching);
 
-            GradientColorKey[] releasedColors = new GradientColorKey[3];
-            releasedColors[0].color = buttonDefaultA;
-            releasedColors[0].time = 0f;
-            releasedColors[1].color = buttonDefaultB;
-            releasedColors[1].time = 0.5f;
-            releasedColors[2].color = buttonDefaultA;
-            releasedColors[2].time = 1f;
+            GradientColorKey[] pressedColors = new[]
+            {
+                new GradientColorKey(buttonClickedA, 0f),
+                new GradientColorKey(buttonClickedB, 0.5f),
+                new GradientColorKey(buttonClickedA, 1f)
+            };
 
-            ColorChanger colorChanger = gameObject.AddComponent<ColorChanger>();
+            GradientColorKey[] releasedColors = new[]
+            {
+                new GradientColorKey(buttonDefaultA, 0f),
+                new GradientColorKey(buttonDefaultB, 0.5f),
+                new GradientColorKey(buttonDefaultA, 1f)
+            };
+
+            ColorChanger colorChanger = buttonObject.AddComponent<ColorChanger>();
             if (isSearching)
             {
                 colorChanger.isRainbow = themeType == 6;
@@ -1654,9 +1642,6 @@ namespace iiMenu.Menu
             }
             else
             {
-                colorChanger.isRainbow = false;
-                colorChanger.isEpileptic = false;
-                colorChanger.isMonkeColors = false;
                 colorChanger.colors = new Gradient
                 {
                     colorKeys = releasedColors
@@ -1665,9 +1650,9 @@ namespace iiMenu.Menu
             colorChanger.Start();
 
             if (shouldRound)
-                RoundObj(gameObject);
+                RoundObj(buttonObject);
 
-            Image image = new GameObject
+            Image searchImage = new GameObject
             {
                 transform =
                 {
@@ -1675,75 +1660,65 @@ namespace iiMenu.Menu
                 }
             }.AddComponent<Image>();
             if (searchIcon == null)
-            {
                 searchIcon = LoadTextureFromResource("iiMenu.Resources.search.png");
-            }
+            
             if (searchMat == null)
-            {
-                searchMat = new Material(image.material);
-            }
-            image.material = searchMat;
-            image.material.SetTexture("_MainTex", searchIcon);
-            image.color = isSearching ? textClicked : textColor;
-            RectTransform component = image.GetComponent<RectTransform>();
-            component.localPosition = Vector3.zero;
-            component.sizeDelta = new Vector2(.03f, .03f);
-            if (FATMENU)
-            {
-                component.localPosition = new Vector3(.064f, -0.35f / 2.6f, -0.58f / 2.6f);
-            } else
-            {
-                component.localPosition = new Vector3(.064f, -0.54444444444f / 2.6f, -0.58f / 2.6f);
-            }
-            component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+                searchMat = new Material(searchImage.material);
+            
+            searchImage.material = searchMat;
+            searchImage.material.SetTexture("_MainTex", searchIcon);
+            searchImage.color = isSearching ? textClicked : textColor;
+
+            RectTransform imageTransform = searchImage.GetComponent<RectTransform>();
+            imageTransform.localPosition = Vector3.zero;
+            imageTransform.sizeDelta = new Vector2(.03f, .03f);
+
+            if (thinMenu)
+                imageTransform.localPosition = new Vector3(.064f, -0.35f / 2.6f, -0.58f / 2.6f);
+            else
+                imageTransform.localPosition = new Vector3(.064f, -0.54444444444f / 2.6f, -0.58f / 2.6f);
+
+            imageTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
         }
 
         private static void AddReturnButton(bool offcenteredPosition)
         {
-            GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            GameObject buttonObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
             if (!UnityInput.Current.GetKey(KeyCode.Q) && !isPcWhenSearching)
-                gameObject.layer = 2;
+                buttonObject.layer = 2;
 
             if (themeType == 30)
-                gameObject.GetComponent<Renderer>().enabled = false;
-            
-            gameObject.GetComponent<BoxCollider>().isTrigger = true;
-            gameObject.transform.parent = menu.transform;
-            gameObject.transform.rotation = Quaternion.identity;
+                buttonObject.GetComponent<Renderer>().enabled = false;
 
-            gameObject.transform.localScale = new Vector3(0.09f, 0.102f, 0.08f);
+            buttonObject.GetComponent<BoxCollider>().isTrigger = true;
+            buttonObject.transform.parent = menu.transform;
+            buttonObject.transform.rotation = Quaternion.identity;
+
+            buttonObject.transform.localScale = new Vector3(0.09f, 0.102f, 0.08f);
             // Fat menu theorem
             // To get the fat position of a button:
             // original x * (0.7 / 0.45) or 1.555555556
-            if (FATMENU)
-            {
-                gameObject.transform.localPosition = new Vector3(0.56f, -0.450f, -0.58f);
-            }
+            if (thinMenu)
+                buttonObject.transform.localPosition = new Vector3(0.56f, -0.450f, -0.58f);
             else
-            {
-                gameObject.transform.localPosition = new Vector3(0.56f, -0.7f, -0.58f);
-            }
+                buttonObject.transform.localPosition = new Vector3(0.56f, -0.7f, -0.58f);
+            
             if (offcenteredPosition)
-            {
-                gameObject.transform.localPosition += new Vector3(0f, 0.16f, 0f);
-            }
-            gameObject.AddComponent<Classes.Button>().relatedText = "Global Return";
+                buttonObject.transform.localPosition += new Vector3(0f, 0.16f, 0f);
+
+            buttonObject.AddComponent<Classes.Button>().relatedText = "Global Return";
 
             if (shouldOutline)
-                OutlineObj(gameObject, true);
+                OutlineObj(buttonObject, true);
 
-            GradientColorKey[] releasedColors = new GradientColorKey[3];
-            releasedColors[0].color = buttonDefaultA;
-            releasedColors[0].time = 0f;
-            releasedColors[1].color = buttonDefaultB;
-            releasedColors[1].time = 0.5f;
-            releasedColors[2].color = buttonDefaultA;
-            releasedColors[2].time = 1f;
+            GradientColorKey[] releasedColors = new[]
+            {
+                new GradientColorKey(buttonDefaultA, 0f),
+                new GradientColorKey(buttonDefaultB, 0.5f),
+                new GradientColorKey(buttonDefaultA, 1f)
+            };
 
-            ColorChanger colorChanger = gameObject.AddComponent<ColorChanger>();
-            colorChanger.isRainbow = false;
-            colorChanger.isEpileptic = false;
-            colorChanger.isMonkeColors = false;
+            ColorChanger colorChanger = buttonObject.AddComponent<ColorChanger>();
             colorChanger.colors = new Gradient
             {
                 colorKeys = releasedColors
@@ -1751,42 +1726,39 @@ namespace iiMenu.Menu
             colorChanger.Start();
 
             if (shouldRound)
-                RoundObj(gameObject);
+                RoundObj(buttonObject);
 
-            Image image = new GameObject
+            Image returnImage = new GameObject
             {
                 transform =
                 {
                     parent = canvasObj.transform
                 }
             }.AddComponent<Image>();
+
             if (returnIcon == null)
-            {
                 returnIcon = LoadTextureFromResource("iiMenu.Resources.return.png");
-            }
+            
             if (returnMat == null)
-            {
-                returnMat = new Material(image.material);
-            }
-            image.material = returnMat;
-            image.material.SetTexture("_MainTex", returnIcon);
-            image.color = textColor;
-            RectTransform component = image.GetComponent<RectTransform>();
-            component.localPosition = Vector3.zero;
-            component.sizeDelta = new Vector2(.03f, .03f);
-            if (FATMENU)
-            {
-                component.localPosition = new Vector3(.064f, -0.35f / 2.6f, -0.58f / 2.6f);
-            }
+                returnMat = new Material(returnImage.material);
+            
+            returnImage.material = returnMat;
+            returnImage.material.SetTexture("_MainTex", returnIcon);
+            returnImage.color = textColor;
+
+            RectTransform imageTransform = returnImage.GetComponent<RectTransform>();
+            imageTransform.localPosition = Vector3.zero;
+            imageTransform.sizeDelta = new Vector2(.03f, .03f);
+
+            if (thinMenu)
+                imageTransform.localPosition = new Vector3(.064f, -0.35f / 2.6f, -0.58f / 2.6f);
             else
-            {
-                component.localPosition = new Vector3(.064f, -0.54444444444f / 2.6f, -0.58f / 2.6f);
-            }
+                imageTransform.localPosition = new Vector3(.064f, -0.54444444444f / 2.6f, -0.58f / 2.6f);
+            
             if (offcenteredPosition)
-            {
-                component.localPosition += new Vector3(0f, 0.0475f, 0f);
-            }
-            component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+                imageTransform.localPosition += new Vector3(0f, 0.0475f, 0f);
+
+            imageTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
         }
 
         public static void CreateReference()
@@ -1808,9 +1780,8 @@ namespace iiMenu.Menu
 
             menu.transform.localScale = new Vector3(0.1f, 0.3f, 0.3825f);
             if (scaleWithPlayer)
-            {
                 menu.transform.localScale *= GorillaLocomotion.GTPlayer.Instance.scale;
-            }
+            
             if (annoyingMode)
             {
                 menu.transform.localScale = new Vector3(0.1f, UnityEngine.Random.Range(10f, 40f) / 100f, 0.3825f);
@@ -1825,11 +1796,11 @@ namespace iiMenu.Menu
 
             if (themeType == 7)
             {
-                GameObject gameObject = LoadAsset("Cone");
+                GameObject coneBackground = LoadAsset<GameObject>("Cone");
 
-                gameObject.transform.parent = menu.transform;
-                gameObject.transform.localPosition = Vector3.zero;
-                gameObject.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
+                coneBackground.transform.parent = menu.transform;
+                coneBackground.transform.localPosition = Vector3.zero;
+                coneBackground.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
             }
             else
             {
@@ -1844,36 +1815,33 @@ namespace iiMenu.Menu
                 menuBackground.transform.rotation = Quaternion.identity;
 
                 // Size is calculated in depth, width, height
-                // Wtf
-                if (FATMENU)
-                {
+                if (thinMenu)
                     menuBackground.transform.localScale = new Vector3(0.1f, 1f, 1f);
-                }
                 else
-                {
                     menuBackground.transform.localScale = new Vector3(0.1f, 1.5f, 1f);
-                }
+                
                 menuBackground.GetComponent<Renderer>().material.color = bgColorA;
                 
-                if (GetIndex("Inner Outline Menu").enabled || themeType == 34)
+                if (innerOutline || themeType == 34)
                 {
-                    GameObject outlinepart = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    Destroy(outlinepart.GetComponent<BoxCollider>());
-                    outlinepart.transform.parent = menuBackground.transform;
-                    outlinepart.transform.rotation = Quaternion.identity;
-                    outlinepart.transform.localPosition = new Vector3(0f, -0.4840625f, 0f);
-                    outlinepart.transform.localScale = new Vector3(1.025f, 0.0065f, 0.98f);
-                    GradientColorKey[] array = new GradientColorKey[3];
-                    array[0].color = buttonClickedA;
-                    array[0].time = 0f;
-                    array[1].color = buttonClickedB;
-                    array[1].time = 0.5f;
-                    array[2].color = buttonClickedA;
-                    array[2].time = 1f;
-                    ColorChanger colorChanger = outlinepart.AddComponent<ColorChanger>();
+                    GradientColorKey[] colors = new[]
+                    {
+                        new GradientColorKey(buttonClickedA, 0f),
+                        new GradientColorKey(buttonClickedB, 0.5f),
+                        new GradientColorKey(buttonClickedA, 1f)
+                    };
+
+                    GameObject innerOutlineSegment = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    Destroy(innerOutlineSegment.GetComponent<BoxCollider>());
+                    innerOutlineSegment.transform.parent = menuBackground.transform;
+                    innerOutlineSegment.transform.rotation = Quaternion.identity;
+                    innerOutlineSegment.transform.localPosition = new Vector3(0f, -0.4840625f, 0f);
+                    innerOutlineSegment.transform.localScale = new Vector3(1.025f, 0.0065f, 0.98f);
+                    
+                    ColorChanger colorChanger = innerOutlineSegment.AddComponent<ColorChanger>();
                     colorChanger.colors = new Gradient
                     {
-                        colorKeys = array
+                        colorKeys = colors
                     };
                     colorChanger.isRainbow = themeType == 6;
                     colorChanger.isPastelRainbow = themeType == 51;
@@ -1881,23 +1849,17 @@ namespace iiMenu.Menu
                     colorChanger.isEpileptic = themeType == 47;
                     colorChanger.Start();
 
-                    outlinepart = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    Destroy(outlinepart.GetComponent<BoxCollider>());
-                    outlinepart.transform.parent = menuBackground.transform;
-                    outlinepart.transform.rotation = Quaternion.identity;
-                    outlinepart.transform.localPosition = new Vector3(0f, 0.4840625f, 0f);
-                    outlinepart.transform.localScale = new Vector3(1.025f, 0.0065f, 0.98f);
-                    array = new GradientColorKey[3];
-                    array[0].color = buttonClickedA;
-                    array[0].time = 0f;
-                    array[1].color = buttonClickedB;
-                    array[1].time = 0.5f;
-                    array[2].color = buttonClickedA;
-                    array[2].time = 1f;
-                    colorChanger = outlinepart.AddComponent<ColorChanger>();
+                    innerOutlineSegment = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    Destroy(innerOutlineSegment.GetComponent<BoxCollider>());
+                    innerOutlineSegment.transform.parent = menuBackground.transform;
+                    innerOutlineSegment.transform.rotation = Quaternion.identity;
+                    innerOutlineSegment.transform.localPosition = new Vector3(0f, 0.4840625f, 0f);
+                    innerOutlineSegment.transform.localScale = new Vector3(1.025f, 0.0065f, 0.98f);
+
+                    colorChanger = innerOutlineSegment.AddComponent<ColorChanger>();
                     colorChanger.colors = new Gradient
                     {
-                        colorKeys = array
+                        colorKeys = colors
                     };
                     colorChanger.isRainbow = themeType == 6;
                     colorChanger.isPastelRainbow = themeType == 51;
@@ -1905,23 +1867,17 @@ namespace iiMenu.Menu
                     colorChanger.isEpileptic = themeType == 47;
                     colorChanger.Start();
 
-                    outlinepart = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    Destroy(outlinepart.GetComponent<BoxCollider>());
-                    outlinepart.transform.parent = menuBackground.transform;
-                    outlinepart.transform.rotation = Quaternion.identity;
-                    outlinepart.transform.localPosition = new Vector3(0f, 0f, -0.4875f);
-                    outlinepart.transform.localScale = new Vector3(1.025f, 0.968125f, 0.005f);
-                    array = new GradientColorKey[3];
-                    array[0].color = buttonClickedA;
-                    array[0].time = 0f;
-                    array[1].color = buttonClickedB;
-                    array[1].time = 0.5f;
-                    array[2].color = buttonClickedA;
-                    array[2].time = 1f;
-                    colorChanger = outlinepart.AddComponent<ColorChanger>();
+                    innerOutlineSegment = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    Destroy(innerOutlineSegment.GetComponent<BoxCollider>());
+                    innerOutlineSegment.transform.parent = menuBackground.transform;
+                    innerOutlineSegment.transform.rotation = Quaternion.identity;
+                    innerOutlineSegment.transform.localPosition = new Vector3(0f, 0f, -0.4875f);
+                    innerOutlineSegment.transform.localScale = new Vector3(1.025f, 0.968125f, 0.005f);
+
+                    colorChanger = innerOutlineSegment.AddComponent<ColorChanger>();
                     colorChanger.colors = new Gradient
                     {
-                        colorKeys = array
+                        colorKeys = colors
                     };
                     colorChanger.isRainbow = themeType == 6;
                     colorChanger.isPastelRainbow = themeType == 51;
@@ -1929,23 +1885,17 @@ namespace iiMenu.Menu
                     colorChanger.isEpileptic = themeType == 47;
                     colorChanger.Start();
 
-                    outlinepart = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    Destroy(outlinepart.GetComponent<BoxCollider>());
-                    outlinepart.transform.parent = menuBackground.transform;
-                    outlinepart.transform.rotation = Quaternion.identity;
-                    outlinepart.transform.localPosition = new Vector3(0f, 0f, 0.4875f);
-                    outlinepart.transform.localScale = new Vector3(1.025f, 0.968125f, 0.005f);
-                    array = new GradientColorKey[3];
-                    array[0].color = buttonClickedA;
-                    array[0].time = 0f;
-                    array[1].color = buttonClickedB;
-                    array[1].time = 0.5f;
-                    array[2].color = buttonClickedA;
-                    array[2].time = 1f;
-                    colorChanger = outlinepart.AddComponent<ColorChanger>();
+                    innerOutlineSegment = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    Destroy(innerOutlineSegment.GetComponent<BoxCollider>());
+                    innerOutlineSegment.transform.parent = menuBackground.transform;
+                    innerOutlineSegment.transform.rotation = Quaternion.identity;
+                    innerOutlineSegment.transform.localPosition = new Vector3(0f, 0f, 0.4875f);
+                    innerOutlineSegment.transform.localScale = new Vector3(1.025f, 0.968125f, 0.005f);
+
+                    colorChanger = innerOutlineSegment.AddComponent<ColorChanger>();
                     colorChanger.colors = new Gradient
                     {
-                        colorKeys = array
+                        colorKeys = colors
                     };
                     colorChanger.isRainbow = themeType == 6;
                     colorChanger.isPastelRainbow = themeType == 51;
@@ -1962,53 +1912,48 @@ namespace iiMenu.Menu
 
                 if (themeType == 25 || themeType == 26 || themeType == 27)
                 {
-                    try
+                    switch (themeType)
                     {
-                        switch (themeType)
-                        {
-                            case 25:
-                                if (pride == null)
-                                {
-                                    pride = LoadTextureFromResource("iiMenu.Resources.pride.png");
-                                    pride.filterMode = FilterMode.Point;
-                                    pride.wrapMode = TextureWrapMode.Clamp;
-                                }
-                                menuBackground.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Lit");
-                                menuBackground.GetComponent<Renderer>().material.SetFloat("_Glossiness", 0f);
-                                menuBackground.GetComponent<Renderer>().material.SetFloat("_Metallic", 0f);
-                                menuBackground.GetComponent<Renderer>().material.color = Color.white;
-                                menuBackground.GetComponent<Renderer>().material.mainTexture = pride;
-                                LogManager.Log("gayed the texture");
-                                break;
-                            case 26:
-                                if (trans == null)
-                                {
-                                    trans = LoadTextureFromResource("iiMenu.Resources.trans.png");
-                                    trans.filterMode = FilterMode.Point;
-                                    trans.wrapMode = TextureWrapMode.Clamp;
-                                }
-                                menuBackground.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Lit");
-                                menuBackground.GetComponent<Renderer>().material.SetFloat("_Glossiness", 0f);
-                                menuBackground.GetComponent<Renderer>().material.SetFloat("_Metallic", 0f);
-                                menuBackground.GetComponent<Renderer>().material.color = Color.white;
-                                menuBackground.GetComponent<Renderer>().material.mainTexture = trans;
-                                break;
-                            case 27:
-                                if (gay == null)
-                                {
-                                    gay = LoadTextureFromResource("iiMenu.Resources.mlm.png");
-                                    gay.filterMode = FilterMode.Point;
-                                    gay.wrapMode = TextureWrapMode.Clamp;
-                                }
-                                menuBackground.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Lit");
-                                menuBackground.GetComponent<Renderer>().material.SetFloat("_Glossiness", 0f);
-                                menuBackground.GetComponent<Renderer>().material.SetFloat("_Metallic", 0f);
-                                menuBackground.GetComponent<Renderer>().material.color = Color.white;
-                                menuBackground.GetComponent<Renderer>().material.mainTexture = gay;
-                                break;
-                        }
+                        case 25:
+                            if (pride == null)
+                            {
+                                pride = LoadTextureFromResource("iiMenu.Resources.pride.png");
+                                pride.filterMode = FilterMode.Point;
+                                pride.wrapMode = TextureWrapMode.Clamp;
+                            }
+                            menuBackground.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Lit");
+                            menuBackground.GetComponent<Renderer>().material.SetFloat("_Glossiness", 0f);
+                            menuBackground.GetComponent<Renderer>().material.SetFloat("_Metallic", 0f);
+                            menuBackground.GetComponent<Renderer>().material.color = Color.white;
+                            menuBackground.GetComponent<Renderer>().material.mainTexture = pride;
+                            break;
+                        case 26:
+                            if (trans == null)
+                            {
+                                trans = LoadTextureFromResource("iiMenu.Resources.trans.png");
+                                trans.filterMode = FilterMode.Point;
+                                trans.wrapMode = TextureWrapMode.Clamp;
+                            }
+                            menuBackground.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Lit");
+                            menuBackground.GetComponent<Renderer>().material.SetFloat("_Glossiness", 0f);
+                            menuBackground.GetComponent<Renderer>().material.SetFloat("_Metallic", 0f);
+                            menuBackground.GetComponent<Renderer>().material.color = Color.white;
+                            menuBackground.GetComponent<Renderer>().material.mainTexture = trans;
+                            break;
+                        case 27:
+                            if (gay == null)
+                            {
+                                gay = LoadTextureFromResource("iiMenu.Resources.mlm.png");
+                                gay.filterMode = FilterMode.Point;
+                                gay.wrapMode = TextureWrapMode.Clamp;
+                            }
+                            menuBackground.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Lit");
+                            menuBackground.GetComponent<Renderer>().material.SetFloat("_Glossiness", 0f);
+                            menuBackground.GetComponent<Renderer>().material.SetFloat("_Metallic", 0f);
+                            menuBackground.GetComponent<Renderer>().material.color = Color.white;
+                            menuBackground.GetComponent<Renderer>().material.mainTexture = gay;
+                            break;
                     }
-                    catch (Exception exception) { LogManager.LogError(string.Format("iiMenu <b>TEXTURE ERROR</b> {1} - {0}", exception.Message, exception.StackTrace)); }
                 }
                 else
                 {
@@ -2022,17 +1967,16 @@ namespace iiMenu.Menu
                     }
                     else
                     {
-                        GradientColorKey[] array = new GradientColorKey[3];
-                        array[0].color = bgColorA;
-                        array[0].time = 0f;
-                        array[1].color = bgColorB;
-                        array[1].time = 0.5f;
-                        array[2].color = bgColorA;
-                        array[2].time = 1f;
+                        GradientColorKey[] backgroundColors = new[]
+                        {
+                            new GradientColorKey(bgColorA, 0f),
+                            new GradientColorKey(bgColorB, 0.5f),
+                            new GradientColorKey(bgColorA, 1f)
+                        };
                         ColorChanger colorChanger = menuBackground.AddComponent<ColorChanger>();
                         colorChanger.colors = new Gradient
                         {
-                            colorKeys = array
+                            colorKeys = backgroundColors
                         };
                         colorChanger.isRainbow = themeType == 6;
                         colorChanger.isPastelRainbow = themeType == 51;
@@ -2045,27 +1989,31 @@ namespace iiMenu.Menu
 
             canvasObj = new GameObject();
             canvasObj.transform.parent = menu.transform;
+
             Canvas canvas = canvasObj.AddComponent<Canvas>();
             if (GetIndex("Hide Text on Camera").enabled) { canvasObj.layer = 19; }
+
             CanvasScaler canvasScaler = canvasObj.AddComponent<CanvasScaler>();
-            canvasObj.AddComponent<GraphicRaycaster>();
             canvas.renderMode = RenderMode.WorldSpace;
             canvasScaler.dynamicPixelsPerUnit = highQualityText ? 2500f : 1000f;
+
             if (scaleWithPlayer)
                 canvas.transform.localScale *= GorillaLocomotion.GTPlayer.Instance.scale;
 
-            Text text = new GameObject
+            canvasObj.AddComponent<GraphicRaycaster>();
+
+            title = new GameObject
             {
                 transform =
                 {
                     parent = canvasObj.transform
                 }
             }.AddComponent<Text>();
-            text.font = activeFont;
-            text.text = translate ? "ii's Stupid Menu" : "ii's <b>Stupid</b> Menu";
+            title.font = activeFont;
+            title.text = translate ? "ii's Stupid Menu" : "ii's <b>Stupid</b> Menu";
 
             if (doCustomName)
-                text.text = customMenuName;
+                title.text = customMenuName;
 
             if (annoyingMode)
             {
@@ -2085,74 +2033,67 @@ namespace iiMenu.Menu
                 };
 
                 if (UnityEngine.Random.Range(1, 5) == 2)
-                    text.text = randomMenuNames[UnityEngine.Random.Range(0, randomMenuNames.Length - 1)] + " v" + UnityEngine.Random.Range(8, 159);
+                    title.text = randomMenuNames[UnityEngine.Random.Range(0, randomMenuNames.Length - 1)] + " v" + UnityEngine.Random.Range(8, 159);
             }
             if (translate)
-                text.text = TranslateText(text.text, (string output) => ReloadMenu());
+                title.text = TranslateText(title.text, (string output) => ReloadMenu());
             
             if (lowercaseMode)
-                text.text = text.text.ToLower();
+                title.text = title.text.ToLower();
             
             if (!noPageNumber)
-                text.text += " <color=grey>[</color><color=white>" + (pageNumber + 1).ToString() + "</color><color=grey>]</color>";
-            
-            text.fontSize = 1;
-            text.color = titleColor;
-            title = text;
-            text.supportRichText = true;
-            text.fontStyle = activeFontStyle;
-            text.alignment = TextAnchor.MiddleCenter;
-            text.resizeTextForBestFit = true;
-            text.resizeTextMinSize = 0;
-            RectTransform component = text.GetComponent<RectTransform>();
+                title.text += $" <color=grey>[</color><color=white>{pageNumber + 1}</color><color=grey>]</color>";
+
+            title.fontSize = 1;
+            title.color = titleColor;
+
+            title.supportRichText = true;
+            title.fontStyle = activeFontStyle;
+            title.alignment = TextAnchor.MiddleCenter;
+            title.resizeTextForBestFit = true;
+            title.resizeTextMinSize = 0;
+            RectTransform component = title.GetComponent<RectTransform>();
             component.localPosition = Vector3.zero;
             component.sizeDelta = new Vector2(0.28f, 0.05f);
             if (NoAutoSizeText)
-            {
                 component.sizeDelta = new Vector2(0.28f, 0.015f);
-            }
+            
             component.localPosition = new Vector3(0.06f, 0f, 0.165f);
             component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
-            text = new GameObject
+            Text buildLabel = new GameObject
             {
                 transform =
                 {
                     parent = canvasObj.transform
                 }
             }.AddComponent<Text>();
-            text.font = activeFont;
-            text.text = "Build " + PluginInfo.Version;
+            buildLabel.font = activeFont;
+            buildLabel.text = $"Build {PluginInfo.Version}";
             if (themeType == 30)
-            {
-                text.text = "";
-            }
+                buildLabel.text = "";
+            
             if (translate)
-            {
-                text.text = TranslateText(text.text, (string output) => ReloadMenu());
-            }
+                buildLabel.text = TranslateText(buildLabel.text, (string output) => ReloadMenu());
+            
             if (lowercaseMode)
-            {
-                text.text = text.text.ToLower();
-            }
-            text.fontSize = 1;
-            text.color = titleColor;
-            text.supportRichText = true;
-            text.fontStyle = activeFontStyle;
-            text.alignment = TextAnchor.MiddleRight;
-            text.resizeTextForBestFit = true;
-            text.resizeTextMinSize = 0;
-            component = text.GetComponent<RectTransform>();
+                buildLabel.text = buildLabel.text.ToLower();
+
+            buildLabel.fontSize = 1;
+            buildLabel.color = titleColor;
+            buildLabel.supportRichText = true;
+            buildLabel.fontStyle = activeFontStyle;
+            buildLabel.alignment = TextAnchor.MiddleRight;
+            buildLabel.resizeTextForBestFit = true;
+            buildLabel.resizeTextMinSize = 0;
+            component = buildLabel.GetComponent<RectTransform>();
             component.localPosition = Vector3.zero;
             component.sizeDelta = new Vector2(0.28f, 0.02f);
-            if (FATMENU)
-            {
+            if (thinMenu)
                 component.position = new Vector3(0.04f, 0.0f, -0.17f);
-            }
             else
-            {
                 component.position = new Vector3(0.04f, 0.07f, -0.17f);
-            }
+
             component.rotation = Quaternion.Euler(new Vector3(0f, 90f, 90f));
 
             if (!disableFpsCounter)
@@ -2160,16 +2101,15 @@ namespace iiMenu.Menu
                 Text fps = new GameObject
                 {
                     transform =
-                {
-                    parent = canvasObj.transform
-                }
+                    {
+                        parent = canvasObj.transform
+                    }
                 }.AddComponent<Text>();
                 fps.font = activeFont;
-                fps.text = "FPS: " + Mathf.Ceil(1f / Time.unscaledDeltaTime).ToString();
+                fps.text = $"FPS: {Mathf.Ceil(1f / Time.unscaledDeltaTime)}";
                 if (lowercaseMode)
-                {
                     fps.text = fps.text.ToLower();
-                }
+                
                 fps.color = titleColor;
                 fpsCount = fps;
                 fps.fontSize = 1;
@@ -2184,25 +2124,20 @@ namespace iiMenu.Menu
                 component2.sizeDelta = new Vector2(0.28f, 0.02f);
                 component2.localPosition = new Vector3(0.06f, 0f, 0.135f);
                 if (NoAutoSizeText)
-                {
                     component2.sizeDelta = new Vector2(9f, 0.015f);
-                }
                 component2.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
             }
 
             if (!disableDisconnectButton)
             {
                 if (hotkeyButton == "none")
-                {
                     AddButton(-0.30f, -1, GetIndex("Disconnect"));
-                } else
+                else
                 {
                     AddButton(-0.30f, -1, GetIndex("Disconnect"));
                     ButtonInfo hkb = GetIndex(hotkeyButton);
                     if (hkb != null)
-                    {
                         AddButton(-0.40f, -1, hkb);
-                    }
                 }
             }
 
@@ -2210,142 +2145,122 @@ namespace iiMenu.Menu
             if (!disableSearchButton)
             {
                 AddSearchButton();
-                if (!disableReturnButton && buttonsType != 0)
-                {
+                if (!disableReturnButton && currentCategoryName != "Main")
                     AddReturnButton(true);
-                }
             }
             else
             {
-                if (!disableReturnButton && buttonsType != 0)
-                {
+                if (!disableReturnButton && currentCategoryName != "Main")
                     AddReturnButton(false);
-                }
             }
 
             if (!disablePageButtons)
                 AddPageButtons();
 
+            int buttonIndexOffset = 0;
+            ButtonInfo[] renderButtons = new ButtonInfo[] { };
+
             if (isSearching)
             {
                 // Draw the search box
-                GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                GameObject searchBoxObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 if (!UnityInput.Current.GetKey(KeyCode.Q) && !isPcWhenSearching)
-                    gameObject.layer = 2;
+                    searchBoxObject.layer = 2;
 
                 if (themeType == 30)
-                    gameObject.GetComponent<Renderer>().enabled = false;
-                
-                gameObject.GetComponent<BoxCollider>().isTrigger = true;
-                gameObject.GetComponent<BoxCollider>().isTrigger = true;
-                gameObject.transform.parent = menu.transform;
-                gameObject.transform.rotation = Quaternion.identity;
+                    searchBoxObject.GetComponent<Renderer>().enabled = false;
 
-                if (FATMENU)
-                    gameObject.transform.localScale = new Vector3(0.09f, 0.9f, 0.08f);
+                searchBoxObject.GetComponent<BoxCollider>().isTrigger = true;
+                searchBoxObject.transform.parent = menu.transform;
+                searchBoxObject.transform.rotation = Quaternion.identity;
+
+                if (thinMenu)
+                    searchBoxObject.transform.localScale = new Vector3(0.09f, 0.9f, 0.08f);
                 else
-                    gameObject.transform.localScale = new Vector3(0.09f, 1.3f, 0.08f);
+                    searchBoxObject.transform.localScale = new Vector3(0.09f, 1.3f, 0.08f);
 
-                gameObject.transform.localPosition = new Vector3(0.56f, 0f, 0.28f - (buttonOffset / 10));
+                searchBoxObject.transform.localPosition = new Vector3(0.56f, 0f, 0.28f - (buttonOffset / 10));
 
                 if (shouldOutline)
-                    OutlineObj(gameObject, true);
+                    OutlineObj(searchBoxObject, true);
 
-                GradientColorKey[] releasedColors = new GradientColorKey[3];
-                releasedColors[0].color = buttonDefaultA;
-                releasedColors[0].time = 0f;
-                releasedColors[1].color = buttonDefaultB;
-                releasedColors[1].time = 0.5f;
-                releasedColors[2].color = buttonDefaultA;
-                releasedColors[2].time = 1f;
+                GradientColorKey[] releasedColors = new[]
+                {
+                    new GradientColorKey(buttonDefaultA, 0f),
+                    new GradientColorKey(buttonDefaultB, 0.5f),
+                    new GradientColorKey(buttonDefaultA, 1f)
+                };
 
-                GradientColorKey[] selectedColors = new GradientColorKey[3];
-                selectedColors[0].color = Color.red;
-                selectedColors[0].time = 0f;
-                selectedColors[1].color = buttonDefaultB;
-                selectedColors[1].time = 0.5f;
-                selectedColors[2].color = Color.red;
-                selectedColors[2].time = 1f;
-
-                ColorChanger colorChanger = gameObject.AddComponent<ColorChanger>();
-                colorChanger.isRainbow = false;
-                colorChanger.isEpileptic = false;
-                colorChanger.isMonkeColors = false;
+                ColorChanger colorChanger = searchBoxObject.AddComponent<ColorChanger>();
                 colorChanger.colors = new Gradient
                 {
                     colorKeys = releasedColors
                 };
                 if (joystickMenu && joystickButtonSelected == 0)
                 {
-                    joystickSelectedButton = "literallythesearchbar";
+                    joystickSelectedButton = "SearchBar";
+
                     colorChanger.isRainbow = false;
                     colorChanger.isMonkeColors = false;
-                    colorChanger.colors = new Gradient
-                    {
-                        colorKeys = selectedColors
-                    };
+                    colorChanger.isEpileptic = false;
+                    colorChanger.isMonkeColors = false;
+
+                    colorChanger.colors.colorKeys[0].color = Color.red;
+                    colorChanger.colors.colorKeys[2].color = Color.red;
                 }
                 colorChanger.Start();
 
                 if (shouldRound)
-                    RoundObj(gameObject);
+                    RoundObj(searchBoxObject);
 
-                Text text2 = new GameObject
+                searchTextObject = new GameObject
                 {
                     transform =
-                {
-                    parent = canvasObj.transform
-                }
-                }.AddComponent<Text>();
-                searchTextObject = text2;
-                text2.font = activeFont;
-                text2.text = searchText + (((Time.frameCount / 45) % 2) == 0 ? "|" : "");
-                if (lowercaseMode)
-                {
-                    text2.text = text2.text.ToLower();
-                }
-                text2.supportRichText = true;
-                text2.fontSize = 1;
-                text2.color = textColor;
-                if (joystickMenu && joystickButtonSelected == 0)
-                {
-                    if (themeType == 30)
                     {
-                        text2.color = Color.red;
+                        parent = canvasObj.transform
                     }
-                }
-                text2.alignment = TextAnchor.MiddleCenter;
-                text2.fontStyle = activeFontStyle;
-                text2.resizeTextForBestFit = true;
-                text2.resizeTextMinSize = 0;
-                RectTransform componentdos = text2.GetComponent<RectTransform>();
-                componentdos.localPosition = Vector3.zero;
-                componentdos.sizeDelta = new Vector2(.2f, .03f);
+                }.AddComponent<Text>();
+
+                searchTextObject.font = activeFont;
+                searchTextObject.text = searchText + (((Time.frameCount / 45) % 2) == 0 ? "|" : "");
+                if (lowercaseMode)
+                    searchTextObject.text = searchTextObject.text.ToLower();
+
+                searchTextObject.supportRichText = true;
+                searchTextObject.fontSize = 1;
+                searchTextObject.color = textColor;
+
+                if (joystickMenu && joystickButtonSelected == 0 && themeType == 30)
+                    searchTextObject.color = Color.red;
+
+                searchTextObject.alignment = TextAnchor.MiddleCenter;
+                searchTextObject.fontStyle = activeFontStyle;
+                searchTextObject.resizeTextForBestFit = true;
+                searchTextObject.resizeTextMinSize = 0;
+
+                RectTransform textTransform = searchTextObject.GetComponent<RectTransform>();
+                textTransform.localPosition = Vector3.zero;
+                textTransform.sizeDelta = new Vector2(.2f, .03f);
                 if (NoAutoSizeText)
-                {
-                    componentdos.sizeDelta = new Vector2(9f, 0.015f);
-                }
-                componentdos.localPosition = new Vector3(.064f, 0, .111f - (buttonOffset / 10) / 2.6f);
-                componentdos.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+                    textTransform.sizeDelta = new Vector2(9f, 0.015f);
+
+                textTransform.localPosition = new Vector3(.064f, 0, .111f - (buttonOffset / 10) / 2.6f);
+                textTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
                 // Search the mod database
                 List<ButtonInfo> searchedMods = new List<ButtonInfo> { };
-                if (nonGlobalSearch && buttonsType != 0)
+                if (nonGlobalSearch && currentCategoryName != "Main")
                 {
-                    foreach (ButtonInfo v in Buttons.buttons[buttonsType])
+                    foreach (ButtonInfo v in Buttons.buttons[currentCategoryIndex])
                     {
                         try
                         {
                             string buttonText = v.buttonText;
                             if (v.overlapText != null)
-                            {
                                 buttonText = v.overlapText;
-                            }
 
                             if (buttonText.Replace(" ", "").ToLower().Contains(searchText.Replace(" ", "").ToLower()))
-                            {
                                 searchedMods.Add(v);
-                            }
                         }
                         catch { }
                     }
@@ -2373,83 +2288,47 @@ namespace iiMenu.Menu
                         }
                     }
                 }
-                ButtonInfo[] array2 = StringsToInfos(Alphabetize(InfosToStrings(searchedMods.ToArray())));
-                array2 = array2.Skip(pageNumber * (pageSize-1)).Take(pageSize-1).ToArray();
-                if (longmenu) { array2 = searchedMods.ToArray(); }
-                for (int i = 0; i < array2.Length; i++)
+
+                buttonIndexOffset = 1;
+                renderButtons = searchedMods.ToArray();
+            }
+
+            if (annoyingMode && UnityEngine.Random.Range(1, 5) == 3)
+            {
+                ButtonInfo disconnectButton = GetIndex("Disconnect");
+                renderButtons = Enumerable.Repeat(disconnectButton, 10).ToArray();
+            }
+            else if (currentCategoryName == "Favorite Mods")
+            {
+                foreach (string favoriteMod in favorites)
                 {
-                    AddButton((i + 1) * 0.1f + (buttonOffset / 10), i , array2[i]);
+                    if (GetIndex(favoriteMod) == null)
+                        favorites.Remove(favoriteMod);
                 }
+
+                renderButtons = StringsToInfos(favorites.ToArray());
+            }
+            else if (currentCategoryName == "Enabled Mods")
+            {
+                List<ButtonInfo> enabledMods = new List<ButtonInfo>() { GetIndex("Exit Enabled Mods") };
+                enabledMods.AddRange(Buttons.buttons.SelectMany(buttonlist => buttonlist).Where(v => v.enabled));
+
+                renderButtons = enabledMods.ToArray();
             }
             else
-            {
-                if (annoyingMode && UnityEngine.Random.Range(1, 5) == 3)
-                {
-                    ButtonInfo disconnect = GetIndex("Disconnect");
-                    ButtonInfo[] array2 = new ButtonInfo[] { disconnect, disconnect, disconnect, disconnect, disconnect, disconnect, disconnect, disconnect, disconnect, disconnect };
-                    array2 = array2.Take(pageSize).ToArray();
-                    if (longmenu) { array2 = Buttons.buttons[buttonsType]; }
-                    for (int i = 0; i < array2.Length; i++)
-                    {
-                        AddButton(i * 0.1f + (buttonOffset / 10), i, array2[i]);
-                    }
-                }
-                else
-                {
-                    if (buttonsType == 19)
-                    {
-                        string[] array2 = favorites.Skip(pageNumber * pageSize).Take(pageSize).ToArray();
-                        if (GetIndex("Alphabetize Menu").enabled) { array2 = Alphabetize(favorites.ToArray()); array2 = array2.Skip(pageNumber * pageSize).Take(pageSize).ToArray(); }
-                        if (longmenu) { array2 = favorites.ToArray(); }
-                        for (int i = 0; i < array2.Length; i++)
-                        {
-                            ButtonInfo fav = GetIndex(array2[i]);
-                            if (fav != null)
-                            {
-                                AddButton(i * 0.1f + (buttonOffset / 10), i, fav);
-                            } else
-                            {
-                                favorites.Remove(array2[i]);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (buttonsType == 24)
-                        {
-                            List<string> enabledMods = new List<string>() { "Exit Enabled Mods" };
-                            foreach (ButtonInfo[] buttonlist in Buttons.buttons)
-                            {
-                                foreach (ButtonInfo v in buttonlist)
-                                {
-                                    if (v.enabled)
-                                    {
-                                        enabledMods.Add(v.buttonText);
-                                    }
-                                }
-                            }
+                renderButtons = Buttons.buttons[currentCategoryIndex];
 
-                            string[] array2 = enabledMods.ToArray().Skip(pageNumber * pageSize).Take(pageSize).ToArray();
-                            if (GetIndex("Alphabetize Menu").enabled) { array2 = Alphabetize(enabledMods.ToArray()); array2 = array2.Skip(pageNumber * pageSize).Take(pageSize).ToArray(); }
-                            if (longmenu) { array2 = enabledMods.ToArray(); }
-                            for (int i = 0; i < array2.Length; i++)
-                            {
-                                AddButton(i * 0.1f + (buttonOffset / 10), i, GetIndex(array2[i]));
-                            }
-                        }
-                        else
-                        {
-                            ButtonInfo[] array2 = Buttons.buttons[buttonsType].Skip(pageNumber * pageSize).Take(pageSize).ToArray();
-                            if (GetIndex("Alphabetize Menu").enabled) { array2 = StringsToInfos(Alphabetize(InfosToStrings(Buttons.buttons[buttonsType]))); array2 = array2.Skip(pageNumber * pageSize).Take(pageSize).ToArray(); }
-                            if (longmenu) { array2 = Buttons.buttons[buttonsType]; }
-                            for (int i = 0; i < array2.Length; i++)
-                            {
-                                AddButton(i * 0.1f + (buttonOffset / 10), i, array2[i]);
-                            }
-                        }
-                    }
-                }
-            }
+            if (GetIndex("Alphabetize Menu").enabled || isSearching)
+                renderButtons = StringsToInfos(Alphabetize(InfosToStrings(Buttons.buttons[currentCategoryIndex])));
+
+            if (!longmenu)
+                renderButtons = renderButtons
+                    .Skip(pageNumber * pageSize - buttonIndexOffset)
+                    .Take(pageSize)
+                    .ToArray();
+
+            for (int i = 0; i < renderButtons.Length; i++)
+                AddButton(i * 0.1f + (buttonOffset / 10), i, renderButtons[i]);
 
             RecenterMenu();
 
@@ -2466,6 +2345,7 @@ namespace iiMenu.Menu
 
                     particle.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Lit");
                     particle.GetComponent<Renderer>().material.color = Color.white;
+
                     if (cannmat == null)
                     {
                         cannmat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
@@ -2585,7 +2465,7 @@ namespace iiMenu.Menu
                     {
                         Toggle("Joystick Menu");
                     }
-                    if (wristThingV2)
+                    if (watchMenu)
                     {
                         Toggle("Watch Menu");
                     }
@@ -2660,25 +2540,24 @@ namespace iiMenu.Menu
 
         private static void AddPageButtons()
         {
-            GradientColorKey[] array = new GradientColorKey[3];
-            array[0].color = buttonDefaultA;
-            array[0].time = 0f;
-            array[1].color = buttonDefaultB;
-            array[1].time = 0.5f;
-            array[2].color = buttonDefaultA;
-            array[2].time = 1f;
+            GradientColorKey[] Gradient = new GradientColorKey[]
+            {
+                new GradientColorKey(buttonDefaultA, 0f),
+                new GradientColorKey(buttonDefaultB, 0.5f),
+                new GradientColorKey(buttonDefaultA, 1f)
+            };
 
             switch (pageButtonType)
             {
                 case 1:
                     CreatePageButtonPair(
                         "PreviousPage", "NextPage",
-                        new Vector3(0.09f, FATMENU ? 0.9f : 1.3f, 0.08f),
+                        new Vector3(0.09f, thinMenu ? 0.9f : 1.3f, 0.08f),
                         new Vector3(0.56f, 0f, 0.28f),
                         new Vector3(0.56f, 0f, 0.28f - 0.1f),
                         new Vector3(0.064f, 0f, 0.109f),
                         new Vector3(0.064f, 0f, 0.109f - 0.1f / 2.55f),
-                        array
+                        Gradient
                     );
                     break;
 
@@ -2686,11 +2565,11 @@ namespace iiMenu.Menu
                     CreatePageButtonPair(
                         "PreviousPage", "NextPage",
                         new Vector3(0.09f, 0.2f, 0.9f),
-                        new Vector3(0.56f, FATMENU ? 0.65f : 0.9f, 0f),
-                        new Vector3(0.56f, FATMENU ? -0.65f : -0.9f, 0f),
-                        new Vector3(0.064f, FATMENU ? 0.195f : 0.267f, 0f),
-                        new Vector3(0.064f, FATMENU ? -0.195f : -0.267f, 0f),
-                        array
+                        new Vector3(0.56f, thinMenu ? 0.65f : 0.9f, 0f),
+                        new Vector3(0.56f, thinMenu ? -0.65f : -0.9f, 0f),
+                        new Vector3(0.064f, thinMenu ? 0.195f : 0.267f, 0f),
+                        new Vector3(0.064f, thinMenu ? -0.195f : -0.267f, 0f),
+                        Gradient
                     );
                     break;
 
@@ -2698,11 +2577,11 @@ namespace iiMenu.Menu
                     CreatePageButtonPair(
                         "PreviousPage", "NextPage",
                         new Vector3(0.09f, 0.3f, 0.05f),
-                        new Vector3(0.56f, FATMENU ? 0.299f : 0.499f, 0.355f),
-                        new Vector3(0.56f, FATMENU ? -0.299f : -0.499f, 0.355f),
-                        new Vector3(0.064f, FATMENU ? 0.09f : 0.15f, 0.135f),
-                        new Vector3(0.064f, FATMENU ? -0.09f : -0.15f, 0.135f),
-                        array
+                        new Vector3(0.56f, thinMenu ? 0.299f : 0.499f, 0.355f),
+                        new Vector3(0.56f, thinMenu ? -0.299f : -0.499f, 0.355f),
+                        new Vector3(0.064f, thinMenu ? 0.09f : 0.15f, 0.135f),
+                        new Vector3(0.064f, thinMenu ? -0.09f : -0.15f, 0.135f),
+                        Gradient
                     );
                     break;
 
@@ -2710,11 +2589,11 @@ namespace iiMenu.Menu
                     CreatePageButtonPair(
                         "PreviousPage", "NextPage",
                         new Vector3(0.09f, 0.102f, 0.08f),
-                        new Vector3(0.56f, FATMENU ? 0.450f : 0.7f, -0.58f),
-                        new Vector3(0.56f, FATMENU ? 0.450f : 0.7f, -0.58f) - new Vector3(0f, 0.16f, 0f),
-                        new Vector3(0.064f, FATMENU ? 0.35f / 2.6f : 0.54444444444f / 2.6f, -0.58f / 2.7f),
-                        new Vector3(0.064f, FATMENU ? 0.35f / 2.6f : 0.54444444444f / 2.6f, -0.58f / 2.7f) - new Vector3(0f, 0.0475f, 0f),
-                        array,
+                        new Vector3(0.56f, thinMenu ? 0.450f : 0.7f, -0.58f),
+                        new Vector3(0.56f, thinMenu ? 0.450f : 0.7f, -0.58f) - new Vector3(0f, 0.16f, 0f),
+                        new Vector3(0.064f, thinMenu ? 0.35f / 2.6f : 0.54444444444f / 2.6f, -0.58f / 2.7f),
+                        new Vector3(0.064f, thinMenu ? 0.35f / 2.6f : 0.54444444444f / 2.6f, -0.58f / 2.7f) - new Vector3(0f, 0.0475f, 0f),
+                        Gradient,
                         new Vector2(0.03f, 0.03f)
                     );
                     break;
@@ -2803,13 +2682,13 @@ namespace iiMenu.Menu
             gameObject.transform.rotation = Quaternion.identity;
             gameObject.transform.localPosition = toOut.transform.localPosition;
             gameObject.transform.localScale = toOut.transform.localScale + new Vector3(-0.01f, 0.01f, 0.0075f);
-            GradientColorKey[] array = new GradientColorKey[3];
-            array[0].color = shouldBeEnabled ? buttonClickedA : buttonDefaultA;
-            array[0].time = 0f;
-            array[1].color = shouldBeEnabled ? buttonClickedB : buttonDefaultB;
-            array[1].time = 0.5f;
-            array[2].color = shouldBeEnabled ? buttonClickedA : buttonDefaultA;
-            array[2].time = 1f;
+            GradientColorKey[] array = new GradientColorKey[]
+            {
+                new GradientColorKey(shouldBeEnabled ? buttonClickedA : buttonDefaultA, 0f),
+                new GradientColorKey(shouldBeEnabled ? buttonClickedB : buttonDefaultB, 0.5f),
+                new GradientColorKey(shouldBeEnabled ? buttonClickedA : buttonDefaultA, 1f)
+            };
+
             ColorChanger colorChanger = gameObject.AddComponent<ColorChanger>();
             colorChanger.colors = new Gradient
             {
@@ -2836,13 +2715,13 @@ namespace iiMenu.Menu
             gameObject.transform.rotation = toOut.transform.rotation;
             gameObject.transform.localPosition = toOut.transform.localPosition;
             gameObject.transform.localScale = toOut.transform.localScale + new Vector3(0.005f, 0.005f, -0.001f);
-            GradientColorKey[] array = new GradientColorKey[3];
-            array[0].color = shouldBeEnabled ? buttonClickedA : buttonDefaultA;
-            array[0].time = 0f;
-            array[1].color = shouldBeEnabled ? buttonClickedB : buttonDefaultB;
-            array[1].time = 0.5f;
-            array[2].color = shouldBeEnabled ? buttonClickedA : buttonDefaultA;
-            array[2].time = 1f;
+            GradientColorKey[] array = new[]
+            {
+                new GradientColorKey(shouldBeEnabled ? buttonClickedA : buttonDefaultA, 0f),
+                new GradientColorKey(shouldBeEnabled ? buttonClickedB : buttonDefaultB, 0.5f),
+                new GradientColorKey(shouldBeEnabled ? buttonClickedA : buttonDefaultA, 1f)
+            };
+
             ColorChanger colorChanger = gameObject.AddComponent<ColorChanger>();
             colorChanger.colors = new Gradient
             {
@@ -2949,35 +2828,15 @@ namespace iiMenu.Menu
                 LogManager.LogError("Failed to load assetbundle");
         }
 
-        public static GameObject LoadAsset(string assetName)
+        public static T LoadAsset<T>(string assetName) where T : UnityEngine.Object
         {
-            GameObject gameObject = null;
+            T gameObject = null;
             
             if (assetBundle == null)
                 LoadAssetBundle();
             
-            gameObject = Instantiate(assetBundle.LoadAsset<GameObject>(assetName));
-            
+            gameObject = Instantiate(assetBundle.LoadAsset<T>(assetName));
             return gameObject;
-        }
-
-        public static Dictionary<string, AudioClip> audioPool = new Dictionary<string, AudioClip> { };
-        public static AudioClip LoadSoundFromResource(string resourcePath)
-        {
-            AudioClip sound = null;
-
-            if (!audioPool.ContainsKey(resourcePath))
-            {
-                if (assetBundle == null)
-                    LoadAssetBundle();
-
-                sound = assetBundle.LoadAsset<AudioClip>(resourcePath);
-                audioPool.Add(resourcePath, sound);
-            } else
-                sound = audioPool[resourcePath];
-            
-
-            return sound;
         }
 
         public static Dictionary<string, AudioClip> audioFilePool = new Dictionary<string, AudioClip> { };
@@ -2987,11 +2846,7 @@ namespace iiMenu.Menu
 
             if (!audioFilePool.ContainsKey(fileName))
             {
-                if (!Directory.Exists("iisStupidMenu"))
-                {
-                    Directory.CreateDirectory("iisStupidMenu");
-                }
-                string filePath = System.IO.Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, "iisStupidMenu/" + fileName);
+                string filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, "iisStupidMenu/" + fileName);
                 filePath = filePath.Split("BepInEx\\")[0] + "iisStupidMenu/" + fileName;
                 filePath = filePath.Replace("\\", "/");
 
@@ -3014,9 +2869,6 @@ namespace iiMenu.Menu
 
         public static AudioClip LoadSoundFromURL(string resourcePath, string fileName)
         {
-            if (!Directory.Exists("iisStupidMenu"))
-                Directory.CreateDirectory("iisStupidMenu");
-            
             if (!File.Exists("iisStupidMenu/" + fileName))
             {
                 LogManager.Log("Downloading " + fileName);
@@ -3048,11 +2900,7 @@ namespace iiMenu.Menu
         public static Texture2D LoadTextureFromURL(string resourcePath, string fileName)
         {
             Texture2D texture = new Texture2D(2, 2);
-            
-            if (!Directory.Exists("iisStupidMenu"))
-            {
-                Directory.CreateDirectory("iisStupidMenu");
-            }
+
             if (!File.Exists("iisStupidMenu/" + fileName))
             {
                 LogManager.Log("Downloading " + fileName);
@@ -3355,9 +3203,6 @@ namespace iiMenu.Menu
             string fileName = GetSHA256(text) + (narratorIndex == 0 ? ".wav" : ".mp3");
             string directoryPath = "iisStupidMenu/TTS" + (narratorName == "Default" ? "" : narratorName);
 
-            if (!Directory.Exists("iisStupidMenu"))
-                Directory.CreateDirectory("iisStupidMenu");
-
             if (!Directory.Exists(directoryPath))
                 Directory.CreateDirectory(directoryPath);
 
@@ -3417,9 +3262,6 @@ namespace iiMenu.Menu
             string fileName = GetSHA256(text) + (narratorIndex == 0 ? ".wav" : ".mp3");
             string directoryPath = "iisStupidMenu/TTS" + (narratorName == "Default" ? "" : narratorName);
 
-            if (!Directory.Exists("iisStupidMenu"))
-                Directory.CreateDirectory("iisStupidMenu");
-
             if (!Directory.Exists(directoryPath))
                 Directory.CreateDirectory(directoryPath);
 
@@ -3474,7 +3316,7 @@ namespace iiMenu.Menu
         public static void SetupAdminPanel(string playername)
         {
             List<ButtonInfo> lolbuttons = Buttons.buttons[0].ToList<ButtonInfo>();
-            lolbuttons.Add(new ButtonInfo { buttonText = "Admin Mods", method = () => Settings.EnableAdmin(), isTogglable = false, toolTip = "Opens the admin mods." });
+            lolbuttons.Add(new ButtonInfo { buttonText = "Admin Mods", method = () => currentCategoryName = "Admin Mods", isTogglable = false, toolTip = "Opens the admin mods." });
             Buttons.buttons[0] = lolbuttons.ToArray();
             NotifiLib.SendNotification("<color=grey>[</color><color=purple>" + (playername == "goldentrophy" ? "OWNER" : "ADMIN") + "</color><color=grey>]</color> Welcome, " + playername + "! Admin mods have been enabled.", 10000);
         }
@@ -3625,40 +3467,22 @@ namespace iiMenu.Menu
                 yield return null;
             }
 
-            GradientColorKey[] releasedColors = new GradientColorKey[3];
-            releasedColors[0].color = buttonDefaultA;
-            releasedColors[0].time = 0f;
-            releasedColors[1].color = buttonDefaultB;
-            releasedColors[1].time = 0.5f;
-            releasedColors[2].color = buttonDefaultA;
-            releasedColors[2].time = 1f;
-
-            GradientColorKey[] selectedColors = new GradientColorKey[3];
-            selectedColors[0].color = Color.red;
-            selectedColors[0].time = 0f;
-            selectedColors[1].color = buttonDefaultB;
-            selectedColors[1].time = 0.5f;
-            selectedColors[2].color = Color.red;
-            selectedColors[2].time = 1f;
+            GradientColorKey[] releasedColors = new[]
+            {
+                new GradientColorKey(buttonDefaultA, 0f),
+                new GradientColorKey(buttonDefaultB, 0.5f),
+                new GradientColorKey(buttonDefaultA, 1f)
+            };
 
             ColorChanger colorChanger = render.gameObject.AddComponent<ColorChanger>();
-            colorChanger.isRainbow = false;
-            colorChanger.isPastelRainbow = false;
-            colorChanger.isEpileptic = false;
-            colorChanger.isMonkeColors = false;
             colorChanger.colors = new Gradient
             {
                 colorKeys = releasedColors
             };
             if (joystickMenu && buttonIndex == joystickButtonSelected)
             {
-                joystickSelectedButton = buttonText;
-                colorChanger.isRainbow = false;
-                colorChanger.isMonkeColors = false;
-                colorChanger.colors = new Gradient
-                {
-                    colorKeys = selectedColors
-                };
+                colorChanger.colors.colorKeys[0].color = Color.red;
+                colorChanger.colors.colorKeys[2].color = Color.red;
             }
             colorChanger.Start();
         }
@@ -3672,14 +3496,16 @@ namespace iiMenu.Menu
                 snowballDict = new Dictionary<string, SnowballThrowable>();
 
                 snowballs = FindObjectsOfType<SnowballThrowable>(true);
-                foreach (SnowballThrowable lol in snowballs)
+                foreach (SnowballThrowable Throwable in snowballs)
                 {
                     try
                     {
-                        if (GetFullPath(lol.transform.parent).ToLower() == "player objects/local vrrig/local gorilla player/holdables" || GetFullPath(lol.transform.parent).ToLower().Contains("player objects/local vrrig/local gorilla player/riganchor/rig/body/shoulder.l/upper_arm.l/forearm.l/hand.l/palm.01.l/transferrableitemlefthand") || GetFullPath(lol.transform.parent).ToLower().Contains("player objects/local vrrig/local gorilla player/riganchor/rig/body/shoulder.r/upper_arm.r/forearm.r/hand.r/palm.01.r/transferrableitemrighthand"))
+                        if (GetFullPath(Throwable.transform.parent).ToLower() == "player objects/local vrrig/local gorilla player/holdables" 
+                         || GetFullPath(Throwable.transform.parent).ToLower().Contains("player objects/local vrrig/local gorilla player/riganchor/rig/body/shoulder.l/upper_arm.l/forearm.l/hand.l/palm.01.l/transferrableitemlefthand") 
+                         || GetFullPath(Throwable.transform.parent).ToLower().Contains("player objects/local vrrig/local gorilla player/riganchor/rig/body/shoulder.r/upper_arm.r/forearm.r/hand.r/palm.01.r/transferrableitemrighthand"))
                         {
-                            LogManager.Log("Projectile " + lol.gameObject.name + " logged");
-                            snowballDict.Add(lol.gameObject.name, lol);
+                            LogManager.Log("Projectile " + Throwable.gameObject.name + " logged");
+                            snowballDict.Add(Throwable.gameObject.name, Throwable);
                         }
                     } catch { }
                 }
@@ -4128,9 +3954,6 @@ namespace iiMenu.Menu
 
             string fileName = GetSHA256(text) + ".txt";
             string directoryPath = "iisStupidMenu/TranslationData" + language.ToUpper();
-
-            if (!Directory.Exists("iisStupidMenu"))
-                Directory.CreateDirectory("iisStupidMenu");
 
             if (!Directory.Exists(directoryPath))
                 Directory.CreateDirectory(directoryPath);
@@ -4739,11 +4562,11 @@ namespace iiMenu.Menu
                 }
             }
 
-            int lastPage = ((Buttons.buttons[buttonsType].Length + pageSize - 1) / pageSize) - 1;
-            if (buttonsType == 19)
+            int lastPage = ((Buttons.buttons[currentCategoryIndex].Length + pageSize - 1) / pageSize) - 1;
+            if (currentCategoryName == "Favorite Mods")
                 lastPage = ((favorites.Count + pageSize - 1) / pageSize) - 1;
             
-            if (buttonsType == 24)
+            if (currentCategoryName == "Enabled Mods")
             {
                 List<string> enabledMods = new List<string>() { "Exit Enabled Mods" };
                 foreach (ButtonInfo[] buttonlist in Buttons.buttons)
@@ -4756,12 +4579,13 @@ namespace iiMenu.Menu
                 }
                 lastPage = ((enabledMods.Count + pageSize - 1) / pageSize) - 1;
             }
+
             if (isSearching)
             {
                 List<ButtonInfo> searchedMods = new List<ButtonInfo> { };
-                if (nonGlobalSearch && buttonsType != 0)
+                if (nonGlobalSearch && currentCategoryName != "Main")
                 {
-                    foreach (ButtonInfo v in Buttons.buttons[buttonsType])
+                    foreach (ButtonInfo v in Buttons.buttons[currentCategoryIndex])
                     {
                         try
                         {
@@ -4796,6 +4620,7 @@ namespace iiMenu.Menu
                 }
                 lastPage = (int)Mathf.Ceil(searchedMods.ToArray().Length / (pageSize - 1));
             }
+
             if (buttonText == "PreviousPage")
             {
                 if (dynamicAnimations)
@@ -4947,11 +4772,7 @@ namespace iiMenu.Menu
             try
             {
                 if (!Font.GetOSInstalledFontNames().Contains("Agency FB"))
-                {
-                    GameObject AgencyGO = LoadAsset("agency");
-                    agency = AgencyGO.transform.Find("text").gameObject.GetComponent<Text>().font;
-                    Destroy(AgencyGO);
-                }
+                    agency = LoadAsset<Font>("Agency");
             } catch { }
 
             PhotonNetwork.NetworkingClient.EventReceived += EventReceived;
@@ -4965,15 +4786,6 @@ namespace iiMenu.Menu
 
             if (ServerData.ServerDataEnabled)
                 new GameObject("iiMenu_ServerData").AddComponent<ServerData>();
-
-            if (!Directory.Exists("iisStupidMenu"))
-                Directory.CreateDirectory("iisStupidMenu");
-
-            if (!Directory.Exists("iisStupidMenu/Sounds"))
-                Directory.CreateDirectory("iisStupidMenu/Sounds");
-
-            if (!Directory.Exists("iisStupidMenu/Plugins"))
-                Directory.CreateDirectory("iisStupidMenu/Plugins");
 
             try
             {
@@ -5016,13 +4828,14 @@ jgs \_   _/ |Oo\
         public static bool NoOverlapRPCs = true;
         public static float loadPreferencesTime;
 
-        public static bool FATMENU = true;
+        public static bool thinMenu = true;
         public static bool longmenu;
         public static bool disorganized;
         public static bool flipMenu;
         public static bool shinymenu;
         public static bool dropOnRemove = true;
         public static bool shouldOutline;
+        public static bool innerOutline;
         public static bool shouldRound;
         public static bool lastclicking;
         public static bool openedwithright;
@@ -5034,7 +4847,33 @@ jgs \_   _/ |Oo\
         public static bool disablePageButtons;
         public static int pageButtonType = 1;
 
-        public static int buttonsType;
+        public static int _currentCategoryIndex;
+        public static int currentCategoryIndex
+        {
+            get => _currentCategoryIndex;
+            set
+            {
+                _currentCategoryIndex = value;
+                pageNumber = 0;
+            }
+        }
+
+        public static string currentCategoryName
+        {
+            get => Buttons.categoryNames[_currentCategoryIndex];
+            set
+            {
+                _currentCategoryIndex = GetCategory(value);
+            }
+        }
+
+        // Compatiblity
+        public static int buttonsType
+        {
+            get => currentCategoryIndex;
+            set => currentCategoryIndex = value;
+        }
+
         public static int buttonClickSound = 8;
         public static int buttonClickIndex;
         public static int buttonClickVolume = 4;
@@ -5054,7 +4893,7 @@ jgs \_   _/ |Oo\
         public static bool isRightHand;
         public static bool bothHands;
         public static bool wristThing;
-        public static bool wristThingV2;
+        public static bool watchMenu;
         public static bool wristOpen;
         public static float wristMenuDelay = -1f;
 
@@ -5383,8 +5222,6 @@ jgs \_   _/ |Oo\
 
         public static int platformMode;
         public static int platformShape;
-
-        public static bool customSoundOnJoin;
 
         public static string rejRoom;
         public static float rejDebounce;
