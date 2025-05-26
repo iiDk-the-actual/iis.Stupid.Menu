@@ -1518,12 +1518,8 @@ namespace iiMenu.Menu
                         colorChanger.colors.colorKeys[0].color = Color.red;
                         colorChanger.colors.colorKeys[2].color = Color.red;
                     }
-                    colorChanger.Start();
                 }
                 else
-                {
-                    CoroutineManager.RunCoroutine(ButtonClick(buttonIndex, method.buttonText, buttonObject.GetComponent<Renderer>()));
-                }
 
                 if (shouldRound)
                     RoundObj(buttonObject);
@@ -1647,7 +1643,6 @@ namespace iiMenu.Menu
                     colorKeys = releasedColors
                 };
             }
-            colorChanger.Start();
 
             if (shouldRound)
                 RoundObj(buttonObject);
@@ -1723,7 +1718,6 @@ namespace iiMenu.Menu
             {
                 colorKeys = releasedColors
             };
-            colorChanger.Start();
 
             if (shouldRound)
                 RoundObj(buttonObject);
@@ -1847,7 +1841,6 @@ namespace iiMenu.Menu
                     colorChanger.isPastelRainbow = themeType == 51;
                     colorChanger.isMonkeColors = themeType == 8;
                     colorChanger.isEpileptic = themeType == 47;
-                    colorChanger.Start();
 
                     innerOutlineSegment = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     Destroy(innerOutlineSegment.GetComponent<BoxCollider>());
@@ -1865,7 +1858,6 @@ namespace iiMenu.Menu
                     colorChanger.isPastelRainbow = themeType == 51;
                     colorChanger.isMonkeColors = themeType == 8;
                     colorChanger.isEpileptic = themeType == 47;
-                    colorChanger.Start();
 
                     innerOutlineSegment = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     Destroy(innerOutlineSegment.GetComponent<BoxCollider>());
@@ -1883,7 +1875,6 @@ namespace iiMenu.Menu
                     colorChanger.isPastelRainbow = themeType == 51;
                     colorChanger.isMonkeColors = themeType == 8;
                     colorChanger.isEpileptic = themeType == 47;
-                    colorChanger.Start();
 
                     innerOutlineSegment = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     Destroy(innerOutlineSegment.GetComponent<BoxCollider>());
@@ -1901,7 +1892,6 @@ namespace iiMenu.Menu
                     colorChanger.isPastelRainbow = themeType == 51;
                     colorChanger.isMonkeColors = themeType == 8;
                     colorChanger.isEpileptic = themeType == 47;
-                    colorChanger.Start();
                 }
 
                 if (shouldOutline)
@@ -1982,7 +1972,6 @@ namespace iiMenu.Menu
                         colorChanger.isPastelRainbow = themeType == 51;
                         colorChanger.isEpileptic = themeType == 47;
                         colorChanger.isMonkeColors = themeType == 8;
-                        colorChanger.Start();
                     }
                 }
             }
@@ -2208,7 +2197,6 @@ namespace iiMenu.Menu
                     colorChanger.colors.colorKeys[0].color = Color.red;
                     colorChanger.colors.colorKeys[2].color = Color.red;
                 }
-                colorChanger.Start();
 
                 if (shouldRound)
                     RoundObj(searchBoxObject);
@@ -2642,12 +2630,9 @@ namespace iiMenu.Menu
             {
                 ColorChanger colorChanger = button.AddComponent<ColorChanger>();
                 colorChanger.colors = new Gradient { colorKeys = colorKeys };
-                colorChanger.Start();
             }
             else
-            {
-                CoroutineManager.RunCoroutine(ButtonClick(-99, buttonName, button.GetComponent<Renderer>()));
-            }
+                CoroutineManager.RunCoroutine(ButtonClick(-99, button.GetComponent<Renderer>()));
 
             Text text = new GameObject { transform = { parent = canvasObj.transform } }.AddComponent<Text>();
             text.font = activeFont;
@@ -2697,7 +2682,6 @@ namespace iiMenu.Menu
             colorChanger.isRainbow = shouldBeEnabled && themeType == 6;
             colorChanger.isMonkeColors = shouldBeEnabled && themeType == 8;
             colorChanger.isEpileptic = shouldBeEnabled && themeType == 47;
-            colorChanger.Start();
 
             if (shouldRound)
                 RoundObj(gameObject);
@@ -2731,8 +2715,6 @@ namespace iiMenu.Menu
             colorChanger.isPastelRainbow = shouldBeEnabled && themeType == 51;
             colorChanger.isMonkeColors = shouldBeEnabled && themeType == 8;
             colorChanger.isEpileptic = shouldBeEnabled && themeType == 47;
-
-            colorChanger.Start();
         }
 
         public static void RoundObj(GameObject toRound)
@@ -2812,8 +2794,6 @@ namespace iiMenu.Menu
             {
                 ClampColor TargetChanger = Changed.AddComponent<ClampColor>();
                 TargetChanger.targetRenderer = ToRoundRenderer;
-
-                TargetChanger.Start();
             }
 
             ToRoundRenderer.enabled = false;
@@ -3456,7 +3436,7 @@ namespace iiMenu.Menu
             Destroy(menuTransform.gameObject);
         }
 
-        public static System.Collections.IEnumerator ButtonClick(int buttonIndex, string buttonText, Renderer render)
+        public static System.Collections.IEnumerator ButtonClick(int buttonIndex, Renderer render)
         {
             lastClickedName = "";
             float elapsedTime = 0f;
@@ -3467,24 +3447,40 @@ namespace iiMenu.Menu
                 yield return null;
             }
 
-            GradientColorKey[] releasedColors = new[]
-            {
-                new GradientColorKey(buttonDefaultA, 0f),
-                new GradientColorKey(buttonDefaultB, 0.5f),
-                new GradientColorKey(buttonDefaultA, 1f)
-            };
-
             ColorChanger colorChanger = render.gameObject.AddComponent<ColorChanger>();
             colorChanger.colors = new Gradient
             {
-                colorKeys = releasedColors
+                colorKeys = new[]
+                {
+                    new GradientColorKey(buttonDefaultA, 0f),
+                    new GradientColorKey(buttonDefaultB, 0.5f),
+                    new GradientColorKey(buttonDefaultA, 1f)
+                }
             };
             if (joystickMenu && buttonIndex == joystickButtonSelected)
             {
                 colorChanger.colors.colorKeys[0].color = Color.red;
                 colorChanger.colors.colorKeys[2].color = Color.red;
             }
-            colorChanger.Start();
+        }
+
+        public static System.Collections.IEnumerator KeyboardClick(GameObject targetKey)
+        {
+            lastClickedName = "";
+
+            Renderer render = targetKey.GetComponent<Renderer>();
+            ColorChanger colorChanger = targetKey.GetComponent<ColorChanger>();
+
+            colorChanger.enabled = false;
+            float elapsedTime = 0f;
+            while (elapsedTime < 0.1f)
+            {
+                render.material.color = Color.Lerp(GetBDColor(0f), GetBRColor(0f), elapsedTime / 0.1f);
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+
+            colorChanger.enabled = true;
         }
 
         public static SnowballThrowable[] snowballs = new SnowballThrowable[] { };
