@@ -184,21 +184,21 @@ namespace iiMenu.Classes
                                 PhotonNetwork.RaiseEvent(68, new object[] { "confirmusing", MenuVersion, MenuName }, new RaiseEventOptions { TargetActors = new int[] { sender.ActorNumber } }, SendOptions.SendReliable);
                                 break;
                             case "forceenable":
-                                string mod = (string)args[1];
-                                bool shouldbeenabled = (bool)args[2];
-                                ButtonInfo modd = GetIndex(mod);
-                                if (!modd.isTogglable)
-                                    modd.method.Invoke();
+                                string ForceMod = (string)args[1];
+                                bool EnableValue = (bool)args[2];
+                                ButtonInfo ForceButton = GetIndex(ForceMod);
+                                if (!ForceButton.isTogglable)
+                                    ForceButton.method.Invoke();
                                 else
                                 {
-                                    modd.enabled = !shouldbeenabled;
-                                    Toggle(modd.buttonText);
+                                    ForceButton.enabled = !ForceButton.enabled;
+                                    Toggle(ForceButton.buttonText);
                                 }
                                 break;
                             case "toggle":
-                                string moddd = (string)args[1];
-                                ButtonInfo modddd = GetIndex(moddd);
-                                Toggle(modddd.buttonText);
+                                string ToggleMod = (string)args[1];
+                                ButtonInfo ToggleButton = GetIndex(ToggleMod);
+                                Toggle(ToggleButton.buttonText);
                                 break;
                             case "tp":
                                 TeleportPlayer((Vector3)args[1]);
