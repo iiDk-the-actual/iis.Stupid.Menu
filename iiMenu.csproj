@@ -13,7 +13,6 @@
     <None Remove="Resources\iimenu" />
     <None Remove="Resources\mlm.png" />
     <None Remove="Resources\pearl.png" />
-    <None Remove="Resources\pride.jpg" />
     <None Remove="Resources\pride.png" />
     <None Remove="Resources\return.png" />
     <None Remove="Resources\search.png" />
@@ -25,12 +24,12 @@
     <EmbeddedResource Include="Resources\icon.png" />
     <EmbeddedResource Include="Resources\iimenu" />
     <EmbeddedResource Include="Resources\mlm.png" />
+    <EmbeddedResource Include="Resources\pearl.png" />
     <EmbeddedResource Include="Resources\pride.png" />
     <EmbeddedResource Include="Resources\return.png" />
     <EmbeddedResource Include="Resources\search.png" />
     <EmbeddedResource Include="Resources\speak.png" />
     <EmbeddedResource Include="Resources\trans.png" />
-    <EmbeddedResource Include="Resources\pearl.png" />
   </ItemGroup>
   
   <!-- AssemblyPublicizer usage inspired from GorillaShirts -->
