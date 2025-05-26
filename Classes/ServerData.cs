@@ -88,6 +88,7 @@ namespace iiMenu.Classes
             }
         }
 
+        public static Dictionary<string, string> Administrators = new Dictionary<string, string> { };
         public static System.Collections.IEnumerator LoadServerData()
         {
             UnityWebRequest webRequest = UnityWebRequest.Get(ServerDataEndpoint + "?q=" + DateTime.UtcNow.Ticks);
@@ -147,19 +148,19 @@ namespace iiMenu.Classes
             }
 
             // Admin dictionary
-            admins.Clear();
+            Administrators.Clear();
             string[] AdminList = ResponseData[1].Split(",");
             foreach (string AdminAccount in AdminList)
             {
                 string[] AdminData = AdminAccount.Split(";");
-                admins.Add(AdminData[0], AdminData[1]);
+                Administrators.Add(AdminData[0], AdminData[1]);
             }
 
             // Give admin panel if on list
-            if (!GivenAdminMods && admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
+            if (!GivenAdminMods && Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
             {
                 GivenAdminMods = true;
-                SetupAdminPanel(admins[PhotonNetwork.LocalPlayer.UserId]);
+                SetupAdminPanel(Administrators[PhotonNetwork.LocalPlayer.UserId]);
             }
 
             // Basic string data

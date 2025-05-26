@@ -57,7 +57,7 @@ namespace iiMenu.Menu
 
                 if (oneHand)
                     buttonCondition = rightHand ? ControllerInputPoller.instance.leftControllerSecondaryButton : ControllerInputPoller.instance.rightControllerSecondaryButton;
-                
+
                 if (bothHands)
                 {
                     buttonCondition = ControllerInputPoller.instance.leftControllerSecondaryButton || ControllerInputPoller.instance.rightControllerSecondaryButton;
@@ -69,10 +69,10 @@ namespace iiMenu.Menu
                     bool shouldOpen = Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position - (GorillaTagger.Instance.leftHandTransform.forward * 0.1f), TrueRightHand().position) < 0.1f;
                     if (rightHand)
                         shouldOpen = Vector3.Distance(TrueLeftHand().position, GorillaTagger.Instance.rightHandTransform.position - (GorillaTagger.Instance.rightHandTransform.forward * 0.1f)) < 0.1f;
-                    
+
                     if (shouldOpen && !lastChecker)
                         wristOpen = !wristOpen;
-                    
+
                     lastChecker = shouldOpen;
 
                     buttonCondition = wristOpen;
@@ -92,7 +92,7 @@ namespace iiMenu.Menu
                     buttonCondition = joystickOpen;
                 } else
                     joystickButtonSelected = 0;
-                
+
                 if (physicalMenu)
                 {
                     if (buttonCondition)
@@ -132,7 +132,7 @@ namespace iiMenu.Menu
 
                         if (dynamicSounds)
                             Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/close.wav", "close.wav"), buttonClickVolume / 10f);
-                        
+
                         try
                         {
                             if (isOnPC && TPC != null && TPC.transform.parent.gameObject.name.Contains("CameraTablet"))
@@ -362,13 +362,13 @@ namespace iiMenu.Menu
 
                         if (doCustomName)
                             motdTC.text = "Thanks for using " + customMenuName + "!";
-                        
+
                         if (translate)
                             motdTC.text = TranslateText(motdTC.text);
-                        
+
                         if (lowercaseMode)
                             motdTC.text = motdTC.text.ToLower();
-                        
+
                         motdTC.color = titleColor;
                         motdTC.overflowMode = TextOverflowModes.Overflow;
 
@@ -400,7 +400,7 @@ namespace iiMenu.Menu
 
                         if (translate)
                             motdTextB.text = TranslateText(motdTextB.text);
-                        
+
                         if (lowercaseMode)
                             motdTextB.text = motdTextB.text.ToLower();
                     } catch { }
@@ -426,12 +426,12 @@ namespace iiMenu.Menu
                             {
                                 if (keyCode != KeyCode.Backspace)
                                     keysPressed.Add(keyCode);
-                                
+
                                 if (!lastPressedKeys.Contains(keyCode))
                                 {
                                     if (keyCode == KeyCode.Space)
                                         searchText += " ";
-                                    
+
                                     else
                                     {
                                         if (keyCode == KeyCode.Backspace)
@@ -458,7 +458,7 @@ namespace iiMenu.Menu
                                     {
                                         if (keyCode == KeyCode.Backspace)
                                             lastBackspaceTime = Time.time + 0.1f;
-                                        
+
                                         GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(66, false, buttonClickVolume / 10f);
                                         pageNumber = 0;
                                         ReloadMenu();
@@ -540,7 +540,7 @@ namespace iiMenu.Menu
                         {
                             if (clearNotificationsOnDisconnect)
                                 NotifiLib.ClearAllNotifications();
-                            
+
                             NotifiLib.SendNotification("<color=grey>[</color><color=blue>LEAVE ROOM</color><color=grey>]</color> Room Code: " + lastRoom + "");
                             RPCProtection();
                             lastMasterClient = false;
@@ -747,76 +747,6 @@ namespace iiMenu.Menu
                     }
                     catch { }
 
-                    // Admin indicator
-                    if (PhotonNetwork.InRoom)
-                    {
-                        try
-                        {
-                            if (!Experimental.daaind)
-                            {
-                                foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerListOthers)
-                                {
-                                    if (admins.ContainsKey(player.UserId))
-                                    {
-                                        if (player != adminConeExclusion)
-                                        {
-                                            try
-                                            {
-                                                VRRig obediantsubject = GetVRRigFromPlayer(player);
-                                                if (obediantsubject != null)
-                                                {
-                                                    GameObject crown = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                                                    Destroy(crown.GetComponent<Collider>());
-                                                    Destroy(crown, Time.deltaTime);
-                                                    if (crownmat == null)
-                                                    {
-                                                        crownmat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
-
-                                                        if (admincrown == null)
-                                                            admincrown = LoadTextureFromResource("iiMenu.Resources.icon.png");
-                                                        
-                                                        crownmat.mainTexture = admincrown;
-
-                                                        crownmat.SetFloat("_Surface", 1);
-                                                        crownmat.SetFloat("_Blend", 0);
-                                                        crownmat.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
-                                                        crownmat.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
-                                                        crownmat.SetFloat("_ZWrite", 0);
-                                                        crownmat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
-                                                        crownmat.renderQueue = (int)RenderQueue.Transparent;
-
-                                                        crownmat.SetFloat("_Glossiness", 0f);
-                                                        crownmat.SetFloat("_Metallic", 0f);
-                                                    }
-                                                    crown.GetComponent<Renderer>().material = crownmat;
-                                                    crown.GetComponent<Renderer>().material.color = obediantsubject.playerColor;
-                                                    crown.transform.localScale = new Vector3(0.4f, 0.4f, 0.01f);
-                                                    crown.transform.position = obediantsubject.headMesh.transform.position + obediantsubject.headMesh.transform.up * 0.8f;
-                                                    crown.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
-                                                    Vector3 rot = crown.transform.rotation.eulerAngles;
-                                                    rot += new Vector3(0f, 0f, Mathf.Sin(Time.time * 2f) * 10f);
-                                                    crown.transform.rotation = Quaternion.Euler(rot);
-                                                }
-                                            }
-                                            catch { }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        catch { }
-                    }
-                    else
-                    {
-                        lastOwner = false;
-                    }
-
-                    try
-                    {
-                        if (adminIsScaling && adminRigTarget != null)
-                            adminRigTarget.NativeScale = adminScale;
-                    } catch { }
-
                     try
                     {
                         if (PhotonNetwork.InRoom)
@@ -869,7 +799,7 @@ namespace iiMenu.Menu
                                     for (var i = 0; i < 4; i++)
                                         randomName = randomName + UnityEngine.Random.Range(0, 9).ToString();
 
-                                    object[] content = new object[] { 
+                                    object[] content = new object[] {
                                         id,
                                         true,
                                         randomName,
@@ -911,10 +841,10 @@ namespace iiMenu.Menu
 
                         if (UnityInput.Current.GetKey(KeyCode.Minus))
                             leftTrigger = 1f;
-                        
+
                         if (UnityInput.Current.GetKey(KeyCode.Equals))
                             rightTrigger = 1f;
-                        
+
 
                         if (IsSteam)
                         {
@@ -950,7 +880,7 @@ namespace iiMenu.Menu
                                 leftJoystickClick = true;
                         }
                     } catch { }
-                    
+
                     shouldBePC = UnityInput.Current.GetKey(KeyCode.E) || UnityInput.Current.GetKey(KeyCode.R) || UnityInput.Current.GetKey(KeyCode.F) || UnityInput.Current.GetKey(KeyCode.G) || UnityInput.Current.GetKey(KeyCode.LeftBracket) || UnityInput.Current.GetKey(KeyCode.RightBracket) || UnityInput.Current.GetKey(KeyCode.Minus) || UnityInput.Current.GetKey(KeyCode.Equals) || Mouse.current.leftButton.isPressed || Mouse.current.rightButton.isPressed;
 
                     if (menu != null)
@@ -1001,7 +931,7 @@ namespace iiMenu.Menu
                                 {
                                     if (dynamicSounds)
                                         Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/next.wav", "next.wav"), buttonClickVolume / 10f);
-                                    
+
                                     Toggle("NextPage");
                                     ReloadMenu();
                                     joystickDelay = Time.time + 0.2f;
@@ -1010,7 +940,7 @@ namespace iiMenu.Menu
                                 {
                                     if (dynamicSounds)
                                         Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/prev.wav", "prev.wav"), buttonClickVolume / 10f);
-                                    
+
                                     Toggle("PreviousPage");
                                     ReloadMenu();
                                     joystickDelay = Time.time + 0.2f;
@@ -1020,11 +950,11 @@ namespace iiMenu.Menu
                                 {
                                     if (dynamicSounds)
                                         Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/open.wav", "open.wav"), buttonClickVolume / 10f);
-                                    
+
                                     joystickButtonSelected--;
                                     if (joystickButtonSelected < 0)
                                         joystickButtonSelected = pageSize - 1;
-                                    
+
                                     ReloadMenu();
                                     joystickDelay = Time.time + 0.2f;
                                 }
@@ -1032,11 +962,11 @@ namespace iiMenu.Menu
                                 {
                                     if (dynamicSounds)
                                         Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/close.wav", "close.wav"), buttonClickVolume / 10f);
-                                    
+
                                     joystickButtonSelected++;
                                     if (joystickButtonSelected > pageSize - 1)
                                         joystickButtonSelected = 0;
-                                    
+
                                     ReloadMenu();
                                     joystickDelay = Time.time + 0.2f;
                                 }
@@ -1045,7 +975,7 @@ namespace iiMenu.Menu
                                 {
                                     if (dynamicSounds)
                                         Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/select.wav", "select.wav"), buttonClickVolume / 10f);
-                                    
+
                                     Toggle(joystickSelectedButton, true);
                                     ReloadMenu();
                                     joystickDelay = Time.time + 0.2f;
@@ -1063,7 +993,7 @@ namespace iiMenu.Menu
 
                             if (currentCategoryName == "Favorite Mods")
                                 toSortOf = StringsToInfos(favorites.ToArray());
-                            
+
                             if (currentCategoryName == "Enabled Mods")
                             {
                                 List<string> enabledMods = new List<string>() { "Exit Enabled Mods" };
@@ -1084,7 +1014,7 @@ namespace iiMenu.Menu
                             watchText.GetComponent<Text>().text = toSortOf[watchMenuIndex].buttonText;
                             if (toSortOf[watchMenuIndex].overlapText != null)
                                 watchText.GetComponent<Text>().text = toSortOf[watchMenuIndex].overlapText;
-                            
+
                             watchText.GetComponent<Text>().text += $"\n<color=grey>[{(watchMenuIndex + 1)}/{toSortOf.Length}]\n{DateTime.Now.ToString("hh:mm tt")}</color>";
                             watchText.GetComponent<Text>().color = titleColor;
 
@@ -1093,7 +1023,7 @@ namespace iiMenu.Menu
 
                             if (watchIndicatorMat == null)
                                 watchIndicatorMat = new Material(Shader.Find("GorillaTag/UberShader"));
-                            
+
                             watchIndicatorMat.color = toSortOf[watchMenuIndex].enabled ? GetBDColor(0f) : GetBRColor(0f);
                             watchEnabledIndicator.GetComponent<Image>().material = watchIndicatorMat;
 
@@ -1105,7 +1035,7 @@ namespace iiMenu.Menu
                                     watchMenuIndex++;
                                     if (watchMenuIndex > toSortOf.Length - 1)
                                         watchMenuIndex = 0;
-                                    
+
                                     wristMenuDelay = Time.time + 0.2f;
                                 }
                                 if (js.x < -0.5f || (rightHand ? (js.y > 0.5f) : (js.y < -0.5f)))
@@ -1122,7 +1052,7 @@ namespace iiMenu.Menu
                                     Toggle(toSortOf[watchMenuIndex].buttonText, true);
                                     if (currentCategoryIndex != archive)
                                         watchMenuIndex = 0;
-                                    
+
                                     wristMenuDelay = Time.time + 0.2f;
                                 }
                             }
@@ -1243,7 +1173,7 @@ namespace iiMenu.Menu
                                             if ((BindValue && !Mod.enabled) || (!BindValue && Mod.enabled))
                                                 Toggle(ModName);
                                         }
-                                    }  
+                                    }
                                 }
 
                                 BindStates[BindInput] = BindValue;
@@ -1443,7 +1373,7 @@ namespace iiMenu.Menu
                     buttonObject.transform.localScale = new Vector3(0.09f, 0.9f, 0.08f);
                 else
                     buttonObject.transform.localScale = new Vector3(0.09f, 1.3f, 0.08f);
-                
+
                 if (longmenu && buttonIndex > (pageSize - 1))
                 {
                     menuBackground.transform.localScale += new Vector3(0f, 0f, 0.1f);
@@ -1536,7 +1466,7 @@ namespace iiMenu.Menu
 
             if (method.overlapText != null)
                 buttonText.text = method.overlapText;
-            
+
             if (translate)
                 buttonText.text = TranslateText(buttonText.text, (string output) => ReloadMenu());
 
@@ -1550,10 +1480,10 @@ namespace iiMenu.Menu
 
             if (inputTextColor != "green")
                 buttonText.text = buttonText.text.Replace(" <color=grey>[</color><color=green>", $" <color=grey>[</color><color={inputTextColor}>");
-            
+
             if (lowercaseMode)
                 buttonText.text = buttonText.text.ToLower();
-            
+
             if (favorites.Contains(method.buttonText))
                 buttonText.text += " ✦";
 
@@ -1654,10 +1584,10 @@ namespace iiMenu.Menu
             }.AddComponent<Image>();
             if (searchIcon == null)
                 searchIcon = LoadTextureFromResource("iiMenu.Resources.search.png");
-            
+
             if (searchMat == null)
                 searchMat = new Material(searchImage.material);
-            
+
             searchImage.material = searchMat;
             searchImage.material.SetTexture("_MainTex", searchIcon);
             searchImage.color = isSearching ? textClicked : textColor;
@@ -1695,7 +1625,7 @@ namespace iiMenu.Menu
                 buttonObject.transform.localPosition = new Vector3(0.56f, -0.450f, -0.58f);
             else
                 buttonObject.transform.localPosition = new Vector3(0.56f, -0.7f, -0.58f);
-            
+
             if (offcenteredPosition)
                 buttonObject.transform.localPosition += new Vector3(0f, 0.16f, 0f);
 
@@ -1730,10 +1660,10 @@ namespace iiMenu.Menu
 
             if (returnIcon == null)
                 returnIcon = LoadTextureFromResource("iiMenu.Resources.return.png");
-            
+
             if (returnMat == null)
                 returnMat = new Material(returnImage.material);
-            
+
             returnImage.material = returnMat;
             returnImage.material.SetTexture("_MainTex", returnIcon);
             returnImage.color = textColor;
@@ -1746,7 +1676,7 @@ namespace iiMenu.Menu
                 imageTransform.localPosition = new Vector3(.064f, -0.35f / 2.6f, -0.58f / 2.6f);
             else
                 imageTransform.localPosition = new Vector3(.064f, -0.54444444444f / 2.6f, -0.58f / 2.6f);
-            
+
             if (offcenteredPosition)
                 imageTransform.localPosition += new Vector3(0f, 0.0475f, 0f);
 
@@ -1773,7 +1703,7 @@ namespace iiMenu.Menu
             menu.transform.localScale = new Vector3(0.1f, 0.3f, 0.3825f);
             if (scaleWithPlayer)
                 menu.transform.localScale *= GorillaLocomotion.GTPlayer.Instance.scale;
-            
+
             if (annoyingMode)
             {
                 menu.transform.localScale = new Vector3(0.1f, UnityEngine.Random.Range(10f, 40f) / 100f, 0.3825f);
@@ -1811,9 +1741,9 @@ namespace iiMenu.Menu
                     menuBackground.transform.localScale = new Vector3(0.1f, 1f, 1f);
                 else
                     menuBackground.transform.localScale = new Vector3(0.1f, 1.5f, 1f);
-                
+
                 menuBackground.GetComponent<Renderer>().material.color = bgColorA;
-                
+
                 if (innerOutline || themeType == 34)
                 {
                     GradientColorKey[] colors = new[]
@@ -1829,7 +1759,7 @@ namespace iiMenu.Menu
                     innerOutlineSegment.transform.rotation = Quaternion.identity;
                     innerOutlineSegment.transform.localPosition = new Vector3(0f, -0.4840625f, 0f);
                     innerOutlineSegment.transform.localScale = new Vector3(1.025f, 0.0065f, 0.98f);
-                    
+
                     ColorChanger colorChanger = innerOutlineSegment.AddComponent<ColorChanger>();
                     colorChanger.colors = new Gradient
                     {
@@ -1978,7 +1908,7 @@ namespace iiMenu.Menu
             canvasObj.transform.parent = menu.transform;
 
             Canvas canvas = canvasObj.AddComponent<Canvas>();
-            if (hideTextOnCamera) 
+            if (hideTextOnCamera)
                 canvasObj.layer = 19;
 
             CanvasScaler canvasScaler = canvasObj.AddComponent<CanvasScaler>();
@@ -2025,10 +1955,10 @@ namespace iiMenu.Menu
             }
             if (translate)
                 title.text = TranslateText(title.text, (string output) => ReloadMenu());
-            
+
             if (lowercaseMode)
                 title.text = title.text.ToLower();
-            
+
             if (!noPageNumber)
                 title.text += $" <color=grey>[</color><color=white>{pageNumber + 1}</color><color=grey>]</color>";
 
@@ -2045,7 +1975,7 @@ namespace iiMenu.Menu
             component.sizeDelta = new Vector2(0.28f, 0.05f);
             if (NoAutoSizeText)
                 component.sizeDelta = new Vector2(0.28f, 0.015f);
-            
+
             component.localPosition = new Vector3(0.06f, 0f, 0.165f);
             component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
@@ -2060,10 +1990,10 @@ namespace iiMenu.Menu
             buildLabel.text = $"Build {PluginInfo.Version}";
             if (themeType == 30)
                 buildLabel.text = "";
-            
+
             if (translate)
                 buildLabel.text = TranslateText(buildLabel.text, (string output) => ReloadMenu());
-            
+
             if (lowercaseMode)
                 buildLabel.text = buildLabel.text.ToLower();
 
@@ -2097,7 +2027,7 @@ namespace iiMenu.Menu
                 fps.text = $"FPS: {Mathf.Ceil(1f / Time.unscaledDeltaTime)}";
                 if (lowercaseMode)
                     fps.text = fps.text.ToLower();
-                
+
                 fps.color = titleColor;
                 fpsCount = fps;
                 fps.fontSize = 1;
@@ -2337,7 +2267,7 @@ namespace iiMenu.Menu
 
                         if (cann == null)
                             cann = LoadTextureFromURL("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/main/cannabis.png", "cannabis.png");
-                        
+
                         cannmat.mainTexture = cann;
 
                         cannmat.SetFloat("_Surface", 1);
@@ -2446,10 +2376,10 @@ namespace iiMenu.Menu
                     isOnPC = true;
                     if (joystickMenu)
                         Toggle("Joystick Menu");
-                    
+
                     if (watchMenu)
                         Toggle("Watch Menu");
-                    
+
                     if (GetIndex("First Person Camera").enabled)
                         Toggle("First Person Camera");
 
@@ -2512,7 +2442,7 @@ namespace iiMenu.Menu
                     physicalOpenPosition = menu.transform.position;
                     physicalOpenRotation = menu.transform.rotation;
                 }
-                    
+
                 menu.transform.position = physicalOpenPosition;
                 menu.transform.rotation = physicalOpenRotation;
             }
@@ -2653,7 +2583,7 @@ namespace iiMenu.Menu
             GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
             if (themeType == 30)
                 gameObject.GetComponent<Renderer>().enabled = false;
-            
+
             Destroy(gameObject.GetComponent<BoxCollider>());
             gameObject.transform.parent = menu.transform;
             gameObject.transform.rotation = Quaternion.identity;
@@ -2738,7 +2668,7 @@ namespace iiMenu.Menu
 
             RoundCornerA.transform.parent = menu.transform;
             RoundCornerA.transform.rotation = Quaternion.identity * Quaternion.Euler(0f, 0f, 90f);
-            
+
             RoundCornerA.transform.localPosition = toRound.transform.localPosition + new Vector3(0f, (toRound.transform.localScale.y / 2f) - (Bevel * 1.275f), (toRound.transform.localScale.z / 2f) - Bevel);
             RoundCornerA.transform.localScale = new Vector3(Bevel * 2.55f, toRound.transform.localScale.x / 2f, Bevel * 2f);
 
@@ -2803,10 +2733,10 @@ namespace iiMenu.Menu
         public static T LoadAsset<T>(string assetName) where T : UnityEngine.Object
         {
             T gameObject = null;
-            
+
             if (assetBundle == null)
                 LoadAssetBundle();
-            
+
             gameObject = Instantiate(assetBundle.LoadAsset<T>(assetName));
             return gameObject;
         }
@@ -3002,7 +2932,7 @@ namespace iiMenu.Menu
 
             if (disableGunPointer)
                 NewPointer.GetComponent<Renderer>().enabled = false;
-            
+
             Destroy(NewPointer.GetComponent<Collider>());
             Destroy(NewPointer, Time.deltaTime);
 
@@ -3033,8 +2963,8 @@ namespace iiMenu.Menu
                             for (int i = 1; i < (Step - 1); i++)
                             {
                                 Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
-                                    lineRenderer.SetPosition(i, Position + (UnityEngine.Random.Range(0f, 1f) > 0.75f ? new Vector3(UnityEngine.Random.Range(-0.1f, 0.1f), UnityEngine.Random.Range(-0.1f, 0.1f), UnityEngine.Random.Range(-0.1f, 0.1f)) : Vector3.zero));
-                                }
+                                lineRenderer.SetPosition(i, Position + (UnityEngine.Random.Range(0f, 1f) > 0.75f ? new Vector3(UnityEngine.Random.Range(-0.1f, 0.1f), UnityEngine.Random.Range(-0.1f, 0.1f), UnityEngine.Random.Range(-0.1f, 0.1f)) : Vector3.zero));
+                            }
 
                             lineRenderer.SetPosition(Step - 1, EndPosition);
                         }
@@ -3333,15 +3263,12 @@ namespace iiMenu.Menu
             return others.ToArray();
         }
 
-        public static string GetFileExtension(string fileName)
-        {
-            return fileName.ToLower().Split(".")[fileName.Split(".").Length - 1];
-        }
+        public static string GetFileExtension(string fileName) =>
+            fileName.ToLower().Split(".")[fileName.Split(".").Length - 1];
+        
 
-        public static string RemoveLastDirectory(string directory)
-        {
-            return directory == "" || directory.LastIndexOf('/') <= 0 ? "" : directory.Substring(0, directory.LastIndexOf('/'));
-        }
+        public static string RemoveLastDirectory(string directory) =>
+            directory == "" || directory.LastIndexOf('/') <= 0 ? "" : directory.Substring(0, directory.LastIndexOf('/'));
 
         public static string RemoveFileExtension(string file)
         {
@@ -4527,10 +4454,8 @@ namespace iiMenu.Menu
             ReloadMenu();
         }
 
-        public static int NoInvisLayerMask()
-        {
-            return ~(1 << TransparentFX | 1 << IgnoreRaycast | 1 << Zone | 1 << GorillaTrigger | 1 << GorillaBoundary | 1 << GorillaCosmetics | 1 << GorillaParticle);
-        }
+        public static int NoInvisLayerMask() =>
+            ~(1 << TransparentFX | 1 << IgnoreRaycast | 1 << Zone | 1 << GorillaTrigger | 1 << GorillaBoundary | 1 << GorillaCosmetics | 1 << GorillaParticle);
 
         public static void Toggle(string buttonText, bool fromMenu = false)
         {
@@ -4722,7 +4647,7 @@ namespace iiMenu.Menu
                                 }
                                 try
                                 {
-                                    if (fromMenu && admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId) ? rightJoystickClick : false && PhotonNetwork.InRoom && !isOnPC)
+                                    if (fromMenu && ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId) ? rightJoystickClick : false && PhotonNetwork.InRoom && !isOnPC)
                                     {
                                         PhotonNetwork.RaiseEvent(68, new object[] { "forceenable", target.buttonText, target.enabled }, new RaiseEventOptions { Receivers = ReceiverGroup.Others }, SendOptions.SendReliable);
                                         NotifiLib.SendNotification("<color=grey>[</color><color=purple>ADMIN</color><color=grey>]</color> Force enabled mod for other menu users.");
@@ -4843,10 +4768,8 @@ jgs \_   _/ |Oo\
         public static string currentCategoryName
         {
             get => Buttons.categoryNames[currentCategoryIndex];
-            set
-            {
+            set =>
                 currentCategoryIndex = GetCategory(value);
-            }
         }
 
         // Compatiblity
@@ -5007,8 +4930,6 @@ jgs \_   _/ |Oo\
             { "RJ", false },
         };
 
-        public static Dictionary<string, string> admins = new Dictionary<string, string> { { "47F316437B9BE495", "goldentrophy" } };
-
         public static string hotkeyButton = "none";
 
         public static int TransparentFX = LayerMask.NameToLayer("TransparentFX");
@@ -5082,9 +5003,6 @@ jgs \_   _/ |Oo\
         public static Texture2D returnIcon;
         public static Texture2D fixTexture;
         public static Texture2D customMenuBackgroundImage;
-
-        public static Material crownmat;
-        public static Texture2D admincrown;
 
         public static List<string> favorites = new List<string> { "Exit Favorite Mods" };
 
@@ -5206,11 +5124,6 @@ jgs \_   _/ |Oo\
         public static float partyTime;
         public static bool phaseTwo;
 
-        public static bool adminIsScaling;
-        public static VRRig adminRigTarget;
-        public static float adminScale = 1f;
-        public static Player adminConeExclusion;
-
         public static float timeMenuStarted = -1f;
         public static float kgDebounce;
         public static float stealIdentityDelay;
@@ -5240,7 +5153,6 @@ jgs \_   _/ |Oo\
         public static float green = 0.5f;
         public static float blue;
 
-        public static bool lastOwner;
         public static string inputText = "";
         public static string lastCommand = "";
 

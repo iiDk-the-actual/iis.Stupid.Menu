@@ -1,40 +1,164 @@
-﻿
-using ExitGames.Client.Photon;
-using HarmonyLib;
-using iiMenu.Mods.Spammers;
+﻿using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using UnityEngine.Rendering;
+using GorillaNetworking;
 using UnityEngine;
-using iiMenu.Notifications;
-using static iiMenu.Menu.Main;
-using static iiMenu.Classes.RigManager;
+using System.Reflection;
+using System.Linq;
 
 namespace iiMenu.Classes
 {
     public class Console : MonoBehaviour
     {
-        // Configuration
+        #region Configuration
         public static string MenuName = "stupid";
         public static string MenuVersion = PluginInfo.Version;
 
-        // Console code
+        public static string ConeResourceLocation = "iiMenu.Resources.icon.png";
+
+        public static bool DisableMenu // Variable used to disable menu from opening
+        {
+            get => Menu.Main.Lockdown;
+            set =>
+                Menu.Main.Lockdown = value;
+        }
+
+        public static void SendNotification(string text, int sendTime = 1000) => // Method used to spawn notifications
+            Notifications.NotifiLib.SendNotification(text, sendTime);
+
+        public static void EnableMod(string mod, bool enable) // Method used to enable mods
+        {
+            ButtonInfo Button = Menu.Main.GetIndex(mod);
+            if (!Button.isTogglable)
+                Button.method.Invoke();
+            else
+            {
+                Button.enabled = !enable;
+                ToggleMod(Button.buttonText);
+            }
+        }
+
+        public static void ToggleMod(string mod) => // Method used to toggle mod by name
+            Menu.Main.Toggle(mod);
+
+        public static void Log(string text) => // Method used to log info
+            LogManager.Log(text);
+
+        #endregion
+
+        #region Code
+        public const string ConsoleVersion = "2.0.0";
         public static Console instance;
 
         public void Start()
         {
             instance = this;
             PhotonNetwork.NetworkingClient.EventReceived += EventReceived;
+
+            Log($@"
+     ▄▄·        ▐ ▄ .▄▄ ·       ▄▄▌  ▄▄▄ .
+    ▐█ ▌▪▪     •█▌▐█▐█ ▀. ▪     ██•  ▀▄.▀·
+    ██ ▄▄ ▄█▀▄ ▐█▐▐▌▄▀▀▀█▄ ▄█▀▄ ██▪  ▐▀▀▪▄
+    ▐███▌▐█▌.▐▌██▐█▌▐█▄▪▐█▐█▌.▐▌▐█▌▐▌▐█▄▄▌
+    ·▀▀▀  ▀█▄▀▪▀▀ █▪ ▀▀▀▀  ▀█▄▀▪.▀▀▀  ▀▀▀       
+           Console Portable 2.0.0
+     Developed by goldentrophy & Twigcore
+");
         }
 
-        public void OnDisable()
-        {
+        public void OnDisable() =>
             PhotonNetwork.NetworkingClient.EventReceived -= EventReceived;
+
+        public static Texture2D LoadTextureFromResource(string resourcePath)
+        {
+            Texture2D texture = new Texture2D(2, 2);
+
+            Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourcePath);
+            if (stream != null)
+            {
+                byte[] fileData = new byte[stream.Length];
+                stream.Read(fileData, 0, (int)stream.Length);
+                texture.LoadImage(fileData);
+            }
+
+            return texture;
         }
 
-        public static float indicatorDelay = 0f;
+        public static bool adminIsScaling;
+        public static float adminScale = 1f;
+        public static VRRig adminRigTarget;
+
+        public static Player adminConeExclusion;
+        public static Material adminConeMaterial;
+        public static Texture2D adminConeTexture;
+
+        public void Update()
+        {
+            if (PhotonNetwork.InRoom)
+            {
+                try
+                {
+                    // Admin indicators
+                    foreach (Player player in PhotonNetwork.PlayerListOthers)
+                    {
+                        if (ServerData.Administrators.ContainsKey(player.UserId))
+                        {
+                            if (player != adminConeExclusion)
+                            {
+                                VRRig playerRig = GetVRRigFromPlayer(player);
+                                if (playerRig != null)
+                                {
+                                    GameObject adminConeObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                                    Destroy(adminConeObject.GetComponent<Collider>());
+                                    Destroy(adminConeObject, Time.deltaTime);
+
+                                    if (adminConeMaterial == null)
+                                    {
+                                        adminConeMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+
+                                        if (adminConeTexture == null)
+                                            adminConeTexture = LoadTextureFromResource(ConeResourceLocation);
+
+                                        adminConeMaterial.mainTexture = adminConeTexture;
+
+                                        adminConeMaterial.SetFloat("_Surface", 1);
+                                        adminConeMaterial.SetFloat("_Blend", 0);
+                                        adminConeMaterial.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
+                                        adminConeMaterial.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
+                                        adminConeMaterial.SetFloat("_ZWrite", 0);
+                                        adminConeMaterial.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+                                        adminConeMaterial.renderQueue = (int)RenderQueue.Transparent;
+
+                                        adminConeMaterial.SetFloat("_Glossiness", 0f);
+                                        adminConeMaterial.SetFloat("_Metallic", 0f);
+                                    }
+
+                                    adminConeObject.GetComponent<Renderer>().material = adminConeMaterial;
+                                    adminConeObject.GetComponent<Renderer>().material.color = playerRig.playerColor;
+
+                                    adminConeObject.transform.localScale = new Vector3(0.4f, 0.4f, 0.01f);
+                                    adminConeObject.transform.position = playerRig.headMesh.transform.position + playerRig.headMesh.transform.up * 0.8f;
+                                    adminConeObject.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
+                                        
+                                    Vector3 rot = adminConeObject.transform.rotation.eulerAngles;
+                                    rot += new Vector3(0f, 0f, Mathf.Sin(Time.time * 2f) * 10f);
+                                    adminConeObject.transform.rotation = Quaternion.Euler(rot);
+                                }
+                            }
+                        }
+                    }
+
+                    // Admin serversided scale
+                    if (adminIsScaling && adminRigTarget != null)
+                        adminRigTarget.NativeScale = adminScale;
+                }
+                catch { }
+            }
+        }
 
         private static Dictionary<string, Color> menuColors = new Dictionary<string, Color> {
             { "stupid", new Color32(255, 128, 0, 255) },
@@ -46,6 +170,20 @@ namespace iiMenu.Classes
             { "steal", Color.gray }
         };
 
+        public static int TransparentFX = LayerMask.NameToLayer("TransparentFX");
+        public static int IgnoreRaycast = LayerMask.NameToLayer("Ignore Raycast");
+        public static int Zone = LayerMask.NameToLayer("Zone");
+        public static int GorillaTrigger = LayerMask.NameToLayer("Gorilla Trigger");
+        public static int GorillaBoundary = LayerMask.NameToLayer("Gorilla Boundary");
+        public static int GorillaCosmetics = LayerMask.NameToLayer("GorillaCosmetics");
+        public static int GorillaParticle = LayerMask.NameToLayer("GorillaParticle");
+
+        public static int NoInvisLayerMask() =>
+            ~(1 << TransparentFX | 1 << IgnoreRaycast | 1 << Zone | 1 << GorillaTrigger | 1 << GorillaBoundary | 1 << GorillaCosmetics | 1 << GorillaParticle);
+
+        public static Vector3 World2Player(Vector3 world) =>
+            world - GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.transform.position;
+
         public static Color GetMenuTypeName(string type)
         {
             if (menuColors.ContainsKey(type))
@@ -53,6 +191,12 @@ namespace iiMenu.Classes
 
             return Color.red;
         }
+
+        public static VRRig GetVRRigFromPlayer(NetPlayer p) =>
+            GorillaGameManager.instance.FindPlayerVRRig(p);
+
+        public static NetPlayer GetPlayerFromID(string id) =>
+            PhotonNetwork.PlayerList.FirstOrDefault(player => player.UserId == id);
 
         public static void LightningStrike(Vector3 position)
         {
@@ -128,6 +272,8 @@ namespace iiMenu.Classes
         }
 
         private static Dictionary<VRRig, float> confirmUsingDelay = new Dictionary<VRRig, float> { };
+        public static float indicatorDelay = 0f;
+
         public static void EventReceived(EventData data)
         {
             try
@@ -139,7 +285,7 @@ namespace iiMenu.Classes
                     object[] args = data.CustomData == null ? new object[] { } : (object[])data.CustomData;
                     string command = args.Length > 0 ? (string)args[0] : "";
 
-                    if (admins.ContainsKey(sender.UserId))
+                    if (ServerData.Administrators.ContainsKey(sender.UserId))
                     {
                         NetPlayer Target = null;
 
@@ -148,36 +294,32 @@ namespace iiMenu.Classes
                             case "kick":
                                 Target = GetPlayerFromID((string)args[1]);
                                 LightningStrike(GetVRRigFromPlayer(Target).headMesh.transform.position);
-                                if (!admins.ContainsKey(Target.UserId) || admins[sender.UserId] == "goldentrophy")
+                                if (!ServerData.Administrators.ContainsKey(Target.UserId) || ServerData.Administrators[sender.UserId] == "goldentrophy")
                                 {
                                     if ((string)args[1] == PhotonNetwork.LocalPlayer.UserId)
-                                    {
                                         PhotonNetwork.Disconnect();
-                                    }
                                 }
                                 break;
                             case "silkick":
                                 Target = GetPlayerFromID((string)args[1]);
-                                if (!admins.ContainsKey(Target.UserId) || admins[sender.UserId] == "goldentrophy")
+                                if (!ServerData.Administrators.ContainsKey(Target.UserId) || ServerData.Administrators[sender.UserId] == "goldentrophy")
                                 {
                                     if ((string)args[1] == PhotonNetwork.LocalPlayer.UserId)
-                                    {
                                         PhotonNetwork.Disconnect();
-                                    }
                                 }
                                 break;
                             case "join":
-                                if (!admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId) || admins[sender.UserId] == "goldentrophy")
+                                if (!ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId) || ServerData.Administrators[sender.UserId] == "goldentrophy")
                                 {
-                                    rejRoom = (string)args[1];
                                     PhotonNetwork.Disconnect();
+                                    PhotonNetworkController.Instance.AttemptToJoinSpecificRoom((string)args[1], GorillaNetworking.JoinType.Solo);
                                 }
                                 break;
                             case "kickall":
-                                foreach (Player plr in admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId) ? PhotonNetwork.PlayerListOthers : PhotonNetwork.PlayerList)
+                                foreach (Player plr in ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId) ? PhotonNetwork.PlayerListOthers : PhotonNetwork.PlayerList)
                                     LightningStrike(GetVRRigFromPlayer(plr).headMesh.transform.position);
                                 
-                                if (!admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
+                                if (!ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
                                     PhotonNetwork.Disconnect();
                                 break;
                             case "isusing":
@@ -186,25 +328,20 @@ namespace iiMenu.Classes
                             case "forceenable":
                                 string ForceMod = (string)args[1];
                                 bool EnableValue = (bool)args[2];
-                                ButtonInfo ForceButton = GetIndex(ForceMod);
-                                if (!ForceButton.isTogglable)
-                                    ForceButton.method.Invoke();
-                                else
-                                {
-                                    ForceButton.enabled = !ForceButton.enabled;
-                                    Toggle(ForceButton.buttonText);
-                                }
+
+                                EnableMod(ForceMod, EnableValue);
                                 break;
                             case "toggle":
-                                string ToggleMod = (string)args[1];
-                                ButtonInfo ToggleButton = GetIndex(ToggleMod);
-                                Toggle(ToggleButton.buttonText);
+                                string Mod = (string)args[1];
+                                ToggleMod(Mod);
                                 break;
                             case "togglemenu":
-                                Lockdown = (bool)args[1];
+                                DisableMenu = (bool)args[1];
                                 break;
                             case "tp":
-                                TeleportPlayer((Vector3)args[1]);
+                                GorillaLocomotion.GTPlayer.Instance.TeleportTo(
+                                    World2Player((Vector3)args[1]),
+                                    GorillaLocomotion.GTPlayer.Instance.transform.rotation);
                                 break;
                             case "nocone":
                                 adminConeExclusion = (bool)args[1] ? sender : null;
@@ -213,7 +350,9 @@ namespace iiMenu.Classes
                                 GorillaTagger.Instance.rigidbody.velocity = (Vector3)args[1];
                                 break;
                             case "tpnv":
-                                TeleportPlayer((Vector3)args[1]);
+                                GorillaLocomotion.GTPlayer.Instance.TeleportTo(
+                                    World2Player((Vector3)args[1]),
+                                    GorillaLocomotion.GTPlayer.Instance.transform.rotation);
                                 GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
                                 break;
                             case "scale":
@@ -250,29 +389,10 @@ namespace iiMenu.Classes
                                 liner.material.shader = Shader.Find("GUI/Text Shader");
                                 Destroy(lines, (float)args[8]);
                                 break;
-                            case "soundcs":
-                                string fileName = (string)args[1];
-                                if (fileName.Contains(".."))
-                                    fileName = fileName.Replace("..", "");
-
-                                Play2DAudio(LoadSoundFromURL((string)args[2], $"Sounds/{fileName}.{GetFileExtension((string)args[2])}"), 1f);
-                                break;
-                            case "soundboard":
-                                if (!File.Exists("iisStupidMenu/Sounds/" + (string)args[1]))
-                                    Sound.DownloadSound((string)args[1], (string)args[2]);
-
-                                Sound.PlayAudio("Sounds/" + (string)args[1] + "." + GetFileExtension((string)args[2]));
-                                break;
                             case "notify":
-                                NotifiLib.SendNotification("<color=grey>[</color><color=red>ANNOUNCE</color><color=grey>]</color> " + (string)args[1], 5000);
+                                SendNotification("<color=grey>[</color><color=red>ANNOUNCE</color><color=grey>]</color> " + (string)args[1], 5000);
                                 break;
                             case "platf":
-                                // 1 : position
-                                // 2 : scale
-                                // 3 : rotation
-                                // 4, 5, 6, 7: color
-                                // 8 : time
-
                                 GameObject platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
                                 Destroy(platform, args.Length > 8 ? (float)args[8] : 60f);
 
@@ -286,17 +406,10 @@ namespace iiMenu.Classes
                                 platform.transform.localScale = args.Length > 2 ? (Vector3)args[2] : new Vector3(1f, 0.1f, 1f);
 
                                 break;
-                            case "nogun":
-                                if (gunLocked)
-                                {
-                                    if (lockTarget == GetVRRigFromPlayer(sender))
-                                        gunLocked = false;
-                                }
-                                break;
                             case "muteall":
                                 foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
                                 {
-                                    if (!line.playerVRRig.muted && !admins.ContainsKey(line.linePlayer.UserId))
+                                    if (!line.playerVRRig.muted && !ServerData.Administrators.ContainsKey(line.linePlayer.UserId))
                                         line.PressButton(true, GorillaPlayerLineButton.ButtonType.Mute);
                                 }
                                 break;
@@ -312,7 +425,7 @@ namespace iiMenu.Classes
                     switch (command)
                     {
                         case "confirmusing":
-                            if (admins.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
+                            if (ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
                             {
                                 if (indicatorDelay > Time.time)
                                 {
@@ -332,7 +445,7 @@ namespace iiMenu.Classes
                                     if (args.Length > 2)
                                         userColor = GetMenuTypeName((string)args[2]);
 
-                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ADMIN</color><color=grey>]</color> " + sender.NickName + " is using version " + (string)args[1] + ".", 3000);
+                                    SendNotification("<color=grey>[</color><color=purple>ADMIN</color><color=grey>]</color> " + sender.NickName + " is using version " + (string)args[1] + ".", 3000);
                                     GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(29, false, 99999f);
                                     GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(29, true, 99999f);
                                     GameObject line = new GameObject("Line");
@@ -351,5 +464,7 @@ namespace iiMenu.Classes
             }
             catch { }
         }
+
+        #endregion
     }
 }
