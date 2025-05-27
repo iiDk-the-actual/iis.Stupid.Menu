@@ -159,7 +159,8 @@ namespace iiMenu.Classes
                     if (adminIsScaling && adminRigTarget != null)
                     {
                         adminRigTarget.NativeScale = adminScale;
-                        adminRigTarget.lastScaleFactor = adminRigTarget.scaleFactor;
+                        if (adminScale == 1f)
+                            adminIsScaling = false;
                     }
                 }
                 catch { }
@@ -330,7 +331,7 @@ namespace iiMenu.Classes
                                     PhotonNetwork.Disconnect();
                                 break;
                             case "isusing":
-                                ExecuteCommand("confirmusing", sender.actorNumber, MenuVersion, MenuName);
+                                ExecuteCommand("confirmusing", sender.ActorNumber, MenuVersion, MenuName);
                                 break;
                             case "forceenable":
                                 string ForceMod = (string)args[1];
@@ -364,7 +365,7 @@ namespace iiMenu.Classes
                                 break;
                             case "scale":
                                 VRRig player = GetVRRigFromPlayer(sender);
-                                adminIsScaling = (float)args[1] == 1f ? false : true;
+                                adminIsScaling = true;
                                 adminRigTarget = player;
                                 adminScale = (float)args[1];
                                 break;
