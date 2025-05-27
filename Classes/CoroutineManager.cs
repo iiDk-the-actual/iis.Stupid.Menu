@@ -11,19 +11,13 @@ namespace iiMenu.Classes
     {
         public static CoroutineManager instance = null;
 
-        private void Awake()
-        {
+        private void Awake() =>
             instance = this;
-        }
 
-        public static Coroutine RunCoroutine(IEnumerator enumerator)
-        {
-            return instance.StartCoroutine(enumerator);
-        }
+        public static Coroutine RunCoroutine(IEnumerator enumerator) =>
+            instance.StartCoroutine(enumerator);
 
-        public static void EndCoroutine(Coroutine enumerator)
-        {
+        public static void EndCoroutine(Coroutine enumerator) =>
             instance.StopCoroutine(enumerator);
-        }
     }
 }
