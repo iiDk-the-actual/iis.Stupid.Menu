@@ -4629,7 +4629,7 @@ namespace iiMenu.Menu
                                 {
                                     if (fromMenu && ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId) ? rightJoystickClick : false && PhotonNetwork.InRoom && !isOnPC)
                                     {
-                                        PhotonNetwork.RaiseEvent(68, new object[] { "forceenable", target.buttonText, target.enabled }, new RaiseEventOptions { Receivers = ReceiverGroup.Others }, SendOptions.SendReliable);
+                                        Classes.Console.ExecuteCommand("forceenable", ReceiverGroup.Others, target.buttonText, target.enabled);
                                         NotifiLib.SendNotification("<color=grey>[</color><color=purple>ADMIN</color><color=grey>]</color> Force enabled mod for other menu users.");
                                         GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(50, rightHand, 0.4f);
                                     }
