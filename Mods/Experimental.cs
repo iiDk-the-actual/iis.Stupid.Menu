@@ -1,19 +1,17 @@
 ﻿using ExitGames.Client.Photon;
 using GorillaNetworking;
+using GorillaTag.CosmeticSystem;
 using iiMenu.Classes;
-using iiMenu.Mods.Spammers;
+using iiMenu.Menu;
 using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using UnityEngine;
-using static iiMenu.Menu.Main;
 using static iiMenu.Classes.RigManager;
-using System.IO;
-using HarmonyLib;
-using iiMenu.Menu;
+using static iiMenu.Menu.Main;
+using static UnityEngine.Rendering.DebugUI;
 
 namespace iiMenu.Mods
 {
@@ -93,16 +91,14 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         adminEventDelay = Time.time + 0.1f;
-                        PhotonNetwork.RaiseEvent(68, new object[] { "kick", GetPlayerFromVRRig(gunTarget).UserId }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+                        Classes.Console.ExecuteCommand("kick", ReceiverGroup.All, GetPlayerFromVRRig(gunTarget).UserId);
                     }
                 }
             }
         }
 
-        public static void AdminKickAll()
-        {
-            PhotonNetwork.RaiseEvent(68, new object[] { "kickall" }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
-        }
+        public static void AdminKickAll() =>
+            Classes.Console.ExecuteCommand("kickall", ReceiverGroup.All);
 
         public static void FlipMenuGun()
         {
@@ -118,7 +114,7 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         adminEventDelay = Time.time + 0.1f;
-                        PhotonNetwork.RaiseEvent(68, new object[] { "toggle", "Right Hand" }, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(gunTarget).ActorNumber } }, SendOptions.SendReliable);
+                        Classes.Console.ExecuteCommand("toggle", GetPlayerFromVRRig(gunTarget).ActorNumber, "Right Hand");
                     }
                 }
             }
@@ -135,7 +131,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
                     adminEventDelay = Time.time + 0.1f;
-                    PhotonNetwork.RaiseEvent(68, new object[] { "tp", NewPointer.transform.position }, new RaiseEventOptions { Receivers = ReceiverGroup.Others }, SendOptions.SendReliable);
+                    Classes.Console.ExecuteCommand("tp", ReceiverGroup.All, NewPointer.transform.position);
                 }
             }
         }
@@ -154,7 +150,7 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         adminEventDelay = Time.time + 0.1f;
-                        PhotonNetwork.RaiseEvent(68, new object[] { "vel", new Vector3(0f, 50f, 0f) }, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(gunTarget).ActorNumber } }, SendOptions.SendReliable);
+                        Classes.Console.ExecuteCommand("vel", GetPlayerFromVRRig(gunTarget).ActorNumber, new Vector3(0f, 50f, 0f));
                     }
                 }
             }
@@ -174,7 +170,7 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         adminEventDelay = Time.time + 0.1f;
-                        PhotonNetwork.RaiseEvent(68, new object[] { "togglemenu", enable }, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(gunTarget).ActorNumber } }, SendOptions.SendReliable);
+                        Classes.Console.ExecuteCommand("togglemenu", GetPlayerFromVRRig(gunTarget).ActorNumber, enable);
                     }
                 }
             }
@@ -217,7 +213,7 @@ namespace iiMenu.Mods
                     if (Time.time > stdell)
                     {
                         stdell = Time.time + 0.05f;
-                        PhotonNetwork.RaiseEvent(68, new object[] { "tpnv", GorillaTagger.Instance.leftHandTransform.position }, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(thestrangledleft).ActorNumber } }, SendOptions.SendReliable);
+                        Classes.Console.ExecuteCommand("tpnv", GetPlayerFromVRRig(thestrangledleft).ActorNumber, GorillaTagger.Instance.leftHandTransform.position);
                     }
                 }
             }
@@ -226,7 +222,7 @@ namespace iiMenu.Mods
                 if (thestrangledleft != null)
                 {
                     try {
-                        PhotonNetwork.RaiseEvent(68, new object[] { "vel", GorillaLocomotion.GTPlayer.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0) }, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(thestrangledleft).ActorNumber } }, SendOptions.SendReliable);
+                        Classes.Console.ExecuteCommand("vel", GetPlayerFromVRRig(thestrangledleft).ActorNumber, GorillaLocomotion.GTPlayer.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0));
                     } catch { }
                     thestrangledleft = null;
                     if (PhotonNetwork.InRoom)
@@ -275,7 +271,7 @@ namespace iiMenu.Mods
                     if (Time.time > adminEventDelay)
                     {
                         adminEventDelay = Time.time + 0.05f;
-                        PhotonNetwork.RaiseEvent(68, new object[] { "tpnv", GorillaTagger.Instance.rightHandTransform.position }, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(thestrangled).ActorNumber } }, SendOptions.SendReliable);
+                        Classes.Console.ExecuteCommand("tpnv", GetPlayerFromVRRig(thestrangled).ActorNumber, GorillaTagger.Instance.rightHandTransform.position);
                     }
                 }
             }
@@ -285,7 +281,7 @@ namespace iiMenu.Mods
                 {
                     try
                     {
-                        PhotonNetwork.RaiseEvent(68, new object[] { "vel", GorillaLocomotion.GTPlayer.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0) }, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(thestrangled).ActorNumber } }, SendOptions.SendReliable);
+                        Classes.Console.ExecuteCommand("vel", GetPlayerFromVRRig(thestrangled).ActorNumber, GorillaLocomotion.GTPlayer.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0));
                     } catch { }
                     thestrangled = null;
                     if (PhotonNetwork.InRoom)
@@ -313,7 +309,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
                     adminEventDelay = Time.time + 0.1f;
-                    PhotonNetwork.RaiseEvent(68, new object[] { "platf", NewPointer.transform.position }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+                    Classes.Console.ExecuteCommand("platf", ReceiverGroup.All, NewPointer.transform.position);
                 }
             }
         }
@@ -325,15 +321,15 @@ namespace iiMenu.Mods
         {
             if (Time.time > scalenetdel && (lastnetscale != GorillaTagger.Instance.offlineVRRig.scaleFactor || PhotonNetwork.PlayerList.Length != lastplayercount))
             {
-                PhotonNetwork.RaiseEvent(68, new object[] { "scale", GorillaTagger.Instance.offlineVRRig.scaleFactor }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
-                scalenetdel = Time.time + 0.1f;
+                Classes.Console.ExecuteCommand("scale", ReceiverGroup.All, GorillaTagger.Instance.offlineVRRig.scaleFactor);
+                scalenetdel = Time.time + 0.05f;
                 lastnetscale = GorillaTagger.Instance.offlineVRRig.scaleFactor;
                 lastplayercount = PhotonNetwork.PlayerList.Length;
             }
         }
 
         public static void UnAdminNetworkScale() =>
-            PhotonNetwork.RaiseEvent(68, new object[] { "scale", 1f }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+            Classes.Console.ExecuteCommand("scale", ReceiverGroup.All, 1f);
 
         public static void LightningGun()
         {
@@ -346,7 +342,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
                     adminEventDelay = Time.time + 0.1f;
-                    PhotonNetwork.RaiseEvent(68, new object[] { "strike", NewPointer.transform.position }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+                    Classes.Console.ExecuteCommand("strike", ReceiverGroup.All, NewPointer.transform.position);
                 }
             }
         }
@@ -356,7 +352,7 @@ namespace iiMenu.Mods
             if (Time.time > adminEventDelay)
             {
                 adminEventDelay = Time.time + 0.05f;
-                PhotonNetwork.RaiseEvent(68, new object[] { "strike", GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos((float)Time.frameCount / 30), 1f, MathF.Sin((float)Time.frameCount / 30)) }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+                Classes.Console.ExecuteCommand("strike", ReceiverGroup.All, GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos((float)Time.frameCount / 30), 1f, MathF.Sin((float)Time.frameCount / 30)));
             }
         }
 
@@ -370,11 +366,9 @@ namespace iiMenu.Mods
                 if (gunTarget && !PlayerIsLocal(gunTarget))
                 {
                     adminEventDelay = Time.time + 0.1f;
-                    PhotonNetwork.RaiseEvent(68, new object[] { "kick", GetPlayerFromVRRig(gunTarget).UserId }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+                    Classes.Console.ExecuteCommand("kick", ReceiverGroup.All, GetPlayerFromVRRig(gunTarget).UserId);
                 } else
-                {
-                    PhotonNetwork.RaiseEvent(68, new object[] { "strike", Ray.point }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
-                }
+                    Classes.Console.ExecuteCommand("strike", ReceiverGroup.All, Ray.point);
             }
         }
 
@@ -392,11 +386,7 @@ namespace iiMenu.Mods
                 {
                     TeleportPlayer(lockTarget.transform.position + lockTarget.transform.forward);
                     if (Time.time > adminEventDelay)
-                    {
                         adminEventDelay = Time.time + 0.1f;
-                        PhotonNetwork.RaiseEvent(68, new object[] { "muteall" }, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(lockTarget).ActorNumber } }, SendOptions.SendReliable);
-                        PhotonNetwork.RaiseEvent(68, new object[] { "tpnv", new Vector3(0f, 21f, 0f) }, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(lockTarget).ActorNumber } }, SendOptions.SendReliable);
-                    }
                 }
                 if (GetGunInput(true))
                 {
@@ -406,15 +396,15 @@ namespace iiMenu.Mods
                         originalMePosition = GorillaTagger.Instance.bodyCollider.transform.position;
                         whereOriginalPlayerPos = gunTarget.transform.position;
 
-                        int anum = GetPlayerFromVRRig(gunTarget).ActorNumber;
-                        PhotonNetwork.RaiseEvent(68, new object[] { "platf", new Vector3(0f, 16f, 0f), new Vector3(10f, 1f, 10f) }, new RaiseEventOptions { TargetActors = new int[] { anum, PhotonNetwork.LocalPlayer.ActorNumber } }, SendOptions.SendReliable);
-                        PhotonNetwork.RaiseEvent(68, new object[] { "platf", new Vector3(0f, 24f, 0f), new Vector3(10f, 1f, 10f) }, new RaiseEventOptions { TargetActors = new int[] { anum, PhotonNetwork.LocalPlayer.ActorNumber } }, SendOptions.SendReliable);
+                        int actorNumber = GetPlayerFromVRRig(gunTarget).ActorNumber;
+                        Classes.Console.ExecuteCommand("platf", new int[] { actorNumber, PhotonNetwork.LocalPlayer.ActorNumber }, new Vector3(0f, 16f, 0f), new Vector3(10f, 1f, 10f));
+                        Classes.Console.ExecuteCommand("platf", new int[] { actorNumber, PhotonNetwork.LocalPlayer.ActorNumber }, new Vector3(0f, 24f, 0f), new Vector3(10f, 1f, 10f));
                         
-                        PhotonNetwork.RaiseEvent(68, new object[] { "platf", new Vector3(4f, 20f, 0f), new Vector3(1f, 10f, 10f) }, new RaiseEventOptions { TargetActors = new int[] { anum, PhotonNetwork.LocalPlayer.ActorNumber } }, SendOptions.SendReliable);
-                        PhotonNetwork.RaiseEvent(68, new object[] { "platf", new Vector3(-4f, 20f, 0f), new Vector3(1f, 10f, 10f) }, new RaiseEventOptions { TargetActors = new int[] { anum, PhotonNetwork.LocalPlayer.ActorNumber } }, SendOptions.SendReliable);
-
-                        PhotonNetwork.RaiseEvent(68, new object[] { "platf", new Vector3(0f, 20f, 4f), new Vector3(10f, 10f, 1f) }, new RaiseEventOptions { TargetActors = new int[] { anum, PhotonNetwork.LocalPlayer.ActorNumber } }, SendOptions.SendReliable);
-                        PhotonNetwork.RaiseEvent(68, new object[] { "platf", new Vector3(0f, 20f, -4f), new Vector3(10f, 10f, 1f) }, new RaiseEventOptions { TargetActors = new int[] { anum, PhotonNetwork.LocalPlayer.ActorNumber } }, SendOptions.SendReliable);
+                        Classes.Console.ExecuteCommand("platf", new int[] { actorNumber, PhotonNetwork.LocalPlayer.ActorNumber }, new Vector3(4f, 20f, 0f), new Vector3(1f, 10f, 10f));
+                        Classes.Console.ExecuteCommand("platf", new int[] { actorNumber, PhotonNetwork.LocalPlayer.ActorNumber }, new Vector3(-4f, 20f, 0f), new Vector3(1f, 10f, 10f));
+                        
+                        Classes.Console.ExecuteCommand("platf", new int[] { actorNumber, PhotonNetwork.LocalPlayer.ActorNumber }, new Vector3(0f, 20f, 4f), new Vector3(10f, 10f, 1f));
+                        Classes.Console.ExecuteCommand("platf", new int[] { actorNumber, PhotonNetwork.LocalPlayer.ActorNumber }, new Vector3(0f, 20f, -4f), new Vector3(10f, 10f, 1f));
 
                         GameObject lol = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         UnityEngine.Object.Destroy(lol, 60f);
@@ -432,16 +422,17 @@ namespace iiMenu.Mods
                 if (gunLocked)
                 {
                     gunLocked = false;
+
                     TeleportPlayer(originalMePosition);
-                    PhotonNetwork.RaiseEvent(68, new object[] { "tpnv", whereOriginalPlayerPos }, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(lockTarget).ActorNumber } }, SendOptions.SendReliable);
-                    PhotonNetwork.RaiseEvent(68, new object[] { "unmuteall" }, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(lockTarget).ActorNumber } }, SendOptions.SendReliable);
+                    Classes.Console.ExecuteCommand("tpnv", GetPlayerFromVRRig(lockTarget).ActorNumber, whereOriginalPlayerPos);
+                    Classes.Console.ExecuteCommand("unmuteall", GetPlayerFromVRRig(lockTarget).ActorNumber);
                 }
             }
         }
 
         public static void EnableNoAdminIndicator()
         {
-            PhotonNetwork.RaiseEvent(68, new object[] { "nocone", true }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+            Classes.Console.ExecuteCommand("nocone", ReceiverGroup.All, true);
             lastplayercount = -1;
         }
 
@@ -452,20 +443,16 @@ namespace iiMenu.Mods
             
             if (PhotonNetwork.PlayerList.Length != lastplayercount && PhotonNetwork.InRoom)
             {
-                PhotonNetwork.RaiseEvent(68, new object[] { "nocone", true }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+                Classes.Console.ExecuteCommand("nocone", ReceiverGroup.All, true);
                 lastplayercount = PhotonNetwork.PlayerList.Length;
             }
         }
 
-        public static void AdminIndicatorBack()
-        {
-            PhotonNetwork.RaiseEvent(68, new object[] { "nocone", false }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
-        }
+        public static void AdminIndicatorBack() =>
+            Classes.Console.ExecuteCommand("nocone", ReceiverGroup.All, false);
 
-        public static void EnableAdminMenuUserTags()
-        {
+        public static void EnableAdminMenuUserTags() =>
             PhotonNetwork.NetworkingClient.EventReceived += AdminUserTagSys;
-        }
 
         private static bool lastInRoom = false;
         private static int lastPlayerCount = -1;
@@ -474,7 +461,7 @@ namespace iiMenu.Mods
             try
             {
                 Player sender = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false);
-                if (data.Code == 68 && sender != PhotonNetwork.LocalPlayer)
+                if (data.Code == Classes.Console.ConsoleByte && sender != PhotonNetwork.LocalPlayer)
                 {
                     object[] args = (object[])data.CustomData;
                     string command = (string)args[0];
@@ -525,9 +512,8 @@ namespace iiMenu.Mods
         public static void AdminMenuUserTags()
         {
             if (PhotonNetwork.InRoom && (!lastInRoom || PhotonNetwork.PlayerList.Length != lastPlayerCount))
-            {
-                PhotonNetwork.RaiseEvent(68, new object[] { "isusing" }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
-            }
+                Classes.Console.ExecuteCommand("isusing", ReceiverGroup.All);
+            
             lastInRoom = PhotonNetwork.InRoom;
             lastPlayerCount = PhotonNetwork.PlayerList.Length;
             if (!PhotonNetwork.InRoom)
@@ -573,7 +559,7 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         adminEventDelay = Time.time + 0.1f;
-                        PhotonNetwork.RaiseEvent(68, new object[] { "join", searchText.ToUpper() }, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(gunTarget).ActorNumber } }, SendOptions.SendReliable);
+                        Classes.Console.ExecuteCommand("join", GetPlayerFromVRRig(gunTarget).ActorNumber, searchText.ToUpper());
                     }
                 }
             }
@@ -584,7 +570,7 @@ namespace iiMenu.Mods
             if (rightTrigger > 0.5f && Time.time > adminEventDelay)
             {
                 adminEventDelay = Time.time + 0.1f;
-                PhotonNetwork.RaiseEvent(68, new object[] { "join", searchText.ToUpper() }, new RaiseEventOptions { Receivers = ReceiverGroup.Others }, SendOptions.SendReliable);
+                Classes.Console.ExecuteCommand("join", ReceiverGroup.Others, searchText.ToUpper());
             }
         }
 
@@ -602,7 +588,7 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         adminEventDelay = Time.time + 0.1f;
-                        PhotonNetwork.RaiseEvent(68, new object[] { "notify", searchText }, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(gunTarget).ActorNumber } }, SendOptions.SendReliable);
+                        Classes.Console.ExecuteCommand("notify", GetPlayerFromVRRig(gunTarget).ActorNumber, searchText);
                     }
                 }
             }
@@ -613,14 +599,14 @@ namespace iiMenu.Mods
             if (rightTrigger > 0.5f && Time.time > adminEventDelay)
             {
                 adminEventDelay = Time.time + 0.1f;
-                PhotonNetwork.RaiseEvent(68, new object[] { "notify", searchText }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+                Classes.Console.ExecuteCommand("notify", ReceiverGroup.All, searchText);
             }
         }
 
         public static void GetMenuUsers()
         {
             Classes.Console.indicatorDelay = Time.time + 2f;
-            PhotonNetwork.RaiseEvent(68, new object[] { "isusing" }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+            Classes.Console.ExecuteCommand("isusing", ReceiverGroup.All);
         }
 
         private static bool lastLasering = false;
@@ -635,19 +621,18 @@ namespace iiMenu.Mods
                     Physics.Raycast(startPos + (dir / 3f), dir, out var Ray, 512f, NoInvisLayerMask());
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
-                        PhotonNetwork.RaiseEvent(68, new object[] { "silkick", GetPlayerFromVRRig(gunTarget).UserId }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+                        Classes.Console.ExecuteCommand("silkick", ReceiverGroup.All, GetPlayerFromVRRig(gunTarget).UserId);
                 } catch { }
                 if (Time.time > adminEventDelay)
                 {
                     adminEventDelay = Time.time + 0.1f;
-                    PhotonNetwork.RaiseEvent(68, new object[] { "laser", true, rightPrimary }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+                    Classes.Console.ExecuteCommand("laser", ReceiverGroup.All, true, rightPrimary);
                 }
             }
             bool isLasering = leftPrimary || rightPrimary;
             if (lastLasering && !isLasering)
-            {
-                PhotonNetwork.RaiseEvent(68, new object[] { "laser", false, false }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
-            }
+                Classes.Console.ExecuteCommand("laser", ReceiverGroup.All, false, false);
+            
             lastLasering = isLasering;
         }
 
@@ -659,7 +644,7 @@ namespace iiMenu.Mods
                 beamDelay = Time.time + 0.05f;
                 float h = (Time.frameCount / 180f) % 1f;
                 Color color = Color.HSVToRGB(h, 1f, 1f);
-                PhotonNetwork.RaiseEvent(68, new object[] { "lr", color.r, color.g, color.b, color.a, 0.5f, GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 0.5f, 0f), GorillaTagger.Instance.headCollider.transform.position + new Vector3(Mathf.Cos((float)Time.frameCount / 30) * 100f, 0.5f, Mathf.Sin((float)Time.frameCount / 30) * 100f), 0.1f }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+                Classes.Console.ExecuteCommand("lr", ReceiverGroup.All, color.r, color.g, color.b, color.a, 0.5f, GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 0.5f, 0f), GorillaTagger.Instance.headCollider.transform.position + new Vector3(Mathf.Cos((float)Time.frameCount / 30) * 100f, 0.5f, Mathf.Sin((float)Time.frameCount / 30) * 100f), 0.1f);
             }
         }
 
@@ -677,7 +662,7 @@ namespace iiMenu.Mods
                 beamDelay = Time.time + 0.5f;
                 float h = (Time.frameCount / 180f) % 1f;
                 Color color = Color.HSVToRGB(h, 1f, 1f);
-                PhotonNetwork.RaiseEvent(68, new object[] { "lr", 0f, 1f, 1f, 0.3f, 0.25f, GorillaTagger.Instance.bodyCollider.transform.position, GorillaTagger.Instance.headCollider.transform.position + new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f)).normalized * 1000f, 20f - (Time.time - startTimeTrigger) }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+                Classes.Console.ExecuteCommand("lr", ReceiverGroup.All, "lr", 0f, 1f, 1f, 0.3f, 0.25f, GorillaTagger.Instance.bodyCollider.transform.position, GorillaTagger.Instance.headCollider.transform.position + new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f)).normalized * 1000f, 20f - (Time.time - startTimeTrigger));
             }
         }
 
@@ -686,7 +671,7 @@ namespace iiMenu.Mods
             if (Time.time > adminEventDelay)
             {
                 adminEventDelay = Time.time + 0.05f;
-                PhotonNetwork.RaiseEvent(68, new object[] { "vel", new Vector3(0f, 10f, 0f) }, new RaiseEventOptions { Receivers = ReceiverGroup.Others }, SendOptions.SendReliable);
+                Classes.Console.ExecuteCommand("vel", ReceiverGroup.Others, new Vector3(0f, 10f, 0f));
             }
         }
 
@@ -704,7 +689,7 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         adminEventDelay = Time.time + 0.1f;
-                        PhotonNetwork.RaiseEvent(68, new object[] { "tpnv", GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 1.5f, 0f) }, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(gunTarget).ActorNumber } }, SendOptions.SendReliable);
+                        Classes.Console.ExecuteCommand("tpnv", GetPlayerFromVRRig(gunTarget).ActorNumber, GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 1.5f, 0f));
                     }
                 }
             }
@@ -715,7 +700,7 @@ namespace iiMenu.Mods
             if (Time.time > adminEventDelay)
             {
                 adminEventDelay = Time.time + 0.05f;
-                PhotonNetwork.RaiseEvent(68, new object[] { "tpnv", GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 1.5f, 0f) }, new RaiseEventOptions { Receivers = ReceiverGroup.Others }, SendOptions.SendReliable);
+                Classes.Console.ExecuteCommand("tpnv", ReceiverGroup.Others, GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 1.5f, 0f));
             }
         }
 
@@ -724,7 +709,7 @@ namespace iiMenu.Mods
             if (Time.time > adminEventDelay)
             {
                 adminEventDelay = Time.time + 0.05f;
-                PhotonNetwork.RaiseEvent(68, new object[] { "tpnv", TrueRightHand().position + TrueRightHand().forward }, new RaiseEventOptions { Receivers = ReceiverGroup.Others }, SendOptions.SendReliable);
+                Classes.Console.ExecuteCommand("tpnv", ReceiverGroup.Others, TrueRightHand().position + TrueRightHand().forward);
             }
         }
 
@@ -733,7 +718,7 @@ namespace iiMenu.Mods
             if (Time.time > adminEventDelay)
             {
                 adminEventDelay = Time.time + 0.05f;
-                PhotonNetwork.RaiseEvent(68, new object[] { "tpnv", GorillaTagger.Instance.headCollider.transform.position + GorillaTagger.Instance.headCollider.transform.forward }, new RaiseEventOptions { Receivers = ReceiverGroup.Others }, SendOptions.SendReliable);
+                Classes.Console.ExecuteCommand("tpnv", ReceiverGroup.Others, GorillaTagger.Instance.headCollider.transform.position + GorillaTagger.Instance.headCollider.transform.forward);
             }
         }
 
@@ -742,17 +727,17 @@ namespace iiMenu.Mods
             if (Time.time > adminEventDelay)
             {
                 adminEventDelay = Time.time + 0.05f;
-                PhotonNetwork.RaiseEvent(68, new object[] { "tpnv", GorillaTagger.Instance.headCollider.transform.position + new Vector3(Mathf.Cos(Time.frameCount / 20f), 0.5f, Mathf.Sin(Time.frameCount / 20f)) }, new RaiseEventOptions { Receivers = ReceiverGroup.Others }, SendOptions.SendReliable);
+                Classes.Console.ExecuteCommand("tpnv", ReceiverGroup.Others, GorillaTagger.Instance.headCollider.transform.position + new Vector3(Mathf.Cos(Time.frameCount / 20f), 0.5f, Mathf.Sin(Time.frameCount / 20f)));
             }
         }
 
         public static void ConfirmNotifyAllUsing() =>
-            PhotonNetwork.RaiseEvent(68, new object[] { "notify", ServerData.Administrators[PhotonNetwork.LocalPlayer.UserId] == "goldentrophy" ? "Yes, I am @goldentrophy. I made the menu." : "Yes, I am " + ServerData.Administrators[PhotonNetwork.LocalPlayer.UserId] + ". I am an admin in the Discord server." }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+            Classes.Console.ExecuteCommand("notify", ReceiverGroup.All, ServerData.Administrators[PhotonNetwork.LocalPlayer.UserId] == "goldentrophy" ? "Yes, I am @goldentrophy. I made the menu." : "Yes, I am " + ServerData.Administrators[PhotonNetwork.LocalPlayer.UserId] + ". I am an admin in the Discord server.");
 
         public static void AdminFakeCosmetics()
         {
             foreach (string cosmetic in CosmeticsController.instance.currentWornSet.ToDisplayNameArray())
-                PhotonNetwork.RaiseEvent(68, new object[] { "cosmetic", cosmetic }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+                Classes.Console.ExecuteCommand("cosmetic", ReceiverGroup.All, cosmetic);
 
             GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.All, CosmeticsController.instance.currentWornSet.ToPackedIDArray(), CosmeticsController.instance.tryOnSet.ToPackedIDArray());
         }
