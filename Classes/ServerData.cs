@@ -13,7 +13,7 @@ namespace iiMenu.Classes
 {
     public class ServerData : MonoBehaviour
     {
-        // Configuration
+        #region Configuration
         public static bool ServerDataEnabled = true;
         public static string ServerEndpoint = "https://iidk.online";
         public static string ServerDataEndpoint = "https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/main/iiMenu_ServerData.txt";
@@ -24,7 +24,9 @@ namespace iiMenu.Classes
         public static void JoinDiscordServer() => // Method used to join the Discord server
             Mods.Important.JoinDiscord();
 
-        // Server Data Code
+        #endregion
+
+        #region Server Data Code
         private static ServerData instance;
 
         private static List<string> DetectedModsLabelled = new List<string> { };
@@ -50,12 +52,12 @@ namespace iiMenu.Classes
                 LoadAttempts++;
                 if (LoadAttempts >= 3)
                 {
-                    LogManager.Log("Server data could not be loaded");
+                    Console.Log("Server data could not be loaded");
                     DataLoadTime = -1f;
                     return;
                 }
 
-                LogManager.Log("Attempting to load web data");
+                Console.Log("Attempting to load web data");
                 CoroutineManager.RunCoroutine(LoadServerData());
             }
 
@@ -116,7 +118,7 @@ namespace iiMenu.Classes
 
             if (webRequest.result != UnityWebRequest.Result.Success)
             {
-                LogManager.Log("Failed to load server data: " + webRequest.error);
+                Console.Log("Failed to load server data: " + webRequest.error);
                 yield break;
             }
 
@@ -133,14 +135,14 @@ namespace iiMenu.Classes
                     if (!PluginInfo.BetaBuild)
                     {
                         VersionWarning = true;
-                        LogManager.Log("Version is outdated");
+                        Console.Log("Version is outdated");
                         JoinDiscordServer();
                         Console.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using an outdated version of the menu. Please update to " + ResponseData[0] + ".", 10000);
                     }
                     else
                     {
                         VersionWarning = true;
-                        LogManager.Log("Version is outdated, but user is on beta");
+                        Console.Log("Version is outdated, but user is on beta");
                         Console.SendNotification("<color=grey>[</color><color=purple>BETA</color><color=grey>]</color> You are using a testing build of the menu. The latest release build is " + ResponseData[0] + ".", 10000);
                     }
                 }
@@ -149,7 +151,7 @@ namespace iiMenu.Classes
                     if (PluginInfo.BetaBuild)
                     {
                         VersionWarning = true;
-                        LogManager.Log("Version is outdated, user is on early build of latest");
+                        Console.Log("Version is outdated, user is on early build of latest");
                         JoinDiscordServer();
                         Console.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using a testing build of the menu. Please update to " + ResponseData[0] + ".", 10000);
                     }
@@ -326,5 +328,6 @@ namespace iiMenu.Classes
             request.downloadHandler = new DownloadHandlerBuffer();
             yield return request.SendWebRequest();
         }
+        #endregion
     }
 }
