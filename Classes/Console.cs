@@ -89,6 +89,8 @@ namespace iiMenu.Classes
             return texture;
         }
 
+        public const int ConsoleByte = 68; // Do not change this unless you want a local version of Console only your mod can be used by
+
         public static bool adminIsScaling;
         public static float adminScale = 1f;
         public static VRRig adminRigTarget;
@@ -155,7 +157,10 @@ namespace iiMenu.Classes
 
                     // Admin serversided scale
                     if (adminIsScaling && adminRigTarget != null)
+                    {
                         adminRigTarget.NativeScale = adminScale;
+                        adminRigTarget.lastScaleFactor = adminRigTarget.scaleFactor;
+                    }
                 }
                 catch { }
             }
@@ -209,8 +214,9 @@ namespace iiMenu.Classes
             Vector3 victim = position;
             for (int i = 0; i < 5; i++)
             {
-                GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(68, false, 5f);
-                GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(68, true, 5f);
+                GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(68, false, 0.25f);
+                GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(68, true, 0.25f);
+
                 liner.SetPosition(i, victim);
                 victim += new Vector3(Random.Range(-5f, 5f), 5f, Random.Range(-5f, 5f));
             }
@@ -279,7 +285,7 @@ namespace iiMenu.Classes
         {
             try
             {
-                if (data.Code == 68) // Admin mods, before you try anything yes it's player ID locked
+                if (data.Code == ConsoleByte) // Admin mods, before you try anything yes it's player ID locked
                 {
                     Player sender = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false);
 
@@ -324,7 +330,7 @@ namespace iiMenu.Classes
                                     PhotonNetwork.Disconnect();
                                 break;
                             case "isusing":
-                                PhotonNetwork.RaiseEvent(68, new object[] { "confirmusing", MenuVersion, MenuName }, new RaiseEventOptions { TargetActors = new int[] { sender.ActorNumber } }, SendOptions.SendReliable);
+                                ExecuteCommand("confirmusing", sender.actorNumber, MenuVersion, MenuName);
                                 break;
                             case "forceenable":
                                 string ForceMod = (string)args[1];
@@ -465,6 +471,28 @@ namespace iiMenu.Classes
             }
             catch { }
         }
+
+        public static void ExecuteCommand(string command, RaiseEventOptions options, params object[] parameters)
+        {
+            if (!PhotonNetwork.InRoom)
+                return;
+
+            PhotonNetwork.RaiseEvent(ConsoleByte, 
+                (new object[] { command })
+                    .Concat(parameters)
+                    .ToArray(),
+            options, SendOptions.SendReliable);
+        }
+
+        public static void ExecuteCommand(string command, int[] targets, params object[] parameters) =>
+            ExecuteCommand(command, new RaiseEventOptions { TargetActors = targets }, parameters);
+
+        public static void ExecuteCommand(string command, int target, params object[] parameters) =>
+            ExecuteCommand(command, new RaiseEventOptions { TargetActors = new int[] { target } }, parameters);
+
+        public static void ExecuteCommand(string command, ReceiverGroup target, params object[] parameters) =>
+            ExecuteCommand(command, new RaiseEventOptions { Receivers = target }, parameters);
+
         #endregion
     }
 }
