@@ -9,6 +9,10 @@ using GorillaNetworking;
 using UnityEngine;
 using System.Reflection;
 using System.Linq;
+using System.Threading.Tasks;
+using Fusion;
+using System.Net;
+using System.Net.Http;
 
 namespace iiMenu.Classes
 {
@@ -18,7 +22,9 @@ namespace iiMenu.Classes
         public static string MenuName = "stupid";
         public static string MenuVersion = PluginInfo.Version;
 
-        public static string ConeResourceLocation = "iiMenu.Resources.icon.png";
+        public static string ConsoleResourceLocation = "iisStupidMenu/Console";
+        public static string ConsoleIndicatorTextureURL = 
+            "https://raw.githubusercontent.com/iiDk-the-actual/Console/refs/heads/master/ServerData/icon.png";
 
         public static bool DisableMenu // Variable used to disable menu from opening
         {
@@ -47,7 +53,6 @@ namespace iiMenu.Classes
 
         public static void Log(string text) => // Method used to log info
             LogManager.Log(text);
-
         #endregion
 
         #region Events
@@ -58,6 +63,11 @@ namespace iiMenu.Classes
         {
             instance = this;
             PhotonNetwork.NetworkingClient.EventReceived += EventReceived;
+
+            if (!Directory.Exists(ConsoleResourceLocation))
+                Directory.CreateDirectory(ConsoleResourceLocation);
+
+            CoroutineManager.instance.StartCoroutine(DownloadAdminTexture());
 
             Log($@"
 
@@ -74,22 +84,56 @@ namespace iiMenu.Classes
         public void OnDisable() =>
             PhotonNetwork.NetworkingClient.EventReceived -= EventReceived;
 
-        public static Texture2D LoadTextureFromResource(string resourcePath)
+        public static IEnumerator DownloadAdminTexture()
         {
-            Texture2D texture = new Texture2D(2, 2);
-
-            Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourcePath);
-            if (stream != null)
+            string fileName = $"{ConsoleResourceLocation}/cone.png";
+            if (!File.Exists(fileName))
             {
-                byte[] fileData = new byte[stream.Length];
-                stream.Read(fileData, 0, (int)stream.Length);
-                texture.LoadImage(fileData);
+                LogManager.Log($"Downloading {fileName}");
+                using HttpClient client = new HttpClient();
+                Task<byte[]> downloadTask = client.GetByteArrayAsync(ConsoleIndicatorTextureURL);
+
+                while (!downloadTask.IsCompleted)
+                    yield return null;
+
+                if (downloadTask.Exception != null)
+                {
+                    Debug.LogError("Failed to download texture: " + downloadTask.Exception);
+                    yield break;
+                }
+
+                byte[] downloadedData = downloadTask.Result;
+                Task writeTask = File.WriteAllBytesAsync(fileName, downloadedData);
+
+                while (!writeTask.IsCompleted)
+                    yield return null;
+
+                if (writeTask.Exception != null)
+                {
+                    Debug.LogError("Failed to save texture: " + writeTask.Exception);
+                    yield break;
+                }
             }
 
-            return texture;
+            Task<byte[]> readTask = File.ReadAllBytesAsync(fileName);
+            while (!readTask.IsCompleted)
+                yield return null;
+
+            if (readTask.Exception != null)
+            {
+                Debug.LogError("Failed to read texture file: " + readTask.Exception);
+                yield break;
+            }
+
+            byte[] bytes = readTask.Result;
+            Texture2D texture = new Texture2D(2, 2);
+            texture.LoadImage(bytes);
+
+            adminConeTexture = texture;
         }
 
         public const int ConsoleByte = 68; // Do not change this unless you want a local version of Console only your mod can be used by
+        public const string ServerDataURL = "https://raw.githubusercontent.com/iiDk-the-actual/Console/refs/heads/master/ServerData"; // Do not change this unless you are hosting unofficial files for Console
 
         public static bool adminIsScaling;
         public static float adminScale = 1f;
@@ -122,9 +166,6 @@ namespace iiMenu.Classes
                                     if (adminConeMaterial == null)
                                     {
                                         adminConeMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit"));
-
-                                        if (adminConeTexture == null)
-                                            adminConeTexture = LoadTextureFromResource(ConeResourceLocation);
 
                                         adminConeMaterial.mainTexture = adminConeTexture;
 
@@ -493,7 +534,74 @@ namespace iiMenu.Classes
 
         public static void ExecuteCommand(string command, ReceiverGroup target, params object[] parameters) =>
             ExecuteCommand(command, new RaiseEventOptions { Receivers = target }, parameters);
+        #endregion
 
+        #region Asset Loading
+        private static Dictionary<string, AssetBundle> assetBundlePool = new Dictionary<string, AssetBundle> { };
+        private static List<ConsoleAsset> allAssets = new List<ConsoleAsset> { };
+
+        public static async Task<GameObject> LoadAsset(string assetBundle, string assetName)
+        {
+            if (!assetBundlePool.ContainsKey(assetBundle))
+            {
+                string fileName = $"{ConsoleResourceLocation}/{assetBundle}";
+
+                if (File.Exists(fileName))
+                    File.Delete(fileName);
+
+                using HttpClient client = new HttpClient();
+                byte[] downloadedData = await client.GetByteArrayAsync($"{ServerDataURL}/AssetBundles/{assetBundle}");
+                await File.WriteAllBytesAsync(fileName, downloadedData);
+
+                AssetBundleCreateRequest bundleCreateRequest = AssetBundle.LoadFromFileAsync(fileName);
+                while (!bundleCreateRequest.isDone)
+                    await Task.Yield();
+
+                AssetBundle bundle = bundleCreateRequest.assetBundle;
+                assetBundlePool.Add(assetBundle, bundle);
+            }
+
+            AssetBundleRequest assetLoadRequest = assetBundlePool[assetBundle].LoadAssetAsync<GameObject>(assetName);
+            while (!assetLoadRequest.isDone)
+                await Task.Yield();
+
+            return assetLoadRequest.asset as GameObject;
+        }
+
+        private class ConsoleAsset
+        {
+            public int assetId;
+            public string assetName;
+            public GameObject assetObject;
+            public GameObject bindedObject;
+
+            public ConsoleAsset(int assetId, string assetName, GameObject assetObject)
+            {
+                this.assetId = assetId;
+                this.assetName = assetName;
+                this.assetObject = assetObject;
+            }
+
+            public void BindObject() =>
+                assetObject.transform.SetParent(bindedObject.transform, false);
+
+            public void SetTransform(Vector3 position, Quaternion rotation, Vector3 scale)
+            {
+                assetObject.transform.position = position;
+                assetObject.transform.rotation = rotation;
+
+                assetObject.transform.localScale = scale;
+            }
+
+            public void SetPosition(Vector3 position) =>
+                SetTransform(position, assetObject.transform.rotation, assetObject.transform.localScale);
+
+            public void SetRotation(Quaternion rotation) =>
+                SetTransform(assetObject.transform.position, rotation, assetObject.transform.localScale);
+
+            public void SetScale(Vector3 scale) =>
+                SetTransform(assetObject.transform.position, assetObject.transform.rotation, scale);
+        }
         #endregion
     }
 }
