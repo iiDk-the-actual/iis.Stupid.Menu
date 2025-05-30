@@ -3466,8 +3466,11 @@ namespace iiMenu.Menu
 
         public static bool PlayerIsTagged(VRRig Player)
         {
+            if (!PhotonNetwork.InRoom)
+                return false;
+
             List<NetPlayer> infectedPlayers = InfectedList();
-            NetPlayer targetPlayer = RigManager.GetPlayerFromVRRig(lockTarget);
+            NetPlayer targetPlayer = GetPlayerFromVRRig(lockTarget);
 
             foreach (NetPlayer infected in infectedPlayers)
             {
