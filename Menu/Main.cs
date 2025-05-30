@@ -4649,6 +4649,7 @@ namespace iiMenu.Menu
             if (!Font.GetOSInstalledFontNames().Contains("Agency FB"))
 
             PhotonNetwork.NetworkingClient.EventReceived += EventReceived;
+
             NetworkSystem.Instance.OnJoinedRoomEvent += OnJoinRoom;
             NetworkSystem.Instance.OnReturnedToSinglePlayer += OnLeaveRoom;
 
