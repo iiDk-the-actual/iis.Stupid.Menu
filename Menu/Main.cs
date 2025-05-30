@@ -3447,11 +3447,8 @@ namespace iiMenu.Menu
             {
                 try
                 {
-                    //view.OwnershipTransfer = OwnershipOption.Request;
                     view.OwnerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
                     view.ControllerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
-                    view.RequestOwnership();
-                    view.TransferOwnership(PhotonNetwork.LocalPlayer);
 
                     RequestableOwnershipGuard rog = view.GetComponent<RequestableOwnershipGuard>();
                     if (rog != null)

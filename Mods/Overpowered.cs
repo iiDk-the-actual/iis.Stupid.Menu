@@ -10,8 +10,6 @@ using Photon.Pun;
 using Photon.Realtime;
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
 using UnityEngine;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
@@ -23,13 +21,9 @@ namespace iiMenu.Mods
         public static void MasterCheck()
         {
             if (PhotonNetwork.IsMasterClient)
-            {
                 NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>You are master client.</color>");
-            }
             else
-            {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-            }
         }
 
         public static void AngerBees()
@@ -256,7 +250,7 @@ namespace iiMenu.Mods
         {
             if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
 
-            int netId = GameEntityManager.instance.CreateNetId();
+            int netId = GhostReactorManager.instance.gameEntityManager.CreateNetId();
 
             if (target is NetPlayer)
                 target = NetPlayerToPlayer((NetPlayer)target);
@@ -275,14 +269,14 @@ namespace iiMenu.Mods
             };
 
             if (target is RpcTarget)
-                GameEntityManager.instance.photonView.RPC("CreateItemRPC", (RpcTarget)target, createData);
+                GhostReactorManager.instance.gameEntityManager.photonView.RPC("CreateItemRPC", (RpcTarget)target, createData);
 
             if (target is Player)
-                GameEntityManager.instance.photonView.RPC("CreateItemRPC", (Player)target, createData);
+                GhostReactorManager.instance.gameEntityManager.photonView.RPC("CreateItemRPC", (Player)target, createData);
 
             if (velocity != Vector3.zero || angVelocity != Vector3.zero)
             {
-                bool handTarget = GamePlayerLocal.instance.gamePlayer.IsHoldingEntity(false);
+                bool handTarget = GamePlayerLocal.instance.gamePlayer.GetGameEntityId(GamePlayer.GetHandIndex(false)) != null;
                 velocity = velocity.ClampMagnitudeSafe(1600f);
 
                 object[] grabData = new object[]
@@ -294,10 +288,10 @@ namespace iiMenu.Mods
                 };
 
                 if (target is RpcTarget)
-                    GameEntityManager.instance.photonView.RPC("GrabEntityRPC", (RpcTarget)target, grabData);
+                    GhostReactorManager.instance.gameEntityManager.photonView.RPC("GrabEntityRPC", (RpcTarget)target, grabData);
 
                 if (target is Player)
-                    GameEntityManager.instance.photonView.RPC("GrabEntityRPC", (Player)target, grabData);
+                    GhostReactorManager.instance.gameEntityManager.photonView.RPC("GrabEntityRPC", (Player)target, grabData);
                 
                 object[] dropData = new object[]
                 {
@@ -312,10 +306,10 @@ namespace iiMenu.Mods
                 };
 
                 if (target is RpcTarget)
-                    GameEntityManager.instance.photonView.RPC("ThrowEntityRPC", (RpcTarget)target, dropData);
+                    GhostReactorManager.instance.gameEntityManager.photonView.RPC("ThrowEntityRPC", (RpcTarget)target, dropData);
 
                 if (target is Player)
-                    GameEntityManager.instance.photonView.RPC("ThrowEntityRPC", (Player)target, dropData);
+                    GhostReactorManager.instance.gameEntityManager.photonView.RPC("ThrowEntityRPC", (Player)target, dropData);
             }
 
             RPCProtection();
@@ -378,25 +372,25 @@ namespace iiMenu.Mods
                         destroyDelay = Time.time + 0.02f;
                         if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
 
-                        GameEntityId gameEntityId = GameEntityId.Invalid;
+                        GameEntity gameEntity = null;
                         float closestDist = float.MaxValue;
 
-                        foreach (GameEntity entity in GameEntityManager.instance.entities)
+                        foreach (GameEntity entity in GhostReactorManager.instance.gameEntityManager.entities)
                         {
                             if (entity != null)
                             {
                                 float distance = Vector3.Distance(NewPointer.transform.position, entity.transform.position);
                                 if (distance < 0.75f && distance < closestDist)
                                 {
-                                    gameEntityId = entity.id;
+                                    gameEntity = entity;
                                     closestDist = distance;
                                 }
                             }
                         }
 
-                        if (gameEntityId != GameEntityId.Invalid)
+                        if (gameEntity != null)
                         {
-                            GameEntityManager.instance.photonView.RPC("DestroyItemRPC", RpcTarget.All, new object[] { new int[] { gameEntityId.GetNetId() } });
+                            GhostReactorManager.instance.gameEntityManager.photonView.RPC("DestroyItemRPC", RpcTarget.All, new object[] { new int[] { gameEntity.GetNetId() } });
                             RPCProtection();
                         }
                     }
