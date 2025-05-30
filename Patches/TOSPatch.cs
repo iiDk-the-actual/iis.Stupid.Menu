@@ -1,8 +1,4 @@
 ﻿using HarmonyLib;
-using iiMenu.Mods;
-using System;
-using UnityEngine;
-using static iiMenu.Menu.Main;
 
 namespace iiMenu.Patches
 {
@@ -42,10 +38,9 @@ namespace iiMenu.Patches
     [HarmonyPatch(typeof(AgeSlider), "PostUpdate")]
     public class TOSPatch3
     {
-        public static bool enabled = false;
         private static bool Prefix(AgeSlider __instance)
         {
-            if (enabled)
+            if (TOSPatch.enabled)
             {
                 __instance.controllerBehaviour.buttonDown = true;
                 __instance.holdTime = 0.1f;

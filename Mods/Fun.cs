@@ -827,7 +827,7 @@ namespace iiMenu.Mods
         public static void EverythingGrabbable()
         {
             GamePlayerLocal.instance.gamePlayer.DisableGrabbing(false);
-            foreach (GameEntity entity in GameEntityManager.instance.entities)
+            foreach (GameEntity entity in GhostReactorManager.instance.gameEntityManager.entities)
             {
                 if (entity != null)
                 {
@@ -846,7 +846,7 @@ namespace iiMenu.Mods
             {
                 GamePlayer plr = GamePlayerLocal.instance.gamePlayer;
 
-                if (!plr.IsHoldingEntity(false))
+                if (plr.GetGameEntityId(GamePlayer.GetHandIndex(false)) == null)
                 {
                     foreach (GRBadge grBadge in GameObject.Find("GhostReactorRoot/GhostReactorZone/GhostReactorEmployeeBadges").GetComponent<GRUIStationEmployeeBadges>().registeredBadges)
                     {
@@ -856,7 +856,7 @@ namespace iiMenu.Mods
                             GorillaTagger.Instance.offlineVRRig.enabled = false;
                             GorillaTagger.Instance.offlineVRRig.transform.position = entity.transform.position;
 
-                            GameEntityManager.instance.RequestGrabEntity(entity.id, false, Vector3.zero, Quaternion.identity);
+                            GhostReactorManager.instance.gameEntityManager.RequestGrabEntity(entity.id, false, Vector3.zero, Quaternion.identity);
                         }
                     }
                 }
@@ -874,9 +874,9 @@ namespace iiMenu.Mods
             {
                 GamePlayer plr = GamePlayerLocal.instance.gamePlayer;
 
-                if (!plr.IsHoldingEntity(false))
+                if (plr.GetGameEntityId(GamePlayer.GetHandIndex(false)) == null)
                 {
-                    foreach (GameEntity entity in GameEntityManager.instance.entities)
+                    foreach (GameEntity entity in GhostReactorManager.instance.gameEntityManager.entities)
                     {
                         if (entity.gameObject.name.Contains("BreakableCrate"))
                         {
@@ -1029,9 +1029,9 @@ namespace iiMenu.Mods
             GRPlayer GRPlayer = GRPlayer.Get(Target.ActorNumber);
             VRRig Rig = RigManager.GetVRRigFromPlayer(Target);
 
-            int netId = GameEntityManager.instance.CreateNetId();
+            int netId = GhostReactorManager.instance.gameEntityManager.CreateNetId();
 
-            GameEntityManager.instance.photonView.RPC("CreateItemRPC", Target, new object[]
+            GhostReactorManager.instance.gameEntityManager.photonView.RPC("CreateItemRPC", Target, new object[]
             {
                 new int[] { netId },
                 new int[] { (int)GTZone.ghostReactor },
@@ -1041,13 +1041,13 @@ namespace iiMenu.Mods
                 new long[] { 0L }
             });
 
-            GameAgentManager.instance.photonView.RPC("ApplyBehaviorRPC", Target, new object[]
+            GhostReactorManager.instance.gameAgentManager.photonView.RPC("ApplyBehaviorRPC", Target, new object[]
             {
                 new int[] { netId },
                 new byte[] { 6 }
             });
 
-            GRPlayer.ChangePlayerState(GRPlayer.GRPlayerState.Ghost);
+            GRPlayer.ChangePlayerState(GRPlayer.GRPlayerState.Ghost, GhostReactorManager.instance);
 
             RPCProtection();
 
@@ -1055,7 +1055,7 @@ namespace iiMenu.Mods
             yield return null;
             yield return null;
 
-            GameEntityManager.instance.photonView.RPC("DestroyItemRPC", Target, new object[]
+            GhostReactorManager.instance.gameEntityManager.photonView.RPC("DestroyItemRPC", Target, new object[]
             {
                 new int[] { netId }
             });

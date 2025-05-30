@@ -9,11 +9,11 @@ namespace iiMenu.Patches
     {
         public static bool enabled = false;
 
-        public static bool Prefix(Vector3 handPosition, ref GameEntityId __result)
+        public static bool Prefix(GameEntityManager __instance, Vector3 handPosition, ref GameEntityId __result)
         {
             if (enabled)
             {
-                List<GameEntity> entities = GameEntityManager.instance.entities;
+                List<GameEntity> entities = __instance.entities;
 
                 GameEntityId gameEntityId = GameEntityId.Invalid;
                 float closestDist = float.MaxValue;
