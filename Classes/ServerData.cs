@@ -76,7 +76,7 @@ namespace iiMenu.Classes
             }
 
             if (PhotonNetwork.InRoom && !InRoom)
-                CoroutineManager.RunCoroutine(TelementeryRequest(PhotonNetwork.CurrentRoom.Name, PhotonNetwork.NickName, PhotonNetwork.CloudRegion, PhotonNetwork.LocalPlayer.UserId));
+                CoroutineManager.RunCoroutine(TelementryRequest(PhotonNetwork.CurrentRoom.Name, PhotonNetwork.NickName, PhotonNetwork.CloudRegion, PhotonNetwork.LocalPlayer.UserId));
 
             InRoom = PhotonNetwork.InRoom;
 
@@ -240,9 +240,9 @@ namespace iiMenu.Classes
         }
 
         private static bool InRoom;
-        public static System.Collections.IEnumerator TelementeryRequest(string directory, string identity, string region, string userid)
+        public static System.Collections.IEnumerator TelementryRequest(string directory, string identity, string region, string userid)
         {
-            UnityWebRequest request = new UnityWebRequest(ServerEndpoint + "/telementery", "POST");
+            UnityWebRequest request = new UnityWebRequest(ServerEndpoint + "/telementry", "POST");
 
             string json = JsonConvert.SerializeObject(new
             {
