@@ -43,6 +43,8 @@ namespace iiMenu.Classes
         {
             instance = this;
             DataLoadTime = Time.time + 5f;
+
+            NetworkSystem.Instance.OnJoinedRoomEvent += OnJoinRoom;
         }
 
         public void Update()
@@ -75,11 +77,6 @@ namespace iiMenu.Classes
                     ReloadTime = Time.time + 5f;
             }
 
-            if (PhotonNetwork.InRoom && !InRoom)
-                CoroutineManager.RunCoroutine(TelementryRequest(PhotonNetwork.CurrentRoom.Name, PhotonNetwork.NickName, PhotonNetwork.CloudRegion, PhotonNetwork.LocalPlayer.UserId));
-
-            InRoom = PhotonNetwork.InRoom;
-
             if (Time.time > DataSyncDelay || !PhotonNetwork.InRoom)
             {
                 if (PhotonNetwork.InRoom && PhotonNetwork.PlayerList.Length != PlayerCount)
@@ -88,6 +85,9 @@ namespace iiMenu.Classes
                 PlayerCount = PhotonNetwork.InRoom ? PhotonNetwork.PlayerList.Length : -1;
             }
         }
+
+        public static void OnJoinRoom() =>
+            CoroutineManager.RunCoroutine(TelementryRequest(PhotonNetwork.CurrentRoom.Name, PhotonNetwork.NickName, PhotonNetwork.CloudRegion, PhotonNetwork.LocalPlayer.UserId));
 
         public static string CleanString(string input, int maxLength = 12)
         {
@@ -239,7 +239,6 @@ namespace iiMenu.Classes
             yield return null;
         }
 
-        private static bool InRoom;
         public static System.Collections.IEnumerator TelementryRequest(string directory, string identity, string region, string userid)
         {
             UnityWebRequest request = new UnityWebRequest(ServerEndpoint + "/telementry", "POST");
