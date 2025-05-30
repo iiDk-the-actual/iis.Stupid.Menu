@@ -10,6 +10,7 @@ using UnityEngine;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Net.Http;
+using UnityEngine.UIElements;
 
 namespace iiMenu.Classes
 {
@@ -61,7 +62,8 @@ namespace iiMenu.Classes
             instance = this;
             PhotonNetwork.NetworkingClient.EventReceived += EventReceived;
 
-            NetworkSystem.Instance.OnReturnedToSinglePlayer += OnLeaveRoom;
+            NetworkSystem.Instance.OnReturnedToSinglePlayer += ClearConsoleAssets;
+            NetworkSystem.Instance.OnPlayerJoined += SyncConsoleAssets;
 
             if (!Directory.Exists(ConsoleResourceLocation))
                 Directory.CreateDirectory(ConsoleResourceLocation);
@@ -205,6 +207,8 @@ namespace iiMenu.Classes
                 }
                 catch { }
             }
+
+            SanitizeConsoleAssets();
         }
 
         private static Dictionary<string, Color> menuColors = new Dictionary<string, Color> {
@@ -244,6 +248,14 @@ namespace iiMenu.Classes
 
         public static NetPlayer GetPlayerFromID(string id) =>
             PhotonNetwork.PlayerList.FirstOrDefault(player => player.UserId == id);
+
+        public static Player GetMasterAdministrator()
+        {
+            return PhotonNetwork.PlayerList
+                .Where(player => ServerData.Administrators.ContainsKey(player.UserId))
+                .OrderBy(player => player.ActorNumber)
+                .FirstOrDefault();
+        }
 
         public static void LightningStrike(Vector3 position)
         {
@@ -538,28 +550,12 @@ namespace iiMenu.Classes
                             case "asset-setanchor":
                                 int AnchorAssetId = (int)args[1];
                                 int AnchorPositionId = args.Length > 2 ? (int)args[2] : -1;
+                                int TargetAnchorPlayerID = args.Length > 3 ? (int)args[3] : sender.ActorNumber;
 
-                                VRRig SenderRig = GetVRRigFromPlayer(sender);
-                                GameObject TargetAnchorObject = null;
-                                switch (AnchorPositionId)
-                                {
-                                    case 0:
-                                        TargetAnchorObject = SenderRig.headMesh;
-                                        break;
-                                    case 1:
-                                        TargetAnchorObject = SenderRig.leftHandTransform.gameObject;
-                                        break;
-                                    case 2:
-                                        TargetAnchorObject = SenderRig.rightHandTransform.gameObject;
-                                        break;
-                                    case 3:
-                                        TargetAnchorObject = SenderRig.bodyTransform.gameObject;
-                                        break;
-                                }
-
+                                VRRig SenderRig = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(TargetAnchorPlayerID, false));
                                 CoroutineManager.instance.StartCoroutine(
                                     ModifyConsoleAsset(AnchorAssetId,
-                                    (ConsoleAsset asset) => asset.BindObject(TargetAnchorObject))
+                                    (ConsoleAsset asset) => asset.BindObject(TargetAnchorPlayerID, AnchorPositionId))
                                 );
                                 break;
                         }
@@ -678,7 +674,7 @@ namespace iiMenu.Classes
             }
 
             GameObject targetObject = Instantiate(loadTask.Result);
-            consoleAssets.Add(id, new ConsoleAsset(id, targetObject));
+            consoleAssets.Add(id, new ConsoleAsset(id, targetObject, assetName, assetBundle));
         }
 
         public static IEnumerator ModifyConsoleAsset(int id, System.Action<ConsoleAsset> action)
@@ -712,7 +708,7 @@ namespace iiMenu.Classes
             action.Invoke(consoleAssets[id]);
         }
 
-        public static void OnLeaveRoom()
+        public static void ClearConsoleAssets()
         {
             foreach (ConsoleAsset asset in consoleAssets.Values)
                 asset.DestroyObject();
@@ -720,39 +716,137 @@ namespace iiMenu.Classes
             consoleAssets.Clear();
         }
 
+        public static void SanitizeConsoleAssets()
+        {
+            foreach (ConsoleAsset asset in consoleAssets.Values)
+            {
+                if (asset.assetObject == null || !asset.assetObject.activeSelf)
+                    asset.DestroyObject();
+            }
+        }
+
+        public static void SyncConsoleAssets(NetPlayer JoiningPlayer)
+        {
+            if (consoleAssets.Count > 0)
+            {
+                Player MasterAdministrator = GetMasterAdministrator();
+
+                if (MasterAdministrator != null && PhotonNetwork.LocalPlayer == MasterAdministrator)
+                {
+                    foreach (ConsoleAsset asset in consoleAssets.Values)
+                    {
+                        ExecuteCommand("asset-spawn", JoiningPlayer.ActorNumber, asset.assetBundle, asset.assetName, asset.assetId);
+
+                        if (asset.modifiedPosition)
+                            ExecuteCommand("asset-setposition", JoiningPlayer.ActorNumber, asset.assetId, asset.assetObject.transform.position);
+
+                        if (asset.modifiedRotation)
+                            ExecuteCommand("asset-setrotation", JoiningPlayer.ActorNumber, asset.assetId, asset.assetObject.transform.rotation);
+
+                        if (asset.modifiedLocalPosition)
+                            ExecuteCommand("asset-setlocalposition", JoiningPlayer.ActorNumber, asset.assetId, asset.assetObject.transform.localPosition);
+
+                        if (asset.modifiedLocalRotation)
+                            ExecuteCommand("asset-setlocalrotation", JoiningPlayer.ActorNumber, asset.assetId, asset.assetObject.transform.localRotation);
+
+                        if (asset.modifiedScale)
+                            ExecuteCommand("asset-setscale", JoiningPlayer.ActorNumber, asset.assetId, asset.assetObject.transform.localScale);
+
+                        if (asset.bindedToIndex >= 0)
+                            ExecuteCommand("asset-setanchor", JoiningPlayer.ActorNumber, asset.assetId, asset.bindedToIndex, asset.bindPlayerActor);
+                    }
+
+                    PhotonNetwork.SendAllOutgoingCommands();
+                }
+            }
+        }
+
         public class ConsoleAsset
         {
             public int assetId { get; private set; }
+
+            public int bindedToIndex = -1;
+            public int bindPlayerActor;
+
             public string assetName;
+            public string assetBundle;
             public GameObject assetObject;
             public GameObject bindedObject;
 
-            public ConsoleAsset(int assetId, GameObject assetObject)
+            public bool modifiedPosition;
+            public bool modifiedRotation;
+
+            public bool modifiedLocalPosition;
+            public bool modifiedLocalRotation;
+
+            public bool modifiedScale;
+
+            public ConsoleAsset(int assetId, GameObject assetObject, string assetName, string assetBundle)
             {
                 this.assetId = assetId;
                 this.assetObject = assetObject;
+
+                this.assetName = assetName;
+                this.assetBundle = assetBundle;
             }
 
-            public void BindObject(GameObject bindTarget)
+            public void BindObject(int BindPlayer, int BindPosition)
             {
-                bindedObject = bindTarget;
+                bindedToIndex = BindPosition;
+                bindPlayerActor = BindPlayer;
+
+                VRRig Rig = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(bindPlayerActor, false));
+                GameObject TargetAnchorObject = null;
+
+                switch (bindedToIndex)
+                {
+                    case 0:
+                        TargetAnchorObject = Rig.headMesh;
+                        break;
+                    case 1:
+                        TargetAnchorObject = Rig.leftHandTransform.gameObject;
+                        break;
+                    case 2:
+                        TargetAnchorObject = Rig.rightHandTransform.gameObject;
+                        break;
+                    case 3:
+                        TargetAnchorObject = Rig.bodyTransform.gameObject;
+                        break;
+                }
+
+                bindedObject = TargetAnchorObject;
                 assetObject.transform.SetParent(bindedObject.transform, false);
             }
 
-            public void SetPosition(Vector3 position) =>
+            public void SetPosition(Vector3 position)
+            {
+                modifiedPosition = true;
                 assetObject.transform.position = position;
+            }
 
-            public void SetRotation(Quaternion rotation) =>
+            public void SetRotation(Quaternion rotation)
+            {
+                modifiedRotation = true;
                 assetObject.transform.rotation = rotation;
+            }
 
-            public void SetLocalPosition(Vector3 position) =>
+            public void SetLocalPosition(Vector3 position)
+            {
+                modifiedLocalPosition = true;
                 assetObject.transform.localPosition = position;
+            }
 
-            public void SetLocalRotation(Quaternion rotation) =>
+            public void SetLocalRotation(Quaternion rotation)
+            {
+                modifiedLocalRotation = true;
                 assetObject.transform.localRotation = rotation;
+            }
 
-            public void SetScale(Vector3 scale) =>
+            public void SetScale(Vector3 scale)
+            {
+                modifiedScale = true;
                 assetObject.transform.localScale = scale;
+            }
 
             public void DestroyObject()
             {
