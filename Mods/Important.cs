@@ -153,6 +153,10 @@ namespace iiMenu.Mods
 
                 if (Room.inOverlay)
                     PrivateUIRoom.StopOverlay();
+
+                GameObject kidUIOverlay = GameObject.Find("Miscellaneous Scripts/PrivateUIRoom_HandRays");
+                if (kidUIOverlay != null && kidUIOverlay.activeSelf)
+                    kidUIOverlay.SetActive(false);
             }
             catch { }
 
