@@ -25,108 +25,23 @@ namespace iiMenu.Mods
 {
     public class Fun
     {
-        public static void NightTime()
-        {
-            BetterDayNightManager.instance.SetTimeOfDay(0);
-        }
-
-        public static void EveningTime()
-        {
-            BetterDayNightManager.instance.SetTimeOfDay(7);
-        }
-
-        public static void MorningTime()
-        {
-            BetterDayNightManager.instance.SetTimeOfDay(1);
-        }
-
-        public static void DayTime()
-        {
-            BetterDayNightManager.instance.SetTimeOfDay(3);
-        }
+        public static void SetTime(int setTime) =>
+            BetterDayNightManager.instance.SetTimeOfDay(setTime);
 
         public static void Rain()
         {
             for (int i = 1; i < BetterDayNightManager.instance.weatherCycle.Length; i++)
-            {
                 BetterDayNightManager.instance.weatherCycle[i] = BetterDayNightManager.WeatherType.Raining;
-            }
         }
 
         public static void NoRain()
         {
             for (int i = 1; i < BetterDayNightManager.instance.weatherCycle.Length; i++)
-            {
                 BetterDayNightManager.instance.weatherCycle[i] = BetterDayNightManager.WeatherType.None;
-            }
         }
 
-        private static LightmapData[] hell = null;
-        public static void Fullbright()
-        {
-            hell = LightmapSettings.lightmaps;
-            LightmapSettings.lightmaps = null;
-            GameLightingManager.instance.SetCustomDynamicLightingEnabled(false);
-        }
-
-        public static void Fullshade()
-        {
-            LightmapSettings.lightmaps = hell;
-            GameLightingManager.instance.SetCustomDynamicLightingEnabled(true);
-        }
-
-        /*
-        private static Volume Volume;
-        public static void EnableShaders()
-        {
-            if (Volume == null)
-                Volume = GameObject.Find("Main Camera").AddComponent<Volume>();
-
-            UnityEngine.Rendering.Universal.UniversalAdditionalCameraData camData = Camera.main.GetComponent<UnityEngine.Rendering.Universal.UniversalAdditionalCameraData>();
-            camData.renderPostProcessing = true;
-
-            QualitySettings.antiAliasing = 4;
-
-            Volume.isGlobal = true;
-            VolumeProfile profile = ScriptableObject.CreateInstance<VolumeProfile>();
-            Volume.profile = profile;
-
-            UnityEngine.Rendering.Universal.Bloom bloom;
-            if (!profile.TryGet(out bloom))
-                bloom = profile.Add<UnityEngine.Rendering.Universal.Bloom>(true);
-            
-            bloom.intensity.value = 1f;
-            bloom.threshold.value = 1f;
-            bloom.active = true;
-
-            UnityEngine.Rendering.Universal.Tonemapping tonemapping;
-            if (!profile.TryGet(out tonemapping))
-                tonemapping = profile.Add<UnityEngine.Rendering.Universal.Tonemapping>(true);
-            
-            tonemapping.mode.value = UnityEngine.Rendering.Universal.TonemappingMode.ACES;
-            tonemapping.active = true;
-
-            UnityEngine.Rendering.Universal.MotionBlur motionBlur;
-            if (!profile.TryGet(out motionBlur))
-                motionBlur = profile.Add<UnityEngine.Rendering.Universal.MotionBlur>(true);
-            
-            motionBlur.intensity.value = 0.4f;
-            motionBlur.active = true;
-
-            UnityEngine.Rendering.Universal.ColorAdjustments colorAdjust;
-            if (!profile.TryGet(out colorAdjust))
-                colorAdjust = profile.Add<UnityEngine.Rendering.Universal.ColorAdjustments>(true);
-            
-            colorAdjust.saturation.value = 20f;
-            colorAdjust.contrast.value = 15f;
-            colorAdjust.postExposure.value = 0.2f;
-            colorAdjust.active = true;
-        }
-
-        public static void DisableShaders()
-        {
-            UnityEngine.Object.Destroy(Volume);
-        }*/
+        public static void SetFullbrightStatus(bool fullBright) =>
+            GameLightingManager.instance.SetCustomDynamicLightingEnabled(!fullBright);
 
         public static void FixHead()
         {
@@ -135,20 +50,14 @@ namespace iiMenu.Mods
             GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.z = 0f;
         }
 
-        public static void UpsideDownHead()
-        {
+        public static void UpsideDownHead() =>
             GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.z = 180f;
-        }
 
-        public static void BrokenNeck()
-        {
+        public static void BrokenNeck() =>
             GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.z = 90f;
-        }
 
-        public static void BackwardsHead()
-        {
+        public static void BackwardsHead() =>
             GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.y = 180f;
-        }
 
         public static int BPM = 159;
         public static void HeadBang()
