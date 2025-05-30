@@ -514,11 +514,11 @@ namespace iiMenu.Menu
             new ButtonInfo[] { // Visual Mods [11]
                 new ButtonInfo { buttonText = "Exit Visual Mods", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
 
-                new ButtonInfo { buttonText = "Morning Time", method =() => Fun.MorningTime(), toolTip = "Makes time day."},
-                new ButtonInfo { buttonText = "Day Time", method =() => Fun.DayTime(), toolTip = "Makes time day."},
-                new ButtonInfo { buttonText = "Evening Time", method =() => Fun.EveningTime(), toolTip = "Makes time evening."},
-                new ButtonInfo { buttonText = "Night Time", method =() => Fun.NightTime(), toolTip = "Makes time night."},
-                new ButtonInfo { buttonText = "Fullbright", enableMethod =() => Fun.Fullbright(), disableMethod =() => Fun.Fullshade(), toolTip = "Makes everything bright."},
+                new ButtonInfo { buttonText = "Morning Time", method =() => Fun.SetTime(1), toolTip = "Sets your time of day to morning."},
+                new ButtonInfo { buttonText = "Day Time", method =() => BetterDayNightManager.instance.SetTimeOfDay(3), toolTip = "Sets your time of day to daytime."},
+                new ButtonInfo { buttonText = "Evening Time", method =() => BetterDayNightManager.instance.SetTimeOfDay(7), toolTip = "Sets your time of day to evening."},
+                new ButtonInfo { buttonText = "Night Time", method =() => BetterDayNightManager.instance.SetTimeOfDay(0), toolTip = "Sets your time of day to night."},
+                new ButtonInfo { buttonText = "Fullbright", enableMethod =() => Fun.SetFullbrightStatus(true), disableMethod =() => Fun.SetFullbrightStatus(false), toolTip = "Disables the dynamic lighting in maps that use it."},
 
                 new ButtonInfo { buttonText = "Rainy Weather", method =() => Fun.Rain(), toolTip = "Forces the weather to rain."},
                 new ButtonInfo { buttonText = "Clear Weather", method =() => Fun.NoRain(), toolTip = "Forces the weather to sunny skies all day."},
@@ -1151,6 +1151,12 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Get Menu Users", method =() => Experimental.GetMenuUsers(), isTogglable = false, toolTip = "Detects who is using the menu."},
                 new ButtonInfo { buttonText = "Menu User Name Tags", enableMethod =() => Experimental.EnableAdminMenuUserTags(), method =() => Experimental.AdminMenuUserTags(), disableMethod =() => Experimental.DisableAdminMenuUserTags(), toolTip = "Detects who is using the menu."},
+
+                // new ButtonInfo { buttonText = "Test Summon Object", method =() => Console.ExecuteCommand("asset-spawn", Photon.Realtime.ReceiverGroup.All, "testbundle", "TestObject", 0), isTogglable = false},
+                // new ButtonInfo { buttonText = "Test Move Object", method =() => Console.ExecuteCommand("asset-setposition", Photon.Realtime.ReceiverGroup.All, 0, new Vector3(0f, 15f, 0f)), isTogglable = false},
+                // new ButtonInfo { buttonText = "Test Anchor Object Head", method =() => Console.ExecuteCommand("asset-setposition", Photon.Realtime.ReceiverGroup.All, 0, new Vector3(0f, 15f, 0f)), isTogglable = false},
+                // new ButtonInfo { buttonText = "Test Anchor Object Hand Left", method =() => Console.ExecuteCommand("asset-setanchor", Photon.Realtime.ReceiverGroup.All, 0, new Vector3(0f, 15f, 0f)), isTogglable = false},
+                // new ButtonInfo { buttonText = "Test Destroy Object", method =() => Console.ExecuteCommand("asset-destroy", Photon.Realtime.ReceiverGroup.All, 0), isTogglable = false},
 
                 new ButtonInfo { buttonText = "Admin Kick Gun", method =() => Experimental.AdminKickGun(), toolTip = "Kicks whoever your hand desires if they're using the menu."},
                 new ButtonInfo { buttonText = "Admin Kick All", method =() => Experimental.AdminKickAll(), isTogglable = false, toolTip = "Kicks everyone using the menu."},
