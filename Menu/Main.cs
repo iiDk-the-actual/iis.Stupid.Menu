@@ -3466,19 +3466,10 @@ namespace iiMenu.Menu
 
         public static bool PlayerIsTagged(VRRig Player)
         {
-            if (!PhotonNetwork.InRoom)
-                return false;
-
             List<NetPlayer> infectedPlayers = InfectedList();
-            NetPlayer targetPlayer = GetPlayerFromVRRig(lockTarget);
+            NetPlayer targetPlayer = GetPlayerFromVRRig(Player);
 
-            foreach (NetPlayer infected in infectedPlayers)
-            {
-                if (infected.UserId == targetPlayer.UserId)
-                    return true;
-            }
-
-            return false;
+            return infectedPlayers.Contains(targetPlayer);
         }
 
         public static bool PlayerIsLocal(VRRig Player) => 
@@ -3987,6 +3978,12 @@ namespace iiMenu.Menu
             RPCProtection();
             lastMasterClient = false;
         }
+
+        public static void OnPlayerJoin(NetPlayer Player) =>
+            NotifiLib.SendNotification($"<color=grey>[</color><color=green>JOIN</color><color=grey>]</color> Name: {Player.NickName}");
+
+        public static void OnPlayerLeave(NetPlayer Player) =>
+            NotifiLib.SendNotification($"<color=grey>[</color><color=red>LEAVE</color><color=grey>]</color> Name: {Player.NickName}");
 
         public static void TeleportPlayer(Vector3 pos) // Prevents your hands from getting stuck on trees
         {
@@ -4572,6 +4569,9 @@ namespace iiMenu.Menu
 
             NetworkSystem.Instance.OnJoinedRoomEvent += OnJoinRoom;
             NetworkSystem.Instance.OnReturnedToSinglePlayer += OnLeaveRoom;
+
+            NetworkSystem.Instance.OnPlayerJoined += OnPlayerJoin;
+            NetworkSystem.Instance.OnPlayerLeft += OnPlayerLeave;
 
             string ConsoleGUID = $"goldentrophy_Console_{Classes.Console.ConsoleVersion}";
             GameObject ConsoleObject = GameObject.Find(ConsoleGUID);
