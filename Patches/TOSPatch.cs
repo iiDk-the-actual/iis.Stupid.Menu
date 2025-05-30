@@ -23,10 +23,10 @@ namespace iiMenu.Patches
         }
     }
 
-    [HarmonyPatch(typeof(ModIOTermsOfUse), "PostUpdate")]
+    [HarmonyPatch(typeof(ModIOTermsOfUse_v1), "PostUpdate")]
     public class TOSPatch2
     {
-        private static bool Prefix(ModIOTermsOfUse __instance)
+        private static bool Prefix(ModIOTermsOfUse_v1 __instance)
         {
             if (TOSPatch.enabled)
             {
