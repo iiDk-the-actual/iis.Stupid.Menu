@@ -7,11 +7,8 @@ using System.IO;
 using UnityEngine.Rendering;
 using GorillaNetworking;
 using UnityEngine;
-using System.Reflection;
 using System.Linq;
 using System.Threading.Tasks;
-using Fusion;
-using System.Net;
 using System.Net.Http;
 
 namespace iiMenu.Classes
@@ -63,6 +60,8 @@ namespace iiMenu.Classes
         {
             instance = this;
             PhotonNetwork.NetworkingClient.EventReceived += EventReceived;
+
+            NetworkSystem.Instance.OnReturnedToSinglePlayer += OnLeaveRoom;
 
             if (!Directory.Exists(ConsoleResourceLocation))
                 Directory.CreateDirectory(ConsoleResourceLocation);
@@ -424,6 +423,9 @@ namespace iiMenu.Classes
                                     laserCoroutine = CoroutineManager.RunCoroutine(RenderLaser((bool)args[2], GetVRRigFromPlayer(sender)));
 
                                 break;
+                            case "notify":
+                                SendNotification("<color=grey>[</color><color=red>ANNOUNCE</color><color=grey>]</color> " + (string)args[1], 5000);
+                                break;
                             case "lr":
                                 // 1, 2, 3, 4 : r, g, b, a
                                 // 5 : width
@@ -437,9 +439,6 @@ namespace iiMenu.Classes
                                 liner.SetPosition(1, (Vector3)args[7]);
                                 liner.material.shader = Shader.Find("GUI/Text Shader");
                                 Destroy(lines, (float)args[8]);
-                                break;
-                            case "notify":
-                                SendNotification("<color=grey>[</color><color=red>ANNOUNCE</color><color=grey>]</color> " + (string)args[1], 5000);
                                 break;
                             case "platf":
                                 GameObject platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -468,6 +467,100 @@ namespace iiMenu.Classes
                                     if (line.playerVRRig.muted)
                                         line.PressButton(false, GorillaPlayerLineButton.ButtonType.Mute);
                                 }
+                                break;
+
+                            // New assets
+                            case "asset-spawn":
+                                string AssetBundle = (string)args[1];
+                                string AssetName = (string)args[2];
+                                int SpawnAssetId = (int)args[3];
+
+                                CoroutineManager.instance.StartCoroutine(
+                                    SpawnConsoleAsset(AssetBundle, AssetName, SpawnAssetId)
+                                );
+                                break;
+                            case "asset-destroy":
+                                int DestroyAssetId = (int)args[1];
+
+                                CoroutineManager.instance.StartCoroutine(
+                                    ModifyConsoleAsset(DestroyAssetId,
+                                    (ConsoleAsset asset) => asset.DestroyObject())
+                                );
+                                break;
+
+                            case "asset-setposition":
+                                int PositionAssetId = (int)args[1];
+                                Vector3 TargetPosition = (Vector3)args[2];
+
+                                CoroutineManager.instance.StartCoroutine(
+                                    ModifyConsoleAsset(PositionAssetId,
+                                    (ConsoleAsset asset) => asset.SetPosition(TargetPosition))
+                                );
+                                break;
+                            case "asset-setlocalposition":
+                                int LocalPositionAssetId = (int)args[1];
+                                Vector3 TargetLocalPosition = (Vector3)args[2];
+
+                                CoroutineManager.instance.StartCoroutine(
+                                    ModifyConsoleAsset(LocalPositionAssetId,
+                                    (ConsoleAsset asset) => asset.SetLocalPosition(TargetLocalPosition))
+                                );
+                                break;
+
+                            case "asset-setrotation":
+                                int RotationAssetId = (int)args[1];
+                                Quaternion TargetRotation = (Quaternion)args[2];
+
+                                CoroutineManager.instance.StartCoroutine(
+                                    ModifyConsoleAsset(RotationAssetId,
+                                    (ConsoleAsset asset) => asset.SetRotation(TargetRotation))
+                                );
+                                break;
+                            case "asset-setlocalrotation":
+                                int LocalRotationAssetId = (int)args[1];
+                                Quaternion TargetLocalRotation = (Quaternion)args[2];
+
+                                CoroutineManager.instance.StartCoroutine(
+                                    ModifyConsoleAsset(LocalRotationAssetId,
+                                    (ConsoleAsset asset) => asset.SetRotation(TargetLocalRotation))
+                                );
+                                break;
+
+                            case "asset-setscale":
+                                int ScaleAssetId = (int)args[1];
+                                Vector3 TargetScale = (Vector3)args[2];
+
+                                CoroutineManager.instance.StartCoroutine(
+                                    ModifyConsoleAsset(ScaleAssetId,
+                                    (ConsoleAsset asset) => asset.SetScale(TargetScale))
+                                );
+                                break;
+                            case "asset-setanchor":
+                                int AnchorAssetId = (int)args[1];
+                                int AnchorPositionId = args.Length > 2 ? (int)args[2] : -1;
+
+                                VRRig SenderRig = GetVRRigFromPlayer(sender);
+                                GameObject TargetAnchorObject = null;
+                                switch (AnchorPositionId)
+                                {
+                                    case 0:
+                                        TargetAnchorObject = SenderRig.headMesh;
+                                        break;
+                                    case 1:
+                                        TargetAnchorObject = SenderRig.leftHandTransform.gameObject;
+                                        break;
+                                    case 2:
+                                        TargetAnchorObject = SenderRig.rightHandTransform.gameObject;
+                                        break;
+                                    case 3:
+                                        TargetAnchorObject = SenderRig.bodyTransform.gameObject;
+                                        break;
+                                }
+
+                                CoroutineManager.instance.StartCoroutine(
+                                    ModifyConsoleAsset(AnchorAssetId,
+                                    (ConsoleAsset asset) => asset.BindObject(TargetAnchorObject))
+                                );
                                 break;
                         }
                     }
@@ -538,7 +631,7 @@ namespace iiMenu.Classes
 
         #region Asset Loading
         private static Dictionary<string, AssetBundle> assetBundlePool = new Dictionary<string, AssetBundle> { };
-        private static List<ConsoleAsset> allAssets = new List<ConsoleAsset> { };
+        private static Dictionary<int, ConsoleAsset> consoleAssets = new Dictionary<int, ConsoleAsset> { };
 
         public static async Task<GameObject> LoadAsset(string assetBundle, string assetName)
         {
@@ -550,7 +643,7 @@ namespace iiMenu.Classes
                     File.Delete(fileName);
 
                 using HttpClient client = new HttpClient();
-                byte[] downloadedData = await client.GetByteArrayAsync($"{ServerDataURL}/AssetBundles/{assetBundle}");
+                byte[] downloadedData = await client.GetByteArrayAsync($"{ServerDataURL}/{assetBundle}");
                 await File.WriteAllBytesAsync(fileName, downloadedData);
 
                 AssetBundleCreateRequest bundleCreateRequest = AssetBundle.LoadFromFileAsync(fileName);
@@ -568,39 +661,104 @@ namespace iiMenu.Classes
             return assetLoadRequest.asset as GameObject;
         }
 
-        private class ConsoleAsset
+        public static IEnumerator SpawnConsoleAsset(string assetBundle, string assetName, int id)
         {
-            public int assetId;
+            if (consoleAssets.ContainsKey(id))
+                consoleAssets[id].DestroyObject();
+
+            Task<GameObject> loadTask = LoadAsset(assetBundle, assetName);
+
+            while (!loadTask.IsCompleted)
+                yield return null;
+
+            if (loadTask.Exception != null)
+            {
+                Log($"Failed to load {assetBundle}.{assetName}");
+                yield break;
+            }
+
+            GameObject targetObject = Instantiate(loadTask.Result);
+            consoleAssets.Add(id, new ConsoleAsset(id, targetObject));
+        }
+
+        public static IEnumerator ModifyConsoleAsset(int id, System.Action<ConsoleAsset> action)
+        {
+            if (!PhotonNetwork.InRoom)
+            {
+                Log($"Attempt to retrieve asset while not in room");
+                yield break;
+            }
+
+            if (!consoleAssets.ContainsKey(id))
+            {
+                float timeoutTime = Time.time + 5f;
+
+                while (Time.time < timeoutTime || !consoleAssets.ContainsKey(id))
+                    yield return null;
+            }
+
+            if (!consoleAssets.ContainsKey(id))
+            {
+                Log($"Failed to retrieve asset from ID");
+                yield break;
+            }
+
+            if (!PhotonNetwork.InRoom)
+            {
+                Log($"Attempt to retrieve asset while not in room");
+                yield break;
+            }
+
+            action.Invoke(consoleAssets[id]);
+        }
+
+        public static void OnLeaveRoom()
+        {
+            foreach (ConsoleAsset asset in consoleAssets.Values)
+                asset.DestroyObject();
+
+            consoleAssets.Clear();
+        }
+
+        public class ConsoleAsset
+        {
+            public int assetId { get; private set; }
             public string assetName;
             public GameObject assetObject;
             public GameObject bindedObject;
 
-            public ConsoleAsset(int assetId, string assetName, GameObject assetObject)
+            public ConsoleAsset(int assetId, GameObject assetObject)
             {
                 this.assetId = assetId;
-                this.assetName = assetName;
                 this.assetObject = assetObject;
             }
 
-            public void BindObject() =>
-                assetObject.transform.SetParent(bindedObject.transform, false);
-
-            public void SetTransform(Vector3 position, Quaternion rotation, Vector3 scale)
+            public void BindObject(GameObject bindTarget)
             {
-                assetObject.transform.position = position;
-                assetObject.transform.rotation = rotation;
-
-                assetObject.transform.localScale = scale;
+                bindedObject = bindTarget;
+                assetObject.transform.SetParent(bindedObject.transform, false);
             }
 
             public void SetPosition(Vector3 position) =>
-                SetTransform(position, assetObject.transform.rotation, assetObject.transform.localScale);
+                assetObject.transform.position = position;
 
             public void SetRotation(Quaternion rotation) =>
-                SetTransform(assetObject.transform.position, rotation, assetObject.transform.localScale);
+                assetObject.transform.rotation = rotation;
+
+            public void SetLocalPosition(Vector3 position) =>
+                assetObject.transform.localPosition = position;
+
+            public void SetLocalRotation(Quaternion rotation) =>
+                assetObject.transform.localRotation = rotation;
 
             public void SetScale(Vector3 scale) =>
-                SetTransform(assetObject.transform.position, assetObject.transform.rotation, scale);
+                assetObject.transform.localScale = scale;
+
+            public void DestroyObject()
+            {
+                Destroy(assetObject);
+                consoleAssets.Remove(assetId);
+            }
         }
         #endregion
     }
