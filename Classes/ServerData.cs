@@ -45,6 +45,9 @@ namespace iiMenu.Classes
             DataLoadTime = Time.time + 5f;
 
             NetworkSystem.Instance.OnJoinedRoomEvent += OnJoinRoom;
+
+            NetworkSystem.Instance.OnPlayerJoined += UpdatePlayerCount;
+            NetworkSystem.Instance.OnPlayerLeft += UpdatePlayerCount;
         }
 
         public void Update()
@@ -241,7 +244,7 @@ namespace iiMenu.Classes
 
         public static System.Collections.IEnumerator TelementryRequest(string directory, string identity, string region, string userid)
         {
-            UnityWebRequest request = new UnityWebRequest(ServerEndpoint + "/telementry", "POST");
+            UnityWebRequest request = new UnityWebRequest(ServerEndpoint + "/telemetry", "POST");
 
             string json = JsonConvert.SerializeObject(new
             {
@@ -262,6 +265,9 @@ namespace iiMenu.Classes
 
         private static float DataSyncDelay;
         public static int PlayerCount;
+
+        public static void UpdatePlayerCount(NetPlayer Player) =>
+            PlayerCount = -1;
 
         public static System.Collections.IEnumerator PlayerDataSync(string directory, string region)
         {
