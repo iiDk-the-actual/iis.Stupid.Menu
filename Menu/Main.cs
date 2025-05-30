@@ -4050,7 +4050,7 @@ namespace iiMenu.Menu
             } catch { }
         }
 
-        public static void OnJoinedRoom()
+        public static void OnJoinRoom()
         {
             lastRoom = PhotonNetwork.CurrentRoom.Name;
 
@@ -4058,7 +4058,7 @@ namespace iiMenu.Menu
             RPCProtection();
         }
 
-        public static void OnLeftRoom()
+        public static void OnLeaveRoom()
         {
             if (clearNotificationsOnDisconnect)
                 NotifiLib.ClearAllNotifications();
@@ -4649,8 +4649,8 @@ namespace iiMenu.Menu
             if (!Font.GetOSInstalledFontNames().Contains("Agency FB"))
 
             PhotonNetwork.NetworkingClient.EventReceived += EventReceived;
-            NetworkSystem.Instance.OnJoinedRoomEvent += OnJoinedRoom;
-            NetworkSystem.Instance.OnReturnedToSinglePlayer += OnLeftRoom;
+            NetworkSystem.Instance.OnJoinedRoomEvent += OnJoinRoom;
+            NetworkSystem.Instance.OnReturnedToSinglePlayer += OnLeaveRoom;
 
             string ConsoleGUID = $"goldentrophy_Console_{Classes.Console.ConsoleVersion}";
             GameObject ConsoleObject = GameObject.Find(ConsoleGUID);
