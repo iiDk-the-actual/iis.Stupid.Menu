@@ -201,8 +201,8 @@ namespace iiMenu.Mods
             {
                 GorillaTagManager tagman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
                 GorillaAmbushManager ambman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Stealth Manager").GetComponent<GorillaAmbushManager>();
-                
-                if (GorillaGameManager.instance.GameModeName().ToLower().Contains("ambush") || GorillaGameManager.instance.GameModeName().ToLower().Contains("stealth"))
+
+                if (GorillaGameManager.instance.GameType() == GorillaGameModes.GameModeType.Ambush || GorillaGameManager.instance.GameType() == GorillaGameModes.GameModeType.Ghost)
                     ambman.tagCoolDown = value;
                 else
                     tagman.tagCoolDown = value;
