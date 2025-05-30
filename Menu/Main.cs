@@ -3467,24 +3467,16 @@ namespace iiMenu.Menu
             }
         }
 
-        protected static List<int> taggedMaterialHash = new List<int>();
-
         public static bool PlayerIsTagged(VRRig Player)
         {
-            if (taggedMaterialHash.Count <= 0)
-            {
-                foreach (Material playerMaterial in Player.materialsToChangeTo)
-                {
-                    string name = playerMaterial.name.ToLower();
-                    if (name.Contains("fected") || name.Contains("it") || name.Contains("stealth") || name.Contains("ice") || !Player.nameTagAnchor.activeSelf)
-                    {
-                        taggedMaterialHash.Add(name.GetHashCode());
-                    }
-                }
-            }
+            List<NetPlayer> infectedPlayers = InfectedList();
+            NetPlayer targetPlayer = RigManager.GetPlayerFromVRRig(lockTarget);
 
-            if (taggedMaterialHash.Contains(Player.mainSkin.material.name.GetHashCode()))
-                return true;
+            foreach (NetPlayer infected in infectedPlayers)
+            {
+                if (infected.UserId == targetPlayer.UserId)
+                    return true;
+            }
 
             return false;
         }
