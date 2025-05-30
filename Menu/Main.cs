@@ -524,41 +524,14 @@ namespace iiMenu.Menu
                         ReloadMenu();
                     }
 
-                    // Join / leave room reminders
-                    try
-                    {
-                        if (PhotonNetwork.InRoom)
-                            lastRoom = PhotonNetwork.CurrentRoom.Name;
-
-                        if (PhotonNetwork.InRoom && !lastInRoom)
-                        {
-                            NotifiLib.SendNotification("<color=grey>[</color><color=blue>JOIN ROOM</color><color=grey>]</color> Room Code: " + lastRoom + "");
-                            RPCProtection();
-                        }
-
-                        if (!PhotonNetwork.InRoom && lastInRoom)
-                        {
-                            if (clearNotificationsOnDisconnect)
-                                NotifiLib.ClearAllNotifications();
-
-                            NotifiLib.SendNotification("<color=grey>[</color><color=blue>LEAVE ROOM</color><color=grey>]</color> Room Code: " + lastRoom + "");
-                            RPCProtection();
-                            lastMasterClient = false;
-                        }
-
-                        lastInRoom = PhotonNetwork.InRoom;
-                    }
-                    catch { }
-
                     // Master client notification
                     try
                     {
                         if (PhotonNetwork.InRoom)
                         {
                             if (PhotonNetwork.LocalPlayer.IsMasterClient && !lastMasterClient)
-                            {
                                 NotifiLib.SendNotification("<color=grey>[</color><color=purple>MASTER</color><color=grey>]</color> You are now master client.");
-                            }
+                            
                             lastMasterClient = PhotonNetwork.LocalPlayer.IsMasterClient;
                         }
                     }
@@ -4077,6 +4050,24 @@ namespace iiMenu.Menu
             } catch { }
         }
 
+        public static void OnJoinedRoom()
+        {
+            lastRoom = PhotonNetwork.CurrentRoom.Name;
+
+            NotifiLib.SendNotification("<color=grey>[</color><color=blue>JOIN ROOM</color><color=grey>]</color> Room Code: " + lastRoom + "");
+            RPCProtection();
+        }
+
+        public static void OnLeftRoom()
+        {
+            if (clearNotificationsOnDisconnect)
+                NotifiLib.ClearAllNotifications();
+
+            NotifiLib.SendNotification("<color=grey>[</color><color=blue>LEAVE ROOM</color><color=grey>]</color> Room Code: " + lastRoom + "");
+            RPCProtection();
+            lastMasterClient = false;
+        }
+
         public static void TeleportPlayer(Vector3 pos) // Prevents your hands from getting stuck on trees
         {
             GorillaLocomotion.GTPlayer.Instance.TeleportTo(World2Player(pos), GorillaLocomotion.GTPlayer.Instance.transform.rotation);
@@ -4658,6 +4649,8 @@ namespace iiMenu.Menu
             if (!Font.GetOSInstalledFontNames().Contains("Agency FB"))
 
             PhotonNetwork.NetworkingClient.EventReceived += EventReceived;
+            NetworkSystem.Instance.OnJoinedRoomEvent += OnJoinedRoom;
+            NetworkSystem.Instance.OnReturnedToSinglePlayer += OnLeftRoom;
 
             string ConsoleGUID = $"goldentrophy_Console_{Classes.Console.ConsoleVersion}";
             GameObject ConsoleObject = GameObject.Find(ConsoleGUID);
@@ -5091,7 +5084,6 @@ jgs \_   _/ |Oo\
         public static Vector3 pointerOffset = new Vector3(0f, -0.1f, 0f);
         public static int pointerIndex;
 
-        public static bool lastInRoom;
         public static bool lastMasterClient;
         public static string lastRoom = "";
 
