@@ -337,43 +337,8 @@ namespace iiMenu.Mods
                     VisualizeAura(GorillaTagger.Instance.rightHandTransform.position, tagReachDistance, GetBGColor(0f));
                 }
             } else
-            {
                 Patches.SphereCastPatch.patchEnabled = false;
-            }
         }
-
-        public static void DisableTagReach()
-        {
-            Patches.SphereCastPatch.patchEnabled = false;
-        }
-
-        /*public static void RPCTagAura()
-        {
-            if (PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
-            {
-                foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerListOthers)
-                {
-                    VRRig rig = GorillaGameManager.instance.FindPlayerVRRig(player);
-                    if (!PlayerIsTagged(rig)})
-                    {
-                        if (Time.time > TagAuraDelay)
-                        {
-                            float distance = Vector3.Distance(GorillaTagger.Instance.offlineVRRig.transform.position, rig.transform.position);
-                            if (distance < GorillaGameManager.instance.tagDistanceThreshold)
-                            {
-                                PhotonView.Get(GorillaGameManager.instance.GetComponent<GorillaGameManager>()).RPC("ReportTagRPC", RpcTarget.MasterClient, new object[]
-                                {
-                                                player
-                                });
-                                RPCProtection();
-                            }
-
-                            TagAuraDelay = Time.time + 0.1f;
-                        }
-                    }
-                }
-            }
-        }*/
 
         public static void TagGun()
         {
