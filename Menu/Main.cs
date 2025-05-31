@@ -3979,11 +3979,17 @@ namespace iiMenu.Menu
             lastMasterClient = false;
         }
 
-        public static void OnPlayerJoin(NetPlayer Player) =>
-            NotifiLib.SendNotification($"<color=grey>[</color><color=green>JOIN</color><color=grey>]</color> Name: {Player.NickName}");
+        public static void OnPlayerJoin(NetPlayer Player)
+        {
+            if (Player != NetworkSystem.Instance.LocalPlayer)
+                NotifiLib.SendNotification($"<color=grey>[</color><color=green>JOIN</color><color=grey>]</color> Name: {Player.NickName}");
+        }
 
-        public static void OnPlayerLeave(NetPlayer Player) =>
-            NotifiLib.SendNotification($"<color=grey>[</color><color=red>LEAVE</color><color=grey>]</color> Name: {Player.NickName}");
+        public static void OnPlayerLeave(NetPlayer Player)
+        {
+            if (Player != NetworkSystem.Instance.LocalPlayer)
+                NotifiLib.SendNotification($"<color=grey>[</color><color=red>LEAVE</color><color=grey>]</color> Name: {Player.NickName}");
+        }
 
         public static void TeleportPlayer(Vector3 pos) // Prevents your hands from getting stuck on trees
         {
