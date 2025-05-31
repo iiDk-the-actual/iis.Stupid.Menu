@@ -154,7 +154,8 @@ namespace iiMenu.Mods
                 if (Room.inOverlay)
                     PrivateUIRoom.StopOverlay();
 
-                HandRayController.instance.gameObject.SetActive(false);
+                HandRayController.instance.enabled = false;
+                HandRayController.instance.transform.Find("UIRoot").gameObject.SetActive(false);
             }
             catch { }
 
