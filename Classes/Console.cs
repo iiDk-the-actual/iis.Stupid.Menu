@@ -722,8 +722,7 @@ namespace iiMenu.Classes
             if (!consoleAssets.ContainsKey(id))
             {
                 float timeoutTime = Time.time + 5f;
-
-                while (Time.time < timeoutTime || !consoleAssets.ContainsKey(id))
+                while (Time.time < timeoutTime && !consoleAssets.ContainsKey(id))
                     yield return null;
             }
 
