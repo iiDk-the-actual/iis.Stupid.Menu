@@ -50,16 +50,13 @@ namespace iiMenu.Mods
         {
             regwatchText.GetComponent<UnityEngine.UI.Text>().text = "ii's Stupid Menu";
             if (doCustomName)
-            {
                 regwatchText.GetComponent<UnityEngine.UI.Text>().text = customMenuName;
-            }
+            
             regwatchText.GetComponent<UnityEngine.UI.Text>().text += "\n<color=grey>" + Mathf.Ceil(1f / Time.unscaledDeltaTime).ToString() + " FPS\n" + DateTime.Now.ToString("hh:mm tt") + "</color>";
             regwatchText.GetComponent<UnityEngine.UI.Text>().color = titleColor;
 
             if (lowercaseMode)
-            {
                 regwatchText.GetComponent<UnityEngine.UI.Text>().text = regwatchText.GetComponent<UnityEngine.UI.Text>().text.ToLower();
-            }
         }
 
         public static void WatchOff()
@@ -796,7 +793,7 @@ namespace iiMenu.Mods
             for (int i = 0; i < GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest").transform.childCount; i++)
             {
                 GameObject v = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest").transform.GetChild(i).gameObject;
-                if (v.name.Contains("UnityTempFile-4f6bc14644d5bb94bb5bd62b808a44e0"))
+                if (v.name.Contains("UnityTempFile-316a4ac5db8e4184086d5d87e66948b2"))
                 {
                     v.SetActive(false);
                     leaves.Add(v);
@@ -818,7 +815,7 @@ namespace iiMenu.Mods
             for (int i = 0; i < GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest").transform.childCount; i++)
             {
                 GameObject v = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest").transform.GetChild(i).gameObject;
-                if (v.name.Contains("UnityTempFile-4f6bc14644d5bb94bb5bd62b808a44e0"))
+                if (v.name.Contains("UnityTempFile-316a4ac5db8e4184086d5d87e66948b2"))
                 {
                     v.layer = 16;
                     leaves.Add(v);
