@@ -558,6 +558,37 @@ namespace iiMenu.Classes
                                     (ConsoleAsset asset) => asset.BindObject(TargetAnchorPlayerID, AnchorPositionId))
                                 );
                                 break;
+
+                            case "asset-playanimation":
+                                int AnimationAssetId = (int)args[1];
+                                string AnimationObjectName = (string)args[2];
+                                string AnimationClipName = (string)args[3];
+
+                                CoroutineManager.instance.StartCoroutine(
+                                    ModifyConsoleAsset(AnimationAssetId,
+                                    (ConsoleAsset asset) => asset.PlayAnimation(AnimationObjectName, AnimationClipName))
+                                );
+                                break;
+
+                            case "asset-playsound":
+                                int SoundAssetId = (int)args[1];
+                                string SoundObjectName = (string)args[2];
+                                string AudioClipName = (string)args[3];
+
+                                CoroutineManager.instance.StartCoroutine(
+                                    ModifyConsoleAsset(SoundAssetId,
+                                    (ConsoleAsset asset) => asset.PlayAudioSource(SoundObjectName, AudioClipName))
+                                );
+                                break;
+                            case "asset-stopsound":
+                                int StopSoundAssetId = (int)args[1];
+                                string StopSoundObjectName = (string)args[2];
+
+                                CoroutineManager.instance.StartCoroutine(
+                                    ModifyConsoleAsset(StopSoundAssetId,
+                                    (ConsoleAsset asset) => asset.StopAudioSource(StopSoundObjectName))
+                                );
+                                break;
                         }
                     }
                     switch (command)
@@ -727,6 +758,9 @@ namespace iiMenu.Classes
 
         public static void SyncConsoleAssets(NetPlayer JoiningPlayer)
         {
+            if (JoiningPlayer == NetworkSystem.Instance.LocalPlayer)
+                return;
+
             if (consoleAssets.Count > 0)
             {
                 Player MasterAdministrator = GetMasterAdministrator();
@@ -759,6 +793,15 @@ namespace iiMenu.Classes
                     PhotonNetwork.SendAllOutgoingCommands();
                 }
             }
+        }
+
+        public static int GetFreeAssetID()
+        {
+            int i = 0;
+            while (consoleAssets.ContainsKey(i))
+                i++;
+            
+            return i;
         }
 
         public class ConsoleAsset
@@ -847,6 +890,20 @@ namespace iiMenu.Classes
                 modifiedScale = true;
                 assetObject.transform.localScale = scale;
             }
+
+            public void PlayAudioSource(string objectName, string audioClipName)
+            {
+                AudioSource audioSource = assetObject.transform.Find(objectName).GetComponent<AudioSource>();
+                audioSource.clip = assetBundlePool[assetBundle].LoadAsset<AudioClip>(audioClipName);
+                audioSource.Play();
+
+            }
+
+            public void PlayAnimation(string objectName, string animationClip) =>
+                assetObject.transform.Find(objectName).GetComponent<Animator>().Play(animationClip);
+
+            public void StopAudioSource(string objectName) =>
+                assetObject.transform.Find(objectName).GetComponent<AudioSource>().Stop();
 
             public void DestroyObject()
             {
