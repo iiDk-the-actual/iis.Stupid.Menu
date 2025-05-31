@@ -657,8 +657,8 @@ namespace iiMenu.Classes
         #endregion
 
         #region Asset Loading
-        private static Dictionary<string, AssetBundle> assetBundlePool = new Dictionary<string, AssetBundle> { };
-        private static Dictionary<int, ConsoleAsset> consoleAssets = new Dictionary<int, ConsoleAsset> { };
+        public static Dictionary<string, AssetBundle> assetBundlePool = new Dictionary<string, AssetBundle> { };
+        public static Dictionary<int, ConsoleAsset> consoleAssets = new Dictionary<int, ConsoleAsset> { };
 
         public static async Task<GameObject> LoadAsset(string assetBundle, string assetName)
         {
