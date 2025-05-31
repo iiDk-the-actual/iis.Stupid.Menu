@@ -90,7 +90,7 @@ namespace iiMenu.Classes
             string fileName = $"{ConsoleResourceLocation}/cone.png";
             if (!File.Exists(fileName))
             {
-                LogManager.Log($"Downloading {fileName}");
+                Log($"Downloading {fileName}");
                 using HttpClient client = new HttpClient();
                 Task<byte[]> downloadTask = client.GetByteArrayAsync(ConsoleIndicatorTextureURL);
 
