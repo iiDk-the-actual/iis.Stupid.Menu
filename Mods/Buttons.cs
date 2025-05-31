@@ -1152,12 +1152,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Get Menu Users", method =() => Experimental.GetMenuUsers(), isTogglable = false, toolTip = "Detects who is using the menu."},
                 new ButtonInfo { buttonText = "Menu User Name Tags", enableMethod =() => Experimental.EnableAdminMenuUserTags(), method =() => Experimental.AdminMenuUserTags(), disableMethod =() => Experimental.DisableAdminMenuUserTags(), toolTip = "Detects who is using the menu."},
 
-                // new ButtonInfo { buttonText = "Test Summon Object", method =() => Console.ExecuteCommand("asset-spawn", Photon.Realtime.ReceiverGroup.All, "testbundle", "TestObject", 0), isTogglable = false},
-                // new ButtonInfo { buttonText = "Test Move Object", method =() => Console.ExecuteCommand("asset-setposition", Photon.Realtime.ReceiverGroup.All, 0, new Vector3(0f, 15f, 0f)), isTogglable = false},
-                // new ButtonInfo { buttonText = "Test Anchor Object Head", method =() => Console.ExecuteCommand("asset-setposition", Photon.Realtime.ReceiverGroup.All, 0, new Vector3(0f, 15f, 0f)), isTogglable = false},
-                // new ButtonInfo { buttonText = "Test Anchor Object Hand Left", method =() => Console.ExecuteCommand("asset-setanchor", Photon.Realtime.ReceiverGroup.All, 0, new Vector3(0f, 15f, 0f)), isTogglable = false},
-                // new ButtonInfo { buttonText = "Test Destroy Object", method =() => Console.ExecuteCommand("asset-destroy", Photon.Realtime.ReceiverGroup.All, 0), isTogglable = false},
-
                 new ButtonInfo { buttonText = "Admin Kick Gun", method =() => Experimental.AdminKickGun(), toolTip = "Kicks whoever your hand desires if they're using the menu."},
                 new ButtonInfo { buttonText = "Admin Kick All", method =() => Experimental.AdminKickAll(), isTogglable = false, toolTip = "Kicks everyone using the menu."},
                 
