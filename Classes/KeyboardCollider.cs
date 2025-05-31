@@ -17,9 +17,6 @@ namespace iiMenu.Classes
 				
                 GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(66, collider == lKeyCollider, buttonClickVolume / 10f);
 				PressKeyboardKey(key);
-
-				if (dynamicAnimations)
-					CoroutineManager.instance.StartCoroutine(KeyboardClick(gameObject));
             }
 		}
 	}
