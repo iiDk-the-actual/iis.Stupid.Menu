@@ -12,6 +12,7 @@ namespace iiMenu
     {
         public static Plugin instance;
         public static ManualLogSource PluginLogger => instance.Logger;
+        public static bool FirstLaunch;
 
         private void Awake()
         {
@@ -28,6 +29,8 @@ namespace iiMenu
     ii's Stupid Menu  {(PluginInfo.BetaBuild ? "Beta " : "Build")} {PluginInfo.Version}
     Compiled {PluginInfo.BuildTimestamp}
 ");
+
+            FirstLaunch = !Directory.Exists("iisStupidMenu");
 
             string[] ExistingDirectories = new string[]
             {
