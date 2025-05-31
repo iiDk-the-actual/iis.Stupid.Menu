@@ -932,6 +932,62 @@ namespace iiMenu.Mods
                 }
             }
         }
+        // by apoca.. heh
+        // iidk add me on discord my username is my github username
+        public static void DistanceESP()
+        {
+            float maxDistance = 10f;
+            float redThreshold = 7.5f;
+
+            if (PerformanceVisuals)
+            {
+                if (Time.time < PerformanceVisualDelay)
+                {
+                    if (Time.frameCount != DelayChangeStep)
+                        return;
+                }
+                else
+                { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
+            }
+            
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                {
+                    float distance = Vector3.Distance(GorillaTagger.Instance.offlineVRRig.transform.position, vrrig.transform.position);
+
+                    Color color;
+
+                    if (distance <= redThreshold)
+                    {
+                        color = Color.red;
+                    }
+                    else if (distance <= maxDistance)
+                    {
+                        float t = Mathf.InverseLerp(maxDistance, redThreshold, distance); 
+                        color = Color.Lerp(Color.green, Color.red, t);
+                    }
+                    else
+                    {
+                        color = Color.green;
+                    }
+
+                    color.a = 0.4f;
+
+                    GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    box.transform.position = vrrig.transform.position;
+                    UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
+                    box.transform.localScale = new Vector3(0.5f, 1f, 0.4f);
+                    box.transform.rotation = vrrig.transform.rotation;
+
+                    Renderer renderer = box.GetComponent<Renderer>();
+                    renderer.material.shader = Shader.Find("GUI/Text Shader");
+                    renderer.material.color = color;
+
+                    UnityEngine.Object.Destroy(box, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
+                }
+            }
+        }
 
         private static Texture2D voicetxt = null;
         public static void VoiceESP()
