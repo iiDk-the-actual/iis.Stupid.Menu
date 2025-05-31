@@ -33,6 +33,7 @@ namespace iiMenu.Classes
 
         private static float DataLoadTime = -1f;
         private static float ReloadTime = -1f;
+        private static float HeartbeatTime = -1f;
 
         private static int LoadAttempts;
 
@@ -86,6 +87,12 @@ namespace iiMenu.Classes
                     CoroutineManager.RunCoroutine(PlayerDataSync(PhotonNetwork.CurrentRoom.Name, PhotonNetwork.CloudRegion));
 
                 PlayerCount = PhotonNetwork.InRoom ? PhotonNetwork.PlayerList.Length : -1;
+            }
+
+            if (Time.time > HeartbeatTime)
+            {
+                HeartbeatTime = Time.time + 60f;
+                CoroutineManager.RunCoroutine(Heartbeat());
             }
         }
 
@@ -333,6 +340,17 @@ namespace iiMenu.Classes
             request.downloadHandler = new DownloadHandlerBuffer();
             yield return request.SendWebRequest();
         }
+
+        public static System.Collections.IEnumerator Heartbeat()
+        {
+            UnityWebRequest request = new UnityWebRequest(ServerEndpoint + "/heartbeat", "POST");
+
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+
+            yield return request.SendWebRequest();
+        }
+
         #endregion
     }
 }
