@@ -131,7 +131,7 @@ namespace iiMenu.UI
                 }
                 if (GUI.Button(new Rect(Screen.width - 105, 90, 85, 30), "Queue"))
                 {
-                    PhotonNetwork.Disconnect();
+                    NetworkSystem.Instance.ReturnToSinglePlayer();
                     rejRoom = inputText;
                 }
 

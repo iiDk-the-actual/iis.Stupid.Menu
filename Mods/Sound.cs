@@ -227,7 +227,7 @@ namespace iiMenu.Mods.Spammers
 
         public static void BetaPlayTag(int id, float volume)
         {
-            if (!PhotonNetwork.IsMasterClient)
+            if (!NetworkSystem.Instance.IsMasterClient)
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             else
             {

@@ -142,7 +142,7 @@ namespace iiMenu.Mods
                                 {
                                     if (!smartarp || (smartarp && line.linePlayer.UserId == buttonClickPlayer && Time.frameCount == buttonClickTime && PhotonNetwork.CurrentRoom.IsVisible && !PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED")))
                                     {
-                                        PhotonNetwork.Disconnect();
+                                        NetworkSystem.Instance.ReturnToSinglePlayer();
                                         RPCProtection();
                                         NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected.");
                                     }
@@ -291,7 +291,7 @@ namespace iiMenu.Mods
                 switch (antiReportType)
                 {
                     case 0:
-                        PhotonNetwork.Disconnect();
+                        NetworkSystem.Instance.ReturnToSinglePlayer();
                         RPCProtection();
                         if (doNotification)
                         {
@@ -372,7 +372,7 @@ namespace iiMenu.Mods
                         }
                     }
                     catch { }
-                    PhotonNetwork.Disconnect();
+                    NetworkSystem.Instance.ReturnToSinglePlayer();
                     NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-MODERATOR</color><color=grey>]</color> There was a moderator in your lobby, you have been disconnected. Their Player ID and Room Code have been saved to a file.");
                 }
             }

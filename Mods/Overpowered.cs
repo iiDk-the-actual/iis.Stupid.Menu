@@ -20,7 +20,7 @@ namespace iiMenu.Mods
     {
         public static void MasterCheck()
         {
-            if (PhotonNetwork.IsMasterClient)
+            if (NetworkSystem.Instance.IsMasterClient)
                 NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>You are master client.</color>");
             else
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
@@ -28,7 +28,7 @@ namespace iiMenu.Mods
 
         public static void AngerBees()
         {
-            if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
+            if (!NetworkSystem.Instance.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
 
             TappableBeeHive BeeHive = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/2025_SharedBlocks_Forest/Bee Hives /Beehive_Prefab").GetComponent<TappableBeeHive>();
             BeeHive.OnTap(1f);
@@ -36,7 +36,7 @@ namespace iiMenu.Mods
 
         public static void StingTarget(NetPlayer Target)
         {
-            if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
+            if (!NetworkSystem.Instance.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
 
             AngryBeeSwarm Bees = GameObject.Find("Environment Objects/05Maze_PersistentObjects/AngryBeeSwarm/FloatingChaseBeeSwarm").GetComponent<AngryBeeSwarm>();
             if (Bees.currentState != AngryBeeSwarm.ChaseState.Grabbing && Time.time > Bees.grabTimestamp + 5.1f)
@@ -88,7 +88,7 @@ namespace iiMenu.Mods
 
         public static void SetGuardianTarget(NetPlayer target)
         {
-            if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
+            if (!NetworkSystem.Instance.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
             foreach (GorillaGuardianZoneManager zoneManager in GorillaGuardianZoneManager.zoneManagers)
             {
                 if (zoneManager.enabled)
@@ -121,7 +121,7 @@ namespace iiMenu.Mods
 
         public static void GuardianAll()
         {
-            if (PhotonNetwork.IsMasterClient)
+            if (NetworkSystem.Instance.IsMasterClient)
             {
                 int i = 0;
                 foreach (GorillaGuardianZoneManager gorillaGuardianZoneManager in GorillaGuardianZoneManager.zoneManagers)
@@ -138,7 +138,7 @@ namespace iiMenu.Mods
 
         public static void UnguardianSelf()
         {
-            if (PhotonNetwork.IsMasterClient)
+            if (NetworkSystem.Instance.IsMasterClient)
             {
                 foreach (GorillaGuardianZoneManager gorillaGuardianZoneManager in GorillaGuardianZoneManager.zoneManagers)
                 {
@@ -165,7 +165,7 @@ namespace iiMenu.Mods
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
-                        if (PhotonNetwork.IsMasterClient)
+                        if (NetworkSystem.Instance.IsMasterClient)
                         {
                             foreach (GorillaGuardianZoneManager gorillaGuardianZoneManager in GorillaGuardianZoneManager.zoneManagers)
                             {
@@ -185,7 +185,7 @@ namespace iiMenu.Mods
 
         public static void UnguardianAll()
         {
-            if (PhotonNetwork.IsMasterClient)
+            if (NetworkSystem.Instance.IsMasterClient)
             {
                 foreach (GorillaGuardianZoneManager gorillaGuardianZoneManager in GorillaGuardianZoneManager.zoneManagers)
                 {
@@ -213,7 +213,7 @@ namespace iiMenu.Mods
 
         public static void AlwaysGuardian()
         {
-            if (PhotonNetwork.IsMasterClient)
+            if (NetworkSystem.Instance.IsMasterClient)
             {
                 GorillaGuardianManager gman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Guardian Manager").GetComponent<GorillaGuardianManager>();
                 if (!gman.IsPlayerGuardian(PhotonNetwork.LocalPlayer))
@@ -248,7 +248,7 @@ namespace iiMenu.Mods
 
         public static void CreateItem(object target, int hash, Vector3 position, Quaternion rotation, Vector3 velocity, Vector3 angVelocity, long[] sendData = null)
         {
-            if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
+            if (!NetworkSystem.Instance.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
 
             int netId = GhostReactorManager.instance.gameEntityManager.CreateNetId();
 
@@ -370,7 +370,7 @@ namespace iiMenu.Mods
                     if (Time.time > destroyDelay)
                     {
                         destroyDelay = Time.time + 0.02f;
-                        if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
+                        if (!NetworkSystem.Instance.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
 
                         GameEntity gameEntity = null;
                         float closestDist = float.MaxValue;
@@ -1745,7 +1745,7 @@ namespace iiMenu.Mods
 
         public static void TargetSpam()
         {
-            if (PhotonNetwork.IsMasterClient)
+            if (NetworkSystem.Instance.IsMasterClient)
             {
                 foreach (HitTargetNetworkState hitTargetNetworkState in Resources.FindObjectsOfTypeAll<HitTargetNetworkState>())
                 {
@@ -1757,7 +1757,7 @@ namespace iiMenu.Mods
 
         public static void InfectionToTag()
         {
-            if (!PhotonNetwork.IsMasterClient)
+            if (!NetworkSystem.Instance.IsMasterClient)
             {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             }
@@ -1772,7 +1772,7 @@ namespace iiMenu.Mods
 
         public static void TagToInfection()
         {
-            if (!PhotonNetwork.IsMasterClient)
+            if (!NetworkSystem.Instance.IsMasterClient)
             {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             }
@@ -1789,7 +1789,7 @@ namespace iiMenu.Mods
 
         public static void BetaSetStatus(int state, RaiseEventOptions balls)
         {
-            if (!PhotonNetwork.IsMasterClient)
+            if (!NetworkSystem.Instance.IsMasterClient)
             {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             }

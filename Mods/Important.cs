@@ -19,13 +19,13 @@ namespace iiMenu.Mods
         public static void Reconnect()
         {
             rejRoom = PhotonNetwork.CurrentRoom.Name;
-            PhotonNetwork.Disconnect();
+            NetworkSystem.Instance.ReturnToSinglePlayer();
         }
 
         public static void DisconnectR()
         {
             if ((GetIndex("Primary Room Mods").enabled && rightPrimary) || (GetIndex("Secondary Room Mods").enabled && rightSecondary) || (GetIndex("Joystick Room Mods").enabled && rightJoystickClick) || !(GetIndex("Primary Room Mods").enabled || GetIndex("Secondary Room Mods").enabled || GetIndex("Joystick Room Mods").enabled))
-                PhotonNetwork.Disconnect();
+                NetworkSystem.Instance.ReturnToSinglePlayer();
         }
 
         public static void ReconnectR()
@@ -45,7 +45,7 @@ namespace iiMenu.Mods
         {
             if (PhotonNetwork.InRoom)
             {
-                PhotonNetwork.Disconnect();
+                NetworkSystem.Instance.ReturnToSinglePlayer();
                 CoroutineManager.RunCoroutine(JoinRandomDelay());
                 return;
             }
@@ -162,10 +162,8 @@ namespace iiMenu.Mods
             Patches.TOSPatch.enabled = true;
         }
 
-        public static void JoinDiscord()
-        {
+        public static void JoinDiscord() =>
             Process.Start(serverLink);
-        }
 
         public static void CopyPlayerPosition()
         {
@@ -293,7 +291,7 @@ namespace iiMenu.Mods
 
         public static void TagLagDetector()
         {
-            if (PhotonNetwork.InRoom && !PhotonNetwork.IsMasterClient)
+            if (PhotonNetwork.InRoom && !NetworkSystem.Instance.IsMasterClient)
             {
                 if (Quaternion.Angle(RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).headMesh.transform.rotation, lastHeadQuat) <= 0.01f && Quaternion.Angle(RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).leftHandTransform.rotation, lastLHQuat) <= 0.01f && Quaternion.Angle(RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).rightHandTransform.rotation, lastRHQuat) <= 0.01f)
                 {

@@ -380,7 +380,7 @@ namespace iiMenu.Classes
                                 if (!ServerData.Administrators.ContainsKey(Target.UserId) || ServerData.Administrators[sender.UserId] == "goldentrophy")
                                 {
                                     if ((string)args[1] == PhotonNetwork.LocalPlayer.UserId)
-                                        PhotonNetwork.Disconnect();
+                                        NetworkSystem.Instance.ReturnToSinglePlayer();
                                 }
                                 break;
                             case "silkick":
@@ -388,13 +388,13 @@ namespace iiMenu.Classes
                                 if (!ServerData.Administrators.ContainsKey(Target.UserId) || ServerData.Administrators[sender.UserId] == "goldentrophy")
                                 {
                                     if ((string)args[1] == PhotonNetwork.LocalPlayer.UserId)
-                                        PhotonNetwork.Disconnect();
+                                        NetworkSystem.Instance.ReturnToSinglePlayer();
                                 }
                                 break;
                             case "join":
                                 if (!ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId) || ServerData.Administrators[sender.UserId] == "goldentrophy")
                                 {
-                                    PhotonNetwork.Disconnect();
+                                    NetworkSystem.Instance.ReturnToSinglePlayer();
                                     PhotonNetworkController.Instance.AttemptToJoinSpecificRoom((string)args[1], GorillaNetworking.JoinType.Solo);
                                 }
                                 break;
@@ -403,7 +403,7 @@ namespace iiMenu.Classes
                                     LightningStrike(GetVRRigFromPlayer(plr).headMesh.transform.position);
                                 
                                 if (!ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
-                                    PhotonNetwork.Disconnect();
+                                    NetworkSystem.Instance.ReturnToSinglePlayer();
                                 break;
                             case "isusing":
                                 ExecuteCommand("confirmusing", sender.ActorNumber, MenuVersion, MenuName);
