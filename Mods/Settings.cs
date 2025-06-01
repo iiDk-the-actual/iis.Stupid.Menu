@@ -242,6 +242,11 @@ namespace iiMenu.Mods
             SavePreferences();
             LoadPlugins();
             LoadPreferences();
+
+            if (isSearching)
+                Search();
+
+            currentCategoryName = "Main";
         }
 
         public static void OpenPluginsFolder()
@@ -1989,7 +1994,8 @@ namespace iiMenu.Mods
                 "iOS",
                 "XP Notify",
                 "XP Ding",
-                "XP Error"
+                "XP Error",
+                "Roblox Bass"
             };
 
             notificationSoundIndex++;
@@ -2916,6 +2922,13 @@ namespace iiMenu.Mods
                 66,
                 106,
                 189,
+                66,
+                66,
+                66,
+                66,
+                66,
+                66,
+                66,
                 66
             };
             string[] buttonSoundNames = new string[]
@@ -2933,7 +2946,14 @@ namespace iiMenu.Mods
                 "Membrane",
                 "Jar",
                 "Wall",
-                "Slider"
+                "Slider",
+                "Can",
+                "Cut",
+                "Creamy",
+                "Roblox Button",
+                "Roblox Tick",
+                "Mouse",
+                "Valve"
             };
 
             buttonClickIndex++;
