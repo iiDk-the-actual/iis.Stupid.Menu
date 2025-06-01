@@ -3790,9 +3790,7 @@ namespace iiMenu.Menu
                 }
             }
             else
-            {
                 translation = File.ReadAllText(filePath);
-            }
 
             if (translation != null)
             {
