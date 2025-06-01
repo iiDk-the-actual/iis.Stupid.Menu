@@ -5,7 +5,7 @@
         public const string GUID = "org.iidk.gorillatag.iimenu";
         public const string Name = "ii's Stupid Menu";
         public const string Description = "Created by @goldentrophy with love <3";
-        public const string BuildTimestamp = "2025-06-01T16:08:53Z";
+        public const string BuildTimestamp = "2025-06-01T16:37:08Z";
         public const string Version = "6.2.1";
 
 #if DEBUG
