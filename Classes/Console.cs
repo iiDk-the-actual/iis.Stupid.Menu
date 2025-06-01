@@ -741,6 +741,17 @@ namespace iiMenu.Classes
             action.Invoke(consoleAssets[id]);
         }
 
+        public static IEnumerator PreloadAssetBundle(string name)
+        {
+            if (!assetBundlePool.ContainsKey(name))
+            {
+                Task loadTask = LoadAssetBundle(name);
+
+                while (!loadTask.IsCompleted)
+                    yield return null;
+            }
+        }
+
         public static void ClearConsoleAssets()
         {
             foreach (ConsoleAsset asset in consoleAssets.Values)
