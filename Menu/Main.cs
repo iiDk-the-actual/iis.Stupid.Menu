@@ -2138,52 +2138,36 @@ namespace iiMenu.Menu
                 textTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
             }
 
-            if (annoyingMode && UnityEngine.Random.Range(1, 5) == 3)
+            try
             {
-                ButtonInfo disconnectButton = GetIndex("Disconnect");
-                renderButtons = Enumerable.Repeat(disconnectButton, 10).ToArray();
-            }
-            else if (currentCategoryName == "Favorite Mods")
-            {
-                foreach (string favoriteMod in favorites)
+                if (annoyingMode && UnityEngine.Random.Range(1, 5) == 3)
                 {
-                    if (GetIndex(favoriteMod) == null)
-                        favorites.Remove(favoriteMod);
+                    ButtonInfo disconnectButton = GetIndex("Disconnect");
+                    renderButtons = Enumerable.Repeat(disconnectButton, 10).ToArray();
                 }
-
-                renderButtons = StringsToInfos(favorites.ToArray());
-            }
-            else if (currentCategoryName == "Enabled Mods")
-            {
-                List<ButtonInfo> enabledMods = new List<ButtonInfo>() { GetIndex("Exit Enabled Mods") };
-                enabledMods.AddRange(Buttons.buttons.SelectMany(buttonlist => buttonlist).Where(v => v.enabled));
-
-                renderButtons = enabledMods.ToArray();
-            }
-            else if (isSearching)
-            {
-                List<ButtonInfo> searchedMods = new List<ButtonInfo> { };
-                if (nonGlobalSearch && currentCategoryName != "Main")
+                else if (currentCategoryName == "Favorite Mods")
                 {
-                    foreach (ButtonInfo v in Buttons.buttons[currentCategoryIndex])
+                    foreach (string favoriteMod in favorites)
                     {
-                        try
-                        {
-                            string buttonText = v.buttonText;
-                            if (v.overlapText != null)
-                                buttonText = v.overlapText;
-
-                            if (buttonText.Replace(" ", "").ToLower().Contains(searchText.Replace(" ", "").ToLower()))
-                                searchedMods.Add(v);
-                        }
-                        catch { }
+                        if (GetIndex(favoriteMod) == null)
+                            favorites.Remove(favoriteMod);
                     }
+
+                    renderButtons = StringsToInfos(favorites.ToArray());
                 }
-                else
+                else if (currentCategoryName == "Enabled Mods")
                 {
-                    foreach (ButtonInfo[] buttonlist in Buttons.buttons)
+                    List<ButtonInfo> enabledMods = new List<ButtonInfo>() { GetIndex("Exit Enabled Mods") };
+                    enabledMods.AddRange(Buttons.buttons.SelectMany(buttonlist => buttonlist).Where(v => v.enabled));
+
+                    renderButtons = enabledMods.ToArray();
+                }
+                else if (isSearching)
+                {
+                    List<ButtonInfo> searchedMods = new List<ButtonInfo> { };
+                    if (nonGlobalSearch && currentCategoryName != "Main")
                     {
-                        foreach (ButtonInfo v in buttonlist)
+                        foreach (ButtonInfo v in Buttons.buttons[currentCategoryIndex])
                         {
                             try
                             {
@@ -2197,24 +2181,47 @@ namespace iiMenu.Menu
                             catch { }
                         }
                     }
+                    else
+                    {
+                        foreach (ButtonInfo[] buttonlist in Buttons.buttons)
+                        {
+                            foreach (ButtonInfo v in buttonlist)
+                            {
+                                try
+                                {
+                                    string buttonText = v.buttonText;
+                                    if (v.overlapText != null)
+                                        buttonText = v.overlapText;
+
+                                    if (buttonText.Replace(" ", "").ToLower().Contains(searchText.Replace(" ", "").ToLower()))
+                                        searchedMods.Add(v);
+                                }
+                                catch { }
+                            }
+                        }
+                    }
+
+                    buttonIndexOffset = 1;
+                    renderButtons = searchedMods.ToArray();
                 }
+                else
+                    renderButtons = Buttons.buttons[currentCategoryIndex];
 
-                buttonIndexOffset = 1;
-                renderButtons = searchedMods.ToArray();
-            } else
-                renderButtons = Buttons.buttons[currentCategoryIndex];
+                if (GetIndex("Alphabetize Menu").enabled || isSearching)
+                    renderButtons = StringsToInfos(Alphabetize(InfosToStrings(renderButtons)));
 
-            if (GetIndex("Alphabetize Menu").enabled || isSearching)
-                renderButtons = StringsToInfos(Alphabetize(InfosToStrings(renderButtons)));
+                if (!longmenu)
+                    renderButtons = renderButtons
+                        .Skip(pageNumber * (pageSize - buttonIndexOffset))
+                        .Take(pageSize - buttonIndexOffset)
+                        .ToArray();
 
-            if (!longmenu)
-                renderButtons = renderButtons
-                    .Skip(pageNumber * (pageSize - buttonIndexOffset))
-                    .Take(pageSize - buttonIndexOffset)
-                    .ToArray();
-
-            for (int i = 0; i < renderButtons.Length; i++)
-                AddButton((i + buttonIndexOffset) * 0.1f + (buttonOffset / 10), i, renderButtons[i]);
+                for (int i = 0; i < renderButtons.Length; i++)
+                    AddButton((i + buttonIndexOffset) * 0.1f + (buttonOffset / 10), i, renderButtons[i]);
+            } catch {
+                LogManager.Log("Menu draw is erroring, return to home page");
+                currentCategoryName = "Main";
+            }
 
             RecenterMenu();
 
