@@ -137,7 +137,7 @@ namespace iiMenu.Classes
             adminConeTexture = texture;
         }
 
-        public static System.Collections.IEnumerator PreloadAssets()
+        public static IEnumerator PreloadAssets()
         {
             using (UnityWebRequest request = UnityWebRequest.Get($"{ServerDataURL}/PreloadedAssets.txt"))
             {
