@@ -829,8 +829,8 @@ namespace iiMenu.Menu
             new ButtonInfo[] { // Spam Mods [13]
                 new ButtonInfo { buttonText = "Exit Spam Mods", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
 
-                new ButtonInfo { buttonText = "Sound Mods", method =() => currentCategoryName = "Sound Mods", isTogglable = false, toolTip = "Opens the sound mods."},
-                new ButtonInfo { buttonText = "Projectile Mods", method =() => currentCategoryName = "Projectile Mods", isTogglable = false, toolTip = "Opens the projectile mods."},
+                new ButtonInfo { buttonText = "Sound Mods", method =() => currentCategoryName = "Sound Spam Mods", isTogglable = false, toolTip = "Opens the sound mods."},
+                new ButtonInfo { buttonText = "Projectile Mods", method =() => currentCategoryName = "Projectile Spam Mods", isTogglable = false, toolTip = "Opens the projectile mods."},
             },
 
             new ButtonInfo[] { // Sound Spam Mods [14]
