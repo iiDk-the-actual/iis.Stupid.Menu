@@ -1622,178 +1622,198 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void CasualBoxESP()
-        {
-            if (PerformanceVisuals)
-            {
-                if (Time.time < PerformanceVisualDelay)
-                {
-                    if (Time.frameCount != DelayChangeStep)
-                        return;
-                }
-                else
-                { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
-            }
+        
 
-            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-            {
-                if (vrrig != GorillaTagger.Instance.offlineVRRig)
-                {
-                    UnityEngine.Color thecolor = vrrig.playerColor;
-                    if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
-                    if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
-                    GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    if (GetIndex("Hidden on Camera").enabled) { box.layer = 19; }
-                    box.transform.position = vrrig.transform.position;
-                    UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
-                    box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
-                    box.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
-                    box.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                    box.GetComponent<Renderer>().material.color = thecolor;
-                    UnityEngine.Object.Destroy(box, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
-                }
-            }
-        }
+public static void CreateBox(VRRig rig, UnityEngine.Color color, Vector3 headPosition, 
+    bool hiddenOnCamera, Vector3 boxScale, Shader shader, float destroyTime)
+{
+    GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
+    if (hiddenOnCamera)
+        box.layer = 19;
+
+    box.transform.position = rig.transform.position;
+    box.transform.localScale = boxScale;
+    box.transform.LookAt(headPosition);
+    UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
+
+    var renderer = box.GetComponent<Renderer>();
+    renderer.material.shader = shader;
+    renderer.material.color = color;
+
+    UnityEngine.Object.Destroy(box, destroyTime);
+}
+        
+
+
+   public static void CasualBoxESP()
+{
+    if (PerformanceVisuals && Time.time < PerformanceVisualDelay)
+    {
+        if (Time.frameCount != DelayChangeStep)
+            return;
+    }
+    else if (PerformanceVisuals)
+    {
+        PerformanceVisualDelay = Time.time + PerformanceModeStep;
+        DelayChangeStep = Time.frameCount;
+    }
+
+    var vrrigs = GorillaParent.instance.vrrigs;
+    bool followTheme = GetIndex("Follow Menu Theme").enabled;
+    bool transparentTheme = GetIndex("Transparent Theme").enabled;
+    bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
+    float destroyTime = PerformanceVisuals ? PerformanceModeStep : Time.deltaTime;
+    var textShader = Shader.Find("GUI/Text Shader");
+    var headPosition = GorillaTagger.Instance.headCollider.transform.position;
+    Vector3 boxScale = new Vector3(0.5f, 0.5f, 0f);
+
+    foreach (var vrrig in vrrigs)
+    {
+        if (vrrig == GorillaTagger.Instance.offlineVRRig)
+            continue;
+
+        UnityEngine.Color boxColor = followTheme ? GetBGColor(0f) : vrrig.playerColor;
+        if (transparentTheme)
+            boxColor.a = 0.5f;
+
+        CreateBox(vrrig, boxColor, headPosition, hiddenOnCamera, boxScale, textShader, destroyTime);
+    }
+}
+
+
 
         public static void InfectionBoxESP()
+{
+    if (PerformanceVisuals)
+    {
+        if (Time.time < PerformanceVisualDelay)
         {
-            if (PerformanceVisuals)
-            {
-                if (Time.time < PerformanceVisualDelay)
-                {
-                    if (Time.frameCount != DelayChangeStep)
-                        return;
-                }
-                else
-                { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
-            }
+            if (Time.frameCount != DelayChangeStep)
+                return;
+        }
+        else
+        {
+            PerformanceVisualDelay = Time.time + PerformanceModeStep;
+            DelayChangeStep = Time.frameCount;
+        }
+    }
 
-            bool isInfectedPlayers = false;
-            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+    var vrrigs = GorillaParent.instance.vrrigs;
+    var offlineVRRig = GorillaTagger.Instance.offlineVRRig;
+    var headPosition = GorillaTagger.Instance.headCollider.transform.position;
+    bool followTheme = GetIndex("Follow Menu Theme").enabled;
+    bool transparentTheme = GetIndex("Transparent Theme").enabled;
+    bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
+    float destroyTime = PerformanceVisuals ? PerformanceModeStep : Time.deltaTime;
+    var textShader = Shader.Find("GUI/Text Shader");
+    Vector3 boxScale = new Vector3(0.5f, 0.5f, 0f);
+
+    bool infectedPlayersExist = false;
+    foreach (var vrrig in vrrigs)
+    {
+        if (PlayerIsTagged(vrrig))
+        {
+            infectedPlayersExist = true;
+            break;
+        }
+    }
+
+    foreach (var vrrig in vrrigs)
+    {
+        if (vrrig == offlineVRRig)
+            continue;
+
+        bool isTagged = PlayerIsTagged(vrrig);
+        bool shouldCreateBox = false;
+        UnityEngine.Color boxColor;
+
+        if (infectedPlayersExist)
+        {
+            if (!PlayerIsTagged(offlineVRRig))
             {
-                if (PlayerIsTagged(vrrig))
-                {
-                    isInfectedPlayers = true;
-                    break;
-                }
-            }
-            if (isInfectedPlayers)
-            {
-                if (!PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
-                {
-                    foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-                    {
-                        if (PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
-                        {
-                            UnityEngine.Color thecolor = new Color32(255, 111, 0, 255);
-                            if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
-                            if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
-                            GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                            if (GetIndex("Hidden on Camera").enabled) { box.layer = 19; }
-                            box.transform.position = vrrig.transform.position;
-                            UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
-                            box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
-                            box.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
-                            box.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                            box.GetComponent<Renderer>().material.color = thecolor;
-                            UnityEngine.Object.Destroy(box, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
-                        }
-                    }
-                }
-                else
-                {
-                    foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-                    {
-                        if (!PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
-                        {
-                            UnityEngine.Color thecolor = vrrig.playerColor;
-                            if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
-                            if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
-                            GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                            if (GetIndex("Hidden on Camera").enabled) { box.layer = 19; }
-                            box.transform.position = vrrig.transform.position;
-                            UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
-                            box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
-                            box.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
-                            box.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                            box.GetComponent<Renderer>().material.color = thecolor;
-                            UnityEngine.Object.Destroy(box, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
-                        }
-                    }
-                }
+                shouldCreateBox = isTagged;
+                boxColor = new Color32(255, 111, 0, 255);
             }
             else
             {
-                foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-                {
-                    if (vrrig != GorillaTagger.Instance.offlineVRRig)
-                    {
-                        UnityEngine.Color thecolor = vrrig.playerColor;
-                        if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
-                        if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
-                        GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        if (GetIndex("Hidden on Camera").enabled) { box.layer = 19; }
-                        box.transform.position = vrrig.transform.position;
-                        UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
-                        box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
-                        box.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
-                        box.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                        box.GetComponent<Renderer>().material.color = thecolor;
-                        UnityEngine.Object.Destroy(box, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
-                    }
-                }
+                shouldCreateBox = !isTagged;
+                boxColor = vrrig.playerColor;
             }
         }
-
-        public static void HuntBoxESP()
+        else
         {
-            if (PerformanceVisuals)
-            {
-                if (Time.time < PerformanceVisualDelay)
-                {
-                    if (Time.frameCount != DelayChangeStep)
-                        return;
-                }
-                else
-                { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
-            }
-
-            GorillaHuntManager sillyComputer = GorillaGameManager.instance.gameObject.GetComponent<GorillaHuntManager>();
-            NetPlayer target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
-            foreach (NetPlayer player in PhotonNetwork.PlayerList)
-            {
-                VRRig vrrig = RigManager.GetVRRigFromPlayer(player);
-                if (player == target)
-                {
-                    UnityEngine.Color thecolor = vrrig.playerColor;
-                    if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
-                    if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
-                    GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    if (GetIndex("Hidden on Camera").enabled) { box.layer = 19; }
-                    box.transform.position = vrrig.transform.position;
-                    UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
-                    box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
-                    box.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
-                    box.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                    box.GetComponent<Renderer>().material.color = thecolor;
-                    UnityEngine.Object.Destroy(box, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
-                }
-                if (sillyComputer.GetTargetOf(player) == (NetPlayer)PhotonNetwork.LocalPlayer)
-                {
-                    UnityEngine.Color thecolor = Color.red;
-                    if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
-                    GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    if (GetIndex("Hidden on Camera").enabled) { box.layer = 19; }
-                    box.transform.position = vrrig.transform.position;
-                    UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
-                    box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
-                    box.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
-                    box.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                    box.GetComponent<Renderer>().material.color = thecolor;
-                    UnityEngine.Object.Destroy(box, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
-                }
-            }
+            shouldCreateBox = true;
+            boxColor = vrrig.playerColor;
         }
+
+        if (shouldCreateBox)
+        {
+            if (followTheme)
+                boxColor = GetBGColor(0f);
+            if (transparentTheme)
+                boxColor.a = 0.5f;
+
+            CreateBox(vrrig, boxColor, headPosition, hiddenOnCamera, boxScale, textShader, destroyTime);
+        }
+    }
+}
+
+
+      public static void HuntBoxESP()
+{
+    if (PerformanceVisuals)
+    {
+        if (Time.time < PerformanceVisualDelay)
+        {
+            if (Time.frameCount != DelayChangeStep)
+                return;
+        }
+        else
+        {
+            PerformanceVisualDelay = Time.time + PerformanceModeStep;
+            DelayChangeStep = Time.frameCount;
+        }
+    }
+
+    var sillyComputer = GorillaGameManager.instance.gameObject.GetComponent<GorillaHuntManager>();
+    var localPlayer = PhotonNetwork.LocalPlayer;
+    var targetOfLocalPlayer = sillyComputer.GetTargetOf(localPlayer);
+    bool followTheme = GetIndex("Follow Menu Theme").enabled;
+    bool transparentTheme = GetIndex("Transparent Theme").enabled;
+    bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
+    float destroyTime = PerformanceVisuals ? PerformanceModeStep : Time.deltaTime;
+    var textShader = Shader.Find("GUI/Text Shader");
+    Vector3 boxScale = new Vector3(0.5f, 0.5f, 0f);
+    var headPosition = GorillaTagger.Instance.headCollider.transform.position;
+
+    foreach (NetPlayer player in PhotonNetwork.PlayerList)
+    {
+        VRRig vrrig = RigManager.GetVRRigFromPlayer(player);
+        if (vrrig == null)
+            continue;
+
+        if (player == targetOfLocalPlayer)
+        {
+            UnityEngine.Color color = vrrig.playerColor;
+            if (followTheme)
+                color = GetBGColor(0f);
+            if (transparentTheme)
+                color.a = 0.5f;
+
+            CreateBox(vrrig, color, headPosition, hiddenOnCamera, boxScale, textShader, destroyTime);
+        }
+
+        if (sillyComputer.GetTargetOf(player) == localPlayer)
+        {
+            UnityEngine.Color color = Color.red;
+            if (transparentTheme)
+                color.a = 0.5f;
+
+            CreateBox(vrrig, color, headPosition, hiddenOnCamera, boxScale, textShader, destroyTime);
+        }
+    }
+}
+
 
         public static void CasualHollowBoxESP()
         {
