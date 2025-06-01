@@ -244,7 +244,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Auto Join Room \"LUCIO\"", method =() => rejRoom = "LUCIO", isTogglable = false, toolTip = "Automatically attempts to connect to room \"LUCIO\" every couple of seconds until connected." },
                 new ButtonInfo { buttonText = "Auto Join Room \"VEN1\"", method =() => rejRoom = "VEN1", isTogglable = false, toolTip = "Automatically attempts to connect to room \"VEN1\" every couple of seconds until connected." },
                 new ButtonInfo { buttonText = "Auto Join Room \"SREN17\"", method =() => rejRoom = "SREN17", isTogglable = false, toolTip = "Automatically attempts to connect to room \"SREN17\" every couple of seconds until connected." },
-                //lbaarLeah was here
+
                 new ButtonInfo { buttonText = "Auto Join Room \"MOD\"", method =() => rejRoom = "MOD", isTogglable = false, toolTip = "Automatically attempts to connect to room \"MOD\" every couple of seconds until connected." },
                 new ButtonInfo { buttonText = "Auto Join Room \"MODS\"", method =() => rejRoom = "MODS", isTogglable = false, toolTip = "Automatically attempts to connect to room \"MODS\" every couple of seconds until connected." },
                 new ButtonInfo { buttonText = "Auto Join Room \"LEMUR\"", method =() => rejRoom = "LEMUR", isTogglable = false, toolTip = "Automatically attempts to connect to room \"LEMUR\" every couple of seconds until connected. Lemming joins this code very often." },
