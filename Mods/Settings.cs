@@ -13,6 +13,7 @@ using System.Net;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using UnityEngine.Windows.Speech;
 using static iiMenu.Menu.Main;
@@ -41,50 +42,47 @@ namespace iiMenu.Mods
                         menuSpawnPosition = VRKeyboard.transform.Find("MenuSpawnPosition").gameObject;
                         VRKeyboard.transform.Find("Canvas/Text").GetComponent<Text>().color = textColor;
 
+                        ColorChanger backgroundColorChanger = VRKeyboard.transform.Find("Background").gameObject.AddComponent<ColorChanger>();
+                        backgroundColorChanger.colors = new Gradient
+                        {
+                            colorKeys = new[]
+                            {
+                                new GradientColorKey(bgColorA, 0f),
+                                new GradientColorKey(bgColorB, 0.5f),
+                                new GradientColorKey(bgColorA, 1f)
+                            }
+                        };
+                        backgroundColorChanger.isRainbow = themeType == 6;
+                        backgroundColorChanger.isEpileptic = themeType == 47;
+                        backgroundColorChanger.isMonkeColors = themeType == 8;
+                        backgroundColorChanger.Start();
+
+                        ColorChanger keyColorChanger = VRKeyboard.transform.Find("Keys/default").gameObject.AddComponent<ColorChanger>();
+                        keyColorChanger.colors = new Gradient
+                        {
+                            colorKeys = new[]
+                            {
+                                new GradientColorKey(buttonDefaultA, 0f),
+                                new GradientColorKey(buttonDefaultB, 0.5f),
+                                new GradientColorKey(buttonDefaultA, 1f)
+                            }
+                        };
+                        keyColorChanger.Start();
+
+                        if (shouldOutline)
+                            OutlineObjNonMenu(VRKeyboard.transform.Find("Background").gameObject, true);
+
                         for (int i = 0; i < VRKeyboard.transform.childCount; i++)
                         {
                             GameObject v = VRKeyboard.transform.GetChild(i).gameObject;
-                            if (v.name != "Canvas" && v.name != "MenuSpawnPosition")
+
+                            if (v.name != "Canvas" && v.name != "MenuSpawnPosition" && v.name != "Background" && v.name != "Keys" && !v.name.Contains("Cube"))
                             {
-                                if (v.name == "Background")
-                                {
-                                    ColorChanger colorChanger = v.AddComponent<ColorChanger>();
-                                    colorChanger.colors = new Gradient
-                                    {
-                                        colorKeys = new[]
-                                        {
-                                            new GradientColorKey(bgColorA, 0f),
-                                            new GradientColorKey(bgColorB, 0.5f),
-                                            new GradientColorKey(bgColorA, 1f)
-                                        }
-                                    };
-                                    colorChanger.isRainbow = themeType == 6;
-                                    colorChanger.isEpileptic = themeType == 47;
-                                    colorChanger.isMonkeColors = themeType == 8;
-                                    colorChanger.Start();
-                                }
-                                else
-                                {
-                                    ColorChanger colorChanger = v.AddComponent<ColorChanger>();
-                                    colorChanger.colors = new Gradient
-                                    {
-                                        colorKeys = new[]
-                                        {
-                                            new GradientColorKey(buttonDefaultA, 0f),
-                                            new GradientColorKey(buttonDefaultB, 0.5f),
-                                            new GradientColorKey(buttonDefaultA, 1f)
-                                        }
-                                    };
-                                    colorChanger.isRainbow = false;
-                                    colorChanger.isEpileptic = false;
-                                    colorChanger.isMonkeColors = false;
-                                    colorChanger.Start();
-                                    v.AddComponent<KeyboardKey>().key = v.name;
-                                    v.layer = 2;
-                                }
+                                v.AddComponent<KeyboardKey>().key = v.name;
+                                v.layer = 2;
 
                                 if (shouldOutline)
-                                    OutlineObjNonMenu(v, v.name == "Background");
+                                    OutlineObjNonMenu(v, true);
                             }
                         }
                     }
