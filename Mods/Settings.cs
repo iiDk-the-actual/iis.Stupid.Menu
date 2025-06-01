@@ -562,7 +562,7 @@ namespace iiMenu.Mods
         public static void ChangeMenuTheme()
         {
             themeType++;
-            if (themeType > 54)
+            if (themeType > 55)
             {
                 themeType = 1;
             }
@@ -1164,6 +1164,17 @@ namespace iiMenu.Mods
                     buttonClickedA = new Color32(136, 9, 227, 255);
                     buttonClickedB = new Color32(136, 9, 227, 255);
                     titleColor = Color.white;
+                    textColor = Color.white;
+                    textClicked = Color.white;
+                    break;
+                case 55: // e621 (for version 6.2.1)
+                    bgColorA = new Color32(1, 73, 149, 255);
+                    bgColorB = new Color32(1, 73, 149, 255);
+                    buttonDefaultA = new Color32(1, 46, 87, 255);
+                    buttonDefaultB = new Color32(1, 46, 87, 255);
+                    buttonClickedA = new Color32(0, 37, 74, 255);
+                    buttonClickedB = new Color32(0, 37, 74, 255);
+                    titleColor = new Color32(252, 179, 40, 255);
                     textColor = Color.white;
                     textClicked = Color.white;
                     break;
