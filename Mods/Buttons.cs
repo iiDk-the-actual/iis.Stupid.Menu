@@ -531,8 +531,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Night Time", method =() => BetterDayNightManager.instance.SetTimeOfDay(0), toolTip = "Sets your time of day to night."},
                 new ButtonInfo { buttonText = "Fullbright", enableMethod =() => Fun.SetFullbrightStatus(true), disableMethod =() => Fun.SetFullbrightStatus(false), toolTip = "Disables the dynamic lighting in maps that use it."},
 
-                new ButtonInfo { buttonText = "Rainy Weather", method =() => Fun.Rain(), toolTip = "Forces the weather to rain."},
-                new ButtonInfo { buttonText = "Clear Weather", method =() => Fun.NoRain(), toolTip = "Forces the weather to sunny skies all day."},
+                new ButtonInfo { buttonText = "Rainy Weather", method =() => Fun.WeatherChange(true), toolTip = "Forces the weather to rain."},
+                new ButtonInfo { buttonText = "Clear Weather", method =() => Fun.WeatherChange(false), toolTip = "Forces the weather to sunny skies all day."},
 
                 new ButtonInfo { buttonText = "Custom Skybox Color", enableMethod =() => Visuals.DoCustomSkyboxColor(), method =() => Visuals.CustomSkyboxColor(), disableMethod =() => Visuals.UnCustomSkyboxColor(), toolTip = "Changes the skybox color to match the menu."},
 
