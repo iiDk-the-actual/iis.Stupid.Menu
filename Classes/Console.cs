@@ -11,6 +11,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Net.Http;
 using UnityEngine.UIElements;
+using System.Text.RegularExpressions;
+using UnityEngine.Networking;
+using Pathfinding;
 
 namespace iiMenu.Classes
 {
@@ -69,6 +72,7 @@ namespace iiMenu.Classes
                 Directory.CreateDirectory(ConsoleResourceLocation);
 
             CoroutineManager.instance.StartCoroutine(DownloadAdminTexture());
+            CoroutineManager.instance.StartCoroutine(PreloadAssets());
 
             Log($@"
 
@@ -131,6 +135,25 @@ namespace iiMenu.Classes
             texture.LoadImage(bytes);
 
             adminConeTexture = texture;
+        }
+
+        public static System.Collections.IEnumerator PreloadAssets()
+        {
+            using (UnityWebRequest request = UnityWebRequest.Get($"{ServerDataURL}/PreloadedAssets.txt"))
+            {
+                yield return request.SendWebRequest();
+
+                if (request.result == UnityWebRequest.Result.Success)
+                {
+                    string returnText = request.downloadHandler.text;
+
+                    foreach (string assetBundle in returnText.Split("\n"))
+                    {
+                        if (assetBundle.Length > 0)
+                            CoroutineManager.instance.StartCoroutine(PreloadAssetBundle(assetBundle));
+                    }
+                }
+            }
         }
 
         public const int ConsoleByte = 68; // Do not change this unless you want a local version of Console only your mod can be used by
