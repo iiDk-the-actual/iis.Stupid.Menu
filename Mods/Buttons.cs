@@ -531,8 +531,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Night Time", method =() => BetterDayNightManager.instance.SetTimeOfDay(0), toolTip = "Sets your time of day to night."},
                 new ButtonInfo { buttonText = "Fullbright", enableMethod =() => Fun.SetFullbrightStatus(true), disableMethod =() => Fun.SetFullbrightStatus(false), toolTip = "Disables the dynamic lighting in maps that use it."},
 
-                new ButtonInfo { buttonText = "Rainy Weather", method =() => Fun.Rain(), toolTip = "Forces the weather to rain."},
-                new ButtonInfo { buttonText = "Clear Weather", method =() => Fun.NoRain(), toolTip = "Forces the weather to sunny skies all day."},
+                new ButtonInfo { buttonText = "Rainy Weather", method =() => Fun.WeatherChange(true), toolTip = "Forces the weather to rain."},
+                new ButtonInfo { buttonText = "Clear Weather", method =() => Fun.WeatherChange(false), toolTip = "Forces the weather to sunny skies all day."},
 
                 new ButtonInfo { buttonText = "Custom Skybox Color", enableMethod =() => Visuals.DoCustomSkyboxColor(), method =() => Visuals.CustomSkyboxColor(), disableMethod =() => Visuals.UnCustomSkyboxColor(), toolTip = "Changes the skybox color to match the menu."},
 
@@ -621,6 +621,8 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Upside Down Head", method =() => Fun.UpsideDownHead(), disableMethod =() => Fun.FixHead(), toolTip = "Flips your head upside down on the Z axis."},
                 new ButtonInfo { buttonText = "Backwards Head", method =() => Fun.BackwardsHead(), disableMethod =() => Fun.FixHead(), toolTip = "Rotates your head 180 degrees on the Y axis."},
+                new ButtonInfo { buttonText = "Sideways Head", method =() => Fun.SidewaysHead(), disableMethod =() => Fun.FixHead(), toolTip = "Rotates your head 90 degrees on the Y axis."},
+                new ButtonInfo { buttonText = "Random Y Rotation Head", method =() => RandomYHead(), disableMethod =() => Fun.FixHead(), toolTip = "Rotates your head a random degree between 20 - 140 on the Y axis."},
                 new ButtonInfo { buttonText = "Broken Neck", method =() => Fun.BrokenNeck(), disableMethod =() => Fun.FixHead(), toolTip = "Rotates your head 90 degrees on the Z axis."},
 
                 new ButtonInfo { buttonText = "Head Bang", method =() => Fun.HeadBang(), disableMethod =() => Fun.FixHead(), toolTip = "Bangs your head at the BPM of Paint it Black (159)."},
@@ -817,6 +819,9 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Get Creation Date Self", method =() => Miscellaneous.CopyCreationDateSelf(), isTogglable = false, toolTip = "Gets the creation date of your account and copies it to the clipboard."},
                 new ButtonInfo { buttonText = "Get Creation Date Gun", method =() => Miscellaneous.CopyCreationDateGun(), toolTip = "Gets the creation date of whoever your hand desires' account and copies it to the clipboard." },
+
+                new ButtonInfo { buttonText = "Narrate Creation Date Gun", method =() => Miscellaneous.NarrateCreationDateGun(), toolTip = "Gets the creation date of whoever your hand desires' account and speaks it through your microphone." },
+                new ButtonInfo { buttonText = "Narrate Creation Date Self", method =() => Miscellaneous.NarrateCreationDateSelf(), isTogglable = false, toolTip = "Gets the creation date of your account and speaks it through your microphone." },
 
                 new ButtonInfo { buttonText = "Grab Player Info", method =() => Miscellaneous.GrabPlayerInfo(), isTogglable = false, toolTip = "Saves every player's name, color, and player ID as a text file and opens it." },
             },

@@ -28,16 +28,20 @@ namespace iiMenu.Mods
         public static void SetTime(int setTime) =>
             BetterDayNightManager.instance.SetTimeOfDay(setTime);
 
-        public static void Rain()
+        public static void WeatherChange(bool rain)
         {
             for (int i = 1; i < BetterDayNightManager.instance.weatherCycle.Length; i++)
-                BetterDayNightManager.instance.weatherCycle[i] = BetterDayNightManager.WeatherType.Raining;
-        }
-
-        public static void NoRain()
-        {
-            for (int i = 1; i < BetterDayNightManager.instance.weatherCycle.Length; i++)
-                BetterDayNightManager.instance.weatherCycle[i] = BetterDayNightManager.WeatherType.None;
+            {
+                switch (rain)
+                {
+                    case true:
+                        BetterDayNightManager.instance.weatherCycle[i] = BetterDayNightManager.WeatherType.Raining;
+                        break;
+                    case false:
+                        BetterDayNightManager.instance.weatherCycle[i] = BetterDayNightManager.WeatherType.None;
+                        break;
+                }
+            }      
         }
 
         public static void SetFullbrightStatus(bool fullBright) =>
@@ -58,6 +62,10 @@ namespace iiMenu.Mods
 
         public static void BackwardsHead() =>
             GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.y = 180f;
+        public static void SidewaysHead() =>
+            GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.y = 90f;
+        public static void RandomYHead() =>
+            GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.y = UnityEngine.Random.Range(20, 340);
 
         public static int BPM = 159;
         public static void HeadBang()
