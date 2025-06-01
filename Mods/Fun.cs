@@ -908,7 +908,7 @@ namespace iiMenu.Mods
 
         public static void SetCurrencySelf(int currency = 0)
         {
-            if (!PhotonNetwork.IsMasterClient) { return; }
+            if (!NetworkSystem.Instance.IsMasterClient) { return; }
             GRPlayer.Get(PhotonNetwork.LocalPlayer.ActorNumber).currency = currency;
         }
 
@@ -936,7 +936,7 @@ namespace iiMenu.Mods
 
         public static void SetCurrencyAll(int currency = 0)
         {
-            if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
+            if (!NetworkSystem.Instance.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
 
             foreach (Player target in PhotonNetwork.PlayerList)
             {
@@ -947,7 +947,7 @@ namespace iiMenu.Mods
 
         public static void RemoveCurrencySelf()
         {
-            if (!PhotonNetwork.IsMasterClient) { return; }
+            if (!NetworkSystem.Instance.IsMasterClient) { return; }
             GRPlayer.Get(PhotonNetwork.LocalPlayer.ActorNumber).currency = 0;
         }
 
@@ -975,7 +975,7 @@ namespace iiMenu.Mods
 
         public static void RemoveCurrencyAll()
         {
-            if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
+            if (!NetworkSystem.Instance.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
 
             foreach (Player target in PhotonNetwork.PlayerList)
             {
@@ -986,7 +986,7 @@ namespace iiMenu.Mods
 
         public static void Invincibility()
         {
-            if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
+            if (!NetworkSystem.Instance.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
 
             GRPlayer plr = GRPlayer.Get(PhotonNetwork.LocalPlayer.ActorNumber);
 
@@ -1004,7 +1004,7 @@ namespace iiMenu.Mods
                 return;
 
             if ((Target == PhotonNetwork.LocalPlayer && State == GRPlayer.GRPlayerState.Ghost)
-                    || (PhotonNetwork.IsMasterClient && State == GRPlayer.GRPlayerState.Alive)
+                    || (NetworkSystem.Instance.IsMasterClient && State == GRPlayer.GRPlayerState.Alive)
                     )
             {
                 GhostReactorManager.instance.RequestPlayerStateChange(GRPlayer, State);
@@ -1012,7 +1012,7 @@ namespace iiMenu.Mods
                 return;
             }
 
-            if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
+            if (!NetworkSystem.Instance.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
 
             if (State == GRPlayer.GRPlayerState.Ghost)
                 CoroutineManager.instance.StartCoroutine(KillTarget(Target));
@@ -1623,7 +1623,7 @@ namespace iiMenu.Mods
         private static bool isFiring = false;
         public static IEnumerator FireShotgun()
         {
-            if (!PhotonNetwork.IsMasterClient)
+            if (!NetworkSystem.Instance.IsMasterClient)
             {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
                 yield break;
@@ -1688,7 +1688,7 @@ namespace iiMenu.Mods
 
         public static void RequestCreatePiece(int pieceType, Vector3 position, Quaternion rotation, int materialType)
         {
-            if (PhotonNetwork.IsMasterClient)
+            if (NetworkSystem.Instance.IsMasterClient)
             {
                 int pieceId = GetBuilderTable().CreatePieceId();
 
@@ -1811,7 +1811,7 @@ namespace iiMenu.Mods
 
         public static IEnumerator CreateShotgun()
         {
-            if (!PhotonNetwork.IsMasterClient)
+            if (!NetworkSystem.Instance.IsMasterClient)
             {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
                 yield break;
@@ -2191,7 +2191,7 @@ namespace iiMenu.Mods
         {
             foreach (MonkeyeAI monkeyeAI in GetAllType<MonkeyeAI>())
             {
-                if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; } // GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                if (!NetworkSystem.Instance.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; } // GetOwnership(monkeyeAI.GetComponent<PhotonView>());
                 monkeyeAI.speed = 0.02f;
             }
         }
@@ -2200,7 +2200,7 @@ namespace iiMenu.Mods
         {
             foreach (MonkeyeAI monkeyeAI in GetAllType<MonkeyeAI>())
             {
-                if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; } // GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                if (!NetworkSystem.Instance.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; } // GetOwnership(monkeyeAI.GetComponent<PhotonView>());
                 monkeyeAI.speed = 0.5f;
             }
         }
@@ -2209,7 +2209,7 @@ namespace iiMenu.Mods
         {
             foreach (MonkeyeAI monkeyeAI in GetAllType<MonkeyeAI>())
             {
-                if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; } // GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                if (!NetworkSystem.Instance.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; } // GetOwnership(monkeyeAI.GetComponent<PhotonView>());
                 monkeyeAI.speed = 0.1f;
             }
         }
@@ -2220,7 +2220,7 @@ namespace iiMenu.Mods
             {
                 foreach (MonkeyeAI monkeyeAI in GetAllType<MonkeyeAI>())
                 {
-                    if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; } // GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                    if (!NetworkSystem.Instance.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; } // GetOwnership(monkeyeAI.GetComponent<PhotonView>());
                     monkeyeAI.gameObject.transform.position = GorillaTagger.Instance.rightHandTransform.position;
                 }
             }
@@ -2238,7 +2238,7 @@ namespace iiMenu.Mods
                 {
                     foreach (MonkeyeAI monkeyeAI in GetAllType<MonkeyeAI>())
                     {
-                        if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; } // GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                        if (!NetworkSystem.Instance.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; } // GetOwnership(monkeyeAI.GetComponent<PhotonView>());
                         monkeyeAI.gameObject.transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
                     }
                 }
@@ -2249,7 +2249,7 @@ namespace iiMenu.Mods
         {
             foreach (MonkeyeAI monkeyeAI in GetAllType<MonkeyeAI>())
             {
-                if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; } // GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                if (!NetworkSystem.Instance.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; } // GetOwnership(monkeyeAI.GetComponent<PhotonView>());
                 monkeyeAI.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
             }
         }
@@ -2260,7 +2260,7 @@ namespace iiMenu.Mods
             int index = 0;
             foreach (MonkeyeAI monkeyeAI in GetAllType<MonkeyeAI>())
             {
-                if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; } // GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                if (!NetworkSystem.Instance.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; } // GetOwnership(monkeyeAI.GetComponent<PhotonView>());
                 float offset = (360f / (float)them.Length) * index;
                 monkeyeAI.transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)) * 2f, 1f, MathF.Sin(offset + ((float)Time.frameCount / 30)) * 2f);
                 index++;
@@ -2271,7 +2271,7 @@ namespace iiMenu.Mods
         {
             foreach (MonkeyeAI monkeyeAI in GetAllType<MonkeyeAI>())
             {
-                if (!PhotonNetwork.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; } // GetOwnership(monkeyeAI.GetComponent<PhotonView>());
+                if (!NetworkSystem.Instance.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; } // GetOwnership(monkeyeAI.GetComponent<PhotonView>());
                 monkeyeAI.gameObject.transform.position = new Vector3(99999f, 99999f, 99999f);
             }
         }

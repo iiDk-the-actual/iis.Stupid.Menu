@@ -73,15 +73,14 @@ namespace iiMenu.Mods
 
         public static void UntagSelf()
         {
-            if (!PhotonNetwork.IsMasterClient)
+            if (!NetworkSystem.Instance.IsMasterClient)
             {
                 Important.Reconnect();
                 NoTagOnJoin();
             }
             else
-            {
                 RemoveInfected(PhotonNetwork.LocalPlayer);
-            }
+            
             GorillaLocomotion.GTPlayer.Instance.disableMovement = false;
         }
 
@@ -97,7 +96,7 @@ namespace iiMenu.Mods
 
         public static void UntagAll()
         {
-            if (!PhotonNetwork.IsMasterClient)
+            if (!NetworkSystem.Instance.IsMasterClient)
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             else
             {
@@ -109,7 +108,7 @@ namespace iiMenu.Mods
         public static float spamtagdelay = -1f;
         public static void SpamTagSelf()
         {
-            if (!PhotonNetwork.IsMasterClient)
+            if (!NetworkSystem.Instance.IsMasterClient)
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             else
             {
@@ -134,7 +133,7 @@ namespace iiMenu.Mods
 
                 if (gunLocked && lockTarget != null)
                 {
-                    if (!PhotonNetwork.IsMasterClient)
+                    if (!NetworkSystem.Instance.IsMasterClient)
                         NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
                     else
                     {
@@ -173,7 +172,7 @@ namespace iiMenu.Mods
 
         public static void SpamTagAll()
         {
-            if (!PhotonNetwork.IsMasterClient)
+            if (!NetworkSystem.Instance.IsMasterClient)
             {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             }
@@ -195,7 +194,7 @@ namespace iiMenu.Mods
 
         public static void SetTagCooldown(float value)
         {
-            if (!PhotonNetwork.IsMasterClient)
+            if (!NetworkSystem.Instance.IsMasterClient)
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             else
             {
@@ -469,7 +468,7 @@ namespace iiMenu.Mods
 
         public static void TagAll()
         {
-            if (PhotonNetwork.IsMasterClient)
+            if (NetworkSystem.Instance.IsMasterClient)
             {
                 foreach (Photon.Realtime.Player v in PhotonNetwork.PlayerList)
                 {
@@ -697,7 +696,7 @@ namespace iiMenu.Mods
 
         public static void BattleStartGame()
         {
-            if (!PhotonNetwork.IsMasterClient)
+            if (!NetworkSystem.Instance.IsMasterClient)
             {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             }
@@ -710,7 +709,7 @@ namespace iiMenu.Mods
 
         public static void BattleEndGame()
         {
-            if (!PhotonNetwork.IsMasterClient)
+            if (!NetworkSystem.Instance.IsMasterClient)
             {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             }
@@ -723,7 +722,7 @@ namespace iiMenu.Mods
 
         public static void BattleRestartGame()
         {
-            if (!PhotonNetwork.IsMasterClient)
+            if (!NetworkSystem.Instance.IsMasterClient)
             {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             }
@@ -737,7 +736,7 @@ namespace iiMenu.Mods
 
         public static void BattleBalloonSpamSelf()
         {
-            if (!PhotonNetwork.IsMasterClient)
+            if (!NetworkSystem.Instance.IsMasterClient)
             {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             }
@@ -750,7 +749,7 @@ namespace iiMenu.Mods
 
         public static void BattleBalloonSpam()
         {
-            if (!PhotonNetwork.IsMasterClient)
+            if (!NetworkSystem.Instance.IsMasterClient)
             {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             }
@@ -778,7 +777,7 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         NetPlayer owner = RigManager.GetPlayerFromVRRig(gunTarget);
-                        if (!PhotonNetwork.IsMasterClient)
+                        if (!NetworkSystem.Instance.IsMasterClient)
                         {
                             NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
                         }
@@ -794,7 +793,7 @@ namespace iiMenu.Mods
 
         public static void BattleKillSelf()
         {
-            if (!PhotonNetwork.IsMasterClient)
+            if (!NetworkSystem.Instance.IsMasterClient)
             {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             }
@@ -807,7 +806,7 @@ namespace iiMenu.Mods
 
         public static void BattleKillAll()
         {
-            if (!PhotonNetwork.IsMasterClient)
+            if (!NetworkSystem.Instance.IsMasterClient)
             {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             }
@@ -835,7 +834,7 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         NetPlayer owner = RigManager.GetPlayerFromVRRig(gunTarget);
-                        if (!PhotonNetwork.IsMasterClient)
+                        if (!NetworkSystem.Instance.IsMasterClient)
                         {
                             NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
                         }
@@ -851,7 +850,7 @@ namespace iiMenu.Mods
 
         public static void BattleReviveSelf()
         {
-            if (!PhotonNetwork.IsMasterClient)
+            if (!NetworkSystem.Instance.IsMasterClient)
             {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             }
@@ -864,7 +863,7 @@ namespace iiMenu.Mods
 
         public static void BattleReviveAll()
         {
-            if (!PhotonNetwork.IsMasterClient)
+            if (!NetworkSystem.Instance.IsMasterClient)
             {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             }
@@ -880,7 +879,7 @@ namespace iiMenu.Mods
 
         public static void BattleGodMode()
         {
-            if (!PhotonNetwork.IsMasterClient)
+            if (!NetworkSystem.Instance.IsMasterClient)
             {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             }
