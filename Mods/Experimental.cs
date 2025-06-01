@@ -131,7 +131,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
                     adminEventDelay = Time.time + 0.1f;
-                    Classes.Console.ExecuteCommand("tp", ReceiverGroup.All, NewPointer.transform.position);
+                    Classes.Console.ExecuteCommand("tp", ReceiverGroup.Others, NewPointer.transform.position);
                 }
             }
         }
