@@ -2029,6 +2029,28 @@ namespace iiMenu.Mods
             GorillaLocomotion.GTPlayer.Instance.jumpMultiplier = jmulti;
         }
 
+        public static void DynamicSpeedBoost()
+        {
+            float minDistance = 2f;
+            float maxDistance = 15f;
+            float closestDistance = float.MaxValue;
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (vrrig == null || vrrig == GorillaTagger.Instance.offlineVRRig)
+                    continue;
+
+                float dist = Vector3.Distance(GorillaLocomotion.GTPlayer.Instance.transform.position, vrrig.transform.position);
+                if (dist < closestDistance)
+                    closestDistance = dist;
+            }
+
+            float distanceFactor = Mathf.Clamp01((maxDistance - closestDistance) / (maxDistance - minDistance));
+            float boostFactor = Mathf.Lerp(1f, 2f, distanceFactor);
+            GorillaLocomotion.GTPlayer.Instance.jumpMultiplier = boostFactor;
+            GorillaLocomotion.GTPlayer.Instance.maxJumpSpeed = Mathf.Lerp(6.5f, 7.5f, distanceFactor);
+        }
+
         public static void GripSpeedBoost()
         {
             if (rightGrab)
