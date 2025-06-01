@@ -1064,7 +1064,7 @@ namespace iiMenu.Menu
                             if (partyLastCode != null && Time.time > partyTime && (waitForPlayerJoin ? PhotonNetwork.PlayerListOthers.Length > 0 : true))
                             {
                                 LogManager.Log("Attempting rejoin");
-                                PhotonNetwork.Disconnect();
+                                NetworkSystem.Instance.ReturnToSinglePlayer();
                                 phaseTwo = true;
                             }
                         }
@@ -2355,6 +2355,9 @@ namespace iiMenu.Menu
 
                     if (GetIndex("First Person Camera").enabled)
                         Toggle("First Person Camera");
+
+                    if (physicalMenu)
+                        Toggle("Physical Menu");
 
                     Vector3[] pcpositions = new Vector3[]
                     {
@@ -4306,7 +4309,14 @@ namespace iiMenu.Menu
                         { 8, "rr" },
                         { 9, "watch" },
                         { 10, "membrane" },
-                        { 13, "slider" }
+                        { 13, "slider" },
+                        { 14, "can" },
+                        { 15, "cut" },
+                        { 16, "creamy2" },
+                        { 17, "robloxbutton" },
+                        { 18, "robloxtick" },
+                        { 19, "mouse" },
+                        { 20, "valve" }
                     };
                     try
                     {
