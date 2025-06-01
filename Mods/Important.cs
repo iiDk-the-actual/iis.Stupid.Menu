@@ -149,6 +149,13 @@ namespace iiMenu.Mods
 
             try
             {
+                GameObject metaReporting = GameObject.Find("Miscellaneous Scripts/MetaReporting");
+                metaReporting.SetActive(false);
+            }
+            catch { }
+
+            try
+            {
                 PrivateUIRoom Room = GameObject.Find("Miscellaneous Scripts/PrivateUIRoom_HandRays").GetComponent<PrivateUIRoom>();
 
                 if (Room.inOverlay)
