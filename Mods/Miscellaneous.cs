@@ -1,4 +1,4 @@
-﻿using iiMenu.Classes;
+using iiMenu.Classes;
 using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
 using Photon.Pun;
@@ -104,6 +104,39 @@ namespace iiMenu.Mods
                 GUIUtility.systemCopyBuffer = date;
             }, delegate { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not copy creation date."); }, null, null);
         }
+        
+        public static void NarrateCreationDateGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget) && Time.time > cgdgd)
+                    {
+                        cgdgd = Time.time + 0.5f;
+                        PlayFabClientAPI.GetAccountInfo(new GetAccountInfoRequest { PlayFabId = GetPlayerFromVRRig(gunTarget).UserId }, delegate (GetAccountInfoResult result) // Who designed this
+                        {
+                            string date = result.AccountInfo.Created.ToString("dd MMMM yyyy 'at' h:mm tt");
+                            CoroutineManager.RunCoroutine(SpeakText(date));
+                        }, delegate { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not narrate creation date."); }, null, null);
+                    }
+                }
+            }
+        }
+
+        public static void NarrateCreationDateSelf()
+        {
+            PlayFabClientAPI.GetAccountInfo(new GetAccountInfoRequest { PlayFabId = PhotonNetwork.LocalPlayer.UserId }, delegate (GetAccountInfoResult result) // Who designed this
+            {
+                string date = result.AccountInfo.Created.ToString("dd MMMM yyyy 'at' h:mm tt");
+                CoroutineManager.RunCoroutine(SpeakText(date));
+            }, delegate { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not narrate creation date."); }, null, null);
+        }
 
         public static void GrabPlayerInfo()
         {
@@ -147,7 +180,7 @@ namespace iiMenu.Mods
             text += "\n====================================\n";
             text += "Text file generated with ii's Stupid Menu";
             string fileName = "iisStupidMenu/PlayerInfo/" + PhotonNetwork.CurrentRoom.Name + ".txt";
-            
+
             File.WriteAllText(fileName, text);
 
             string filePath = Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, fileName);
