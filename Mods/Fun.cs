@@ -58,6 +58,10 @@ namespace iiMenu.Mods
 
         public static void BackwardsHead() =>
             GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.y = 180f;
+        public static void SidewaysHead() =>
+            GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.y = 90f;
+        public static void RandomYHead() =>
+            GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.y = UnityEngine.Random.Range(20, 340);
 
         public static int BPM = 159;
         public static void HeadBang()
