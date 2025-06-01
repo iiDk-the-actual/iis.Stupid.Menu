@@ -818,6 +818,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Get Creation Date Self", method =() => Miscellaneous.CopyCreationDateSelf(), isTogglable = false, toolTip = "Gets the creation date of your account and copies it to the clipboard."},
                 new ButtonInfo { buttonText = "Get Creation Date Gun", method =() => Miscellaneous.CopyCreationDateGun(), toolTip = "Gets the creation date of whoever your hand desires' account and copies it to the clipboard." },
 
+                new ButtonInfo { buttonText = "Narrate Creation Date Gun", method =() => Miscellaneous.NarrateCreationDateGun(), toolTip = "Gets the creation date of whoever your hand desires' account and speaks it through your microphone." },
+                new ButtonInfo { buttonText = "Narrate Creation Date Self", method =() => Miscellaneous.NarrateCreationDateSelf(), isTogglable = false, toolTip = "Gets the creation date of your account and speaks it through your microphone." },
+
                 new ButtonInfo { buttonText = "Grab Player Info", method =() => Miscellaneous.GrabPlayerInfo(), isTogglable = false, toolTip = "Saves every player's name, color, and player ID as a text file and opens it." },
             },
 
