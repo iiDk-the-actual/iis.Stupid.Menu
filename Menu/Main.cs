@@ -3962,8 +3962,14 @@ namespace iiMenu.Menu
             } catch { }
         }
 
+        public static bool inRoomStatus;
+
         public static void OnJoinRoom()
         {
+            if (inRoomStatus)
+                return;
+
+            inRoomStatus = true;
             lastRoom = PhotonNetwork.CurrentRoom.Name;
 
             NotifiLib.SendNotification("<color=grey>[</color><color=blue>JOIN ROOM</color><color=grey>]</color> Room Code: " + lastRoom + "");
@@ -3972,6 +3978,11 @@ namespace iiMenu.Menu
 
         public static void OnLeaveRoom()
         {
+            if (!inRoomStatus)
+                return;
+
+            inRoomStatus = false;
+
             if (clearNotificationsOnDisconnect)
                 NotifiLib.ClearAllNotifications();
 
