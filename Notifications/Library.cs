@@ -191,7 +191,8 @@ namespace iiMenu.Notifications
                                 "ios",
                                 "xpnotify",
                                 "xpding",
-                                "xperror"
+                                "xperror",
+                                "robloxbass"
                             };
                             Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/" + notificationServerNames[notificationSoundIndex] + ".wav", notificationServerNames[notificationSoundIndex] + ".wav"), buttonClickVolume / 10f);
                         }
