@@ -1642,10 +1642,8 @@ public static void CreateBox(VRRig rig, UnityEngine.Color color, Vector3 headPos
 
     UnityEngine.Object.Destroy(box, destroyTime);
 }
-        
 
-
-   public static void CasualBoxESP()
+public static void CasualBoxESP()
 {
     if (PerformanceVisuals && Time.time < PerformanceVisualDelay)
     {
@@ -1680,9 +1678,7 @@ public static void CreateBox(VRRig rig, UnityEngine.Color color, Vector3 headPos
     }
 }
 
-
-
-        public static void InfectionBoxESP()
+public static void InfectionBoxESP()
 {
     if (PerformanceVisuals)
     {
@@ -1758,8 +1754,7 @@ public static void CreateBox(VRRig rig, UnityEngine.Color color, Vector3 headPos
     }
 }
 
-
-      public static void HuntBoxESP()
+public static void HuntBoxESP()
 {
     if (PerformanceVisuals)
     {
@@ -1813,6 +1808,7 @@ public static void CreateBox(VRRig rig, UnityEngine.Color color, Vector3 headPos
         }
     }
 }
+
 
 
         public static void CasualHollowBoxESP()
