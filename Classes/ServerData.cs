@@ -122,129 +122,130 @@ namespace iiMenu.Classes
         public static Dictionary<string, string> Administrators = new Dictionary<string, string> { };
         public static System.Collections.IEnumerator LoadServerData()
         {
-            UnityWebRequest webRequest = UnityWebRequest.Get(ServerDataEndpoint + "?q=" + DateTime.UtcNow.Ticks);
-
-            yield return webRequest.SendWebRequest();
-
-            if (webRequest.result != UnityWebRequest.Result.Success)
+            using (UnityWebRequest request = UnityWebRequest.Get($"{ServerDataEndpoint}?q={DateTime.UtcNow.Ticks}"))
             {
-                Console.Log("Failed to load server data: " + webRequest.error);
-                yield break;
-            }
+                yield return request.SendWebRequest();
 
-            string response = webRequest.downloadHandler.text;
-            DataLoadTime = -1f;
-
-            string[] ResponseData = response.Split("\n");
-
-            // Version Check
-            if (!VersionWarning)
-            {
-                if (ResponseData[0] != PluginInfo.Version)
+                if (request.result != UnityWebRequest.Result.Success)
                 {
-                    if (!PluginInfo.BetaBuild)
+                    Console.Log("Failed to load server data: " + request.error);
+                    yield break;
+                }
+
+                string response = request.downloadHandler.text;
+                DataLoadTime = -1f;
+
+                string[] ResponseData = response.Split("\n");
+
+                // Version Check
+                if (!VersionWarning)
+                {
+                    if (ResponseData[0] != PluginInfo.Version)
                     {
-                        VersionWarning = true;
-                        Console.Log("Version is outdated");
-                        JoinDiscordServer();
-                        Console.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using an outdated version of the menu. Please update to " + ResponseData[0] + ".", 10000);
+                        if (!PluginInfo.BetaBuild)
+                        {
+                            VersionWarning = true;
+                            Console.Log("Version is outdated");
+                            JoinDiscordServer();
+                            Console.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using an outdated version of the menu. Please update to " + ResponseData[0] + ".", 10000);
+                        }
+                        else
+                        {
+                            VersionWarning = true;
+                            Console.Log("Version is outdated, but user is on beta");
+                            Console.SendNotification("<color=grey>[</color><color=purple>BETA</color><color=grey>]</color> You are using a testing build of the menu. The latest release build is " + ResponseData[0] + ".", 10000);
+                        }
                     }
                     else
                     {
-                        VersionWarning = true;
-                        Console.Log("Version is outdated, but user is on beta");
-                        Console.SendNotification("<color=grey>[</color><color=purple>BETA</color><color=grey>]</color> You are using a testing build of the menu. The latest release build is " + ResponseData[0] + ".", 10000);
+                        if (PluginInfo.BetaBuild)
+                        {
+                            VersionWarning = true;
+                            Console.Log("Version is outdated, user is on early build of latest");
+                            JoinDiscordServer();
+                            Console.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using a testing build of the menu. Please update to " + ResponseData[0] + ".", 10000);
+                        }
                     }
                 }
+
+                // Lockdown check
+                if (ResponseData[0] == "lockdown")
+                {
+                    Console.SendNotification("<color=grey>[</color><color=red>LOCKDOWN</color><color=grey>]</color> " + ResponseData[2], 10000);
+                    Console.DisableMenu = true;
+                }
+
+                // Admin dictionary
+                Administrators.Clear();
+                string[] AdminList = ResponseData[1].Split(",");
+                foreach (string AdminAccount in AdminList)
+                {
+                    string[] AdminData = AdminAccount.Split(";");
+                    Administrators.Add(AdminData[0], AdminData[1]);
+                }
+
+                // Give admin panel if on list
+                if (!GivenAdminMods && Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
+                {
+                    GivenAdminMods = true;
+                    SetupAdminPanel(Administrators[PhotonNetwork.LocalPlayer.UserId]);
+                }
+
+                // Basic string data
+                Menu.Main.motdTemplate = ResponseData[2];
+                Menu.Main.serverLink = ResponseData[3];
+                Menu.Main.repReason = ResponseData[8];
+
+                // Custom board data
+                string[] Data2 = ResponseData[4].Split(";;");
+                Menu.Main.StumpLeaderboardID = Data2[0];
+                Menu.Main.ForestLeaderboardID = Data2[1];
+                Menu.Main.StumpLeaderboardIndex = int.Parse(Data2[2]);
+                Menu.Main.ForestLeaderboardIndex = int.Parse(Data2[3]);
+
+                // Detected mod labels
+                string[] DetectedMods = null;
+
+                if (ResponseData[5].Contains(";;"))
+                    DetectedMods = ResponseData[5].Split(";;");
                 else
+                    DetectedMods = new string[] { ResponseData[5] };
+
+                foreach (string DetectedMod in DetectedMods)
                 {
-                    if (PluginInfo.BetaBuild)
+                    if (!DetectedModsLabelled.Contains(DetectedMod))
                     {
-                        VersionWarning = true;
-                        Console.Log("Version is outdated, user is on early build of latest");
-                        JoinDiscordServer();
-                        Console.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using a testing build of the menu. Please update to " + ResponseData[0] + ".", 10000);
+                        ButtonInfo Button = Menu.Main.GetIndex(DetectedMod);
+                        if (Button != null)
+                        {
+                            string overlapText = Button.overlapText == null ? Button.buttonText : Button.overlapText;
+
+                            Button.overlapText = overlapText + " <color=grey>[</color><color=red>Detected</color><color=grey>]</color>";
+                            Button.isTogglable = false;
+                            Button.enabled = false;
+
+                            Button.method = delegate { Console.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> This mod is currently disabled, as it is detected."); };
+                        }
+                        DetectedModsLabelled.Add(DetectedMod);
                     }
                 }
-            }
 
-            // Lockdown check
-            if (ResponseData[0] == "lockdown")
-            {
-                Console.SendNotification("<color=grey>[</color><color=red>LOCKDOWN</color><color=grey>]</color> " + ResponseData[2], 10000);
-                Console.DisableMenu = true;
-            }
-
-            // Admin dictionary
-            Administrators.Clear();
-            string[] AdminList = ResponseData[1].Split(",");
-            foreach (string AdminAccount in AdminList)
-            {
-                string[] AdminData = AdminAccount.Split(";");
-                Administrators.Add(AdminData[0], AdminData[1]);
-            }
-
-            // Give admin panel if on list
-            if (!GivenAdminMods && Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
-            {
-                GivenAdminMods = true;
-                SetupAdminPanel(Administrators[PhotonNetwork.LocalPlayer.UserId]);
-            }
-
-            // Basic string data
-            Menu.Main.motdTemplate = ResponseData[2];
-            Menu.Main.serverLink = ResponseData[3];
-            Menu.Main.repReason = ResponseData[8];
-
-            // Custom board data
-            string[] Data2 = ResponseData[4].Split(";;");
-            Menu.Main.StumpLeaderboardID = Data2[0];
-            Menu.Main.ForestLeaderboardID = Data2[1];
-            Menu.Main.StumpLeaderboardIndex = int.Parse(Data2[2]);
-            Menu.Main.ForestLeaderboardIndex = int.Parse(Data2[3]);
-
-            // Detected mod labels
-            string[] DetectedMods = null;
-
-            if (ResponseData[5].Contains(";;"))
-                DetectedMods = ResponseData[5].Split(";;");
-            else
-                DetectedMods = new string[] { ResponseData[5] };
-
-            foreach (string DetectedMod in DetectedMods)
-            {
-                if (!DetectedModsLabelled.Contains(DetectedMod))
+                Menu.Main.annoyingIDs.Clear();
+                string[] AnnoyingList = ResponseData[6].Split(",");
+                foreach (string AnnoyingPlayer in AnnoyingList)
                 {
-                    ButtonInfo Button = Menu.Main.GetIndex(DetectedMod);
-                    if (Button != null)
-                    {
-                        string overlapText = Button.overlapText == null ? Button.buttonText : Button.overlapText;
-
-                        Button.overlapText = overlapText + " <color=grey>[</color><color=red>Detected</color><color=grey>]</color>";
-                        Button.isTogglable = false;
-                        Button.enabled = false;
-
-                        Button.method = delegate { Console.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> This mod is currently disabled, as it is detected."); };
-                    }
-                    DetectedModsLabelled.Add(DetectedMod);
+                    string[] AnnoyingData = AnnoyingPlayer.Split(";");
+                    Menu.Main.annoyingIDs.Add(AnnoyingData[0], long.Parse(AnnoyingData[1]));
                 }
+
+                string[] AnnoyingPeople = new string[] { };
+                if (ResponseData[7].Contains(";"))
+                    AnnoyingPeople = ResponseData[7].Split(";");
+                else
+                    AnnoyingPeople = ResponseData[7].Length < 1 ? new string[] { } : new string[] { ResponseData[7] };
+
+                Menu.Main.muteIDs = AnnoyingPeople.ToList();
             }
-
-            Menu.Main.annoyingIDs.Clear();
-            string[] AnnoyingList = ResponseData[6].Split(",");
-            foreach (string AnnoyingPlayer in AnnoyingList)
-            {
-                string[] AnnoyingData = AnnoyingPlayer.Split(";");
-                Menu.Main.annoyingIDs.Add(AnnoyingData[0], long.Parse(AnnoyingData[1]));
-            }
-
-            string[] AnnoyingPeople = new string[] { };
-            if (ResponseData[7].Contains(";"))
-                AnnoyingPeople = ResponseData[7].Split(";");
-            else
-                AnnoyingPeople = ResponseData[7].Length < 1 ? new string[] { } : new string[] { ResponseData[7] };
-
-            Menu.Main.muteIDs = AnnoyingPeople.ToList();
 
             yield return null;
         }
