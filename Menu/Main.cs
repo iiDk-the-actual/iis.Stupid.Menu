@@ -1,4 +1,4 @@
-﻿using BepInEx;
+using BepInEx;
 using ExitGames.Client.Photon;
 using GorillaExtensions;
 using GorillaNetworking;
@@ -486,13 +486,14 @@ namespace iiMenu.Menu
                     } catch { }
 
                     // FPS counter
-                    if (fpsCount != null)
+                    if (fpsCount != null && (Time.time > fpsAvgTime || fpsCountTimed == false))
                     {
                         fpsCount.text = "FPS: " + Mathf.Ceil(1f / Time.unscaledDeltaTime).ToString();
                         if (lowercaseMode)
                         {
                             fpsCount.text = fpsCount.text.ToLower();
                         }
+                        fpsAvgTime = Time.time + 1f;
                     }
 
                     if (searchTextObject != null)
@@ -2002,7 +2003,11 @@ namespace iiMenu.Menu
                     fps.text = fps.text.ToLower();
 
                 fps.color = titleColor;
-                fpsCount = fps;
+                if (Time.time > fpsAvgTime || fpsCountTimed == false)
+                {
+                    fpsCount = fps;
+                    fpsAvgTime = Time.time + 1f;
+                }
                 fps.fontSize = 1;
                 fps.supportRichText = true;
                 fps.fontStyle = activeFontStyle;
@@ -4872,6 +4877,8 @@ jgs \_   _/ |Oo\
         public static GameObject canvasObj;
         public static AssetBundle assetBundle;
         public static Text fpsCount;
+        private static float fpsAvgTime = 0f;
+        public static bool fpsCountTimed = false;
         public static Text searchTextObject;
         public static Text title;
         public static VRRig GhostRig;
