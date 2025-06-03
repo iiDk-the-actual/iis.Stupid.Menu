@@ -51,7 +51,6 @@ namespace iiMenu
 
         private void Start() => LoadMenu();
 
-        // For SharpMonoInjector usage
         private static void LoadMenu()
         {
             Console.Title = $"ii's Stupid Menu // Build {PluginInfo.Version}";
@@ -64,6 +63,15 @@ namespace iiMenu
             Loader.AddComponent<Classes.CoroutineManager>();
 
             DontDestroyOnLoad(Loader);
+        }
+
+        // For SharpMonoInjector usage
+        private static void Inject()
+        {
+            GameObject iiMenu = new GameObject("iiMenu");
+            iiMenu.AddComponent<Plugin>();
+
+            DontDestroyOnLoad(iiMenu);
         }
     }
 }
