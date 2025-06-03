@@ -1,4 +1,4 @@
-﻿using GorillaNetworking;
+using GorillaNetworking;
 using iiMenu.Classes;
 using iiMenu.Menu;
 using iiMenu.Mods.Spammers;
@@ -2589,6 +2589,16 @@ namespace iiMenu.Mods
         public static void EnableFPSCounter()
         {
             disableFpsCounter = false;
+        }
+
+        public static void SlowFPSCounter()
+        {
+            fpsCountTimed = true;
+        }
+
+        public static void QuickFPSCounter()
+        {
+            fpsCountTimed = false;
         }
 
         public static void EnableBackupPreferences()
