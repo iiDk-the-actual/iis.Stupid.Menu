@@ -2,10 +2,9 @@
 using ExitGames.Client.Photon;
 using GorillaLocomotion.Climbing;
 using GorillaLocomotion.Swimming;
-using GorillaTagScripts;
-using HarmonyLib;
 using iiMenu.Classes;
 using iiMenu.Menu;
+using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
@@ -13,11 +12,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
-using UnityEngine.UI;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -28,12 +25,6 @@ namespace iiMenu.Mods
         public static int platformMode;
         public static void ChangePlatformType()
         {
-            platformMode++;
-            if (platformMode > 11)
-            {
-                platformMode = 0;
-            }
-
             string[] platformNames = new string[] {
                 "Normal",
                 "Invisible",
@@ -41,13 +32,12 @@ namespace iiMenu.Mods
                 "Random Color",
                 "Noclip",
                 "Glass",
-                "Snowball",
-                "Water Balloon",
-                "Rock",
-                "Present",
-                "Mentos",
-                "Fish Food"
+                "Projectile"
             };
+
+            platformMode++;
+            if (platformMode >= platformNames.Length)
+                platformMode = 0;
 
             GetIndex("Change Platform Type").overlapText = "Change Platform Type <color=grey>[</color><color=green>" + platformNames[platformMode] + "</color><color=grey>]</color>";
         }
@@ -55,12 +45,6 @@ namespace iiMenu.Mods
         public static int platformShape;
         public static void ChangePlatformShape()
         {
-            platformShape++;
-            if (platformShape > 6)
-            {
-                platformShape = 0;
-            }
-
             string[] platformShapes = new string[] {
                 "Sphere",
                 "Cube",
@@ -71,11 +55,17 @@ namespace iiMenu.Mods
                 "1x1"
             };
 
+            platformShape++;
+            if (platformShape >= platformShapes.Length)
+                platformShape = 0;
+
             GetIndex("Change Platform Shape").overlapText = "Change Platform Shape <color=grey>[</color><color=green>" + platformShapes[platformShape] + "</color><color=grey>]</color>";
         }
 
         public static GameObject CreatePlatform()
         {
+            if (platformMode == 6)
+                Projectiles.GrabProjectile();
             GameObject platform = null;
             switch (platformShape)
             {
@@ -112,6 +102,7 @@ namespace iiMenu.Mods
             switch (platformMode)
             {
                 case 1:
+                case 6:
                     platform.GetComponent<Renderer>().enabled = false;
                     break;
                 case 2:
@@ -136,30 +127,6 @@ namespace iiMenu.Mods
                         glass.color = new Color32(145, 187, 255, 100);
                     }
                     platform.GetComponent<Renderer>().material = glass;
-                    break;
-                case 6:
-                    platform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 32;
-                    platform.GetComponent<Renderer>().enabled = false;
-                    break;
-                case 7:
-                    platform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 204;
-                    platform.GetComponent<Renderer>().enabled = false;
-                    break;
-                case 8:
-                    platform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 231;
-                    platform.GetComponent<Renderer>().enabled = false;
-                    break;
-                case 9:
-                    platform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 240;
-                    platform.GetComponent<Renderer>().enabled = false;
-                    break;
-                case 10:
-                    platform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 249;
-                    platform.GetComponent<Renderer>().enabled = false;
-                    break;
-                case 11:
-                    platform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 252;
-                    platform.GetComponent<Renderer>().enabled = false;
                     break;
             }
 
@@ -230,9 +197,8 @@ namespace iiMenu.Mods
                     leftplat.transform.position = leftHandTransform.position;
                     leftplat.transform.rotation = leftHandTransform.rotation;
                     if (GetIndex("Stick Long Arms").enabled)
-                    {
                         leftplat.transform.position += GorillaTagger.Instance.leftHandTransform.forward * (armlength - 0.917f);
-                    }
+                    
                     if (GetIndex("Multiplied Long Arms").enabled)
                     {
                         Vector3 legacyPosL = GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.transform.position;
@@ -264,18 +230,16 @@ namespace iiMenu.Mods
                 else
                 {
                     if (platformMode != 5)
-                    {
                         leftplat.GetComponent<Renderer>().material.color = GetBGColor(0f);
-                    }
+                    
                     if (platformMode == 2)
                     {
                         float h = (Time.frameCount / 180f) % 1f;
                         leftplat.GetComponent<Renderer>().material.color = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
                     }
+
                     if (platformMode == 3)
-                    {
                         leftplat.GetComponent<Renderer>().material.color = new Color32((byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), 128);
-                    }
                 }
             }
             else
@@ -289,14 +253,11 @@ namespace iiMenu.Mods
                         UnityEngine.Object.Destroy(leftplat, 2f);
                     }
                     else
-                    {
                         UnityEngine.Object.Destroy(leftplat);
-                    }
+                    
                     leftplat = null;
                     if (platformMode == 4 && rightplat == null)
-                    {
                         UpdateClipColliders(true);
-                    }
                 }
             }
 
@@ -309,9 +270,8 @@ namespace iiMenu.Mods
                     rightplat.transform.position = rightHandTransform.position;
                     rightplat.transform.rotation = rightHandTransform.rotation;
                     if (GetIndex("Stick Long Arms").enabled)
-                    {
                         rightplat.transform.position += GorillaTagger.Instance.rightHandTransform.forward * (armlength - 0.917f);
-                    }
+                    
                     if (GetIndex("Multiplied Long Arms").enabled)
                     {
                         Vector3 legacyPosL = GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.transform.position;
@@ -343,18 +303,16 @@ namespace iiMenu.Mods
                 else
                 {
                     if (platformMode != 5)
-                    {
                         rightplat.GetComponent<Renderer>().material.color = GetBGColor(0f);
-                    }
+                    
                     if (platformMode == 2)
                     {
                         float h = (Time.frameCount / 180f) % 1f;
                         rightplat.GetComponent<Renderer>().material.color = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
                     }
                     if (platformMode == 3)
-                    {
                         rightplat.GetComponent<Renderer>().material.color = new Color32((byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), 128);
-                    }
+                    
                 }
             }
             else
@@ -368,14 +326,11 @@ namespace iiMenu.Mods
                         UnityEngine.Object.Destroy(rightplat, 2f);
                     }
                     else
-                    {
                         UnityEngine.Object.Destroy(rightplat);
-                    }
+                    
                     rightplat = null;
                     if (platformMode == 4 && leftplat == null)
-                    {
                         UpdateClipColliders(true);
-                    }
                 }
             }
         }

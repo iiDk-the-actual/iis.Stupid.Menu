@@ -3390,7 +3390,7 @@ namespace iiMenu.Menu
 
         public static SnowballThrowable[] snowballs = new SnowballThrowable[] { };
         public static Dictionary<string, SnowballThrowable> snowballDict = null;
-        public static SnowballThrowable GetProjectile(string provided)
+        public static SnowballThrowable GetProjectile(string projectileName)
         {
             if (snowballDict == null)
             {
@@ -3404,7 +3404,9 @@ namespace iiMenu.Menu
                         if (GetFullPath(Throwable.transform.parent).ToLower() == "player objects/local vrrig/local gorilla player/holdables"
                          || GetFullPath(Throwable.transform.parent).ToLower().Contains("player objects/local vrrig/local gorilla player/riganchor/rig/body/shoulder.l/upper_arm.l/forearm.l/hand.l/palm.01.l/transferrableitemlefthand")
                          || GetFullPath(Throwable.transform.parent).ToLower().Contains("player objects/local vrrig/local gorilla player/riganchor/rig/body/shoulder.r/upper_arm.r/forearm.r/hand.r/palm.01.r/transferrableitemrighthand"))
-                            snowballDict.Add(Throwable.gameObject.name, Throwable);
+                        {
+                            snowballDict.Add(Throwable.transform.parent.gameObject.name, Throwable); 
+                        }
                     } catch { }
                 }
 
@@ -3412,11 +3414,13 @@ namespace iiMenu.Menu
                     snowballDict = null;
             }
 
-            if (snowballDict != null && snowballDict.ContainsKey(provided))
-                return snowballDict[provided];
+            projectileName = $"{projectileName}(Clone)";
+
+            if (snowballDict != null && snowballDict.ContainsKey(projectileName))
+                return snowballDict[projectileName];
             else
             {
-                LogManager.Log("No key found for " + provided);
+                LogManager.Log("No key found for " + projectileName);
                 return null;
             }
         }
@@ -4978,51 +4982,6 @@ jgs \_   _/ |Oo\
             new string[] {"◀", "▶"},
             new string[] {"-", "+"},
             new string[] {"", ""}
-        };
-
-        public static string[] ExternalProjectileNames = new string[]
-        {
-            "SnowballLeft",
-            "WaterBalloonLeft",
-            "LavaRockLeft",
-            "BucketGiftFunctional",
-            "ScienceCandyLeft",
-            "FishFoodLeft",
-            "TrickTreatFunctionalAnchor",
-            "VotingRockAnchor_LEFT",
-            "TrickTreatFunctionalAnchor",
-            "TrickTreatFunctionalAnchor",
-            "AppleLeftAnchor"
-        };
-
-        public static string[] InternalProjectileNames = new string[]
-        {
-            "LMACE. LEFT.",
-            "LMAEX. LEFT.",
-            "LMAGD. LEFT.",
-            "LMAHQ. LEFT.",
-            "LMAIE. RIGHT.",
-            "LMAIO. LEFT.",
-            "LMAMN. LEFT.",
-            "LMAMS. LEFT.",
-            "LMAMN. LEFT.",
-            "LMAMN. LEFT.",
-            "LMAMU. LEFT."
-        };
-
-        public static string[] InternalProjectileNamesRight = new string[]
-        {
-            "LMACF. RIGHT.",
-            "LMAEY. RIGHT.",
-            "LMAGE. RIGHT.",
-            "LMAHR. RIGHT.",
-            "LMAIF. RIGHT.",
-            "LMAIP. RIGHT.",
-            "LMAMO. RIGHT.",
-            "LMAMT. RIGHT.",
-            "LMAMO. RIGHT.",
-            "LMAMO. RIGHT.",
-            "LMAMV."
         };
 
         public static int themeType = 1;
