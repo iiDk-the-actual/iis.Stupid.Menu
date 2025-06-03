@@ -2647,7 +2647,7 @@ namespace iiMenu.Mods
                 Movement.longarmCycle.ToString(),
                 Movement.speedboostCycle.ToString(),
                 Projectiles.projmode.ToString(),
-                Projectiles.trailmode.ToString(),
+                "0",
                 Projectiles.shootCycle.ToString(),
                 pointerIndex.ToString(),
                 Advantages.tagAuraIndex.ToString(),
@@ -2744,8 +2744,8 @@ namespace iiMenu.Mods
                 Projectiles.projmode = int.Parse(data[5]) - 1;
                 Projectiles.ChangeProjectile();
 
-                Projectiles.trailmode = int.Parse(data[6]) - 1;
-                Projectiles.ChangeTrail();
+                //Projectiles.trailmode = int.Parse(data[6]) - 1;
+                //Projectiles.ChangeTrail();
 
                 Projectiles.shootCycle = int.Parse(data[7]) - 1;
                 Projectiles.ChangeShootSpeed();
