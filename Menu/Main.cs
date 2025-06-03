@@ -4601,6 +4601,7 @@ namespace iiMenu.Menu
             IsSteam = PlayFabAuthenticator.instance.platform;
 
             if (!Font.GetOSInstalledFontNames().Contains("Agency FB"))
+                gtagfont = LoadAsset<Font>("Agency");
 
             PhotonNetwork.NetworkingClient.EventReceived += EventReceived;
 
