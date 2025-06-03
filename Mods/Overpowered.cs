@@ -1695,7 +1695,6 @@ namespace iiMenu.Mods
             }
         }
 
-        // No, it's not skidded, read the debunk: https://pastebin.com/raw/FL5j8fcy
         private static bool lastfreezegarbage = false;
         private static float Garfield = 0f;
         public static void FreezeAll()
