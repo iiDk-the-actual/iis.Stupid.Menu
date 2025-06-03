@@ -145,6 +145,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Hide Settings", enableMethod =() => Settings.HideSettings(), disableMethod =() => Settings.ShowSettings(), toolTip = "Hides all settings from the Enabled Mods tab, and all arraylists."},
                 new ButtonInfo { buttonText = "High Quality Text", enableMethod =() => Settings.HighQualityText(), disableMethod =() => Settings.HighQualityTextOff(), toolTip = "Makes the menu's text really high quality."},
 
+                new ButtonInfo { buttonText = "Slow FPS Counter", enableMethod =() => Settings.SlowFPSCounter(), disableMethod =() => Settings.QuickFPSCounter(), toolTip = "Updates the FPS Counter less, making it easier to read."},
+
                 new ButtonInfo { buttonText = "Disable Ghostview", enableMethod =() => Settings.DisableGhostview(), disableMethod =() => Settings.EnableGhostview(), toolTip = "Disables the transparent rig when you're in ghost."},
                 new ButtonInfo { buttonText = "Legacy Ghostview", enableMethod =() => Settings.LegacyGhostview(), disableMethod =() => Settings.NewGhostview(), toolTip = "Reverts the transparent rig to the two balls when you're in ghost."},
 
@@ -612,6 +614,11 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Hunt Distance ESP", method =() => Visuals.HuntDistanceESP(), disableMethod =() => {Visuals.isNameTagQueued = true;}, toolTip = "Acts like infection tracers color wise, but with text."},
 
                 new ButtonInfo { buttonText = "Show Pointers", method =() => Visuals.ShowButtonColliders(), disableMethod =() => Visuals.HideButtonColliders(), toolTip = "Shows dots near your hands, such as when you open the menu."},
+
+                new ButtonInfo { buttonText = "Info Watch Menu Name", enableMethod =() => Visuals.infoWatchMenuName = true, disableMethod =() => Visuals.infoWatchMenuName = false, toolTip = "Shows the menu name on the Info Watch mod."},
+                new ButtonInfo { buttonText = "Info Watch FPS", enableMethod =() => Visuals.infoWatchFPS = true, disableMethod =() => Visuals.infoWatchFPS = false, toolTip = "Shows your framerate on the Info Watch mod."},
+                new ButtonInfo { buttonText = "Info Watch Time", enableMethod =() => Visuals.infoWatchTime = true, disableMethod =() => Visuals.infoWatchTime = false, toolTip = "Shows the current time on the Info Watch mod."},
+                new ButtonInfo { buttonText = "Info Watch Clipboard", enableMethod =() => Visuals.infoWatchClip = true, disableMethod =() => Visuals.infoWatchClip = false, toolTip = "Shows your clipboard on the Info Watch mod."},
             },
 
             new ButtonInfo[] { // Fun Mods [12]
