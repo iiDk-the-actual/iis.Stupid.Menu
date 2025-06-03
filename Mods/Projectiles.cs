@@ -1,18 +1,11 @@
-﻿using BepInEx;
-using ExitGames.Client.Photon;
-using GorillaNetworking;
-using HarmonyLib;
+﻿using ExitGames.Client.Photon;
 using iiMenu.Classes;
 using iiMenu.Patches;
 using Photon.Pun;
 using Photon.Realtime;
-using Photon.Voice;
 using System;
-using System.Reflection;
-using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UIElements;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -22,7 +15,6 @@ namespace iiMenu.Mods.Spammers
     {
         // This file needs to be rewritten
         public static GorillaVelocityEstimator VelocityEstimator = null;
-
 
         public static string[] ProjectileObjectNames = new string[]
         {
