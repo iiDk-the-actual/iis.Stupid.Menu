@@ -226,7 +226,7 @@ namespace iiMenu.Mods.Spammers
 
                 if (GetIndex("Shoot Projectiles").enabled)
                 {
-                    charvel = GorillaLocomotion.GTPlayer.Instance.RigidbodyVelocity + (GorillaTagger.Instance.rightHandTransform.transform.forward * ShootStrength);
+                    charvel = GorillaLocomotion.GTPlayer.Instance.RigidbodyVelocity + (GorillaTagger.Instance.rightHandTransform.transform.forward * -ShootStrength);
                     if (Mouse.current.leftButton.isPressed)
                     {
                         Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
@@ -246,7 +246,7 @@ namespace iiMenu.Mods.Spammers
                 if (GetIndex("Above Players").enabled)
                 {
                     charvel = Vector3.zero;
-                    startpos = GetRandomVRRig(false).transform.position + new Vector3(0f, 1f, 0f);//rigs[UnityEngine.Random.Range(0, rigs.Count)].transform.position + new Vector3(0, 1, 0);
+                    startpos = GetRandomVRRig(false).transform.position + new Vector3(0f, 1f, 0f);
                 }
 
                 if (GetIndex("Rain Projectiles").enabled)
