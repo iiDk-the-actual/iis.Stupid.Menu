@@ -66,11 +66,17 @@ namespace iiMenu
         }
 
         // For SharpMonoInjector usage
-        private static void Inject()
+        // Don't merge these methods, it just doesn't work
+        public static void Inject()
         {
             GameObject iiMenu = new GameObject("iiMenu");
             iiMenu.AddComponent<Plugin>();
+        }
 
+        public static void InjectDontDestroy()
+        {
+            GameObject iiMenu = new GameObject("iiMenu");
+            iiMenu.AddComponent<Plugin>();
             DontDestroyOnLoad(iiMenu);
         }
     }
