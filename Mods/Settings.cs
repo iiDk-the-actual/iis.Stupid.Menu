@@ -436,20 +436,23 @@ namespace iiMenu.Mods
         {
             watchMenu = true;
             GameObject mainwatch = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/huntcomputer (1)");
-            watchobject = UnityEngine.Object.Instantiate(mainwatch, rightHand ? GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R").transform : GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L").transform, false); // See cause unlike skid.lol I actually clone the watch
+            watchobject = UnityEngine.Object.Instantiate(mainwatch, 
+                rightHand ? 
+                GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R").transform : 
+                GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L").transform, false);
+
             UnityEngine.Object.Destroy(watchobject.GetComponent<GorillaHuntComputer>());
             watchobject.SetActive(true);
 
-            Transform thething = watchobject.transform.Find("HuntWatch_ScreenLocal/Canvas/Anchor");
-            thething.Find("Hat").gameObject.SetActive(false);
-            thething.Find("Face").gameObject.SetActive(false);
-            thething.Find("Badge").gameObject.SetActive(false);
-            thething.Find("Material").gameObject.SetActive(false);
-            thething.Find("Right Hand").gameObject.SetActive(false);
+            Transform watchCanvas = watchobject.transform.Find("HuntWatch_ScreenLocal/Canvas/Anchor");
+            watchCanvas.Find("Hat").gameObject.SetActive(false);
+            watchCanvas.Find("Face").gameObject.SetActive(false);
+            watchCanvas.Find("Badge").gameObject.SetActive(false);
+            watchCanvas.Find("Material").gameObject.SetActive(false);
+            watchCanvas.Find("Right Hand").gameObject.SetActive(false);
 
-            watchText = thething.Find("Text").gameObject;
-            //watchText.GetComponent<Text>().horizontalOverflow = UnityEngine.HorizontalWrapMode.Overflow;
-            watchEnabledIndicator = thething.Find("Left Hand").gameObject;
+            watchText = watchCanvas.Find("Text").gameObject;
+            watchEnabledIndicator = watchCanvas.Find("Left Hand").gameObject;
             watchShell = watchobject.transform.Find("HuntWatch_ScreenLocal").gameObject;
 
             watchShell.GetComponent<Renderer>().material = OrangeUI;
@@ -2589,16 +2592,6 @@ namespace iiMenu.Mods
         public static void EnableFPSCounter()
         {
             disableFpsCounter = false;
-        }
-
-        public static void SlowFPSCounter()
-        {
-            fpsCountTimed = true;
-        }
-
-        public static void QuickFPSCounter()
-        {
-            fpsCountTimed = false;
         }
 
         public static void EnableBackupPreferences()
