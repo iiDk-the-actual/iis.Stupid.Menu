@@ -18,8 +18,10 @@ namespace iiMenu.Notifications
 
     public class NotifiLib : MonoBehaviour
     {
+        public static NotifiLib instance;
         private void Start()
         {
+            instance = this;
             LogManager.Log("Notifications loaded");
         }
 

@@ -341,6 +341,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "FPS Spoof", method =() => Safety.FPSSpoof(), disableMethod =() => Patches.FPSPatch.enabled = false, toolTip = "Makes your FPS appear to be 90 for other players and the competitive bot."},
                 new ButtonInfo { buttonText = "Name Spoof", enableMethod =() => Patches.ColorPatch.nameSpoofEnabled = true, disableMethod =() => Patches.ColorPatch.nameSpoofEnabled = false, toolTip = "Changes your name on the leaderboard to something random, but not on your rig."},
                 new ButtonInfo { buttonText = "Color Spoof", enableMethod =() => Patches.ColorPatch.patchEnabled = true, disableMethod =() => Patches.ColorPatch.patchEnabled = false, toolTip = "Makes your color appear different to every player."},
+
+                new ButtonInfo { buttonText = "Unload Menu", method =() => UnloadMenu(), isTogglable = false, toolTip = "Unloads the menu from your game."}
             },
 
             new ButtonInfo[] { // Movement Mods [9]

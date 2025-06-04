@@ -17,6 +17,8 @@ namespace iiMenu.UI
 {
     public class Main : MonoBehaviour
     {
+        private static Main instance;
+
         private string inputText = "goldentrophy";
 
         private string r = "255";
@@ -30,6 +32,8 @@ namespace iiMenu.UI
 
         private void Start()
         {
+            instance = this;
+
             if (File.Exists("iisStupidMenu/iiMenu_HideGUI.txt"))
                 isOpen = false;
         }

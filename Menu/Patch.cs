@@ -7,7 +7,6 @@ namespace iiMenu.Patches
     public class Menu
     {
         public static bool IsPatched { get; private set; }
-        //public static GameObject pointer { get; internal set; }
 
         internal static void ApplyHarmonyPatches()
         {
@@ -24,7 +23,11 @@ namespace iiMenu.Patches
         internal static void RemoveHarmonyPatches()
         {
             if (instance != null && IsPatched)
+            {
+                instance.UnpatchSelf();
                 IsPatched = false;
+                instance = null;
+            }
         }
 
         private static Harmony instance;
