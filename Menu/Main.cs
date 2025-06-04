@@ -4308,9 +4308,7 @@ namespace iiMenu.Menu
             try
             {
                 if (doButtonsVibrate)
-                {
                     GorillaTagger.Instance.StartVibration(rightHand, GorillaTagger.Instance.tagHapticStrength / 2f, GorillaTagger.Instance.tagHapticDuration / 2f);
-                }
 
                 if (buttonClickIndex <= 3 || buttonClickIndex == 11)
                 {
