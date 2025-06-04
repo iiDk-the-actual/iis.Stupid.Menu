@@ -4800,6 +4800,7 @@ jgs \_   _/ |Oo\
         public static string narratorName = "Default";
         public static int narratorIndex;
         public static bool showEnabledModsVR = true;
+        public static bool advancedArraylist;
         public static bool hideSettings;
         public static bool hideTextOnCamera;
         public static bool disableDisconnectButton;

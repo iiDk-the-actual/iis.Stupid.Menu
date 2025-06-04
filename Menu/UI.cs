@@ -64,14 +64,15 @@ namespace iiMenu.UI
                 GUI.skin.textField.font = activeFont;
                 GUI.skin.button.font = activeFont;
                 GUI.skin.label.font = activeFont;
+                GUI.skin.label.richText = true;
                 GUI.skin.textField.fontStyle = activeFontStyle;
                 GUI.skin.button.fontStyle = activeFontStyle;
                 GUI.skin.label.fontStyle = activeFontStyle;
 
-                Color victimColor = GetIndex("Swap GUI Colors").enabled ? textColor : GetBGColor(0f);
+                Color guiColor = GetIndex("Swap GUI Colors").enabled ? textColor : GetBGColor(0f);
 
-                GUI.color = victimColor;
-                GUI.backgroundColor = victimColor;
+                GUI.color = guiColor;
+                GUI.backgroundColor = guiColor;
 
                 string roomText = translate ? TranslateText("Not connected to room") : "Not connected to room";
                 try
@@ -141,12 +142,12 @@ namespace iiMenu.UI
 
                 try
                 {
-                    GUI.color = victimColor;
-                    GUILayout.BeginHorizontal(Array.Empty<GUILayoutOption>());
-                    GUILayout.Space(5f);
-                    GUILayout.BeginVertical(Array.Empty<GUILayoutOption>());
+                    GUI.color = guiColor;
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Space(10f);
 
-                    GUILayout.Space(5f);
+                    GUILayout.BeginVertical();
+                    GUILayout.Space(10f);
 
                     List<string> alphabetized = new List<string>();
 
@@ -159,19 +160,20 @@ namespace iiMenu.UI
                             {
                                 if (v.enabled && (!hideSettings || (hideSettings && !Buttons.categoryNames[categoryIndex].Contains("Settings"))))
                                 {
-                                    string toadd = (v.overlapText == null) ? v.buttonText : v.overlapText;
+                                    string buttonText = (v.overlapText == null) ? v.buttonText : v.overlapText;
                                     if (translate)
-                                        toadd = TranslateText(toadd);
-                                    
+                                        buttonText = TranslateText(buttonText);
+
                                     if (inputTextColor != "green")
-                                        toadd = toadd.Replace(" <color=grey>[</color><color=green>", " <color=grey>[</color><color=" + inputTextColor + ">");
+                                        buttonText = buttonText.Replace(" <color=grey>[</color><color=green>", " <color=grey>[</color><color=" + inputTextColor + ">");
 
                                     if (lowercaseMode)
-                                        toadd = toadd.ToLower();
+                                        buttonText = buttonText.ToLower();
 
-                                    alphabetized.Add(toadd);
+                                    alphabetized.Add(buttonText);
                                 }
-                            } catch { }
+                            }
+                            catch { }
                         }
                         categoryIndex++;
                     }
@@ -181,13 +183,41 @@ namespace iiMenu.UI
                         .OrderByDescending(s => NoRichtextTags(s).Length)
                         .ToArray();
 
+                    int index = 0;
                     foreach (string v in sortedButtons)
-                        GUILayout.Label(v, Array.Empty<GUILayoutOption>());
+                    {
+                        if (advancedArraylist)
+                        {
+                            string text = $"<color=#{ColorToHex(GetBGColor(index * 0.1f))}>| </color><color=#{ColorToHex(textColor)}>{v}</color>";
+
+                            GUIStyle labelStyle = new GUIStyle(GUI.skin.label);
+                            labelStyle.richText = true;
+                            labelStyle.fontStyle = (FontStyle)((int)activeFontStyle % 2);
+
+                            Vector2 size = labelStyle.CalcSize(new GUIContent(text));
+                            GUILayout.Space(size.y);
+
+                            Rect lastRect = GUILayoutUtility.GetLastRect();
+                            Rect labelRect = new Rect(lastRect.x, lastRect.y, size.x + 5, index == sortedButtons.Length - 1 ? size.y + 5 : size.y);
+
+                            Color oldColor = GUI.color;
+                            GUI.color = new Color(0f, 0f, 0f, 0.4f);
+                            GUI.DrawTexture(labelRect, Texture2D.whiteTexture);
+                            GUI.color = oldColor;
+
+                            GUI.Label(labelRect, text, labelStyle);
+                        }
+                        else
+                            GUILayout.Label(v);
+
+                        index++;
+                    }
 
                     GUILayout.EndVertical();
                     GUILayout.EndHorizontal();
                 }
                 catch { }
+
 
                 foreach (KeyValuePair<string, Assembly> Plugin in Settings.LoadedPlugins)
                 {
