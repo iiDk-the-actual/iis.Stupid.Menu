@@ -162,6 +162,8 @@ namespace iiMenu.Mods
                     PrivateUIRoom.StopOverlay();
 
                 HandRayController.instance.enabled = false;
+                HandRayController.instance.DisableHandRays();
+                HandRayController.instance.HideHands();
                 HandRayController.instance.transform.Find("UIRoot").gameObject.SetActive(false);
             }
             catch { }

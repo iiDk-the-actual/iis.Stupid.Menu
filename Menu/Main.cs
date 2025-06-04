@@ -4646,6 +4646,65 @@ namespace iiMenu.Menu
             }
         }
 
+        public static void UnloadMenu()
+        {
+            Settings.Panic();
+            Settings.DisableBoardColors();
+
+            PhotonNetwork.NetworkingClient.EventReceived -= EventReceived;
+
+            NetworkSystem.Instance.OnJoinedRoomEvent -= OnJoinRoom;
+            NetworkSystem.Instance.OnReturnedToSinglePlayer -= OnLeaveRoom;
+
+            NetworkSystem.Instance.OnPlayerJoined -= OnPlayerJoin;
+            NetworkSystem.Instance.OnPlayerLeft -= OnPlayerLeave;
+
+            if (Classes.Console.instance != null)
+                Destroy(Classes.Console.instance.gameObject);
+
+            if (NotifiLib.instance != null)
+                Destroy(NotifiLib.instance.gameObject);
+
+            if (VRKeyboard != null)
+                Destroy(VRKeyboard);
+
+            if (motd != null)
+                Destroy(motd);
+
+            if (motdText != null)
+                Destroy(motdText);
+
+            if (menu != null)
+                Destroy(menu);
+
+            if (reference != null)
+                Destroy(reference);
+
+            if (lKeyReference != null)
+                Destroy(lKeyReference);
+
+            if (rKeyReference != null)
+                Destroy(rKeyReference);
+
+            try
+            {
+                Visuals.ClearLinePool();
+                Visuals.ClearNameTagPool();
+            }
+            catch { }
+
+            HasLoaded = false;
+            hasLoadedPreferences = false;
+            loadPreferencesTime = -1;
+
+            Lockdown = true;
+
+            if (Plugin.instance != null)
+                Destroy(Plugin.instance);
+
+            Patches.Menu.RemoveHarmonyPatches();
+        }
+
         // The variable warehouse
         public static string rat = @"
      _   _
