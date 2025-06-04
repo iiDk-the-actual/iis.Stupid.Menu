@@ -14,10 +14,8 @@ namespace iiMenu.Classes
             Update();
         }
 
-        public void Update()
-        {
+        public void Update() =>
             gameObjectRenderer.material.color = targetRenderer.material.color;
-        }
 
         public Renderer gameObjectRenderer;
         public Renderer targetRenderer;
