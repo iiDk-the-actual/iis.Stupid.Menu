@@ -13,6 +13,7 @@ using static iiMenu.Menu.Main;
 using static iiMenu.Classes.RigManager;
 using HarmonyLib;
 using iiMenu.Mods.Spammers;
+using iiMenu.Menu;
 
 namespace iiMenu.Mods
 {
@@ -50,31 +51,33 @@ namespace iiMenu.Mods
         public static bool infoWatchTime = false;
         public static bool infoWatchClip = false;
         public static bool infoWatchFPS = false;
+        public static bool infoWatchCode = false;
         public static void WatchStep()
         {
-            if (infoWatchMenuName == false && infoWatchTime == false && infoWatchClip == false && infoWatchFPS == false)
+            if (!infoWatchMenuName && !infoWatchTime && !infoWatchClip && !infoWatchFPS && !infoWatchCode)
             {
                 regwatchText.GetComponent<UnityEngine.UI.Text>().text = "ii's Stupid Menu";
                 if (doCustomName)
                     regwatchText.GetComponent<UnityEngine.UI.Text>().text = customMenuName;
                 regwatchText.GetComponent<UnityEngine.UI.Text>().text += "\n<color=grey>";
-                regwatchText.GetComponent<UnityEngine.UI.Text>().text += Mathf.Ceil(1f / Time.unscaledDeltaTime).ToString() + " FPS\n";
+                regwatchText.GetComponent<UnityEngine.UI.Text>().text += Main.lastDeltaTime.ToString() + " FPS\n";
                 regwatchText.GetComponent<UnityEngine.UI.Text>().text += DateTime.Now.ToString("hh:mm tt") + "\n</color>";
             }
             else
             {
-                if (infoWatchMenuName == true) regwatchText.GetComponent<UnityEngine.UI.Text>().text = "ii's Stupid Menu\n<color=grey>";
-                if (doCustomName && infoWatchMenuName == true)
+                if (infoWatchMenuName) regwatchText.GetComponent<UnityEngine.UI.Text>().text = "ii's Stupid Menu\n<color=grey>";
+                if (doCustomName && infoWatchMenuName)
                 {
                     regwatchText.GetComponent<UnityEngine.UI.Text>().text = customMenuName + "\n<color=grey>";
                 }
-                if (infoWatchMenuName == false)
+                if (!infoWatchMenuName)
                 {
                     regwatchText.GetComponent<UnityEngine.UI.Text>().text = "<color=grey>";
                 }
-                if (infoWatchFPS == true) regwatchText.GetComponent<UnityEngine.UI.Text>().text += Mathf.Ceil(1f / Time.unscaledDeltaTime).ToString() + " FPS\n";
-                if (infoWatchTime == true) regwatchText.GetComponent<UnityEngine.UI.Text>().text += DateTime.Now.ToString("hh:mm tt") + "\n";
-                if (infoWatchClip == true) regwatchText.GetComponent<UnityEngine.UI.Text>().text += "Clipboard: " + (GUIUtility.systemCopyBuffer.Length > 20 ? GUIUtility.systemCopyBuffer.Substring(0, 20) : GUIUtility.systemCopyBuffer) + "\n";
+                if (infoWatchFPS) regwatchText.GetComponent<UnityEngine.UI.Text>().text += Main.lastDeltaTime.ToString() + " FPS\n";
+                if (infoWatchTime) regwatchText.GetComponent<UnityEngine.UI.Text>().text += DateTime.Now.ToString("hh:mm tt") + "\n";
+                if (infoWatchClip) regwatchText.GetComponent<UnityEngine.UI.Text>().text += "Clip: " + (GUIUtility.systemCopyBuffer.Length > 20 ? GUIUtility.systemCopyBuffer.Substring(0, 20) : GUIUtility.systemCopyBuffer) + "\n";
+                if (infoWatchCode) regwatchText.GetComponent<UnityEngine.UI.Text>().text += (PhotonNetwork.CurrentRoom.Name != null ? PhotonNetwork.CurrentRoom.Name : "Not in room") + "\n";
                 regwatchText.GetComponent<UnityEngine.UI.Text>().text += "</color>";
                 regwatchText.GetComponent<UnityEngine.UI.Text>().color = titleColor;
             }
