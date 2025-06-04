@@ -485,15 +485,16 @@ namespace iiMenu.Menu
                         }
                     } catch { }
 
-                    // FPS counter
                     if (fpsCount != null && (Time.time > fpsAvgTime || fpsCountTimed == false))
                     {
-                        fpsCount.text = "FPS: " + Mathf.Ceil(1f / Time.unscaledDeltaTime).ToString();
-                        if (lowercaseMode)
-                        {
-                            fpsCount.text = fpsCount.text.ToLower();
-                        }
+                        lastDeltaTime = Mathf.Ceil(1f / Time.unscaledDeltaTime);
                         fpsAvgTime = Time.time + 1f;
+                    }                        
+                    // FPS counter
+                    fpsCount.text = "FPS: " + lastDeltaTime.ToString();
+                    if (lowercaseMode)
+                    {
+                        fpsCount.text = fpsCount.text.ToLower();
                     }
 
                     if (searchTextObject != null)
@@ -1998,16 +1999,12 @@ namespace iiMenu.Menu
                     }
                 }.AddComponent<Text>();
                 fps.font = activeFont;
-                fps.text = $"FPS: {Mathf.Ceil(1f / Time.unscaledDeltaTime)}";
+                fps.text = $"FPS: {lastDeltaTime}";
                 if (lowercaseMode)
                     fps.text = fps.text.ToLower();
 
                 fps.color = titleColor;
-                if (Time.time > fpsAvgTime || fpsCountTimed == false)
-                {
-                    fpsCount = fps;
-                    fpsAvgTime = Time.time + 1f;
-                }
+                fpsCount = fps;
                 fps.fontSize = 1;
                 fps.supportRichText = true;
                 fps.fontStyle = activeFontStyle;
@@ -4942,6 +4939,7 @@ jgs \_   _/ |Oo\
         public static Text fpsCount;
         private static float fpsAvgTime = 0f;
         public static bool fpsCountTimed = false;
+        public static float lastDeltaTime = 1f;
         public static Text searchTextObject;
         public static Text title;
         public static VRRig GhostRig;
