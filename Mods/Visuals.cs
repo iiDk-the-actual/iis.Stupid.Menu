@@ -77,7 +77,7 @@ namespace iiMenu.Mods
                 if (infoWatchFPS) regwatchText.GetComponent<UnityEngine.UI.Text>().text += Main.lastDeltaTime.ToString() + " FPS\n";
                 if (infoWatchTime) regwatchText.GetComponent<UnityEngine.UI.Text>().text += DateTime.Now.ToString("hh:mm tt") + "\n";
                 if (infoWatchClip) regwatchText.GetComponent<UnityEngine.UI.Text>().text += "Clip: " + (GUIUtility.systemCopyBuffer.Length > 20 ? GUIUtility.systemCopyBuffer.Substring(0, 20) : GUIUtility.systemCopyBuffer) + "\n";
-                if (infoWatchCode) regwatchText.GetComponent<UnityEngine.UI.Text>().text += (PhotonNetwork.CurrentRoom.Name != null ? PhotonNetwork.CurrentRoom.Name : "Not in room") + "\n";
+                if (infoWatchCode) regwatchText.GetComponent<UnityEngine.UI.Text>().text += (PhotonNetwork.InRoom ? PhotonNetwork.CurrentRoom.Name : "Not in room") + "\n";
                 regwatchText.GetComponent<UnityEngine.UI.Text>().text += "</color>";
                 regwatchText.GetComponent<UnityEngine.UI.Text>().color = titleColor;
             }
