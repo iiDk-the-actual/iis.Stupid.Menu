@@ -99,7 +99,7 @@ namespace iiMenu.Mods
         {
             PlayFabClientAPI.GetAccountInfo(new GetAccountInfoRequest { PlayFabId = PhotonNetwork.LocalPlayer.UserId }, delegate (GetAccountInfoResult result) // Who designed this
             {
-                string date = result.AccountInfo.Created.ToString("MMMM dd, yyyy h mm tt");
+                string date = result.AccountInfo.Created.ToString("MMMM dd, yyyy h:mm tt");
                 NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> " + date, 5000);
                 GUIUtility.systemCopyBuffer = date;
             }, delegate { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not copy creation date."); }, null, null);
@@ -121,7 +121,7 @@ namespace iiMenu.Mods
                         cgdgd = Time.time + 0.5f;
                         PlayFabClientAPI.GetAccountInfo(new GetAccountInfoRequest { PlayFabId = GetPlayerFromVRRig(gunTarget).UserId }, delegate (GetAccountInfoResult result) // Who designed this
                         {
-                            string date = result.AccountInfo.Created.ToString("dd MMMM yyyy 'at' h mm tt");
+                            string date = result.AccountInfo.Created.ToString("MMMM dd, yyyy at h mm");
                             CoroutineManager.RunCoroutine(SpeakText(date));
                         }, delegate { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not narrate creation date."); }, null, null);
                     }
@@ -133,7 +133,7 @@ namespace iiMenu.Mods
         {
             PlayFabClientAPI.GetAccountInfo(new GetAccountInfoRequest { PlayFabId = PhotonNetwork.LocalPlayer.UserId }, delegate (GetAccountInfoResult result) // Who designed this
             {
-                string date = result.AccountInfo.Created.ToString("dd MMMM yyyy 'at' h:mm tt");
+                string date = result.AccountInfo.Created.ToString("MMMM dd, yyyy at h mm");
                 CoroutineManager.RunCoroutine(SpeakText(date));
             }, delegate { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not narrate creation date."); }, null, null);
         }
