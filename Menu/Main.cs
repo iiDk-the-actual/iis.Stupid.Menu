@@ -485,16 +485,18 @@ namespace iiMenu.Menu
                         }
                     } catch { }
 
-                    if (fpsCount != null && (Time.time > fpsAvgTime || fpsCountTimed == false))
-                    {
-                        lastDeltaTime = Mathf.Ceil(1f / Time.unscaledDeltaTime);
-                        fpsAvgTime = Time.time + 1f;
-                    }                        
                     // FPS counter
-                    fpsCount.text = "FPS: " + lastDeltaTime.ToString();
-                    if (lowercaseMode)
+                    if (fpsCount != null)
                     {
-                        fpsCount.text = fpsCount.text.ToLower();
+                        if (Time.time > fpsAvgTime || !fpsCountTimed)
+                        {
+                            lastDeltaTime = Mathf.Ceil(1f / Time.unscaledDeltaTime);
+                            fpsAvgTime = Time.time + 1f;
+                        }
+
+                        fpsCount.text = "FPS: " + lastDeltaTime.ToString();
+                        if (lowercaseMode)
+                            fpsCount.text = fpsCount.text.ToLower();
                     }
 
                     if (searchTextObject != null)
