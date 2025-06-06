@@ -128,9 +128,6 @@ namespace iiMenu.Mods.Spammers
             if (projmode > (shortProjectileNames.Length - 1))
                 projmode = 0;
 
-            SnowballPatch.enabled = projmode == 14 || projmode == 15;
-            SnowballPatch.minusIndex = projmode == 14 ? 2 : 1;
-
             GetIndex("Change Projectile").overlapText = "Change Projectile <color=grey>[</color><color=green>" + shortProjectileNames[projmode] + "</color><color=grey>]</color>";
         }
 
