@@ -138,37 +138,47 @@ namespace iiMenu.Mods
             reportMenuToggle = leftPrimary;
         }
 
-        private static GameObject popup;
         public static void AcceptTOS()
         {
+            Patches.TOSPatch.enabled = true;
+
             try
             {
-                popup = GameObject.Find("Miscellaneous Scripts/PopUpMessage");
-                popup.SetActive(false);
+                GameObject popupMessage = GameObject.Find("Miscellaneous Scripts/PopUpMessage");
+
+                if (popupMessage != null)
+                    popupMessage.SetActive(false);
             } catch { }
 
             try
             {
                 GameObject metaReporting = GameObject.Find("Miscellaneous Scripts/MetaReporting");
-                metaReporting.SetActive(false);
+
+                if (metaReporting != null)
+                    metaReporting.SetActive(false);
             }
             catch { }
 
             try
             {
-                PrivateUIRoom Room = GameObject.Find("Miscellaneous Scripts/PrivateUIRoom_HandRays").GetComponent<PrivateUIRoom>();
+                GameObject RoomObject = GameObject.Find("Miscellaneous Scripts/PrivateUIRoom_HandRays");
+                if (RoomObject == null)
+                    return;
+
+                PrivateUIRoom Room = RoomObject.GetComponent<PrivateUIRoom>();
 
                 if (Room.inOverlay)
                     PrivateUIRoom.StopOverlay();
 
                 HandRayController.instance.enabled = false;
                 HandRayController.instance.DisableHandRays();
-                HandRayController.instance.HideHands();
+
+                if (HandRayController.instance._leftHandRay.gameObject.activeSelf ||
+                    HandRayController.instance._rightHandRay.gameObject.activeSelf)
+                        HandRayController.instance.HideHands();
                 HandRayController.instance.transform.Find("UIRoot").gameObject.SetActive(false);
             }
             catch { }
-
-            Patches.TOSPatch.enabled = true;
         }
 
         public static void JoinDiscord() =>

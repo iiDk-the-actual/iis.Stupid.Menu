@@ -1,7 +1,10 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
+using iiMenu.Mods;
+using iiMenu.Patches;
 using System;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 
 namespace iiMenu
@@ -46,6 +49,13 @@ namespace iiMenu
             {
                 if (!Directory.Exists(DirectoryString))
                     Directory.CreateDirectory(DirectoryString);
+            }
+
+            // Ugily hard-coded but works so well
+            if (File.Exists("iisStupidMenu/iiMenu_Preferences.txt"))
+            {
+                if (File.ReadAllLines("iisStupidMenu/iiMenu_Preferences.txt")[0].Split(";;").Contains("Accept TOS"))
+                    TOSPatch.enabled = true;
             }
         }
 
