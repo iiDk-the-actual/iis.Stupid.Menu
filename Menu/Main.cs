@@ -503,16 +503,12 @@ namespace iiMenu.Menu
                     {
                         searchTextObject.text = searchText + (((Time.frameCount / 45) % 2) == 0 ? "|" : " ");
                         if (lowercaseMode)
-                        {
                             searchTextObject.text = searchTextObject.text.ToLower();
-                        }
                     }
 
                     // Recolor the button collider
                     if (menuBackground != null && reference != null)
-                    {
                         reference.GetComponent<Renderer>().material.color = menuBackground.GetComponent<Renderer>().material.color;
-                    }
 
                     // Fix for disorganized
                     if (disorganized && currentCategoryName != "Main")
@@ -2144,29 +2140,7 @@ namespace iiMenu.Menu
 
             try
             {
-                if (annoyingMode && UnityEngine.Random.Range(1, 5) == 3)
-                {
-                    ButtonInfo disconnectButton = GetIndex("Disconnect");
-                    renderButtons = Enumerable.Repeat(disconnectButton, 10).ToArray();
-                }
-                else if (currentCategoryName == "Favorite Mods")
-                {
-                    foreach (string favoriteMod in favorites)
-                    {
-                        if (GetIndex(favoriteMod) == null)
-                            favorites.Remove(favoriteMod);
-                    }
-
-                    renderButtons = StringsToInfos(favorites.ToArray());
-                }
-                else if (currentCategoryName == "Enabled Mods")
-                {
-                    List<ButtonInfo> enabledMods = new List<ButtonInfo>() { GetIndex("Exit Enabled Mods") };
-                    enabledMods.AddRange(Buttons.buttons.SelectMany(buttonlist => buttonlist).Where(v => v.enabled));
-
-                    renderButtons = enabledMods.ToArray();
-                }
-                else if (isSearching)
+                if (isSearching)
                 {
                     List<ButtonInfo> searchedMods = new List<ButtonInfo> { };
                     if (nonGlobalSearch && currentCategoryName != "Main")
@@ -2207,6 +2181,28 @@ namespace iiMenu.Menu
 
                     buttonIndexOffset = 1;
                     renderButtons = searchedMods.ToArray();
+                }
+                else if (annoyingMode && UnityEngine.Random.Range(1, 5) == 3)
+                {
+                    ButtonInfo disconnectButton = GetIndex("Disconnect");
+                    renderButtons = Enumerable.Repeat(disconnectButton, 1000).ToArray();
+                }
+                else if (currentCategoryName == "Favorite Mods")
+                {
+                    foreach (string favoriteMod in favorites)
+                    {
+                        if (GetIndex(favoriteMod) == null)
+                            favorites.Remove(favoriteMod);
+                    }
+
+                    renderButtons = StringsToInfos(favorites.ToArray());
+                }
+                else if (currentCategoryName == "Enabled Mods")
+                {
+                    List<ButtonInfo> enabledMods = new List<ButtonInfo>() { GetIndex("Exit Enabled Mods") };
+                    enabledMods.AddRange(Buttons.buttons.SelectMany(buttonlist => buttonlist).Where(v => v.enabled));
+
+                    renderButtons = enabledMods.ToArray();
                 }
                 else
                     renderButtons = Buttons.buttons[currentCategoryIndex];
@@ -4800,6 +4796,7 @@ jgs \_   _/ |Oo\
         public static int narratorIndex;
         public static bool showEnabledModsVR = true;
         public static bool advancedArraylist;
+        public static bool flipArraylist;
         public static bool hideSettings;
         public static bool hideTextOnCamera;
         public static bool disableDisconnectButton;
