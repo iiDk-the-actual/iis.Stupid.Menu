@@ -20,6 +20,16 @@ namespace iiMenu.UI
         private static Main instance;
 
         private string inputText = "goldentrophy";
+        private static GUIStyle labelStyle;
+
+        private static Dictionary<string, Vector2> textWidthPool = new Dictionary<string, Vector2> { };
+        public static Vector2 ExternalCalcSize(GUIContent text)
+        {
+            if (textWidthPool.ContainsKey(text.text))
+                return textWidthPool[text.text];
+
+            return new Vector2(text.text.Length, 12);
+        }
 
         private string r = "255";
         private string g = "128";
@@ -103,38 +113,55 @@ namespace iiMenu.UI
                 }
                 catch { }
 
-                GUI.Box(new Rect(Screen.width - 250, 10, 240, 120), "", GUI.skin.box);
+                GUI.Box(
+                    flipArraylist ? new Rect(10, 10, 240, 120) : 
+                    new Rect(Screen.width - 250, 10, 240, 120),
+                    "", GUI.skin.box);
 
-                inputText = GUI.TextField(new Rect(Screen.width - 200, 20, 180, 20), inputText);
+                inputText = GUI.TextField(
+                    flipArraylist ? new Rect(60, 20, 180, 20) :
+                    new Rect(Screen.width - 200, 20, 180, 20), 
+                    inputText);
 
-                r = GUI.TextField(new Rect(Screen.width - 240, 20, 30, 20), r);
-                g = GUI.TextField(new Rect(Screen.width - 240, 50, 30, 20), g);
-                b = GUI.TextField(new Rect(Screen.width - 240, 80, 30, 20), b);
+                r = GUI.TextField(
+                    flipArraylist ? new Rect(20, 20, 30, 20) :
+                    new Rect(Screen.width - 240, 20, 30, 20), 
+                    r);
+                g = GUI.TextField(flipArraylist ? new Rect(20, 50, 30, 20) :
+                    new Rect(Screen.width - 240, 50, 30, 20),
+                    g);
+                b = GUI.TextField(flipArraylist ? new Rect(20, 80, 30, 20) :
+                    new Rect(Screen.width - 240, 80, 30, 20),
+                    b);
 
-                if (GUI.Button(new Rect(Screen.width - 200, 50, 85, 30), translate ? TranslateText("Name") : "Name"))
+                if (GUI.Button(flipArraylist ? new Rect(60, 50, 85, 30) : 
+                                               new Rect(Screen.width - 200, 50, 85, 30), 
+                                               translate ? TranslateText("Name") : "Name"))
                     ChangeName(inputText.Replace("\\n", "\n"));
                 
-                if (GUI.Button(new Rect(Screen.width - 105, 50, 85, 30), translate ? TranslateText("Color") : "Color"))
+                if (GUI.Button(flipArraylist ? new Rect(155, 50, 85, 30) :
+                                               new Rect(Screen.width - 105, 50, 85, 30),
+                                                translate ? TranslateText("Color") : "Color"))
                 {
-                    UnityEngine.Color color = new Color32(byte.Parse(r), byte.Parse(g), byte.Parse(b), 255);
+                    Color color = new Color32(byte.Parse(r), byte.Parse(g), byte.Parse(b), 255);
                     ChangeColor(color);
                 }
 
-                bool Create = false;
-                try
-                {
-                    Create = UnityInput.Current.GetKey(KeyCode.LeftControl);
-                } catch { }
+                bool Create = UnityInput.Current.GetKey(KeyCode.LeftControl);
 
                 string targetText = Create ? "Create" : "Join";
-                if (GUI.Button(new Rect(Screen.width - 200, 90, 85, 30), translate ? TranslateText(targetText) : targetText))
+                if (GUI.Button(flipArraylist ? new Rect(60, 90, 85, 30) :
+                               new Rect(Screen.width - 200, 90, 85, 30), 
+                               translate ? TranslateText(targetText) : targetText))
                 {
                     if (Create)
-                        iiMenu.Mods.Important.CreateRoom(inputText.Replace("\\n", "\n"), true);
+                        Important.CreateRoom(inputText.Replace("\\n", "\n"), true);
                     else
                         PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(inputText.Replace("\\n", "\n"), JoinType.Solo);
                 }
-                if (GUI.Button(new Rect(Screen.width - 105, 90, 85, 30), "Queue"))
+                if (GUI.Button(flipArraylist ? new Rect(155, 90, 85, 30) :
+                               new Rect(Screen.width - 105, 90, 85, 30),
+                               "Queue"))
                 {
                     NetworkSystem.Instance.ReturnToSinglePlayer();
                     rejRoom = inputText;
@@ -142,13 +169,14 @@ namespace iiMenu.UI
 
                 try
                 {
+                    labelStyle = new GUIStyle(GUI.skin.label);
+                    labelStyle.richText = true;
+                    if (advancedArraylist)
+                        labelStyle.fontStyle = (FontStyle)((int)activeFontStyle % 2);
+                    if (flipArraylist)
+                        labelStyle.alignment = TextAnchor.UpperRight;
+
                     GUI.color = guiColor;
-                    GUILayout.BeginHorizontal();
-                    GUILayout.Space(10f);
-
-                    GUILayout.BeginVertical();
-                    GUILayout.Space(10f);
-
                     List<string> alphabetized = new List<string>();
 
                     int categoryIndex = 0;
@@ -180,44 +208,49 @@ namespace iiMenu.UI
 
                     Regex notags = new Regex("<.*?>");
                     string[] sortedButtons = alphabetized
-                        .OrderByDescending(s => NoRichtextTags(s).Length)
+                        .OrderByDescending(s => labelStyle.CalcSize(new GUIContent(NoRichtextTags(s))).x)
                         .ToArray();
 
                     int index = 0;
+                    float y = 10;
                     foreach (string v in sortedButtons)
                     {
+                        if (!textWidthPool.ContainsKey(NoRichtextTags(v)))
+                            textWidthPool.Add(NoRichtextTags(v), labelStyle.CalcSize(new GUIContent(NoRichtextTags(v))));
+
+                        if (!textWidthPool.ContainsKey(v))
+                            textWidthPool.Add(v, labelStyle.CalcSize(new GUIContent(v)));
+
                         if (advancedArraylist)
                         {
-                            string text = $"<color=#{ColorToHex(GetBGColor(index * 0.1f))}>| </color><color=#{ColorToHex(textColor)}>{v}</color>";
-
-                            GUIStyle labelStyle = new GUIStyle(GUI.skin.label);
-                            labelStyle.richText = true;
-                            labelStyle.fontStyle = (FontStyle)((int)activeFontStyle % 2);
+                            string text = flipArraylist ? 
+                                  $"<color=#{ColorToHex(textColor)}>{v}</color><color=#{ColorToHex(GetBGColor(index * -0.1f))}> |</color>"
+                                : $"<color=#{ColorToHex(GetBGColor(index * -0.1f))}>| </color><color=#{ColorToHex(textColor)}>{v}</color>";
 
                             Vector2 size = labelStyle.CalcSize(new GUIContent(text));
-                            GUILayout.Space(size.y);
+                            Rect labelRect = new Rect(flipArraylist ? Screen.width - (size.x + 15) : 10, y, size.x + 5, index == sortedButtons.Length - 1 ? size.y + 5 : size.y);
 
-                            Rect lastRect = GUILayoutUtility.GetLastRect();
-                            Rect labelRect = new Rect(lastRect.x, lastRect.y, size.x + 5, index == sortedButtons.Length - 1 ? size.y + 5 : size.y);
+                            y += size.y;
 
                             Color oldColor = GUI.color;
-                            GUI.color = new Color(0f, 0f, 0f, 0.4f);
+                            GUI.color = new Color(0f, 0f, 0f, 0.5f);
                             GUI.DrawTexture(labelRect, Texture2D.whiteTexture);
                             GUI.color = oldColor;
 
                             GUI.Label(labelRect, text, labelStyle);
                         }
                         else
-                            GUILayout.Label(v);
+                        {
+                            Vector2 size = labelStyle.CalcSize(new GUIContent(v));
+                            GUI.Label(new Rect(flipArraylist ? Screen.width - (size.x + 15) : 10, y, size.x, size.y), v, labelStyle);
+
+                            y += size.y;
+                        }
 
                         index++;
                     }
-
-                    GUILayout.EndVertical();
-                    GUILayout.EndHorizontal();
                 }
                 catch { }
-
 
                 foreach (KeyValuePair<string, Assembly> Plugin in Settings.LoadedPlugins)
                 {
