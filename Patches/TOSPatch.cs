@@ -5,7 +5,7 @@ namespace iiMenu.Patches
     [HarmonyPatch(typeof(LegalAgreements), "Update")]
     public class TOSPatch
     {
-        public static bool enabled = false;
+        public static bool enabled;
         private static bool Prefix(LegalAgreements __instance)
         {
             if (enabled)
@@ -48,5 +48,19 @@ namespace iiMenu.Patches
             }
             return true;
         }
+    }
+
+    [HarmonyPatch(typeof(PrivateUIRoom), "StartOverlay")]
+    public class TOSPatch4
+    {
+        private static bool Prefix() =>
+            !TOSPatch.enabled;
+    }
+
+    [HarmonyPatch(typeof(KIDManager), "InitialiseKID")]
+    public class TOSPatch5
+    {
+        private static bool Prefix() =>
+            !TOSPatch.enabled;
     }
 }
