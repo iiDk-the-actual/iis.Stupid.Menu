@@ -3399,9 +3399,7 @@ namespace iiMenu.Menu
                         if (GetFullPath(Throwable.transform.parent).ToLower() == "player objects/local vrrig/local gorilla player/holdables"
                          || GetFullPath(Throwable.transform.parent).ToLower().Contains("player objects/local vrrig/local gorilla player/riganchor/rig/body/shoulder.l/upper_arm.l/forearm.l/hand.l/palm.01.l/transferrableitemlefthand")
                          || GetFullPath(Throwable.transform.parent).ToLower().Contains("player objects/local vrrig/local gorilla player/riganchor/rig/body/shoulder.r/upper_arm.r/forearm.r/hand.r/palm.01.r/transferrableitemrighthand"))
-                        {
                             snowballDict.Add(Throwable.transform.parent.gameObject.name, Throwable); 
-                        }
                     } catch { }
                 }
 
