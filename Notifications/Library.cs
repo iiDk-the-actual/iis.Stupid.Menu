@@ -1,12 +1,9 @@
-﻿using System;
+﻿using iiMenu.Classes;
+using iiMenu.Menu;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using BepInEx;
-using iiMenu.Classes;
-using iiMenu.Menu;
 using UnityEngine;
 using UnityEngine.UI;
 using static iiMenu.Menu.Main;
@@ -33,7 +30,7 @@ namespace iiMenu.Notifications
             HUDObj2.name = "NOTIFICATIONLIB_HUD_OBJ";
             HUDObj.name = "NOTIFICATIONLIB_HUD_OBJ";
             HUDObj.AddComponent<Canvas>();
-            HUDObj.AddComponent<CanvasScaler>();
+            HUDObj.AddComponent<CanvasScaler>().dynamicPixelsPerUnit *= highQualityText ? 2f : 1f;
             HUDObj.AddComponent<GraphicRaycaster>();
             HUDObj.GetComponent<Canvas>().enabled = true;
             HUDObj.GetComponent<Canvas>().renderMode = RenderMode.WorldSpace;
@@ -101,11 +98,16 @@ namespace iiMenu.Notifications
 
                     Testtext.fontStyle = activeFontStyle;
                     ModText.fontStyle = activeFontStyle;
+
+                    if (advancedArraylist)
+                        ModText.fontStyle = (FontStyle)((int)activeFontStyle % 2);
                 }
                 catch { }
+                ModText.rectTransform.localPosition = new Vector3(-1f, -0.7f, flipArraylist ? 0.5f : -0.5f);
+                ModText.alignment = flipArraylist ? TextAnchor.UpperRight : TextAnchor.UpperLeft;
                 if (showEnabledModsVR)
                 {
-                    string lol = "";
+                    string enabledModsText = "";
                     List<string> alphabetized = new List<string>();
                     int categoryIndex = 0;
                     foreach (ButtonInfo[] buttonlist in Buttons.buttons)
@@ -135,13 +137,23 @@ namespace iiMenu.Notifications
                     }
 
                     string[] sortedButtons = alphabetized
-                        .OrderByDescending(s => NoRichtextTags(s).Length)
+                        .OrderByDescending(s => UI.Main.ExternalCalcSize(new GUIContent(NoRichtextTags(s))).x)
                         .ToArray();
 
+                    int index = 0;
                     foreach (string v in sortedButtons)
-                        lol += v + "\n";
+                    {
+                        if (advancedArraylist)
+                            enabledModsText += (flipArraylist ?
+                                  $"<color=#{ColorToHex(textColor)}>{v}</color><color=#{ColorToHex(GetBGColor(index * -0.1f))}> |</color>"
+                                : $"<color=#{ColorToHex(GetBGColor(index * -0.1f))}>| </color><color=#{ColorToHex(textColor)}>{v}</color>") + "\n";
+                        else
+                            enabledModsText += v + "\n";
+
+                        index++;
+                    }
                     
-                    ModText.text = lol;
+                    ModText.text = enabledModsText;
                     ModText.color = GetIndex("Swap GUI Colors").enabled ? textColor : GetBGColor(0f);
                 }
                 else
@@ -154,7 +166,7 @@ namespace iiMenu.Notifications
                     NotifiText.text = NotifiText.text.ToLower();
                 }
                 HUDObj.layer = GetIndex("Hide Notifications on Camera").enabled ? 19 : 0;
-            } catch { /* Game not initialized */ }
+            } catch (Exception e) { LogManager.Log(e); }
         }
 
         public static void SendNotification(string NotificationText, int clearTime = -1)
