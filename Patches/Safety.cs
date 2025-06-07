@@ -98,7 +98,6 @@ namespace iiMenu.Patches
     {
         private static bool Prefix(PhotonMessageInfoWrapped infoWrapped, string rpcFunction)
         {
-            // LogManager.Log(info.Sender.NickName + " sent rpc: " + rpcFunction);
             return false;
         }
     }
