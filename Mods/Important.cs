@@ -138,30 +138,26 @@ namespace iiMenu.Mods
             reportMenuToggle = leftPrimary;
         }
 
+        private static float acceptTOSCheckDelay;
         public static void AcceptTOS()
         {
             Patches.TOSPatch.enabled = true;
 
-            try
+            if (Time.time > acceptTOSCheckDelay)
             {
-                GameObject popupMessage = GameObject.Find("Miscellaneous Scripts/PopUpMessage");
+                acceptTOSCheckDelay = Time.time + 1f;
+
+                Transform MiscellaneousScripts = GameObject.Find("Miscellaneous Scripts").transform;
+
+                GameObject popupMessage = MiscellaneousScripts.Find("PopUpMessage").gameObject;
 
                 if (popupMessage != null)
                     popupMessage.SetActive(false);
-            } catch { }
-
-            try
-            {
-                GameObject metaReporting = GameObject.Find("Miscellaneous Scripts/MetaReporting");
+                GameObject metaReporting = MiscellaneousScripts.Find("MetaReporting").gameObject;
 
                 if (metaReporting != null)
                     metaReporting.SetActive(false);
-            }
-            catch { }
-
-            try
-            {
-                GameObject RoomObject = GameObject.Find("Miscellaneous Scripts/PrivateUIRoom_HandRays");
+                GameObject RoomObject = MiscellaneousScripts.Find("PrivateUIRoom_HandRays").gameObject;
                 if (RoomObject == null)
                     return;
 
@@ -173,12 +169,10 @@ namespace iiMenu.Mods
                 HandRayController.instance.enabled = false;
                 HandRayController.instance.DisableHandRays();
 
-                if (HandRayController.instance._leftHandRay.gameObject.activeSelf ||
-                    HandRayController.instance._rightHandRay.gameObject.activeSelf)
-                        HandRayController.instance.HideHands();
+                if (HandRayController.instance._leftHandRay.gameObject.activeSelf || HandRayController.instance._rightHandRay.gameObject.activeSelf)
+                    HandRayController.instance.HideHands();
                 HandRayController.instance.transform.Find("UIRoot").gameObject.SetActive(false);
             }
-            catch { }
         }
 
         public static void JoinDiscord() =>
