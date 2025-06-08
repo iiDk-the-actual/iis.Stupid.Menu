@@ -54,8 +54,7 @@ Done. That’s it. Go have fun. 🎮🔥
 
 1️⃣ **Download** the source code 👉 [here](https://github.com/iiDk-the-actual/iis.Stupid.Menu/releases/latest)<br>
 2️⃣ **Edit** `Directory.Build.props` and update `<GamePath>` if your Gorilla Tag is in a custom spot 🛠️<br>
-3️⃣ **Fix Dependencies** (if needed): remove and re-add the **ii's Stupid Menu** reference 🔁<br>
-4️⃣ **Build** the project with `Ctrl + Shift + B`<br>
+3️⃣ **Build** the project with `Ctrl + Shift + B`<br>
 ✅ The DLL will automatically go into your Gorilla Tag **plugins folder**<br>
 
 ---
