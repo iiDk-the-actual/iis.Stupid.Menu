@@ -2001,11 +2001,11 @@ namespace iiMenu.Mods
                     .OrderBy(x => x.distance)
                     .First();
 
-                if (RopeCoroutine != null)
-                    CoroutineManager.instance.StopCoroutine(RopeCoroutine);
-
-                if (GorillaTagger.Instance.offlineVRRig.enabled && ClosestNode.distance > 5f)
+                if (ClosestNode.distance > 5f)
                 {
+                    if (RopeCoroutine != null)
+                        CoroutineManager.instance.StopCoroutine(RopeCoroutine);
+
                     RopeCoroutine = CoroutineManager.instance.StartCoroutine(RopeEnableRig());
 
                     GorillaTagger.Instance.offlineVRRig.enabled = false;
