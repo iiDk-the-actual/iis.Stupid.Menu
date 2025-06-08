@@ -1,6 +1,5 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
-using iiMenu.Mods;
 using iiMenu.Patches;
 using System;
 using System.IO;
@@ -55,7 +54,7 @@ namespace iiMenu
             if (File.Exists("iisStupidMenu/iiMenu_Preferences.txt"))
             {
                 if (File.ReadAllLines("iisStupidMenu/iiMenu_Preferences.txt")[0].Split(";;").Contains("Accept TOS"))
-                    TOSPatch.enabled = true;
+                    TOSPatch.enabled = true;  
             }
         }
 
