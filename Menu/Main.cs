@@ -1715,8 +1715,6 @@ namespace iiMenu.Menu
                 else
                     menuBackground.transform.localScale = new Vector3(0.1f, 1.5f, 1f);
 
-                menuBackground.GetComponent<Renderer>().material.color = bgColorA;
-
                 if (innerOutline || themeType == 34)
                 {
                     GradientColorKey[] colors = new[]
@@ -1873,6 +1871,7 @@ namespace iiMenu.Menu
                         colorChanger.isPastelRainbow = themeType == 51;
                         colorChanger.isEpileptic = themeType == 47;
                         colorChanger.isMonkeColors = themeType == 8;
+                        colorChanger.Start(); // Fix for the clamp color
                     }
                 }
             }
@@ -3439,6 +3438,21 @@ namespace iiMenu.Menu
             return (T[])typePool[type];
         }
 
+        private static float randomIndex;
+        private static float randomDecayTime;
+        public static T GetRandomType<T>(float decayTime = 0f) where T : UnityEngine.Object
+        {
+            T[] allOfType = GetAllType<T>();
+
+            if (Time.time > randomDecayTime)
+            {
+                randomIndex = UnityEngine.Random.Range(0f, 1f);
+                randomDecayTime = Time.time + decayTime;
+            }
+
+            return allOfType[(int)randomIndex * allOfType.Length];
+        }
+
         public static void ClearType<T>() where T : UnityEngine.Object
         {
             Type type = typeof(T);
@@ -3569,6 +3583,11 @@ namespace iiMenu.Menu
         // SteamVR bug causes teleporting of the player to the center of your playspace
         public static Vector3 World2Player(Vector3 world) => 
             world - GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.transform.position;
+
+        public static Vector3 RandomVector3(float range = 1f) =>
+            new Vector3(UnityEngine.Random.Range(-range, range),
+                        UnityEngine.Random.Range(-range, range),
+                        UnityEngine.Random.Range(-range, range));
 
         // True left and right hand get the exact position and rotation of the middle of the hand
         public static (Vector3 position, Quaternion rotation, Vector3 up, Vector3 forward, Vector3 right) TrueLeftHand()
