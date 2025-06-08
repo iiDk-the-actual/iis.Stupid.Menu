@@ -1,4 +1,3 @@
-using BepInEx;
 using System.Reflection;
 
 [assembly: AssemblyCompany("goldentrophy")]

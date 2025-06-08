@@ -1,6 +1,5 @@
 ﻿using ExitGames.Client.Photon;
 using GorillaNetworking;
-using GorillaTag.CosmeticSystem;
 using iiMenu.Classes;
 using iiMenu.Menu;
 using iiMenu.Notifications;
@@ -11,7 +10,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
-using static UnityEngine.Rendering.DebugUI;
 
 namespace iiMenu.Mods
 {

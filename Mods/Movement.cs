@@ -123,8 +123,7 @@ namespace iiMenu.Mods
                     platform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 29;
                     if (glass == null)
                     {
-                        glass = new Material(Shader.Find("GUI/Text Shader"));
-                        glass.color = new Color32(145, 187, 255, 100);
+                        glass = new Material(Shader.Find("GUI/Text Shader")) { color = new Color32(145, 187, 255, 100) };
                     }
                     platform.GetComponent<Renderer>().material = glass;
                     break;
@@ -135,7 +134,7 @@ namespace iiMenu.Mods
 
             if (GetIndex("Platform Outlines").enabled)
             {
-                GameObject gameObject = null;
+                GameObject gameObject;
                 switch (platformShape)
                 {
                     case 0:
@@ -413,7 +412,6 @@ namespace iiMenu.Mods
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
@@ -1652,7 +1650,6 @@ namespace iiMenu.Mods
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > teleDebounce)
@@ -1670,7 +1667,6 @@ namespace iiMenu.Mods
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > teleDebounce)
@@ -1891,9 +1887,10 @@ namespace iiMenu.Mods
                     pearl.transform.localScale = new Vector3(0.1f, 0.1f, 0.01f);
                     if (pearlmat == null)
                     {
-                        pearlmat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
-
-                        pearlmat.color = Color.white;
+                        pearlmat = new Material(Shader.Find("Universal Render Pipeline/Lit"))
+                        {
+                            color = Color.white
+                        };
                         if (pearltxt == null)
                         {
                             pearltxt = LoadTextureFromResource("iiMenu.Resources.pearl.png");
@@ -1974,14 +1971,14 @@ namespace iiMenu.Mods
 
             if (GetIndex("Factored Speed Boost").enabled)
             {
-                jspt = (jspt / 6.5f) * GorillaLocomotion.GTPlayer.Instance.maxJumpSpeed;
-                jmpt = (jmpt / 1.1f) * GorillaLocomotion.GTPlayer.Instance.jumpMultiplier;
+                jspt = jspt / 6.5f * GorillaLocomotion.GTPlayer.Instance.maxJumpSpeed;
+                jmpt = jmpt / 1.1f * GorillaLocomotion.GTPlayer.Instance.jumpMultiplier;
             }
 
             if (!GetIndex("Disable Max Speed Modification").enabled)
-                GorillaLocomotion.GTPlayer.Instance.maxJumpSpeed = jspeed;
+                GorillaLocomotion.GTPlayer.Instance.maxJumpSpeed = jspt;
             
-            GorillaLocomotion.GTPlayer.Instance.jumpMultiplier = jmulti;
+            GorillaLocomotion.GTPlayer.Instance.jumpMultiplier = jmpt;
         }
 
         public static void GripSpeedBoost()
@@ -2112,7 +2109,6 @@ namespace iiMenu.Mods
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
@@ -2703,7 +2699,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
@@ -3446,7 +3441,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
@@ -3478,7 +3472,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
@@ -3537,7 +3530,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
@@ -3611,7 +3603,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
@@ -3679,7 +3670,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
@@ -3752,7 +3742,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
@@ -3821,7 +3810,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
@@ -3875,7 +3863,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {
@@ -3986,7 +3973,6 @@ namespace iiMenu.Mods
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
                 {

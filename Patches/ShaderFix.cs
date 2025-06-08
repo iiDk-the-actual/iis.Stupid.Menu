@@ -1,5 +1,4 @@
-﻿using System;
-using HarmonyLib;
+﻿using HarmonyLib;
 using UnityEngine;
 using static iiMenu.Menu.Main;
 

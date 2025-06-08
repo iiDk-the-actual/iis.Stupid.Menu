@@ -1,7 +1,5 @@
 ﻿using GorillaTagScripts;
 using HarmonyLib;
-using UnityEngine;
-using static iiMenu.Menu.Main;
 
 namespace iiMenu.Patches
 {

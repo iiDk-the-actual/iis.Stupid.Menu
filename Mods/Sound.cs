@@ -2,17 +2,13 @@
 using iiMenu.Classes;
 using iiMenu.Menu;
 using iiMenu.Notifications;
-using OVR;
 using Photon.Pun;
 using Photon.Realtime;
 using Photon.Voice.Unity;
-using PlayFab.ClientModels;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using UnityEngine;
-using Valve.VR;
 using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods.Spammers

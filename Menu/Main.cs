@@ -1208,8 +1208,6 @@ namespace iiMenu.Menu
 
         public static Color GetBGColor(float offset)
         {
-            Color oColor = bgColorA;
-
             Gradient bg = new Gradient
             {
                 colorKeys = new[]
@@ -1219,7 +1217,7 @@ namespace iiMenu.Menu
                     new GradientColorKey(bgColorA, 1f)
                 }
             };
-            oColor = bg.Evaluate(((Time.time / 2f) + offset) % 1f);
+            Color oColor = bg.Evaluate((Time.time / 2f + offset) % 1f);
 
             switch (themeType)
             {
@@ -1260,8 +1258,6 @@ namespace iiMenu.Menu
 
         public static Color GetBRColor(float offset)
         {
-            Color oColor = buttonDefaultA;
-
             Gradient bg = new Gradient
             {
                 colorKeys = new[]
@@ -1271,15 +1267,12 @@ namespace iiMenu.Menu
                     new GradientColorKey(buttonDefaultA, 1f)
                 }
             };
-            oColor = bg.Evaluate(((Time.time / 2f) + offset) % 1f);
-
+            Color oColor = bg.Evaluate((Time.time / 2f + offset) % 1f);
             return oColor;
         }
 
         public static Color GetBDColor(float offset)
         {
-            Color oColor = buttonClickedA;
-
             Gradient bg = new Gradient
             {
                 colorKeys = new[]
@@ -1289,8 +1282,7 @@ namespace iiMenu.Menu
                     new GradientColorKey(buttonClickedA, 1f)
                 }
             };
-            oColor = bg.Evaluate(((Time.time / 2f) + offset) % 1f);
-
+            Color oColor = bg.Evaluate((Time.time / 2f + offset) % 1f);
             switch (themeType)
             {
                 case 6:
@@ -2240,9 +2232,10 @@ namespace iiMenu.Menu
 
                     if (cannmat == null)
                     {
-                        cannmat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
-
-                        cannmat.color = Color.white;
+                        cannmat = new Material(Shader.Find("Universal Render Pipeline/Lit"))
+                        {
+                            color = Color.white
+                        };
 
                         if (cann == null)
                             cann = LoadTextureFromURL("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/main/cannabis.png", "cannabis.png");
@@ -2714,20 +2707,17 @@ namespace iiMenu.Menu
 
         public static T LoadAsset<T>(string assetName) where T : UnityEngine.Object
         {
-            T gameObject = null;
-
             if (assetBundle == null)
                 LoadAssetBundle();
 
-            gameObject = Instantiate(assetBundle.LoadAsset<T>(assetName));
+            T gameObject = Instantiate(assetBundle.LoadAsset<T>(assetName));
             return gameObject;
         }
 
         public static Dictionary<string, AudioClip> audioFilePool = new Dictionary<string, AudioClip> { };
         public static AudioClip LoadSoundFromFile(string fileName) // Thanks to ShibaGT for help with loading the audio from file
         {
-            AudioClip sound = null;
-
+            AudioClip sound;
             if (!audioFilePool.ContainsKey(fileName))
             {
                 string filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, "iisStupidMenu/" + fileName);
@@ -2744,9 +2734,7 @@ namespace iiMenu.Menu
                 audioFilePool.Add(fileName, sound);
             }
             else
-            {
                 sound = audioFilePool[fileName];
-            }
 
             return sound;
         }
