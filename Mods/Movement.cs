@@ -169,7 +169,6 @@ namespace iiMenu.Mods
                 {
                     colorKeys = array
                 };
-                colorChanger.Start();
             }
             return platform;
         }
@@ -1972,64 +1971,77 @@ namespace iiMenu.Mods
         {
             float jspt = jspeed;
             float jmpt = jmulti;
+
             if (GetIndex("Factored Speed Boost").enabled)
             {
                 jspt = (jspt / 6.5f) * GorillaLocomotion.GTPlayer.Instance.maxJumpSpeed;
                 jmpt = (jmpt / 1.1f) * GorillaLocomotion.GTPlayer.Instance.jumpMultiplier;
             }
+
             if (!GetIndex("Disable Max Speed Modification").enabled)
-            {
                 GorillaLocomotion.GTPlayer.Instance.maxJumpSpeed = jspeed;
-            }
+            
             GorillaLocomotion.GTPlayer.Instance.jumpMultiplier = jmulti;
         }
 
         public static void GripSpeedBoost()
         {
             if (rightGrab)
-            {
                 SpeedBoost();
-            }
         }
 
         public static void JoystickSpeedBoost()
         {
             if (rightJoystickClick)
-            {
                 SpeedBoost();
-            }
         }
 
-        /*
-        public static void DisableSpeedBoost()
+        public static void DynamicSpeedBoost()
         {
-            GorillaLocomotion.GTPlayer.Instance.maxJumpSpeed = 6.5f;
-            GorillaLocomotion.GTPlayer.Instance.jumpMultiplier = 1.1f;
-        }*/
+            bool isTagged = PlayerIsTagged(GorillaTagger.Instance.offlineVRRig);
 
-        public static void UncapMaxVelocity()
-        {
-            GorillaLocomotion.GTPlayer.Instance.maxJumpSpeed = 99999f;
+            VRRig closestRig = GorillaParent.instance.vrrigs
+                .Where(rig => rig != null && rig != GorillaTagger.Instance.offlineVRRig && 
+                                  (isTagged ? PlayerIsTagged(rig) : !PlayerIsTagged(rig)))
+                .OrderBy(rig => Vector3.Distance(rig.transform.position, GorillaTagger.Instance.bodyCollider.transform.position))
+                .FirstOrDefault();
+
+            float rigDistance = closestRig == null ? float.MaxValue :
+                          Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, closestRig.transform.position);
+
+            if (rigDistance < 15f)
+            {
+                float jspt = jspeed;
+                float jmpt = jmulti;
+
+                if (GetIndex("Factored Speed Boost").enabled)
+                {
+                    jspt = (jspt / 6.5f) * GorillaLocomotion.GTPlayer.Instance.maxJumpSpeed;
+                    jmpt = (jmpt / 1.1f) * GorillaLocomotion.GTPlayer.Instance.jumpMultiplier;
+                }
+
+                jspt = Mathf.Lerp(GorillaLocomotion.GTPlayer.Instance.maxJumpSpeed, jspt, (Mathf.Clamp(rigDistance, 5f, 15f) - 5f) / 10f);
+                jmpt = Mathf.Lerp(GorillaLocomotion.GTPlayer.Instance.maxJumpSpeed, jmpt, (Mathf.Clamp(rigDistance, 5f, 15f) - 5f) / 10f);
+
+                if (!GetIndex("Disable Max Speed Modification").enabled)
+                    GorillaLocomotion.GTPlayer.Instance.maxJumpSpeed = jspeed;
+
+                GorillaLocomotion.GTPlayer.Instance.jumpMultiplier = jmulti;
+            }
         }
 
         public static void AlwaysMaxVelocity()
         {
             if (GetIndex("Uncap Max Velocity").enabled)
-            {
                 Toggle("Uncap Max Velocity");
-            }
             else
-            {
                 GorillaLocomotion.GTPlayer.Instance.jumpMultiplier = 99999f;
-            }
         }
 
-        public static void UpdateClipColliders(bool enabledd)
+        public static void UpdateClipColliders(bool enabled)
         {
             foreach (MeshCollider v in Resources.FindObjectsOfTypeAll<MeshCollider>())
-            {
-                v.enabled = enabledd;
-            }
+                v.enabled = enabled;
         }
 
         public static void Noclip()
@@ -2058,30 +2070,19 @@ namespace iiMenu.Mods
         {
             bool hit = rightSecondary || Mouse.current.rightButton.isPressed;
             if (GetIndex("Non-Togglable Invisible").enabled)
-            {
                 invisMonke = hit;
-            }
             if (invisMonke)
             {
                 GorillaTagger.Instance.offlineVRRig.enabled = false;
                 GorillaTagger.Instance.offlineVRRig.transform.position = new Vector3(99999f, 99999f, 99999f);
-                try
-                {
-                    GorillaTagger.Instance.myVRRig.transform.position = new Vector3(99999f, 99999f, 99999f);
-                }
-                catch { }
             }
             if (hit == true && lastHit2 == false)
             {
                 invisMonke = !invisMonke;
                 if (invisMonke)
-                {
                     wasDisabledAlready = GorillaTagger.Instance.offlineVRRig.enabled;
-                }
                 else
-                {
                     GorillaTagger.Instance.offlineVRRig.enabled = wasDisabledAlready;
-                }
             }
             lastHit2 = hit;
         }
@@ -2091,14 +2092,12 @@ namespace iiMenu.Mods
         {
             bool hit = rightPrimary || Mouse.current.leftButton.isPressed;
             if (GetIndex("Non-Togglable Ghost").enabled)
-            {
                 ghostMonke = hit;
-            }
+            
             GorillaTagger.Instance.offlineVRRig.enabled = !ghostMonke;
             if (hit == true && lastHit == false)
-            {
                 ghostMonke = !ghostMonke;
-            }
+            
             lastHit = hit;
         }
 
@@ -2126,9 +2125,7 @@ namespace iiMenu.Mods
                     } catch { }
                 }
                 else
-                {
                     GorillaTagger.Instance.offlineVRRig.enabled = true;
-                }
             }
         }
 
@@ -2147,9 +2144,7 @@ namespace iiMenu.Mods
                 } catch { }
             }
             else
-            {
                 GorillaTagger.Instance.offlineVRRig.enabled = true;
-            }
         }
 
         public static Vector3 offsetLH = Vector3.zero;
@@ -2197,15 +2192,7 @@ namespace iiMenu.Mods
                 GorillaTagger.Instance.offlineVRRig.enabled = false;
 
                 GorillaTagger.Instance.offlineVRRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, 0.15f, 0f);
-                try
-                {
-                    GorillaTagger.Instance.myVRRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, 0.15f, 0f);
-                } catch { }
-
                 GorillaTagger.Instance.offlineVRRig.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
-                try {
-                    GorillaTagger.Instance.myVRRig.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
-                } catch { }
 
                 GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
 
@@ -2234,9 +2221,7 @@ namespace iiMenu.Mods
                 GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = GorillaTagger.Instance.rightHandTransform.position + GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.forward * 3f;
             }
             else
-            {
                 GorillaTagger.Instance.offlineVRRig.enabled = true;
-            }
         }
 
         public static void FreezeRigLimbs()
@@ -2246,21 +2231,10 @@ namespace iiMenu.Mods
                 GorillaTagger.Instance.offlineVRRig.enabled = false;
 
                 GorillaTagger.Instance.offlineVRRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, 0.15f, 0f);
-                try
-                {
-                    GorillaTagger.Instance.myVRRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, 0.15f, 0f);
-                } catch { }
-
                 GorillaTagger.Instance.offlineVRRig.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
-                try
-                {
-                    GorillaTagger.Instance.myVRRig.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
-                } catch { }
             }
             else
-            {
                 GorillaTagger.Instance.offlineVRRig.enabled = true;
-            }
         }
 
         public static void FixRigHandRotation()
@@ -2289,27 +2263,16 @@ namespace iiMenu.Mods
                 GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
             }
             else
-            {
                 GorillaTagger.Instance.offlineVRRig.enabled = true;
-            }
         }
 
-        public static void SpinRigBody()
+        public static void SetBodyPatch(bool enabled, int mode = 0)
         {
-            Patches.TorsoPatch.enabled = true;
-            Patches.TorsoPatch.mode = 0;
-        }
+            Patches.TorsoPatch.enabled = enabled;
+            Patches.TorsoPatch.mode = mode;
 
-        public static void SpazRigBody()
-        {
-            Patches.TorsoPatch.enabled = true;
-            Patches.TorsoPatch.mode = 1;
-        }
-
-        public static void ReverseRigBody()
-        {
-            Patches.TorsoPatch.enabled = true;
-            Patches.TorsoPatch.mode = 2;
+            if (!enabled && recBodyRotary != null)
+                UnityEngine.Object.Destroy(recBodyRotary);
         }
 
         public static GameObject recBodyRotary;
@@ -2322,15 +2285,8 @@ namespace iiMenu.Mods
                 recBodyRotary = new GameObject("ii_recBodyRotary");
             recBodyRotary.transform.rotation = Quaternion.Lerp(recBodyRotary.transform.rotation, Quaternion.Euler(0f, GorillaTagger.Instance.headCollider.transform.rotation.eulerAngles.y, 0f), Time.deltaTime * 6.5f);
         }
-
-        public static void FixBody()
-        {
-            Patches.TorsoPatch.enabled = false;
-            if (recBodyRotary != null)
-                UnityEngine.Object.Destroy(recBodyRotary);
-        }
-
-        public static void FakeOculusMenu() // I swear I thought the oculus menu had their arms crossed
+        
+        public static void FakeOculusMenu()
         {
             if (leftPrimary)
             {
