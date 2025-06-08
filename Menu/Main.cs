@@ -3390,7 +3390,7 @@ namespace iiMenu.Menu
                     } catch { }
                 }
 
-                if (snowballDict.Count < 18)
+                if (snowballDict.Count < Projectiles.ProjectileObjectNames.Length)
                     snowballDict = null;
             }
 
@@ -3438,7 +3438,7 @@ namespace iiMenu.Menu
                 randomDecayTime = Time.time + decayTime;
             }
 
-            return allOfType[(int)randomIndex * allOfType.Length];
+            return allOfType[(int)(randomIndex * allOfType.Length)];
         }
 
         public static void ClearType<T>() where T : UnityEngine.Object
