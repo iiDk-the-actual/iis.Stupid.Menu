@@ -2850,7 +2850,7 @@ namespace iiMenu.Mods
         public static void TryOnAnywhere()
         {
             archiveCosmetics = CosmeticsController.instance.currentWornSet.ToPackedIDArray();
-            string[] itjustworks = new string[] { "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU." };
+            string[] itjustworks = new string[] { };
             CosmeticsController.instance.currentWornSet = new CosmeticsController.CosmeticSet(itjustworks, CosmeticsController.instance);
             GorillaTagger.Instance.offlineVRRig.cosmeticSet = new CosmeticsController.CosmeticSet(itjustworks, CosmeticsController.instance);
             GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.All, new object[] { PackCosmetics(itjustworks), CosmeticsController.instance.tryOnSet.ToPackedIDArray() });
