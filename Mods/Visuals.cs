@@ -313,9 +313,7 @@ namespace iiMenu.Mods
                     {
                         float dist = Vector3.Distance(GorillaTagger.Instance.headCollider.transform.position, vrrig.headMesh.transform.position);
                         if (dist < closest)
-                        {
                             closest = dist;
-                        }
                     }
                 }
                 if (closest != float.MaxValue)
@@ -819,7 +817,7 @@ namespace iiMenu.Mods
             for (int i = 0; i < GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest").transform.childCount; i++)
             {
                 GameObject v = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest").transform.GetChild(i).gameObject;
-                if (v.name.Contains("UnityTempFile-316a4ac5db8e4184086d5d87e66948b2"))
+                if (v.name.Contains("UnityTempFile-61ecd8f243d09be42980b87145bede74"))
                 {
                     v.SetActive(false);
                     leaves.Add(v);
@@ -830,9 +828,8 @@ namespace iiMenu.Mods
         public static void DisableRemoveLeaves()
         {
             foreach (GameObject l in leaves)
-            {
                 l.SetActive(true);
-            }
+            
             leaves.Clear();
         }
 
@@ -841,7 +838,7 @@ namespace iiMenu.Mods
             for (int i = 0; i < GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest").transform.childCount; i++)
             {
                 GameObject v = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest").transform.GetChild(i).gameObject;
-                if (v.name.Contains("UnityTempFile-316a4ac5db8e4184086d5d87e66948b2"))
+                if (v.name.Contains("UnityTempFile-61ecd8f243d09be42980b87145bede74"))
                 {
                     v.layer = 16;
                     leaves.Add(v);
@@ -852,9 +849,8 @@ namespace iiMenu.Mods
         public static void DisableStreamerRemoveLeaves()
         {
             foreach (GameObject l in leaves)
-            {
                 l.layer = 0;
-            }
+            
             leaves.Clear();
         }
 
