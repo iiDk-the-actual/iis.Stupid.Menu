@@ -55,7 +55,6 @@ namespace iiMenu.Mods
                         backgroundColorChanger.isRainbow = themeType == 6;
                         backgroundColorChanger.isEpileptic = themeType == 47;
                         backgroundColorChanger.isMonkeColors = themeType == 8;
-                        backgroundColorChanger.Start();
 
                         ColorChanger keyColorChanger = VRKeyboard.transform.Find("Keys/default").gameObject.AddComponent<ColorChanger>();
                         keyColorChanger.colors = new Gradient
@@ -67,7 +66,6 @@ namespace iiMenu.Mods
                                 new GradientColorKey(buttonDefaultA, 1f)
                             }
                         };
-                        keyColorChanger.Start();
 
                         if (shouldOutline)
                             OutlineObjNonMenu(VRKeyboard.transform.Find("Background").gameObject, true);
@@ -111,7 +109,6 @@ namespace iiMenu.Mods
                     colorChanger.isRainbow = themeType == 6;
                     colorChanger.isEpileptic = themeType == 47;
                     colorChanger.isMonkeColors = themeType == 8;
-                    colorChanger.Start();
                 }
                 if (rKeyReference == null)
                 {
@@ -137,7 +134,6 @@ namespace iiMenu.Mods
                     colorChanger.isRainbow = themeType == 6;
                     colorChanger.isEpileptic = themeType == 47;
                     colorChanger.isMonkeColors = themeType == 8;
-                    colorChanger.Start();
                 }
             } else
             {
