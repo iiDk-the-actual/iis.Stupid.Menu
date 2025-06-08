@@ -10,6 +10,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using System;
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
@@ -1982,19 +1983,55 @@ namespace iiMenu.Mods
             }
         }
 
+        public static Coroutine RopeCoroutine;
+        public static IEnumerator RopeEnableRig()
+        {
+            yield return new WaitForSeconds(0.3f);
+            GorillaTagger.Instance.offlineVRRig.enabled = true;
+        }
+
+        public static void BetaSetRopeVelocity(int RopeId, Vector3 Velocity)
+        {
+            if (RopeSwingManager.instance.ropes.TryGetValue(RopeId, out GorillaRopeSwing Rope))
+            {
+                var ClosestNode = Rope.nodes
+                    .Select((v, i) => new { index = i, 
+                                            transform = v,
+                                            distance = Vector3.Distance(GorillaTagger.Instance.offlineVRRig.transform.position, v.transform.position) 
+                                          })
+                    .OrderBy(x => x.distance)
+                    .First();
+
+                if (RopeCoroutine != null)
+                    CoroutineManager.instance.StopCoroutine(RopeCoroutine);
+
+                if (GorillaTagger.Instance.offlineVRRig.enabled && ClosestNode.distance > 5f)
+                {
+                    RopeCoroutine = CoroutineManager.instance.StartCoroutine(RopeEnableRig());
+
+                    GorillaTagger.Instance.offlineVRRig.enabled = false;
+                    GorillaTagger.Instance.offlineVRRig.transform.position = ClosestNode.transform.position;
+                }
+
+                RopeSwingManager.instance.SendSetVelocity_RPC(RopeId, ClosestNode.index, Velocity.ClampMagnitudeSafe(100f), true);
+                RPCProtection();
+            }
+        }
+
+        public static void BetaSetRopeVelocity(GorillaRopeSwing Rope, Vector3 Velocity) =>
+            BetaSetRopeVelocity(RopeSwingManager.instance.ropes.FirstOrDefault(x => x.Value == Rope).Key, Velocity);
+
         private static float RopeDelay = 0f;
         public static void JoystickRopeControl() // Thanks to ShibaGT for the fix
         {
-            Vector2 joy = ControllerInputPoller.instance.rightControllerPrimary2DAxis;
+            Vector2 joy = rightJoystick;
 
             if ((Mathf.Abs(joy.x) > 0.05f || Mathf.Abs(joy.y) > 0.05f) && Time.time > RopeDelay)
             {
-                RopeDelay = Time.time + 0.25f;
-                foreach (GorillaRopeSwing rope in GetAllType<GorillaRopeSwing>())
-                {
-                    RopeSwingManager.instance.photonView.RPC("SetVelocity", RpcTarget.All, new object[] { rope.ropeId, 1, new Vector3(joy.x * 50f, joy.y * 50f, 0f), true, null });
-                    RPCProtection();
-                }
+                RopeDelay = Time.time + 0.125f;
+
+                GorillaRopeSwing rope = GetRandomType<GorillaRopeSwing>(0.25f);
+                BetaSetRopeVelocity(rope, new Vector3(joy.x * 100f, joy.y * 100f, 0f));
             }
         }
 
@@ -2012,8 +2049,7 @@ namespace iiMenu.Mods
                     if (gunTarget && Time.time > RopeDelay)
                     {
                         RopeDelay = Time.time + 0.25f;
-                        RopeSwingManager.instance.photonView.RPC("SetVelocity", RpcTarget.All, new object[] { gunTarget.ropeId, 1, new Vector3(UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f)), true, null });
-                        RPCProtection();
+                        BetaSetRopeVelocity(gunTarget, RandomVector3(100f));
                     }
                 }
             }
@@ -2029,12 +2065,10 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true) && Time.time > RopeDelay)
                 {
-                    RopeDelay = Time.time + 0.25f;
-                    foreach (GorillaRopeSwing rope in GetAllType<GorillaRopeSwing>())
-                    {
-                        RopeSwingManager.instance.photonView.RPC("SetVelocity", RpcTarget.All, new object[] { rope.ropeId, 1, new Vector3(UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f)), true, null });
-                        RPCProtection();
-                    }
+                    RopeDelay = Time.time + 0.125f;
+
+                    GorillaRopeSwing rope = GetRandomType<GorillaRopeSwing>(0.25f);
+                    BetaSetRopeVelocity(rope, RandomVector3(100f));
                 }
             }
         }
@@ -2043,33 +2077,14 @@ namespace iiMenu.Mods
         {
             if (Time.time > RopeDelay)
             {
-                RopeDelay = Time.time + 0.1f;
-                foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-                {
-                    GorillaRopeSwing rope = vrrig.currentRopeSwing;
-                    if (rope != null)
-                    {
-                        RopeSwingManager.instance.photonView.RPC("SetVelocity", RpcTarget.All, new object[] { rope.ropeId, 1, new Vector3(UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f)), true, null });
-                        RPCProtection();
-                    }
-                }
-            }
-        }
+                RopeDelay = Time.time + 0.125f;
+                VRRig randomRig = GorillaParent.instance.vrrigs
+                    .Where(rig => rig.currentRopeSwing != null)
+                    .OrderBy(_ => UnityEngine.Random.value)
+                    .FirstOrDefault();
 
-        public static void ConfusingRopes()
-        {
-            if (Time.time > RopeDelay)
-            {
-                RopeDelay = Time.time + 0.1f;
-                foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-                {
-                    GorillaRopeSwing rope = vrrig.currentRopeSwing;
-                    if (rope != null)
-                    {
-                        RopeSwingManager.instance.photonView.RPC("SetVelocity", NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)), new object[] { rope.ropeId, 1, new Vector3(UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f)), true, null });
-                        RPCProtection();
-                    }
-                }
+                if (randomRig != null)
+                    BetaSetRopeVelocity(randomRig.currentRopeSwing, RandomVector3(100f));
             }
         }
 
@@ -2084,10 +2099,11 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     GorillaRopeSwing gunTarget = Ray.collider.GetComponentInParent<GorillaRopeSwing>();
-                    if (gunTarget)
+
+                    if (gunTarget && Time.time > RopeDelay)
                     {
-                        RopeSwingManager.instance.photonView.RPC("SetVelocity", RpcTarget.All, new object[] { gunTarget.ropeId, 1, (gunTarget.transform.position - GorillaTagger.Instance.headCollider.transform.position).normalized * 50f, true, null });
-                        RPCProtection();
+                        RopeDelay = Time.time + 0.125f;
+                        BetaSetRopeVelocity(gunTarget, RandomVector3(100f));
                     }
                 }
             }
@@ -2103,12 +2119,10 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true) && Time.time > RopeDelay)
                 {
-                    RopeDelay = Time.time + 0.25f;
-                    foreach (GorillaRopeSwing rope in GetAllType<GorillaRopeSwing>())
-                    {
-                        RopeSwingManager.instance.photonView.RPC("SetVelocity", RpcTarget.All, new object[] { rope.ropeId, 1, (NewPointer.transform.position - rope.transform.position).normalized * 50f, true, null });
-                        RPCProtection();
-                    }
+                    RopeDelay = Time.time + 0.125f;
+
+                    GorillaRopeSwing rope = GetRandomType<GorillaRopeSwing>(0.25f);
+                    BetaSetRopeVelocity(rope, (NewPointer.transform.position - rope.transform.position).normalized * 100f);
                 }
             }
         }
