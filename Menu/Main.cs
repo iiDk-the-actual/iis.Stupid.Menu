@@ -486,14 +486,14 @@ namespace iiMenu.Menu
                     } catch { }
 
                     // FPS counter
+                    if (Time.time > fpsAvgTime || !fpsCountTimed)
+                    {
+                        lastDeltaTime = Mathf.Ceil(1f / Time.unscaledDeltaTime);
+                        fpsAvgTime = Time.time + 1f;
+                    }
+
                     if (fpsCount != null)
                     {
-                        if (Time.time > fpsAvgTime || !fpsCountTimed)
-                        {
-                            lastDeltaTime = Mathf.Ceil(1f / Time.unscaledDeltaTime);
-                            fpsAvgTime = Time.time + 1f;
-                        }
-
                         fpsCount.text = "FPS: " + lastDeltaTime.ToString();
                         if (lowercaseMode)
                             fpsCount.text = fpsCount.text.ToLower();
