@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace iiMenu.Classes
+﻿namespace iiMenu.Classes
 {
     public class LogManager
     {

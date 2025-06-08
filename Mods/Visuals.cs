@@ -2,18 +2,15 @@ using GorillaExtensions;
 using GorillaGameModes;
 using GorillaNetworking;
 using iiMenu.Classes;
+using iiMenu.Menu;
 using Photon.Pun;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
-using static iiMenu.Menu.Main;
 using static iiMenu.Classes.RigManager;
-using HarmonyLib;
-using iiMenu.Mods.Spammers;
-using iiMenu.Menu;
+using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods
 {

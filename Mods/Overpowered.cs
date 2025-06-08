@@ -2,7 +2,6 @@
 using GorillaExtensions;
 using GorillaGameModes;
 using GorillaLocomotion.Gameplay;
-using HarmonyLib;
 using iiMenu.Classes;
 using iiMenu.Notifications;
 using iiMenu.Patches;

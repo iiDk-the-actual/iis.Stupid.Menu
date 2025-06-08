@@ -1,8 +1,4 @@
 ﻿using HarmonyLib;
-using iiMenu.Mods;
-using System;
-using UnityEngine;
-using static iiMenu.Menu.Main;
 
 namespace iiMenu.Patches
 {

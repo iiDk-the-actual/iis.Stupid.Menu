@@ -1,19 +1,16 @@
 ﻿using ExitGames.Client.Photon;
+using GorillaNetworking;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using UnityEngine.Rendering;
-using GorillaNetworking;
-using UnityEngine;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Net.Http;
-using UnityEngine.UIElements;
-using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using UnityEngine;
 using UnityEngine.Networking;
-using Pathfinding;
+using UnityEngine.Rendering;
 
 namespace iiMenu.Classes
 {
