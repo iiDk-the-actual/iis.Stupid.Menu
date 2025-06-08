@@ -10,7 +10,7 @@ namespace iiMenu.Classes
     {
         public void Start()
         {
-            gameObjectRenderer = base.GetComponent<Renderer>();
+            gameObjectRenderer = GetComponent<Renderer>();
             Update();
         }
 
