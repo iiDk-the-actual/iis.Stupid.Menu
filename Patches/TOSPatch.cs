@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using System.Threading.Tasks;
 
 namespace iiMenu.Patches
 {
@@ -54,13 +55,16 @@ namespace iiMenu.Patches
     public class TOSPatch4
     {
         private static bool Prefix() =>
-            !TOSPatch.enabled;
+        !TOSPatch.enabled;
     }
 
-    [HarmonyPatch(typeof(KIDManager), "InitialiseKID")]
+    [HarmonyPatch(typeof(KIDManager), "UseKID")]
     public class TOSPatch5
     {
-        private static bool Prefix() =>
-            !TOSPatch.enabled;
+        private static bool Prefix(ref Task<bool> __result)
+        {
+            __result = Task.FromResult(false);
+            return false;
+        }
     }
 }
