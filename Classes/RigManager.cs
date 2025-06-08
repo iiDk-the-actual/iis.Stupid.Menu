@@ -42,19 +42,10 @@ namespace iiMenu.Classes
         public static PhotonView GetPhotonViewFromVRRig(VRRig p) =>
             GetNetworkViewFromVRRig(p).GetView;
 
-        public static VRRig GetClosestVRRig()
-        {
-            float num = float.MaxValue;
-            VRRig outRig = null;
-            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-            {
-                if (Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, vrrig.transform.position) < num && vrrig != GorillaTagger.Instance.offlineVRRig)
-                {
-                    num = Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, vrrig.transform.position);
-                    outRig = vrrig;
-                }
-            }
-            return outRig;
-        }
+        public static VRRig GetClosestVRRig() =>
+            GorillaParent.instance.vrrigs
+                .Where(rig => rig != null && rig != GorillaTagger.Instance.offlineVRRig)
+                .OrderBy(rig => Vector3.Distance(rig.transform.position, GorillaTagger.Instance.bodyCollider.transform.position))
+                .FirstOrDefault();
     }
 }
