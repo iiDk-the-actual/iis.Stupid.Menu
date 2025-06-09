@@ -905,12 +905,6 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Master Check", method =() => Overpowered.MasterCheck(), isTogglable = false, toolTip = "Checks if you are master client."},
 
-                new ButtonInfo { buttonText = "Anger Bees Self", method =() => Overpowered.AngerBees(), isTogglable = false, toolTip = "Angers the bees in forest." },
-
-                new ButtonInfo { buttonText = "Sting Self", method =() => Overpowered.StingSelf(), isTogglable = false, toolTip = "Makes the bees attack you."},
-                new ButtonInfo { buttonText = "Sting Gun", method =() => Overpowered.StingGun(), toolTip = "Makes the bees attack whoever your hand desires."},
-                new ButtonInfo { buttonText = "Sting All", method =() => Overpowered.StingAll(), toolTip = "Makes the bees attack everyone in the room."},
-
                 new ButtonInfo { buttonText = "Guardian Self", method =() => Overpowered.GuardianSelf(), isTogglable = false, toolTip = "Makes you the guardian."},
                 new ButtonInfo { buttonText = "Guardian Gun", method =() => Overpowered.GuardianGun(), toolTip = "Makes whoever your hand desires the guardian."},
                 new ButtonInfo { buttonText = "Guardian All", method =() => Overpowered.GuardianAll(), isTogglable = false, toolTip = "Makes everyone in the room the guardian."},
