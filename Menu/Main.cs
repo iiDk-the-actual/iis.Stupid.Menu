@@ -3861,6 +3861,26 @@ namespace iiMenu.Menu
             return notags.Replace(input, replace);
         }
 
+        public static string RichtextGradient(string input, GradientColorKey[] Colors)
+        {
+            Gradient bg = new Gradient
+            {
+                colorKeys = Colors
+            };
+
+            char[] chars = input.ToCharArray();
+            string finalOutput = "";
+            for (int i = 0; i < chars.Length; i++)
+            {
+                char character = chars[i];
+                float offset = (chars.Length - (i + 1)) / chars.Length;
+                Color characterColor = bg.Evaluate(Time.time / 2f + offset % 1f);
+                finalOutput += $"<color=#{ColorToHex(characterColor)}>{character}</color>";
+            }
+
+            return finalOutput;
+        }
+
         // To get the optimal delay from call limiter
         public static float GetCallLimiterDelay(CallLimiter limiter) =>
             limiter.timeCooldown / limiter.callHistoryLength;
