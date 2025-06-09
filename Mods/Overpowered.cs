@@ -26,66 +26,6 @@ namespace iiMenu.Mods
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
         }
 
-        public static void AngerBees()
-        {
-            if (!NetworkSystem.Instance.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
-
-            TappableBeeHive BeeHive = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/2025_SharedBlocks_Forest/Bee Hives /Beehive_Prefab").GetComponent<TappableBeeHive>();
-            BeeHive.OnTap(1f);
-        }
-
-        public static void StingTarget(NetPlayer Target)
-        {
-            if (!NetworkSystem.Instance.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
-
-            AngryBeeSwarm Bees = GameObject.Find("Environment Objects/05Maze_PersistentObjects/AngryBeeSwarm/FloatingChaseBeeSwarm").GetComponent<AngryBeeSwarm>();
-            if (Bees.currentState != AngryBeeSwarm.ChaseState.Grabbing && Time.time > Bees.grabTimestamp + 5.1f)
-            {
-                Bees.grabTimestamp = Time.time;
-                Bees.emergeStartedTimestamp = Time.time;
-
-                Bees.targetPlayer = Target;
-                Bees.grabbedPlayer = Target;
-
-                Bees.lastState = AngryBeeSwarm.ChaseState.Chasing;
-                Bees.currentState = AngryBeeSwarm.ChaseState.Grabbing;
-            }
-        }
-
-        public static void StingSelf() =>
-            StingTarget(PhotonNetwork.LocalPlayer);
-
-        public static void StingGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (gunLocked && lockTarget != null)
-                    StingTarget(GetPlayerFromVRRig(lockTarget));
-
-                if (GetGunInput(true))
-                {
-                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
-                    {
-                        gunLocked = true;
-                        lockTarget = gunTarget;
-                    }
-                }
-            }
-            else
-            {
-                if (gunLocked)
-                    gunLocked = false;
-            }
-        }
-
-        public static void StingAll() =>
-            StingTarget(GetRandomPlayer(false));
-
         public static void SetGuardianTarget(NetPlayer target)
         {
             if (!NetworkSystem.Instance.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
