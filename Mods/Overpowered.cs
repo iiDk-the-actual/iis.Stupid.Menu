@@ -44,8 +44,8 @@ namespace iiMenu.Mods
                 Bees.grabTimestamp = Time.time;
                 Bees.emergeStartedTimestamp = Time.time;
 
-                Bees.targetPlayer = PhotonNetwork.LocalPlayer;
-                Bees.grabbedPlayer = PhotonNetwork.LocalPlayer;
+                Bees.targetPlayer = Target;
+                Bees.grabbedPlayer = Target;
 
                 Bees.lastState = AngryBeeSwarm.ChaseState.Chasing;
                 Bees.currentState = AngryBeeSwarm.ChaseState.Grabbing;
