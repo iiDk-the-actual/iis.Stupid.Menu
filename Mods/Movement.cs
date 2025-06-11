@@ -2017,8 +2017,8 @@ namespace iiMenu.Mods
                     jmpt = (jmpt / 1.1f) * GorillaLocomotion.GTPlayer.Instance.jumpMultiplier;
                 }
 
-                jspt = Mathf.Lerp(GorillaLocomotion.GTPlayer.Instance.maxJumpSpeed, jspt, (Mathf.Clamp(rigDistance, 1f, 15f)) / 15f);
-                jmpt = Mathf.Lerp(GorillaLocomotion.GTPlayer.Instance.jumpMultiplier, jmpt, (Mathf.Clamp(rigDistance, 1f, 15f)) / 15f);
+                jspt = Mathf.Lerp(GorillaLocomotion.GTPlayer.Instance.maxJumpSpeed, jspt, Mathf.Clamp(rigDistance, 1f, 15f) / 15f);
+                jmpt = Mathf.Lerp(GorillaLocomotion.GTPlayer.Instance.jumpMultiplier, jmpt, Mathf.Clamp(rigDistance, 1f, 15f) / 15f);
 
                 if (!GetIndex("Disable Max Speed Modification").enabled)
                     GorillaLocomotion.GTPlayer.Instance.maxJumpSpeed = jspeed;
