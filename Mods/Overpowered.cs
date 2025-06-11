@@ -704,8 +704,8 @@ namespace iiMenu.Mods
             }
         }
 
-        private static float snowballSpawnDelay = 0.15f;
-        private static bool SnowballHandIndex;
+        public static float snowballSpawnDelay = 0.15f;
+        public static bool SnowballHandIndex;
         public static void BetaSpawnSnowball(Vector3 Pos, Vector3 Vel, float Scale, int Mode, Player Target = null, bool NetworkSize = true, int customNetworkedSize = -1)
         {
             try
