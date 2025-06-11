@@ -289,7 +289,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Disable Mouth Movement", method =() => Important.DisableMouthMovement(), disableMethod =() => Important.EnableMouthMovement(), toolTip = "Disables your mouth from moving."},
                 new ButtonInfo { buttonText = "Low Mic Latency", method =() => Important.LowMicLatency(), disableMethod =() => Important.NoLowMicLatency(), toolTip = "Lowers the microphone latency of other users, letting you hear them faster."},
 
-                new ButtonInfo { buttonText = "60 FPS", method =() => Task.Delay(60), toolTip = "Caps your FPS at 60 frames per second."},
+                new ButtonInfo { buttonText = "60 FPS", method =() => Task.Delay(80), toolTip = "Caps your FPS at 60 frames per second."},
                 new ButtonInfo { buttonText = "Grip 60 FPS <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Important.GripForceLagGame(), toolTip = "Caps your FPS at 60 frames per second when holding <color=green>grip</color>."},
                 new ButtonInfo { buttonText = "Unlock FPS", method =() => Important.UncapFPS(), disableMethod =() => Application.targetFrameRate = 144, toolTip = "Unlocks your FPS."},
 
@@ -789,7 +789,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Pop All Balloons", method =() => Fun.PopAllBalloons(), isTogglable = false, toolTip = "Pops every single balloon cosmetic." },
                 new ButtonInfo { buttonText = "Become Balloon <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Fun.BecomeBalloon(), toolTip = "Turns you into a balloon when holding <color=green>trigger</color>." },
 
-                new ButtonInfo { buttonText = "Remove Name", method =() => ChangeName("________"), isTogglable = false, toolTip = "Sets your name to nothing." },
+                new ButtonInfo { buttonText = "Remove Name", method =() => ChangeName(""), isTogglable = false, toolTip = "Sets your name to nothing." },
                 new ButtonInfo { buttonText = "Set Name to \"STATUE\"", method =() => ChangeName("STATUE"), isTogglable = false, toolTip = "Sets your name to \"STATUE\"." },
                 new ButtonInfo { buttonText = "Set Name to \"RUN\"", method =() => ChangeName("RUN"), isTogglable = false, toolTip = "Sets your name to \"RUN\"." },
                 new ButtonInfo { buttonText = "Set Name to \"BEHINDYOU\"", method =() => ChangeName("BEHINDYOU"), isTogglable = false, toolTip = "Sets your name to \"BEHINDYOU\"." },
@@ -812,7 +812,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Become \"DAISY09\"", method =() => Fun.BecomePlayer("DAISY09", new Color32(255, 81, 231, 255)), isTogglable = false, toolTip = "Sets your name to \"DAISY09\" and color to a light pink." },
                 new ButtonInfo { buttonText = "Become Child", method =() => Fun.BecomeMinigamesKid(), isTogglable = false, toolTip = "Sets your name and color to something a child would pick." },
 
-                new ButtonInfo { buttonText = "Become Hidden on Leaderboard", method =() => Fun.BecomePlayer("________", new Color32(0, 53, 2, 255)), isTogglable = false, toolTip = "Sets your name to nothing and your color to a dark red, matching the leaderboard." },
+                new ButtonInfo { buttonText = "Become Hidden on Leaderboard", method =() => Fun.BecomePlayer("", new Color32(0, 53, 2, 255)), isTogglable = false, toolTip = "Sets your name to nothing and your color to a dark red, matching the leaderboard." },
                 new ButtonInfo { buttonText = "Copy Identity Gun", method =() => Fun.CopyIdentityGun(), toolTip = "Steals the identity of whoever your hand desires." },
 
                 new ButtonInfo { buttonText = "Change Accessories", overlapText = "Change Cosmetics", method =() => Fun.ChangeAccessories(), toolTip = "Use your grips to change what hat you're wearing." },
