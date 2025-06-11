@@ -254,7 +254,7 @@ namespace iiMenu.Mods
         public static void GripForceLagGame()
         {
             if (rightGrab)
-                Task.Delay(50);
+                Task.Delay(80);
         }
 
         public static void UncapFPS()
