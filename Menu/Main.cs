@@ -4681,28 +4681,65 @@ namespace iiMenu.Menu
                 Destroy(Classes.Console.instance.gameObject);
 
             if (NotifiLib.instance != null)
+            {
+                Destroy(NotifiLib.instance.HUDObj);
+                Destroy(NotifiLib.instance.HUDObj2);
+                Destroy(NotifiLib.ModText);
+                Destroy(NotifiLib.NotifiText);
                 Destroy(NotifiLib.instance.gameObject);
+            }
 
             if (VRKeyboard != null)
+            {
                 Destroy(VRKeyboard);
+                motd = null;
+            }
+                
 
             if (motd != null)
+            {
                 Destroy(motd);
+                motd = null;
+            }
+                
 
             if (motdText != null)
+            {
                 Destroy(motdText);
+                motdText = null;
+            }
+               
+
+            if (menuBackground != null)
+            {
+                Destroy(menuBackground);
+                menuBackground = null;
+            }
 
             if (menu != null)
+            {
                 Destroy(menu);
+                menu = null;
+            }
 
             if (reference != null)
+            {
                 Destroy(reference);
+                reference = null;
+            }
 
             if (lKeyReference != null)
+            {
                 Destroy(lKeyReference);
+                lKeyReference = null;
+            }
+                
 
             if (rKeyReference != null)
+            {
                 Destroy(rKeyReference);
+                rKeyReference = null;
+            }
 
             try
             {
