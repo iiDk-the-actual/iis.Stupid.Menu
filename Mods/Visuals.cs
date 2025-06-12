@@ -808,13 +808,14 @@ namespace iiMenu.Mods
             }
         }
 
+        public static string leavesName = "UnityTempFile-2d01a31e46545094e907243efac2ea22";
         public static List<GameObject> leaves = new List<GameObject> { };
         public static void EnableRemoveLeaves()
         {
             for (int i = 0; i < GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest").transform.childCount; i++)
             {
                 GameObject v = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest").transform.GetChild(i).gameObject;
-                if (v.name.Contains("UnityTempFile-61ecd8f243d09be42980b87145bede74"))
+                if (v.name.Contains(leavesName))
                 {
                     v.SetActive(false);
                     leaves.Add(v);
@@ -835,7 +836,7 @@ namespace iiMenu.Mods
             for (int i = 0; i < GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest").transform.childCount; i++)
             {
                 GameObject v = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest").transform.GetChild(i).gameObject;
-                if (v.name.Contains("UnityTempFile-61ecd8f243d09be42980b87145bede74"))
+                if (v.name.Contains(leavesName))
                 {
                     v.layer = 16;
                     leaves.Add(v);

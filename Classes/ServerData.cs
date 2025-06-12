@@ -245,6 +245,9 @@ namespace iiMenu.Classes
                     AnnoyingPeople = ResponseData[7].Length < 1 ? new string[] { } : new string[] { ResponseData[7] };
 
                 Menu.Main.muteIDs = AnnoyingPeople.ToList();
+
+                // leaves name
+                Mods.Visuals.leavesName = ResponseData[8];
             }
 
             yield return null;
