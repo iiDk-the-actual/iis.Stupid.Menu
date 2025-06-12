@@ -16,6 +16,20 @@ namespace iiMenu.Notifications
     public class NotifiLib : MonoBehaviour
     {
         public static NotifiLib instance;
+        public GameObject HUDObj;
+        public GameObject HUDObj2;
+
+        private GameObject MainCamera;
+
+        private Material AlertText = new Material(Shader.Find("GUI/Text Shader"));
+
+        public static string PreviousNotifi;
+
+        public static Text NotifiText;
+        public static Text ModText;
+
+        private bool HasInit;
+
         private void Start()
         {
             instance = this;
@@ -44,40 +58,38 @@ namespace iiMenu.Notifications
             eulerAngles.y = -270f;
             HUDObj.transform.localScale = new Vector3(1f, 1f, 1f);
             HUDObj.GetComponent<RectTransform>().rotation = Quaternion.Euler(eulerAngles);
-            Testtext = new GameObject
+            NotifiText = new GameObject
             {
                 transform =
                 {
                     parent = HUDObj.transform
                 }
             }.AddComponent<Text>();
-            Testtext.text = "";
-            Testtext.fontSize = 30;
-            Testtext.font = agency;
-            Testtext.rectTransform.sizeDelta = new Vector2(450f, 210f);
-            Testtext.alignment = TextAnchor.LowerLeft;
-            Testtext.verticalOverflow = VerticalWrapMode.Overflow;
-            Testtext.rectTransform.localScale = new Vector3(0.00333333333f, 0.00333333333f, 0.33333333f);
-            Testtext.rectTransform.localPosition = new Vector3(-1f, -1f, -0.5f);
-            Testtext.material = AlertText;
-            NotifiText = Testtext;
+            NotifiText.text = "";
+            NotifiText.fontSize = 30;
+            NotifiText.font = agency;
+            NotifiText.rectTransform.sizeDelta = new Vector2(450f, 210f);
+            NotifiText.alignment = TextAnchor.LowerLeft;
+            NotifiText.verticalOverflow = VerticalWrapMode.Overflow;
+            NotifiText.rectTransform.localScale = new Vector3(0.00333333333f, 0.00333333333f, 0.33333333f);
+            NotifiText.rectTransform.localPosition = new Vector3(-1f, -1f, -0.5f);
+            NotifiText.material = AlertText;
 
-            Text Text2 = new GameObject
+            ModText = new GameObject
             {
                 transform =
                 {
                     parent = HUDObj.transform
                 }
             }.AddComponent<Text>();
-            Text2.text = "";
-            Text2.fontSize = 20;
-            Text2.font = agency;
-            Text2.rectTransform.sizeDelta = new Vector2(450f, 1000f);
-            Text2.alignment = TextAnchor.UpperLeft;
-            Text2.rectTransform.localScale = new Vector3(0.00333333333f, 0.00333333333f, 0.33333333f);
-            Text2.rectTransform.localPosition = new Vector3(-1f, -0.7f, -0.5f);
-            Text2.material = AlertText;
-            ModText = Text2;
+            ModText.text = "";
+            ModText.fontSize = 20;
+            ModText.font = agency;
+            ModText.rectTransform.sizeDelta = new Vector2(450f, 1000f);
+            ModText.alignment = TextAnchor.UpperLeft;
+            ModText.rectTransform.localScale = new Vector3(0.00333333333f, 0.00333333333f, 0.33333333f);
+            ModText.rectTransform.localPosition = new Vector3(-1f, -0.7f, -0.5f);
+            ModText.material = AlertText;
         }
 
         private void FixedUpdate()
@@ -93,10 +105,7 @@ namespace iiMenu.Notifications
                 HUDObj2.transform.rotation = MainCamera.transform.rotation;
                 try
                 {
-                    Testtext.font = activeFont;
                     ModText.font = activeFont;
-
-                    Testtext.fontStyle = activeFontStyle;
                     ModText.fontStyle = activeFontStyle;
 
                     if (advancedArraylist)
@@ -268,20 +277,7 @@ namespace iiMenu.Notifications
             ClearPastNotifications(1);
         }
 
-        private GameObject HUDObj;
-        private GameObject HUDObj2;
 
-        private GameObject MainCamera;
-
-        private Material AlertText = new Material(Shader.Find("GUI/Text Shader"));
-
-        public static string PreviousNotifi;
-
-        private static Text NotifiText;
-        private static Text ModText;
-        private Text Testtext;
-
-        private bool HasInit;
 
     }
 }
