@@ -363,55 +363,10 @@ namespace iiMenu.Mods
             BindInput = Bind;
         }
 
-        public static void BothHandsOn()
-        {
-            bothHands = true;
-        }
-
-        public static void BothHandsOff()
-        {
-            bothHands = false;
-        }
-
-        public static void JoystickMenuOn()
-        {
-            joystickMenu = true;
-        }
-
         public static void JoystickMenuOff()
         {
             joystickMenu = false;
             joystickOpen = false;
-        }
-
-        public static void RoundMenuOn()
-        {
-            shouldRound = true;
-        }
-
-        public static void RoundMenuOff()
-        {
-            shouldRound = false;
-        }
-
-        public static void OutlineMenuOn()
-        {
-            shouldOutline = true;
-        }
-
-        public static void OutlineMenuOff()
-        {
-            shouldOutline = false;
-        }
-
-        public static void InnerOutlineMenuOn()
-        {
-            innerOutline = true;
-        }
-
-        public static void InnerOutlineMenuOff()
-        {
-            innerOutline = false;
         }
 
         public static void PhysicalMenuOn()
@@ -463,56 +418,6 @@ namespace iiMenu.Mods
         {
             watchMenu = false;
             UnityEngine.Object.Destroy(watchobject);
-        }
-
-        public static void ShinyMenu()
-        {
-            shinymenu = true;
-        }
-
-        public static void NoShinyMenu()
-        {
-            shinymenu = false;
-        }
-
-        public static void LongMenuOn()
-        {
-            longmenu = true;
-        }
-
-        public static void LongMenuOff()
-        {
-            longmenu = false;
-        }
-
-        public static void DropMenu()
-        {
-            dropOnRemove = false;
-        }
-
-        public static void DropMenuOff()
-        {
-            dropOnRemove = true;
-        }
-
-        public static void HighQualityText()
-        {
-            highQualityText = true;
-        }
-
-        public static void HighQualityTextOff()
-        {
-            highQualityText = false;
-        }
-
-        public static void FlipMenu()
-        {
-            flipMenu = true;
-        }
-
-        public static void NonFlippedMenu()
-        {
-            flipMenu = false;
         }
 
         public static int langInd = 0;
@@ -2083,66 +1988,6 @@ namespace iiMenu.Mods
             GetIndex("Change Gun Direction").overlapText = "Change Gun Direction <color=grey>[</color><color=green>" + DirectionNames[GunDirection] + "</color><color=grey>]</color>";
         }
 
-        public static void EnableGunSounds()
-        {
-            GunSounds = true;
-        }
-
-        public static void DisableGunSounds()
-        {
-            GunSounds = false;
-        }
-
-        public static void EnableSwapGunHand()
-        {
-            SwapGunHand = true;
-        }
-
-        public static void DisableSwapGunHand()
-        {
-            SwapGunHand = false;
-        }
-
-        public static void SmallGunPointer()
-        {
-            smallGunPointer = true;
-        }
-
-        public static void BigGunPointer()
-        {
-            smallGunPointer = false;
-        }
-
-        public static void DoSmoothGunPointer()
-        {
-            SmoothGunPointer = true;
-        }
-
-        public static void NoSmoothGunPointer()
-        {
-            SmoothGunPointer = false;
-        }
-
-        public static void NoGunPointer()
-        {
-            disableGunPointer = true;
-        }
-
-        public static void YesGunPointer()
-        {
-            disableGunPointer = false;
-        }
-
-        public static void NoGunLine()
-        {
-            disableGunLine = true;
-        }
-
-        public static void YesGunLine()
-        {
-            disableGunLine = false;
-        }
-
         private static int gunLineQualityIndex = 2;
         public static void ChangeGunLineQuality()
         {
@@ -2188,11 +2033,6 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void FreezePlayerInMenuEnabled()
-        {
-            closePosition = GorillaTagger.Instance.rigidbody.transform.position;
-        }
-
         public static bool currentmentalstate = false;
         public static void FreezeRigInMenu()
         {
@@ -2212,16 +2052,6 @@ namespace iiMenu.Mods
                     GorillaTagger.Instance.offlineVRRig.enabled = true;
                 }
             }
-        }
-
-        public static void ScaleMenuWithPlayer()
-        {
-            scaleWithPlayer = true;
-        }
-
-        public static void DontScaleMenuWithPlayer()
-        {
-            scaleWithPlayer = false;
         }
 
         public static void DisorganizeMenu()
@@ -2244,36 +2074,11 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void AnnoyingModeOn()
-        {
-            annoyingMode = true;
-        }
-
         public static void AnnoyingModeOff()
         {
             annoyingMode = false;
             themeType--;
             ChangeMenuTheme();
-        }
-
-        public static void LowercaseMode()
-        {
-            lowercaseMode = true;
-        }
-
-        public static void NoLowercaseMode()
-        {
-            lowercaseMode = false;
-        }
-
-        public static void OverflowMode()
-        {
-            NoAutoSizeText = true;
-        }
-
-        public static void NoOverflowMode()
-        {
-            NoAutoSizeText = false;
         }
 
         public static void EnablePrimaryRoomMods()
@@ -2294,66 +2099,6 @@ namespace iiMenu.Mods
             GetIndex("Join Random").isTogglable = false;
         }
 
-        public static void NarrateNotifications()
-        {
-            narrateNotifications = true;
-        }
-
-        public static void NarrateNotificationsDisabled()
-        {
-            narrateNotifications = false;
-        }
-
-        public static void DisableNotifications()
-        {
-            disableNotifications = true;
-        }
-
-        public static void EnableNotifications()
-        {
-            disableNotifications = false;
-        }
-
-        public static void DisableEnabledGUI()
-        {
-            showEnabledModsVR = false;
-        }
-
-        public static void EnableEnabledGUI()
-        {
-            showEnabledModsVR = true;
-        }
-
-        public static void DisableDisconnectButton()
-        {
-            disableDisconnectButton = true;
-        }
-
-        public static void EnableDisconnectButton()
-        {
-            disableDisconnectButton = false;
-        }
-
-        public static void DisableSearchButton()
-        {
-            disableSearchButton = true;
-        }
-
-        public static void EnableSearchButton()
-        {
-            disableSearchButton = false;
-        }
-
-        public static void DisableReturnButton()
-        {
-            disableReturnButton = true;
-        }
-
-        public static void EnableReturnButton()
-        {
-            disableReturnButton = false;
-        }
-
         public static void DisablePageButtons()
         {
             if (GetIndex("Joystick Menu").enabled) {
@@ -2363,21 +2108,6 @@ namespace iiMenu.Mods
                 GetIndex("Disable Page Buttons").enabled = false;
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>DISABLE</color><color=grey>]</color> <color=white>Disable Page Buttons can only be used when using Joystick Menu.</color>");
             }
-        }
-
-        public static void EnablePageButtons()
-        {
-            disablePageButtons = false;
-        }
-
-        public static void DisablePageText()
-        {
-            noPageNumber = true;
-        }
-
-        public static void EnablePageText()
-        {
-            noPageNumber = false;
         }
 
         public static void CustomMenuName()
@@ -2394,48 +2124,7 @@ namespace iiMenu.Mods
             doCustomName = false;
         }
 
-        public static void MenuTrail()
-        {
-            menuTrail = true;
-        }
-
-        public static void NoMenuTrail()
-        {
-            menuTrail = false;
-        }
-
-        public static void DynamicSounds()
-        {
-            dynamicSounds = true;
-        }
-
-        public static void NoDynamicSounds()
-        {
-            dynamicSounds = false;
-        }
-
-        public static void DynamicAnimations()
-        {
-            dynamicAnimations = true;
-        }
-
-        public static void NoDynamicAnimations()
-        {
-            dynamicAnimations = false;
-        }
-
-        public static void DynamicGradients()
-        {
-            dynamicGradients = true;
-        }
-
-        public static void NoDynamicGradients()
-        {
-            dynamicGradients = false;
-        }
-
         // Thanks to kingofnetflix for inspiration and support with voice recognition
-        // No, it's not skidded, read the debunk: https://pastebin.com/raw/dj55QNyC
         private static KeywordRecognizer mainPhrases;
         private static KeywordRecognizer modPhrases;
         public static void VoiceRecognitionOn()
@@ -2556,46 +2245,12 @@ namespace iiMenu.Mods
 
         public static void VoiceRecognitionOff()
         {
-            if (mainPhrases != null)
-            {
-                mainPhrases.Stop();
-            }
-            if (modPhrases != null)
-            {
-                modPhrases.Stop();
-            }
+            mainPhrases?.Stop();
+            
+            modPhrases?.Stop();
+            
             mainPhrases = null;
             modPhrases = null;
-        }
-
-        public static void NoGlobalSearch()
-        {
-            nonGlobalSearch = true;
-        }
-
-        public static void PleaseGlobalSearch()
-        {
-            nonGlobalSearch = false;
-        }
-
-        public static void DisableFPSCounter()
-        {
-            disableFpsCounter = true;
-        }
-
-        public static void EnableFPSCounter()
-        {
-            disableFpsCounter = false;
-        }
-
-        public static void EnableBackupPreferences()
-        {
-            BackupPreferences = true;
-        }
-
-        public static void DisableBackupPreferences()
-        {
-            BackupPreferences = false;
         }
 
         public static string SavePreferencesToText()
@@ -2634,7 +2289,7 @@ namespace iiMenu.Mods
                 Movement.longarmCycle.ToString(),
                 Movement.speedboostCycle.ToString(),
                 Projectiles.projmode.ToString(),
-                "0",
+                Movement.timerPowerIndex.ToString(),
                 Projectiles.shootCycle.ToString(),
                 pointerIndex.ToString(),
                 Advantages.tagAuraIndex.ToString(),
@@ -2731,8 +2386,8 @@ namespace iiMenu.Mods
                 Projectiles.projmode = int.Parse(data[5]) - 1;
                 Projectiles.ChangeProjectile();
 
-                //Projectiles.trailmode = int.Parse(data[6]) - 1;
-                //Projectiles.ChangeTrail();
+                Movement.timerPowerIndex = int.Parse(data[6]) - 1;
+                Movement.ChangeTimerSpeed();
 
                 Projectiles.shootCycle = int.Parse(data[7]) - 1;
                 Projectiles.ChangeShootSpeed();
@@ -2851,12 +2506,6 @@ namespace iiMenu.Mods
             } catch (Exception e) { LogManager.Log("Error loading preferences: " + e.Message); }
         }
 
-        public static void NoAutoSave()
-        {
-            autoSaveDelay = Time.time + 1f;
-        }
-
-
         public static void Panic()
         {
             foreach (ButtonInfo[] buttonlist in Buttons.buttons)
@@ -2880,26 +2529,6 @@ namespace iiMenu.Mods
                 internetTime = 1;
             }
             GetIndex("crTime").overlapText = "Change Reconnect Time <color=grey>[</color><color=green>" + internetTime.ToString() + "</color><color=grey>]</color>";
-        }
-
-        public static void ThinMenuOn()
-        {
-            thinMenu = false;
-        }
-
-        public static void ThinMenuOff()
-        {
-            thinMenu = true;
-        }
-
-        public static void CheckboxButtons()
-        {
-            checkMode = true;
-        }
-
-        public static void CheckboxButtonsOff()
-        {
-            checkMode = false;
         }
 
         public static void ChangeButtonSound()
@@ -2968,36 +2597,6 @@ namespace iiMenu.Mods
                 buttonClickVolume = 0;
             
             GetIndex("Change Button Volume").overlapText = "Change Button Volume <color=grey>[</color><color=green>" + buttonClickVolume.ToString() + "</color><color=grey>]</color>";
-        }
-
-        public static void DisableButtonVibration()
-        {
-            doButtonsVibrate = false;
-        }
-
-        public static void EnableButtonVibration()
-        {
-            doButtonsVibrate = true;
-        }
-
-        public static void DisableGhostview()
-        {
-            disableGhostview = true;
-        }
-
-        public static void EnableGhostview()
-        {
-            disableGhostview = false;
-        }
-
-        public static void LegacyGhostview()
-        {
-            legacyGhostview = true;
-        }
-
-        public static void NewGhostview()
-        {
-            legacyGhostview = false;
         }
 
         public static Material screenRed = null;
@@ -3086,26 +2685,6 @@ namespace iiMenu.Mods
             motdText.SetActive(true);
             GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/motd (1)").SetActive(false);
             GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/motdtext").SetActive(false);
-        }
-
-        public static void DisableBoardTextColors()
-        {
-            disableBoardTextColor = true;
-        }
-
-        public static void EnableBoardTextColors()
-        {
-            disableBoardTextColor = false;
-        }
-
-        public static void HideSettings()
-        {
-            hideSettings = true;
-        }
-
-        public static void ShowSettings()
-        {
-            hideSettings = false;
         }
     }
 }
