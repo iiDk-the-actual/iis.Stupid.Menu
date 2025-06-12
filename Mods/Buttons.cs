@@ -186,11 +186,11 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Change Speed Boost Amount", overlapText = "Change Speed Boost Amount <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method =() => Movement.ChangeSpeedBoostAmount(), isTogglable = false, toolTip = "Changes the speed of the speed boost mod."},
                 new ButtonInfo { buttonText = "Change Pull Mod Power", overlapText = "Change Pull Mod Power <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method =() => Movement.ChangePullModPower(), isTogglable = false, toolTip = "Changes the power of the pull mod."},
                 new ButtonInfo { buttonText = "Change Prediction Amount", overlapText = "Change Prediction Amount <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method =() => Movement.ChangePredictionAmount(), isTogglable = false, toolTip = "Changes the power of the predictions."},
+                new ButtonInfo { buttonText = "Change Timer Speed", overlapText = "Change Timer Speed <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method =() => Movement.ChangeTimerSpeed(), isTogglable = false, toolTip = "Changes the speed of the timer mod."},
                 new ButtonInfo { buttonText = "cdSpeed", overlapText = "Change Drive Speed <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method =() => Movement.ChangeDriveSpeed(), isTogglable = false, toolTip = "Changes the speed of the drive mod."},
                 new ButtonInfo { buttonText = "Factored Speed Boost", toolTip = "Factors your current speed into the speed boost, giving you a positive effect even if you're tagged."},
                 new ButtonInfo { buttonText = "Disable Max Speed Modification", toolTip = "Makes your max speed not change, so you can't be detected of using a speed boost."},
                 new ButtonInfo { buttonText = "Disable Size Changer Buttons", toolTip = "Disables the size changer's buttons, so hitting grip or trigger or whatever won't do anything."},
-
 
                 new ButtonInfo { buttonText = "Networked Platforms", method =() => Movement.NetworkedPlatforms(), toolTip = "Makes the platforms networked. This requires attic."},
                 new ButtonInfo { buttonText = "Networked Grapple Mods", method =() => Movement.NetworkedGrappleMods(), toolTip = "Makes the spider man and grappling hook mods networked, showing the line for everyone. This requires a balloon."},
@@ -417,7 +417,10 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Telekinesis", method =() => Movement.Telekinesis(), toolTip = "Lets people control you with nothing but the power of their finger."},
                 new ButtonInfo { buttonText = "Solid Players", method =() => Movement.SolidPlayers(), toolTip = "Lets you walk on top of other players."},
                 new ButtonInfo { buttonText = "Pull Mod <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Movement.PullMod(), toolTip = "Pulls you more whenever you walk to simulate speed without modifying your velocity."},
-                new ButtonInfo { buttonText = "Velocity Long Arms", overlapText = "Predictions", enableMethod =() => Movement.CreateVelocityTrackers(), method =() => Movement.VelocityLongArms(), disableMethod =() => Movement.DestroyVelocityTrackers(),  toolTip = "Moves your arms farther depending on how fast you move them."},
+                new ButtonInfo { buttonText = "Velocity Long Arms", overlapText = "Predictions", enableMethod =() => Movement.CreateVelocityTrackers(), method =() => Movement.VelocityLongArms(), disableMethod =() => Movement.DestroyVelocityTrackers(), toolTip = "Moves your arms farther depending on how fast you move them."},
+
+                new ButtonInfo { buttonText = "Timer", method =() => Movement.Timer(), disableMethod =() => Time.timeScale = 1f, toolTip = "Speeds up or slows down the time of your game."},
+                new ButtonInfo { buttonText = "Lag Range", method =() => Movement.LagRange(), toolTip = "Dynamically changes how much your rig updates depending on how close you are to others."},
 
                 new ButtonInfo { buttonText = "Speed Boost", method =() => Movement.SpeedBoost(), toolTip = "Changes your speed to whatever you set it to."},
                 new ButtonInfo { buttonText = "Grip Speed Boost <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Movement.GripSpeedBoost(), toolTip = "Changes your speed to whatever you set it to when holding <color=green>grip</color>."},
@@ -434,7 +437,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Slide Control", enableMethod =() => Movement.EnableSlideControl(), disableMethod =() => Movement.DisableSlideControl(), toolTip = "Lets you control yourself on ice perfectly."},
                 new ButtonInfo { buttonText = "Weak Slide Control", enableMethod =() => Movement.EnableWeakSlideControl(), disableMethod =() => Movement.DisableSlideControl(), toolTip = "Lets you control yourself on ice a little more perfect than before."},
 
-                new ButtonInfo { buttonText = "Throw Controllers", method =() => Movement.ThrowControllers(), toolTip = "Lets you throw your controllers with <color=green>X</color> and <color=green>A</color>."},
+                new ButtonInfo { buttonText = "Throw Controllers", method =() => Movement.ThrowControllers(), toolTip = "Lets you throw your controllers with <color=green>X</color> or <color=green>A</color>."},
+                new ButtonInfo { buttonText = "Controller Flick", enableMethod =() => Movement.EnableControllerFlick(), method =() => Movement.ControllerFlick(), disableMethod =() => Movement.DisableControllerFlick(), toolTip = "Flicks your controllers in a similar way to disconnecting them with <color=green>X</color> or <color=green>A</color>."},
 
                 new ButtonInfo { buttonText = "Steam Long Arms", method =() => Movement.EnableSteamLongArms(), disableMethod =() => Movement.DisableSteamLongArms(), toolTip = "Gives you long arms similar to override world scale."},
                 new ButtonInfo { buttonText = "Stick Long Arms", method =() => Movement.StickLongArms(), toolTip = "Makes you look like you're using sticks."},

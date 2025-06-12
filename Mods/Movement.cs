@@ -375,19 +375,17 @@ namespace iiMenu.Mods
 
         public static void ChangeSpeedBoostAmount()
         {
-            speedboostCycle++;
-            if (speedboostCycle > 3)
-            {
-                speedboostCycle = 0;
-            }
-
             float[] jspeedamounts = new float[] { 2f, 7.5f, 9f, 200f };
-            jspeed = jspeedamounts[speedboostCycle];
-
             float[] jmultiamounts = new float[] { 0.5f, /*1.25f*/1.1f, 2f, 10f };
-            jmulti = jmultiamounts[speedboostCycle];
-
             string[] speedNames = new string[] { "Slow", "Normal", "Fast", "Ultra Fast" };
+
+            speedboostCycle++;
+            if (speedboostCycle >= jspeedamounts.Length)
+                speedboostCycle = 0;
+
+            jspeed = jspeedamounts[speedboostCycle];
+            jmulti = jmultiamounts[speedboostCycle];
+            
             GetIndex("Change Speed Boost Amount").overlapText = "Change Speed Boost Amount <color=grey>[</color><color=green>" + speedNames[speedboostCycle] + "</color><color=grey>]</color>";
         }
 
@@ -1999,7 +1997,7 @@ namespace iiMenu.Mods
 
             VRRig closestRig = GorillaParent.instance.vrrigs
                 .Where(rig => rig != null && rig != GorillaTagger.Instance.offlineVRRig && 
-                                  (isTagged ? PlayerIsTagged(rig) : !PlayerIsTagged(rig)))
+                                  (isTagged ? !PlayerIsTagged(rig) : PlayerIsTagged(rig)))
                 .OrderBy(rig => Vector3.Distance(rig.transform.position, GorillaTagger.Instance.bodyCollider.transform.position))
                 .FirstOrDefault();
 
@@ -3157,6 +3155,84 @@ namespace iiMenu.Mods
             }
         }
 
+        public static GameObject flickLeft;
+        public static GameObject flickRight;
+        public static void EnableControllerFlick()
+        {
+            flickLeft = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            UnityEngine.Object.Destroy(flickLeft.GetComponent<BoxCollider>());
+            flickLeft.GetComponent<Renderer>().enabled = false;
+            flickLeft.AddComponent<GorillaVelocityTracker>();
+            Rigidbody leftRigid = flickLeft.AddComponent<Rigidbody>();
+            leftRigid.isKinematic = true;
+            leftRigid.useGravity = false;
+
+            flickRight = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            UnityEngine.Object.Destroy(flickRight.GetComponent<BoxCollider>());
+            flickRight.GetComponent<Renderer>().enabled = false;
+            flickRight.AddComponent<GorillaVelocityTracker>();
+            Rigidbody rightRigid = flickRight.AddComponent<Rigidbody>();
+            rightRigid.isKinematic = true;
+            rightRigid.useGravity = false;
+        }
+
+        public static void DisableControllerFlick()
+        {
+            UnityEngine.Object.Destroy(flickLeft);
+            UnityEngine.Object.Destroy(flickRight);
+        }
+
+        private static Quaternion initialRotationLeft = Quaternion.identity;
+        private static Quaternion initialRotationRight = Quaternion.identity;
+        public static void ControllerFlick()
+        {
+            if (leftPrimary)
+            {
+                if (initialRotationLeft == Quaternion.identity)
+                    initialRotationLeft = GorillaTagger.Instance.leftHandTransform.rotation;
+
+                Rigidbody rigidbody = flickLeft.GetComponent<Rigidbody>();
+                if (rigidbody.isKinematic)
+                {
+                    rigidbody.isKinematic = false;
+                    rigidbody.velocity = rigidbody.GetComponent<GorillaVelocityTracker>().GetAverageVelocity(true, 0);
+                }
+                
+                GorillaTagger.Instance.leftHandTransform.position = GorillaTagger.Instance.headCollider.transform.position - flickLeft.transform.position;
+                GorillaTagger.Instance.leftHandTransform.rotation = initialRotationLeft;
+            } 
+            else
+            {
+                Rigidbody rigidbody = flickLeft.GetComponent<Rigidbody>();
+                rigidbody.isKinematic = true;
+                flickLeft.transform.position = GorillaTagger.Instance.headCollider.transform.position - GorillaTagger.Instance.leftHandTransform.position;
+                initialRotationLeft = Quaternion.identity;
+            }
+
+            if (rightPrimary)
+            {
+                if (initialRotationRight == Quaternion.identity)
+                    initialRotationRight = GorillaTagger.Instance.rightHandTransform.rotation;
+
+                Rigidbody rigidbody = flickRight.GetComponent<Rigidbody>();
+                if (rigidbody.isKinematic)
+                {
+                    rigidbody.isKinematic = false;
+                    rigidbody.velocity = rigidbody.GetComponent<GorillaVelocityTracker>().GetAverageVelocity(true, 0);
+                }
+
+                GorillaTagger.Instance.rightHandTransform.position = GorillaTagger.Instance.headCollider.transform.position - flickRight.transform.position;
+                GorillaTagger.Instance.rightHandTransform.rotation = initialRotationRight;
+            }
+            else
+            {
+                Rigidbody rigidbody = flickRight.GetComponent<Rigidbody>();
+                rigidbody.isKinematic = true;
+                flickRight.transform.position = GorillaTagger.Instance.headCollider.transform.position - GorillaTagger.Instance.rightHandTransform.position;
+                initialRotationRight = Quaternion.identity;
+            }
+        }
+
         public static void StickLongArms()
         {
             GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.transform.position = GorillaTagger.Instance.leftHandTransform.position + (GorillaTagger.Instance.leftHandTransform.forward * (armlength - 0.917f));
@@ -3201,8 +3277,8 @@ namespace iiMenu.Mods
             GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.transform.position = GorillaTagger.Instance.headCollider.transform.position - righty;
         }
 
-        public static GameObject lvT = null;
-        public static GameObject rvT = null;
+        public static GameObject lvT;
+        public static GameObject rvT;
         public static void CreateVelocityTrackers()
         {
             lvT = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -3218,8 +3294,8 @@ namespace iiMenu.Mods
 
         public static void DestroyVelocityTrackers()
         {
-            LogManager.Log(lvT);
-            LogManager.Log(rvT);
+            UnityEngine.Object.Destroy(lvT);
+            UnityEngine.Object.Destroy(rvT);
         }
 
         public static float predCount = 0.0125f;
@@ -3241,7 +3317,7 @@ namespace iiMenu.Mods
                 "Extreme"
             };
             predInt++;
-            if (predInt > predAmnts.Length - 1)
+            if (predInt >= predAmnts.Length)
                 predInt = 0;
 
             predCount = predAmnts[predInt];
@@ -3255,6 +3331,56 @@ namespace iiMenu.Mods
             GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.transform.position -= lvT.GetComponent<GorillaVelocityTracker>().GetAverageVelocity(true, 0) * predCount;
             GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.transform.position -= rvT.GetComponent<GorillaVelocityTracker>().GetAverageVelocity(true, 0) * predCount;
         }
+
+        public static void LagRange()
+        {
+            bool isTagged = PlayerIsTagged(GorillaTagger.Instance.offlineVRRig);
+
+            VRRig closestRig = GorillaParent.instance.vrrigs
+                .Where(rig => rig != null && rig != GorillaTagger.Instance.offlineVRRig &&
+                                  (isTagged ? !PlayerIsTagged(rig) : PlayerIsTagged(rig)))
+                .OrderBy(rig => Vector3.Distance(rig.transform.position, GorillaTagger.Instance.bodyCollider.transform.position))
+                .FirstOrDefault();
+
+            float rigDistance = closestRig == null ? float.MaxValue :
+                          Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, closestRig.transform.position);
+
+            if (rigDistance < 15f)
+            {
+                float lagPower = Mathf.Clamp(rigDistance, 1f, 15f) / 15f;
+                PhotonNetwork.SerializationRate = 4 + (int)Math.Ceiling(lagPower * 6f);
+            }
+        }
+
+        public static int timerPowerIndex = 1;
+        public static void ChangeTimerSpeed()
+        {
+            float[] timerPowers = new float[]
+            {
+                0.75f,
+                1.25f,
+                1.5f,
+                2f
+            };
+            string[] timerNames = new string[]
+            {
+                "Slow",
+                "Normal",
+                "Fast",
+                "Extreme"
+            };
+
+            timerPowerIndex++;
+            if (timerPowerIndex >= timerPowers.Length)
+                timerPowerIndex = 0;
+
+            timerPower = timerPowers[predInt];
+            GetIndex("Change Timer Speed").overlapText = "Change Timer Speed <color=grey>[</color><color=green>" + timerNames[timerPowerIndex] + "</color><color=grey>]</color>";
+        }
+
+        private static float timerPower = 1.25f;
+        public static void Timer() =>
+            Time.timeScale = timerPower;
 
         public static void FlickJump()
         {
