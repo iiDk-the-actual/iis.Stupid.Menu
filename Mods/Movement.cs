@@ -2059,8 +2059,8 @@ namespace iiMenu.Mods
             }
         }
 
-        private static bool wasDisabledAlready = false;
-        private static bool invisMonke = false;
+        private static bool wasDisabledAlready;
+        private static bool invisMonke;
         public static void Invisible()
         {
             bool hit = rightSecondary || Mouse.current.rightButton.isPressed;
@@ -2082,7 +2082,7 @@ namespace iiMenu.Mods
             lastHit2 = hit;
         }
 
-        private static bool ghostMonke = false;
+        private static bool ghostMonke;
         public static void Ghost()
         {
             bool hit = rightPrimary || Mouse.current.leftButton.isPressed;
