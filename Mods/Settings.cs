@@ -2508,6 +2508,7 @@ namespace iiMenu.Mods
 
         public static void Panic()
         {
+            AnnoyingModeOff();
             foreach (ButtonInfo[] buttonlist in Buttons.buttons)
             {
                 foreach (ButtonInfo v in buttonlist)
