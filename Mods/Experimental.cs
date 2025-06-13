@@ -15,11 +15,6 @@ namespace iiMenu.Mods
 {
     public class Experimental
     {
-        public static void Hyperflush()
-        {
-            PhotonNetwork.serializeStreamOut.writeData.Clear();
-        }
-
         public static void FixDuplicateButtons()
         {
             int duplicateButtons = 0;
@@ -39,16 +34,6 @@ namespace iiMenu.Mods
                 }
             }
             NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully fixed " + duplicateButtons.ToString() + " broken buttons.");
-        }
-
-        public static void EnableOverlapRPCs()
-        {
-            NoOverlapRPCs = false;
-        }
-
-        public static void DisableOverlapRPCs()
-        {
-            NoOverlapRPCs = true;
         }
 
         private static Dictionary<Renderer, Material> oldMats = new Dictionary<Renderer, Material> { };

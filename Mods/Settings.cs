@@ -1085,6 +1085,17 @@ namespace iiMenu.Mods
                     textColor = Color.white;
                     textClicked = Color.white;
                     break;
+                case 56: // Catppuccin Mocha
+                    bgColorA = new Color32(30, 30, 46, 255);
+                    bgColorB = new Color32(30, 30, 46, 255);
+                    buttonDefaultA = new Color32(88, 91, 112, 255);
+                    buttonDefaultB = new Color32(88, 91, 112, 255);
+                    buttonClickedA = new Color32(49, 50, 68, 255);
+                    buttonClickedB = new Color32(49, 50, 68, 255);
+                    titleColor = new Color32(205, 214, 244, 255);
+                    textColor = new Color32(186, 194, 222, 255);
+                    textClicked = new Color32(166, 173, 200, 255);
+                    break;
             }
         }
 

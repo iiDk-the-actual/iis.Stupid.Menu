@@ -233,24 +233,6 @@ namespace iiMenu.Mods
             Patches.MicPatch.returnAsNone = false;
         }
 
-        public static void LowMicLatency()
-        {
-            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-            {
-                if (vrrig != GorillaTagger.Instance.offlineVRRig)
-                    vrrig.GetComponent<GorillaSpeakerLoudness>().speaker.SetPlaybackDelaySettings(new Photon.Voice.Unity.PlaybackDelaySettings() { MinDelaySoft = 0, MaxDelaySoft = 400, MaxDelayHard = 100 });
-            } 
-        }
-
-        public static void NoLowMicLatency()
-        {
-            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-            {
-                if (vrrig != GorillaTagger.Instance.offlineVRRig)
-                    vrrig.GetComponent<GorillaSpeakerLoudness>().speaker.SetPlaybackDelaySettings(new Photon.Voice.Unity.PlaybackDelaySettings() { MinDelaySoft = 200, MaxDelaySoft = 400, MaxDelayHard = 100 });
-            }
-        }
-
         public static void GripForceLagGame()
         {
             if (rightGrab)

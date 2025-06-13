@@ -55,18 +55,6 @@ namespace iiMenu.Mods
             GorillaComputer.instance.screenText.Text = GorillaComputer.instance.screenText.Text.Replace("STEAM", "QUEST").Replace(GorillaComputer.instance.buildDate, "05/30/2024 16:50:12\nBUILD CODE 4893\nMANAGED ACCOUNT: NO");
         }
 
-        public static void AntiCrashEnabled()
-        {
-            //GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools").SetActive(false);
-            AntiCrashToggle = true;
-        }
-
-        public static void AntiCrashDisabled()
-        {
-            //GameObject.Find("Environment Objects/PersistentObjects_Prefab/GlobalObjectPools").SetActive(true);
-            AntiCrashToggle = false;
-        }
-
         private static float lastCacheClearedTime = 0f;
         public static void AutoClearCache()
         {
@@ -95,29 +83,18 @@ namespace iiMenu.Mods
                 1.5f
             };
             antireportrangeindex++;
-            if (antireportrangeindex > names.Length - 1)
-            {
+            if (antireportrangeindex >= names.Length)
                 antireportrangeindex = 0;
-            }
 
             threshold = distances[antireportrangeindex];
             GetIndex("Change Anti Report Distance").overlapText = "Change Anti Report Distance <color=grey>[</color><color=green>" + names[antireportrangeindex] + "</color><color=grey>]</color>";
         }
 
-        public static bool smartarp = false;
+        public static bool smartarp;
         public static int buttonClickTime;
         public static string buttonClickPlayer;
 
-        public static void SmartAntiReport()
-        {
-            smartarp = true;
-        }
-
-        public static void StupidAntiReport() // lol
-        {
-            smartarp = false;
-        }
-
+        public static float antiReportNotificationDelay;
         public static void AntiReportDisconnect()
         {
             try
@@ -128,9 +105,8 @@ namespace iiMenu.Mods
                     {
                         Transform report = line.reportButton.gameObject.transform;
                         if (GetIndex("Visualize Anti Report").enabled)
-                        {
                             VisualizeAura(report.position, threshold, Color.red);
-                        }
+                        
                         foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                         {
                             if (vrrig != GorillaTagger.Instance.offlineVRRig)
@@ -144,7 +120,12 @@ namespace iiMenu.Mods
                                     {
                                         NetworkSystem.Instance.ReturnToSinglePlayer();
                                         RPCProtection();
-                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected.");
+
+                                        if (Time.time > antiReportNotificationDelay)
+                                        {
+                                            antiReportNotificationDelay = Time.time + 0.1f;
+                                            NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected.");
+                                        }
                                     }
                                 }
                             }
@@ -165,9 +146,8 @@ namespace iiMenu.Mods
                     {
                         Transform report = line.reportButton.gameObject.transform;
                         if (GetIndex("Visualize Anti Report").enabled)
-                        {
                             VisualizeAura(report.position, threshold, Color.red);
-                        }
+                        
                         foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                         {
                             if (vrrig != GorillaTagger.Instance.offlineVRRig)
@@ -181,7 +161,12 @@ namespace iiMenu.Mods
                                     {
                                         Important.Reconnect();
                                         RPCProtection();
-                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected and will be reconnected shortly.");
+
+                                        if (Time.time > antiReportNotificationDelay)
+                                        {
+                                            antiReportNotificationDelay = Time.time + 0.1f;
+                                            NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected and will be reconnected shortly.");
+                                        }
                                     }
                                 }
                             }
@@ -202,9 +187,8 @@ namespace iiMenu.Mods
                     {
                         Transform report = line.reportButton.gameObject.transform;
                         if (GetIndex("Visualize Anti Report").enabled)
-                        {
                             VisualizeAura(report.position, threshold, Color.red);
-                        }
+                        
                         foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                         {
                             if (vrrig != GorillaTagger.Instance.offlineVRRig)
@@ -218,7 +202,12 @@ namespace iiMenu.Mods
                                     {
                                         RPCProtection();
                                         Important.JoinRandom();
-                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected and will be connected to a random lobby shortly.");
+
+                                        if (Time.time > antiReportNotificationDelay)
+                                        {
+                                            antiReportNotificationDelay = Time.time + 0.1f;
+                                            NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected and will be connected to a random lobby shortly.");
+                                        }
                                     }
                                 }
                             }
@@ -242,9 +231,8 @@ namespace iiMenu.Mods
                         {
                             Transform report = line.reportButton.gameObject.transform;
                             if (GetIndex("Visualize Anti Report").enabled)
-                            {
                                 VisualizeAura(report.position, threshold, Color.red);
-                            }
+                            
                             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                             {
                                 if (vrrig != GorillaTagger.Instance.offlineVRRig)
@@ -276,9 +264,9 @@ namespace iiMenu.Mods
                 int antiReportType = 0;
                 string[] types = new string[]
                 {
-                "Disconnect",
-                "Reconnect",
-                "Join Random"
+                    "Disconnect",
+                    "Reconnect",
+                    "Join Random"
                 };
                 for (int i = 0; i < types.Length - 1; i++)
                 {
@@ -294,25 +282,22 @@ namespace iiMenu.Mods
                         NetworkSystem.Instance.ReturnToSinglePlayer();
                         RPCProtection();
                         if (doNotification)
-                        {
                             NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + subject.NickName + " attempted to report you, you have been disconnected.");
-                        }
+                        
                         break;
                     case 1:
                         Important.Reconnect();
                         RPCProtection();
                         if (doNotification)
-                        {
                             NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + subject.NickName + " attempted to report you, you have been disconnected and will be reconnected shortly.");
-                        }
+                        
                         break;
                     case 2:
                         RPCProtection();
                         Important.JoinRandom();
                         if (doNotification)
-                        {
                             NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + subject.NickName + " attempted to report you, you have been disconnected and will be connected to a random lobby shortly.");
-                        }
+                        
                         break;
                 }
             }
@@ -382,9 +367,7 @@ namespace iiMenu.Mods
         {
             string randomName = "gorilla";
             for (var i = 0; i < 4; i++)
-            {
                 randomName = randomName + UnityEngine.Random.Range(0, 9).ToString();
-            }
 
             ChangeName(randomName);
 

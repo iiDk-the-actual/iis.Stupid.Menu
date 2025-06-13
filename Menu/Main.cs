@@ -499,6 +499,17 @@ namespace iiMenu.Menu
                             fpsCount.text = fpsCount.text.ToLower();
                     }
 
+                    // Title gradient
+                    if (gradientTitle && title != null)
+                        title.text = RichtextGradient(NoRichtextTags(title.text),
+                            new GradientColorKey[]
+                            {
+                                new GradientColorKey(BrightenColor(buttonDefaultA), 0f),
+                                new GradientColorKey(BrightenColor(buttonDefaultA, 0.95f), 0.5f),
+                                new GradientColorKey(BrightenColor(buttonDefaultA), 1f)
+                            });
+
+                    // Search text flashing cursor
                     if (searchTextObject != null)
                     {
                         searchTextObject.text = searchText + (((Time.frameCount / 45) % 2) == 0 ? "|" : " ");
@@ -1925,6 +1936,15 @@ namespace iiMenu.Menu
 
             if (!noPageNumber)
                 title.text += $" <color=grey>[</color><color=white>{pageNumber + 1}</color><color=grey>]</color>";
+
+            if (gradientTitle)
+                title.text = RichtextGradient(NoRichtextTags(title.text),
+                    new GradientColorKey[]
+                    {
+                        new GradientColorKey(BrightenColor(buttonDefaultA), 0f),
+                        new GradientColorKey(BrightenColor(buttonDefaultA, 0.95f), 0.5f),
+                        new GradientColorKey(BrightenColor(buttonDefaultA), 1f)
+                    });
 
             title.fontSize = 1;
             title.color = titleColor;
@@ -3873,12 +3893,19 @@ namespace iiMenu.Menu
             for (int i = 0; i < chars.Length; i++)
             {
                 char character = chars[i];
-                float offset = (chars.Length - (i + 1)) / chars.Length;
-                Color characterColor = bg.Evaluate(Time.time / 2f + offset % 1f);
+                Color characterColor = bg.Evaluate(((Time.time / 2f) + (i / 25f)) % 1f);
                 finalOutput += $"<color=#{ColorToHex(characterColor)}>{character}</color>";
             }
 
             return finalOutput;
+        }
+
+        public static Color BrightenColor(Color color, float intensity = 0.75f)
+        {
+            Color.RGBToHSV(color, out float h, out float s, out float v);
+            v = Mathf.Clamp01(v + (1f - v) * intensity * 1.2f);
+            s = Mathf.Clamp01(s * (1f - intensity * 0.3f));
+            return Color.HSVToRGB(h, s, v);
         }
 
         // To get the optimal delay from call limiter
@@ -4916,6 +4943,7 @@ jgs \_   _/ |Oo\
         public static bool dynamicSounds;
         public static bool dynamicAnimations;
         public static bool dynamicGradients;
+        public static bool gradientTitle;
         public static string lastClickedName = "";
 
         public static string motdTemplate = "You are using build {0}. This menu was created by iiDk (@goldentrophy) on discord. " +
@@ -5098,7 +5126,9 @@ jgs \_   _/ |Oo\
             new string[] {"«", "»"},
             new string[] {"◀", "▶"},
             new string[] {"-", "+"},
-            new string[] {"", ""}
+            new string[] {"", ""},
+            new string[] {"v", "ʌ"},
+            new string[] { "v\nv\nv\nv\nv\nv", "ʌ\nʌ\nʌ\nʌ\nʌ\nʌ" }
         };
 
         public static int themeType = 1;
