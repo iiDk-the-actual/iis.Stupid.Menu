@@ -73,7 +73,7 @@ namespace iiMenu.Mods
                 createIfMissing = true,
                 isJoinable = true,
                 isPublic = isPublic,
-                MaxPlayers = PhotonNetworkController.Instance.GetRoomSize(PhotonNetworkController.Instance.currentJoinTrigger.networkZone),
+                MaxPlayers = RoomSystem.GetRoomSize(PhotonNetworkController.Instance.currentJoinTrigger.networkZone),
                 CustomProps = new ExitGames.Client.Photon.Hashtable()
                 {
                     { "gameMode", PhotonNetworkController.Instance.currentJoinTrigger.GetFullDesiredGameModeString() },

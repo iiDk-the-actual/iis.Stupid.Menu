@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace iiMenu.Patches
 {
-    [HarmonyPatch(typeof(VRRig), "OnHandTap")]
+    [HarmonyPatch(typeof(VRRig), "SetHandEffectData")]
     public class HandTapPatch
     {
         public static bool doPatch = false;
@@ -14,7 +14,7 @@ namespace iiMenu.Patches
         public static float overrideVolume = 99999f;
         public static int tapMultiplier = 1;
 
-        private static bool Prefix(VRRig __instance, int soundIndex, bool isLeftHand, float handSpeed, Vector3 tapDir)
+        private static bool Prefix(VRRig __instance, HandEffectContext effectContext, int audioClipIndex, bool isDownTap, bool isLeftHand, float handTapVolume, float handTapSpeed, Vector3 dirFromHitToHand)
         {
             if (doPatch)
             {
@@ -22,19 +22,21 @@ namespace iiMenu.Patches
                 {
                     if (doOverride)
                     {
-                        handSpeed = overrideVolume;
-                        tapDir = new Vector3(overrideVolume, overrideVolume, overrideVolume);
+                        handTapSpeed = overrideVolume;
+                        dirFromHitToHand = new Vector3(overrideVolume, overrideVolume, overrideVolume);
                         GorillaTagger.Instance.handTapVolume = overrideVolume;
-                        GorillaTagger.Instance.tempHitDir = new Vector3(overrideVolume, overrideVolume, overrideVolume);
-                        
+                        GorillaTagger.Instance.dirFromHitToHand = new Vector3(overrideVolume, overrideVolume, overrideVolume);
+                        effectContext.speed = overrideVolume;
+                        effectContext.clipVolume = overrideVolume;
+
                         if (PhotonNetwork.InRoom)
                         {
                             GorillaTagger.Instance.myVRRig.SendRPC("OnHandTapRPC", RpcTarget.All, new object[]
                             {
-                                soundIndex,
+                                audioClipIndex,
                                 isLeftHand,
-                                handSpeed,
-                                Utils.PackVector3ToLong(tapDir)
+                                handTapSpeed,
+                                Utils.PackVector3ToLong(dirFromHitToHand)
                             });
 
                             if (tapMultiplier > 1)
@@ -43,24 +45,26 @@ namespace iiMenu.Patches
                                 {
                                     GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]
                                     {
-                                        soundIndex,
+                                        audioClipIndex,
                                         isLeftHand,
-                                        handSpeed
+                                        handTapSpeed
                                     });
                                 }
                                 Main.RPCProtection();
                             }
+
+
                         } else
-                            GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(soundIndex, isLeftHand, handSpeed);
+                            GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(audioClipIndex, isLeftHand, overrideVolume);
 
                         return false;
                     }
                     if (!tapsEnabled)
                     {
-                        handSpeed = 0f;
+                        handTapSpeed = 0f;
                         GorillaTagger.Instance.handTapVolume = 0f;
-                        GorillaTagger.Instance.tempInt = -1;
-                        soundIndex = -1;
+                        GorillaTagger.Instance.audioClipIndex = -1;
+                        audioClipIndex = -1;
                         return false;
                     }
                 }
