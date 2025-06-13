@@ -34,6 +34,7 @@ namespace iiMenu.Patches
                             GorillaTagger.Instance.myVRRig.SendRPC("OnHandTapRPC", RpcTarget.All, new object[]
                             {
                                 audioClipIndex,
+                                isDownTap,
                                 isLeftHand,
                                 handTapSpeed,
                                 Utils.PackVector3ToLong(dirFromHitToHand)
