@@ -100,7 +100,7 @@ namespace iiMenu.Classes
 
                 if (downloadTask.Exception != null)
                 {
-                    Debug.LogError("Failed to download texture: " + downloadTask.Exception);
+                    Log("Failed to download texture: " + downloadTask.Exception);
                     yield break;
                 }
 
@@ -112,7 +112,7 @@ namespace iiMenu.Classes
 
                 if (writeTask.Exception != null)
                 {
-                    Debug.LogError("Failed to save texture: " + writeTask.Exception);
+                    Log("Failed to save texture: " + writeTask.Exception);
                     yield break;
                 }
             }
@@ -123,7 +123,7 @@ namespace iiMenu.Classes
 
             if (readTask.Exception != null)
             {
-                Debug.LogError("Failed to read texture file: " + readTask.Exception);
+                Log("Failed to read texture file: " + readTask.Exception);
                 yield break;
             }
 

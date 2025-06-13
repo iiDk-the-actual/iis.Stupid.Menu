@@ -31,17 +31,7 @@ namespace iiMenu.Mods
         public static void WeatherChange(bool rain)
         {
             for (int i = 1; i < BetterDayNightManager.instance.weatherCycle.Length; i++)
-            {
-                switch (rain)
-                {
-                    case true:
-                        BetterDayNightManager.instance.weatherCycle[i] = BetterDayNightManager.WeatherType.Raining;
-                        break;
-                    case false:
-                        BetterDayNightManager.instance.weatherCycle[i] = BetterDayNightManager.WeatherType.None;
-                        break;
-                }
-            }      
+                BetterDayNightManager.instance.weatherCycle[i] = rain ? BetterDayNightManager.WeatherType.Raining : BetterDayNightManager.WeatherType.None;     
         }
 
         public static void SetFullbrightStatus(bool fullBright) =>
@@ -62,8 +52,10 @@ namespace iiMenu.Mods
 
         public static void BackwardsHead() =>
             GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.y = 180f;
+
         public static void SidewaysHead() =>
             GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.y = 90f;
+
         public static void RandomYHead() =>
             GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.y = UnityEngine.Random.Range(20, 340);
 
@@ -74,45 +66,33 @@ namespace iiMenu.Mods
             {
                 GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.x = 50f;
                 lastBangTime = Time.time + (60f/(float)BPM);
-            } else
-            {
+            } 
+            else
                 GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.x = Mathf.Lerp(GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.x,0f,0.1f);
-            }
         }
 
         public static void SpinHeadX()
         {
             if (GorillaTagger.Instance.offlineVRRig.enabled)
-            {
                 GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.x += 10f;
-            } else
-            {
+            else
                 GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = Quaternion.Euler(GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation.eulerAngles + new Vector3(10f, 0f, 0f));
-            }
         }
 
         public static void SpinHeadY()
         {
             if (GorillaTagger.Instance.offlineVRRig.enabled)
-            {
                 GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.y += 10f;
-            }
             else
-            {
                 GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = Quaternion.Euler(GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation.eulerAngles + new Vector3(0f, 10f, 0f));
-            }
         }
 
         public static void SpinHeadZ()
         {
             if (GorillaTagger.Instance.offlineVRRig.enabled)
-            {
                 GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.z += 10f;
-            }
             else
-            {
                 GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = Quaternion.Euler(GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation.eulerAngles + new Vector3(0f, 0f, 10f));
-            }
         }
 
         public static void FlipHands()
@@ -162,23 +142,9 @@ namespace iiMenu.Mods
         public static void SilentHandTapsOnTag()
         {
             if (PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
-            {
                 SilentHandTaps();
-            } else
-            {
+            else
                 FixHandTaps();
-            }
-            
-        }
-
-        public static void EnableInstantHandTaps()
-        {
-            GorillaTagger.Instance.tapCoolDown = 0f;
-        }
-
-        public static void DisableInstantHandTaps()
-        {
-            GorillaTagger.Instance.tapCoolDown = 0.33f;
         }
 
         private static float instantPartyDelay = 0f;
@@ -210,11 +176,6 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void LeaveParty()
-        {
-            FriendshipGroupDetection.Instance.LeaveParty();
-        }
-
         public static void KickAllInParty()
         {
             if (FriendshipGroupDetection.Instance.IsInParty)
@@ -228,9 +189,7 @@ namespace iiMenu.Mods
                 NotifiLib.SendNotification("<color=grey>[</color><color=purple>PARTY</color><color=grey>]</color> <color=white>Kicking " + amountPartying.ToString() + " party members, this may take a second...</color>");
             }
             else
-            {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not in a party!</color>");
-            }
         }
 
         public static void BanAllInParty()
@@ -246,9 +205,7 @@ namespace iiMenu.Mods
                 NotifiLib.SendNotification("<color=grey>[</color><color=purple>PARTY</color><color=grey>]</color> <color=white>Banning " + amountPartying.ToString() + " party members, this may take a second...</color>");
             }
             else
-            {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not in a party!</color>");
-            }
         }
 
         public static Coroutine partyKickDelayCoroutine;
@@ -393,9 +350,7 @@ namespace iiMenu.Mods
                     }
                 }
                 else
-                {
                     GorillaTagger.Instance.offlineVRRig.enabled = true;
-                }
             }
         }
 
@@ -470,9 +425,7 @@ namespace iiMenu.Mods
                     RPCProtection();
                 }
                 else
-                {
                     GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(sound, true, 999999f);
-                }
             }
             if (isBoopRight && !lastrhboop)
             {
@@ -486,9 +439,7 @@ namespace iiMenu.Mods
                     RPCProtection();
                 }
                 else
-                {
                     GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(sound, false, 999999f);
-                }
             }
             lastlhboop = isBoopLeft;
             lastrhboop = isBoopRight;
@@ -503,14 +454,14 @@ namespace iiMenu.Mods
                 ControllerInputPoller.instance.leftControllerIndexFloat = autoclickstate ? 1f : 0f;
 
                 GorillaTagger.Instance.offlineVRRig.leftHand.calcT = autoclickstate ? 1f : 0f;
-                GorillaTagger.Instance.offlineVRRig.leftHand.LerpFinger(1f, false);
+                GorillaTagger.Instance.offlineVRRig.leftHand.MapMyFinger(1f);
             }
             if (rightTrigger > 0.5f)
             {
                 ControllerInputPoller.instance.rightControllerIndexFloat = autoclickstate ? 1f : 0f;
 
                 GorillaTagger.Instance.offlineVRRig.rightHand.calcT = autoclickstate ? 1f : 0f;
-                GorillaTagger.Instance.offlineVRRig.rightHand.LerpFinger(1f, false);
+                GorillaTagger.Instance.offlineVRRig.rightHand.MapMyFinger(1f);
             }
         }
 
@@ -1237,9 +1188,7 @@ namespace iiMenu.Mods
                 foreach (BuilderPiece piece in GetAllType<BuilderPiece>())
                 {
                     if (piece.pieceType > 0)
-                    {
                         archivepiecesfiltered.Add(piece);
-                    }
                 }
             }
             return archivepiecesfiltered.ToArray();
@@ -1309,66 +1258,6 @@ namespace iiMenu.Mods
         {
             GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().maxDistanceFromOriginBeforeRespawn = 50f;
             GameObject.Find("Cave Bat Holdable").GetComponent<ThrowableBug>().maxDistanceFromTargetPlayerBeforeRespawn = 50f;
-        }
-
-        public static void NoRespawnGliders()
-        {
-            NoGliderRespawn = true;
-        }
-
-        public static void PleaseRespawnGliders()
-        {
-            NoGliderRespawn = false;
-        }
-
-        public static void AntiGrab()
-        {
-            Patches.GrabPatch.enabled = true;
-        }
-
-        public static void AntiGrabDisabled()
-        {
-            Patches.GrabPatch.enabled = false;
-        }
-
-        public static void AntiNoclip()
-        {
-            Patches.CaughtPatch.enabled = true;
-        }
-
-        public static void AntiNoclipDisabled()
-        {
-            Patches.CaughtPatch.enabled = false;
-        }
-
-        public static void AntiKnockback()
-        {
-            Patches.KnockbackPatch.enabled = true;
-        }
-
-        public static void AntiKnockbackDisabled()
-        {
-            Patches.KnockbackPatch.enabled = false;
-        }
-
-        public static void AntiSting()
-        {
-            Patches.BeesPatch.enabled = true;
-        }
-
-        public static void AntiStingDisabled()
-        {
-            Patches.BeesPatch.enabled = false;
-        }
-
-        public static void LargeSnowballs()
-        {
-            Patches.EnablePatch.enabled = true;
-        }
-
-        public static void LargeSnowballsDisabled()
-        {
-            Patches.EnablePatch.enabled = false;
         }
 
         public static void FastSnowballs()

@@ -684,9 +684,7 @@ namespace iiMenu.Mods.Spammers
 
             if (rightGrab)
             {
-                SnowballThrowable Projectile = GetProjectile(ProjectileObjectNames[projIndex]
-                    .Replace("Left", "Right")
-                    .Replace("LEFT", "RIGHT"));
+                SnowballThrowable Projectile = GetProjectile(ProjectileObjectNames[projIndex] + 1);
 
                 if (!Projectile.gameObject.activeSelf)
                 {
