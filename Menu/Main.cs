@@ -5093,8 +5093,8 @@ jgs \_   _/ |Oo\
         public static string StumpLeaderboardID = "UnityTempFile";
         public static string ForestLeaderboardID = "UnityTempFile";
 
-        public static int StumpLeaderboardIndex = 3;
-        public static int ForestLeaderboardIndex = 10;
+        public static int StumpLeaderboardIndex = 5;
+        public static int ForestLeaderboardIndex = 13;
 
         public static Material[] ogScreenMats = new Material[] { };
 

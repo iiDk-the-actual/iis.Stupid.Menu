@@ -802,13 +802,11 @@ namespace iiMenu.Mods
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
                 if (vrrig.mainSkin.material.name.Contains("gorilla_body"))
-                {
                     vrrig.mainSkin.material.color = vrrig.playerColor;
-                }
             }
         }
 
-        public static string leavesName = "UnityTempFile-2d01a31e46545094e907243efac2ea22";
+        public static string leavesName = "UnityTempFile-63cb50cfea10ced4d91f469791d0d539";
         public static List<GameObject> leaves = new List<GameObject> { };
         public static void EnableRemoveLeaves()
         {
@@ -872,9 +870,8 @@ namespace iiMenu.Mods
         public static void EnableCosmetics()
         {
             foreach (GameObject c in cosmetics)
-            {
                 c.SetActive(true);
-            }
+            
             cosmetics.Clear();
         }
 

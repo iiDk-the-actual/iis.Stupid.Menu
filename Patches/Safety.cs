@@ -284,7 +284,7 @@ namespace iiMenu.Patches
     [HarmonyPatch(typeof(VRRig), "PlayHandTapLocal")]
     public class AntiSoundPatch
     {
-        public static bool Prefix(int soundIndex, bool isLeftHand, float tapVolume)
+        public static bool Prefix(int audioClipIndex, bool isLeftHand, float tapVolume)
         {
             if (AntiSoundToggle)
                 return false;
