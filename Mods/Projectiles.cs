@@ -80,7 +80,7 @@ namespace iiMenu.Mods.Spammers
                 } catch (Exception e) { LogManager.Log(e.Message); }
 
                 if (projDebounceType > 0f)
-                    projDebounce = Time.time + Mathf.Min(projDebounceType, 1f); // Literally the only delay that works
+                    projDebounce = Time.time + Mathf.Min(projDebounceType, 0.16f);
             }
         }
 
