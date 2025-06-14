@@ -361,7 +361,7 @@ namespace iiMenu.Menu
                         motdTC.text = "Thanks for using ii's <b>Stupid</b> Menu!";
 
                         if (doCustomName)
-                            motdTC.text = "Thanks for using " + customMenuName + "!";
+                            motdTC.text = "Thanks for using " + NoRichtextTags(customMenuName) + "!";
 
                         if (translate)
                             motdTC.text = TranslateText(motdTC.text);
@@ -1376,18 +1376,19 @@ namespace iiMenu.Menu
 
                 if (lastClickedName != method.buttonText)
                 {
+                    bool shouldSwap = swapButtonColors && buttonIndex < 0;
                     GradientColorKey[] pressedColors = new[]
                     {
-                        new GradientColorKey(buttonClickedA, 0f),
-                        new GradientColorKey(buttonClickedB, 0.5f),
-                        new GradientColorKey(buttonClickedA, 1f)
+                        new GradientColorKey(shouldSwap ? buttonDefaultA : buttonClickedA, 0f),
+                        new GradientColorKey(shouldSwap ? buttonDefaultB : buttonClickedB, 0.5f),
+                        new GradientColorKey(shouldSwap ? buttonDefaultA : buttonClickedA, 1f)
                     };
 
                     GradientColorKey[] releasedColors = new[]
                     {
-                        new GradientColorKey(buttonDefaultA, 0f),
-                        new GradientColorKey(buttonDefaultB, 0.5f),
-                        new GradientColorKey(buttonDefaultA, 1f)
+                        new GradientColorKey(shouldSwap ? buttonClickedA : buttonDefaultA, 0f),
+                        new GradientColorKey(shouldSwap ? buttonClickedB : buttonDefaultB, 0.5f),
+                        new GradientColorKey(shouldSwap ? buttonClickedA : buttonDefaultA, 1f)
                     };
 
                     ColorChanger colorChanger = buttonObject.AddComponent<ColorChanger>();
@@ -1512,7 +1513,7 @@ namespace iiMenu.Menu
             buttonObject.AddComponent<Classes.Button>().relatedText = "Search";
 
             if (shouldOutline)
-                OutlineObj(buttonObject, !isSearching);
+                OutlineObj(buttonObject, swapButtonColors ? isSearching : !isSearching);
 
             GradientColorKey[] pressedColors = new[]
             {
@@ -1537,14 +1538,14 @@ namespace iiMenu.Menu
                 colorChanger.isMonkeColors = themeType == 8;
                 colorChanger.colors = new Gradient
                 {
-                    colorKeys = pressedColors
+                    colorKeys = swapButtonColors ? releasedColors : pressedColors
                 };
             }
             else
             {
                 colorChanger.colors = new Gradient
                 {
-                    colorKeys = releasedColors
+                    colorKeys = swapButtonColors ? pressedColors : releasedColors
                 };
             }
 
@@ -1608,20 +1609,22 @@ namespace iiMenu.Menu
             buttonObject.AddComponent<Classes.Button>().relatedText = "Global Return";
 
             if (shouldOutline)
-                OutlineObj(buttonObject, true);
+                OutlineObj(buttonObject, swapButtonColors ? false : true);
 
-            GradientColorKey[] releasedColors = new[]
+            GradientColorKey[] colorKeys = new[]
             {
-                new GradientColorKey(buttonDefaultA, 0f),
-                new GradientColorKey(buttonDefaultB, 0.5f),
-                new GradientColorKey(buttonDefaultA, 1f)
+                new GradientColorKey(swapButtonColors ? buttonClickedA : buttonDefaultA, 0f),
+                new GradientColorKey(swapButtonColors ? buttonClickedB : buttonDefaultB, 0.5f),
+                new GradientColorKey(swapButtonColors ? buttonClickedA : buttonDefaultA, 1f)
             };
 
-            ColorChanger colorChanger = buttonObject.AddComponent<ColorChanger>();
-            colorChanger.colors = new Gradient
+            if (lastClickedName != "Global Return")
             {
-                colorKeys = releasedColors
-            };
+                ColorChanger colorChanger = buttonObject.AddComponent<ColorChanger>();
+                colorChanger.colors = new Gradient { colorKeys = colorKeys };
+            }
+            else
+                CoroutineManager.RunCoroutine(ButtonClick(-99, buttonObject.GetComponent<Renderer>()));
 
             if (shouldRound)
                 RoundObj(buttonObject);
@@ -1874,7 +1877,6 @@ namespace iiMenu.Menu
                         colorChanger.isPastelRainbow = themeType == 51;
                         colorChanger.isEpileptic = themeType == 47;
                         colorChanger.isMonkeColors = themeType == 8;
-                        colorChanger.Start(); // Fix for the clamp color
                     }
                 }
             }
@@ -2447,9 +2449,9 @@ namespace iiMenu.Menu
         {
             GradientColorKey[] Gradient = new GradientColorKey[]
             {
-                new GradientColorKey(buttonDefaultA, 0f),
-                new GradientColorKey(buttonDefaultB, 0.5f),
-                new GradientColorKey(buttonDefaultA, 1f)
+                new GradientColorKey(swapButtonColors ? buttonClickedA : buttonDefaultA, 0f),
+                new GradientColorKey(swapButtonColors ? buttonClickedB : buttonDefaultB, 0.5f),
+                new GradientColorKey(swapButtonColors ? buttonClickedA : buttonDefaultA, 1f)
             };
 
             switch (pageButtonType)
@@ -2563,6 +2565,9 @@ namespace iiMenu.Menu
             RectTransform textRect = text.GetComponent<RectTransform>();
             textRect.localPosition = Vector3.zero;
             textRect.sizeDelta = textSize ?? new Vector2(0.2f, 0.03f);
+
+            if (arrowType == 11)
+                textRect.sizeDelta = new Vector2(textRect.sizeDelta.x, textRect.sizeDelta.y * 6f);
 
             if (NoAutoSizeText)
                 textRect.sizeDelta = new Vector2(9f, 0.015f);
@@ -3351,7 +3356,7 @@ namespace iiMenu.Menu
             float elapsedTime = 0f;
             while (elapsedTime < 0.1f)
             {
-                render.material.color = Color.Lerp(GetBDColor(0f), GetBRColor(0f), elapsedTime / 0.1f);
+                render.material.color = swapButtonColors ? Color.Lerp(GetBRColor(0f), GetBDColor(0f), elapsedTime / 0.1f) : Color.Lerp(GetBDColor(0f), GetBRColor(0f), elapsedTime / 0.1f);
                 elapsedTime += Time.deltaTime;
                 yield return null;
             }
@@ -3361,9 +3366,9 @@ namespace iiMenu.Menu
             {
                 colorKeys = new[]
                 {
-                    new GradientColorKey(buttonDefaultA, 0f),
-                    new GradientColorKey(buttonDefaultB, 0.5f),
-                    new GradientColorKey(buttonDefaultA, 1f)
+                    new GradientColorKey(swapButtonColors ? buttonClickedA : buttonDefaultA, 0f),
+                    new GradientColorKey(swapButtonColors ? buttonClickedB : buttonDefaultB, 0.5f),
+                    new GradientColorKey(swapButtonColors ? buttonClickedA : buttonDefaultA, 1f)
                 }
             };
             if (joystickMenu && buttonIndex == joystickButtonSelected)
@@ -4827,6 +4832,7 @@ jgs \_   _/ |Oo\
         public static int pageNumber;
         public static bool noPageNumber;
         public static bool disablePageButtons;
+        public static bool swapButtonColors;
         public static int pageButtonType = 1;
 
         public static int _currentCategoryIndex;
