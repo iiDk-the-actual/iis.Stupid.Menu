@@ -1350,12 +1350,12 @@ namespace iiMenu.Menu
                 else
                     buttonObject.transform.localScale = new Vector3(0.09f, 1.3f, 0.08f);
 
-                if (longmenu && buttonIndex > (pageSize - 1))
+                if (longmenu && buttonIndex >= pageSize)
                 {
                     menuBackground.transform.localScale += new Vector3(0f, 0f, 0.1f);
                     menuBackground.transform.localPosition += new Vector3(0f, 0f, -0.05f);
                 }
-
+                
                 buttonObject.transform.localPosition = new Vector3(0.56f, 0f, 0.28f - offset);
                 if (checkMode && buttonIndex > -1)
                 {
@@ -3401,33 +3401,31 @@ namespace iiMenu.Menu
         {
             if (snowballDict == null)
             {
+                if (!CosmeticsV2Spawner_Dirty.allPartsInstantiated)
+                    return null;
+
                 snowballDict = new Dictionary<string, SnowballThrowable>();
 
-                snowballs = FindObjectsOfType<SnowballThrowable>(true);
-                foreach (SnowballThrowable Throwable in snowballs)
+                foreach (SnowballMaker Maker in new[] { SnowballMaker.leftHandInstance, SnowballMaker.rightHandInstance })
                 {
-                    try
+                    foreach (SnowballThrowable Throwable in Maker.snowballs)
                     {
-                        if (GetFullPath(Throwable.transform.parent).ToLower() == "player objects/local vrrig/local gorilla player/holdables"
-                         || GetFullPath(Throwable.transform.parent).ToLower().Contains("player objects/local vrrig/local gorilla player/riganchor/rig/body/shoulder.l/upper_arm.l/forearm.l/hand.l/palm.01.l/transferrableitemlefthand")
-                         || GetFullPath(Throwable.transform.parent).ToLower().Contains("player objects/local vrrig/local gorilla player/riganchor/rig/body/shoulder.r/upper_arm.r/forearm.r/hand.r/palm.01.r/transferrableitemrighthand"))
-                            snowballDict.Add(Throwable.transform.parent.gameObject.name, Throwable); 
-                    } catch { }
+                        try
+                        {
+                            LogManager.Log(Throwable.transform.parent.gameObject.name);
+                            snowballDict.Add(Throwable.transform.parent.gameObject.name, Throwable);
+                        }
+                        catch { }
+                    }
                 }
-
-                if (snowballDict.Count < Projectiles.ProjectileObjectNames.Length)
-                    snowballDict = null;
             }
 
-            projectileName = $"{projectileName}(Clone)";
+            projectileName += "(Clone)";
 
             if (snowballDict != null && snowballDict.ContainsKey(projectileName))
                 return snowballDict[projectileName];
             else
-            {
-                LogManager.Log("No key found for " + projectileName);
                 return null;
-            }
         }
 
         public static Dictionary<Type, object[]> typePool = new Dictionary<Type, object[]> { };
@@ -3540,6 +3538,14 @@ namespace iiMenu.Menu
                     else
                         foreach (NetPlayer plr in ghostManager.currentInfected)
                             infected.Add(plr);
+                    break;
+                case GorillaGameModes.GameModeType.PropHaunt:
+                    GorillaPropHauntGameManager hauntManager = (GorillaPropHauntGameManager)GorillaGameManager.instance;
+                    foreach (VRRig rig in GorillaPropHauntGameManager._g_ph_activePlayerRigs)
+                    {
+                        if (rig.IsInvisibleToLocalPlayer)
+                            infected.Add(GetPlayerFromVRRig(rig));
+                    }
                     break;
             }
 
