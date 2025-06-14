@@ -22,13 +22,6 @@ namespace iiMenu.Patches
                 {
                     if (doOverride)
                     {
-                        handTapSpeed = overrideVolume;
-                        dirFromHitToHand = new Vector3(overrideVolume, overrideVolume, overrideVolume);
-                        GorillaTagger.Instance.handTapVolume = overrideVolume;
-                        GorillaTagger.Instance.dirFromHitToHand = new Vector3(overrideVolume, overrideVolume, overrideVolume);
-                        effectContext.speed = overrideVolume;
-                        effectContext.clipVolume = overrideVolume;
-
                         if (PhotonNetwork.InRoom)
                         {
                             GorillaTagger.Instance.myVRRig.SendRPC("OnHandTapRPC", RpcTarget.All, new object[]
@@ -51,10 +44,8 @@ namespace iiMenu.Patches
                                         handTapSpeed
                                     });
                                 }
-                                Main.RPCProtection();
                             }
-
-
+                            Main.RPCProtection();
                         } else
                             GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(audioClipIndex, isLeftHand, overrideVolume);
 
