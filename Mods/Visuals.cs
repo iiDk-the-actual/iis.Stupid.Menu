@@ -93,15 +93,6 @@ namespace iiMenu.Mods
         public static void WatchOff() =>
             UnityEngine.Object.Destroy(regwatchobject);
 
-        public static void PropHuntESP()
-        {
-            foreach (VRRig rig in GorillaPropHauntGameManager._g_ph_activePlayerRigs)
-            {
-                if (rig.IsInvisibleToLocalPlayer)
-                    GorillaPropHauntGameManager.instance._ResetRigAppearance(rig);
-            }
-        }
-
         public static Material oldSkyMat = null;
         public static void DoCustomSkyboxColor()
         {
