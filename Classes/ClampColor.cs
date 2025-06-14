@@ -6,8 +6,8 @@ namespace iiMenu.Classes
     {
         public void Start()
         {
-            if (targetRenderer.GetComponent<ColorChanger>() != null)
-                targetRenderer.GetComponent<ColorChanger>().Update();
+            if (targetRenderer.gameObject.GetComponent<ColorChanger>() != null)
+                targetRenderer.gameObject.GetComponent<ColorChanger>().Start();
 
             gameObjectRenderer = GetComponent<Renderer>();
             Update();
