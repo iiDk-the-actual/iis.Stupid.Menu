@@ -13,7 +13,7 @@ namespace iiMenu.Mods.Spammers
     public class Projectiles
     {
         // This file needs to be rewritten
-        public static GorillaVelocityEstimator VelocityEstimator = null;
+        public static GorillaVelocityEstimator VelocityEstimator;
 
         public static string[] ProjectileObjectNames = new string[]
         {
@@ -34,7 +34,17 @@ namespace iiMenu.Mods.Spammers
             "TrickTreatFunctionalAnchor",
             "TrickTreatFunctionalAnchorRIGHT Variant",
             "VotingRockAnchor_LEFT",
-            "VotingRockAnchor_RIGHT"
+            "VotingRockAnchor_RIGHT",
+            "BookLeftAnchor",
+            "BookRightAnchor",
+            "CoinLeftAnchor",
+            "CoinRightAnchor",
+            "EggLeftHand_Anchor Variant",
+            "EggRightHand_Anchor Variant",
+            "IceCreamLeftAnchor",
+            "IceCreamRightAnchor",
+            "HotDogLeftAnchor",
+            "HotDogRightAnchor"
         };
 
 
@@ -55,6 +65,7 @@ namespace iiMenu.Mods.Spammers
                 Throwable.transform.position = GorillaTagger.Instance.leftHandTransform.position;
                 Throwable.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
             }
+
             if (Time.time > projDebounce)
             {
                 try
@@ -80,7 +91,7 @@ namespace iiMenu.Mods.Spammers
                 } catch (Exception e) { LogManager.Log(e.Message); }
 
                 if (projDebounceType > 0f)
-                    projDebounce = Time.time + Mathf.Min(projDebounceType, 0.16f);
+                    projDebounce = Time.time + Mathf.Max(projDebounceType, 0.16f);
             }
         }
 
@@ -120,11 +131,16 @@ namespace iiMenu.Mods.Spammers
                 "Fish Food",
                 "Apple",
                 "Candy Corn",
-                "Voting Rock"
+                "Voting Rock",
+                "Book",
+                "Coin",
+                "Egg",
+                "Ice Cream",
+                "Hot Dog"
             };
 
             projmode++;
-            if (projmode > (shortProjectileNames.Length - 1))
+            if (projmode >= shortProjectileNames.Length)
                 projmode = 0;
 
             GetIndex("Change Projectile").overlapText = "Change Projectile <color=grey>[</color><color=green>" + shortProjectileNames[projmode] + "</color><color=grey>]</color>";
@@ -684,7 +700,7 @@ namespace iiMenu.Mods.Spammers
 
             if (rightGrab)
             {
-                SnowballThrowable Projectile = GetProjectile(ProjectileObjectNames[projIndex] + 1);
+                SnowballThrowable Projectile = GetProjectile(ProjectileObjectNames[projIndex + 1]);
 
                 if (!Projectile.gameObject.activeSelf)
                 {
