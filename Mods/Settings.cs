@@ -469,10 +469,8 @@ namespace iiMenu.Mods
         public static void ChangeMenuTheme()
         {
             themeType++;
-            if (themeType > 55)
-            {
+            if (themeType > 57)
                 themeType = 1;
-            }
 
             if (GetIndex("Custom Menu Theme").enabled)
                 return;
@@ -1095,6 +1093,17 @@ namespace iiMenu.Mods
                     titleColor = new Color32(205, 214, 244, 255);
                     textColor = new Color32(186, 194, 222, 255);
                     textClicked = new Color32(166, 173, 200, 255);
+                    break;
+                case 57: // Rexon
+                    bgColorA = new Color32(45, 25, 75, 255);
+                    bgColorB = new Color32(45, 25, 75, 255);
+                    buttonDefaultA = new Color32(40, 15, 60, 255);
+                    buttonDefaultB = new Color32(40, 15, 60, 255);
+                    buttonClickedA = new Color32(100, 30, 140, 255);
+                    buttonClickedB = new Color32(100, 30, 140, 255);
+                    titleColor = Color.white;
+                    textColor = Color.white;
+                    textClicked = Color.white;
                     break;
             }
         }
