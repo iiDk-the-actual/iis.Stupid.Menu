@@ -544,9 +544,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Day Time", method =() => BetterDayNightManager.instance.SetTimeOfDay(3), toolTip = "Sets your time of day to daytime."},
                 new ButtonInfo { buttonText = "Evening Time", method =() => BetterDayNightManager.instance.SetTimeOfDay(7), toolTip = "Sets your time of day to evening."},
                 new ButtonInfo { buttonText = "Night Time", method =() => BetterDayNightManager.instance.SetTimeOfDay(0), toolTip = "Sets your time of day to night."},
-                
                 new ButtonInfo { buttonText = "Fullbright", enableMethod =() => Visuals.SetFullbrightStatus(true), disableMethod =() => Visuals.SetFullbrightStatus(false), toolTip = "Disables the dynamic lighting in maps that use it."},
-                new ButtonInfo { buttonText = "Prop Hunt ESP", method =() => Visuals.PropHuntESP(), toolTip = "Disables the dynamic lighting in maps that use it."},
 
                 new ButtonInfo { buttonText = "Rainy Weather", method =() => Visuals.WeatherChange(true), toolTip = "Forces the weather to rain."},
                 new ButtonInfo { buttonText = "Clear Weather", method =() => Visuals.WeatherChange(false), toolTip = "Forces the weather to sunny skies all day."},
