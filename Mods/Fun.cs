@@ -25,18 +25,6 @@ namespace iiMenu.Mods
 {
     public class Fun
     {
-        public static void SetTime(int setTime) =>
-            BetterDayNightManager.instance.SetTimeOfDay(setTime);
-
-        public static void WeatherChange(bool rain)
-        {
-            for (int i = 1; i < BetterDayNightManager.instance.weatherCycle.Length; i++)
-                BetterDayNightManager.instance.weatherCycle[i] = rain ? BetterDayNightManager.WeatherType.Raining : BetterDayNightManager.WeatherType.None;     
-        }
-
-        public static void SetFullbrightStatus(bool fullBright) =>
-            GameLightingManager.instance.SetCustomDynamicLightingEnabled(!fullBright);
-
         public static void FixHead()
         {
             GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.x = 0f;
