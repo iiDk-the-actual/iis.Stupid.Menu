@@ -16,6 +16,16 @@ namespace iiMenu.Mods
 {
     public class Visuals
     {
+        public static void WeatherChange(bool rain)
+        {
+            for (int i = 1; i < BetterDayNightManager.instance.weatherCycle.Length; i++)
+                BetterDayNightManager.instance.weatherCycle[i] = rain ? BetterDayNightManager.WeatherType.Raining : BetterDayNightManager.WeatherType.None;
+        }
+
+        public static void SetFullbrightStatus(bool fullBright) =>
+            GameLightingManager.instance.SetCustomDynamicLightingEnabled(!fullBright);
+
+
         public static void WatchOn()
         {
             GameObject mainwatch = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/huntcomputer (1)");
@@ -55,7 +65,7 @@ namespace iiMenu.Mods
             {
                 regwatchText.GetComponent<UnityEngine.UI.Text>().text = "ii's Stupid Menu";
                 if (doCustomName)
-                    regwatchText.GetComponent<UnityEngine.UI.Text>().text = customMenuName;
+                    regwatchText.GetComponent<UnityEngine.UI.Text>().text = NoRichtextTags(customMenuName);
                 regwatchText.GetComponent<UnityEngine.UI.Text>().text += "\n<color=grey>";
                 regwatchText.GetComponent<UnityEngine.UI.Text>().text += Main.lastDeltaTime.ToString() + " FPS\n";
                 regwatchText.GetComponent<UnityEngine.UI.Text>().text += DateTime.Now.ToString("hh:mm tt") + "\n</color>";
@@ -64,13 +74,11 @@ namespace iiMenu.Mods
             {
                 if (infoWatchMenuName) regwatchText.GetComponent<UnityEngine.UI.Text>().text = "ii's Stupid Menu\n<color=grey>";
                 if (doCustomName && infoWatchMenuName)
-                {
-                    regwatchText.GetComponent<UnityEngine.UI.Text>().text = customMenuName + "\n<color=grey>";
-                }
+                    regwatchText.GetComponent<UnityEngine.UI.Text>().text = NoRichtextTags(customMenuName) + "\n<color=grey>";
+                
                 if (!infoWatchMenuName)
-                {
                     regwatchText.GetComponent<UnityEngine.UI.Text>().text = "<color=grey>";
-                }
+                
                 if (infoWatchFPS) regwatchText.GetComponent<UnityEngine.UI.Text>().text += Main.lastDeltaTime.ToString() + " FPS\n";
                 if (infoWatchTime) regwatchText.GetComponent<UnityEngine.UI.Text>().text += DateTime.Now.ToString("hh:mm tt") + "\n";
                 if (infoWatchClip) regwatchText.GetComponent<UnityEngine.UI.Text>().text += "Clip: " + (GUIUtility.systemCopyBuffer.Length > 20 ? GUIUtility.systemCopyBuffer.Substring(0, 20) : GUIUtility.systemCopyBuffer) + "\n";
@@ -82,9 +90,16 @@ namespace iiMenu.Mods
                     regwatchText.GetComponent<UnityEngine.UI.Text>().text = regwatchText.GetComponent<UnityEngine.UI.Text>().text.ToLower();
         }
 
-        public static void WatchOff()
-        {
+        public static void WatchOff() =>
             UnityEngine.Object.Destroy(regwatchobject);
+
+        public static void PropHuntESP()
+        {
+            foreach (VRRig rig in GorillaPropHauntGameManager._g_ph_activePlayerRigs)
+            {
+                if (rig.IsInvisibleToLocalPlayer)
+                    GorillaPropHauntGameManager.instance._ResetRigAppearance(rig);
+            }
         }
 
         public static Material oldSkyMat = null;
@@ -806,7 +821,7 @@ namespace iiMenu.Mods
             }
         }
 
-        public static string leavesName = "UnityTempFile-63cb50cfea10ced4d91f469791d0d539";
+        public static string leavesName = "UnityTempFile-26577bdd7a2dbde479b5e9ed43bfffcc";
         public static List<GameObject> leaves = new List<GameObject> { };
         public static void EnableRemoveLeaves()
         {
