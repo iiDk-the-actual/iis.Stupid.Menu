@@ -111,7 +111,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Change Pointer Position", method =() => Settings.ChangePointerPosition(), isTogglable = false, toolTip = "Changes the position of the pointer."},
 
                 new ButtonInfo { buttonText = "Swap GUI Colors", toolTip = "Swaps the GUI colors to the enabled color, for darker themes."},
-                
+                new ButtonInfo { buttonText = "Swap Button Colors", enableMethod =() => swapButtonColors = true, disableMethod =() => swapButtonColors = false, toolTip = "Swaps the colors of the page buttons, disconnect button, search button, and return button to be the opposite color."},
+
                 new ButtonInfo { buttonText = "Change Gun Line Quality", overlapText = "Change Gun Line Quality <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method =() => Settings.ChangeGunLineQuality(), isTogglable = false, toolTip = "Changes the amount of points on your gun."},
                 new ButtonInfo { buttonText = "Change Gun Variation", overlapText = "Change Gun Variation <color=grey>[</color><color=green>Default</color><color=grey>]</color>", method =() => Settings.ChangeGunVariation(), isTogglable = false, toolTip = "Changes the look of the gun."},
                 new ButtonInfo { buttonText = "Change Gun Direction", overlapText = "Change Gun Direction <color=grey>[</color><color=green>Default</color><color=grey>]</color>", method =() => Settings.ChangeGunDirection(), isTogglable = false, toolTip = "Changes the direction of the gun."},
@@ -539,14 +540,16 @@ namespace iiMenu.Menu
             new ButtonInfo[] { // Visual Mods [11]
                 new ButtonInfo { buttonText = "Exit Visual Mods", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
 
-                new ButtonInfo { buttonText = "Morning Time", method =() => Fun.SetTime(1), toolTip = "Sets your time of day to morning."},
+                new ButtonInfo { buttonText = "Morning Time", method =() => BetterDayNightManager.instance.SetTimeOfDay(1), toolTip = "Sets your time of day to morning."},
                 new ButtonInfo { buttonText = "Day Time", method =() => BetterDayNightManager.instance.SetTimeOfDay(3), toolTip = "Sets your time of day to daytime."},
                 new ButtonInfo { buttonText = "Evening Time", method =() => BetterDayNightManager.instance.SetTimeOfDay(7), toolTip = "Sets your time of day to evening."},
                 new ButtonInfo { buttonText = "Night Time", method =() => BetterDayNightManager.instance.SetTimeOfDay(0), toolTip = "Sets your time of day to night."},
-                new ButtonInfo { buttonText = "Fullbright", enableMethod =() => Fun.SetFullbrightStatus(true), disableMethod =() => Fun.SetFullbrightStatus(false), toolTip = "Disables the dynamic lighting in maps that use it."},
+                
+                new ButtonInfo { buttonText = "Fullbright", enableMethod =() => Visuals.SetFullbrightStatus(true), disableMethod =() => Visuals.SetFullbrightStatus(false), toolTip = "Disables the dynamic lighting in maps that use it."},
+                new ButtonInfo { buttonText = "Prop Hunt ESP", method =() => Visuals.PropHuntESP(), toolTip = "Disables the dynamic lighting in maps that use it."},
 
-                new ButtonInfo { buttonText = "Rainy Weather", method =() => Fun.WeatherChange(true), toolTip = "Forces the weather to rain."},
-                new ButtonInfo { buttonText = "Clear Weather", method =() => Fun.WeatherChange(false), toolTip = "Forces the weather to sunny skies all day."},
+                new ButtonInfo { buttonText = "Rainy Weather", method =() => Visuals.WeatherChange(true), toolTip = "Forces the weather to rain."},
+                new ButtonInfo { buttonText = "Clear Weather", method =() => Visuals.WeatherChange(false), toolTip = "Forces the weather to sunny skies all day."},
 
                 new ButtonInfo { buttonText = "Custom Skybox Color", enableMethod =() => Visuals.DoCustomSkyboxColor(), method =() => Visuals.CustomSkyboxColor(), disableMethod =() => Visuals.UnCustomSkyboxColor(), toolTip = "Changes the skybox color to match the menu."},
 
