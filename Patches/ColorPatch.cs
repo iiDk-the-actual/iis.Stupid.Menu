@@ -10,7 +10,7 @@ namespace iiMenu.Patches
 
         public static bool Prefix(VRRig __instance, int askingPlayerID, PhotonMessageInfoWrapped info)
         {
-            if (__instance == GorillaTagger.Instance.offlineVRRig)
+            if (__instance == VRRig.LocalRig)
             {
                 if (nameSpoofEnabled)
                 {

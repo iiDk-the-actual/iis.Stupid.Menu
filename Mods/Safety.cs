@@ -109,7 +109,7 @@ namespace iiMenu.Mods
                         
                         foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                         {
-                            if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                            if (vrrig != VRRig.LocalRig)
                             {
                                 float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
                                 float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
@@ -150,7 +150,7 @@ namespace iiMenu.Mods
                         
                         foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                         {
-                            if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                            if (vrrig != VRRig.LocalRig)
                             {
                                 float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
                                 float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
@@ -191,7 +191,7 @@ namespace iiMenu.Mods
                         
                         foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                         {
-                            if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                            if (vrrig != VRRig.LocalRig)
                             {
                                 float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
                                 float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
@@ -235,7 +235,7 @@ namespace iiMenu.Mods
                             
                             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                             {
-                                if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                                if (vrrig != VRRig.LocalRig)
                                 {
                                     float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
                                     float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);

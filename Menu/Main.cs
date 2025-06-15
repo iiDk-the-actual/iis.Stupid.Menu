@@ -459,7 +459,7 @@ namespace iiMenu.Menu
                                         if (keyCode == KeyCode.Backspace)
                                             lastBackspaceTime = Time.time + 0.1f;
 
-                                        GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(66, false, buttonClickVolume / 10f);
+                                        VRRig.LocalRig.PlayHandTapLocal(66, false, buttonClickVolume / 10f);
                                         pageNumber = 0;
                                         ReloadMenu();
                                     }
@@ -610,14 +610,14 @@ namespace iiMenu.Menu
                             {
                                 if (!lastGunSpawned)
                                 {
-                                    AudioSource audioSource = SwapGunHand ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
+                                    AudioSource audioSource = SwapGunHand ? VRRig.LocalRig.leftHandPlayer : VRRig.LocalRig.rightHandPlayer;
                                     audioSource.volume = buttonClickVolume / 10f;
                                     audioSource.PlayOneShot(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/grip-press.wav", "grip-press.wav"));
                                 }
 
                                 if (GetGunInput(true) && (!lastGunTrigger || (audiomgrhand != null && !audiomgrhand.GetComponent<AudioSource>().isPlaying)))
                                 {
-                                    AudioSource audioSource = SwapGunHand ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
+                                    AudioSource audioSource = SwapGunHand ? VRRig.LocalRig.leftHandPlayer : VRRig.LocalRig.rightHandPlayer;
                                     audioSource.volume = buttonClickVolume / 10f;
                                     audioSource.PlayOneShot(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/trigger-press.wav", "trigger-press.wav"));
 
@@ -626,7 +626,7 @@ namespace iiMenu.Menu
 
                                 if (!GetGunInput(true) && lastGunTrigger)
                                 {
-                                    AudioSource audioSource = SwapGunHand ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
+                                    AudioSource audioSource = SwapGunHand ? VRRig.LocalRig.leftHandPlayer : VRRig.LocalRig.rightHandPlayer;
                                     audioSource.volume = buttonClickVolume / 10f;
                                     audioSource.PlayOneShot(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/trigger-release.wav", "trigger-release.wav"));
 
@@ -637,7 +637,7 @@ namespace iiMenu.Menu
                             {
                                 if (lastGunSpawned)
                                 {
-                                    AudioSource audioSource = SwapGunHand ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
+                                    AudioSource audioSource = SwapGunHand ? VRRig.LocalRig.leftHandPlayer : VRRig.LocalRig.rightHandPlayer;
                                     audioSource.volume = buttonClickVolume / 10f;
                                     audioSource.PlayOneShot(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/grip-release.wav", "grip-release.wav"));
                                 }
@@ -646,7 +646,7 @@ namespace iiMenu.Menu
                                 {
                                     audiomgrhand.GetComponent<AudioSource>().Stop();
 
-                                    AudioSource audioSource = SwapGunHand ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
+                                    AudioSource audioSource = SwapGunHand ? VRRig.LocalRig.leftHandPlayer : VRRig.LocalRig.rightHandPlayer;
                                     audioSource.volume = buttonClickVolume / 10f;
                                     audioSource.PlayOneShot(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/trigger-release.wav", "trigger-release.wav"));
                                 }
@@ -662,7 +662,7 @@ namespace iiMenu.Menu
                     // Ghostview
                     try
                     {
-                        if ((!GorillaTagger.Instance.offlineVRRig.enabled || ghostException) && !disableGhostview)
+                        if ((!VRRig.LocalRig.enabled || ghostException) && !disableGhostview)
                         {
                             if (legacyGhostview)
                             {
@@ -691,7 +691,7 @@ namespace iiMenu.Menu
                             {
                                 if (GhostRig == null)
                                 {
-                                    GhostRig = Instantiate<VRRig>(GorillaTagger.Instance.offlineVRRig, GorillaLocomotion.GTPlayer.Instance.transform.position, GorillaLocomotion.GTPlayer.Instance.transform.rotation);
+                                    GhostRig = Instantiate<VRRig>(VRRig.LocalRig, GorillaLocomotion.GTPlayer.Instance.transform.position, GorillaLocomotion.GTPlayer.Instance.transform.rotation);
                                     GhostRig.headBodyOffset = Vector3.zero;
                                     GhostRig.enabled = true;
 
@@ -699,7 +699,7 @@ namespace iiMenu.Menu
                                     GhostRig.transform.Find("VR Constraints/RightArm/Right Arm IK/SlideAudio").gameObject.SetActive(false);
 
                                     Visuals.FixRigMaterialESPColors(GhostRig);
-                                    //GhostPatch.Prefix(GorillaTagger.Instance.offlineVRRig);
+                                    //GhostPatch.Prefix(VRRig.LocalRig);
                                 }
 
                                 if (GhostMaterial == null)
@@ -1108,8 +1108,8 @@ namespace iiMenu.Menu
                         int randy = UnityEngine.Random.Range(1, 400);
                         if (randy == 21)
                         {
-                            GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(84, true, 0.4f);
-                            GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(84, false, 0.4f);
+                            VRRig.LocalRig.PlayHandTapLocal(84, true, 0.4f);
+                            VRRig.LocalRig.PlayHandTapLocal(84, false, 0.4f);
                             NotifiLib.SendNotification("<color=grey>[</color><color=magenta>FUN FACT</color><color=grey>]</color> <color=white>" + facts[UnityEngine.Random.Range(0, facts.Length - 1)] + "</color>");
                         }
                     }
@@ -1255,8 +1255,8 @@ namespace iiMenu.Menu
                     }
                 case 8:
                     {
-                        if (!Menu.Main.PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
-                            oColor = GorillaTagger.Instance.offlineVRRig.mainSkin.material.color;
+                        if (!Menu.Main.PlayerIsTagged(VRRig.LocalRig))
+                            oColor = VRRig.LocalRig.mainSkin.material.color;
                         else
                             oColor = new Color32(255, 111, 0, 255);
 
@@ -1316,9 +1316,9 @@ namespace iiMenu.Menu
                         break;
                     }
                 case 8:
-                    if (!Menu.Main.PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
+                    if (!Menu.Main.PlayerIsTagged(VRRig.LocalRig))
                     {
-                        oColor = GorillaTagger.Instance.offlineVRRig.mainSkin.material.color;
+                        oColor = VRRig.LocalRig.mainSkin.material.color;
                     }
                     else
                     {
@@ -3057,7 +3057,7 @@ namespace iiMenu.Menu
                                     audioSize += targetRecorder.Loudness * 3f;
                             }
 
-                            GorillaSpeakerLoudness localRecorder = GorillaTagger.Instance.offlineVRRig.GetComponent<GorillaSpeakerLoudness>();
+                            GorillaSpeakerLoudness localRecorder = VRRig.LocalRig.GetComponent<GorillaSpeakerLoudness>();
                             if (localRecorder != null)
                                 audioSize += localRecorder.Loudness * 3f;
 
@@ -3474,7 +3474,7 @@ namespace iiMenu.Menu
 
         public static BuilderTable GetBuilderTable()
         {
-            BuilderTable.TryGetBuilderTableForZone(GorillaTagger.Instance.offlineVRRig.zoneEntity.currentZone, out BuilderTable table);
+            BuilderTable.TryGetBuilderTableForZone(VRRig.LocalRig.zoneEntity.currentZone, out BuilderTable table);
             return table;
         }
 
@@ -3510,7 +3510,7 @@ namespace iiMenu.Menu
         }
 
         public static bool PlayerIsLocal(VRRig Player) => 
-            Player == GorillaTagger.Instance.offlineVRRig || Player == GhostRig;
+            Player == VRRig.LocalRig || Player == GhostRig;
 
         public static List<NetPlayer> InfectedList()
         {
@@ -3741,7 +3741,7 @@ namespace iiMenu.Menu
                 temp.maxDistance = 15f;
                 temp.spatialize = true;
             }
-            audiomgrhand.transform.SetParent(left ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer.gameObject.transform : GorillaTagger.Instance.offlineVRRig.rightHandPlayer.gameObject.transform, false);
+            audiomgrhand.transform.SetParent(left ? VRRig.LocalRig.leftHandPlayer.gameObject.transform : VRRig.LocalRig.rightHandPlayer.gameObject.transform, false);
 
             AudioSource ausrc = audiomgrhand.GetComponent<AudioSource>();
             ausrc.clip = sound;
@@ -4325,8 +4325,8 @@ namespace iiMenu.Menu
         {
             GorillaComputer.instance.currentName = PlayerName;
             PhotonNetwork.LocalPlayer.NickName = PlayerName;
-            GorillaTagger.Instance.offlineVRRig.playerText1.text = PlayerName;
-            GorillaTagger.Instance.offlineVRRig.playerText2.text = PlayerName;
+            VRRig.LocalRig.playerText1.text = PlayerName;
+            VRRig.LocalRig.playerText2.text = PlayerName;
             GorillaComputer.instance.savedName = PlayerName;
             PlayerPrefs.SetString("playerName", PlayerName);
             PlayerPrefs.Save();
@@ -4335,7 +4335,7 @@ namespace iiMenu.Menu
             {
                 if (GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(PhotonNetwork.LocalPlayer.UserId) || CosmeticWardrobeProximityDetector.IsUserNearWardrobe(PhotonNetwork.LocalPlayer.UserId))
                 {
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_InitializeNoobMaterial", RpcTarget.All, new object[] { GorillaTagger.Instance.offlineVRRig.playerColor.r, GorillaTagger.Instance.offlineVRRig.playerColor.g, GorillaTagger.Instance.offlineVRRig.playerColor.b });
+                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_InitializeNoobMaterial", RpcTarget.All, new object[] { VRRig.LocalRig.playerColor.r, VRRig.LocalRig.playerColor.g, VRRig.LocalRig.playerColor.b });
                     RPCProtection();
                 }
             } catch { }
@@ -4347,7 +4347,7 @@ namespace iiMenu.Menu
             PlayerPrefs.SetFloat("greenValue", Mathf.Clamp(color.g, 0f, 1f));
             PlayerPrefs.SetFloat("blueValue", Mathf.Clamp(color.b, 0f, 1f));
 
-            //GorillaTagger.Instance.offlineVRRig.mainSkin.material.color = color;
+            //VRRig.LocalRig.mainSkin.material.color = color;
             GorillaTagger.Instance.UpdateColor(color.r, color.g, color.b);
             PlayerPrefs.Save();
 
@@ -4370,7 +4370,7 @@ namespace iiMenu.Menu
 
                 if (buttonClickIndex <= 3 || buttonClickIndex == 11)
                 {
-                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(buttonClickSound, rightHand, buttonClickVolume / 10f);
+                    VRRig.LocalRig.PlayHandTapLocal(buttonClickSound, rightHand, buttonClickVolume / 10f);
                     if (PhotonNetwork.InRoom && serversidedButtonSounds)
                     {
                         GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.Others, new object[] {
@@ -4412,7 +4412,7 @@ namespace iiMenu.Menu
                     }
                     catch { }
 
-                    AudioSource audioSource = rightHand ? GorillaTagger.Instance.offlineVRRig.leftHandPlayer : GorillaTagger.Instance.offlineVRRig.rightHandPlayer;
+                    AudioSource audioSource = rightHand ? VRRig.LocalRig.leftHandPlayer : VRRig.LocalRig.rightHandPlayer;
                     audioSource.volume = buttonClickVolume / 10f;
                     audioSource.PlayOneShot(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/" + namesToIds[buttonClickIndex] + ".ogg", namesToIds[buttonClickIndex] + ".ogg"));
                 }
@@ -4434,7 +4434,7 @@ namespace iiMenu.Menu
                 else
                     searchText += key.ToLower();
             }
-            GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(66, false, buttonClickVolume / 10f);
+            VRRig.LocalRig.PlayHandTapLocal(66, false, buttonClickVolume / 10f);
             pageNumber = 0;
             ReloadMenu();
         }
@@ -4558,13 +4558,13 @@ namespace iiMenu.Menu
                                     target.customBind = null;
                                     ModBindings[BindedTo].Remove(target.buttonText);
                                     NotifiLib.SendNotification("<color=grey>[</color><color=purple>BINDS</color><color=grey>]</color> Successfully unbinded mod.");
-                                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(48, rightHand, 0.4f);
+                                    VRRig.LocalRig.PlayHandTapLocal(48, rightHand, 0.4f);
                                 } else
                                 {
                                     target.customBind = BindInput;
                                     ModBindings[BindInput].Add(target.buttonText);
                                     NotifiLib.SendNotification("<color=grey>[</color><color=purple>BINDS</color><color=grey>]</color> Successfully binded mod to " + BindInput + ".");
-                                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(50, rightHand, 0.4f);
+                                    VRRig.LocalRig.PlayHandTapLocal(50, rightHand, 0.4f);
                                 }
                             }
                             else
@@ -4575,13 +4575,13 @@ namespace iiMenu.Menu
                                     {
                                         favorites.Remove(target.buttonText);
                                         NotifiLib.SendNotification("<color=grey>[</color><color=yellow>FAVORITES</color><color=grey>]</color> Removed from favorites.");
-                                        GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(48, rightHand, 0.4f);
+                                        VRRig.LocalRig.PlayHandTapLocal(48, rightHand, 0.4f);
                                     }
                                     else
                                     {
                                         favorites.Add(target.buttonText);
                                         NotifiLib.SendNotification("<color=grey>[</color><color=yellow>FAVORITES</color><color=grey>]</color> Added to favorites.");
-                                        GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(50, rightHand, 0.4f);
+                                        VRRig.LocalRig.PlayHandTapLocal(50, rightHand, 0.4f);
                                     }
                                 }
                             }
@@ -4594,11 +4594,11 @@ namespace iiMenu.Menu
                                 {
                                     hotkeyButton = target.buttonText;
                                     NotifiLib.SendNotification("<color=grey>[</color><color=purple>HOTKEY</color><color=grey>]</color> Set hotkey button.");
-                                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(50, rightHand, 0.4f);
+                                    VRRig.LocalRig.PlayHandTapLocal(50, rightHand, 0.4f);
                                 } else
                                 {
                                     hotkeyButton = "none";
-                                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(48, rightHand, 0.4f);
+                                    VRRig.LocalRig.PlayHandTapLocal(48, rightHand, 0.4f);
                                     NotifiLib.SendNotification("<color=grey>[</color><color=purple>HOTKEY</color><color=grey>]</color> Reset hotkey button.");
                                 }
                             }
@@ -4636,7 +4636,7 @@ namespace iiMenu.Menu
                                     {
                                         Classes.Console.ExecuteCommand("forceenable", ReceiverGroup.Others, target.buttonText, target.enabled);
                                         NotifiLib.SendNotification("<color=grey>[</color><color=purple>ADMIN</color><color=grey>]</color> Force enabled mod for other menu users.");
-                                        GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(50, rightHand, 0.4f);
+                                        VRRig.LocalRig.PlayHandTapLocal(50, rightHand, 0.4f);
                                     }
                                 } catch { }
                             }

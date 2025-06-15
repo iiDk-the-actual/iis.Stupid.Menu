@@ -30,8 +30,8 @@ namespace iiMenu.Mods
             if (PhotonNetwork.InRoom && GorillaGameManager.instance.GameType() == GameModeType.PropHaunt)
             {
                 GorillaPropHauntGameManager hauntManager = (GorillaPropHauntGameManager)GorillaGameManager.instance;
-                hauntManager._SetPlayerBlindfoldVisibility(GorillaTagger.Instance.offlineVRRig, PhotonNetwork.LocalPlayer, false);
-                hauntManager._SetPlayerBlindfoldVisibility(GorillaTagger.Instance.offlineVRRig, null, false);
+                hauntManager._SetPlayerBlindfoldVisibility(VRRig.LocalRig, PhotonNetwork.LocalPlayer, false);
+                hauntManager._SetPlayerBlindfoldVisibility(VRRig.LocalRig, null, false);
             }
         }
 
@@ -266,7 +266,7 @@ namespace iiMenu.Mods
                 }
                 if (isThereTagged)
                 {
-                    bool playerIsTagged = PlayerIsTagged(GorillaTagger.Instance.offlineVRRig);
+                    bool playerIsTagged = PlayerIsTagged(VRRig.LocalRig);
                     if (playerIsTagged && !lastWasTagged)
                     {
                         endTime = Time.time - startTime;
@@ -281,7 +281,7 @@ namespace iiMenu.Mods
                     if (GetIndex("Hidden Labels").enabled) { go.layer = 19; }
                     go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
                     TextMesh textMesh = go.AddComponent<TextMesh>();
-                    textMesh.color = PlayerIsTagged(GorillaTagger.Instance.offlineVRRig) ? Color.green : Color.white;
+                    textMesh.color = PlayerIsTagged(VRRig.LocalRig) ? Color.green : Color.white;
                     textMesh.fontSize = 24;
                     textMesh.fontStyle = activeFontStyle;
                     textMesh.characterSize = 0.1f;
@@ -316,12 +316,12 @@ namespace iiMenu.Mods
                 { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
             }
 
-            if (!PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
+            if (!PlayerIsTagged(VRRig.LocalRig))
             {
                 float closest = float.MaxValue;
                 foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                 {
-                    if (vrrig != GorillaTagger.Instance.offlineVRRig && PlayerIsTagged(vrrig))
+                    if (vrrig != VRRig.LocalRig && PlayerIsTagged(vrrig))
                     {
                         float dist = Vector3.Distance(GorillaTagger.Instance.headCollider.transform.position, vrrig.headMesh.transform.position);
                         if (dist < closest)
@@ -392,7 +392,7 @@ namespace iiMenu.Mods
                 if (GetIndex("Hidden Labels").enabled) { go.layer = 19; }
                 go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
                 TextMesh textMesh = go.AddComponent<TextMesh>();
-                textMesh.color = left <= 1 && !PlayerIsTagged(GorillaTagger.Instance.offlineVRRig) ? Color.green : Color.white;
+                textMesh.color = left <= 1 && !PlayerIsTagged(VRRig.LocalRig) ? Color.green : Color.white;
                 textMesh.fontSize = 24;
                 textMesh.fontStyle = activeFontStyle;
                 textMesh.characterSize = 0.1f;
@@ -435,7 +435,7 @@ namespace iiMenu.Mods
             visualizerObject.transform.rotation = Quaternion.LookRotation(Ray.normal) * Quaternion.Euler(90f, 0f, 0f);
 
             float size = 0f;
-            GorillaSpeakerLoudness recorder = GorillaTagger.Instance.offlineVRRig.GetComponent<GorillaSpeakerLoudness>();
+            GorillaSpeakerLoudness recorder = VRRig.LocalRig.GetComponent<GorillaSpeakerLoudness>();
             if (recorder != null)
             {
                 size = recorder.Loudness;
@@ -526,7 +526,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                if (vrrig != VRRig.LocalRig)
                 {
                     if (!nametags.ContainsKey(vrrig))
                     {
@@ -577,7 +577,7 @@ namespace iiMenu.Mods
             {
                 try
                 {
-                    if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                    if (vrrig != VRRig.LocalRig)
                     {
                         if (!velnametags.ContainsKey(vrrig))
                         {
@@ -629,7 +629,7 @@ namespace iiMenu.Mods
             {
                 try
                 {
-                    if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                    if (vrrig != VRRig.LocalRig)
                     {
                         if (!FPSnametags.ContainsKey(vrrig))
                         {
@@ -681,7 +681,7 @@ namespace iiMenu.Mods
             {
                 try
                 {
-                    if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                    if (vrrig != VRRig.LocalRig)
                     {
                         if (!turnNameTags.ContainsKey(vrrig))
                         {
@@ -736,7 +736,7 @@ namespace iiMenu.Mods
             {
                 try
                 {
-                    if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                    if (vrrig != VRRig.LocalRig)
                     {
                         if (!taggedNameTags.ContainsKey(vrrig))
                         {
@@ -870,9 +870,9 @@ namespace iiMenu.Mods
         {
             try
             {
-                foreach (GameObject Cosmetic in GorillaTagger.Instance.offlineVRRig.cosmetics)
+                foreach (GameObject Cosmetic in VRRig.LocalRig.cosmetics)
                 {
-                    if (Cosmetic.activeSelf && Cosmetic.transform.parent == GorillaTagger.Instance.offlineVRRig.mainCamera.transform.Find("HeadCosmetics"))
+                    if (Cosmetic.activeSelf && Cosmetic.transform.parent == VRRig.LocalRig.mainCamera.transform.Find("HeadCosmetics"))
                     {
                         cosmetics.Add(Cosmetic);
                         Cosmetic.SetActive(false);
@@ -894,7 +894,7 @@ namespace iiMenu.Mods
         {
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                if (vrrig != VRRig.LocalRig)
                 {
                     vrrig.lerpValueBody = 2f;
                     vrrig.lerpValueFingers = 1f;
@@ -906,10 +906,10 @@ namespace iiMenu.Mods
         {
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                if (vrrig != VRRig.LocalRig)
                 {
-                    vrrig.lerpValueBody = GorillaTagger.Instance.offlineVRRig.lerpValueBody;
-                    vrrig.lerpValueFingers = GorillaTagger.Instance.offlineVRRig.lerpValueFingers;
+                    vrrig.lerpValueBody = VRRig.LocalRig.lerpValueBody;
+                    vrrig.lerpValueFingers = VRRig.LocalRig.lerpValueFingers;
                 }
             }
         }
@@ -929,7 +929,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                if (vrrig != VRRig.LocalRig)
                 {
                     bool showtracersplz = false;
                     UnityEngine.Color thecolor = vrrig.playerColor;
@@ -981,7 +981,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                if (vrrig != VRRig.LocalRig)
                 {
                     float size = 0f;
                     GorillaSpeakerLoudness recorder = vrrig.GetComponent<GorillaSpeakerLoudness>();
@@ -1026,7 +1026,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                if (vrrig != VRRig.LocalRig)
                 {
                     GameObject volIndicator = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     UnityEngine.Object.Destroy(volIndicator.GetComponent<Collider>());
@@ -1082,7 +1082,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                if (vrrig != VRRig.LocalRig)
                 {
                     GameObject volIndicator = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     UnityEngine.Object.Destroy(volIndicator.GetComponent<Collider>());
@@ -1122,7 +1122,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                if (vrrig != VRRig.LocalRig)
                 {
                     float size = 0f;
                     GorillaSpeakerLoudness recorder = vrrig.GetComponent<GorillaSpeakerLoudness>();
@@ -1171,8 +1171,8 @@ namespace iiMenu.Mods
 
         private static void UpdateLimbColor()
         {
-            Color limbcolor = GorillaTagger.Instance.offlineVRRig.playerColor;
-            if (PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
+            Color limbcolor = VRRig.LocalRig.playerColor;
+            if (PlayerIsTagged(VRRig.LocalRig))
             {
                 limbcolor = new Color32(255, 111, 0, 255);
             }
@@ -1200,8 +1200,8 @@ namespace iiMenu.Mods
         {
             l.transform.position = TrueLeftHand().position;
             r.transform.position = TrueRightHand().position;
-            GorillaTagger.Instance.offlineVRRig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
-            GorillaTagger.Instance.offlineVRRig.mainSkin.material.color = new Color(GorillaTagger.Instance.offlineVRRig.mainSkin.material.color.r, GorillaTagger.Instance.offlineVRRig.mainSkin.material.color.g, GorillaTagger.Instance.offlineVRRig.mainSkin.material.color.b, 0f);
+            VRRig.LocalRig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
+            VRRig.LocalRig.mainSkin.material.color = new Color(VRRig.LocalRig.mainSkin.material.color.r, VRRig.LocalRig.mainSkin.material.color.g, VRRig.LocalRig.mainSkin.material.color.b, 0f);
             UpdateLimbColor();
         }
 
@@ -1210,8 +1210,8 @@ namespace iiMenu.Mods
             UnityEngine.Object.Destroy(l);
             UnityEngine.Object.Destroy(r);
 
-            GorillaTagger.Instance.offlineVRRig.mainSkin.material.shader = Shader.Find("GorillaTag/UberShader");
-            GorillaTagger.Instance.offlineVRRig.mainSkin.material.color = new Color(GorillaTagger.Instance.offlineVRRig.mainSkin.material.color.r, GorillaTagger.Instance.offlineVRRig.mainSkin.material.color.g, GorillaTagger.Instance.offlineVRRig.mainSkin.material.color.b, 1f);
+            VRRig.LocalRig.mainSkin.material.shader = Shader.Find("GorillaTag/UberShader");
+            VRRig.LocalRig.mainSkin.material.color = new Color(VRRig.LocalRig.mainSkin.material.color.r, VRRig.LocalRig.mainSkin.material.color.g, VRRig.LocalRig.mainSkin.material.color.b, 1f);
         }
 
         public static void CasualBoneESP()
@@ -1232,7 +1232,7 @@ namespace iiMenu.Mods
                 UnityEngine.Color thecolor = vrrig.playerColor;
                 if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                 if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
-                if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                if (vrrig != VRRig.LocalRig)
                 {
                     LineRenderer liner = vrrig.head.rigTarget.gameObject.GetOrAddComponent<LineRenderer>();
                     if (GetIndex("Hidden on Camera").enabled) { liner.gameObject.layer = 19; }
@@ -1293,14 +1293,14 @@ namespace iiMenu.Mods
             }
             if (isInfectedPlayers)
             {
-                if (!PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
+                if (!PlayerIsTagged(VRRig.LocalRig))
                 {
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
                         UnityEngine.Color thecolor = new Color32(255, 111, 0, 255);
                         if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                         if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
-                        if (PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
+                        if (PlayerIsTagged(vrrig) && vrrig != VRRig.LocalRig)
                         {
                             LineRenderer liner = vrrig.head.rigTarget.gameObject.GetOrAddComponent<LineRenderer>();
                             if (GetIndex("Hidden on Camera").enabled) { liner.gameObject.layer = 19; }
@@ -1343,7 +1343,7 @@ namespace iiMenu.Mods
                         UnityEngine.Color thecolor = vrrig.playerColor;
                         if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                         if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
-                        if (!PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
+                        if (!PlayerIsTagged(vrrig) && vrrig != VRRig.LocalRig)
                         {
                             LineRenderer liner = vrrig.head.rigTarget.gameObject.GetOrAddComponent<LineRenderer>();
                             if (GetIndex("Hidden on Camera").enabled) { liner.gameObject.layer = 19; }
@@ -1387,7 +1387,7 @@ namespace iiMenu.Mods
                     UnityEngine.Color thecolor = vrrig.playerColor;
                     if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                     if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
-                    if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                    if (vrrig != VRRig.LocalRig)
                     {
                         LineRenderer liner = vrrig.head.rigTarget.gameObject.GetOrAddComponent<LineRenderer>();
                         if (GetIndex("Hidden on Camera").enabled) { liner.gameObject.layer = 19; }
@@ -1538,7 +1538,7 @@ namespace iiMenu.Mods
         {
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                if (vrrig != VRRig.LocalRig)
                 {
                     FixRigMaterialESPColors(vrrig);
 
@@ -1563,11 +1563,11 @@ namespace iiMenu.Mods
             }
             if (isInfectedPlayers)
             {
-                if (!PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
+                if (!PlayerIsTagged(VRRig.LocalRig))
                 {
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
-                        if (PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
+                        if (PlayerIsTagged(vrrig) && vrrig != VRRig.LocalRig)
                         {
                             FixRigMaterialESPColors(vrrig);
 
@@ -1586,7 +1586,7 @@ namespace iiMenu.Mods
                 {
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
-                        if (!PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
+                        if (!PlayerIsTagged(vrrig) && vrrig != VRRig.LocalRig)
                         {
                             FixRigMaterialESPColors(vrrig);
 
@@ -1602,7 +1602,7 @@ namespace iiMenu.Mods
             {
                 foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                 {
-                    if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                    if (vrrig != VRRig.LocalRig)
                     {
                         FixRigMaterialESPColors(vrrig);
 
@@ -1647,7 +1647,7 @@ namespace iiMenu.Mods
         {
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                if (vrrig != VRRig.LocalRig)
                 {
                     vrrig.mainSkin.material.shader = Shader.Find("GorillaTag/UberShader");
                 }
@@ -1669,7 +1669,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                if (vrrig != VRRig.LocalRig)
                 {
                     UnityEngine.Color thecolor = vrrig.playerColor;
                     if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
@@ -1711,11 +1711,11 @@ namespace iiMenu.Mods
             }
             if (isInfectedPlayers)
             {
-                if (!PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
+                if (!PlayerIsTagged(VRRig.LocalRig))
                 {
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
-                        if (PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
+                        if (PlayerIsTagged(vrrig) && vrrig != VRRig.LocalRig)
                         {
                             UnityEngine.Color thecolor = new Color32(255, 111, 0, 255);
                             if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
@@ -1736,7 +1736,7 @@ namespace iiMenu.Mods
                 {
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
-                        if (!PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
+                        if (!PlayerIsTagged(vrrig) && vrrig != VRRig.LocalRig)
                         {
                             UnityEngine.Color thecolor = vrrig.playerColor;
                             if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
@@ -1758,7 +1758,7 @@ namespace iiMenu.Mods
             {
                 foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                 {
-                    if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                    if (vrrig != VRRig.LocalRig)
                     {
                         UnityEngine.Color thecolor = vrrig.playerColor;
                         if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
@@ -1842,7 +1842,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                if (vrrig != VRRig.LocalRig)
                 {
                     UnityEngine.Color thecolor = vrrig.playerColor;
                     if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
@@ -1924,11 +1924,11 @@ namespace iiMenu.Mods
             }
             if (isInfectedPlayers)
             {
-                if (!PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
+                if (!PlayerIsTagged(VRRig.LocalRig))
                 {
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
-                        if (PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
+                        if (PlayerIsTagged(vrrig) && vrrig != VRRig.LocalRig)
                         {
                             UnityEngine.Color thecolor = new Color32(255, 111, 0, 255);
                             if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
@@ -1989,7 +1989,7 @@ namespace iiMenu.Mods
                 {
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
-                        if (!PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
+                        if (!PlayerIsTagged(vrrig) && vrrig != VRRig.LocalRig)
                         {
                             UnityEngine.Color thecolor = vrrig.playerColor;
                             if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
@@ -2051,7 +2051,7 @@ namespace iiMenu.Mods
             {
                 foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                 {
-                    if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                    if (vrrig != VRRig.LocalRig)
                     {
                         UnityEngine.Color thecolor = vrrig.playerColor;
                         if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
@@ -2245,7 +2245,7 @@ namespace iiMenu.Mods
         {
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                if (vrrig != VRRig.LocalRig)
                 {
                     UnityEngine.Color thecolor = vrrig.playerColor;
                     if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
@@ -2274,11 +2274,11 @@ namespace iiMenu.Mods
             }
             if (isInfectedPlayers)
             {
-                if (!PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
+                if (!PlayerIsTagged(VRRig.LocalRig))
                 {
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
-                        if (PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
+                        if (PlayerIsTagged(vrrig) && vrrig != VRRig.LocalRig)
                         {
                             UnityEngine.Color thecolor = new Color32(255, 111, 0, 255);
                             if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
@@ -2297,7 +2297,7 @@ namespace iiMenu.Mods
                 {
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
-                        if (!PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
+                        if (!PlayerIsTagged(vrrig) && vrrig != VRRig.LocalRig)
                         {
                             UnityEngine.Color thecolor = vrrig.playerColor;
                             if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
@@ -2317,7 +2317,7 @@ namespace iiMenu.Mods
             {
                 foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                 {
-                    if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                    if (vrrig != VRRig.LocalRig)
                     {
                         UnityEngine.Color thecolor = vrrig.playerColor;
                         if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
@@ -2453,7 +2453,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
             {
-                if (playerRig == GorillaTagger.Instance.offlineVRRig)
+                if (playerRig == VRRig.LocalRig)
                     continue;
 
                 Color lineColor = playerRig.playerColor;
@@ -2488,12 +2488,12 @@ namespace iiMenu.Mods
             bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
             float lineWidth = GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f;
 
-            bool LocalTagged = PlayerIsTagged(GorillaTagger.Instance.offlineVRRig);
+            bool LocalTagged = PlayerIsTagged(VRRig.LocalRig);
             bool NoInfected = InfectedList().Count == 0;
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
             {
-                if (playerRig == GorillaTagger.Instance.offlineVRRig)
+                if (playerRig == VRRig.LocalRig)
                     continue;
 
                 Color lineColor = playerRig.playerColor;
@@ -2555,7 +2555,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
             {
-                if (playerRig == GorillaTagger.Instance.offlineVRRig)
+                if (playerRig == VRRig.LocalRig)
                     continue;
 
                 if (GetPlayerFromVRRig(playerRig) == currentTarget)
@@ -2614,7 +2614,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
             {
-                if (playerRig == GorillaTagger.Instance.offlineVRRig)
+                if (playerRig == VRRig.LocalRig)
                     continue;
 
                 Color lineColor = playerRig.playerColor;
@@ -2648,14 +2648,14 @@ namespace iiMenu.Mods
             bool transparentTheme = GetIndex("Transparent Theme").enabled;
             bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
 
-            bool LocalTagged = PlayerIsTagged(GorillaTagger.Instance.offlineVRRig);
+            bool LocalTagged = PlayerIsTagged(VRRig.LocalRig);
             bool NoInfected = InfectedList().Count == 0;
 
             Color menuColor = GetBDColor(0f);
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
             {
-                if (playerRig == GorillaTagger.Instance.offlineVRRig)
+                if (playerRig == VRRig.LocalRig)
                     continue;
 
                 Color lineColor = playerRig.playerColor;
@@ -2719,7 +2719,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
             {
-                if (playerRig == GorillaTagger.Instance.offlineVRRig)
+                if (playerRig == VRRig.LocalRig)
                     continue;
 
                 if (GetPlayerFromVRRig(playerRig) == currentTarget)
@@ -2779,7 +2779,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
             {
-                if (playerRig == GorillaTagger.Instance.offlineVRRig) // Skip local player
+                if (playerRig == VRRig.LocalRig) // Skip local player
                     continue;
 
                 Color tagColor = followMenuTheme ? titleColor : Color.white;
@@ -2836,14 +2836,14 @@ namespace iiMenu.Mods
             bool transparentTheme = GetIndex("Transparent Theme").enabled;
             bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
 
-            bool LocalTagged = PlayerIsTagged(GorillaTagger.Instance.offlineVRRig);
+            bool LocalTagged = PlayerIsTagged(VRRig.LocalRig);
             bool NoInfected = InfectedList().Count == 0;
 
             Color menuColor = GetBDColor(0f);
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
             {
-                if (playerRig == GorillaTagger.Instance.offlineVRRig) //skip local player
+                if (playerRig == VRRig.LocalRig) //skip local player
                     continue;
 
                 Color tagColor = followMenuTheme ? titleColor : Color.white;
@@ -2936,7 +2936,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
             {
-                if (playerRig == GorillaTagger.Instance.offlineVRRig) // Skip local player
+                if (playerRig == VRRig.LocalRig) // Skip local player
                     continue;
 
                 if (GetPlayerFromVRRig(playerRig) == currentTarget) // Use ID for quick comparison

@@ -13,13 +13,13 @@ namespace iiMenu.Patches
         {
             if (enabled)
             {
-                GorillaSnapTurn GorillaSnapTurningComp = GorillaTagger.Instance.offlineVRRig.GorillaSnapTurningComp;
+                GorillaSnapTurn GorillaSnapTurningComp = VRRig.LocalRig.GorillaSnapTurningComp;
 
                 int turnTypeInt = 0;
                 if (GorillaSnapTurningComp != null)
                 {
-                    GorillaTagger.Instance.offlineVRRig.turnFactor = GorillaSnapTurningComp.turnFactor;
-                    GorillaTagger.Instance.offlineVRRig.turnType = GorillaSnapTurningComp.turnType;
+                    VRRig.LocalRig.turnFactor = GorillaSnapTurningComp.turnFactor;
+                    VRRig.LocalRig.turnType = GorillaSnapTurningComp.turnType;
 
                     if (!(GorillaSnapTurningComp.turnType == "SNAP"))
                     {

@@ -222,7 +222,7 @@ namespace iiMenu.Patches
     {
         public static bool Prefix(VRRig __instance, VRRig grabbedByRig, Vector3 throwVelocity)
         {
-            if (AntiCrashToggle && __instance == GorillaTagger.Instance.offlineVRRig && !GTExt.IsValid(throwVelocity))
+            if (AntiCrashToggle && __instance == VRRig.LocalRig && !GTExt.IsValid(throwVelocity))
                 return false;
             
             return true;
@@ -235,7 +235,7 @@ namespace iiMenu.Patches
         private static List<float> callTimestamps = new List<float>();
         public static bool Prefix(VRRig __instance)
         {
-            if (AntiCrashToggle && __instance == GorillaTagger.Instance.offlineVRRig)
+            if (AntiCrashToggle && __instance == VRRig.LocalRig)
             {
                 callTimestamps.Add(Time.time);
                 callTimestamps.RemoveAll(t => (Time.time - t) > 1);
@@ -252,7 +252,7 @@ namespace iiMenu.Patches
         private static List<float> callTimestamps = new List<float>();
         public static bool Prefix(VRRig __instance)
         {
-            if (AntiCrashToggle && __instance == GorillaTagger.Instance.offlineVRRig)
+            if (AntiCrashToggle && __instance == VRRig.LocalRig)
             {
                 callTimestamps.Add(Time.time);
                 callTimestamps.RemoveAll(t => (Time.time - t) > 1);

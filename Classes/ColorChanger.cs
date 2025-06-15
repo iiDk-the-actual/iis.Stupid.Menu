@@ -37,8 +37,8 @@ namespace iiMenu.Classes
                     }
                     else
                     {
-                        if (!Menu.Main.PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
-                            gameObjectRenderer.material.color = GorillaTagger.Instance.offlineVRRig.mainSkin.material.color;
+                        if (!Menu.Main.PlayerIsTagged(VRRig.LocalRig))
+                            gameObjectRenderer.material.color = VRRig.LocalRig.mainSkin.material.color;
                         else
                             gameObjectRenderer.material.color = new Color32(255, 111, 0, 255);
                     }

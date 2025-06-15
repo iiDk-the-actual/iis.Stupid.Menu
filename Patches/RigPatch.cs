@@ -7,7 +7,7 @@ namespace iiMenu.Patches
     {
         public static bool Prefix(VRRig __instance)
         {
-            return !(__instance == GorillaTagger.Instance.offlineVRRig);
+            return !(__instance == VRRig.LocalRig);
         }
     }
 
@@ -17,7 +17,7 @@ namespace iiMenu.Patches
     {
         public static bool Prefix(VRRigJobManager __instance, VRRig rig)
         {
-            return !(__instance == GorillaTagger.Instance.offlineVRRig);
+            return !(__instance == VRRig.LocalRig);
         }
     }
 }

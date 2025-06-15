@@ -191,12 +191,12 @@ namespace iiMenu.Mods
             text += $"new Quaternion({p.rotation.x.ToString()}f, {p.rotation.y.ToString()}f, {p.rotation.z.ToString()}f, {p.rotation.w.ToString()}f);\n\n";
 
             text += "Left Hand\n";
-            p = GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform;
+            p = VRRig.LocalRig.leftHand.rigTarget.transform;
             text += $"new Vector3({p.position.x.ToString()}f, {p.position.y.ToString()}f, {p.position.z.ToString()}f);";
             text += $"new Quaternion({p.rotation.x.ToString()}f, {p.rotation.y.ToString()}f, {p.rotation.z.ToString()}f, {p.rotation.w.ToString()}f);\n\n";
 
             text += "Right Hand\n";
-            p = GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform;
+            p = VRRig.LocalRig.rightHand.rigTarget.transform;
             text += $"new Vector3({p.position.x.ToString()}f, {p.position.y.ToString()}f, {p.position.z.ToString()}f);";
             text += $"new Quaternion({p.rotation.x.ToString()}f, {p.rotation.y.ToString()}f, {p.rotation.z.ToString()}f, {p.rotation.w.ToString()}f);";
 
@@ -223,13 +223,13 @@ namespace iiMenu.Mods
 
         public static void DisableMouthMovement()
         {
-            GorillaTagger.Instance.offlineVRRig.shouldSendSpeakingLoudness = false;
+            VRRig.LocalRig.shouldSendSpeakingLoudness = false;
             Patches.MicPatch.returnAsNone = true;
         }
 
         public static void EnableMouthMovement()
         {
-            GorillaTagger.Instance.offlineVRRig.shouldSendSpeakingLoudness = true;
+            VRRig.LocalRig.shouldSendSpeakingLoudness = true;
             Patches.MicPatch.returnAsNone = false;
         }
 

@@ -12,7 +12,7 @@ namespace iiMenu.Patches
 
         public static void Postfix(VRRig __instance)
         {
-            if (__instance == GorillaTagger.Instance.offlineVRRig && enabled)
+            if (__instance == VRRig.LocalRig && enabled)
             {
                 Quaternion rotation = Quaternion.identity;
                 switch (mode)

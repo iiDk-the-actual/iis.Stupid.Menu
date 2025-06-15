@@ -80,7 +80,7 @@ namespace iiMenu.Mods.Spammers
                     Throwable.transform.position = startpos;
 
                     GorillaTagger.Instance.GetComponent<Rigidbody>().velocity = charvel;
-                    GorillaTagger.Instance.offlineVRRig.SetThrowableProjectileColor(true, color);
+                    VRRig.LocalRig.SetThrowableProjectileColor(true, color);
                     Throwable.PerformSnowballThrowAuthority();
 
                     GorillaTagger.Instance.GetComponent<Rigidbody>().velocity = oldVel;
@@ -446,7 +446,7 @@ namespace iiMenu.Mods.Spammers
                 if (gunLocked)
                 {
                     gunLocked = false;
-                    GorillaTagger.Instance.offlineVRRig.enabled = true;
+                    VRRig.LocalRig.enabled = true;
                 }
             }
         }
@@ -786,10 +786,10 @@ namespace iiMenu.Mods.Spammers
             }
             if (isInfectedPlayers)
             {
-                if (!PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
+                if (!PlayerIsTagged(VRRig.LocalRig))
                 {
                     VRRig vrrig = GetRandomVRRig(false);//GorillaParent.instance.vrrigs[UnityEngine.Random.Range(0, GorillaParent.instance.vrrigs.Count - 1)];
-                    if (PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
+                    if (PlayerIsTagged(vrrig) && vrrig != VRRig.LocalRig)
                     {
                         Vector3 startpos = GorillaTagger.Instance.rightHandTransform.position;
                         Vector3 charvel = vrrig.transform.position - GorillaTagger.Instance.rightHandTransform.position;
@@ -802,7 +802,7 @@ namespace iiMenu.Mods.Spammers
                 else
                 {
                     VRRig vrrig = GetRandomVRRig(false);
-                    if (!PlayerIsTagged(vrrig) && vrrig != GorillaTagger.Instance.offlineVRRig)
+                    if (!PlayerIsTagged(vrrig) && vrrig != VRRig.LocalRig)
                     {
                         Vector3 startpos = GorillaTagger.Instance.rightHandTransform.position;
                         Vector3 charvel = vrrig.transform.position - GorillaTagger.Instance.rightHandTransform.position;
@@ -816,7 +816,7 @@ namespace iiMenu.Mods.Spammers
             else
             {
                 VRRig vrrig = GetRandomVRRig(false);
-                if (vrrig != GorillaTagger.Instance.offlineVRRig)
+                if (vrrig != VRRig.LocalRig)
                 {
                     Vector3 startpos = GorillaTagger.Instance.rightHandTransform.position;
                     Vector3 charvel = vrrig.transform.position - GorillaTagger.Instance.rightHandTransform.position;
@@ -858,7 +858,7 @@ namespace iiMenu.Mods.Spammers
                 if (gunLocked)
                 {
                     gunLocked = false;
-                    GorillaTagger.Instance.offlineVRRig.enabled = true;
+                    VRRig.LocalRig.enabled = true;
                 }
             }
         }
@@ -893,7 +893,7 @@ namespace iiMenu.Mods.Spammers
                 if (gunLocked)
                 {
                     gunLocked = false;
-                    GorillaTagger.Instance.offlineVRRig.enabled = true;
+                    VRRig.LocalRig.enabled = true;
                 }
             }
         }
@@ -928,7 +928,7 @@ namespace iiMenu.Mods.Spammers
                 if (gunLocked)
                 {
                     gunLocked = false;
-                    GorillaTagger.Instance.offlineVRRig.enabled = true;
+                    VRRig.LocalRig.enabled = true;
                 }
             }
         }
@@ -963,7 +963,7 @@ namespace iiMenu.Mods.Spammers
                 if (gunLocked)
                 {
                     gunLocked = false;
-                    GorillaTagger.Instance.offlineVRRig.enabled = true;
+                    VRRig.LocalRig.enabled = true;
                 }
             }
         }
@@ -998,7 +998,7 @@ namespace iiMenu.Mods.Spammers
                 if (gunLocked)
                 {
                     gunLocked = false;
-                    GorillaTagger.Instance.offlineVRRig.enabled = true;
+                    VRRig.LocalRig.enabled = true;
                 }
             }
         }
