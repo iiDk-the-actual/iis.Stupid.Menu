@@ -2160,26 +2160,22 @@ namespace iiMenu.Mods
             mainPhrases.Stop();
 
             if (!GetIndex("Chain Voice Commands").enabled)
-            {
                 timeoutCoroutine = CoroutineManager.RunCoroutine(Timeout());
-            }
+            
             List<string> rawbuttonnames = new List<string> { "nevermind", "cancel", "never mind", "stop" };
 
             foreach (ButtonInfo[] buttonlist in Buttons.buttons)
             {
                 foreach (ButtonInfo v in buttonlist)
-                {
                     rawbuttonnames.Add(NoRichtextTags(v.overlapText == null ? v.buttonText : v.overlapText));
-                }
             }
             modPhrases = new KeywordRecognizer(rawbuttonnames.ToArray());
             modPhrases.OnPhraseRecognized += ExecuteVoiceCommand;
             modPhrases.Start();
 
             if (dynamicSounds)
-            {
                 Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/select.wav", "select.wav"), buttonClickVolume / 10f);
-            }
+            
             NotifiLib.SendNotification("<color=grey>[</color><color=purple>VOICE</color><color=grey>]</color> Listening...", 3000);
         }
 
@@ -2258,9 +2254,7 @@ namespace iiMenu.Mods
 
             NotifiLib.SendNotification("<color=grey>[</color><color=red>VOICE</color><color=grey>]</color> Cancelling...", 3000);
             if (dynamicSounds)
-            {
                 Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/close.wav", "close.wav"), buttonClickVolume / 10f);
-            }
         }
 
         public static void VoiceRecognitionOff()
@@ -2546,9 +2540,8 @@ namespace iiMenu.Mods
         {
             internetTime++;
             if (internetTime > 5)
-            {
                 internetTime = 1;
-            }
+            
             GetIndex("crTime").overlapText = "Change Reconnect Time <color=grey>[</color><color=green>" + internetTime.ToString() + "</color><color=grey>]</color>";
         }
 
