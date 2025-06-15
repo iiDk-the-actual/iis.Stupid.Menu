@@ -546,6 +546,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Night Time", method =() => BetterDayNightManager.instance.SetTimeOfDay(0), toolTip = "Sets your time of day to night."},
                 new ButtonInfo { buttonText = "Fullbright", enableMethod =() => Visuals.SetFullbrightStatus(true), disableMethod =() => Visuals.SetFullbrightStatus(false), toolTip = "Disables the dynamic lighting in maps that use it."},
 
+                new ButtonInfo { buttonText = "Remove Blindfold", method =() => Visuals.RemoveBlindfold(), toolTip = "Disables the blindfold in the prop haunt map."},
+
                 new ButtonInfo { buttonText = "Rainy Weather", method =() => Visuals.WeatherChange(true), toolTip = "Forces the weather to rain."},
                 new ButtonInfo { buttonText = "Clear Weather", method =() => Visuals.WeatherChange(false), toolTip = "Forces the weather to sunny skies all day."},
 
@@ -920,6 +922,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Unguardian All", method =() => Overpowered.UnguardianAll(), isTogglable = false, toolTip = "Removes everyone in the room from the guardian position."},
 
                 new ButtonInfo { buttonText = "Guardian Spaz", method =() => Overpowered.GuardianSpaz(), toolTip = "Spams the guardian position for everyone in the room."},
+
+                new ButtonInfo { buttonText = "Spaz Prop Haunt", method =() => Overpowered.SpazPropHaunt(), toolTip = "Repeatedly starts and ends the prop haunt gamemode."},
+                new ButtonInfo { buttonText = "Spaz Prop Haunt Objects", method =() => Overpowered.SpazPropHauntObjects(), toolTip = "Repeatedly randomizes everyone's selected object in the prop haunt gamemode."},
 
                 new ButtonInfo { buttonText = "Max Currency Self", method =() => Fun.SetCurrencySelf(int.MaxValue), isTogglable = false, toolTip = "Gives you the maximum amount of currency in the horror map (2 billion)."},
                 new ButtonInfo { buttonText = "Max Currency Gun", method =() => Fun.SetCurrencyGun(int.MaxValue), toolTip = "Gives whoever your hand desires the maximum amount of currency in the horror map (2 billion)."},

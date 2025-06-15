@@ -25,6 +25,15 @@ namespace iiMenu.Mods
         public static void SetFullbrightStatus(bool fullBright) =>
             GameLightingManager.instance.SetCustomDynamicLightingEnabled(!fullBright);
 
+        public static void RemoveBlindfold()
+        {
+            if (PhotonNetwork.InRoom && GorillaGameManager.instance.GameType() == GameModeType.PropHaunt)
+            {
+                GorillaPropHauntGameManager hauntManager = (GorillaPropHauntGameManager)GorillaGameManager.instance;
+                hauntManager._SetPlayerBlindfoldVisibility(GorillaTagger.Instance.offlineVRRig, PhotonNetwork.LocalPlayer, false);
+                hauntManager._SetPlayerBlindfoldVisibility(GorillaTagger.Instance.offlineVRRig, null, false);
+            }
+        }
 
         public static void WatchOn()
         {

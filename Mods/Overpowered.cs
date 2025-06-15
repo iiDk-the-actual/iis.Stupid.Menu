@@ -186,6 +186,43 @@ namespace iiMenu.Mods
             }
         }
 
+        private static float propHuntSpazDelay;
+        private static bool propHuntSpazMode;
+        public static void SpazPropHauntObjects()
+        {
+            if (Time.time > propHuntSpazDelay)
+            {
+                propHuntSpazDelay = Time.time + 0.1f;
+                propHuntSpazMode = !propHuntSpazMode;
+
+                if (!NetworkSystem.Instance.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
+
+                if (PhotonNetwork.InRoom && GorillaGameManager.instance.GameType() == GameModeType.PropHaunt)
+                {
+                    GorillaPropHauntGameManager hauntManager = (GorillaPropHauntGameManager)GorillaGameManager.instance;
+                    hauntManager._ph_timeRoundStartedMillis = propHuntSpazMode ? 1 : 2;
+                    hauntManager._ph_randomSeed = UnityEngine.Random.Range(1, int.MaxValue);
+                }
+            }
+        }
+
+        public static void SpazPropHaunt()
+        {
+            if (Time.time > propHuntSpazDelay)
+            {
+                propHuntSpazDelay = Time.time + 0.1f;
+                propHuntSpazMode = !propHuntSpazMode;
+
+                if (!NetworkSystem.Instance.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
+
+                if (PhotonNetwork.InRoom && GorillaGameManager.instance.GameType() == GameModeType.PropHaunt)
+                {
+                    GorillaPropHauntGameManager hauntManager = (GorillaPropHauntGameManager)GorillaGameManager.instance;
+                    hauntManager._ph_timeRoundStartedMillis = propHuntSpazMode ? 0 : 1;
+                }
+            }
+        }
+
         public static void CreateItem(object target, int hash, Vector3 position, Quaternion rotation, Vector3 velocity, Vector3 angVelocity, long[] sendData = null)
         {
             if (!NetworkSystem.Instance.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
