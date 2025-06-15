@@ -8,13 +8,7 @@ namespace iiMenu.Patches
     {
         public static bool enabled = false;
 
-        public static bool Prefix(Vector3 direction, float speed)
-        {
-            if (enabled)
-            {
-                return false;
-            }
-            return true;
-        }
+        public static bool Prefix(Vector3 direction, float speed) =>
+            !enabled;
     }
 }

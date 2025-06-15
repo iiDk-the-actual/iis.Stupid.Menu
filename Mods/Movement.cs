@@ -1643,6 +1643,7 @@ namespace iiMenu.Mods
             }
         }
 
+        public static bool previousTeleportTrigger;
         public static void TeleportGun()
         {
             if (GetGunInput(false))
@@ -1650,13 +1651,14 @@ namespace iiMenu.Mods
                 var GunData = RenderGun();
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (GetGunInput(true) && Time.time > teleDebounce)
+                if (GetGunInput(true) && !previousTeleportTrigger)
                 {
                     closePosition = Vector3.zero;
                     TeleportPlayer(NewPointer.transform.position + new Vector3(0f, 1f, 0f));
                     GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
-                    teleDebounce = Time.time + 0.5f;
                 }
+
+                previousTeleportTrigger = GetGunInput(true);
             }
         }
 
@@ -1667,13 +1669,14 @@ namespace iiMenu.Mods
                 var GunData = RenderGun();
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (GetGunInput(true) && Time.time > teleDebounce)
+                if (GetGunInput(true) && !previousTeleportTrigger)
                 {
                     GorillaTagger.Instance.rigidbody.velocity = new Vector3(0f, -20f, 0f);
                     TeleportPlayer(NewPointer.transform.position + new Vector3(0f, 30f, 0f));
                     GorillaTagger.Instance.rigidbody.velocity = new Vector3(0f, -20f, 0f);
-                    teleDebounce = Time.time + 0.5f;
                 }
+
+                previousTeleportTrigger = GetGunInput(true);
             }
         }
 

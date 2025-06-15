@@ -5180,7 +5180,6 @@ jgs \_   _/ |Oo\
         public static float soundDebounce;
         public static float buttonCooldown;
         public static float colorChangerDelay;
-        public static float teleDebounce;
         public static float splashDel;
         public static float headspazDelay;
         public static float internetTime = 5f;

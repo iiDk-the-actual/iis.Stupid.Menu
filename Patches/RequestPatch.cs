@@ -42,13 +42,11 @@ namespace iiMenu.Patches
             {
                 Vector3 target = new Vector3(-51.4897f, 16.9286f, -120.1083f);
 
-                string[] spamarray = new string[] { "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU." };
-
                 VRRig.LocalRig.enabled = false;
                 VRRig.LocalRig.transform.position = target;
 
                 archiveCosmetics = CosmeticsController.instance.currentWornSet.ToDisplayNameArray();
-                CosmeticsController.instance.currentWornSet = new CosmeticsController.CosmeticSet(spamarray, CosmeticsController.instance);
+                CosmeticsController.instance.currentWornSet = new CosmeticsController.CosmeticSet(Array.Empty<string>(), CosmeticsController.instance);
 
                 Vector3 point = GorillaTagger.Instance.bodyCollider.transform.position;
                 while (Vector3.Distance(point, target) > 0.2f)
@@ -58,7 +56,7 @@ namespace iiMenu.Patches
                 }
                 yield return new WaitForSeconds(0.1f);
 
-                GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.Others, new object[] { Fun.PackCosmetics(spamarray), CosmeticsController.instance.currentWornSet.ToPackedIDArray() });
+                GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.Others, new object[] { Fun.PackCosmetics(Array.Empty<string>()), CosmeticsController.instance.currentWornSet.ToPackedIDArray() });
                 VRRig.LocalRig.enabled = true;
                 yield return new WaitForSeconds(0.5f);
 
@@ -67,9 +65,8 @@ namespace iiMenu.Patches
 
                 float delay = Time.time + 30f;
                 while (Time.time < delay || PhotonNetwork.InRoom)
-                {
                     yield return null;
-                }
+                
                 currentCoroutine = null;
             }
         }

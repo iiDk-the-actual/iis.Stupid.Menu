@@ -55,7 +55,7 @@ namespace iiMenu.Patches
     public class TOSPatch4
     {
         private static bool Prefix() =>
-        !TOSPatch.enabled;
+            !TOSPatch.enabled;
     }
 
     [HarmonyPatch(typeof(KIDManager), "UseKID")]

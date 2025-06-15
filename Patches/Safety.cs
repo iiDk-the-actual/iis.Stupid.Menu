@@ -48,173 +48,135 @@ namespace iiMenu.Patches
     [HarmonyPatch(typeof(GorillaNot), "LogErrorCount")]
     public class NoLogErrorCount
     {
-        private static bool Prefix(string logString, string stackTrace, LogType type)
-        {
-            return false;
-        }
+        private static bool Prefix(string logString, string stackTrace, LogType type) =>
+            false;
     }
 
     [HarmonyPatch(typeof(GorillaNot), "CloseInvalidRoom")]
     public class NoCloseInvalidRoom
     {
-        private static bool Prefix()
-        {
-            return false;
-        }
+        private static bool Prefix() =>
+            false;
     }
 
     [HarmonyPatch(typeof(GorillaNot), "CheckReports", MethodType.Enumerator)]
     public class NoCheckReports
     {
-        private static bool Prefix()
-        {
-            return false;
-        }
+        private static bool Prefix() =>
+            false;
     }
 
     [HarmonyPatch(typeof(GorillaNot), "QuitDelay", MethodType.Enumerator)]
     public class NoQuitDelay
     {
-        private static bool Prefix()
-        {
-            return false;
-        }
+        private static bool Prefix() =>
+            false;
     }
 
     [HarmonyPatch(typeof(GorillaGameManager), "ForceStopGame_DisconnectAndDestroy")]
     public class NoQuitOnBan
     {
-        private static bool Prefix()
-        {
-            return false;
-        }
+        private static bool Prefix() =>
+            false;
     }
 
     [HarmonyPatch(typeof(GorillaNot), "IncrementRPCCallLocal")]
     public class NoIncrementRPCCallLocal
     {
-        private static bool Prefix(PhotonMessageInfoWrapped infoWrapped, string rpcFunction)
-        {
-            return false;
-        }
+        private static bool Prefix(PhotonMessageInfoWrapped infoWrapped, string rpcFunction) =>
+            false;
     }
 
     [HarmonyPatch(typeof(GorillaNot), "GetRPCCallTracker")]
     internal class NoGetRPCCallTracker
     {
-        private static bool Prefix()
-        {
-            return false;
-        }
+        private static bool Prefix() =>
+            false;
     }
 
     [HarmonyPatch(typeof(GorillaNot), "IncrementRPCCall", new Type[] { typeof(PhotonMessageInfo), typeof(string) })]
     public class NoIncrementRPCCall
     {
-        private static bool Prefix(PhotonMessageInfo info, string callingMethod = "")
-        {
-            return false;
-        }
+        private static bool Prefix(PhotonMessageInfo info, string callingMethod = "") =>
+            false;
     }
 
     // Thanks DrPerky
     [HarmonyPatch(typeof(VRRig), "IncrementRPC", new Type[] { typeof(PhotonMessageInfoWrapped), typeof(string) })]
     public class NoIncrementRPC
     {
-        private static bool Prefix(PhotonMessageInfoWrapped info, string sourceCall)
-        {
-            return false;
-        }
+        private static bool Prefix(PhotonMessageInfoWrapped info, string sourceCall) =>
+            false;
     }
 
     [HarmonyPatch(typeof(PlayFabDeviceUtil), "SendDeviceInfoToPlayFab")]
-    internal class PlayfabUtil01
+    public class PlayfabUtil01
     {
-        private static bool Prefix()
-        {
-            return false;
-        }
+        private static bool Prefix() =>
+            false;
     }
 
     [HarmonyPatch(typeof(PlayFabClientInstanceAPI), "ReportDeviceInfo")]
-    internal class PlayfabUtil02
+    public class PlayfabUtil02
     {
-        private static bool Prefix()
-        {
-            return false;
-        }
+        private static bool Prefix() =>
+            false;
     }
 
     [HarmonyPatch(typeof(PlayFabClientAPI), "ReportDeviceInfo")]
     public class PlayfabUtil03
     {
-        private static bool Prefix()
-        {
-            return false;
-        }
+        private static bool Prefix() =>
+            false;
     }
 
     [HarmonyPatch(typeof(PlayFabDeviceUtil), "GetAdvertIdFromUnity")]
     public class PlayfabUtil04
     {
-        private static bool Prefix()
-        {
-            return false;
-        }
+        private static bool Prefix() =>
+            false;
     }
 
     [HarmonyPatch(typeof(PlayFabClientAPI), "AttributeInstall")]
     public class PlayfabUtil05
     {
-        private static bool Prefix()
-        {
-            return false;
-        }
+        private static bool Prefix() =>
+            false;
     }
 
     [HarmonyPatch(typeof(PlayFabHttp), "InitializeScreenTimeTracker")]
     public class PlayfabUtil06
     {
-        private static bool Prefix()
-        {
-            return false;
-        }
+        private static bool Prefix() =>
+            false;
     }
 
     [HarmonyPatch(typeof(GorillaNot), "DispatchReport")]
     public class NoDispatchReport
     {
-        private static bool Prefix()
-        {
-            return false;
-        }
+        private static bool Prefix() =>
+            false;
     }
 
     [HarmonyPatch(typeof(GorillaNetworkPublicTestsJoin), "GracePeriod")]
     public class GNPTJ1
     {
-        private static bool Prefix()
-        {
-            return false;
-        }
+        private static bool Prefix() =>
+            false;
     }
 
     [HarmonyPatch(typeof(GorillaNetworkPublicTestJoin2), "GracePeriod")]
     public class GNPTJ2
     {
-        private static bool Prefix()
-        {
-            return false;
-        }
+        private static bool Prefix() =>
+            false;
     }
 
     [HarmonyPatch(typeof(GorillaNot), "ShouldDisconnectFromRoom")]
     public class NoShouldDisconnectFromRoom
     {
-        private static bool Prefix()
-        {
-            return false;
-        }
+        private static bool Prefix() =>
+            false;
     }
 
     [HarmonyPatch(typeof(VRRig), "DroppedByPlayer")]
@@ -266,42 +228,28 @@ namespace iiMenu.Patches
     [HarmonyPatch(typeof(ModIOManager), "OnJoinedRoom")]
     public class ModIOPatch
     {
-        public static bool Prefix(VRRig __instance)
-        {
-            return false;
-        }
+        public static bool Prefix(VRRig __instance) =>
+            false;
     }
 
     [HarmonyPatch(typeof(PlayFabClientAPI), "UpdateUserTitleDisplayName")] // Credits to Shiny for letting me use this
     public class DisplayNamePatch
     {
-        public static void Prefix(ref UpdateUserTitleDisplayNameRequest request, Action<UpdateUserTitleDisplayNameResult> resultCallback, Action<PlayFabError> errorCallback, object customData = null, Dictionary<string, string> extraHeaders = null)
-        {
+        public static void Prefix(ref UpdateUserTitleDisplayNameRequest request, Action<UpdateUserTitleDisplayNameResult> resultCallback, Action<PlayFabError> errorCallback, object customData = null, Dictionary<string, string> extraHeaders = null) =>
             request.DisplayName = GenerateRandomString(8);
-        }
     }
 
     [HarmonyPatch(typeof(VRRig), "PlayHandTapLocal")]
     public class AntiSoundPatch
     {
-        public static bool Prefix(int audioClipIndex, bool isLeftHand, float tapVolume)
-        {
-            if (AntiSoundToggle)
-                return false;
-            
-            return true;
-        }
+        public static bool Prefix(int audioClipIndex, bool isLeftHand, float tapVolume) =>
+            !AntiSoundToggle;
     }
 
     [HarmonyPatch(typeof(GliderHoldable), "Respawn")]
     public class AntiGliderRespawn
     {
-        public static bool Prefix()
-        {
-            if (NoGliderRespawn)
-                return false;
-            
-            return true;
-        }
+        public static bool Prefix() =>
+            !NoGliderRespawn;
     }
 }

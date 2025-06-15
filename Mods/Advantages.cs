@@ -328,7 +328,7 @@ namespace iiMenu.Mods
         {
             if (PlayerIsTagged(VRRig.LocalRig))
             {
-                Patches.SphereCastPatch.patchEnabled = true;
+                Patches.SphereCastPatch.enabled = true;
                 Patches.SphereCastPatch.overrideRadius = tagReachDistance;
                 if (GetIndex("Visualize Tag Reach").enabled)
                 {
@@ -336,7 +336,7 @@ namespace iiMenu.Mods
                     VisualizeAura(GorillaTagger.Instance.rightHandTransform.position, tagReachDistance, GetBGColor(0f));
                 }
             } else
-                Patches.SphereCastPatch.patchEnabled = false;
+                Patches.SphereCastPatch.enabled = false;
         }
 
         public static void TagGun()
