@@ -17,7 +17,7 @@ namespace iiMenu.Patches
 
         public static bool Prefix(VRRig __instance, PhotonMessageInfoWrapped info)
         {
-            if (__instance == GorillaTagger.Instance.offlineVRRig)
+            if (__instance == VRRig.LocalRig)
             {
                 if (enabled)
                 {
@@ -44,8 +44,8 @@ namespace iiMenu.Patches
 
                 string[] spamarray = new string[] { "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU.", "LMAJU." };
 
-                GorillaTagger.Instance.offlineVRRig.enabled = false;
-                GorillaTagger.Instance.offlineVRRig.transform.position = target;
+                VRRig.LocalRig.enabled = false;
+                VRRig.LocalRig.transform.position = target;
 
                 archiveCosmetics = CosmeticsController.instance.currentWornSet.ToDisplayNameArray();
                 CosmeticsController.instance.currentWornSet = new CosmeticsController.CosmeticSet(spamarray, CosmeticsController.instance);
@@ -53,17 +53,17 @@ namespace iiMenu.Patches
                 Vector3 point = GorillaTagger.Instance.bodyCollider.transform.position;
                 while (Vector3.Distance(point, target) > 0.2f)
                 {
-                    point = Vector3.Lerp(point, target, GorillaTagger.Instance.offlineVRRig.lerpValueBody * 0.3f);
+                    point = Vector3.Lerp(point, target, VRRig.LocalRig.lerpValueBody * 0.3f);
                     yield return null;
                 }
                 yield return new WaitForSeconds(0.1f);
 
                 GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.Others, new object[] { Fun.PackCosmetics(spamarray), CosmeticsController.instance.currentWornSet.ToPackedIDArray() });
-                GorillaTagger.Instance.offlineVRRig.enabled = true;
+                VRRig.LocalRig.enabled = true;
                 yield return new WaitForSeconds(0.5f);
 
                 CosmeticsController.instance.currentWornSet = new CosmeticsController.CosmeticSet(archiveCosmetics, CosmeticsController.instance);
-                GorillaTagger.Instance.offlineVRRig.LocalUpdateCosmeticsWithTryon(CosmeticsController.instance.currentWornSet, CosmeticsController.instance.tryOnSet);
+                VRRig.LocalRig.LocalUpdateCosmeticsWithTryon(CosmeticsController.instance.currentWornSet, CosmeticsController.instance.tryOnSet);
 
                 float delay = Time.time + 30f;
                 while (Time.time < delay || PhotonNetwork.InRoom)

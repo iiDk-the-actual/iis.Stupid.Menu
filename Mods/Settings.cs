@@ -2061,7 +2061,7 @@ namespace iiMenu.Mods
                 if (!currentmentalstate)
                 {
                     currentmentalstate = true;
-                    GorillaTagger.Instance.offlineVRRig.enabled = false;
+                    VRRig.LocalRig.enabled = false;
                 }
             }
             else
@@ -2069,7 +2069,7 @@ namespace iiMenu.Mods
                 if (currentmentalstate)
                 {
                     currentmentalstate = false;
-                    GorillaTagger.Instance.offlineVRRig.enabled = true;
+                    VRRig.LocalRig.enabled = true;
                 }
             }
         }

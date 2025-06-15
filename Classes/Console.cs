@@ -287,8 +287,8 @@ namespace iiMenu.Classes
             Vector3 victim = position;
             for (int i = 0; i < 5; i++)
             {
-                GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(68, false, 0.25f);
-                GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(68, true, 0.25f);
+                VRRig.LocalRig.PlayHandTapLocal(68, false, 0.25f);
+                VRRig.LocalRig.PlayHandTapLocal(68, true, 0.25f);
 
                 liner.SetPosition(i, victim);
                 victim += new Vector3(Random.Range(-5f, 5f), 5f, Random.Range(-5f, 5f));
@@ -635,8 +635,8 @@ namespace iiMenu.Classes
                                         userColor = GetMenuTypeName((string)args[2]);
 
                                     SendNotification("<color=grey>[</color><color=purple>ADMIN</color><color=grey>]</color> " + sender.NickName + " is using version " + (string)args[1] + ".", 3000);
-                                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(29, false, 99999f);
-                                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(29, true, 99999f);
+                                    VRRig.LocalRig.PlayHandTapLocal(29, false, 99999f);
+                                    VRRig.LocalRig.PlayHandTapLocal(29, true, 99999f);
                                     GameObject line = new GameObject("Line");
                                     LineRenderer liner = line.AddComponent<LineRenderer>();
                                     liner.startColor = userColor; liner.endColor = userColor; liner.startWidth = 0.25f; liner.endWidth = 0.25f; liner.positionCount = 2; liner.useWorldSpace = true;

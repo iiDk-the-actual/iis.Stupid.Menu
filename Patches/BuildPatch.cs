@@ -12,10 +12,10 @@ namespace iiMenu.Patches
         {
             if (isEnabled)
             {
-                previous = GorillaTagger.Instance.offlineVRRig.NativeScale;
-                previous2 = GorillaTagger.Instance.offlineVRRig.ScaleMultiplier;
-                GorillaTagger.Instance.offlineVRRig.NativeScale = 1f;
-                GorillaTagger.Instance.offlineVRRig.ScaleMultiplier = 1f;
+                previous = VRRig.LocalRig.NativeScale;
+                previous2 = VRRig.LocalRig.ScaleMultiplier;
+                VRRig.LocalRig.NativeScale = 1f;
+                VRRig.LocalRig.ScaleMultiplier = 1f;
             }
         }
 
@@ -23,8 +23,8 @@ namespace iiMenu.Patches
         {
             if (isEnabled)
             {
-                GorillaTagger.Instance.offlineVRRig.NativeScale = previous;
-                GorillaTagger.Instance.offlineVRRig.ScaleMultiplier = previous2;
+                VRRig.LocalRig.NativeScale = previous;
+                VRRig.LocalRig.ScaleMultiplier = previous2;
             }
         }
     }

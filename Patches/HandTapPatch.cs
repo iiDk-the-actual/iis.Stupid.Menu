@@ -18,7 +18,7 @@ namespace iiMenu.Patches
         {
             if (doPatch)
             {
-                if (__instance == GorillaTagger.Instance.offlineVRRig)
+                if (__instance == VRRig.LocalRig)
                 {
                     if (doOverride)
                     {
@@ -47,7 +47,7 @@ namespace iiMenu.Patches
                             }
                             Main.RPCProtection();
                         } else
-                            GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(audioClipIndex, isLeftHand, overrideVolume);
+                            VRRig.LocalRig.PlayHandTapLocal(audioClipIndex, isLeftHand, overrideVolume);
 
                         return false;
                     }

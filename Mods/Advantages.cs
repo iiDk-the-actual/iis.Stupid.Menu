@@ -23,7 +23,7 @@ namespace iiMenu.Mods
                 if (InfectedList().Contains(PhotonNetwork.LocalPlayer))
                 {
                     NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>You have been tagged.</color>");
-                    GorillaTagger.Instance.offlineVRRig.enabled = true;
+                    VRRig.LocalRig.enabled = true;
                     GetIndex("Tag Self").enabled = false;
                 }
                 else
@@ -32,38 +32,38 @@ namespace iiMenu.Mods
                     {
                         if (PlayerIsTagged(rig))
                         {
-                            GorillaTagger.Instance.offlineVRRig.enabled = false;
+                            VRRig.LocalRig.enabled = false;
 
-                            GorillaTagger.Instance.offlineVRRig.transform.position = rig.rightHandTransform.position;
+                            VRRig.LocalRig.transform.position = rig.rightHandTransform.position;
                             GorillaTagger.Instance.myVRRig.transform.position = rig.rightHandTransform.position;
                             if (GetIndex("Obnoxious Tag").enabled)
                             {
                                 Quaternion rotation = Quaternion.Euler(new Vector3(0, UnityEngine.Random.Range(0, 360), 0));
-                                GorillaTagger.Instance.offlineVRRig.transform.rotation = rotation;
+                                VRRig.LocalRig.transform.rotation = rotation;
                                 GorillaTagger.Instance.myVRRig.transform.rotation = rotation;
 
-                                GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
-                                GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.position = GorillaTagger.Instance.offlineVRRig.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
-                                GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.position = GorillaTagger.Instance.offlineVRRig.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
+                                VRRig.LocalRig.head.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+                                VRRig.LocalRig.leftHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
+                                VRRig.LocalRig.rightHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
 
-                                GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
-                                GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+                                VRRig.LocalRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+                                VRRig.LocalRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
 
-                                GorillaTagger.Instance.offlineVRRig.leftIndex.calcT = 0f;
-                                GorillaTagger.Instance.offlineVRRig.leftMiddle.calcT = 0f;
-                                GorillaTagger.Instance.offlineVRRig.leftThumb.calcT = 0f;
+                                VRRig.LocalRig.leftIndex.calcT = 0f;
+                                VRRig.LocalRig.leftMiddle.calcT = 0f;
+                                VRRig.LocalRig.leftThumb.calcT = 0f;
 
-                                GorillaTagger.Instance.offlineVRRig.leftIndex.LerpFinger(1f, false);
-                                GorillaTagger.Instance.offlineVRRig.leftMiddle.LerpFinger(1f, false);
-                                GorillaTagger.Instance.offlineVRRig.leftThumb.LerpFinger(1f, false);
+                                VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
+                                VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
+                                VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
 
-                                GorillaTagger.Instance.offlineVRRig.rightIndex.calcT = 0f;
-                                GorillaTagger.Instance.offlineVRRig.rightMiddle.calcT = 0f;
-                                GorillaTagger.Instance.offlineVRRig.rightThumb.calcT = 0f;
+                                VRRig.LocalRig.rightIndex.calcT = 0f;
+                                VRRig.LocalRig.rightMiddle.calcT = 0f;
+                                VRRig.LocalRig.rightThumb.calcT = 0f;
 
-                                GorillaTagger.Instance.offlineVRRig.rightIndex.LerpFinger(1f, false);
-                                GorillaTagger.Instance.offlineVRRig.rightMiddle.LerpFinger(1f, false);
-                                GorillaTagger.Instance.offlineVRRig.rightThumb.LerpFinger(1f, false);
+                                VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+                                VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
+                                VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
                             }
                         }
                     }
@@ -88,7 +88,7 @@ namespace iiMenu.Mods
         {
             if (PhotonNetwork.InRoom)
             {
-                if (PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
+                if (PlayerIsTagged(VRRig.LocalRig))
                     UntagSelf();
             } else
                 NoTagOnJoin();
@@ -165,7 +165,7 @@ namespace iiMenu.Mods
                 if (gunLocked)
                 {
                     gunLocked = false;
-                    GorillaTagger.Instance.offlineVRRig.enabled = true;
+                    VRRig.LocalRig.enabled = true;
                 }
             }
         }
@@ -270,10 +270,10 @@ namespace iiMenu.Mods
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
                 Vector3 they = vrrig.headMesh.transform.position;
-                Vector3 notthem = GorillaTagger.Instance.offlineVRRig.head.rigTarget.position;
+                Vector3 notthem = VRRig.LocalRig.head.rigTarget.position;
                 float distance = Vector3.Distance(they, notthem);
 
-                if (PlayerIsTagged(GorillaTagger.Instance.offlineVRRig) && !PlayerIsTagged(vrrig) && GorillaLocomotion.GTPlayer.Instance.disableMovement == false && distance < tagAuraDistance)
+                if (PlayerIsTagged(VRRig.LocalRig) && !PlayerIsTagged(vrrig) && GorillaLocomotion.GTPlayer.Instance.disableMovement == false && distance < tagAuraDistance)
                 {
                     if (rightHand == true) { GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = they; } else { GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.position = they; }
                 }
@@ -287,10 +287,10 @@ namespace iiMenu.Mods
                 foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                 {
                     Vector3 they = vrrig.headMesh.transform.position;
-                    Vector3 notthem = GorillaTagger.Instance.offlineVRRig.head.rigTarget.position;
+                    Vector3 notthem = VRRig.LocalRig.head.rigTarget.position;
                     float distance = Vector3.Distance(they, notthem);
 
-                    if (PlayerIsTagged(GorillaTagger.Instance.offlineVRRig) && !PlayerIsTagged(vrrig) && GorillaLocomotion.GTPlayer.Instance.disableMovement == false && distance < tagAuraDistance)
+                    if (PlayerIsTagged(VRRig.LocalRig) && !PlayerIsTagged(vrrig) && GorillaLocomotion.GTPlayer.Instance.disableMovement == false && distance < tagAuraDistance)
                     {
                         if (rightHand == true) { GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = they; } else { GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.position = they; }
                     }
@@ -313,10 +313,10 @@ namespace iiMenu.Mods
                 foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                 {
                     Vector3 they = vrrig.headMesh.transform.position;
-                    Vector3 notthem = GorillaTagger.Instance.offlineVRRig.head.rigTarget.position;
+                    Vector3 notthem = VRRig.LocalRig.head.rigTarget.position;
                     float distance = Vector3.Distance(they, notthem);
 
-                    if (PlayerIsTagged(GorillaTagger.Instance.offlineVRRig) && !PlayerIsTagged(vrrig) && GorillaLocomotion.GTPlayer.Instance.disableMovement == false && distance < tagAuraDistance)
+                    if (PlayerIsTagged(VRRig.LocalRig) && !PlayerIsTagged(vrrig) && GorillaLocomotion.GTPlayer.Instance.disableMovement == false && distance < tagAuraDistance)
                     {
                         if (rightHand == true) { GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = they; } else { GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.position = they; }
                     }
@@ -326,7 +326,7 @@ namespace iiMenu.Mods
 
         public static void TagReach()
         {
-            if (PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
+            if (PlayerIsTagged(VRRig.LocalRig))
             {
                 Patches.SphereCastPatch.patchEnabled = true;
                 Patches.SphereCastPatch.overrideRadius = tagReachDistance;
@@ -351,41 +351,41 @@ namespace iiMenu.Mods
                 {
                     if (!PlayerIsTagged(lockTarget))
                     {
-                        GorillaTagger.Instance.offlineVRRig.enabled = false;
+                        VRRig.LocalRig.enabled = false;
 
                         if (!GetIndex("Obnoxious Tag").enabled)
                         {
-                            GorillaTagger.Instance.offlineVRRig.transform.position = lockTarget.transform.position - new Vector3(0f, 3f, 0f);
+                            VRRig.LocalRig.transform.position = lockTarget.transform.position - new Vector3(0f, 3f, 0f);
                             GorillaTagger.Instance.myVRRig.transform.position = lockTarget.transform.position - new Vector3(0f, 3f, 0f);
                         } else
                         {
                             Vector3 position = lockTarget.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
 
-                            GorillaTagger.Instance.offlineVRRig.transform.position = position;
+                            VRRig.LocalRig.transform.position = position;
                             GorillaTagger.Instance.myVRRig.transform.position = position;
 
-                            GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
-                            GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.position = lockTarget.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
-                            GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.position = lockTarget.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
+                            VRRig.LocalRig.head.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+                            VRRig.LocalRig.leftHand.rigTarget.transform.position = lockTarget.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
+                            VRRig.LocalRig.rightHand.rigTarget.transform.position = lockTarget.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
 
-                            GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
-                            GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+                            VRRig.LocalRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+                            VRRig.LocalRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
 
-                            GorillaTagger.Instance.offlineVRRig.leftIndex.calcT = 0f;
-                            GorillaTagger.Instance.offlineVRRig.leftMiddle.calcT = 0f;
-                            GorillaTagger.Instance.offlineVRRig.leftThumb.calcT = 0f;
+                            VRRig.LocalRig.leftIndex.calcT = 0f;
+                            VRRig.LocalRig.leftMiddle.calcT = 0f;
+                            VRRig.LocalRig.leftThumb.calcT = 0f;
 
-                            GorillaTagger.Instance.offlineVRRig.leftIndex.LerpFinger(1f, false);
-                            GorillaTagger.Instance.offlineVRRig.leftMiddle.LerpFinger(1f, false);
-                            GorillaTagger.Instance.offlineVRRig.leftThumb.LerpFinger(1f, false);
+                            VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
+                            VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
+                            VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
 
-                            GorillaTagger.Instance.offlineVRRig.rightIndex.calcT = 0f;
-                            GorillaTagger.Instance.offlineVRRig.rightMiddle.calcT = 0f;
-                            GorillaTagger.Instance.offlineVRRig.rightThumb.calcT = 0f;
+                            VRRig.LocalRig.rightIndex.calcT = 0f;
+                            VRRig.LocalRig.rightMiddle.calcT = 0f;
+                            VRRig.LocalRig.rightThumb.calcT = 0f;
 
-                            GorillaTagger.Instance.offlineVRRig.rightIndex.LerpFinger(1f, false);
-                            GorillaTagger.Instance.offlineVRRig.rightMiddle.LerpFinger(1f, false);
-                            GorillaTagger.Instance.offlineVRRig.rightThumb.LerpFinger(1f, false);
+                            VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+                            VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
+                            VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
                         }
 
                         GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = lockTarget.transform.position;
@@ -393,7 +393,7 @@ namespace iiMenu.Mods
                     else
                     {
                         gunLocked = false;
-                        GorillaTagger.Instance.offlineVRRig.enabled = true;
+                        VRRig.LocalRig.enabled = true;
                     }
                 }
                 if (GetGunInput(true))
@@ -407,7 +407,7 @@ namespace iiMenu.Mods
                         }
                         else
                         {
-                            if (PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
+                            if (PlayerIsTagged(VRRig.LocalRig))
                             {
                                 gunLocked = true;
                                 lockTarget = gunTarget;
@@ -421,7 +421,7 @@ namespace iiMenu.Mods
                 if (gunLocked)
                 {
                     gunLocked = false;
-                    GorillaTagger.Instance.offlineVRRig.enabled = true;
+                    VRRig.LocalRig.enabled = true;
                 }
             }
         }
@@ -478,7 +478,7 @@ namespace iiMenu.Mods
             }
             else
             {
-                if (!PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
+                if (!PlayerIsTagged(VRRig.LocalRig))
                 {
                     NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be tagged.</color>");
                     GetIndex("Tag All").enabled = false;
@@ -500,46 +500,46 @@ namespace iiMenu.Mods
                         {
                             if (!PlayerIsTagged(vrrig))
                             {
-                                GorillaTagger.Instance.offlineVRRig.enabled = false;
+                                VRRig.LocalRig.enabled = false;
 
                                 if (!GetIndex("Obnoxious Tag").enabled)
                                 {
-                                    GorillaTagger.Instance.offlineVRRig.transform.position = vrrig.transform.position - new Vector3(0f, -3f, 0f);
+                                    VRRig.LocalRig.transform.position = vrrig.transform.position - new Vector3(0f, -3f, 0f);
                                     GorillaTagger.Instance.myVRRig.transform.position = vrrig.transform.position - new Vector3(0f, -3f, 0f);
                                 }
                                 else
                                 {
                                     Vector3 position = vrrig.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
                                     
-                                    GorillaTagger.Instance.offlineVRRig.transform.position = position;
+                                    VRRig.LocalRig.transform.position = position;
                                     GorillaTagger.Instance.myVRRig.transform.position = position;
 
                                     Quaternion rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
-                                    GorillaTagger.Instance.offlineVRRig.transform.rotation = rotation;
+                                    VRRig.LocalRig.transform.rotation = rotation;
                                     GorillaTagger.Instance.myVRRig.transform.rotation = rotation;
 
-                                    GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
-                                    GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.position = vrrig.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
-                                    GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.position = vrrig.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
+                                    VRRig.LocalRig.head.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+                                    VRRig.LocalRig.leftHand.rigTarget.transform.position = vrrig.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
+                                    VRRig.LocalRig.rightHand.rigTarget.transform.position = vrrig.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
 
-                                    GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
-                                    GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+                                    VRRig.LocalRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+                                    VRRig.LocalRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
 
-                                    GorillaTagger.Instance.offlineVRRig.leftIndex.calcT = 0f;
-                                    GorillaTagger.Instance.offlineVRRig.leftMiddle.calcT = 0f;
-                                    GorillaTagger.Instance.offlineVRRig.leftThumb.calcT = 0f;
+                                    VRRig.LocalRig.leftIndex.calcT = 0f;
+                                    VRRig.LocalRig.leftMiddle.calcT = 0f;
+                                    VRRig.LocalRig.leftThumb.calcT = 0f;
 
-                                    GorillaTagger.Instance.offlineVRRig.leftIndex.LerpFinger(1f, false);
-                                    GorillaTagger.Instance.offlineVRRig.leftMiddle.LerpFinger(1f, false);
-                                    GorillaTagger.Instance.offlineVRRig.leftThumb.LerpFinger(1f, false);
+                                    VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
+                                    VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
+                                    VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
 
-                                    GorillaTagger.Instance.offlineVRRig.rightIndex.calcT = 0f;
-                                    GorillaTagger.Instance.offlineVRRig.rightMiddle.calcT = 0f;
-                                    GorillaTagger.Instance.offlineVRRig.rightThumb.calcT = 0f;
+                                    VRRig.LocalRig.rightIndex.calcT = 0f;
+                                    VRRig.LocalRig.rightMiddle.calcT = 0f;
+                                    VRRig.LocalRig.rightThumb.calcT = 0f;
 
-                                    GorillaTagger.Instance.offlineVRRig.rightIndex.LerpFinger(1f, false);
-                                    GorillaTagger.Instance.offlineVRRig.rightMiddle.LerpFinger(1f, false);
-                                    GorillaTagger.Instance.offlineVRRig.rightThumb.LerpFinger(1f, false);
+                                    VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+                                    VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
+                                    VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
                                 }
 
                                 GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = vrrig.transform.position;
@@ -549,7 +549,7 @@ namespace iiMenu.Mods
                     else
                     {
                         NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Everyone is tagged!</color>");
-                        GorillaTagger.Instance.offlineVRRig.enabled = true;
+                        VRRig.LocalRig.enabled = true;
                         GetIndex("Tag All").enabled = false;
                     }
                 }
@@ -563,42 +563,42 @@ namespace iiMenu.Mods
             if (!GorillaLocomotion.GTPlayer.Instance.disableMovement)
             {
                 VRRig vrrig = RigManager.GetVRRigFromPlayer(target);
-                GorillaTagger.Instance.offlineVRRig.enabled = false;
+                VRRig.LocalRig.enabled = false;
 
                 if (!GetIndex("Obnoxious Tag").enabled)
                 {
-                    GorillaTagger.Instance.offlineVRRig.transform.position = vrrig.transform.position - new Vector3(0f, -3f, 0f);
+                    VRRig.LocalRig.transform.position = vrrig.transform.position - new Vector3(0f, -3f, 0f);
                     GorillaTagger.Instance.myVRRig.transform.position = vrrig.transform.position - new Vector3(0f, -3f, 0f);
                 }
                 else
                 {
                     Vector3 position = vrrig.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
 
-                    GorillaTagger.Instance.offlineVRRig.transform.position = position;
+                    VRRig.LocalRig.transform.position = position;
                     GorillaTagger.Instance.myVRRig.transform.position = position;
 
-                    GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
-                    GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.position = vrrig.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
-                    GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.position = vrrig.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
+                    VRRig.LocalRig.head.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+                    VRRig.LocalRig.leftHand.rigTarget.transform.position = vrrig.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
+                    VRRig.LocalRig.rightHand.rigTarget.transform.position = vrrig.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
 
-                    GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
-                    GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+                    VRRig.LocalRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+                    VRRig.LocalRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
 
-                    GorillaTagger.Instance.offlineVRRig.leftIndex.calcT = 0f;
-                    GorillaTagger.Instance.offlineVRRig.leftMiddle.calcT = 0f;
-                    GorillaTagger.Instance.offlineVRRig.leftThumb.calcT = 0f;
+                    VRRig.LocalRig.leftIndex.calcT = 0f;
+                    VRRig.LocalRig.leftMiddle.calcT = 0f;
+                    VRRig.LocalRig.leftThumb.calcT = 0f;
 
-                    GorillaTagger.Instance.offlineVRRig.leftIndex.LerpFinger(1f, false);
-                    GorillaTagger.Instance.offlineVRRig.leftMiddle.LerpFinger(1f, false);
-                    GorillaTagger.Instance.offlineVRRig.leftThumb.LerpFinger(1f, false);
+                    VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
+                    VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
+                    VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
 
-                    GorillaTagger.Instance.offlineVRRig.rightIndex.calcT = 0f;
-                    GorillaTagger.Instance.offlineVRRig.rightMiddle.calcT = 0f;
-                    GorillaTagger.Instance.offlineVRRig.rightThumb.calcT = 0f;
+                    VRRig.LocalRig.rightIndex.calcT = 0f;
+                    VRRig.LocalRig.rightMiddle.calcT = 0f;
+                    VRRig.LocalRig.rightThumb.calcT = 0f;
 
-                    GorillaTagger.Instance.offlineVRRig.rightIndex.LerpFinger(1f, false);
-                    GorillaTagger.Instance.offlineVRRig.rightMiddle.LerpFinger(1f, false);
-                    GorillaTagger.Instance.offlineVRRig.rightThumb.LerpFinger(1f, false);
+                    VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+                    VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
+                    VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
                 }
 
                 GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = vrrig.transform.position;
@@ -606,7 +606,7 @@ namespace iiMenu.Mods
             else
             {
                 NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Everyone is tagged!</color>");
-                GorillaTagger.Instance.offlineVRRig.enabled = true;
+                VRRig.LocalRig.enabled = true;
                 GetIndex("Hunt Tag All").enabled = false;
                 ReloadMenu();
             }
@@ -620,7 +620,7 @@ namespace iiMenu.Mods
             }
             if (PhotonNetwork.InRoom)
             {
-                if (!PlayerIsTagged(GorillaTagger.Instance.offlineVRRig))
+                if (!PlayerIsTagged(VRRig.LocalRig))
                 {
                     bool isInfectedPlayers = false;
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
@@ -655,7 +655,7 @@ namespace iiMenu.Mods
                 }
             } else
             {
-                GorillaTagger.Instance.offlineVRRig.enabled = true;
+                VRRig.LocalRig.enabled = true;
             }
         }
 
