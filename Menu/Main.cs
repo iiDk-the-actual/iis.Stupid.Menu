@@ -3604,6 +3604,11 @@ namespace iiMenu.Menu
                         UnityEngine.Random.Range(-range, range),
                         UnityEngine.Random.Range(-range, range));
 
+        public static Quaternion RandomQuaternion(float range = 360f) =>
+            Quaternion.Euler(UnityEngine.Random.Range(0f, range),
+                        UnityEngine.Random.Range(0f, range),
+                        UnityEngine.Random.Range(0f, range));
+
         // True left and right hand get the exact position and rotation of the middle of the hand
         public static (Vector3 position, Quaternion rotation, Vector3 up, Vector3 forward, Vector3 right) TrueLeftHand()
         {
@@ -5180,8 +5185,6 @@ jgs \_   _/ |Oo\
         public static float soundDebounce;
         public static float buttonCooldown;
         public static float colorChangerDelay;
-        public static float splashDel;
-        public static float headspazDelay;
         public static float internetTime = 5f;
         public static float autoSaveDelay = Time.time + 60f;
         public static bool BackupPreferences;
@@ -5229,9 +5232,6 @@ jgs \_   _/ |Oo\
 
         public static bool plastLeftGrip;
         public static bool plastRightGrip;
-
-        public static bool EverythingSlippery;
-        public static bool EverythingGrippy;
 
         public static bool headspazType;
 

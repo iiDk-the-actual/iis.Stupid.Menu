@@ -7,12 +7,15 @@ namespace iiMenu.Patches
     [HarmonyPatch(typeof(GTPlayer), "GetSlidePercentage")]
     public class SlidePatch
     {
-        private static void Postfix(GTPlayer __instance, ref float __result)
+        public static bool everythingSlippery;
+        public static bool everythingGrippy;
+
+        public static void Postfix(GTPlayer __instance, ref float __result)
         {
-            if (EverythingSlippery)
+            if (everythingSlippery)
                 __result = 1;
 
-            if (EverythingGrippy == true)
+            if (everythingGrippy)
                 __result = 0;
         }
     }

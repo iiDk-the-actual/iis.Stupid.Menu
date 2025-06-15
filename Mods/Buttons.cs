@@ -431,8 +431,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Uncap Max Velocity", method =() => GorillaLocomotion.GTPlayer.Instance.maxJumpSpeed = 99999f, toolTip = "Lets you go as fast as you want without hitting the velocity limit."},
                 new ButtonInfo { buttonText = "Always Max Velocity", method =() => Movement.AlwaysMaxVelocity(), toolTip = "Always makes you go as fast as the velocity limit."},
 
-                new ButtonInfo { buttonText = "Slippery Hands", enableMethod =() => Movement.EnableSlipperyHands(), disableMethod =() => Movement.DisableSlipperyHands(), toolTip = "Makes everything ice, as in extremely slippery."},
-                new ButtonInfo { buttonText = "Grippy Hands", enableMethod =() => Movement.EnableGrippyHands(), disableMethod =() => Movement.DisableGrippyHands(), toolTip = "Covers your hands in grip tape, letting you wallrun as high as you want."},
+                new ButtonInfo { buttonText = "Slippery Hands", enableMethod =() => Patches.SlidePatch.everythingSlippery = true, disableMethod =() => Patches.SlidePatch.everythingSlippery = false, toolTip = "Makes everything ice, as in extremely slippery."},
+                new ButtonInfo { buttonText = "Grippy Hands", enableMethod =() => Patches.SlidePatch.everythingGrippy = true, disableMethod =() => Patches.SlidePatch.everythingGrippy = false, toolTip = "Covers your hands in grip tape, letting you wallrun as high as you want."},
                 new ButtonInfo { buttonText = "Sticky Hands", method =() => Movement.StickyHands(), disableMethod =() => Movement.DisableStickyHands(), toolTip = "Makes your hands really sticky."},
                 new ButtonInfo { buttonText = "Climby Hands", method =() => Movement.ClimbyHands(), disableMethod =() => Movement.DisableClimbyHands(), toolTip = "Lets you climb everything like a rope."},
 
