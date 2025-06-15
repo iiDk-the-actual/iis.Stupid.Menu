@@ -25,13 +25,20 @@ namespace iiMenu.Mods
         public static void SetFullbrightStatus(bool fullBright) =>
             GameLightingManager.instance.SetCustomDynamicLightingEnabled(!fullBright);
 
+        private static float removeBlindfoldDelay;
         public static void RemoveBlindfold()
         {
-            if (PhotonNetwork.InRoom && GorillaGameManager.instance.GameType() == GameModeType.PropHaunt)
+            if (PhotonNetwork.InRoom && Time.time > removeBlindfoldDelay)
             {
-                GorillaPropHauntGameManager hauntManager = (GorillaPropHauntGameManager)GorillaGameManager.instance;
-                hauntManager._SetPlayerBlindfoldVisibility(VRRig.LocalRig, PhotonNetwork.LocalPlayer, false);
-                hauntManager._SetPlayerBlindfoldVisibility(VRRig.LocalRig, null, false);
+                removeBlindfoldDelay = Time.time + 0.5f;
+                GameObject mainCamera = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/Main Camera");
+                int childCount = mainCamera.transform.childCount;
+                for (int i = 0; i < childCount; i++)
+                {
+                    GameObject v = mainCamera.transform.GetChild(i).gameObject;
+                    if (v.name == "PropHaunt_Blindfold_ForCameras_Prefab(Clone)")
+                        UnityEngine.Object.Destroy(v);
+                }
             }
         }
 
