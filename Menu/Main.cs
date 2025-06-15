@@ -917,7 +917,6 @@ namespace iiMenu.Menu
                                         Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/next.wav", "next.wav"), buttonClickVolume / 10f);
 
                                     Toggle("NextPage");
-                                    ReloadMenu();
                                     joystickDelay = Time.time + 0.2f;
                                 }
                                 if (js.x < -0.5f)
@@ -926,14 +925,13 @@ namespace iiMenu.Menu
                                         Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/prev.wav", "prev.wav"), buttonClickVolume / 10f);
 
                                     Toggle("PreviousPage");
-                                    ReloadMenu();
                                     joystickDelay = Time.time + 0.2f;
                                 }
 
                                 if (js.y > 0.5f)
                                 {
                                     if (dynamicSounds)
-                                        Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/open.wav", "open.wav"), buttonClickVolume / 10f);
+                                        Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/open.wav", "up.wav"), buttonClickVolume / 10f);
 
                                     joystickButtonSelected--;
                                     if (joystickButtonSelected < 0)
@@ -945,7 +943,7 @@ namespace iiMenu.Menu
                                 if (js.y < -0.5f)
                                 {
                                     if (dynamicSounds)
-                                        Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/close.wav", "close.wav"), buttonClickVolume / 10f);
+                                        Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/close.wav", "down.wav"), buttonClickVolume / 10f);
 
                                     joystickButtonSelected++;
                                     if (joystickButtonSelected > pageSize - 1)
