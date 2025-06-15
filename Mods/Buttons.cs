@@ -708,6 +708,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Entity Reach", method =() => Patches.EntityGrabPatch.enabled = true, disableMethod =() => Patches.EntityGrabPatch.enabled = false, toolTip = "Gives you the ability to grab entities from farther away in the horror map." },
                 new ButtonInfo { buttonText = "Break All Crates", method =() => Fun.BreakAllCrates(), toolTip = "Breaks every crate in the horror map." },
 
+                new ButtonInfo { buttonText = "Infinite Prop Distance", method =() => Fun.SetPropDistanceLimit(float.MaxValue), disableMethod =() => Fun.SetPropDistanceLimit(0.35f), toolTip = "Removes the distance limit of props in the prop haunt map." },
+                new ButtonInfo { buttonText = "Prop Noclip", method =() => Patches.PropPatch.enabled = true, disableMethod =() => Patches.PropPatch.enabled = false, toolTip = "Allows you to put props in walls in the prop haunt map." },
+
                 new ButtonInfo { buttonText = "Spaz Tool Stations", method =() => Fun.SpazToolStations(), toolTip = "Spazzes out the tool purchase stations in the horror map." },
                 new ButtonInfo { buttonText = "Purchase All Tool Stations", method =() => Fun.PurchaseAllToolStations(), toolTip = "Makes every tool purchase station force purchase in the horror map." },
 

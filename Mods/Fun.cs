@@ -1,4 +1,5 @@
 ﻿using GorillaExtensions;
+using GorillaGameModes;
 using GorillaNetworking;
 using GorillaTag;
 using GorillaTagScripts;
@@ -841,6 +842,15 @@ namespace iiMenu.Mods
             }
             else
                 VRRig.LocalRig.enabled = true;
+        }
+
+        public static void SetPropDistanceLimit(float distance)
+        {
+            if (PhotonNetwork.InRoom && GorillaGameManager.instance.GameType() == GameModeType.PropHaunt)
+            {
+                GorillaPropHauntGameManager hauntManager = (GorillaPropHauntGameManager)GorillaGameManager.instance;
+                hauntManager.m_ph_hand_follow_distance = distance;
+            }
         }
 
         private static float purchaseDelay;
