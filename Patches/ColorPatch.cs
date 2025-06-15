@@ -13,9 +13,8 @@ namespace iiMenu.Patches
             if (__instance == VRRig.LocalRig)
             {
                 if (nameSpoofEnabled)
-                {
                     return false;
-                }
+                
                 if (patchEnabled)
                 {
                     Photon.Realtime.Player playerRef = ((PunNetPlayer)NetworkSystem.Instance.GetPlayer(info.senderID)).PlayerRef;

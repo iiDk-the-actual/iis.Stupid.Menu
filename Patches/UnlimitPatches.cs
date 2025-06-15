@@ -17,6 +17,7 @@ namespace iiMenu.Patches
                     __result = true;
                     return false;
                 }
+
                 return true;
             }
         }
@@ -31,6 +32,7 @@ namespace iiMenu.Patches
                     __result = true;
                     return false;
                 }
+
                 return true;
             }
         }
@@ -45,6 +47,7 @@ namespace iiMenu.Patches
                     __result = true;
                     return false;
                 }
+
                 return true;
             }
         }
@@ -59,6 +62,7 @@ namespace iiMenu.Patches
                     __result = true;
                     return false;
                 }
+
                 return true;
             }
         }
@@ -73,6 +77,7 @@ namespace iiMenu.Patches
                     __result = true;
                     return false;
                 }
+
                 return true;
             }
         }
@@ -87,6 +92,7 @@ namespace iiMenu.Patches
                     __result = true;
                     return false;
                 }
+
                 return true;
             }
         }
@@ -101,6 +107,7 @@ namespace iiMenu.Patches
                     __result = true;
                     return false;
                 }
+
                 return true;
             }
         }
@@ -115,6 +122,7 @@ namespace iiMenu.Patches
                     __result = true;
                     return false;
                 }
+
                 return true;
             }
         }
@@ -129,6 +137,7 @@ namespace iiMenu.Patches
                     __result = true;
                     return false;
                 }
+
                 return true;
             }
         }
@@ -143,6 +152,7 @@ namespace iiMenu.Patches
                     __result = true;
                     return false;
                 }
+
                 return true;
             }
         }
@@ -157,6 +167,7 @@ namespace iiMenu.Patches
                     __result = true;
                     return false;
                 }
+
                 return true;
             }
         }
@@ -171,6 +182,7 @@ namespace iiMenu.Patches
                     __result = true;
                     return false;
                 }
+
                 return true;
             }
         }
@@ -185,6 +197,7 @@ namespace iiMenu.Patches
                     __result = true;
                     return false;
                 }
+
                 return true;
             }
         }
@@ -199,6 +212,7 @@ namespace iiMenu.Patches
                     __result = true;
                     return false;
                 }
+
                 return true;
             }
         }
@@ -213,6 +227,7 @@ namespace iiMenu.Patches
                     __result = true;
                     return false;
                 }
+
                 return true;
             }
         }
@@ -227,6 +242,7 @@ namespace iiMenu.Patches
                     __result = true;
                     return false;
                 }
+
                 return true;
             }
         }
@@ -241,6 +257,7 @@ namespace iiMenu.Patches
                     __result = true;
                     return false;
                 }
+
                 return true;
             }
         }
@@ -255,22 +272,9 @@ namespace iiMenu.Patches
                     __result = false;
                     return false;
                 }
+
                 return true;
             }
         }
-        /*
-        [HarmonyPatch(typeof(BuilderTable), "HasEnoughResources")]
-        public class UnlimitPatch19
-        {
-            public static bool Prefix(ref bool __result)
-            {
-                if (enabled)
-                {
-                    __result = false;
-                    return false;
-                }
-                return true;
-            }
-        }*/
     }
 }

@@ -7,9 +7,7 @@ namespace iiMenu.Patches
     {
         public static bool enabled = false;
 
-        public static bool Prefix(VRRig __instance)
-        {
-            return !enabled;
-        }
+        public static bool Prefix(VRRig __instance) =>
+            !enabled;
     }
 }

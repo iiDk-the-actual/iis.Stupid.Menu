@@ -27,9 +27,8 @@ namespace iiMenu.Patches
                             turnTypeInt = 2;
                     }
                     else
-                    {
                         turnTypeInt = 1;
-                    }
+                    
                     turnTypeInt *= 10;
                     turnTypeInt += GorillaSnapTurningComp.turnFactor;
                 }

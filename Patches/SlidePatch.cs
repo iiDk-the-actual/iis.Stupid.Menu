@@ -9,19 +9,11 @@ namespace iiMenu.Patches
     {
         private static void Postfix(GTPlayer __instance, ref float __result)
         {
-            try
-            {
-                if (EverythingSlippery == true)
-                {
-                    __result = 1;
-                }
+            if (EverythingSlippery)
+                __result = 1;
 
-                if (EverythingGrippy == true)
-                {
-                    __result = 0;
-                }
-            }
-            catch { }
+            if (EverythingGrippy == true)
+                __result = 0;
         }
     }
 }

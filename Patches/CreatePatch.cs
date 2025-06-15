@@ -15,7 +15,7 @@ namespace iiMenu.Patches
             {
                 if (pieceTypeSearch == pieceType)
                 {
-                    iiMenu.Mods.Fun.pieceId = pieceId;
+                    Mods.Fun.pieceId = pieceId;
                     enabled = false;
                 }
             }

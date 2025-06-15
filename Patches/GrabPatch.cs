@@ -8,24 +8,14 @@ namespace iiMenu.Patches
     {
         public static bool enabled = false;
 
-        public static bool Prefix(VRRig __instance, VRRig grabbedByRig, bool grabbedBody, bool grabbedLeftHand, bool grabbedWithLeftHand)
-        {
-            if (enabled && __instance == VRRig.LocalRig)
-                return false;
-            
-            return true;
-        }
+        public static bool Prefix(VRRig __instance, VRRig grabbedByRig, bool grabbedBody, bool grabbedLeftHand, bool grabbedWithLeftHand) =>
+            !(enabled && __instance == VRRig.LocalRig);
     }
 
     [HarmonyPatch(typeof(VRRig), "DroppedByPlayer")]
     public class DropPatch
     {
-        public static bool Prefix(VRRig __instance, VRRig grabbedByRig, Vector3 throwVelocity)
-        {
-            if (GrabPatch.enabled && __instance == VRRig.LocalRig)
-                return false;
-
-            return true;
-        }
+        public static bool Prefix(VRRig __instance, VRRig grabbedByRig, Vector3 throwVelocity) =>
+            !(GrabPatch.enabled && __instance == VRRig.LocalRig);
     }
 }
