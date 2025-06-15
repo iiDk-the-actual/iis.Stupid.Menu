@@ -33,21 +33,19 @@ namespace iiMenu.Mods
                         if (PlayerIsTagged(rig))
                         {
                             VRRig.LocalRig.enabled = false;
-
                             VRRig.LocalRig.transform.position = rig.rightHandTransform.position;
-                            GorillaTagger.Instance.myVRRig.transform.position = rig.rightHandTransform.position;
+
                             if (GetIndex("Obnoxious Tag").enabled)
                             {
-                                Quaternion rotation = Quaternion.Euler(new Vector3(0, UnityEngine.Random.Range(0, 360), 0));
+                                Quaternion rotation = Quaternion.Euler(new Vector3(0, Random.Range(0, 360), 0));
                                 VRRig.LocalRig.transform.rotation = rotation;
-                                GorillaTagger.Instance.myVRRig.transform.rotation = rotation;
 
-                                VRRig.LocalRig.head.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
-                                VRRig.LocalRig.leftHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
-                                VRRig.LocalRig.rightHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
+                                VRRig.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
+                                VRRig.LocalRig.leftHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + RandomVector3();
+                                VRRig.LocalRig.rightHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + RandomVector3();
 
-                                VRRig.LocalRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
-                                VRRig.LocalRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+                                VRRig.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
+                                VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
 
                                 VRRig.LocalRig.leftIndex.calcT = 0f;
                                 VRRig.LocalRig.leftMiddle.calcT = 0f;
@@ -354,22 +352,19 @@ namespace iiMenu.Mods
                         VRRig.LocalRig.enabled = false;
 
                         if (!GetIndex("Obnoxious Tag").enabled)
-                        {
                             VRRig.LocalRig.transform.position = lockTarget.transform.position - new Vector3(0f, 3f, 0f);
-                            GorillaTagger.Instance.myVRRig.transform.position = lockTarget.transform.position - new Vector3(0f, 3f, 0f);
-                        } else
+                        else
                         {
-                            Vector3 position = lockTarget.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
+                            Vector3 position = lockTarget.transform.position + RandomVector3();
 
                             VRRig.LocalRig.transform.position = position;
-                            GorillaTagger.Instance.myVRRig.transform.position = position;
 
-                            VRRig.LocalRig.head.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
-                            VRRig.LocalRig.leftHand.rigTarget.transform.position = lockTarget.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
-                            VRRig.LocalRig.rightHand.rigTarget.transform.position = lockTarget.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
+                            VRRig.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
+                            VRRig.LocalRig.leftHand.rigTarget.transform.position = lockTarget.transform.position + RandomVector3();
+                            VRRig.LocalRig.rightHand.rigTarget.transform.position = lockTarget.transform.position + RandomVector3();
 
-                            VRRig.LocalRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
-                            VRRig.LocalRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+                            VRRig.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
+                            VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
 
                             VRRig.LocalRig.leftIndex.calcT = 0f;
                             VRRig.LocalRig.leftMiddle.calcT = 0f;
@@ -503,27 +498,20 @@ namespace iiMenu.Mods
                                 VRRig.LocalRig.enabled = false;
 
                                 if (!GetIndex("Obnoxious Tag").enabled)
-                                {
                                     VRRig.LocalRig.transform.position = vrrig.transform.position - new Vector3(0f, -3f, 0f);
-                                    GorillaTagger.Instance.myVRRig.transform.position = vrrig.transform.position - new Vector3(0f, -3f, 0f);
-                                }
                                 else
                                 {
-                                    Vector3 position = vrrig.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
+                                    Vector3 position = vrrig.transform.position + RandomVector3();
                                     
                                     VRRig.LocalRig.transform.position = position;
-                                    GorillaTagger.Instance.myVRRig.transform.position = position;
+                                    VRRig.LocalRig.transform.rotation = RandomQuaternion();
 
-                                    Quaternion rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
-                                    VRRig.LocalRig.transform.rotation = rotation;
-                                    GorillaTagger.Instance.myVRRig.transform.rotation = rotation;
+                                    VRRig.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
+                                    VRRig.LocalRig.leftHand.rigTarget.transform.position = vrrig.transform.position + RandomVector3();
+                                    VRRig.LocalRig.rightHand.rigTarget.transform.position = vrrig.transform.position + RandomVector3();
 
-                                    VRRig.LocalRig.head.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
-                                    VRRig.LocalRig.leftHand.rigTarget.transform.position = vrrig.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
-                                    VRRig.LocalRig.rightHand.rigTarget.transform.position = vrrig.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
-
-                                    VRRig.LocalRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
-                                    VRRig.LocalRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+                                    VRRig.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
+                                    VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
 
                                     VRRig.LocalRig.leftIndex.calcT = 0f;
                                     VRRig.LocalRig.leftMiddle.calcT = 0f;
@@ -566,23 +554,19 @@ namespace iiMenu.Mods
                 VRRig.LocalRig.enabled = false;
 
                 if (!GetIndex("Obnoxious Tag").enabled)
-                {
                     VRRig.LocalRig.transform.position = vrrig.transform.position - new Vector3(0f, -3f, 0f);
-                    GorillaTagger.Instance.myVRRig.transform.position = vrrig.transform.position - new Vector3(0f, -3f, 0f);
-                }
                 else
                 {
-                    Vector3 position = vrrig.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
+                    Vector3 position = vrrig.transform.position + RandomVector3();
 
                     VRRig.LocalRig.transform.position = position;
-                    GorillaTagger.Instance.myVRRig.transform.position = position;
 
-                    VRRig.LocalRig.head.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
-                    VRRig.LocalRig.leftHand.rigTarget.transform.position = vrrig.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
-                    VRRig.LocalRig.rightHand.rigTarget.transform.position = vrrig.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
+                    VRRig.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
+                    VRRig.LocalRig.leftHand.rigTarget.transform.position = vrrig.transform.position + RandomVector3();
+                    VRRig.LocalRig.rightHand.rigTarget.transform.position = vrrig.transform.position + RandomVector3();
 
-                    VRRig.LocalRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
-                    VRRig.LocalRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+                    VRRig.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
+                    VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
 
                     VRRig.LocalRig.leftIndex.calcT = 0f;
                     VRRig.LocalRig.leftMiddle.calcT = 0f;
@@ -743,7 +727,7 @@ namespace iiMenu.Mods
             else
             {
                 GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
-                lol.playerLives[PhotonNetwork.LocalPlayer.ActorNumber] = UnityEngine.Random.Range(0, 4);
+                lol.playerLives[PhotonNetwork.LocalPlayer.ActorNumber] = Random.Range(0, 4);
             }
         }
 
@@ -758,7 +742,7 @@ namespace iiMenu.Mods
                 GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
                 foreach (Photon.Realtime.Player loln in PhotonNetwork.PlayerList)
                 {
-                    lol.playerLives[loln.ActorNumber] = UnityEngine.Random.Range(0, 4);
+                    lol.playerLives[loln.ActorNumber] = Random.Range(0, 4);
                 }
             }
         }
