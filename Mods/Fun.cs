@@ -239,6 +239,7 @@ namespace iiMenu.Mods
             lastPartyKickThingy = FriendshipGroupDetection.Instance.IsInParty;
         }
 
+        public static float splashDel;
         public static void WaterSplashHands()
         {
             if (Time.time > splashDel && (rightGrab || leftGrab))
@@ -264,7 +265,7 @@ namespace iiMenu.Mods
                 GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", RpcTarget.All, new object[]
                 {
                     VRRig.LocalRig.transform.position + new Vector3(UnityEngine.Random.Range(-0.5f, 0.5f),UnityEngine.Random.Range(-0.5f, 0.5f),UnityEngine.Random.Range(-0.5f, 0.5f)),
-                    Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0,360), UnityEngine.Random.Range(0,360), UnityEngine.Random.Range(0,360))),
+                    RandomQuaternion(),
                     4f,
                     100f,
                     true,
@@ -282,7 +283,7 @@ namespace iiMenu.Mods
                 GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", RpcTarget.All, new object[]
                 {
                     GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos((float)Time.frameCount / 30), 1f, MathF.Sin((float)Time.frameCount / 30)),
-                    Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0,360), UnityEngine.Random.Range(0,360), UnityEngine.Random.Range(0,360))),
+                    RandomQuaternion(),
                     4f,
                     100f,
                     true,
@@ -305,13 +306,12 @@ namespace iiMenu.Mods
                 {
                     VRRig.LocalRig.enabled = false;
                     VRRig.LocalRig.transform.position = NewPointer.transform.position - new Vector3(0, 1, 0);
-                    GorillaTagger.Instance.myVRRig.transform.position = NewPointer.transform.position - new Vector3(0, 1, 0);
                     if (Time.time > splashDel)
                     {
                         GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", RpcTarget.All, new object[]
                         {
                             NewPointer.transform.position,
-                            Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0,360), UnityEngine.Random.Range(0,360), UnityEngine.Random.Range(0,360))),
+                            RandomQuaternion(),
                             4f,
                             100f,
                             true,
