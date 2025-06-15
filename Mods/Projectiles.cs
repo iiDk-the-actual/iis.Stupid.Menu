@@ -3,6 +3,8 @@ using iiMenu.Classes;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
+using System.Linq;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static iiMenu.Classes.RigManager;
@@ -248,7 +250,12 @@ namespace iiMenu.Mods.Spammers
                 if (GetIndex("Above Players").enabled)
                 {
                     charvel = Vector3.zero;
-                    startpos = GetRandomVRRig(false).transform.position + new Vector3(0f, 1f, 0f);
+                    VRRig[] targetRigs = GorillaParent.instance.vrrigs
+                        .Where(rig => rig != null && rig != VRRig.LocalRig && Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, rig.transform.position) < 3.9f)
+                        .ToArray();
+
+                    VRRig targetRig = targetRigs[UnityEngine.Random.Range(0, targetRigs.Length - 1)];
+                    startpos = targetRig.transform.position + new Vector3(0f, 1f, 0f);
                 }
 
                 if (GetIndex("Rain Projectiles").enabled)
@@ -358,12 +365,17 @@ namespace iiMenu.Mods.Spammers
                     if (GetIndex("Above Players").enabled)
                     {
                         charvel = Vector3.zero;
-                        startpos = GetRandomVRRig(false).transform.position + new Vector3(0f, 1f, 0f);//rigs[UnityEngine.Random.Range(0, rigs.Count)].transform.position + new Vector3(0, 1, 0);
+                        VRRig[] targetRigs = GorillaParent.instance.vrrigs
+                            .Where(rig => rig != null && rig != VRRig.LocalRig && Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, rig.transform.position) < 3.9f)
+                            .ToArray();
+
+                        VRRig targetRig = targetRigs[UnityEngine.Random.Range(0, targetRigs.Length - 1)];
+                        startpos = targetRig.transform.position + new Vector3(0f, 1f, 0f);
                     }
 
                     if (GetIndex("Rain Projectiles").enabled)
                     {
-                        startpos = lockTarget.headMesh.transform.position + new Vector3(UnityEngine.Random.Range(-5f, 5f), 5f, UnityEngine.Random.Range(-5f, 5f));
+                        startpos = lockTarget.headMesh.transform.position + new Vector3(UnityEngine.Random.Range(-3f, 3f), 3f, UnityEngine.Random.Range(-3f, 3f));
                         charvel = Vector3.zero;
                     }
 
@@ -519,12 +531,16 @@ namespace iiMenu.Mods.Spammers
 
                 if (GetIndex("Above Players").enabled)
                 {
-                    //List<VRRig> rigs = GorillaParent.instance.vrrigs;
-                    startpos = GetRandomVRRig(false).transform.position + new Vector3(0f, 1f, 0f);//rigs[UnityEngine.Random.Range(0, rigs.Count)].transform.position + new Vector3(0, 1, 0);
+                    VRRig[] targetRigs = GorillaParent.instance.vrrigs
+                        .Where(rig => rig != null && rig != VRRig.LocalRig && Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, rig.transform.position) < 3.9f)
+                        .ToArray();
+
+                    VRRig targetRig = targetRigs[UnityEngine.Random.Range(0, targetRigs.Length - 1)];
+                    startpos = targetRig.transform.position + new Vector3(0f, 1f, 0f);
                 }
 
                 if (GetIndex("Rain Projectiles").enabled)
-                    startpos = GorillaTagger.Instance.headCollider.transform.position + new Vector3(UnityEngine.Random.Range(-5f, 5f), 5f, UnityEngine.Random.Range(-5f, 5f));
+                    startpos = GorillaTagger.Instance.headCollider.transform.position + new Vector3(UnityEngine.Random.Range(-3f, 3f), 3f, UnityEngine.Random.Range(-3f, 3f));
 
                 if (GetIndex("Projectile Aura").enabled)
                 {
@@ -609,10 +625,17 @@ namespace iiMenu.Mods.Spammers
                 }
 
                 if (GetIndex("Above Players").enabled)
-                    startpos = GetRandomVRRig(false).transform.position + new Vector3(0f, 1f, 0f);//rigs[UnityEngine.Random.Range(0, rigs.Count)].transform.position + new Vector3(0, 1, 0);
+                {
+                    VRRig[] targetRigs = GorillaParent.instance.vrrigs
+                        .Where(rig => rig != null && rig != VRRig.LocalRig && Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, rig.transform.position) < 3.9f)
+                        .ToArray();
+
+                    VRRig targetRig = targetRigs[UnityEngine.Random.Range(0, targetRigs.Length - 1)];
+                    startpos = targetRig.transform.position + new Vector3(0f, 1f, 0f);
+                }
 
                 if (GetIndex("Rain Projectiles").enabled)
-                    startpos = GorillaTagger.Instance.headCollider.transform.position + new Vector3(UnityEngine.Random.Range(-5f, 5f), 5f, UnityEngine.Random.Range(-5f, 5f));
+                    startpos = GorillaTagger.Instance.headCollider.transform.position + new Vector3(UnityEngine.Random.Range(-3f, 3f), 3f, UnityEngine.Random.Range(-3f, 3f));
 
                 if (GetIndex("Projectile Aura").enabled)
                 {
