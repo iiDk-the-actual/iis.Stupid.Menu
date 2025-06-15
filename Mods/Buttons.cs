@@ -464,7 +464,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Disable Water", enableMethod =() => Movement.DisableWater(), disableMethod =() => Movement.FixWater(), toolTip = "Disables the water in the beach map." },
                 new ButtonInfo { buttonText = "Air Swim", method =() => Movement.AirSwim(), disableMethod =() => Movement.DisableAirSwim(), toolTip = "Puts you in a block of water, letting you swim in the air." },
                 new ButtonInfo { buttonText = "Fast Swim", method =() => Movement.FastSwim(), toolTip = "Whenever you are in water, your velocity is slowly multiplied." },
-                new ButtonInfo { buttonText = "Disable Air", overlapText = "Disable Wind Barriers", method =() => Movement.DisableAir(), disableMethod =() => Movement.EnableAir(), toolTip = "Disables the wind barriers in every map." },
+                new ButtonInfo { buttonText = "Disable Air", overlapText = "Disable Wind Barriers", method =() => Patches.ForcePatch.enabled = true, disableMethod =() => Patches.ForcePatch.enabled = false, toolTip = "Disables the wind barriers in every map." },
 
                 new ButtonInfo { buttonText = "Ghost <color=grey>[</color><color=green>A</color><color=grey>]</color>", method =() => Movement.Ghost(), disableMethod =() => Movement.EnableRig(), toolTip = "Keeps your rig still when holding <color=green>A</color>."},
                 new ButtonInfo { buttonText = "Invisible <color=grey>[</color><color=green>B</color><color=grey>]</color>", method =() => Movement.Invisible(), disableMethod =() => Movement.EnableRig(), toolTip = "Makes you go invisible when holding <color=green>B</color>."},

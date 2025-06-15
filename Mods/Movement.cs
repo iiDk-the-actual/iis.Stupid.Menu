@@ -2351,9 +2351,7 @@ namespace iiMenu.Mods
                 FixRigHandRotation();
             }
             else
-            {
                 VRRig.LocalRig.enabled = true;
-            }
         }
 
         public static void AutoGriddy()
@@ -2375,9 +2373,7 @@ namespace iiMenu.Mods
                 FixRigHandRotation();
             }
             else
-            {
                 VRRig.LocalRig.enabled = true;
-            }
         }
 
         public static void AutoTPose()
@@ -2400,9 +2396,7 @@ namespace iiMenu.Mods
                 FixRigHandRotation();
             }
             else
-            {
                 VRRig.LocalRig.enabled = true;
-            }
         }
 
         public static void Helicopter()
@@ -2425,9 +2419,7 @@ namespace iiMenu.Mods
                 FixRigHandRotation();
             }
             else
-            {
                 VRRig.LocalRig.enabled = true;
-            }
         }
 
         public static void Beyblade()
@@ -2747,9 +2739,8 @@ namespace iiMenu.Mods
                     GorillaLocomotion.GTPlayer.Instance.BeginClimbing(climb.AddComponent<GorillaClimbable>(), GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller/GorillaHandClimber").GetComponent<GorillaHandClimber>());
                 }
             } else
-            {
                 leftisclimbing = false;
-            }
+            
             if (rightGrab)
             {
                 if (GorillaLocomotion.GTPlayer.Instance.IsHandTouching(false) && !rightisclimbing)
@@ -2760,9 +2751,7 @@ namespace iiMenu.Mods
                 }
             }
             else
-            {
                 rightisclimbing = false;
-            }
         }
 
         public static void DisableClimbyHands()
@@ -2786,10 +2775,8 @@ namespace iiMenu.Mods
             GorillaLocomotion.GTPlayer.Instance.slideControl = oldSlide*2f;
         }
 
-        public static void DisableSlideControl()
-        {
+        public static void DisableSlideControl() =>
             GorillaLocomotion.GTPlayer.Instance.slideControl = oldSlide;
-        }
 
         public static Vector3[] lastLeft = new Vector3[] { Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero };
         public static Vector3[] lastRight = new Vector3[] { Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero };
@@ -2879,9 +2866,7 @@ namespace iiMenu.Mods
                     GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
                     ZeroGravity();
                 } else
-                {
                     sithlord = null;
-                }
             }
         }
 
@@ -2933,10 +2918,9 @@ namespace iiMenu.Mods
                 "Powerful"
             };
             pullPowerInt++;
-            if (pullPowerInt > powers.Length - 1)
-            {
+            if (pullPowerInt >= powers.Length)
                 pullPowerInt = 0;
-            }
+            
             pullPower = powers[pullPowerInt];
             GetIndex("Change Pull Mod Power").overlapText = "Change Pull Mod Power <color=grey>[</color><color=green>" + powerNames[pullPowerInt] + "</color><color=grey>]</color>";
         }
@@ -2979,9 +2963,8 @@ namespace iiMenu.Mods
                     try
                     {
                         if (GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").GetComponent<GorillaVelocityEstimator>() == null)
-                        {
                             GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").AddComponent<GorillaVelocityEstimator>();
-                        }
+                        
                         comp.angularVelocity = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").GetComponent<GorillaVelocityEstimator>().angularVelocity;
                     } catch { }
                 }
@@ -3015,9 +2998,8 @@ namespace iiMenu.Mods
                     try
                     {
                         if (GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").GetComponent<GorillaVelocityEstimator>() == null)
-                        {
                             GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").AddComponent<GorillaVelocityEstimator>();
-                        }
+                        
                         comp.angularVelocity = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").GetComponent<GorillaVelocityEstimator>().angularVelocity;
                     } catch { }
                 }
@@ -3116,15 +3098,11 @@ namespace iiMenu.Mods
             GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.transform.position = GorillaTagger.Instance.rightHandTransform.position + (GorillaTagger.Instance.rightHandTransform.forward * (armlength - 0.917f));
         }
 
-        public static void EnableSteamLongArms()
-        {
+        public static void EnableSteamLongArms() =>
             GorillaLocomotion.GTPlayer.Instance.transform.localScale = new Vector3(armlength, armlength, armlength);
-        }
 
-        public static void DisableSteamLongArms()
-        {
+        public static void DisableSteamLongArms() =>
             GorillaLocomotion.GTPlayer.Instance.transform.localScale = new Vector3(1f, 1f, 1f);
-        }
 
         public static void MultipliedLongArms()
         {
@@ -3278,9 +3256,7 @@ namespace iiMenu.Mods
                 GorillaLocomotion.GTPlayer.Instance.transform.position += longJumpPower;
             }
             else
-            {
                 longJumpPower = Vector3.zero;
-            }
         }
 
         public static void BunnyHop()
@@ -3288,9 +3264,7 @@ namespace iiMenu.Mods
             Physics.Raycast(GorillaTagger.Instance.bodyCollider.transform.position - new Vector3(0f, 0.2f, 0f), Vector3.down, out var Ray, 512f, GorillaLocomotion.GTPlayer.Instance.locomotionEnabledLayers);
 
             if (Ray.distance < 0.15f)
-            {
                 GorillaTagger.Instance.rigidbody.velocity = new Vector3(GorillaTagger.Instance.rigidbody.velocity.x, (GorillaLocomotion.GTPlayer.Instance.jumpMultiplier * 2.727272727f), GorillaTagger.Instance.rigidbody.velocity.z);
-            }
         }
 
         public static void Strafe()
@@ -3311,25 +3285,19 @@ namespace iiMenu.Mods
         public static void GripBunnyHop()
         {
             if (rightGrab)
-            {
                 BunnyHop();
-            }
         }
 
         public static void GripStrafe()
         {
             if (rightGrab)
-            {
                 Strafe();
-            }
         }
 
         public static void GripDynamicStrafe()
         {
             if (rightGrab)
-            {
                 DynamicStrafe();
-            }
         }
 
         public static void GroundHelper()
@@ -3338,9 +3306,7 @@ namespace iiMenu.Mods
             {
                 Vector3 x3 = GorillaTagger.Instance.rigidbody.velocity;
                 if (x3.y > 0f)
-                {
                     GorillaTagger.Instance.rigidbody.velocity = new Vector3(x3.x, 0f, x3.z);
-                }
             }
         }
 
@@ -3367,16 +3333,6 @@ namespace iiMenu.Mods
             GorillaTagger.Instance.bodyCollider.material.bounciness = preBounciness;
             GorillaTagger.Instance.bodyCollider.material.bounceCombine = whateverthisis;
             GorillaTagger.Instance.bodyCollider.material.dynamicFriction = preFrictiness;
-        }
-
-        public static void DisableAir()
-        {
-            Patches.ForcePatch.enabled = true;
-        }
-
-        public static void EnableAir()
-        {
-            Patches.ForcePatch.enabled = false;
         }
 
         public static void DisableWater()
