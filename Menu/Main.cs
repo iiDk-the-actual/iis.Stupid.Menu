@@ -3527,8 +3527,7 @@ namespace iiMenu.Menu
                     if (tagManager.isCurrentlyTag)
                         infected.Add(tagManager.currentIt);
                     else
-                        foreach (NetPlayer plr in tagManager.currentInfected)
-                            infected.Add(plr);
+                        infected.AddRange(tagManager.currentInfected);
                     break;
                 case GorillaGameModes.GameModeType.Ghost:
                 case GorillaGameModes.GameModeType.Ambush:
@@ -3536,14 +3535,13 @@ namespace iiMenu.Menu
                     if (ghostManager.isCurrentlyTag)
                         infected.Add(ghostManager.currentIt);
                     else
-                        foreach (NetPlayer plr in ghostManager.currentInfected)
-                            infected.Add(plr);
+                        infected.AddRange(ghostManager.currentInfected);
                     break;
                 case GorillaGameModes.GameModeType.PropHaunt:
                     GorillaPropHauntGameManager hauntManager = (GorillaPropHauntGameManager)GorillaGameManager.instance;
                     foreach (VRRig rig in GorillaPropHauntGameManager._g_ph_activePlayerRigs)
                     {
-                        if (rig.IsInvisibleToLocalPlayer)
+                        if (VRRig.LocalRig.bodyRenderer.gameModeBodyType == GorillaBodyType.Skeleton ? VRRig.LocalRig.bodyRenderer.gameModeBodyType == GorillaBodyType.Default : rig.IsInvisibleToLocalPlayer)
                             infected.Add(GetPlayerFromVRRig(rig));
                     }
                     break;
