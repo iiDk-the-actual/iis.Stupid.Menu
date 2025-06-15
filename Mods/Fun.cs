@@ -44,6 +44,9 @@ namespace iiMenu.Mods
         public static void SidewaysHead() =>
             GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.y = 90f;
 
+        public static void RandomYHeadSpaz() =>
+            GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.y = UnityEngine.Random.Range(20, 340);
+        
         public static void RandomYHead() =>
             GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.y = UnityEngine.Random.Range(20, 340);
 
