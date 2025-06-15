@@ -241,39 +241,19 @@ namespace iiMenu.Mods
 
         public static void WaterSplashHands()
         {
-            if (rightGrab)
+            if (Time.time > splashDel && (rightGrab || leftGrab))
             {
-                if (Time.time > splashDel)
+                GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", RpcTarget.All, new object[]
                 {
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", RpcTarget.All, new object[]
-                    {
-                        GorillaTagger.Instance.rightHandTransform.position,
-                        GorillaTagger.Instance.rightHandTransform.rotation,
-                        4f,
-                        100f,
-                        true,
-                        false
-                    });
-                    RPCProtection();
-                    splashDel = Time.time + 0.1f;
-                }
-            }
-            if (leftGrab)
-            {
-                if (Time.time > splashDel)
-                {
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", RpcTarget.All, new object[]
-                    {
-                        GorillaTagger.Instance.leftHandTransform.position,
-                        GorillaTagger.Instance.leftHandTransform.rotation,
-                        4f,
-                        100f,
-                        true,
-                        false
-                    });
-                    RPCProtection();
-                    splashDel = Time.time + 0.1f;
-                }
+                    rightGrab ? GorillaTagger.Instance.rightHandTransform.position : GorillaTagger.Instance.leftHandTransform.position,
+                    rightGrab ? GorillaTagger.Instance.rightHandTransform.rotation : GorillaTagger.Instance.leftHandTransform.rotation,
+                    4f,
+                    100f,
+                    true,
+                    false
+                });
+                RPCProtection();
+                splashDel = Time.time + 0.1f;
             }
         }
 
