@@ -46,8 +46,10 @@ namespace iiMenu.Mods
                     if (v.material.shader.name == "GorillaTag/UberShader")
                     {
                         oldMats.Add(v, v.material);
-                        Material replacement = new Material(Shader.Find("GorillaTag/UberShader"));
-                        replacement.color = v.material.color;
+                        Material replacement = new Material(Shader.Find("GorillaTag/UberShader"))
+                        {
+                            color = v.material.color
+                        };
                         v.material = replacement;
                     }
                 } catch (System.Exception exception) { LogManager.LogError(string.Format("mat error {1} - {0}", exception.Message, exception.StackTrace)); }

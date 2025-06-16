@@ -439,7 +439,7 @@ namespace iiMenu.Menu
                                             if (Time.time > lastBackspaceTime)
                                             {
                                                 if (searchText.Length > 0)
-                                                    searchText = searchText.Substring(0, searchText.Length - 1);
+                                                    searchText = searchText[..^1];
                                             }
                                         }
                                         else
@@ -630,8 +630,7 @@ namespace iiMenu.Menu
                                     audioSource.volume = buttonClickVolume / 10f;
                                     audioSource.PlayOneShot(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/trigger-release.wav", "trigger-release.wav"));
 
-                                    if (audiomgrhand != null)
-                                        audiomgrhand.GetComponent<AudioSource>().Stop();
+                                    audiomgrhand?.GetComponent<AudioSource>().Stop();
                                 }
                             } else
                             {
@@ -741,7 +740,7 @@ namespace iiMenu.Menu
                                 {
                                     string randomName = "gorilla";
                                     for (var i = 0; i < 4; i++)
-                                        randomName = randomName + UnityEngine.Random.Range(0, 9).ToString();
+                                        randomName += UnityEngine.Random.Range(0, 9).ToString();
 
                                     List<string> playerids = new List<string> { };
 
@@ -781,7 +780,7 @@ namespace iiMenu.Menu
                                 {
                                     string randomName = "gorilla";
                                     for (var i = 0; i < 4; i++)
-                                        randomName = randomName + UnityEngine.Random.Range(0, 9).ToString();
+                                        randomName += UnityEngine.Random.Range(0, 9).ToString();
 
                                     object[] content = new object[] {
                                         id,
@@ -1070,7 +1069,7 @@ namespace iiMenu.Menu
                         }
                         else
                         {
-                            if (partyLastCode != null && Time.time > partyTime && (waitForPlayerJoin ? PhotonNetwork.PlayerListOthers.Length > 0 : true))
+                            if (partyLastCode != null && Time.time > partyTime && (!waitForPlayerJoin || PhotonNetwork.PlayerListOthers.Length > 0))
                             {
                                 LogManager.Log("Attempting rejoin");
                                 NetworkSystem.Instance.ReturnToSinglePlayer();
@@ -1081,7 +1080,7 @@ namespace iiMenu.Menu
                     {
                         if (phaseTwo)
                         {
-                            if (partyLastCode != null && Time.time > partyTime && (waitForPlayerJoin ? PhotonNetwork.PlayerListOthers.Length > 0 : true))
+                            if (partyLastCode != null && Time.time > partyTime && (!waitForPlayerJoin || PhotonNetwork.PlayerListOthers.Length > 0))
                             {
                                 LogManager.Log("Attempting rejoin");
                                 PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(partyLastCode, GorillaNetworking.JoinType.Solo);
@@ -1607,7 +1606,7 @@ namespace iiMenu.Menu
             buttonObject.AddComponent<Classes.Button>().relatedText = "Global Return";
 
             if (shouldOutline)
-                OutlineObj(buttonObject, swapButtonColors ? false : true);
+                OutlineObj(buttonObject, !swapButtonColors);
 
             GradientColorKey[] colorKeys = new[]
             {
@@ -3111,36 +3110,32 @@ namespace iiMenu.Menu
 
                     if (narratorIndex == 0)
                     {
-                        using (UnityWebRequest request = new UnityWebRequest("https://iidk.online/tts", "POST"))
+                        using UnityWebRequest request = new UnityWebRequest("https://iidk.online/tts", "POST");
+                        byte[] raw = Encoding.UTF8.GetBytes(postData);
+
+                        request.uploadHandler = new UploadHandlerRaw(raw);
+                        request.SetRequestHeader("Content-Type", "application/json");
+
+                        request.downloadHandler = new DownloadHandlerBuffer();
+                        yield return request.SendWebRequest();
+
+                        if (request.result != UnityWebRequest.Result.Success)
                         {
-                            byte[] raw = Encoding.UTF8.GetBytes(postData);
-
-                            request.uploadHandler = new UploadHandlerRaw(raw);
-                            request.SetRequestHeader("Content-Type", "application/json");
-
-                            request.downloadHandler = new DownloadHandlerBuffer();
-                            yield return request.SendWebRequest();
-
-                            if (request.result != UnityWebRequest.Result.Success)
-                            {
-                                LogManager.LogError("Error downloading TTS: " + request.error);
-                                yield break;
-                            }
-
-                            byte[] response = request.downloadHandler.data;
-                            File.WriteAllBytes(filePath, response);
+                            LogManager.LogError("Error downloading TTS: " + request.error);
+                            yield break;
                         }
+
+                        byte[] response = request.downloadHandler.data;
+                        File.WriteAllBytes(filePath, response);
                     } else
                     {
-                        using (UnityWebRequest request = UnityWebRequest.Get("https://api.streamelements.com/kappa/v2/speech?voice=" + narratorName + "&text=" + UnityWebRequest.EscapeURL(text)))
-                        {
-                            yield return request.SendWebRequest();
+                        using UnityWebRequest request = UnityWebRequest.Get("https://api.streamelements.com/kappa/v2/speech?voice=" + narratorName + "&text=" + UnityWebRequest.EscapeURL(text));
+                        yield return request.SendWebRequest();
 
-                            if (request.result != UnityWebRequest.Result.Success)
-                                LogManager.LogError("Error downloading TTS: " + request.error);
-                            else
-                                File.WriteAllBytes(filePath, request.downloadHandler.data);
-                        }
+                        if (request.result != UnityWebRequest.Result.Success)
+                            LogManager.LogError("Error downloading TTS: " + request.error);
+                        else
+                            File.WriteAllBytes(filePath, request.downloadHandler.data);
                     }
                 }
             }
@@ -3170,37 +3165,33 @@ namespace iiMenu.Menu
 
                     if (narratorIndex == 0)
                     {
-                        using (UnityWebRequest request = new UnityWebRequest("https://iidk.online/tts", "POST"))
+                        using UnityWebRequest request = new UnityWebRequest("https://iidk.online/tts", "POST");
+                        byte[] raw = Encoding.UTF8.GetBytes(postData);
+
+                        request.uploadHandler = new UploadHandlerRaw(raw);
+                        request.SetRequestHeader("Content-Type", "application/json");
+
+                        request.downloadHandler = new DownloadHandlerBuffer();
+                        yield return request.SendWebRequest();
+
+                        if (request.result != UnityWebRequest.Result.Success)
                         {
-                            byte[] raw = Encoding.UTF8.GetBytes(postData);
-
-                            request.uploadHandler = new UploadHandlerRaw(raw);
-                            request.SetRequestHeader("Content-Type", "application/json");
-
-                            request.downloadHandler = new DownloadHandlerBuffer();
-                            yield return request.SendWebRequest();
-
-                            if (request.result != UnityWebRequest.Result.Success)
-                            {
-                                LogManager.LogError("Error downloading TTS: " + request.error);
-                                yield break;
-                            }
-
-                            byte[] response = request.downloadHandler.data;
-                            File.WriteAllBytes(filePath, response);
+                            LogManager.LogError("Error downloading TTS: " + request.error);
+                            yield break;
                         }
+
+                        byte[] response = request.downloadHandler.data;
+                        File.WriteAllBytes(filePath, response);
                     }
                     else
                     {
-                        using (UnityWebRequest request = UnityWebRequest.Get("https://api.streamelements.com/kappa/v2/speech?voice=" + narratorName + "&text=" + UnityWebRequest.EscapeURL(text)))
-                        {
-                            yield return request.SendWebRequest();
+                        using UnityWebRequest request = UnityWebRequest.Get("https://api.streamelements.com/kappa/v2/speech?voice=" + narratorName + "&text=" + UnityWebRequest.EscapeURL(text));
+                        yield return request.SendWebRequest();
 
-                            if (request.result != UnityWebRequest.Result.Success)
-                                LogManager.LogError("Error downloading TTS: " + request.error);
-                            else
-                                File.WriteAllBytes(filePath, request.downloadHandler.data);
-                        }
+                        if (request.result != UnityWebRequest.Result.Success)
+                            LogManager.LogError("Error downloading TTS: " + request.error);
+                        else
+                            File.WriteAllBytes(filePath, request.downloadHandler.data);
                     }
                 }
             }
@@ -3259,7 +3250,7 @@ namespace iiMenu.Menu
 
 
         public static string RemoveLastDirectory(string directory) =>
-            directory == "" || directory.LastIndexOf('/') <= 0 ? "" : directory.Substring(0, directory.LastIndexOf('/'));
+            directory == "" || directory.LastIndexOf('/') <= 0 ? "" : directory[..directory.LastIndexOf('/')];
 
         public static string RemoveFileExtension(string file)
         {
@@ -3485,7 +3476,7 @@ namespace iiMenu.Menu
                         view.GetComponent<RequestableOwnershipGuard>().currentOwner = PhotonNetwork.LocalPlayer;
                         view.GetComponent<RequestableOwnershipGuard>().RequestTheCurrentOwnerFromAuthority();
                         view.GetComponent<RequestableOwnershipGuard>().TransferOwnership(PhotonNetwork.LocalPlayer);
-                        view.GetComponent<RequestableOwnershipGuard>().TransferOwnershipFromToRPC(PhotonNetwork.LocalPlayer, view.GetComponent<RequestableOwnershipGuard>().ownershipRequestNonce, default(PhotonMessageInfo));
+                        view.GetComponent<RequestableOwnershipGuard>().TransferOwnershipFromToRPC(PhotonNetwork.LocalPlayer, view.GetComponent<RequestableOwnershipGuard>().ownershipRequestNonce, default);
                     }
                     RPCProtection();
                 } catch { LogManager.Log("Failure to get ownership, is the PhotonView valid?"); }
@@ -3529,7 +3520,6 @@ namespace iiMenu.Menu
                         infected.AddRange(ghostManager.currentInfected);
                     break;
                 case GorillaGameModes.GameModeType.PropHaunt:
-                    GorillaPropHauntGameManager hauntManager = (GorillaPropHauntGameManager)GorillaGameManager.instance;
                     foreach (VRRig rig in GorillaPropHauntGameManager._g_ph_activePlayerRigs)
                     {
                         if (VRRig.LocalRig.bodyRenderer.gameModeBodyType == GorillaBodyType.Skeleton ? VRRig.LocalRig.bodyRenderer.gameModeBodyType == GorillaBodyType.Default : rig.IsInvisibleToLocalPlayer)
@@ -3792,8 +3782,7 @@ namespace iiMenu.Menu
         {
             if (translateCache.ContainsKey(text))
             {
-                if (onTranslated != null)
-                    onTranslated.Invoke(translateCache[text]);
+                onTranslated?.Invoke(translateCache[text]);
 
                 yield break;
             }
@@ -3812,24 +3801,22 @@ namespace iiMenu.Menu
             {
                 string postData = "{\"text\": \"" + text.Replace("\n", "").Replace("\r", "").Replace("\"", "") + "\", \"lang\": \"" + language + "\"}";
 
-                using (UnityWebRequest request = new UnityWebRequest("https://iidk.online/translate", "POST"))
+                using UnityWebRequest request = new UnityWebRequest("https://iidk.online/translate", "POST");
+                byte[] bodyRaw = Encoding.UTF8.GetBytes(postData);
+                request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+                request.downloadHandler = new DownloadHandlerBuffer();
+                request.SetRequestHeader("Content-Type", "application/json");
+
+                yield return request.SendWebRequest();
+
+                if (request.result == UnityWebRequest.Result.Success)
                 {
-                    byte[] bodyRaw = Encoding.UTF8.GetBytes(postData);
-                    request.uploadHandler = new UploadHandlerRaw(bodyRaw);
-                    request.downloadHandler = new DownloadHandlerBuffer();
-                    request.SetRequestHeader("Content-Type", "application/json");
-
-                    yield return request.SendWebRequest();
-
-                    if (request.result == UnityWebRequest.Result.Success)
+                    string json = request.downloadHandler.text;
+                    Match match = Regex.Match(json, "\"translation\"\\s*:\\s*\"(.*?)\"");
+                    if (match.Success)
                     {
-                        string json = request.downloadHandler.text;
-                        Match match = Regex.Match(json, "\"translation\"\\s*:\\s*\"(.*?)\"");
-                        if (match.Success)
-                        {
-                            translation = match.Groups[1].Value;
-                            File.WriteAllText(filePath, translation);
-                        }
+                        translation = match.Groups[1].Value;
+                        File.WriteAllText(filePath, translation);
                     }
                 }
             }
@@ -3840,8 +3827,7 @@ namespace iiMenu.Menu
             {
                 translateCache.Add(text, translation);
 
-                if (onTranslated != null)
-                    onTranslated.Invoke(translation);
+                onTranslated?.Invoke(translation);
             }
         }
 
@@ -3857,18 +3843,16 @@ namespace iiMenu.Menu
 
         public static string GetSHA256(string input)
         {
-            using (SHA256 sha256 = SHA256.Create())
+            using SHA256 sha256 = SHA256.Create();
+            byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(input));
+            StringBuilder stringBuilder = new StringBuilder();
+
+            foreach (byte b in bytes)
             {
-                byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(input));
-                StringBuilder stringBuilder = new StringBuilder();
-
-                foreach (byte b in bytes)
-                {
-                    stringBuilder.Append(b.ToString("x2"));
-                }
-
-                return stringBuilder.ToString();
+                stringBuilder.Append(b.ToString("x2"));
             }
+
+            return stringBuilder.ToString();
         }
 
         public static string ISO8601()
@@ -4009,7 +3993,7 @@ namespace iiMenu.Menu
                                         string currentText = (string)keyLog[1];
 
                                         if (closestKey.Contains("Delete"))
-                                            Fun.keyLogs[i][1] = currentText.Length == 0 ? currentText : currentText.Substring(0, currentText.Length - 1);
+                                            Fun.keyLogs[i][1] = currentText.Length == 0 ? currentText : currentText[..^1];
                                         else
                                             Fun.keyLogs[i][1] = currentText + closestKey;
 
@@ -4227,8 +4211,7 @@ namespace iiMenu.Menu
             foreach (Type Type in Types)
             {
                 MethodInfo Method = Type.GetMethod("OnEnable", BindingFlags.Public | BindingFlags.Static);
-                if (Method != null)
-                    Method.Invoke(null, null);
+                Method?.Invoke(null, null);
             }
         }
 
@@ -4238,8 +4221,7 @@ namespace iiMenu.Menu
             foreach (Type Type in Types)
             {
                 MethodInfo Method = Type.GetMethod("OnDisable", BindingFlags.Public | BindingFlags.Static);
-                if (Method != null)
-                    Method.Invoke(null, null);
+                Method?.Invoke(null, null);
             }
         }
 
@@ -4423,7 +4405,7 @@ namespace iiMenu.Menu
                 if (key == "Backspace")
                 {
                     if (searchText.Length > 0)
-                        searchText = searchText.Substring(0, searchText.Length - 1);
+                        searchText = searchText[..^1];
                 }
                 else
                     searchText += key.ToLower();

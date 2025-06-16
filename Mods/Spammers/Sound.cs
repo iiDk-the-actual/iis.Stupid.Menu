@@ -33,7 +33,7 @@ namespace iiMenu.Mods.Spammers
             }
             List<ButtonInfo> soundbuttons = new List<ButtonInfo> { };
             if (Subdirectory != "")
-                soundbuttons.Add(new ButtonInfo { buttonText = "Exit Parent Directory", overlapText = "Exit " + Subdirectory.Split("/")[Subdirectory.Split("/").Length - 1], method = () => ExitParentDirectory(), isTogglable = false, toolTip = "Returns you back to the last folder." });
+                soundbuttons.Add(new ButtonInfo { buttonText = "Exit Parent Directory", overlapText = "Exit " + Subdirectory.Split("/")[^1], method = () => ExitParentDirectory(), isTogglable = false, toolTip = "Returns you back to the last folder." });
 
             soundbuttons.Add(new ButtonInfo { buttonText = "Exit Soundboard", method = () => currentCategoryName = "Fun Mods", isTogglable = false, toolTip = "Returns you back to the fun mods." });
             int index = 0;
@@ -43,8 +43,8 @@ namespace iiMenu.Mods.Spammers
             {
                 index++;
                 int substringLength = ("iisStupidMenu/Sounds" + Subdirectory + "/").Length;
-                string FolderName = folder.Replace("\\", "/").Substring(substringLength);
-                soundbuttons.Add(new ButtonInfo { buttonText = "SoundboardFolder" + index.ToString(), overlapText = "▶ " + FolderName, method = () => OpenFolder(folder.Substring(21)), isTogglable = false, toolTip = "Opens the " + FolderName + " folder."});
+                string FolderName = folder.Replace("\\", "/")[substringLength..];
+                soundbuttons.Add(new ButtonInfo { buttonText = "SoundboardFolder" + index.ToString(), overlapText = "▶ " + FolderName, method = () => OpenFolder(folder[21..]), isTogglable = false, toolTip = "Opens the " + FolderName + " folder."});
             }
 
             index = 0;
@@ -52,12 +52,12 @@ namespace iiMenu.Mods.Spammers
             foreach (string file in files)
             {
                 index++;
-                string FileName = file.Replace("\\", "/").Substring(21 + Subdirectory.Length);
+                string FileName = file.Replace("\\", "/")[(21 + Subdirectory.Length)..];
                 if (BindMode > 0)
                 {
                     string soundName = RemoveFileExtension(FileName).Replace("_", " ");
                     bool enabled = enabledSounds.Contains(soundName);
-                    soundbuttons.Add(new ButtonInfo { buttonText = "SoundboardSound" + index.ToString(), overlapText = soundName, method = () => PrepareBindAudio(file.Substring(14)), disableMethod = () => FixMicrophone(), enabled = enabled, toolTip = "Plays \"" + RemoveFileExtension(FileName).Replace("_", " ") + "\" through your microphone." });
+                    soundbuttons.Add(new ButtonInfo { buttonText = "SoundboardSound" + index.ToString(), overlapText = soundName, method = () => PrepareBindAudio(file[14..]), disableMethod = () => FixMicrophone(), enabled = enabled, toolTip = "Plays \"" + RemoveFileExtension(FileName).Replace("_", " ") + "\" through your microphone." });
                     
                 } else
                 {
@@ -65,11 +65,11 @@ namespace iiMenu.Mods.Spammers
                     {
                         string soundName = RemoveFileExtension(FileName).Replace("_", " ");
                         bool enabled = enabledSounds.Contains(soundName);
-                        soundbuttons.Add(new ButtonInfo { buttonText = "SoundboardSound" + index.ToString(), overlapText = soundName, enableMethod = () => PlayAudio(file.Substring(14)), disableMethod = () => FixMicrophone(), enabled = enabled, toolTip = "Plays \"" + RemoveFileExtension(FileName).Replace("_", " ") + "\" through your microphone." });
+                        soundbuttons.Add(new ButtonInfo { buttonText = "SoundboardSound" + index.ToString(), overlapText = soundName, enableMethod = () => PlayAudio(file[14..]), disableMethod = () => FixMicrophone(), enabled = enabled, toolTip = "Plays \"" + RemoveFileExtension(FileName).Replace("_", " ") + "\" through your microphone." });
                     }
                     else
                     {
-                        soundbuttons.Add(new ButtonInfo { buttonText = "SoundboardSound" + index.ToString(), overlapText = RemoveFileExtension(FileName).Replace("_", " "), method = () => PlayAudio(file.Substring(14)), isTogglable = false, toolTip = "Plays \"" + RemoveFileExtension(FileName).Replace("_", " ") + "\" through your microphone." });
+                        soundbuttons.Add(new ButtonInfo { buttonText = "SoundboardSound" + index.ToString(), overlapText = RemoveFileExtension(FileName).Replace("_", " "), method = () => PlayAudio(file[14..]), isTogglable = false, toolTip = "Plays \"" + RemoveFileExtension(FileName).Replace("_", " ") + "\" through your microphone." });
                     }
                 }
             }
@@ -302,7 +302,7 @@ namespace iiMenu.Mods.Spammers
 
         public static void DecreaseSoundID()
         {
-            soundId = soundId - 1;
+            soundId--;
             if (soundId < 0)
             {
                 soundId = 0;

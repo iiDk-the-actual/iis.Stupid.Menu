@@ -220,10 +220,7 @@ namespace iiMenu.Mods
         public static void AutoPartyKick()
         {
             if (FriendshipGroupDetection.Instance.IsInParty && !lastPartyKickThingy)
-            {
-                if (partyKickDelayCoroutine == null)
-                    partyKickDelayCoroutine = CoroutineManager.RunCoroutine(PartyKickDelay(false));
-            }
+                partyKickDelayCoroutine ??= CoroutineManager.RunCoroutine(PartyKickDelay(false));
             
             lastPartyKickThingy = FriendshipGroupDetection.Instance.IsInParty;
         }
@@ -231,10 +228,7 @@ namespace iiMenu.Mods
         public static void AutoPartyBan()
         {
             if (FriendshipGroupDetection.Instance.IsInParty && !lastPartyKickThingy)
-            {
-                if (partyKickDelayCoroutine == null)
-                    partyKickDelayCoroutine = CoroutineManager.RunCoroutine(PartyKickDelay(true));
-            }
+                partyKickDelayCoroutine ??= CoroutineManager.RunCoroutine(PartyKickDelay(true));
 
             lastPartyKickThingy = FriendshipGroupDetection.Instance.IsInParty;
         }
@@ -2764,8 +2758,7 @@ namespace iiMenu.Mods
         public static void AutoLoadCosmetics()
         {
             Patches.RequestPatch.enabled = true;
-            if (Patches.RequestPatch.currentCoroutine == null)
-                Patches.RequestPatch.currentCoroutine = CoroutineManager.RunCoroutine(Patches.RequestPatch.LoadCosmetics());
+            Patches.RequestPatch.currentCoroutine ??= CoroutineManager.RunCoroutine(Patches.RequestPatch.LoadCosmetics());
             GameObject.Find("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Cosmetics Room Triggers/TryOnRoom").GetComponent<CosmeticBoundaryTrigger>().enabled = false;
         }
 

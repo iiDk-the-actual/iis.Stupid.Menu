@@ -136,19 +136,17 @@ namespace iiMenu.Classes
 
         public static IEnumerator PreloadAssets()
         {
-            using (UnityWebRequest request = UnityWebRequest.Get($"{ServerDataURL}/PreloadedAssets.txt"))
+            using UnityWebRequest request = UnityWebRequest.Get($"{ServerDataURL}/PreloadedAssets.txt");
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.Success)
             {
-                yield return request.SendWebRequest();
+                string returnText = request.downloadHandler.text;
 
-                if (request.result == UnityWebRequest.Result.Success)
+                foreach (string assetBundle in returnText.Split("\n"))
                 {
-                    string returnText = request.downloadHandler.text;
-
-                    foreach (string assetBundle in returnText.Split("\n"))
-                    {
-                        if (assetBundle.Length > 0)
-                            CoroutineManager.instance.StartCoroutine(PreloadAssetBundle(assetBundle));
-                    }
+                    if (assetBundle.Length > 0)
+                        CoroutineManager.instance.StartCoroutine(PreloadAssetBundle(assetBundle));
                 }
             }
         }
@@ -186,9 +184,10 @@ namespace iiMenu.Classes
 
                                     if (adminConeMaterial == null)
                                     {
-                                        adminConeMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit"));
-
-                                        adminConeMaterial.mainTexture = adminConeTexture;
+                                        adminConeMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit"))
+                                        {
+                                            mainTexture = adminConeTexture
+                                        };
 
                                         adminConeMaterial.SetFloat("_Surface", 1);
                                         adminConeMaterial.SetFloat("_Blend", 0);

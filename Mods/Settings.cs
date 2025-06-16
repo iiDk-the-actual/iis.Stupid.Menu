@@ -277,7 +277,7 @@ namespace iiMenu.Mods
             if (name.Contains(".."))
                 name = name.Replace("..", "");
 
-            string filename = url.Split("/")[url.Split("/").Length - 1];
+            string filename = url.Split("/")[^1];
 
             if (File.Exists("iisStupidMenu/Plugins/" + filename))
                 File.Delete("iisStupidMenu/Plugins/" + filename);
@@ -2626,14 +2626,18 @@ namespace iiMenu.Mods
 
                     if (screenRed == null)
                     {
-                        screenRed = new Material(Shader.Find("GorillaTag/UberShader"));
-                        screenRed.color = new Color32(226, 73, 41, 255);
+                        screenRed = new Material(Shader.Find("GorillaTag/UberShader"))
+                        {
+                            color = new Color32(226, 73, 41, 255)
+                        };
                     }
 
                     if (screenBlack == null)
                     {
-                        screenBlack = new Material(Shader.Find("GorillaTag/UberShader"));
-                        screenBlack.color = new Color32(39, 34, 28, 255);
+                        screenBlack = new Material(Shader.Find("GorillaTag/UberShader"))
+                        {
+                            color = new Color32(39, 34, 28, 255)
+                        };
                     }
 
                     temp.ScreenBG_AbandonPartyAndSoloJoin = screenRed;

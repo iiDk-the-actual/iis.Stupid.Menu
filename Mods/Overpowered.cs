@@ -232,8 +232,7 @@ namespace iiMenu.Mods
             if (target is NetPlayer)
                 target = NetPlayerToPlayer((NetPlayer)target);
 
-            if (sendData == null)
-                sendData = new long[] { 0L };
+            sendData ??= new long[] { 0L };
 
             object[] createData = new object[]
             {
