@@ -38,7 +38,7 @@ namespace iiMenu.Mods
             Settings.Panic();
             foreach (string mod in presetMods)
             {
-                Main.Toggle(mod);
+                Toggle(mod);
             }
             NotifiLib.ClearAllNotifications();
             NotifiLib.SendNotification("<color=grey>[</color><color=purple>PRESET</color><color=grey>]</color> Legitimate preset enabled successfully.");
@@ -62,7 +62,7 @@ namespace iiMenu.Mods
             
             Settings.Panic();
             foreach (string mod in presetMods)
-                Main.Toggle(mod);
+                Toggle(mod);
             
             NotifiLib.ClearAllNotifications();
             NotifiLib.SendNotification("<color=grey>[</color><color=purple>PRESET</color><color=grey>]</color> Ghost preset enabled successfully.");
@@ -125,7 +125,7 @@ namespace iiMenu.Mods
             Settings.Panic();
             foreach (string mod in presetMods)
             {
-                Main.Toggle(mod);
+                Toggle(mod);
             }
             NotifiLib.ClearAllNotifications();
             NotifiLib.SendNotification("<color=grey>[</color><color=purple>PRESET</color><color=grey>]</color> Goldentrophy preset enabled successfully.");
@@ -153,7 +153,7 @@ namespace iiMenu.Mods
             Settings.Panic();
             foreach (string mod in presetMods)
             {
-                Main.Toggle(mod);
+                Toggle(mod);
             }
 
             NotifiLib.ClearAllNotifications();
@@ -184,7 +184,7 @@ namespace iiMenu.Mods
             Settings.Panic();
             foreach (string mod in presetMods)
             {
-                Main.Toggle(mod);
+                Toggle(mod);
             }
 
             NotifiLib.ClearAllNotifications();

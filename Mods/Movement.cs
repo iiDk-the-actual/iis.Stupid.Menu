@@ -107,7 +107,7 @@ namespace iiMenu.Mods
                     break;
                 case 2:
                     float h = (Time.frameCount / 180f) % 1f;
-                    platform.GetComponent<Renderer>().material.color = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
+                    platform.GetComponent<Renderer>().material.color = Color.HSVToRGB(h, 1f, 1f);
                     break;
                 case 3:
                     platform.GetComponent<Renderer>().material.color = new Color32(
@@ -233,7 +233,7 @@ namespace iiMenu.Mods
                     if (platformMode == 2)
                     {
                         float h = (Time.frameCount / 180f) % 1f;
-                        leftplat.GetComponent<Renderer>().material.color = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
+                        leftplat.GetComponent<Renderer>().material.color = Color.HSVToRGB(h, 1f, 1f);
                     }
 
                     if (platformMode == 3)
@@ -306,7 +306,7 @@ namespace iiMenu.Mods
                     if (platformMode == 2)
                     {
                         float h = (Time.frameCount / 180f) % 1f;
-                        rightplat.GetComponent<Renderer>().material.color = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
+                        rightplat.GetComponent<Renderer>().material.color = Color.HSVToRGB(h, 1f, 1f);
                     }
                     if (platformMode == 3)
                         rightplat.GetComponent<Renderer>().material.color = new Color32((byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), 128);
@@ -577,16 +577,16 @@ namespace iiMenu.Mods
                 if (startX < 0)
                 {
                     startX = euler.y;
-                    subThingy = Mouse.current.position.value.x / UnityEngine.Screen.width;
+                    subThingy = Mouse.current.position.value.x / Screen.width;
                 }
                 if (startY < 0)
                 {
                     startY = euler.x;
-                    subThingyZ = Mouse.current.position.value.y / UnityEngine.Screen.height;
+                    subThingyZ = Mouse.current.position.value.y / Screen.height;
                 }
 
-                float newX = startY - ((((Mouse.current.position.value.y / UnityEngine.Screen.height) - subThingyZ) * 360) * 1.33f);
-                float newY = startX + ((((Mouse.current.position.value.x / UnityEngine.Screen.width) - subThingy) * 360) * 1.33f);
+                float newX = startY - ((((Mouse.current.position.value.y / Screen.height) - subThingyZ) * 360) * 1.33f);
+                float newY = startX + ((((Mouse.current.position.value.x / Screen.width) - subThingy) * 360) * 1.33f);
 
                 newX = (newX > 180f) ? newX - 360f : newX;
                 newX = Mathf.Clamp(newX, -90f, 90f);

@@ -967,7 +967,7 @@ namespace iiMenu.Mods
         public static IEnumerator KillTarget(Player Target)
         {
             GRPlayer GRPlayer = GRPlayer.Get(Target.ActorNumber);
-            VRRig Rig = RigManager.GetVRRigFromPlayer(Target);
+            VRRig Rig = GetVRRigFromPlayer(Target);
 
             int netId = GhostReactorManager.instance.gameEntityManager.CreateNetId();
 
@@ -1512,7 +1512,7 @@ namespace iiMenu.Mods
             if (!File.Exists("iisStupidMenu/shotgun.wav"))
                 LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/refs/heads/main/shotgun.wav", "shotgun.wav");
 
-            iiMenu.Mods.Spammers.Sound.PlayAudio("shotgun.wav");
+            Sound.PlayAudio("shotgun.wav");
 
             BuilderPiece bullet = null;
 
@@ -2745,11 +2745,11 @@ namespace iiMenu.Mods
             currentCategoryName = "Temporary Category";
 
             List<ButtonInfo> cosmeticbuttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Cosmetic Browser", method = () => RemoveCosmeticBrowser(), isTogglable = false, toolTip = "Returns you back to the fun mods." } };
-            foreach (GorillaNetworking.CosmeticsController.CosmeticItem hat in GorillaNetworking.CosmeticsController.instance.allCosmetics)
+            foreach (GorillaNetworking.CosmeticsController.CosmeticItem hat in CosmeticsController.instance.allCosmetics)
             {
                 if (hat.canTryOn)
                 {
-                    cosmeticbuttons.Add(new ButtonInfo { buttonText = ToTitleCase(hat.overrideDisplayName), method = () => Fun.AddCosmeticToCart(hat.itemName), isTogglable = false, toolTip = "Adds the " + hat.overrideDisplayName.ToLower() + "to your cart." });
+                    cosmeticbuttons.Add(new ButtonInfo { buttonText = ToTitleCase(hat.overrideDisplayName), method = () => AddCosmeticToCart(hat.itemName), isTogglable = false, toolTip = "Adds the " + hat.overrideDisplayName.ToLower() + "to your cart." });
                 }
             }
             Buttons.buttons[29] = cosmeticbuttons.ToArray();

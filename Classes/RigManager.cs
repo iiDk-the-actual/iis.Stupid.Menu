@@ -22,15 +22,15 @@ namespace iiMenu.Classes
         public static Player GetRandomPlayer(bool includeSelf) =>
             includeSelf ?
             PhotonNetwork.PlayerList[Random.Range(0, PhotonNetwork.PlayerList.Length - 1)] :
-            PhotonNetwork.PlayerListOthers[UnityEngine.Random.Range(0, PhotonNetwork.PlayerListOthers.Length - 1)];
+            PhotonNetwork.PlayerListOthers[Random.Range(0, PhotonNetwork.PlayerListOthers.Length - 1)];
 
         public static VRRig GetRandomVRRig(bool includeSelf)
         {
             Player randomPlayer;
             if (includeSelf)
-                randomPlayer = PhotonNetwork.PlayerList[UnityEngine.Random.Range(0, PhotonNetwork.PlayerList.Length -1)];
+                randomPlayer = PhotonNetwork.PlayerList[Random.Range(0, PhotonNetwork.PlayerList.Length -1)];
             else
-                randomPlayer = PhotonNetwork.PlayerListOthers[UnityEngine.Random.Range(0, PhotonNetwork.PlayerListOthers.Length - 1)];
+                randomPlayer = PhotonNetwork.PlayerListOthers[Random.Range(0, PhotonNetwork.PlayerListOthers.Length - 1)];
             
             return GetVRRigFromPlayer(randomPlayer);
         }

@@ -216,7 +216,7 @@ namespace iiMenu.Mods
             File.WriteAllText(fileName, text);
 
             //string filePath = System.IO.Path.Combine(Application.dataPath, fileName);
-            string filePath = System.IO.Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, fileName);
+            string filePath = Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, fileName);
             filePath = filePath.Split("BepInEx\\")[0] + fileName;
             //filePath = filePath.Split("\\")[0] + "/" + filePath.Split("\\")[1];
             try
@@ -250,7 +250,7 @@ namespace iiMenu.Mods
             File.WriteAllText(fileName, text);
 
             //string filePath = System.IO.Path.Combine(Application.dataPath, fileName);
-            string filePath = System.IO.Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, fileName);
+            string filePath = Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, fileName);
             filePath = filePath.Split("BepInEx\\")[0] + fileName;
             //filePath = filePath.Split("\\")[0] + "/" + filePath.Split("\\")[1];
             try
@@ -281,7 +281,7 @@ namespace iiMenu.Mods
             File.WriteAllText(fileName, text);
 
             //string filePath = System.IO.Path.Combine(Application.dataPath, fileName);
-            string filePath = System.IO.Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, fileName);
+            string filePath = Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, fileName);
             filePath = filePath.Split("BepInEx\\")[0] + fileName;
             //filePath = filePath.Split("\\")[0] + "/" + filePath.Split("\\")[1];
             try
@@ -315,7 +315,7 @@ namespace iiMenu.Mods
             File.WriteAllText(fileName, text);
 
             //string filePath = System.IO.Path.Combine(Application.dataPath, fileName);
-            string filePath = System.IO.Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, fileName);
+            string filePath = Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, fileName);
             filePath = filePath.Split("BepInEx\\")[0] + fileName;
             //filePath = filePath.Split("\\")[0] + "/" + filePath.Split("\\")[1];
             try
