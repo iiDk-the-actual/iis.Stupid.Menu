@@ -3218,22 +3218,20 @@ namespace iiMenu.Menu
 
         public static string[] InfosToStrings(ButtonInfo[] array)
         {
-            List<string> lol = new List<string>();
-            foreach (ButtonInfo help in array)
-            {
-                lol.Add(help.buttonText);
-            }
-            return lol.ToArray();
+            List<string> strings = new List<string>();
+            foreach (ButtonInfo button in array)
+                strings.Add(button.buttonText);
+            
+            return strings.ToArray();
         }
 
         public static ButtonInfo[] StringsToInfos(string[] array)
         {
-            List<ButtonInfo> lol = new List<ButtonInfo>();
-            foreach (string help in array)
-            {
-                lol.Add(GetIndex(help));
-            }
-            return lol.ToArray();
+            List<ButtonInfo> infos = new List<ButtonInfo>();
+            foreach (string button in array)
+                infos.Add(GetIndex(button));
+            
+            return infos.ToArray();
         }
 
         public static string[] Alphabetize(string[] array)
@@ -3274,9 +3272,8 @@ namespace iiMenu.Menu
                 if (index != split.Length)
                 {
                     if (index > 1)
-                    {
                         output += ".";
-                    }
+                    
                     output += lol;
                 }
             }
@@ -3306,13 +3303,9 @@ namespace iiMenu.Menu
             {
                 transform = transform.parent;
                 if (path == "")
-                {
                     path = transform.name;
-                }
                 else
-                {
                     path = transform.name + "/" + path;
-                }
             }
             return path;
         }

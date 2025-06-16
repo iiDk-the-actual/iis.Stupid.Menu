@@ -2158,12 +2158,10 @@ namespace iiMenu.Mods
         {
             List<BuilderPiece> blocks = new List<BuilderPiece> { };
 
-            foreach (BuilderPiece lol in GetPiecesFiltered())
+            foreach (BuilderPiece filteredBlock in GetPiecesFiltered())
             {
-                if (lol.name.ToLower().Contains(blockname))
-                {
-                    blocks.Add(lol);
-                }
+                if (filteredBlock.name.ToLower().Contains(blockname))
+                    blocks.Add(filteredBlock);
             }
 
             return blocks;

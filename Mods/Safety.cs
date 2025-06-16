@@ -270,10 +270,11 @@ namespace iiMenu.Mods
                 };
                 for (int i = 0; i < types.Length - 1; i++)
                 {
-                    ButtonInfo lol = GetIndex("Anti Report <color=grey>[</color><color=green>" + types[i] + "</color><color=grey>]</color>");
-                    if (lol.enabled)
+                    ButtonInfo buttonInfo = GetIndex("Anti Report <color=grey>[</color><color=green>" + types[i] + "</color><color=grey>]</color>");
+                    if (buttonInfo.enabled)
                     {
                         antiReportType = i;
+                        break;
                     }
                 }
                 switch (antiReportType)
