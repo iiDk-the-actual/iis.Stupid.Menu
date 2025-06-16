@@ -662,8 +662,10 @@ namespace iiMenu.Mods
         {
             PlayerPrefs.SetString("tutorial", "nope");
             PlayerPrefs.SetString("didTutorial", "nope");
-            Hashtable h = new Hashtable();
-            h.Add("didTutorial", false);
+            Hashtable h = new Hashtable
+            {
+                { "didTutorial", false }
+            };
             PhotonNetwork.LocalPlayer.SetCustomProperties(h, null, null);
             PlayerPrefs.Save();
         }
@@ -672,8 +674,10 @@ namespace iiMenu.Mods
         {
             PlayerPrefs.SetString("tutorial", "done");
             PlayerPrefs.SetString("didTutorial", "done");
-            Hashtable h = new Hashtable();
-            h.Add("didTutorial", true);
+            Hashtable h = new Hashtable
+            {
+                { "didTutorial", true }
+            };
             PhotonNetwork.LocalPlayer.SetCustomProperties(h, null, null);
             PlayerPrefs.Save();
         }
