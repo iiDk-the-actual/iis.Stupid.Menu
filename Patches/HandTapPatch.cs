@@ -8,34 +8,28 @@ namespace iiMenu.Patches
     [HarmonyPatch(typeof(VRRig), "SetHandEffectData")]
     public class HandTapPatch
     {
-        public static bool doPatch = false;
+        public static bool enabled;
         public static bool tapsEnabled = true;
-        public static bool doOverride = false;
+        public static bool doOverride;
         public static float overrideVolume = 99999f;
         public static int tapMultiplier = 1;
 
         private static bool Prefix(VRRig __instance, HandEffectContext effectContext, int audioClipIndex, bool isDownTap, bool isLeftHand, float handTapVolume, float handTapSpeed, Vector3 dirFromHitToHand)
         {
-            if (doPatch)
+            if (enabled)
             {
                 if (__instance == VRRig.LocalRig)
                 {
                     if (doOverride)
                     {
+                        effectContext.speed = overrideVolume;
+                        effectContext.clipVolume = overrideVolume;
+
                         if (PhotonNetwork.InRoom)
                         {
-                            GorillaTagger.Instance.myVRRig.SendRPC("OnHandTapRPC", RpcTarget.All, new object[]
-                            {
-                                audioClipIndex,
-                                isDownTap,
-                                isLeftHand,
-                                handTapSpeed,
-                                Utils.PackVector3ToLong(dirFromHitToHand)
-                            });
-
                             if (tapMultiplier > 1)
                             {
-                                for (int i = 0; i < tapMultiplier - 1; i++)
+                                for (int i = 0; i < tapMultiplier; i++)
                                 {
                                     GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]
                                     {
@@ -44,8 +38,8 @@ namespace iiMenu.Patches
                                         handTapSpeed
                                     });
                                 }
+                                Main.RPCProtection();
                             }
-                            Main.RPCProtection();
                         } else
                             VRRig.LocalRig.PlayHandTapLocal(audioClipIndex, isLeftHand, overrideVolume);
 
@@ -53,10 +47,13 @@ namespace iiMenu.Patches
                     }
                     if (!tapsEnabled)
                     {
-                        handTapSpeed = 0f;
+                        effectContext.speed = 0f;
+                        effectContext.clipVolume = 0f;
+
                         GorillaTagger.Instance.handTapVolume = 0f;
+                        GorillaTagger.Instance.handTapSpeed = 0f;
                         GorillaTagger.Instance.audioClipIndex = -1;
-                        audioClipIndex = -1;
+
                         return false;
                     }
                 }
