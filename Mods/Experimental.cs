@@ -168,13 +168,13 @@ namespace iiMenu.Mods
             {
                 if (thestrangledleft == null)
                 {
-                    foreach (VRRig lol in GorillaParent.instance.vrrigs)
+                    foreach (VRRig rig in GorillaParent.instance.vrrigs)
                     {
-                        if (lol != VRRig.LocalRig)
+                        if (rig != VRRig.LocalRig)
                         {
-                            if (Vector3.Distance(lol.headMesh.transform.position, GorillaTagger.Instance.leftHandTransform.position) < 0.2f)
+                            if (Vector3.Distance(rig.headMesh.transform.position, GorillaTagger.Instance.leftHandTransform.position) < 0.2f)
                             {
-                                thestrangledleft = lol;
+                                thestrangledleft = rig;
                                 if (PhotonNetwork.InRoom)
                                 {
                                     GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
@@ -184,9 +184,7 @@ namespace iiMenu.Mods
                                     });
                                 }
                                 else
-                                {
                                     VRRig.LocalRig.PlayHandTapLocal(89, true, 999999f);
-                                }
                             }
                         }
                     }
@@ -227,13 +225,13 @@ namespace iiMenu.Mods
             {
                 if (thestrangled == null)
                 {
-                    foreach (VRRig lol in GorillaParent.instance.vrrigs)
+                    foreach (VRRig rig in GorillaParent.instance.vrrigs)
                     {
-                        if (lol != VRRig.LocalRig)
+                        if (rig != VRRig.LocalRig)
                         {
-                            if (Vector3.Distance(lol.headMesh.transform.position, GorillaTagger.Instance.rightHandTransform.position) < 0.2f)
+                            if (Vector3.Distance(rig.headMesh.transform.position, GorillaTagger.Instance.rightHandTransform.position) < 0.2f)
                             {
-                                thestrangled = lol;
+                                thestrangled = rig;
                                 if (PhotonNetwork.InRoom)
                                 {
                                     GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
@@ -243,9 +241,7 @@ namespace iiMenu.Mods
                                     });
                                 }
                                 else
-                                {
                                     VRRig.LocalRig.PlayHandTapLocal(89, false, 999999f);
-                                }
                             }
                         }
                     }
@@ -389,11 +385,11 @@ namespace iiMenu.Mods
                         Classes.Console.ExecuteCommand("platf", new int[] { actorNumber, PhotonNetwork.LocalPlayer.ActorNumber }, new Vector3(0f, 20f, 4f), new Vector3(10f, 10f, 1f));
                         Classes.Console.ExecuteCommand("platf", new int[] { actorNumber, PhotonNetwork.LocalPlayer.ActorNumber }, new Vector3(0f, 20f, -4f), new Vector3(10f, 10f, 1f));
 
-                        GameObject lol = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        UnityEngine.Object.Destroy(lol, 60f);
-                        lol.GetComponent<Renderer>().material.color = Color.black;
-                        lol.transform.position = new Vector3(0f, 20f, 0f);
-                        lol.transform.localScale = new Vector3(10f, 1f, 10f);
+                        GameObject platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        UnityEngine.Object.Destroy(platform, 60f);
+                        platform.GetComponent<Renderer>().material.color = Color.black;
+                        platform.transform.position = new Vector3(0f, 20f, 0f);
+                        platform.transform.localScale = new Vector3(10f, 1f, 10f);
 
                         gunLocked = true;
                         lockTarget = gunTarget;

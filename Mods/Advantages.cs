@@ -681,69 +681,57 @@ namespace iiMenu.Mods
         public static void BattleStartGame()
         {
             if (!NetworkSystem.Instance.IsMasterClient)
-            {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-            }
             else
             {
-                GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
-                lol.StartBattle();
+                GorillaPaintbrawlManager brawlManager = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
+                brawlManager.StartBattle();
             }
         }
 
         public static void BattleEndGame()
         {
             if (!NetworkSystem.Instance.IsMasterClient)
-            {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-            }
             else
             {
-                GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
-                lol.BattleEnd();
+                GorillaPaintbrawlManager brawlManager = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
+                brawlManager.BattleEnd();
             }
         }
 
         public static void BattleRestartGame()
         {
             if (!NetworkSystem.Instance.IsMasterClient)
-            {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-            }
             else
             {
-                GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
-                lol.BattleEnd();
-                lol.StartBattle();
+                GorillaPaintbrawlManager brawlManager = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
+                brawlManager.BattleEnd();
+                brawlManager.StartBattle();
             }
         }
 
         public static void BattleBalloonSpamSelf()
         {
             if (!NetworkSystem.Instance.IsMasterClient)
-            {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-            }
             else
             {
-                GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
-                lol.playerLives[PhotonNetwork.LocalPlayer.ActorNumber] = Random.Range(0, 4);
+                GorillaPaintbrawlManager brawlManager = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
+                brawlManager.playerLives[PhotonNetwork.LocalPlayer.ActorNumber] = Random.Range(0, 4);
             }
         }
 
         public static void BattleBalloonSpam()
         {
             if (!NetworkSystem.Instance.IsMasterClient)
-            {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-            }
             else
             {
-                GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
-                foreach (Photon.Realtime.Player loln in PhotonNetwork.PlayerList)
-                {
-                    lol.playerLives[loln.ActorNumber] = Random.Range(0, 4);
-                }
+                GorillaPaintbrawlManager brawlManager = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
+                foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
+                    brawlManager.playerLives[player.ActorNumber] = Random.Range(0, 4);
             }
         }
 
@@ -762,13 +750,11 @@ namespace iiMenu.Mods
                     {
                         NetPlayer owner = RigManager.GetPlayerFromVRRig(gunTarget);
                         if (!NetworkSystem.Instance.IsMasterClient)
-                        {
                             NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-                        }
                         else
                         {
-                            GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
-                            lol.playerLives[owner.ActorNumber] = 0;
+                            GorillaPaintbrawlManager brawlManager = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
+                            brawlManager.playerLives[owner.ActorNumber] = 0;
                         }
                     }
                 }
@@ -778,29 +764,23 @@ namespace iiMenu.Mods
         public static void BattleKillSelf()
         {
             if (!NetworkSystem.Instance.IsMasterClient)
-            {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-            }
             else
             {
-                GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
-                lol.playerLives[PhotonNetwork.LocalPlayer.ActorNumber] = 0;
+                GorillaPaintbrawlManager brawlManager = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
+                brawlManager.playerLives[PhotonNetwork.LocalPlayer.ActorNumber] = 0;
             }
         }
 
         public static void BattleKillAll()
         {
             if (!NetworkSystem.Instance.IsMasterClient)
-            {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-            }
             else
             {
-                GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
+                GorillaPaintbrawlManager brawlManager = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
                 foreach (Photon.Realtime.Player loln in PhotonNetwork.PlayerList)
-                {
-                    lol.playerLives[loln.ActorNumber] = 0;
-                }
+                    brawlManager.playerLives[loln.ActorNumber] = 0;
             }
         }
 
@@ -819,13 +799,11 @@ namespace iiMenu.Mods
                     {
                         NetPlayer owner = RigManager.GetPlayerFromVRRig(gunTarget);
                         if (!NetworkSystem.Instance.IsMasterClient)
-                        {
                             NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-                        }
                         else
                         {
-                            GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
-                            lol.playerLives[owner.ActorNumber] = 4;
+                            GorillaPaintbrawlManager brawlManager = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
+                            brawlManager.playerLives[owner.ActorNumber] = 4;
                         }
                     }
                 }
@@ -835,42 +813,34 @@ namespace iiMenu.Mods
         public static void BattleReviveSelf()
         {
             if (!NetworkSystem.Instance.IsMasterClient)
-            {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-            }
             else
             {
-                GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
-                lol.playerLives[PhotonNetwork.LocalPlayer.ActorNumber] = 4;
+                GorillaPaintbrawlManager brawlManager = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
+                brawlManager.playerLives[PhotonNetwork.LocalPlayer.ActorNumber] = 4;
             }
         }
 
         public static void BattleReviveAll()
         {
             if (!NetworkSystem.Instance.IsMasterClient)
-            {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-            }
             else
             {
-                GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
-                foreach (Photon.Realtime.Player loln in PhotonNetwork.PlayerList)
-                {
-                    lol.playerLives[loln.ActorNumber] = 4;
-                }
+                GorillaPaintbrawlManager brawlManager = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
+                foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
+                    brawlManager.playerLives[player.ActorNumber] = 4;
             }
         }
 
         public static void BattleGodMode()
         {
             if (!NetworkSystem.Instance.IsMasterClient)
-            {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-            }
             else
             {
-                GorillaPaintbrawlManager lol = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
-                lol.playerLives[PhotonNetwork.LocalPlayer.ActorNumber] = 4;
+                GorillaPaintbrawlManager brawlManager = GameObject.Find("Gorilla Battle Manager").GetComponent<GorillaPaintbrawlManager>();
+                brawlManager.playerLives[PhotonNetwork.LocalPlayer.ActorNumber] = 4;
                 GorillaLocomotion.GTPlayer.Instance.disableMovement = false;
             }
         }

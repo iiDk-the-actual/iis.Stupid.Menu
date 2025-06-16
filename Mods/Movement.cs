@@ -348,26 +348,26 @@ namespace iiMenu.Mods
         {
             if (leftGrab)
             {
-                GameObject lol = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                lol.GetComponent<Renderer>().material.color = GetBGColor(0f);
-                lol.transform.localScale = new Vector3(0.025f, 0.3f, 0.4f);
-                lol.transform.localPosition = TrueLeftHand().position + (TrueLeftHand().right * 0.05f);
-                lol.transform.rotation = TrueLeftHand().rotation;
+                GameObject slipperyPlatform = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                slipperyPlatform.GetComponent<Renderer>().material.color = GetBGColor(0f);
+                slipperyPlatform.transform.localScale = new Vector3(0.025f, 0.3f, 0.4f);
+                slipperyPlatform.transform.localPosition = TrueLeftHand().position + (TrueLeftHand().right * 0.05f);
+                slipperyPlatform.transform.rotation = TrueLeftHand().rotation;
 
-                lol.AddComponent<GorillaSurfaceOverride>().overrideIndex = 61;
-                UnityEngine.Object.Destroy(lol, 1);
+                slipperyPlatform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 61;
+                UnityEngine.Object.Destroy(slipperyPlatform, 1);
             }
 
             if (rightGrab)
             {
-                GameObject lol = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                lol.GetComponent<Renderer>().material.color = GetBGColor(0f);
-                lol.transform.localScale = new Vector3(0.025f, 0.3f, 0.4f);
-                lol.transform.localPosition = TrueRightHand().position + (TrueRightHand().right * -0.05f);
-                lol.transform.rotation = TrueRightHand().rotation;
+                GameObject slipperyPlatform = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                slipperyPlatform.GetComponent<Renderer>().material.color = GetBGColor(0f);
+                slipperyPlatform.transform.localScale = new Vector3(0.025f, 0.3f, 0.4f);
+                slipperyPlatform.transform.localPosition = TrueRightHand().position + (TrueRightHand().right * -0.05f);
+                slipperyPlatform.transform.rotation = TrueRightHand().rotation;
 
-                lol.AddComponent<GorillaSurfaceOverride>().overrideIndex = 61;
-                UnityEngine.Object.Destroy(lol, 1);
+                slipperyPlatform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 61;
+                UnityEngine.Object.Destroy(slipperyPlatform, 1);
             }
 
             GorillaTagger.Instance.bodyCollider.enabled = !(leftGrab || rightGrab);
@@ -3271,8 +3271,8 @@ namespace iiMenu.Mods
         {
             Vector3 funnyDir = GorillaTagger.Instance.bodyCollider.transform.forward * GorillaLocomotion.GTPlayer.Instance.maxJumpSpeed;
             GorillaTagger.Instance.rigidbody.velocity = new Vector3(funnyDir.x, GorillaTagger.Instance.rigidbody.velocity.y, funnyDir.z);
-            Vector3 lol = GorillaTagger.Instance.rigidbody.velocity;
-            lol.y = (lol.y < 0 ? 0 : lol.y);
+            Vector3 dir = GorillaTagger.Instance.rigidbody.velocity;
+            dir.y = (dir.y < 0 ? 0 : dir.y);
         }
 
         public static void DynamicStrafe()
@@ -3337,27 +3337,27 @@ namespace iiMenu.Mods
 
         public static void DisableWater()
         {
-            foreach (WaterVolume lol in UnityEngine.Object.FindObjectsOfType<WaterVolume>())
+            foreach (WaterVolume waterVolume in UnityEngine.Object.FindObjectsOfType<WaterVolume>())
             {
-                GameObject v = lol.gameObject;
+                GameObject v = waterVolume.gameObject;
                 v.layer = LayerMask.NameToLayer("TransparentFX");
             }
         }
 
         public static void SolidWater()
         {
-            foreach (WaterVolume lol in UnityEngine.Object.FindObjectsOfType<WaterVolume>())
+            foreach (WaterVolume waterVolume in UnityEngine.Object.FindObjectsOfType<WaterVolume>())
             {
-                GameObject v = lol.gameObject;
+                GameObject v = waterVolume.gameObject;
                 v.layer = LayerMask.NameToLayer("Default");
             }
         }
 
         public static void FixWater()
         {
-            foreach (WaterVolume lol in UnityEngine.Object.FindObjectsOfType<WaterVolume>())
+            foreach (WaterVolume waterVolume in UnityEngine.Object.FindObjectsOfType<WaterVolume>())
             {
-                GameObject v = lol.gameObject;
+                GameObject v = waterVolume.gameObject;
                 v.layer = LayerMask.NameToLayer("Water");
             }
         }
