@@ -151,12 +151,10 @@ namespace iiMenu.Mods
 
                 GameObject popupMessage = MiscellaneousScripts.Find("PopUpMessage").gameObject;
 
-                if (popupMessage != null)
-                    popupMessage.SetActive(false);
+                popupMessage?.SetActive(false);
                 GameObject metaReporting = MiscellaneousScripts.Find("MetaReporting").gameObject;
 
-                if (metaReporting != null)
-                    metaReporting.SetActive(false);
+                metaReporting?.SetActive(false);
                 GameObject RoomObject = MiscellaneousScripts.Find("PrivateUIRoom_HandRays").gameObject;
                 if (RoomObject == null)
                     return;

@@ -11,8 +11,7 @@ namespace iiMenu.Patches
         {
             if (!IsPatched)
             {
-                if (instance == null)
-                    instance = new Harmony(PluginInfo.GUID);
+                instance ??= new Harmony(PluginInfo.GUID);
                 
                 instance.PatchAll(Assembly.GetExecutingAssembly());
                 IsPatched = true;

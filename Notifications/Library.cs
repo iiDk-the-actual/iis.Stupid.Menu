@@ -40,8 +40,10 @@ namespace iiMenu.Notifications
         {
             MainCamera = GameObject.Find("Main Camera");
             HUDObj = new GameObject();
-            HUDObj2 = new GameObject();
-            HUDObj2.name = "NOTIFICATIONLIB_HUD_OBJ";
+            HUDObj2 = new GameObject
+            {
+                name = "NOTIFICATIONLIB_HUD_OBJ"
+            };
             HUDObj.name = "NOTIFICATIONLIB_HUD_OBJ";
             HUDObj.AddComponent<Canvas>();
             HUDObj.AddComponent<CanvasScaler>().dynamicPixelsPerUnit *= highQualityText ? 2f : 1f;
@@ -229,7 +231,7 @@ namespace iiMenu.Notifications
                         if (inputTextColor != "green")
                             NotificationText = NotificationText.Replace("<color=green>", "<color=" + inputTextColor + ">");
 
-                        NotifiText.text = NotifiText.text + NotificationText;
+                        NotifiText.text += NotificationText;
                         if (lowercaseMode)
                             NotifiText.text = NotifiText.text.ToLower();
 

@@ -660,9 +660,7 @@ namespace iiMenu.Mods
             Physics.Raycast(GorillaTagger.Instance.bodyCollider.transform.position - new Vector3(0f, 0.2f, 0f), Vector3.down, out var Ray, 512f, NoInvisLayerMask());
 
             if (Ray.distance < 0.2f && (Mathf.Abs(lerpygerpy.x) > 0.05f || Mathf.Abs(lerpygerpy.y) > 0.05f))
-            {
-                GorillaTagger.Instance.rigidbody.velocity = addition * 10f;
-            }
+                GorillaTagger.Instance.rigidbody.velocity = addition * driveSpeed;
         }
 
         private static bool lastaomfg = false;
@@ -1371,7 +1369,7 @@ namespace iiMenu.Mods
             {
                 if (playerPositions.Count > 0)
                 {
-                    object[] targetPos = playerPositions[playerPositions.Count - 1];
+                    object[] targetPos = playerPositions[^1];
 
                     TeleportPlayer((Vector3)targetPos[0]);
 
@@ -1952,8 +1950,7 @@ namespace iiMenu.Mods
             if (pearl != null)
             {
                 pearl.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
-                if (pearl.GetComponent<Rigidbody>() != null)
-                    pearl.GetComponent<Rigidbody>().AddForce(Vector3.up * (Time.deltaTime * (6.66f / Time.deltaTime)), ForceMode.Acceleration);
+                pearl.GetComponent<Rigidbody>()?.AddForce(Vector3.up * (Time.deltaTime * (6.66f / Time.deltaTime)), ForceMode.Acceleration);
             }
         }
 

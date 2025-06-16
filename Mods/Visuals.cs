@@ -97,7 +97,7 @@ namespace iiMenu.Mods
                 
                 if (infoWatchFPS) regwatchText.GetComponent<UnityEngine.UI.Text>().text += lastDeltaTime.ToString() + " FPS\n";
                 if (infoWatchTime) regwatchText.GetComponent<UnityEngine.UI.Text>().text += DateTime.Now.ToString("hh:mm tt") + "\n";
-                if (infoWatchClip) regwatchText.GetComponent<UnityEngine.UI.Text>().text += "Clip: " + (GUIUtility.systemCopyBuffer.Length > 20 ? GUIUtility.systemCopyBuffer.Substring(0, 20) : GUIUtility.systemCopyBuffer) + "\n";
+                if (infoWatchClip) regwatchText.GetComponent<UnityEngine.UI.Text>().text += "Clip: " + (GUIUtility.systemCopyBuffer.Length > 20 ? GUIUtility.systemCopyBuffer[..20] : GUIUtility.systemCopyBuffer) + "\n";
                 if (infoWatchCode) regwatchText.GetComponent<UnityEngine.UI.Text>().text += (PhotonNetwork.InRoom ? PhotonNetwork.CurrentRoom.Name : "Not in room") + "\n";
                 regwatchText.GetComponent<UnityEngine.UI.Text>().text += "</color>";
                 regwatchText.GetComponent<UnityEngine.UI.Text>().color = titleColor;
@@ -2553,7 +2553,6 @@ namespace iiMenu.Mods
             if (sillyComputer == null)
                 return;
 
-            bool followMenuTheme = GetIndex("Follow Menu Theme").enabled;
             bool transparentTheme = GetIndex("Transparent Theme").enabled;
             bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
             float lineWidth = GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f;

@@ -368,7 +368,7 @@ namespace iiMenu.Mods
         {
             string randomName = "gorilla";
             for (var i = 0; i < 4; i++)
-                randomName = randomName + Random.Range(0, 9).ToString();
+                randomName += Random.Range(0, 9).ToString();
 
             ChangeName(randomName);
 

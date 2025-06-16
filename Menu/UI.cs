@@ -106,8 +106,10 @@ namespace iiMenu.UI
                         GUI.DrawTexture(pos, icon);
                         GUI.matrix = matrix;
 
-                        GUIStyle style = new GUIStyle(GUI.skin.label);
-                        style.alignment = TextAnchor.LowerRight;
+                        GUIStyle style = new GUIStyle(GUI.skin.label)
+                        {
+                            alignment = TextAnchor.LowerRight
+                        };
                         GUI.Label(new Rect(Screen.width - 590, Screen.height - 75, 512, 64), (translate ? TranslateText("Build") : "Build")+" "+PluginInfo.Version+"\n"+(serverLink.Replace("https://", "")), style);
                     }
                 }
@@ -169,8 +171,10 @@ namespace iiMenu.UI
 
                 try
                 {
-                    labelStyle = new GUIStyle(GUI.skin.label);
-                    labelStyle.richText = true;
+                    labelStyle = new GUIStyle(GUI.skin.label)
+                    {
+                        richText = true
+                    };
                     if (advancedArraylist)
                         labelStyle.fontStyle = (FontStyle)((int)activeFontStyle % 2);
                     if (flipArraylist)

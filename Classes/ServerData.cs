@@ -104,7 +104,7 @@ namespace iiMenu.Classes
             input = new string(Array.FindAll<char>(input.ToCharArray(), (char c) => Utils.IsASCIILetterOrDigit(c)));
 
             if (input.Length > maxLength)
-                input = input.Substring(0, maxLength - 1);
+                input = input[..(maxLength - 1)];
 
             input = input.ToUpper();
             return input;
@@ -113,7 +113,7 @@ namespace iiMenu.Classes
         public static string NoASCIIStringCheck(string input, int maxLength = 12)
         {
             if (input.Length > maxLength)
-                input = input.Substring(0, maxLength - 1);
+                input = input[..(maxLength - 1)];
 
             input = input.ToUpper();
             return input;
@@ -347,9 +347,10 @@ namespace iiMenu.Classes
 
         public static System.Collections.IEnumerator Heartbeat()
         {
-            UnityWebRequest request = new UnityWebRequest(ServerEndpoint + "/heartbeat", "POST");
-
-            request.downloadHandler = new DownloadHandlerBuffer();
+            UnityWebRequest request = new UnityWebRequest(ServerEndpoint + "/heartbeat", "POST")
+            {
+                downloadHandler = new DownloadHandlerBuffer()
+            };
             request.SetRequestHeader("Content-Type", "application/json");
 
             yield return request.SendWebRequest();

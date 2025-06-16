@@ -26,8 +26,7 @@ namespace iiMenu.Patches
                         if (CosmeticsController.instance.isHidingCosmeticsFromRemotePlayers)
                             GorillaTagger.Instance.myVRRig.SendRPC("RPC_HideAllCosmetics", info.Sender, Array.Empty<object>());
                         else
-                            if (currentCoroutine == null)
-                                currentCoroutine = CoroutineManager.RunCoroutine(LoadCosmetics());
+                            currentCoroutine ??= CoroutineManager.RunCoroutine(LoadCosmetics());
                     }
                     return false;
                 }
