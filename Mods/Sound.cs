@@ -33,7 +33,7 @@ namespace iiMenu.Mods.Spammers
             }
             List<ButtonInfo> soundbuttons = new List<ButtonInfo> { };
             if (Subdirectory != "")
-                soundbuttons.Add(new ButtonInfo { buttonText = "Exit Parent Directory", overlapText = "Exit " + Subdirectory.Split("/")[Subdirectory.Split("/").Length - 1], method = () => Sound.ExitParentDirectory(), isTogglable = false, toolTip = "Returns you back to the last folder." });
+                soundbuttons.Add(new ButtonInfo { buttonText = "Exit Parent Directory", overlapText = "Exit " + Subdirectory.Split("/")[Subdirectory.Split("/").Length - 1], method = () => ExitParentDirectory(), isTogglable = false, toolTip = "Returns you back to the last folder." });
 
             soundbuttons.Add(new ButtonInfo { buttonText = "Exit Soundboard", method = () => currentCategoryName = "Fun Mods", isTogglable = false, toolTip = "Returns you back to the fun mods." });
             int index = 0;
@@ -193,7 +193,7 @@ namespace iiMenu.Mods.Spammers
 
         public static void OpenSoundFolder()
         {
-            string filePath = System.IO.Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, "iisStupidMenu/Sounds");
+            string filePath = Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, "iisStupidMenu/Sounds");
             filePath = filePath.Split("BepInEx\\")[0] + "iisStupidMenu/Sounds";
             Process.Start(filePath);
         }
@@ -270,17 +270,17 @@ namespace iiMenu.Mods.Spammers
 
         public static void RandomSoundSpam()
         {
-            SoundSpam(UnityEngine.Random.Range(0, GorillaLocomotion.GTPlayer.Instance.materialData.Count));
+            SoundSpam(Random.Range(0, GorillaLocomotion.GTPlayer.Instance.materialData.Count));
         }
 
         public static void CrystalSoundSpam()
         {
             int[] sounds = new int[]
             {
-                UnityEngine.Random.Range(40,54),
-                UnityEngine.Random.Range(214,221)
+                Random.Range(40,54),
+                Random.Range(214,221)
             };
-            SoundSpam(sounds[UnityEngine.Random.Range(0, 1)]);
+            SoundSpam(sounds[Random.Range(0, 1)]);
         }
 
         private static bool squeakToggle = false;

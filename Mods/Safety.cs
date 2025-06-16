@@ -368,13 +368,13 @@ namespace iiMenu.Mods
         {
             string randomName = "gorilla";
             for (var i = 0; i < 4; i++)
-                randomName = randomName + UnityEngine.Random.Range(0, 9).ToString();
+                randomName = randomName + Random.Range(0, 9).ToString();
 
             ChangeName(randomName);
 
-            byte randA = (byte)UnityEngine.Random.Range(0, 255);
-            byte randB = (byte)UnityEngine.Random.Range(0, 255);
-            byte randC = (byte)UnityEngine.Random.Range(0, 255);
+            byte randA = (byte)Random.Range(0, 255);
+            byte randB = (byte)Random.Range(0, 255);
+            byte randC = (byte)Random.Range(0, 255);
             ChangeColor(new Color32(randA, randB, randC, 255));
         }
 
@@ -401,7 +401,7 @@ namespace iiMenu.Mods
                 new Color32(227, 170, 85, 255),
                 new Color32(0, 226, 255, 255)
             };
-            ChangeColor(colors[UnityEngine.Random.Range(0, colors.Length - 1)]);
+            ChangeColor(colors[Random.Range(0, colors.Length - 1)]);
         }
 
         private static bool lastinlobbyagain = false;
@@ -430,7 +430,7 @@ namespace iiMenu.Mods
         public static void FPSSpoof()
         {
             Patches.FPSPatch.enabled = true;
-            Patches.FPSPatch.spoofFPSValue = UnityEngine.Random.Range(88, 92); //  - (UnityEngine.Random.Range(0, 400) > 399 ? UnityEngine.Random.Range(15, 60) : 0)
+            Patches.FPSPatch.spoofFPSValue = Random.Range(88, 92); //  - (UnityEngine.Random.Range(0, 400) > 399 ? UnityEngine.Random.Range(15, 60) : 0)
         }
 
         public static string[] names = new string[]

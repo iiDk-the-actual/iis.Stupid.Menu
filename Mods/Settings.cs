@@ -245,7 +245,7 @@ namespace iiMenu.Mods
 
         public static void OpenPluginsFolder()
         {
-            string filePath = System.IO.Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, "iisStupidMenu/Plugins");
+            string filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, "iisStupidMenu/Plugins");
             filePath = filePath.Split("BepInEx\\")[0] + "iisStupidMenu/Plugins";
             Process.Start(filePath);
         }

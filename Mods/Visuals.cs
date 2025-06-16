@@ -83,7 +83,7 @@ namespace iiMenu.Mods
                 if (doCustomName)
                     regwatchText.GetComponent<UnityEngine.UI.Text>().text = NoRichtextTags(customMenuName);
                 regwatchText.GetComponent<UnityEngine.UI.Text>().text += "\n<color=grey>";
-                regwatchText.GetComponent<UnityEngine.UI.Text>().text += Main.lastDeltaTime.ToString() + " FPS\n";
+                regwatchText.GetComponent<UnityEngine.UI.Text>().text += lastDeltaTime.ToString() + " FPS\n";
                 regwatchText.GetComponent<UnityEngine.UI.Text>().text += DateTime.Now.ToString("hh:mm tt") + "\n</color>";
             }
             else
@@ -95,7 +95,7 @@ namespace iiMenu.Mods
                 if (!infoWatchMenuName)
                     regwatchText.GetComponent<UnityEngine.UI.Text>().text = "<color=grey>";
                 
-                if (infoWatchFPS) regwatchText.GetComponent<UnityEngine.UI.Text>().text += Main.lastDeltaTime.ToString() + " FPS\n";
+                if (infoWatchFPS) regwatchText.GetComponent<UnityEngine.UI.Text>().text += lastDeltaTime.ToString() + " FPS\n";
                 if (infoWatchTime) regwatchText.GetComponent<UnityEngine.UI.Text>().text += DateTime.Now.ToString("hh:mm tt") + "\n";
                 if (infoWatchClip) regwatchText.GetComponent<UnityEngine.UI.Text>().text += "Clip: " + (GUIUtility.systemCopyBuffer.Length > 20 ? GUIUtility.systemCopyBuffer.Substring(0, 20) : GUIUtility.systemCopyBuffer) + "\n";
                 if (infoWatchCode) regwatchText.GetComponent<UnityEngine.UI.Text>().text += (PhotonNetwork.InRoom ? PhotonNetwork.CurrentRoom.Name : "Not in room") + "\n";
@@ -549,7 +549,7 @@ namespace iiMenu.Mods
                     }
 
                     GameObject nameTag = nametags[vrrig];
-                    nameTag.GetComponent<TextMesh>().text = RigManager.GetPlayerFromVRRig(vrrig).NickName;
+                    nameTag.GetComponent<TextMesh>().text = GetPlayerFromVRRig(vrrig).NickName;
                     nameTag.GetComponent<TextMesh>().color = vrrig.playerColor;
                     nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
 
@@ -1449,7 +1449,7 @@ namespace iiMenu.Mods
             NetPlayer target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
             foreach (NetPlayer player in PhotonNetwork.PlayerList)
             {
-                VRRig vrrig = RigManager.GetVRRigFromPlayer(player);
+                VRRig vrrig = GetVRRigFromPlayer(player);
                 if (player == target)
                 {
                     UnityEngine.Color thecolor = vrrig.playerColor;
@@ -1626,7 +1626,7 @@ namespace iiMenu.Mods
             NetPlayer target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
             foreach (NetPlayer player in PhotonNetwork.PlayerList)
             {
-                VRRig vrrig = RigManager.GetVRRigFromPlayer(player);
+                VRRig vrrig = GetVRRigFromPlayer(player);
                 if (player == target)
                 {
                     FixRigMaterialESPColors(vrrig);
@@ -1801,7 +1801,7 @@ namespace iiMenu.Mods
             NetPlayer target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
             foreach (NetPlayer player in PhotonNetwork.PlayerList)
             {
-                VRRig vrrig = RigManager.GetVRRigFromPlayer(player);
+                VRRig vrrig = GetVRRigFromPlayer(player);
                 if (player == target)
                 {
                     UnityEngine.Color thecolor = vrrig.playerColor;
@@ -2134,7 +2134,7 @@ namespace iiMenu.Mods
             NetPlayer target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
             foreach (NetPlayer player in PhotonNetwork.PlayerList)
             {
-                VRRig vrrig = RigManager.GetVRRigFromPlayer(player);
+                VRRig vrrig = GetVRRigFromPlayer(player);
                 if (player == target)
                 {
                     UnityEngine.Color thecolor = vrrig.playerColor;
@@ -2347,7 +2347,7 @@ namespace iiMenu.Mods
             NetPlayer target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
             foreach (NetPlayer player in PhotonNetwork.PlayerList)
             {
-                VRRig vrrig = RigManager.GetVRRigFromPlayer(player);
+                VRRig vrrig = GetVRRigFromPlayer(player);
                 if (player == target)
                 {
                     UnityEngine.Color thecolor = vrrig.playerColor;
@@ -2435,8 +2435,8 @@ namespace iiMenu.Mods
 
         public static void HideButtonColliders()
         {
-            UnityEngine.GameObject.Destroy(LeftSphere);
-            UnityEngine.GameObject.Destroy(RightSphere);
+            UnityEngine.Object.Destroy(LeftSphere);
+            UnityEngine.Object.Destroy(RightSphere);
 
             LeftSphere = null;
             RightSphere = null;
@@ -3083,7 +3083,7 @@ namespace iiMenu.Mods
 
 
                 GameObject backgroundObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                UnityEngine.GameObject.Destroy(backgroundObject.GetComponent<Collider>());
+                UnityEngine.Object.Destroy(backgroundObject.GetComponent<Collider>());
 
                 Renderer backgroundRender = backgroundObject.GetComponent<Renderer>();
 

@@ -32,12 +32,12 @@ namespace iiMenu.Classes
                             color = Color.HSVToRGB(h, 0.3f, 1f);
                         }
                         if (isEpileptic)
-                            color = new Color32((byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), 255);
+                            color = new Color32((byte)Random.Range(0, 255), (byte)Random.Range(0, 255), (byte)Random.Range(0, 255), 255);
                         gameObjectRenderer.material.color = color;
                     }
                     else
                     {
-                        if (!Menu.Main.PlayerIsTagged(VRRig.LocalRig))
+                        if (!Main.PlayerIsTagged(VRRig.LocalRig))
                             gameObjectRenderer.material.color = VRRig.LocalRig.mainSkin.material.color;
                         else
                             gameObjectRenderer.material.color = new Color32(255, 111, 0, 255);

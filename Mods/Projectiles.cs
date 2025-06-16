@@ -495,11 +495,11 @@ namespace iiMenu.Mods.Spammers
         {
             if (rightPrimary)
             {
-                foreach (SlingshotProjectile projectile in GameObject.FindObjectsOfType<SlingshotProjectile>())
+                foreach (SlingshotProjectile projectile in UnityEngine.Object.FindObjectsOfType<SlingshotProjectile>())
                 {
                     if (projectile.projectileOwner == (NetPlayer)PhotonNetwork.LocalPlayer)
                     {
-                        projectile.gameObject.transform.position = RigManager.GetRandomVRRig(false).headConstraint.transform.position;
+                        projectile.gameObject.transform.position = GetRandomVRRig(false).headConstraint.transform.position;
                         RPCProtection();
                     }
                 }

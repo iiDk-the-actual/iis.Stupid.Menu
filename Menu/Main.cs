@@ -1233,7 +1233,7 @@ namespace iiMenu.Menu
                 case 6:
                     {
                         float h = ((Time.frameCount / 180f) + offset) % 1f;
-                        oColor = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
+                        oColor = Color.HSVToRGB(h, 1f, 1f);
                         break;
                     }
                 case 47:
@@ -1248,12 +1248,12 @@ namespace iiMenu.Menu
                 case 51:
                     {
                         float h = (Time.frameCount / 180f) % 1f;
-                        oColor = UnityEngine.Color.HSVToRGB(h, 0.3f, 1f);
+                        oColor = Color.HSVToRGB(h, 0.3f, 1f);
                         break;
                     }
                 case 8:
                     {
-                        if (!Menu.Main.PlayerIsTagged(VRRig.LocalRig))
+                        if (!PlayerIsTagged(VRRig.LocalRig))
                             oColor = VRRig.LocalRig.mainSkin.material.color;
                         else
                             oColor = new Color32(255, 111, 0, 255);
@@ -1297,7 +1297,7 @@ namespace iiMenu.Menu
                 case 6:
                     {
                         float h = ((Time.frameCount / 180f) + offset) % 1f;
-                        oColor = UnityEngine.Color.HSVToRGB(h, 1f, 1f);
+                        oColor = Color.HSVToRGB(h, 1f, 1f);
                         break;
                     }
                 case 47:
@@ -1310,11 +1310,11 @@ namespace iiMenu.Menu
                 case 51:
                     {
                         float h = (Time.frameCount / 180f) % 1f;
-                        oColor = UnityEngine.Color.HSVToRGB(h, 0.3f, 1f);
+                        oColor = Color.HSVToRGB(h, 0.3f, 1f);
                         break;
                     }
                 case 8:
-                    if (!Menu.Main.PlayerIsTagged(VRRig.LocalRig))
+                    if (!PlayerIsTagged(VRRig.LocalRig))
                     {
                         oColor = VRRig.LocalRig.mainSkin.material.color;
                     }
@@ -2018,7 +2018,7 @@ namespace iiMenu.Menu
                 fps.supportRichText = true;
                 fps.fontStyle = activeFontStyle;
                 fps.alignment = TextAnchor.MiddleCenter;
-                fps.horizontalOverflow = UnityEngine.HorizontalWrapMode.Overflow;
+                fps.horizontalOverflow = HorizontalWrapMode.Overflow;
                 fps.resizeTextForBestFit = true;
                 fps.resizeTextMinSize = 0;
                 RectTransform component2 = fps.GetComponent<RectTransform>();
@@ -2394,7 +2394,7 @@ namespace iiMenu.Menu
                         bg.transform.transform.position = TPC.transform.position + TPC.transform.forward;
                         Color realcolor = GetBGColor(0f);
                         bg.GetComponent<Renderer>().material.color = new Color32((byte)(realcolor.r * 50), (byte)(realcolor.g * 50), (byte)(realcolor.b * 50), 255);
-                        GameObject.Destroy(bg, Time.deltaTime * 3f);
+                        Destroy(bg, Time.deltaTime * 3f);
                     }
                     menu.transform.parent = TPC.transform;
                     menu.transform.position = TPC.transform.position + (TPC.transform.forward * 0.5f) + (TPC.transform.up * 0f);
@@ -4096,7 +4096,7 @@ namespace iiMenu.Menu
             }
 
             int categoryIndex = 0;
-            foreach (ButtonInfo[] buttons in Menu.Buttons.buttons)
+            foreach (ButtonInfo[] buttons in Buttons.buttons)
             {
                 int buttonIndex = 0;
                 foreach (ButtonInfo button in buttons)
