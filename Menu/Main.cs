@@ -2896,6 +2896,12 @@ namespace iiMenu.Menu
                     Right = SwapGunHand ? TrueLeftHand().right : TrueRightHand().right;
                     Direction = SwapGunHand ? TrueLeftHand().forward : TrueRightHand().forward;
                     break;
+                case 4:
+                    Up = GorillaTagger.Instance.headCollider.transform.up;
+                    Right = GorillaTagger.Instance.headCollider.transform.right;
+                    Direction = GorillaTagger.Instance.headCollider.transform.forward;
+                    StartPosition = GorillaTagger.Instance.headCollider.transform.position + (Up * 0.1f);
+                    break;
             }
 
             Physics.Raycast(StartPosition + (Direction / 4f), Direction, out var Ray, 512f, overrideLayerMask > 0 ? overrideLayerMask : NoInvisLayerMask());
@@ -3505,6 +3511,7 @@ namespace iiMenu.Menu
             {
                 case GorillaGameModes.GameModeType.Infection:
                 case GorillaGameModes.GameModeType.FreezeTag:
+                case GorillaGameModes.GameModeType.PropHaunt:
                     GorillaTagManager tagManager = (GorillaTagManager)GorillaGameManager.instance;
                     if (tagManager.isCurrentlyTag)
                         infected.Add(tagManager.currentIt);
@@ -3519,13 +3526,6 @@ namespace iiMenu.Menu
                     else
                         infected.AddRange(ghostManager.currentInfected);
                     break;
-                case GorillaGameModes.GameModeType.PropHaunt:
-                    foreach (VRRig rig in GorillaPropHauntGameManager._g_ph_activePlayerRigs)
-                    {
-                        if (VRRig.LocalRig.bodyRenderer.gameModeBodyType == GorillaBodyType.Skeleton ? VRRig.LocalRig.bodyRenderer.gameModeBodyType == GorillaBodyType.Default : rig.IsInvisibleToLocalPlayer)
-                            infected.Add(GetPlayerFromVRRig(rig));
-                    }
-                    break;
             }
 
             return infected;
@@ -3537,6 +3537,7 @@ namespace iiMenu.Menu
             {
                 case GorillaGameModes.GameModeType.Infection:
                 case GorillaGameModes.GameModeType.FreezeTag:
+                case GorillaGameModes.GameModeType.PropHaunt:
                     GorillaTagManager tagManager = (GorillaTagManager)GorillaGameManager.instance;
                     if (tagManager.isCurrentlyTag)
                         tagManager.ChangeCurrentIt(plr);
@@ -3561,6 +3562,7 @@ namespace iiMenu.Menu
             {
                 case GorillaGameModes.GameModeType.Infection:
                 case GorillaGameModes.GameModeType.FreezeTag:
+                case GorillaGameModes.GameModeType.PropHaunt:
                     GorillaTagManager tagManager = (GorillaTagManager)GorillaGameManager.instance;
                     if (tagManager.isCurrentlyTag && tagManager.currentIt == plr)
                         tagManager.currentIt = null;

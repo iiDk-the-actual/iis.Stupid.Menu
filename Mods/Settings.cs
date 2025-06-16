@@ -1998,11 +1998,12 @@ namespace iiMenu.Mods
                 "Default",
                 "Legacy",
                 "Laser",
-                "Finger"
+                "Finger",
+                "Face"
             };
 
             GunDirection++;
-            if (GunDirection > DirectionNames.Length - 1)
+            if (GunDirection >= DirectionNames.Length)
                 GunDirection = 0;
 
             GetIndex("Change Gun Direction").overlapText = "Change Gun Direction <color=grey>[</color><color=green>" + DirectionNames[GunDirection] + "</color><color=grey>]</color>";
