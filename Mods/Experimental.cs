@@ -25,7 +25,7 @@ namespace iiMenu.Mods
                 {
                     if (previousNames.Contains(button.buttonText))
                     {
-                        string buttonText = button.overlapText == null ? button.buttonText : button.overlapText;
+                        string buttonText = button.overlapText ?? button.buttonText;
                         button.overlapText = buttonText;
                         button.buttonText += "X";
                         duplicateButtons++;
