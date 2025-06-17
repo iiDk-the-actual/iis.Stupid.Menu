@@ -188,7 +188,7 @@ namespace iiMenu.Mods
 
         private static float propHuntSpazDelay;
         private static bool propHuntSpazMode;
-        public static void SpazPropHauntObjects()
+        public static void SpazPropHuntObjects()
         {
             if (Time.time > propHuntSpazDelay)
             {
@@ -206,7 +206,7 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void SpazPropHaunt()
+        public static void SpazPropHunt()
         {
             if (Time.time > propHuntSpazDelay)
             {

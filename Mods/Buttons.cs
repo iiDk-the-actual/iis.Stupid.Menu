@@ -546,7 +546,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Night Time", method =() => BetterDayNightManager.instance.SetTimeOfDay(0), toolTip = "Sets your time of day to night."},
                 new ButtonInfo { buttonText = "Fullbright", enableMethod =() => Visuals.SetFullbrightStatus(true), disableMethod =() => Visuals.SetFullbrightStatus(false), toolTip = "Disables the dynamic lighting in maps that use it."},
 
-                new ButtonInfo { buttonText = "Remove Blindfold", method =() => Visuals.RemoveBlindfold(), toolTip = "Disables the blindfold in the prop haunt map."},
+                new ButtonInfo { buttonText = "Remove Blindfold", method =() => Visuals.RemoveBlindfold(), toolTip = "Disables the blindfold in the prop hunt map."},
 
                 new ButtonInfo { buttonText = "Rainy Weather", method =() => Visuals.WeatherChange(true), toolTip = "Forces the weather to rain."},
                 new ButtonInfo { buttonText = "Clear Weather", method =() => Visuals.WeatherChange(false), toolTip = "Forces the weather to sunny skies all day."},
@@ -709,8 +709,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Entity Reach", method =() => Patches.EntityGrabPatch.enabled = true, disableMethod =() => Patches.EntityGrabPatch.enabled = false, toolTip = "Gives you the ability to grab entities from farther away in the horror map." },
                 new ButtonInfo { buttonText = "Break All Crates", method =() => Fun.BreakAllCrates(), toolTip = "Breaks every crate in the horror map." },
 
-                new ButtonInfo { buttonText = "Infinite Prop Distance", method =() => Fun.SetPropDistanceLimit(float.MaxValue), disableMethod =() => Fun.SetPropDistanceLimit(0.35f), toolTip = "Removes the distance limit of props in the prop haunt map." },
-                new ButtonInfo { buttonText = "Prop Noclip", method =() => Patches.PropPatch.enabled = true, disableMethod =() => Patches.PropPatch.enabled = false, toolTip = "Allows you to put props in walls in the prop haunt map." },
+                new ButtonInfo { buttonText = "Infinite Prop Distance", method =() => Fun.SetPropDistanceLimit(float.MaxValue), disableMethod =() => Fun.SetPropDistanceLimit(0.35f), toolTip = "Removes the distance limit of props in the prop hunt map." },
+                new ButtonInfo { buttonText = "Prop Noclip", method =() => Patches.PropPatch.enabled = true, disableMethod =() => Patches.PropPatch.enabled = false, toolTip = "Allows you to put props in walls in the prop hunt map." },
 
                 new ButtonInfo { buttonText = "Spaz Tool Stations", method =() => Fun.SpazToolStations(), toolTip = "Spazzes out the tool purchase stations in the horror map." },
                 new ButtonInfo { buttonText = "Purchase All Tool Stations", method =() => Fun.PurchaseAllToolStations(), toolTip = "Makes every tool purchase station force purchase in the horror map." },
@@ -927,8 +927,8 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Guardian Spaz", method =() => Overpowered.GuardianSpaz(), toolTip = "Spams the guardian position for everyone in the room."},
 
-                new ButtonInfo { buttonText = "Spaz Prop Haunt", method =() => Overpowered.SpazPropHaunt(), toolTip = "Repeatedly starts and ends the prop haunt gamemode."},
-                new ButtonInfo { buttonText = "Spaz Prop Haunt Objects", method =() => Overpowered.SpazPropHauntObjects(), toolTip = "Repeatedly randomizes everyone's selected object in the prop haunt gamemode."},
+                new ButtonInfo { buttonText = "Spaz Prop Hunt", method =() => Overpowered.SpazPropHunt(), toolTip = "Repeatedly starts and ends the prop hunt gamemode."},
+                new ButtonInfo { buttonText = "Spaz Prop Hunt Objects", method =() => Overpowered.SpazPropHuntObjects(), toolTip = "Repeatedly randomizes everyone's selected object in the prop hunt gamemode."},
 
                 new ButtonInfo { buttonText = "Max Currency Self", method =() => Fun.SetCurrencySelf(int.MaxValue), isTogglable = false, toolTip = "Gives you the maximum amount of currency in the horror map (2 billion)."},
                 new ButtonInfo { buttonText = "Max Currency Gun", method =() => Fun.SetCurrencyGun(int.MaxValue), toolTip = "Gives whoever your hand desires the maximum amount of currency in the horror map (2 billion)."},
