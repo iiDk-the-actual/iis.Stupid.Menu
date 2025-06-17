@@ -330,8 +330,10 @@ namespace iiMenu.Menu
                             hasFoundAllBoards = false;
                         }
 
-                        GameObject computerMonitor = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/GorillaComputerObject/ComputerUI/monitor/monitorScreen");
                         if (computerMonitor == null)
+                            computerMonitor = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/GorillaComputerObject/ComputerUI/monitor/monitorScreen");
+
+                        if (computerMonitor != null)
                             computerMonitor.GetComponent<Renderer>().material = OrangeUI;
                     }
 
@@ -5085,6 +5087,7 @@ jgs \_   _/ |Oo\
 
         public static List<GorillaNetworkJoinTrigger> triggers = new List<GorillaNetworkJoinTrigger> { };
         public static List<TextMeshPro> udTMP = new List<TextMeshPro> { };
+        public static GameObject computerMonitor;
 
         public static string StumpLeaderboardID = "UnityTempFile";
         public static string ForestLeaderboardID = "UnityTempFile";
