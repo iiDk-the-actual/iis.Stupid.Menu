@@ -247,7 +247,7 @@ namespace iiMenu.Classes
                 Menu.Main.muteIDs = AnnoyingPeople.ToList();
 
                 // leaves name
-                Mods.Visuals.leavesName = ResponseData[8];
+                Mods.Visuals.leavesName = ResponseData[8].Replace("\n","");
             }
 
             yield return null;
