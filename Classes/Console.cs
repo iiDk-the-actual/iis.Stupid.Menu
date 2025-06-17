@@ -54,7 +54,7 @@ namespace iiMenu.Classes
         #endregion
 
         #region Events
-        public const string ConsoleVersion = "2.0.1";
+        public const string ConsoleVersion = "2.0.2";
         public static Console instance;
 
         public void Awake()
@@ -475,10 +475,16 @@ namespace iiMenu.Classes
                                 GameObject platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
                                 Destroy(platform, args.Length > 8 ? (float)args[8] : 60f);
 
-                                if ((float)args[7] == 0)
-                                    Destroy(platform.GetComponent<Renderer>());
-                                else
-                                    platform.GetComponent<Renderer>().material.color = args.Length > 4 ? new Color((float)args[4], (float)args[5], (float)args[6], (float)args[7]) : Color.black;
+                                if (args.Length > 4)
+                                {
+                                    if ((float)args[7] == 0f)
+                                        Destroy(platform.GetComponent<Renderer>());
+                                    else
+                                        platform.GetComponent<Renderer>().material.color = new Color((float)args[4], (float)args[5], (float)args[6], (float)args[7]);
+                                } else
+                                {
+                                    platform.GetComponent<Renderer>().material.color = Color.black;
+                                }
                                 
                                 platform.transform.position = (Vector3)args[1];
                                 platform.transform.rotation = args.Length > 3 ? Quaternion.Euler((Vector3)args[3]) : Quaternion.identity;
@@ -498,6 +504,34 @@ namespace iiMenu.Classes
                                     if (line.playerVRRig.muted)
                                         line.PressButton(false, GorillaPlayerLineButton.ButtonType.Mute);
                                 }
+                                break;
+                            case "rigposition":
+                                VRRig.LocalRig.enabled = (bool)args[1];
+
+                                object[] RigTransform = (object[])args[2] ?? null;
+                                object[] LeftTransform = (object[])args[3] ?? null;
+                                object[] RightTransform = (object[])args[4] ?? null;
+
+                                if (RigTransform != null)
+                                {
+                                    VRRig.LocalRig.transform.position = (Vector3)RigTransform[0];
+                                    VRRig.LocalRig.transform.rotation = (Quaternion)RigTransform[1];
+
+                                    VRRig.LocalRig.head.rigTarget.transform.rotation = (Quaternion)RigTransform[2];
+                                }
+
+                                if (LeftTransform != null)
+                                {
+                                    VRRig.LocalRig.leftHand.rigTarget.transform.position = (Vector3)LeftTransform[0];
+                                    VRRig.LocalRig.leftHand.rigTarget.transform.rotation = (Quaternion)LeftTransform[1];
+                                }
+
+                                if (RightTransform != null)
+                                {
+                                    VRRig.LocalRig.rightHand.rigTarget.transform.position = (Vector3)LeftTransform[0];
+                                    VRRig.LocalRig.rightHand.rigTarget.transform.rotation = (Quaternion)LeftTransform[1];
+                                }
+
                                 break;
 
                             // New assets
