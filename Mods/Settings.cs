@@ -2168,7 +2168,7 @@ namespace iiMenu.Mods
             foreach (ButtonInfo[] buttonlist in Buttons.buttons)
             {
                 foreach (ButtonInfo v in buttonlist)
-                    rawbuttonnames.Add(NoRichtextTags(v.overlapText == null ? v.buttonText : v.overlapText));
+                    rawbuttonnames.Add(NoRichtextTags(v.overlapText ?? v.buttonText));
             }
             modPhrases = new KeywordRecognizer(rawbuttonnames.ToArray());
             modPhrases.OnPhraseRecognized += ExecuteVoiceCommand;
@@ -2205,7 +2205,7 @@ namespace iiMenu.Mods
                 foreach (ButtonInfo v in buttonlist)
                 {
                     if (exactMatch) { break; }
-                    string buttonName = NoRichtextTags(v.overlapText == null ? v.buttonText : v.overlapText);
+                    string buttonName = NoRichtextTags(v.overlapText ?? v.buttonText);
                     if (output.ToLower() == buttonName.ToLower())
                     {
                         modTarget = v.buttonText;
@@ -2222,7 +2222,7 @@ namespace iiMenu.Mods
             if (modTarget != null)
             {
                 ButtonInfo mod = GetIndex(modTarget);
-                NotifiLib.SendNotification("<color=grey>[</color><color=" + (mod.enabled ? "red" : "green") + "> VOICE</color><color=grey>]</color> " + (mod.enabled ? "Disabling " : "Enabling ") + (mod.overlapText == null ? mod.buttonText : mod.overlapText)+"...", 3000);
+                NotifiLib.SendNotification("<color=grey>[</color><color=" + (mod.enabled ? "red" : "green") + "> VOICE</color><color=grey>]</color> " + (mod.enabled ? "Disabling " : "Enabling ") + (mod.overlapText ?? mod.buttonText) +"...", 3000);
                 if (dynamicSounds)
                 {
                     Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/confirm.wav", "confirm.wav"), buttonClickVolume / 10f);
