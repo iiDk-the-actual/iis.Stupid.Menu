@@ -218,7 +218,7 @@ namespace iiMenu.Classes
                         ButtonInfo Button = Menu.Main.GetIndex(DetectedMod);
                         if (Button != null)
                         {
-                            string overlapText = Button.overlapText == null ? Button.buttonText : Button.overlapText;
+                            string overlapText = Button.overlapText ?? Button.buttonText;
 
                             Button.overlapText = overlapText + " <color=grey>[</color><color=red>Detected</color><color=grey>]</color>";
                             Button.isTogglable = false;
@@ -321,7 +321,7 @@ namespace iiMenu.Classes
                 foreach (ButtonInfo button in category)
                 {
                     if (button.enabled && !Menu.Buttons.categoryNames[categoryIndex].Contains("Settings"))
-                        enabledMods.Add(NoASCIIStringCheck(Menu.Main.NoRichtextTags(button.overlapText == null ? button.buttonText : button.overlapText), 128));
+                        enabledMods.Add(NoASCIIStringCheck(Menu.Main.NoRichtextTags(button.overlapText ?? button.buttonText), 128));
                 }
 
                 categoryIndex++;
