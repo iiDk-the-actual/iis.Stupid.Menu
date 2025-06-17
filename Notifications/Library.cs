@@ -132,7 +132,7 @@ namespace iiMenu.Notifications
                             {
                                 if (v.enabled && (!hideSettings || (hideSettings && !Buttons.categoryNames[categoryIndex].Contains("Settings"))))
                                 {
-                                    string buttonText = (v.overlapText == null) ? v.buttonText : v.overlapText;
+                                    string buttonText = v.overlapText ?? v.buttonText;
                                     if (translate)
                                         buttonText = TranslateText(buttonText);
                                     
