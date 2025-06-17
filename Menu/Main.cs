@@ -329,14 +329,11 @@ namespace iiMenu.Menu
                             LogManager.LogError(string.Format("Error with board colors at {0}: {1}", exc.StackTrace, exc.Message));
                             hasFoundAllBoards = false;
                         }
-                    }
 
-                    try
-                    {
                         GameObject computerMonitor = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/GorillaComputerObject/ComputerUI/monitor/monitorScreen");
-                        if (computerMonitor != null)
+                        if (computerMonitor == null)
                             computerMonitor.GetComponent<Renderer>().material = OrangeUI;
-                    } catch { }
+                    }
 
                     try
                     {
@@ -587,9 +584,7 @@ namespace iiMenu.Menu
                             if (Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, menu.transform.position) < 1.5f)
                             {
                                 if (reference == null)
-                                {
                                     CreateReference();
-                                }
                             } else
                             {
                                 if (reference != null)
@@ -668,29 +663,33 @@ namespace iiMenu.Menu
                                 if (GhostRig != null)
                                     Destroy(GhostRig.gameObject);
 
-                                GameObject l = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                                Destroy(l.GetComponent<SphereCollider>());
+                                if (legacyGhostViewLeft == null)
+                                {
+                                    legacyGhostViewLeft = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                                    Destroy(legacyGhostViewLeft.GetComponent<SphereCollider>());
 
-                                l.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-                                l.transform.position = TrueLeftHand().position;
+                                    legacyGhostViewLeft.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                                }
 
-                                GameObject r = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                                Destroy(r.GetComponent<SphereCollider>());
+                                legacyGhostViewLeft.transform.position = TrueLeftHand().position;
+                                legacyGhostViewLeft.GetComponent<Renderer>().material.color = GetBGColor(0f);
 
-                                r.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-                                r.transform.position = TrueRightHand().position;
+                                if (legacyGhostViewRight == null)
+                                {
+                                    legacyGhostViewRight = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                                    Destroy(legacyGhostViewRight.GetComponent<SphereCollider>());
 
-                                l.GetComponent<Renderer>().material.color = GetBGColor(0f);
-                                r.GetComponent<Renderer>().material.color = GetBGColor(0f);
+                                    legacyGhostViewRight.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                                }
 
-                                Destroy(l, Time.deltaTime);
-                                Destroy(r, Time.deltaTime);
+                                legacyGhostViewRight.transform.position = TrueRightHand().position;
+                                legacyGhostViewRight.GetComponent<Renderer>().material.color = GetBGColor(0f);
                             }
                             else
                             {
                                 if (GhostRig == null)
                                 {
-                                    GhostRig = Instantiate<VRRig>(VRRig.LocalRig, GorillaLocomotion.GTPlayer.Instance.transform.position, GorillaLocomotion.GTPlayer.Instance.transform.rotation);
+                                    GhostRig = Instantiate(VRRig.LocalRig, GorillaLocomotion.GTPlayer.Instance.transform.position, GorillaLocomotion.GTPlayer.Instance.transform.rotation);
                                     GhostRig.headBodyOffset = Vector3.zero;
                                     GhostRig.enabled = true;
 
@@ -698,7 +697,6 @@ namespace iiMenu.Menu
                                     GhostRig.transform.Find("VR Constraints/RightArm/Right Arm IK/SlideAudio").gameObject.SetActive(false);
 
                                     Visuals.FixRigMaterialESPColors(GhostRig);
-                                    //GhostPatch.Prefix(VRRig.LocalRig);
                                 }
 
                                 if (GhostMaterial == null)
@@ -726,6 +724,12 @@ namespace iiMenu.Menu
                         {
                             if (GhostRig != null)
                                 Destroy(GhostRig.gameObject);
+
+                            if (legacyGhostViewLeft != null)
+                                Destroy(legacyGhostViewLeft);
+
+                            if (legacyGhostViewRight != null)
+                                Destroy(legacyGhostViewRight);
                         }
                     }
                     catch { }
@@ -5022,6 +5026,8 @@ jgs \_   _/ |Oo\
         public static Text searchTextObject;
         public static Text title;
         public static VRRig GhostRig;
+        public static GameObject legacyGhostViewLeft;
+        public static GameObject legacyGhostViewRight;
         public static Material GhostMaterial;
         public static Material searchMat;
         public static Material returnMat;
