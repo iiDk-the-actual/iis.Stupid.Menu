@@ -329,13 +329,13 @@ namespace iiMenu.Menu
                             LogManager.LogError(string.Format("Error with board colors at {0}: {1}", exc.StackTrace, exc.Message));
                             hasFoundAllBoards = false;
                         }
-
-                        if (computerMonitor == null)
-                            computerMonitor = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/GorillaComputerObject/ComputerUI/monitor/monitorScreen");
-
-                        if (computerMonitor != null)
-                            computerMonitor.GetComponent<Renderer>().material = OrangeUI;
                     }
+
+                    if (computerMonitor == null)
+                        computerMonitor = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/GorillaComputerObject/ComputerUI/monitor/monitorScreen");
+
+                    if (computerMonitor != null)
+                        computerMonitor.GetComponent<Renderer>().material = OrangeUI;
 
                     try
                     {
