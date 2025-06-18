@@ -1315,6 +1315,12 @@ namespace iiMenu.Mods
             VRRig.LocalRig.hoverboardVisual.gameObject.SetActive(false);
         }
 
+        public static void SpawnHoverboard()
+        {
+            FreeHoverboardManager.instance.SendDropBoardRPC(GorillaTagger.Instance.offlineVRRig.transform.position, GorillaTagger.Instance.offlineVRRig.transform.rotation, Vector3.zero, Vector3.zero, new Color32((byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), 255));
+            GorillaLocomotion.GTPlayer.Instance.SetHoverAllowed(true);
+        }
+
         public static void RainbowHoverboard()
         {
             if (VRRig.LocalRig.hoverboardVisual != null && VRRig.LocalRig.hoverboardVisual.IsHeld)
