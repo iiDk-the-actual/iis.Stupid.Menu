@@ -1976,6 +1976,7 @@ namespace iiMenu.Mods
             if (RopeSwingManager.instance.ropes.TryGetValue(RopeId, out GorillaRopeSwing Rope))
             {
                 var ClosestNode = Rope.nodes
+                    .Skip(1) // Can't do the first one
                     .Select((v, i) => new { index = i, 
                                             transform = v,
                                             distance = Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, v.transform.position) 
