@@ -1375,7 +1375,7 @@ namespace iiMenu.Menu
                 buttonObject.AddComponent<Classes.Button>().relatedText = method.buttonText;
 
                 if (shouldOutline)
-                    OutlineObj(buttonObject, !method.enabled);
+                    OutlineObj(buttonObject, buttonIndex < 0 && swapButtonColors ? method.enabled : !method.enabled);
 
                 if (lastClickedName != method.buttonText)
                 {
@@ -2377,9 +2377,6 @@ namespace iiMenu.Menu
                     if (watchMenu)
                         Toggle("Watch Menu");
 
-                    if (GetIndex("First Person Camera").enabled)
-                        Toggle("First Person Camera");
-
                     if (physicalMenu)
                         Toggle("Physical Menu");
 
@@ -2518,8 +2515,8 @@ namespace iiMenu.Menu
 
             if (shouldOutline)
             {
-                OutlineObj(prevButton, true);
-                OutlineObj(nextButton, true);
+                OutlineObj(prevButton, !swapButtonColors);
+                OutlineObj(nextButton, !swapButtonColors);
             }
 
             if (shouldRound)
@@ -2609,7 +2606,7 @@ namespace iiMenu.Menu
             colorChanger.isEpileptic = shouldBeEnabled && themeType == 47;
 
             if (shouldRound)
-                RoundObj(gameObject);
+                RoundObj(gameObject, 0.024f);
         }
 
         public static void OutlineObjNonMenu(GameObject toOut, bool shouldBeEnabled)
@@ -2642,10 +2639,8 @@ namespace iiMenu.Menu
             colorChanger.isEpileptic = shouldBeEnabled && themeType == 47;
         }
 
-        public static void RoundObj(GameObject toRound)
+        public static void RoundObj(GameObject toRound, float Bevel = 0.02f)
         {
-            float Bevel = 0.02f;
-
             Renderer ToRoundRenderer = toRound.GetComponent<Renderer>();
             GameObject BaseA = GameObject.CreatePrimitive(PrimitiveType.Cube);
             BaseA.GetComponent<Renderer>().enabled = ToRoundRenderer.enabled;
