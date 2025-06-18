@@ -1803,7 +1803,7 @@ namespace iiMenu.Mods
 
             switch (fontCycle) {
                 case 0:
-                    activeFont = agency;
+                    activeFont = AgencyFB;
                     return;
                 case 1:
                     activeFont = Arial;
@@ -1818,19 +1818,22 @@ namespace iiMenu.Mods
                     activeFont = gtagfont;
                     return;
                 case 4:
-                    activeFont = sans;
+                    activeFont = ComicSans;
                     return;
                 case 5:
-                    activeFont = consolas;
+                    activeFont = Consolas;
                     return;
                 case 6:
-                    activeFont = ubuntu;
+                    activeFont = Candara;
                     return;
                 case 7:
-                    activeFont = MSGOTHIC;
+                    activeFont = MSGothic;
                     return;
                 case 8:
-                    activeFont = impact;
+                    activeFont = Impact;
+                    return;
+                case 9:
+                    activeFont = SimSun;
                     return;
             }
         }

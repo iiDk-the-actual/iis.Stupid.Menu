@@ -69,7 +69,7 @@ namespace iiMenu.Notifications
             }.AddComponent<Text>();
             NotifiText.text = "";
             NotifiText.fontSize = 30;
-            NotifiText.font = agency;
+            NotifiText.font = AgencyFB;
             NotifiText.rectTransform.sizeDelta = new Vector2(450f, 210f);
             NotifiText.alignment = TextAnchor.LowerLeft;
             NotifiText.verticalOverflow = VerticalWrapMode.Overflow;
@@ -86,7 +86,7 @@ namespace iiMenu.Notifications
             }.AddComponent<Text>();
             ModText.text = "";
             ModText.fontSize = 20;
-            ModText.font = agency;
+            ModText.font = AgencyFB;
             ModText.rectTransform.sizeDelta = new Vector2(450f, 1000f);
             ModText.alignment = TextAnchor.UpperLeft;
             ModText.rectTransform.localScale = new Vector3(0.00333333333f, 0.00333333333f, 0.33333333f);

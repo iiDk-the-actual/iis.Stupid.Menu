@@ -4640,7 +4640,7 @@ namespace iiMenu.Menu
             IsSteam = PlayFabAuthenticator.instance.platform;
 
             if (!Font.GetOSInstalledFontNames().Contains("Agency FB"))
-                agency = LoadAsset<Font>("Agency");
+                AgencyFB = LoadAsset<Font>("Agency");
 
             PhotonNetwork.NetworkingClient.EventReceived += EventReceived;
 
@@ -5029,16 +5029,17 @@ jgs \_   _/ |Oo\
         public static Material searchMat;
         public static Material returnMat;
 
-        public static Font agency = Font.CreateDynamicFontFromOSFont("Agency FB", 24);
+        public static Font AgencyFB = Font.CreateDynamicFontFromOSFont("Agency FB", 24);
         public static Font Arial = Resources.GetBuiltinResource(typeof(Font), "Arial.ttf") as Font;
         public static Font Verdana = Font.CreateDynamicFontFromOSFont("Verdana", 24);
-        public static Font sans = Font.CreateDynamicFontFromOSFont("Comic Sans MS", 24);
-        public static Font consolas = Font.CreateDynamicFontFromOSFont("Consolas", 24);
-        public static Font ubuntu = Font.CreateDynamicFontFromOSFont("Candara", 24);
-        public static Font MSGOTHIC = Font.CreateDynamicFontFromOSFont("MS Gothic", 24);
-        public static Font impact = Font.CreateDynamicFontFromOSFont("Impact", 24);
+        public static Font ComicSans = Font.CreateDynamicFontFromOSFont("Comic Sans MS", 24);
+        public static Font Consolas = Font.CreateDynamicFontFromOSFont("Consolas", 24);
+        public static Font Candara = Font.CreateDynamicFontFromOSFont("Candara", 24);
+        public static Font MSGothic = Font.CreateDynamicFontFromOSFont("MS Gothic", 24);
+        public static Font Impact = Font.CreateDynamicFontFromOSFont("Impact", 24);
+        public static Font SimSun = Font.CreateDynamicFontFromOSFont("SimSun", 24);
         public static Font gtagfont;
-        public static Font activeFont = agency;
+        public static Font activeFont = AgencyFB;
         public static FontStyle activeFontStyle = FontStyle.Italic;
 
         public static GameObject lKeyReference;
