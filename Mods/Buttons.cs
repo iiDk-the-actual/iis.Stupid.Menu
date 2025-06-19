@@ -7,7 +7,6 @@ using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
 using Photon.Pun;
 using System.Threading;
-using System.Threading.Tasks;
 using UnityEngine;
 using static iiMenu.Menu.Main;
 

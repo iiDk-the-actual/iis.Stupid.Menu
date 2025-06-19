@@ -1,8 +1,6 @@
 using GorillaExtensions;
 using GorillaGameModes;
 using GorillaNetworking;
-using iiMenu.Classes;
-using iiMenu.Menu;
 using Photon.Pun;
 using System;
 using System.Collections.Generic;
