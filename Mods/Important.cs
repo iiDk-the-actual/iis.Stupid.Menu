@@ -231,7 +231,7 @@ namespace iiMenu.Mods
             Patches.MicPatch.returnAsNone = false;
         }
 
-        private static float lastTime = 0f;
+        private static float lastTime;
         public static void CapFPS(int fps)
         {
             float targetDelta = 1f / fps;
