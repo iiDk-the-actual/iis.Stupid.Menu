@@ -57,7 +57,7 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         idgundelay = Time.time + 0.5f;
-                        CoroutineManager.RunCoroutine(SpeakText("Name: " + GetPlayerFromVRRig(gunTarget).NickName + ". I D: " + GetPlayerFromVRRig(gunTarget).UserId));
+                        CoroutineManager.RunCoroutine(SpeakText("Name: " + GetPlayerFromVRRig(gunTarget).NickName + ". I D: " + string.Join(" ", GetPlayerFromVRRig(gunTarget).UserId)));
                     }
                 }
             }
@@ -65,7 +65,7 @@ namespace iiMenu.Mods
 
         public static void NarrateSelfID()
         {
-            CoroutineManager.RunCoroutine(SpeakText("Name: " + PhotonNetwork.LocalPlayer.NickName + ". I D: " + PhotonNetwork.LocalPlayer.UserId));
+            CoroutineManager.RunCoroutine(SpeakText("Name: " + PhotonNetwork.LocalPlayer.NickName + ". I D: " + string.Join(" ", PhotonNetwork.LocalPlayer.UserId)));
         }
 
         private static float cgdgd = 0f;
