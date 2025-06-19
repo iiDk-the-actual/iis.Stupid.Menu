@@ -7,7 +7,7 @@ using Photon.Pun;
 using System.Collections;
 using System.Diagnostics;
 using System.Reflection;
-using System.Threading.Tasks;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static iiMenu.Menu.Main;
@@ -234,7 +234,7 @@ namespace iiMenu.Mods
         public static void GripForceLagGame()
         {
             if (rightGrab)
-                Task.Delay(80);
+                Thread.Sleep((1 / 60) * 1000);
         }
 
         public static void UncapFPS()
