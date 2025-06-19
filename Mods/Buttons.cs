@@ -751,6 +751,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Global Hoverboard", method =() => Fun.GlobalHoverboard(), disableMethod =() => Fun.DisableGlobalHoverboard(), toolTip = "Gives you the hoverboard no matter where you are."},
 
                 new ButtonInfo { buttonText = "Hoverboard Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.HoverboardSpam(), toolTip = "Spams hoverboards from your hand when holding <color=green>grip</color>."},
+                new ButtonInfo { buttonText = "Spawn Hoverboard", method =() => Fun.SpawnHoverboard(), isTogglable = false, toolTip = "Spawns a hoverboard at your player position."},
                 new ButtonInfo { buttonText = "Orbit Hoverboards", method =() => Fun.OrbitHoverboards(), toolTip = "Orbits the hoverboards around you."},
 
                 new ButtonInfo { buttonText = "Start All Races", method =() => Fun.StartAllRaces(), isTogglable = false, toolTip = "Starts every race in the hoverboard map."},
