@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using ExitGames.Client.Photon;
+using GorillaLocomotion;
 using GorillaLocomotion.Climbing;
 using GorillaLocomotion.Swimming;
 using iiMenu.Classes;
@@ -199,30 +200,30 @@ namespace iiMenu.Mods
                     
                     if (GetIndex("Multiplied Long Arms").enabled)
                     {
-                        Vector3 legacyPosL = GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.transform.position;
-                        Vector3 legacyPosR = GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.transform.position;
+                        Vector3 legacyPosL = GTPlayer.Instance.leftControllerTransform.transform.position;
+                        Vector3 legacyPosR = GTPlayer.Instance.rightControllerTransform.transform.position;
                         MultipliedLongArms();
                         leftplat.transform.position = TrueLeftHand().position;
-                        GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.transform.position = legacyPosL;
-                        GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.transform.position = legacyPosR;
+                        GTPlayer.Instance.leftControllerTransform.transform.position = legacyPosL;
+                        GTPlayer.Instance.rightControllerTransform.transform.position = legacyPosR;
                     }
                     if (GetIndex("Vertical Long Arms").enabled)
                     {
-                        Vector3 legacyPosL = GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.transform.position;
-                        Vector3 legacyPosR = GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.transform.position;
+                        Vector3 legacyPosL = GTPlayer.Instance.leftControllerTransform.transform.position;
+                        Vector3 legacyPosR = GTPlayer.Instance.rightControllerTransform.transform.position;
                         VerticalLongArms();
                         leftplat.transform.position = TrueLeftHand().position;
-                        GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.transform.position = legacyPosL;
-                        GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.transform.position = legacyPosR;
+                        GTPlayer.Instance.leftControllerTransform.transform.position = legacyPosL;
+                        GTPlayer.Instance.rightControllerTransform.transform.position = legacyPosR;
                     }
                     if (GetIndex("Horizontal Long Arms").enabled)
                     {
-                        Vector3 legacyPosL = GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.transform.position;
-                        Vector3 legacyPosR = GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.transform.position;
+                        Vector3 legacyPosL = GTPlayer.Instance.leftControllerTransform.transform.position;
+                        Vector3 legacyPosR = GTPlayer.Instance.rightControllerTransform.transform.position;
                         HorizontalLongArms();
                         leftplat.transform.position = TrueLeftHand().position;
-                        GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.transform.position = legacyPosL;
-                        GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.transform.position = legacyPosR;
+                        GTPlayer.Instance.leftControllerTransform.transform.position = legacyPosL;
+                        GTPlayer.Instance.rightControllerTransform.transform.position = legacyPosR;
                     }
                 }
                 else
@@ -272,30 +273,30 @@ namespace iiMenu.Mods
                     
                     if (GetIndex("Multiplied Long Arms").enabled)
                     {
-                        Vector3 legacyPosL = GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.transform.position;
-                        Vector3 legacyPosR = GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.transform.position;
+                        Vector3 legacyPosL = GTPlayer.Instance.leftControllerTransform.transform.position;
+                        Vector3 legacyPosR = GTPlayer.Instance.rightControllerTransform.transform.position;
                         MultipliedLongArms();
                         rightplat.transform.position = TrueRightHand().position;
-                        GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.transform.position = legacyPosL;
-                        GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.transform.position = legacyPosR;
+                        GTPlayer.Instance.leftControllerTransform.transform.position = legacyPosL;
+                        GTPlayer.Instance.rightControllerTransform.transform.position = legacyPosR;
                     }
                     if (GetIndex("Vertical Long Arms").enabled)
                     {
-                        Vector3 legacyPosL = GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.transform.position;
-                        Vector3 legacyPosR = GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.transform.position;
+                        Vector3 legacyPosL = GTPlayer.Instance.leftControllerTransform.transform.position;
+                        Vector3 legacyPosR = GTPlayer.Instance.rightControllerTransform.transform.position;
                         VerticalLongArms();
                         rightplat.transform.position = TrueRightHand().position;
-                        GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.transform.position = legacyPosL;
-                        GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.transform.position = legacyPosR;
+                        GTPlayer.Instance.leftControllerTransform.transform.position = legacyPosL;
+                        GTPlayer.Instance.rightControllerTransform.transform.position = legacyPosR;
                     }
                     if (GetIndex("Horizontal Long Arms").enabled)
                     {
-                        Vector3 legacyPosL = GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.transform.position;
-                        Vector3 legacyPosR = GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.transform.position;
+                        Vector3 legacyPosL = GTPlayer.Instance.leftControllerTransform.transform.position;
+                        Vector3 legacyPosR = GTPlayer.Instance.rightControllerTransform.transform.position;
                         HorizontalLongArms();
                         rightplat.transform.position = TrueRightHand().position;
-                        GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.transform.position = legacyPosL;
-                        GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.transform.position = legacyPosR;
+                        GTPlayer.Instance.leftControllerTransform.transform.position = legacyPosL;
+                        GTPlayer.Instance.rightControllerTransform.transform.position = legacyPosR;
                     }
                 }
                 else
@@ -461,7 +462,7 @@ namespace iiMenu.Mods
         {
             if (rightPrimary)
             {
-                GorillaLocomotion.GTPlayer.Instance.transform.position += GorillaTagger.Instance.headCollider.transform.forward * Time.deltaTime * flySpeed;
+                GTPlayer.Instance.transform.position += GorillaTagger.Instance.headCollider.transform.forward * Time.deltaTime * flySpeed;
                 GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
             }
         }
@@ -470,7 +471,7 @@ namespace iiMenu.Mods
         {
             if (rightTrigger > 0.5f)
             {
-                GorillaLocomotion.GTPlayer.Instance.transform.position += GorillaTagger.Instance.headCollider.transform.forward * Time.deltaTime * flySpeed;
+                GTPlayer.Instance.transform.position += GorillaTagger.Instance.headCollider.transform.forward * Time.deltaTime * flySpeed;
                 GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
             }
         }
@@ -480,7 +481,7 @@ namespace iiMenu.Mods
         {
             if (rightPrimary)
             {
-                GorillaLocomotion.GTPlayer.Instance.transform.position += GorillaTagger.Instance.headCollider.transform.forward * Time.deltaTime * flySpeed;
+                GTPlayer.Instance.transform.position += GorillaTagger.Instance.headCollider.transform.forward * Time.deltaTime * flySpeed;
                 GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
                 if (noclip == false)
                 {
@@ -503,7 +504,7 @@ namespace iiMenu.Mods
 
             if (Mathf.Abs(joy.x) > 0.3 || Mathf.Abs(joy.y) > 0.3)
             {
-                GorillaLocomotion.GTPlayer.Instance.transform.position += (GorillaTagger.Instance.headCollider.transform.forward * Time.deltaTime * (joy.y * flySpeed)) + (GorillaTagger.Instance.headCollider.transform.right * Time.deltaTime * (joy.x * flySpeed));
+                GTPlayer.Instance.transform.position += (GorillaTagger.Instance.headCollider.transform.forward * Time.deltaTime * (joy.y * flySpeed)) + (GorillaTagger.Instance.headCollider.transform.right * Time.deltaTime * (joy.x * flySpeed));
                 GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
             }
         }
@@ -513,13 +514,13 @@ namespace iiMenu.Mods
             ZeroGravity();
 
             Vector3 inputDirection = new Vector3(leftJoystick.x, rightJoystick.y, leftJoystick.y);
-            Vector3 playerForward = GorillaLocomotion.GTPlayer.Instance.bodyCollider.transform.forward;
+            Vector3 playerForward = GTPlayer.Instance.bodyCollider.transform.forward;
             playerForward.y = 0;
-            Vector3 playerRight = GorillaLocomotion.GTPlayer.Instance.bodyCollider.transform.right;
+            Vector3 playerRight = GTPlayer.Instance.bodyCollider.transform.right;
             playerRight.y = 0;
 
             Vector3 velocity = inputDirection.x * playerRight + rightJoystick.y * Vector3.up + inputDirection.z * playerForward;
-            velocity *= GorillaLocomotion.GTPlayer.Instance.scale * flySpeed;
+            velocity *= GTPlayer.Instance.scale * flySpeed;
             GorillaTagger.Instance.rigidbody.velocity = Vector3.Lerp(GorillaTagger.Instance.rigidbody.velocity, velocity, 0.12875f);
         }
 
@@ -535,7 +536,7 @@ namespace iiMenu.Mods
         {
             if (rightPrimary)
             {
-                GorillaLocomotion.GTPlayer.Instance.transform.position += TrueRightHand().forward * Time.deltaTime * flySpeed;
+                GTPlayer.Instance.transform.position += TrueRightHand().forward * Time.deltaTime * flySpeed;
                 GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
             }
         }
@@ -544,7 +545,7 @@ namespace iiMenu.Mods
         {
             if (rightPrimary)
             {
-                GorillaTagger.Instance.rigidbody.velocity += GorillaLocomotion.GTPlayer.Instance.headCollider.transform.forward * Time.deltaTime * (flySpeed * 2);
+                GorillaTagger.Instance.rigidbody.velocity += GTPlayer.Instance.headCollider.transform.forward * Time.deltaTime * (flySpeed * 2);
             }
         }
 
@@ -553,7 +554,7 @@ namespace iiMenu.Mods
             if (rightPrimary)
             {
                 ZeroGravity();
-                GorillaTagger.Instance.rigidbody.velocity += GorillaLocomotion.GTPlayer.Instance.headCollider.transform.forward * Time.deltaTime * flySpeed;
+                GorillaTagger.Instance.rigidbody.velocity += GTPlayer.Instance.headCollider.transform.forward * Time.deltaTime * flySpeed;
             }
         }
 
@@ -570,7 +571,7 @@ namespace iiMenu.Mods
 
             if (Mouse.current.rightButton.isPressed)
             {
-                Transform parentTransform = GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.parent;
+                Transform parentTransform = GTPlayer.Instance.rightControllerTransform.parent;
                 Quaternion currentRotation = parentTransform.rotation;
                 Vector3 euler = currentRotation.eulerAngles;
 
@@ -604,16 +605,16 @@ namespace iiMenu.Mods
                 speed *= 2f;
 
             if (W)
-                GorillaTagger.Instance.rigidbody.transform.position += GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.parent.forward * Time.deltaTime * speed;
+                GorillaTagger.Instance.rigidbody.transform.position += GTPlayer.Instance.rightControllerTransform.parent.forward * Time.deltaTime * speed;
 
             if (S)
-                GorillaTagger.Instance.rigidbody.transform.position += GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.parent.forward * Time.deltaTime * -speed;
+                GorillaTagger.Instance.rigidbody.transform.position += GTPlayer.Instance.rightControllerTransform.parent.forward * Time.deltaTime * -speed;
 
             if (A)
-                GorillaTagger.Instance.rigidbody.transform.position += GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.parent.right * Time.deltaTime * -speed;
+                GorillaTagger.Instance.rigidbody.transform.position += GTPlayer.Instance.rightControllerTransform.parent.right * Time.deltaTime * -speed;
 
             if (D)
-                GorillaTagger.Instance.rigidbody.transform.position += GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.parent.right * Time.deltaTime * speed;
+                GorillaTagger.Instance.rigidbody.transform.position += GTPlayer.Instance.rightControllerTransform.parent.right * Time.deltaTime * speed;
 
             if (Space)
                 GorillaTagger.Instance.rigidbody.transform.position += new Vector3(0f, Time.deltaTime * speed, 0f);
@@ -659,7 +660,7 @@ namespace iiMenu.Mods
         {
             if (rightPrimary && !lastaomfg)
             {
-                GorillaTagger.Instance.rigidbody.velocity += GorillaLocomotion.GTPlayer.Instance.headCollider.transform.forward * flySpeed;
+                GorillaTagger.Instance.rigidbody.velocity += GTPlayer.Instance.headCollider.transform.forward * flySpeed;
             }
             lastaomfg = rightPrimary;
         }
@@ -1306,7 +1307,7 @@ namespace iiMenu.Mods
             }
 
             if (isOnBranch)
-                GorillaTagger.Instance.rigidbody.velocity = GorillaLocomotion.GTPlayer.Instance.headCollider.transform.forward * 10f;
+                GorillaTagger.Instance.rigidbody.velocity = GTPlayer.Instance.headCollider.transform.forward * 10f;
 
             if (isOnBranch && !lastOnBranch)
                 UpdateClipColliders(false);
@@ -1319,12 +1320,12 @@ namespace iiMenu.Mods
 
         public static void ForceTagFreeze()
         {
-            GorillaLocomotion.GTPlayer.Instance.disableMovement = true;
+            GTPlayer.Instance.disableMovement = true;
         }
 
         public static void NoTagFreeze()
         {
-            GorillaLocomotion.GTPlayer.Instance.disableMovement = false;
+            GTPlayer.Instance.disableMovement = false;
         }
 
         public static void LowGravity()
@@ -1345,12 +1346,12 @@ namespace iiMenu.Mods
         public static void ReverseGravity()
         {
             GorillaTagger.Instance.rigidbody.AddForce(Vector3.up * (Time.deltaTime * (19.62f / Time.deltaTime)), ForceMode.Acceleration);
-            GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.parent.rotation = Quaternion.Euler(180f, 0f, 0f);
+            GTPlayer.Instance.rightControllerTransform.parent.rotation = Quaternion.Euler(180f, 0f, 0f);
         }
 
         public static void UnflipCharacter()
         {
-            GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.parent.rotation = Quaternion.identity;
+            GTPlayer.Instance.rightControllerTransform.parent.rotation = Quaternion.identity;
         }
 
         private static List<object[]> playerPositions = new List<object[]> { };
@@ -1400,9 +1401,9 @@ namespace iiMenu.Mods
 
         public static void WallWalk()
         {
-            if (GorillaLocomotion.GTPlayer.Instance.IsHandTouching(true) || GorillaLocomotion.GTPlayer.Instance.IsHandTouching(false))
+            if (GTPlayer.Instance.IsHandTouching(true) || GTPlayer.Instance.IsHandTouching(false))
             {
-                RaycastHit ray = GorillaLocomotion.GTPlayer.Instance.lastHitInfoHand;
+                RaycastHit ray = GTPlayer.Instance.lastHitInfoHand;
                 walkPos = ray.point;
                 walkNormal = ray.normal;
             }
@@ -1416,9 +1417,9 @@ namespace iiMenu.Mods
 
         public static void WeakWallWalk()
         {
-            if (GorillaLocomotion.GTPlayer.Instance.IsHandTouching(true) || GorillaLocomotion.GTPlayer.Instance.IsHandTouching(false))
+            if (GTPlayer.Instance.IsHandTouching(true) || GTPlayer.Instance.IsHandTouching(false))
             {
-                RaycastHit ray = GorillaLocomotion.GTPlayer.Instance.lastHitInfoHand;
+                RaycastHit ray = GTPlayer.Instance.lastHitInfoHand;
                 walkPos = ray.point;
                 walkNormal = ray.normal;
             }
@@ -1432,9 +1433,9 @@ namespace iiMenu.Mods
 
         public static void StrongWallWalk()
         {
-            if (GorillaLocomotion.GTPlayer.Instance.IsHandTouching(true) || GorillaLocomotion.GTPlayer.Instance.IsHandTouching(false))
+            if (GTPlayer.Instance.IsHandTouching(true) || GTPlayer.Instance.IsHandTouching(false))
             {
-                RaycastHit ray = GorillaLocomotion.GTPlayer.Instance.lastHitInfoHand;
+                RaycastHit ray = GTPlayer.Instance.lastHitInfoHand;
                 walkPos = ray.point;
                 walkNormal = ray.normal;
             }
@@ -1454,26 +1455,26 @@ namespace iiMenu.Mods
 
             if (leftGrab)
             {
-                RaycastHit ray = GorillaLocomotion.GTPlayer.Instance.lastHitInfoHand;
+                RaycastHit ray = GTPlayer.Instance.lastHitInfoHand;
 
-                if (Physics.Raycast(TrueLeftHand().position, -ray.normal, out var Ray, range, GorillaLocomotion.GTPlayer.Instance.locomotionEnabledLayers))
+                if (Physics.Raycast(TrueLeftHand().position, -ray.normal, out var Ray, range, GTPlayer.Instance.locomotionEnabledLayers))
                     GorillaTagger.Instance.rigidbody.AddForce(Ray.normal * power, ForceMode.Acceleration);
             }
 
             if (rightGrab)
             {
-                RaycastHit ray = GorillaLocomotion.GTPlayer.Instance.lastHitInfoHand;
+                RaycastHit ray = GTPlayer.Instance.lastHitInfoHand;
 
-                if (Physics.Raycast(TrueRightHand().position, -ray.normal, out var Ray, range, GorillaLocomotion.GTPlayer.Instance.locomotionEnabledLayers))
+                if (Physics.Raycast(TrueRightHand().position, -ray.normal, out var Ray, range, GTPlayer.Instance.locomotionEnabledLayers))
                     GorillaTagger.Instance.rigidbody.AddForce(Ray.normal * power, ForceMode.Acceleration);
             }
         }
 
         public static void SpiderWalk()
         {
-            if (GorillaLocomotion.GTPlayer.Instance.IsHandTouching(true) || GorillaLocomotion.GTPlayer.Instance.IsHandTouching(false))
+            if (GTPlayer.Instance.IsHandTouching(true) || GTPlayer.Instance.IsHandTouching(false))
             {
-                RaycastHit ray = GorillaLocomotion.GTPlayer.Instance.lastHitInfoHand;
+                RaycastHit ray = GTPlayer.Instance.lastHitInfoHand;
                 walkPos = ray.point;
                 walkNormal = ray.normal;
             }
@@ -1481,7 +1482,7 @@ namespace iiMenu.Mods
             if (walkPos != Vector3.zero)
             {
                 GorillaTagger.Instance.rigidbody.AddForce(walkNormal * -9.81f, ForceMode.Acceleration);
-                GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.parent.rotation = Quaternion.Lerp(GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.parent.rotation, Quaternion.LookRotation(walkNormal) * Quaternion.Euler(90f, 0f, 0f), Time.deltaTime);
+                GTPlayer.Instance.rightControllerTransform.parent.rotation = Quaternion.Lerp(GTPlayer.Instance.rightControllerTransform.parent.rotation, Quaternion.LookRotation(walkNormal) * Quaternion.Euler(90f, 0f, 0f), Time.deltaTime);
                 ZeroGravity();
             }
         }
@@ -1798,7 +1799,7 @@ namespace iiMenu.Mods
             if (GetIndex("Hidden Labels").enabled) { go.layer = 19; }
             go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
             TextMesh textMesh = go.AddComponent<TextMesh>();
-            textMesh.color = GorillaTagger.Instance.rigidbody.velocity.magnitude >= GorillaLocomotion.GTPlayer.Instance.maxJumpSpeed ? Color.green : Color.white;
+            textMesh.color = GorillaTagger.Instance.rigidbody.velocity.magnitude >= GTPlayer.Instance.maxJumpSpeed ? Color.green : Color.white;
             textMesh.fontSize = 24;
             textMesh.fontStyle = activeFontStyle;
             textMesh.characterSize = 0.1f;
@@ -1915,9 +1916,9 @@ namespace iiMenu.Mods
                     if (pearl.GetComponent<Rigidbody>() == null)
                     {
                         Rigidbody comp = pearl.AddComponent(typeof(Rigidbody)) as Rigidbody;
-                        comp.velocity = isrighthandedpearl ? GorillaLocomotion.GTPlayer.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0) : GorillaLocomotion.GTPlayer.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0);
+                        comp.velocity = isrighthandedpearl ? GTPlayer.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0) : GTPlayer.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0);
                     }
-                    Physics.Raycast(pearl.transform.position, pearl.GetComponent<Rigidbody>().velocity, out var Ray, 0.25f, GorillaLocomotion.GTPlayer.Instance.locomotionEnabledLayers);
+                    Physics.Raycast(pearl.transform.position, pearl.GetComponent<Rigidbody>().velocity, out var Ray, 0.25f, GTPlayer.Instance.locomotionEnabledLayers);
                     if (Ray.collider != null)
                     {
                         TeleportPlayer(pearl.transform.position);
@@ -1960,14 +1961,14 @@ namespace iiMenu.Mods
 
             if (GetIndex("Factored Speed Boost").enabled)
             {
-                jspt = jspt / 6.5f * GorillaLocomotion.GTPlayer.Instance.maxJumpSpeed;
-                jmpt = jmpt / 1.1f * GorillaLocomotion.GTPlayer.Instance.jumpMultiplier;
+                jspt = jspt / 6.5f * GTPlayer.Instance.maxJumpSpeed;
+                jmpt = jmpt / 1.1f * GTPlayer.Instance.jumpMultiplier;
             }
 
             if (!GetIndex("Disable Max Speed Modification").enabled)
-                GorillaLocomotion.GTPlayer.Instance.maxJumpSpeed = jspt;
-            
-            GorillaLocomotion.GTPlayer.Instance.jumpMultiplier = jmpt;
+                GTPlayer.Instance.maxJumpSpeed = jspt;
+
+            GTPlayer.Instance.jumpMultiplier = jmpt;
         }
 
         public static void GripSpeedBoost()
@@ -2002,17 +2003,17 @@ namespace iiMenu.Mods
 
                 if (GetIndex("Factored Speed Boost").enabled)
                 {
-                    jspt = (jspt / 6.5f) * GorillaLocomotion.GTPlayer.Instance.maxJumpSpeed;
-                    jmpt = (jmpt / 1.1f) * GorillaLocomotion.GTPlayer.Instance.jumpMultiplier;
+                    jspt = (jspt / 6.5f) * GTPlayer.Instance.maxJumpSpeed;
+                    jmpt = (jmpt / 1.1f) * GTPlayer.Instance.jumpMultiplier;
                 }
 
-                jspt = Mathf.Lerp(GorillaLocomotion.GTPlayer.Instance.maxJumpSpeed, jspt, Mathf.Clamp(rigDistance, 1f, 15f) / 15f);
-                jmpt = Mathf.Lerp(GorillaLocomotion.GTPlayer.Instance.jumpMultiplier, jmpt, Mathf.Clamp(rigDistance, 1f, 15f) / 15f);
+                jspt = Mathf.Lerp(GTPlayer.Instance.maxJumpSpeed, jspt, Mathf.Clamp(rigDistance, 1f, 15f) / 15f);
+                jmpt = Mathf.Lerp(GTPlayer.Instance.jumpMultiplier, jmpt, Mathf.Clamp(rigDistance, 1f, 15f) / 15f);
 
                 if (!GetIndex("Disable Max Speed Modification").enabled)
-                    GorillaLocomotion.GTPlayer.Instance.maxJumpSpeed = jspeed;
+                    GTPlayer.Instance.maxJumpSpeed = jspeed;
 
-                GorillaLocomotion.GTPlayer.Instance.jumpMultiplier = jmulti;
+                GTPlayer.Instance.jumpMultiplier = jmulti;
             }
         }
 
@@ -2021,7 +2022,7 @@ namespace iiMenu.Mods
             if (GetIndex("Uncap Max Velocity").enabled)
                 Toggle("Uncap Max Velocity");
             else
-                GorillaLocomotion.GTPlayer.Instance.jumpMultiplier = 99999f;
+                GTPlayer.Instance.jumpMultiplier = 99999f;
         }
 
         public static void UpdateClipColliders(bool enabled)
@@ -2190,11 +2191,11 @@ namespace iiMenu.Mods
             if (rightPrimary)
             {
                 float spazAmount = 360f;
-                GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, spazAmount), UnityEngine.Random.Range(0, spazAmount), UnityEngine.Random.Range(0, spazAmount)));
-                GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.position = GorillaTagger.Instance.leftHandTransform.position + GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.forward * 3f;
+                GTPlayer.Instance.leftControllerTransform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, spazAmount), UnityEngine.Random.Range(0, spazAmount), UnityEngine.Random.Range(0, spazAmount)));
+                GTPlayer.Instance.leftControllerTransform.position = GorillaTagger.Instance.leftHandTransform.position + GTPlayer.Instance.leftControllerTransform.forward * 3f;
 
-                GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, spazAmount), UnityEngine.Random.Range(0, spazAmount), UnityEngine.Random.Range(0, spazAmount)));
-                GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = GorillaTagger.Instance.rightHandTransform.position + GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.forward * 3f;
+                GTPlayer.Instance.rightControllerTransform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, spazAmount), UnityEngine.Random.Range(0, spazAmount), UnityEngine.Random.Range(0, spazAmount)));
+                GTPlayer.Instance.rightControllerTransform.position = GorillaTagger.Instance.rightHandTransform.position + GTPlayer.Instance.rightControllerTransform.forward * 3f;
             }
             else
                 VRRig.LocalRig.enabled = true;
@@ -2309,11 +2310,11 @@ namespace iiMenu.Mods
             if (leftPrimary)
             {
                 Safety.NoFinger();
-                GorillaLocomotion.GTPlayer.Instance.inOverlay = true;
-                GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.localPosition = new Vector3(238f, -90f, 0f);
-                GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.localPosition = new Vector3(-190f, 90f, 0f);
-                GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.rotation = Camera.main.transform.rotation * Quaternion.Euler(-55f, 90f, 0f);
-                GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.rotation = Camera.main.transform.rotation * Quaternion.Euler(-55f, -49f, 0f);
+                GTPlayer.Instance.inOverlay = true;
+                GTPlayer.Instance.leftControllerTransform.localPosition = new Vector3(238f, -90f, 0f);
+                GTPlayer.Instance.rightControllerTransform.localPosition = new Vector3(-190f, 90f, 0f);
+                GTPlayer.Instance.leftControllerTransform.rotation = Camera.main.transform.rotation * Quaternion.Euler(-55f, 90f, 0f);
+                GTPlayer.Instance.rightControllerTransform.rotation = Camera.main.transform.rotation * Quaternion.Euler(-55f, -49f, 0f);
             }
            
         }
@@ -2323,7 +2324,7 @@ namespace iiMenu.Mods
             if (leftPrimary)
                 Safety.NoFinger();
 
-            GorillaLocomotion.GTPlayer.Instance.inOverlay = leftPrimary;
+            GTPlayer.Instance.inOverlay = leftPrimary;
         }
 
         public static void FakeBrokenController()
@@ -2331,11 +2332,11 @@ namespace iiMenu.Mods
             Vector3 Position = leftPrimary ? GorillaTagger.Instance.leftHandTransform.position : GorillaTagger.Instance.rightHandTransform.position;
             Quaternion Rotation = leftPrimary ? GorillaTagger.Instance.leftHandTransform.rotation : GorillaTagger.Instance.rightHandTransform.rotation;
 
-            GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.localPosition = new Vector3(238f, -90f, 0f);
-            GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.rotation = Camera.main.transform.rotation * Quaternion.Euler(-55f, 90f, 0f);
+            GTPlayer.Instance.leftControllerTransform.localPosition = new Vector3(238f, -90f, 0f);
+            GTPlayer.Instance.leftControllerTransform.rotation = Camera.main.transform.rotation * Quaternion.Euler(-55f, 90f, 0f);
 
-            GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.localPosition = Position;
-            GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.rotation = Rotation;
+            GTPlayer.Instance.rightControllerTransform.localPosition = Position;
+            GTPlayer.Instance.rightControllerTransform.rotation = Rotation;
 
             ControllerInputPoller.instance.leftControllerGripFloat = 0f;
             ControllerInputPoller.instance.leftControllerIndexFloat = 0f;
@@ -2715,7 +2716,7 @@ namespace iiMenu.Mods
 
             VRRig.LocalRig.transform.localScale = Vector3.one * sizeScale;
             VRRig.LocalRig.NativeScale = sizeScale;
-            GorillaLocomotion.GTPlayer.Instance.nativeScale = sizeScale;
+            GTPlayer.Instance.nativeScale = sizeScale;
         }
 
         public static void DisableSizeChanger()
@@ -2724,7 +2725,7 @@ namespace iiMenu.Mods
 
             VRRig.LocalRig.transform.localScale = Vector3.one * sizeScale;
             VRRig.LocalRig.NativeScale = sizeScale;
-            GorillaLocomotion.GTPlayer.Instance.nativeScale = sizeScale;
+            GTPlayer.Instance.nativeScale = sizeScale;
         }
 
         public static GameObject stickpart = null;
@@ -2737,13 +2738,13 @@ namespace iiMenu.Mods
                 stickpart.transform.localScale = new Vector3(0.15f, 0.15f, 0.15f);
                 stickpart.GetComponent<Renderer>().enabled = false;
             }
-            if (GorillaLocomotion.GTPlayer.Instance.IsHandTouching(true))
+            if (GTPlayer.Instance.IsHandTouching(true))
                 stickpart.transform.position = TrueLeftHand().position;
 
-            if (GorillaLocomotion.GTPlayer.Instance.IsHandTouching(false))
+            if (GTPlayer.Instance.IsHandTouching(false))
                 stickpart.transform.position = TrueRightHand().position;
 
-            if (GorillaLocomotion.GTPlayer.Instance.IsHandTouching(true) && GorillaLocomotion.GTPlayer.Instance.IsHandTouching(false))
+            if (GTPlayer.Instance.IsHandTouching(true) && GTPlayer.Instance.IsHandTouching(false))
                 stickpart.transform.position = Vector3.zero;
         }
 
@@ -2768,22 +2769,22 @@ namespace iiMenu.Mods
             }
             if (leftGrab)
             {
-                if (GorillaLocomotion.GTPlayer.Instance.IsHandTouching(true) && !leftisclimbing)
+                if (GTPlayer.Instance.IsHandTouching(true) && !leftisclimbing)
                 {
                     climb.transform.position = GorillaTagger.Instance.leftHandTransform.position;
                     leftisclimbing = true;
-                    GorillaLocomotion.GTPlayer.Instance.BeginClimbing(climb.AddComponent<GorillaClimbable>(), GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller/GorillaHandClimber").GetComponent<GorillaHandClimber>());
+                    GTPlayer.Instance.BeginClimbing(climb.AddComponent<GorillaClimbable>(), GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller/GorillaHandClimber").GetComponent<GorillaHandClimber>());
                 }
             } else
                 leftisclimbing = false;
             
             if (rightGrab)
             {
-                if (GorillaLocomotion.GTPlayer.Instance.IsHandTouching(false) && !rightisclimbing)
+                if (GTPlayer.Instance.IsHandTouching(false) && !rightisclimbing)
                 {
                     climb.transform.position = GorillaTagger.Instance.rightHandTransform.position;
                     rightisclimbing = true;
-                    GorillaLocomotion.GTPlayer.Instance.BeginClimbing(climb.AddComponent<GorillaClimbable>(), GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller/GorillaHandClimber").GetComponent<GorillaHandClimber>());
+                    GTPlayer.Instance.BeginClimbing(climb.AddComponent<GorillaClimbable>(), GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller/GorillaHandClimber").GetComponent<GorillaHandClimber>());
                 }
             }
             else
@@ -2799,20 +2800,26 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void SetHandEnabled(bool value)
+        {
+            GTPlayer.Instance.leftHandHolding = !value;
+            GTPlayer.Instance.rightHandHolding = !value;
+        }
+
         public static void EnableSlideControl()
         {
-            oldSlide = GorillaLocomotion.GTPlayer.Instance.slideControl;
-            GorillaLocomotion.GTPlayer.Instance.slideControl = 1f;
+            oldSlide = GTPlayer.Instance.slideControl;
+            GTPlayer.Instance.slideControl = 1f;
         }
 
         public static void EnableWeakSlideControl()
         {
-            oldSlide = GorillaLocomotion.GTPlayer.Instance.slideControl;
-            GorillaLocomotion.GTPlayer.Instance.slideControl = oldSlide*2f;
+            oldSlide = GTPlayer.Instance.slideControl;
+            GTPlayer.Instance.slideControl = oldSlide*2f;
         }
 
         public static void DisableSlideControl() =>
-            GorillaLocomotion.GTPlayer.Instance.slideControl = oldSlide;
+            GTPlayer.Instance.slideControl = oldSlide;
 
         public static Vector3[] lastLeft = new Vector3[] { Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero };
         public static Vector3[] lastRight = new Vector3[] { Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero };
@@ -2966,13 +2973,13 @@ namespace iiMenu.Mods
         private static bool lasttouchright = false;
         public static void PullMod()
         {
-            if (((!GorillaLocomotion.GTPlayer.Instance.IsHandTouching(true) && lasttouchleft) || (!GorillaLocomotion.GTPlayer.Instance.IsHandTouching(false) && lasttouchright)) && rightGrab)
+            if (((!GTPlayer.Instance.IsHandTouching(true) && lasttouchleft) || (!GTPlayer.Instance.IsHandTouching(false) && lasttouchright)) && rightGrab)
             {
                 Vector3 vel = GorillaTagger.Instance.rigidbody.velocity;
-                GorillaLocomotion.GTPlayer.Instance.transform.position += new Vector3(vel.x * pullPower, 0f, vel.z * pullPower);
+                GTPlayer.Instance.transform.position += new Vector3(vel.x * pullPower, 0f, vel.z * pullPower);
             }
-            lasttouchleft = GorillaLocomotion.GTPlayer.Instance.IsHandTouching(true);
-            lasttouchright = GorillaLocomotion.GTPlayer.Instance.IsHandTouching(false);
+            lasttouchleft = GTPlayer.Instance.IsHandTouching(true);
+            lasttouchright = GTPlayer.Instance.IsHandTouching(false);
         }
 
         public static GameObject leftThrow = null;
@@ -2983,8 +2990,8 @@ namespace iiMenu.Mods
             {
                 if (leftThrow != null)
                 {
-                    GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.position = leftThrow.transform.position;
-                    GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.rotation = leftThrow.transform.rotation;
+                    GTPlayer.Instance.leftControllerTransform.position = leftThrow.transform.position;
+                    GTPlayer.Instance.leftControllerTransform.rotation = leftThrow.transform.rotation;
                 }
                 else
                 {
@@ -2992,10 +2999,10 @@ namespace iiMenu.Mods
                     leftThrow.GetComponent<Renderer>().enabled = false;
                     UnityEngine.Object.Destroy(leftThrow.GetComponent<BoxCollider>());
 
-                    leftThrow.transform.position = GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.position;
-                    leftThrow.transform.rotation = GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.rotation;
+                    leftThrow.transform.position = GTPlayer.Instance.leftControllerTransform.position;
+                    leftThrow.transform.rotation = GTPlayer.Instance.leftControllerTransform.rotation;
                     Rigidbody comp = leftThrow.AddComponent(typeof(Rigidbody)) as Rigidbody;
-                    comp.velocity = GorillaLocomotion.GTPlayer.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0);
+                    comp.velocity = GTPlayer.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0);
                     try
                     {
                         if (GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").GetComponent<GorillaVelocityEstimator>() == null)
@@ -3018,8 +3025,8 @@ namespace iiMenu.Mods
             {
                 if (rightThrow != null)
                 {
-                    GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = rightThrow.transform.position;
-                    GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.rotation = rightThrow.transform.rotation;
+                    GTPlayer.Instance.rightControllerTransform.position = rightThrow.transform.position;
+                    GTPlayer.Instance.rightControllerTransform.rotation = rightThrow.transform.rotation;
                 }
                 else
                 {
@@ -3027,10 +3034,10 @@ namespace iiMenu.Mods
                     rightThrow.GetComponent<Renderer>().enabled = false;
                     UnityEngine.Object.Destroy(rightThrow.GetComponent<BoxCollider>());
 
-                    rightThrow.transform.position = GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position;
-                    rightThrow.transform.rotation = GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.rotation;
+                    rightThrow.transform.position = GTPlayer.Instance.rightControllerTransform.position;
+                    rightThrow.transform.rotation = GTPlayer.Instance.rightControllerTransform.rotation;
                     Rigidbody comp = rightThrow.AddComponent(typeof(Rigidbody)) as Rigidbody;
-                    comp.velocity = GorillaLocomotion.GTPlayer.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0);
+                    comp.velocity = GTPlayer.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0);
                     try
                     {
                         if (GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").GetComponent<GorillaVelocityEstimator>() == null)
@@ -3130,20 +3137,20 @@ namespace iiMenu.Mods
 
         public static void StickLongArms()
         {
-            GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.transform.position = GorillaTagger.Instance.leftHandTransform.position + (GorillaTagger.Instance.leftHandTransform.forward * (armlength - 0.917f));
-            GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.transform.position = GorillaTagger.Instance.rightHandTransform.position + (GorillaTagger.Instance.rightHandTransform.forward * (armlength - 0.917f));
+            GTPlayer.Instance.leftControllerTransform.transform.position = GorillaTagger.Instance.leftHandTransform.position + (GorillaTagger.Instance.leftHandTransform.forward * (armlength - 0.917f));
+            GTPlayer.Instance.rightControllerTransform.transform.position = GorillaTagger.Instance.rightHandTransform.position + (GorillaTagger.Instance.rightHandTransform.forward * (armlength - 0.917f));
         }
 
         public static void EnableSteamLongArms() =>
-            GorillaLocomotion.GTPlayer.Instance.transform.localScale = new Vector3(armlength, armlength, armlength);
+            GTPlayer.Instance.transform.localScale = new Vector3(armlength, armlength, armlength);
 
         public static void DisableSteamLongArms() =>
-            GorillaLocomotion.GTPlayer.Instance.transform.localScale = new Vector3(1f, 1f, 1f);
+            GTPlayer.Instance.transform.localScale = new Vector3(1f, 1f, 1f);
 
         public static void MultipliedLongArms()
         {
-            GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.transform.position = GorillaTagger.Instance.headCollider.transform.position - (GorillaTagger.Instance.headCollider.transform.position - GorillaTagger.Instance.leftHandTransform.position) * armlength;
-            GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.transform.position = GorillaTagger.Instance.headCollider.transform.position - (GorillaTagger.Instance.headCollider.transform.position - GorillaTagger.Instance.rightHandTransform.position) * armlength;
+            GTPlayer.Instance.leftControllerTransform.transform.position = GorillaTagger.Instance.headCollider.transform.position - (GorillaTagger.Instance.headCollider.transform.position - GorillaTagger.Instance.leftHandTransform.position) * armlength;
+            GTPlayer.Instance.rightControllerTransform.transform.position = GorillaTagger.Instance.headCollider.transform.position - (GorillaTagger.Instance.headCollider.transform.position - GorillaTagger.Instance.rightHandTransform.position) * armlength;
         }
 
         public static void VerticalLongArms()
@@ -3152,8 +3159,8 @@ namespace iiMenu.Mods
             lefty.y *= armlength;
             Vector3 righty = GorillaTagger.Instance.headCollider.transform.position - GorillaTagger.Instance.rightHandTransform.position;
             righty.y *= armlength;
-            GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.transform.position = GorillaTagger.Instance.headCollider.transform.position - lefty;
-            GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.transform.position = GorillaTagger.Instance.headCollider.transform.position - righty;
+            GTPlayer.Instance.leftControllerTransform.transform.position = GorillaTagger.Instance.headCollider.transform.position - lefty;
+            GTPlayer.Instance.rightControllerTransform.transform.position = GorillaTagger.Instance.headCollider.transform.position - righty;
         }
 
         public static void HorizontalLongArms()
@@ -3164,8 +3171,8 @@ namespace iiMenu.Mods
             Vector3 righty = GorillaTagger.Instance.headCollider.transform.position - GorillaTagger.Instance.rightHandTransform.position;
             righty.x *= armlength;
             righty.z *= armlength;
-            GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.transform.position = GorillaTagger.Instance.headCollider.transform.position - lefty;
-            GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.transform.position = GorillaTagger.Instance.headCollider.transform.position - righty;
+            GTPlayer.Instance.leftControllerTransform.transform.position = GorillaTagger.Instance.headCollider.transform.position - lefty;
+            GTPlayer.Instance.rightControllerTransform.transform.position = GorillaTagger.Instance.headCollider.transform.position - righty;
         }
 
         public static GameObject lvT;
@@ -3219,8 +3226,8 @@ namespace iiMenu.Mods
         {
             lvT.transform.position = GorillaTagger.Instance.headCollider.transform.position - GorillaTagger.Instance.leftHandTransform.position;
             rvT.transform.position = GorillaTagger.Instance.headCollider.transform.position - GorillaTagger.Instance.rightHandTransform.position;
-            GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.transform.position -= lvT.GetComponent<GorillaVelocityTracker>().GetAverageVelocity(true, 0) * predCount;
-            GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.transform.position -= rvT.GetComponent<GorillaVelocityTracker>().GetAverageVelocity(true, 0) * predCount;
+            GTPlayer.Instance.leftControllerTransform.transform.position -= lvT.GetComponent<GorillaVelocityTracker>().GetAverageVelocity(true, 0) * predCount;
+            GTPlayer.Instance.rightControllerTransform.transform.position -= rvT.GetComponent<GorillaVelocityTracker>().GetAverageVelocity(true, 0) * predCount;
         }
 
         public static void LagRange()
@@ -3276,7 +3283,7 @@ namespace iiMenu.Mods
         public static void FlickJump()
         {
             if (rightPrimary)
-                GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.transform.position = GorillaTagger.Instance.rightHandTransform.position + new Vector3(0f, -1.5f, 0f);
+                GTPlayer.Instance.rightControllerTransform.transform.position = GorillaTagger.Instance.rightHandTransform.position + new Vector3(0f, -1.5f, 0f);
         }
 
         public static Vector3 longJumpPower = Vector3.zero;
@@ -3289,7 +3296,7 @@ namespace iiMenu.Mods
                     longJumpPower = GorillaTagger.Instance.rigidbody.velocity / 125f;
                     longJumpPower.y = 0f;
                 }
-                GorillaLocomotion.GTPlayer.Instance.transform.position += longJumpPower;
+                GTPlayer.Instance.transform.position += longJumpPower;
             }
             else
                 longJumpPower = Vector3.zero;
@@ -3297,15 +3304,15 @@ namespace iiMenu.Mods
 
         public static void BunnyHop()
         {
-            Physics.Raycast(GorillaTagger.Instance.bodyCollider.transform.position - new Vector3(0f, 0.2f, 0f), Vector3.down, out var Ray, 512f, GorillaLocomotion.GTPlayer.Instance.locomotionEnabledLayers);
+            Physics.Raycast(GorillaTagger.Instance.bodyCollider.transform.position - new Vector3(0f, 0.2f, 0f), Vector3.down, out var Ray, 512f, GTPlayer.Instance.locomotionEnabledLayers);
 
             if (Ray.distance < 0.15f)
-                GorillaTagger.Instance.rigidbody.velocity = new Vector3(GorillaTagger.Instance.rigidbody.velocity.x, (GorillaLocomotion.GTPlayer.Instance.jumpMultiplier * 2.727272727f), GorillaTagger.Instance.rigidbody.velocity.z);
+                GorillaTagger.Instance.rigidbody.velocity = new Vector3(GorillaTagger.Instance.rigidbody.velocity.x, (GTPlayer.Instance.jumpMultiplier * 2.727272727f), GorillaTagger.Instance.rigidbody.velocity.z);
         }
 
         public static void Strafe()
         {
-            Vector3 funnyDir = GorillaTagger.Instance.bodyCollider.transform.forward * GorillaLocomotion.GTPlayer.Instance.maxJumpSpeed;
+            Vector3 funnyDir = GorillaTagger.Instance.bodyCollider.transform.forward * GTPlayer.Instance.maxJumpSpeed;
             GorillaTagger.Instance.rigidbody.velocity = new Vector3(funnyDir.x, GorillaTagger.Instance.rigidbody.velocity.y, funnyDir.z);
             Vector3 dir = GorillaTagger.Instance.rigidbody.velocity;
             dir.y = (dir.y < 0 ? 0 : dir.y);
@@ -3409,7 +3416,7 @@ namespace iiMenu.Mods
             }
             else
             {
-                GorillaLocomotion.GTPlayer.Instance.audioManager.UnsetMixerSnapshot(0.1f);
+                GTPlayer.Instance.audioManager.UnsetMixerSnapshot(0.1f);
                 airSwimPart.transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 2.5f, 0f);
             }
         }
@@ -3424,9 +3431,9 @@ namespace iiMenu.Mods
 
         public static void FastSwim()
         {
-            if (GorillaLocomotion.GTPlayer.Instance.InWater)
+            if (GTPlayer.Instance.InWater)
             {
-                GorillaLocomotion.GTPlayer.Instance.gameObject.GetComponent<Rigidbody>().velocity *= 1.069f;
+                GTPlayer.Instance.gameObject.GetComponent<Rigidbody>().velocity *= 1.069f;
             }
         }
 
