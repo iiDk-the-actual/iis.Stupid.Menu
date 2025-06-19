@@ -2331,12 +2331,18 @@ namespace iiMenu.Mods
             Vector3 Position = leftPrimary ? GorillaTagger.Instance.leftHandTransform.position : GorillaTagger.Instance.rightHandTransform.position;
             Quaternion Rotation = leftPrimary ? GorillaTagger.Instance.leftHandTransform.rotation : GorillaTagger.Instance.rightHandTransform.rotation;
 
-            GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.position = Position;
-            GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = Position;
-            GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.rotation = Rotation;
+            GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.localPosition = new Vector3(238f, -90f, 0f);
+            GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.rotation = Camera.main.transform.rotation * Quaternion.Euler(-55f, 90f, 0f);
+
+            GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.localPosition = Position;
             GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.rotation = Rotation;
 
-            Safety.NoFinger();
+            ControllerInputPoller.instance.leftControllerGripFloat = 0f;
+            ControllerInputPoller.instance.leftControllerIndexFloat = 0f;
+            ControllerInputPoller.instance.leftControllerPrimaryButton = false;
+            ControllerInputPoller.instance.leftControllerSecondaryButton = false;
+            ControllerInputPoller.instance.leftControllerPrimaryButtonTouch = false;
+            ControllerInputPoller.instance.leftControllerSecondaryButtonTouch = false;
         }
 
         public static Vector3 deadPosition = Vector3.zero;
