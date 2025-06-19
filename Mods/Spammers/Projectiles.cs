@@ -3,8 +3,8 @@ using iiMenu.Classes;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
+using System.Collections;
 using System.Linq;
-using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static iiMenu.Classes.RigManager;
@@ -49,6 +49,12 @@ namespace iiMenu.Mods.Spammers
             "HotDogRightAnchor"
         };
 
+        public static Coroutine RigCoroutine;
+        public static IEnumerator EnableRig()
+        {
+            yield return new WaitForSeconds(0.3f);
+            VRRig.LocalRig.enabled = true;
+        }
 
         public static void BetaFireProjectile(string projectileName, Vector3 position, Vector3 velocity, Color color) // This code is really bad
         {
@@ -72,6 +78,17 @@ namespace iiMenu.Mods.Spammers
             {
                 try
                 {
+                    if (Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, position) > 3.9f)
+                    {
+                        VRRig.LocalRig.enabled = false;
+                        VRRig.LocalRig.transform.position = position + new Vector3(0f, velocity.y > 0f ? -3f : 3f, 0f);
+
+                        if (RigCoroutine != null)
+                            CoroutineManager.instance.StopCoroutine(RigCoroutine);
+
+                        RigCoroutine = CoroutineManager.instance.StartCoroutine(EnableRig());
+                    }
+
                     Vector3 startpos = position;
                     Vector3 charvel = velocity;
 
@@ -90,7 +107,7 @@ namespace iiMenu.Mods.Spammers
 
                     Throwable.transform.position = oldPos;
                     Throwable.randomizeColor = false;
-                } catch (Exception e) { LogManager.Log(e.Message); }
+                } catch (Exception e) { LogManager.LogError($"Projectile error: {e.Message}"); }
 
                 if (projDebounceType > 0f)
                     projDebounce = Time.time + Mathf.Max(projDebounceType, 0.16f);
