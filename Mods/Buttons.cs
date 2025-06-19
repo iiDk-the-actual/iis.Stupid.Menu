@@ -6,6 +6,7 @@ using iiMenu.Mods;
 using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
 using Photon.Pun;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using static iiMenu.Menu.Main;
@@ -291,7 +292,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Disable Mouth Movement", method =() => Important.DisableMouthMovement(), disableMethod =() => Important.EnableMouthMovement(), toolTip = "Disables your mouth from moving."},
 
-                new ButtonInfo { buttonText = "60 FPS", method =() => Task.Delay(80), toolTip = "Caps your FPS at 60 frames per second."},
+                new ButtonInfo { buttonText = "60 FPS", method =() => Thread.Sleep((1 / 60) * 1000), toolTip = "Caps your FPS at 60 frames per second."},
                 new ButtonInfo { buttonText = "Grip 60 FPS <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Important.GripForceLagGame(), toolTip = "Caps your FPS at 60 frames per second when holding <color=green>grip</color>."},
                 new ButtonInfo { buttonText = "Unlock FPS", method =() => Important.UncapFPS(), disableMethod =() => Application.targetFrameRate = 144, toolTip = "Unlocks your FPS."},
 
