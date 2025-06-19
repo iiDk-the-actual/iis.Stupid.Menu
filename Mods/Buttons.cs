@@ -471,6 +471,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Rig Gun", method =() => Movement.RigGun(), toolTip = "Moves your rig to wherever your hand desires."},
                 new ButtonInfo { buttonText = "Grab Rig <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Movement.GrabRig(), toolTip = "Lets you grab your rig when holding <color=green>grip</color>."},
+                
                 new ButtonInfo { buttonText = "Spaz Rig <color=grey>[</color><color=green>A</color><color=grey>]</color>", enableMethod =() => Movement.EnableSpazRig(), method =() => Movement.SpazRig(), disableMethod =() => Movement.DisableSpazRig(), toolTip = "Makes every part of your rig spaz out a little bit when holding <color=green>A</color>."},
                 new ButtonInfo { buttonText = "Spaz Rig Hands <color=grey>[</color><color=green>A</color><color=grey>]</color>", method =() => Movement.SpazHands(), toolTip = "Makes your rig's hands spaz out everywhere when holding <color=green>A</color>."},
                 new ButtonInfo { buttonText = "Spaz Hands <color=grey>[</color><color=green>A</color><color=grey>]</color>", method =() => Movement.SpazRealHands(), toolTip = "Makes your hands spaz out everywhere when holding <color=green>A</color>."},
@@ -478,11 +479,16 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Random Spaz Head Position", enableMethod =() => Movement.EnableSpazHead(), method =() => Movement.RandomSpazHeadPosition(), disableMethod =() => Movement.FixHeadPosition(), toolTip = "Makes your head position spaz out for 0 to 1 seconds every 1 to 4 seconds."},
                 new ButtonInfo { buttonText = "Spaz Head", overlapText = "Spaz Head Rotation", method =() => Movement.SpazHead(), disableMethod =() => Fun.FixHead(), toolTip = "Makes your head rotation spaz out."},
                 new ButtonInfo { buttonText = "Random Spaz Head", overlapText = "Random Spaz Head Rotation", method =() => Movement.RandomSpazHead(), disableMethod =() => Fun.FixHead(), toolTip = "Makes your head rotation spaz out for 0 to 1 seconds every 1 to 4 seconds."},
+                
                 new ButtonInfo { buttonText = "Laggy Rig", method =() => Movement.LaggyRig(), disableMethod =() => Movement.EnableRig(), toolTip = "Makes your rig laggy."},
                 new ButtonInfo { buttonText = "Smooth Rig", method =() => Movement.SmoothRig(), disableMethod =() => Movement.DisableSmoothRig(), toolTip = "Makes your rig really smooth."},
                 new ButtonInfo { buttonText = "Update Rig <color=grey>[</color><color=green>A</color><color=grey>]</color>", method =() => Movement.UpdateRig(), disableMethod =() => Movement.EnableRig(), toolTip = "Freezes your rig in place. Whenever you click <color=green>A</color>, your rig will update."},
+                
                 new ButtonInfo { buttonText = "Freeze Rig Limbs <color=grey>[</color><color=green>A</color><color=grey>]</color>", method =() => Movement.FreezeRigLimbs(), toolTip = "Makes your hands and head freeze on your rig, but not your body, when holding <color=green>A</color>."},
                 new ButtonInfo { buttonText = "Freeze Rig Body <color=grey>[</color><color=green>A</color><color=grey>]</color>", method =() => Movement.FreezeRigBody(), toolTip = "Makes your body freeze on your rig, but not your hands and head, when holding <color=green>A</color>."},
+
+                new ButtonInfo { buttonText = "Paralyze Rig", method =() => Movement.ParalyzeRig(), toolTip = "Removes your arms from your rig."},
+                new ButtonInfo { buttonText = "Amputate Rig", method =() => Movement.AmputateRig(), toolTip = "Removes all of your limbs from your rig."},
 
                 new ButtonInfo { buttonText = "Spin Rig Body", method =() => Movement.SetBodyPatch(true), disableMethod =() => Movement.SetBodyPatch(false), toolTip = "Makes your body spin around, but not your head."},
                 new ButtonInfo { buttonText = "Spaz Rig Body", method =() => Movement.SetBodyPatch(true, 1), disableMethod =() => Movement.SetBodyPatch(false), toolTip = "Gives your body a seizure, randomizing its rotation."},
