@@ -40,15 +40,8 @@ namespace iiMenu.Mods
             lastjsi = rightJoystickClick;
         }
 
-        public static void DisableGamemodeButtons()
-        {
-            GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/ModeSelector_Group").SetActive(false);
-        }
-
-        public static void EnableGamemodeButtons()
-        {
-            GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/ModeSelector_Group").SetActive(true);
-        }
+        public static void SetGamemodeButtonActive(bool active = true) =>
+            GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/ModeSelector_Group").SetActive(active);
 
         public static void SpoofSupportPage()
         {
