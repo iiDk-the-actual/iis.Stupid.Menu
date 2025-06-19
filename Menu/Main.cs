@@ -2910,6 +2910,7 @@ namespace iiMenu.Menu
             {
                 Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
                 Physics.Raycast(ray, out Ray, 512f, NoInvisLayerMask());
+                Direction = ray.direction;
             }
 
             Vector3 EndPosition = gunLocked ? lockTarget.transform.position : Ray.point;
