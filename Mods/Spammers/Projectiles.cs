@@ -1042,5 +1042,38 @@ namespace iiMenu.Mods.Spammers
                 }
             }
         }
+
+        public static void ProjectileBlindGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                        BetaFireProjectile("EggLeftHand_Anchor Variant", gunTarget.headMesh.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, -15f, 0f), Color.black);
+                }
+            }
+        }
+
+        private static float playerSwapDelay;
+        private static VRRig targetRig;
+        public static void ProjectileBlindAll()
+        {
+            if (rightTrigger > 0.5f)
+            {
+                if (Time.time > playerSwapDelay || targetRig == null)
+                {
+                    playerSwapDelay = Time.time + 1f;
+                    targetRig = GetRandomVRRig(false);
+                }
+
+                BetaFireProjectile("EggLeftHand_Anchor Variant", targetRig.headMesh.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, -15f, 0f), Color.black);
+            }
+        }
     }
 }

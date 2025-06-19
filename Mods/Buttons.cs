@@ -920,6 +920,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Spit Gun", method =() => Projectiles.SpitGun(), toolTip = "Makes whoever your hand desires spit." },
 
                 new ButtonInfo { buttonText = "Serversided Tracers", method =() => Projectiles.ServersidedTracers(), toolTip = "Spams projectiles that move really fast towards players, like tracers." },
+
+                new ButtonInfo { buttonText = "Projectile Blind Gun", method =() => Projectiles.ProjectileBlindGun(), toolTip = "Blinds whoever your hand desires using the egg projectiles."},
+                new ButtonInfo { buttonText = "Projectile Blind All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Projectiles.ProjectileBlindAll(), toolTip = "Blinds everybody in the room using the egg projectiles."}
             },
 
             new ButtonInfo[] { // Master Mods [16]
