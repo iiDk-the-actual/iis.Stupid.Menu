@@ -602,35 +602,26 @@ namespace iiMenu.Mods
             float speed = flySpeed;
             if (UnityInput.Current.GetKey(KeyCode.LeftShift))
                 speed *= 2f;
+
             if (W)
-            {
                 GorillaTagger.Instance.rigidbody.transform.position += GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.parent.forward * Time.deltaTime * speed;
-            }
 
             if (S)
-            {
                 GorillaTagger.Instance.rigidbody.transform.position += GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.parent.forward * Time.deltaTime * -speed;
-            }
 
             if (A)
-            {
                 GorillaTagger.Instance.rigidbody.transform.position += GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.parent.right * Time.deltaTime * -speed;
-            }
 
             if (D)
-            {
                 GorillaTagger.Instance.rigidbody.transform.position += GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.parent.right * Time.deltaTime * speed;
-            }
 
             if (Space)
-            {
                 GorillaTagger.Instance.rigidbody.transform.position += new Vector3(0f, Time.deltaTime * speed, 0f);
-            }
 
             if (Ctrl)
-            {
                 GorillaTagger.Instance.rigidbody.transform.position += new Vector3(0f, Time.deltaTime * -speed, 0f);
-            }
+
+            VRRig.LocalRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
         }
 
         private static float driveSpeed = 0f;
