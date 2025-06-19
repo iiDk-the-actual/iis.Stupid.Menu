@@ -231,10 +231,20 @@ namespace iiMenu.Mods
             Patches.MicPatch.returnAsNone = false;
         }
 
-        public static void GripForceLagGame()
+        private static float lastTime = 0f;
+        public static void CapFPS(int fps)
         {
-            if (rightGrab)
-                Thread.Sleep((1 / 60) * 1000);
+            float targetDelta = 1f / fps;
+            float elapsed = Time.realtimeSinceStartup - lastTime;
+
+            if (elapsed < targetDelta)
+            {
+                int sleepMs = Mathf.FloorToInt((targetDelta - elapsed) * 1000);
+                if (sleepMs > 0)
+                    Thread.Sleep(sleepMs);
+            }
+
+            lastTime = Time.realtimeSinceStartup;
         }
 
         public static void UncapFPS()
