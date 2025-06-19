@@ -2786,9 +2786,8 @@ namespace iiMenu.Menu
                 texture.LoadImage(fileData);
             }
             else
-            {
                 LogManager.LogError("Failed to load texture from resource: " + resourcePath);
-            }
+
             return texture;
         }
 
