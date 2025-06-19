@@ -1798,7 +1798,7 @@ namespace iiMenu.Mods
         public static void ChangeFontType() // Say goodbye to daily lagspikes and dirty if spam with new switch (x) { }
         {
             fontCycle++;
-            if (fontCycle > 8)
+            if (fontCycle > 9)
                 fontCycle = 0;
 
             switch (fontCycle) {
