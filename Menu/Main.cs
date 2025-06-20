@@ -8,6 +8,7 @@ using iiMenu.Classes;
 using iiMenu.Mods;
 using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
+using iiMenu.Patches;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -4787,7 +4788,7 @@ namespace iiMenu.Menu
             if (Plugin.instance != null)
                 Destroy(Plugin.instance);
 
-            Patches.Menu.RemoveHarmonyPatches();
+            PatchHandler.UnpatchAll();
         }
 
         // The variable warehouse

@@ -64,7 +64,7 @@ namespace iiMenu
         {
             Console.Title = $"ii's Stupid Menu // Build {PluginInfo.Version}";
 
-            Patches.Menu.ApplyHarmonyPatches();
+            PatchHandler.PatchAll();
 
             GameObject Loader = new GameObject("iiMenu_Loader");
             Loader.AddComponent<UI.Main>();
