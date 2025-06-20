@@ -261,24 +261,27 @@ namespace iiMenu.Mods
                 Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
                 Physics.Raycast(ray, out var Ray, 512f, NoInvisLayerMask());
 
-                foreach (Component component in Ray.collider.GetComponents<Component>())
+                if (Time.time > keyboardDelay)
                 {
-                    System.Type compType = component.GetType();
-                    string compName = compType.Name;
-
-                    if (compName == "GorillaPressableButton" || typeof(GorillaPressableButton).IsAssignableFrom(compType) || (compName == "GorillaPlayerLineButton" && Time.time > keyboardDelay))
-                        compType.GetMethod("OnTriggerEnter", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(component, new object[] { GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHandTriggerCollider").GetComponent<Collider>() });
-
-                    if (compName == "CustomKeyboardKey" && Time.time > keyboardDelay)
+                    foreach (Component component in Ray.collider.GetComponents<Component>())
                     {
-                        keyboardDelay = Time.time + 0.1f;
-                        compType.GetMethod("OnTriggerEnter", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(component, new object[] { GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHandTriggerCollider").GetComponent<Collider>() });
-                    }
+                        System.Type compType = component.GetType();
+                        string compName = compType.Name;
 
-                    if (compName == "GorillaKeyboardButton" && Time.time > keyboardDelay)
-                    {
-                        keyboardDelay = Time.time + 0.1f;
-                        GameEvents.OnGorrillaKeyboardButtonPressedEvent.Invoke(Traverse.Create(component).Field("Binding").GetValue<GorillaKeyboardBindings>());
+                        if (compName == "GorillaPressableButton" || typeof(GorillaPressableButton).IsAssignableFrom(compType) || (compName == "GorillaPlayerLineButton"))
+                            compType.GetMethod("OnTriggerEnter", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(component, new object[] { GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHandTriggerCollider").GetComponent<Collider>() });
+
+                        if (compName == "CustomKeyboardKey")
+                        {
+                            keyboardDelay = Time.time + 0.1f;
+                            compType.GetMethod("OnTriggerEnter", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(component, new object[] { GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHandTriggerCollider").GetComponent<Collider>() });
+                        }
+
+                        if (compName == "GorillaKeyboardButton")
+                        {
+                            keyboardDelay = Time.time + 0.1f;
+                            GameEvents.OnGorrillaKeyboardButtonPressedEvent.Invoke(Traverse.Create(component).Field("Binding").GetValue<GorillaKeyboardBindings>());
+                        }
                     }
                 }
             }
