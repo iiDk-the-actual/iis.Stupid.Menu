@@ -327,5 +327,8 @@ namespace iiMenu.Mods
                 LogManager.Log("Could not open process " + filePath);
             }
         }
+
+        public static void CopyCustomGamemodeScript() =>
+            GUIUtility.systemCopyBuffer = CustomGameMode.LuaScript;
     }
 }
