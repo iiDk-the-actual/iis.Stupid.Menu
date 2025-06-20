@@ -428,43 +428,55 @@ namespace iiMenu.Menu
 
                                 if (!lastPressedKeys.Contains(keyCode))
                                 {
-                                    if (keyCode == KeyCode.Space)
-                                        searchText += " ";
-
-                                    else
+                                    if (UnityInput.Current.GetKey(KeyCode.LeftControl))
                                     {
-                                        if (keyCode == KeyCode.Backspace)
+                                        switch (keyCode)
                                         {
-                                            if (Time.time > lastBackspaceTime)
-                                            {
-                                                if (searchText.Length > 0)
-                                                    searchText = searchText[..^1];
-                                            }
+                                            case KeyCode.A:
+                                                searchText = "";
+                                                break;
+                                            case KeyCode.C:
+                                                GUIUtility.systemCopyBuffer = searchText;
+                                                break;
+                                            case KeyCode.V:
+                                                searchText = GUIUtility.systemCopyBuffer;
+                                                break;
+                                            case KeyCode.Backspace:
+                                                searchText = string.Join(" ", searchText.Split(' ').SkipLast(1));
+                                                break;
                                         }
-                                        else
+                                    } else
+                                    {
+                                        switch (keyCode)
                                         {
-                                            if (keyCode == KeyCode.Escape)
-                                            {
+                                            case KeyCode.Space:
+                                                searchText += " ";
+                                                break;
+                                            case KeyCode.Backspace:
+                                                if (Time.time > lastBackspaceTime)
+                                                {
+                                                    if (searchText.Length > 0)
+                                                        searchText = searchText[..^1];
+
+                                                    lastBackspaceTime = Time.time + 0.1f;
+                                                }
+                                                break;
+                                            case KeyCode.Escape:
                                                 Toggle("Global Search");
-                                            }
-                                            else
-                                            {
+                                                break;
+                                            default:
                                                 searchText += UnityInput.Current.GetKey(KeyCode.LeftShift) || UnityInput.Current.GetKey(KeyCode.RightShift) ? keyCode.ToString().Capitalize() : keyCode.ToString().ToLower();
-                                            }
+                                                break;
                                         }
                                     }
-                                    if (Time.time > lastBackspaceTime)
-                                    {
-                                        if (keyCode == KeyCode.Backspace)
-                                            lastBackspaceTime = Time.time + 0.1f;
 
-                                        VRRig.LocalRig.PlayHandTapLocal(66, false, buttonClickVolume / 10f);
-                                        pageNumber = 0;
-                                        ReloadMenu();
-                                    }
+                                    VRRig.LocalRig.PlayHandTapLocal(66, false, buttonClickVolume / 10f);
+                                    pageNumber = 0;
+                                    ReloadMenu();
                                 }
                             }
                         }
+
                         lastPressedKeys = keysPressed;
                     }
 
