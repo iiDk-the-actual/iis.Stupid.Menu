@@ -6,8 +6,8 @@ namespace iiMenu.Patches
     [HarmonyPatch(typeof(BuilderTableNetworking), "PieceCreatedByShelfRPC")]
     public class CreatePatch
     {
-        public static bool enabled = false;
-        public static int pieceTypeSearch = 0;
+        public static bool enabled;
+        public static int pieceTypeSearch;
 
         private static void Postfix(int pieceType, int pieceId)
         {
