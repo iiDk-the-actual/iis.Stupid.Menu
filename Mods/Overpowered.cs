@@ -755,7 +755,7 @@ namespace iiMenu.Mods
                     sendEventData[1] = (byte)6;
                     sendEventData[2] = playerEffectData;
 
-                    PhotonNetwork.RaiseEvent(3, sendEventData, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendUnreliable);
+                    PhotonNetwork.RaiseEvent(3, sendEventData, new RaiseEventOptions { Receivers = ReceiverGroup.Others }, SendOptions.SendUnreliable);
                 }
                 RPCProtection();
             }
