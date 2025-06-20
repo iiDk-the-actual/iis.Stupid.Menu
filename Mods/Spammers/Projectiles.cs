@@ -1049,14 +1049,24 @@ namespace iiMenu.Mods.Spammers
             {
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
 
+                if (gunLocked && lockTarget != null)
+                    BetaFireProjectile("EggLeftHand_Anchor Variant", lockTarget.headMesh.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, -15f, 0f), Color.black);
+                
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
-                        BetaFireProjectile("EggLeftHand_Anchor Variant", gunTarget.headMesh.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, -15f, 0f), Color.black);
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
                 }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
             }
         }
 
