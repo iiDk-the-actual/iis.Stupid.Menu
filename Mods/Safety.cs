@@ -1,4 +1,5 @@
-﻿using GorillaNetworking;
+﻿using GorillaLocomotion;
+using GorillaNetworking;
 using iiMenu.Classes;
 using iiMenu.Notifications;
 using Photon.Pun;
@@ -28,25 +29,80 @@ namespace iiMenu.Mods
             ControllerInputPoller.instance.rightControllerSecondaryButtonTouch = false;
         }
 
-        public static bool lastjsi = false;
-        public static bool isActive = true;
-        public static void ToggleIgloo()
-        {
-            if (rightJoystickClick && !lastjsi)
-            {
-                isActive = !isActive;
-                GameObject.Find("Mountain/Geometry/goodigloo").SetActive(isActive);
-            }
-            lastjsi = rightJoystickClick;
-        }
-
         public static void SetGamemodeButtonActive(bool active = true) =>
             GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/ModeSelector_Group").SetActive(active);
 
-        public static void SpoofSupportPage()
+        public static void FakeOculusMenu()
         {
-            GorillaComputer.instance.screenText.Text = GorillaComputer.instance.screenText.Text.Replace("STEAM", "QUEST").Replace(GorillaComputer.instance.buildDate, "05/30/2024 16:50:12\nBUILD CODE 4893\nMANAGED ACCOUNT: NO");
+            if (leftPrimary)
+            {
+                Safety.NoFinger();
+                GTPlayer.Instance.inOverlay = true;
+                GTPlayer.Instance.leftControllerTransform.localPosition = new Vector3(238f, -90f, 0f);
+                GTPlayer.Instance.rightControllerTransform.localPosition = new Vector3(-190f, 90f, 0f);
+                GTPlayer.Instance.leftControllerTransform.rotation = Camera.main.transform.rotation * Quaternion.Euler(-55f, 90f, 0f);
+                GTPlayer.Instance.rightControllerTransform.rotation = Camera.main.transform.rotation * Quaternion.Euler(-55f, -49f, 0f);
+            }
+
         }
+
+        public static void FakeReportMenu()
+        {
+            if (leftSecondary)
+                Safety.NoFinger();
+
+            GTPlayer.Instance.inOverlay = leftPrimary;
+        }
+
+        public static void FakeBrokenController()
+        {
+            Vector3 Position = leftPrimary ? GorillaTagger.Instance.leftHandTransform.position : GorillaTagger.Instance.rightHandTransform.position;
+            Quaternion Rotation = leftPrimary ? GorillaTagger.Instance.leftHandTransform.rotation : GorillaTagger.Instance.rightHandTransform.rotation;
+
+            GTPlayer.Instance.leftControllerTransform.localPosition = new Vector3(238f, -90f, 0f);
+            GTPlayer.Instance.leftControllerTransform.rotation = Camera.main.transform.rotation * Quaternion.Euler(-55f, 90f, 0f);
+
+            GTPlayer.Instance.rightControllerTransform.localPosition = Position;
+            GTPlayer.Instance.rightControllerTransform.rotation = Rotation;
+
+            ControllerInputPoller.instance.leftControllerGripFloat = 0f;
+            ControllerInputPoller.instance.leftControllerIndexFloat = 0f;
+            ControllerInputPoller.instance.leftControllerPrimaryButton = false;
+            ControllerInputPoller.instance.leftControllerSecondaryButton = false;
+            ControllerInputPoller.instance.leftControllerPrimaryButtonTouch = false;
+            ControllerInputPoller.instance.leftControllerSecondaryButtonTouch = false;
+        }
+
+        public static Vector3 deadPosition = Vector3.zero;
+        public static Vector3 lvel = Vector3.zero;
+        public static void FakePowerOff()
+        {
+            if (leftJoystickClick)
+            {
+                if (deadPosition == Vector3.zero)
+                {
+                    deadPosition = GorillaTagger.Instance.rigidbody.transform.position;
+                    lvel = GorillaTagger.Instance.rigidbody.velocity;
+                }
+                VRRig.LocalRig.enabled = false;
+                GorillaTagger.Instance.rigidbody.transform.position = deadPosition;
+                GorillaTagger.Instance.rigidbody.velocity = lvel;
+            }
+            else
+            {
+                deadPosition = Vector3.zero;
+                VRRig.LocalRig.enabled = true;
+            }
+        }
+
+        public static void FakeValveTracking()
+        {
+            if (rightJoystickClick)
+                VRRig.LocalRig.head.rigTarget.transform.rotation = Quaternion.identity;
+        }
+
+        public static void SpoofSupportPage() =>
+            GorillaComputer.instance.screenText.Text = GorillaComputer.instance.screenText.Text.Replace("STEAM", "QUEST").Replace(GorillaComputer.instance.buildDate, "05/30/2024 16:50:12\nBUILD CODE 4893\nMANAGED ACCOUNT: NO");
 
         private static float lastCacheClearedTime = 0f;
         public static void AutoClearCache()

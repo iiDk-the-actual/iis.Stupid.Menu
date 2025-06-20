@@ -2304,68 +2304,6 @@ namespace iiMenu.Mods
                 recBodyRotary = new GameObject("ii_recBodyRotary");
             recBodyRotary.transform.rotation = Quaternion.Lerp(recBodyRotary.transform.rotation, Quaternion.Euler(0f, GorillaTagger.Instance.headCollider.transform.rotation.eulerAngles.y, 0f), Time.deltaTime * 6.5f);
         }
-        
-        public static void FakeOculusMenu()
-        {
-            if (leftPrimary)
-            {
-                Safety.NoFinger();
-                GTPlayer.Instance.inOverlay = true;
-                GTPlayer.Instance.leftControllerTransform.localPosition = new Vector3(238f, -90f, 0f);
-                GTPlayer.Instance.rightControllerTransform.localPosition = new Vector3(-190f, 90f, 0f);
-                GTPlayer.Instance.leftControllerTransform.rotation = Camera.main.transform.rotation * Quaternion.Euler(-55f, 90f, 0f);
-                GTPlayer.Instance.rightControllerTransform.rotation = Camera.main.transform.rotation * Quaternion.Euler(-55f, -49f, 0f);
-            }
-           
-        }
-
-        public static void FakeReportMenu()
-        {
-            if (leftPrimary)
-                Safety.NoFinger();
-
-            GTPlayer.Instance.inOverlay = leftPrimary;
-        }
-
-        public static void FakeBrokenController()
-        {
-            Vector3 Position = leftPrimary ? GorillaTagger.Instance.leftHandTransform.position : GorillaTagger.Instance.rightHandTransform.position;
-            Quaternion Rotation = leftPrimary ? GorillaTagger.Instance.leftHandTransform.rotation : GorillaTagger.Instance.rightHandTransform.rotation;
-
-            GTPlayer.Instance.leftControllerTransform.localPosition = new Vector3(238f, -90f, 0f);
-            GTPlayer.Instance.leftControllerTransform.rotation = Camera.main.transform.rotation * Quaternion.Euler(-55f, 90f, 0f);
-
-            GTPlayer.Instance.rightControllerTransform.localPosition = Position;
-            GTPlayer.Instance.rightControllerTransform.rotation = Rotation;
-
-            ControllerInputPoller.instance.leftControllerGripFloat = 0f;
-            ControllerInputPoller.instance.leftControllerIndexFloat = 0f;
-            ControllerInputPoller.instance.leftControllerPrimaryButton = false;
-            ControllerInputPoller.instance.leftControllerSecondaryButton = false;
-            ControllerInputPoller.instance.leftControllerPrimaryButtonTouch = false;
-            ControllerInputPoller.instance.leftControllerSecondaryButtonTouch = false;
-        }
-
-        public static Vector3 deadPosition = Vector3.zero;
-        public static Vector3 lvel = Vector3.zero;
-        public static void FakePowerOff()
-        {
-            if (leftJoystickClick)
-            {
-                if (deadPosition == Vector3.zero)
-                {
-                    deadPosition = GorillaTagger.Instance.rigidbody.transform.position;
-                    lvel = GorillaTagger.Instance.rigidbody.velocity;
-                }
-                VRRig.LocalRig.enabled = false;
-                GorillaTagger.Instance.rigidbody.transform.position = deadPosition;
-                GorillaTagger.Instance.rigidbody.velocity = lvel;
-            } else
-            {
-                deadPosition = Vector3.zero;
-                VRRig.LocalRig.enabled = true;
-            }
-        }
 
         public static void AutoDance()
         {
@@ -2630,12 +2568,13 @@ namespace iiMenu.Mods
             FixRigHandRotation();
         }
 
-        public static void StareAtNearby()
-        {
-            VRRig.LocalRig.headConstraint.LookAt(GetClosestVRRig().headMesh.transform.position);
+        public static void StareAtNearby() =>
             VRRig.LocalRig.head.rigTarget.LookAt(GetClosestVRRig().headMesh.transform.position);
-        }
 
+        public static void StareAtTarget() =>
+            VRRig.LocalRig.head.rigTarget.LookAt(lockTarget.headMesh.transform.position);
+
+        private static bool hasAdded;
         public static void StareAtGun()
         {
             if (GetGunInput(false))
@@ -2643,16 +2582,17 @@ namespace iiMenu.Mods
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
 
-                if (gunLocked && lockTarget != null)
-                {
-                    VRRig.LocalRig.headConstraint.LookAt(lockTarget.headMesh.transform.position);
-                    VRRig.LocalRig.head.rigTarget.LookAt(lockTarget.headMesh.transform.position);
-                }
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
+                        if (!hasAdded)
+                        {
+                            hasAdded = true;
+                            Patches.TorsoPatch.VRRigLateUpdate += StareAtTarget;
+                        }
+
                         gunLocked = true;
                         lockTarget = gunTarget;
                     }
@@ -2661,7 +2601,14 @@ namespace iiMenu.Mods
             else
             {
                 if (gunLocked)
+                {
                     gunLocked = false;
+                    if (hasAdded)
+                    {
+                        hasAdded = false;
+                        Patches.TorsoPatch.VRRigLateUpdate -= StareAtTarget;
+                    }
+                }
             }
         }
 
