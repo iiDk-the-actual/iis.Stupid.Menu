@@ -1275,6 +1275,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Get Decryptable Cosmetic Data", method =() => Miscellaneous.DecryptableCosmeticData(), isTogglable = false, toolTip = "Dumps the cosmetics and their data to a easily decryptable file for databases."},
                 new ButtonInfo { buttonText = "Get RPC Data", method =() => Miscellaneous.DumpRPCData(), isTogglable = false, toolTip = "Dumps the data of every RPC to a file."},
 
+                new ButtonInfo { buttonText = "Copy Custom Gamemode Script", method =() => Miscellaneous.CopyCustomGamemodeScript(), isTogglable = false, toolTip = "Copies the lua script source code of the current custom map being played."},
+
                 new ButtonInfo { buttonText = "Better FPS Boost", enableMethod =() => Experimental.BetterFPSBoost(), disableMethod =() => Experimental.DisableBetterFPSBoost(), toolTip = "Makes everything one color, boosting your FPS."},
 
                 new ButtonInfo { buttonText = "Disorganize Menu", method =() => Settings.DisorganizeMenu(), isTogglable = false, toolTip = "Disorganizes the entire menu. This cannot be undone."},
@@ -1301,7 +1303,7 @@ namespace iiMenu.Menu
 
             new ButtonInfo[] { // Overpowered Settings [31]
                 new ButtonInfo { buttonText = "Exit Overpowered Settings", method =() => currentCategoryName = "Settings", isTogglable = false, toolTip = "Returns you back to the settings menu."},
-                new ButtonInfo { buttonText = "Disable Snowball Impact Effects", method =() => Overpowered.DisableSnowballImpactEffect(), toolTip = "Disables the impact effect that people get when hit with snowballs."}
+                new ButtonInfo { buttonText = "Disable Snowball Impact Effect", method =() => Overpowered.DisableSnowballImpactEffect(), toolTip = "Disables the impact effect that people get when hit with snowballs."}
             },
 
             new ButtonInfo[] { // Keybind Settings [32]

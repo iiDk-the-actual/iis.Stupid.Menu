@@ -740,22 +740,25 @@ namespace iiMenu.Mods
             }
         }
 
+        private static float timeSinceCallInvalidated;
         public static void DisableSnowballImpactEffect()
         {
-            if (PhotonNetwork.InRoom && Time.time < snowballSpawnDelay + 0.1f)
+            if (PhotonNetwork.InRoom && Time.time < snowballDelay + 0.1f && Time.time > timeSinceCallInvalidated)
             {
-                while (RoomSystem.callbackInstance.roomSettings.PlayerEffectLimiter.CheckCallServerTime(PhotonNetwork.ServerTimestamp))
+                timeSinceCallInvalidated = Time.time + 1f;
+                
+                for (int i = 0; i < 11; i++)
                 {
                     object[] playerEffectData = new object[6];
                     playerEffectData[0] = -1;
                     playerEffectData[1] = -1;
 
                     object[] sendEventData = new object[3];
-                    sendEventData[0] = PhotonNetwork.ServerTimestamp;
+                    sendEventData[0] = NetworkSystem.Instance.ServerTimestamp - (11 - i);
                     sendEventData[1] = (byte)6;
                     sendEventData[2] = playerEffectData;
 
-                    PhotonNetwork.RaiseEvent(3, sendEventData, new RaiseEventOptions { Receivers = ReceiverGroup.Others }, SendOptions.SendUnreliable);
+                    PhotonNetwork.RaiseEvent(3, sendEventData, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendUnreliable);
                 }
                 RPCProtection();
             }
@@ -833,7 +836,7 @@ namespace iiMenu.Mods
             playerEffectData[1] = 0;
 
             object[] sendEventData = new object[3];
-            sendEventData[0] = PhotonNetwork.ServerTimestamp;
+            sendEventData[0] = NetworkSystem.Instance.ServerTimestamp;
             sendEventData[1] = (byte)6;
             sendEventData[2] = playerEffectData;
 
@@ -1800,7 +1803,7 @@ namespace iiMenu.Mods
                 object[] statusSendData = new object[1];
                 statusSendData[0] = state;
                 object[] sendEventData = new object[3];
-                sendEventData[0] = PhotonNetwork.ServerTimestamp;
+                sendEventData[0] = NetworkSystem.Instance.ServerTimestamp;
                 sendEventData[1] = (byte)2;
                 sendEventData[2] = statusSendData;
                 PhotonNetwork.RaiseEvent(3, sendEventData, balls, SendOptions.SendUnreliable);
