@@ -1301,7 +1301,7 @@ namespace iiMenu.Menu
 
             new ButtonInfo[] { // Overpowered Settings [31]
                 new ButtonInfo { buttonText = "Exit Overpowered Settings", method =() => currentCategoryName = "Settings", isTogglable = false, toolTip = "Returns you back to the settings menu."},
-                new ButtonInfo { buttonText = "Disable Snowball Impact Effects", enableMethod =() => Overpowered.noSnowballEffects = true, disableMethod =() => Overpowered.noSnowballEffects = false, toolTip = "Disables the impact effect that people get when hit with snowballs."}
+                new ButtonInfo { buttonText = "Disable Snowball Impact Effects", method =() => Overpowered.DisableSnowballImpactEffect(), toolTip = "Disables the impact effect that people get when hit with snowballs."}
             },
 
             new ButtonInfo[] { // Keybind Settings [32]
