@@ -424,8 +424,7 @@ namespace iiMenu.Menu
                         {
                             if (UnityInput.Current.GetKey(keyCode))
                             {
-                                if (keyCode != KeyCode.Backspace)
-                                    keysPressed.Add(keyCode);
+                                keysPressed.Add(keyCode);
 
                                 if (!lastPressedKeys.Contains(keyCode))
                                 {
@@ -454,13 +453,7 @@ namespace iiMenu.Menu
                                                 searchText += " ";
                                                 break;
                                             case KeyCode.Backspace:
-                                                if (Time.time > lastBackspaceTime)
-                                                {
-                                                    if (searchText.Length > 0)
-                                                        searchText = searchText[..^1];
-
-                                                    lastBackspaceTime = Time.time + 0.1f;
-                                                }
+                                                searchText = searchText[..^1];
                                                 break;
                                             case KeyCode.Escape:
                                                 Toggle("Global Search");
