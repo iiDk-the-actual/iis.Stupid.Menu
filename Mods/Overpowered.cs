@@ -741,11 +741,29 @@ namespace iiMenu.Mods
         }
 
         public static float snowballSpawnDelay = 0.15f;
+        public static bool noSnowballEffects;
         public static bool SnowballHandIndex;
         public static void BetaSpawnSnowball(Vector3 Pos, Vector3 Vel, float Scale, int Mode, Player Target = null, bool NetworkSize = true, int customNetworkedSize = -1)
         {
             try
             {
+                if (noSnowballEffects)
+                {
+                    while (RoomSystem.callbackInstance.roomSettings.PlayerEffectLimiter.CheckCallServerTime(PhotonNetwork.ServerTimestamp))
+                    {
+                        object[] playerEffectData = new object[6];
+                        playerEffectData[0] = -1;
+                        playerEffectData[1] = -1;
+
+                        object[] sendEventData = new object[3];
+                        sendEventData[0] = PhotonNetwork.ServerTimestamp;
+                        sendEventData[1] = (byte)6;
+                        sendEventData[2] = playerEffectData;
+
+                        PhotonNetwork.RaiseEvent(3, sendEventData, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendUnreliable);
+                    }
+                }
+
                 SnowballHandIndex = !SnowballHandIndex;
                 Vel = Vel.ClampMagnitudeSafe(50f);
 
@@ -801,8 +819,8 @@ namespace iiMenu.Mods
                         });
                         break;
                 }
-                RPCProtection();
             } catch { }
+            RPCProtection();
         }
 
         public static void BetaSnowballImpact(Player Target)
