@@ -3731,6 +3731,7 @@ namespace iiMenu.Menu
             audiomgrhand.transform.SetParent(left ? VRRig.LocalRig.leftHandPlayer.gameObject.transform : VRRig.LocalRig.rightHandPlayer.gameObject.transform, false);
 
             AudioSource ausrc = audiomgrhand.GetComponent<AudioSource>();
+            ausrc.volume = volume;
             ausrc.clip = sound;
             ausrc.loop = true;
             ausrc.Play();
@@ -3892,7 +3893,7 @@ namespace iiMenu.Menu
             return finalOutput;
         }
 
-        public static Color BrightenColor(Color color, float intensity = 0.75f)
+        public static Color BrightenColor(Color color, float intensity = 0.5f)
         {
             Color.RGBToHSV(color, out float h, out float s, out float v);
             v = Mathf.Clamp01(v + (1f - v) * intensity * 1.2f);

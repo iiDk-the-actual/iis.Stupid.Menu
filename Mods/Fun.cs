@@ -1582,9 +1582,7 @@ namespace iiMenu.Mods
                     PhotonNetwork.LocalPlayer
                 });
             } else
-            {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-            }
         }
 
         public static void BuildingBlockAura()
@@ -2009,8 +2007,8 @@ namespace iiMenu.Mods
             yield return null;
         }
 
-        private static bool lastgripcrap = false;
-        private static bool lasttrigcrap = false;
+        private static bool lastgripcrap;
+        private static bool lasttrigcrap;
         public static void Shotgun()
         {
             if (isFiring)
@@ -2277,13 +2275,9 @@ namespace iiMenu.Mods
             foreach (BalloonHoldable balloon in GetAllType<BalloonHoldable>())
             {
                 if (balloon.ownerRig == VRRig.LocalRig)
-                {
                     balloon.gameObject.transform.position = new Vector3(99999f, 99999f, 99999f);
-                }
                 else
-                {
                     balloon.WorldShareableRequestOwnership();
-                }
             }
         }
 
@@ -2333,13 +2327,9 @@ namespace iiMenu.Mods
             foreach (GliderHoldable glider in GetAllType<GliderHoldable>())
             {
                 if (glider.GetView.Owner == PhotonNetwork.LocalPlayer)
-                {
                     glider.gameObject.transform.position = new Vector3(99999f, 99999f, 99999f);
-                }
                 else
-                {
                     glider.OnHover(null, null);
-                }
             }
         }
 
@@ -2397,9 +2387,8 @@ namespace iiMenu.Mods
                 colorChangerDelay = Time.time + 1f;
                 colorChangeType++;
                 if (colorChangeType > 3)
-                {
                     colorChangeType = 0;
-                }
+                
                 Color[] colors = new Color[]
                 {
                     Color.red,
@@ -2653,9 +2642,7 @@ namespace iiMenu.Mods
                 {
                     List<string> holyshit = new List<string> { };
                     for (int i = 0; i <= amnt; i++)
-                    {
                         holyshit.Add(owned[UnityEngine.Random.Range(0, owned.Length - 1)]);
-                    }
                     if (VRRig.LocalRig.inTryOnRoom)
                     {
                         CosmeticsController.instance.tryOnSet = new CosmeticsController.CosmeticSet(holyshit.ToArray(), CosmeticsController.instance);
@@ -2683,13 +2670,9 @@ namespace iiMenu.Mods
                     if (cosmet.IsMyItem())
                     {
                         if (cosmet.currentState == TransferrableObject.PositionState.OnLeftArm || cosmet.currentState == TransferrableObject.PositionState.OnLeftShoulder)
-                        {
                             cosmet.currentState = TransferrableObject.PositionState.InLeftHand;
-                        }
                         if (cosmet.currentState == TransferrableObject.PositionState.OnRightArm || cosmet.currentState == TransferrableObject.PositionState.OnRightShoulder || cosmet.currentState == TransferrableObject.PositionState.OnChest)
-                        {
                             cosmet.currentState = TransferrableObject.PositionState.InRightHand;
-                        }
                     }
                 }
             }
@@ -2706,9 +2689,7 @@ namespace iiMenu.Mods
                     {
                         cosmet.currentState = (TransferrableObject.PositionState)((int)cosmet.currentState * 2);
                         if ((int)cosmet.currentState > 128)
-                        {
                             cosmet.currentState = TransferrableObject.PositionState.OnLeftArm;
-                        }
                     }
                 }
             }
@@ -2745,12 +2726,10 @@ namespace iiMenu.Mods
             currentCategoryName = "Temporary Category";
 
             List<ButtonInfo> cosmeticbuttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Cosmetic Browser", method = () => RemoveCosmeticBrowser(), isTogglable = false, toolTip = "Returns you back to the fun mods." } };
-            foreach (GorillaNetworking.CosmeticsController.CosmeticItem hat in CosmeticsController.instance.allCosmetics)
+            foreach (CosmeticsController.CosmeticItem hat in CosmeticsController.instance.allCosmetics)
             {
                 if (hat.canTryOn)
-                {
                     cosmeticbuttons.Add(new ButtonInfo { buttonText = ToTitleCase(hat.overrideDisplayName), method = () => AddCosmeticToCart(hat.itemName), isTogglable = false, toolTip = "Adds the " + hat.overrideDisplayName.ToLower() + "to your cart." });
-                }
             }
             Buttons.buttons[29] = cosmeticbuttons.ToArray();
         }

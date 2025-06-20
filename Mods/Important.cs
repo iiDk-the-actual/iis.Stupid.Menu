@@ -73,11 +73,11 @@ namespace iiMenu.Mods
                 createIfMissing = true,
                 isJoinable = true,
                 isPublic = isPublic,
-                MaxPlayers = RoomSystem.GetRoomSize(PhotonNetworkController.Instance.currentJoinTrigger.networkZone),
+                MaxPlayers = RoomSystem.GetRoomSizeForCreate(PhotonNetworkController.Instance.currentJoinTrigger.networkZone),
                 CustomProps = new ExitGames.Client.Photon.Hashtable()
                 {
                     { "gameMode", PhotonNetworkController.Instance.currentJoinTrigger.GetFullDesiredGameModeString() },
-                    { "platform", PlayFabAuthenticator.instance.platform },
+                    { "platform", PhotonNetworkController.Instance.platformTag },
                     { "queueName", GorillaComputer.instance.currentQueue }
                 }
             };
