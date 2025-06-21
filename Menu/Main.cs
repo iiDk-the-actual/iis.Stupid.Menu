@@ -65,6 +65,7 @@ namespace iiMenu.Menu
                     if (buttonCondition)
                         openedwithright = ControllerInputPoller.instance.rightControllerSecondaryButton;
                 }
+
                 if (wristMenu)
                 {
                     bool shouldOpen = Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position - (GorillaTagger.Instance.leftHandTransform.forward * 0.1f), TrueRightHand().position) < 0.1f;
@@ -1497,7 +1498,7 @@ namespace iiMenu.Menu
 
         private static void AddButton(float offset, int buttonIndex, string method) => AddButton(offset, buttonIndex, GetIndex(method));
 
-        private static void AddSearchButton()
+        private static void AddSearchButton() // Me :D -Twig
         {
             GameObject buttonObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
             if (!UnityInput.Current.GetKey(KeyCode.Q) && !isPcWhenSearching)
