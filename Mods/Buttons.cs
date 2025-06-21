@@ -750,6 +750,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Large Snowballs", enableMethod =() => Patches.EnablePatch.enabled = true, disableMethod =() => Patches.EnablePatch.enabled = false, toolTip = "Makes snowballs by default the largest size."},
                 new ButtonInfo { buttonText = "Fast Snowballs", method =() => Fun.FastSnowballs(), disableMethod =() => Fun.FixSnowballs(), toolTip = "Makes snowballs go really fast when thrown."},
                 new ButtonInfo { buttonText = "Slow Snowballs", method =() => Fun.SlowSnowballs(), disableMethod =() => Fun.FixSnowballs(), toolTip = "Makes snowballs go really slow when thrown."},
+                new ButtonInfo { buttonText = "Multiply Snowballs", method =() => Patches.ThrowPatch.enabled = true, disableMethod =() => Patches.ThrowPatch.enabled = false, toolTip = "Multiplies the snowballs you spawn by 5."},
 
                 new ButtonInfo { buttonText = "Fast Hoverboard", method =() => Fun.FastHoverboard(), disableMethod =() => Fun.FixHoverboard(), toolTip = "Makes your hoverboard go really fast."},
                 new ButtonInfo { buttonText = "Slow Hoverboard", method =() => Fun.SlowHoverboard(), disableMethod =() => Fun.FixHoverboard(), toolTip = "Makes your hoverboard go really slow."},
@@ -779,9 +780,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Break Bug", enableMethod =() => Fun.AllowStealingThrowableBug("Floating Bug Holdable", false), disableMethod =() => Fun.AllowStealingThrowableBug("Floating Bug Holdable", true), toolTip = "Makes the bug ungrabbable."},
                 new ButtonInfo { buttonText = "Break Bat", enableMethod =() => Fun.AllowStealingThrowableBug("Cave Bat Holdable", false), disableMethod =() => Fun.AllowStealingThrowableBug("Cave Bat Holdable", true), toolTip = "Makes the bat ungrabbable."},
 
-                new ButtonInfo { buttonText = "Grab Bug <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.GrabBug(), toolTip = "Forces the bug into your hand when holding <color=green>grip</color>." },
-                new ButtonInfo { buttonText = "Grab Bat <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.GrabBat(), toolTip = "Forces the bat into your hand when holding <color=green>grip</color>." },
-                new ButtonInfo { buttonText = "Grab Beach Ball <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.GrabBeachBall(), toolTip = "Forces the beach ball into your hand when holding <color=green>grip</color>." },
+                new ButtonInfo { buttonText = "Grab Bug <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.ObjectToHand("Floating Bug Holdable"), toolTip = "Forces the bug into your hand when holding <color=green>grip</color>." },
+                new ButtonInfo { buttonText = "Grab Bat <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.ObjectToHand("Cave Bat Holdable"), toolTip = "Forces the bat into your hand when holding <color=green>grip</color>." },
+                new ButtonInfo { buttonText = "Grab Beach Ball <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.ObjectToHand("BeachBall"), toolTip = "Forces the beach ball into your hand when holding <color=green>grip</color>." },
                 new ButtonInfo { buttonText = "Grab Balloons <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.GrabBalloons(), toolTip = "Forces every single balloon cosmetic into your hand when holding <color=green>grip</color>." },
                 new ButtonInfo { buttonText = "Grab Gliders <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.GrabGliders(), toolTip = "Forces the bug into your hand when holding <color=green>grip</color>." },
 
