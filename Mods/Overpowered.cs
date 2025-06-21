@@ -11,6 +11,7 @@ using System;
 using System.Collections;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -773,11 +774,6 @@ namespace iiMenu.Mods
                 SnowballHandIndex = !SnowballHandIndex;
                 Vel = Vel.ClampMagnitudeSafe(50f);
 
-                try
-                {
-                    GetProjectile($"GrowingSnowball{(SnowballHandIndex ? "Right" : "Left")}Anchor").SetSnowballActiveLocal(true);
-                } catch { }
-
                 bool isTooFar = Vector3.Distance(Pos, GorillaTagger.Instance.bodyCollider.transform.position) > 3.9f;
                 if (isTooFar)
                 {
@@ -792,26 +788,36 @@ namespace iiMenu.Mods
 
                 DisableCoroutine = CoroutineManager.RunCoroutine(DisableSnowball(isTooFar));
 
-                GrowingSnowballThrowable GrowingSnowball = GameObject.Find(
-                    SnowballHandIndex ? "Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R/palm.01.R/TransferrableItemRightHand/GrowingSnowballRightAnchor(Clone)/LMACF. RIGHT."
-                                      : "Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/palm.01.L/TransferrableItemLeftHand/GrowingSnowballLeftAnchor(Clone)/LMACE. LEFT.").GetComponent<GrowingSnowballThrowable>();
-                PhotonEvent Event = GrowingSnowball.snowballThrowEvent;
+                GrowingSnowballThrowable GrowingSnowball = GetProjectile($"GrowingSnowball{(SnowballHandIndex ? "Right" : "Left")}Anchor") as GrowingSnowballThrowable;
+                GrowingSnowball.SetSnowballActiveLocal(true);
 
-                if (NetworkSize)
-                    GrowingSnowball.changeSizeEvent.RaiseAll(customNetworkedSize > 0 ? customNetworkedSize : (int)Scale);
-                
                 switch (Mode)
                 {
                     case 0:
-                        Event.RaiseAll(Pos, Vel, GetProjectileIncrement(Pos, Vel, Scale));
+                        GrowingSnowball.changeSizeEvent.RaiseAll(customNetworkedSize > 0 ? customNetworkedSize : (int)Scale);
+                        GrowingSnowball.snowballThrowEvent.RaiseAll(Pos, Vel, GetProjectileIncrement(Pos, Vel, Scale));
                         break;
                     case 1:
-                        Event.RaiseOthers(Pos, Vel, GetProjectileIncrement(Pos, Vel, Scale));
+                        GrowingSnowball.changeSizeEvent.RaiseOthers(customNetworkedSize > 0 ? customNetworkedSize : (int)Scale);
+                        GrowingSnowball.snowballThrowEvent.RaiseOthers(Pos, Vel, GetProjectileIncrement(Pos, Vel, Scale));
                         break;
                     case 2:
                         PhotonNetwork.RaiseEvent(176, new object[]
                         {
-                            Event._eventId,
+                            GrowingSnowball.changeSizeEvent._eventId,
+                            customNetworkedSize > 0 ? customNetworkedSize : (int)Scale
+                        }, new RaiseEventOptions
+                        {
+                            TargetActors = new int[] { Target.ActorNumber }
+                        }, new SendOptions
+                        {
+                            Reliability = false,
+                            Encrypt = true
+                        });
+
+                        PhotonNetwork.RaiseEvent(176, new object[]
+                        {
+                            GrowingSnowball.snowballThrowEvent._eventId,
                             Pos,
                             Vel,
                             GetProjectileIncrement(Pos, Vel, Scale)
@@ -907,7 +913,7 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true) && Time.time > snowballDelay)
                 {
-                    BetaSpawnSnowball(NewPointer.transform.position + new Vector3(0f, 1f, 0f), new Vector3(0f, 50f, 0f), 10f, 0);
+                    BetaSpawnSnowball(NewPointer.transform.position + new Vector3(0f, 1f, 0f), new Vector3(0f, 30f, 0f), 10f, 0);
                     snowballDelay = Time.time + snowballSpawnDelay;
                 }
             }
@@ -915,9 +921,19 @@ namespace iiMenu.Mods
 
         public static void SnowballMinigun()
         {
-            if (rightGrab && Time.time > snowballDelay)
+            if ((rightGrab || Mouse.current.leftButton.isPressed) && Time.time > snowballDelay)
             {
-                BetaSpawnSnowball(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.transform.forward * ShootStrength * 5f, 5f, 0);
+                Vector3 velocity = GorillaTagger.Instance.rightHandTransform.transform.forward * ShootStrength * 5f;
+                if (Mouse.current.leftButton.isPressed)
+                {
+                    Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
+                    Physics.Raycast(ray, out var hit, 512f, NoInvisLayerMask());
+                    velocity = hit.point - GorillaTagger.Instance.rightHandTransform.transform.position;
+                    velocity.Normalize();
+                    velocity *= ShootStrength * 2f;
+                }
+
+                BetaSpawnSnowball(GorillaTagger.Instance.rightHandTransform.position, velocity, 5f, 0);
                 snowballDelay = Time.time + snowballSpawnDelay;
             }
         }
