@@ -1237,34 +1237,40 @@ namespace iiMenu.Mods
 
         public static void FastSnowballs()
         {
-            GetProjectile("LMACE. LEFT.");
-            foreach (SnowballThrowable snowball in snowballs)
+            foreach (SnowballMaker Maker in new[] { SnowballMaker.leftHandInstance, SnowballMaker.rightHandInstance })
             {
-                snowball.linSpeedMultiplier = 10f;
-                snowball.maxLinSpeed = 99999f;
-                snowball.maxWristSpeed = 99999f;
+                foreach (SnowballThrowable Throwable in Maker.snowballs)
+                {
+                    Throwable.linSpeedMultiplier = 10f;
+                    Throwable.maxLinSpeed = 99999f;
+                    Throwable.maxWristSpeed = 99999f;
+                }
             }
         }
 
         public static void SlowSnowballs()
         {
-            GetProjectile("LMACE. LEFT.");
-            foreach (SnowballThrowable snowball in snowballs)
+            foreach (SnowballMaker Maker in new[] { SnowballMaker.leftHandInstance, SnowballMaker.rightHandInstance })
             {
-                snowball.linSpeedMultiplier = 0.2f;
-                snowball.maxLinSpeed = 6f;
-                snowball.maxWristSpeed = 2f;
+                foreach (SnowballThrowable Throwable in Maker.snowballs)
+                {
+                    Throwable.linSpeedMultiplier = 0.2f;
+                    Throwable.maxLinSpeed = 6f;
+                    Throwable.maxWristSpeed = 2f;
+                }
             }
         }
 
         public static void FixSnowballs()
         {
-            GetProjectile("LMACE. LEFT.");
-            foreach (SnowballThrowable snowball in snowballs)
+            foreach (SnowballMaker Maker in new[] { SnowballMaker.leftHandInstance, SnowballMaker.rightHandInstance })
             {
-                snowball.linSpeedMultiplier = 1f;
-                snowball.maxLinSpeed = 12f;
-                snowball.maxWristSpeed = 4f;
+                foreach (SnowballThrowable Throwable in Maker.snowballs)
+                {
+                    Throwable.linSpeedMultiplier = 1f;
+                    Throwable.maxLinSpeed = 12f;
+                    Throwable.maxWristSpeed = 4f;
+                }
             }
         }
 
@@ -1410,26 +1416,10 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void GrabBug()
+        public static void ObjectToHand(string objectName)
         {
             if (rightGrab)
-                GameObject.Find("Floating Bug Holdable").transform.position = GorillaTagger.Instance.rightHandTransform.position;
-        }
-
-        public static void GrabBat()
-        {
-            if (rightGrab)
-            {
-                GameObject.Find("Cave Bat Holdable").transform.position = GorillaTagger.Instance.rightHandTransform.position;
-            }
-        }
-
-        public static void GrabBeachBall()
-        {
-            if (rightGrab)
-            {
-                GameObject.Find("BeachBall").transform.position = GorillaTagger.Instance.rightHandTransform.position;
-            }
+                GameObject.Find(objectName).transform.position = GorillaTagger.Instance.rightHandTransform.position;
         }
 
         public static void GrabGliders()
