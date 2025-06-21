@@ -3262,7 +3262,6 @@ namespace iiMenu.Menu
         public static string GetFileExtension(string fileName) =>
             fileName.ToLower().Split(".")[fileName.Split(".").Length - 1];
 
-
         public static string RemoveLastDirectory(string directory) =>
             directory == "" || directory.LastIndexOf('/') <= 0 ? "" : directory[..directory.LastIndexOf('/')];
 
@@ -3408,7 +3407,6 @@ namespace iiMenu.Menu
                     {
                         try
                         {
-                            LogManager.Log(Throwable.transform.parent.gameObject.name);
                             snowballDict.Add(Throwable.transform.parent.gameObject.name, Throwable);
                         }
                         catch { }
