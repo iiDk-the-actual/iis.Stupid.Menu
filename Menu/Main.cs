@@ -323,7 +323,7 @@ namespace iiMenu.Menu
                                 }
 
                                 hasFoundAllBoards = true;
-                                LogManager.Log("Found all boards");
+                                // LogManager.Log("Found all boards");
                             }
                         }
                         catch (Exception exc)
@@ -4064,6 +4064,10 @@ namespace iiMenu.Menu
                 NotifiLib.SendNotification($"<color=grey>[</color><color=red>LEAVE</color><color=grey>]</color> Name: {Player.NickName}");
         }
 
+        public static Vector3 ServerSyncPos;
+        public static void OnSerialize() =>
+            ServerSyncPos = VRRig.LocalRig?.syncPos ?? ServerSyncPos;
+
         public static void TeleportPlayer(Vector3 pos) // Prevents your hands from getting stuck on trees
         {
             GorillaLocomotion.GTPlayer.Instance.TeleportTo(World2Player(pos), GorillaLocomotion.GTPlayer.Instance.transform.rotation);
@@ -4655,6 +4659,8 @@ namespace iiMenu.Menu
 
             NetworkSystem.Instance.OnPlayerJoined += OnPlayerJoin;
             NetworkSystem.Instance.OnPlayerLeft += OnPlayerLeave;
+
+            Patches.SerializePatch.OnSerialize += OnSerialize;
 
             string ConsoleGUID = $"goldentrophy_Console_{Classes.Console.ConsoleVersion}";
             GameObject ConsoleObject = GameObject.Find(ConsoleGUID);
