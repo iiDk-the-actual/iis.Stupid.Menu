@@ -51,14 +51,14 @@ namespace iiMenu.Mods.Spammers
         public static Coroutine RigCoroutine;
         public static IEnumerator EnableRig()
         {
-            yield return new WaitForSeconds(0.3f);
+            yield return new WaitForSeconds(projDebounceType + 0.2f);
             VRRig.LocalRig.enabled = true;
         }
 
         public static Coroutine DisableCoroutine;
         public static IEnumerator DisableProjectile(SnowballThrowable Throwable)
         {
-            yield return new WaitForSeconds(0.3f);
+            yield return new WaitForSeconds(projDebounceType + 0.2f);
             Throwable.SetSnowballActiveLocal(false);
         }
 
