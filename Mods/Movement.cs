@@ -650,9 +650,10 @@ namespace iiMenu.Mods
 
             Vector3 addition = GorillaTagger.Instance.bodyCollider.transform.forward * lerpygerpy.y + GorillaTagger.Instance.bodyCollider.transform.right * lerpygerpy.x;// + new Vector3(0f, -1f, 0f);
             Physics.Raycast(GorillaTagger.Instance.bodyCollider.transform.position - new Vector3(0f, 0.2f, 0f), Vector3.down, out var Ray, 512f, NoInvisLayerMask());
+            Vector3 targetVelocity = (addition * driveSpeed);
 
             if (Ray.distance < 0.2f && (Mathf.Abs(lerpygerpy.x) > 0.05f || Mathf.Abs(lerpygerpy.y) > 0.05f))
-                GorillaTagger.Instance.rigidbody.velocity = addition * driveSpeed;
+                GorillaTagger.Instance.rigidbody.velocity = new Vector3(targetVelocity.x, GorillaTagger.Instance.rigidbody.velocity.y, targetVelocity.z);
         }
 
         private static bool lastaomfg = false;
@@ -2061,7 +2062,7 @@ namespace iiMenu.Mods
             if (invisMonke)
             {
                 VRRig.LocalRig.enabled = false;
-                VRRig.LocalRig.transform.position = new Vector3(99999f, 99999f, 99999f);
+                VRRig.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position - Vector3.up * 99999f;
             }
             if (hit == true && lastHit2 == false)
             {
@@ -2297,12 +2298,22 @@ namespace iiMenu.Mods
         public static GameObject recBodyRotary;
         public static void RecRoomBody()
         {
-            Patches.TorsoPatch.enabled = true;
-            Patches.TorsoPatch.mode = 3;
+            SetBodyPatch(true, 3);
 
             if (recBodyRotary == null)
                 recBodyRotary = new GameObject("ii_recBodyRotary");
+
             recBodyRotary.transform.rotation = Quaternion.Lerp(recBodyRotary.transform.rotation, Quaternion.Euler(0f, GorillaTagger.Instance.headCollider.transform.rotation.eulerAngles.y, 0f), Time.deltaTime * 6.5f);
+        }
+
+        public static void FreezeBodyRotation()
+        {
+            SetBodyPatch(true, 3);
+
+            if (recBodyRotary == null)
+                recBodyRotary = new GameObject("ii_recBodyRotary");
+
+            recBodyRotary.transform.rotation = rightGrab ? recBodyRotary.transform.rotation : Quaternion.Euler(0f, GorillaTagger.Instance.headCollider.transform.rotation.eulerAngles.y, 0f);
         }
 
         public static void AutoDance()
