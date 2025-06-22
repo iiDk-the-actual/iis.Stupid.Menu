@@ -1314,7 +1314,7 @@ namespace iiMenu.Mods
             if (!LeftHandSnowball.gameObject.activeSelf)
             {
                 LeftHandSnowball.SetSnowballActiveLocal(true);
-                LeftHandSnowball.IncreaseSize(3);
+                LeftHandSnowball.SetSizeLevelAuthority(3);
 
                 VRRig.LocalRig.SetThrowableProjectileColor(true, VRRig.LocalRig.playerColor);
                 LeftHandSnowball.ApplyColor(VRRig.LocalRig.playerColor);
@@ -1324,7 +1324,7 @@ namespace iiMenu.Mods
             if (!RightHandSnowball.gameObject.activeSelf)
             {
                 RightHandSnowball.SetSnowballActiveLocal(true);
-                RightHandSnowball.IncreaseSize(3);
+                RightHandSnowball.SetSizeLevelAuthority(3);
 
                 VRRig.LocalRig.SetThrowableProjectileColor(false, VRRig.LocalRig.playerColor);
                 RightHandSnowball.ApplyColor(VRRig.LocalRig.playerColor);
