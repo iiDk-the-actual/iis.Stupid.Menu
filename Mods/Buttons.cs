@@ -752,8 +752,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Slow Snowballs", method =() => Fun.SlowSnowballs(), disableMethod =() => Fun.FixSnowballs(), toolTip = "Makes snowballs go really slow when thrown."},
                 new ButtonInfo { buttonText = "Multiply Snowballs", method =() => Patches.ThrowPatch.enabled = true, disableMethod =() => Patches.ThrowPatch.enabled = false, toolTip = "Multiplies the snowballs you spawn by 5."},
 
-                new ButtonInfo { buttonText = "Snowball Buttocks", method =() => Fun.SnowballButtocks(), disableMethod =() => Movement.EnableRig(), toolTip = "Gives you fake buttocks using the snowballs." },
-                new ButtonInfo { buttonText = "Snowball Breasts", method =() => Fun.SnowballBreasts(), disableMethod =() => Movement.EnableRig(), toolTip = "Gives you fake breasts using the snowballs." },
+                new ButtonInfo { buttonText = "Snowball Buttocks", method =() => Fun.SnowballButtocks(), disableMethod =() => Fun.DisableSnowballGenitals(), toolTip = "Gives you fake buttocks using the snowballs." },
+                new ButtonInfo { buttonText = "Snowball Breasts", method =() => Fun.SnowballBreasts(), disableMethod =() => Fun.DisableSnowballGenitals(), toolTip = "Gives you fake breasts using the snowballs." },
 
                 new ButtonInfo { buttonText = "Fast Hoverboard", method =() => Fun.FastHoverboard(), disableMethod =() => Fun.FixHoverboard(), toolTip = "Makes your hoverboard go really fast."},
                 new ButtonInfo { buttonText = "Slow Hoverboard", method =() => Fun.SlowHoverboard(), disableMethod =() => Fun.FixHoverboard(), toolTip = "Makes your hoverboard go really slow."},

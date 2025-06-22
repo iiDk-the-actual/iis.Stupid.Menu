@@ -1386,6 +1386,14 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void DisableSnowballGenitals()
+        {
+            VRRig.LocalRig.enabled = true;
+
+            GetProjectile("GrowingSnowballLeftAnchor").SetSnowballActiveLocal(false);
+            GetProjectile("GrowingSnowballRightAnchor").SetSnowballActiveLocal(false);
+        }
+
         public static void FastHoverboard()
         {
             GorillaLocomotion.GTPlayer.Instance.hoverboardPaddleBoostMax = float.MaxValue;
