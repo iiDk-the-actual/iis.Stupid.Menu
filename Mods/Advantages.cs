@@ -440,6 +440,12 @@ namespace iiMenu.Mods
 
         public static void TagAll()
         {
+            if (GorillaGameManager.instance.GameType() == GorillaGameModes.GameModeType.Hunt)
+            {
+                HuntTagAll();
+                return;
+            }
+
             if (NetworkSystem.Instance.IsMasterClient)
             {
                 foreach (Photon.Realtime.Player v in PhotonNetwork.PlayerList)
@@ -569,7 +575,7 @@ namespace iiMenu.Mods
             {
                 NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Everyone is tagged!</color>");
                 VRRig.LocalRig.enabled = true;
-                GetIndex("Hunt Tag All").enabled = false;
+                GetIndex("Tag All").enabled = false;
                 ReloadMenu();
             }
         }
@@ -618,21 +624,6 @@ namespace iiMenu.Mods
             } else
             {
                 VRRig.LocalRig.enabled = true;
-            }
-        }
-
-        public static void HuntTagBot()
-        {
-            if (rightSecondary)
-            {
-                GetIndex("Hunt Tag Bot").enabled = false;
-            }
-            if (PhotonNetwork.InRoom)
-            {
-                if (!GorillaLocomotion.GTPlayer.Instance.disableMovement)
-                {
-                    GetIndex("Hunt Tag All").enabled = true;
-                }
             }
         }
 
