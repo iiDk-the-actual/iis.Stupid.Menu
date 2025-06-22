@@ -1456,9 +1456,7 @@ namespace iiMenu.Mods
             else
             {
                 if (gunLocked)
-                {
                     gunLocked = false;
-                }
             }
         }
 

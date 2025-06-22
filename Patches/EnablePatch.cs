@@ -5,7 +5,7 @@ namespace iiMenu.Patches
     [HarmonyPatch(typeof(GrowingSnowballThrowable), "OnEnable")]
     public class EnablePatch
     {
-        public static bool enabled = false;
+        public static bool enabled;
 
         public static void Postfix(GrowingSnowballThrowable __instance)
         {
