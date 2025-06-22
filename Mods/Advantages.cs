@@ -310,7 +310,6 @@ namespace iiMenu.Mods
                 Patches.SphereCastPatch.enabled = false;
         }
 
-        private static Vector3 tagStartPos;
         public static void TagGun()
         {
             if (GetGunInput(false))
@@ -357,8 +356,8 @@ namespace iiMenu.Mods
                             VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
                         }
 
-                        tagStartPos = Vector3.Lerp(tagStartPos, lockTarget.transform.position, VRRig.LocalRig.lerpValueBody);
-                        GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = tagStartPos;
+                        if (Vector3.Distance(ServerSyncPos, lockTarget.transform.position) < 6f)
+                            GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = lockTarget.transform.position;
                     }
                     else
                     {
@@ -366,14 +365,15 @@ namespace iiMenu.Mods
                         VRRig.LocalRig.enabled = true;
                     }
                 }
-
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget) && !PlayerIsTagged(gunTarget))
                     {
                         if (PhotonNetwork.LocalPlayer.IsMasterClient)
+                        {
                             AddInfected(RigManager.GetPlayerFromVRRig(gunTarget));
+                        }
                         else
                         {
                             if (PlayerIsTagged(VRRig.LocalRig))
@@ -409,9 +409,12 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget) && PlayerIsTagged(gunTarget))
                     {
                         if (PhotonNetwork.LocalPlayer.IsMasterClient)
+                        {
                             RemoveInfected(RigManager.GetPlayerFromVRRig(gunTarget));
-                        else
+                        } else
+                        {
                             NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                        }
                     }
                 }
             }
@@ -437,12 +440,6 @@ namespace iiMenu.Mods
 
         public static void TagAll()
         {
-            if (GorillaGameManager.instance.GameType() == GorillaGameModes.GameModeType.Hunt)
-            {
-                HuntTagAll();
-                return;
-            }
-
             if (NetworkSystem.Instance.IsMasterClient)
             {
                 foreach (Photon.Realtime.Player v in PhotonNetwork.PlayerList)
@@ -477,7 +474,7 @@ namespace iiMenu.Mods
                                 VRRig.LocalRig.enabled = false;
 
                                 if (!GetIndex("Obnoxious Tag").enabled)
-                                    VRRig.LocalRig.transform.position = vrrig.transform.position - new Vector3(0f, -3f, 0f);
+                                    VRRig.LocalRig.transform.position = vrrig.transform.position - new Vector3(0f, 3f, 0f);
                                 else
                                 {
                                     Vector3 position = vrrig.transform.position + RandomVector3();
@@ -509,8 +506,8 @@ namespace iiMenu.Mods
                                     VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
                                 }
 
-                                tagStartPos = Vector3.Lerp(tagStartPos, vrrig.transform.position, VRRig.LocalRig.lerpValueBody);
-                                GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = tagStartPos;
+                                if (Vector3.Distance(ServerSyncPos, lockTarget.transform.position) < 6f)
+                                    GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = vrrig.transform.position;
                             }
                         }
                     }
@@ -534,7 +531,7 @@ namespace iiMenu.Mods
                 VRRig.LocalRig.enabled = false;
 
                 if (!GetIndex("Obnoxious Tag").enabled)
-                    VRRig.LocalRig.transform.position = vrrig.transform.position - new Vector3(0f, -3f, 0f);
+                    VRRig.LocalRig.transform.position = vrrig.transform.position - new Vector3(0f, 3f, 0f);
                 else
                 {
                     Vector3 position = vrrig.transform.position + RandomVector3();
@@ -565,8 +562,8 @@ namespace iiMenu.Mods
                     VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
                 }
 
-                tagStartPos = Vector3.Lerp(tagStartPos, vrrig.transform.position, VRRig.LocalRig.lerpValueBody);
-                GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = tagStartPos;
+                if (Vector3.Distance(ServerSyncPos, lockTarget.transform.position) < 6f)
+                    GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = vrrig.transform.position;
             }
             else
             {
@@ -580,7 +577,9 @@ namespace iiMenu.Mods
         public static void TagBot()
         {
             if (rightSecondary)
+            {
                 GetIndex("Tag Bot").enabled = false;
+            }
             if (PhotonNetwork.InRoom)
             {
                 if (!PlayerIsTagged(VRRig.LocalRig))
@@ -619,6 +618,21 @@ namespace iiMenu.Mods
             } else
             {
                 VRRig.LocalRig.enabled = true;
+            }
+        }
+
+        public static void HuntTagBot()
+        {
+            if (rightSecondary)
+            {
+                GetIndex("Hunt Tag Bot").enabled = false;
+            }
+            if (PhotonNetwork.InRoom)
+            {
+                if (!GorillaLocomotion.GTPlayer.Instance.disableMovement)
+                {
+                    GetIndex("Hunt Tag All").enabled = true;
+                }
             }
         }
 
