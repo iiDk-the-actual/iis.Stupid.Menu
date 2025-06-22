@@ -59,7 +59,7 @@ namespace iiMenu.Mods.Spammers
         public static IEnumerator DisableProjectile(SnowballThrowable Throwable)
         {
             yield return new WaitForSeconds(0.3f);
-            Throwable.SetSnowballActiveLocal(true);
+            Throwable.SetSnowballActiveLocal(false);
         }
 
         public static void BetaFireProjectile(string projectileName, Vector3 position, Vector3 velocity, Color color) // This code is really bad
@@ -83,10 +83,15 @@ namespace iiMenu.Mods.Spammers
                 Throwable.transform.position = GorillaTagger.Instance.leftHandTransform.position;
                 Throwable.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
 
-                if (DisableCoroutine != null)
-                    CoroutineManager.instance.StopCoroutine(DisableCoroutine);
+                if (GetIndex("Random Projectile").enabled)
+                    CoroutineManager.instance.StartCoroutine(DisableProjectile(Throwable));
+                else
+                {
+                    if (DisableCoroutine != null)
+                        CoroutineManager.instance.StopCoroutine(DisableCoroutine);
 
-                DisableCoroutine = CoroutineManager.instance.StartCoroutine(DisableProjectile(Throwable));
+                    DisableCoroutine = CoroutineManager.instance.StartCoroutine(DisableProjectile(Throwable));
+                }
             }
 
             if (Time.time > projDebounce)
@@ -607,15 +612,15 @@ namespace iiMenu.Mods.Spammers
             }
         }
 
-        public static bool lastLeftGrab = false;
-        public static bool lastRightGrab = false;
+        private static bool lastLeftGrab;
+        private static bool lastRightGrab;
         public static void GrabProjectile()
         {
             int projIndex = projmode * 2;
             if (GetIndex("Random Projectile").enabled)
-                projIndex = UnityEngine.Random.Range(0, ProjectileObjectNames.Length);
+                projIndex = UnityEngine.Random.Range(0, ProjectileObjectNames.Length / 2) * 2;
 
-            if (leftGrab)
+            if (leftGrab && !lastLeftGrab)
             {
                 SnowballThrowable Projectile = GetProjectile(ProjectileObjectNames[projIndex]);
                 if (!Projectile.gameObject.activeSelf)
@@ -632,7 +637,7 @@ namespace iiMenu.Mods.Spammers
                 }
             }
 
-            if (rightGrab)
+            if (rightGrab && !lastRightGrab)
             {
                 SnowballThrowable Projectile = GetProjectile(ProjectileObjectNames[projIndex + 1]);
 
@@ -649,6 +654,9 @@ namespace iiMenu.Mods.Spammers
                     Projectile.ApplyColor(TargetProjectileColor);
                 }
             }
+
+            lastLeftGrab = leftGrab;
+            lastRightGrab = rightGrab;
         }
 
         public static void Urine()
