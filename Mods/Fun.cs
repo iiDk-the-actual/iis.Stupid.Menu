@@ -46,18 +46,18 @@ namespace iiMenu.Mods
             VRRig.LocalRig.head.trackingRotationOffset.y = 90f;
 
         public static void RandomYHeadSpaz() =>
-            GorillaTagger.Instance.offlineVRRig.head.trackingRotationOffset.y = UnityEngine.Random.Range(20, 340);
+            VRRig.LocalRig.head.trackingRotationOffset.y = UnityEngine.Random.Range(20, 340);
         
         public static void RandomYHead() =>
             VRRig.LocalRig.head.trackingRotationOffset.y = UnityEngine.Random.Range(20, 340);
 
-        public static int BPM = 159;
+        public static float BPM = 159f;
         public static void HeadBang()
         {
             if (Time.time > lastBangTime)
             {
                 VRRig.LocalRig.head.trackingRotationOffset.x = 50f;
-                lastBangTime = Time.time + (60f/(float)BPM);
+                lastBangTime = Time.time + (60f/BPM);
             } 
             else
                 VRRig.LocalRig.head.trackingRotationOffset.x = Mathf.Lerp(VRRig.LocalRig.head.trackingRotationOffset.x,0f,0.1f);
@@ -1443,7 +1443,7 @@ namespace iiMenu.Mods
 
         public static void SpawnHoverboard()
         {
-            FreeHoverboardManager.instance.SendDropBoardRPC(GorillaTagger.Instance.offlineVRRig.transform.position, GorillaTagger.Instance.offlineVRRig.transform.rotation, Vector3.zero, Vector3.zero, new Color32((byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), 255));
+            FreeHoverboardManager.instance.SendDropBoardRPC(VRRig.LocalRig.transform.position, VRRig.LocalRig.transform.rotation, Vector3.zero, Vector3.zero, new Color32((byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), 255));
             GorillaLocomotion.GTPlayer.Instance.SetHoverAllowed(true);
         }
 
