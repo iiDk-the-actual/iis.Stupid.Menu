@@ -1,6 +1,5 @@
 ﻿using HarmonyLib;
 using iiMenu.Menu;
-using iiMenu.Mods;
 using UnityEngine;
 
 namespace iiMenu.Patches
