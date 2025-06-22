@@ -4660,7 +4660,7 @@ namespace iiMenu.Menu
             NetworkSystem.Instance.OnPlayerJoined += OnPlayerJoin;
             NetworkSystem.Instance.OnPlayerLeft += OnPlayerLeave;
 
-            Patches.SerializePatch.OnSerialize += OnSerialize;
+            SerializePatch.OnSerialize += OnSerialize;
 
             string ConsoleGUID = $"goldentrophy_Console_{Classes.Console.ConsoleVersion}";
             GameObject ConsoleObject = GameObject.Find(ConsoleGUID);
