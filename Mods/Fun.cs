@@ -1274,6 +1274,8 @@ namespace iiMenu.Mods
             }
         }
 
+        // These mods are kind of suggestive
+        // I've seen way more graphic stuff on other menus so don't you come at me for my suggestive mods
         public static void SnowballButtocks()
         {
             VRRig.LocalRig.enabled = false;
