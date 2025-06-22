@@ -36,7 +36,7 @@ namespace iiMenu.Mods
         {
             if (leftPrimary)
             {
-                Safety.NoFinger();
+                NoFinger();
                 GTPlayer.Instance.inOverlay = true;
                 GTPlayer.Instance.leftControllerTransform.localPosition = new Vector3(238f, -90f, 0f);
                 GTPlayer.Instance.rightControllerTransform.localPosition = new Vector3(-190f, 90f, 0f);
@@ -49,7 +49,7 @@ namespace iiMenu.Mods
         public static void FakeReportMenu()
         {
             if (leftSecondary)
-                Safety.NoFinger();
+                NoFinger();
 
             GTPlayer.Instance.inOverlay = leftPrimary;
         }

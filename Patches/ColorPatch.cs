@@ -24,7 +24,7 @@ namespace iiMenu.Patches
                         UnityEngine.Random.Range(0f, 255f) / 255f,
                         UnityEngine.Random.Range(0f, 255f) / 255f
                     });
-                    iiMenu.Menu.Main.RPCProtection();
+                    Menu.Main.RPCProtection();
                     return false;
                 }
             }
