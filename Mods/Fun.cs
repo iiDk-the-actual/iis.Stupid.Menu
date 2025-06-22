@@ -1274,6 +1274,116 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void SnowballButtocks()
+        {
+            VRRig.LocalRig.enabled = false;
+
+            VRRig.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, 0.15f, 0f);
+            VRRig.LocalRig.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
+            VRRig.LocalRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
+
+            VRRig.LocalRig.leftHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + VRRig.LocalRig.transform.TransformDirection(
+                new Vector3(-0.0436f, -0.3f, -0.1563f)
+            );
+            VRRig.LocalRig.rightHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + VRRig.LocalRig.transform.TransformDirection(
+                new Vector3(-0.0072f, -0.2964f, -0.1563f)
+            );
+
+            VRRig.LocalRig.leftHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation * Quaternion.Euler(330f, 344.5f, 0f);
+            VRRig.LocalRig.rightHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation * Quaternion.Euler(340f, 165.5f, 160f);
+
+            VRRig.LocalRig.leftIndex.calcT = 1f;
+            VRRig.LocalRig.leftMiddle.calcT = 1f;
+            VRRig.LocalRig.leftThumb.calcT = 1f;
+
+            VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
+            VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
+            VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
+
+            VRRig.LocalRig.rightIndex.calcT = 1f;
+            VRRig.LocalRig.rightMiddle.calcT = 1f;
+            VRRig.LocalRig.rightThumb.calcT = 1f;
+
+            VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+            VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
+            VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
+
+            GrowingSnowballThrowable LeftHandSnowball = GetProjectile("GrowingSnowballLeftAnchor") as GrowingSnowballThrowable;
+            if (!LeftHandSnowball.gameObject.activeSelf)
+            {
+                LeftHandSnowball.SetSnowballActiveLocal(true);
+                LeftHandSnowball.IncreaseSize(3);
+
+                VRRig.LocalRig.SetThrowableProjectileColor(true, VRRig.LocalRig.playerColor);
+                LeftHandSnowball.ApplyColor(VRRig.LocalRig.playerColor);
+            }
+
+            GrowingSnowballThrowable RightHandSnowball = GetProjectile("GrowingSnowballRightAnchor") as GrowingSnowballThrowable;
+            if (!RightHandSnowball.gameObject.activeSelf)
+            {
+                RightHandSnowball.SetSnowballActiveLocal(true);
+                RightHandSnowball.IncreaseSize(3);
+
+                VRRig.LocalRig.SetThrowableProjectileColor(false, VRRig.LocalRig.playerColor);
+                RightHandSnowball.ApplyColor(VRRig.LocalRig.playerColor);
+            }
+        }
+
+        public static void SnowballBreasts()
+        {
+            VRRig.LocalRig.enabled = false;
+
+            VRRig.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, 0.15f, 0f);
+            VRRig.LocalRig.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
+            VRRig.LocalRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
+
+            VRRig.LocalRig.leftHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + VRRig.LocalRig.transform.TransformDirection(
+                new Vector3(-0.08f, -0.0691f, 0f)
+            );
+            VRRig.LocalRig.rightHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + VRRig.LocalRig.transform.TransformDirection(
+                new Vector3(-0.0073f, -0.2182f, 0.0164f)
+            );
+
+            VRRig.LocalRig.leftHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation * Quaternion.Euler(350f, 140f, 62f);
+            VRRig.LocalRig.rightHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation * Quaternion.Euler(8f, 30f, 8f);
+
+            VRRig.LocalRig.leftIndex.calcT = 1f;
+            VRRig.LocalRig.leftMiddle.calcT = 1f;
+            VRRig.LocalRig.leftThumb.calcT = 1f;
+
+            VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
+            VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
+            VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
+
+            VRRig.LocalRig.rightIndex.calcT = 1f;
+            VRRig.LocalRig.rightMiddle.calcT = 1f;
+            VRRig.LocalRig.rightThumb.calcT = 1f;
+
+            VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+            VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
+            VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
+
+            GrowingSnowballThrowable LeftHandSnowball = GetProjectile("GrowingSnowballLeftAnchor") as GrowingSnowballThrowable;
+            if (!LeftHandSnowball.gameObject.activeSelf)
+            {
+                LeftHandSnowball.SetSnowballActiveLocal(true);
+                LeftHandSnowball.IncreaseSize(3);
+
+                VRRig.LocalRig.SetThrowableProjectileColor(true, VRRig.LocalRig.playerColor);
+                LeftHandSnowball.ApplyColor(VRRig.LocalRig.playerColor);
+            }
+
+            GrowingSnowballThrowable RightHandSnowball = GetProjectile("GrowingSnowballRightAnchor") as GrowingSnowballThrowable;
+            if (!RightHandSnowball.gameObject.activeSelf)
+            {
+                RightHandSnowball.SetSnowballActiveLocal(true);
+                RightHandSnowball.IncreaseSize(3);
+
+                VRRig.LocalRig.SetThrowableProjectileColor(false, VRRig.LocalRig.playerColor);
+                RightHandSnowball.ApplyColor(VRRig.LocalRig.playerColor);
+            }
+        }
+
         public static void FastHoverboard()
         {
             GorillaLocomotion.GTPlayer.Instance.hoverboardPaddleBoostMax = float.MaxValue;
