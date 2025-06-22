@@ -241,9 +241,8 @@ namespace iiMenu.Mods
         {
             tagRangeIndex++;
             if (tagRangeIndex > 3)
-            {
                 tagRangeIndex = 0;
-            }
+            
             string[] names = new string[]
             {
                 "Unnoticable",
@@ -251,6 +250,7 @@ namespace iiMenu.Mods
                 "Far",
                 "Maximum"
             };
+
             float[] distances = new float[]
             {
                 0.3f,
@@ -272,54 +272,27 @@ namespace iiMenu.Mods
                 float distance = Vector3.Distance(they, notthem);
 
                 if (PlayerIsTagged(VRRig.LocalRig) && !PlayerIsTagged(vrrig) && GorillaLocomotion.GTPlayer.Instance.disableMovement == false && distance < tagAuraDistance)
-                {
                     if (rightHand == true) { GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = they; } else { GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.position = they; }
-                }
             }
         }
 
         public static void GripTagAura()
         {
             if (rightGrab)
-            {
-                foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-                {
-                    Vector3 they = vrrig.headMesh.transform.position;
-                    Vector3 notthem = VRRig.LocalRig.head.rigTarget.position;
-                    float distance = Vector3.Distance(they, notthem);
-
-                    if (PlayerIsTagged(VRRig.LocalRig) && !PlayerIsTagged(vrrig) && GorillaLocomotion.GTPlayer.Instance.disableMovement == false && distance < tagAuraDistance)
-                    {
-                        if (rightHand == true) { GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = they; } else { GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.position = they; }
-                    }
-                }
-            }
+                PhysicalTagAura();
         }
 
-        public static bool lastj = false;
-        public static bool jta = false;
+        public static bool lastj;
+        public static bool jta;
         public static void JoystickTagAura()
         {
             bool l = rightJoystickClick;
             if (l && !lastj)
-            {
                 jta = !jta;
-            }
             lastj = l;
-            if (jta)
-            {
-                foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-                {
-                    Vector3 they = vrrig.headMesh.transform.position;
-                    Vector3 notthem = VRRig.LocalRig.head.rigTarget.position;
-                    float distance = Vector3.Distance(they, notthem);
 
-                    if (PlayerIsTagged(VRRig.LocalRig) && !PlayerIsTagged(vrrig) && GorillaLocomotion.GTPlayer.Instance.disableMovement == false && distance < tagAuraDistance)
-                    {
-                        if (rightHand == true) { GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = they; } else { GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.position = they; }
-                    }
-                }
-            }
+            if (jta)
+                PhysicalTagAura();
         }
 
         public static void TagReach()
@@ -337,6 +310,7 @@ namespace iiMenu.Mods
                 Patches.SphereCastPatch.enabled = false;
         }
 
+        private static Vector3 tagStartPos;
         public static void TagGun()
         {
             if (GetGunInput(false))
@@ -383,7 +357,8 @@ namespace iiMenu.Mods
                             VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
                         }
 
-                        GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = lockTarget.transform.position;
+                        tagStartPos = Vector3.Lerp(tagStartPos, lockTarget.transform.position, VRRig.LocalRig.lerpValueBody);
+                        GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = tagStartPos;
                     }
                     else
                     {
@@ -391,15 +366,14 @@ namespace iiMenu.Mods
                         VRRig.LocalRig.enabled = true;
                     }
                 }
+
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget) && !PlayerIsTagged(gunTarget))
                     {
                         if (PhotonNetwork.LocalPlayer.IsMasterClient)
-                        {
                             AddInfected(RigManager.GetPlayerFromVRRig(gunTarget));
-                        }
                         else
                         {
                             if (PlayerIsTagged(VRRig.LocalRig))
@@ -435,12 +409,9 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget) && PlayerIsTagged(gunTarget))
                     {
                         if (PhotonNetwork.LocalPlayer.IsMasterClient)
-                        {
                             RemoveInfected(RigManager.GetPlayerFromVRRig(gunTarget));
-                        } else
-                        {
+                        else
                             NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-                        }
                     }
                 }
             }
@@ -457,18 +428,26 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = NewPointer.transform.position + new Vector3(0f, 0.1f, 0f);
+
+                    if (Vector3.Distance(GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 4f)
+                        GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = GorillaTagger.Instance.bodyCollider.transform.position + (GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position - GorillaTagger.Instance.bodyCollider.transform.position) * 4f;
                 }
             }
         }
 
         public static void TagAll()
         {
+            if (GorillaGameManager.instance.GameType() == GorillaGameModes.GameModeType.Hunt)
+            {
+                HuntTagAll();
+                return;
+            }
+
             if (NetworkSystem.Instance.IsMasterClient)
             {
                 foreach (Photon.Realtime.Player v in PhotonNetwork.PlayerList)
-                {
                     AddInfected(v);
-                }
+                
                 GetIndex("Tag All").enabled = false;
             }
             else
@@ -530,7 +509,8 @@ namespace iiMenu.Mods
                                     VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
                                 }
 
-                                GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = vrrig.transform.position;
+                                tagStartPos = Vector3.Lerp(tagStartPos, vrrig.transform.position, VRRig.LocalRig.lerpValueBody);
+                                GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = tagStartPos;
                             }
                         }
                     }
@@ -585,7 +565,8 @@ namespace iiMenu.Mods
                     VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
                 }
 
-                GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = vrrig.transform.position;
+                tagStartPos = Vector3.Lerp(tagStartPos, vrrig.transform.position, VRRig.LocalRig.lerpValueBody);
+                GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = tagStartPos;
             }
             else
             {
@@ -599,9 +580,7 @@ namespace iiMenu.Mods
         public static void TagBot()
         {
             if (rightSecondary)
-            {
                 GetIndex("Tag Bot").enabled = false;
-            }
             if (PhotonNetwork.InRoom)
             {
                 if (!PlayerIsTagged(VRRig.LocalRig))
@@ -640,21 +619,6 @@ namespace iiMenu.Mods
             } else
             {
                 VRRig.LocalRig.enabled = true;
-            }
-        }
-
-        public static void HuntTagBot()
-        {
-            if (rightSecondary)
-            {
-                GetIndex("Hunt Tag Bot").enabled = false;
-            }
-            if (PhotonNetwork.InRoom)
-            {
-                if (!GorillaLocomotion.GTPlayer.Instance.disableMovement)
-                {
-                    GetIndex("Hunt Tag All").enabled = true;
-                }
             }
         }
 
