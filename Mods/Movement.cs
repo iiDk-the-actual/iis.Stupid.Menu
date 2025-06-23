@@ -16,6 +16,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
+using UnityEngine.UIElements;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -24,7 +25,7 @@ namespace iiMenu.Mods
     public class Movement
     {
         public static int platformMode;
-        public static void ChangePlatformType()
+        public static void ChangePlatformType(bool positive = true)
         {
             string[] platformNames = new string[] {
                 "Normal",
@@ -36,15 +37,20 @@ namespace iiMenu.Mods
                 "Projectile"
             };
 
-            platformMode++;
-            if (platformMode >= platformNames.Length)
-                platformMode = 0;
+            if (positive)
+                platformMode++;
+            else
+                platformMode--;
+
+            platformMode %= platformNames.Length;
+            if (platformMode < 0)
+                platformMode = platformNames.Length - 1;
 
             GetIndex("Change Platform Type").overlapText = "Change Platform Type <color=grey>[</color><color=green>" + platformNames[platformMode] + "</color><color=grey>]</color>";
         }
 
         public static int platformShape;
-        public static void ChangePlatformShape()
+        public static void ChangePlatformShape(bool positive = true)
         {
             string[] platformShapes = new string[] {
                 "Sphere",
@@ -56,9 +62,14 @@ namespace iiMenu.Mods
                 "1x1"
             };
 
-            platformShape++;
-            if (platformShape >= platformShapes.Length)
-                platformShape = 0;
+            if (positive)
+                platformShape++;
+            else
+                platformShape--;
+
+            platformShape %= platformShapes.Length;
+            if (platformShape < 0)
+                platformShape = platformShapes.Length - 1;
 
             GetIndex("Change Platform Shape").overlapText = "Change Platform Shape <color=grey>[</color><color=green>" + platformShapes[platformShape] + "</color><color=grey>]</color>";
         }
@@ -374,15 +385,20 @@ namespace iiMenu.Mods
             GorillaTagger.Instance.bodyCollider.enabled = !(leftGrab || rightGrab);
         }
 
-        public static void ChangeSpeedBoostAmount()
+        public static void ChangeSpeedBoostAmount(bool positive = true)
         {
             float[] jspeedamounts = new float[] { 2f, 7.5f, 9f, 200f };
-            float[] jmultiamounts = new float[] { 0.5f, /*1.25f*/1.1f, 2f, 10f };
+            float[] jmultiamounts = new float[] { 0.5f, 1.1f, 2f, 10f };
             string[] speedNames = new string[] { "Slow", "Normal", "Fast", "Ultra Fast" };
 
-            speedboostCycle++;
-            if (speedboostCycle >= jspeedamounts.Length)
-                speedboostCycle = 0;
+            if (positive)
+                speedboostCycle++;
+            else
+                speedboostCycle--;
+
+            speedboostCycle %= jspeedamounts.Length;
+            if (speedboostCycle < 0)
+                speedboostCycle = jspeedamounts.Length - 1;
 
             jspeed = jspeedamounts[speedboostCycle];
             jmulti = jmultiamounts[speedboostCycle];
@@ -428,33 +444,39 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void ChangeFlySpeed()
+        public static void ChangeFlySpeed(bool positive = true)
         {
-            flySpeedCycle++;
-            if (flySpeedCycle > 4)
-            {
-                flySpeedCycle = 0;
-            }
-
             float[] speedamounts = new float[] { 5f, 10f, 30f, 60f, 0.5f };
-            flySpeed = speedamounts[flySpeedCycle];
-
             string[] speedNames = new string[] { "Slow", "Normal", "Fast", "Extra Fast", "Extra Slow" };
+
+            if (positive)
+                flySpeedCycle++;
+            else
+                flySpeedCycle--;
+
+            flySpeedCycle %= speedamounts.Length;
+            if (flySpeedCycle < 0)
+                flySpeedCycle = speedamounts.Length - 1;
+
+            flySpeed = speedamounts[flySpeedCycle];
             GetIndex("Change Fly Speed").overlapText = "Change Fly Speed <color=grey>[</color><color=green>" + speedNames[flySpeedCycle] + "</color><color=grey>]</color>";
         }
 
-        public static void ChangeArmLength()
+        public static void ChangeArmLength(bool positive = true)
         {
-            longarmCycle++;
-            if (longarmCycle > 4)
-            {
-                longarmCycle = 0;
-            }
-
             float[] lengthAmounts = new float[] { 0.75f, 1.1f, 1.25f, 1.5f, 2f };
-            armlength = lengthAmounts[longarmCycle];
-
             string[] lengthNames = new string[] { "Shorter", "Unnoticable", "Normal", "Long", "Extreme" };
+
+            if (positive)
+                longarmCycle++;
+            else
+                longarmCycle--;
+
+            longarmCycle %= lengthAmounts.Length;
+            if (longarmCycle < 0)
+                longarmCycle = lengthAmounts.Length - 1;
+
+            armlength = lengthAmounts[longarmCycle];
             GetIndex("Change Arm Length").overlapText = "Change Arm Length <color=grey>[</color><color=green>" + lengthNames[longarmCycle] + "</color><color=grey>]</color>";
         }
 
@@ -558,6 +580,12 @@ namespace iiMenu.Mods
             }
         }
 
+        public static float startX = -1f;
+        public static float startY = -1f;
+
+        public static float subThingy;
+        public static float subThingyZ;
+
         public static void WASDFly()
         {
             GorillaTagger.Instance.rigidbody.velocity = new Vector3(0f, 0.067f, 0f);
@@ -627,19 +655,22 @@ namespace iiMenu.Mods
 
         private static float driveSpeed = 0f;
         public static int driveInt = 0;
-        public static void ChangeDriveSpeed()
+        public static void ChangeDriveSpeed(bool positive = true)
         {
-            speedboostCycle++;
-            if (speedboostCycle > 3)
-            {
-                speedboostCycle = 0;
-            }
-
             float[] speedamounts = new float[] { 10f, 30f, 50f, 3f };
-            driveSpeed = speedamounts[speedboostCycle];
-
             string[] speedNames = new string[] { "Normal", "Fast", "Ultra Fast", "Slow" };
-            GetIndex("cdSpeed").overlapText = "Change Drive Speed <color=grey>[</color><color=green>" + speedNames[speedboostCycle] + "</color><color=grey>]</color>";
+
+            if (positive)
+                driveInt++;
+            else
+                driveInt--;
+
+            driveInt %= speedamounts.Length;
+            if (driveInt < 0)
+                driveInt = speedamounts.Length - 1;
+
+            driveSpeed = speedamounts[driveInt];
+            GetIndex("cdSpeed").overlapText = "Change Drive Speed <color=grey>[</color><color=green>" + speedNames[driveInt] + "</color><color=grey>]</color>";
         }
 
         public static Vector2 lerpygerpy = Vector2.zero;
@@ -2901,8 +2932,8 @@ namespace iiMenu.Mods
             }
         }
 
-        public static int pullPowerInt = 0;
-        public static void ChangePullModPower()
+        public static int pullPowerInt;
+        public static void ChangePullModPower(bool positive = true)
         {
             float[] powers = new float[]
             {
@@ -2918,10 +2949,16 @@ namespace iiMenu.Mods
                 "Strong",
                 "Powerful"
             };
-            pullPowerInt++;
-            if (pullPowerInt >= powers.Length)
-                pullPowerInt = 0;
-            
+
+            if (positive)
+                pullPowerInt++;
+            else
+                pullPowerInt--;
+
+            pullPowerInt %= powerNames.Length;
+            if (pullPowerInt < 0)
+                pullPowerInt = powerNames.Length - 1;
+
             pullPower = powers[pullPowerInt];
             GetIndex("Change Pull Mod Power").overlapText = "Change Pull Mod Power <color=grey>[</color><color=green>" + powerNames[pullPowerInt] + "</color><color=grey>]</color>";
         }
@@ -3156,7 +3193,7 @@ namespace iiMenu.Mods
 
         public static float predCount = 0.0125f;
         public static int predInt = 1;
-        public static void ChangePredictionAmount()
+        public static void ChangePredictionAmount(bool positive = true)
         {
             float[] predAmnts = new float[]
             {
@@ -3172,9 +3209,15 @@ namespace iiMenu.Mods
                 "High",
                 "Extreme"
             };
-            predInt++;
-            if (predInt >= predAmnts.Length)
-                predInt = 0;
+
+            if (positive)
+                predInt++;
+            else
+                predInt--;
+
+            predInt %= predAmnts.Length;
+            if (predInt < 0)
+                predInt = predAmnts.Length - 1;
 
             predCount = predAmnts[predInt];
             GetIndex("Change Prediction Amount").overlapText = "Change Prediction Amount <color=grey>[</color><color=green>" + predAmntNames[predInt] + "</color><color=grey>]</color>";
@@ -3209,7 +3252,7 @@ namespace iiMenu.Mods
         }
 
         public static int timerPowerIndex = 1;
-        public static void ChangeTimerSpeed()
+        public static void ChangeTimerSpeed(bool positive = true)
         {
             float[] timerPowers = new float[]
             {
@@ -3226,9 +3269,14 @@ namespace iiMenu.Mods
                 "Extreme"
             };
 
-            timerPowerIndex++;
-            if (timerPowerIndex >= timerPowers.Length)
-                timerPowerIndex = 0;
+            if (positive)
+                timerPowerIndex++;
+            else
+                timerPowerIndex--;
+
+            timerPowerIndex %= timerPowers.Length;
+            if (timerPowerIndex < 0)
+                timerPowerIndex = timerPowers.Length - 1;
 
             timerPower = timerPowers[predInt];
             GetIndex("Change Timer Speed").overlapText = "Change Timer Speed <color=grey>[</color><color=green>" + timerNames[timerPowerIndex] + "</color><color=grey>]</color>";

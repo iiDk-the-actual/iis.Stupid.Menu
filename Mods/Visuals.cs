@@ -9,6 +9,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
+using static Mono.Security.X509.X509Stores;
 
 namespace iiMenu.Mods
 {
@@ -126,22 +127,19 @@ namespace iiMenu.Mods
         }
 
         public static bool PerformanceVisuals;
-        public static void PerformanceVisualsEnabled()
-        {
-            PerformanceVisuals = true;
-        }
-        public static void PerformanceVisualsDisabled()
-        {
-            PerformanceVisuals = false;
-        }
 
         public static float PerformanceModeStep = 0.2f;
         public static int PerformanceModeStepIndex = 2;
-        public static void ChangePerformanceModeVisualStep()
+        public static void ChangePerformanceModeVisualStep(bool positive = true)
         {
-            PerformanceModeStepIndex++;
-            if (PerformanceModeStepIndex > 10)
-                PerformanceModeStepIndex = 0;
+            if (positive)
+                PerformanceModeStepIndex++;
+            else
+                PerformanceModeStepIndex--;
+
+            PerformanceModeStepIndex %= 11;
+            if (PerformanceModeStepIndex < 0)
+                PerformanceModeStepIndex = 10;
 
             PerformanceModeStep = PerformanceModeStepIndex / 10f;
             GetIndex("Change Performance Visuals Step").overlapText = "Change Performance Visuals Step <color=grey>[</color><color=green>" + PerformanceModeStep.ToString() + "</color><color=grey>]</color>";

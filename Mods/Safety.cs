@@ -114,10 +114,10 @@ namespace iiMenu.Mods
             }
         }
 
-        public static int antireportrangeindex = 0;
+        public static int antireportrangeindex;
         public static float threshold = 0.35f;
 
-        public static void ChangeAntiReportRange()
+        public static void ChangeAntiReportRange(bool positive = true)
         {
             string[] names = new string[]
             {
@@ -131,9 +131,15 @@ namespace iiMenu.Mods
                 0.7f,
                 1.5f
             };
-            antireportrangeindex++;
-            if (antireportrangeindex >= names.Length)
-                antireportrangeindex = 0;
+
+            if (positive)
+                antireportrangeindex++;
+            else
+                antireportrangeindex--;
+
+            antireportrangeindex %= names.Length;
+            if (antireportrangeindex < 0)
+                antireportrangeindex = names.Length - 1;
 
             threshold = distances[antireportrangeindex];
             GetIndex("Change Anti Report Distance").overlapText = "Change Anti Report Distance <color=grey>[</color><color=green>" + names[antireportrangeindex] + "</color><color=grey>]</color>";

@@ -15,6 +15,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Windows.Speech;
 using static iiMenu.Menu.Main;
+using static Mono.Security.X509.X509Stores;
 
 namespace iiMenu.Mods
 {
@@ -421,7 +422,7 @@ namespace iiMenu.Mods
         }
 
         public static int langInd = 0;
-        public static void ChangeMenuLanguage()
+        public static void ChangeMenuLanguage(bool positive = true)
         {
             string[] langnames = new string[]
             {
@@ -451,9 +452,14 @@ namespace iiMenu.Mods
                 "pl"
             };
 
-            langInd++;
-            if (langInd > langnames.Length - 1)
-                langInd = 0;
+            if (positive)
+                langInd++;
+            else
+                langInd--;
+
+            langInd %= langnames.Length;
+            if (langInd < 0)
+                langInd = langnames.Length - 1;
 
             translateCache.Clear();
             language = codenames[langInd];
@@ -466,11 +472,17 @@ namespace iiMenu.Mods
                 translate = true;
         }
 
-        public static void ChangeMenuTheme()
+        public static void ChangeMenuTheme(bool increment = true)
         {
-            themeType++;
-            if (themeType > 57)
-                themeType = 1;
+            if (increment) 
+                themeType++; 
+            else 
+                themeType--;
+
+            int themeCount = 57;
+            themeType %= themeCount + 1;
+            if (themeType < 0)
+                themeType = themeCount;
 
             if (GetIndex("Custom Menu Theme").enabled)
                 return;
@@ -1110,16 +1122,22 @@ namespace iiMenu.Mods
 
 
         private static int modifyWhatId = 0;
-        public static void CMTIncreaseRed()
+        public static void CMTRed(bool increase = true)
         {
             int r = 0;
             switch (modifyWhatId)
             {
                 case 0:
                     r = (int)Math.Round(bgColorA.r * 10f);
-                    r++;
-                    if (r > 10)
-                        r = 0;
+
+                    if (increase)
+                        r++;
+                    else
+                        r--;
+
+                    r %= 11;
+                    if (r < 0)
+                        r = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
                         bgColorA = new Color(r / 10f, bgColorA.g, bgColorA.b);
@@ -1129,9 +1147,15 @@ namespace iiMenu.Mods
                     break;
                 case 1:
                     r = (int)Math.Round(bgColorB.r * 10f);
-                    r++;
-                    if (r > 10)
-                        r = 0;
+
+                    if (increase)
+                        r++;
+                    else
+                        r--;
+
+                    r %= 11;
+                    if (r < 0)
+                        r = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
                         bgColorB = new Color(r / 10f, bgColorB.g, bgColorB.b);
@@ -1141,9 +1165,15 @@ namespace iiMenu.Mods
                     break;
                 case 2:
                     r = (int)Math.Round(buttonDefaultA.r * 10f);
-                    r++;
-                    if (r > 10)
-                        r = 0;
+
+                    if (increase)
+                        r++;
+                    else
+                        r--;
+
+                    r %= 11;
+                    if (r < 0)
+                        r = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
                         buttonDefaultA = new Color(r / 10f, buttonDefaultA.g, buttonDefaultA.b);
@@ -1153,9 +1183,15 @@ namespace iiMenu.Mods
                     break;
                 case 3:
                     r = (int)Math.Round(buttonDefaultB.r * 10f);
-                    r++;
-                    if (r > 10)
-                        r = 0;
+
+                    if (increase)
+                        r++;
+                    else
+                        r--;
+
+                    r %= 11;
+                    if (r < 0)
+                        r = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
                         buttonDefaultB = new Color(r / 10f, buttonDefaultB.g, buttonDefaultB.b);
@@ -1165,9 +1201,15 @@ namespace iiMenu.Mods
                     break;
                 case 4:
                     r = (int)Math.Round(buttonClickedA.r * 10f);
-                    r++;
-                    if (r > 10)
-                        r = 0;
+
+                    if (increase)
+                        r++;
+                    else
+                        r--;
+
+                    r %= 11;
+                    if (r < 0)
+                        r = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
                         buttonClickedA = new Color(r / 10f, buttonClickedA.g, buttonClickedA.b);
@@ -1177,9 +1219,15 @@ namespace iiMenu.Mods
                     break;
                 case 5:
                     r = (int)Math.Round(buttonClickedB.r * 10f);
-                    r++;
-                    if (r > 10)
-                        r = 0;
+
+                    if (increase)
+                        r++;
+                    else
+                        r--;
+
+                    r %= 11;
+                    if (r < 0)
+                        r = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
                         buttonClickedB = new Color(r / 10f, buttonClickedB.g, buttonClickedB.b);
@@ -1189,9 +1237,15 @@ namespace iiMenu.Mods
                     break;
                 case 6:
                     r = (int)Math.Round(titleColor.r * 10f);
-                    r++;
-                    if (r > 10)
-                        r = 0;
+
+                    if (increase)
+                        r++;
+                    else
+                        r--;
+
+                    r %= 11;
+                    if (r < 0)
+                        r = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
                         titleColor = new Color(r / 10f, titleColor.g, titleColor.b);
@@ -1201,9 +1255,15 @@ namespace iiMenu.Mods
                     break;
                 case 7:
                     r = (int)Math.Round(textColor.r * 10f);
-                    r++;
-                    if (r > 10)
-                        r = 0;
+
+                    if (increase)
+                        r++;
+                    else
+                        r--;
+
+                    r %= 11;
+                    if (r < 0)
+                        r = 10;
 
                     textColor = new Color(r / 10f, textColor.g, textColor.b);
 
@@ -1212,9 +1272,15 @@ namespace iiMenu.Mods
                     break;
                 case 8:
                     r = (int)Math.Round(textClicked.r * 10f);
-                    r++;
-                    if (r > 10)
-                        r = 0;
+
+                    if (increase)
+                        r++;
+                    else
+                        r--;
+
+                    r %= 11;
+                    if (r < 0)
+                        r = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
                         textClicked = new Color(r / 10f, textClicked.g, textClicked.b);
@@ -1225,16 +1291,22 @@ namespace iiMenu.Mods
             }
             UpdateWriteCustomTheme();
         }
-        public static void CMTIncreaseGreen()
+        public static void CMTGreen(bool increase = true)
         {
             int g = 0;
             switch (modifyWhatId)
             {
                 case 0:
                     g = (int)Math.Round(bgColorA.g * 10f);
-                    g++;
-                    if (g > 10)
-                        g = 0;
+
+                    if (increase)
+                        g++;
+                    else
+                        g--;
+
+                    g %= 11;
+                    if (g < 0)
+                        g = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
                         bgColorA = new Color(bgColorA.r, g / 10f, bgColorA.b);
@@ -1244,9 +1316,15 @@ namespace iiMenu.Mods
                     break;
                 case 1:
                     g = (int)Math.Round(bgColorB.g * 10f);
-                    g++;
-                    if (g > 10)
-                        g = 0;
+
+                    if (increase)
+                        g++;
+                    else
+                        g--;
+
+                    g %= 11;
+                    if (g < 0)
+                        g = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
                         bgColorB = new Color(bgColorB.r, g / 10f, bgColorB.b);
@@ -1256,9 +1334,15 @@ namespace iiMenu.Mods
                     break;
                 case 2:
                     g = (int)Math.Round(buttonDefaultA.g * 10f);
-                    g++;
-                    if (g > 10)
-                        g = 0;
+
+                    if (increase)
+                        g++;
+                    else
+                        g--;
+
+                    g %= 11;
+                    if (g < 0)
+                        g = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
                         buttonDefaultA = new Color(buttonDefaultA.r, g / 10f, buttonDefaultA.b);
@@ -1268,9 +1352,15 @@ namespace iiMenu.Mods
                     break;
                 case 3:
                     g = (int)Math.Round(buttonDefaultB.g * 10f);
-                    g++;
-                    if (g > 10)
-                        g = 0;
+
+                    if (increase)
+                        g++;
+                    else
+                        g--;
+
+                    g %= 11;
+                    if (g < 0)
+                        g = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
                         buttonDefaultB = new Color(buttonDefaultB.r, g / 10f, buttonDefaultB.b);
@@ -1280,9 +1370,15 @@ namespace iiMenu.Mods
                     break;
                 case 4:
                     g = (int)Math.Round(buttonClickedA.g * 10f);
-                    g++;
-                    if (g > 10)
-                        g = 0;
+
+                    if (increase)
+                        g++;
+                    else
+                        g--;
+
+                    g %= 11;
+                    if (g < 0)
+                        g = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
                         buttonClickedA = new Color(buttonClickedA.r, g / 10f, buttonClickedA.b);
@@ -1292,9 +1388,15 @@ namespace iiMenu.Mods
                     break;
                 case 5:
                     g = (int)Math.Round(buttonClickedB.g * 10f);
-                    g++;
-                    if (g > 10)
-                        g = 0;
+
+                    if (increase)
+                        g++;
+                    else
+                        g--;
+
+                    g %= 11;
+                    if (g < 0)
+                        g = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
                         buttonClickedB = new Color(buttonClickedB.r, g / 10f, buttonClickedB.b);
@@ -1304,9 +1406,15 @@ namespace iiMenu.Mods
                     break;
                 case 6:
                     g = (int)Math.Round(titleColor.g * 10f);
-                    g++;
-                    if (g > 10)
-                        g = 0;
+
+                    if (increase)
+                        g++;
+                    else
+                        g--;
+
+                    g %= 11;
+                    if (g < 0)
+                        g = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
                         titleColor = new Color(titleColor.r, g / 10f, titleColor.b);
@@ -1316,9 +1424,15 @@ namespace iiMenu.Mods
                     break;
                 case 7:
                     g = (int)Math.Round(textColor.g * 10f);
-                    g++;
-                    if (g > 10)
-                        g = 0;
+
+                    if (increase)
+                        g++;
+                    else
+                        g--;
+
+                    g %= 11;
+                    if (g < 0)
+                        g = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
                         textColor = new Color(textColor.r, g / 10f, textColor.b);
@@ -1328,9 +1442,15 @@ namespace iiMenu.Mods
                     break;
                 case 8:
                     g = (int)Math.Round(textClicked.g * 10f);
-                    g++;
-                    if (g > 10)
-                        g = 0;
+
+                    if (increase)
+                        g++;
+                    else
+                        g--;
+
+                    g %= 11;
+                    if (g < 0)
+                        g = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
                         textClicked = new Color(textClicked.r, g / 10f, textClicked.b);
@@ -1341,16 +1461,22 @@ namespace iiMenu.Mods
             }
             UpdateWriteCustomTheme();
         }
-        public static void CMTIncreaseBlue()
+        public static void CMTBlue(bool increase = true)
         {
             int b = 0;
             switch (modifyWhatId)
             {
                 case 0:
                     b = (int)Math.Round(bgColorA.b * 10f);
-                    b++;
-                    if (b > 10)
-                        b = 0;
+
+                    if (increase)
+                        b++;
+                    else
+                        b--;
+
+                    b %= 11;
+                    if (b < 0)
+                        b = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
                         bgColorA = new Color(bgColorA.r, bgColorA.g, b / 10f);
@@ -1360,9 +1486,15 @@ namespace iiMenu.Mods
                     break;
                 case 1:
                     b = (int)Math.Round(bgColorB.b * 10f);
-                    b++;
-                    if (b > 10)
-                        b = 0;
+
+                    if (increase)
+                        b++;
+                    else
+                        b--;
+
+                    b %= 11;
+                    if (b < 0)
+                        b = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
                         bgColorB = new Color(bgColorB.r, bgColorB.g, b / 10f);
@@ -1372,9 +1504,15 @@ namespace iiMenu.Mods
                     break;
                 case 2:
                     b = (int)Math.Round(buttonDefaultA.b * 10f);
-                    b++;
-                    if (b > 10)
-                        b = 0;
+
+                    if (increase)
+                        b++;
+                    else
+                        b--;
+
+                    b %= 11;
+                    if (b < 0)
+                        b = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
                         buttonDefaultA = new Color(buttonDefaultA.r, buttonDefaultA.g, b / 10f);
@@ -1384,9 +1522,15 @@ namespace iiMenu.Mods
                     break;
                 case 3:
                     b = (int)Math.Round(buttonDefaultB.b * 10f);
-                    b++;
-                    if (b > 10)
-                        b = 0;
+
+                    if (increase)
+                        b++;
+                    else
+                        b--;
+
+                    b %= 11;
+                    if (b < 0)
+                        b = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
                         buttonDefaultB = new Color(buttonDefaultB.r, buttonDefaultB.g, b / 10f);
@@ -1396,9 +1540,15 @@ namespace iiMenu.Mods
                     break;
                 case 4:
                     b = (int)Math.Round(buttonClickedA.b * 10f);
-                    b++;
-                    if (b > 10)
-                        b = 0;
+
+                    if (increase)
+                        b++;
+                    else
+                        b--;
+
+                    b %= 11;
+                    if (b < 0)
+                        b = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
                         buttonClickedA = new Color(buttonClickedA.r, buttonClickedA.g, b / 10f);
@@ -1408,9 +1558,15 @@ namespace iiMenu.Mods
                     break;
                 case 5:
                     b = (int)Math.Round(buttonClickedB.b * 10f);
-                    b++;
-                    if (b > 10)
-                        b = 0;
+
+                    if (increase)
+                        b++;
+                    else
+                        b--;
+
+                    b %= 11;
+                    if (b < 0)
+                        b = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
                         buttonClickedB = new Color(buttonClickedB.r, buttonClickedB.g, b / 10f);
@@ -1420,9 +1576,15 @@ namespace iiMenu.Mods
                     break;
                 case 6:
                     b = (int)Math.Round(titleColor.b * 10f);
-                    b++;
-                    if (b > 10)
-                        b = 0;
+
+                    if (increase)
+                        b++;
+                    else
+                        b--;
+
+                    b %= 11;
+                    if (b < 0)
+                        b = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
                         titleColor = new Color(titleColor.r, titleColor.g, b / 10f);
@@ -1432,9 +1594,15 @@ namespace iiMenu.Mods
                     break;
                 case 7:
                     b = (int)Math.Round(textColor.b * 10f);
-                    b++;
-                    if (b > 10)
-                        b = 0;
+
+                    if (increase)
+                        b++;
+                    else
+                        b--;
+
+                    b %= 11;
+                    if (b < 0)
+                        b = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
                         textColor = new Color(textColor.r, textColor.g, b / 10f);
@@ -1444,9 +1612,15 @@ namespace iiMenu.Mods
                     break;
                 case 8:
                     b = (int)Math.Round(textClicked.b * 10f);
-                    b++;
-                    if (b > 10)
-                        b = 0;
+
+                    if (increase)
+                        b++;
+                    else
+                        b--;
+
+                    b %= 11;
+                    if (b < 0)
+                        b = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
                         textClicked = new Color(textClicked.r, textClicked.g, b / 10f);
@@ -1506,9 +1680,9 @@ namespace iiMenu.Mods
 
             List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit First Color", method = () => CMTBackground(), isTogglable = false, toolTip = "Returns you back to the background menu." },
-                new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + ((int)Math.Round(bgColorA.r * 10f)).ToString() + "</color><color=grey>]</color>", method = () => CMTIncreaseRed(), isTogglable = false, toolTip = "Change the red of the first color of the background." },
-                new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + ((int)Math.Round(bgColorA.g * 10f)).ToString() + "</color><color=grey>]</color>", method = () => CMTIncreaseGreen(), isTogglable = false, toolTip = "Change the green of the first color of the background." },
-                new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>" + ((int)Math.Round(bgColorA.b * 10f)).ToString() + "</color><color=grey>]</color>", method = () => CMTIncreaseBlue(), isTogglable = false, toolTip = "Change the blue of the first color of the background." },
+                new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + ((int)Math.Round(bgColorA.r * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTRed(), enableMethod =() => CMTRed(), disableMethod =() => CMTRed(false), incremental = true, isTogglable = false, toolTip = "Change the red of the first color of the background." },
+                new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + ((int)Math.Round(bgColorA.g * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTGreen(), enableMethod =() => CMTGreen(), disableMethod =() => CMTGreen(false), incremental = true, isTogglable = false, toolTip = "Change the green of the first color of the background." },
+                new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>" + ((int)Math.Round(bgColorA.b * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTBlue(), enableMethod =() => CMTBlue(), disableMethod =() => CMTBlue(false), incremental = true, isTogglable = false, toolTip = "Change the blue of the first color of the background." },
                 new ButtonInfo { buttonText = "PreviewLabel", overlapText = "<color=#" + ColorToHex(bgColorA) + ">Preview</color>", label = true },
             };
 
@@ -1521,9 +1695,9 @@ namespace iiMenu.Mods
 
             List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit Second Color", method = () => CMTBackground(), isTogglable = false, toolTip = "Returns you back to the background menu." },
-                new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + ((int)Math.Round(bgColorB.r * 10f)).ToString() + "</color><color=grey>]</color>", method = () => CMTIncreaseRed(), isTogglable = false, toolTip = "Change the red of the second color of the background." },
-                new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + ((int)Math.Round(bgColorB.g * 10f)).ToString() + "</color><color=grey>]</color>", method = () => CMTIncreaseGreen(), isTogglable = false, toolTip = "Change the green of the second color of the background." },
-                new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>" + ((int)Math.Round(bgColorB.b * 10f)).ToString() + "</color><color=grey>]</color>", method = () => CMTIncreaseBlue(), isTogglable = false, toolTip = "Change the blue of the second color of the background." },
+                new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + ((int)Math.Round(bgColorB.r * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTRed(), enableMethod =() => CMTRed(), disableMethod =() => CMTRed(false), incremental = true, isTogglable = false, toolTip = "Change the red of the second color of the background." },
+                new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + ((int)Math.Round(bgColorB.g * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTGreen(), enableMethod =() => CMTGreen(), disableMethod =() => CMTGreen(false), incremental = true, isTogglable = false, toolTip = "Change the green of the second color of the background." },
+                new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>" + ((int)Math.Round(bgColorB.b * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTBlue(), enableMethod =() => CMTBlue(), disableMethod =() => CMTBlue(false), incremental = true, isTogglable = false, toolTip = "Change the blue of the second color of the background." },
                 new ButtonInfo { buttonText = "PreviewLabel", overlapText = "<color=#" + ColorToHex(bgColorB) + ">Preview</color>", label = true },
             };
 
@@ -1573,9 +1747,9 @@ namespace iiMenu.Mods
 
             List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit First Color", method = () => CMTButtonEnabled(), isTogglable = false, toolTip = "Returns you back to the enabled button menu." },
-                new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + ((int)Math.Round(buttonClickedA.r * 10f)).ToString() + "</color><color=grey>]</color>", method = () => CMTIncreaseRed(), isTogglable = false, toolTip = "Change the red of the first color of the enabled button color." },
-                new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + ((int)Math.Round(buttonClickedA.g * 10f)).ToString() + "</color><color=grey>]</color>", method = () => CMTIncreaseGreen(), isTogglable = false, toolTip = "Change the green of the first color of the enabled button color." },
-                new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>" + ((int)Math.Round(buttonClickedA.b * 10f)).ToString() + "</color><color=grey>]</color>", method = () => CMTIncreaseBlue(), isTogglable = false, toolTip = "Change the blue of the first color of the enabled button color." },
+                new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + ((int)Math.Round(buttonClickedA.r * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTRed(), enableMethod =() => CMTRed(), disableMethod =() => CMTRed(false), incremental = true, isTogglable = false, toolTip = "Change the red of the first color of the enabled button color." },
+                new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + ((int)Math.Round(buttonClickedA.g * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTGreen(), enableMethod =() => CMTGreen(), disableMethod =() => CMTGreen(false), incremental = true, isTogglable = false, toolTip = "Change the green of the first color of the enabled button color." },
+                new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>" + ((int)Math.Round(buttonClickedA.b * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTBlue(), enableMethod =() => CMTBlue(), disableMethod =() => CMTBlue(false), incremental = true, isTogglable = false, toolTip = "Change the blue of the first color of the enabled button color." },
                 new ButtonInfo { buttonText = "PreviewLabel", overlapText = "<color=#" + ColorToHex(buttonClickedA) + ">Preview</color>", label = true },
             };
 
@@ -1588,9 +1762,9 @@ namespace iiMenu.Mods
 
             List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit Second Color", method = () => CMTButtonEnabled(), isTogglable = false, toolTip = "Returns you back to the enabled button menu." },
-                new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + ((int)Math.Round(buttonClickedB.r * 10f)).ToString() + "</color><color=grey>]</color>", method = () => CMTIncreaseRed(), isTogglable = false, toolTip = "Change the red of the first color of the enabled button color." },
-                new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + ((int)Math.Round(buttonClickedB.g * 10f)).ToString() + "</color><color=grey>]</color>", method = () => CMTIncreaseGreen(), isTogglable = false, toolTip = "Change the green of the first color of the enabled button color." },
-                new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>" + ((int)Math.Round(buttonClickedB.b * 10f)).ToString() + "</color><color=grey>]</color>", method = () => CMTIncreaseBlue(), isTogglable = false, toolTip = "Change the blue of the first color of the enabled button color." },
+                new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + ((int)Math.Round(buttonClickedB.r * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTRed(), enableMethod =() => CMTRed(), disableMethod =() => CMTRed(false), incremental = true, isTogglable = false, toolTip = "Change the red of the first color of the enabled button color." },
+                new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + ((int)Math.Round(buttonClickedB.g * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTGreen(), enableMethod =() => CMTGreen(), disableMethod =() => CMTGreen(false), incremental = true, isTogglable = false, toolTip = "Change the green of the first color of the enabled button color." },
+                new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>" + ((int)Math.Round(buttonClickedB.b * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTBlue(), enableMethod =() => CMTBlue(), disableMethod =() => CMTBlue(false), incremental = true, isTogglable = false, toolTip = "Change the blue of the first color of the enabled button color." },
                 new ButtonInfo { buttonText = "PreviewLabel", overlapText = "<color=#" + ColorToHex(buttonClickedB) + ">Preview</color>", label = true },
             };
 
@@ -1603,9 +1777,9 @@ namespace iiMenu.Mods
 
             List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit First Color", method = () => CMTButtonDisabled(), isTogglable = false, toolTip = "Returns you back to the disabled button menu." },
-                new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + ((int)Math.Round(buttonDefaultA.r * 10f)).ToString() + "</color><color=grey>]</color>", method = () => CMTIncreaseRed(), isTogglable = false, toolTip = "Change the red of the first color of the disabled button color." },
-                new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + ((int)Math.Round(buttonDefaultA.g * 10f)).ToString() + "</color><color=grey>]</color>", method = () => CMTIncreaseGreen(), isTogglable = false, toolTip = "Change the green of the first color of the disabled button color." },
-                new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>" + ((int)Math.Round(buttonDefaultA.b * 10f)).ToString() + "</color><color=grey>]</color>", method = () => CMTIncreaseBlue(), isTogglable = false, toolTip = "Change the blue of the first color of the disabled button color." },
+                new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + ((int)Math.Round(buttonDefaultA.r * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTRed(), enableMethod =() => CMTRed(), disableMethod =() => CMTRed(false), incremental = true, isTogglable = false, toolTip = "Change the red of the first color of the disabled button color." },
+                new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + ((int)Math.Round(buttonDefaultA.g * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTGreen(), enableMethod =() => CMTGreen(), disableMethod =() => CMTGreen(false), incremental = true, isTogglable = false, toolTip = "Change the green of the first color of the disabled button color." },
+                new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>" + ((int)Math.Round(buttonDefaultA.b * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTBlue(), enableMethod =() => CMTBlue(), disableMethod =() => CMTBlue(false), incremental = true, isTogglable = false, toolTip = "Change the blue of the first color of the disabled button color." },
                 new ButtonInfo { buttonText = "PreviewLabel", overlapText = "<color=#" + ColorToHex(buttonDefaultA) + ">Preview</color>", label = true },
             };
 
@@ -1618,9 +1792,9 @@ namespace iiMenu.Mods
 
             List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit Second Color", method = () => CMTButtonDisabled(), isTogglable = false, toolTip = "Returns you back to the disabled button menu." },
-                new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + ((int)Math.Round(buttonDefaultB.r * 10f)).ToString() + "</color><color=grey>]</color>", method = () => CMTIncreaseRed(), isTogglable = false, toolTip = "Change the red of the first color of the disabled button color." },
-                new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + ((int)Math.Round(buttonDefaultB.g * 10f)).ToString() + "</color><color=grey>]</color>", method = () => CMTIncreaseGreen(), isTogglable = false, toolTip = "Change the green of the first color of the disabled button color." },
-                new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>" + ((int)Math.Round(buttonDefaultB.b * 10f)).ToString() + "</color><color=grey>]</color>", method = () => CMTIncreaseBlue(), isTogglable = false, toolTip = "Change the blue of the first color of the disabled button color." },
+                new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + ((int)Math.Round(buttonDefaultB.r * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTRed(), enableMethod =() => CMTRed(), disableMethod =() => CMTRed(false), incremental = true, isTogglable = false, toolTip = "Change the red of the first color of the disabled button color." },
+                new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + ((int)Math.Round(buttonDefaultB.g * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTGreen(), enableMethod =() => CMTGreen(), disableMethod =() => CMTGreen(false), incremental = true, isTogglable = false, toolTip = "Change the green of the first color of the disabled button color." },
+                new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>" + ((int)Math.Round(buttonDefaultB.b * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTBlue(), enableMethod =() => CMTBlue(), disableMethod =() => CMTBlue(false), incremental = true, isTogglable = false, toolTip = "Change the blue of the first color of the disabled button color." },
                 new ButtonInfo { buttonText = "PreviewLabel", overlapText = "<color=#" + ColorToHex(buttonDefaultB) + ">Preview</color>", label = true },
             };
 
@@ -1647,9 +1821,9 @@ namespace iiMenu.Mods
 
             List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit Title", method = () => CMTText(), isTogglable = false, toolTip = "Returns you back to the text menu." },
-                new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + ((int)Math.Round(titleColor.r * 10f)).ToString() + "</color><color=grey>]</color>", method = () => CMTIncreaseRed(), isTogglable = false, toolTip = "Change the red of the title color." },
-                new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + ((int)Math.Round(titleColor.g * 10f)).ToString() + "</color><color=grey>]</color>", method = () => CMTIncreaseGreen(), isTogglable = false, toolTip = "Change the green of the title color." },
-                new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>" + ((int)Math.Round(titleColor.b * 10f)).ToString() + "</color><color=grey>]</color>", method = () => CMTIncreaseBlue(), isTogglable = false, toolTip = "Change the blue of the title color." },
+                new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + ((int)Math.Round(titleColor.r * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTRed(), enableMethod =() => CMTRed(), disableMethod =() => CMTRed(false), incremental = true, isTogglable = false, toolTip = "Change the red of the title color." },
+                new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + ((int)Math.Round(titleColor.g * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTGreen(), enableMethod =() => CMTGreen(), disableMethod =() => CMTGreen(false), incremental = true, isTogglable = false, toolTip = "Change the green of the title color." },
+                new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>" + ((int)Math.Round(titleColor.b * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTBlue(), enableMethod =() => CMTBlue(), disableMethod =() => CMTBlue(false), incremental = true, isTogglable = false, toolTip = "Change the blue of the title color." },
                 new ButtonInfo { buttonText = "PreviewLabel", overlapText = "<color=#" + ColorToHex(titleColor) + ">Preview</color>", label = true },
             };
 
@@ -1662,9 +1836,9 @@ namespace iiMenu.Mods
 
             List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit Second Color", method = () => CMTText(), isTogglable = false, toolTip = "Returns you back to the text menu." },
-                new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + ((int)Math.Round(textClicked.r * 10f)).ToString() + "</color><color=grey>]</color>", method = () => CMTIncreaseRed(), isTogglable = false, toolTip = "Change the red of the enabled text color." },
-                new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + ((int)Math.Round(textClicked.g * 10f)).ToString() + "</color><color=grey>]</color>", method = () => CMTIncreaseGreen(), isTogglable = false, toolTip = "Change the green of the enabled text color." },
-                new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>" + ((int)Math.Round(textClicked.b * 10f)).ToString() + "</color><color=grey>]</color>", method = () => CMTIncreaseBlue(), isTogglable = false, toolTip = "Change the blue of the enabled text color." },
+                new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + ((int)Math.Round(textClicked.r * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTRed(), enableMethod =() => CMTRed(), disableMethod =() => CMTRed(false), incremental = true, isTogglable = false, toolTip = "Change the red of the enabled text color." },
+                new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + ((int)Math.Round(textClicked.g * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTGreen(), enableMethod =() => CMTGreen(), disableMethod =() => CMTGreen(false), incremental = true, isTogglable = false, toolTip = "Change the green of the enabled text color." },
+                new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>" + ((int)Math.Round(textClicked.b * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTBlue(), enableMethod =() => CMTBlue(), disableMethod =() => CMTBlue(false), incremental = true, isTogglable = false, toolTip = "Change the blue of the enabled text color." },
                 new ButtonInfo { buttonText = "PreviewLabel", overlapText = "<color=#" + ColorToHex(textClicked) + ">Preview</color>", label = true },
             };
 
@@ -1677,9 +1851,9 @@ namespace iiMenu.Mods
 
             List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit Second Color", method = () => CMTText(), isTogglable = false, toolTip = "Returns you back to the text menu." },
-                new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + ((int)Math.Round(textColor.r * 10f)).ToString() + "</color><color=grey>]</color>", method = () => CMTIncreaseRed(), isTogglable = false, toolTip = "Change the red of the disabled text color." },
-                new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + ((int)Math.Round(textColor.g * 10f)).ToString() + "</color><color=grey>]</color>", method = () => CMTIncreaseGreen(), isTogglable = false, toolTip = "Change the green of the disabled text color." },
-                new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>" + ((int)Math.Round(textColor.b * 10f)).ToString() + "</color><color=grey>]</color>", method = () => CMTIncreaseBlue(), isTogglable = false, toolTip = "Change the blue of the disabled text color." },
+                new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + ((int)Math.Round(textColor.r * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTRed(), enableMethod =() => CMTRed(), disableMethod =() => CMTRed(false), incremental = true, isTogglable = false, toolTip = "Change the red of the disabled text color." },
+                new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + ((int)Math.Round(textColor.g * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTGreen(), enableMethod =() => CMTGreen(), disableMethod =() => CMTGreen(false), incremental = true, isTogglable = false, toolTip = "Change the green of the disabled text color." },
+                new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>" + ((int)Math.Round(textColor.b * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTBlue(), enableMethod =() => CMTBlue(), disableMethod =() => CMTBlue(false), incremental = true, isTogglable = false, toolTip = "Change the blue of the disabled text color." },
                 new ButtonInfo { buttonText = "PreviewLabel", overlapText = "<color=#" + ColorToHex(textColor) + ">Preview</color>", label = true },
             };
 
@@ -1770,11 +1944,16 @@ namespace iiMenu.Mods
             doCustomMenuBackground = false;
         }
 
-        public static void ChangePageType() // Say goodbye to daily lagspikes and dirty if spam with new else
+        public static void ChangePageType(bool positive = true)
         {
-            pageButtonType++;
-            if (pageButtonType > 6)
-                pageButtonType = 1;
+            if (positive)
+                pageButtonType++;
+            else
+                pageButtonType--;
+
+            pageButtonType %= 7;
+            if (pageButtonType < 0)
+                pageButtonType = 6;
 
             if (pageButtonType == 1)
             {
@@ -1788,18 +1967,27 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void ChangeArrowType()
+        public static void ChangeArrowType(bool positive = true)
         {
-            arrowType++;
+            if (positive)
+                arrowType++;
+            else
+                arrowType--;
+
             if (arrowType > arrowTypes.Length - 1)
                 arrowType = 0;
         }
 
-        public static void ChangeFontType() // Say goodbye to daily lagspikes and dirty if spam with new switch (x) { }
+        public static void ChangeFontType(bool positive = true)
         {
-            fontCycle++;
-            if (fontCycle > 9)
-                fontCycle = 0;
+            if (positive)
+                fontCycle++;
+            else
+                fontCycle--;
+
+            fontCycle %= 10;
+            if (fontCycle < 0)
+                fontCycle = 9;
 
             switch (fontCycle) {
                 case 0:
@@ -1838,17 +2026,22 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void ChangeFontStyleType()
+        public static void ChangeFontStyleType(bool positive = true)
         {
-            fontStyleType++;
-            if (fontStyleType > 3)
-                fontStyleType = 0;
+            if (positive)
+                fontStyleType++;
+            else
+                fontStyleType--;
+
+            fontStyleType %= 4;
+            if (fontStyleType < 0)
+                fontStyleType = 3;
 
             activeFontStyle = (FontStyle)fontStyleType;
         }
 
         public static int inputTextColorInt = 3;
-        public static void ChangeInputTextColor()
+        public static void ChangeInputTextColor(bool positive = true)
         {
             string[] textColors = new string[]
             {
@@ -1881,31 +2074,46 @@ namespace iiMenu.Mods
                 "#ff005d"
             };
 
-            inputTextColorInt++;
-            if (inputTextColorInt > realinputcolor.Length - 1)
-                inputTextColorInt = 0;
+            if (positive)
+                inputTextColorInt++;
+            else
+                inputTextColorInt--;
+
+            inputTextColorInt %= realinputcolor.Length;
+            if (inputTextColorInt < 0)
+                inputTextColorInt = realinputcolor.Length - 1;
 
             inputTextColor = realinputcolor[inputTextColorInt];
             GetIndex("Change Input Text Color").overlapText = $"Change Input Text Color <color=grey>[</color><color=green>{textColors[inputTextColorInt]}</color><color=grey>]</color>";
         }
 
-        public static void ChangePCUI()
+        public static void ChangePCUI(bool positive = true)
         {
-            pcbg++;
-            if (pcbg > 3)
-                pcbg = 0;
+            if (positive)
+                pcbg++;
+            else
+                pcbg--;
+
+            pcbg %= 4;
+            if (pcbg < 0)
+                pcbg = 3;
         }
 
-        public static void ChangeNotificationTime()
+        public static void ChangeNotificationTime(bool positive = true)
         {
-            notificationDecayTime += 1000;
-            if (notificationDecayTime > 5500)
-                notificationDecayTime = 1000;
-            
+            if (positive)
+                notificationDecayTime += 1000;
+            else
+                notificationDecayTime -= 1000;
+
+            notificationDecayTime %= 6000;
+            if (notificationDecayTime < 0)
+                notificationDecayTime = 5000;
+
             GetIndex("Change Notification Time").overlapText = "Change Notification Time <color=grey>[</color><color=green>" + (notificationDecayTime / 1000).ToString() + "</color><color=grey>]</color>";
         }
 
-        public static void ChangeNotificationSound()
+        public static void ChangeNotificationSound(bool positive = true)
         {
             string[] notificationSoundNames = new string[]
             {
@@ -1923,14 +2131,19 @@ namespace iiMenu.Mods
                 "Roblox Bass"
             };
 
-            notificationSoundIndex++;
-            if (notificationSoundIndex > notificationSoundNames.Length - 1)
-                notificationSoundIndex = 0;
+            if (positive)
+                notificationSoundIndex++;
+            else
+                notificationSoundIndex--;
+
+            notificationSoundIndex %= notificationSoundNames.Length;
+            if (notificationSoundIndex < 0)
+                notificationSoundIndex = notificationSoundNames.Length - 1;
 
             GetIndex("Change Notification Sound").overlapText = "Change Notification Sound <color=grey>[</color><color=green>" + notificationSoundNames[notificationSoundIndex] + "</color><color=grey>]</color>";
         }
 
-        public static void ChangeNarrationVoice()
+        public static void ChangeNarrationVoice(bool positive = true)
         {
             string[] narratorNames = new string[]
             {
@@ -1945,22 +2158,21 @@ namespace iiMenu.Mods
                 "Ewa"
             };
 
-            narratorIndex++;
-            if (narratorIndex > narratorNames.Length - 1)
-                narratorIndex = 0;
+            if (positive)
+                narratorIndex++;
+            else
+                narratorIndex--;
+
+            narratorIndex %= narratorNames.Length;
+            if (narratorIndex < 0)
+                narratorIndex = narratorNames.Length - 1;
 
             GetIndex("Change Narration Voice").overlapText = "Change Narration Voice <color=grey>[</color><color=green>" + narratorNames[narratorIndex] + "</color><color=grey>]</color>";
             narratorName = narratorNames[narratorIndex];
         }
 
-        public static void ChangePointerPosition()
+        public static void ChangePointerPosition(bool positive = true)
         {
-            pointerIndex++;
-            if (pointerIndex > 3)
-            {
-                pointerIndex = 0;
-            }
-
             Vector3[] pointerPos = new Vector3[]
             {
                 new Vector3(0f, -0.1f, 0f),
@@ -1968,12 +2180,22 @@ namespace iiMenu.Mods
                 new Vector3(0f, 0.1f, -0.05f),
                 new Vector3(0f, 0.0666f, 0.1f)
             };
+
+            if (positive)
+                pointerIndex++;
+            else
+                pointerIndex--;
+
+            pointerIndex %= pointerPos.Length;
+            if (pointerIndex < 0)
+                pointerIndex = pointerPos.Length - 1;
+
             pointerOffset = pointerPos[pointerIndex];
             try { reference.transform.localPosition = pointerOffset; } catch { }
         }
 
         // Credits to Scintilla for the idea
-        public static void ChangeGunVariation()
+        public static void ChangeGunVariation(bool positive = true)
         {
             string[] VariationNames = new string[]
             {
@@ -1987,14 +2209,19 @@ namespace iiMenu.Mods
                 "Audio"
             };
 
-            gunVariation++;
-            if (gunVariation > VariationNames.Length - 1)
-                gunVariation = 0;
+            if (positive)
+                gunVariation++;
+            else
+                gunVariation--;
+
+            gunVariation %= VariationNames.Length;
+            if (gunVariation < 0)
+                gunVariation = VariationNames.Length - 1;
 
             GetIndex("Change Gun Variation").overlapText = "Change Gun Variation <color=grey>[</color><color=green>" + VariationNames[gunVariation] + "</color><color=grey>]</color>";
         }
 
-        public static void ChangeGunDirection()
+        public static void ChangeGunDirection(bool positive = true)
         {
             string[] DirectionNames = new string[]
             {
@@ -2005,15 +2232,20 @@ namespace iiMenu.Mods
                 "Face"
             };
 
-            GunDirection++;
-            if (GunDirection >= DirectionNames.Length)
-                GunDirection = 0;
+            if (positive)
+                GunDirection++;
+            else
+                GunDirection--;
+
+            GunDirection %= DirectionNames.Length;
+            if (GunDirection < 0)
+                GunDirection = DirectionNames.Length - 1;
 
             GetIndex("Change Gun Direction").overlapText = "Change Gun Direction <color=grey>[</color><color=green>" + DirectionNames[GunDirection] + "</color><color=grey>]</color>";
         }
 
         private static int gunLineQualityIndex = 2;
-        public static void ChangeGunLineQuality()
+        public static void ChangeGunLineQuality(bool positive = true)
         {
             string[] Names = new string[]
             {
@@ -2033,10 +2265,14 @@ namespace iiMenu.Mods
                 250
             };
 
-            gunLineQualityIndex++;
+            if (positive)
+                gunLineQualityIndex++;
+            else
+                gunLineQualityIndex--;
 
-            if (gunLineQualityIndex >= Names.Length)
-                gunLineQualityIndex = 0;
+            gunLineQualityIndex %= Names.Length;
+            if (gunLineQualityIndex < 0)
+                gunLineQualityIndex = Names.Length - 1;
 
             GunLineQuality = Qualities[gunLineQualityIndex];
             GetIndex("Change Gun Line Quality").overlapText = "Change Gun Line Quality <color=grey>[</color><color=green>" + Names[gunLineQualityIndex] + "</color><color=grey>]</color>";
@@ -2540,16 +2776,21 @@ namespace iiMenu.Mods
             NotifiLib.ClearAllNotifications();
         }
 
-        public static void ChangeReconnectTime()
+        public static void ChangeReconnectTime(bool positive = true)
         {
-            internetTime++;
-            if (internetTime > 5)
-                internetTime = 1;
-            
+            if (positive)
+                internetTime++;
+            else
+                internetTime--;
+
+            internetTime %= 6;
+            if (internetTime < 0)
+                internetTime = 5;
+
             GetIndex("crTime").overlapText = "Change Reconnect Time <color=grey>[</color><color=green>" + internetTime.ToString() + "</color><color=grey>]</color>";
         }
 
-        public static void ChangeButtonSound()
+        public static void ChangeButtonSound(bool positive = true)
         {
             int[] sounds = new int[]
             {
@@ -2600,20 +2841,30 @@ namespace iiMenu.Mods
                 "Valve"
             };
 
-            buttonClickIndex++;
-            if (buttonClickIndex > buttonSoundNames.Length - 1)
-                buttonClickIndex = 0;
-            
+            if (positive)
+                buttonClickIndex++;
+            else
+                buttonClickIndex--;
+
+            buttonClickIndex %= sounds.Length;
+            if (buttonClickIndex < 0)
+                buttonClickIndex = sounds.Length - 1;
+
             buttonClickSound = sounds[buttonClickIndex];
             GetIndex("Change Button Sound").overlapText = "Change Button Sound <color=grey>[</color><color=green>" + buttonSoundNames[buttonClickIndex] + "</color><color=grey>]</color>";
         }
 
-        public static void ChangeButtonVolume()
+        public static void ChangeButtonVolume(bool positive = true)
         {
-            buttonClickVolume++;
-            if (buttonClickVolume > 10)
-                buttonClickVolume = 0;
-            
+            if (positive)
+                buttonClickVolume++;
+            else
+                buttonClickVolume--;
+
+            buttonClickVolume %= 11;
+            if (buttonClickVolume < 0)
+                buttonClickVolume = 10;
+
             GetIndex("Change Button Volume").overlapText = "Change Button Volume <color=grey>[</color><color=green>" + buttonClickVolume.ToString() + "</color><color=grey>]</color>";
         }
 
