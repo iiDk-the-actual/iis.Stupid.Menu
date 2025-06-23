@@ -19,9 +19,9 @@ namespace iiMenu.Patches
         public static float tagDelay;
         public static int tagCount;
 
-        public static void Postfix(VRRig rig, Vector3 hitObjectPos, bool isBodyTag, ref NetPlayer taggedPlayer, ref NetPlayer touchedPlayer)
+        public static void Postfix(GorillaTagger __instance, VRRig rig, Vector3 hitObjectPos, bool isBodyTag, ref NetPlayer taggedPlayer, ref NetPlayer touchedPlayer)
         {
-            if (enabled && PhotonNetwork.InRoom)
+            if (enabled && PhotonNetwork.InRoom && __instance == GorillaTagger.Instance)
             {
                 if (Time.time > tagDelay)
                 {
