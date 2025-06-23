@@ -209,13 +209,8 @@ namespace iiMenu.Mods
         public static float tagAuraDistance = 1.666f;
         public static int tagAuraIndex = 1;
 
-        public static void ChangeTagAuraRange()
+        public static void ChangeTagAuraRange(bool positive = true)
         {
-            tagAuraIndex++;
-            if (tagAuraIndex > 3)
-            {
-                tagAuraIndex = 0;
-            }
             string[] names = new string[]
             {
                 "Short",
@@ -228,21 +223,26 @@ namespace iiMenu.Mods
                 0.777f,
                 1.666f,
                 3f,
-                5f
+                5.5f
             };
 
+            if (positive)
+                tagAuraIndex++;
+            else
+                tagAuraIndex--;
+
+            tagAuraIndex %= names.Length;
+            if (tagAuraIndex < 0)
+                tagAuraIndex = names.Length - 1;
+
             tagAuraDistance = distances[tagAuraIndex];
-            GetIndex("ctaRange").overlapText = "Change Tag Aura Distance <color=grey>[</color><color=green>"+names[tagAuraIndex]+"</color><color=grey>]</color>";
+            GetIndex("ctaRange").overlapText = "Change Tag Aura Range <color=grey>[</color><color=green>"+names[tagAuraIndex]+"</color><color=grey>]</color>";
         }
 
-        public static int tagRangeIndex = 0;
+        public static int tagRangeIndex;
         private static float tagReachDistance = 0.3f;
-        public static void ChangeTagReachDistance()
+        public static void ChangeTagReachDistance(bool positive = true)
         {
-            tagRangeIndex++;
-            if (tagRangeIndex > 3)
-                tagRangeIndex = 0;
-            
             string[] names = new string[]
             {
                 "Unnoticable",
@@ -258,6 +258,15 @@ namespace iiMenu.Mods
                 1f,
                 3f
             };
+
+            if (positive)
+                tagRangeIndex++;
+            else
+                tagRangeIndex--;
+
+            tagRangeIndex %= names.Length;
+            if (tagRangeIndex < 0)
+                tagRangeIndex = names.Length - 1;
 
             tagReachDistance = distances[tagRangeIndex];
             GetIndex("ctrRange").overlapText = "Change Tag Reach Distance <color=grey>[</color><color=green>" + names[tagRangeIndex] + "</color><color=grey>]</color>";

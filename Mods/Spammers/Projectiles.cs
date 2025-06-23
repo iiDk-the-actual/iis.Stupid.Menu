@@ -158,7 +158,7 @@ namespace iiMenu.Mods.Spammers
         }
 
         public static int projmode;
-        public static void ChangeProjectile()
+        public static void ChangeProjectile(bool positive = true)
         {
             string[] shortProjectileNames = new string[] {
                 "Snowball",
@@ -177,20 +177,21 @@ namespace iiMenu.Mods.Spammers
                 "Hot Dog"
             };
 
-            projmode++;
-            if (projmode >= shortProjectileNames.Length)
-                projmode = 0;
+            if (positive)
+                projmode++;
+            else
+                projmode--;
+
+            projmode %= shortProjectileNames.Length;
+            if (projmode < 0)
+                projmode = shortProjectileNames.Length - 1;
 
             GetIndex("Change Projectile").overlapText = "Change Projectile <color=grey>[</color><color=green>" + shortProjectileNames[projmode] + "</color><color=grey>]</color>";
         }
 
         public static int shootCycle = 1;
-        public static void ChangeShootSpeed()
+        public static void ChangeShootSpeed(bool positive = true)
         {
-            shootCycle++;
-            if (shootCycle > 3)
-                shootCycle = 0;
-
             float[] ShootStrengthTypes = new float[]
             {
                 9.72f,
@@ -206,6 +207,15 @@ namespace iiMenu.Mods.Spammers
                 "Fast",
                 "Instant"
             };
+
+            if (positive)
+                shootCycle++;
+            else
+                shootCycle--;
+
+            shootCycle %= ShootStrengthTypes.Length;
+            if (shootCycle < 0)
+                shootCycle = ShootStrengthTypes.Length - 1;
 
             ShootStrength = ShootStrengthTypes[shootCycle];
             GetIndex("Change Shoot Speed").overlapText = "Change Shoot Speed <color=grey>[</color><color=green>" + ShootStrengthNames[shootCycle] + "</color><color=grey>]</color>";

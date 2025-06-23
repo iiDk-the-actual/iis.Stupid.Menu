@@ -9,6 +9,7 @@ using iiMenu.Mods;
 using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
 using iiMenu.Patches;
+using Oculus.Interaction;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -459,8 +460,51 @@ namespace iiMenu.Menu
                                             case KeyCode.Escape:
                                                 Toggle("Global Search");
                                                 break;
+                                            case KeyCode.Return:
+                                                List<ButtonInfo> searchedMods = new List<ButtonInfo> { };
+                                                if (nonGlobalSearch && currentCategoryName != "Main")
+                                                {
+                                                    foreach (ButtonInfo v in Buttons.buttons[currentCategoryIndex])
+                                                    {
+                                                        try
+                                                        {
+                                                            string buttonText = v.buttonText;
+                                                            if (v.overlapText != null)
+                                                                buttonText = v.overlapText;
+
+                                                            if (buttonText.Replace(" ", "").ToLower().Contains(searchText.Replace(" ", "").ToLower()))
+                                                                searchedMods.Add(v);
+                                                        }
+                                                        catch { }
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    foreach (ButtonInfo[] buttonlist in Buttons.buttons)
+                                                    {
+                                                        foreach (ButtonInfo v in buttonlist)
+                                                        {
+                                                            try
+                                                            {
+                                                                string buttonText = v.buttonText;
+                                                                if (v.overlapText != null)
+                                                                    buttonText = v.overlapText;
+
+                                                                if (buttonText.Replace(" ", "").ToLower().Contains(searchText.Replace(" ", "").ToLower()))
+                                                                    searchedMods.Add(v);
+                                                            }
+                                                            catch { }
+                                                        }
+                                                    }
+                                                }
+
+                                                ButtonInfo[] buttons = StringsToInfos(Alphabetize(InfosToStrings(searchedMods.ToArray())));
+                                                Toggle(buttons[0].buttonText);
+                                                break;
                                             default:
-                                                searchText += UnityInput.Current.GetKey(KeyCode.LeftShift) || UnityInput.Current.GetKey(KeyCode.RightShift) ? keyCode.ToString().Capitalize() : keyCode.ToString().ToLower();
+                                                searchText += 
+                                                    UnityInput.Current.GetKey(KeyCode.LeftShift) || UnityInput.Current.GetKey(KeyCode.RightShift) ? 
+                                                    keyCode.ToString().Capitalize() : keyCode.ToString().ToLower();
                                                 break;
                                         }
                                     }
@@ -1340,7 +1384,7 @@ namespace iiMenu.Menu
             return oColor;
         }
 
-        private static void AddButton(float offset, int buttonIndex, ButtonInfo method)
+        private static void AddButton(float offset, int buttonIndex, ButtonInfo method, bool flip = false)
         {
             if (!method.label)
             {
@@ -1372,6 +1416,7 @@ namespace iiMenu.Menu
                     // The Checkbox Theorem ; TO BE THE SQUARE, YOU MUST circumvent the inconvenient menu localScale parameter
                     // Variable calculations: (menu scale y)0.3825 / (menu scale z)0.3 = 1.275 = Y
                     // 0.08 x Y = 0.102
+
                     buttonObject.transform.localScale = new Vector3(0.09f, 0.102f, 0.08f);
                     if (thinMenu)
                         buttonObject.transform.localPosition = new Vector3(0.56f, 0.399f, 0.28f - offset);
@@ -1379,7 +1424,33 @@ namespace iiMenu.Menu
                         buttonObject.transform.localPosition = new Vector3(0.56f, 0.599f, 0.28f - offset);
                 }
 
-                buttonObject.AddComponent<Classes.Button>().relatedText = method.buttonText;
+                Classes.Button Button = buttonObject.AddComponent<Classes.Button>();
+                Button.relatedText = method.buttonText;
+
+                if (incrementalButtons)
+                {
+                    if (method.incremental)
+                    {
+                        if (checkMode && buttonIndex > -1)
+                        {
+                            Button.incremental = true;
+                            Button.positive = false;
+
+                            RenderIncrementalText(false, offset);
+                            RenderIncrementalButton(true, offset, method);
+                        } else
+                        {
+                            buttonObject.transform.localScale -= new Vector3(0f, 0.254f, 0f);
+                            Destroy(Button);
+
+                            RenderIncrementalButton(false, offset, method);
+                            RenderIncrementalButton(true, offset, method);
+                        }
+                    }
+                }
+
+                if (flip)
+                    buttonObject.transform.localPosition = new Vector3(buttonObject.transform.localPosition.x, -buttonObject.transform.localPosition.y, buttonObject.transform.localPosition.z);
 
                 if (shouldOutline)
                     OutlineObj(buttonObject, buttonIndex < 0 && swapButtonColors ? method.enabled : !method.enabled);
@@ -1488,7 +1559,7 @@ namespace iiMenu.Menu
 
             RectTransform textTransform = buttonText.GetComponent<RectTransform>();
             textTransform.localPosition = Vector3.zero;
-            textTransform.sizeDelta = new Vector2(.2f, .03f);
+            textTransform.sizeDelta = new Vector2(method.incremental && incrementalButtons ? .18f : .2f, .03f);
             if (NoAutoSizeText)
                 textTransform.sizeDelta = new Vector2(9f, 0.015f);
 
@@ -1670,6 +1741,97 @@ namespace iiMenu.Menu
                 imageTransform.localPosition += new Vector3(0f, 0.0475f, 0f);
 
             imageTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+        }
+
+        private static void RenderIncrementalButton(bool increment, float offset, ButtonInfo method)
+        {
+            if (!method.label)
+            {
+                GameObject buttonObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                if (!UnityInput.Current.GetKey(KeyCode.Q) && !isPcWhenSearching)
+                    buttonObject.layer = 2;
+
+                if (themeType == 30)
+                    buttonObject.GetComponent<Renderer>().enabled = false;
+
+                buttonObject.GetComponent<BoxCollider>().isTrigger = true;
+                buttonObject.transform.parent = menu.transform;
+                buttonObject.transform.rotation = Quaternion.identity;
+
+                buttonObject.transform.localScale = new Vector3(0.09f, 0.102f, 0.08f);
+                if (thinMenu)
+                    buttonObject.transform.localPosition = new Vector3(0.56f, 0.399f, 0.28f - offset);
+                else
+                    buttonObject.transform.localPosition = new Vector3(0.56f, 0.599f, 0.28f - offset);
+
+                Classes.Button Button = buttonObject.AddComponent<Classes.Button>();
+                Button.relatedText = method.buttonText;
+                Button.incremental = true;
+                Button.positive = increment;
+
+                if (increment)
+                    buttonObject.transform.localPosition = new Vector3(buttonObject.transform.localPosition.x, -buttonObject.transform.localPosition.y, buttonObject.transform.localPosition.z);
+
+                if (shouldOutline)
+                    OutlineObj(buttonObject, true);
+
+                if (lastClickedName != method.buttonText + (increment ? "+" : "-"))
+                {
+                    GradientColorKey[] releasedColors = new[]
+                    {
+                        new GradientColorKey(buttonDefaultA, 0f),
+                        new GradientColorKey(buttonDefaultB, 0.5f),
+                        new GradientColorKey(buttonDefaultA, 1f)
+                    };
+
+                    ColorChanger colorChanger = buttonObject.AddComponent<ColorChanger>();
+                    colorChanger.colors = new Gradient
+                    {
+                        colorKeys = releasedColors
+                    };
+                }
+                else
+                    CoroutineManager.RunCoroutine(ButtonClick(-1, buttonObject.GetComponent<Renderer>()));
+
+                if (shouldRound)
+                    RoundObj(buttonObject);
+            }
+
+            RenderIncrementalText(increment, offset);
+        }
+
+        public static void RenderIncrementalText(bool increment, float offset)
+        {
+            Text buttonText = new GameObject
+            {
+                transform =
+                {
+                    parent = canvasObj.transform
+                }
+            }.AddComponent<Text>();
+
+            buttonText.font = activeFont;
+            buttonText.text = increment ? "+" : "-";
+            buttonText.supportRichText = true;
+            buttonText.fontSize = 1;
+            buttonText.color = textColor;
+
+            buttonText.alignment = TextAnchor.MiddleCenter;
+            buttonText.fontStyle = activeFontStyle;
+            buttonText.resizeTextForBestFit = true;
+            buttonText.resizeTextMinSize = 0;
+
+            RectTransform textTransform = buttonText.GetComponent<RectTransform>();
+            textTransform.localPosition = Vector3.zero;
+            textTransform.sizeDelta = new Vector2(.2f, .03f);
+            if (NoAutoSizeText)
+                textTransform.sizeDelta = new Vector2(9f, 0.015f);
+
+            if (thinMenu)
+                textTransform.localPosition = new Vector3(.064f, increment ? -0.12f : 0.12f, .111f - offset / 2.6f);
+            else
+                textTransform.localPosition = new Vector3(.064f, increment ? -0.18f : 0.18f, .111f - offset / 2.6f);
+            textTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
         }
 
         public static void CreateReference()
@@ -4433,7 +4595,7 @@ namespace iiMenu.Menu
 
         public static void Toggle(string buttonText, bool fromMenu = false)
         {
-            if (annoyingMode)
+            if (annoyingMode && fromMenu)
             {
                 if (UnityEngine.Random.Range(1, 5) == 2)
                 {
@@ -4633,6 +4795,30 @@ namespace iiMenu.Menu
                     }
                     else
                         LogManager.LogError($"{buttonText} does not exist");
+                }
+            }
+            ReloadMenu();
+        }
+
+        public static void ToggleIncremental(string buttonText, bool increment)
+        { 
+            ButtonInfo target = GetIndex(buttonText);
+            if (target != null)
+            {
+                if (dynamicAnimations)
+                    lastClickedName = buttonText + (increment ? "+" : "-");
+
+                if (increment)
+                {
+                    NotifiLib.SendNotification("<color=grey>[</color><color=green>INCREMENT</color><color=grey>]</color> " + target.toolTip);
+                    if (target.enableMethod != null)
+                        try { target.enableMethod.Invoke(); } catch (Exception exc) { LogManager.LogError(string.Format("Error with mod enableMethod {0} at {1}: {2}", target.buttonText, exc.StackTrace, exc.Message)); }
+                }
+                else
+                {
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>DECREMENT</color><color=grey>]</color> " + target.toolTip);
+                    if (target.disableMethod != null)
+                        try { target.disableMethod.Invoke(); } catch (Exception exc) { LogManager.LogError(string.Format("Error with mod disableMethod {0} at {1}: {2}", target.buttonText, exc.StackTrace, exc.Message)); }
                 }
             }
             ReloadMenu();
@@ -4891,6 +5077,7 @@ jgs \_   _/ |Oo\
         public static bool flipArraylist;
         public static bool hideSettings;
         public static bool hideTextOnCamera;
+        public static bool incrementalButtons = true;
         public static bool disableDisconnectButton;
         public static bool disableFpsCounter;
         public static bool disableSearchButton;
@@ -4978,7 +5165,7 @@ jgs \_   _/ |Oo\
             KeyCode.K, KeyCode.L, KeyCode.M, KeyCode.N, KeyCode.O,
             KeyCode.P, KeyCode.Q, KeyCode.R, KeyCode.S, KeyCode.T,
             KeyCode.U, KeyCode.V, KeyCode.W, KeyCode.X, KeyCode.Y,
-            KeyCode.Z, KeyCode.Space, KeyCode.Backspace, KeyCode.Escape // it doesn't fit :(
+            KeyCode.Z, KeyCode.Space, KeyCode.Backspace,KeyCode.Return, KeyCode.Escape // it doesn't fit :(
         };
 
         public static bool ToggleBindings = true;
@@ -5231,17 +5418,10 @@ jgs \_   _/ |Oo\
 
         public static bool hasFoundAllBoards;
 
-        public static float lastBangTime;
-
-        public static float subThingy;
-        public static float subThingyZ;
-
         public static float sizeScale = 1f;
 
         public static float turnAmnt;
         public static float TagAuraDelay;
-        public static float startX = -1f;
-        public static float startY = -1f;
 
         public static bool lowercaseMode;
         public static string inputTextColor = "green";

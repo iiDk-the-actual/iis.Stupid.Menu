@@ -51,6 +51,7 @@ namespace iiMenu.Mods
         public static void RandomYHead() =>
             VRRig.LocalRig.head.trackingRotationOffset.y = UnityEngine.Random.Range(20, 340);
 
+        public static float lastBangTime;
         public static float BPM = 159f;
         public static void HeadBang()
         {

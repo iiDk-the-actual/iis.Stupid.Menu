@@ -198,7 +198,7 @@ namespace iiMenu.Mods.Spammers
             Process.Start(filePath);
         }
 
-        public static void SoundBindings()
+        public static void SoundBindings(bool positive = true)
         {
             string[] names = new string[]
             {
@@ -214,10 +214,16 @@ namespace iiMenu.Mods.Spammers
                 "Left Joystick",
                 "Right Joystick"
             };
-            BindMode++;
-            if (BindMode > names.Length - 1)
-                BindMode = 0;
-            
+
+            if (positive)
+                BindMode++;
+            else
+                BindMode--;
+
+            BindMode %= names.Length;
+            if (BindMode < 0)
+                BindMode = names.Length - 1;
+
             GetIndex("Sound Bindings").overlapText = "Sound Bindings <color=grey>[</color><color=green>" + names[BindMode] + "</color><color=grey>]</color>";
         }
 
