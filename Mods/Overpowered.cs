@@ -1314,9 +1314,8 @@ namespace iiMenu.Mods
                         {
                             Transform report = line.reportButton.gameObject.transform;
                             if (GetIndex("Visualize Anti Report").enabled)
-                            {
                                 VisualizeAura(report.position, Safety.threshold, Color.red);
-                            }
+                            
                             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                             {
                                 if (vrrig != VRRig.LocalRig)

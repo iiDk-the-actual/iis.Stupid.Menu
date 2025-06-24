@@ -3648,29 +3648,6 @@ namespace iiMenu.Menu
             return table;
         }
 
-        public static void GetOwnership(PhotonView view)
-        {
-            if (!view.AmOwner)
-            {
-                try
-                {
-                    view.OwnerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
-                    view.ControllerActorNr = PhotonNetwork.LocalPlayer.ActorNumber;
-
-                    RequestableOwnershipGuard rog = view.GetComponent<RequestableOwnershipGuard>();
-                    if (rog != null)
-                    {
-                        view.GetComponent<RequestableOwnershipGuard>().actualOwner = PhotonNetwork.LocalPlayer;
-                        view.GetComponent<RequestableOwnershipGuard>().currentOwner = PhotonNetwork.LocalPlayer;
-                        view.GetComponent<RequestableOwnershipGuard>().RequestTheCurrentOwnerFromAuthority();
-                        view.GetComponent<RequestableOwnershipGuard>().TransferOwnership(PhotonNetwork.LocalPlayer);
-                        view.GetComponent<RequestableOwnershipGuard>().TransferOwnershipFromToRPC(PhotonNetwork.LocalPlayer, view.GetComponent<RequestableOwnershipGuard>().ownershipRequestNonce, default);
-                    }
-                    RPCProtection();
-                } catch { LogManager.Log("Failure to get ownership, is the PhotonView valid?"); }
-            }
-        }
-
         public static bool PlayerIsTagged(VRRig Player)
         {
             List<NetPlayer> infectedPlayers = InfectedList();
@@ -3818,34 +3795,6 @@ namespace iiMenu.Menu
             for (int i = 0; i < localPositions.Length; i++)
             {
                 GameObject side = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                try
-                {
-                    switch (Movement.platformMode)
-                    {
-                        case 5:
-                            side.AddComponent<GorillaSurfaceOverride>().overrideIndex = 29;
-                            break;
-                        case 6:
-                            side.AddComponent<GorillaSurfaceOverride>().overrideIndex = 32;
-                            break;
-                        case 7:
-                            side.AddComponent<GorillaSurfaceOverride>().overrideIndex = 204;
-                            break;
-                        case 8:
-                            side.AddComponent<GorillaSurfaceOverride>().overrideIndex = 231;
-                            break;
-                        case 9:
-                            side.AddComponent<GorillaSurfaceOverride>().overrideIndex = 240;
-                            break;
-                        case 10:
-                            side.AddComponent<GorillaSurfaceOverride>().overrideIndex = 249;
-                            break;
-                        case 11:
-                            side.AddComponent<GorillaSurfaceOverride>().overrideIndex = 252;
-                            break;
-                    }
-                }
-                catch { }
                 float size = 0.025f;
                 side.transform.SetParent(platform.transform);
                 side.transform.position = localPositions[i] * (size / 2);

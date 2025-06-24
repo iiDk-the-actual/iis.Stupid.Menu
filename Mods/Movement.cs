@@ -134,9 +134,8 @@ namespace iiMenu.Mods
                 case 5:
                     platform.AddComponent<GorillaSurfaceOverride>().overrideIndex = 29;
                     if (glass == null)
-                    {
                         glass = new Material(Shader.Find("GUI/Text Shader")) { color = new Color32(145, 187, 255, 100) };
-                    }
+                    
                     platform.GetComponent<Renderer>().material = glass;
                     break;
             }
