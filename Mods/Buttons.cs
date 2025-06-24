@@ -1069,8 +1069,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Give Fly Gun", method =() => Overpowered.GiveFlyGun(), toolTip = "Gives whoever you want fly when they hold their right thumb down."},
                 new ButtonInfo { buttonText = "Give Fly All", method =() => Overpowered.GiveFlyAll(), toolTip = "Gives everyone in the room fly when they hold their right thumb down."},
 
-                new ButtonInfo { buttonText = "Safety Bubble", method =() => Overpowered.SafetyBubble(), toolTip = "Anyone who gets too close to you will be launched away."},
-
                 new ButtonInfo { buttonText = "Spaz Player Gun", method =() => Overpowered.SpazPlayerGun(), toolTip = "Spazzes out whoever your hand desires."},
                 new ButtonInfo { buttonText = "Spaz All Players <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.SpazAllPlayers(), toolTip = "Spazzes out everyone in the room."},
 
@@ -1107,6 +1105,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Snowball Impact Effect Gun", method =() => Overpowered.SnowballImpactEffectGun(), toolTip = "Spawns snowball impact events on whoever your hand desires."},
 
                 new ButtonInfo { buttonText = "Snowball Punch Mod", method =() => Overpowered.SnowballPunchMod(), toolTip = "Flings people when you punch them."},
+                new ButtonInfo { buttonText = "Snowball Safety Bubble", method =() => Overpowered.SnowballSafetyBubble(), toolTip = "Anyone who gets too close to you will be launched away."},
 
                 new ButtonInfo { buttonText = "Snowball Fling Gun", method =() => Overpowered.SnowballFlingGun(), toolTip = "Flings whoever your hand desires."},
                 new ButtonInfo { buttonText = "Snowball Fling All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.SnowballFlingAll(), toolTip = "Flings everybody when holding <color=green>trigger</color>."},
