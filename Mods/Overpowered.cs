@@ -2016,7 +2016,7 @@ namespace iiMenu.Mods
             if (RopeSwingManager.instance.ropes.TryGetValue(RopeId, out GorillaRopeSwing Rope))
             {
                 var ClosestNode = Rope.nodes
-                    .Skip(3) // Can't do the first couple
+                    .Skip(1) // Can't do the first couple
                     .Select((v, i) => new { index = i, 
                                             transform = v,
                                             distance = Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, v.transform.position) 
@@ -2036,7 +2036,7 @@ namespace iiMenu.Mods
                 }
 
                 if (Vector3.Distance(ServerPos, ClosestNode.transform.position) < 5f)
-                    RopeSwingManager.instance.SendSetVelocity_RPC(RopeId, ClosestNode.index, Velocity.ClampMagnitudeSafe(100f), true);
+                    RopeSwingManager.instance.SendSetVelocity_RPC(RopeId, ClosestNode.index, Velocity.ClampMagnitudeSafe(100f), ClosestNode.index > 6);
                 else
                     RopeDelay = 0f;
 
