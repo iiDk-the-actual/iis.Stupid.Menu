@@ -2,36 +2,32 @@
 using Photon.Pun;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using UnityEngine;
 
 namespace iiMenu.Patches
 {
-    [HarmonyPatch(typeof(GorillaTagger))]
+    [HarmonyPatch(typeof(GorillaGameModes.GameMode), "ReportTag")]
     public class TagPatch
     {
-        private static MethodBase TargetMethod() =>
-            typeof(GorillaTagger).GetMethod("TryToTag", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, new Type[] { typeof(VRRig), typeof(Vector3), typeof(bool), typeof(NetPlayer).MakeByRefType(), typeof(NetPlayer).MakeByRefType() }, null);
-
-        public static List<VRRig> taggedRigs = new List<VRRig> { };
+        public static List<NetPlayer> taggedPlayers = new List<NetPlayer> { };
 
         public static bool enabled;
         public static float tagDelay;
         public static int tagCount;
 
-        public static void Postfix(VRRig rig, Vector3 hitObjectPos, bool isBodyTag, ref NetPlayer taggedPlayer, ref NetPlayer touchedPlayer)
+        public static void Postfix(NetPlayer player)
         {
-            if (enabled && PhotonNetwork.InRoom && taggedPlayer != null)
+            if (enabled && PhotonNetwork.InRoom)
             {
                 if (Time.time > tagDelay)
                 {
-                    taggedRigs.Clear();
+                    taggedPlayers.Clear();
                     tagCount = 0;
                 }
 
-                if (!taggedRigs.Contains(rig))
+                if (!taggedPlayers.Contains(player))
                 {
-                    taggedRigs.Add(rig);
+                    taggedPlayers.Add(player);
                     tagCount = Math.Min(tagCount + 1, 7);
                     tagDelay = Time.time + 10f;
 
