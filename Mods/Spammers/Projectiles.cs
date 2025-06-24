@@ -264,7 +264,7 @@ namespace iiMenu.Mods.Spammers
             if (blue < 0)
                 blue = 10;
 
-            GetIndex("BlueProj").overlapText = "Blue <color=grey>[</color><color=green>" + Mathf.Floor(blue * 10f).ToString() + "</color><color=grey>]</color>";
+            GetIndex("BlueProj").overlapText = "Blue <color=grey>[</color><color=green>" + blue.ToString() + "</color><color=grey>]</color>";
         }
 
         public static int projDebounceIndex = 1;
@@ -280,7 +280,7 @@ namespace iiMenu.Mods.Spammers
                 projDebounceIndex = 10;
 
             projDebounceType = projDebounceIndex / 10f;
-            GetIndex("Projectile Delay").overlapText = "Projectile Delay <color=grey>[</color><color=green>" + (Mathf.Floor(projDebounceType * 10f) / 10f).ToString() + "</color><color=grey>]</color>";
+            GetIndex("Change Projectile Delay").overlapText = "Change Projectile Delay <color=grey>[</color><color=green>" + projDebounceIndex.ToString() + "</color><color=grey>]</color>";
         }
 
         public static Color CalculateProjectileColor()
