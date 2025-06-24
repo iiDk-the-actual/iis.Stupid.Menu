@@ -855,19 +855,19 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Auto Purchase Cosmetics", method =() => Fun.AutoPurchaseCosmetics(), toolTip = "Automatically purchases any free cosmetics." },
                 new ButtonInfo { buttonText = "Disable Cosmetics on Tag", method =() => Fun.DisableCosmeticsOnTag(), toolTip = "Disables your cosmetics when you get tagged, good for ambush." },
 
-                new ButtonInfo { buttonText = "Get ID Self", method =() => Miscellaneous.CopySelfID(), isTogglable = false, toolTip = "Gets your player ID and copies it to the clipboard."},
-                new ButtonInfo { buttonText = "Get ID Gun", method =() => Miscellaneous.CopyIDGun(), toolTip = "Gets the player ID of whoever your hand desires and copies it to the clipboard." },
+                new ButtonInfo { buttonText = "Get ID Self", method =() => Fun.CopySelfID(), isTogglable = false, toolTip = "Gets your player ID and copies it to the clipboard."},
+                new ButtonInfo { buttonText = "Get ID Gun", method =() => Fun.CopyIDGun(), toolTip = "Gets the player ID of whoever your hand desires and copies it to the clipboard." },
 
-                new ButtonInfo { buttonText = "Narrate ID Self", method =() => Miscellaneous.NarrateSelfID(), isTogglable = false, toolTip = "Gets your player ID and speaks it through your microphone."},
-                new ButtonInfo { buttonText = "Narrate ID Gun", method =() => Miscellaneous.NarrateIDGun(), toolTip = "Gets the player ID of whoever your hand desires and speaks it through your microphone." },
+                new ButtonInfo { buttonText = "Narrate ID Self", method =() => Fun.NarrateSelfID(), isTogglable = false, toolTip = "Gets your player ID and speaks it through your microphone."},
+                new ButtonInfo { buttonText = "Narrate ID Gun", method =() => Fun.NarrateIDGun(), toolTip = "Gets the player ID of whoever your hand desires and speaks it through your microphone." },
 
-                new ButtonInfo { buttonText = "Get Creation Date Self", method =() => Miscellaneous.CopyCreationDateSelf(), isTogglable = false, toolTip = "Gets the creation date of your account and copies it to the clipboard."},
-                new ButtonInfo { buttonText = "Get Creation Date Gun", method =() => Miscellaneous.CopyCreationDateGun(), toolTip = "Gets the creation date of whoever your hand desires' account and copies it to the clipboard." },
+                new ButtonInfo { buttonText = "Get Creation Date Self", method =() => Fun.CopyCreationDateSelf(), isTogglable = false, toolTip = "Gets the creation date of your account and copies it to the clipboard."},
+                new ButtonInfo { buttonText = "Get Creation Date Gun", method =() => Fun.CopyCreationDateGun(), toolTip = "Gets the creation date of whoever your hand desires' account and copies it to the clipboard." },
 
-                new ButtonInfo { buttonText = "Narrate Creation Date Gun", method =() => Miscellaneous.NarrateCreationDateGun(), toolTip = "Gets the creation date of whoever your hand desires' account and speaks it through your microphone." },
-                new ButtonInfo { buttonText = "Narrate Creation Date Self", method =() => Miscellaneous.NarrateCreationDateSelf(), isTogglable = false, toolTip = "Gets the creation date of your account and speaks it through your microphone." },
+                new ButtonInfo { buttonText = "Narrate Creation Date Gun", method =() => Fun.NarrateCreationDateGun(), toolTip = "Gets the creation date of whoever your hand desires' account and speaks it through your microphone." },
+                new ButtonInfo { buttonText = "Narrate Creation Date Self", method =() => Fun.NarrateCreationDateSelf(), isTogglable = false, toolTip = "Gets the creation date of your account and speaks it through your microphone." },
 
-                new ButtonInfo { buttonText = "Grab Player Info", method =() => Miscellaneous.GrabPlayerInfo(), isTogglable = false, toolTip = "Saves every player's name, color, and player ID as a text file and opens it." },
+                new ButtonInfo { buttonText = "Grab Player Info", method =() => Fun.GrabPlayerInfo(), isTogglable = false, toolTip = "Saves every player's name, color, and player ID as a text file and opens it." },
             },
 
             new ButtonInfo[] { // Spam Mods [13]
@@ -1266,12 +1266,12 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Fix Broken Buttons", method =() => Experimental.FixDuplicateButtons(), isTogglable = false, toolTip = "Fixes any duplicate or broken buttons."},
 
-                new ButtonInfo { buttonText = "Get Sound Data", method =() => Miscellaneous.DumpSoundData(), isTogglable = false, toolTip = "Dumps the hand tap sounds to a file."},
-                new ButtonInfo { buttonText = "Get Cosmetic Data", method =() => Miscellaneous.DumpCosmeticData(), isTogglable = false, toolTip = "Dumps the cosmetics and their data to a file."},
-                new ButtonInfo { buttonText = "Get Decryptable Cosmetic Data", method =() => Miscellaneous.DecryptableCosmeticData(), isTogglable = false, toolTip = "Dumps the cosmetics and their data to a easily decryptable file for databases."},
-                new ButtonInfo { buttonText = "Get RPC Data", method =() => Miscellaneous.DumpRPCData(), isTogglable = false, toolTip = "Dumps the data of every RPC to a file."},
+                new ButtonInfo { buttonText = "Get Sound Data", method =() => Experimental.DumpSoundData(), isTogglable = false, toolTip = "Dumps the hand tap sounds to a file."},
+                new ButtonInfo { buttonText = "Get Cosmetic Data", method =() => Experimental.DumpCosmeticData(), isTogglable = false, toolTip = "Dumps the cosmetics and their data to a file."},
+                new ButtonInfo { buttonText = "Get Decryptable Cosmetic Data", method =() => Experimental.DecryptableCosmeticData(), isTogglable = false, toolTip = "Dumps the cosmetics and their data to a easily decryptable file for databases."},
+                new ButtonInfo { buttonText = "Get RPC Data", method =() => Experimental.DumpRPCData(), isTogglable = false, toolTip = "Dumps the data of every RPC to a file."},
 
-                new ButtonInfo { buttonText = "Copy Custom Gamemode Script", method =() => Miscellaneous.CopyCustomGamemodeScript(), isTogglable = false, toolTip = "Copies the lua script source code of the current custom map being played."},
+                new ButtonInfo { buttonText = "Copy Custom Gamemode Script", method =() => Experimental.CopyCustomGamemodeScript(), isTogglable = false, toolTip = "Copies the lua script source code of the current custom map being played."},
 
                 new ButtonInfo { buttonText = "Better FPS Boost", enableMethod =() => Experimental.BetterFPSBoost(), disableMethod =() => Experimental.DisableBetterFPSBoost(), toolTip = "Makes everything one color, boosting your FPS."},
 
