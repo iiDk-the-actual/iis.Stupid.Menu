@@ -36,6 +36,7 @@ Yes! But there’s a catch—you gotta play fair. **GPL-3.0 License rules apply*
 - No shady stuff.  
 
 Need help or want to collaborate? Hit me up on my [Linktree](https://linktr.ee/iiWasHere) or join the [Discord server](https://discord.gg/iidk).  
+Feel like something is missing? Make a pull request if you want code added to this menu.
 
 > **"You wouldn’t steal a method."**  
 > [🎥 (Or would you?)](https://www.youtube.com/watch?v=zMBqPdMzZ9E)  
