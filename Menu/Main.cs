@@ -1227,8 +1227,8 @@ namespace iiMenu.Menu
 
                     if (ServerPos == Vector3.zero)
                         ServerPos = ServerSyncPos;
-
-                    ServerPos = Vector3.Lerp(ServerSyncPos, VRRig.LocalRig.SanitizeVector3(ServerSyncPos), VRRig.LocalRig.lerpValueBody * 0.66f);
+                    else
+                        ServerPos = Vector3.Lerp(ServerPos, VRRig.LocalRig.SanitizeVector3(ServerSyncPos), VRRig.LocalRig.lerpValueBody * 0.66f);
 
                     if (Lockdown)
                         return;
