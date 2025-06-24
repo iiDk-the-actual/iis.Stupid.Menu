@@ -221,42 +221,65 @@ namespace iiMenu.Mods.Spammers
             GetIndex("Change Shoot Speed").overlapText = "Change Shoot Speed <color=grey>[</color><color=green>" + ShootStrengthNames[shootCycle] + "</color><color=grey>]</color>";
         }
 
-        public static void IncreaseRed()
-        {
-            red += 0.1f;
-            if (red > 1.05f)
-                red = 0f;
+        public static int red = 10;
+        public static int green = 5;
+        public static int blue;
 
-            GetIndex("RedProj").overlapText = "Red <color=grey>[</color><color=green>" + Mathf.Floor(red * 10f).ToString() + "</color><color=grey>]</color>";
+        public static void IncreaseRed(bool positive = true)
+        {
+            if (positive)
+                red++;
+            else
+                red--;
+
+            red %= 11;
+            if (red < 0)
+                red = 10;
+
+            GetIndex("RedProj").overlapText = "Red <color=grey>[</color><color=green>" + red.ToString() + "</color><color=grey>]</color>";
         }
 
-        public static void IncreaseGreen()
+        public static void IncreaseGreen(bool positive = true)
         {
-            green += 0.1f;
+            if (positive)
+                green++;
+            else
+                green--;
 
-            if (green > 1.05f)
-                green = 0f;
+            green %= 11;
+            if (green < 0)
+                green = 10;
 
-            GetIndex("GreenProj").overlapText = "Green <color=grey>[</color><color=green>" + Mathf.Floor(green * 10f).ToString() + "</color><color=grey>]</color>";
+            GetIndex("GreenProj").overlapText = "Green <color=grey>[</color><color=green>" + green.ToString() + "</color><color=grey>]</color>";
         }
 
-        public static void IncreaseBlue()
+        public static void IncreaseBlue(bool positive = true)
         {
-            blue += 0.1f;
+            if (positive)
+                blue++;
+            else
+                blue--;
 
-            if (blue > 1.05f)
-                blue = 0f;
+            blue %= 11;
+            if (blue < 0)
+                blue = 10;
 
             GetIndex("BlueProj").overlapText = "Blue <color=grey>[</color><color=green>" + Mathf.Floor(blue * 10f).ToString() + "</color><color=grey>]</color>";
         }
 
-        public static void ProjectileDelay()
+        public static int projDebounceIndex = 1;
+        public static void ChangeProjectileDelay(bool positive = true)
         {
-            projDebounceType += 0.1f;
+            if (positive)
+                projDebounceIndex++;
+            else
+                projDebounceIndex--;
 
-            if (projDebounceType > 1.05f)
-                projDebounceType = 0.1f;
+            projDebounceIndex %= 11;
+            if (projDebounceIndex < 1)
+                projDebounceIndex = 10;
 
+            projDebounceType = projDebounceIndex / 10f;
             GetIndex("Projectile Delay").overlapText = "Projectile Delay <color=grey>[</color><color=green>" + (Mathf.Floor(projDebounceType * 10f) / 10f).ToString() + "</color><color=grey>]</color>";
         }
 
@@ -300,9 +323,9 @@ namespace iiMenu.Mods.Spammers
 
             if (GetIndex("Custom Colored Projectiles").enabled)
             {
-                r = (byte)(red * 255);
-                g = (byte)(green * 255);
-                b = (byte)(blue * 255);
+                r = (byte)((red / 10f) * 255);
+                g = (byte)((green / 10f) * 255);
+                b = (byte)((blue / 10f) * 255);
             }
 
             return new Color32(r, g, b, 255);
@@ -566,56 +589,6 @@ namespace iiMenu.Mods.Spammers
 
                 if (GetIndex("Projectile Fountain").enabled)
                     startpos = GorillaTagger.Instance.headCollider.transform.position + new Vector3(0, 1, 0);
-
-                float randa = 255f;
-                float randb = 255f;
-                float randc = 255f;
-
-                if (GetIndex("Random Color").enabled)
-                {
-                    randa = UnityEngine.Random.Range(0, 255);
-                    randb = UnityEngine.Random.Range(0, 255);
-                    randc = UnityEngine.Random.Range(0, 255);
-                }
-
-                if (GetIndex("Rainbow Projectiles").enabled)
-                {
-                    float h = (Time.frameCount / 180f) % 1f;
-                    Color rgbcolor = Color.HSVToRGB(h, 1f, 1f);
-                    randa = rgbcolor.r * 255;
-                    randb = rgbcolor.g * 255;
-                    randc = rgbcolor.b * 255;
-                }
-
-                if (GetIndex("Hard Rainbow Projectiles").enabled)
-                {
-                    float h = (Time.frameCount / 180f) % 1f;
-                    Color rgbcolor = Color.HSVToRGB(h, 1f, 1f);
-                    randa = (Mathf.Floor(rgbcolor.r * 2f) / 2f * 255f) * 100f;
-                    randb = (Mathf.Floor(rgbcolor.g * 2f) / 2f * 255f) * 100f;
-                    randc = (Mathf.Floor(rgbcolor.b * 2f) / 2f * 255f) * 100f;
-                }
-
-                if (GetIndex("Black Projectiles").enabled)
-                {
-                    randa = 0f;
-                    randb = 0f;
-                    randc = 0f;
-                }
-
-                if (GetIndex("No Texture Projectiles").enabled)
-                {
-                    randa = 25500f;
-                    randb = 0f;
-                    randc = 25500f;
-                }
-
-                if (GetIndex("Custom Colored Projectiles").enabled)
-                {
-                    randa = red * 255;
-                    randb = green * 255;
-                    randc = blue * 255;
-                }
 
                 BetaFireImpact(startpos, CalculateProjectileColor());
                 RPCProtection();
