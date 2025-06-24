@@ -1108,7 +1108,7 @@ namespace iiMenu.Mods
         }
 
         public static void ReloadMicrophone() =>
-            GameObject.Find("Photon Manager").GetComponent<Recorder>().RestartRecording(true);
+            GorillaTagger.Instance.myRecorder.RestartRecording(true);
 
         public static void ObjectToPointGun(string objectName)
         {

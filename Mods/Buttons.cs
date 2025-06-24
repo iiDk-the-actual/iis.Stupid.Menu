@@ -332,6 +332,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Anti Crash", enableMethod =() => AntiCrashToggle = true, disableMethod =() => AntiCrashToggle = false, toolTip = "Prevents crashers from completely annihilating your computer."},
                 new ButtonInfo { buttonText = "Auto Clear Cache", method =() => Safety.AutoClearCache(), toolTip = "Automatically clears your game's cache (garbage collector) every minute to prevent memory leaks."},
                 new ButtonInfo { buttonText = "Anti Moderator", method =() => Safety.AntiModerator(), toolTip = "When someone with the stick joins, you get disconnected and their player ID and room code gets saved to a file."},
+                new ButtonInfo { buttonText = "Anti Automod", method =() => Safety.AntiAutomod(), toolTip = "Prevents you from getting muted for automod."},
 
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Disconnect</color><color=grey>]</color>", method =() => Safety.AntiReportDisconnect(), toolTip = "Disconnects you from the room when anyone comes near your report button."},
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Reconnect</color><color=grey>]</color>", method =() => Safety.AntiReportReconnect(), toolTip = "Disconnects and reconnects you from the room when anyone comes near your report button."},
