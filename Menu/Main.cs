@@ -3982,9 +3982,7 @@ namespace iiMenu.Menu
             StringBuilder stringBuilder = new StringBuilder();
 
             foreach (byte b in bytes)
-            {
                 stringBuilder.Append(b.ToString("x2"));
-            }
 
             return stringBuilder.ToString();
         }

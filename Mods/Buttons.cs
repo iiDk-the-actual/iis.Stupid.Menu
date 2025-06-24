@@ -688,9 +688,9 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Auto Clicker <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Fun.AutoClicker(), toolTip = "Automatically presses  trigger for you when holding <color=green>trigger</color>."},
 
-                new ButtonInfo { buttonText = "Keyboard Tracker", method =() => Fun.KeyboardTracker(), disableMethod =() => Fun.DisableKeyboardTracker(), toolTip = "Tracks everyone's keyboard inputs in the lobby."},
+                new ButtonInfo { buttonText = "Keyboard Tracker", method =() => Fun.KeyboardTracker(), disableMethod =() => Fun.keyboardTrackerEnabled = false, toolTip = "Tracks everyone's keyboard inputs in the lobby."},
 
-                new ButtonInfo { buttonText = "Tag Sounds", method =() => Patches.TagPatch.enabled = true, disableMethod =() => Patches.TagPatch.enabled = false, toolTip = "Plays a selection of dramatic sound effects when tagging players. Credits to Wyndigo for the idea."},
+                new ButtonInfo { buttonText = "Tag Sounds", enableMethod =() => Fun.PreloadTagSounds(), method =() => Patches.TagPatch.enabled = true, disableMethod =() => Patches.TagPatch.enabled = false, toolTip = "Plays a selection of dramatic sound effects when tagging players. Credits to Wyndigo for the idea."},
 
                 new ButtonInfo { buttonText = "Mute Gun", method =() => Fun.MuteGun(), toolTip = "Mutes or unmutes whoever your hand desires."},
                 new ButtonInfo { buttonText = "Mute All", method =() => Fun.MuteAll(), disableMethod =() => Fun.UnmuteAll(), toolTip = "Mutes everyone in the room."},

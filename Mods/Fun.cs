@@ -7,6 +7,7 @@ using iiMenu.Classes;
 using iiMenu.Menu;
 using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
+using OVR;
 using Photon.Pun;
 using Photon.Realtime;
 using Photon.Voice.Unity;
@@ -451,9 +452,21 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void DisableKeyboardTracker()
+        public static void PreloadTagSounds()
         {
-            keyboardTrackerEnabled = false;
+            string[] sounds = new string[]
+            {
+                "firstblood",
+                "doublekill",
+                "triplekill",
+                "killingspree",
+                "wickedsick",
+                "monsterkill",
+                "rampage"
+            };
+
+            foreach (string sound in sounds)
+                LoadSoundFromURL($"https://github.com/iiDk-the-actual/ModInfo/raw/main/killsounds/{sound}.wav", $"{sound}.wav");
         }
 
         private static float muteDelay = 0f;
