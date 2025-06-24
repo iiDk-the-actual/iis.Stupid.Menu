@@ -260,7 +260,7 @@ namespace iiMenu.Mods.Spammers
             if (rightGrab)
             {
                 if (Time.time > soundSpamDelay)
-                    soundSpamDelay = Time.time + 0.1f;
+                    soundSpamDelay = Time.time + 0.05f;
                 else
                     return;
 
@@ -278,10 +278,8 @@ namespace iiMenu.Mods.Spammers
             }
         }
 
-        public static void RandomSoundSpam()
-        {
+        public static void RandomSoundSpam() =>
             SoundSpam(Random.Range(0, GorillaLocomotion.GTPlayer.Instance.materialData.Count));
-        }
 
         public static void CrystalSoundSpam()
         {
@@ -314,15 +312,16 @@ namespace iiMenu.Mods.Spammers
         {
             soundId--;
             if (soundId < 0)
-            {
-                soundId = 0;
-            }
+                soundId = GorillaLocomotion.GTPlayer.Instance.materialData.Count - 1;
+
             GetIndex("Custom Sound Spam").overlapText = "Custom Sound Spam <color=grey>[</color><color=green>" + soundId.ToString() + "</color><color=grey>]</color>";
         }
 
         public static void IncreaseSoundID()
         {
             soundId++;
+            soundId %= GorillaLocomotion.GTPlayer.Instance.materialData.Count;
+
             GetIndex("Custom Sound Spam").overlapText = "Custom Sound Spam <color=grey>[</color><color=green>" + soundId.ToString() + "</color><color=grey>]</color>";
         }
 
