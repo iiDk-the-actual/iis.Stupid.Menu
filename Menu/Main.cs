@@ -5392,10 +5392,6 @@ jgs \_   _/ |Oo\
 
         public static int soundId;
 
-        public static float red = 1f;
-        public static float green = 0.5f;
-        public static float blue;
-
         public static string inputText = "";
         public static string lastCommand = "";
 
