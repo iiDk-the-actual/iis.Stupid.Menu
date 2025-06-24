@@ -1225,6 +1225,11 @@ namespace iiMenu.Menu
                         Visuals.ClearNameTagPool();
                     } catch { }
 
+                    if (ServerPos == Vector3.zero)
+                        ServerPos = ServerSyncPos;
+
+                    ServerPos = Vector3.Lerp(ServerSyncPos, VRRig.LocalRig.SanitizeVector3(ServerSyncPos), VRRig.LocalRig.lerpValueBody * 0.66f);
+
                     if (Lockdown)
                         return;
 
@@ -4236,6 +4241,7 @@ namespace iiMenu.Menu
         }
 
         public static Vector3 ServerSyncPos;
+        public static Vector3 ServerPos;
         public static void OnSerialize() =>
             ServerSyncPos = VRRig.LocalRig?.transform.position ?? ServerSyncPos;  
 
