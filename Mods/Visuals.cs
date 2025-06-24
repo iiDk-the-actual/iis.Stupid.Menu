@@ -440,9 +440,7 @@ namespace iiMenu.Mods
             float size = 0f;
             GorillaSpeakerLoudness recorder = VRRig.LocalRig.GetComponent<GorillaSpeakerLoudness>();
             if (recorder != null)
-            {
                 size = recorder.Loudness;
-            }
 
             size *= 16f;
             visualizerObject.transform.localScale = new Vector3(size, 0.05f, size);
