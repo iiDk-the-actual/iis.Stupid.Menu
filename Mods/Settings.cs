@@ -2568,7 +2568,11 @@ namespace iiMenu.Mods
                 GunDirection.ToString(),
                 narratorIndex.ToString(),
                 Movement.predInt.ToString(),
-                gunLineQualityIndex.ToString()
+                gunLineQualityIndex.ToString(),
+                Projectiles.projDebounceIndex.ToString(),
+                Projectiles.red.ToString(),
+                Projectiles.green.ToString(),
+                Projectiles.blue.ToString()
             };
 
             string settingstext = string.Join(seperator, settings);
@@ -2715,6 +2719,18 @@ namespace iiMenu.Mods
 
                 gunLineQualityIndex = int.Parse(data[31]) - 1;
                 ChangeGunLineQuality();
+
+                Projectiles.projDebounceIndex = int.Parse(data[32]) - 1;
+                Projectiles.ChangeProjectileDelay();
+
+                Projectiles.red = int.Parse(data[33]) - 1;
+                Projectiles.IncreaseRed();
+
+                Projectiles.green = int.Parse(data[34]) - 1;
+                Projectiles.IncreaseGreen();
+
+                Projectiles.blue = int.Parse(data[35]) - 1;
+                Projectiles.IncreaseBlue();
             } catch { LogManager.Log("Save file out of date"); }
 
             pageButtonType = int.Parse(textData[3]) - 1;
