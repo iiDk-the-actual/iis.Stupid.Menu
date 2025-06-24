@@ -122,18 +122,15 @@ namespace iiMenu.Mods.Spammers
 
             string filename = "Sounds" + Subdirectory + "/" + name + "." + GetFileExtension(url);
             if (File.Exists("iisStupidMenu/"+filename))
-            {
                 File.Delete("iisStupidMenu/" + filename);
-            }
+            
             if (audioFilePool.ContainsKey(name))
-            {
                 audioFilePool.Remove(name);
-            }
+            
             AudioClip soundDownloaded = LoadSoundFromURL(url, filename);
             if (soundDownloaded.length < 20f)
-            {
                 Play2DAudio(soundDownloaded, 1f);
-            }
+            
             NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully downloaded " + name + " to the soundboard.");
         }
 
@@ -141,24 +138,31 @@ namespace iiMenu.Mods.Spammers
         public static float RecoverTime = -1f;
         public static void PlayAudio(string file)
         {
-            AudioClip sound = LoadSoundFromFile(file);
-            GorillaTagger.Instance.myRecorder.SourceType = Recorder.InputSourceType.AudioClip;
-            GorillaTagger.Instance.myRecorder.AudioClip = sound;
-            GorillaTagger.Instance.myRecorder.RestartRecording(true);
-            GorillaTagger.Instance.myRecorder.DebugEchoMode = true;
-            if (!LoopAudio)
+            if (PhotonNetwork.InRoom)
             {
-                AudioIsPlaying = true;
-                RecoverTime = Time.time + sound.length + 0.4f;
+                AudioClip sound = LoadSoundFromFile(file);
+                GorillaTagger.Instance.myRecorder.SourceType = Recorder.InputSourceType.AudioClip;
+                GorillaTagger.Instance.myRecorder.AudioClip = sound;
+                GorillaTagger.Instance.myRecorder.RestartRecording(true);
+                GorillaTagger.Instance.myRecorder.DebugEchoMode = true;
+                if (!LoopAudio)
+                {
+                    AudioIsPlaying = true;
+                    RecoverTime = Time.time + sound.length + 0.4f;
+                }
             }
         }
 
         public static void FixMicrophone()
         {
-            GorillaTagger.Instance.myRecorder.SourceType = Recorder.InputSourceType.Microphone;
-            GorillaTagger.Instance.myRecorder.AudioClip = null;
-            GorillaTagger.Instance.myRecorder.RestartRecording(true);
-            GorillaTagger.Instance.myRecorder.DebugEchoMode = false;
+            if (PhotonNetwork.InRoom)
+            {
+                GorillaTagger.Instance.myRecorder.SourceType = Recorder.InputSourceType.Microphone;
+                GorillaTagger.Instance.myRecorder.AudioClip = null;
+                GorillaTagger.Instance.myRecorder.RestartRecording(true);
+                GorillaTagger.Instance.myRecorder.DebugEchoMode = false;
+            }
+            
             AudioIsPlaying = false;
             RecoverTime = -1f;
         }
