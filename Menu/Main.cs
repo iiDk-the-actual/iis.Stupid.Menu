@@ -4237,7 +4237,7 @@ namespace iiMenu.Menu
 
         public static Vector3 ServerSyncPos;
         public static void OnSerialize() =>
-            ServerSyncPos = VRRig.LocalRig?.syncPos ?? ServerSyncPos;
+            ServerSyncPos = VRRig.LocalRig?.transform.position ?? ServerSyncPos;  
 
         public static void TeleportPlayer(Vector3 pos) // Prevents your hands from getting stuck on trees
         {

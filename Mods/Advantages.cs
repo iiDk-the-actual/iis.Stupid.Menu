@@ -319,6 +319,9 @@ namespace iiMenu.Mods
                 Patches.SphereCastPatch.enabled = false;
         }
 
+        public static bool ValidateTag(VRRig Rig) =>
+            Vector3.Distance(ServerSyncPos, lockTarget.transform.position) < 6f && VRRig.LocalRig.CheckTagDistanceRollback(Rig, 6f, 0.2f);
+
         public static void TagGun()
         {
             if (GetGunInput(false))
@@ -365,7 +368,7 @@ namespace iiMenu.Mods
                             VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
                         }
 
-                        if (Vector3.Distance(ServerSyncPos, lockTarget.transform.position) < 6f)
+                        if (ValidateTag(lockTarget))
                             GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = lockTarget.transform.position;
                     }
                     else
@@ -520,10 +523,10 @@ namespace iiMenu.Mods
                                     VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
                                     VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
                                 }
-
-                                if (Vector3.Distance(ServerSyncPos, lockTarget.transform.position) < 6f)
-                                    GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = vrrig.transform.position;
                             }
+
+                            if (ValidateTag(vrrig))
+                                GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = vrrig.transform.position;
                         }
                     }
                     else
@@ -577,7 +580,7 @@ namespace iiMenu.Mods
                     VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
                 }
 
-                if (Vector3.Distance(ServerSyncPos, lockTarget.transform.position) < 6f)
+                if (ValidateTag(vrrig))
                     GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = vrrig.transform.position;
             }
             else
