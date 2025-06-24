@@ -1869,7 +1869,7 @@ namespace iiMenu.Menu
 
             if (themeType == 7)
             {
-                GameObject coneBackground = LoadAsset<GameObject>("Cone");
+                GameObject coneBackground = LoadObject<GameObject>("Cone");
 
                 coneBackground.transform.parent = menu.transform;
                 coneBackground.transform.localPosition = Vector3.zero;
@@ -2897,12 +2897,21 @@ namespace iiMenu.Menu
                 LogManager.LogError("Failed to load assetbundle");
         }
 
-        public static T LoadAsset<T>(string assetName) where T : UnityEngine.Object
+        public static T LoadObject<T>(string assetName) where T : UnityEngine.Object
         {
             if (assetBundle == null)
                 LoadAssetBundle();
 
             T gameObject = Instantiate(assetBundle.LoadAsset<T>(assetName));
+            return gameObject;
+        }
+
+        public static T LoadAsset<T>(string assetName) where T : UnityEngine.Object
+        {
+            if (assetBundle == null)
+                LoadAssetBundle();
+
+            T gameObject = assetBundle.LoadAsset(assetName) as T;
             return gameObject;
         }
 
