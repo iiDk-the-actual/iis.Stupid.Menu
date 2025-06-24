@@ -2011,10 +2011,12 @@ namespace iiMenu.Mods
 
         public static void BetaSetRopeVelocity(int RopeId, Vector3 Velocity)
         {
+            Velocity = Velocity.ClampMagnitudeSafe(100f);
+
             if (RopeSwingManager.instance.ropes.TryGetValue(RopeId, out GorillaRopeSwing Rope))
             {
                 var ClosestNode = Rope.nodes
-                    .Skip(1) // Can't do the first one
+                    .Skip(3) // Can't do the first couple
                     .Select((v, i) => new { index = i, 
                                             transform = v,
                                             distance = Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, v.transform.position) 
@@ -2033,7 +2035,11 @@ namespace iiMenu.Mods
                     VRRig.LocalRig.transform.position = ClosestNode.transform.position;
                 }
 
-                RopeSwingManager.instance.SendSetVelocity_RPC(RopeId, ClosestNode.index, Velocity.ClampMagnitudeSafe(100f), true);
+                if (Vector3.Distance(ServerPos, ClosestNode.transform.position) < 5f)
+                    RopeSwingManager.instance.SendSetVelocity_RPC(RopeId, ClosestNode.index, Velocity.ClampMagnitudeSafe(100f), true);
+                else
+                    RopeDelay = 0f;
+
                 RPCProtection();
             }
         }
@@ -2047,7 +2053,7 @@ namespace iiMenu.Mods
         {
             if (Time.time > randomRopeDelay)
             {
-                randomRopeDelay = Time.time + 0.25f;
+                randomRopeDelay = Time.time + 0.5f;
                 randomRope = RopeSwingManager.instance.ropes.Values.OrderBy(_ => UnityEngine.Random.value).FirstOrDefault();
             }
             return randomRope;
