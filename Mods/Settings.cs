@@ -34,7 +34,7 @@ namespace iiMenu.Mods
                 {
                     if (VRKeyboard == null)
                     {
-                        VRKeyboard = LoadAsset<GameObject>("keyboard");
+                        VRKeyboard = LoadObject<GameObject>("keyboard");
                         VRKeyboard.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
                         VRKeyboard.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
 
