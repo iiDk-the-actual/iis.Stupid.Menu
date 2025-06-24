@@ -275,12 +275,14 @@ namespace iiMenu.Mods.Spammers
             else
                 projDebounceIndex--;
 
-            projDebounceIndex %= 11;
             if (projDebounceIndex < 1)
                 projDebounceIndex = 10;
 
+            if (projDebounceIndex > 10)
+                projDebounceIndex = 1;
+
             projDebounceType = projDebounceIndex / 10f;
-            GetIndex("Change Projectile Delay").overlapText = "Change Projectile Delay <color=grey>[</color><color=green>" + projDebounceIndex.ToString() + "</color><color=grey>]</color>";
+            GetIndex("Change Projectile Delay").overlapText = "Change Projectile Delay <color=grey>[</color><color=green>" + projDebounceType.ToString() + "</color><color=grey>]</color>";
         }
 
         public static Color CalculateProjectileColor()
