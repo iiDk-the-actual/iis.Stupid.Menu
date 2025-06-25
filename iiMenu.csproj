@@ -17,6 +17,7 @@
     <None Remove="Resources\return.png" />
     <None Remove="Resources\search.png" />
     <None Remove="Resources\speak.png" />
+    <None Remove="Resources\star.png" />
     <None Remove="Resources\trans.png" />
   </ItemGroup>
   
@@ -29,6 +30,7 @@
     <EmbeddedResource Include="Resources\return.png" />
     <EmbeddedResource Include="Resources\search.png" />
     <EmbeddedResource Include="Resources\speak.png" />
+    <EmbeddedResource Include="Resources\star.png" />
     <EmbeddedResource Include="Resources\trans.png" />
   </ItemGroup>
   
