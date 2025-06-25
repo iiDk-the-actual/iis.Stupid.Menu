@@ -378,6 +378,8 @@ namespace iiMenu.Classes
 
         #region Menu Implementation
         private static int previousOnlineCount = -1;
+        private static int previousIncomingCount = -1;
+
         public static void FriendsListUpdated()
         {
             FriendData.Friend[] onlineFriends = instance.Friends.friends.Values
@@ -395,7 +397,11 @@ namespace iiMenu.Classes
             if (onlineFriends.Length > previousOnlineCount && onlineFriends.Length > 0)
                 NotifiLib.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> You have {onlineFriends.Length - (previousOnlineCount + (previousOnlineCount < 0 ? 1 : 0))}{(previousOnlineCount < 0 ? " " : " new ")}friend{(onlineFriends.Length > 1 ? "s" : "")} online.", 5000);
 
+            if (instance.Friends.incoming.Values.Count > previousIncomingCount && instance.Friends.incoming.Values.Count > 0)
+                NotifiLib.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> You have {instance.Friends.incoming.Values.Count - (previousIncomingCount + (previousIncomingCount < 0 ? 1 : 0))}{(previousIncomingCount < 0 ? " " : " new ")}friend{(instance.Friends.incoming.Values.Count > 1 ? "s" : "")} request.", 5000);
+
             previousOnlineCount = onlineFriends.Length;
+            previousIncomingCount = instance.Friends.incoming.Values.Count;
 
             if (onlineFriends.Length > 0)
                 GetIndex("Friends").overlapText = $"Friends <color=grey>[</color><color=green>{onlineFriends.Length} Online</color><color=grey>]</color>";
@@ -468,13 +474,14 @@ namespace iiMenu.Classes
             {
                 foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
                 {
-                    buttons.Add(new ButtonInfo
-                    {
-                        buttonText = $"Friend <color=#{ColorToHex(GetVRRigFromPlayer(Player).playerColor)}>{Player.NickName}</color>",
-                        method = () => SendFriendRequest(Player.UserId),
-                        isTogglable = false,
-                        toolTip = $"Sends a friend request to {Player.NickName}."
-                    });
+                    if (!IsPlayerFriend(Player))
+                        buttons.Add(new ButtonInfo
+                        {
+                            buttonText = $"Friend <color=#{ColorToHex(GetVRRigFromPlayer(Player).playerColor)}>{Player.NickName}</color>",
+                            method = () => SendFriendRequest(Player.UserId),
+                            isTogglable = false,
+                            toolTip = $"Sends a friend request to {Player.NickName}."
+                        });
                 }
             } else
                 buttons.Add(new ButtonInfo
