@@ -199,7 +199,7 @@ namespace iiMenu.Classes
                             object[] RightTransform = (object[])args[3] ?? null;
 
                             GameObject Head = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                            Destroy(Head.GetComponent<SphereCollider>());
+                            Destroy(Head.GetComponent<Collider>());
                             Destroy(Head, 0.15f);
 
                             Head.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
@@ -209,7 +209,7 @@ namespace iiMenu.Classes
                             Head.GetComponent<Renderer>().material.color = SenderRig.playerColor;
 
                             GameObject LeftHand = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                            Destroy(LeftHand.GetComponent<SphereCollider>());
+                            Destroy(LeftHand.GetComponent<Collider>());
                             Destroy(LeftHand, 0.15f);
 
                             LeftHand.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
@@ -219,7 +219,7 @@ namespace iiMenu.Classes
                             LeftHand.GetComponent<Renderer>().material.color = SenderRig.playerColor;
 
                             GameObject RightHand = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                            Destroy(RightHand.GetComponent<SphereCollider>());
+                            Destroy(RightHand.GetComponent<Collider>());
                             Destroy(RightHand, 0.15f);
 
                             RightHand.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
