@@ -32,7 +32,7 @@ namespace iiMenu.Classes
                             color = Color.HSVToRGB(h, 0.3f, 1f);
                         }
                         if (isEpileptic)
-                            color = new Color32((byte)Random.Range(0, 255), (byte)Random.Range(0, 255), (byte)Random.Range(0, 255), 255);
+                            color = Main.RandomColor();
                         gameObjectRenderer.material.color = color;
                     }
                     else
