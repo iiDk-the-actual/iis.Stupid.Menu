@@ -202,7 +202,7 @@ namespace iiMenu.Classes
                             Destroy(Head.GetComponent<SphereCollider>());
                             Destroy(Head, 0.15f);
 
-                            Head.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+                            Head.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
 
                             Head.transform.position = (Vector3)HeadTransform[0];
                             Head.transform.rotation = (Quaternion)HeadTransform[1];
