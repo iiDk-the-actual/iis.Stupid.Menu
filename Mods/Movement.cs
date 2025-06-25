@@ -2086,7 +2086,7 @@ namespace iiMenu.Mods
         private static bool invisMonke;
         public static void Invisible()
         {
-            bool hit = rightSecondary || Mouse.current.rightButton.isPressed;
+            bool hit = rightSecondary;
             if (GetIndex("Non-Togglable Invisible").enabled)
                 invisMonke = hit;
             if (invisMonke)
@@ -2108,7 +2108,7 @@ namespace iiMenu.Mods
         private static bool ghostMonke;
         public static void Ghost()
         {
-            bool hit = rightPrimary || Mouse.current.leftButton.isPressed;
+            bool hit = rightPrimary;
             if (GetIndex("Non-Togglable Ghost").enabled)
                 ghostMonke = hit;
             
