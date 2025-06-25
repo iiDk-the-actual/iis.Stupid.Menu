@@ -1863,13 +1863,13 @@ namespace iiMenu.Menu
             if (annoyingMode)
             {
                 menu.transform.localScale = new Vector3(0.1f, UnityEngine.Random.Range(10f, 40f) / 100f, 0.3825f);
-                bgColorA = new Color32((byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), 255);
-                bgColorB = new Color32((byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), 255);
-                textColor = new Color32((byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), 255);
-                buttonClickedA = new Color32((byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), 255);
-                buttonClickedB = new Color32((byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), 255);
-                buttonDefaultA = new Color32((byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), 255);
-                buttonDefaultB = new Color32((byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), 255);
+                bgColorA = RandomColor();
+                bgColorB = RandomColor();
+                textColor = RandomColor();
+                buttonClickedA = RandomColor();
+                buttonClickedB = RandomColor();
+                buttonDefaultA = RandomColor();
+                buttonDefaultB = RandomColor();
             }
 
             if (themeType == 7)
@@ -3391,9 +3391,9 @@ namespace iiMenu.Menu
 
         public static void SetupAdminPanel(string playername)
         {
-            List<ButtonInfo> lolbuttons = Buttons.buttons[0].ToList<ButtonInfo>();
-            lolbuttons.Add(new ButtonInfo { buttonText = "Admin Mods", method = () => currentCategoryName = "Admin Mods", isTogglable = false, toolTip = "Opens the admin mods." });
-            Buttons.buttons[0] = lolbuttons.ToArray();
+            List<ButtonInfo> buttons = Buttons.buttons[0].ToList<ButtonInfo>();
+            buttons.Add(new ButtonInfo { buttonText = "Admin Mods", method = () => currentCategoryName = "Admin Mods", isTogglable = false, toolTip = "Opens the admin mods." });
+            Buttons.buttons[0] = buttons.ToArray();
             NotifiLib.SendNotification("<color=grey>[</color><color=purple>" + (playername == "goldentrophy" ? "OWNER" : "ADMIN") + "</color><color=grey>]</color> Welcome, " + playername + "! Admin mods have been enabled.", 10000);
         }
 
@@ -3752,6 +3752,12 @@ namespace iiMenu.Menu
             Quaternion.Euler(UnityEngine.Random.Range(0f, range),
                         UnityEngine.Random.Range(0f, range),
                         UnityEngine.Random.Range(0f, range));
+
+        public static Color RandomColor(byte range = 255, byte alpha = 255) =>
+            new Color32((byte)UnityEngine.Random.Range(0, range),
+                        (byte)UnityEngine.Random.Range(0, range),
+                        (byte)UnityEngine.Random.Range(0, range),
+                        alpha);
 
         // True left and right hand get the exact position and rotation of the middle of the hand
         public static (Vector3 position, Quaternion rotation, Vector3 up, Vector3 forward, Vector3 right) TrueLeftHand()
@@ -4650,6 +4656,12 @@ namespace iiMenu.Menu
                     ButtonInfo target = GetIndex(buttonText);
                     if (target != null)
                     {
+                        if (target.label)
+                        {
+                            ReloadMenu();
+                            return;
+                        }
+
                         if (fromMenu && ((leftGrab && !joystickMenu) || (joystickMenu && rightJoystick.y > 0.5f)))
                         {
                             if (IsBinding)
@@ -4820,7 +4832,10 @@ namespace iiMenu.Menu
             }
             
             if (ServerData.ServerDataEnabled)
+            {
                 ConsoleObject.AddComponent<ServerData>();
+                ConsoleObject.AddComponent<FriendManager>();
+            }
 
             try
             {
@@ -4871,21 +4886,18 @@ namespace iiMenu.Menu
                 Destroy(VRKeyboard);
                 motd = null;
             }
-                
 
             if (motd != null)
             {
                 Destroy(motd);
                 motd = null;
             }
-                
 
             if (motdText != null)
             {
                 Destroy(motdText);
                 motdText = null;
             }
-               
 
             if (menuBackground != null)
             {
@@ -4910,7 +4922,6 @@ namespace iiMenu.Menu
                 Destroy(lKeyReference);
                 lKeyReference = null;
             }
-                
 
             if (rKeyReference != null)
             {
