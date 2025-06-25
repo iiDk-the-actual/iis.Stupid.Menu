@@ -17,7 +17,9 @@ namespace iiMenu.Menu
         {
             new ButtonInfo[] { // Main [0]
                 new ButtonInfo { buttonText = "Join Discord", method =() => Important.JoinDiscord(), isTogglable = false, toolTip = "Invites you to join the ii's <b>Stupid</b> Mods Discord server."},
+                
                 new ButtonInfo { buttonText = "Settings", method =() => currentCategoryName = "Settings", isTogglable = false, toolTip = "Opens the settings menu."},
+                new ButtonInfo { buttonText = "Friends", method =() => currentCategoryName = "Friends", isTogglable = false, toolTip = "Opens the friends menu."},
 
                 new ButtonInfo { buttonText = "Favorite Mods", method =() => currentCategoryName = "Favorite Mods", isTogglable = false, toolTip = "Opens your favorite mods. Favorite mods with left grip."},
                 new ButtonInfo { buttonText = "Enabled Mods", method =() => currentCategoryName = "Enabled Mods", isTogglable = false, toolTip = "Shows all mods you have enabled."},
@@ -332,7 +334,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Anti Crash", enableMethod =() => AntiCrashToggle = true, disableMethod =() => AntiCrashToggle = false, toolTip = "Prevents crashers from completely annihilating your computer."},
                 new ButtonInfo { buttonText = "Auto Clear Cache", method =() => Safety.AutoClearCache(), toolTip = "Automatically clears your game's cache (garbage collector) every minute to prevent memory leaks."},
                 new ButtonInfo { buttonText = "Anti Moderator", method =() => Safety.AntiModerator(), toolTip = "When someone with the stick joins, you get disconnected and their player ID and room code gets saved to a file."},
-                new ButtonInfo { buttonText = "Anti Automod", method =() => Safety.AntiAutomod(), toolTip = "Prevents you from getting muted for automod."},
 
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Disconnect</color><color=grey>]</color>", method =() => Safety.AntiReportDisconnect(), toolTip = "Disconnects you from the room when anyone comes near your report button."},
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Reconnect</color><color=grey>]</color>", method =() => Safety.AntiReportReconnect(), toolTip = "Disconnects and reconnects you from the room when anyone comes near your report button."},
@@ -760,8 +761,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Fast Hoverboard", method =() => Fun.FastHoverboard(), disableMethod =() => Fun.FixHoverboard(), toolTip = "Makes your hoverboard go really fast."},
                 new ButtonInfo { buttonText = "Slow Hoverboard", method =() => Fun.SlowHoverboard(), disableMethod =() => Fun.FixHoverboard(), toolTip = "Makes your hoverboard go really slow."},
 
-                new ButtonInfo { buttonText = "Rainbow Hoverboard", method =() => Fun.RainbowHoverboard(), toolTip = "Makes your hoverboard rainbow."},
-                new ButtonInfo { buttonText = "Strobe Hoverboard", method =() => Fun.StrobeHoverboard(), toolTip = "Makes your hoverboard flash."},
+                new ButtonInfo { buttonText = "Rainbow Hoverboard", method =() => Fun.RainbowHoverboard(), toolTip = "Changes your hoverboard's color to be rainbow."},
+                new ButtonInfo { buttonText = "Strobe Hoverboard", method =() => Fun.StrobeHoverboard(), toolTip = "Changes your hoverboard's color to flash between black and white."},
+                new ButtonInfo { buttonText = "Random Hoverboard", method =() => Fun.RandomHoverboard(), toolTip = "Changes your hoverboard's color to flash random colors."},
 
                 new ButtonInfo { buttonText = "Global Hoverboard", method =() => Fun.GlobalHoverboard(), disableMethod =() => Fun.DisableGlobalHoverboard(), toolTip = "Gives you the hoverboard no matter where you are."},
 
@@ -1323,6 +1325,11 @@ namespace iiMenu.Menu
             new ButtonInfo[] { // Plugin Settings [33]
                 new ButtonInfo { buttonText = "Exit Plugin Settings", method =() => currentCategoryName = "Settings", isTogglable = false, toolTip = "Returns you back to the settings menu."},
                 new ButtonInfo { buttonText = "Reload Plugins", method = () => Settings.ReloadPlugins(), isTogglable = false, toolTip = "Reloads all of your plugins." }
+            },
+
+            new ButtonInfo[] { // Friends [34]
+                new ButtonInfo { buttonText = "Exit Friends", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
+                new ButtonInfo { buttonText = "Loading...", label = true},
             }
         };
 
@@ -1361,7 +1368,8 @@ namespace iiMenu.Menu
             "Soundboard Settings",
             "Overpowered Settings",
             "Keybind Settings",
-            "Plugin Settings"
+            "Plugin Settings",
+            "Friends"
         };
     }
 }
