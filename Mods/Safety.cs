@@ -419,25 +419,6 @@ namespace iiMenu.Mods
             }
         }
 
-        private static float lastVol;
-        public static void AntiAutomod()
-        {
-            if (PhotonNetwork.InRoom)
-            {
-                GorillaSpeakerLoudness Loudness = VRRig.LocalRig.GetComponent<GorillaSpeakerLoudness>();
-                if (Loudness != null)
-                {
-                    if (Loudness.Loudness <= 0 && lastVol > 0)
-                        GorillaTagger.Instance.myRecorder.RestartRecording(true);
-
-                    lastVol = Loudness.Loudness;
-                } else
-                    lastVol = 0f;
-            }
-            else
-                lastVol = 0f;
-        }
-
         public static void ChangeIdentity()
         {
             string randomName = "gorilla";
