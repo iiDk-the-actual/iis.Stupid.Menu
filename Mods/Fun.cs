@@ -1223,7 +1223,6 @@ namespace iiMenu.Mods
                     }
                 }
             }
-            //RPCProtection();
         }
 
         public static void NoRespawnBug()
@@ -1458,18 +1457,8 @@ namespace iiMenu.Mods
 
         public static void SpawnHoverboard()
         {
-            FreeHoverboardManager.instance.SendDropBoardRPC(VRRig.LocalRig.transform.position, VRRig.LocalRig.transform.rotation, Vector3.zero, Vector3.zero, new Color32((byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), 255));
+            FreeHoverboardManager.instance.SendDropBoardRPC(VRRig.LocalRig.transform.position, VRRig.LocalRig.transform.rotation, Vector3.zero, Vector3.zero, RandomColor());
             GorillaLocomotion.GTPlayer.Instance.SetHoverAllowed(true);
-        }
-
-        public static void RainbowHoverboard()
-        {
-            if (VRRig.LocalRig.hoverboardVisual != null && VRRig.LocalRig.hoverboardVisual.IsHeld)
-            {
-                float h = (Time.frameCount / 180f) % 1f;
-                Color rgbColor = Color.HSVToRGB(h, 1f, 1f);
-                VRRig.LocalRig.hoverboardVisual.SetIsHeld(VRRig.LocalRig.hoverboardVisual.IsLeftHanded, VRRig.LocalRig.hoverboardVisual.NominalLocalPosition, VRRig.LocalRig.hoverboardVisual.NominalLocalRotation, rgbColor);
-            }
         }
 
         private static float hoverboardSpamDelay;
@@ -1479,7 +1468,7 @@ namespace iiMenu.Mods
             {
                 hoverboardSpamDelay = Time.time + 0.5f;
 
-                FreeHoverboardManager.instance.SendDropBoardRPC(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, GorillaTagger.Instance.rightHandTransform.forward * 15f, new Vector3(100f, 100f, 100f), new Color32((byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), 255));
+                FreeHoverboardManager.instance.SendDropBoardRPC(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, GorillaTagger.Instance.rightHandTransform.forward * ShootStrength, RandomVector3(100f), RandomColor());
             }
         }
 
@@ -1495,7 +1484,7 @@ namespace iiMenu.Mods
                 offset = -25f;
                 Vector3 position2 = new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)) * 2f, 1f, MathF.Sin(offset + ((float)Time.frameCount / 30)) * 2f);
 
-                FreeHoverboardManager.instance.SendDropBoardRPC(GorillaTagger.Instance.headCollider.transform.position + position, Quaternion.Euler((GorillaTagger.Instance.headCollider.transform.position - position).normalized), (position2 - position).normalized * 6.5f, new Vector3(0f, 360f, 0f), new Color32((byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), 255));
+                FreeHoverboardManager.instance.SendDropBoardRPC(GorillaTagger.Instance.headCollider.transform.position + position, Quaternion.Euler((GorillaTagger.Instance.headCollider.transform.position - position).normalized), (position2 - position).normalized * 6.5f, new Vector3(0f, 360f, 0f), RandomColor());
 
                 offset = 180f;
                 position = new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)) * 2f, 1f, MathF.Sin(offset + ((float)Time.frameCount / 30)) * 2f);
@@ -1503,7 +1492,7 @@ namespace iiMenu.Mods
                 offset = 155f;
                 position2 = new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)) * 2f, 1f, MathF.Sin(offset + ((float)Time.frameCount / 30)) * 2f);
 
-                FreeHoverboardManager.instance.SendDropBoardRPC(GorillaTagger.Instance.headCollider.transform.position + position, Quaternion.Euler((GorillaTagger.Instance.headCollider.transform.position - position).normalized), (position2 - position).normalized * 6.5f, new Vector3(0f, 360f, 0f), new Color32((byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), 255));
+                FreeHoverboardManager.instance.SendDropBoardRPC(GorillaTagger.Instance.headCollider.transform.position + position, Quaternion.Euler((GorillaTagger.Instance.headCollider.transform.position - position).normalized), (position2 - position).normalized * 6.5f, new Vector3(0f, 360f, 0f), RandomColor());
             }
         }
 
@@ -1513,6 +1502,16 @@ namespace iiMenu.Mods
             {
                 if (race.racingState == RacingManager.RacingState.Inactive)
                     race.Button_StartRace(5);
+            }
+        }
+
+        public static void RainbowHoverboard()
+        {
+            if (VRRig.LocalRig.hoverboardVisual != null && VRRig.LocalRig.hoverboardVisual.IsHeld)
+            {
+                float h = (Time.frameCount / 180f) % 1f;
+                Color rgbColor = Color.HSVToRGB(h, 1f, 1f);
+                VRRig.LocalRig.hoverboardVisual.SetIsHeld(VRRig.LocalRig.hoverboardVisual.IsLeftHanded, VRRig.LocalRig.hoverboardVisual.NominalLocalPosition, VRRig.LocalRig.hoverboardVisual.NominalLocalRotation, rgbColor);
             }
         }
 
@@ -1531,6 +1530,12 @@ namespace iiMenu.Mods
                 Color rgbColor = flashColor ? Color.white : Color.black;
                 VRRig.LocalRig.hoverboardVisual.SetIsHeld(VRRig.LocalRig.hoverboardVisual.IsLeftHanded, VRRig.LocalRig.hoverboardVisual.NominalLocalPosition, VRRig.LocalRig.hoverboardVisual.NominalLocalRotation, rgbColor);
             }
+        }
+
+        public static void RandomHoverboard()
+        {
+            if (VRRig.LocalRig.hoverboardVisual != null && VRRig.LocalRig.hoverboardVisual.IsHeld)
+                VRRig.LocalRig.hoverboardVisual.SetIsHeld(VRRig.LocalRig.hoverboardVisual.IsLeftHanded, VRRig.LocalRig.hoverboardVisual.NominalLocalPosition, VRRig.LocalRig.hoverboardVisual.NominalLocalRotation, RandomColor());
         }
 
         public static void ModifyGliderSpeed(float pullUpLiftBonus, float dragVsSpeedDragFactor)
