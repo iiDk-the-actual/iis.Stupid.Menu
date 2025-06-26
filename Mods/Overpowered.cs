@@ -1,4 +1,4 @@
-﻿using ExitGames.Client.Photon;
+using ExitGames.Client.Photon;
 using GorillaExtensions;
 using GorillaGameModes;
 using GorillaLocomotion.Gameplay;
@@ -2128,6 +2128,385 @@ namespace iiMenu.Mods
 
                     GorillaRopeSwing rope = GetRandomRope();
                     BetaSetRopeVelocity(rope, (NewPointer.transform.position - rope.transform.position).normalized * 100f);
+                }
+            }
+        }
+
+        public static float searchdelay = 0f;
+        public static float notifdelay = 0f;
+        public static void ShockwaveSpam()
+        {
+            if (PhotonNetwork.LocalPlayer.IsMasterClient)
+            {
+                if (ControllerInputPoller.instance.rightGrab)
+                {
+                    if (Time.time > searchdelay)
+                    {
+                        CrittersPawn[] critters = GetAllType<CrittersPawn>();
+                        if (critters.Length > 0)
+                        {
+                            CrittersPawn critter = critters[1];
+                            critter.transform.position = GorillaTagger.Instance.rightHandTransform.transform.position;
+                            int actorId = critter.actorId;
+                            CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StunExplosion, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
+                        }
+                        searchdelay = Time.time + 0.25f;
+                    }
+                }
+
+
+            }
+            else
+            {
+                if (Time.time > notifdelay)
+                {
+                    notifdelay = Time.time + 0.1f;
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                }
+            }
+        }
+        public static void StickySpam()
+        {
+            if (PhotonNetwork.LocalPlayer.IsMasterClient)
+            {
+                if (ControllerInputPoller.instance.rightGrab)
+                {
+                    if (Time.time > searchdelay)
+                    {
+                        CrittersPawn[] critters = GetAllType<CrittersPawn>();
+                        if (critters.Length > 0)
+                        {
+                            CrittersPawn critter = critters[1];
+                            critter.transform.position = GorillaTagger.Instance.rightHandTransform.transform.position;
+                            int actorId = critter.actorId;
+                            CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StickyDeployed, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
+                        }
+                        searchdelay = Time.time + 0.25f;
+                    }
+                }
+
+
+            }
+            else
+            {
+                if (Time.time > notifdelay)
+                {
+                    notifdelay = Time.time + 0.1f;
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                }
+            }
+        }
+        public static void DustSpam()
+        {
+            if (PhotonNetwork.LocalPlayer.IsMasterClient)
+            {
+                if (ControllerInputPoller.instance.rightGrab)
+                {
+                    if (Time.time > searchdelay)
+                    {
+                        CrittersPawn[] critters = GetAllType<CrittersPawn>();
+                        if (critters.Length > 0)
+                        {
+                            CrittersPawn critter = critters[1];
+                            critter.transform.position = GorillaTagger.Instance.rightHandTransform.transform.position;
+                            int actorId = critter.actorId;
+                            CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StickyTriggered, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
+                        }
+                        searchdelay = Time.time + 0.25f;
+                    }
+                }
+
+
+            }
+            else
+            {
+                if (Time.time > notifdelay)
+                {
+                    notifdelay = Time.time + 0.1f;
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                }
+            }
+        }
+
+        public static void NoiseSpam()
+        {
+            if (PhotonNetwork.LocalPlayer.IsMasterClient)
+            {
+                if (ControllerInputPoller.instance.rightGrab)
+                {
+                    if (Time.time > searchdelay)
+                    {
+                        CrittersPawn[] critters = GetAllType<CrittersPawn>();
+                        if (critters.Length > 0)
+                        {
+                            CrittersPawn critter = critters[1];
+                            critter.transform.position = GorillaTagger.Instance.rightHandTransform.transform.position;
+                            int actorId = critter.actorId;
+                            CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.NoiseMakerTriggered, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
+                        }
+                        searchdelay = Time.time + 0.25f;
+                    }
+                }
+
+
+            }
+            else
+            {
+                if (Time.time > notifdelay)
+                {
+                    notifdelay = Time.time + 0.1f;
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                }
+            }
+        }
+        public static void AllSpam()
+        {
+            if (PhotonNetwork.LocalPlayer.IsMasterClient)
+            {
+                if (ControllerInputPoller.instance.rightGrab)
+                {
+                    if (Time.time > searchdelay)
+                    {
+                        CrittersPawn[] critters = GetAllType<CrittersPawn>();
+                        if (critters.Length > 0)
+                        {
+                            CrittersPawn critter = critters[1];
+                            critter.transform.position = GorillaTagger.Instance.rightHandTransform.transform.position;
+                            int actorId = critter.actorId;
+                            CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.NoiseMakerTriggered, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
+                            CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StunExplosion, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
+                            CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StickyTriggered, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
+                            CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StickyDeployed, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
+                        }
+                        searchdelay = Time.time + 0.25f;
+                    }
+                }
+
+
+            }
+            else
+            {
+                if (Time.time > notifdelay)
+                {
+                    notifdelay = Time.time + 0.1f;
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                }
+            }
+        }
+
+        public static void ShockwaveGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    if (PhotonNetwork.LocalPlayer.IsMasterClient)
+                    {
+                        if (Time.time > searchdelay)
+                        {
+                            CrittersPawn[] critters = GetAllType<CrittersPawn>();
+                            if (critters.Length > 0)
+                            {
+                                CrittersPawn critter = critters[1];
+                                critter.transform.position = NewPointer.transform.position;
+                                int actorId = critter.actorId;
+                                CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StunExplosion, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
+                            }
+                            searchdelay = Time.time + 0.25f;
+                        }
+                    }
+                    else
+                    {
+                        if (Time.time > notifdelay)
+                        {
+                            notifdelay = Time.time + 0.1f;
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void StickyGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    if (PhotonNetwork.LocalPlayer.IsMasterClient)
+                    {
+                        if (Time.time > searchdelay)
+                        {
+                            CrittersPawn[] critters = GetAllType<CrittersPawn>();
+                            if (critters.Length > 0)
+                            {
+                                CrittersPawn critter = critters[1];
+                                critter.transform.position = NewPointer.transform.position;
+                                int actorId = critter.actorId;
+                                CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StickyDeployed, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
+                            }
+                            searchdelay = Time.time + 0.25f;
+                        }
+                    }
+                    else
+                    {
+                        if (Time.time > notifdelay)
+                        {
+                            notifdelay = Time.time + 0.1f;
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void DustGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    if (PhotonNetwork.LocalPlayer.IsMasterClient)
+                    {
+                        if (Time.time > searchdelay)
+                        {
+                            CrittersPawn[] critters = GetAllType<CrittersPawn>();
+                            if (critters.Length > 0)
+                            {
+                                CrittersPawn critter = critters[1];
+                                critter.transform.position = NewPointer.transform.position;
+                                int actorId = critter.actorId;
+                                CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StickyTriggered, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
+                            }
+                            searchdelay = Time.time + 0.25f;
+                        }
+                    }
+                    else
+                    {
+                        if (Time.time > notifdelay)
+                        {
+                            notifdelay = Time.time + 0.1f;
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void NoiseGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    if (PhotonNetwork.LocalPlayer.IsMasterClient)
+                    {
+                        if (Time.time > searchdelay)
+                        {
+                            CrittersPawn[] critters = GetAllType<CrittersPawn>();
+                            if (critters.Length > 0)
+                            {
+                                CrittersPawn critter = critters[1];
+                                critter.transform.position = NewPointer.transform.position;
+                                int actorId = critter.actorId;
+                                CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.NoiseMakerTriggered, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
+                            }
+                            searchdelay = Time.time + 0.25f;
+                        }
+                    }
+                    else
+                    {
+                        if (Time.time > notifdelay)
+                        {
+                            notifdelay = Time.time + 0.1f;
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void AllSpamGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    if (PhotonNetwork.LocalPlayer.IsMasterClient)
+                    {
+                        if (Time.time > searchdelay)
+                        {
+                            CrittersPawn[] critters = GetAllType<CrittersPawn>();
+                            if (critters.Length > 0)
+                            {
+                                CrittersPawn critter = critters[1];
+                                critter.transform.position = NewPointer.transform.position;
+                                int actorId = critter.actorId;
+                                CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.NoiseMakerTriggered, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
+                                CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StunExplosion, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
+                                CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StickyTriggered, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
+                                CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StickyDeployed, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
+                            }
+                            searchdelay = Time.time + 0.25f;
+                        }
+                    }
+                    else
+                    {
+                        if (Time.time > notifdelay)
+                        {
+                            notifdelay = Time.time + 0.1f;
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                        }
+                    }
+                }
+            }
+        }
+        public static void AllSpamAura()
+        {
+            if (PhotonNetwork.LocalPlayer.IsMasterClient)
+            {
+                if (Time.time > searchdelay)
+                {
+                    CrittersPawn[] critters = GetAllType<CrittersPawn>();
+                    if (critters.Length > 0)
+                    {
+                        CrittersPawn critter = critters[1];
+                        critter.transform.position = VRRig.LocalRig.transform.position + new Vector3(UnityEngine.Random.Range(0, 2), UnityEngine.Random.Range(0, 2), UnityEngine.Random.Range(0, 2));
+                        int actorId = critter.actorId;
+                        CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.NoiseMakerTriggered, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
+                        CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StunExplosion, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
+                        CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StickyTriggered, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
+                        CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StickyDeployed, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
+                    }
+                    searchdelay = Time.time + 0.25f;
+                }
+            }
+            else
+            {
+                if (Time.time > notifdelay)
+                {
+                    notifdelay = Time.time + 0.1f;
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
                 }
             }
         }
