@@ -2132,29 +2132,22 @@ namespace iiMenu.Mods
             }
         }
 
-        public static float searchdelay = 0f;
-        public static float notifdelay = 0f;
+        public static float notifdelay;
         public static void ShockwaveSpam()
         {
             if (PhotonNetwork.LocalPlayer.IsMasterClient)
             {
-                if (ControllerInputPoller.instance.rightGrab)
+                if (rightGrab)
                 {
-                    if (Time.time > searchdelay)
+                    CrittersPawn[] critters = GetAllType<CrittersPawn>();
+                    if (critters.Length > 0)
                     {
-                        CrittersPawn[] critters = GetAllType<CrittersPawn>();
-                        if (critters.Length > 0)
-                        {
-                            CrittersPawn critter = critters[1];
-                            critter.transform.position = GorillaTagger.Instance.rightHandTransform.transform.position;
-                            int actorId = critter.actorId;
-                            CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StunExplosion, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
-                        }
-                        searchdelay = Time.time + 0.25f;
+                        CrittersPawn critter = critters[0];
+                        critter.transform.position = GorillaTagger.Instance.rightHandTransform.transform.position;
+                        int actorId = critter.actorId;
+                        CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StunExplosion, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
                     }
                 }
-
-
             }
             else
             {
@@ -2165,27 +2158,22 @@ namespace iiMenu.Mods
                 }
             }
         }
+
         public static void StickySpam()
         {
             if (PhotonNetwork.LocalPlayer.IsMasterClient)
             {
-                if (ControllerInputPoller.instance.rightGrab)
+                if (rightGrab)
                 {
-                    if (Time.time > searchdelay)
+                    CrittersPawn[] critters = GetAllType<CrittersPawn>();
+                    if (critters.Length > 0)
                     {
-                        CrittersPawn[] critters = GetAllType<CrittersPawn>();
-                        if (critters.Length > 0)
-                        {
-                            CrittersPawn critter = critters[1];
-                            critter.transform.position = GorillaTagger.Instance.rightHandTransform.transform.position;
-                            int actorId = critter.actorId;
-                            CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StickyDeployed, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
-                        }
-                        searchdelay = Time.time + 0.25f;
+                        CrittersPawn critter = critters[0];
+                        critter.transform.position = GorillaTagger.Instance.rightHandTransform.transform.position;
+                        int actorId = critter.actorId;
+                        CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StickyDeployed, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
                     }
                 }
-
-
             }
             else
             {
@@ -2196,27 +2184,22 @@ namespace iiMenu.Mods
                 }
             }
         }
+
         public static void DustSpam()
         {
             if (PhotonNetwork.LocalPlayer.IsMasterClient)
             {
-                if (ControllerInputPoller.instance.rightGrab)
+                if (rightGrab)
                 {
-                    if (Time.time > searchdelay)
+                    CrittersPawn[] critters = GetAllType<CrittersPawn>();
+                    if (critters.Length > 0)
                     {
-                        CrittersPawn[] critters = GetAllType<CrittersPawn>();
-                        if (critters.Length > 0)
-                        {
-                            CrittersPawn critter = critters[1];
-                            critter.transform.position = GorillaTagger.Instance.rightHandTransform.transform.position;
-                            int actorId = critter.actorId;
-                            CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StickyTriggered, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
-                        }
-                        searchdelay = Time.time + 0.25f;
+                        CrittersPawn critter = critters[0];
+                        critter.transform.position = GorillaTagger.Instance.rightHandTransform.transform.position;
+                        int actorId = critter.actorId;
+                        CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StickyTriggered, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
                     }
                 }
-
-
             }
             else
             {
@@ -2232,23 +2215,17 @@ namespace iiMenu.Mods
         {
             if (PhotonNetwork.LocalPlayer.IsMasterClient)
             {
-                if (ControllerInputPoller.instance.rightGrab)
+                if (rightGrab)
                 {
-                    if (Time.time > searchdelay)
+                    CrittersPawn[] critters = GetAllType<CrittersPawn>();
+                    if (critters.Length > 0)
                     {
-                        CrittersPawn[] critters = GetAllType<CrittersPawn>();
-                        if (critters.Length > 0)
-                        {
-                            CrittersPawn critter = critters[1];
-                            critter.transform.position = GorillaTagger.Instance.rightHandTransform.transform.position;
-                            int actorId = critter.actorId;
-                            CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.NoiseMakerTriggered, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
-                        }
-                        searchdelay = Time.time + 0.25f;
+                        CrittersPawn critter = critters[0];
+                        critter.transform.position = GorillaTagger.Instance.rightHandTransform.transform.position;
+                        int actorId = critter.actorId;
+                        CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.NoiseMakerTriggered, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
                     }
                 }
-
-
             }
             else
             {
@@ -2259,30 +2236,25 @@ namespace iiMenu.Mods
                 }
             }
         }
+
         public static void AllSpam()
         {
             if (PhotonNetwork.LocalPlayer.IsMasterClient)
             {
-                if (ControllerInputPoller.instance.rightGrab)
+                if (rightGrab)
                 {
-                    if (Time.time > searchdelay)
+                    CrittersPawn[] critters = GetAllType<CrittersPawn>();
+                    if (critters.Length > 0)
                     {
-                        CrittersPawn[] critters = GetAllType<CrittersPawn>();
-                        if (critters.Length > 0)
-                        {
-                            CrittersPawn critter = critters[1];
-                            critter.transform.position = GorillaTagger.Instance.rightHandTransform.transform.position;
-                            int actorId = critter.actorId;
-                            CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.NoiseMakerTriggered, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
-                            CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StunExplosion, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
-                            CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StickyTriggered, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
-                            CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StickyDeployed, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
-                        }
-                        searchdelay = Time.time + 0.25f;
+                        CrittersPawn critter = critters[0];
+                        critter.transform.position = GorillaTagger.Instance.rightHandTransform.transform.position;
+                        int actorId = critter.actorId;
+                        CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.NoiseMakerTriggered, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
+                        CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StunExplosion, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
+                        CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StickyTriggered, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
+                        CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StickyDeployed, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
                     }
                 }
-
-
             }
             else
             {
@@ -2306,17 +2278,13 @@ namespace iiMenu.Mods
                 {
                     if (PhotonNetwork.LocalPlayer.IsMasterClient)
                     {
-                        if (Time.time > searchdelay)
+                        CrittersPawn[] critters = GetAllType<CrittersPawn>();
+                        if (critters.Length > 0)
                         {
-                            CrittersPawn[] critters = GetAllType<CrittersPawn>();
-                            if (critters.Length > 0)
-                            {
-                                CrittersPawn critter = critters[1];
-                                critter.transform.position = NewPointer.transform.position;
-                                int actorId = critter.actorId;
-                                CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StunExplosion, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
-                            }
-                            searchdelay = Time.time + 0.25f;
+                            CrittersPawn critter = critters[0];
+                            critter.transform.position = NewPointer.transform.position;
+                            int actorId = critter.actorId;
+                            CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StunExplosion, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
                         }
                     }
                     else
@@ -2343,17 +2311,13 @@ namespace iiMenu.Mods
                 {
                     if (PhotonNetwork.LocalPlayer.IsMasterClient)
                     {
-                        if (Time.time > searchdelay)
+                        CrittersPawn[] critters = GetAllType<CrittersPawn>();
+                        if (critters.Length > 0)
                         {
-                            CrittersPawn[] critters = GetAllType<CrittersPawn>();
-                            if (critters.Length > 0)
-                            {
-                                CrittersPawn critter = critters[1];
-                                critter.transform.position = NewPointer.transform.position;
-                                int actorId = critter.actorId;
-                                CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StickyDeployed, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
-                            }
-                            searchdelay = Time.time + 0.25f;
+                            CrittersPawn critter = critters[0];
+                            critter.transform.position = NewPointer.transform.position;
+                            int actorId = critter.actorId;
+                            CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StickyDeployed, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
                         }
                     }
                     else
@@ -2380,17 +2344,13 @@ namespace iiMenu.Mods
                 {
                     if (PhotonNetwork.LocalPlayer.IsMasterClient)
                     {
-                        if (Time.time > searchdelay)
+                        CrittersPawn[] critters = GetAllType<CrittersPawn>();
+                        if (critters.Length > 0)
                         {
-                            CrittersPawn[] critters = GetAllType<CrittersPawn>();
-                            if (critters.Length > 0)
-                            {
-                                CrittersPawn critter = critters[1];
-                                critter.transform.position = NewPointer.transform.position;
-                                int actorId = critter.actorId;
-                                CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StickyTriggered, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
-                            }
-                            searchdelay = Time.time + 0.25f;
+                            CrittersPawn critter = critters[0];
+                            critter.transform.position = NewPointer.transform.position;
+                            int actorId = critter.actorId;
+                            CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StickyTriggered, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
                         }
                     }
                     else
@@ -2417,17 +2377,13 @@ namespace iiMenu.Mods
                 {
                     if (PhotonNetwork.LocalPlayer.IsMasterClient)
                     {
-                        if (Time.time > searchdelay)
+                        CrittersPawn[] critters = GetAllType<CrittersPawn>();
+                        if (critters.Length > 0)
                         {
-                            CrittersPawn[] critters = GetAllType<CrittersPawn>();
-                            if (critters.Length > 0)
-                            {
-                                CrittersPawn critter = critters[1];
-                                critter.transform.position = NewPointer.transform.position;
-                                int actorId = critter.actorId;
-                                CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.NoiseMakerTriggered, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
-                            }
-                            searchdelay = Time.time + 0.25f;
+                            CrittersPawn critter = critters[0];
+                            critter.transform.position = NewPointer.transform.position;
+                            int actorId = critter.actorId;
+                            CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.NoiseMakerTriggered, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
                         }
                     }
                     else
@@ -2454,20 +2410,16 @@ namespace iiMenu.Mods
                 {
                     if (PhotonNetwork.LocalPlayer.IsMasterClient)
                     {
-                        if (Time.time > searchdelay)
+                        CrittersPawn[] critters = GetAllType<CrittersPawn>();
+                        if (critters.Length > 0)
                         {
-                            CrittersPawn[] critters = GetAllType<CrittersPawn>();
-                            if (critters.Length > 0)
-                            {
-                                CrittersPawn critter = critters[1];
-                                critter.transform.position = NewPointer.transform.position;
-                                int actorId = critter.actorId;
-                                CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.NoiseMakerTriggered, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
-                                CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StunExplosion, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
-                                CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StickyTriggered, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
-                                CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StickyDeployed, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
-                            }
-                            searchdelay = Time.time + 0.25f;
+                            CrittersPawn critter = critters[0];
+                            critter.transform.position = NewPointer.transform.position;
+                            int actorId = critter.actorId;
+                            CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.NoiseMakerTriggered, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
+                            CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StunExplosion, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
+                            CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StickyTriggered, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
+                            CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StickyDeployed, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
                         }
                     }
                     else
@@ -2481,24 +2433,21 @@ namespace iiMenu.Mods
                 }
             }
         }
+
         public static void AllSpamAura()
         {
             if (PhotonNetwork.LocalPlayer.IsMasterClient)
             {
-                if (Time.time > searchdelay)
+                CrittersPawn[] critters = GetAllType<CrittersPawn>();
+                if (critters.Length > 0)
                 {
-                    CrittersPawn[] critters = GetAllType<CrittersPawn>();
-                    if (critters.Length > 0)
-                    {
-                        CrittersPawn critter = critters[1];
-                        critter.transform.position = VRRig.LocalRig.transform.position + new Vector3(UnityEngine.Random.Range(0, 2), UnityEngine.Random.Range(0, 2), UnityEngine.Random.Range(0, 2));
-                        int actorId = critter.actorId;
-                        CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.NoiseMakerTriggered, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
-                        CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StunExplosion, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
-                        CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StickyTriggered, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
-                        CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StickyDeployed, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
-                    }
-                    searchdelay = Time.time + 0.25f;
+                    CrittersPawn critter = critters[0];
+                    critter.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + RandomVector3(2f);
+                    int actorId = critter.actorId;
+                    CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.NoiseMakerTriggered, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
+                    CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StunExplosion, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
+                    CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StickyTriggered, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
+                    CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StickyDeployed, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
                 }
             }
             else
