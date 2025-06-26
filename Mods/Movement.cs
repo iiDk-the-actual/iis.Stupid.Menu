@@ -2172,9 +2172,9 @@ namespace iiMenu.Mods
             {
                 float spazAmount = 0.1f;
                 ghostException = true;
-                VRRig.LocalRig.leftHand.trackingPositionOffset = offsetLH + new Vector3(UnityEngine.Random.Range(-spazAmount, spazAmount), UnityEngine.Random.Range(-spazAmount, spazAmount), UnityEngine.Random.Range(-spazAmount, spazAmount));
-                VRRig.LocalRig.rightHand.trackingPositionOffset = offsetRH + new Vector3(UnityEngine.Random.Range(-spazAmount, spazAmount), UnityEngine.Random.Range(-spazAmount, spazAmount), UnityEngine.Random.Range(-spazAmount, spazAmount));
-                VRRig.LocalRig.head.trackingPositionOffset = offsetH + new Vector3(UnityEngine.Random.Range(-spazAmount, spazAmount), UnityEngine.Random.Range(-spazAmount, spazAmount), UnityEngine.Random.Range(-spazAmount, spazAmount));
+                VRRig.LocalRig.leftHand.trackingPositionOffset = offsetLH + RandomVector3(spazAmount);
+                VRRig.LocalRig.rightHand.trackingPositionOffset = offsetRH + RandomVector3(spazAmount);
+                VRRig.LocalRig.head.trackingPositionOffset = offsetH + RandomVector3(spazAmount);
             }
             else
             {
@@ -2204,9 +2204,8 @@ namespace iiMenu.Mods
 
                 VRRig.LocalRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
 
-                float spazAmount = 360f;
-                VRRig.LocalRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, spazAmount), UnityEngine.Random.Range(0, spazAmount), UnityEngine.Random.Range(0, spazAmount)));
-                VRRig.LocalRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, spazAmount), UnityEngine.Random.Range(0, spazAmount), UnityEngine.Random.Range(0, spazAmount)));
+                VRRig.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
+                VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
 
                 VRRig.LocalRig.leftHand.rigTarget.transform.position = GorillaTagger.Instance.leftHandTransform.position + VRRig.LocalRig.leftHand.rigTarget.transform.forward * 3f;
                 VRRig.LocalRig.rightHand.rigTarget.transform.position = GorillaTagger.Instance.rightHandTransform.position + VRRig.LocalRig.rightHand.rigTarget.transform.forward * 3f;
@@ -2221,11 +2220,10 @@ namespace iiMenu.Mods
         {
             if (rightPrimary)
             {
-                float spazAmount = 360f;
-                GTPlayer.Instance.leftControllerTransform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, spazAmount), UnityEngine.Random.Range(0, spazAmount), UnityEngine.Random.Range(0, spazAmount)));
+                GTPlayer.Instance.leftControllerTransform.rotation = RandomQuaternion();
                 GTPlayer.Instance.leftControllerTransform.position = GorillaTagger.Instance.leftHandTransform.position + GTPlayer.Instance.leftControllerTransform.forward * 3f;
 
-                GTPlayer.Instance.rightControllerTransform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, spazAmount), UnityEngine.Random.Range(0, spazAmount), UnityEngine.Random.Range(0, spazAmount)));
+                GTPlayer.Instance.rightControllerTransform.rotation = RandomQuaternion();
                 GTPlayer.Instance.rightControllerTransform.position = GorillaTagger.Instance.rightHandTransform.position + GTPlayer.Instance.rightControllerTransform.forward * 3f;
             }
             else
@@ -4009,7 +4007,7 @@ namespace iiMenu.Mods
             }
             else
             {
-                VRRig.LocalRig.head.rigTarget.transform.rotation = Quaternion.Euler(UnityEngine.Random.Range(0f, 360f), UnityEngine.Random.Range(0f, 360f), UnityEngine.Random.Range(0f, 360f));
+                VRRig.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
             }
         }
 
