@@ -1043,6 +1043,18 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Battle God Mode", method =() => Advantages.BattleGodMode(), toolTip = "Gives you god mode in battle." },
 
+                new ButtonInfo { buttonText = "Critter Shockwave Particle Gun", method =() => Overpowered.ShockwaveGun(), isTogglable = true, toolTip = "Spams particles wherever you want."},
+                new ButtonInfo { buttonText = "Critter Sticky Particle Gun", method =() => Overpowered.StickyGun(), isTogglable = true, toolTip = "Spams particles wherever you want."},
+                new ButtonInfo { buttonText = "Critter Dust Particle Gun", method =() => Overpowered.DustGun(), isTogglable = true, toolTip = "Spams particles wherever you want."},
+                new ButtonInfo { buttonText = "Critter Noise Particle Gun", method =() => Overpowered.NoiseGun(), isTogglable = true, toolTip = "Spams particles wherever you want."},
+                new ButtonInfo { buttonText = "Critter All Particle Gun", method =() => Overpowered.AllSpamGun(), isTogglable = true, toolTip = "Spams particles wherever you want."},
+                new ButtonInfo { buttonText = "Critter Spam Shockwave Particle (<color=green>G</color>)", method =() => Overpowered.ShockwaveSpam(), isTogglable = true, toolTip = "Grabs the Shockwave particle in your right hand"},
+                new ButtonInfo { buttonText = "Critter Spam Sticky Particle (<color=green>G</color>)", method =() => Overpowered.StickySpam(), isTogglable = true, toolTip = "Grabs the sticky particle in your right hand"},
+                new ButtonInfo { buttonText = "Critter Spam Dust Particle (<color=green>G</color>)", method =() => Overpowered.DustSpam(), isTogglable = true, toolTip = "Grabs the dust particle in your right hand"},
+                new ButtonInfo { buttonText = "Critter Spam Noise Particle (<color=green>G</color>)", method =() => Overpowered.NoiseSpam(), isTogglable = true, toolTip = "Grabs the noise particle in your right hand"},
+                new ButtonInfo { buttonText = "Critter Spam All Particles (<color=green>G</color>)", method =() => Overpowered.AllSpam(), isTogglable = true, toolTip = "Grabs all the particles in your right hand"},
+                new ButtonInfo { buttonText = "Critter All Particles Aura", method =() => Overpowered.AllSpamAura(), isTogglable = true, toolTip = "Spams all the particles around your rig"},
+
                 new ButtonInfo { buttonText = "Slow Gun", method =() => Overpowered.SlowGun(), toolTip = "Forces tag freeze on whoever your hand desires." },
                 new ButtonInfo { buttonText = "Slow All", method =() => Overpowered.SlowAll(), toolTip = "Forces tag freeze on everyone in the the room." },
 
