@@ -3,23 +3,27 @@ using HarmonyLib;
 
 namespace iiMenu.Patches
 {
-    [HarmonyPatch(typeof(PhotonNetworkController), "AttemptToJoinRankedPublicRoomAsync")]
+    [HarmonyPatch(typeof(PhotonNetworkController), "AttemptToJoinRankedPublicRoom")]
     public class RankedPatch
     {
         public static bool enabled;
         public static string targetPlatform;
         public static string targetTier;
 
-        public static void Prefix(GorillaNetworkJoinTrigger triggeredTrigger, ref string mmrTier, ref string platform, JoinType roomJoinType)
+        public static bool Prefix(GorillaNetworkJoinTrigger triggeredTrigger, JoinType roomJoinType = JoinType.Solo)
         {
             if (enabled)
             {
-                if (targetPlatform != "")
-                    platform = targetPlatform;
+                PhotonNetworkController.Instance.AttemptToJoinRankedPublicRoomAsync(
+                    triggeredTrigger,
+                    targetTier == "" ? RankedProgressionManager.Instance.GetRankedMatchmakingTier().ToString() : targetTier,
+                    targetPlatform == "" ? "PC" : targetPlatform,
+                    roomJoinType
+                );
 
-                if (targetTier != "")
-                    mmrTier = targetTier;
+                return false;
             }
+            return true;
         }
     }
 }

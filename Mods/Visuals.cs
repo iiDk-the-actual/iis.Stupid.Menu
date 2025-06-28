@@ -9,7 +9,6 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
-using static Mono.Security.X509.X509Stores;
 
 namespace iiMenu.Mods
 {

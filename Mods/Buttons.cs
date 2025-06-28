@@ -357,9 +357,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Name Spoof", enableMethod =() => Patches.ColorPatch.nameSpoofEnabled = true, disableMethod =() => Patches.ColorPatch.nameSpoofEnabled = false, toolTip = "Changes your name on the leaderboard to something random, but not on your rig."},
                 new ButtonInfo { buttonText = "Color Spoof", enableMethod =() => Patches.ColorPatch.patchEnabled = true, disableMethod =() => Patches.ColorPatch.patchEnabled = false, toolTip = "Makes your color appear different to every player."},
 
-                new ButtonInfo { buttonText = "Ranked Tier Spoof", method =() => Safety.SpoofRank(true), disableMethod =() => Safety.SpoofRank(false), toolTip = "Spoofs your rank for competitive lobbies, letting you join higher or lower lobbies."},
-                new ButtonInfo { buttonText = "Ranked Platform Spoof", method =() => Safety.SpoofPlatform(true), disableMethod =() => Safety.SpoofPlatform(false), toolTip = "Spoofs your platform for competitive lobbies, letting you join quest lobbies."},
-
+                new ButtonInfo { buttonText = "Ranked Tier Spoof", method =() => Safety.SpoofRank(true, Safety.targetRank), disableMethod =() => Safety.SpoofRank(false), toolTip = "Spoofs your rank for competitive lobbies, letting you join higher or lower lobbies."},
+                new ButtonInfo { buttonText = "Ranked Platform Spoof", method =() => Safety.SpoofPlatform(true, "Quest"), disableMethod =() => Safety.SpoofPlatform(false), toolTip = "Spoofs your platform for competitive lobbies, letting you join quest lobbies."},
                 new ButtonInfo { buttonText = "Unload Menu", method =() => UnloadMenu(), isTogglable = false, toolTip = "Unloads the menu from your game."}
             },
 
@@ -1319,7 +1318,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Visualize Anti Report", toolTip = "Visualizes the distance threshold for the anti report mods."},
                 new ButtonInfo { buttonText = "Smart Anti Report", enableMethod =() => Safety.smartarp = true, disableMethod =() => Safety.smartarp = false, toolTip = "Makes the anti report mods only activate in non-modded public lobbies."},
 
-                new ButtonInfo { buttonText = "Change Ranked Tier", overlapText = "Change Ranked Tier <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method =() => Safety.ChangeRankedTier(), enableMethod =() => Safety.ChangeRankedTier(), disableMethod =() => Safety.ChangeRankedTier(false), incremental = true, isTogglable = false, toolTip = "Changes the targetted tier for the rank spoof mod."},
+                new ButtonInfo { buttonText = "Change Ranked Tier", overlapText = "Change Ranked Tier <color=grey>[</color><color=green>High</color><color=grey>]</color>", method =() => Safety.ChangeRankedTier(), enableMethod =() => Safety.ChangeRankedTier(), disableMethod =() => Safety.ChangeRankedTier(false), incremental = true, isTogglable = false, toolTip = "Changes the targetted tier for the rank spoof mod."},
             },
 
             new ButtonInfo[] { // Temporary Category [29]
