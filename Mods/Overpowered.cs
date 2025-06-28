@@ -199,9 +199,9 @@ namespace iiMenu.Mods
 
                 if (!NetworkSystem.Instance.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
 
-                if (PhotonNetwork.InRoom && GorillaGameManager.instance.GameType() == GameModeType.PropHaunt)
+                if (PhotonNetwork.InRoom && GorillaGameManager.instance.GameType() == GameModeType.PropHunt)
                 {
-                    GorillaPropHauntGameManager hauntManager = (GorillaPropHauntGameManager)GorillaGameManager.instance;
+                    GorillaPropHuntGameManager hauntManager = (GorillaPropHuntGameManager)GorillaGameManager.instance;
                     hauntManager._ph_timeRoundStartedMillis = propHuntSpazMode ? 1 : 2;
                     hauntManager._ph_randomSeed = UnityEngine.Random.Range(1, int.MaxValue);
                 }
@@ -217,9 +217,9 @@ namespace iiMenu.Mods
 
                 if (!NetworkSystem.Instance.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
 
-                if (PhotonNetwork.InRoom && GorillaGameManager.instance.GameType() == GameModeType.PropHaunt)
+                if (PhotonNetwork.InRoom && GorillaGameManager.instance.GameType() == GameModeType.PropHunt)
                 {
-                    GorillaPropHauntGameManager hauntManager = (GorillaPropHauntGameManager)GorillaGameManager.instance;
+                    GorillaPropHuntGameManager hauntManager = (GorillaPropHuntGameManager)GorillaGameManager.instance;
                     hauntManager._ph_timeRoundStartedMillis = propHuntSpazMode ? 0 : 1;
                 }
             }

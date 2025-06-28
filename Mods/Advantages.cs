@@ -452,7 +452,7 @@ namespace iiMenu.Mods
 
         public static void TagAll()
         {
-            if (GorillaGameManager.instance.GameType() == GorillaGameModes.GameModeType.Hunt)
+            if (GorillaGameManager.instance.GameType() == GorillaGameModes.GameModeType.HuntDown)
             {
                 HuntTagAll();
                 return;

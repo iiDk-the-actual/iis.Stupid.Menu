@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace iiMenu.Patches
 {
-    [HarmonyPatch(typeof(PropHauntHandFollower), "GeoCollisionPoint")]
+    [HarmonyPatch(typeof(PropHuntHandFollower), "GeoCollisionPoint")]
     public class PropPatch
     {
         public static bool enabled = false;

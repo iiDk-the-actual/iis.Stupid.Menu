@@ -2572,7 +2572,8 @@ namespace iiMenu.Mods
                 Projectiles.projDebounceIndex.ToString(),
                 Projectiles.red.ToString(),
                 Projectiles.green.ToString(),
-                Projectiles.blue.ToString()
+                Projectiles.blue.ToString(),
+                Safety.rankIndex.ToString()
             };
 
             string settingstext = string.Join(seperator, settings);
@@ -2731,6 +2732,9 @@ namespace iiMenu.Mods
 
                 Projectiles.blue = int.Parse(data[35]) - 1;
                 Projectiles.IncreaseBlue();
+
+                Safety.rankIndex = int.Parse(data[36]) - 1;
+                Safety.ChangeRankedTier();
             } catch { LogManager.Log("Save file out of date"); }
 
             pageButtonType = int.Parse(textData[3]) - 1;

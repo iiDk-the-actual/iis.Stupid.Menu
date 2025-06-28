@@ -822,7 +822,7 @@ namespace iiMenu.Mods
             }
         }
 
-        public static string leavesName = "UnityTempFile-4ab5e8e27994e4a4bb0e9ae13713371d";
+        public static string leavesName = "UnityTempFile-e162124c4c7e6c8449aea41a34ebb282";
         public static List<GameObject> leaves = new List<GameObject> { };
         public static void EnableRemoveLeaves()
         {
@@ -2539,7 +2539,7 @@ namespace iiMenu.Mods
             if (GorillaGameManager.instance == null)
                 return;
 
-            if (GorillaGameManager.instance.GameType() != GameModeType.Hunt)
+            if (GorillaGameManager.instance.GameType() != GameModeType.HuntDown)
                 return;
 
             GorillaHuntManager sillyComputer = GorillaGameManager.instance.gameObject.GetComponent<GorillaHuntManager>();
@@ -2701,7 +2701,7 @@ namespace iiMenu.Mods
             if (GorillaGameManager.instance == null)
                 return;
 
-            if (GorillaGameManager.instance.GameType() != GameModeType.Hunt)
+            if (GorillaGameManager.instance.GameType() != GameModeType.HuntDown)
                 return;
 
             GorillaHuntManager sillyComputer = GorillaGameManager.instance.gameObject.GetComponent<GorillaHuntManager>();
@@ -2915,7 +2915,7 @@ namespace iiMenu.Mods
             if (GorillaGameManager.instance == null)
                 return;
 
-            if (GorillaGameManager.instance.GameType() != GameModeType.Hunt)
+            if (GorillaGameManager.instance.GameType() != GameModeType.HuntDown)
                 return;
 
             GorillaHuntManager sillyComputer = GorillaGameManager.instance.gameObject.GetComponent<GorillaHuntManager>();

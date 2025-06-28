@@ -23,7 +23,7 @@ namespace iiMenu.Patches
                     if (doOverride)
                     {
                         effectContext.speed = overrideVolume;
-                        effectContext.clipVolume = overrideVolume;
+                        effectContext.soundVolume = overrideVolume;
 
                         if (PhotonNetwork.InRoom)
                         {
@@ -48,7 +48,7 @@ namespace iiMenu.Patches
                     if (!tapsEnabled)
                     {
                         effectContext.speed = 0f;
-                        effectContext.clipVolume = 0f;
+                        effectContext.soundVolume = 0f;
 
                         GorillaTagger.Instance.handTapVolume = 0f;
                         GorillaTagger.Instance.handTapSpeed = 0f;

@@ -807,40 +807,11 @@ namespace iiMenu.Mods
             }
         }
 
-        private static float crateDelay;
-        public static void BreakAllCrates()
-        {
-            if (rightTrigger > 0.5f)
-            {
-                GamePlayer plr = GamePlayerLocal.instance.gamePlayer;
-
-                if (plr.GetGameEntityId(GamePlayer.GetHandIndex(false)) == null)
-                {
-                    foreach (GameEntity entity in GhostReactorManager.instance.gameEntityManager.entities)
-                    {
-                        if (entity.gameObject.name.Contains("BreakableCrate"))
-                        {
-                            VRRig.LocalRig.enabled = false;
-                            VRRig.LocalRig.transform.position = entity.transform.position;
-
-                            if (Time.time > crateDelay)
-                            {
-                                GhostReactorManager.instance.ReportBreakableBroken(entity);
-                                crateDelay = Time.time + 0.1f;
-                            }
-                        }
-                    }
-                }
-            }
-            else
-                VRRig.LocalRig.enabled = true;
-        }
-
         public static void SetPropDistanceLimit(float distance)
         {
-            if (PhotonNetwork.InRoom && GorillaGameManager.instance.GameType() == GameModeType.PropHaunt)
+            if (PhotonNetwork.InRoom && GorillaGameManager.instance.GameType() == GameModeType.PropHunt)
             {
-                GorillaPropHauntGameManager hauntManager = (GorillaPropHauntGameManager)GorillaGameManager.instance;
+                GorillaPropHuntGameManager hauntManager = (GorillaPropHuntGameManager)GorillaGameManager.instance;
                 hauntManager.m_ph_hand_follow_distance = distance;
             }
         }

@@ -293,8 +293,8 @@ namespace iiMenu.Menu
 
                                 string[] objectsWithTMPro = new string[]
                                 {
-                                    "Environment Objects/LocalObjects_Prefab/TreeRoom/CodeOfConduct",
-                                    "Environment Objects/LocalObjects_Prefab/TreeRoom/COC Text",
+                                    "Environment Objects/LocalObjects_Prefab/TreeRoom/CodeOfConductHeadingText",
+                                    "Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData",
                                     "Environment Objects/LocalObjects_Prefab/TreeRoom/Data",
                                     "Environment Objects/LocalObjects_Prefab/TreeRoom/FunctionSelect"
                                 };
@@ -324,7 +324,6 @@ namespace iiMenu.Menu
                                 }
 
                                 hasFoundAllBoards = true;
-                                // LogManager.Log("Found all boards");
                             }
                         }
                         catch (Exception exc)
@@ -349,7 +348,7 @@ namespace iiMenu.Menu
 
                         if (motd == null)
                         {
-                            GameObject motdObject = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/motd (1)");
+                            GameObject motdObject = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/motdHeadingText");
                             motd = Instantiate(motdObject, motdObject.transform.parent);
                             motdObject.SetActive(false);
                         }
@@ -376,7 +375,7 @@ namespace iiMenu.Menu
 
                         if (motdText == null)
                         {
-                            GameObject motdObject = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/motdtext");
+                            GameObject motdObject = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/motdBodyText");
                             motdText = Instantiate(motdObject, motdObject.transform.parent);
                             motdObject.SetActive(false);
 
@@ -3669,8 +3668,9 @@ namespace iiMenu.Menu
             switch (GorillaGameManager.instance.GameType())
             {
                 case GorillaGameModes.GameModeType.Infection:
+                case GorillaGameModes.GameModeType.InfectionCompetitive:
                 case GorillaGameModes.GameModeType.FreezeTag:
-                case GorillaGameModes.GameModeType.PropHaunt:
+                case GorillaGameModes.GameModeType.PropHunt:
                     GorillaTagManager tagManager = (GorillaTagManager)GorillaGameManager.instance;
                     if (tagManager.isCurrentlyTag)
                         infected.Add(tagManager.currentIt);
@@ -3695,8 +3695,9 @@ namespace iiMenu.Menu
             switch (GorillaGameManager.instance.GameType())
             {
                 case GorillaGameModes.GameModeType.Infection:
+                case GorillaGameModes.GameModeType.InfectionCompetitive:
                 case GorillaGameModes.GameModeType.FreezeTag:
-                case GorillaGameModes.GameModeType.PropHaunt:
+                case GorillaGameModes.GameModeType.PropHunt:
                     GorillaTagManager tagManager = (GorillaTagManager)GorillaGameManager.instance;
                     if (tagManager.isCurrentlyTag)
                         tagManager.ChangeCurrentIt(plr);
@@ -3716,12 +3717,12 @@ namespace iiMenu.Menu
 
         public static void RemoveInfected(NetPlayer plr)
         {
-
             switch (GorillaGameManager.instance.GameType())
             {
                 case GorillaGameModes.GameModeType.Infection:
+                case GorillaGameModes.GameModeType.InfectionCompetitive:
                 case GorillaGameModes.GameModeType.FreezeTag:
-                case GorillaGameModes.GameModeType.PropHaunt:
+                case GorillaGameModes.GameModeType.PropHunt:
                     GorillaTagManager tagManager = (GorillaTagManager)GorillaGameManager.instance;
                     if (tagManager.isCurrentlyTag && tagManager.currentIt == plr)
                         tagManager.currentIt = null;

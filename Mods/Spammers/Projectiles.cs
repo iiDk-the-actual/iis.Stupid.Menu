@@ -45,7 +45,9 @@ namespace iiMenu.Mods.Spammers
             "IceCreamLeftAnchor",
             "IceCreamRightAnchor",
             "HotDogLeftAnchor",
-            "HotDogRightAnchor"
+            "HotDogRightAnchor",
+            "Fireworks_Anchor Variant_Left Hand",
+            "Fireworks_Anchor Variant_Right Han"
         };
 
         public static Coroutine RigCoroutine;
@@ -174,7 +176,8 @@ namespace iiMenu.Mods.Spammers
                 "Coin",
                 "Egg",
                 "Ice Cream",
-                "Hot Dog"
+                "Hot Dog",
+                "Fireworks"
             };
 
             if (positive)
