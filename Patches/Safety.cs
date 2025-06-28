@@ -236,7 +236,7 @@ namespace iiMenu.Patches
     public class DisplayNamePatch
     {
         public static void Prefix(ref UpdateUserTitleDisplayNameRequest request, Action<UpdateUserTitleDisplayNameResult> resultCallback, Action<PlayFabError> errorCallback, object customData = null, Dictionary<string, string> extraHeaders = null) =>
-            request.DisplayName = GenerateRandomString(UnityEngine.Random.Range(1, 12));
+            request.DisplayName = GenerateRandomString(UnityEngine.Random.Range(3, 12));
     }
 
     [HarmonyPatch(typeof(VRRig), "PlayHandTapLocal")]

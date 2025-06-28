@@ -502,8 +502,8 @@ namespace iiMenu.Mods
             "GREY", "OG", "BANNED", "LEMON", "PLUSHIE", "CHEETO", "TIKTOK", "YOUTUBE", "TWITCH", "DISCORD"
         };
 
-        private static string targetRank;
-        public static int rankIndex;
+        public static string targetRank = "High";
+        public static int rankIndex = 2;
 
         public static void ChangeRankedTier(bool positive = true)
         {
@@ -520,16 +520,16 @@ namespace iiMenu.Mods
             GetIndex("Change Ranked Tier").overlapText = "Change Ranked Tier <color=grey>[</color><color=green>" + targetRank + "</color><color=grey>]</color>";
         }
 
-        public static void SpoofRank(bool enabled)
+        public static void SpoofRank(bool enabled, string tier = "")
         {
             Patches.RankedPatch.enabled = enabled;
-            Patches.RankedPatch.targetTier = targetRank;
+            Patches.RankedPatch.targetTier = tier;
         }
 
-        public static void SpoofPlatform(bool enabled)
+        public static void SpoofPlatform(bool enabled, string target = "")
         {
             Patches.RankedPatch.enabled = enabled;
-            Patches.RankedPatch.targetPlatform = "QUEST";
+            Patches.RankedPatch.targetPlatform = target;
         }
     }
 }
