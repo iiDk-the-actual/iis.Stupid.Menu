@@ -170,6 +170,8 @@ namespace iiMenu.Mods
                 if (HandRayController.instance._leftHandRay.gameObject.activeSelf || HandRayController.instance._rightHandRay.gameObject.activeSelf)
                     HandRayController.instance.HideHands();
                 HandRayController.instance.transform.Find("UIRoot").gameObject.SetActive(false);
+
+                RoomObject?.SetActive(false);
             }
         }
 
