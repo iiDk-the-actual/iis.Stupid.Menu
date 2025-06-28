@@ -357,6 +357,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Name Spoof", enableMethod =() => Patches.ColorPatch.nameSpoofEnabled = true, disableMethod =() => Patches.ColorPatch.nameSpoofEnabled = false, toolTip = "Changes your name on the leaderboard to something random, but not on your rig."},
                 new ButtonInfo { buttonText = "Color Spoof", enableMethod =() => Patches.ColorPatch.patchEnabled = true, disableMethod =() => Patches.ColorPatch.patchEnabled = false, toolTip = "Makes your color appear different to every player."},
 
+                new ButtonInfo { buttonText = "Ranked Tier Spoof", method =() => Safety.SpoofRank(true), disableMethod =() => Safety.SpoofRank(false), toolTip = "Spoofs your rank for competitive lobbies, letting you join higher or lower lobbies."},
+                new ButtonInfo { buttonText = "Ranked Platform Spoof", method =() => Safety.SpoofPlatform(true), disableMethod =() => Safety.SpoofPlatform(false), toolTip = "Spoofs your platform for competitive lobbies, letting you join quest lobbies."},
+
                 new ButtonInfo { buttonText = "Unload Menu", method =() => UnloadMenu(), isTogglable = false, toolTip = "Unloads the menu from your game."}
             },
 
@@ -725,7 +728,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Grab ID Card <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.GrabIDCard(), toolTip = "Puts the ID card in your hand." },
                 new ButtonInfo { buttonText = "Everything Grabbable", method =() => Fun.EverythingGrabbable(), toolTip = "Gives you the ability to grab any entity in the horror map." },
                 new ButtonInfo { buttonText = "Entity Reach", method =() => Patches.EntityGrabPatch.enabled = true, disableMethod =() => Patches.EntityGrabPatch.enabled = false, toolTip = "Gives you the ability to grab entities from farther away in the horror map." },
-                new ButtonInfo { buttonText = "Break All Crates", method =() => Fun.BreakAllCrates(), toolTip = "Breaks every crate in the horror map." },
 
                 new ButtonInfo { buttonText = "Infinite Prop Distance", method =() => Fun.SetPropDistanceLimit(float.MaxValue), disableMethod =() => Fun.SetPropDistanceLimit(0.35f), toolTip = "Removes the distance limit of props in the prop hunt map." },
                 new ButtonInfo { buttonText = "Prop Noclip", method =() => Patches.PropPatch.enabled = true, disableMethod =() => Patches.PropPatch.enabled = false, toolTip = "Allows you to put props in walls in the prop hunt map." },
@@ -1313,8 +1315,11 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Exit Safety Settings", method =() => currentCategoryName = "Settings", isTogglable = false, toolTip = "Returns you back to the settings menu."},
 
                 new ButtonInfo { buttonText = "Change Anti Report Distance", overlapText = "Change Anti Report Distance <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method =() => Safety.ChangeAntiReportRange(), enableMethod =() => Safety.ChangeAntiReportRange(), disableMethod =() => Safety.ChangeAntiReportRange(false), incremental = true, isTogglable = false, toolTip = "Changes the distance threshold for the anti report mods."},
+                
                 new ButtonInfo { buttonText = "Visualize Anti Report", toolTip = "Visualizes the distance threshold for the anti report mods."},
-                new ButtonInfo { buttonText = "Smart Anti Report", enableMethod =() => Safety.smartarp = true, disableMethod =() => Safety.smartarp = false, toolTip = "Makes the anti report mods only activate in non-modded public lobbies."}
+                new ButtonInfo { buttonText = "Smart Anti Report", enableMethod =() => Safety.smartarp = true, disableMethod =() => Safety.smartarp = false, toolTip = "Makes the anti report mods only activate in non-modded public lobbies."},
+
+                new ButtonInfo { buttonText = "Change Ranked Tier", overlapText = "Change Ranked Tier <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method =() => Safety.ChangeRankedTier(), enableMethod =() => Safety.ChangeRankedTier(), disableMethod =() => Safety.ChangeRankedTier(false), incremental = true, isTogglable = false, toolTip = "Changes the targetted tier for the rank spoof mod."},
             },
 
             new ButtonInfo[] { // Temporary Category [29]

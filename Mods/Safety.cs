@@ -6,6 +6,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using System.IO;
 using UnityEngine;
+using static GorillaTag.ScienceExperimentManager;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -485,7 +486,7 @@ namespace iiMenu.Mods
         public static void FPSSpoof()
         {
             Patches.FPSPatch.enabled = true;
-            Patches.FPSPatch.spoofFPSValue = Random.Range(88, 92); //  - (UnityEngine.Random.Range(0, 400) > 399 ? UnityEngine.Random.Range(15, 60) : 0)
+            Patches.FPSPatch.spoofFPSValue = Random.Range(88, 92);
         }
 
         public static string[] names = new string[]
@@ -500,5 +501,35 @@ namespace iiMenu.Mods
             "BLUE", "RED", "GREEN", "PURPLE", "YELLOW", "BLACK", "WHITE", "BROWN", "CYAN", "GRAY",
             "GREY", "OG", "BANNED", "LEMON", "PLUSHIE", "CHEETO", "TIKTOK", "YOUTUBE", "TWITCH", "DISCORD"
         };
+
+        private static string targetRank;
+        public static int rankIndex;
+
+        public static void ChangeRankedTier(bool positive = true)
+        {
+            if (positive)
+                rankIndex++;
+            else
+                rankIndex--;
+
+            rankIndex %= 3;
+            if (rankIndex < 0)
+                rankIndex = 2;
+
+            targetRank = ((RankedProgressionManager.ERankedMatchmakingTier)rankIndex).ToString();
+            GetIndex("Change Ranked Tier").overlapText = "Change Ranked Tier <color=grey>[</color><color=green>" + targetRank + "</color><color=grey>]</color>";
+        }
+
+        public static void SpoofRank(bool enabled)
+        {
+            Patches.RankedPatch.enabled = enabled;
+            Patches.RankedPatch.targetTier = targetRank;
+        }
+
+        public static void SpoofPlatform(bool enabled)
+        {
+            Patches.RankedPatch.enabled = enabled;
+            Patches.RankedPatch.targetPlatform = "QUEST";
+        }
     }
 }
