@@ -69,8 +69,7 @@ namespace iiMenu.Classes
                     VRRig playerRig = GetVRRigFromPlayer(player);
                     if (playerRig != null)
                     {
-                        GameObject playerStar;
-                        if (!starPool.TryGetValue(playerRig, out playerStar))
+                        if (!starPool.TryGetValue(playerRig, out GameObject playerStar))
                         {
                             playerStar = GameObject.CreatePrimitive(PrimitiveType.Cube);
                             Destroy(playerStar.GetComponent<Collider>());

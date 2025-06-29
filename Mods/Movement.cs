@@ -744,12 +744,10 @@ namespace iiMenu.Mods
                             999999f
                         });
                     } else
-                    {
                         VRRig.LocalRig.PlayHandTapLocal(89, true, 999999f);
-                    }
+                    
                     RPCProtection();
-                    RaycastHit lefthit;
-                    if (Physics.Raycast(GorillaTagger.Instance.leftHandTransform.position, GorillaTagger.Instance.leftHandTransform.forward, out lefthit, 512f, NoInvisLayerMask()))
+                    if (Physics.Raycast(GorillaTagger.Instance.leftHandTransform.position, GorillaTagger.Instance.leftHandTransform.forward, out RaycastHit lefthit, 512f, NoInvisLayerMask()))
                     {
                         leftgrapplePoint = lefthit.point;
 
@@ -822,11 +820,9 @@ namespace iiMenu.Mods
                         RPCProtection();
                     }
                     else
-                    {
                         VRRig.LocalRig.PlayHandTapLocal(89, false, 999999f);
-                    }
-                    RaycastHit righthit;
-                    if (Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out righthit, 512f, NoInvisLayerMask()))
+                    
+                    if (Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out RaycastHit righthit, 512f, NoInvisLayerMask()))
                     {
                         rightgrapplePoint = righthit.point;
 
@@ -900,15 +896,11 @@ namespace iiMenu.Mods
                         });
                     }
                     else
-                    {
                         VRRig.LocalRig.PlayHandTapLocal(89, true, 999999f);
-                    }
+                    
                     RPCProtection();
-                    RaycastHit lefthit;
-                    if (Physics.Raycast(GorillaTagger.Instance.leftHandTransform.position, GorillaTagger.Instance.leftHandTransform.forward, out lefthit, 512f, NoInvisLayerMask()))
-                    {
+                    if (Physics.Raycast(GorillaTagger.Instance.leftHandTransform.position, GorillaTagger.Instance.leftHandTransform.forward, out RaycastHit lefthit, 512f, NoInvisLayerMask()))
                         leftgrapplePoint = lefthit.point;
-                    }
                 }
 
                 GorillaTagger.Instance.rigidbody.velocity += Vector3.Normalize(leftgrapplePoint - GorillaTagger.Instance.leftHandTransform.position) * 0.5f;
@@ -966,14 +958,10 @@ namespace iiMenu.Mods
                         RPCProtection();
                     }
                     else
-                    {
                         VRRig.LocalRig.PlayHandTapLocal(89, false, 999999f);
-                    }
-                    RaycastHit righthit;
-                    if (Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out righthit, 512f, NoInvisLayerMask()))
-                    {
+                    
+                    if (Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out RaycastHit righthit, 512f, NoInvisLayerMask()))
                         rightgrapplePoint = righthit.point;
-                    }
                 }
 
                 GorillaTagger.Instance.rigidbody.velocity += Vector3.Normalize(rightgrapplePoint - GorillaTagger.Instance.rightHandTransform.position) * 0.5f;
@@ -1088,13 +1076,11 @@ namespace iiMenu.Mods
             if (GetIndex("Platforms").enabled)
             {
                 if (leftGrab && !lastWasGrab)
-                {
                     CoroutineManager.RunCoroutine(CreateLeftPlatform());
-                }
+                
                 if (rightGrab && !lastWasRightGrab)
-                {
                     CoroutineManager.RunCoroutine(CreateRightPlatform());
-                }
+                
                 lastWasGrab = leftGrab;
                 lastWasRightGrab = rightGrab;
             }
@@ -1792,9 +1778,7 @@ namespace iiMenu.Mods
             }
 
             if (rightPrimary)
-            {
                 TeleportPlayer(checkpoints[selectedCheckpoint].transform.position);
-            }
 
             foreach (GameObject checkpoint in checkpoints)
             {
@@ -1872,9 +1856,7 @@ namespace iiMenu.Mods
                     BombObject = null;
                 }
                 else
-                {
                     BombObject.GetComponent<Renderer>().material.color = buttonDefaultA;
-                }
             }
         }
 

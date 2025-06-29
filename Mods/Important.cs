@@ -182,23 +182,23 @@ namespace iiMenu.Mods
         {
             string text = "Body\n";
             Transform p = GorillaTagger.Instance.bodyCollider.transform;
-            text += $"new Vector3({p.position.x.ToString()}f, {p.position.y.ToString()}f, {p.position.z.ToString()}f);";
-            text += $"new Quaternion({p.rotation.x.ToString()}f, {p.rotation.y.ToString()}f, {p.rotation.z.ToString()}f, {p.rotation.w.ToString()}f);\n\n";
+            text += $"new Vector3({p.position.x}f, {p.position.y}f, {p.position.z}f);";
+            text += $"new Quaternion({p.rotation.x}f, {p.rotation.y}f, {p.rotation.z}f, {p.rotation.w}f);\n\n";
 
             text += "Head\n";
             p = GorillaTagger.Instance.headCollider.transform;
-            text += $"new Vector3({p.position.x.ToString()}f, {p.position.y.ToString()}f, {p.position.z.ToString()}f);";
-            text += $"new Quaternion({p.rotation.x.ToString()}f, {p.rotation.y.ToString()}f, {p.rotation.z.ToString()}f, {p.rotation.w.ToString()}f);\n\n";
+            text += $"new Vector3({p.position.x}f, {p.position.y}f, {p.position.z}f);";
+            text += $"new Quaternion({p.rotation.x}f, {p.rotation.y}f, {p.rotation.z}f, {p.rotation.w}f);\n\n";
 
             text += "Left Hand\n";
             p = VRRig.LocalRig.leftHand.rigTarget.transform;
-            text += $"new Vector3({p.position.x.ToString()}f, {p.position.y.ToString()}f, {p.position.z.ToString()}f);";
-            text += $"new Quaternion({p.rotation.x.ToString()}f, {p.rotation.y.ToString()}f, {p.rotation.z.ToString()}f, {p.rotation.w.ToString()}f);\n\n";
+            text += $"new Vector3({p.position.x}f, {p.position.y}f, {p.position.z}f);";
+            text += $"new Quaternion({p.rotation.x}f, {p.rotation.y}f, {p.rotation.z}f, {p.rotation.w}f);\n\n";
 
             text += "Right Hand\n";
             p = VRRig.LocalRig.rightHand.rigTarget.transform;
-            text += $"new Vector3({p.position.x.ToString()}f, {p.position.y.ToString()}f, {p.position.z.ToString()}f);";
-            text += $"new Quaternion({p.rotation.x.ToString()}f, {p.rotation.y.ToString()}f, {p.rotation.z.ToString()}f, {p.rotation.w.ToString()}f);";
+            text += $"new Vector3({p.position.x}f, {p.position.y}f, {p.position.z}f);";
+            text += $"new Quaternion({p.rotation.x}f, {p.rotation.y}f, {p.rotation.z}f, {p.rotation.w}f);";
 
             GUIUtility.systemCopyBuffer = text;
         }
