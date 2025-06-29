@@ -56,9 +56,11 @@ namespace iiMenu
                 if (File.ReadAllLines("iisStupidMenu/iiMenu_Preferences.txt")[0].Split(";;").Contains("Accept TOS"))
                     TOSPatch.enabled = true;  
             }
+
+            LoadMenu();
         }
 
-        private void Start() => LoadMenu();
+        //private void Start() => LoadMenu();
 
         private static void LoadMenu()
         {
