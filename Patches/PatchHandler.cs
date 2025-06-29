@@ -1,5 +1,7 @@
 using HarmonyLib;
+using iiMenu.Classes;
 using System;
+using System.Linq;
 using System.Reflection;
 
 namespace iiMenu.Patches
@@ -13,8 +15,20 @@ namespace iiMenu.Patches
             if (!IsPatched)
             {
                 instance ??= new Harmony(PluginInfo.GUID);
-                
-                instance.PatchAll(Assembly.GetExecutingAssembly());
+
+                foreach (var type in Assembly.GetExecutingAssembly().GetTypes()
+                    .Where(t => t.IsClass && t.GetCustomAttribute<HarmonyPatch>() != null))
+                {
+                    try
+                    {
+                        instance.CreateClassProcessor(type).Patch();
+                    }
+                    catch (Exception ex)
+                    {
+                        LogManager.LogError($"Failed to patch {type.FullName}: {ex}");
+                    }
+                }
+
                 IsPatched = true;
             }
         }

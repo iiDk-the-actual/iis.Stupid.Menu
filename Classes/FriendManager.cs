@@ -1,7 +1,6 @@
 ﻿using ExitGames.Client.Photon;
 using GorillaNetworking;
 using iiMenu.Menu;
-using iiMenu.Mods;
 using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
@@ -13,7 +12,6 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Rendering;
 using Valve.Newtonsoft.Json;
-using static BuilderMaterialOptions;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
