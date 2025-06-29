@@ -56,13 +56,14 @@ namespace iiMenu
                 if (File.ReadAllLines("iisStupidMenu/iiMenu_Preferences.txt")[0].Split(";;").Contains("Accept TOS"))
                     TOSPatch.enabled = true;  
             }
-
-            PatchHandler.PatchAll();
+            
             GorillaTagger.OnPlayerSpawned(LoadMenu);
         }
 
         private static void LoadMenu()
         {
+            PatchHandler.PatchAll();
+
             GameObject Loader = new GameObject("iiMenu_Loader");
             Loader.AddComponent<UI.Main>();
             Loader.AddComponent<Notifications.NotifiLib>();
