@@ -9,6 +9,7 @@ namespace iiMenu.Patches
     public class PatchHandler
     {
         public static bool IsPatched { get; private set; }
+        public static int PatchErrors { get; private set; }
 
         internal static void PatchAll()
         {
@@ -25,9 +26,12 @@ namespace iiMenu.Patches
                     }
                     catch (Exception ex)
                     {
+                        PatchErrors++;
                         LogManager.LogError($"Failed to patch {type.FullName}: {ex}");
                     }
                 }
+
+                LogManager.Log($"Patched with {PatchErrors} errors");
 
                 IsPatched = true;
             }
