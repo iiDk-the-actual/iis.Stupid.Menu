@@ -1,7 +1,6 @@
 using BepInEx;
 using ExitGames.Client.Photon;
 using GorillaExtensions;
-using GorillaLocomotion.Climbing;
 using GorillaNetworking;
 using GorillaTagScripts;
 using HarmonyLib;
@@ -4683,14 +4682,18 @@ namespace iiMenu.Menu
                                 {
                                     target.customBind = null;
                                     ModBindings[BindedTo].Remove(target.buttonText);
-                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>BINDS</color><color=grey>]</color> Successfully unbinded mod.");
                                     VRRig.LocalRig.PlayHandTapLocal(48, rightHand, 0.4f);
+
+                                    if (fromMenu)
+                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>BINDS</color><color=grey>]</color> Successfully unbinded mod.");
                                 } else
                                 {
                                     target.customBind = BindInput;
                                     ModBindings[BindInput].Add(target.buttonText);
-                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>BINDS</color><color=grey>]</color> Successfully binded mod to " + BindInput + ".");
                                     VRRig.LocalRig.PlayHandTapLocal(50, rightHand, 0.4f);
+
+                                    if (fromMenu)
+                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>BINDS</color><color=grey>]</color> Successfully binded mod to " + BindInput + ".");
                                 }
                             }
                             else
@@ -4700,14 +4703,18 @@ namespace iiMenu.Menu
                                     if (favorites.Contains(target.buttonText))
                                     {
                                         favorites.Remove(target.buttonText);
-                                        NotifiLib.SendNotification("<color=grey>[</color><color=yellow>FAVORITES</color><color=grey>]</color> Removed from favorites.");
                                         VRRig.LocalRig.PlayHandTapLocal(48, rightHand, 0.4f);
+
+                                        if (fromMenu)
+                                            NotifiLib.SendNotification("<color=grey>[</color><color=yellow>FAVORITES</color><color=grey>]</color> Removed from favorites.");
                                     }
                                     else
                                     {
                                         favorites.Add(target.buttonText);
-                                        NotifiLib.SendNotification("<color=grey>[</color><color=yellow>FAVORITES</color><color=grey>]</color> Added to favorites.");
                                         VRRig.LocalRig.PlayHandTapLocal(50, rightHand, 0.4f);
+
+                                        if (fromMenu)
+                                            NotifiLib.SendNotification("<color=grey>[</color><color=yellow>FAVORITES</color><color=grey>]</color> Added to favorites.");
                                     }
                                 }
                             }
@@ -4719,13 +4726,17 @@ namespace iiMenu.Menu
                                 if (hotkeyButton != target.buttonText)
                                 {
                                     hotkeyButton = target.buttonText;
-                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>HOTKEY</color><color=grey>]</color> Set hotkey button.");
                                     VRRig.LocalRig.PlayHandTapLocal(50, rightHand, 0.4f);
+
+                                    if (fromMenu)
+                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>HOTKEY</color><color=grey>]</color> Set hotkey button.");
                                 } else
                                 {
                                     hotkeyButton = "none";
                                     VRRig.LocalRig.PlayHandTapLocal(48, rightHand, 0.4f);
-                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>HOTKEY</color><color=grey>]</color> Reset hotkey button.");
+                                    
+                                    if (fromMenu)
+                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>HOTKEY</color><color=grey>]</color> Reset hotkey button.");
                                 }
                             }
                             else
@@ -4735,13 +4746,17 @@ namespace iiMenu.Menu
                                     target.enabled = !target.enabled;
                                     if (target.enabled)
                                     {
-                                        NotifiLib.SendNotification("<color=grey>[</color><color=green>ENABLE</color><color=grey>]</color> " + target.toolTip);
+                                        if (fromMenu)
+                                            NotifiLib.SendNotification("<color=grey>[</color><color=green>ENABLE</color><color=grey>]</color> " + target.toolTip);
+                                        
                                         if (target.enableMethod != null)
                                             try { target.enableMethod.Invoke(); } catch (Exception exc) { LogManager.LogError(string.Format("Error with mod enableMethod {0} at {1}: {2}", target.buttonText, exc.StackTrace, exc.Message)); }
                                     }
                                     else
                                     {
-                                        NotifiLib.SendNotification("<color=grey>[</color><color=red>DISABLE</color><color=grey>]</color> " + target.toolTip);
+                                        if (fromMenu)
+                                            NotifiLib.SendNotification("<color=grey>[</color><color=red>DISABLE</color><color=grey>]</color> " + target.toolTip);
+                                        
                                         if (target.disableMethod != null)
                                             try { target.disableMethod.Invoke(); } catch (Exception exc) { LogManager.LogError(string.Format("Error with mod disableMethod {0} at {1}: {2}", target.buttonText, exc.StackTrace, exc.Message)); }
                                     }
@@ -4751,7 +4766,8 @@ namespace iiMenu.Menu
                                     if (dynamicAnimations)
                                         lastClickedName = target.buttonText;
 
-                                    NotifiLib.SendNotification("<color=grey>[</color><color=green>ENABLE</color><color=grey>]</color> " + target.toolTip);
+                                    if (fromMenu)
+                                        NotifiLib.SendNotification("<color=grey>[</color><color=green>ENABLE</color><color=grey>]</color> " + target.toolTip);
 
                                     if (target.method != null)
                                         try { target.method.Invoke(); } catch (Exception exc) { LogManager.LogError(string.Format("Error with mod {0} at {1}: {2}", target.buttonText, exc.StackTrace, exc.Message)); }
