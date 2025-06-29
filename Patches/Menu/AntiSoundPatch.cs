@@ -1,5 +1,4 @@
 ﻿using HarmonyLib;
-using static iiMenu.Menu.Main;
 
 namespace iiMenu.Patches
 {

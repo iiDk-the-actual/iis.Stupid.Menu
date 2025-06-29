@@ -54,7 +54,7 @@ namespace iiMenu
             if (File.Exists("iisStupidMenu/iiMenu_Preferences.txt"))
             {
                 if (File.ReadAllLines("iisStupidMenu/iiMenu_Preferences.txt")[0].Split(";;").Contains("Accept TOS"))
-                    TOSPatch.enabled = true;  
+                    TOSPatch.enabled = true;
             }
             
             GorillaTagger.OnPlayerSpawned(LoadMenu);

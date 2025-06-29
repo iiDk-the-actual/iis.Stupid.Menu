@@ -2,7 +2,6 @@
 using HarmonyLib;
 using System.Collections.Generic;
 using UnityEngine;
-using static iiMenu.Menu.Main;
 
 namespace iiMenu.Patches
 {
