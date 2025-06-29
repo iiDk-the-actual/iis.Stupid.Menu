@@ -185,7 +185,7 @@ namespace iiMenu.Classes
                 }
 
                 // Give admin panel if on list
-                if (!GivenAdminMods && Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
+                if (!GivenAdminMods && PhotonNetwork.LocalPlayer.UserId != null && Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
                 {
                     GivenAdminMods = true;
                     SetupAdminPanel(Administrators[PhotonNetwork.LocalPlayer.UserId]);

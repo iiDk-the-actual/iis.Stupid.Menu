@@ -1,12 +1,13 @@
 ﻿using HarmonyLib;
 using static iiMenu.Menu.Main;
 
-namespace iiMenu.Patches.Safety
+namespace iiMenu.Patches
 {
     [HarmonyPatch(typeof(GliderHoldable), "Respawn")]
-    public class AntiGliderRespawn
+    public class GliderPatch
     {
+        public static bool enabled;
         public static bool Prefix() =>
-            !NoGliderRespawn;
+            !enabled;
     }
 }

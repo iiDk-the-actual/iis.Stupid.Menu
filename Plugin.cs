@@ -57,15 +57,12 @@ namespace iiMenu
                     TOSPatch.enabled = true;  
             }
 
-            //LoadMenu();
+            PatchHandler.PatchAll();
+            GorillaTagger.OnPlayerSpawned(LoadMenu);
         }
-
-        private void Start() => LoadMenu();
 
         private static void LoadMenu()
         {
-            PatchHandler.PatchAll();
-
             GameObject Loader = new GameObject("iiMenu_Loader");
             Loader.AddComponent<UI.Main>();
             Loader.AddComponent<Notifications.NotifiLib>();

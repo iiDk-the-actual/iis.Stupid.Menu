@@ -5361,13 +5361,7 @@ jgs \_   _/ |Oo\
         public static int colorChangeType;
         public static bool strobeColor;
 
-        public static bool AntiCrashToggle;
-        public static bool AntiSoundToggle;
-        public static bool AntiCheatSelf;
-        public static bool AntiCheatAll;
-        public static bool AntiACReport;
         public static bool AntiOculusReport;
-        public static bool NoGliderRespawn;
 
         public static bool lastHit;
         public static bool lastHit2;

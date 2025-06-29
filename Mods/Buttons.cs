@@ -279,7 +279,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Exit Gorilla Tag", method =() => Application.Quit(), isTogglable = false, toolTip = "Closes Gorilla Tag."},
                 new ButtonInfo { buttonText = "Restart Gorilla Tag", method =() => Important.RestartGame(), isTogglable = false, toolTip = "Restarts Gorilla Tag."},
 
-                new ButtonInfo { buttonText = "Anti Hand Tap", enableMethod =() => AntiSoundToggle = true, disableMethod =() => AntiSoundToggle = false, toolTip = "Stops all hand tap sounds from being played."},
+                new ButtonInfo { buttonText = "Anti Hand Tap", enableMethod =() => Patches.AntiSoundPatch.enabled = true, disableMethod =() => Patches.AntiSoundPatch.enabled = false, toolTip = "Stops all hand tap sounds from being played."},
                 new ButtonInfo { buttonText = "First Person Camera", enableMethod =() => Important.EnableFPC(), method =() => Important.MoveFPC(), disableMethod =() => Important.DisableFPC(), toolTip = "Makes your camera output what you see in VR."},
                 new ButtonInfo { buttonText = "Force Enable Hands", method =() => Important.ForceEnableHands(), toolTip = "Prevents your hands from disconnecting."},
 
@@ -331,7 +331,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Spoof Support Page", method =() => Safety.SpoofSupportPage(), toolTip = "Makes the support page appear as if you are on Oculus."},
 
                 new ButtonInfo { buttonText = "Flush RPCs", method =() => RPCProtection(), isTogglable = false, toolTip = "Flushes all RPC calls, good after you stop spamming." },
-                new ButtonInfo { buttonText = "Anti Crash", enableMethod =() => AntiCrashToggle = true, disableMethod =() => AntiCrashToggle = false, toolTip = "Prevents crashers from completely annihilating your computer."},
+                new ButtonInfo { buttonText = "Anti Crash", enableMethod =() => Patches.AntiCrashPatch.enabled = true, disableMethod =() => Patches.AntiCrashPatch.enabled = false, toolTip = "Prevents crashers from completely annihilating your computer."},
                 new ButtonInfo { buttonText = "Auto Clear Cache", method =() => Safety.AutoClearCache(), toolTip = "Automatically clears your game's cache (garbage collector) every minute to prevent memory leaks."},
                 new ButtonInfo { buttonText = "Anti Moderator", method =() => Safety.AntiModerator(), toolTip = "When someone with the stick joins, you get disconnected and their player ID and room code gets saved to a file."},
 
@@ -340,11 +340,11 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Join Random</color><color=grey>]</color>", method =() => Safety.AntiReportJoinRandom(), toolTip = "Connects you to a random the room when anyone comes near your report button."},
                 
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Oculus</color><color=grey>]</color>", enableMethod =() => AntiOculusReport = true, disableMethod =() => AntiOculusReport = false, toolTip = "Disconnects you from the room when you get reported with the Oculus report menu."},
-                new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Anti Cheat</color><color=grey>]</color>", enableMethod =() => AntiACReport = true, disableMethod =() => AntiACReport = false, toolTip = "Disconnects you from the room when you get reported by the anti cheat."},
+                new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Anti Cheat</color><color=grey>]</color>", enableMethod =() => Patches.Safety.AntiCheat.AntiACReport = true, disableMethod =() => Patches.Safety.AntiCheat.AntiACReport = false, toolTip = "Disconnects you from the room when you get reported by the anti cheat."},
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Notify</color><color=grey>]</color>", method =() => Safety.AntiReportNotify(), toolTip = "Tells you when people come near your report button, but doesn't do anything."},
 
-                new ButtonInfo { buttonText = "Show Anti Cheat Reports <color=grey>[</color><color=green>Self</color><color=grey>]</color>", enableMethod =() => AntiCheatSelf = true, disableMethod =() => AntiCheatSelf = false, toolTip = "Gives you a notification every time you have been reported by the anti cheat."},
-                new ButtonInfo { buttonText = "Show Anti Cheat Reports <color=grey>[</color><color=green>All</color><color=grey>]</color>", enableMethod =() => AntiCheatAll = true, disableMethod =() => AntiCheatAll = false, toolTip = "Gives you a notification every time anyone has been reported by the anti cheat."},
+                new ButtonInfo { buttonText = "Show Anti Cheat Reports <color=grey>[</color><color=green>Self</color><color=grey>]</color>", enableMethod =() => Patches.Safety.AntiCheat.AntiCheatSelf = true, disableMethod =() => Patches.Safety.AntiCheat.AntiCheatSelf = false, toolTip = "Gives you a notification every time you have been reported by the anti cheat."},
+                new ButtonInfo { buttonText = "Show Anti Cheat Reports <color=grey>[</color><color=green>All</color><color=grey>]</color>", enableMethod =() => Patches.Safety.AntiCheat.AntiCheatAll = true, disableMethod =() => Patches.Safety.AntiCheat.AntiCheatAll = false, toolTip = "Gives you a notification every time anyone has been reported by the anti cheat."},
 
                 new ButtonInfo { buttonText = "Change Identity", overlapText = "Change Identity <color=grey>[</color><color=green>New</color><color=grey>]</color>", method =() => Safety.ChangeIdentity(), isTogglable = false, toolTip = "Changes your name and color to something a new player would have."},
                 new ButtonInfo { buttonText = "Change Identity <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method =() => Safety.ChangeIdentityRegular(), isTogglable = false, toolTip = "Changes your name and color to something a regular player would have."},
@@ -745,7 +745,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "No Respawn Bug", enableMethod =() => Fun.NoRespawnBug(), disableMethod =() => Fun.DisableNoRespawnBug(), toolTip = "Doesn't respawn the bug if it goes too far outside the bounds of forest."},
                 new ButtonInfo { buttonText = "No Respawn Bat", enableMethod =() => Fun.NoRespawnBat(), disableMethod =() => Fun.DisableNoRespawnBat(), toolTip = "Doesn't respawn the bat if it goes too far outside the bounds of caves."},
-                new ButtonInfo { buttonText = "No Respawn Gliders", enableMethod =() => NoGliderRespawn = true, disableMethod =() => NoGliderRespawn = false, toolTip = "Doesn't respawn gliders that go too far outside the bounds of clouds."},
+                new ButtonInfo { buttonText = "No Respawn Gliders", enableMethod =() => Patches.GliderPatch.enabled = true, disableMethod =() => Patches.GliderPatch.enabled = false, toolTip = "Doesn't respawn gliders that go too far outside the bounds of clouds."},
 
                 new ButtonInfo { buttonText = "Anti Grab", enableMethod =() => Patches.GrabPatch.enabled = true, disableMethod =() => Patches.GrabPatch.enabled = false, toolTip = "Prevents players from picking you up in guardian."},
                 new ButtonInfo { buttonText = "Anti Sting", enableMethod =() => Patches.BeesPatch.enabled = true, disableMethod =() => Patches.BeesPatch.enabled = false, toolTip = "Prevents the bees from making you float."},
