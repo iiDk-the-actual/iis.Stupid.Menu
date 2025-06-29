@@ -1,5 +1,6 @@
-﻿using BepInEx;
+using BepInEx;
 using BepInEx.Logging;
+using HarmonyLib;
 using iiMenu.Patches;
 using System;
 using System.IO;
@@ -8,6 +9,7 @@ using UnityEngine;
 
 namespace iiMenu
 {
+
     [System.ComponentModel.Description(PluginInfo.Description)]
     [BepInPlugin(PluginInfo.GUID, PluginInfo.Name, PluginInfo.Version)]
     public class Plugin : BaseUnityPlugin
@@ -15,6 +17,7 @@ namespace iiMenu
         public static Plugin instance;
         public static ManualLogSource PluginLogger => instance.Logger;
         public static bool FirstLaunch;
+
 
         private void Awake()
         {
@@ -57,22 +60,10 @@ namespace iiMenu
                     TOSPatch.enabled = true;  
             }
 
-            //LoadMenu();
-        }
-
-        private void Start() => LoadMenu();
-
-        private static void LoadMenu()
-        {
             PatchHandler.PatchAll();
-
-            GameObject Loader = new GameObject("iiMenu_Loader");
-            Loader.AddComponent<UI.Main>();
-            Loader.AddComponent<Notifications.NotifiLib>();
-            Loader.AddComponent<Classes.CoroutineManager>();
-
-            DontDestroyOnLoad(Loader);
         }
+
+
 
         // For SharpMonoInjector usage
         // Don't merge these methods, it just doesn't work
@@ -87,6 +78,23 @@ namespace iiMenu
             GameObject iiMenu = new GameObject("iiMenu");
             iiMenu.AddComponent<Plugin>();
             DontDestroyOnLoad(iiMenu);
+        }
+    }
+    
+    [HarmonyPatch(typeof(GorillaLocomotion.GTPlayer), "FixedUpdate")]
+    public class LoadMenu
+    {
+        public static GameObject Loader;
+        private static void Postfix()
+        {
+            if (Loader is null)
+            {
+                Loader = new GameObject("iiMenu_Loader");
+                Loader.AddComponent<UI.Main>();
+                Loader.AddComponent<Notifications.NotifiLib>();
+                Loader.AddComponent<Classes.CoroutineManager>();
+                GameObject.DontDestroyOnLoad(Loader);
+            }
         }
     }
 }
