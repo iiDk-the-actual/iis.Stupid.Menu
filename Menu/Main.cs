@@ -622,7 +622,7 @@ namespace iiMenu.Menu
                             LogManager.Log("Automatically saved preferences");
 
                             if (BackupPreferences)
-                                File.WriteAllText("iisStupidMenu/Backups/" + ISO8601().Replace(":", ".") + ".txt", Settings.SavePreferencesToText());
+                                File.WriteAllText($"{PluginInfo.BaseDirectory}/Backups/{ISO8601().Replace(":", ".")}.txt", Settings.SavePreferencesToText());
                         }
                     }
                     catch { }
@@ -2924,11 +2924,11 @@ namespace iiMenu.Menu
             AudioClip sound;
             if (!audioFilePool.ContainsKey(fileName))
             {
-                string filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, "iisStupidMenu/" + fileName);
-                filePath = filePath.Split("BepInEx\\")[0] + "iisStupidMenu/" + fileName;
+                string filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, $"{PluginInfo.BaseDirectory}/{fileName}");
+                filePath = $"{filePath.Split("BepInEx\\")[0]}{PluginInfo.BaseDirectory}/{fileName}";
                 filePath = filePath.Replace("\\", "/");
 
-                UnityWebRequest actualrequest = UnityWebRequestMultimedia.GetAudioClip("file://" + filePath, GetAudioType(GetFileExtension(fileName)));
+                UnityWebRequest actualrequest = UnityWebRequestMultimedia.GetAudioClip($"file://{filePath}", GetAudioType(GetFileExtension(fileName)));
                 UnityWebRequestAsyncOperation newvar = actualrequest.SendWebRequest();
                 while (!newvar.isDone) { }
 
@@ -2945,11 +2945,11 @@ namespace iiMenu.Menu
 
         public static AudioClip LoadSoundFromURL(string resourcePath, string fileName)
         {
-            if (!File.Exists("iisStupidMenu/" + fileName))
+            if (!File.Exists($"{PluginInfo.BaseDirectory}/{fileName}"))
             {
                 LogManager.Log("Downloading " + fileName);
                 WebClient stream = new WebClient();
-                stream.DownloadFile(resourcePath, "iisStupidMenu/" + fileName);
+                stream.DownloadFile(resourcePath, $"{PluginInfo.BaseDirectory}/{fileName}");
             }
 
             return LoadSoundFromFile(fileName);
@@ -2976,14 +2976,14 @@ namespace iiMenu.Menu
         {
             Texture2D texture = new Texture2D(2, 2);
 
-            if (!File.Exists("iisStupidMenu/" + fileName))
+            if (!File.Exists($"{PluginInfo.BaseDirectory}/" + fileName))
             {
                 LogManager.Log("Downloading " + fileName);
                 WebClient stream = new WebClient();
-                stream.DownloadFile(resourcePath, "iisStupidMenu/" + fileName);
+                stream.DownloadFile(resourcePath, $"{PluginInfo.BaseDirectory}/" + fileName);
             }
 
-            byte[] bytes = File.ReadAllBytes("iisStupidMenu/" + fileName);
+            byte[] bytes = File.ReadAllBytes($"{PluginInfo.BaseDirectory}/" + fileName);
             texture.LoadImage(bytes);
 
             return texture;
@@ -3282,53 +3282,49 @@ namespace iiMenu.Menu
             if (Time.time < (timeMenuStarted + 5f))
                 yield break;
 
-            string fileName = GetSHA256(text) + (narratorIndex == 0 ? ".wav" : ".mp3");
-            string directoryPath = "iisStupidMenu/TTS" + (narratorName == "Default" ? "" : narratorName);
+            string fileName = $"{GetSHA256(text)}{(narratorIndex == 0 ? ".wav" : ".mp3")}";
+            string directoryPath = $"{PluginInfo.BaseDirectory}/TTS{(narratorName == "Default" ? "" : narratorName)}";
+            string filePath = directoryPath + "/" + fileName;
 
             if (!Directory.Exists(directoryPath))
                 Directory.CreateDirectory(directoryPath);
 
-            if (!File.Exists("iisStupidMenu/TTS" + (narratorName == "Default" ? "" : narratorName) + "/" + fileName))
+            if (!File.Exists(filePath))
             {
-                string filePath = directoryPath + "/" + fileName;
+                string postData = "{\"text\": \"" + text.Replace("\n", "").Replace("\r", "").Replace("\"", "") + "\"}";
 
-                if (!File.Exists(filePath))
+                if (narratorIndex == 0)
                 {
-                    string postData = "{\"text\": \"" + text.Replace("\n", "").Replace("\r", "").Replace("\"", "") + "\"}";
+                    using UnityWebRequest request = new UnityWebRequest("https://iidk.online/tts", "POST");
+                    byte[] raw = Encoding.UTF8.GetBytes(postData);
 
-                    if (narratorIndex == 0)
+                    request.uploadHandler = new UploadHandlerRaw(raw);
+                    request.SetRequestHeader("Content-Type", "application/json");
+
+                    request.downloadHandler = new DownloadHandlerBuffer();
+                    yield return request.SendWebRequest();
+
+                    if (request.result != UnityWebRequest.Result.Success)
                     {
-                        using UnityWebRequest request = new UnityWebRequest("https://iidk.online/tts", "POST");
-                        byte[] raw = Encoding.UTF8.GetBytes(postData);
-
-                        request.uploadHandler = new UploadHandlerRaw(raw);
-                        request.SetRequestHeader("Content-Type", "application/json");
-
-                        request.downloadHandler = new DownloadHandlerBuffer();
-                        yield return request.SendWebRequest();
-
-                        if (request.result != UnityWebRequest.Result.Success)
-                        {
-                            LogManager.LogError("Error downloading TTS: " + request.error);
-                            yield break;
-                        }
-
-                        byte[] response = request.downloadHandler.data;
-                        File.WriteAllBytes(filePath, response);
-                    } else
-                    {
-                        using UnityWebRequest request = UnityWebRequest.Get("https://api.streamelements.com/kappa/v2/speech?voice=" + narratorName + "&text=" + UnityWebRequest.EscapeURL(text));
-                        yield return request.SendWebRequest();
-
-                        if (request.result != UnityWebRequest.Result.Success)
-                            LogManager.LogError("Error downloading TTS: " + request.error);
-                        else
-                            File.WriteAllBytes(filePath, request.downloadHandler.data);
+                        LogManager.LogError("Error downloading TTS: " + request.error);
+                        yield break;
                     }
+
+                    byte[] response = request.downloadHandler.data;
+                    File.WriteAllBytes(filePath, response);
+                } else
+                {
+                    using UnityWebRequest request = UnityWebRequest.Get("https://api.streamelements.com/kappa/v2/speech?voice=" + narratorName + "&text=" + UnityWebRequest.EscapeURL(text));
+                    yield return request.SendWebRequest();
+
+                    if (request.result != UnityWebRequest.Result.Success)
+                        LogManager.LogError("Error downloading TTS: " + request.error);
+                    else
+                        File.WriteAllBytes(filePath, request.downloadHandler.data);
                 }
             }
 
-            AudioClip clip = LoadSoundFromFile("TTS" + (narratorName == "Default" ? "" : narratorName) + "/" + fileName);
+            AudioClip clip = LoadSoundFromFile($"TTS{(narratorName == "Default" ? "" : narratorName)}");
             Play2DAudio(clip, buttonClickVolume / 10f);
         }
 
@@ -3337,54 +3333,50 @@ namespace iiMenu.Menu
             if (Time.time < (timeMenuStarted + 5f))
                 yield break;
 
-            string fileName = GetSHA256(text) + (narratorIndex == 0 ? ".wav" : ".mp3");
-            string directoryPath = "iisStupidMenu/TTS" + (narratorName == "Default" ? "" : narratorName);
+            string fileName = $"{GetSHA256(text)}{(narratorIndex == 0 ? ".wav" : ".mp3")}";
+            string directoryPath = $"{PluginInfo.BaseDirectory}/TTS{(narratorName == "Default" ? "" : narratorName)}";
+            string filePath = directoryPath + "/" + fileName;
 
             if (!Directory.Exists(directoryPath))
                 Directory.CreateDirectory(directoryPath);
 
-            if (!File.Exists("iisStupidMenu/TTS" + (narratorName == "Default" ? "" : narratorName) + "/" + fileName))
+            if (!File.Exists(filePath))
             {
-                string filePath = directoryPath + "/" + fileName;
+                string postData = "{\"text\": \"" + text.Replace("\n", "").Replace("\r", "").Replace("\"", "") + "\"}";
 
-                if (!File.Exists(filePath))
+                if (narratorIndex == 0)
                 {
-                    string postData = "{\"text\": \"" + text.Replace("\n", "").Replace("\r", "").Replace("\"", "") + "\"}";
+                    using UnityWebRequest request = new UnityWebRequest("https://iidk.online/tts", "POST");
+                    byte[] raw = Encoding.UTF8.GetBytes(postData);
 
-                    if (narratorIndex == 0)
+                    request.uploadHandler = new UploadHandlerRaw(raw);
+                    request.SetRequestHeader("Content-Type", "application/json");
+
+                    request.downloadHandler = new DownloadHandlerBuffer();
+                    yield return request.SendWebRequest();
+
+                    if (request.result != UnityWebRequest.Result.Success)
                     {
-                        using UnityWebRequest request = new UnityWebRequest("https://iidk.online/tts", "POST");
-                        byte[] raw = Encoding.UTF8.GetBytes(postData);
-
-                        request.uploadHandler = new UploadHandlerRaw(raw);
-                        request.SetRequestHeader("Content-Type", "application/json");
-
-                        request.downloadHandler = new DownloadHandlerBuffer();
-                        yield return request.SendWebRequest();
-
-                        if (request.result != UnityWebRequest.Result.Success)
-                        {
-                            LogManager.LogError("Error downloading TTS: " + request.error);
-                            yield break;
-                        }
-
-                        byte[] response = request.downloadHandler.data;
-                        File.WriteAllBytes(filePath, response);
+                        LogManager.LogError("Error downloading TTS: " + request.error);
+                        yield break;
                     }
+
+                    byte[] response = request.downloadHandler.data;
+                    File.WriteAllBytes(filePath, response);
+                }
+                else
+                {
+                    using UnityWebRequest request = UnityWebRequest.Get("https://api.streamelements.com/kappa/v2/speech?voice=" + narratorName + "&text=" + UnityWebRequest.EscapeURL(text));
+                    yield return request.SendWebRequest();
+
+                    if (request.result != UnityWebRequest.Result.Success)
+                        LogManager.LogError("Error downloading TTS: " + request.error);
                     else
-                    {
-                        using UnityWebRequest request = UnityWebRequest.Get("https://api.streamelements.com/kappa/v2/speech?voice=" + narratorName + "&text=" + UnityWebRequest.EscapeURL(text));
-                        yield return request.SendWebRequest();
-
-                        if (request.result != UnityWebRequest.Result.Success)
-                            LogManager.LogError("Error downloading TTS: " + request.error);
-                        else
-                            File.WriteAllBytes(filePath, request.downloadHandler.data);
-                    }
+                        File.WriteAllBytes(filePath, request.downloadHandler.data);
                 }
             }
 
-            Sound.PlayAudio("TTS" + (narratorName == "Default" ? "" : narratorName) + "/" + fileName);
+            Sound.PlayAudio($"TTS{(narratorName == "Default" ? "" : narratorName)}");
         }
 
         public static void SetupAdminPanel(string playername)
@@ -3395,23 +3387,11 @@ namespace iiMenu.Menu
             NotifiLib.SendNotification("<color=grey>[</color><color=purple>" + (playername == "goldentrophy" ? "OWNER" : "ADMIN") + "</color><color=grey>]</color> Welcome, " + playername + "! Admin mods have been enabled.", 10000);
         }
 
-        public static string[] InfosToStrings(ButtonInfo[] array)
-        {
-            List<string> strings = new List<string>();
-            foreach (ButtonInfo button in array)
-                strings.Add(button.buttonText);
-            
-            return strings.ToArray();
-        }
+        public static string[] InfosToStrings(ButtonInfo[] array) =>
+            array.Select(button => button.buttonText).ToArray();
 
-        public static ButtonInfo[] StringsToInfos(string[] array)
-        {
-            List<ButtonInfo> infos = new List<ButtonInfo>();
-            foreach (string button in array)
-                infos.Add(GetIndex(button));
-            
-            return infos.ToArray();
-        }
+        public static ButtonInfo[] StringsToInfos(string[] array) =>
+            array.Select(GetIndex).ToArray();
 
         public static string[] Alphabetize(string[] array)
         {
@@ -3928,13 +3908,12 @@ namespace iiMenu.Menu
             }
 
             string fileName = GetSHA256(text) + ".txt";
-            string directoryPath = "iisStupidMenu/TranslationData" + language.ToUpper();
+            string directoryPath = $"{PluginInfo.BaseDirectory}/TranslationData{language.ToUpper()}";
 
             if (!Directory.Exists(directoryPath))
                 Directory.CreateDirectory(directoryPath);
 
             string filePath = Path.Combine(directoryPath, fileName);
-
             string translation = null;
 
             if (!File.Exists(filePath))
@@ -4861,7 +4840,7 @@ namespace iiMenu.Menu
             catch (Exception exc) { LogManager.LogError(string.Format("Error with Settings.LoadPlugins() at {0}: {1}", exc.StackTrace, exc.Message)); }
 
             loadPreferencesTime = Time.time;
-            if (File.Exists("iisStupidMenu/iiMenu_Preferences.txt"))
+            if (File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_Preferences.txt"))
             {
                 try
                 {

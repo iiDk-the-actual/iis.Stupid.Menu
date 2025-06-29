@@ -32,28 +32,29 @@ namespace iiMenu
     Compiled {PluginInfo.BuildTimestamp}
 ");
 
-            FirstLaunch = !Directory.Exists("iisStupidMenu");
+            FirstLaunch = !Directory.Exists(PluginInfo.BaseDirectory);
 
             string[] ExistingDirectories = new string[]
             {
-                "iisStupidMenu",
-                "iisStupidMenu/Sounds",
-                "iisStupidMenu/Plugins",
-                "iisStupidMenu/Backups",
-                "iisStupidMenu/TTS",
-                "iisStupidMenu/PlayerInfo"
+                "",
+                "/Sounds",
+                "/Plugins",
+                "/Backups",
+                "/TTS",
+                "/PlayerInfo"
             };
 
             foreach (string DirectoryString in ExistingDirectories)
             {
-                if (!Directory.Exists(DirectoryString))
-                    Directory.CreateDirectory(DirectoryString);
+                string DirectoryTarget = $"{PluginInfo.BaseDirectory}{DirectoryString}";
+                if (!Directory.Exists(DirectoryTarget))
+                    Directory.CreateDirectory(DirectoryTarget);
             }
 
             // Ugily hard-coded but works so well
-            if (File.Exists("iisStupidMenu/iiMenu_Preferences.txt"))
+            if (File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_Preferences.txt"))
             {
-                if (File.ReadAllLines("iisStupidMenu/iiMenu_Preferences.txt")[0].Split(";;").Contains("Accept TOS"))
+                if (File.ReadAllLines($"{PluginInfo.BaseDirectory}/iiMenu_Preferences.txt")[0].Split(";;").Contains("Accept TOS"))
                     TOSPatch.enabled = true;
             }
             

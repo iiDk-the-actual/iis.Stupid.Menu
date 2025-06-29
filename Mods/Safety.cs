@@ -407,7 +407,7 @@ namespace iiMenu.Mods
 
                             text += "\n====================================\n";
                             text += "Text file generated with ii's Stupid Menu";
-                            string fileName = "iisStupidMenu/" + player.NickName + " - Anti Moderator.txt";
+                            string fileName = $"{PluginInfo.BaseDirectory}/" + player.NickName + " - Anti Moderator.txt";
 
                             File.WriteAllText(fileName, text);
                         }

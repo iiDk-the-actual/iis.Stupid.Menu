@@ -79,7 +79,7 @@ namespace iiMenu.Mods
             }
             text += "\n====================================\n";
             text += "Text file generated with ii's Stupid Menu";
-            string fileName = "iisStupidMenu/SoundData.txt";
+            string fileName = $"{PluginInfo.BaseDirectory}/SoundData.txt";
 
             File.WriteAllText(fileName, text);
 
@@ -105,7 +105,7 @@ namespace iiMenu.Mods
             }
             text += "\n====================================\n";
             text += "Text file generated with ii's Stupid Menu";
-            string fileName = "iisStupidMenu/CosmeticData.txt";
+            string fileName = $"{PluginInfo.BaseDirectory}/CosmeticData.txt";
 
             File.WriteAllText(fileName, text);
 
@@ -128,7 +128,7 @@ namespace iiMenu.Mods
                 catch { LogManager.Log("Failed to log hat"); }
                 i++;
             }
-            string fileName = "iisStupidMenu/DecryptableCosmeticData.txt";
+            string fileName = $"{PluginInfo.BaseDirectory}/DecryptableCosmeticData.txt";
 
             File.WriteAllText(fileName, text);
 
@@ -154,7 +154,7 @@ namespace iiMenu.Mods
             }
             text += "\n====================================\n";
             text += "Text file generated with ii's Stupid Menu";
-            string fileName = "iisStupidMenu/RPCData.txt";
+            string fileName = $"{PluginInfo.BaseDirectory}/RPCData.txt";
 
             File.WriteAllText(fileName, text);
 

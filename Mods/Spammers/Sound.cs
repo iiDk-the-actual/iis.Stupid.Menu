@@ -22,8 +22,8 @@ namespace iiMenu.Mods.Spammers
         {
             currentCategoryName = "Soundboard";
 
-            if (!Directory.Exists("iisStupidMenu/Sounds" + Subdirectory))
-                Directory.CreateDirectory("iisStupidMenu/Sounds" + Subdirectory);
+            if (!Directory.Exists($"{PluginInfo.BaseDirectory}/Sounds" + Subdirectory))
+                Directory.CreateDirectory($"{PluginInfo.BaseDirectory}/Sounds" + Subdirectory);
             
             List<string> enabledSounds = new List<string> { };
             foreach (ButtonInfo binfo in Buttons.buttons[18])
@@ -38,17 +38,17 @@ namespace iiMenu.Mods.Spammers
             soundbuttons.Add(new ButtonInfo { buttonText = "Exit Soundboard", method = () => currentCategoryName = "Fun Mods", isTogglable = false, toolTip = "Returns you back to the fun mods." });
             int index = 0;
 
-            string[] folders = Directory.GetDirectories("iisStupidMenu/Sounds" + Subdirectory);
+            string[] folders = Directory.GetDirectories($"{PluginInfo.BaseDirectory}/Sounds" + Subdirectory);
             foreach (string folder in folders)
             {
                 index++;
-                int substringLength = ("iisStupidMenu/Sounds" + Subdirectory + "/").Length;
+                int substringLength = ($"{PluginInfo.BaseDirectory}/Sounds" + Subdirectory + "/").Length;
                 string FolderName = folder.Replace("\\", "/")[substringLength..];
                 soundbuttons.Add(new ButtonInfo { buttonText = "SoundboardFolder" + index.ToString(), overlapText = "▶ " + FolderName, method = () => OpenFolder(folder[21..]), isTogglable = false, toolTip = "Opens the " + FolderName + " folder."});
             }
 
             index = 0;
-            string[] files = Directory.GetFiles("iisStupidMenu/Sounds" + Subdirectory);
+            string[] files = Directory.GetFiles($"{PluginInfo.BaseDirectory}/Sounds" + Subdirectory);
             foreach (string file in files)
             {
                 index++;
@@ -120,9 +120,9 @@ namespace iiMenu.Mods.Spammers
             if (name.Contains(":"))
                 return;
 
-            string filename = "Sounds" + Subdirectory + "/" + name + "." + GetFileExtension(url);
-            if (File.Exists("iisStupidMenu/"+filename))
-                File.Delete("iisStupidMenu/" + filename);
+            string filename = $"Sounds{Subdirectory}/{name}.{GetFileExtension(url)}";
+            if (File.Exists($"{PluginInfo.BaseDirectory}/{filename}"))
+                File.Delete($"{PluginInfo.BaseDirectory}/{filename}");
             
             if (audioFilePool.ContainsKey(name))
                 audioFilePool.Remove(name);
@@ -197,8 +197,8 @@ namespace iiMenu.Mods.Spammers
 
         public static void OpenSoundFolder()
         {
-            string filePath = Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, "iisStupidMenu/Sounds");
-            filePath = filePath.Split("BepInEx\\")[0] + "iisStupidMenu/Sounds";
+            string filePath = Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, $"{PluginInfo.BaseDirectory}/Sounds");
+            filePath = filePath.Split("BepInEx\\")[0] + $"{PluginInfo.BaseDirectory}/Sounds";
             Process.Start(filePath);
         }
 
