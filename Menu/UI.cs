@@ -44,7 +44,7 @@ namespace iiMenu.UI
         {
             instance = this;
 
-            if (File.Exists("iisStupidMenu/iiMenu_HideGUI.txt"))
+            if (File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_HideGUI.txt"))
                 isOpen = false;
         }
 
@@ -57,12 +57,12 @@ namespace iiMenu.UI
                 isOpen = !isOpen;
                 if (isOpen)
                 {
-                    if (File.Exists("iisStupidMenu/iiMenu_HideGUI.txt"))
-                        File.Delete("iisStupidMenu/iiMenu_HideGUI.txt");
+                    if (File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_HideGUI.txt"))
+                        File.Delete($"{PluginInfo.BaseDirectory}/iiMenu_HideGUI.txt");
                 } else
                 {
-                    if (!File.Exists("iisStupidMenu/iiMenu_HideGUI.txt"))
-                        File.WriteAllText("iisStupidMenu/iiMenu_HideGUI.txt", "true");
+                    if (!File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_HideGUI.txt"))
+                        File.WriteAllText($"{PluginInfo.BaseDirectory}/iiMenu_HideGUI.txt", "true");
                 }
             }
             lastCondition = isKeyboardCondition;

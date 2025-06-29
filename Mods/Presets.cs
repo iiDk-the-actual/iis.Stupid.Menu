@@ -66,17 +66,17 @@ namespace iiMenu.Mods
 
         public static void SaveCustomPreset(int id)
         {
-            if (!Directory.Exists("iisStupidMenu/SavedPresets"))
-                Directory.CreateDirectory("iisStupidMenu/SavedPresets");
+            if (!Directory.Exists($"{PluginInfo.BaseDirectory}/SavedPresets"))
+                Directory.CreateDirectory($"{PluginInfo.BaseDirectory}/SavedPresets");
             
-            File.WriteAllText("iisStupidMenu/SavedPresets/Preset_" + id.ToString() + ".txt", Settings.SavePreferencesToText());
+            File.WriteAllText($"{PluginInfo.BaseDirectory}/SavedPresets/Preset_" + id.ToString() + ".txt", Settings.SavePreferencesToText());
         }
 
         public static void LoadCustomPreset(int id)
         {
-            if (Directory.Exists("iisStupidMenu/SavedPresets"))
+            if (Directory.Exists($"{PluginInfo.BaseDirectory}/SavedPresets"))
             {
-                string text = File.ReadAllText("iisStupidMenu/SavedPresets/Preset_" + id.ToString() + ".txt");
+                string text = File.ReadAllText($"{PluginInfo.BaseDirectory}/SavedPresets/Preset_" + id.ToString() + ".txt");
                 LogManager.Log(text);
                 Settings.LoadPreferencesFromText(text);
             }

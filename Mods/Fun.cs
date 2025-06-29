@@ -1606,7 +1606,7 @@ namespace iiMenu.Mods
 
             isFiring = true;
 
-            if (!File.Exists("iisStupidMenu/shotgun.wav"))
+            if (!File.Exists($"{PluginInfo.BaseDirectory}/shotgun.wav"))
                 LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/refs/heads/main/shotgun.wav", "shotgun.wav");
 
             Sound.PlayAudio("shotgun.wav");
@@ -2451,10 +2451,10 @@ namespace iiMenu.Mods
         public static string[] names = new string[] { };
         public static void EnableCustomNameCycle()
         {
-            if (File.Exists("iisStupidMenu/iiMenu_CustomNameCycle.txt"))
-                names = File.ReadAllText("iisStupidMenu/iiMenu_CustomNameCycle.txt").Split('\n');
+            if (File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_CustomNameCycle.txt"))
+                names = File.ReadAllText($"{PluginInfo.BaseDirectory}/iiMenu_CustomNameCycle.txt").Split('\n');
             else
-                File.WriteAllText("iisStupidMenu/iiMenu_CustomNameCycle.txt","YOUR\nTEXT\nHERE");
+                File.WriteAllText($"{PluginInfo.BaseDirectory}/iiMenu_CustomNameCycle.txt","YOUR\nTEXT\nHERE");
         }
 
         public static void StrobeColor()
@@ -3058,7 +3058,7 @@ namespace iiMenu.Mods
             }
             text += "\n====================================\n";
             text += "Text file generated with ii's Stupid Menu";
-            string fileName = "iisStupidMenu/PlayerInfo/" + PhotonNetwork.CurrentRoom.Name + ".txt";
+            string fileName = $"{PluginInfo.BaseDirectory}/PlayerInfo/" + PhotonNetwork.CurrentRoom.Name + ".txt";
 
             File.WriteAllText(fileName, text);
 

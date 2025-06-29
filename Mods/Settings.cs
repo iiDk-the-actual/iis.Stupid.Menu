@@ -187,26 +187,26 @@ namespace iiMenu.Mods
 
             LoadedPlugins.Clear();
 
-            if (!Directory.Exists("iisStupidMenu/Plugins"))
-                Directory.CreateDirectory("iisStupidMenu/Plugins");
+            if (!Directory.Exists($"{PluginInfo.BaseDirectory}/Plugins"))
+                Directory.CreateDirectory($"{PluginInfo.BaseDirectory}/Plugins");
 
-            if (!File.Exists("iisStupidMenu/Plugins/DisabledPlugins.txt"))
-                File.WriteAllText("iisStupidMenu/Plugins/DisabledPlugins.txt", "");
+            if (!File.Exists($"{PluginInfo.BaseDirectory}/Plugins/DisabledPlugins.txt"))
+                File.WriteAllText($"{PluginInfo.BaseDirectory}/Plugins/DisabledPlugins.txt", "");
             else
             {
-                string text = File.ReadAllText("iisStupidMenu/Plugins/DisabledPlugins.txt");
+                string text = File.ReadAllText($"{PluginInfo.BaseDirectory}/Plugins/DisabledPlugins.txt");
                 if (text.Length > 1)
                     disabledPlugins = text.Split("\n").ToList();
             }
 
-            string[] Files = Directory.GetFiles("iisStupidMenu/Plugins");
+            string[] Files = Directory.GetFiles($"{PluginInfo.BaseDirectory}/Plugins");
             foreach (string File in Files)
             {
                 try
                 {
                     if (GetFileExtension(File) == "dll")
                     {
-                        string PluginName = File.Replace("iisStupidMenu/Plugins/", "");
+                        string PluginName = File.Replace($"{PluginInfo.BaseDirectory}/Plugins/", "");
                         LoadedPlugins.Add(PluginName, GetAssembly(File));
                     }
                 } catch (Exception e) { LogManager.Log("Error with loading plugin " + File + ": " + e.ToString()); }
@@ -245,8 +245,8 @@ namespace iiMenu.Mods
 
         public static void OpenPluginsFolder()
         {
-            string filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, "iisStupidMenu/Plugins");
-            filePath = filePath.Split("BepInEx\\")[0] + "iisStupidMenu/Plugins";
+            string filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, $"{PluginInfo.BaseDirectory}/Plugins");
+            filePath = filePath.Split("BepInEx\\")[0] + $"{PluginInfo.BaseDirectory}/Plugins";
             Process.Start(filePath);
         }
 
@@ -279,11 +279,11 @@ namespace iiMenu.Mods
 
             string filename = url.Split("/")[^1];
 
-            if (File.Exists("iisStupidMenu/Plugins/" + filename))
-                File.Delete("iisStupidMenu/Plugins/" + filename);
+            if (File.Exists($"{PluginInfo.BaseDirectory}/Plugins/" + filename))
+                File.Delete($"{PluginInfo.BaseDirectory}/Plugins/" + filename);
 
             WebClient stream = new WebClient();
-            stream.DownloadFile(url, "iisStupidMenu/Plugins/" + filename);
+            stream.DownloadFile(url, $"{PluginInfo.BaseDirectory}/Plugins/" + filename);
 
             LoadPlugins();
             NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully downloaded " + name + " to your plugins.");
@@ -303,11 +303,9 @@ namespace iiMenu.Mods
 
             string disabledPluginsString = "";
             foreach (string disabledPlugin in disabledPlugins)
-            {
                 disabledPluginsString += disabledPlugin + "\n";
-            }
 
-            File.WriteAllText("iisStupidMenu/Plugins/DisabledPlugins.txt", disabledPluginsString);
+            File.WriteAllText($"{PluginInfo.BaseDirectory}/Plugins/DisabledPlugins.txt", disabledPluginsString);
 
             GetIndex(Plugin.Key).overlapText = (disabledPlugins.Contains(Plugin.Key) ? "<color=grey>[</color><color=red>OFF</color><color=grey>]</color>" : "<color=grey>[</color><color=green>ON</color><color=grey>]</color>") + " " + GetPluginInfo(Plugin.Value)[0];
         }
@@ -1634,7 +1632,7 @@ namespace iiMenu.Mods
         private static int rememberdirectory = 0;
         public static void CustomMenuTheme()
         {
-            if (!File.Exists("iisStupidMenu/iiMenu_CustomThemeColor.txt"))
+            if (!File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_CustomThemeColor.txt"))
                 UpdateWriteCustomTheme();
             
             UpdateReadCustomTheme();
@@ -1867,7 +1865,7 @@ namespace iiMenu.Mods
 
         public static void UpdateReadCustomTheme()
         {
-            string[] linesplit = File.ReadAllText("iisStupidMenu/iiMenu_CustomThemeColor.txt").Split("\n");
+            string[] linesplit = File.ReadAllText($"{PluginInfo.BaseDirectory}/iiMenu_CustomThemeColor.txt").Split("\n");
 
             string[] a = linesplit[0].Split(",");
             bgColorA = new Color32(byte.Parse(a[0]), byte.Parse(a[1]), byte.Parse(a[2]), 255);
@@ -1915,7 +1913,7 @@ namespace iiMenu.Mods
 
                 output += Math.Round((Mathf.Round(clr.r * 10) / 10) * 255f).ToString() + "," + Math.Round((Mathf.Round(clr.g * 10) / 10) * 255f).ToString() + "," + Math.Round((Mathf.Round(clr.b * 10) / 10) * 255f).ToString();
             }
-            File.WriteAllText("iisStupidMenu/iiMenu_CustomThemeColor.txt", output);
+            File.WriteAllText($"{PluginInfo.BaseDirectory}/iiMenu_CustomThemeColor.txt", output);
         }
 
         public static void FixTheme()
@@ -1926,14 +1924,14 @@ namespace iiMenu.Mods
 
         public static void CustomMenuBackground()
         {
-            if (!File.Exists("iisStupidMenu/iiMenu_CustomMenuBackground.txt"))
-                File.WriteAllText("iisStupidMenu/iiMenu_CustomMenuBackground.txt", "");
+            if (!File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_CustomMenuBackground.txt"))
+                File.WriteAllText($"{PluginInfo.BaseDirectory}/iiMenu_CustomMenuBackground.txt", "");
 
-            if (File.Exists("iisStupidMenu/MenuBG.png"))
-                File.Delete("iisStupidMenu/MenuBG.png");
+            if (File.Exists($"{PluginInfo.BaseDirectory}/MenuBG.png"))
+                File.Delete($"{PluginInfo.BaseDirectory}/MenuBG.png");
             
             doCustomMenuBackground = true;
-            customMenuBackgroundImage = LoadTextureFromURL(File.ReadAllText("iisStupidMenu/iiMenu_CustomMenuBackground.txt"), "MenuBG.png");
+            customMenuBackgroundImage = LoadTextureFromURL(File.ReadAllText($"{PluginInfo.BaseDirectory}/iiMenu_CustomMenuBackground.txt"), "MenuBG.png");
             ReloadMenu();
         }
 
@@ -2372,10 +2370,10 @@ namespace iiMenu.Mods
         public static void CustomMenuName()
         {
             doCustomName = true;
-            if (!File.Exists("iisStupidMenu/iiMenu_CustomMenuName.txt"))
-                File.WriteAllText("iisStupidMenu/iiMenu_CustomMenuName.txt", "Your Text Here");
+            if (!File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_CustomMenuName.txt"))
+                File.WriteAllText($"{PluginInfo.BaseDirectory}/iiMenu_CustomMenuName.txt", "Your Text Here");
             
-            customMenuName = File.ReadAllText("iisStupidMenu/iiMenu_CustomMenuName.txt");
+            customMenuName = File.ReadAllText($"{PluginInfo.BaseDirectory}/iiMenu_CustomMenuName.txt");
         }
 
         public static void NoCustomMenuName()
@@ -2603,7 +2601,7 @@ namespace iiMenu.Mods
 
         public static void SavePreferences()
         {
-            File.WriteAllText("iisStupidMenu/iiMenu_Preferences.txt", SavePreferencesToText());
+            File.WriteAllText($"{PluginInfo.BaseDirectory}/iiMenu_Preferences.txt", SavePreferencesToText());
         }
 
         public static void LoadPreferencesFromText(string text)
@@ -2770,7 +2768,7 @@ namespace iiMenu.Mods
         {
             try
             {
-                string text = File.ReadAllText("iisStupidMenu/iiMenu_Preferences.txt");
+                string text = File.ReadAllText($"{PluginInfo.BaseDirectory}/iiMenu_Preferences.txt");
                 LoadPreferencesFromText(text);
             } catch (Exception e) { LogManager.Log("Error loading preferences: " + e.Message); }
         }
