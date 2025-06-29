@@ -1051,7 +1051,7 @@ namespace iiMenu.Menu
                             if (toSortOf[watchMenuIndex].overlapText != null)
                                 watchText.GetComponent<Text>().text = toSortOf[watchMenuIndex].overlapText;
 
-                            watchText.GetComponent<Text>().text += $"\n<color=grey>[{(watchMenuIndex + 1)}/{toSortOf.Length}]\n{DateTime.Now.ToString("hh:mm tt")}</color>";
+                            watchText.GetComponent<Text>().text += $"\n<color=grey>[{(watchMenuIndex + 1)}/{toSortOf.Length}]\n{DateTime.Now:hh:mm tt}</color>";
                             watchText.GetComponent<Text>().color = titleColor;
 
                             if (lowercaseMode)
@@ -1387,7 +1387,7 @@ namespace iiMenu.Menu
             return oColor;
         }
 
-        private static void AddButton(float offset, int buttonIndex, ButtonInfo method, bool flip = false)
+        private static void AddButton(float offset, int buttonIndex, ButtonInfo method)
         {
             if (!method.label)
             {
@@ -1452,8 +1452,10 @@ namespace iiMenu.Menu
                     }
                 }
 
-                if (flip)
-                    buttonObject.transform.localPosition = new Vector3(buttonObject.transform.localPosition.x, -buttonObject.transform.localPosition.y, buttonObject.transform.localPosition.z);
+                /*
+                 * if (flip)
+                 *   buttonObject.transform.localPosition = new Vector3(buttonObject.transform.localPosition.x, -buttonObject.transform.localPosition.y, buttonObject.transform.localPosition.z);
+                 */
 
                 if (shouldOutline)
                     OutlineObj(buttonObject, buttonIndex < 0 && swapButtonColors ? method.enabled : !method.enabled);
@@ -1569,8 +1571,6 @@ namespace iiMenu.Menu
             textTransform.localPosition = new Vector3(.064f, 0, .111f - offset / 2.6f);
             textTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
         }
-
-        private static void AddButton(float offset, int buttonIndex, string method) => AddButton(offset, buttonIndex, GetIndex(method));
 
         private static void AddSearchButton() // Me :D -Twig
         {
