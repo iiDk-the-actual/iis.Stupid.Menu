@@ -63,6 +63,9 @@ namespace iiMenu.Patches
     {
         private static bool Prefix(ref Task<bool> __result)
         {
+            if (!TOSPatch.enabled)
+                return true;
+
             __result = Task.FromResult(false);
             return false;
         }
