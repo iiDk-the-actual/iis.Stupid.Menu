@@ -4855,6 +4855,9 @@ namespace iiMenu.Menu
                     CoroutineManager.RunCoroutine(DelayLoadPreferences());
                 }
             }
+
+            if (PatchHandler.PatchErrors > 0)
+                NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> {PatchHandler.PatchErrors} patch{(PatchHandler.PatchErrors > 1 ? "es" : "")} failed to initialize. Please report this as an issue to the GitHub repository.", 10000);
         }
 
         public static void UnloadMenu()
