@@ -3779,8 +3779,37 @@ namespace iiMenu.Menu
             obj.transform.localScale = new Vector3(targetWorldScale.x / parentScale.x, targetWorldScale.y / parentScale.y, targetWorldScale.z / parentScale.z);
         }
 
-        public static void FixStickyColliders(GameObject platform) => // Thank you Colossus for optimized sticky platforms
-            platform.AddComponent<GorillaClimbable>();
+        public static void FixStickyColliders(GameObject platform)
+        {
+            Vector3[] localPositions = new Vector3[]
+            {
+                new Vector3(0, 1f, 0),
+                new Vector3(0, -1f, 0),
+                new Vector3(1f, 0, 0),
+                new Vector3(-1f, 0, 0),
+                new Vector3(0, 0, 1f),
+                new Vector3(0, 0, -1f)
+            };
+            Quaternion[] localRotations = new Quaternion[]
+            {
+                Quaternion.Euler(90, 0, 0),
+                Quaternion.Euler(-90, 0, 0),
+                Quaternion.Euler(0, -90, 0),
+                Quaternion.Euler(0, 90, 0),
+                Quaternion.identity,
+                Quaternion.Euler(0, 180, 0)
+            };
+            for (int i = 0; i < localPositions.Length; i++)
+            {
+                GameObject side = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                float size = 0.025f;
+                side.transform.SetParent(platform.transform);
+                side.transform.position = localPositions[i] * (size / 2);
+                side.transform.rotation = localRotations[i];
+                WorldScale(side, new Vector3(size, size, 0.01f));
+                side.GetComponent<Renderer>().enabled = false;
+            }
+        }
 
         public static void VisualizeAura(Vector3 position, float range, Color color)
         {
