@@ -119,11 +119,7 @@ namespace iiMenu.Mods
                     platform.GetComponent<Renderer>().material.color = Color.HSVToRGB(h, 1f, 1f);
                     break;
                 case 3:
-                    platform.GetComponent<Renderer>().material.color = new Color32(
-                        (byte)UnityEngine.Random.Range(0, 255),
-                        (byte)UnityEngine.Random.Range(0, 255),
-                        (byte)UnityEngine.Random.Range(0, 255),
-                        128);
+                    platform.GetComponent<Renderer>().material.color = RandomColor();
                     break;
                 case 4:
                     UpdateClipColliders(false);
@@ -183,7 +179,7 @@ namespace iiMenu.Mods
 
         public static int speedboostCycle = 1;
         public static float jspeed = 7.5f;
-        public static float jmulti = 1.25f;
+        public static float jmulti = 1.1f;
 
         public static int longarmCycle = 2;
         public static float armlength = 1.25f;
@@ -192,11 +188,11 @@ namespace iiMenu.Mods
         public static GameObject rightplat = null;
         public static void Platforms()
         {
+            if (platformMode == 6)
+                Projectiles.GrabProjectile();
+
             if (leftGrab)
             {
-                if (platformMode == 6)
-                    Projectiles.GrabProjectile();
-
                 if (leftplat == null)
                 {
                     leftplat = CreatePlatform();
@@ -246,7 +242,7 @@ namespace iiMenu.Mods
                     }
 
                     if (platformMode == 3)
-                        leftplat.GetComponent<Renderer>().material.color = new Color32((byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), 128);
+                        leftplat.GetComponent<Renderer>().material.color = RandomColor();
                 }
             }
             else
