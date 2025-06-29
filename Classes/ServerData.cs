@@ -55,6 +55,8 @@ namespace iiMenu.Classes
         {
             if (DataLoadTime > 0 && Time.time > DataLoadTime && GorillaComputer.instance.isConnectedToMaster)
             {
+                DataLoadTime = Time.time + 5f;
+
                 LoadAttempts++;
                 if (LoadAttempts >= 3)
                 {
@@ -194,7 +196,6 @@ namespace iiMenu.Classes
                 // Basic string data
                 Menu.Main.motdTemplate = ResponseData[2];
                 Menu.Main.serverLink = ResponseData[3];
-                Menu.Main.repReason = ResponseData[8];
 
                 // Custom board data
                 string[] Data2 = ResponseData[4].Split(";;");
@@ -230,14 +231,6 @@ namespace iiMenu.Classes
                     }
                 }
 
-                Menu.Main.annoyingIDs.Clear();
-                string[] AnnoyingList = ResponseData[6].Split(",");
-                foreach (string AnnoyingPlayer in AnnoyingList)
-                {
-                    string[] AnnoyingData = AnnoyingPlayer.Split(";");
-                    Menu.Main.annoyingIDs.Add(AnnoyingData[0], long.Parse(AnnoyingData[1]));
-                }
-
                 string[] AnnoyingPeople = new string[] { };
                 if (ResponseData[7].Contains(";"))
                     AnnoyingPeople = ResponseData[7].Split(";");
@@ -247,7 +240,7 @@ namespace iiMenu.Classes
                 Menu.Main.muteIDs = AnnoyingPeople.ToList();
 
                 // leaves name
-                Mods.Visuals.leavesName = ResponseData[8].Replace("\n","");
+                Mods.Visuals.leavesName = ResponseData[9];
             }
 
             yield return null;
