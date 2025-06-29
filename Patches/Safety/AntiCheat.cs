@@ -8,6 +8,10 @@ namespace iiMenu.Patches.Safety
     [HarmonyPatch(typeof(GorillaNot), "SendReport")]
     public class AntiCheat
     {
+        public static bool AntiCheatSelf;
+        public static bool AntiCheatAll;
+        public static bool AntiACReport;
+
         private static bool Prefix(string susReason, string susId, string susNick)
         {
             if (susReason.ToLower() == "empty rig")
@@ -28,6 +32,7 @@ namespace iiMenu.Patches.Safety
                         NotifiLib.SendNotification("<color=grey>[</color><color=green>ANTI-CHEAT</color><color=grey>] </color><color=white>" + susNick + " was reported for " + susReason + ".</color>");
                 }
             }
+
             if (AntiACReport)
             {
                 Mods.Safety.AntiReportFRT(null, false);

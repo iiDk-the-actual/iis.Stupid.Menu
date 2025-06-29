@@ -1,6 +1,6 @@
 ﻿using HarmonyLib;
 
-namespace iiMenu.Patches.Safety
+namespace iiMenu.Patches
 {
     [HarmonyPatch(typeof(ModIOManager), "OnJoinedRoom")]
     public class ModIOPatch
