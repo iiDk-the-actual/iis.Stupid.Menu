@@ -16,7 +16,6 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
-using UnityEngine.UIElements;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -76,8 +75,6 @@ namespace iiMenu.Mods
 
         public static GameObject CreatePlatform()
         {
-            if (platformMode == 6)
-                Projectiles.GrabProjectile();
             GameObject platform = null;
             switch (platformShape)
             {
@@ -140,7 +137,6 @@ namespace iiMenu.Mods
                     break;
             }
 
-
             FixStickyColliders(platform);
 
             if (GetIndex("Platform Outlines").enabled)
@@ -167,17 +163,16 @@ namespace iiMenu.Mods
                 gameObject.transform.localPosition = Vector3.zero;
                 gameObject.transform.localRotation = Quaternion.identity;
                 gameObject.transform.localScale = new Vector3(0.95f, 1.05f, 1.05f);
-                GradientColorKey[] array = new GradientColorKey[3];
-                array[0].color = buttonDefaultA;
-                array[0].time = 0f;
-                array[1].color = buttonDefaultB;
-                array[1].time = 0.5f;
-                array[2].color = buttonDefaultA;
-                array[2].time = 1f;
+
                 ColorChanger colorChanger = gameObject.AddComponent<ColorChanger>();
                 colorChanger.colors = new Gradient
                 {
-                    colorKeys = array
+                    colorKeys = new GradientColorKey[]
+                    {
+                        new GradientColorKey(bgColorA, 0f),
+                        new GradientColorKey(bgColorB, 0.5f),
+                        new GradientColorKey(bgColorA, 1f)
+                    }
                 };
             }
             return platform;
@@ -199,6 +194,9 @@ namespace iiMenu.Mods
         {
             if (leftGrab)
             {
+                if (platformMode == 6)
+                    Projectiles.GrabProjectile();
+
                 if (leftplat == null)
                 {
                     leftplat = CreatePlatform();

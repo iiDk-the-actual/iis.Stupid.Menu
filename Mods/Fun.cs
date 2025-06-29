@@ -7,7 +7,6 @@ using iiMenu.Classes;
 using iiMenu.Menu;
 using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
-using OVR;
 using Photon.Pun;
 using Photon.Realtime;
 using Photon.Voice.Unity;

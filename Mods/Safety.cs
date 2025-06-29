@@ -6,7 +6,6 @@ using Photon.Pun;
 using Photon.Realtime;
 using System.IO;
 using UnityEngine;
-using static GorillaTag.ScienceExperimentManager;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 

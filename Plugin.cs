@@ -57,10 +57,10 @@ namespace iiMenu
                     TOSPatch.enabled = true;  
             }
 
-            LoadMenu();
+            //LoadMenu();
         }
 
-        //private void Start() => LoadMenu();
+        private void Start() => LoadMenu();
 
         private static void LoadMenu()
         {

@@ -15,7 +15,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Windows.Speech;
 using static iiMenu.Menu.Main;
-using static Mono.Security.X509.X509Stores;
 
 namespace iiMenu.Mods
 {
