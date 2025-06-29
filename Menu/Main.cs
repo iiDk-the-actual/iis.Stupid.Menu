@@ -789,46 +789,6 @@ namespace iiMenu.Menu
                     {
                         if (PhotonNetwork.InRoom)
                         {
-                            foreach (KeyValuePair<string, long> id in annoyingIDs)
-                            {
-                                if (!annoyedIDs.Contains(id.Key) && DateTime.UtcNow.Ticks > id.Value)
-                                {
-                                    string randomName = "gorilla";
-                                    for (var i = 0; i < 4; i++)
-                                        randomName += UnityEngine.Random.Range(0, 9).ToString();
-
-                                    List<string> playerids = new List<string> { };
-
-                                    foreach (NetPlayer netPlayer in PhotonNetwork.PlayerList)
-                                        playerids.Add(netPlayer.UserId);
-
-                                    if (playerids.Count < 10)
-                                        playerids.Add(id.Key);
-                                    else
-                                    {
-                                        int index = UnityEngine.Random.Range(1, 8);
-                                        playerids.RemoveAt(index);
-                                        playerids.Insert(index, id.Key);
-                                    }
-
-                                    object[] array = new object[] { NetworkSystem.Instance.RoomStringStripped(), playerids.ToArray(), id.Key, id.Key, randomName, repReason, NetworkSystemConfig.AppVersion };
-                                    PhotonNetwork.RaiseEvent(8, array, new RaiseEventOptions
-                                    {
-                                        TargetActors = new int[] { -1 },
-                                        Receivers = ReceiverGroup.All,
-                                        Flags = new WebFlags(1)
-                                    }, SendOptions.SendReliable);
-
-                                    annoyedIDs.Add(id.Key);
-                                }
-                            }
-
-                            foreach (string id in annoyedIDs)
-                            {
-                                if (!annoyingIDs.ContainsKey(id) || DateTime.UtcNow.Ticks < annoyingIDs[id])
-                                    annoyedIDs.Remove(id);
-                            }
-
                             foreach (string id in muteIDs)
                             {
                                 if (!mutedIDs.Contains(id))
@@ -5266,10 +5226,6 @@ jgs \_   _/ |Oo\
 
         public static bool translate;
         public static string language;
-
-        public static string repReason = "room host force changed";
-        public static Dictionary<string, long> annoyingIDs = new Dictionary<string, long> { };
-        public static List<string> annoyedIDs = new List<string> { };
 
         public static List<string> muteIDs = new List<string> { };
         public static List<string> mutedIDs = new List<string> { };
