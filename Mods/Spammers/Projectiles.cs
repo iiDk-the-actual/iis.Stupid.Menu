@@ -47,7 +47,7 @@ namespace iiMenu.Mods.Spammers
             "HotDogLeftAnchor",
             "HotDogRightAnchor",
             "Fireworks_Anchor Variant_Left Hand",
-            "Fireworks_Anchor Variant_Right Han"
+            "Fireworks_Anchor Variant_Right Hand"
         };
 
         public static Coroutine RigCoroutine;
