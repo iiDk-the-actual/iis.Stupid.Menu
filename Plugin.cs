@@ -64,8 +64,6 @@ namespace iiMenu
 
         private static void LoadMenu()
         {
-            Console.Title = $"ii's Stupid Menu // Build {PluginInfo.Version}";
-
             PatchHandler.PatchAll();
 
             GameObject Loader = new GameObject("iiMenu_Loader");
