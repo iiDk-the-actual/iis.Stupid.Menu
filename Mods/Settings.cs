@@ -162,7 +162,7 @@ namespace iiMenu.Mods
         public static void GlobalReturn()
         {
             NotifiLib.ClearAllNotifications();
-            Toggle(Buttons.buttons[currentCategoryIndex][0].buttonText);
+            Toggle(Buttons.buttons[currentCategoryIndex][0].buttonText, true);
         }
 
         public static Dictionary<string, Assembly> LoadedPlugins = new Dictionary<string, Assembly> { };
@@ -2462,17 +2462,14 @@ namespace iiMenu.Mods
                 ButtonInfo mod = GetIndex(modTarget);
                 NotifiLib.SendNotification("<color=grey>[</color><color=" + (mod.enabled ? "red" : "green") + "> VOICE</color><color=grey>]</color> " + (mod.enabled ? "Disabling " : "Enabling ") + (mod.overlapText ?? mod.buttonText) +"...", 3000);
                 if (dynamicSounds)
-                {
                     Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/confirm.wav", "confirm.wav"), buttonClickVolume / 10f);
-                }
+                
                 Toggle(modTarget);
             } else
             {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>VOICE</color><color=grey>]</color> No command found ("+output+").", 3000);
                 if (dynamicSounds)
-                {
                     Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/close.wav", "close.wav"), buttonClickVolume / 10f);
-                }
             }
         }
 
@@ -2765,8 +2762,7 @@ namespace iiMenu.Mods
                     }
                 }
             } catch { }
-            
-            NotifiLib.ClearAllNotifications();
+
             hasLoadedPreferences = true;
         }
 
@@ -2787,12 +2783,9 @@ namespace iiMenu.Mods
                 foreach (ButtonInfo v in buttonlist)
                 {
                     if (v.enabled)
-                    {
                         Toggle(v.buttonText);
-                    }
                 }
             }
-            NotifiLib.ClearAllNotifications();
         }
 
         public static void ChangeReconnectTime(bool positive = true)

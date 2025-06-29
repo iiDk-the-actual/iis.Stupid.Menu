@@ -36,10 +36,8 @@ namespace iiMenu.Mods
 
             Settings.Panic();
             foreach (string mod in presetMods)
-            {
                 Toggle(mod);
-            }
-            NotifiLib.ClearAllNotifications();
+            
             NotifiLib.SendNotification("<color=grey>[</color><color=purple>PRESET</color><color=grey>]</color> Legitimate preset enabled successfully.");
         }
 
@@ -62,17 +60,15 @@ namespace iiMenu.Mods
             Settings.Panic();
             foreach (string mod in presetMods)
                 Toggle(mod);
-            
-            NotifiLib.ClearAllNotifications();
+
             NotifiLib.SendNotification("<color=grey>[</color><color=purple>PRESET</color><color=grey>]</color> Ghost preset enabled successfully.");
         }
 
         public static void SaveCustomPreset(int id)
         {
             if (!Directory.Exists("iisStupidMenu/SavedPresets"))
-            {
                 Directory.CreateDirectory("iisStupidMenu/SavedPresets");
-            }
+            
             File.WriteAllText("iisStupidMenu/SavedPresets/Preset_" + id.ToString() + ".txt", Settings.SavePreferencesToText());
         }
 
@@ -123,10 +119,8 @@ namespace iiMenu.Mods
 
             Settings.Panic();
             foreach (string mod in presetMods)
-            {
                 Toggle(mod);
-            }
-            NotifiLib.ClearAllNotifications();
+            
             NotifiLib.SendNotification("<color=grey>[</color><color=purple>PRESET</color><color=grey>]</color> Goldentrophy preset enabled successfully.");
         }
 
@@ -151,11 +145,8 @@ namespace iiMenu.Mods
 
             Settings.Panic();
             foreach (string mod in presetMods)
-            {
                 Toggle(mod);
-            }
 
-            NotifiLib.ClearAllNotifications();
             NotifiLib.SendNotification("<color=grey>[</color><color=purple>PRESET</color><color=grey>]</color> Performance preset enabled successfully.");
         }
 
@@ -182,11 +173,8 @@ namespace iiMenu.Mods
 
             Settings.Panic();
             foreach (string mod in presetMods)
-            {
                 Toggle(mod);
-            }
 
-            NotifiLib.ClearAllNotifications();
             NotifiLib.SendNotification("<color=grey>[</color><color=purple>PRESET</color><color=grey>]</color> Safety preset enabled successfully.");
         }
     }
