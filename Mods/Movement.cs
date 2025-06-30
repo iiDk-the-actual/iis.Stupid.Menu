@@ -10,7 +10,6 @@ using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -133,7 +132,8 @@ namespace iiMenu.Mods
                     break;
             }
 
-            FixStickyColliders(platform);
+            if (!GetIndex("Non-Sticky Platforms").enabled)
+                FixStickyColliders(platform);
 
             if (GetIndex("Platform Outlines").enabled)
             {
@@ -199,9 +199,9 @@ namespace iiMenu.Mods
                     var leftHandTransform = TrueLeftHand();
                     leftplat.transform.position = leftHandTransform.position;
                     leftplat.transform.rotation = leftHandTransform.rotation;
+
                     if (GetIndex("Stick Long Arms").enabled)
                         leftplat.transform.position += GorillaTagger.Instance.leftHandTransform.forward * (armlength - 0.917f);
-                    
                     if (GetIndex("Multiplied Long Arms").enabled)
                     {
                         Vector3 legacyPosL = GTPlayer.Instance.leftControllerTransform.transform.position;
@@ -229,6 +229,8 @@ namespace iiMenu.Mods
                         GTPlayer.Instance.leftControllerTransform.transform.position = legacyPosL;
                         GTPlayer.Instance.rightControllerTransform.transform.position = legacyPosR;
                     }
+                    if (GetIndex("Non-Sticky Platforms").enabled)
+                        leftplat.transform.position += TrueLeftHand().right * (0.025f + (leftplat.transform.localScale.x / 2f));
                 }
                 else
                 {
@@ -302,6 +304,8 @@ namespace iiMenu.Mods
                         GTPlayer.Instance.leftControllerTransform.transform.position = legacyPosL;
                         GTPlayer.Instance.rightControllerTransform.transform.position = legacyPosR;
                     }
+                    if (GetIndex("Non-Sticky Platforms").enabled)
+                        rightplat.transform.position -= TrueRightHand().right * (0.025f + (rightplat.transform.localScale.x / 2f));
                 }
                 else
                 {
@@ -1067,39 +1071,6 @@ namespace iiMenu.Mods
                         tb.currentState = TransferrableObject.PositionState.Dropped;
                 }
             }
-        }
-
-        private static bool lastWasGrab = false;
-        private static bool lastWasRightGrab = false;
-        public static void NetworkedPlatforms()
-        {
-            if (GetIndex("Platforms").enabled)
-            {
-                if (leftGrab && !lastWasGrab)
-                    CoroutineManager.RunCoroutine(CreateLeftPlatform());
-                
-                if (rightGrab && !lastWasRightGrab)
-                    CoroutineManager.RunCoroutine(CreateRightPlatform());
-                
-                lastWasGrab = leftGrab;
-                lastWasRightGrab = rightGrab;
-            }
-        }
-
-        public static IEnumerator CreateLeftPlatform()
-        {
-            yield return Fun.CreateGetPiece(1924370326, piece =>
-            {
-                GetBuilderTable().RequestGrabPiece(piece, true, new Vector3(-0.03f, -0.03f, -0.27f), new Quaternion(-0.6f, 0.5f, -0.4f, 0.5f));
-            });
-        }
-
-        public static IEnumerator CreateRightPlatform()
-        {
-            yield return Fun.CreateGetPiece(1924370326, piece =>
-            {
-                GetBuilderTable().RequestGrabPiece(piece, false, new Vector3(0.03f, -0.03f, -0.27f), new Quaternion(0.5f, -0.6f, -0.5f, 0.4f));
-            });
         }
 
         public static void UpAndDown()
