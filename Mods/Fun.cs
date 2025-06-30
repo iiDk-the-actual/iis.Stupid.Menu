@@ -1082,7 +1082,11 @@ namespace iiMenu.Mods
             } else
             {
                 if (mic.gameObject.GetComponent<MicAmplifier>())
+                {
+                    MicAmplifier microphoneAmplifier = mic.gameObject.GetOrAddComponent<MicAmplifier>();
+                    microphoneAmplifier.enabled = false;
                     UnityEngine.Object.Destroy(mic.gameObject.GetComponent<MicAmplifier>());
+                }
             }
 
             mic.RestartRecording(true);
