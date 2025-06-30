@@ -20,8 +20,19 @@ namespace iiMenu.Mods
                 BetterDayNightManager.instance.weatherCycle[i] = rain ? BetterDayNightManager.WeatherType.Raining : BetterDayNightManager.WeatherType.None;
         }
 
-        public static void SetFullbrightStatus(bool fullBright) =>
-            GameLightingManager.instance.SetCustomDynamicLightingEnabled(!fullBright);
+        private static bool previousFullbrightStatus;
+        public static void SetFullbrightStatus(bool fullBright)
+        {
+            if (fullBright)
+            {
+                previousFullbrightStatus = GameLightingManager.instance.customVertexLightingEnabled;
+                GameLightingManager.instance.SetCustomDynamicLightingEnabled(false);
+            } else
+            {
+                if (previousFullbrightStatus)
+                    GameLightingManager.instance.SetCustomDynamicLightingEnabled(true);
+            }
+        }
 
         private static float removeBlindfoldDelay;
         public static void RemoveBlindfold()
@@ -543,7 +554,7 @@ namespace iiMenu.Mods
 
                     GameObject nameTag = nametags[vrrig];
                     nameTag.GetComponent<TextMesh>().text = GetPlayerFromVRRig(vrrig).NickName;
-                    nameTag.GetComponent<TextMesh>().color = vrrig.playerColor;
+                    nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
                     nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
 
                     nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
@@ -594,7 +605,7 @@ namespace iiMenu.Mods
 
                         GameObject nameTag = velnametags[vrrig];
                         nameTag.GetComponent<TextMesh>().text = string.Format("{0:F1}m/s", vrrig.LatestVelocity().magnitude);
-                        nameTag.GetComponent<TextMesh>().color = vrrig.playerColor;
+                        nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
                         nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
 
                         nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
@@ -646,7 +657,7 @@ namespace iiMenu.Mods
 
                         GameObject nameTag = FPSnametags[vrrig];
                         nameTag.GetComponent<TextMesh>().text = $"{vrrig.fps} FPS";
-                        nameTag.GetComponent<TextMesh>().color = vrrig.playerColor;
+                        nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
                         nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
 
                         nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
@@ -701,7 +712,7 @@ namespace iiMenu.Mods
 
                         GameObject nameTag = turnNameTags[vrrig];
                         nameTag.GetComponent<TextMesh>().text = turnType == "NONE" ? "None" : ToTitleCase(turnType) + " " + turnFactor.ToString();
-                        nameTag.GetComponent<TextMesh>().color = vrrig.playerColor;
+                        nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
                         nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
 
                         nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
@@ -765,7 +776,7 @@ namespace iiMenu.Mods
                             nameTag.GetComponent<TextMesh>().text = "";
                         }
                             
-                        nameTag.GetComponent<TextMesh>().color = vrrig.playerColor;
+                        nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
                         nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
 
                         nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
@@ -1034,7 +1045,7 @@ namespace iiMenu.Mods
                         if (voicetxt == null)
                             voicetxt = LoadTextureFromResource("iiMenu.Resources.speak.png");
                         volIndicator.GetComponent<Renderer>().material.mainTexture = voicetxt;
-                        volIndicator.GetComponent<Renderer>().material.color = PlayerIsTagged(vrrig) ? (Color)new Color32(255, 111, 0, 255) : vrrig.playerColor;
+                        volIndicator.GetComponent<Renderer>().material.color = GetPlayerColor(vrrig);
                         volIndicator.transform.localScale = new Vector3(size, size, 0.01f);
                         volIndicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * 0.8f;
                         volIndicator.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
@@ -1094,7 +1105,7 @@ namespace iiMenu.Mods
                         oculustxt = LoadTextureFromURL("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/refs/heads/main/steam.png", "steam.png");
 
                     volIndicator.GetComponent<Renderer>().material.mainTexture = vrrig.concatStringOfCosmeticsAllowed.Contains("FIRST LOGIN") ? oculustxt : steamtxt;
-                    volIndicator.GetComponent<Renderer>().material.color = PlayerIsTagged(vrrig) ? (Color)new Color32(255, 111, 0, 255) : vrrig.playerColor;
+                    volIndicator.GetComponent<Renderer>().material.color = GetPlayerColor(vrrig);
 
                     volIndicator.transform.localScale = new Vector3(0.5f, 0.5f, 0.01f);
                     volIndicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * 0.8f;
@@ -1133,7 +1144,7 @@ namespace iiMenu.Mods
                         oculustxt = LoadTextureFromURL("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/refs/heads/main/steam.png", "steam.png");
 
                     volIndicator.GetComponent<Renderer>().material.mainTexture = vrrig.concatStringOfCosmeticsAllowed.Contains("FIRST LOGIN") ? oculustxt : steamtxt;
-                    volIndicator.GetComponent<Renderer>().material.color = PlayerIsTagged(vrrig) ? (Color)new Color32(255, 111, 0, 255) : vrrig.playerColor;
+                    volIndicator.GetComponent<Renderer>().material.color = GetPlayerColor(vrrig);
                         
                     volIndicator.transform.localScale = new Vector3(0.5f, 0.5f, 0.01f);
                     volIndicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * 0.8f;
@@ -1193,7 +1204,7 @@ namespace iiMenu.Mods
                             voiceMat.SetFloat("_Metallic", 0f);
                         }
                         volIndicator.GetComponent<Renderer>().material = voiceMat;
-                        volIndicator.GetComponent<Renderer>().material.color = PlayerIsTagged(vrrig) ? (Color)new Color32(255, 111, 0, 255) : vrrig.playerColor;
+                        volIndicator.GetComponent<Renderer>().material.color = GetPlayerColor(vrrig);
                         volIndicator.transform.localScale = new Vector3(size, size, 0.01f);
                         volIndicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * 0.8f; ;
                         volIndicator.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
@@ -1202,16 +1213,12 @@ namespace iiMenu.Mods
             }
         }
 
-        private static GameObject l = null;
-        private static GameObject r = null;
+        private static GameObject l;
+        private static GameObject r;
 
         private static void UpdateLimbColor()
         {
-            Color limbcolor = VRRig.LocalRig.playerColor;
-            if (PlayerIsTagged(VRRig.LocalRig))
-            {
-                limbcolor = new Color32(255, 111, 0, 255);
-            }
+            Color limbcolor = GetPlayerColor(VRRig.LocalRig);
 
             l.GetComponent<Renderer>().material.color = limbcolor;
             r.GetComponent<Renderer>().material.color = limbcolor;
@@ -1265,7 +1272,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                UnityEngine.Color thecolor = vrrig.playerColor;
+                Color thecolor = vrrig.playerColor;
                 if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                 if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                 if (vrrig != VRRig.LocalRig)
@@ -1333,7 +1340,7 @@ namespace iiMenu.Mods
                 {
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
-                        UnityEngine.Color thecolor = new Color32(255, 111, 0, 255);
+                        Color thecolor = new Color32(255, 111, 0, 255);
                         if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                         if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                         if (PlayerIsTagged(vrrig) && vrrig != VRRig.LocalRig)
@@ -1613,9 +1620,7 @@ namespace iiMenu.Mods
                             if (GetIndex("Transparent Theme").enabled) { vrrig.mainSkin.material.color = new Color(vrrig.mainSkin.material.color.r, vrrig.mainSkin.material.color.g, vrrig.mainSkin.material.color.b, 0.5f); }
                         }
                         else
-                        {
                             vrrig.mainSkin.material.shader = Shader.Find("GorillaTag/UberShader");
-                        }
                     }
                 }
                 else
@@ -1753,7 +1758,7 @@ namespace iiMenu.Mods
                     {
                         if (PlayerIsTagged(vrrig) && vrrig != VRRig.LocalRig)
                         {
-                            UnityEngine.Color thecolor = new Color32(255, 111, 0, 255);
+                            Color thecolor = new Color32(255, 111, 0, 255);
                             if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                             if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                             GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -1966,7 +1971,7 @@ namespace iiMenu.Mods
                     {
                         if (PlayerIsTagged(vrrig) && vrrig != VRRig.LocalRig)
                         {
-                            UnityEngine.Color thecolor = new Color32(255, 111, 0, 255);
+                            Color thecolor = new Color32(255, 111, 0, 255);
                             if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                             if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
 
@@ -2316,7 +2321,7 @@ namespace iiMenu.Mods
                     {
                         if (PlayerIsTagged(vrrig) && vrrig != VRRig.LocalRig)
                         {
-                            UnityEngine.Color thecolor = new Color32(255, 111, 0, 255);
+                            Color thecolor = new Color32(255, 111, 0, 255);
                             if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                             if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                             GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
