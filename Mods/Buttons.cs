@@ -1134,6 +1134,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Snowball Orbit <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.SnowballOrbit(), toolTip = "Orbits snowballs around you when holding <color=green>trigger</color>."},
 
                 new ButtonInfo { buttonText = "Snowball Minigun", method =() => Overpowered.SnowballMinigun(), toolTip = "Spawns snowballs towards wherever your hand desires."},
+                new ButtonInfo { buttonText = "Give Snowball Minigun", method =() => Overpowered.GiveSnowballMinigun(), toolTip = "Gives whoever your hand desires a snowball minigun." },
 
                 new ButtonInfo { buttonText = "Snowball Particle Gun", method =() => Overpowered.SnowballParticleGun(), toolTip = "Spawns snowball particles wherever your hand desires."},
                 new ButtonInfo { buttonText = "Snowball Impact Effect Gun", method =() => Overpowered.SnowballImpactEffectGun(), toolTip = "Spawns snowball impact events on whoever your hand desires."},
