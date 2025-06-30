@@ -938,6 +938,49 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void GiveSnowballMinigun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (gunLocked && lockTarget != null && Time.time > snowballDelay)
+                {
+                    Vector3 velocity = lockTarget.rightHandTransform.transform.forward * ShootStrength * 5f;
+                    if (Mouse.current.leftButton.isPressed)
+                    {
+                        Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
+                        Physics.Raycast(ray, out var hit, 512f, NoInvisLayerMask());
+                        velocity = hit.point - GorillaTagger.Instance.rightHandTransform.transform.position;
+                        velocity.Normalize();
+                        velocity *= ShootStrength * 2f;
+                    }
+
+                    BetaSpawnSnowball(lockTarget.rightHandTransform.transform.position, velocity, 5f, 0);
+                    snowballDelay = Time.time + snowballSpawnDelay;
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                {
+                    gunLocked = false;
+                    VRRig.LocalRig.enabled = true;
+                }
+            }
+        }
+
         public static void SnowballParticleGun()
         {
             if (GetGunInput(false))
