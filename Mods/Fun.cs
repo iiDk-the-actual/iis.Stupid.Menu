@@ -1682,6 +1682,50 @@ namespace iiMenu.Mods
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
         }
 
+        public static void RequestGrabPiece(BuilderPiece piece, bool isLefHand, Vector3 localPosition, Quaternion localRotation)
+        {
+            BuilderTableNetworking Networking = GetBuilderTable().builderNetworking;
+            Networking.photonView.RPC("PieceGrabbedRPC", RpcTarget.All, new object[]
+            {
+                Networking.CreateLocalCommandId(),
+                piece.pieceId,
+                isLefHand,
+                BitPackUtils.PackHandPosRotForNetwork(localPosition, localRotation),
+                PhotonNetwork.LocalPlayer
+            });
+        }
+
+        public static void RequestPlacePiece(BuilderPiece piece, BuilderPiece attachPiece, sbyte bumpOffsetX, sbyte bumpOffsetZ, byte twist, BuilderPiece parentPiece, int attachIndex, int parentAttachIndex)
+        {
+            BuilderTableNetworking Networking = GetBuilderTable().builderNetworking;
+            Networking.photonView.RPC("PiecePlacedRPC", RpcTarget.All, new object[]
+            {
+                Networking.CreateLocalCommandId(),
+                piece.pieceId,
+                attachPiece != null ? attachPiece.pieceId : -1,
+                BuilderTable.PackPiecePlacement(twist, bumpOffsetX, bumpOffsetZ),
+                (parentPiece != null) ? parentPiece.pieceId : -1,
+                attachIndex,
+                parentAttachIndex,
+                PhotonNetwork.LocalPlayer
+            });
+        }
+
+        public static void RequestDropPiece(BuilderPiece piece, Vector3 position, Quaternion rotation, Vector3 velocity, Vector3 angVelocity)
+        {
+            BuilderTableNetworking Networking = GetBuilderTable().builderNetworking;
+            Networking.photonView.RPC("PieceDroppedRPC", RpcTarget.All, new object[]
+            {
+                Networking.CreateLocalCommandId(),
+                piece.pieceId,
+                position,
+                rotation,
+                velocity,
+                angVelocity,
+                PhotonNetwork.LocalPlayer
+            });
+        }
+
         public static void BuildingBlockAura()
         {
             RequestCreatePiece(pieceIdSet, VRRig.LocalRig.transform.position + Vector3.Normalize(new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f))) * 2f, Quaternion.identity, 0);
@@ -1801,7 +1845,7 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            GetBuilderTable().RequestGrabPiece(basea, false, Vector3.zero, Quaternion.identity);
+            RequestGrabPiece(basea, false, Vector3.zero, Quaternion.identity);
             yield return null;
             
             BuilderPieceInteractor.instance.handState[1] = BuilderPieceInteractor.HandState.Empty;
@@ -1820,9 +1864,9 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            GetBuilderTable().RequestGrabPiece(base2a, false, Vector3.zero, Quaternion.identity);
+            RequestGrabPiece(base2a, false, Vector3.zero, Quaternion.identity);
             yield return null;
-            GetBuilderTable().RequestPlacePiece(base2a, base2a, 0, 0, 0, basea, 1, 0);
+            RequestPlacePiece(base2a, base2a, 0, 0, 0, basea, 1, 0);
             yield return null;
 
             BuilderPiece slopea = null;
@@ -1837,9 +1881,9 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            GetBuilderTable().RequestGrabPiece(slopea, false, Vector3.zero, Quaternion.identity);
+            RequestGrabPiece(slopea, false, Vector3.zero, Quaternion.identity);
             yield return null;
-            GetBuilderTable().RequestPlacePiece(slopea, slopea, 0, 0, 2, base2a, 1, 0);
+            RequestPlacePiece(slopea, slopea, 0, 0, 2, base2a, 1, 0);
             yield return null;
 
             BuilderPiece trigger = null;
@@ -1853,9 +1897,9 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            GetBuilderTable().RequestGrabPiece(trigger, false, Vector3.zero, Quaternion.identity);
+            RequestGrabPiece(trigger, false, Vector3.zero, Quaternion.identity);
             yield return null;
-            GetBuilderTable().RequestPlacePiece(trigger, trigger, -1, -2, 3, slopea, 1, 0);
+            RequestPlacePiece(trigger, trigger, -1, -2, 3, slopea, 1, 0);
             yield return null;
 
             BuilderPiece slopeb = null;
@@ -1869,9 +1913,9 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            GetBuilderTable().RequestGrabPiece(slopeb, false, Vector3.zero, Quaternion.identity);
+            RequestGrabPiece(slopeb, false, Vector3.zero, Quaternion.identity);
             yield return null;
-            GetBuilderTable().RequestPlacePiece(basea, trigger, 0, -2, 3, slopeb, 1, 0);
+            RequestPlacePiece(basea, trigger, 0, -2, 3, slopeb, 1, 0);
             yield return null;
 
             BuilderPiece base2b = null;
@@ -1885,9 +1929,9 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            GetBuilderTable().RequestGrabPiece(base2b, false, Vector3.zero, Quaternion.identity);
+            RequestGrabPiece(base2b, false, Vector3.zero, Quaternion.identity);
             yield return null;
-            GetBuilderTable().RequestPlacePiece(slopeb, slopeb, 0, 0, 2, base2b, 1, 0);
+            RequestPlacePiece(slopeb, slopeb, 0, 0, 2, base2b, 1, 0);
             yield return null;
 
             BuilderPiece baseb = null;
@@ -1901,9 +1945,9 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            GetBuilderTable().RequestGrabPiece(baseb, false, Vector3.zero, Quaternion.identity);
+            RequestGrabPiece(baseb, false, Vector3.zero, Quaternion.identity);
             yield return null;
-            GetBuilderTable().RequestPlacePiece(base2b, base2b, 0, 0, 0, baseb, 1, 0);
+            RequestPlacePiece(base2b, base2b, 0, 0, 0, baseb, 1, 0);
             yield return null;
 
             BuilderPiece minislopeb = null;
@@ -1917,9 +1961,9 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            GetBuilderTable().RequestGrabPiece(minislopeb, false, Vector3.zero, Quaternion.identity);
+            RequestGrabPiece(minislopeb, false, Vector3.zero, Quaternion.identity);
             yield return null;
-            GetBuilderTable().RequestPlacePiece(baseb, slopea, 0, -3, 2, minislopeb, 2, 0);
+            RequestPlacePiece(baseb, slopea, 0, -3, 2, minislopeb, 2, 0);
             yield return null;
 
             BuilderPiece minislopea = null;
@@ -1933,9 +1977,9 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            GetBuilderTable().RequestGrabPiece(minislopea, false, Vector3.zero, Quaternion.identity);
+            RequestGrabPiece(minislopea, false, Vector3.zero, Quaternion.identity);
             yield return null;
-            GetBuilderTable().RequestPlacePiece(minislopeb, slopeb, 0, -3, 2, minislopea, 2, 0);
+            RequestPlacePiece(minislopeb, slopeb, 0, -3, 2, minislopea, 2, 0);
             yield return null;
 
             BuilderPiece minislope2a = null;
@@ -1949,9 +1993,9 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            GetBuilderTable().RequestGrabPiece(minislope2a, false, Vector3.zero, Quaternion.identity);
+            RequestGrabPiece(minislope2a, false, Vector3.zero, Quaternion.identity);
             yield return null;
-            GetBuilderTable().RequestPlacePiece(minislopea, minislopeb, 0, 0, 2, minislope2a, 1, 0);
+            RequestPlacePiece(minislopea, minislopeb, 0, 0, 2, minislope2a, 1, 0);
             yield return null;
 
             BuilderPiece minislope2b = null;
@@ -1965,9 +2009,9 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            GetBuilderTable().RequestGrabPiece(minislope2b, false, Vector3.zero, Quaternion.identity);
+            RequestGrabPiece(minislope2b, false, Vector3.zero, Quaternion.identity);
             yield return null;
-            GetBuilderTable().RequestPlacePiece(minislope2a, minislopea, 0, 0, 2, minislope2b, 1, 0);
+            RequestPlacePiece(minislope2a, minislopea, 0, 0, 2, minislope2b, 1, 0);
             yield return null;
 
             BuilderPiece flatthinga = null;
@@ -1981,9 +2025,9 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            GetBuilderTable().RequestGrabPiece(flatthinga, false, Vector3.zero, Quaternion.identity);
+            RequestGrabPiece(flatthinga, false, Vector3.zero, Quaternion.identity);
             yield return null;
-            GetBuilderTable().RequestPlacePiece(minislope2b, minislope2b, 0, -1, 2, flatthinga, 2, 0);
+            RequestPlacePiece(minislope2b, minislope2b, 0, -1, 2, flatthinga, 2, 0);
             yield return null;
 
             BuilderPiece flatthingb = null;
@@ -1997,9 +2041,9 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            GetBuilderTable().RequestGrabPiece(flatthingb, false, Vector3.zero, Quaternion.identity);
+            RequestGrabPiece(flatthingb, false, Vector3.zero, Quaternion.identity);
             yield return null;
-            GetBuilderTable().RequestPlacePiece(flatthinga, minislope2a, 0, -1, 2, flatthingb, 2, 0);
+            RequestPlacePiece(flatthinga, minislope2a, 0, -1, 2, flatthingb, 2, 0);
             yield return null;
 
             BuilderPiece connectorthinga = null;
@@ -2013,9 +2057,9 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            GetBuilderTable().RequestGrabPiece(connectorthinga, false, Vector3.zero, Quaternion.identity);
+            RequestGrabPiece(connectorthinga, false, Vector3.zero, Quaternion.identity);
             yield return null;
-            GetBuilderTable().RequestPlacePiece(flatthingb, flatthinga, -1, 1, 3, connectorthinga, 1, 0);
+            RequestPlacePiece(flatthingb, flatthinga, -1, 1, 3, connectorthinga, 1, 0);
             yield return null;
 
             BuilderPiece connectorthingb = null;
@@ -2029,9 +2073,9 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            GetBuilderTable().RequestGrabPiece(connectorthingb, false, Vector3.zero, Quaternion.identity);
+            RequestGrabPiece(connectorthingb, false, Vector3.zero, Quaternion.identity);
             yield return null;
-            GetBuilderTable().RequestPlacePiece(connectorthinga, connectorthinga, -1, 0, 1, connectorthingb, 1, 0);
+            RequestPlacePiece(connectorthinga, connectorthinga, -1, 0, 1, connectorthingb, 1, 0);
             yield return null;
 
             BuilderPiece connectorthingc = null;
@@ -2045,9 +2089,9 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            GetBuilderTable().RequestGrabPiece(connectorthingc, false, Vector3.zero, Quaternion.identity);
+            RequestGrabPiece(connectorthingc, false, Vector3.zero, Quaternion.identity);
             yield return null;
-            GetBuilderTable().RequestPlacePiece(connectorthingb, connectorthinga, 0, 0, 1, connectorthingc, 1, 0);
+            RequestPlacePiece(connectorthingb, connectorthinga, 0, 0, 1, connectorthingc, 1, 0);
             yield return null;
 
             BuilderPiece barrela = null;
@@ -2061,9 +2105,9 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            GetBuilderTable().RequestGrabPiece(barrela, false, Vector3.zero, Quaternion.identity);
+            RequestGrabPiece(barrela, false, Vector3.zero, Quaternion.identity);
             yield return null;
-            GetBuilderTable().RequestPlacePiece(connectorthingc, connectorthingb, 0, 0, 1, barrela, 1, 0);
+            RequestPlacePiece(connectorthingc, connectorthingb, 0, 0, 1, barrela, 1, 0);
             yield return null;
 
             BuilderPiece barrelb = null;
@@ -2077,9 +2121,9 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            GetBuilderTable().RequestGrabPiece(barrelb, false, Vector3.zero, Quaternion.identity);
+            RequestGrabPiece(barrelb, false, Vector3.zero, Quaternion.identity);
             yield return null;
-            GetBuilderTable().RequestPlacePiece(barrela, barrela, 0, 0, 2, barrelb, 1, 0);
+            RequestPlacePiece(barrela, barrela, 0, 0, 2, barrelb, 1, 0);
             yield return null;
 
             BuilderPiece scope = null;
@@ -2093,14 +2137,14 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            GetBuilderTable().RequestGrabPiece(scope, false, Vector3.zero, Quaternion.identity);
+            RequestGrabPiece(scope, false, Vector3.zero, Quaternion.identity);
             yield return null;
-            GetBuilderTable().RequestPlacePiece(barrelb, minislope2a, -2, 1, 3, scope, 1, 0);
+            RequestPlacePiece(barrelb, minislope2a, -2, 1, 3, scope, 1, 0);
             yield return null;
-            GetBuilderTable().RequestDropPiece(scope, GorillaTagger.Instance.rightHandTransform.position, Quaternion.identity, Vector3.zero, Vector3.zero);
+            RequestDropPiece(scope, GorillaTagger.Instance.rightHandTransform.position, Quaternion.identity, Vector3.zero, Vector3.zero);
             yield return null;
             // pos is forward/back, left/right, up/down
-            GetBuilderTable().RequestGrabPiece(basea, false, new Vector3(-0.2f, 0.01f, -0.3f), new Quaternion(0f, 0.1f, 0.75f, -0.6f));
+            RequestGrabPiece(basea, false, new Vector3(-0.2f, 0.01f, -0.3f), new Quaternion(0f, 0.1f, 0.75f, -0.6f));
             yield return null;
         }
 
@@ -2137,7 +2181,7 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            GetBuilderTable().RequestGrabPiece(stupid, false, Vector3.zero, Quaternion.identity);
+            RequestGrabPiece(stupid, false, Vector3.zero, Quaternion.identity);
             yield return new WaitForSeconds(0.7f);
 
             VRRig.LocalRig.sizeManager.currentSizeLayerMaskValue = 13;
