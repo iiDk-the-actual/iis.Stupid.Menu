@@ -519,13 +519,13 @@ namespace iiMenu.Mods
             GetIndex("Change Ranked Tier").overlapText = "Change Ranked Tier <color=grey>[</color><color=green>" + targetRank + "</color><color=grey>]</color>";
         }
 
-        public static void SpoofRank(bool enabled, string tier = "")
+        public static void SpoofRank(bool enabled, string tier = null)
         {
             Patches.RankedPatch.enabled = enabled;
             Patches.RankedPatch.targetTier = tier;
         }
 
-        public static void SpoofPlatform(bool enabled, string target = "")
+        public static void SpoofPlatform(bool enabled, string target = null)
         {
             Patches.RankedPatch.enabled = enabled;
             Patches.RankedPatch.targetPlatform = target;
