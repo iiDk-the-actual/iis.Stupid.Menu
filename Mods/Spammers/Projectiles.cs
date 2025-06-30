@@ -285,6 +285,7 @@ namespace iiMenu.Mods.Spammers
                 projDebounceIndex = 1;
 
             projDebounceType = projDebounceIndex / 10f;
+            Overpowered.snowballSpawnDelay = Mathf.Max(projDebounceIndex / 10f, 0.15f);
             GetIndex("Change Projectile Delay").overlapText = "Change Projectile Delay <color=grey>[</color><color=green>" + projDebounceType.ToString() + "</color><color=grey>]</color>";
         }
 
