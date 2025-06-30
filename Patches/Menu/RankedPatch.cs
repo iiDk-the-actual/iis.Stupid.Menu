@@ -16,8 +16,8 @@ namespace iiMenu.Patches
             {
                 PhotonNetworkController.Instance.AttemptToJoinRankedPublicRoomAsync(
                     triggeredTrigger,
-                    targetTier == "" ? RankedProgressionManager.Instance.GetRankedMatchmakingTier().ToString() : targetTier,
-                    targetPlatform == "" ? "PC" : targetPlatform,
+                    targetTier ?? RankedProgressionManager.Instance.GetRankedMatchmakingTier().ToString(),
+                    targetPlatform ?? "PC",
                     roomJoinType
                 );
 
