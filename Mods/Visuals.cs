@@ -825,13 +825,31 @@ namespace iiMenu.Mods
         public static List<GameObject> leaves = new List<GameObject> { };
         public static void EnableRemoveLeaves()
         {
-            for (int i = 0; i < GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest").transform.childCount; i++)
+            GameObject Forest = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest");
+            if (Forest != null)
             {
-                GameObject v = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest").transform.GetChild(i).gameObject;
-                if (v.name.Contains(leavesName))
+                for (int i = 0; i < Forest.transform.childCount; i++)
                 {
-                    v.SetActive(false);
-                    leaves.Add(v);
+                    GameObject v = Forest.transform.GetChild(i).gameObject;
+                    if (v.name.Contains(leavesName))
+                    {
+                        v.SetActive(false);
+                        leaves.Add(v);
+                    }
+                }
+            }
+
+            GameObject RankedForest = GameObject.Find("RankedMain/Ranked_Layout/Ranked_Forest_prefab");
+            if (RankedForest != null)
+            {
+                for (int i = 0; i < RankedForest.transform.childCount; i++)
+                {
+                    GameObject v = RankedForest.transform.GetChild(i).gameObject;
+                    if (v.name.Contains(leavesName))
+                    {
+                        v.SetActive(false);
+                        leaves.Add(v);
+                    }
                 }
             }
         }
@@ -846,13 +864,31 @@ namespace iiMenu.Mods
 
         public static void EnableStreamerRemoveLeaves()
         {
-            for (int i = 0; i < GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest").transform.childCount; i++)
+            GameObject Forest = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest");
+            if (Forest != null)
             {
-                GameObject v = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest").transform.GetChild(i).gameObject;
-                if (v.name.Contains(leavesName))
+                for (int i = 0; i < Forest.transform.childCount; i++)
                 {
-                    v.layer = 16;
-                    leaves.Add(v);
+                    GameObject v = Forest.transform.GetChild(i).gameObject;
+                    if (v.name.Contains(leavesName))
+                    {
+                        v.layer = 16;
+                        leaves.Add(v);
+                    }
+                }
+            }
+
+            GameObject RankedForest = GameObject.Find("RankedMain/Ranked_Layout/Ranked_Forest_prefab");
+            if (RankedForest != null)
+            {
+                for (int i = 0; i < RankedForest.transform.childCount; i++)
+                {
+                    GameObject v = RankedForest.transform.GetChild(i).gameObject;
+                    if (v.name.Contains(leavesName))
+                    {
+                        v.layer = 16;
+                        leaves.Add(v);
+                    }
                 }
             }
         }
