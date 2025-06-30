@@ -36,12 +36,7 @@ namespace iiMenu.Classes
                         gameObjectRenderer.material.color = color;
                     }
                     else
-                    {
-                        if (!Main.PlayerIsTagged(VRRig.LocalRig))
-                            gameObjectRenderer.material.color = VRRig.LocalRig.mainSkin.material.color;
-                        else
-                            gameObjectRenderer.material.color = new Color32(255, 111, 0, 255);
-                    }
+                        gameObjectRenderer.material.color = Main.GetPlayerColor(VRRig.LocalRig);
                 }
                 else
                 {

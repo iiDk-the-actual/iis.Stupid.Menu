@@ -1272,11 +1272,7 @@ namespace iiMenu.Menu
                     }
                 case 8:
                     {
-                        if (!PlayerIsTagged(VRRig.LocalRig))
-                            oColor = VRRig.LocalRig.mainSkin.material.color;
-                        else
-                            oColor = new Color32(255, 111, 0, 255);
-
+                        oColor = GetPlayerColor(VRRig.LocalRig);
                         break;
                     }
             }
@@ -1333,14 +1329,7 @@ namespace iiMenu.Menu
                         break;
                     }
                 case 8:
-                    if (!PlayerIsTagged(VRRig.LocalRig))
-                    {
-                        oColor = VRRig.LocalRig.mainSkin.material.color;
-                    }
-                    else
-                    {
-                        oColor = new Color32(255, 111, 0, 255);
-                    }
+                    oColor = GetPlayerColor(VRRig.LocalRig);
                     break;
             }
 
@@ -3596,6 +3585,29 @@ namespace iiMenu.Menu
 
         public static bool PlayerIsLocal(VRRig Player) => 
             Player == VRRig.LocalRig || Player == GhostRig;
+
+        // Credits to The-Graze/WhoIsTalking for the color detection
+        public static Color GetPlayerColor(VRRig Player)
+        {
+            if (Player.bodyRenderer.cosmeticBodyType == GorillaBodyType.Skeleton)
+                return Color.green;
+
+            switch (Player.setMatIndex)
+            {
+                case 1:
+                    return Color.red;
+                case 2:
+                case 11:
+                    return new Color32(255, 128, 0, 255);
+                case 3:
+                case 7:
+                    return Color.blue;
+                case 12:
+                    return Color.green;
+                default:
+                    return Player.playerColor;
+            }
+        }
 
         public static List<NetPlayer> InfectedList()
         {
