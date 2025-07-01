@@ -1390,14 +1390,14 @@ namespace iiMenu.Menu
                             Button.positive = false;
 
                             RenderIncrementalText(false, offset);
-                            RenderIncrementalButton(true, offset, method);
+                            RenderIncrementalButton(true, offset, buttonIndex, method);
                         } else
                         {
                             buttonObject.transform.localScale -= new Vector3(0f, 0.254f, 0f);
                             Destroy(Button);
 
-                            RenderIncrementalButton(false, offset, method);
-                            RenderIncrementalButton(true, offset, method);
+                            RenderIncrementalButton(false, offset, buttonIndex, method);
+                            RenderIncrementalButton(true, offset, buttonIndex, method);
                         }
                     }
                 }
@@ -1696,7 +1696,7 @@ namespace iiMenu.Menu
             imageTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
         }
 
-        private static void RenderIncrementalButton(bool increment, float offset, ButtonInfo method)
+        private static void RenderIncrementalButton(bool increment, float offset, int buttonIndex, ButtonInfo method)
         {
             if (!method.label)
             {
@@ -1744,7 +1744,7 @@ namespace iiMenu.Menu
                     };
                 }
                 else
-                    CoroutineManager.RunCoroutine(ButtonClick(-1, buttonObject.GetComponent<Renderer>()));
+                    CoroutineManager.RunCoroutine(ButtonClick(buttonIndex, buttonObject.GetComponent<Renderer>()));
 
                 if (shouldRound)
                     RoundObj(buttonObject);
