@@ -529,50 +529,6 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void SetDebugEchoMode(bool value)
-        {
-            if (!GorillaTagger.Instance.myRecorder.DebugEchoMode)
-                GorillaTagger.Instance.myRecorder.DebugEchoMode = value;
-        }
-
-        public static void CopyVoiceGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (gunLocked && lockTarget != null)
-                {
-                    AudioClip clippy = lockTarget.gameObject.GetComponent<GorillaSpeakerLoudness>().speaker.gameObject.GetComponent<AudioSource>().clip;
-                    if (GorillaTagger.Instance.myRecorder.AudioClip != clippy)
-                        GorillaTagger.Instance.myRecorder.AudioClip = clippy;
-                }
-                if (GetGunInput(true))
-                {
-                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
-                    {
-                        gunLocked = true;
-                        lockTarget = gunTarget;
-                        GorillaTagger.Instance.myRecorder.SourceType = Recorder.InputSourceType.AudioClip;
-                        GorillaTagger.Instance.myRecorder.AudioClip = lockTarget.gameObject.GetComponent<GorillaSpeakerLoudness>().speaker.gameObject.GetComponent<AudioSource>().clip;
-                        GorillaTagger.Instance.myRecorder.RestartRecording(true);
-                        GorillaTagger.Instance.myRecorder.DebugEchoMode = true;
-                    }
-                }
-            }
-            else
-            {
-                if (gunLocked)
-                {
-                    gunLocked = false;
-                    Sound.FixMicrophone();
-                }
-            }
-        }
-
         private static float tapDelay = 0f;
         public static void TapAllClass<T>() where T : Tappable
         {
@@ -1108,7 +1064,35 @@ namespace iiMenu.Mods
 
                 public void Dispose() { }
             }
+        }
 
+        public class LoopbackFactory : IAudioReader<float>
+        {
+            private Queue<float> buffer = new Queue<float>();
+
+            public void Feed(float[] data)
+            {
+                foreach (var sample in data)
+                    buffer.Enqueue(sample);
+            }
+
+            public bool Read(float[] bufferOut)
+            {
+                if (buffer.Count < bufferOut.Length)
+                    return false;
+
+                for (int i = 0; i < bufferOut.Length; i++)
+                    bufferOut[i] = buffer.Dequeue();
+
+                return true;
+            }
+
+            public int SamplingRate => 16000;
+            public int Channels => 1;
+            public string Error => null;
+
+            public void Dispose() =>
+                buffer.Clear();
         }
 
         public static void SetMicrophoneQuality(int bitrate, int samplingRate)
@@ -1117,7 +1101,7 @@ namespace iiMenu.Mods
             mic.SamplingRate = (SamplingRate)samplingRate;
             mic.Bitrate = bitrate;
 
-            mic.RestartRecording(true);
+            CoroutineManager.instance.StartCoroutine(DelayReloadMicrophone());
         }
 
         public static void SetMicrophoneAmplification(bool amplify)
@@ -1139,7 +1123,7 @@ namespace iiMenu.Mods
                 }
             }
 
-            mic.RestartRecording(true);
+            CoroutineManager.instance.StartCoroutine(DelayReloadMicrophone());
         }
 
         public static void SetMicrophonePitch(float pitch)
@@ -1161,11 +1145,81 @@ namespace iiMenu.Mods
                 }
             }
 
-            mic.RestartRecording(true);
+            CoroutineManager.instance.StartCoroutine(DelayReloadMicrophone());
         }
+
+        public static void SetDebugEchoMode(bool value)
+        {
+            if (GorillaTagger.Instance.myRecorder != null && !GorillaTagger.Instance.myRecorder.DebugEchoMode)
+                GorillaTagger.Instance.myRecorder.DebugEchoMode = value;
+        }
+
+        private static LoopbackFactory factory;
+        private static float copyVoiceGunDelay;
+        public static void CopyVoiceGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget) && Time.time > copyVoiceGunDelay)
+                    {
+                        copyVoiceGunDelay = Time.time + 0.5f;
+
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+
+                        Patches.SpeakerPatch.enabled = true;
+
+                        Patches.SpeakerPatch.targetSpeaker = lockTarget.gameObject.GetComponent<GorillaSpeakerLoudness>().speaker;
+
+                        if (factory != null)
+                            factory.Dispose();
+
+                        factory = new LoopbackFactory();
+
+                        GorillaTagger.Instance.myRecorder.SourceType = Recorder.InputSourceType.Factory;
+                        GorillaTagger.Instance.myRecorder.InputFactory = () =>
+                        {
+                            return factory;
+                        };
+                        CoroutineManager.instance.StartCoroutine(DelayReloadMicrophone());
+                        GorillaTagger.Instance.myRecorder.DebugEchoMode = true;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                {
+                    gunLocked = false;
+
+                    if (factory != null)
+                        factory.Dispose();
+
+                    Patches.SpeakerPatch.enabled = false;
+
+                    Sound.FixMicrophone();
+                }
+            }
+        }
+
+        public static void ProcessFrameBuffer(float[] data) =>
+            factory.Feed(data);
 
         public static void ReloadMicrophone() =>
             GorillaTagger.Instance.myRecorder.RestartRecording(true);
+
+        public static IEnumerator DelayReloadMicrophone()
+        {
+            yield return new WaitForSeconds(0.25f);
+            ReloadMicrophone();
+        }
 
         public static void ObjectToPointGun(string objectName)
         {
