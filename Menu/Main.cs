@@ -721,6 +721,8 @@ namespace iiMenu.Menu
 
                                     legacyGhostViewLeft.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
                                 }
+                                else if (legacyGhostViewLeft != null)
+                                    legacyGhostViewLeft.SetActive(true);
 
                                 legacyGhostViewLeft.transform.position = TrueLeftHand().position;
                                 legacyGhostViewLeft.GetComponent<Renderer>().material.color = GetBGColor(0f);
@@ -732,6 +734,8 @@ namespace iiMenu.Menu
 
                                     legacyGhostViewRight.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
                                 }
+                                else if (legacyGhostViewRight != null)
+                                    legacyGhostViewRight.SetActive(true);
 
                                 legacyGhostViewRight.transform.position = TrueRightHand().position;
                                 legacyGhostViewRight.GetComponent<Renderer>().material.color = GetBGColor(0f);
@@ -749,6 +753,11 @@ namespace iiMenu.Menu
 
                                     Visuals.FixRigMaterialESPColors(GhostRig);
                                 }
+                                else if (GhostRig != null)
+                                {
+                                    GhostRig.enabled = true;
+                                    GhostRig.mainSkin.enabled = true;
+                                }
 
                                 if (GhostMaterial == null)
                                     GhostMaterial = new Material(Shader.Find("GUI/Text Shader"));
@@ -757,30 +766,22 @@ namespace iiMenu.Menu
                                 ghm.a = 0.5f;
                                 GhostMaterial.color = ghm;
                                 GhostRig.mainSkin.material = GhostMaterial;
-
-                                GhostRig.headConstraint.transform.position = GorillaLocomotion.GTPlayer.Instance.headCollider.transform.position;
-                                GhostRig.headConstraint.transform.rotation = GorillaLocomotion.GTPlayer.Instance.headCollider.transform.rotation;
-
-                                GhostRig.leftHandTransform.position = GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.position;
-                                GhostRig.rightHandTransform.position = GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position;
-
-                                GhostRig.leftHandTransform.rotation = GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.rotation;
-                                GhostRig.rightHandTransform.rotation = GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.rotation;
-
-                                GhostRig.transform.position = GorillaLocomotion.GTPlayer.Instance.transform.position;
-                                GhostRig.transform.rotation = GorillaLocomotion.GTPlayer.Instance.transform.rotation;
                             }
                         }
                         else
                         {
                             if (GhostRig != null)
-                                Destroy(GhostRig.gameObject);
+                            {
+                                GhostRig.mainSkin.enabled = false;
+                                GhostRig.enabled = false;
+                                GhostRig.transform.position = new Vector3(99999f, 99999f, 99999f);
+                            }
 
                             if (legacyGhostViewLeft != null)
-                                Destroy(legacyGhostViewLeft);
+                                legacyGhostViewLeft.SetActive(false);
 
                             if (legacyGhostViewRight != null)
-                                Destroy(legacyGhostViewRight);
+                                legacyGhostViewRight.SetActive(false);
                         }
                     }
                     catch { }
