@@ -41,9 +41,8 @@ namespace iiMenu.Classes
                 else
                 {
                     if (colors.colorKeys[0].color == colors.colorKeys[1].color)
-                    {
                         gameObjectRenderer.material.color = colors.colorKeys[0].color;
-                    } else
+                    else
                     {
                         if (gameObjectRenderer.material.shader.name != "Universal Render Pipeline/Lit")
                         {

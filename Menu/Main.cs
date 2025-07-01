@@ -2939,7 +2939,7 @@ namespace iiMenu.Menu
             return texture;
         }
 
-        private static Dictionary<(Color, Color), Texture2D> cacheGradients = new Dictionary<(Color, Color), Texture2D>();
+        public static Dictionary<(Color, Color), Texture2D> cacheGradients = new Dictionary<(Color, Color), Texture2D>();
 
         public static Texture2D GetGradientTexture(Color colorA, Color colorB)
         {
@@ -2950,11 +2950,22 @@ namespace iiMenu.Menu
             Texture2D txt2d = new Texture2D(128, 128);
             Color[] pixels = new Color[128 * 128];
 
-            for (int i = 0; i < 128; i++)
+            if (horizontalGradients)
             {
-                Color rowColor = Color.Lerp(colorA, colorB, i / 128f);
-                for (int j = 0; j < 128; j++)
-                    pixels[j * 128 + i] = rowColor;
+                for (int y = 0; y < 128; y++)
+                {
+                    Color rowColor = Color.Lerp(colorA, colorB, y / 128f);
+                    for (int x = 0; x < 128; x++)
+                        pixels[y * 128 + x] = rowColor;
+                }
+            } else
+            {
+                for (int i = 0; i < 128; i++)
+                {
+                    Color rowColor = Color.Lerp(colorA, colorB, i / 128f);
+                    for (int j = 0; j < 128; j++)
+                        pixels[j * 128 + i] = rowColor;
+                }
             }
 
             txt2d.SetPixels(pixels);
@@ -5095,6 +5106,7 @@ jgs \_   _/ |Oo\
         public static bool dynamicSounds;
         public static bool dynamicAnimations;
         public static bool dynamicGradients;
+        public static bool horizontalGradients;
         public static bool gradientTitle;
         public static string lastClickedName = "";
 
