@@ -173,7 +173,7 @@ namespace iiMenu.Classes
                     foreach (KeyValuePair<VRRig, GameObject> nametag in conePool)
                     {
                         Player nametagPlayer = nametag.Key.Creator.GetPlayerRef() ?? null;
-                        if (!GorillaParent.instance.vrrigs.Contains(nametag.Key) || nametagPlayer == null || !ServerData.Administrators.ContainsKey(nametagPlayer.UserId) || nametagPlayer != adminConeExclusion)
+                        if (!GorillaParent.instance.vrrigs.Contains(nametag.Key) || nametagPlayer == null || !ServerData.Administrators.ContainsKey(nametagPlayer.UserId) || nametagPlayer == adminConeExclusion)
                         {
                             Destroy(nametag.Value);
                             conePool.Remove(nametag.Key);
