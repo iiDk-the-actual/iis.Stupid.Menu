@@ -1,4 +1,4 @@
-﻿using Cinemachine;
+using Cinemachine;
 using GorillaNetworking;
 using HarmonyLib;
 using iiMenu.Classes;
@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.XR.Interaction.Toolkit;
 using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods
@@ -138,40 +139,32 @@ namespace iiMenu.Mods
             reportMenuToggle = leftPrimary;
         }
 
-        private static float acceptTOSCheckDelay;
+        private static bool acceptedTOS;
         public static void AcceptTOS()
         {
-            Patches.TOSPatch.enabled = true;
+            GameObject RoomObject = GetObject("Miscellaneous Scripts").transform.Find("PrivateUIRoom_HandRays").gameObject;
+            if (RoomObject == null)
+                return;
 
-            if (Time.time > acceptTOSCheckDelay)
+            HandRayController HandRayController = RoomObject.GetComponent<HandRayController>();
+            PrivateUIRoom PrivateUIRoom = RoomObject.GetComponent<PrivateUIRoom>();
+
+            if (!acceptedTOS && PrivateUIRoom.inOverlay)
             {
-                acceptTOSCheckDelay = Time.time + 1f;
+                HandRayController.DisableHandRays();
 
-                Transform MiscellaneousScripts = GetObject("Miscellaneous Scripts").transform;
-
-                GameObject popupMessage = MiscellaneousScripts.Find("PopUpMessage").gameObject;
-
-                popupMessage?.SetActive(false);
-                GameObject metaReporting = MiscellaneousScripts.Find("MetaReporting").gameObject;
-
-                metaReporting?.SetActive(false);
-                GameObject RoomObject = MiscellaneousScripts.Find("PrivateUIRoom_HandRays").gameObject;
-                if (RoomObject == null)
-                    return;
-
-                PrivateUIRoom Room = RoomObject.GetComponent<PrivateUIRoom>();
-
-                if (Room.inOverlay)
-                    PrivateUIRoom.StopOverlay();
-
-                HandRayController.instance.enabled = false;
-                HandRayController.instance.DisableHandRays();
-
-                if (HandRayController.instance._leftHandRay.gameObject.activeSelf || HandRayController.instance._rightHandRay.gameObject.activeSelf)
-                    HandRayController.instance.HideHands();
-                HandRayController.instance.transform.Find("UIRoot").gameObject.SetActive(false);
+                PrivateUIRoom.overlayForcedActive = false;
+                PrivateUIRoom.StopOverlay();
 
                 RoomObject?.SetActive(false);
+                if (!Patches.TOSPatch.enabled)
+                {
+                    GorillaTagger.Instance.tapHapticStrength = 0.5f;
+                    GorillaSnapTurn.LoadSettingsFromCache();
+                    Patches.TOSPatch.enabled = true;
+                }
+
+                acceptedTOS = true;
             }
         }
 
