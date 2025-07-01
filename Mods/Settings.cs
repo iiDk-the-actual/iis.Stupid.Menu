@@ -2442,9 +2442,10 @@ namespace iiMenu.Mods
         // Thanks to kingofnetflix for inspiration and support with voice recognition
         private static KeywordRecognizer mainPhrases;
         private static KeywordRecognizer modPhrases;
+        private static string[] cancelKeywords = new string[] { "nevermind", "cancel", "never mind", "stop", "i hate you" };
         public static void VoiceRecognitionOn()
         {
-            mainPhrases = new KeywordRecognizer(new string[] { "jarvis", "ii", "i i", "eye eye", "siri", "google", "alexa", "dummy", "computer", "stinky", "silly", "stupid", "console", "go go gadget" });
+            mainPhrases = new KeywordRecognizer(new string[] { "jarvis", "ii", "i i", "eye eye", "siri", "google", "alexa", "dummy", "computer", "stinky", "silly", "stupid", "console", "go go gadget", "monika" });
             mainPhrases.OnPhraseRecognized += ModRecognition;
             mainPhrases.Start();
         }
@@ -2455,15 +2456,23 @@ namespace iiMenu.Mods
             mainPhrases.Stop();
 
             if (!GetIndex("Chain Voice Commands").enabled)
-                timeoutCoroutine = CoroutineManager.RunCoroutine(Timeout());
+                timeoutCoroutine = CoroutineManager.RunCoroutine(Timeout(string.Empty));
             
-            List<string> rawbuttonnames = new List<string> { "nevermind", "cancel", "never mind", "stop" };
+            List<string> rawbuttonnames = cancelKeywords.ToList();
 
             foreach (ButtonInfo[] buttonlist in Buttons.buttons)
             {
                 foreach (ButtonInfo v in buttonlist)
-                    rawbuttonnames.Add(NoRichtextTags(v.overlapText ?? v.buttonText));
+                {
+                    string buttonName = v.overlapText ?? v.buttonText;
+
+                    if (buttonName.Contains(" <color"))
+                        buttonName = buttonName.Split(" <color")[0];
+
+                    rawbuttonnames.Add(buttonName);
+                }
             }
+
             modPhrases = new KeywordRecognizer(rawbuttonnames.ToArray());
             modPhrases.OnPhraseRecognized += ExecuteVoiceCommand;
             modPhrases.Start();
@@ -2483,10 +2492,9 @@ namespace iiMenu.Mods
                 CoroutineManager.EndCoroutine(timeoutCoroutine);
             }
 
-            string output = args.text;
-            if (output == "nevermind" || output == "cancel" || output == "never mind" || output == "stop")
+            if (cancelKeywords.Contains(args.text))
             {
-                CancelModRecognition();
+                CancelModRecognition(args.text);
                 return;
             }
 
@@ -2495,24 +2503,31 @@ namespace iiMenu.Mods
 
             foreach (ButtonInfo[] buttonlist in Buttons.buttons)
             {
-                if (exactMatch) { break; }
+                if (exactMatch)
+                    break;
+
                 foreach (ButtonInfo v in buttonlist)
                 {
-                    if (exactMatch) { break; }
-                    string buttonName = NoRichtextTags(v.overlapText ?? v.buttonText);
-                    if (output.ToLower() == buttonName.ToLower())
+                    if (exactMatch)
+                        break;
+
+                    string buttonName = v.overlapText ?? v.buttonText;
+
+                    if (buttonName.Contains(" <color"))
+                        buttonName = buttonName.Split(" <color")[0];
+
+                    if (args.text.ToLower() == buttonName.ToLower())
                     {
                         modTarget = v.buttonText;
                         exactMatch = true;
                     } else
                     {
-                        if (output.Contains(buttonName.ToLower()))
-                        {
+                        if (args.text.Contains(buttonName.ToLower()))
                             modTarget = v.buttonText;
-                        }
                     }
                 }
             }
+
             if (modTarget != null)
             {
                 ButtonInfo mod = GetIndex(modTarget);
@@ -2520,22 +2535,22 @@ namespace iiMenu.Mods
                 if (dynamicSounds)
                     Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/confirm.wav", "confirm.wav"), buttonClickVolume / 10f);
                 
-                Toggle(modTarget);
+                Toggle(modTarget, true, true);
             } else
             {
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>VOICE</color><color=grey>]</color> No command found ("+output+").", 3000);
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>VOICE</color><color=grey>]</color> No command found ("+args.text+").", 3000);
                 if (dynamicSounds)
                     Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/close.wav", "close.wav"), buttonClickVolume / 10f);
             }
         }
 
-        public static IEnumerator Timeout()
+        public static IEnumerator Timeout(string text)
         {
             yield return new WaitForSeconds(10f);
-            CancelModRecognition();
+            CancelModRecognition(text);
         }
 
-        public static void CancelModRecognition()
+        public static void CancelModRecognition(string text)
         {
             modPhrases.Stop();
             mainPhrases.Start();
@@ -2543,8 +2558,8 @@ namespace iiMenu.Mods
             {
                 CoroutineManager.EndCoroutine(timeoutCoroutine);
             } catch { }
-
-            NotifiLib.SendNotification("<color=grey>[</color><color=red>VOICE</color><color=grey>]</color> Cancelling...", 3000);
+            
+            NotifiLib.SendNotification($"<color=grey>[</color><color=red>VOICE</color><color=grey>]</color> {(text == "i hate you" ? "I hate you too." : "Cancelling...")}", 3000);
             if (dynamicSounds)
                 Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/close.wav", "close.wav"), buttonClickVolume / 10f);
         }
