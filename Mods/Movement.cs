@@ -72,40 +72,39 @@ namespace iiMenu.Mods
             GetIndex("Change Platform Shape").overlapText = "Change Platform Shape <color=grey>[</color><color=green>" + platformShapes[platformShape] + "</color><color=grey>]</color>";
         }
 
-        public static GameObject CreatePlatform()
+        public static PrimitiveType GetPlatformPrimitiveType()
         {
-            GameObject platform = null;
             switch (platformShape)
             {
                 case 0:
-                    platform = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                    platform.transform.localScale = new Vector3(0.333f, 0.333f, 0.333f);
-                    break;
+                    return PrimitiveType.Sphere;
                 case 1:
-                    platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    platform.transform.localScale = new Vector3(0.333f, 0.333f, 0.333f);
-                    break;
+                    return PrimitiveType.Cube;
                 case 2:
-                    platform = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-                    platform.transform.localScale = new Vector3(0.333f, 0.333f, 0.333f);
-                    break;
-                case 3:
-                    platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    platform.transform.localScale = new Vector3(0.025f, 0.3f, 0.4f);
-                    break;
-                case 4:
-                    platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    platform.transform.localScale = new Vector3(0.025f, 0.15f, 0.2f);
-                    break;
-                case 5:
-                    platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    platform.transform.localScale = new Vector3(0.025f, 0.3f, 0.8f);
-                    break;
-                case 6:
-                    platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    platform.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-                    break;
+                    return PrimitiveType.Cylinder;
+                default:
+                    return PrimitiveType.Cube;
             }
+        }
+
+        public static Vector3 GetPlatformScale()
+        {
+            return new[]
+            {
+                new Vector3(0.333f, 0.333f, 0.333f),
+                new Vector3(0.333f, 0.333f, 0.333f),
+                new Vector3(0.333f, 0.333f, 0.333f),
+                new Vector3(0.025f, 0.3f, 0.4f),
+                new Vector3(0.025f, 0.15f, 0.2f),
+                new Vector3(0.025f, 0.3f, 0.8f),
+                new Vector3(0.1f, 0.1f, 0.1f)
+            }[platformShape];
+        }
+
+        public static GameObject CreatePlatform()
+        {
+            GameObject platform = GameObject.CreatePrimitive(GetPlatformPrimitiveType());
+            platform.transform.localScale = GetPlatformScale();
 
             switch (platformMode)
             {
@@ -135,39 +134,36 @@ namespace iiMenu.Mods
             if (!GetIndex("Non-Sticky Platforms").enabled)
                 FixStickyColliders(platform);
 
+            ColorChanger colorChanger = platform.AddComponent<ColorChanger>();
+            colorChanger.colors = new Gradient
+            {
+                colorKeys = new GradientColorKey[]
+                {
+                    new GradientColorKey(bgColorA, 0f),
+                    new GradientColorKey(bgColorB, 0.5f),
+                    new GradientColorKey(bgColorA, 1f)
+                }
+            };
+            colorChanger.isRainbow = platformMode == 2;
+            colorChanger.isEpileptic = platformMode == 3;
+
             if (GetIndex("Platform Outlines").enabled)
             {
-                GameObject gameObject;
-                switch (platformShape)
-                {
-                    case 0:
-                        gameObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                        break;
-                    case 1:
-                        gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        break;
-                    case 2:
-                        gameObject = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-                        break;
-                    default:
-                        gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        break;
-                }
-
-                UnityEngine.Object.Destroy(gameObject.GetComponent<BoxCollider>());
+                GameObject gameObject = GameObject.CreatePrimitive(GetPlatformPrimitiveType());
+                UnityEngine.Object.Destroy(gameObject.GetComponent<Collider>());
                 gameObject.transform.parent = platform.transform;
                 gameObject.transform.localPosition = Vector3.zero;
                 gameObject.transform.localRotation = Quaternion.identity;
-                gameObject.transform.localScale = new Vector3(0.95f, 1.05f, 1.05f);
+                gameObject.transform.localScale = new Vector3(-1.05f, -1.05f, -1.05f);
 
-                ColorChanger colorChanger = gameObject.AddComponent<ColorChanger>();
-                colorChanger.colors = new Gradient
+                ColorChanger outlineColorChanger = gameObject.AddComponent<ColorChanger>();
+                outlineColorChanger.colors = new Gradient
                 {
                     colorKeys = new GradientColorKey[]
                     {
-                        new GradientColorKey(bgColorA, 0f),
-                        new GradientColorKey(bgColorB, 0.5f),
-                        new GradientColorKey(bgColorA, 1f)
+                        new GradientColorKey(buttonDefaultA, 0f),
+                        new GradientColorKey(buttonDefaultB, 0.5f),
+                        new GradientColorKey(buttonDefaultA, 1f)
                     }
                 };
             }
@@ -231,20 +227,8 @@ namespace iiMenu.Mods
                     }
                     if (GetIndex("Non-Sticky Platforms").enabled)
                         leftplat.transform.position += TrueLeftHand().right * (0.025f + (leftplat.transform.localScale.x / 2f));
-                }
-                else
-                {
-                    if (platformMode != 5)
-                        leftplat.GetComponent<Renderer>().material.color = GetBGColor(0f);
-                    
-                    if (platformMode == 2)
-                    {
-                        float h = (Time.frameCount / 180f) % 1f;
-                        leftplat.GetComponent<Renderer>().material.color = Color.HSVToRGB(h, 1f, 1f);
-                    }
 
-                    if (platformMode == 3)
-                        leftplat.GetComponent<Renderer>().material.color = RandomColor();
+                    FriendManager.PlatformSpawned(true, leftplat.transform.position, leftplat.transform.rotation, leftplat.transform.localScale, GetPlatformPrimitiveType());
                 }
             }
             else
@@ -263,6 +247,8 @@ namespace iiMenu.Mods
                     leftplat = null;
                     if (platformMode == 4 && rightplat == null)
                         UpdateClipColliders(true);
+
+                    FriendManager.PlatformDespawned(true);
                 }
             }
 
@@ -306,20 +292,8 @@ namespace iiMenu.Mods
                     }
                     if (GetIndex("Non-Sticky Platforms").enabled)
                         rightplat.transform.position -= TrueRightHand().right * (0.025f + (rightplat.transform.localScale.x / 2f));
-                }
-                else
-                {
-                    if (platformMode != 5)
-                        rightplat.GetComponent<Renderer>().material.color = GetBGColor(0f);
-                    
-                    if (platformMode == 2)
-                    {
-                        float h = (Time.frameCount / 180f) % 1f;
-                        rightplat.GetComponent<Renderer>().material.color = Color.HSVToRGB(h, 1f, 1f);
-                    }
-                    if (platformMode == 3)
-                        rightplat.GetComponent<Renderer>().material.color = new Color32((byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), (byte)UnityEngine.Random.Range(0, 255), 128);
-                    
+
+                    FriendManager.PlatformSpawned(false, rightplat.transform.position, rightplat.transform.rotation, rightplat.transform.localScale, GetPlatformPrimitiveType());
                 }
             }
             else
@@ -338,6 +312,8 @@ namespace iiMenu.Mods
                     rightplat = null;
                     if (platformMode == 4 && leftplat == null)
                         UpdateClipColliders(true);
+
+                    FriendManager.PlatformDespawned(false);
                 }
             }
         }
