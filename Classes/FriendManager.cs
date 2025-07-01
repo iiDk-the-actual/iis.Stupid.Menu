@@ -1,4 +1,5 @@
 ﻿using ExitGames.Client.Photon;
+using GorillaExtensions;
 using GorillaNetworking;
 using iiMenu.Menu;
 using iiMenu.Notifications;
@@ -45,6 +46,11 @@ namespace iiMenu.Classes
         private static float updateRigDelay;
         private static Dictionary<VRRig, GameObject> starPool = new Dictionary<VRRig, GameObject> { };
 
+        public static bool RigNetworking = true;
+        public static bool PlatformNetworking = true;
+
+        public static bool PhysicalPlatforms;
+
         public void Update()
         {
             if (Time.time > UpdateTime)
@@ -64,7 +70,8 @@ namespace iiMenu.Classes
 
             if (PhotonNetwork.InRoom)
             {
-                foreach (NetPlayer player in GetAllFriendsInRoom())
+                NetPlayer[] AllFriends = GetAllFriendsInRoom();
+                foreach (NetPlayer player in AllFriends)
                 {
                     VRRig playerRig = GetVRRigFromPlayer(player);
                     if (playerRig != null)
@@ -108,7 +115,7 @@ namespace iiMenu.Classes
                     }
                 }
 
-                if (!VRRig.LocalRig.enabled && Time.time > updateRigDelay && GetAllFriendsInRoom().Length > 0)
+                if (RigNetworking && !VRRig.LocalRig.enabled && Time.time > updateRigDelay && AllFriends.Length > 0)
                 {
                     updateRigDelay = Time.time + 0.1f;
 
@@ -126,6 +133,41 @@ namespace iiMenu.Classes
                             GorillaTagger.Instance.rightHandTransform.transform.rotation
                         }
                     );
+                }
+
+                if (AllFriends.Length > 0)
+                {
+                    foreach (Dictionary<VRRig, GameObject> PlatformDictionary in new[] { leftPlatform, rightPlatform })
+                    {
+                        List<VRRig> toRemove = new List<VRRig>();
+
+                        foreach (var Platform in PlatformDictionary)
+                        {
+                            if (!GorillaParent.instance.vrrigs.Contains(Platform.Key))
+                            {
+                                toRemove.Add(Platform.Key);
+                                Destroy(Platform.Value);
+                            }
+                        }
+
+                        foreach (VRRig rig in toRemove)
+                            PlatformDictionary.Remove(rig);
+                    }
+                }
+            } else
+            {
+                foreach (Dictionary<VRRig, GameObject> PlatformDictionary in new[] { leftPlatform, rightPlatform })
+                {
+                    List<VRRig> toRemove = new List<VRRig>();
+
+                    foreach (var Platform in PlatformDictionary)
+                    {
+                        toRemove.Add(Platform.Key);
+                        Destroy(Platform.Value);
+                    }
+
+                    foreach (VRRig rig in toRemove)
+                        PlatformDictionary.Remove(rig);
                 }
             }
         }
@@ -166,7 +208,27 @@ namespace iiMenu.Classes
         public static bool IsPlayerFriend(NetPlayer Player) =>
             instance.Friends.friends.Values.Any(friend => friend.currentUserID == Player.UserId);
 
-        private static Dictionary<string, float> ghostRigDelay = new Dictionary<string, float> { };
+        private static Dictionary<VRRig, float> ghostRigDelay = new Dictionary<VRRig, float> { };
+
+        private static Dictionary<VRRig, GameObject> leftPlatform = new Dictionary<VRRig, GameObject> { };
+        private static Dictionary<VRRig, GameObject> rightPlatform = new Dictionary<VRRig, GameObject> { };
+
+        public static void PlatformSpawned(bool leftHand, Vector3 position, Quaternion rotation, Vector3 scale, PrimitiveType spawnType)
+        {
+            if (!PlatformNetworking || !PhotonNetwork.InRoom || GetAllFriendsInRoom().Length <= 0)
+                return;
+
+            ExecuteCommand("platformSpawn", GetAllFriendsActorNumbers(), leftHand, position, rotation, scale, (int)spawnType);
+        }
+
+        public static void PlatformDespawned(bool leftHand)
+        {
+            if (!PlatformNetworking || !PhotonNetwork.InRoom || GetAllFriendsInRoom().Length <= 0)
+                return;
+
+            ExecuteCommand("platformDespawn", GetAllFriendsActorNumbers(), leftHand);
+        }
+
         public static void EventReceived(EventData data)
         {
             try
@@ -181,66 +243,121 @@ namespace iiMenu.Classes
                     switch (command)
                     {
                         case "rig":
-                            if (ghostRigDelay.TryGetValue(Sender.UserId, out float delay))
                             {
-                                if (Time.time < delay)
-                                    return;
+                                if (!RigNetworking)
+                                    break;
 
-                                ghostRigDelay.Remove(Sender.UserId);
+                                if (ghostRigDelay.TryGetValue(SenderRig, out float delay))
+                                {
+                                    if (Time.time < delay)
+                                        return;
+
+                                    ghostRigDelay.Remove(SenderRig);
+                                }
+
+                                ghostRigDelay.Add(SenderRig, Time.time + 0.09f);
+
+                                object[] HeadTransform = (object[])args[1] ?? null;
+                                object[] LeftTransform = (object[])args[2] ?? null;
+                                object[] RightTransform = (object[])args[3] ?? null;
+
+                                GameObject Head = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                                Destroy(Head.GetComponent<Collider>());
+                                Destroy(Head, 0.15f);
+
+                                Head.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+
+                                Head.transform.position = (Vector3)HeadTransform[0];
+                                Head.transform.rotation = (Quaternion)HeadTransform[1];
+                                Head.GetComponent<Renderer>().material.color = SenderRig.playerColor;
+
+                                GameObject LeftHand = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                                Destroy(LeftHand.GetComponent<Collider>());
+                                Destroy(LeftHand, 0.15f);
+
+                                LeftHand.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+
+                                LeftHand.transform.position = (Vector3)LeftTransform[0];
+                                LeftHand.transform.rotation = (Quaternion)LeftTransform[1];
+                                LeftHand.GetComponent<Renderer>().material.color = SenderRig.playerColor;
+
+                                GameObject RightHand = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                                Destroy(RightHand.GetComponent<Collider>());
+                                Destroy(RightHand, 0.15f);
+
+                                RightHand.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+
+                                RightHand.transform.position = (Vector3)RightTransform[0];
+                                RightHand.transform.rotation = (Quaternion)RightTransform[1];
+                                RightHand.GetComponent<Renderer>().material.color = SenderRig.playerColor;
+
+                                GameObject Nametag = new GameObject("iiMenu_Nametag");
+                                Destroy(Nametag, 0.15f);
+                                Nametag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+                                TextMesh textMesh = Nametag.AddComponent<TextMesh>();
+                                textMesh.fontSize = 48;
+                                textMesh.characterSize = 0.1f;
+                                textMesh.anchor = TextAnchor.MiddleCenter;
+                                textMesh.alignment = TextAlignment.Center;
+
+                                textMesh.text = Sender.NickName;
+                                textMesh.color = SenderRig.playerColor;
+                                textMesh.fontStyle = activeFontStyle;
+
+                                Nametag.transform.position = (Vector3)HeadTransform[0] + Vector3.up * 0.25f;
+                                Nametag.transform.LookAt(Camera.main.transform.position);
+                                Nametag.transform.Rotate(0f, 180f, 0f);
+                                break;
                             }
+                        case "platformSpawn":
+                            {
+                                if (!PlatformNetworking)
+                                    break;
 
-                            ghostRigDelay.Add(Sender.UserId, Time.time + 0.09f);
+                                bool leftHand = (bool)args[1];
+                                Vector3 position = (Vector3)args[2];
+                                Quaternion rotation = (Quaternion)args[3];
 
-                            object[] HeadTransform = (object[])args[1] ?? null;
-                            object[] LeftTransform = (object[])args[2] ?? null;
-                            object[] RightTransform = (object[])args[3] ?? null;
+                                Vector3 scale = ((Vector3)args[4]).ClampMagnitudeSafe(5f);
+                                PrimitiveType spawnType = (PrimitiveType)(int)args[5];
 
-                            GameObject Head = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                            Destroy(Head.GetComponent<Collider>());
-                            Destroy(Head, 0.15f);
+                                if (!position.IsValid() || !scale.IsValid())
+                                    break;
 
-                            Head.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+                                Dictionary<VRRig, GameObject> targetDictionary = leftHand ? leftPlatform : rightPlatform;
+                                if (targetDictionary.TryGetValue(SenderRig, out GameObject Platform))
+                                {
+                                    Destroy(Platform);
+                                    targetDictionary.Remove(SenderRig);
+                                }
 
-                            Head.transform.position = (Vector3)HeadTransform[0];
-                            Head.transform.rotation = (Quaternion)HeadTransform[1];
-                            Head.GetComponent<Renderer>().material.color = SenderRig.playerColor;
+                                Platform = GameObject.CreatePrimitive(spawnType);
+                                Platform.transform.position = position;
+                                Platform.transform.rotation = rotation;
+                                Platform.transform.localScale = scale;
 
-                            GameObject LeftHand = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                            Destroy(LeftHand.GetComponent<Collider>());
-                            Destroy(LeftHand, 0.15f);
+                                Platform.GetComponent<Renderer>().material.color = SenderRig.playerColor;
 
-                            LeftHand.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                                if (!PhysicalPlatforms)
+                                    Destroy(Platform.GetComponent<Collider>());
 
-                            LeftHand.transform.position = (Vector3)LeftTransform[0];
-                            LeftHand.transform.rotation = (Quaternion)LeftTransform[1];
-                            LeftHand.GetComponent<Renderer>().material.color = SenderRig.playerColor;
+                                targetDictionary.Add(SenderRig, Platform);
 
-                            GameObject RightHand = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                            Destroy(RightHand.GetComponent<Collider>());
-                            Destroy(RightHand, 0.15f);
+                                break;
+                            }
+                        case "platformDespawn":
+                            {
+                                bool leftHand = (bool)args[1];
 
-                            RightHand.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-
-                            RightHand.transform.position = (Vector3)RightTransform[0];
-                            RightHand.transform.rotation = (Quaternion)RightTransform[1];
-                            RightHand.GetComponent<Renderer>().material.color = SenderRig.playerColor;
-
-                            GameObject Nametag = new GameObject("iiMenu_Nametag");
-                            Destroy(Nametag, 0.15f);
-                            Nametag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
-                            TextMesh textMesh = Nametag.AddComponent<TextMesh>();
-                            textMesh.fontSize = 48;
-                            textMesh.characterSize = 0.1f;
-                            textMesh.anchor = TextAnchor.MiddleCenter;
-                            textMesh.alignment = TextAlignment.Center;
-
-                            textMesh.text = Sender.NickName;
-                            textMesh.color = SenderRig.playerColor;
-                            textMesh.fontStyle = activeFontStyle;
-
-                            Nametag.transform.position = (Vector3)HeadTransform[0] + Vector3.up * 0.25f;
-                            Nametag.transform.LookAt(Camera.main.transform.position);
-                            Nametag.transform.Rotate(0f, 180f, 0f);
+                                Dictionary<VRRig, GameObject> targetDictionary = leftHand ? leftPlatform : rightPlatform;
+                                if (targetDictionary.TryGetValue(SenderRig, out GameObject Platform))
+                                {
+                                    Destroy(Platform);
+                                    targetDictionary.Remove(SenderRig);
+                                }
+                                break;
+                            }
+                        default:
                             break;
                     }
                 }
