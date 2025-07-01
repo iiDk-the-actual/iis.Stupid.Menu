@@ -608,11 +608,11 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Cosmetic ESP", method =() => Visuals.CosmeticESP(), toolTip = "Shows beacons above people's heads if they are a Finger Painter, Illustrator, Administrator, Stick, or if they have any unreleased cosmetics."},
 
-                new ButtonInfo { buttonText = "Voice Indicators", method =() => Visuals.VoiceIndicators(), toolTip = "Puts voice indicators above people's heads when they're talking."},
-                new ButtonInfo { buttonText = "Voice ESP", method =() => Visuals.VoiceESP(), toolTip = "Puts voice indicators above people's heads when they're talking, but now they go through walls."},
+                new ButtonInfo { buttonText = "Voice Indicators", method =() => Visuals.VoiceIndicators(), disableMethod =() => Visuals.DisableVoiceIndicators(), toolTip = "Puts voice indicators above people's heads when they're talking."},
+                new ButtonInfo { buttonText = "Voice ESP", method =() => Visuals.VoiceESP(), disableMethod =() => Visuals.DisableVoiceIndicators(), toolTip = "Puts voice indicators above people's heads when they're talking, but now they go through walls."},
 
-                new ButtonInfo { buttonText = "Platform Indicators", method =() => Visuals.PlatformIndicators(), toolTip = "Puts indicators above people's heads that show what platform they are playing on."},
-                new ButtonInfo { buttonText = "Platform ESP", method =() => Visuals.PlatformESP(), toolTip = "Puts indicators above people's heads that show what platform they are playing on, but now they go through walls."},
+                new ButtonInfo { buttonText = "Platform Indicators", method =() => Visuals.PlatformIndicators(), disableMethod =() => Visuals.DisablePlatformIndicators(), toolTip = "Puts indicators above people's heads that show what platform they are playing on."},
+                new ButtonInfo { buttonText = "Platform ESP", method =() => Visuals.PlatformESP(), disableMethod =() => Visuals.DisablePlatformIndicators(), toolTip = "Puts indicators above people's heads that show what platform they are playing on, but now they go through walls."},
 
                 new ButtonInfo { buttonText = "No Limb Mode", enableMethod =() => Visuals.StartNoLimb(), method =() => Visuals.NoLimbMode(), disableMethod =() => Visuals.EndNoLimb(), toolTip = "Makes your regular rig invisible, and puts balls on your hands."},
 

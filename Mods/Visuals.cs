@@ -1012,91 +1012,54 @@ namespace iiMenu.Mods
             }
         }
 
-        private static Texture2D voicetxt = null;
-        public static void VoiceESP()
-        {
-            if (PerformanceVisuals)
-            {
-                if (Time.time < PerformanceVisualDelay)
-                {
-                    if (Time.frameCount != DelayChangeStep)
-                        return;
-                }
-                else
-                { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
-            }
+        // Credits to zvbex for the 'FIRST LOGIN' concat check
 
-            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-            {
-                if (vrrig != VRRig.LocalRig)
-                {
-                    float size = 0f;
-                    GorillaSpeakerLoudness recorder = vrrig.GetComponent<GorillaSpeakerLoudness>();
-                    if (recorder != null)
-                    {
-                        size = recorder.Loudness * 3f;
-                    }
-                    if (size > 0f)
-                    {
-                        GameObject volIndicator = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        UnityEngine.Object.Destroy(volIndicator.GetComponent<Collider>());
-                        UnityEngine.Object.Destroy(volIndicator, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
-                        volIndicator.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                        if (voicetxt == null)
-                            voicetxt = LoadTextureFromResource("iiMenu.Resources.speak.png");
-                        volIndicator.GetComponent<Renderer>().material.mainTexture = voicetxt;
-                        volIndicator.GetComponent<Renderer>().material.color = GetPlayerColor(vrrig);
-                        volIndicator.transform.localScale = new Vector3(size, size, 0.01f);
-                        volIndicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * 0.8f;
-                        volIndicator.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
-                    }
-                }
-            }
-        }
-
-        // Credits to zvbex for the 'FIRST LOGIN' concat check-+
         private static Material platformMat;
+        private static Material platformEspMat;
         private static Texture2D steamtxt;
         private static Texture2D oculustxt;
+        private static Dictionary<VRRig, GameObject> platformIndicators = new Dictionary<VRRig, GameObject> { };
+
         public static void PlatformIndicators()
         {
-            if (PerformanceVisuals)
+            foreach (KeyValuePair<VRRig, GameObject> nametag in platformIndicators)
             {
-                if (Time.time < PerformanceVisualDelay)
+                if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
-                    if (Time.frameCount != DelayChangeStep)
-                        return;
+                    UnityEngine.Object.Destroy(nametag.Value);
+                    platformIndicators.Remove(nametag.Key);
                 }
-                else
-                { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
             }
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
                 if (vrrig != VRRig.LocalRig)
                 {
-                    GameObject volIndicator = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    UnityEngine.Object.Destroy(volIndicator.GetComponent<Collider>());
-                    UnityEngine.Object.Destroy(volIndicator, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
-
-                    volIndicator.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-
-                    if (platformMat == null)
+                    if (!platformIndicators.TryGetValue(vrrig, out GameObject indicator))
                     {
-                        platformMat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+                        indicator = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        UnityEngine.Object.Destroy(indicator.GetComponent<Collider>());
 
-                        platformMat.SetFloat("_Surface", 1);
-                        platformMat.SetFloat("_Blend", 0);
-                        platformMat.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
-                        platformMat.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
-                        platformMat.SetFloat("_ZWrite", 0);
-                        platformMat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
-                        platformMat.renderQueue = (int)RenderQueue.Transparent;
+                        indicator.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
 
-                        platformMat.SetFloat("_Glossiness", 0f);
-                        platformMat.SetFloat("_Metallic", 0f);
+                        if (platformMat == null)
+                        {
+                            platformMat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+
+                            platformMat.SetFloat("_Surface", 1);
+                            platformMat.SetFloat("_Blend", 0);
+                            platformMat.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
+                            platformMat.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
+                            platformMat.SetFloat("_ZWrite", 0);
+                            platformMat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+                            platformMat.renderQueue = (int)RenderQueue.Transparent;
+
+                            platformMat.SetFloat("_Glossiness", 0f);
+                            platformMat.SetFloat("_Metallic", 0f);
+                        }
+                        indicator.GetComponent<Renderer>().material = platformMat;
+                        platformIndicators.Add(vrrig, indicator);
                     }
-                    volIndicator.GetComponent<Renderer>().material = platformMat;
 
                     if (steamtxt == null)
                         steamtxt = LoadTextureFromURL("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/refs/heads/main/oculus.png", "oculus.png");
@@ -1104,38 +1067,44 @@ namespace iiMenu.Mods
                     if (oculustxt == null)
                         oculustxt = LoadTextureFromURL("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/refs/heads/main/steam.png", "steam.png");
 
-                    volIndicator.GetComponent<Renderer>().material.mainTexture = vrrig.concatStringOfCosmeticsAllowed.Contains("FIRST LOGIN") ? oculustxt : steamtxt;
-                    volIndicator.GetComponent<Renderer>().material.color = GetPlayerColor(vrrig);
+                    indicator.GetComponent<Renderer>().material.mainTexture = vrrig.concatStringOfCosmeticsAllowed.Contains("FIRST LOGIN") ? oculustxt : steamtxt;
+                    indicator.GetComponent<Renderer>().material.color = GetPlayerColor(vrrig);
 
-                    volIndicator.transform.localScale = new Vector3(0.5f, 0.5f, 0.01f);
-                    volIndicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * 0.8f;
-                    volIndicator.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
+                    indicator.transform.localScale = new Vector3(0.5f, 0.5f, 0.01f);
+                    indicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * 0.8f;
+                    indicator.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
                 }
             }
         }
 
         public static void PlatformESP()
         {
-            if (PerformanceVisuals)
+            foreach (KeyValuePair<VRRig, GameObject> nametag in platformIndicators)
             {
-                if (Time.time < PerformanceVisualDelay)
+                if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
-                    if (Time.frameCount != DelayChangeStep)
-                        return;
+                    UnityEngine.Object.Destroy(nametag.Value);
+                    platformIndicators.Remove(nametag.Key);
                 }
-                else
-                { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
             }
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
                 if (vrrig != VRRig.LocalRig)
                 {
-                    GameObject volIndicator = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    UnityEngine.Object.Destroy(volIndicator.GetComponent<Collider>());
-                    UnityEngine.Object.Destroy(volIndicator, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
+                    if (!platformIndicators.TryGetValue(vrrig, out GameObject indicator))
+                    {
+                        indicator = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        UnityEngine.Object.Destroy(indicator.GetComponent<Collider>());
 
-                    volIndicator.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+                        indicator.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
+
+                        if (platformEspMat == null)
+                            platformEspMat = new Material(Shader.Find("GUI/Text Shader"));
+                        
+                        indicator.GetComponent<Renderer>().material = platformEspMat;
+                        platformIndicators.Add(vrrig, indicator);
+                    }
 
                     if (steamtxt == null)
                         steamtxt = LoadTextureFromURL("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/refs/heads/main/oculus.png", "oculus.png");
@@ -1143,28 +1112,39 @@ namespace iiMenu.Mods
                     if (oculustxt == null)
                         oculustxt = LoadTextureFromURL("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/refs/heads/main/steam.png", "steam.png");
 
-                    volIndicator.GetComponent<Renderer>().material.mainTexture = vrrig.concatStringOfCosmeticsAllowed.Contains("FIRST LOGIN") ? oculustxt : steamtxt;
-                    volIndicator.GetComponent<Renderer>().material.color = GetPlayerColor(vrrig);
-                        
-                    volIndicator.transform.localScale = new Vector3(0.5f, 0.5f, 0.01f);
-                    volIndicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * 0.8f;
-                    volIndicator.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
+                    indicator.GetComponent<Renderer>().material.mainTexture = vrrig.concatStringOfCosmeticsAllowed.Contains("FIRST LOGIN") ? oculustxt : steamtxt;
+                    indicator.GetComponent<Renderer>().material.color = GetPlayerColor(vrrig);
+
+                    indicator.transform.localScale = new Vector3(0.5f, 0.5f, 0.01f);
+                    indicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * 0.8f;
+                    indicator.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
                 }
             }
         }
 
-        private static Material voiceMat = null;
+        public static void DisablePlatformIndicators()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> nametag in platformIndicators)
+            {
+                UnityEngine.Object.Destroy(nametag.Value);
+                platformIndicators.Remove(nametag.Key);
+            }
+        }
+
+        private static Material voiceMat;
+        private static Material voiceEspMat;
+        private static Texture2D voicetxt;
+
+        private static Dictionary<VRRig, GameObject> voiceIndicators = new Dictionary<VRRig, GameObject> { };
         public static void VoiceIndicators()
         {
-            if (PerformanceVisuals)
+            foreach (KeyValuePair<VRRig, GameObject> nametag in voiceIndicators)
             {
-                if (Time.time < PerformanceVisualDelay)
+                if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
-                    if (Time.frameCount != DelayChangeStep)
-                        return;
+                    UnityEngine.Object.Destroy(nametag.Value);
+                    voiceIndicators.Remove(nametag.Key);
                 }
-                else
-                { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
             }
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
@@ -1174,42 +1154,117 @@ namespace iiMenu.Mods
                     float size = 0f;
                     GorillaSpeakerLoudness recorder = vrrig.GetComponent<GorillaSpeakerLoudness>();
                     if (recorder != null)
-                    {
                         size = recorder.Loudness * 3f;
-                    }
+                    
                     if (size > 0f)
                     {
-                        GameObject volIndicator = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        UnityEngine.Object.Destroy(volIndicator.GetComponent<Collider>());
-                        UnityEngine.Object.Destroy(volIndicator, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
-                        if (voiceMat == null)
+                        if (!voiceIndicators.TryGetValue(vrrig, out GameObject volIndicator))
                         {
-                            voiceMat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
-
-                            if (voicetxt == null)
+                            volIndicator = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                            UnityEngine.Object.Destroy(volIndicator.GetComponent<Collider>());
+                            
+                            if (voiceMat == null)
                             {
-                                voicetxt = LoadTextureFromResource("iiMenu.Resources.speak.png");
+                                voiceMat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+
+                                if (voicetxt == null)
+                                    voicetxt = LoadTextureFromResource("iiMenu.Resources.speak.png");
+                                
+                                voiceMat.mainTexture = voicetxt;
+
+                                voiceMat.SetFloat("_Surface", 1);
+                                voiceMat.SetFloat("_Blend", 0);
+                                voiceMat.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
+                                voiceMat.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
+                                voiceMat.SetFloat("_ZWrite", 0);
+                                voiceMat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+                                voiceMat.renderQueue = (int)RenderQueue.Transparent;
+
+                                voiceMat.SetFloat("_Glossiness", 0f);
+                                voiceMat.SetFloat("_Metallic", 0f);
                             }
-                            voiceMat.mainTexture = voicetxt;
-
-                            voiceMat.SetFloat("_Surface", 1);
-                            voiceMat.SetFloat("_Blend", 0);
-                            voiceMat.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
-                            voiceMat.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
-                            voiceMat.SetFloat("_ZWrite", 0);
-                            voiceMat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
-                            voiceMat.renderQueue = (int)RenderQueue.Transparent;
-
-                            voiceMat.SetFloat("_Glossiness", 0f);
-                            voiceMat.SetFloat("_Metallic", 0f);
+                            volIndicator.GetComponent<Renderer>().material = voiceMat;
+                            voiceIndicators.Add(vrrig, volIndicator);
                         }
-                        volIndicator.GetComponent<Renderer>().material = voiceMat;
+
                         volIndicator.GetComponent<Renderer>().material.color = GetPlayerColor(vrrig);
                         volIndicator.transform.localScale = new Vector3(size, size, 0.01f);
-                        volIndicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * 0.8f; ;
+                        volIndicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * 0.8f;
                         volIndicator.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
+                    } else
+                    {
+                        if (voiceIndicators.TryGetValue(vrrig, out GameObject existing))
+                        {
+                            UnityEngine.Object.Destroy(existing);
+                            voiceIndicators.Remove(vrrig);
+                        }
                     }
                 }
+            }
+        }
+
+        public static void VoiceESP()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> nametag in voiceIndicators)
+            {
+                if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
+                {
+                    UnityEngine.Object.Destroy(nametag.Value);
+                    voiceIndicators.Remove(nametag.Key);
+                }
+            }
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (vrrig != VRRig.LocalRig)
+                {
+                    float size = 0f;
+                    GorillaSpeakerLoudness recorder = vrrig.GetComponent<GorillaSpeakerLoudness>();
+                    if (recorder != null)
+                        size = recorder.Loudness * 3f;
+
+                    if (size > 0f)
+                    {
+                        if (!voiceIndicators.TryGetValue(vrrig, out GameObject volIndicator))
+                        {
+                            volIndicator = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                            UnityEngine.Object.Destroy(volIndicator.GetComponent<Collider>());
+
+                            if (voiceEspMat == null)
+                                voiceEspMat = new Material(Shader.Find("GUI/Text Shader"));
+
+                            if (voicetxt == null)
+                                voicetxt = LoadTextureFromResource("iiMenu.Resources.speak.png");
+
+                            voiceEspMat.mainTexture = voicetxt;
+
+                            volIndicator.GetComponent<Renderer>().material = voiceEspMat;
+                            voiceIndicators.Add(vrrig, volIndicator);
+                        }
+
+                        volIndicator.GetComponent<Renderer>().material.color = GetPlayerColor(vrrig);
+                        volIndicator.transform.localScale = new Vector3(size, size, 0.01f);
+                        volIndicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * 0.8f;
+                        volIndicator.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
+                    }
+                    else
+                    {
+                        if (voiceIndicators.TryGetValue(vrrig, out GameObject existing))
+                        {
+                            UnityEngine.Object.Destroy(existing);
+                            voiceIndicators.Remove(vrrig);
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void DisableVoiceIndicators()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> nametag in voiceIndicators)
+            {
+                UnityEngine.Object.Destroy(nametag.Value);
+                voiceIndicators.Remove(nametag.Key);
             }
         }
 
