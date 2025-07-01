@@ -120,8 +120,8 @@ namespace iiMenu.Mods
 
         public static void ForceEnableHands()
         {
-            GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").SetActive(true);
-            GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").SetActive(true);
+            GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").SetActive(true);
+            GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").SetActive(true);
         }
 
         private static bool reportMenuToggle;
@@ -129,7 +129,7 @@ namespace iiMenu.Mods
         {
             if (leftPrimary && !reportMenuToggle)
             {
-                GorillaMetaReport metaReporting = GameObject.Find("Miscellaneous Scripts").transform.Find("MetaReporting").GetComponent<GorillaMetaReport>();
+                GorillaMetaReport metaReporting = GetObject("Miscellaneous Scripts").transform.Find("MetaReporting").GetComponent<GorillaMetaReport>();
                 metaReporting.gameObject.SetActive(true);
                 metaReporting.enabled = true;
 
@@ -147,7 +147,7 @@ namespace iiMenu.Mods
             {
                 acceptTOSCheckDelay = Time.time + 1f;
 
-                Transform MiscellaneousScripts = GameObject.Find("Miscellaneous Scripts").transform;
+                Transform MiscellaneousScripts = GetObject("Miscellaneous Scripts").transform;
 
                 GameObject popupMessage = MiscellaneousScripts.Find("PopUpMessage").gameObject;
 
@@ -206,19 +206,19 @@ namespace iiMenu.Mods
         public static GameObject theboxlol = null;
         public static void PhysicalQuitbox()
         {
-            GameObject thequitbox = GameObject.Find("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/QuitBox");
+            GameObject thequitbox = GetObject("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/QuitBox");
             theboxlol = GameObject.CreatePrimitive(PrimitiveType.Cube);
             theboxlol.transform.position = thequitbox.transform.position;
             theboxlol.transform.rotation = thequitbox.transform.rotation;
             theboxlol.transform.localScale = thequitbox.transform.localScale;
             theboxlol.GetComponent<Renderer>().material = OrangeUI;
-            GameObject.Find("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/QuitBox").SetActive(false);
+            GetObject("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/QuitBox").SetActive(false);
         }
 
         public static void NotPhysicalQuitbox()
         {
             Object.Destroy(theboxlol);
-            GameObject.Find("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/QuitBox").SetActive(true);
+            GetObject("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/QuitBox").SetActive(true);
         }
 
         public static void DisableMouthMovement()
@@ -271,12 +271,12 @@ namespace iiMenu.Mods
                         string compName = compType.Name;
 
                         if (compName == "GorillaPressableButton" || typeof(GorillaPressableButton).IsAssignableFrom(compType) || (compName == "GorillaPlayerLineButton"))
-                            compType.GetMethod("OnTriggerEnter", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(component, new object[] { GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHandTriggerCollider").GetComponent<Collider>() });
+                            compType.GetMethod("OnTriggerEnter", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(component, new object[] { GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHandTriggerCollider").GetComponent<Collider>() });
 
                         if (compName == "CustomKeyboardKey")
                         {
                             keyboardDelay = Time.time + 0.1f;
-                            compType.GetMethod("OnTriggerEnter", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(component, new object[] { GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHandTriggerCollider").GetComponent<Collider>() });
+                            compType.GetMethod("OnTriggerEnter", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(component, new object[] { GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHandTriggerCollider").GetComponent<Collider>() });
                         }
 
                         if (compName == "GorillaKeyboardButton")

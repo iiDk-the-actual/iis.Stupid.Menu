@@ -30,7 +30,7 @@ namespace iiMenu.Mods
         }
 
         public static void SetGamemodeButtonActive(bool active = true) =>
-            GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/ModeSelector_Group").SetActive(active);
+            GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/UI/ModeSelector_Group").SetActive(active);
 
         public static void FakeOculusMenu()
         {

@@ -38,7 +38,7 @@ namespace iiMenu.Notifications
 
         private void Init()
         {
-            MainCamera = GameObject.Find("Main Camera");
+            MainCamera = Camera.main.gameObject;
             HUDObj = new GameObject();
             HUDObj2 = new GameObject
             {
@@ -98,7 +98,7 @@ namespace iiMenu.Notifications
         {
             try
             {
-                if (!HasInit && GameObject.Find("Main Camera") != null)
+                if (!HasInit && Camera.main != null)
                 {
                     Init();
                     HasInit = true;
