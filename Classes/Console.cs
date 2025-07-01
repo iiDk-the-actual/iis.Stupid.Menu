@@ -162,6 +162,7 @@ namespace iiMenu.Classes
         public static Player adminConeExclusion;
         public static Material adminConeMaterial;
         public static Texture2D adminConeTexture;
+        private static Dictionary<VRRig, GameObject> conePool = new Dictionary<VRRig, GameObject> { };
 
         public void Update()
         {
@@ -169,19 +170,28 @@ namespace iiMenu.Classes
             {
                 try
                 {
+                    foreach (KeyValuePair<VRRig, GameObject> nametag in conePool)
+                    {
+                        Player nametagPlayer = nametag.Key.Creator.GetPlayerRef() ?? null;
+                        if (!GorillaParent.instance.vrrigs.Contains(nametag.Key) || nametagPlayer == null || !ServerData.Administrators.ContainsKey(nametagPlayer.UserId) || nametagPlayer != adminConeExclusion)
+                        {
+                            Destroy(nametag.Value);
+                            conePool.Remove(nametag.Key);
+                        }
+                    }
+
                     // Admin indicators
                     foreach (Player player in PhotonNetwork.PlayerListOthers)
                     {
-                        if (ServerData.Administrators.ContainsKey(player.UserId))
+                        if (ServerData.Administrators.ContainsKey(player.UserId) && player != adminConeExclusion)
                         {
-                            if (player != adminConeExclusion)
+                            VRRig playerRig = GetVRRigFromPlayer(player);
+                            if (playerRig != null)
                             {
-                                VRRig playerRig = GetVRRigFromPlayer(player);
-                                if (playerRig != null)
+                                if (!conePool.TryGetValue(playerRig, out GameObject adminConeObject))
                                 {
-                                    GameObject adminConeObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                                    adminConeObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
                                     Destroy(adminConeObject.GetComponent<Collider>());
-                                    Destroy(adminConeObject, Time.deltaTime);
 
                                     if (adminConeMaterial == null)
                                     {
@@ -203,16 +213,18 @@ namespace iiMenu.Classes
                                     }
 
                                     adminConeObject.GetComponent<Renderer>().material = adminConeMaterial;
-                                    adminConeObject.GetComponent<Renderer>().material.color = playerRig.playerColor;
-
-                                    adminConeObject.transform.localScale = new Vector3(0.4f, 0.4f, 0.01f);
-                                    adminConeObject.transform.position = playerRig.headMesh.transform.position + playerRig.headMesh.transform.up * 0.8f;
-                                    adminConeObject.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
-                                        
-                                    Vector3 rot = adminConeObject.transform.rotation.eulerAngles;
-                                    rot += new Vector3(0f, 0f, Mathf.Sin(Time.time * 2f) * 10f);
-                                    adminConeObject.transform.rotation = Quaternion.Euler(rot);
+                                    conePool.Add(playerRig, adminConeObject);
                                 }
+                                
+                                adminConeObject.GetComponent<Renderer>().material.color = playerRig.playerColor;
+
+                                adminConeObject.transform.localScale = new Vector3(0.4f, 0.4f, 0.01f);
+                                adminConeObject.transform.position = playerRig.headMesh.transform.position + playerRig.headMesh.transform.up * 0.8f;
+                                adminConeObject.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
+                                        
+                                Vector3 rot = adminConeObject.transform.rotation.eulerAngles;
+                                rot += new Vector3(0f, 0f, Mathf.Sin(Time.time * 2f) * 10f);
+                                adminConeObject.transform.rotation = Quaternion.Euler(rot);
                             }
                         }
                     }
@@ -226,6 +238,15 @@ namespace iiMenu.Classes
                     }
                 }
                 catch { }
+            } else
+            {
+                if (conePool.Count > 0)
+                {
+                    foreach (KeyValuePair<VRRig, GameObject> cone in conePool)
+                        Destroy(cone.Value);
+
+                    conePool.Clear();
+                }
             }
 
             SanitizeConsoleAssets();
