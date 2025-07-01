@@ -42,7 +42,7 @@ namespace iiMenu.Mods
             if (PhotonNetwork.InRoom && Time.time > removeBlindfoldDelay)
             {
                 removeBlindfoldDelay = Time.time + 0.5f;
-                GameObject mainCamera = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/Main Camera");
+                GameObject mainCamera = GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/Main Camera");
                 int childCount = mainCamera.transform.childCount;
                 for (int i = 0; i < childCount; i++)
                 {
@@ -55,8 +55,8 @@ namespace iiMenu.Mods
 
         public static void WatchOn()
         {
-            GameObject mainwatch = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/huntcomputer (1)");
-            regwatchobject = UnityEngine.Object.Instantiate(mainwatch, rightHand ? GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R").transform : GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L").transform, false);
+            GameObject mainwatch = GetObject("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/huntcomputer (1)");
+            regwatchobject = UnityEngine.Object.Instantiate(mainwatch, rightHand ? GetObject("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R").transform : GetObject("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L").transform, false);
             UnityEngine.Object.Destroy(regwatchobject.GetComponent<GorillaHuntComputer>());
             regwatchobject.SetActive(true);
 
@@ -123,18 +123,18 @@ namespace iiMenu.Mods
         public static Material oldSkyMat = null;
         public static void DoCustomSkyboxColor()
         {
-            GameObject sky = GameObject.Find("Environment Objects/LocalObjects_Prefab/Standard Sky");
+            GameObject sky = GetObject("Environment Objects/LocalObjects_Prefab/Standard Sky");
             oldSkyMat = sky.GetComponent<Renderer>().material;
         }
 
         public static void CustomSkyboxColor()
         {
-            GameObject.Find("Environment Objects/LocalObjects_Prefab/Standard Sky").GetComponent<Renderer>().material = OrangeUI;
+            GetObject("Environment Objects/LocalObjects_Prefab/Standard Sky").GetComponent<Renderer>().material = OrangeUI;
         }
 
         public static void UnCustomSkyboxColor()
         {
-            GameObject sky = GameObject.Find("Environment Objects/LocalObjects_Prefab/Standard Sky");
+            GameObject sky = GetObject("Environment Objects/LocalObjects_Prefab/Standard Sky");
             sky.GetComponent<Renderer>().material = oldSkyMat;
         }
 
@@ -473,7 +473,7 @@ namespace iiMenu.Mods
 
         public static void VisualizeNetworkTriggers()
         {
-            GameObject triggers = GameObject.Find("Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab");
+            GameObject triggers = GetObject("Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab");
             for (int i = 0; i < triggers.transform.childCount; i++)
             {
                 try
@@ -489,7 +489,7 @@ namespace iiMenu.Mods
 
         public static void VisualizeMapTriggers()
         {
-            GameObject triggers = GameObject.Find("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab");
+            GameObject triggers = GetObject("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab");
             for (int i = 0; i < triggers.transform.childCount; i++)
             {
                 try
@@ -838,7 +838,7 @@ namespace iiMenu.Mods
         public static List<GameObject> leaves = new List<GameObject> { };
         public static void EnableRemoveLeaves()
         {
-            GameObject Forest = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest");
+            GameObject Forest = GetObject("Environment Objects/LocalObjects_Prefab/Forest");
             if (Forest != null)
             {
                 for (int i = 0; i < Forest.transform.childCount; i++)
@@ -852,7 +852,7 @@ namespace iiMenu.Mods
                 }
             }
 
-            GameObject RankedForest = GameObject.Find("RankedMain/Ranked_Layout/Ranked_Forest_prefab");
+            GameObject RankedForest = GetObject("RankedMain/Ranked_Layout/Ranked_Forest_prefab");
             if (RankedForest != null)
             {
                 for (int i = 0; i < RankedForest.transform.childCount; i++)
@@ -877,7 +877,7 @@ namespace iiMenu.Mods
 
         public static void EnableStreamerRemoveLeaves()
         {
-            GameObject Forest = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest");
+            GameObject Forest = GetObject("Environment Objects/LocalObjects_Prefab/Forest");
             if (Forest != null)
             {
                 for (int i = 0; i < Forest.transform.childCount; i++)
@@ -891,7 +891,7 @@ namespace iiMenu.Mods
                 }
             }
 
-            GameObject RankedForest = GameObject.Find("RankedMain/Ranked_Layout/Ranked_Forest_prefab");
+            GameObject RankedForest = GetObject("RankedMain/Ranked_Layout/Ranked_Forest_prefab");
             if (RankedForest != null)
             {
                 for (int i = 0; i < RankedForest.transform.childCount; i++)
@@ -1548,7 +1548,7 @@ namespace iiMenu.Mods
                 { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
             }
 
-            GorillaHuntManager sillyComputer = GorillaGameManager.instance.gameObject.GetOrAddComponent<GorillaHuntManager>();
+            GorillaHuntManager sillyComputer = (GorillaHuntManager)GorillaGameManager.instance;
             NetPlayer target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
             foreach (NetPlayer player in PhotonNetwork.PlayerList)
             {
@@ -1723,7 +1723,7 @@ namespace iiMenu.Mods
 
         public static void HuntChams()
         {
-            GorillaHuntManager sillyComputer = GorillaGameManager.instance.gameObject.GetComponent<GorillaHuntManager>();
+            GorillaHuntManager sillyComputer = (GorillaHuntManager)GorillaGameManager.instance;
             NetPlayer target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
             foreach (NetPlayer player in PhotonNetwork.PlayerList)
             {
@@ -1898,7 +1898,7 @@ namespace iiMenu.Mods
                 { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
             }
 
-            GorillaHuntManager sillyComputer = GorillaGameManager.instance.gameObject.GetComponent<GorillaHuntManager>();
+            GorillaHuntManager sillyComputer = (GorillaHuntManager)GorillaGameManager.instance;
             NetPlayer target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
             foreach (NetPlayer player in PhotonNetwork.PlayerList)
             {
@@ -2231,7 +2231,7 @@ namespace iiMenu.Mods
                 { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
             }
 
-            GorillaHuntManager sillyComputer = GorillaGameManager.instance.gameObject.GetComponent<GorillaHuntManager>();
+            GorillaHuntManager sillyComputer = (GorillaHuntManager)GorillaGameManager.instance;
             NetPlayer target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
             foreach (NetPlayer player in PhotonNetwork.PlayerList)
             {
@@ -2444,7 +2444,7 @@ namespace iiMenu.Mods
 
         public static void HuntBreadcrumbs()
         {
-            GorillaHuntManager sillyComputer = GorillaGameManager.instance.gameObject.GetComponent<GorillaHuntManager>();
+            GorillaHuntManager sillyComputer = (GorillaHuntManager)GorillaGameManager.instance;
             NetPlayer target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
             foreach (NetPlayer player in PhotonNetwork.PlayerList)
             {
@@ -2649,7 +2649,7 @@ namespace iiMenu.Mods
             if (GorillaGameManager.instance.GameType() != GameModeType.HuntDown)
                 return;
 
-            GorillaHuntManager sillyComputer = GorillaGameManager.instance.gameObject.GetComponent<GorillaHuntManager>();
+            GorillaHuntManager sillyComputer = (GorillaHuntManager)GorillaGameManager.instance;
 
             if (sillyComputer == null)
                 return;
@@ -2811,7 +2811,7 @@ namespace iiMenu.Mods
             if (GorillaGameManager.instance.GameType() != GameModeType.HuntDown)
                 return;
 
-            GorillaHuntManager sillyComputer = GorillaGameManager.instance.gameObject.GetComponent<GorillaHuntManager>();
+            GorillaHuntManager sillyComputer = (GorillaHuntManager)GorillaGameManager.instance;
 
             if (sillyComputer == null)
                 return;
@@ -3025,7 +3025,7 @@ namespace iiMenu.Mods
             if (GorillaGameManager.instance.GameType() != GameModeType.HuntDown)
                 return;
 
-            GorillaHuntManager sillyComputer = GorillaGameManager.instance.gameObject.GetComponent<GorillaHuntManager>();
+            GorillaHuntManager sillyComputer = (GorillaHuntManager)GorillaGameManager.instance;
             
             if (sillyComputer == null)
                 return;

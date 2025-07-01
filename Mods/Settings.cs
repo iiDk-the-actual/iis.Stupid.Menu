@@ -382,11 +382,11 @@ namespace iiMenu.Mods
         public static void WatchMenuOn()
         {
             watchMenu = true;
-            GameObject mainwatch = GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/huntcomputer (1)");
+            GameObject mainwatch = GetObject("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/huntcomputer (1)");
             watchobject = UnityEngine.Object.Instantiate(mainwatch, 
-                rightHand ? 
-                GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R").transform : 
-                GameObject.Find("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L").transform, false);
+                rightHand ?
+                GetObject("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.R/upper_arm.R/forearm.R/hand.R").transform :
+                GetObject("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L").transform, false);
 
             UnityEngine.Object.Destroy(watchobject.GetComponent<GorillaHuntComputer>());
             watchobject.SetActive(true);
@@ -2925,13 +2925,13 @@ namespace iiMenu.Mods
             disableBoardColor = true;
             motd.SetActive(false);
             motdText.SetActive(false);
-            GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/motd (1)").SetActive(true);
-            GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/motdtext").SetActive(true);
+            GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/motd (1)").SetActive(true);
+            GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/motdtext").SetActive(true);
 
             int boardIndex = 0;
-            for (int i = 0; i < GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.childCount; i++)
+            for (int i = 0; i < GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.childCount; i++)
             {
-                GameObject v = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.GetChild(i).gameObject;
+                GameObject v = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.GetChild(i).gameObject;
                 if (v.name.Contains(StumpLeaderboardID))
                 {
                     boardIndex++;
@@ -2941,9 +2941,9 @@ namespace iiMenu.Mods
             }
 
             boardIndex = 0;
-            for (int i = 0; i < GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest").transform.childCount; i++)
+            for (int i = 0; i < GetObject("Environment Objects/LocalObjects_Prefab/Forest").transform.childCount; i++)
             {
-                GameObject v = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest").transform.GetChild(i).gameObject;
+                GameObject v = GetObject("Environment Objects/LocalObjects_Prefab/Forest").transform.GetChild(i).gameObject;
                 if (v.name.Contains(ForestLeaderboardID))
                 {
                     boardIndex++;
@@ -2977,8 +2977,8 @@ namespace iiMenu.Mods
             disableBoardColor = false;
             motd.SetActive(true);
             motdText.SetActive(true);
-            GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/motd (1)").SetActive(false);
-            GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/motdtext").SetActive(false);
+            GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/motd (1)").SetActive(false);
+            GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/motdtext").SetActive(false);
         }
     }
 }

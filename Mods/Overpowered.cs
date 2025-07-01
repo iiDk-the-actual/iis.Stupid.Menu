@@ -156,7 +156,7 @@ namespace iiMenu.Mods
         {
             if (NetworkSystem.Instance.IsMasterClient)
             {
-                GorillaGuardianManager gman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Guardian Manager").GetComponent<GorillaGuardianManager>();
+                GorillaGuardianManager gman = (GorillaGuardianManager)GorillaGameManager.instance;
                 if (!gman.IsPlayerGuardian(PhotonNetwork.LocalPlayer))
                     SetGuardianTarget(PhotonNetwork.LocalPlayer);
             }
@@ -166,7 +166,7 @@ namespace iiMenu.Mods
                 {
                     if (!tgi.isChangingPositions)
                     {
-                        GorillaGuardianManager gman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Guardian Manager").GetComponent<GorillaGuardianManager>();
+                        GorillaGuardianManager gman = (GorillaGuardianManager)GorillaGameManager.instance;
                         if (!gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer)) // gzm.enabled && 
                         {
                             VRRig.LocalRig.enabled = false;
@@ -391,7 +391,7 @@ namespace iiMenu.Mods
             if (velocity.sqrMagnitude > 20f)
                 velocity = Vector3.Normalize(velocity) * 20f;
 
-            GorillaGuardianManager gman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Guardian Manager").GetComponent<GorillaGuardianManager>();
+            GorillaGuardianManager gman = (GorillaGuardianManager)GorillaGameManager.instance;
             if (gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
                 ActiveNetworkHandlerRPC("GuardianLaunchPlayer", NetPlayerToPlayer(victim), new object[] { velocity });
             else
@@ -402,7 +402,7 @@ namespace iiMenu.Mods
             if (velocity.sqrMagnitude > 20f)
                 velocity = Vector3.Normalize(velocity) * 20f;
 
-            GorillaGuardianManager gman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Guardian Manager").GetComponent<GorillaGuardianManager>();
+            GorillaGuardianManager gman = (GorillaGuardianManager)GorillaGameManager.instance;
             if (gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
                 ActiveNetworkHandlerRPC("GuardianLaunchPlayer", victim, new object[] { velocity });
             else
@@ -423,7 +423,7 @@ namespace iiMenu.Mods
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
-                        GorillaGuardianManager gman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Guardian Manager").GetComponent<GorillaGuardianManager>();
+                        GorillaGuardianManager gman = (GorillaGuardianManager)GorillaGameManager.instance;
                         if (gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
                         {
                             GetNetworkViewFromVRRig(gunTarget).SendRPC("GrabbedByPlayer", RpcTarget.Others, new object[] { true, false, false });
@@ -444,7 +444,7 @@ namespace iiMenu.Mods
             if (rightGrab && Time.time > kgDebounce)
             {
                 kgDebounce = Time.time + 0.1f;
-                GorillaGuardianManager gman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Guardian Manager").GetComponent<GorillaGuardianManager>();
+                GorillaGuardianManager gman = (GorillaGuardianManager)GorillaGameManager.instance;
                 if (gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
                 {
                     foreach (VRRig plr in GorillaParent.instance.vrrigs)
@@ -476,7 +476,7 @@ namespace iiMenu.Mods
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
-                        GorillaGuardianManager gman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Guardian Manager").GetComponent<GorillaGuardianManager>();
+                        GorillaGuardianManager gman = (GorillaGuardianManager)GorillaGameManager.instance;
                         if (gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
                         {
                             GetNetworkViewFromVRRig(gunTarget).SendRPC("DroppedByPlayer", RpcTarget.Others, new object[] { new Vector3(0f, 0f, 0f) });
@@ -497,7 +497,7 @@ namespace iiMenu.Mods
             if (rightTrigger > 0.5f && Time.time > kgDebounce)
             {
                 kgDebounce = Time.time + 0.1f;
-                GorillaGuardianManager gman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Guardian Manager").GetComponent<GorillaGuardianManager>();
+                GorillaGuardianManager gman = (GorillaGuardianManager)GorillaGameManager.instance;
                 if (gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
                 {
                     foreach (VRRig plr in GorillaParent.instance.vrrigs)
@@ -542,7 +542,7 @@ namespace iiMenu.Mods
             if (rightTrigger > 0.5f && Time.time > kgDebounce)
             {
                 kgDebounce = Time.time + 0.1f;
-                GorillaGuardianManager gman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Guardian Manager").GetComponent<GorillaGuardianManager>();
+                GorillaGuardianManager gman = (GorillaGuardianManager)GorillaGameManager.instance;
                 if (gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
                 {
                     BetaSetVelocityTargetGroup(RpcTarget.Others, new Vector3(0f, 19.9f, 0f));
@@ -1429,7 +1429,7 @@ namespace iiMenu.Mods
         {
             if (rightTrigger > 0.5f && Time.time > delay)
             {
-                PhotonView that = GameObject.Find("Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/Arcade_prefab/MainRoom/VRArea/ModIOArcadeTeleporter/NetObject_VRTeleporter").GetComponent<Photon.Pun.PhotonView>();
+                PhotonView that = GetObject("Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/Arcade_prefab/MainRoom/VRArea/ModIOArcadeTeleporter/NetObject_VRTeleporter").GetComponent<Photon.Pun.PhotonView>();
                 delay = Time.time + 0.05f;
                 returnOrTeleport = !returnOrTeleport;
                 that.RPC(returnOrTeleport ? "ActivateTeleportVFX" : "ActivateReturnVFX", RpcTarget.All, new object[] { (short)UnityEngine.Random.Range(0, 7) });
@@ -1441,7 +1441,7 @@ namespace iiMenu.Mods
         {
             if (rightTrigger > 0.5f && Time.time > delay)
             {
-                PhotonView that = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/StumpVRHeadset/ModIOArcadeTeleporter (1)/NetObject_VRTeleporter").GetComponent<Photon.Pun.PhotonView>();
+                PhotonView that = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/StumpVRHeadset/ModIOArcadeTeleporter (1)/NetObject_VRTeleporter").GetComponent<Photon.Pun.PhotonView>();
                 delay = Time.time + 0.05f;
                 returnOrTeleport = !returnOrTeleport;
                 that.RPC(returnOrTeleport ? "ActivateTeleportVFX" : "ActivateReturnVFX", RpcTarget.All, new object[] { (short)0 });
@@ -1636,7 +1636,7 @@ namespace iiMenu.Mods
             {
                 if (Time.time > slamDel)
                 {
-                    GorillaGuardianManager gman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Guardian Manager").GetComponent<GorillaGuardianManager>();
+                    GorillaGuardianManager gman = (GorillaGuardianManager)GorillaGameManager.instance;
                     if (gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
                     {
                         ActiveNetworkHandlerRPC(flip ? "ShowSlamEffect" : "ShowSlapEffects", RpcTarget.All, new object[] { GorillaTagger.Instance.rightHandTransform.position, new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)) });
@@ -1654,7 +1654,7 @@ namespace iiMenu.Mods
             {
                 if (Time.time > slamDel)
                 {
-                    GorillaGuardianManager gman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Guardian Manager").GetComponent<GorillaGuardianManager>();
+                    GorillaGuardianManager gman = (GorillaGuardianManager)GorillaGameManager.instance;
                     if (gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
                     {
                         ActiveNetworkHandlerRPC(flip ? "ShowSlamEffect" : "ShowSlapEffects", RpcTarget.All, new object[] { GorillaTagger.Instance.leftHandTransform.position, new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)) });
@@ -1680,7 +1680,7 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true))
                 {
-                    GorillaGuardianManager gman = GameObject.Find("GT Systems/GameModeSystem/Gorilla Guardian Manager").GetComponent<GorillaGuardianManager>();
+                    GorillaGuardianManager gman = (GorillaGuardianManager)GorillaGameManager.instance;
                     if (Time.time > slamDel)
                     {
                         if (gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
@@ -1701,13 +1701,13 @@ namespace iiMenu.Mods
 
         public static void SpawnSecondLook()
         {
-            GameObject secondlook = GameObject.Find("Environment Objects/05Maze_PersistentObjects/MinesSecondLookSkeleton");
+            GameObject secondlook = GetObject("Environment Objects/05Maze_PersistentObjects/MinesSecondLookSkeleton");
             secondlook.GetComponent<SecondLookSkeletonSynchValues>().GetView.RPC("RemoteActivateGhost", RpcTarget.All, new object[] { });
         }
 
         public static void AngerSecondLook()
         {
-            GameObject secondlook = GameObject.Find("Environment Objects/05Maze_PersistentObjects/MinesSecondLookSkeleton");
+            GameObject secondlook = GetObject("Environment Objects/05Maze_PersistentObjects/MinesSecondLookSkeleton");
             secondlook.GetComponent<SecondLookSkeleton>().tapped = true;
             if (secondlook.GetComponent<SecondLookSkeleton>().currentState == SecondLookSkeleton.GhostState.Unactivated)
                 secondlook.GetComponent<SecondLookSkeletonSynchValues>().GetView.RPC("RemoteActivateGhost", RpcTarget.All, new object[] { });
@@ -1717,7 +1717,7 @@ namespace iiMenu.Mods
 
         public static void ThrowSecondLook()
         {
-            GameObject secondlook = GameObject.Find("Environment Objects/05Maze_PersistentObjects/MinesSecondLookSkeleton");
+            GameObject secondlook = GetObject("Environment Objects/05Maze_PersistentObjects/MinesSecondLookSkeleton");
             secondlook.GetComponent<SecondLookSkeleton>().tapped = true;
             if (secondlook.GetComponent<SecondLookSkeleton>().currentState == SecondLookSkeleton.GhostState.Unactivated)
                 secondlook.GetComponent<SecondLookSkeletonSynchValues>().GetView.RPC("RemoteActivateGhost", RpcTarget.All, new object[] { });
@@ -1731,7 +1731,7 @@ namespace iiMenu.Mods
             if (Time.time > lasttimeaa)
             {
                 lasttimeaa = Time.time + 0.75f;
-                GameObject secondlook = GameObject.Find("Environment Objects/05Maze_PersistentObjects/MinesSecondLookSkeleton");
+                GameObject secondlook = GetObject("Environment Objects/05Maze_PersistentObjects/MinesSecondLookSkeleton");
                 secondlook.GetComponent<SecondLookSkeleton>().tapped = true;
                 if (secondlook.GetComponent<SecondLookSkeleton>().currentState == SecondLookSkeleton.GhostState.Unactivated || secondlook.GetComponent<SecondLookSkeleton>().currentState == SecondLookSkeleton.GhostState.PlayerThrown || secondlook.GetComponent<SecondLookSkeleton>().currentState == SecondLookSkeleton.GhostState.Reset)
                     secondlook.GetComponent<SecondLookSkeletonSynchValues>().GetView.RPC("RemoteActivateGhost", RpcTarget.All, new object[] { });
@@ -1806,7 +1806,7 @@ namespace iiMenu.Mods
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             else
             {
-                GorillaTagManager gorillaTagManager = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
+                GorillaTagManager gorillaTagManager = (GorillaTagManager)GorillaGameManager.instance;
                 gorillaTagManager.SetisCurrentlyTag(true);
                 gorillaTagManager.ClearInfectionState();
                 gorillaTagManager.ChangeCurrentIt(GameMode.ParticipatingPlayers[UnityEngine.Random.Range(0, GameMode.ParticipatingPlayers.Count)]);
@@ -1819,7 +1819,7 @@ namespace iiMenu.Mods
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             else
             {
-                GorillaTagManager gorillaTagManager = GameObject.Find("GT Systems/GameModeSystem/Gorilla Tag Manager").GetComponent<GorillaTagManager>();
+                GorillaTagManager gorillaTagManager = (GorillaTagManager)GorillaGameManager.instance;
                 gorillaTagManager.SetisCurrentlyTag(false);
                 gorillaTagManager.ClearInfectionState();
                 NetPlayer victim = GameMode.ParticipatingPlayers[UnityEngine.Random.Range(0, GameMode.ParticipatingPlayers.Count)];

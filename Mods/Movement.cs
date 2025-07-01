@@ -1176,7 +1176,7 @@ namespace iiMenu.Mods
 
             foreach (string SmallTreeTarget in SmallTreeTargets)
             {
-                GameObject TreeGroupGO = GameObject.Find(SmallTreeTarget);
+                GameObject TreeGroupGO = GetObject(SmallTreeTarget);
 
                 for (int i = 0; i < TreeGroupGO.transform.childCount; i++)
                 {
@@ -1578,7 +1578,7 @@ namespace iiMenu.Mods
         {
             if (zone == "VSTUMP")
             {
-                VirtualStumpTeleporter tele = GameObject.Find("Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/Arcade_prefab/MainRoom/VRArea/ModIOArcadeTeleporter/TeleportTriggers_1/VRHeadsetTrigger_1").GetComponent<VirtualStumpTeleporter>();
+                VirtualStumpTeleporter tele = GetObject("Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/Arcade_prefab/MainRoom/VRArea/ModIOArcadeTeleporter/TeleportTriggers_1/VRHeadsetTrigger_1").GetComponent<VirtualStumpTeleporter>();
 
                 tele.gameObject.transform.parent.parent.parent.parent.parent.parent.gameObject.SetActive(true); // wtf
                 tele.gameObject.transform.parent.parent.parent.parent.gameObject.SetActive(true);
@@ -1586,8 +1586,8 @@ namespace iiMenu.Mods
                 tele.TeleportPlayer();
             } else
             {
-                GameObject.Find(zone).GetComponent<GorillaSetZoneTrigger>().OnBoxTriggered();
-                TeleportPlayer(GameObject.Find(pos).transform.position);
+                GetObject(zone).GetComponent<GorillaSetZoneTrigger>().OnBoxTriggered();
+                TeleportPlayer(GetObject(pos).transform.position);
             }
         }
 
@@ -2682,7 +2682,7 @@ namespace iiMenu.Mods
                 {
                     climb.transform.position = GorillaTagger.Instance.leftHandTransform.position;
                     leftisclimbing = true;
-                    GTPlayer.Instance.BeginClimbing(climb.AddComponent<GorillaClimbable>(), GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller/GorillaHandClimber").GetComponent<GorillaHandClimber>());
+                    GTPlayer.Instance.BeginClimbing(climb.AddComponent<GorillaClimbable>(), GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller/GorillaHandClimber").GetComponent<GorillaHandClimber>());
                 }
             } else
                 leftisclimbing = false;
@@ -2693,7 +2693,7 @@ namespace iiMenu.Mods
                 {
                     climb.transform.position = GorillaTagger.Instance.rightHandTransform.position;
                     rightisclimbing = true;
-                    GTPlayer.Instance.BeginClimbing(climb.AddComponent<GorillaClimbable>(), GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller/GorillaHandClimber").GetComponent<GorillaHandClimber>());
+                    GTPlayer.Instance.BeginClimbing(climb.AddComponent<GorillaClimbable>(), GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller/GorillaHandClimber").GetComponent<GorillaHandClimber>());
                 }
             }
             else
@@ -2920,10 +2920,10 @@ namespace iiMenu.Mods
                     comp.velocity = GTPlayer.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0);
                     try
                     {
-                        if (GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").GetComponent<GorillaVelocityEstimator>() == null)
-                            GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").AddComponent<GorillaVelocityEstimator>();
+                        if (GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").GetComponent<GorillaVelocityEstimator>() == null)
+                            GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").AddComponent<GorillaVelocityEstimator>();
                         
-                        comp.angularVelocity = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").GetComponent<GorillaVelocityEstimator>().angularVelocity;
+                        comp.angularVelocity = GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").GetComponent<GorillaVelocityEstimator>().angularVelocity;
                     } catch { }
                 }
             }
@@ -2955,10 +2955,10 @@ namespace iiMenu.Mods
                     comp.velocity = GTPlayer.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0);
                     try
                     {
-                        if (GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").GetComponent<GorillaVelocityEstimator>() == null)
-                            GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").AddComponent<GorillaVelocityEstimator>();
+                        if (GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").GetComponent<GorillaVelocityEstimator>() == null)
+                            GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").AddComponent<GorillaVelocityEstimator>();
                         
-                        comp.angularVelocity = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").GetComponent<GorillaVelocityEstimator>().angularVelocity;
+                        comp.angularVelocity = GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").GetComponent<GorillaVelocityEstimator>().angularVelocity;
                     } catch { }
                 }
             }
@@ -3336,7 +3336,7 @@ namespace iiMenu.Mods
         {
             if (airSwimPart == null)
             {
-                airSwimPart = UnityEngine.Object.Instantiate<GameObject>(GameObject.Find("Environment Objects/LocalObjects_Prefab/ForestToBeach/ForestToBeach_Prefab_V4/CaveWaterVolume"));
+                airSwimPart = UnityEngine.Object.Instantiate<GameObject>(GetObject("Environment Objects/LocalObjects_Prefab/ForestToBeach/ForestToBeach_Prefab_V4/CaveWaterVolume"));
                 airSwimPart.transform.localScale = new Vector3(5f, 5f, 5f);
                 airSwimPart.GetComponent<Renderer>().enabled = false;
             }

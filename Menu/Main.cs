@@ -130,7 +130,7 @@ namespace iiMenu.Menu
                 {
                     if (!buttonCondition && menu != null)
                     {
-                        GameObject.Find("Shoulder Camera").transform.Find("CM vcam1").gameObject.SetActive(true);
+                        GetObject("Shoulder Camera").transform.Find("CM vcam1").gameObject.SetActive(true);
 
                         if (dynamicSounds)
                             Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/close.wav", "close.wav"), buttonClickVolume / 10f);
@@ -159,12 +159,12 @@ namespace iiMenu.Menu
                                     if (rightHand || (bothHands && openedwithright))
                                     {
                                         comp.velocity = GorillaLocomotion.GTPlayer.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0);
-                                        comp.angularVelocity = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").GetOrAddComponent<GorillaVelocityEstimator>().angularVelocity;
+                                        comp.angularVelocity = GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").GetOrAddComponent<GorillaVelocityEstimator>().angularVelocity;
                                     }
                                     else
                                     {
                                         comp.velocity = GorillaLocomotion.GTPlayer.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0);
-                                        comp.angularVelocity = GameObject.Find("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").GetOrAddComponent<GorillaVelocityEstimator>().angularVelocity;
+                                        comp.angularVelocity = GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").GetOrAddComponent<GorillaVelocityEstimator>().angularVelocity;
                                     }
 
                                     if (annoyingMode)
@@ -225,9 +225,9 @@ namespace iiMenu.Menu
                             //LogManager.Log("Looking for boards");
                             bool found = false;
                             int indexOfThatThing = 0;
-                            for (int i = 0; i < GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.childCount; i++)
+                            for (int i = 0; i < GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.childCount; i++)
                             {
-                                GameObject v = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.GetChild(i).gameObject;
+                                GameObject v = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.GetChild(i).gameObject;
                                 if (v.name.Contains(StumpLeaderboardID))
                                 {
                                     indexOfThatThing++;
@@ -244,9 +244,9 @@ namespace iiMenu.Menu
 
                             bool found2 = false;
                             indexOfThatThing = 0;
-                            for (int i = 0; i < GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest").transform.childCount; i++)
+                            for (int i = 0; i < GetObject("Environment Objects/LocalObjects_Prefab/Forest").transform.childCount; i++)
                             {
-                                GameObject v = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest").transform.GetChild(i).gameObject;
+                                GameObject v = GetObject("Environment Objects/LocalObjects_Prefab/Forest").transform.GetChild(i).gameObject;
                                 if (v.name.Contains(ForestLeaderboardID))
                                 {
                                     indexOfThatThing++;
@@ -262,7 +262,7 @@ namespace iiMenu.Menu
                             }
                             if (found && found2)
                             {
-                                GameObject vr = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomBoundaryStones/BoundaryStoneSet_Forest/wallmonitorforestbg");
+                                GameObject vr = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomBoundaryStones/BoundaryStoneSet_Forest/wallmonitorforestbg");
                                 if (vr != null)
                                     vr.GetComponent<Renderer>().material = OrangeUI;
 
@@ -299,7 +299,7 @@ namespace iiMenu.Menu
                                 };
                                 foreach (string objectName in objectsWithTMPro)
                                 {
-                                    GameObject obj = GameObject.Find(objectName);
+                                    GameObject obj = GetObject(objectName);
                                     if (obj != null)
                                     {
                                         TextMeshPro text = obj.GetComponent<TextMeshPro>();
@@ -310,7 +310,7 @@ namespace iiMenu.Menu
                                         LogManager.Log("Could not find " + objectName);
                                 }
 
-                                Transform forestTransform = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/ForestScoreboardAnchor/GorillaScoreBoard").transform;
+                                Transform forestTransform = GetObject("Environment Objects/LocalObjects_Prefab/Forest/ForestScoreboardAnchor/GorillaScoreBoard").transform;
                                 for (int i = 0; i < forestTransform.transform.childCount; i++)
                                 {
                                     GameObject v = forestTransform.GetChild(i).gameObject;
@@ -333,7 +333,7 @@ namespace iiMenu.Menu
                     }
 
                     if (computerMonitor == null)
-                        computerMonitor = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/GorillaComputerObject/ComputerUI/monitor/monitorScreen");
+                        computerMonitor = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/GorillaComputerObject/ComputerUI/monitor/monitorScreen");
 
                     if (computerMonitor != null)
                         computerMonitor.GetComponent<Renderer>().material = OrangeUI;
@@ -347,7 +347,7 @@ namespace iiMenu.Menu
 
                         if (motd == null)
                         {
-                            GameObject motdObject = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/motdHeadingText");
+                            GameObject motdObject = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/motdHeadingText");
                             motd = Instantiate(motdObject, motdObject.transform.parent);
                             motdObject.SetActive(false);
                         }
@@ -374,7 +374,7 @@ namespace iiMenu.Menu
 
                         if (motdText == null)
                         {
-                            GameObject motdObject = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/motdBodyText");
+                            GameObject motdObject = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/motdBodyText");
                             motdText = Instantiate(motdObject, motdObject.transform.parent);
                             motdObject.SetActive(false);
 
@@ -524,11 +524,11 @@ namespace iiMenu.Menu
                         {
                             try
                             {
-                                TPC = GameObject.Find("Player Objects/Third Person Camera/Shoulder Camera").GetComponent<Camera>();
+                                TPC = GetObject("Player Objects/Third Person Camera/Shoulder Camera").GetComponent<Camera>();
                             }
                             catch
                             {
-                                TPC = GameObject.Find("Shoulder Camera").GetComponent<Camera>();
+                                TPC = GetObject("Shoulder Camera").GetComponent<Camera>();
                             }
                         }
                     } catch { }
@@ -2487,7 +2487,7 @@ namespace iiMenu.Menu
             }
             if (isKeyboardCondition)
             {
-                GameObject.Find("Shoulder Camera").transform.Find("CM vcam1").gameObject.SetActive(false);
+                GetObject("Shoulder Camera").transform.Find("CM vcam1").gameObject.SetActive(false);
 
                 if (TPC != null)
                 {
@@ -3576,6 +3576,19 @@ namespace iiMenu.Menu
             return table;
         }
 
+        private static Dictionary<string, GameObject> objectPool = new Dictionary<string, GameObject> { };
+        public static GameObject GetObject(string find)
+        {
+            if (objectPool.TryGetValue(find, out GameObject go))
+                return go;
+
+            GameObject tgo = GameObject.Find(find);
+            if (tgo != null)
+                objectPool.Add(find, tgo);
+
+            return tgo;
+        }
+
         public static bool PlayerIsTagged(VRRig Player)
         {
             List<NetPlayer> infectedPlayers = InfectedList();
@@ -4046,7 +4059,7 @@ namespace iiMenu.Menu
                         {
                             VRRig target = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false));
 
-                            Transform keyboardTransform = GameObject.Find("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/GorillaComputerObject/ComputerUI/keyboard (1)").transform;
+                            Transform keyboardTransform = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/GorillaComputerObject/ComputerUI/keyboard (1)").transform;
                             if (Vector3.Distance(target.transform.position, keyboardTransform.position) < 3f)
                             {
                                 string handPath = (bool)args[1]
