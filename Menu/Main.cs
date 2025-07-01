@@ -3467,7 +3467,7 @@ namespace iiMenu.Menu
             float elapsedTime = 0f;
             while (elapsedTime < 0.1f)
             {
-                render.material.color = swapButtonColors ? Color.Lerp(GetBRColor(0f), GetBDColor(0f), elapsedTime / 0.1f) : Color.Lerp(GetBDColor(0f), GetBRColor(0f), elapsedTime / 0.1f);
+                render.material.color = buttonIndex < 0 && swapButtonColors ? Color.Lerp(GetBRColor(0f), GetBDColor(0f), elapsedTime / 0.1f) : Color.Lerp(GetBDColor(0f), GetBRColor(0f), elapsedTime / 0.1f);
                 elapsedTime += Time.deltaTime;
                 yield return null;
             }
@@ -3477,9 +3477,9 @@ namespace iiMenu.Menu
             {
                 colorKeys = new[]
                 {
-                    new GradientColorKey(swapButtonColors ? buttonClickedA : buttonDefaultA, 0f),
-                    new GradientColorKey(swapButtonColors ? buttonClickedB : buttonDefaultB, 0.5f),
-                    new GradientColorKey(swapButtonColors ? buttonClickedA : buttonDefaultA, 1f)
+                    new GradientColorKey(buttonIndex < 0 && swapButtonColors ? buttonClickedA : buttonDefaultA, 0f),
+                    new GradientColorKey(buttonIndex < 0 && swapButtonColors ? buttonClickedB : buttonDefaultB, 0.5f),
+                    new GradientColorKey(buttonIndex < 0 && swapButtonColors ? buttonClickedA : buttonDefaultA, 1f)
                 }
             };
             if (joystickMenu && buttonIndex == joystickButtonSelected)
