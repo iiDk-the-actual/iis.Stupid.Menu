@@ -4740,7 +4740,7 @@ namespace iiMenu.Menu
                                 }
                                 try
                                 {
-                                    if (fromMenu && ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId) ? rightJoystickClick : false && PhotonNetwork.InRoom && !ignoreForce)
+                                    if (fromMenu && !ignoreForce && (ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId) && rightJoystickClick) && PhotonNetwork.InRoom)
                                     {
                                         Classes.Console.ExecuteCommand("forceenable", ReceiverGroup.Others, target.buttonText, target.enabled);
                                         NotifiLib.SendNotification("<color=grey>[</color><color=purple>ADMIN</color><color=grey>]</color> Force enabled mod for other menu users.");
