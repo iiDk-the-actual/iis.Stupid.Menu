@@ -3399,8 +3399,9 @@ namespace iiMenu.Menu
                     return AudioType.OGGVORBIS;
                 case "aiff":
                     return AudioType.AIFF;
+                default:
+                    return AudioType.WAV;
             }
-            return AudioType.WAV;
         }
 
         public static string GetFullPath(Transform transform)
