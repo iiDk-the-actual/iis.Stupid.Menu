@@ -45,6 +45,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Plugin Settings", method =() => currentCategoryName = "Plugin Settings", isTogglable = false, toolTip = "Opens the settings for the plugins."},
 
                 new ButtonInfo { buttonText = "Soundboard Settings", method =() => currentCategoryName = "Soundboard Settings", isTogglable = false, toolTip = "Opens the settings for the soundboard."},
+                new ButtonInfo { buttonText = "Friend Settings", method =() => currentCategoryName = "Friend Settings", isTogglable = false, toolTip = "Opens the settings for the friend system."},
 
                 new ButtonInfo { buttonText = "Room Settings", method =() => currentCategoryName = "Room Settings", isTogglable = false, toolTip = "Opens the settings for the room mods."},
                 new ButtonInfo { buttonText = "Safety Settings", method =() => currentCategoryName = "Safety Settings", isTogglable = false, toolTip = "Opens the settings for the safety mods."},
@@ -1366,6 +1367,15 @@ namespace iiMenu.Menu
             new ButtonInfo[] { // Friends [34]
                 new ButtonInfo { buttonText = "Exit Friends", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
                 new ButtonInfo { buttonText = "Loading...", label = true},
+            },
+
+            new ButtonInfo[] { // Friend Settings [35]
+                new ButtonInfo { buttonText = "Exit Friend Settings", method =() => currentCategoryName = "Settings", isTogglable = false, toolTip = "Returns you back to the settings menu."},
+                
+                new ButtonInfo { buttonText = "Disable Rig Networking", enableMethod =() => FriendManager.RigNetworking = false, disableMethod =() => FriendManager.RigNetworking = true, toolTip = "Disables the networking between friends when your rig is disabled."},
+                new ButtonInfo { buttonText = "Disable Platform Networking", enableMethod =() => FriendManager.PlatformNetworking = false, disableMethod =() => FriendManager.PlatformNetworking = true, toolTip = "Disables the platform networking between friends."},
+                
+                new ButtonInfo { buttonText = "Physical Platforms", enableMethod =() => FriendManager.PhysicalPlatforms = false, disableMethod =() => FriendManager.PhysicalPlatforms = true, toolTip = "Allows networked platforms to be collided with between friends."},
             }
         };
 
@@ -1405,7 +1415,8 @@ namespace iiMenu.Menu
             "Overpowered Settings",
             "Keybind Settings",
             "Plugin Settings",
-            "Friends"
+            "Friends",
+            "Friend Settings"
         };
     }
 }
