@@ -1189,8 +1189,10 @@ namespace iiMenu.Menu
                     else
                         ServerPos = Vector3.Lerp(ServerPos, VRRig.LocalRig.SanitizeVector3(ServerSyncPos), VRRig.LocalRig.lerpValueBody * 0.66f);
 
-                    if (Lockdown)
-                        return;
+                    /*
+                     * if (Lockdown)
+                     *  return;
+                     */
 
                     // Execute plugin updates
                     foreach (KeyValuePair<string, Assembly> Plugin in Settings.LoadedPlugins)
