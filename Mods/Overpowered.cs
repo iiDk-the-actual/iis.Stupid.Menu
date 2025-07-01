@@ -949,14 +949,6 @@ namespace iiMenu.Mods
                 if (gunLocked && lockTarget != null && Time.time > snowballDelay)
                 {
                     Vector3 velocity = lockTarget.rightHandTransform.transform.forward * ShootStrength * 5f;
-                    if (Mouse.current.leftButton.isPressed)
-                    {
-                        Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
-                        Physics.Raycast(ray, out var hit, 512f, NoInvisLayerMask());
-                        velocity = hit.point - GorillaTagger.Instance.rightHandTransform.transform.position;
-                        velocity.Normalize();
-                        velocity *= ShootStrength * 2f;
-                    }
 
                     BetaSpawnSnowball(lockTarget.rightHandTransform.transform.position, velocity, 5f, 0);
                     snowballDelay = Time.time + snowballSpawnDelay;

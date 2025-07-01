@@ -476,9 +476,12 @@ namespace iiMenu.Mods
             else 
                 themeType--;
 
-            int themeCount = 57;
-            themeType %= themeCount + 1;
-            if (themeType < 0)
+            int themeCount = 62;
+
+            if (themeType > themeCount)
+                themeType = 1;
+
+            if (themeType < 1)
                 themeType = themeCount;
 
             if (GetIndex("Custom Menu Theme").enabled)
@@ -1121,6 +1124,50 @@ namespace iiMenu.Mods
                     buttonDefaultB = new Color32(45, 46, 51, 255);
                     buttonClickedA = new Color32(231, 133, 209, 255);
                     buttonClickedB = new Color32(56, 155, 193, 255);
+                    titleColor = Color.white;
+                    textColor = Color.white;
+                    textClicked = Color.white;
+                    break;
+                case 59: // Mint Blue (Opal v2)
+                    bgColorA = new Color32(32, 32, 32, 255);
+                    bgColorB = new Color32(32, 32, 32, 255);
+                    buttonDefaultA = new Color32(45, 46, 51, 255);
+                    buttonDefaultB = new Color32(45, 46, 51, 255);
+                    buttonClickedA = new Color32(40, 94, 93, 255);
+                    buttonClickedB = new Color32(66, 158, 157, 255);
+                    titleColor = Color.white;
+                    textColor = Color.white;
+                    textClicked = Color.white;
+                    break;
+                case 60: // Pink Blood (Opal v2)
+                    bgColorA = new Color32(32, 32, 32, 255);
+                    bgColorB = new Color32(32, 32, 32, 255);
+                    buttonDefaultA = new Color32(45, 46, 51, 255);
+                    buttonDefaultB = new Color32(45, 46, 51, 255);
+                    buttonClickedA = new Color32(255, 166, 201, 255);
+                    buttonClickedB = new Color32(228, 0, 70, 255);
+                    titleColor = Color.white;
+                    textColor = Color.white;
+                    textClicked = Color.white;
+                    break;
+                case 61: // Purple Fire (Opal v2)
+                    bgColorA = new Color32(32, 32, 32, 255);
+                    bgColorB = new Color32(32, 32, 32, 255);
+                    buttonDefaultA = new Color32(45, 46, 51, 255);
+                    buttonDefaultB = new Color32(45, 46, 51, 255);
+                    buttonClickedA = new Color32(177, 162, 202, 255);
+                    buttonClickedB = new Color32(104, 71, 141, 255);
+                    titleColor = Color.white;
+                    textColor = Color.white;
+                    textClicked = Color.white;
+                    break;
+                case 62: // Deep Ocean (Opal v2)
+                    bgColorA = new Color32(32, 32, 32, 255);
+                    bgColorB = new Color32(32, 32, 32, 255);
+                    buttonDefaultA = new Color32(45, 46, 51, 255);
+                    buttonDefaultB = new Color32(45, 46, 51, 255);
+                    buttonClickedA = new Color32(60, 82, 145, 255);
+                    buttonClickedB = new Color32(0, 20, 64, 255);
                     titleColor = Color.white;
                     textColor = Color.white;
                     textClicked = Color.white;
