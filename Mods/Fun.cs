@@ -9,6 +9,7 @@ using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
+using Photon.Voice;
 using Photon.Voice.Unity;
 using Photon.Voice.Unity.UtilityScripts;
 using PlayFab;
@@ -1061,6 +1062,55 @@ namespace iiMenu.Mods
             }
         }
 
+        public class MicPitchShifter : VoiceComponent
+        {
+            public float PitchFactor = 1.5f;
+            public PitchProcessor floatProcessor;
+
+            public void PhotonVoiceCreated(PhotonVoiceCreatedParams p)
+            {
+                if (p.Voice is LocalVoiceAudioFloat floatVoice)
+                {
+                    floatProcessor = new PitchProcessor(PitchFactor);
+                    floatVoice.AddPostProcessor(new IProcessor<float>[] { floatProcessor });
+                }
+            }
+
+            public class PitchProcessor : IProcessor<float>
+            {
+                private float pitch;
+
+                public PitchProcessor(float pitchFactor) =>
+                    pitch = Mathf.Clamp(pitchFactor, 0.5f, 2f);
+
+                public float[] Process(float[] buf)
+                {
+                    int inputLength = buf.Length;
+                    float[] output = new float[inputLength];
+
+                    float sampleIndex = 0f;
+                    for (int i = 0; i < inputLength; i++)
+                    {
+                        int indexFloor = Mathf.FloorToInt(sampleIndex);
+                        int indexCeil = Mathf.Min(indexFloor + 1, inputLength - 1);
+                        float t = sampleIndex - indexFloor;
+
+                        float interpolated = Mathf.Lerp(buf[indexFloor], buf[indexCeil], t);
+                        output[i] = interpolated;
+
+                        sampleIndex += pitch;
+                        if (sampleIndex >= inputLength - 1)
+                            break;
+                    }
+
+                    return output;
+                }
+
+                public void Dispose() { }
+            }
+
+        }
+
         public static void SetMicrophoneQuality(int bitrate, int samplingRate)
         {
             Recorder mic = GorillaTagger.Instance.myRecorder;
@@ -1086,6 +1136,28 @@ namespace iiMenu.Mods
                     MicAmplifier microphoneAmplifier = mic.gameObject.GetOrAddComponent<MicAmplifier>();
                     microphoneAmplifier.enabled = false;
                     UnityEngine.Object.Destroy(mic.gameObject.GetComponent<MicAmplifier>());
+                }
+            }
+
+            mic.RestartRecording(true);
+        }
+
+        public static void SetMicrophonePitch(float pitch)
+        {
+            Recorder mic = GorillaTagger.Instance.myRecorder;
+
+            if (pitch != 1f)
+            {
+                MicPitchShifter microphoneAmplifier = mic.gameObject.GetOrAddComponent<MicPitchShifter>();
+                microphoneAmplifier.PitchFactor = pitch;
+            }
+            else
+            {
+                if (mic.gameObject.GetComponent<MicPitchShifter>())
+                {
+                    MicPitchShifter microphoneAmplifier = mic.gameObject.GetOrAddComponent<MicPitchShifter>();
+                    microphoneAmplifier.enabled = false;
+                    UnityEngine.Object.Destroy(mic.gameObject.GetComponent<MicPitchShifter>());
                 }
             }
 
