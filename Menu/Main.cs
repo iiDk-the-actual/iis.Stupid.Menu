@@ -1162,13 +1162,13 @@ namespace iiMenu.Menu
                                         if (ToggleBindings || !Mod.isTogglable)
                                         {
                                             if (BindValue && !BindStates[BindInput])
-                                                Toggle(ModName);
+                                                Toggle(ModName, true);
                                         }
 
                                         if (!ToggleBindings)
                                         {
                                             if ((BindValue && !Mod.enabled) || (!BindValue && Mod.enabled))
-                                                Toggle(ModName);
+                                                Toggle(ModName, true);
                                         }
                                     }
                                 }
