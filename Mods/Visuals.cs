@@ -347,17 +347,14 @@ namespace iiMenu.Mods
                 {
                     Color colorn = Color.green;
                     if (closest < 30f)
-                    {
                         colorn = Color.yellow;
-                    }
+                    
                     if (closest < 20f)
-                    {
                         colorn = new Color32(255, 90, 0, 255);
-                    }
+                    
                     if (closest < 10f)
-                    {
                         colorn = Color.red;
-                    }
+                    
                     GameObject go = new GameObject("Lbl");
                     if (GetIndex("Hidden Labels").enabled) { go.layer = 19; }
                     go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
@@ -1407,7 +1404,7 @@ namespace iiMenu.Mods
                 {
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
-                        Color thecolor = new Color32(255, 111, 0, 255);
+                        Color thecolor = GetPlayerColor(vrrig);
                         if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                         if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                         if (PlayerIsTagged(vrrig) && vrrig != VRRig.LocalRig)
@@ -1682,7 +1679,7 @@ namespace iiMenu.Mods
                             FixRigMaterialESPColors(vrrig);
 
                             vrrig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
-                            vrrig.mainSkin.material.color = new Color32(255, 111, 0, 255);
+                            vrrig.mainSkin.material.color = GetPlayerColor(vrrig);
                             if (GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = GetBGColor(0f); }
                             if (GetIndex("Transparent Theme").enabled) { vrrig.mainSkin.material.color = new Color(vrrig.mainSkin.material.color.r, vrrig.mainSkin.material.color.g, vrrig.mainSkin.material.color.b, 0.5f); }
                         }
@@ -1825,7 +1822,7 @@ namespace iiMenu.Mods
                     {
                         if (PlayerIsTagged(vrrig) && vrrig != VRRig.LocalRig)
                         {
-                            Color thecolor = new Color32(255, 111, 0, 255);
+                            Color thecolor = GetPlayerColor(vrrig);
                             if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                             if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                             GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -2038,7 +2035,7 @@ namespace iiMenu.Mods
                     {
                         if (PlayerIsTagged(vrrig) && vrrig != VRRig.LocalRig)
                         {
-                            Color thecolor = new Color32(255, 111, 0, 255);
+                            Color thecolor = GetPlayerColor(vrrig);
                             if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                             if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
 
@@ -2388,7 +2385,7 @@ namespace iiMenu.Mods
                     {
                         if (PlayerIsTagged(vrrig) && vrrig != VRRig.LocalRig)
                         {
-                            Color thecolor = new Color32(255, 111, 0, 255);
+                            Color thecolor = GetPlayerColor(vrrig);
                             if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                             if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                             GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
@@ -2496,8 +2493,6 @@ namespace iiMenu.Mods
 
             return false;
         }
-
-        static Color infectedColor = new Color32(255, 111, 0, 255);
 
         static GameObject LeftSphere = null;
         static GameObject RightSphere = null;
@@ -2618,7 +2613,7 @@ namespace iiMenu.Mods
                         if (!PlayerIsTagged(playerRig))
                             continue;
 
-                        lineColor = infectedColor;
+                        lineColor = GetPlayerColor(playerRig);
                     }
                 }
 
@@ -2779,7 +2774,7 @@ namespace iiMenu.Mods
                         if (!PlayerIsTagged(playerRig))
                             continue;
 
-                        lineColor = infectedColor;
+                        lineColor = GetPlayerColor(playerRig);
                     }
                 }
 
@@ -2968,7 +2963,7 @@ namespace iiMenu.Mods
                         if (!PlayerIsTagged(playerRig))
                             continue;
 
-                        backgroundColor = infectedColor;
+                        backgroundColor = GetPlayerColor(playerRig);
                     }
                 }
 
