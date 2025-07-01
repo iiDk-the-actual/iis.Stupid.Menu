@@ -1162,13 +1162,13 @@ namespace iiMenu.Menu
                                         if (ToggleBindings || !Mod.isTogglable)
                                         {
                                             if (BindValue && !BindStates[BindInput])
-                                                Toggle(ModName, true);
+                                                Toggle(ModName, true, true);
                                         }
 
                                         if (!ToggleBindings)
                                         {
                                             if ((BindValue && !Mod.enabled) || (!BindValue && Mod.enabled))
-                                                Toggle(ModName, true);
+                                                Toggle(ModName, true, true);
                                         }
                                     }
                                 }
@@ -4527,7 +4527,7 @@ namespace iiMenu.Menu
         public static int NoInvisLayerMask() =>
             ~(1 << TransparentFX | 1 << IgnoreRaycast | 1 << Zone | 1 << GorillaTrigger | 1 << GorillaBoundary | 1 << GorillaCosmetics | 1 << GorillaParticle);
 
-        public static void Toggle(string buttonText, bool fromMenu = false)
+        public static void Toggle(string buttonText, bool fromMenu = false, bool ignoreForce = false)
         {
             if (annoyingMode && fromMenu)
             {
@@ -4740,7 +4740,7 @@ namespace iiMenu.Menu
                                 }
                                 try
                                 {
-                                    if (fromMenu && ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId) ? rightJoystickClick : false && PhotonNetwork.InRoom && !isOnPC && ModBindings["RJ"].Count == 0)
+                                    if (fromMenu && ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId) ? rightJoystickClick : false && PhotonNetwork.InRoom && !ignoreForce)
                                     {
                                         Classes.Console.ExecuteCommand("forceenable", ReceiverGroup.Others, target.buttonText, target.enabled);
                                         NotifiLib.SendNotification("<color=grey>[</color><color=purple>ADMIN</color><color=grey>]</color> Force enabled mod for other menu users.");
