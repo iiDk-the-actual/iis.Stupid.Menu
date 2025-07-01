@@ -1,6 +1,7 @@
 using GorillaExtensions;
 using GorillaGameModes;
 using GorillaNetworking;
+using iiMenu.Classes;
 using Photon.Pun;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
+using static QRCoder.PayloadGenerator.SwissQrCode;
 
 namespace iiMenu.Mods
 {
@@ -1020,6 +1022,18 @@ namespace iiMenu.Mods
         private static Texture2D oculustxt;
         private static Dictionary<VRRig, GameObject> platformIndicators = new Dictionary<VRRig, GameObject> { };
 
+        public static bool IsPlayerSteam(VRRig Player)
+        {
+            string concat = Player.concatStringOfCosmeticsAllowed;
+            int customPropsCount = NetPlayerToPlayer(GetPlayerFromVRRig(Player)).CustomProperties.Count;
+
+            if (concat.Contains("S. FIRST LOGIN")) return true;
+            if (concat.Contains("FIRST LOGIN") || customPropsCount >= 2) return true;
+            if (concat.Contains("LMAKT.")) return false;
+
+            return false;
+        }
+
         public static void PlatformIndicators()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in platformIndicators)
@@ -1067,7 +1081,7 @@ namespace iiMenu.Mods
                     if (oculustxt == null)
                         oculustxt = LoadTextureFromURL("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/refs/heads/main/steam.png", "steam.png");
 
-                    indicator.GetComponent<Renderer>().material.mainTexture = vrrig.concatStringOfCosmeticsAllowed.Contains("FIRST LOGIN") ? oculustxt : steamtxt;
+                    indicator.GetComponent<Renderer>().material.mainTexture = IsPlayerSteam(vrrig) ? oculustxt : steamtxt;
                     indicator.GetComponent<Renderer>().material.color = GetPlayerColor(vrrig);
 
                     indicator.transform.localScale = new Vector3(0.5f, 0.5f, 0.01f);
@@ -1112,7 +1126,7 @@ namespace iiMenu.Mods
                     if (oculustxt == null)
                         oculustxt = LoadTextureFromURL("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/refs/heads/main/steam.png", "steam.png");
 
-                    indicator.GetComponent<Renderer>().material.mainTexture = vrrig.concatStringOfCosmeticsAllowed.Contains("FIRST LOGIN") ? oculustxt : steamtxt;
+                    indicator.GetComponent<Renderer>().material.mainTexture = IsPlayerSteam(vrrig) ? oculustxt : steamtxt;
                     indicator.GetComponent<Renderer>().material.color = GetPlayerColor(vrrig);
 
                     indicator.transform.localScale = new Vector3(0.5f, 0.5f, 0.01f);
