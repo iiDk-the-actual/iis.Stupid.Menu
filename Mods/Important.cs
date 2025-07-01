@@ -294,34 +294,25 @@ namespace iiMenu.Mods
         {
             if (PhotonNetwork.InRoom && !NetworkSystem.Instance.IsMasterClient)
             {
-                if (Quaternion.Angle(RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).headMesh.transform.rotation, lastHeadQuat) <= 0.01f && Quaternion.Angle(RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).leftHandTransform.rotation, lastLHQuat) <= 0.01f && Quaternion.Angle(RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).rightHandTransform.rotation, lastRHQuat) <= 0.01f)
-                {
+                if (Quaternion.Angle(RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).head.syncRotation, lastHeadQuat) <= 0.01f && Quaternion.Angle(RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).leftHand.syncRotation, lastLHQuat) <= 0.01f && Quaternion.Angle(RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).rightHand.syncRotation, lastRHQuat) <= 0.01f)
                     tagLagFrames++;
-                } else
-                {
+                else
                     tagLagFrames = 0;
-                }
 
-                lastLHQuat = RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).leftHandTransform.rotation;
-                lastRHQuat = RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).rightHandTransform.rotation;
-                lastHeadQuat = RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).headMesh.transform.rotation;
+                lastLHQuat = RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).leftHand.syncRotation;
+                lastRHQuat = RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).leftHand.syncRotation;
+                lastHeadQuat = RigManager.GetVRRigFromPlayer(PhotonNetwork.MasterClient).head.syncRotation;
 
-                bool thereIsTagLag = tagLagFrames > 512;
+                bool thereIsTagLag = tagLagFrames > 255;
                 if (thereIsTagLag && !lastTagLag)
-                {
                     NotifiLib.SendNotification("<color=grey>[</color><color=red>TAG LAG</color><color=grey>]</color> <color=white>There is currently tag lag.</color>");
-                }
                 if (!thereIsTagLag && lastTagLag)
-                {
                     NotifiLib.SendNotification("<color=grey>[</color><color=green>TAG LAG</color><color=grey>]</color> <color=white>There is no longer tag lag.</color>");
-                }
                 lastTagLag = thereIsTagLag;
             } else
             {
                 if (lastTagLag)
-                {
                     NotifiLib.SendNotification("<color=grey>[</color><color=green>TAG LAG</color><color=grey>]</color> <color=white>There is no longer tag lag.</color>");
-                }
                 lastTagLag = false;
             }
         }
