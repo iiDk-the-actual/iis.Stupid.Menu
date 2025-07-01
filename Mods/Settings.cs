@@ -1114,6 +1114,17 @@ namespace iiMenu.Mods
                     textColor = Color.white;
                     textClicked = Color.white;
                     break;
+                case 58: // Tenacity (Minecraft)
+                    bgColorA = new Color32(32, 32, 32, 255);
+                    bgColorB = new Color32(32, 32, 32, 255);
+                    buttonDefaultA = new Color32(45, 46, 51, 255);
+                    buttonDefaultB = new Color32(45, 46, 51, 255);
+                    buttonClickedA = new Color32(231, 133, 209, 255);
+                    buttonClickedB = new Color32(56, 155, 193, 255);
+                    titleColor = Color.white;
+                    textColor = Color.white;
+                    textClicked = Color.white;
+                    break;
             }
         }
 
