@@ -1108,7 +1108,7 @@ namespace iiMenu.Mods
                 {
                     if (!platformIndicators.TryGetValue(vrrig, out GameObject indicator))
                     {
-                        indicator = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        indicator = GameObject.CreatePrimitive(PrimitiveType.Quad);
                         UnityEngine.Object.Destroy(indicator.GetComponent<Collider>());
 
                         indicator.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
@@ -1139,10 +1139,9 @@ namespace iiMenu.Mods
         public static void DisablePlatformIndicators()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in platformIndicators)
-            {
                 UnityEngine.Object.Destroy(nametag.Value);
-                platformIndicators.Remove(nametag.Key);
-            }
+
+            platformIndicators.Clear();
         }
 
         private static Material voiceMat;
@@ -1241,7 +1240,7 @@ namespace iiMenu.Mods
                     {
                         if (!voiceIndicators.TryGetValue(vrrig, out GameObject volIndicator))
                         {
-                            volIndicator = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                            volIndicator = GameObject.CreatePrimitive(PrimitiveType.Quad);
                             UnityEngine.Object.Destroy(volIndicator.GetComponent<Collider>());
 
                             if (voiceEspMat == null)
@@ -1276,10 +1275,9 @@ namespace iiMenu.Mods
         public static void DisableVoiceIndicators()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in voiceIndicators)
-            {
                 UnityEngine.Object.Destroy(nametag.Value);
-                voiceIndicators.Remove(nametag.Key);
-            }
+
+            voiceIndicators.Clear();
         }
 
         private static GameObject l;
