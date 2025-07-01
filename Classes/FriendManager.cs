@@ -59,14 +59,19 @@ namespace iiMenu.Classes
                 CoroutineManager.RunCoroutine(UpdateFriendsList());
             }
 
+            List<VRRig> toRemoveRigs = new List<VRRig>();
+
             foreach (KeyValuePair<VRRig, GameObject> star in starPool)
             {
-                if (!GorillaParent.instance.vrrigs.Contains(star.Key))
+                if (!GorillaParent.instance.vrrigs.Contains(star.Key) || !IsPlayerFriend(GetPlayerFromVRRig(star.Key)))
                 {
-                    starPool.Remove(star.Key);
+                    toRemoveRigs.Add(star.Key);
                     Destroy(star.Value);
                 }
             }
+
+            foreach (VRRig rig in toRemoveRigs)
+                starPool.Remove(rig);
 
             if (PhotonNetwork.InRoom)
             {
@@ -180,7 +185,7 @@ namespace iiMenu.Classes
 
         public static void CheckPlayerFriends(NetPlayer Player)
         {
-            if (instance.Friends.friends.Values.Any(friend => friend.currentUserID == Player.UserId))
+            if (IsPlayerFriend(Player))
                 NotifiLib.SendNotification("<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> Your friend " + Player.NickName + " is in your current room.", 5000);
         }
 
