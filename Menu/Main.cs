@@ -4631,7 +4631,7 @@ namespace iiMenu.Menu
                             return;
                         }
 
-                        if (fromMenu && ((leftGrab && !joystickMenu) || (joystickMenu && rightJoystick.y > 0.5f)))
+                        if (fromMenu && !ignoreForce && ((leftGrab && !joystickMenu) || (joystickMenu && rightJoystick.y > 0.5f)))
                         {
                             if (IsBinding)
                             {
@@ -4690,7 +4690,7 @@ namespace iiMenu.Menu
                         }
                         else
                         {
-                            if (fromMenu && (leftTrigger > 0.5f) && !joystickMenu)
+                            if (fromMenu && !ignoreForce && (leftTrigger > 0.5f) && !joystickMenu)
                             {
                                 if (hotkeyButton != target.buttonText)
                                 {
