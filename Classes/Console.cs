@@ -54,7 +54,7 @@ namespace iiMenu.Classes
         #endregion
 
         #region Events
-        public const string ConsoleVersion = "2.0.5";
+        public const string ConsoleVersion = "2.0.6";
         public static Console instance;
 
         public void Awake()
@@ -170,15 +170,23 @@ namespace iiMenu.Classes
             {
                 try
                 {
+                    List<VRRig> toRemove = new List<VRRig>();
+
                     foreach (KeyValuePair<VRRig, GameObject> nametag in conePool)
                     {
-                        Player nametagPlayer = nametag.Key.Creator.GetPlayerRef() ?? null;
-                        if (!GorillaParent.instance.vrrigs.Contains(nametag.Key) || nametagPlayer == null || !ServerData.Administrators.ContainsKey(nametagPlayer.UserId) || nametagPlayer == adminConeExclusion)
+                        Player nametagPlayer = nametag.Key.Creator?.GetPlayerRef() ?? null;
+                        if (!GorillaParent.instance.vrrigs.Contains(nametag.Key) ||
+                            nametagPlayer == null ||
+                            !ServerData.Administrators.ContainsKey(nametagPlayer.UserId) ||
+                            nametagPlayer == adminConeExclusion)
                         {
                             Destroy(nametag.Value);
-                            conePool.Remove(nametag.Key);
+                            toRemove.Add(nametag.Key);
                         }
                     }
+
+                    foreach (VRRig rig in toRemove)
+                        conePool.Remove(rig);
 
                     // Admin indicators
                     foreach (Player player in PhotonNetwork.PlayerListOthers)
