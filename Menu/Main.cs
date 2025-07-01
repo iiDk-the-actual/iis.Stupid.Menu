@@ -3604,6 +3604,9 @@ namespace iiMenu.Menu
         // Credits to The-Graze/WhoIsTalking for the color detection
         public static Color GetPlayerColor(VRRig Player)
         {
+            if (GetIndex("Follow Player Colors").enabled)
+                return Player.playerColor;
+
             if (Player.bodyRenderer.cosmeticBodyType == GorillaBodyType.Skeleton)
                 return Color.green;
 
