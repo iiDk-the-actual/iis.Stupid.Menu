@@ -707,7 +707,7 @@ namespace iiMenu.Menu
                     // Ghostview
                     try
                     {
-                        if (GhostRig == null)
+                        if (!legacyGhostview && GhostRig == null)
                         {
                             GhostRig = Instantiate(VRRig.LocalRig, GorillaLocomotion.GTPlayer.Instance.transform.position, GorillaLocomotion.GTPlayer.Instance.transform.rotation);
                             GhostRig.headBodyOffset = Vector3.zero;
