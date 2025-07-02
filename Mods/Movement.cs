@@ -521,16 +521,12 @@ namespace iiMenu.Mods
                 velocity *= GTPlayer.Instance.scale * flySpeed;
                 GorillaTagger.Instance.rigidbody.velocity = Vector3.Lerp(GorillaTagger.Instance.rigidbody.velocity, velocity, 0.12875f);
             }
-            else
-                GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
         }
 
         public static void VelocityBarkFly()
         {
             if ((Mathf.Abs(leftJoystick.x) > 0.3 || Mathf.Abs(leftJoystick.y) > 0.3) || (Mathf.Abs(rightJoystick.x) > 0.3 || Mathf.Abs(rightJoystick.y) > 0.3))
-            {
                 BarkFly();
-            }
         }
 
         public static void HandFly()
