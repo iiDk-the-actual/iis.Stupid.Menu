@@ -8,6 +8,7 @@ using System.Collections;
 using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.XR.Interaction.Toolkit;
@@ -166,6 +167,32 @@ namespace iiMenu.Mods
 
                 acceptedTOS = true;
             }
+        }
+        
+        public static IEnumerator RedeemShinyRocks()
+        {
+            Task<GetPlayerData_Data> newSessionDataTask = KIDManager.TryGetPlayerData(true); 
+
+            while (!newSessionDataTask.IsCompleted)
+                yield return null;
+            if (newSessionDataTask.IsFaulted)
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Failed to redeem shiny rocks.");
+
+            GetPlayerData_Data newSessionData = newSessionDataTask.Result;
+            if (newSessionData.responseType == GetSessionResponseType.NOT_FOUND)
+            {
+                Task optInTask = KIDManager.Server_OptIn();
+
+                while (!optInTask.IsCompleted)
+                    yield return null;
+                if (optInTask.IsFaulted)
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Failed to redeem shiny rocks.");
+
+                NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully redeemed shiny rocks!");
+                CosmeticsController.instance.GetCurrencyBalance();
+            }
+            else
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You have already redeemed the shiny rocks.");
         }
 
         public static void JoinDiscord() =>
