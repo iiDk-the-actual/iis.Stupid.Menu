@@ -758,7 +758,6 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Anti Grab", enableMethod =() => Patches.GrabPatch.enabled = true, disableMethod =() => Patches.GrabPatch.enabled = false, toolTip = "Prevents players from picking you up in guardian."},
                 new ButtonInfo { buttonText = "Anti Sting", enableMethod =() => Patches.BeesPatch.enabled = true, disableMethod =() => Patches.BeesPatch.enabled = false, toolTip = "Prevents the bees from making you float."},
-                new ButtonInfo { buttonText = "Anti Noclip", enableMethod =() => Patches.CaughtPatch.enabled = true, disableMethod =() => Patches.CaughtPatch.enabled = false, toolTip = "Prevents the second look skeleton from picking you up."},
                 new ButtonInfo { buttonText = "Anti Knockback", enableMethod =() => Patches.KnockbackPatch.enabled = true, disableMethod =() => Patches.KnockbackPatch.enabled = false, toolTip = "Prevents players from knocking you back with snowballs."},
 
                 new ButtonInfo { buttonText = "Large Snowballs", enableMethod =() => Patches.EnablePatch.enabled = true, disableMethod =() => Patches.EnablePatch.enabled = false, toolTip = "Makes snowballs by default the largest size."},
@@ -1175,11 +1174,6 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Fling Rope Gun", method =() => Overpowered.FlingRopeGun(), toolTip = "Flings whatever rope your hand desires away from you."},
                 new ButtonInfo { buttonText = "Fling All Ropes Gun", method =() => Overpowered.FlingAllRopesGun(), toolTip = "Flings every rope in whatever direction your hand desires."},
-
-                new ButtonInfo { buttonText = "Spawn Second Look", method =() => Overpowered.SpawnSecondLook(), isTogglable = false, toolTip = "Spawns the ghost in the rotational map." },
-                new ButtonInfo { buttonText = "Anger Second Look", method =() => Overpowered.AngerSecondLook(), isTogglable = false, toolTip = "Makes the ghost in the rotational map chase after people." },
-                new ButtonInfo { buttonText = "Cancel Second Look", method =() => Overpowered.ThrowSecondLook(), isTogglable = false, toolTip = "Makes the ghost in the rotational map throw whoever it's holding." },
-                new ButtonInfo { buttonText = "Spaz Second Look", method =() => Overpowered.SpazSecondLook(), toolTip = "Makes the ghost in the rotational map automatically try chasing people and throwing things." },
 
                 new ButtonInfo { buttonText = "Instant Party", method =() => Fun.InstantParty(), toolTip = "Makes parties form instantly, instead of having to wait a couple of seconds." },
                 new ButtonInfo { buttonText = "Leave Party", method =() => FriendshipGroupDetection.Instance.LeaveParty(), isTogglable = false, toolTip = "Leaves the party, incase you can't pull off the string." },
