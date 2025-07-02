@@ -30,6 +30,8 @@ namespace iiMenu.Notifications
 
         private bool HasInit;
 
+        public static int NotifiCounter = 0;
+
         private void Start()
         {
             instance = this;
@@ -192,65 +194,71 @@ namespace iiMenu.Notifications
             {
                 try
                 {
-                    if (PreviousNotifi != NotificationText)
+                    if (translate)
                     {
-                        if (translate)
+                        if (translateCache.ContainsKey(NotificationText))
+                            NotificationText = TranslateText(NotificationText);
+                        else
                         {
-                            if (translateCache.ContainsKey(NotificationText))
-                                NotificationText = TranslateText(NotificationText);
-                            else
-                            {
-                                TranslateText(NotificationText, delegate { SendNotification(NotificationText, clearTime); });
-                                return;
-                            }
+                            TranslateText(NotificationText, delegate { SendNotification(NotificationText, clearTime); });
+                            return;
                         }
+                    }
 
-                        if (notificationSoundIndex != 0 && (Time.time > (timeMenuStarted + 5f)))
+                    if (notificationSoundIndex != 0 && (Time.time > (timeMenuStarted + 5f)))
+                    {
+                        string[] notificationServerNames = new string[]
                         {
-                            string[] notificationServerNames = new string[]
-                            {
-                                "none",
-                                "pop",
-                                "ding",
-                                "twitter",
-                                "discord",
-                                "whatsapp",
-                                "grindr",
-                                "ios",
-                                "xpnotify",
-                                "xpding",
-                                "xperror",
-                                "robloxbass"
-                            };
-                            Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/" + notificationServerNames[notificationSoundIndex] + ".wav", notificationServerNames[notificationSoundIndex] + ".wav"), buttonClickVolume / 10f);
-                        }
+                            "none",
+                            "pop",
+                            "ding",
+                            "twitter",
+                            "discord",
+                            "whatsapp",
+                            "grindr",
+                            "ios",
+                            "xpnotify",
+                            "xpding",
+                            "xperror",
+                            "robloxbass"
+                        };
+                        Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/" + notificationServerNames[notificationSoundIndex] + ".wav", notificationServerNames[notificationSoundIndex] + ".wav"), buttonClickVolume / 10f);
+                    }
 
+                    if (inputTextColor != "green")
+                        NotificationText = NotificationText.Replace("<color=green>", "<color=" + inputTextColor + ">");
+
+                    if (PreviousNotifi == NotificationText && stackNotifications)
+                    {
+                        NotifiCounter++;
+                        NotifiText.text = $"{NotificationText} {(NotifiCounter >= 1 ? $"<color=grey>(x{NotifiCounter + 1})</color>" : "")}";
+                    }
+                    else
+                    {
+                        PreviousNotifi = NotificationText;
                         if (!NotificationText.Contains(Environment.NewLine))
                             NotificationText += Environment.NewLine;
-                        
-                        if (inputTextColor != "green")
-                            NotificationText = NotificationText.Replace("<color=green>", "<color=" + inputTextColor + ">");
-
                         NotifiText.text += NotificationText;
-                        if (lowercaseMode)
-                            NotifiText.text = NotifiText.text.ToLower();
+                    }
 
-                        NotifiText.supportRichText = true;
-                        PreviousNotifi = NotificationText;
+                    if (lowercaseMode)
+                        NotifiText.text = NotifiText.text.ToLower();
 
+                    NotifiText.supportRichText = true;
+
+
+                    try
+                    {
+                        CoroutineManager.RunCoroutine(ClearLast(clearTime / 1000f));
+                    } catch { /* cheeseburger */ }
+
+                    if (narrateNotifications)
+                    {
                         try
                         {
-                            CoroutineManager.RunCoroutine(ClearLast(clearTime / 1000f));
-                        } catch { /* cheeseburger */ }
-
-                        if (narrateNotifications)
-                        {
-                            try
-                            {
-                                CoroutineManager.RunCoroutine(NarrateText(NoRichtextTags(NotificationText, "")));
-                            }
-                            catch { }
+                            CoroutineManager.RunCoroutine(NarrateText(NoRichtextTags(NotificationText, "")));
                         }
+                        catch { }
                     }
                 }
                 catch
