@@ -1087,31 +1087,13 @@ namespace iiMenu.Mods
             }
         }
 
-        private static bool randomPlayerToggle = false;
-        private static float playerWait = 0f;
-        private static Player archiveRandomPlayer = null;
-        public static Player SpedGetRandomPlayer()
-        {
-            if (Time.time > playerWait || archiveRandomPlayer == null)
-            {
-                randomPlayerToggle = !randomPlayerToggle;
-
-                if (randomPlayerToggle || archiveRandomPlayer == null)
-                    archiveRandomPlayer = GetRandomPlayer(false);
-
-                playerWait = Time.time + 0.0777f;
-            }
-            
-            return archiveRandomPlayer;
-        }
-
         public static void SnowballFlingAll()
         {
             if (rightTrigger > 0.5f && Time.time > snowballDelay)
             {
                 snowballDelay = Time.time + snowballSpawnDelay;
-                Player plr = SpedGetRandomPlayer();
-                BetaSpawnSnowball(GetVRRigFromPlayer(plr).transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(UnityEngine.Random.Range(-1f, 1f), 0f, UnityEngine.Random.Range(-1f, 1f)).normalized / 1.7f, new Vector3(0f, -500f, 0f), 5f, 2, plr);
+                Player target = NetPlayerToPlayer(GetPlayerFromVRRig(GetCurrentTargetRig(0.5f)));
+                BetaSpawnSnowball(GetVRRigFromPlayer(target).transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(UnityEngine.Random.Range(-1f, 1f), 0f, UnityEngine.Random.Range(-1f, 1f)).normalized / 1.7f, new Vector3(0f, -500f, 0f), 5f, 2, target);
             }
         }
 
@@ -1153,7 +1135,8 @@ namespace iiMenu.Mods
             if (rightTrigger > 0.5f && Time.time > snowballDelay)
             {
                 snowballDelay = Time.time + snowballSpawnDelay;
-                Player plr = SpedGetRandomPlayer();
+
+                Player plr = NetPlayerToPlayer(GetPlayerFromVRRig(GetCurrentTargetRig(0.5f)));
                 BetaSpawnSnowball(GetVRRigFromPlayer(plr).transform.position + new Vector3(0f, -0.7f, 0f), new Vector3(0f, -500f, 0f), 5f, 2, plr);
             }
         }
@@ -1169,7 +1152,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true) && Time.time > snowballDelay)
                 {
                     snowballDelay = Time.time + snowballSpawnDelay;
-                    Player plr = SpedGetRandomPlayer();
+                    Player plr = NetPlayerToPlayer(GetPlayerFromVRRig(GetCurrentTargetRig(0.5f)));
                     Vector3 targetDirection = (NewPointer.transform.position - GetVRRigFromPlayer(plr).headMesh.transform.position).normalized;
                     BetaSpawnSnowball(GetVRRigFromPlayer(plr).transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(-targetDirection.x, 0f, -targetDirection.z) / 1.7f, new Vector3(0f, -500f, 0f), 5f, 2, plr);
                 }
