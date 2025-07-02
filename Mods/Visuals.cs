@@ -503,7 +503,7 @@ namespace iiMenu.Mods
                 Vector3 position = rig.syncPos;
                 Vector3 velocity = rig.LatestVelocity();
 
-                if (velocity.magnitude < 0.05f)
+                if (velocity.magnitude < 0.5f)
                 {
                     Line.enabled = false;
                     continue;
