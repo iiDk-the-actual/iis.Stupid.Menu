@@ -5059,8 +5059,9 @@ jgs \_   _/ |Oo\
         public static bool wristOpen;
         public static float wristMenuDelay;
 
-        public static bool disableNotifications;
+        public static bool stackNotifications;
         public static bool narrateNotifications;
+        public static bool disableNotifications;
         public static bool clearNotificationsOnDisconnect;
         public static string narratorName = "Default";
         public static int narratorIndex;
