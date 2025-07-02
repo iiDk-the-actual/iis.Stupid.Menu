@@ -232,7 +232,7 @@ namespace iiMenu.UI
                                 : $"<color=#{ColorToHex(GetBGColor(index * -0.1f))}>| </color><color=#{ColorToHex(textColor)}>{v}</color>";
 
                             Vector2 size = labelStyle.CalcSize(new GUIContent(text));
-                            Rect labelRect = new Rect(flipArraylist ? Screen.width - (size.x + 15) : 10, y, size.x + 5, index == sortedButtons.Length - 1 ? size.y + 5 : size.y);
+                            Rect labelRect = new Rect(flipArraylist ? Screen.width - (size.x + 15) : 10, y, size.x + 8, index == sortedButtons.Length - 1 ? size.y + 5 : size.y);
 
                             y += size.y;
 
