@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 using UnityEngine.Rendering;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
@@ -427,8 +428,8 @@ namespace iiMenu.Mods
             GorillaComputer.instance.functionSelectText.DisableFailedState();
         }
 
-        private static GameObject visualizerObject = null;
-        private static GameObject visualizerOutline = null;
+        private static GameObject visualizerObject;
+        private static GameObject visualizerOutline;
         public static void CreateAudioVisualizer()
         {
             visualizerObject = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
@@ -466,6 +467,67 @@ namespace iiMenu.Mods
         {
             UnityEngine.Object.Destroy(visualizerObject);
             UnityEngine.Object.Destroy(visualizerOutline);
+        }
+
+        private static Dictionary<VRRig, LineRenderer> predictions = new Dictionary<VRRig, LineRenderer> { };
+        public static void JumpPredictions()
+        {
+            foreach (KeyValuePair<VRRig, LineRenderer> pred in predictions)
+            {
+                if (!GorillaParent.instance.vrrigs.Contains(pred.Key))
+                {
+                    UnityEngine.Object.Destroy(pred.Value.gameObject);
+                    predictions.Remove(pred.Key);
+                }
+            }
+
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (rig == VRRig.LocalRig)
+                    continue;
+
+                if (!predictions.TryGetValue(rig, out LineRenderer Line))
+                {
+                    GameObject LineObject = new GameObject("LineObject");
+                    Line = LineObject.AddComponent<LineRenderer>();
+                    Line.material.shader = Shader.Find("GUI/Text Shader");
+                    Line.startWidth = 0.025f;
+                    Line.endWidth = 0.025f;
+                    Line.positionCount = 25;
+                    Line.useWorldSpace = true;
+                }
+
+                Line.material.color = GetPlayerColor(rig);
+
+                int stepCount = Mathf.Min(25, Mathf.CeilToInt(5f / 0.1f));
+                Vector3[] points = new Vector3[stepCount];
+
+                Vector3 setvelocity = rig.LatestVelocity();
+
+                Vector3 position = rig.transform.position;
+                Vector3 velocity = setvelocity;
+
+                for (int i = 0; i < stepCount; i++)
+                {
+                    points[i] = position;
+
+                    if (setvelocity.magnitude > 0.05f)
+                        velocity += Physics.gravity * 0.1f;
+
+                    position += velocity * 0.1f;
+                }
+
+                Line.positionCount = points.Length;
+                Line.SetPositions(points);
+            }
+        }
+
+        public static void DisableJumpPredictions()
+        {
+            foreach (KeyValuePair<VRRig, LineRenderer> pred in predictions)
+                UnityEngine.Object.Destroy(pred.Value.gameObject);
+
+            predictions.Clear();
         }
 
         public static void VisualizeNetworkTriggers()
