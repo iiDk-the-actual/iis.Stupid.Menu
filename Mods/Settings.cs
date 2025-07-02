@@ -2442,10 +2442,10 @@ namespace iiMenu.Mods
         // Thanks to kingofnetflix for inspiration and support with voice recognition
         private static KeywordRecognizer mainPhrases;
         private static KeywordRecognizer modPhrases;
-        private static string[] cancelKeywords = new string[] { "nevermind", "cancel", "never mind", "stop", "i hate you" };
+        private static string[] cancelKeywords = new string[] { "nevermind", "cancel", "never mind", "stop", "i hate you", "die" };
         public static void VoiceRecognitionOn()
         {
-            mainPhrases = new KeywordRecognizer(new string[] { "jarvis", "ii", "i i", "eye eye", "siri", "google", "alexa", "dummy", "computer", "stinky", "silly", "stupid", "console", "go go gadget", "monika" });
+            mainPhrases = new KeywordRecognizer(new string[] { "jarvis", "ii", "i i", "eye eye", "siri", "google", "alexa", "dummy", "computer", "stinky", "silly", "stupid", "console", "go go gadget", "monika", "wikipedia" });
             mainPhrases.OnPhraseRecognized += ModRecognition;
             mainPhrases.Start();
         }
