@@ -625,13 +625,13 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Infection Tracers", method =() => Visuals.InfectionTracers(), disableMethod =() => {Visuals.isLineRenderQueued = true;}, toolTip = "Puts tracers on your right hand. Shows everyone."},
                 new ButtonInfo { buttonText = "Hunt Tracers", method =() => Visuals.HuntTracers(), disableMethod =() => {Visuals.isLineRenderQueued = true;}, toolTip = "Puts tracers on your right hand. Shows your target and who is hunting you."},
 
-                new ButtonInfo { buttonText = "Casual Box ESP", method =() => Visuals.CasualBoxESP(), toolTip = "Acts like casual tracers color wise, but with boxes."},
-                new ButtonInfo { buttonText = "Infection Box ESP", method =() => Visuals.InfectionBoxESP(), toolTip = "Acts like infection tracers color wise, but with boxes."},
-                new ButtonInfo { buttonText = "Hunt Box ESP", method =() => Visuals.HuntBoxESP(), toolTip = "Acts like hunt tracers color wise, but with boxes."},
+                new ButtonInfo { buttonText = "Casual Box ESP", method =() => Visuals.CasualBoxESP(), disableMethod =() => Visuals.DisableBoxESP(), toolTip = "Acts like casual tracers color wise, but with boxes."},
+                new ButtonInfo { buttonText = "Infection Box ESP", method =() => Visuals.InfectionBoxESP(), disableMethod =() => Visuals.DisableBoxESP(), toolTip = "Acts like infection tracers color wise, but with boxes."},
+                new ButtonInfo { buttonText = "Hunt Box ESP", method =() => Visuals.HuntBoxESP(), disableMethod =() => Visuals.DisableBoxESP(), toolTip = "Acts like hunt tracers color wise, but with boxes."},
 
-                new ButtonInfo { buttonText = "Casual Hollow Box ESP", method =() => Visuals.CasualHollowBoxESP(), disableMethod =() => Visuals.DisableBoxESP(), toolTip = "Acts like casual box ESP, except the box is hollow."},
-                new ButtonInfo { buttonText = "Infection Hollow Box ESP", method =() => Visuals.HollowInfectionBoxESP(), disableMethod =() => Visuals.DisableBoxESP(), toolTip = "Acts like infection box ESP, except the box is hollow."},
-                new ButtonInfo { buttonText = "Hunt Hollow Box ESP", method =() => Visuals.HollowHuntBoxESP(), disableMethod =() => Visuals.DisableBoxESP(), toolTip = "Acts like hunt box ESP, except the box is hollow."},
+                new ButtonInfo { buttonText = "Casual Hollow Box ESP", method =() => Visuals.CasualHollowBoxESP(), toolTip = "Acts like casual box ESP, except the box is hollow."},
+                new ButtonInfo { buttonText = "Infection Hollow Box ESP", method =() => Visuals.HollowInfectionBoxESP(), toolTip = "Acts like infection box ESP, except the box is hollow."},
+                new ButtonInfo { buttonText = "Hunt Hollow Box ESP", method =() => Visuals.HollowHuntBoxESP(), toolTip = "Acts like hunt box ESP, except the box is hollow."},
 
                 new ButtonInfo { buttonText = "Casual Breadcrumbs", method =() => Visuals.CasualBreadcrumbs(), toolTip = "Acts like casual tracers color wise, but with breadcrumbs."},
                 new ButtonInfo { buttonText = "Infection Breadcrumbs", method =() => Visuals.InfectionBreadcrumbs(), toolTip = "Acts like infection tracers color wise, but with breadcrumbs."},
