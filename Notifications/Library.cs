@@ -232,25 +232,26 @@ namespace iiMenu.Notifications
                     {
                         NotifiCounter++;
                         NotifiText.text = $"{NotificationText} {(NotifiCounter >= 1 ? $"<color=grey>(x{NotifiCounter + 1})</color>" : "")}";
+
+                        if (clearCoroutines.Count > 0)
+                            CancelClear(clearCoroutines[0]);
                     }
                     else
                     {
+                        NotifiCounter = 0;
+
                         PreviousNotifi = NotificationText;
                         if (!NotificationText.Contains(Environment.NewLine))
                             NotificationText += Environment.NewLine;
                         NotifiText.text += NotificationText;
+
+                        clearCoroutines.Add(CoroutineManager.RunCoroutine(TrackCoroutine(ClearHolder(clearTime / 1000f))));
                     }
 
                     if (lowercaseMode)
                         NotifiText.text = NotifiText.text.ToLower();
 
                     NotifiText.supportRichText = true;
-
-
-                    try
-                    {
-                        CoroutineManager.RunCoroutine(ClearLast(clearTime / 1000f));
-                    } catch { /* cheeseburger */ }
 
                     if (narrateNotifications)
                     {
@@ -282,13 +283,36 @@ namespace iiMenu.Notifications
             NotifiText.text = text;
         }
 
-        public static IEnumerator ClearLast(float time = 1f)
+        private static IEnumerator TrackCoroutine(IEnumerator routine)
+        {
+            Coroutine self = null;
+
+            IEnumerator Wrapper()
+            {
+                self = CoroutineManager.instance.StartCoroutine(routine);
+                clearCoroutines.Add(self);
+                yield return self;
+                clearCoroutines.Remove(self);
+            }
+
+            yield return Wrapper();
+        }
+
+        public static IEnumerator ClearHolder(float time = 1f)
         {
             yield return new WaitForSeconds(time);
             ClearPastNotifications(1);
         }
 
+        public static void CancelClear(Coroutine coroutine)
+        {
+            if (clearCoroutines.Contains(coroutine))
+            {
+                clearCoroutines.Remove(coroutine);
+                CoroutineManager.instance.StopCoroutine(coroutine);
+            }
+        }
 
-
+        public static List<Coroutine> clearCoroutines = new List<Coroutine> { };
     }
 }
