@@ -506,17 +506,23 @@ namespace iiMenu.Mods
 
         public static void BarkFly()
         {
-            ZeroGravity();
-
             Vector3 inputDirection = new Vector3(leftJoystick.x, rightJoystick.y, leftJoystick.y);
+
             Vector3 playerForward = GTPlayer.Instance.bodyCollider.transform.forward;
             playerForward.y = 0;
             Vector3 playerRight = GTPlayer.Instance.bodyCollider.transform.right;
             playerRight.y = 0;
 
-            Vector3 velocity = inputDirection.x * playerRight + rightJoystick.y * Vector3.up + inputDirection.z * playerForward;
-            velocity *= GTPlayer.Instance.scale * flySpeed;
-            GorillaTagger.Instance.rigidbody.velocity = Vector3.Lerp(GorillaTagger.Instance.rigidbody.velocity, velocity, 0.12875f);
+            if (leftJoystick != Vector2.zero || rightJoystick != Vector2.zero)
+            {
+                ZeroGravity();
+
+                Vector3 velocity = inputDirection.x * playerRight + rightJoystick.y * Vector3.up + inputDirection.z * playerForward;
+                velocity *= GTPlayer.Instance.scale * flySpeed;
+                GorillaTagger.Instance.rigidbody.velocity = Vector3.Lerp(GorillaTagger.Instance.rigidbody.velocity, velocity, 0.12875f);
+            }
+            else
+                GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
         }
 
         public static void VelocityBarkFly()
@@ -559,9 +565,10 @@ namespace iiMenu.Mods
         public static float subThingy;
         public static float subThingyZ;
 
+        public static Vector3 lastPosition = GorillaTagger.Instance.rigidbody.transform.position;
         public static void WASDFly()
         {
-            GorillaTagger.Instance.rigidbody.velocity = new Vector3(0f, 0.067f, 0f);
+            GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
 
             bool W = UnityInput.Current.GetKey(KeyCode.W);
             bool A = UnityInput.Current.GetKey(KeyCode.A);
@@ -624,6 +631,12 @@ namespace iiMenu.Mods
                 GorillaTagger.Instance.rigidbody.transform.position += new Vector3(0f, Time.deltaTime * -speed, 0f);
 
             VRRig.LocalRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
+
+            if (!W && !A && !S && !D && !Space && !Ctrl)
+                GorillaTagger.Instance.rigidbody.transform.position = lastPosition;
+            else
+                lastPosition = GorillaTagger.Instance.rigidbody.transform.position;
+
         }
 
         private static float driveSpeed = 0f;
@@ -1276,30 +1289,21 @@ namespace iiMenu.Mods
             lastOnBranch = isOnBranch;
         }
 
-        public static void ForceTagFreeze()
-        {
+        public static void ForceTagFreeze() =>
             GTPlayer.Instance.disableMovement = true;
-        }
 
-        public static void NoTagFreeze()
-        {
+        public static void NoTagFreeze() =>
             GTPlayer.Instance.disableMovement = false;
-        }
 
-        public static void LowGravity()
-        {
+        public static void LowGravity() =>
             GorillaTagger.Instance.rigidbody.AddForce(Vector3.up * (Time.unscaledDeltaTime * (6.66f / Time.unscaledDeltaTime)), ForceMode.Acceleration);
-        }
 
-        public static void ZeroGravity()
-        {
+        public static void ZeroGravity() => 
             GorillaTagger.Instance.rigidbody.AddForce(Vector3.up * (Time.unscaledDeltaTime * (9.81f / Time.unscaledDeltaTime)), ForceMode.Acceleration);
-        }
 
-        public static void HighGravity()
-        {
+        public static void HighGravity() =>
             GorillaTagger.Instance.rigidbody.AddForce(Vector3.down * (Time.unscaledDeltaTime * (7.77f / Time.unscaledDeltaTime)), ForceMode.Acceleration);
-        }
+        
 
         public static void ReverseGravity()
         {
@@ -1307,10 +1311,9 @@ namespace iiMenu.Mods
             GTPlayer.Instance.rightControllerTransform.parent.rotation = Quaternion.Euler(180f, 0f, 0f);
         }
 
-        public static void UnflipCharacter()
-        {
+        public static void UnflipCharacter() =>
             GTPlayer.Instance.rightControllerTransform.parent.rotation = Quaternion.identity;
-        }
+        
 
         private static List<object[]> playerPositions = new List<object[]> { };
         public static void Rewind()
