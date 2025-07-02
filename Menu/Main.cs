@@ -3587,6 +3587,20 @@ namespace iiMenu.Menu
                 typePool.Remove(type);
         }
 
+        private static VRRig rigTarget;
+        private static float rigTargetChange;
+        public static VRRig GetCurrentTargetRig(float targetChangeDelay = 1f)
+        {
+            if (Time.time > rigTargetChange || !GorillaParent.instance.vrrigs.Contains(rigTarget))
+            {
+                rigTargetChange = Time.time + targetChangeDelay;
+                rigTarget = GetRandomVRRig(false);
+            }
+
+            return rigTarget;
+        }
+
+
         public static BuilderTable GetBuilderTable()
         {
             BuilderTable.TryGetBuilderTableForZone(VRRig.LocalRig.zoneEntity.currentZone, out BuilderTable table);

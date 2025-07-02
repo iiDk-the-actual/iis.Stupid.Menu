@@ -337,19 +337,6 @@ namespace iiMenu.Mods.Spammers
             return new Color32(r, g, b, 255);
         }
 
-        private static VRRig rigTarget;
-        private static float rigTargetChange;
-        public static VRRig GetCurrentTargetRig()
-        {
-            if (Time.time > rigTargetChange || !GorillaParent.instance.vrrigs.Contains(rigTarget))
-            {
-                rigTargetChange = Time.time + 1f;
-                rigTarget = GetRandomVRRig(false);
-            }
-
-            return rigTarget;
-        }
-
         public static void ProjectileSpam()
         {
             int projIndex = projmode * 2;
