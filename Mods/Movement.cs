@@ -541,9 +541,7 @@ namespace iiMenu.Mods
         public static void SlingshotFly()
         {
             if (rightPrimary)
-            {
                 GorillaTagger.Instance.rigidbody.velocity += GTPlayer.Instance.headCollider.transform.forward * Time.deltaTime * (flySpeed * 2);
-            }
         }
 
         public static void ZeroGravitySlingshotFly()
@@ -673,9 +671,8 @@ namespace iiMenu.Mods
         public static void Dash()
         {
             if (rightPrimary && !lastaomfg)
-            {
                 GorillaTagger.Instance.rigidbody.velocity += GTPlayer.Instance.headCollider.transform.forward * flySpeed;
-            }
+            
             lastaomfg = rightPrimary;
         }
 
@@ -699,9 +696,7 @@ namespace iiMenu.Mods
             foreach (BalloonHoldable balloo in GetAllType<BalloonHoldable>())
             {
                 if (balloo.IsMyItem())
-                {
                     return balloo;
-                }
             }
             if (Time.time > loaoalsode)
             {
@@ -757,7 +752,7 @@ namespace iiMenu.Mods
 
                 GameObject line = new GameObject("Line");
                 LineRenderer liner = line.AddComponent<LineRenderer>();
-                UnityEngine.Color thecolor = Color.red;
+                Color thecolor = Color.red;
                 liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = 0.025f; liner.endWidth = 0.025f; liner.positionCount = 2; liner.useWorldSpace = true;
                 liner.SetPosition(0, GorillaTagger.Instance.leftHandTransform.position);
                 liner.SetPosition(1, leftgrapplePoint);
@@ -832,7 +827,7 @@ namespace iiMenu.Mods
 
                 GameObject line = new GameObject("Line");
                 LineRenderer liner = line.AddComponent<LineRenderer>();
-                UnityEngine.Color thecolor = Color.red;
+                Color thecolor = Color.red;
                 liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = 0.025f; liner.endWidth = 0.025f; liner.positionCount = 2; liner.useWorldSpace = true;
                 liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
                 liner.SetPosition(1, rightgrapplePoint);
@@ -896,7 +891,7 @@ namespace iiMenu.Mods
 
                 GameObject line = new GameObject("Line");
                 LineRenderer liner = line.AddComponent<LineRenderer>();
-                UnityEngine.Color thecolor = Color.red;
+                Color thecolor = Color.red;
                 liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = 0.025f; liner.endWidth = 0.025f; liner.positionCount = 2; liner.useWorldSpace = true;
                 liner.SetPosition(0, GorillaTagger.Instance.leftHandTransform.position);
                 liner.SetPosition(1, leftgrapplePoint);
@@ -957,7 +952,7 @@ namespace iiMenu.Mods
 
                 GameObject line = new GameObject("Line");
                 LineRenderer liner = line.AddComponent<LineRenderer>();
-                UnityEngine.Color thecolor = Color.red;
+                Color thecolor = Color.red;
                 liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = 0.025f; liner.endWidth = 0.025f; liner.positionCount = 2; liner.useWorldSpace = true;
                 liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
                 liner.SetPosition(1, rightgrapplePoint);
