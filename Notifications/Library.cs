@@ -275,7 +275,7 @@ namespace iiMenu.Notifications
         public static void ClearPastNotifications(int amount)
         {
             string text = "";
-            foreach (string text2 in Enumerable.ToArray<string>(Enumerable.Skip<string>(NotifiText.text.Split(Environment.NewLine.ToCharArray()), amount)))
+            foreach (string text2 in Enumerable.Skip(NotifiText.text.Split(Environment.NewLine.ToCharArray()), amount))
             {
                 if (text2 != "")
                     text = text + text2 + "\n";
