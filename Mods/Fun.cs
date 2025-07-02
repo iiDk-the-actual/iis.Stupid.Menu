@@ -1097,7 +1097,14 @@ namespace iiMenu.Mods
 
         public static void SetMicrophoneQuality(int bitrate, int samplingRate)
         {
+            if (!PhotonNetwork.InRoom)
+                return;
+
             Recorder mic = GorillaTagger.Instance.myRecorder;
+
+            if (mic.SamplingRate == (SamplingRate)samplingRate && mic.Bitrate == bitrate)
+                return;
+
             mic.SamplingRate = (SamplingRate)samplingRate;
             mic.Bitrate = bitrate;
 
@@ -1106,10 +1113,16 @@ namespace iiMenu.Mods
 
         public static void SetMicrophoneAmplification(bool amplify)
         {
+            if (!PhotonNetwork.InRoom)
+                return;
+
             Recorder mic = GorillaTagger.Instance.myRecorder;
 
             if (amplify)
             {
+                if (mic.gameObject.GetComponent<MicAmplifier>() != null)
+                    return;
+
                 MicAmplifier microphoneAmplifier = mic.gameObject.GetOrAddComponent<MicAmplifier>();
                 microphoneAmplifier.AmplificationFactor = 16;
                 microphoneAmplifier.BoostValue = 16;
@@ -1117,7 +1130,10 @@ namespace iiMenu.Mods
             {
                 if (mic.gameObject.GetComponent<MicAmplifier>())
                 {
-                    MicAmplifier microphoneAmplifier = mic.gameObject.GetOrAddComponent<MicAmplifier>();
+                    if (mic.gameObject.GetComponent<MicAmplifier>() == null)
+                        return;
+
+                    MicAmplifier microphoneAmplifier = mic.gameObject.GetComponent<MicAmplifier>();
                     microphoneAmplifier.enabled = false;
                     UnityEngine.Object.Destroy(mic.gameObject.GetComponent<MicAmplifier>());
                 }
@@ -1128,10 +1144,17 @@ namespace iiMenu.Mods
 
         public static void SetMicrophonePitch(float pitch)
         {
+            if (!PhotonNetwork.InRoom)
+                return;
+
             Recorder mic = GorillaTagger.Instance.myRecorder;
 
             if (pitch != 1f)
             {
+                MicPitchShifter pitchShifter = mic.gameObject.GetComponent<MicPitchShifter>() ?? null;
+                if (pitchShifter != null && pitchShifter.PitchFactor == pitch)
+                    return;
+
                 MicPitchShifter microphoneAmplifier = mic.gameObject.GetOrAddComponent<MicPitchShifter>();
                 microphoneAmplifier.PitchFactor = pitch;
             }
@@ -1139,10 +1162,12 @@ namespace iiMenu.Mods
             {
                 if (mic.gameObject.GetComponent<MicPitchShifter>())
                 {
-                    MicPitchShifter microphoneAmplifier = mic.gameObject.GetOrAddComponent<MicPitchShifter>();
+                    MicPitchShifter microphoneAmplifier = mic.gameObject.GetComponent<MicPitchShifter>();
                     microphoneAmplifier.enabled = false;
                     UnityEngine.Object.Destroy(mic.gameObject.GetComponent<MicPitchShifter>());
                 }
+                else
+                    return;
             }
 
             CoroutineManager.instance.StartCoroutine(DelayReloadMicrophone());

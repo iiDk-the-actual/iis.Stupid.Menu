@@ -710,15 +710,15 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Mute DJ Sets", method =() => Fun.MuteDJSets(), disableMethod =() => Fun.UnmuteDJSets(), toolTip = "Mutes every DJ set so you don't have to hear the worst music known to man."},
 
-                new ButtonInfo { buttonText = "Low Quality Microphone", enableMethod =() => Fun.SetMicrophoneQuality(5, 08000), disableMethod =() => Fun.SetMicrophoneQuality(20000, 16000), toolTip = "Makes your microphone have really bad quality."},
-                new ButtonInfo { buttonText = "Loud Microphone", enableMethod =() => Fun.SetMicrophoneAmplification(true), disableMethod =() => Fun.SetMicrophoneAmplification(false), toolTip = "Makes your microphone really loud."},
+                new ButtonInfo { buttonText = "Low Quality Microphone", method =() => Fun.SetMicrophoneQuality(5, 08000), disableMethod =() => Fun.SetMicrophoneQuality(20000, 16000), toolTip = "Makes your microphone have really bad quality."},
+                new ButtonInfo { buttonText = "Loud Microphone", method =() => Fun.SetMicrophoneAmplification(true), disableMethod =() => Fun.SetMicrophoneAmplification(false), toolTip = "Makes your microphone really loud."},
                 
-                new ButtonInfo { buttonText = "High Pitch Microphone", enableMethod =() => Fun.SetMicrophonePitch(1.5f), disableMethod =() => Fun.SetMicrophonePitch(1f), toolTip = "Makes your microphone high pitched."},
-                new ButtonInfo { buttonText = "Low Pitch Microphone", enableMethod =() => Fun.SetMicrophonePitch(0.5f), disableMethod =() => Fun.SetMicrophonePitch(1f), toolTip = "Makes your microphone low pitched."},
+                new ButtonInfo { buttonText = "High Pitch Microphone", method =() => Fun.SetMicrophonePitch(1.5f), disableMethod =() => Fun.SetMicrophonePitch(1f), toolTip = "Makes your microphone high pitched."},
+                new ButtonInfo { buttonText = "Low Pitch Microphone", method =() => Fun.SetMicrophonePitch(0.5f), disableMethod =() => Fun.SetMicrophonePitch(1f), toolTip = "Makes your microphone low pitched."},
 
                 new ButtonInfo { buttonText = "Reload Microphone", method =() => Fun.ReloadMicrophone(), isTogglable = false,  toolTip = "Reloads / fixes your microphone."},
 
-                new ButtonInfo { buttonText = "Microphone Feedback", enableMethod =() => Fun.SetDebugEchoMode(true), disableMethod =() => Fun.SetDebugEchoMode(false), toolTip = "Plays sound coming through your microphone back to your speakers."},
+                new ButtonInfo { buttonText = "Microphone Feedback", method =() => Fun.SetDebugEchoMode(true), disableMethod =() => Fun.SetDebugEchoMode(false), toolTip = "Plays sound coming through your microphone back to your speakers."},
                 new ButtonInfo { buttonText = "Copy Voice Gun", method =() => Fun.CopyVoiceGun(), toolTip = "Copies the voice of whoever your hand desires."},
 
                 new ButtonInfo { buttonText = "Activate All Doors <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.ActivateAllDoors(), toolTip = "Activates all doors when holding <color=green>grip</color>."},
