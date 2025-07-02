@@ -2639,7 +2639,7 @@ namespace iiMenu.Mods
             bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
             float lineWidth = GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f;
 
-            Color menuColor = GetBDColor(0f);
+            Color menuColor = GetBGColor(0f);
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
             {
@@ -2800,7 +2800,7 @@ namespace iiMenu.Mods
             bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
             bool thinTracers = GetIndex("Thin Tracers").enabled;
 
-            Color menuColor = GetBDColor(0f);
+            Color menuColor = GetBGColor(0f);
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
             {
@@ -2843,7 +2843,7 @@ namespace iiMenu.Mods
             bool LocalTagged = PlayerIsTagged(VRRig.LocalRig);
             bool NoInfected = InfectedList().Count == 0;
 
-            Color menuColor = GetBDColor(0f);
+            Color menuColor = GetBGColor(0f);
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
             {
@@ -2907,7 +2907,7 @@ namespace iiMenu.Mods
             bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
             bool thinTracers = GetIndex("Thin Tracers").enabled;
 
-            Color menuColor = GetBDColor(0f);
+            Color menuColor = GetBGColor(0f);
 
             NetPlayer currentTarget = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
 
@@ -2971,7 +2971,7 @@ namespace iiMenu.Mods
             bool transparentTheme = GetIndex("Transparent Theme").enabled;
             bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
 
-            Color menuColor = GetBDColor(0f);
+            Color menuColor = GetBGColor(0f);
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
             {
@@ -3035,7 +3035,7 @@ namespace iiMenu.Mods
             bool LocalTagged = PlayerIsTagged(VRRig.LocalRig);
             bool NoInfected = InfectedList().Count == 0;
 
-            Color menuColor = GetBDColor(0f);
+            Color menuColor = GetBGColor(0f);
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
             {
@@ -3124,7 +3124,7 @@ namespace iiMenu.Mods
             bool transparentTheme = GetIndex("Transparent Theme").enabled;
             bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
 
-            Color menuColor = GetBDColor(0f);
+            Color menuColor = GetBGColor(0f);
 
             NetPlayer currentTarget = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
 
