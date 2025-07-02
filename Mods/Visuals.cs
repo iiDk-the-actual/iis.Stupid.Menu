@@ -488,7 +488,7 @@ namespace iiMenu.Mods
             bool fmt = GetIndex("Follow Menu Theme").enabled;
             bool hoc = GetIndex("Hidden on Camera").enabled;
             bool tt = GetIndex("Transparent Theme").enabled;
-            bool tht = GetIndex("Thin Tracers").enabled;
+            bool thinTracers = GetIndex("Thin Tracers").enabled;
 
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
@@ -517,7 +517,7 @@ namespace iiMenu.Mods
                 if (tt) 
                     color = new Color(color.r, color.g, color.b, 0.5f);
 
-                float width = tht ? 0.0075f : 0.025f;
+                float width = thinTracers ? 0.0075f : 0.025f;
                 Line.startWidth = width;
                 Line.endWidth = width;
 
@@ -1433,7 +1433,7 @@ namespace iiMenu.Mods
             bool fmt = GetIndex("Follow Menu Theme").enabled;
             bool hoc = GetIndex("Hidden on Camera").enabled;
             bool tt = GetIndex("Transparent Theme").enabled;
-            bool tht = GetIndex("Thin Tracers").enabled;
+            bool thinTracers = GetIndex("Thin Tracers").enabled;
 
             List<VRRig> toRemove = new List<VRRig>();
 
@@ -1483,8 +1483,8 @@ namespace iiMenu.Mods
                     if (hoc) 
                         liner.gameObject.layer = 19;
 
-                    liner.startWidth = tht ? 0.0075f : 0.025f;
-                    liner.endWidth = tht ? 0.0075f : 0.025f;
+                    liner.startWidth = thinTracers ? 0.0075f : 0.025f;
+                    liner.endWidth = thinTracers ? 0.0075f : 0.025f;
 
                     liner.startColor = thecolor;
                     liner.endColor = thecolor;
@@ -1499,8 +1499,8 @@ namespace iiMenu.Mods
                         if (hoc)
                             liner.gameObject.layer = 19;
 
-                        liner.startWidth = tht ? 0.0075f : 0.025f;
-                        liner.endWidth = tht ? 0.0075f : 0.025f;
+                        liner.startWidth = thinTracers ? 0.0075f : 0.025f;
+                        liner.endWidth = thinTracers ? 0.0075f : 0.025f;
 
                         liner.startColor = thecolor;
                         liner.endColor = thecolor;
@@ -1519,7 +1519,7 @@ namespace iiMenu.Mods
             bool fmt = GetIndex("Follow Menu Theme").enabled;
             bool hoc = GetIndex("Hidden on Camera").enabled;
             bool tt = GetIndex("Transparent Theme").enabled;
-            bool tht = GetIndex("Thin Tracers").enabled;
+            bool thinTracers = GetIndex("Thin Tracers").enabled;
             bool selfTagged = PlayerIsTagged(VRRig.LocalRig);
 
             List<VRRig> toRemove = new List<VRRig>();
@@ -1572,13 +1572,13 @@ namespace iiMenu.Mods
                     if (hoc)
                         liner.gameObject.layer = 19;
 
-                    liner.startWidth = tht ? 0.0075f : 0.025f;
-                    liner.endWidth = tht ? 0.0075f : 0.025f;
+                    liner.startWidth = thinTracers ? 0.0075f : 0.025f;
+                    liner.endWidth = thinTracers ? 0.0075f : 0.025f;
 
                     liner.startColor = thecolor;
                     liner.endColor = thecolor;
 
-                    liner.enabled = selfTagged ? !playerTagged : playerTagged;
+                    liner.enabled = (selfTagged ? !playerTagged : playerTagged) || InfectedList().Count <= 0;
 
                     liner.SetPosition(0, vrrig.head.rigTarget.transform.position + new Vector3(0f, 0.16f, 0f));
                     liner.SetPosition(1, vrrig.head.rigTarget.transform.position - new Vector3(0f, 0.4f, 0f));
@@ -1590,8 +1590,8 @@ namespace iiMenu.Mods
                         if (hoc)
                             liner.gameObject.layer = 19;
 
-                        liner.startWidth = tht ? 0.0075f : 0.025f;
-                        liner.endWidth = tht ? 0.0075f : 0.025f;
+                        liner.startWidth = thinTracers ? 0.0075f : 0.025f;
+                        liner.endWidth = thinTracers ? 0.0075f : 0.025f;
 
                         liner.startColor = thecolor;
                         liner.endColor = thecolor;
@@ -1613,7 +1613,7 @@ namespace iiMenu.Mods
             bool fmt = GetIndex("Follow Menu Theme").enabled;
             bool hoc = GetIndex("Hidden on Camera").enabled;
             bool tt = GetIndex("Transparent Theme").enabled;
-            bool tht = GetIndex("Thin Tracers").enabled;
+            bool thinTracers = GetIndex("Thin Tracers").enabled;
 
             List<VRRig> toRemove = new List<VRRig>();
             GorillaHuntManager hunt = (GorillaHuntManager)GorillaGameManager.instance;
@@ -1668,8 +1668,8 @@ namespace iiMenu.Mods
                     if (hoc)
                         liner.gameObject.layer = 19;
 
-                    liner.startWidth = tht ? 0.0075f : 0.025f;
-                    liner.endWidth = tht ? 0.0075f : 0.025f;
+                    liner.startWidth = thinTracers ? 0.0075f : 0.025f;
+                    liner.endWidth = thinTracers ? 0.0075f : 0.025f;
 
                     liner.startColor = thecolor;
                     liner.endColor = thecolor;
@@ -1686,8 +1686,8 @@ namespace iiMenu.Mods
                         if (hoc)
                             liner.gameObject.layer = 19;
 
-                        liner.startWidth = tht ? 0.0075f : 0.025f;
-                        liner.endWidth = tht ? 0.0075f : 0.025f;
+                        liner.startWidth = thinTracers ? 0.0075f : 0.025f;
+                        liner.endWidth = thinTracers ? 0.0075f : 0.025f;
 
                         liner.startColor = thecolor;
                         liner.endColor = thecolor;
@@ -2798,6 +2798,7 @@ namespace iiMenu.Mods
             bool followMenuTheme = GetIndex("Follow Menu Theme").enabled;
             bool transparentTheme = GetIndex("Transparent Theme").enabled;
             bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
+            bool thinTracers = GetIndex("Thin Tracers").enabled;
 
             Color menuColor = GetBDColor(0f);
 
@@ -2818,8 +2819,9 @@ namespace iiMenu.Mods
 
                 line.startColor = lineColor;
                 line.endColor = lineColor;
-                line.startWidth = 0.025f;
-                line.endWidth = 0.025f;
+                float width = thinTracers ? 0.0075f : 0.025f;
+                line.startWidth = width;
+                line.endWidth = width;
                 line.SetPosition(0, playerRig.transform.position + new Vector3(0f, 9999f, 0f));
                 line.SetPosition(1, playerRig.transform.position - new Vector3(0f, 9999f, 0f));
             }
@@ -2836,6 +2838,7 @@ namespace iiMenu.Mods
             bool followMenuTheme = GetIndex("Follow Menu Theme").enabled;
             bool transparentTheme = GetIndex("Transparent Theme").enabled;
             bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
+            bool thinTracers = GetIndex("Thin Tracers").enabled;
 
             bool LocalTagged = PlayerIsTagged(VRRig.LocalRig);
             bool NoInfected = InfectedList().Count == 0;
@@ -2875,8 +2878,9 @@ namespace iiMenu.Mods
 
                 line.startColor = lineColor;
                 line.endColor = lineColor;
-                line.startWidth = 0.025f;
-                line.endWidth = 0.025f;
+                float width = thinTracers ? 0.0075f : 0.025f;
+                line.startWidth = width;
+                line.endWidth = width;
                 line.SetPosition(0, playerRig.transform.position + new Vector3(0f, 9999f, 0f));
                 line.SetPosition(1, playerRig.transform.position - new Vector3(0f, 9999f, 0f));
             }
@@ -2901,6 +2905,7 @@ namespace iiMenu.Mods
             bool followMenuTheme = GetIndex("Follow Menu Theme").enabled;
             bool transparentTheme = GetIndex("Transparent Theme").enabled;
             bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
+            bool thinTracers = GetIndex("Thin Tracers").enabled;
 
             Color menuColor = GetBDColor(0f);
 
@@ -2924,8 +2929,9 @@ namespace iiMenu.Mods
 
                     line.startColor = lineColor;
                     line.endColor = lineColor;
-                    line.startWidth = 0.025f;
-                    line.endWidth = 0.025f;
+                    float width = thinTracers ? 0.0075f : 0.025f;
+                    line.startWidth = width;
+                    line.endWidth = width;
                     line.SetPosition(0, playerRig.transform.position + new Vector3(0f, 9999f, 0f));
                     line.SetPosition(1, playerRig.transform.position - new Vector3(0f, 9999f, 0f));
                 } 
@@ -2943,8 +2949,9 @@ namespace iiMenu.Mods
 
                     line.startColor = lineColor;
                     line.endColor = lineColor;
-                    line.startWidth = 0.025f;
-                    line.endWidth = 0.025f;
+                    float width = thinTracers ? 0.0075f : 0.025f;
+                    line.startWidth = width;
+                    line.endWidth = width;
                     line.SetPosition(0, playerRig.transform.position + new Vector3(0f, 9999f, 0f));
                     line.SetPosition(1, playerRig.transform.position - new Vector3(0f, 9999f, 0f));
                 }
