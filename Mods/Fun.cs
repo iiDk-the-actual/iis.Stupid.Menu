@@ -1150,7 +1150,7 @@ namespace iiMenu.Mods
 
         public static void SetDebugEchoMode(bool value)
         {
-            if (GorillaTagger.Instance.myRecorder != null && !GorillaTagger.Instance.myRecorder.DebugEchoMode)
+            if (GorillaTagger.Instance.myRecorder != null)
                 GorillaTagger.Instance.myRecorder.DebugEchoMode = value;
         }
 
