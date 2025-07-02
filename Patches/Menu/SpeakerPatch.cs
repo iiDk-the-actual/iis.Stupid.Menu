@@ -1,5 +1,4 @@
-﻿using GorillaTag.Audio;
-using HarmonyLib;
+﻿using HarmonyLib;
 using iiMenu.Mods;
 using Photon.Voice;
 using Photon.Voice.Unity;

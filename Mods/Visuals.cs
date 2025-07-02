@@ -1,17 +1,14 @@
 using GorillaExtensions;
 using GorillaGameModes;
 using GorillaNetworking;
-using iiMenu.Classes;
 using Photon.Pun;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Animations.Rigging;
 using UnityEngine.Rendering;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
-using static QRCoder.PayloadGenerator.SwissQrCode;
 
 namespace iiMenu.Mods
 {
