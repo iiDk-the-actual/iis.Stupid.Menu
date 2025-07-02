@@ -477,6 +477,10 @@ namespace iiMenu.Mods
                     predictions.Remove(pred.Key);
                 }
             }
+            bool fmt = GetIndex("Follow Menu Theme").enabled;
+            bool hoc = GetIndex("Hidden on Camera").enabled;
+            bool tt = GetIndex("Transparent Theme").enabled;
+            bool tht = GetIndex("Thin Tracers").enabled;
 
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
@@ -495,10 +499,22 @@ namespace iiMenu.Mods
                     predictions.Add(rig, Line);
                 }
 
-                float width = GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f;
+                if (hoc) 
+                    Line.gameObject.layer = 19;
+
+                Color color = GetPlayerColor(rig);
+
+                if (fmt) 
+                    color = GetBGColor(0f);
+                if (tt) 
+                    color = new Color(color.r, color.g, color.b, 0.5f);
+
+                float width = tht ? 0.0075f : 0.025f;
                 Line.startWidth = width;
                 Line.endWidth = width;
-                Line.material.color = GetPlayerColor(rig);
+
+                Line.startColor = color;
+                Line.endColor = color;
 
                 Vector3 position = rig.syncPos;
                 Vector3 velocity = rig.LatestVelocity();
