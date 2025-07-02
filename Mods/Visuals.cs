@@ -492,30 +492,53 @@ namespace iiMenu.Mods
                     Line.endWidth = 0.025f;
                     Line.positionCount = 25;
                     Line.useWorldSpace = true;
+                    predictions.Add(rig, Line);
                 }
 
+                float width = GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f;
+                Line.startWidth = width;
+                Line.endWidth = width;
                 Line.material.color = GetPlayerColor(rig);
+
+                Vector3 position = rig.syncPos;
+                Vector3 velocity = rig.LatestVelocity();
+
+                if (velocity.magnitude < 0.05f)
+                {
+                    Line.enabled = false;
+                    continue;
+                }
+
+                Line.enabled = true;
 
                 int stepCount = Mathf.Min(25, Mathf.CeilToInt(5f / 0.1f));
                 Vector3[] points = new Vector3[stepCount];
 
-                Vector3 setvelocity = rig.LatestVelocity();
-
-                Vector3 position = rig.transform.position;
-                Vector3 velocity = setvelocity;
-
-                for (int i = 0; i < stepCount; i++)
+                int i;
+                for (i = 0; i < stepCount; i++)
                 {
                     points[i] = position;
 
-                    if (setvelocity.magnitude > 0.05f)
-                        velocity += Physics.gravity * 0.1f;
+                    Vector3 nextVelocity = velocity + Physics.gravity * 0.1f;
+                    Vector3 nextPosition = position + velocity * 0.1f;
 
-                    position += velocity * 0.1f;
+                    if (Physics.Raycast(position, nextPosition - position, out RaycastHit hit, (nextPosition - position).magnitude, GorillaLocomotion.GTPlayer.Instance.locomotionEnabledLayers))
+                    {
+                        points[i] = hit.point;
+                        i++;
+                        break;
+                    }
+
+                    position = nextPosition;
+                    velocity = nextVelocity;
                 }
 
-                Line.positionCount = points.Length;
-                Line.SetPositions(points);
+                Vector3[] finalPoints = new Vector3[i];
+                for (int j = 0; j < i; j++)
+                    finalPoints[j] = points[j];
+
+                Line.positionCount = finalPoints.Length;
+                Line.SetPositions(finalPoints);
             }
         }
 
