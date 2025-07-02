@@ -1,6 +1,8 @@
 using GorillaExtensions;
 using GorillaGameModes;
 using GorillaNetworking;
+using iiMenu.Classes;
+using Pathfinding.Util;
 using Photon.Pun;
 using System;
 using System.Collections.Generic;
@@ -469,14 +471,20 @@ namespace iiMenu.Mods
         private static Dictionary<VRRig, LineRenderer> predictions = new Dictionary<VRRig, LineRenderer> { };
         public static void JumpPredictions()
         {
-            foreach (KeyValuePair<VRRig, LineRenderer> pred in predictions)
+            List<VRRig> toRemove = new List<VRRig>();
+
+            foreach (KeyValuePair<VRRig, LineRenderer> lines in predictions)
             {
-                if (!GorillaParent.instance.vrrigs.Contains(pred.Key))
+                if (!GorillaParent.instance.vrrigs.Contains(lines.Key))
                 {
-                    UnityEngine.Object.Destroy(pred.Value.gameObject);
-                    predictions.Remove(pred.Key);
+                    toRemove.Add(lines.Key);
+                    UnityEngine.Object.Destroy(lines.Value.gameObject);
                 }
             }
+
+            foreach (VRRig rig in toRemove)
+                predictions.Remove(rig);
+
             bool fmt = GetIndex("Follow Menu Theme").enabled;
             bool hoc = GetIndex("Hidden on Camera").enabled;
             bool tt = GetIndex("Transparent Theme").enabled;
@@ -1076,7 +1084,7 @@ namespace iiMenu.Mods
                 if (vrrig != VRRig.LocalRig)
                 {
                     bool showtracersplz = false;
-                    UnityEngine.Color thecolor = vrrig.playerColor;
+                    Color thecolor = vrrig.playerColor;
                     if (vrrig.concatStringOfCosmeticsAllowed.Contains("LBADE") || vrrig.concatStringOfCosmeticsAllowed.Contains("LBAGS"))
                     {
                         thecolor = Color.green;
@@ -1419,56 +1427,88 @@ namespace iiMenu.Mods
             VRRig.LocalRig.mainSkin.material.color = new Color(VRRig.LocalRig.mainSkin.material.color.r, VRRig.LocalRig.mainSkin.material.color.g, VRRig.LocalRig.mainSkin.material.color.b, 1f);
         }
 
+        private static Dictionary<VRRig, List<LineRenderer>> boneESP = new Dictionary<VRRig, List<LineRenderer>>() { };
         public static void CasualBoneESP()
         {
-            if (PerformanceVisuals)
+            bool fmt = GetIndex("Follow Menu Theme").enabled;
+            bool hoc = GetIndex("Hidden on Camera").enabled;
+            bool tt = GetIndex("Transparent Theme").enabled;
+            bool tht = GetIndex("Thin Tracers").enabled;
+
+            List<VRRig> toRemove = new List<VRRig>();
+
+            foreach (KeyValuePair<VRRig, List<LineRenderer>> boness in boneESP)
             {
-                if (Time.time < PerformanceVisualDelay)
+                if (!GorillaParent.instance.vrrigs.Contains(boness.Key))
                 {
-                    if (Time.frameCount != DelayChangeStep)
-                        return;
+                    toRemove.Add(boness.Key);
+
+                    foreach (LineRenderer renderer in boness.Value)
+                        UnityEngine.Object.Destroy(renderer);
                 }
-                else
-                { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
             }
+
+            foreach (VRRig rig in toRemove)
+                boneESP.Remove(rig);
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                Color thecolor = vrrig.playerColor;
-                if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
-                if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                 if (vrrig != VRRig.LocalRig)
                 {
-                    LineRenderer liner = vrrig.head.rigTarget.gameObject.GetOrAddComponent<LineRenderer>();
-                    if (GetIndex("Hidden on Camera").enabled) { liner.gameObject.layer = 19; }
-                    liner.startWidth = 0.025f;
-                    liner.endWidth = 0.025f;
+                    if (!boneESP.TryGetValue(vrrig, out List<LineRenderer> Lines))
+                    {
+                        Lines = new List<LineRenderer> { };
+
+                        LineRenderer LineHead = vrrig.head.rigTarget.gameObject.GetOrAddComponent<LineRenderer>();
+                        LineHead.material.shader = Shader.Find("GUI/Text Shader");
+                        Lines.Add(LineHead);
+
+                        for (int i = 0; i < 19; i++)
+                        {
+                            LineRenderer Line = vrrig.mainSkin.bones[bones[i * 2]].gameObject.GetOrAddComponent<LineRenderer>();
+                            Line.material.shader = Shader.Find("GUI/Text Shader");
+                            Lines.Add(Line);
+                        }
+
+                        boneESP.Add(vrrig, Lines);
+                    }
+
+                    LineRenderer liner = Lines[0];
+
+                    Color thecolor = vrrig.playerColor;
+                    if (fmt) 
+                        thecolor = GetBGColor(0f);
+                    if (tt) 
+                        thecolor.a = 0.5f;
+                    if (hoc) 
+                        liner.gameObject.layer = 19;
+
+                    liner.startWidth = tht ? 0.0075f : 0.025f;
+                    liner.endWidth = tht ? 0.0075f : 0.025f;
 
                     liner.startColor = thecolor;
                     liner.endColor = thecolor;
 
-                    liner.material.shader = Shader.Find("GUI/Text Shader");
-
                     liner.SetPosition(0, vrrig.head.rigTarget.transform.position + new Vector3(0f, 0.16f, 0f));
                     liner.SetPosition(1, vrrig.head.rigTarget.transform.position - new Vector3(0f, 0.4f, 0f));
 
-                    UnityEngine.Object.Destroy(liner, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
-                    for (int i = 0; i < bones.Count<int>(); i += 2)
+                    for (int i = 0; i < 19; i++)
                     {
-                        liner = vrrig.mainSkin.bones[bones[i]].gameObject.GetOrAddComponent<LineRenderer>();
+                        liner = Lines[i + 1];
 
-                        liner.startWidth = 0.025f;
-                        liner.endWidth = 0.025f;
+                        if (hoc)
+                            liner.gameObject.layer = 19;
+
+                        liner.startWidth = tht ? 0.0075f : 0.025f;
+                        liner.endWidth = tht ? 0.0075f : 0.025f;
 
                         liner.startColor = thecolor;
                         liner.endColor = thecolor;
 
                         liner.material.shader = Shader.Find("GUI/Text Shader");
 
-                        liner.SetPosition(0, vrrig.mainSkin.bones[bones[i]].position);
-                        liner.SetPosition(1, vrrig.mainSkin.bones[bones[i + 1]].position);
-
-                        UnityEngine.Object.Destroy(liner, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
+                        liner.SetPosition(0, vrrig.mainSkin.bones[bones[i * 2]].position);
+                        liner.SetPosition(1, vrrig.mainSkin.bones[bones[(i * 2) + 1]].position);
                     }
                 }
             }
@@ -1476,155 +1516,90 @@ namespace iiMenu.Mods
 
         public static void InfectionBoneESP()
         {
-            if (PerformanceVisuals)
+            bool fmt = GetIndex("Follow Menu Theme").enabled;
+            bool hoc = GetIndex("Hidden on Camera").enabled;
+            bool tt = GetIndex("Transparent Theme").enabled;
+            bool tht = GetIndex("Thin Tracers").enabled;
+            bool selfTagged = PlayerIsTagged(VRRig.LocalRig);
+
+            List<VRRig> toRemove = new List<VRRig>();
+
+            foreach (KeyValuePair<VRRig, List<LineRenderer>> boness in boneESP)
             {
-                if (Time.time < PerformanceVisualDelay)
+                if (!GorillaParent.instance.vrrigs.Contains(boness.Key))
                 {
-                    if (Time.frameCount != DelayChangeStep)
-                        return;
+                    toRemove.Add(boness.Key);
+
+                    foreach (LineRenderer renderer in boness.Value)
+                        UnityEngine.Object.Destroy(renderer);
                 }
-                else
-                { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
             }
 
-            bool isInfectedPlayers = false;
+            foreach (VRRig rig in toRemove)
+                boneESP.Remove(rig);
+
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (PlayerIsTagged(vrrig))
+                if (vrrig != VRRig.LocalRig)
                 {
-                    isInfectedPlayers = true;
-                    break;
-                }
-            }
-            if (isInfectedPlayers)
-            {
-                if (!PlayerIsTagged(VRRig.LocalRig))
-                {
-                    foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                    if (!boneESP.TryGetValue(vrrig, out List<LineRenderer> Lines))
                     {
-                        Color thecolor = GetPlayerColor(vrrig);
-                        if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
-                        if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
-                        if (PlayerIsTagged(vrrig) && vrrig != VRRig.LocalRig)
+                        Lines = new List<LineRenderer> { };
+
+                        LineRenderer LineHead = vrrig.head.rigTarget.gameObject.GetOrAddComponent<LineRenderer>();
+                        LineHead.material.shader = Shader.Find("GUI/Text Shader");
+                        Lines.Add(LineHead);
+
+                        for (int i = 0; i < 19; i++)
                         {
-                            LineRenderer liner = vrrig.head.rigTarget.gameObject.GetOrAddComponent<LineRenderer>();
-                            if (GetIndex("Hidden on Camera").enabled) { liner.gameObject.layer = 19; }
-                            liner.startWidth = 0.025f;
-                            liner.endWidth = 0.025f;
-
-                            liner.startColor = thecolor;
-                            liner.endColor = thecolor;
-
-                            liner.material.shader = Shader.Find("GUI/Text Shader");
-
-                            liner.SetPosition(0, vrrig.head.rigTarget.transform.position + new Vector3(0f, 0.16f, 0f));
-                            liner.SetPosition(1, vrrig.head.rigTarget.transform.position - new Vector3(0f, 0.4f, 0f));
-
-                            UnityEngine.Object.Destroy(liner, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
-                            for (int i = 0; i < bones.Count<int>(); i += 2)
-                            {
-                                liner = vrrig.mainSkin.bones[bones[i]].gameObject.GetOrAddComponent<LineRenderer>();
-
-                                liner.startWidth = 0.025f;
-                                liner.endWidth = 0.025f;
-
-                                liner.startColor = thecolor;
-                                liner.endColor = thecolor;
-
-                                liner.material.shader = Shader.Find("GUI/Text Shader");
-
-                                liner.SetPosition(0, vrrig.mainSkin.bones[bones[i]].position);
-                                liner.SetPosition(1, vrrig.mainSkin.bones[bones[i + 1]].position);
-
-                                UnityEngine.Object.Destroy(liner, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
-                            }
+                            LineRenderer Line = vrrig.mainSkin.bones[bones[i * 2]].gameObject.GetOrAddComponent<LineRenderer>();
+                            Line.material.shader = Shader.Find("GUI/Text Shader");
+                            Lines.Add(Line);
                         }
+
+                        boneESP.Add(vrrig, Lines);
                     }
-                }
-                else
-                {
-                    foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+
+                    LineRenderer liner = Lines[0];
+
+                    bool playerTagged = PlayerIsTagged(vrrig);
+                    Color thecolor = selfTagged ? vrrig.playerColor : GetPlayerColor(vrrig);
+
+                    if (fmt)
+                        thecolor = GetBGColor(0f);
+                    if (tt)
+                        thecolor.a = 0.5f;
+                    if (hoc)
+                        liner.gameObject.layer = 19;
+
+                    liner.startWidth = tht ? 0.0075f : 0.025f;
+                    liner.endWidth = tht ? 0.0075f : 0.025f;
+
+                    liner.startColor = thecolor;
+                    liner.endColor = thecolor;
+
+                    liner.enabled = selfTagged ? !playerTagged : playerTagged;
+
+                    liner.SetPosition(0, vrrig.head.rigTarget.transform.position + new Vector3(0f, 0.16f, 0f));
+                    liner.SetPosition(1, vrrig.head.rigTarget.transform.position - new Vector3(0f, 0.4f, 0f));
+
+                    for (int i = 0; i < 19; i++)
                     {
-                        UnityEngine.Color thecolor = vrrig.playerColor;
-                        if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
-                        if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
-                        if (!PlayerIsTagged(vrrig) && vrrig != VRRig.LocalRig)
-                        {
-                            LineRenderer liner = vrrig.head.rigTarget.gameObject.GetOrAddComponent<LineRenderer>();
-                            if (GetIndex("Hidden on Camera").enabled) { liner.gameObject.layer = 19; }
-                            liner.startWidth = 0.025f;
-                            liner.endWidth = 0.025f;
+                        liner = Lines[i + 1];
 
-                            liner.startColor = thecolor;
-                            liner.endColor = thecolor;
+                        if (hoc)
+                            liner.gameObject.layer = 19;
 
-                            liner.material.shader = Shader.Find("GUI/Text Shader");
-
-                            liner.SetPosition(0, vrrig.head.rigTarget.transform.position + new Vector3(0f, 0.16f, 0f));
-                            liner.SetPosition(1, vrrig.head.rigTarget.transform.position - new Vector3(0f, 0.4f, 0f));
-
-                            UnityEngine.Object.Destroy(liner, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
-                            for (int i = 0; i < bones.Count<int>(); i += 2)
-                            {
-                                liner = vrrig.mainSkin.bones[bones[i]].gameObject.GetOrAddComponent<LineRenderer>();
-
-                                liner.startWidth = 0.025f;
-                                liner.endWidth = 0.025f;
-
-                                liner.startColor = thecolor;
-                                liner.endColor = thecolor;
-
-                                liner.material.shader = Shader.Find("GUI/Text Shader");
-
-                                liner.SetPosition(0, vrrig.mainSkin.bones[bones[i]].position);
-                                liner.SetPosition(1, vrrig.mainSkin.bones[bones[i + 1]].position);
-
-                                UnityEngine.Object.Destroy(liner, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-                {
-                    UnityEngine.Color thecolor = vrrig.playerColor;
-                    if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
-                    if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
-                    if (vrrig != VRRig.LocalRig)
-                    {
-                        LineRenderer liner = vrrig.head.rigTarget.gameObject.GetOrAddComponent<LineRenderer>();
-                        if (GetIndex("Hidden on Camera").enabled) { liner.gameObject.layer = 19; }
-                        liner.startWidth = 0.025f;
-                        liner.endWidth = 0.025f;
+                        liner.startWidth = tht ? 0.0075f : 0.025f;
+                        liner.endWidth = tht ? 0.0075f : 0.025f;
 
                         liner.startColor = thecolor;
                         liner.endColor = thecolor;
 
                         liner.material.shader = Shader.Find("GUI/Text Shader");
 
-                        liner.SetPosition(0, vrrig.head.rigTarget.transform.position + new Vector3(0f, 0.16f, 0f));
-                        liner.SetPosition(1, vrrig.head.rigTarget.transform.position - new Vector3(0f, 0.4f, 0f));
-
-                        UnityEngine.Object.Destroy(liner, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
-                        for (int i = 0; i < bones.Count<int>(); i += 2)
-                        {
-                            liner = vrrig.mainSkin.bones[bones[i]].gameObject.GetOrAddComponent<LineRenderer>();
-
-                            liner.startWidth = 0.025f;
-                            liner.endWidth = 0.025f;
-
-                            liner.startColor = thecolor;
-                            liner.endColor = thecolor;
-
-                            liner.material.shader = Shader.Find("GUI/Text Shader");
-
-                            liner.SetPosition(0, vrrig.mainSkin.bones[bones[i]].position);
-                            liner.SetPosition(1, vrrig.mainSkin.bones[bones[i + 1]].position);
-
-                            UnityEngine.Object.Destroy(liner, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
-                        }
+                        liner.SetPosition(0, vrrig.mainSkin.bones[bones[i * 2]].position);
+                        liner.SetPosition(1, vrrig.mainSkin.bones[bones[(i * 2) + 1]].position);
                     }
                 }
             }
@@ -1632,97 +1607,111 @@ namespace iiMenu.Mods
 
         public static void HuntBoneESP()
         {
-            if (PerformanceVisuals)
+            if (!PhotonNetwork.InRoom || GorillaGameManager.instance.GameType() != GameModeType.HuntDown)
+                return;
+
+            bool fmt = GetIndex("Follow Menu Theme").enabled;
+            bool hoc = GetIndex("Hidden on Camera").enabled;
+            bool tt = GetIndex("Transparent Theme").enabled;
+            bool tht = GetIndex("Thin Tracers").enabled;
+
+            List<VRRig> toRemove = new List<VRRig>();
+            GorillaHuntManager hunt = (GorillaHuntManager)GorillaGameManager.instance;
+            NetPlayer target = hunt.GetTargetOf(NetworkSystem.Instance.LocalPlayer);
+
+            foreach (KeyValuePair<VRRig, List<LineRenderer>> boness in boneESP)
             {
-                if (Time.time < PerformanceVisualDelay)
+                if (!GorillaParent.instance.vrrigs.Contains(boness.Key))
                 {
-                    if (Time.frameCount != DelayChangeStep)
-                        return;
+                    toRemove.Add(boness.Key);
+
+                    foreach (LineRenderer renderer in boness.Value)
+                        UnityEngine.Object.Destroy(renderer);
                 }
-                else
-                { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
             }
 
-            GorillaHuntManager sillyComputer = (GorillaHuntManager)GorillaGameManager.instance;
-            NetPlayer target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
-            foreach (NetPlayer player in PhotonNetwork.PlayerList)
+            foreach (VRRig rig in toRemove)
+                boneESP.Remove(rig);
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                VRRig vrrig = GetVRRigFromPlayer(player);
-                if (player == target)
+                if (vrrig != VRRig.LocalRig)
                 {
-                    UnityEngine.Color thecolor = vrrig.playerColor;
-                    if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
-                    if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
-                    LineRenderer liner = vrrig.head.rigTarget.gameObject.GetOrAddComponent<LineRenderer>();
-                    if (GetIndex("Hidden on Camera").enabled) { liner.gameObject.layer = 19; }
-                    liner.startWidth = 0.025f;
-                    liner.endWidth = 0.025f;
-
-                    liner.startColor = thecolor;
-                    liner.endColor = thecolor;
-
-                    liner.material.shader = Shader.Find("GUI/Text Shader");
-
-                    liner.SetPosition(0, vrrig.head.rigTarget.transform.position + new Vector3(0f, 0.16f, 0f));
-                    liner.SetPosition(1, vrrig.head.rigTarget.transform.position - new Vector3(0f, 0.4f, 0f));
-
-                    UnityEngine.Object.Destroy(liner, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
-                    for (int i = 0; i < bones.Count<int>(); i += 2)
+                    if (!boneESP.TryGetValue(vrrig, out List<LineRenderer> Lines))
                     {
-                        liner = vrrig.mainSkin.bones[bones[i]].gameObject.GetOrAddComponent<LineRenderer>();
+                        Lines = new List<LineRenderer> { };
 
-                        liner.startWidth = 0.025f;
-                        liner.endWidth = 0.025f;
+                        LineRenderer LineHead = vrrig.head.rigTarget.gameObject.GetOrAddComponent<LineRenderer>();
+                        LineHead.material.shader = Shader.Find("GUI/Text Shader");
+                        Lines.Add(LineHead);
 
-                        liner.startColor = thecolor;
-                        liner.endColor = thecolor;
+                        for (int i = 0; i < 19; i++)
+                        {
+                            LineRenderer Line = vrrig.mainSkin.bones[bones[i * 2]].gameObject.GetOrAddComponent<LineRenderer>();
+                            Line.material.shader = Shader.Find("GUI/Text Shader");
+                            Lines.Add(Line);
+                        }
 
-                        liner.material.shader = Shader.Find("GUI/Text Shader");
-
-                        liner.SetPosition(0, vrrig.mainSkin.bones[bones[i]].position);
-                        liner.SetPosition(1, vrrig.mainSkin.bones[bones[i + 1]].position);
-
-                        UnityEngine.Object.Destroy(liner, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
+                        boneESP.Add(vrrig, Lines);
                     }
-                }
-                if (sillyComputer.GetTargetOf(player) == (NetPlayer)PhotonNetwork.LocalPlayer)
-                {
-                    UnityEngine.Color thecolor = Color.red;
-                    if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
-                    LineRenderer liner = vrrig.head.rigTarget.gameObject.GetOrAddComponent<LineRenderer>();
-                    if (GetIndex("Hidden on Camera").enabled) { liner.gameObject.layer = 19; }
-                    liner.startWidth = 0.025f;
-                    liner.endWidth = 0.025f;
+
+                    LineRenderer liner = Lines[0];
+
+                    NetPlayer owner = GetPlayerFromVRRig(vrrig);
+                    NetPlayer theirTarget = hunt.GetTargetOf(owner);
+                    Color thecolor = owner == target ? GetPlayerColor(vrrig) : (theirTarget == NetworkSystem.Instance.LocalPlayer ? Color.red : Color.clear);
+
+                    if (fmt)
+                        thecolor = GetBGColor(0f);
+                    if (tt)
+                        thecolor.a = 0.5f;
+                    if (hoc)
+                        liner.gameObject.layer = 19;
+
+                    liner.startWidth = tht ? 0.0075f : 0.025f;
+                    liner.endWidth = tht ? 0.0075f : 0.025f;
 
                     liner.startColor = thecolor;
                     liner.endColor = thecolor;
 
-                    liner.material.shader = Shader.Find("GUI/Text Shader");
+                    liner.enabled = owner == target || theirTarget == NetworkSystem.Instance.LocalPlayer;
 
                     liner.SetPosition(0, vrrig.head.rigTarget.transform.position + new Vector3(0f, 0.16f, 0f));
                     liner.SetPosition(1, vrrig.head.rigTarget.transform.position - new Vector3(0f, 0.4f, 0f));
 
-                    UnityEngine.Object.Destroy(liner, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
-                    for (int i = 0; i < bones.Count<int>(); i += 2)
+                    for (int i = 0; i < 19; i++)
                     {
-                        liner = vrrig.mainSkin.bones[bones[i]].gameObject.GetOrAddComponent<LineRenderer>();
+                        liner = Lines[i + 1];
 
-                        liner.startWidth = 0.025f;
-                        liner.endWidth = 0.025f;
+                        if (hoc)
+                            liner.gameObject.layer = 19;
+
+                        liner.startWidth = tht ? 0.0075f : 0.025f;
+                        liner.endWidth = tht ? 0.0075f : 0.025f;
 
                         liner.startColor = thecolor;
                         liner.endColor = thecolor;
 
                         liner.material.shader = Shader.Find("GUI/Text Shader");
 
-                        liner.SetPosition(0, vrrig.mainSkin.bones[bones[i]].position);
-                        liner.SetPosition(1, vrrig.mainSkin.bones[bones[i + 1]].position);
-
-                        UnityEngine.Object.Destroy(liner, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
+                        liner.SetPosition(0, vrrig.mainSkin.bones[bones[i * 2]].position);
+                        liner.SetPosition(1, vrrig.mainSkin.bones[bones[(i * 2) + 1]].position);
                     }
                 }
             }
         }
+
+        public static void DisableBoneESP()
+        {
+            foreach (KeyValuePair<VRRig, List<LineRenderer>> bones in boneESP)
+            {
+                foreach (LineRenderer renderer in bones.Value)
+                    UnityEngine.Object.Destroy(renderer);
+            }
+
+            boneESP.Clear();
+        }
+
 
         private static Dictionary<VRRig, float> delays = new Dictionary<VRRig, float> { };
         public static void FixRigMaterialESPColors(VRRig rig)
@@ -1874,7 +1863,7 @@ namespace iiMenu.Mods
             {
                 if (vrrig != VRRig.LocalRig)
                 {
-                    UnityEngine.Color thecolor = vrrig.playerColor;
+                    Color thecolor = vrrig.playerColor;
                     if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                     if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                     GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -1941,7 +1930,7 @@ namespace iiMenu.Mods
                     {
                         if (!PlayerIsTagged(vrrig) && vrrig != VRRig.LocalRig)
                         {
-                            UnityEngine.Color thecolor = vrrig.playerColor;
+                            Color thecolor = vrrig.playerColor;
                             if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                             if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                             GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -1963,7 +1952,7 @@ namespace iiMenu.Mods
                 {
                     if (vrrig != VRRig.LocalRig)
                     {
-                        UnityEngine.Color thecolor = vrrig.playerColor;
+                        Color thecolor = vrrig.playerColor;
                         if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                         if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                         GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -2000,7 +1989,7 @@ namespace iiMenu.Mods
                 VRRig vrrig = GetVRRigFromPlayer(player);
                 if (player == target)
                 {
-                    UnityEngine.Color thecolor = vrrig.playerColor;
+                    Color thecolor = vrrig.playerColor;
                     if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                     if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                     GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -2015,7 +2004,7 @@ namespace iiMenu.Mods
                 }
                 if (sillyComputer.GetTargetOf(player) == (NetPlayer)PhotonNetwork.LocalPlayer)
                 {
-                    UnityEngine.Color thecolor = Color.red;
+                    Color thecolor = Color.red;
                     if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                     GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     if (GetIndex("Hidden on Camera").enabled) { box.layer = 19; }
@@ -2047,7 +2036,7 @@ namespace iiMenu.Mods
             {
                 if (vrrig != VRRig.LocalRig)
                 {
-                    UnityEngine.Color thecolor = vrrig.playerColor;
+                    Color thecolor = vrrig.playerColor;
                     if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                     if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
 
@@ -2194,7 +2183,7 @@ namespace iiMenu.Mods
                     {
                         if (!PlayerIsTagged(vrrig) && vrrig != VRRig.LocalRig)
                         {
-                            UnityEngine.Color thecolor = vrrig.playerColor;
+                            Color thecolor = vrrig.playerColor;
                             if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                             if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
 
@@ -2256,7 +2245,7 @@ namespace iiMenu.Mods
                 {
                     if (vrrig != VRRig.LocalRig)
                     {
-                        UnityEngine.Color thecolor = vrrig.playerColor;
+                        Color thecolor = vrrig.playerColor;
                         if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                         if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
 
@@ -2333,7 +2322,7 @@ namespace iiMenu.Mods
                 VRRig vrrig = GetVRRigFromPlayer(player);
                 if (player == target)
                 {
-                    UnityEngine.Color thecolor = vrrig.playerColor;
+                    Color thecolor = vrrig.playerColor;
                     if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                     if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
 
@@ -2388,7 +2377,7 @@ namespace iiMenu.Mods
                 }
                 if (sillyComputer.GetTargetOf(player) == (NetPlayer)PhotonNetwork.LocalPlayer)
                 {
-                    UnityEngine.Color thecolor = Color.red;
+                    Color thecolor = Color.red;
                     if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
 
                     GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -2450,7 +2439,7 @@ namespace iiMenu.Mods
             {
                 if (vrrig != VRRig.LocalRig)
                 {
-                    UnityEngine.Color thecolor = vrrig.playerColor;
+                    Color thecolor = vrrig.playerColor;
                     if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                     if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                     GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
@@ -2502,7 +2491,7 @@ namespace iiMenu.Mods
                     {
                         if (!PlayerIsTagged(vrrig) && vrrig != VRRig.LocalRig)
                         {
-                            UnityEngine.Color thecolor = vrrig.playerColor;
+                            Color thecolor = vrrig.playerColor;
                             if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                             if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                             GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
@@ -2522,7 +2511,7 @@ namespace iiMenu.Mods
                 {
                     if (vrrig != VRRig.LocalRig)
                     {
-                        UnityEngine.Color thecolor = vrrig.playerColor;
+                        Color thecolor = vrrig.playerColor;
                         if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                         if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                         GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
@@ -2546,7 +2535,7 @@ namespace iiMenu.Mods
                 VRRig vrrig = GetVRRigFromPlayer(player);
                 if (player == target)
                 {
-                    UnityEngine.Color thecolor = vrrig.playerColor;
+                    Color thecolor = vrrig.playerColor;
                     if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
                     if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                     GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
@@ -2559,7 +2548,7 @@ namespace iiMenu.Mods
                 }
                 if (sillyComputer.GetTargetOf(player) == (NetPlayer)PhotonNetwork.LocalPlayer)
                 {
-                    UnityEngine.Color thecolor = Color.red;
+                    Color thecolor = Color.red;
                     if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
                     GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                     if (GetIndex("Hidden on Camera").enabled) { sphere.layer = 19; }
