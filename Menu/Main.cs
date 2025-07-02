@@ -2504,6 +2504,9 @@ namespace iiMenu.Menu
                     if (physicalMenu)
                         Toggle("Physical Menu");
 
+                    if (GetIndex("First Person Camera").enabled)
+                        Toggle("First Person Camera");
+
                     Vector3[] pcpositions = new Vector3[]
                     {
                         new Vector3(10f, 10f, 10f),
