@@ -244,9 +244,9 @@ namespace iiMenu.Notifications
                         if (!NotificationText.Contains(Environment.NewLine))
                             NotificationText += Environment.NewLine;
                         NotifiText.text += NotificationText;
-
-                        clearCoroutines.Add(CoroutineManager.RunCoroutine(TrackCoroutine(ClearHolder(clearTime / 1000f))));
                     }
+
+                    CoroutineManager.RunCoroutine(TrackCoroutine(ClearHolder(clearTime / 1000f)));
 
                     if (lowercaseMode)
                         NotifiText.text = NotifiText.text.ToLower();
