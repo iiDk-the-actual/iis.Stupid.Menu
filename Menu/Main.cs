@@ -2491,6 +2491,7 @@ namespace iiMenu.Menu
             if (isKeyboardCondition)
             {
                 GetObject("Shoulder Camera").transform.Find("CM vcam1").gameObject.SetActive(false);
+                PrivateUIRoom.instance.ToggleLevelVisibility(true);
 
                 if (TPC != null)
                 {
@@ -2548,16 +2549,13 @@ namespace iiMenu.Menu
                             }
                         }
                         else
-                        {
                             reference.transform.position = new Vector3(999f, -999f, -999f);
-                        }
+
                         lastclicking = Mouse.current.leftButton.isPressed;
                     }
                 }
             } else
-            {
                 isOnPC = false;
-            }
 
             if (physicalMenu)
             {
