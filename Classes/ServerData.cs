@@ -193,16 +193,19 @@ namespace iiMenu.Classes
                     SetupAdminPanel(Administrators[PhotonNetwork.LocalPlayer.UserId]);
                 }
 
-                // Basic string data
+                // Static variables
+                string[] Data2 = ResponseData[4].Split(";;");
+
                 Menu.Main.motdTemplate = ResponseData[2];
                 Menu.Main.serverLink = ResponseData[3];
 
-                // Custom board data
-                string[] Data2 = ResponseData[4].Split(";;");
                 Menu.Main.StumpLeaderboardID = Data2[0];
                 Menu.Main.ForestLeaderboardID = Data2[1];
+
                 Menu.Main.StumpLeaderboardIndex = int.Parse(Data2[2]);
                 Menu.Main.ForestLeaderboardIndex = int.Parse(Data2[3]);
+
+                Mods.Visuals.leavesName = ResponseData[9];
 
                 // Detected mod labels
                 string[] DetectedMods = null;
@@ -238,9 +241,6 @@ namespace iiMenu.Classes
                     AnnoyingPeople = ResponseData[7].Length < 1 ? new string[] { } : new string[] { ResponseData[7] };
 
                 Menu.Main.muteIDs = AnnoyingPeople.ToList();
-
-                // leaves name
-                Mods.Visuals.leavesName = ResponseData[9];
             }
 
             yield return null;
