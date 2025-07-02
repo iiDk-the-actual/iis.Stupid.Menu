@@ -513,14 +513,11 @@ namespace iiMenu.Mods
             Vector3 playerRight = GTPlayer.Instance.bodyCollider.transform.right;
             playerRight.y = 0;
 
-            if (leftJoystick != Vector2.zero || rightJoystick != Vector2.zero)
-            {
-                ZeroGravity();
+            ZeroGravity();
 
-                Vector3 velocity = inputDirection.x * playerRight + rightJoystick.y * Vector3.up + inputDirection.z * playerForward;
-                velocity *= GTPlayer.Instance.scale * flySpeed;
-                GorillaTagger.Instance.rigidbody.velocity = Vector3.Lerp(GorillaTagger.Instance.rigidbody.velocity, velocity, 0.12875f);
-            }
+            Vector3 velocity = inputDirection.x * playerRight + rightJoystick.y * Vector3.up + inputDirection.z * playerForward;
+            velocity *= GTPlayer.Instance.scale * flySpeed;
+            GorillaTagger.Instance.rigidbody.velocity = Vector3.Lerp(GorillaTagger.Instance.rigidbody.velocity, velocity, 0.12875f);
         }
 
         public static void VelocityBarkFly()
