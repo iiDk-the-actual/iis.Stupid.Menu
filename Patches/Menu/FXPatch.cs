@@ -9,7 +9,7 @@ namespace iiMenu.Patches
         public static bool Prefix(FXType fxType, IFXContext context, PhotonMessageInfoWrapped info = default(PhotonMessageInfoWrapped))
         {
             NetPlayer player = info.Sender;
-            if (player != NetworkSystem.Instance.LocalPlayer && player != null && Menu.Main.ShouldBypassChecks(player))
+            if (player != null && Menu.Main.ShouldBypassChecks(player))
             {
                 context.OnPlayFX();
                 return false;
