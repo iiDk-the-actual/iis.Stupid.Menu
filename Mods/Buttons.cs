@@ -343,7 +343,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Auto Clear Cache", method =() => Safety.AutoClearCache(), toolTip = "Automatically clears your game's cache (garbage collector) every minute to prevent memory leaks."},
                 new ButtonInfo { buttonText = "Anti Moderator", method =() => Safety.AntiModerator(), toolTip = "When someone with the stick joins, you get disconnected and their player ID and room code gets saved to a file."},
 
-                new ButtonInfo { buttonText = "Bypass Automod", method =() => Safety.BypassAutomod(), isTogglable = false, toolTip = "Attempts to bypass automod muting yourself and others."},
+                new ButtonInfo { buttonText = "Bypass Automod", method =() => Safety.BypassAutomod(), toolTip = "Attempts to bypass automod muting yourself and others."},
 
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Disconnect</color><color=grey>]</color>", method =() => Safety.AntiReportDisconnect(), toolTip = "Disconnects you from the room when anyone comes near your report button."},
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Reconnect</color><color=grey>]</color>", method =() => Safety.AntiReportReconnect(), toolTip = "Disconnects and reconnects you from the room when anyone comes near your report button."},
