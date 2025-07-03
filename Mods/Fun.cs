@@ -156,9 +156,9 @@ namespace iiMenu.Mods
 
         public static IEnumerator StumpKickDelay(Action action, Action action2)
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.2f);
             action?.Invoke();
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.2f);
             action2?.Invoke();
         }
 
@@ -176,10 +176,13 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         NetPlayer player = GetPlayerFromVRRig(gunTarget);
+                        kgDebounce = Time.time + 0.5f;
 
-                        bool visible = NetworkSystem.Instance.SessionIsPrivate;
-                        if (visible)
-                            PhotonNetwork.CurrentRoom.IsVisible = false;
+                        if (NetworkSystem.Instance.SessionIsPrivate)
+                        {
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must be in a private room.");
+                            return;
+                        }
 
                         CoroutineManager.instance.StartCoroutine(StumpKickDelay(() =>
                         {
@@ -193,8 +196,6 @@ namespace iiMenu.Mods
                             GorillaComputer.instance.primaryTriggersByZone.TryGetValue("forest", out GorillaNetworkJoinTrigger trigger);
                             PhotonNetworkController.Instance.AttemptToJoinPublicRoom(trigger, GorillaNetworking.JoinType.JoinWithNearby, null);
                         }));
-    
-                        kgDebounce = Time.time + 0.5f;
                     }
                 }
             }
@@ -204,9 +205,11 @@ namespace iiMenu.Mods
         {
             if (PhotonNetwork.InRoom)
             {
-                bool visible = NetworkSystem.Instance.SessionIsPrivate;
-                if (visible)
-                    PhotonNetwork.CurrentRoom.IsVisible = false;
+                if (NetworkSystem.Instance.SessionIsPrivate)
+                {
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must be in a private room.");
+                    return;
+                }
 
                 CoroutineManager.instance.StartCoroutine(StumpKickDelay(() =>
                 {
