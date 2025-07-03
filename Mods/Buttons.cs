@@ -710,7 +710,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Mute DJ Sets", method =() => Fun.MuteDJSets(), disableMethod =() => Fun.UnmuteDJSets(), toolTip = "Mutes every DJ set so you don't have to hear the worst music known to man."},
 
-                new ButtonInfo { buttonText = "Low Quality Microphone", method =() => Fun.SetMicrophoneQuality(5, 08000), disableMethod =() => Fun.SetMicrophoneQuality(20000, 16000), toolTip = "Makes your microphone have really bad quality."},
+                new ButtonInfo { buttonText = "Low Quality Microphone", method =() => Fun.SetMicrophoneQuality(6000, 08000), disableMethod =() => Fun.SetMicrophoneQuality(20000, 16000), toolTip = "Makes your microphone have really bad quality."},
                 new ButtonInfo { buttonText = "Loud Microphone", method =() => Fun.SetMicrophoneAmplification(true), disableMethod =() => Fun.SetMicrophoneAmplification(false), toolTip = "Makes your microphone really loud."},
                 
                 new ButtonInfo { buttonText = "High Pitch Microphone", method =() => Fun.SetMicrophonePitch(1.5f), disableMethod =() => Fun.SetMicrophonePitch(1f), toolTip = "Makes your microphone high pitched."},
