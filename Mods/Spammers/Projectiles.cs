@@ -305,7 +305,7 @@ namespace iiMenu.Mods.Spammers
                 9.72f,
                 19.44f,
                 38.88f,
-                77.76f,
+                150f,
                 1000000f
             };
 
