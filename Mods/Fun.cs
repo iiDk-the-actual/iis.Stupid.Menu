@@ -140,40 +140,19 @@ namespace iiMenu.Mods
                 FixHandTaps();
         }
 
-        public static void BetaNearbyFollowCommand(GorillaFriendCollider friendCollider, string shuffler, string keyStr, Player player) 
+        public static void BetaNearbyFollowCommand(GorillaFriendCollider friendCollider, Player player) 
         {
+            PhotonNetworkController.Instance.FriendIDList.Add(player.UserId);
+
             object[] groupJoinSendData = new object[2];
-            groupJoinSendData[0] = shuffler;
-            groupJoinSendData[1] = keyStr;
+            groupJoinSendData[0] = PhotonNetworkController.Instance.shuffler;
+            groupJoinSendData[1] = PhotonNetworkController.Instance.keyStr;
             NetEventOptions netEventOptions = new NetEventOptions { TargetActors = new int[] { player.ActorNumber } };
 
             if (friendCollider.playerIDsCurrentlyTouching.Contains(PhotonNetwork.LocalPlayer.UserId) && friendCollider.playerIDsCurrentlyTouching.Contains(player.UserId) && player != PhotonNetwork.LocalPlayer)
                 RoomSystem.SendEvent(4, groupJoinSendData, netEventOptions, false);
-
             else if (!friendCollider.playerIDsCurrentlyTouching.Contains(PhotonNetwork.LocalPlayer.UserId))
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in stump.");
-        }
-        public static void StumpKickAll()
-        {
-            if (PhotonNetwork.InRoom)
-            {
-                bool visible = NetworkSystem.Instance.SessionIsPrivate;
-                if (visible)
-                    PhotonNetwork.CurrentRoom.IsVisible = false;
-
-                foreach (VRRig rig in GorillaParent.instance.vrrigs)
-                    BetaNearbyFollowCommand(GorillaComputer.instance.friendJoinCollider, UnityEngine.Random.Range(0, 99).ToString().PadLeft(2, '0') + UnityEngine.Random.Range(0, 99999999).ToString().PadLeft(8, '0'), UnityEngine.Random.Range(0, 99999999).ToString().PadLeft(8, '0'), RigManager.NetPlayerToPlayer(RigManager.GetPlayerFromVRRig(rig)));
-
-                if (string.IsNullOrEmpty(GorillaComputer.instance.roomToJoin))
-                {
-                    string gamemode = PhotonNetworkController.Instance.currentJoinTrigger == null ? "forest" : PhotonNetworkController.Instance.currentJoinTrigger.networkZone;
-                    PhotonNetworkController.Instance.AttemptToJoinPublicRoom(GorillaComputer.instance.GetJoinTriggerForZone(gamemode), GorillaNetworking.JoinType.JoinWithNearby);
-                }
-                else
-                    PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(GorillaComputer.instance.roomToJoin, GorillaNetworking.JoinType.JoinWithNearby);
-            }
-            else
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in a room.");
         }
 
         public static void StumpKickGun()
@@ -195,20 +174,41 @@ namespace iiMenu.Mods
                         if (visible)
                             PhotonNetwork.CurrentRoom.IsVisible = false;
 
-                        BetaNearbyFollowCommand(GorillaComputer.instance.friendJoinCollider, UnityEngine.Random.Range(0, 99).ToString().PadLeft(2, '0') + UnityEngine.Random.Range(0, 99999999).ToString().PadLeft(8, '0'), UnityEngine.Random.Range(0, 99999999).ToString().PadLeft(8, '0'), RigManager.NetPlayerToPlayer(player));
+                        PhotonNetworkController.Instance.shuffler = UnityEngine.Random.Range(0, 99).ToString().PadLeft(2, '0') + UnityEngine.Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+                        PhotonNetworkController.Instance.keyStr = UnityEngine.Random.Range(0, 99999999).ToString().PadLeft(8, '0');
 
-                        if (string.IsNullOrEmpty(GorillaComputer.instance.roomToJoin))
-                        {
-                            string gamemode = PhotonNetworkController.Instance.currentJoinTrigger == null ? "forest" : PhotonNetworkController.Instance.currentJoinTrigger.networkZone;
-                            PhotonNetworkController.Instance.AttemptToJoinPublicRoom(GorillaComputer.instance.GetJoinTriggerForZone(gamemode), GorillaNetworking.JoinType.JoinWithNearby);
-                        }
-                        else
-                            PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(GorillaComputer.instance.roomToJoin, GorillaNetworking.JoinType.JoinWithNearby);
+                        BetaNearbyFollowCommand(GorillaComputer.instance.friendJoinCollider, NetPlayerToPlayer(player));
+                        RPCProtection();
 
-                        kgDebounce = Time.time + 1.5f;
+                        GorillaComputer.instance.primaryTriggersByZone.TryGetValue("forest", out GorillaNetworkJoinTrigger trigger);
+                        PhotonNetworkController.Instance.AttemptToJoinPublicRoom(trigger, GorillaNetworking.JoinType.JoinWithNearby, null);
+
+                        kgDebounce = Time.time + 0.5f;
                     }
                 }
             }
+        }
+
+        public static void StumpKickAll()
+        {
+            if (PhotonNetwork.InRoom)
+            {
+                bool visible = NetworkSystem.Instance.SessionIsPrivate;
+                if (visible)
+                    PhotonNetwork.CurrentRoom.IsVisible = false;
+
+                PhotonNetworkController.Instance.shuffler = UnityEngine.Random.Range(0, 99).ToString().PadLeft(2, '0') + UnityEngine.Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+                PhotonNetworkController.Instance.keyStr = UnityEngine.Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+
+                foreach (VRRig rig in GorillaParent.instance.vrrigs)
+                    BetaNearbyFollowCommand(GorillaComputer.instance.friendJoinCollider, NetPlayerToPlayer(RigManager.GetPlayerFromVRRig(rig)));
+
+                RPCProtection();
+
+                PhotonNetworkController.Instance.AttemptToJoinPublicRoom(GorillaComputer.instance.GetJoinTriggerForZone("forest"), GorillaNetworking.JoinType.JoinWithNearby);
+            }
+            else
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in a room.");
         }
 
         private static float instantPartyDelay = 0f;

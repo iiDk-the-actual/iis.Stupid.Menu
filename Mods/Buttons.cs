@@ -320,7 +320,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Tag Lag Detector", method =() => Important.TagLagDetector(), toolTip = "Detects when the master client is not currently allowing tag requests."},
 
-                new ButtonInfo { buttonText = "Anti Group Kick", enableMethod =() => Patches.GroupPatch.enabled = true, disableMethod =() => Patches.GroupPatch.enabled = false, toolTip = "Disallows people from group kicking you."},
+                new ButtonInfo { buttonText = "Anti Stump Kick", enableMethod =() => Patches.GroupPatch.enabled = true, disableMethod =() => Patches.GroupPatch.enabled = false, toolTip = "Stops people from group kicking you."},
 
                 new ButtonInfo { buttonText = "Connect to US", method =() => PhotonNetwork.ConnectToRegion("us"), isTogglable = false, toolTip = "Connects you to the United States servers."},
                 new ButtonInfo { buttonText = "Connect to US West", method =() => PhotonNetwork.ConnectToRegion("usw"), isTogglable = false, toolTip = "Connects you to the western United States servers."},
@@ -1197,9 +1197,9 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Fling Rope Gun", method =() => Overpowered.FlingRopeGun(), toolTip = "Flings whatever rope your hand desires away from you."},
                 new ButtonInfo { buttonText = "Fling All Ropes Gun", method =() => Overpowered.FlingAllRopesGun(), toolTip = "Flings every rope in whatever direction your hand desires."},
-                
-                new ButtonInfo { buttonText = "Stump Kick All", method =() => Fun.StumpKickAll(), isTogglable = false, toolTip = "Kick everyone in stump." },
-                new ButtonInfo { buttonText = "Stump Kick Gun", method =() => Fun.StumpKickGun(), toolTip = "Kick whoever your hand desires if they are in stump." },
+
+                new ButtonInfo { buttonText = "Stump Kick Gun", method =() => Fun.StumpKickGun(), toolTip = "Kicks whoever your hand desires if they are in stump." },
+                new ButtonInfo { buttonText = "Stump Kick All", method =() => Fun.StumpKickAll(), isTogglable = false, toolTip = "Kicks everyone in stump." },
                 
                 new ButtonInfo { buttonText = "Instant Party", method =() => Fun.InstantParty(), toolTip = "Makes parties form instantly, instead of having to wait a couple of seconds." },
                 new ButtonInfo { buttonText = "Leave Party", method =() => FriendshipGroupDetection.Instance.LeaveParty(), isTogglable = false, toolTip = "Leaves the party, incase you can't pull off the string." },
