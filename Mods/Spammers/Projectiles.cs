@@ -890,7 +890,7 @@ namespace iiMenu.Mods.Spammers
                 RaycastHit Ray = GunData.Ray;
 
                 if (gunLocked && lockTarget != null)
-                    BetaFireProjectile("EggLeftHand_Anchor Variant", lockTarget.headMesh.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, -15f, 0f), Color.black);
+                    BetaFireProjectile("EggLeftHand_Anchor Variant", lockTarget.headMesh.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, -15f, 0f), Color.black, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)).ActorNumber } });
                 
                 if (GetGunInput(true))
                 {
@@ -912,13 +912,13 @@ namespace iiMenu.Mods.Spammers
         public static void ProjectileBlindAll()
         {
             if (rightTrigger > 0.5f)
-                BetaFireProjectile("EggLeftHand_Anchor Variant", GetCurrentTargetRig().headMesh.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, -15f, 0f), Color.black);
+                BetaFireProjectile("EggLeftHand_Anchor Variant", GetCurrentTargetRig().headMesh.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, -15f, 0f), Color.black, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(GetCurrentTargetRig())).ActorNumber } });
         }
 
         public static void ProjectileBlindPlayer(NetPlayer player)
         {
             VRRig rig = GetVRRigFromPlayer(player);
-            BetaFireProjectile("EggLeftHand_Anchor Variant", rig.headMesh.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, -15f, 0f), Color.black);
+            BetaFireProjectile("EggLeftHand_Anchor Variant", rig.headMesh.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, -15f, 0f), Color.black, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(rig)).ActorNumber } });
         }
 
         public static void ProjectileLagGun()
@@ -929,7 +929,7 @@ namespace iiMenu.Mods.Spammers
                 RaycastHit Ray = GunData.Ray;
 
                 if (gunLocked && lockTarget != null)
-                    BetaFireProjectile("Fireworks_Anchor Variant_Left Hand", lockTarget.headMesh.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, 15f, 0f), Color.black);
+                    BetaFireProjectile("Fireworks_Anchor Variant_Left Hand", lockTarget.headMesh.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, 15f, 0f), Color.black, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)).ActorNumber } } );
 
                 if (GetGunInput(true))
                 {
@@ -951,13 +951,13 @@ namespace iiMenu.Mods.Spammers
         public static void ProjectileLagAll()
         {
             if (rightTrigger > 0.5f)
-                BetaFireProjectile("Fireworks_Anchor Variant_Left Hand", GetCurrentTargetRig().headMesh.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, 15f, 0f), Color.black);
+                BetaFireProjectile("Fireworks_Anchor Variant_Left Hand", GetCurrentTargetRig().headMesh.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, 15f, 0f), Color.black, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(GetCurrentTargetRig())).ActorNumber } });
         }
 
         public static void ProjectileLagPlayer(NetPlayer player)
         {
             VRRig rig = GetVRRigFromPlayer(player);
-            BetaFireProjectile("Fireworks_Anchor Variant_Left Hand", rig.headMesh.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, 15f, 0f), Color.black);
+            BetaFireProjectile("Fireworks_Anchor Variant_Left Hand", rig.headMesh.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, 15f, 0f), Color.black, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(rig)).ActorNumber } });
         }
     }
 }
