@@ -68,6 +68,9 @@ namespace iiMenu.Mods.Spammers
 
         public static void BetaFireProjectile(string projectileName, Vector3 position, Vector3 velocity, Color color, RaiseEventOptions options = null)
         {
+            if (velocity.magnitude > 9999f)
+                velocity = velocity.normalized * 9999f;
+
             if (options == null)
                 options = new RaiseEventOptions
                 {
@@ -234,7 +237,7 @@ namespace iiMenu.Mods.Spammers
                 9.72f,
                 19.44f,
                 38.88f,
-                1000f
+                1000000f
             };
 
             string[] ShootStrengthNames = new string[]
