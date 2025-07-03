@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -120,48 +121,65 @@ namespace iiMenu.Mods.Spammers
                     Throwable.randomizeColor = true;
                     VRRig.LocalRig.SetThrowableProjectileColor(true, color);
 
-                    SlingshotProjectile slingshotProjectile = null;
                     bool showSelf = options.Receivers == ReceiverGroup.All || options.TargetActors.Contains(PhotonNetwork.LocalPlayer.ActorNumber);
-                    if (showSelf)
-                        slingshotProjectile = Throwable.LaunchSnowballLocal(position, velocity, Throwable.transform.lossyScale.x, true, color);
 
-                    if (PhotonNetwork.InRoom)
+                    if (projectileName.Contains("GrowingSnowball"))
                     {
-                        int index = showSelf ? slingshotProjectile.myProjectileCount : Overpowered.GetProjectileIncrement(position, velocity, Throwable.transform.lossyScale.x);
-
-                        Color32 color32 = (Color32)color;
-
-                        object[] projectileSendData = new object[9];
-                        projectileSendData[0] = position;
-                        projectileSendData[1] = velocity;
-                        projectileSendData[2] = 1;
-                        projectileSendData[3] = index;
-                        projectileSendData[4] = true;
-                        projectileSendData[5] = color32.r;
-                        projectileSendData[6] = color32.g;
-                        projectileSendData[7] = color32.b;
-                        projectileSendData[8] = color32.a;
-
-                        object[] sendEventData = new object[3];
-                        sendEventData[0] = NetworkSystem.Instance.ServerTimestamp;
-                        sendEventData[1] = 0;
-                        sendEventData[2] = projectileSendData;
-
+                        GrowingSnowballThrowable GrowingSnowball = Throwable as GrowingSnowballThrowable;
                         if (showSelf)
                         {
-                            if (options.Receivers == ReceiverGroup.All)
-                                options.Receivers = ReceiverGroup.Others;
-
-                            if (options.TargetActors.Contains(PhotonNetwork.LocalPlayer.ActorNumber))
-                            {
-                                List<int> targetActors = options.TargetActors.ToList();
-                                targetActors.Remove(PhotonNetwork.LocalPlayer.ActorNumber);
-                                options.TargetActors = targetActors.ToArray();
-                            }
+                            GrowingSnowball.changeSizeEvent.RaiseAll(1);
+                            GrowingSnowball.snowballThrowEvent.RaiseAll(position, velocity, Overpowered.GetProjectileIncrement(position, velocity, 1f));
+                        } else
+                        {
+                            GrowingSnowball.changeSizeEvent.RaiseOthers(1);
+                            GrowingSnowball.snowballThrowEvent.RaiseOthers(position, velocity, Overpowered.GetProjectileIncrement(position, velocity, 1f));
                         }
+                    }
+                    else
+                    {
+                        SlingshotProjectile slingshotProjectile = null;
+                        if (showSelf)
+                            slingshotProjectile = Throwable.LaunchSnowballLocal(position, velocity, Throwable.transform.lossyScale.x, true, color);
 
-                        PhotonNetwork.RaiseEvent(3, sendEventData, options, SendOptions.SendUnreliable);
-                        RPCProtection();
+                        if (PhotonNetwork.InRoom)
+                        {
+                            int index = showSelf ? slingshotProjectile.myProjectileCount : Overpowered.GetProjectileIncrement(position, velocity, Throwable.transform.lossyScale.x);
+
+                            Color32 color32 = (Color32)color;
+
+                            object[] projectileSendData = new object[9];
+                            projectileSendData[0] = position;
+                            projectileSendData[1] = velocity;
+                            projectileSendData[2] = 1;
+                            projectileSendData[3] = index;
+                            projectileSendData[4] = true;
+                            projectileSendData[5] = color32.r;
+                            projectileSendData[6] = color32.g;
+                            projectileSendData[7] = color32.b;
+                            projectileSendData[8] = color32.a;
+
+                            object[] sendEventData = new object[3];
+                            sendEventData[0] = NetworkSystem.Instance.ServerTimestamp;
+                            sendEventData[1] = 0;
+                            sendEventData[2] = projectileSendData;
+
+                            if (showSelf)
+                            {
+                                if (options.Receivers == ReceiverGroup.All)
+                                    options.Receivers = ReceiverGroup.Others;
+
+                                if (options.TargetActors.Contains(PhotonNetwork.LocalPlayer.ActorNumber))
+                                {
+                                    List<int> targetActors = options.TargetActors.ToList();
+                                    targetActors.Remove(PhotonNetwork.LocalPlayer.ActorNumber);
+                                    options.TargetActors = targetActors.ToArray();
+                                }
+                            }
+
+                            PhotonNetwork.RaiseEvent(3, sendEventData, options, SendOptions.SendUnreliable);
+                            RPCProtection();
+                        }
                     }
 
                     Throwable.randomizeColor = false;
@@ -307,7 +325,7 @@ namespace iiMenu.Mods.Spammers
             GetIndex("BlueProj").overlapText = "Blue <color=grey>[</color><color=green>" + blue.ToString() + "</color><color=grey>]</color>";
         }
 
-        public static int projDebounceIndex = 16;
+        public static int projDebounceIndex = 2;
         public static void ChangeProjectileDelay(bool positive = true, bool fromMenu = false)
         {
             if (positive)
