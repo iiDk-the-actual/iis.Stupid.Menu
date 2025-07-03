@@ -1,5 +1,7 @@
 ﻿using ExitGames.Client.Photon;
+using Fusion.Sockets;
 using iiMenu.Classes;
+using Mono.Cecil.Cil;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -8,14 +10,13 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
+using static Unity.Burst.Intrinsics.Arm;
 
 namespace iiMenu.Mods.Spammers
 {
     public class Projectiles
     {
         // This file needs to be rewritten
-        public static GorillaVelocityEstimator VelocityEstimator;
-
         public static string[] ProjectileObjectNames = new string[]
         {
             "GrowingSnowballLeftAnchor",
@@ -64,14 +65,14 @@ namespace iiMenu.Mods.Spammers
             Throwable.SetSnowballActiveLocal(false);
         }
 
-        public static void BetaFireProjectile(string projectileName, Vector3 position, Vector3 velocity, Color color) // This code is really bad
+        private static int studpishit = 2000;
+        public static void BetaFireProjectile(string projectileName, Vector3 position, Vector3 velocity, Color color, RaiseEventOptions options = null)
         {
-            if (VelocityEstimator == null)
-            {
-                GameObject thepointless = new GameObject("Blank GVE");
-                VelocityEstimator = thepointless.AddComponent<GorillaVelocityEstimator>() as GorillaVelocityEstimator;
-            }
-            VelocityEstimator.enabled = false;
+            if (options == null)
+                options = new RaiseEventOptions
+                {
+                    Receivers = ReceiverGroup.All
+                };
 
             SnowballThrowable Throwable = GetProjectile(projectileName);
 
@@ -81,7 +82,6 @@ namespace iiMenu.Mods.Spammers
             if (!Throwable.gameObject.activeSelf)
             {
                 Throwable.SetSnowballActiveLocal(true);
-                Throwable.velocityEstimator = VelocityEstimator;
                 Throwable.transform.position = GorillaTagger.Instance.leftHandTransform.position;
                 Throwable.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
 
@@ -114,25 +114,46 @@ namespace iiMenu.Mods.Spammers
                     Vector3 startpos = position;
                     Vector3 charvel = velocity;
 
-                    Vector3 oldVel = GorillaTagger.Instance.GetComponent<Rigidbody>().velocity;
-
-                    Vector3 oldPos = Throwable.transform.position;
                     Throwable.randomizeColor = true;
-                    Throwable.transform.position = startpos;
-
-                    GorillaTagger.Instance.GetComponent<Rigidbody>().velocity = charvel;
                     VRRig.LocalRig.SetThrowableProjectileColor(true, color);
-                    Throwable.PerformSnowballThrowAuthority();
 
-                    GorillaTagger.Instance.GetComponent<Rigidbody>().velocity = oldVel;
-                    RPCProtection();
+                    SlingshotProjectile slingshotProjectile = null;
+                    bool showSelf = options.Receivers == ReceiverGroup.All || options.TargetActors.Contains(PhotonNetwork.LocalPlayer.ActorNumber);
+                    if (showSelf)
+                        slingshotProjectile = Throwable.LaunchSnowballLocal(position, velocity, Throwable.transform.lossyScale.x, true, color);
 
-                    Throwable.transform.position = oldPos;
+                    if (PhotonNetwork.InRoom)
+                    {
+                        int index = showSelf ? slingshotProjectile.myProjectileCount : Overpowered.GetProjectileIncrement(position, velocity, Throwable.transform.lossyScale.x);
+
+                        Color32 color32 = (Color32)color;
+
+                        object[] projectileSendData = new object[9];
+                        projectileSendData[0] = position;
+                        projectileSendData[1] = velocity;
+                        projectileSendData[2] = 1;
+                        projectileSendData[3] = index;
+                        projectileSendData[4] = true;
+                        projectileSendData[5] = color32.r;
+                        projectileSendData[6] = color32.g;
+                        projectileSendData[7] = color32.b;
+                        projectileSendData[8] = color32.a;
+
+                        object[] sendEventData = new object[3];
+                        sendEventData[0] = NetworkSystem.Instance.ServerTimestamp;
+                        sendEventData[1] = 0;
+                        sendEventData[2] = projectileSendData;
+
+                        PhotonNetwork.RaiseEvent(3, sendEventData, options, SendOptions.SendUnreliable);
+                        RPCProtection();
+                    }
+
                     Throwable.randomizeColor = false;
-                } catch (Exception e) { LogManager.LogError($"Projectile error: {e.Message}"); }
+                }
+                catch (Exception e) { LogManager.LogError($"Projectile error: {e.Message}"); }
 
                 if (projDebounceType > 0f)
-                    projDebounce = Time.time + Mathf.Max(projDebounceType, 0.16f);
+                    projDebounce = Time.time + Mathf.Max(projDebounceType, 0.81f);
             }
         }
 
@@ -906,6 +927,12 @@ namespace iiMenu.Mods.Spammers
 
                 BetaFireProjectile("EggLeftHand_Anchor Variant", targetRig.headMesh.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, -15f, 0f), Color.black);
             }
+        }
+
+        public static void ProjectileBlindPlayer(NetPlayer player)
+        {
+            VRRig rig = GetVRRigFromPlayer(player);
+            BetaFireProjectile("EggLeftHand_Anchor Variant", rig.headMesh.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, -15f, 0f), Color.black);
         }
     }
 }
