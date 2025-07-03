@@ -945,7 +945,7 @@ namespace iiMenu.Mods.Spammers
                 RaycastHit Ray = GunData.Ray;
 
                 if (gunLocked && lockTarget != null)
-                    BetaFireProjectile("Fireworks_Anchor Variant_Left Hand", lockTarget.headMesh.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, 15f, 0f), Color.black, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)).ActorNumber } } );
+                    BetaFireProjectile("Fireworks_Anchor Variant_Left Hand", lockTarget.headMesh.transform.position + new Vector3(0f, 0.1f, 0f) + lockTarget.headMesh.transform.forward * -0.7f, new Vector3(0f, 15f, 0f), Color.black, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)).ActorNumber } } );
 
                 if (GetGunInput(true))
                 {
@@ -967,13 +967,13 @@ namespace iiMenu.Mods.Spammers
         public static void ProjectileLagAll()
         {
             if (rightTrigger > 0.5f)
-                BetaFireProjectile("Fireworks_Anchor Variant_Left Hand", GetCurrentTargetRig().headMesh.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, 15f, 0f), Color.black, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(GetCurrentTargetRig())).ActorNumber } });
+                BetaFireProjectile("Fireworks_Anchor Variant_Left Hand", GetCurrentTargetRig().headMesh.transform.position + new Vector3(0f, 0.1f, 0f) + GetCurrentTargetRig().headMesh.transform.forward * -0.7f, new Vector3(0f, 15f, 0f), Color.black, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(GetCurrentTargetRig())).ActorNumber } });
         }
 
         public static void ProjectileLagPlayer(NetPlayer player)
         {
             VRRig rig = GetVRRigFromPlayer(player);
-            BetaFireProjectile("Fireworks_Anchor Variant_Left Hand", rig.headMesh.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, 15f, 0f), Color.black, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(rig)).ActorNumber } });
+            BetaFireProjectile("Fireworks_Anchor Variant_Left Hand", rig.headMesh.transform.position + new Vector3(0f, 0.1f, 0f) + rig.headMesh.transform.forward * -0.7f, new Vector3(0f, 15f, 0f), Color.black, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(rig)).ActorNumber } });
         }
     }
 }
