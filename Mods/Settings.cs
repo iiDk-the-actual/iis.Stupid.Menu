@@ -1,4 +1,3 @@
-using Fusion;
 using GorillaNetworking;
 using iiMenu.Classes;
 using iiMenu.Menu;
@@ -17,8 +16,8 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Windows.Speech;
-using static iiMenu.Menu.Main;
 using static iiMenu.Classes.RigManager;
+using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods
 {

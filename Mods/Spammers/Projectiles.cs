@@ -1,7 +1,5 @@
 ﻿using ExitGames.Client.Photon;
-using Fusion.Sockets;
 using iiMenu.Classes;
-using Mono.Cecil.Cil;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -10,7 +8,6 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
-using static Unity.Burst.Intrinsics.Arm;
 
 namespace iiMenu.Mods.Spammers
 {
@@ -65,7 +62,6 @@ namespace iiMenu.Mods.Spammers
             Throwable.SetSnowballActiveLocal(false);
         }
 
-        private static int studpishit = 2000;
         public static void BetaFireProjectile(string projectileName, Vector3 position, Vector3 velocity, Color color, RaiseEventOptions options = null)
         {
             if (options == null)
