@@ -30,7 +30,6 @@ using UnityEngine.Rendering;
 using UnityEngine.UI;
 using UnityEngine.XR;
 using Valve.VR;
-using Valve.VR.InteractionSystem;
 using static iiMenu.Classes.RigManager;
 
 /*
