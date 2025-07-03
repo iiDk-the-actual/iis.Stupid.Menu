@@ -1443,40 +1443,21 @@ namespace iiMenu.Mods
             GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
         }
 
-        private static int rememberPageNumber;
-        public static void EnterTeleportToPlayer()
-        {
-            rememberPageNumber = pageNumber;
-            currentCategoryName = "Temporary Category";
+        public static void TeleportToPlayer(NetPlayer plr) => TeleportPlayer(GetVRRigFromPlayer(plr).headMesh.transform.position);
 
-            List<ButtonInfo> tpbuttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Teleport to Player", method = () => ExitTeleportToPlayer(), isTogglable = false, toolTip = "Returns you back to the movement mods." } };
-            foreach (Player plr in PhotonNetwork.PlayerListOthers)
-            {
-                string playerColor = "#ffffff";
-                try
-                {
-                    playerColor = $"#{ColorToHex(GetVRRigFromPlayer(plr).playerColor)}";
-                }
-                catch { }
-                tpbuttons.Add(new ButtonInfo { buttonText = "TeleportPlayer" + tpbuttons.Count.ToString(), overlapText = $"<color={playerColor}>" + ToTitleCase(plr.NickName) + "</color>", method = () => TeleportToPlayer(plr), isTogglable = false, toolTip = $"Teleports you to {ToTitleCase(plr.NickName)}." });
-            }
-            Buttons.buttons[29] = tpbuttons.ToArray();
-        }
-
-        public static void TeleportToPlayer(Player plr) => TeleportPlayer(GetVRRigFromPlayer(plr).headMesh.transform.position);
-
-        public static void ExitTeleportToPlayer()
+        public static void ExitTeleportToMap()
         {
             currentCategoryName = "Movement Mods";
             pageNumber = rememberPageNumber;
         }
 
+        private static int rememberPageNumber;
         public static void EnterTeleportToMap() // Credits to Malachi for the positions
         {
             rememberPageNumber = pageNumber;
             currentCategoryName = "Temporary Category";
 
-            List<ButtonInfo> tpbuttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Teleport to Map", method = () => ExitTeleportToPlayer(), isTogglable = false, toolTip = "Returns you back to the movement mods." } };
+            List<ButtonInfo> tpbuttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Teleport to Map", method = () => ExitTeleportToMap(), isTogglable = false, toolTip = "Returns you back to the movement mods." } };
             string[][] mapData = new string[][]
             {
                 new string[] // Forest
@@ -3441,6 +3422,78 @@ namespace iiMenu.Mods
                     VRRig.LocalRig.enabled = true;
                 }
             }
+        }
+
+        public static void CopyMovementPlayer(NetPlayer player)
+        {
+            VRRig targetRig = GetVRRigFromPlayer(player);
+            VRRig.LocalRig.enabled = false;
+
+            VRRig.LocalRig.transform.position = targetRig.transform.position;
+            VRRig.LocalRig.transform.rotation = targetRig.transform.rotation;
+
+            VRRig.LocalRig.leftHand.rigTarget.transform.position = targetRig.leftHandTransform.position;
+            VRRig.LocalRig.rightHand.rigTarget.transform.position = targetRig.rightHandTransform.position;
+
+            VRRig.LocalRig.leftHand.rigTarget.transform.rotation = targetRig.leftHandTransform.rotation;
+            VRRig.LocalRig.rightHand.rigTarget.transform.rotation = targetRig.rightHandTransform.rotation;
+
+            VRRig.LocalRig.leftIndex.calcT = targetRig.leftIndex.calcT;
+            VRRig.LocalRig.leftMiddle.calcT = targetRig.leftMiddle.calcT;
+            VRRig.LocalRig.leftThumb.calcT = targetRig.leftThumb.calcT;
+
+            VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
+            VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
+            VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
+
+            VRRig.LocalRig.rightIndex.calcT = targetRig.rightIndex.calcT;
+            VRRig.LocalRig.rightMiddle.calcT = targetRig.rightMiddle.calcT;
+            VRRig.LocalRig.rightThumb.calcT = targetRig.rightThumb.calcT;
+
+            VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+            VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
+            VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
+
+            VRRig.LocalRig.head.rigTarget.transform.rotation = targetRig.headMesh.transform.rotation;
+        }
+
+        public static void FollowPlayer(NetPlayer player)
+        {
+            VRRig targetRig = GetVRRigFromPlayer(player);
+            VRRig.LocalRig.enabled = false;
+
+            Vector3 look = targetRig.transform.position - VRRig.LocalRig.transform.position;
+            look.Normalize();
+
+            Vector3 position = VRRig.LocalRig.transform.position + (look * ((flySpeed / 2f) * Time.deltaTime));
+
+            VRRig.LocalRig.transform.position = position;
+            VRRig.LocalRig.transform.LookAt(targetRig.transform.position);
+
+            VRRig.LocalRig.head.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
+            VRRig.LocalRig.leftHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + (VRRig.LocalRig.transform.right * -1f);
+            VRRig.LocalRig.rightHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + (VRRig.LocalRig.transform.right * 1f);
+
+            VRRig.LocalRig.leftHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
+            VRRig.LocalRig.rightHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
+
+            FixRigHandRotation();
+
+            VRRig.LocalRig.leftIndex.calcT = 0f;
+            VRRig.LocalRig.leftMiddle.calcT = 0f;
+            VRRig.LocalRig.leftThumb.calcT = 0f;
+
+            VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
+            VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
+            VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
+
+            VRRig.LocalRig.rightIndex.calcT = 0f;
+            VRRig.LocalRig.rightMiddle.calcT = 0f;
+            VRRig.LocalRig.rightThumb.calcT = 0f;
+
+            VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+            VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
+            VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
         }
 
         public static void FollowPlayerGun()

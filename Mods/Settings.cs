@@ -1,8 +1,11 @@
+using Fusion;
 using GorillaNetworking;
 using iiMenu.Classes;
 using iiMenu.Menu;
 using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
+using Photon.Pun;
+using Photon.Realtime;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,6 +18,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Windows.Speech;
 using static iiMenu.Menu.Main;
+using static iiMenu.Classes.RigManager;
 
 namespace iiMenu.Mods
 {
@@ -309,7 +313,167 @@ namespace iiMenu.Mods
 
             GetIndex(Plugin.Key).overlapText = (disabledPlugins.Contains(Plugin.Key) ? "<color=grey>[</color><color=red>OFF</color><color=grey>]</color>" : "<color=grey>[</color><color=green>ON</color><color=grey>]</color>") + " " + GetPluginInfo(Plugin.Value)[0];
         }
-        
+
+        public static void PlayersTab()
+        {
+            currentCategoryName = "Temporary Category";
+
+            List<ButtonInfo> buttons = new List<ButtonInfo> { 
+                new ButtonInfo { 
+                    buttonText = "Exit Players", 
+                    method =() => currentCategoryName = "Main", 
+                    isTogglable = false, 
+                    toolTip = "Returns you back to the main page." 
+                } 
+            };
+
+            if (!PhotonNetwork.InRoom)
+                buttons.Add(new ButtonInfo { buttonText = "Not in a Room", label = true });
+            else
+            {
+                for (int i = 0; i < NetworkSystem.Instance.PlayerListOthers.Length; i++)
+                {
+                    NetPlayer player = NetworkSystem.Instance.PlayerListOthers[i];
+                    string playerColor = "#ffffff";
+                    try
+                    {
+                        playerColor = $"#{ColorToHex(GetVRRigFromPlayer(player).playerColor)}";
+                    }
+                    catch { }
+
+                    buttons.Add(new ButtonInfo
+                    {
+                        buttonText = $"PlayerButton{i}",
+                        overlapText = $"<color={playerColor}>" + ToTitleCase(player.NickName) + "</color>",
+                        method =() => NavigatePlayer(player),
+                        isTogglable = false,
+                        toolTip = $"See information on the player {player.NickName}."
+                    });
+                }
+            }
+
+            Buttons.buttons[29] = buttons.ToArray();
+        }
+
+        public static void NavigatePlayer(NetPlayer player)
+        {
+            currentCategoryName = "Temporary Category";
+
+            List<ButtonInfo> buttons = new List<ButtonInfo> {
+                new ButtonInfo {
+                    buttonText = "Exit PlayerInspect",
+                    overlapText = $"Exit {player.NickName}",
+                    method =() => PlayersTab(),
+                    isTogglable = false,
+                    toolTip = "Returns you back to the players tab."
+                },
+
+                new ButtonInfo {
+                    buttonText = "Teleport to Player",
+                    overlapText = $"Teleport to {player.NickName}",
+                    method =() => Movement.TeleportToPlayer(player),
+                    isTogglable = false,
+                    toolTip = $"Teleports you to {player.NickName}."
+                },
+                new ButtonInfo {
+                    buttonText = "Copy Movement",
+                    overlapText = $"Copy Movement {player.NickName}",
+                    method =() => Movement.CopyMovementPlayer(player),
+                    disableMethod =() => Movement.EnableRig(),
+                    toolTip = $"Copies the movement of {player.NickName}."
+                },
+                new ButtonInfo {
+                    buttonText = "Follow Player",
+                    overlapText = $"Follow {player.NickName}",
+                    method =() => Movement.FollowPlayer(player),
+                    disableMethod =() => Movement.EnableRig(),
+                    toolTip = $"Follows {player.NickName}."
+                },
+                new ButtonInfo {
+                    buttonText = "Tag Player",
+                    overlapText = $"Tag {player.NickName}",
+                    method =() => Advantages.TagPlayer(player),
+                    disableMethod =() => Movement.EnableRig(),
+                    toolTip = $"Tags {player.NickName}."
+                },
+                new ButtonInfo {
+                    buttonText = "Snowball Fling Player",
+                    overlapText = $"Snowball Fling {player.NickName}",
+                    method =() => Overpowered.FlingPlayer(player),
+                    toolTip = $"Flings {player.NickName} with snowballs."
+                },
+                new ButtonInfo {
+                    buttonText = "Projectile Blind Player",
+                    overlapText = $"Projectile Blind {player.NickName}",
+                    method =() => Projectiles.ProjectileBlindPlayer(player),
+                    toolTip = $"Blinds {player.NickName} with projectiles."
+                },
+                new ButtonInfo {
+                    buttonText = "Destroy Player",
+                    overlapText = $"Destroy {player.NickName}",
+                    method =() => Overpowered.DestroyPlayer(player),
+                    toolTip = $"Stops all new players from seeing {player.NickName}."
+                }
+            };
+
+            if (PhotonNetwork.IsMasterClient)
+            {
+                buttons.AddRange(
+                    new ButtonInfo[]
+                    {
+                        new ButtonInfo {
+                            buttonText = "Vibrate Player",
+                            overlapText = $"Vibrate {player.NickName}",
+                            method =() => Overpowered.SetPlayerStatus(1, player),
+                            disableMethod =() => Movement.EnableRig(),
+                            toolTip = $"Vibrates {player.NickName}'s controllers."
+                        },
+                        new ButtonInfo {
+                            buttonText = "Slow Player",
+                            overlapText = $"Slow {player.NickName}",
+                            method =() => Overpowered.SetPlayerStatus(0, player),
+                            disableMethod =() => Movement.EnableRig(),
+                            toolTip = $"Gives {player.NickName} tag freeze."
+                        }
+                    }
+                );
+            }
+
+            Color playerColor = Color.white;
+            try
+            {
+                playerColor = GetVRRigFromPlayer(player).playerColor;
+            }
+            catch { }
+
+            buttons.AddRange(
+                new ButtonInfo[]
+                {
+                    new ButtonInfo {
+                        buttonText = "Player Name",
+                        overlapText = $"Name: {player.NickName}",
+                        method =() => ChangeName(player.NickName),
+                        isTogglable = false,
+                        toolTip = $"Sets your name to {player.NickName}."
+                    },
+                    new ButtonInfo {
+                        buttonText = "Player Color",
+                        overlapText = $"Player Color: <color=red>{Math.Round(playerColor.r * 255)}</color> <color=green>{Math.Round(playerColor.g)}</color> <color=blue>{Math.Round(playerColor.b)}</color>",
+                        method =() => ChangeColor(playerColor),
+                        isTogglable = false,
+                        toolTip = $"Sets your color to the same as {player.NickName}."
+                    },
+                    new ButtonInfo {
+                        buttonText = "Player User ID",
+                        overlapText = $"User ID: {player.UserId}",
+                        label = true
+                    }
+                }
+            );
+
+            Buttons.buttons[29] = buttons.ToArray();
+        }
+
         public static void RightHand()
         {
             rightHand = true;
@@ -2672,10 +2836,8 @@ namespace iiMenu.Mods
             return finaltext;
         }
 
-        public static void SavePreferences()
-        {
+        public static void SavePreferences() =>
             File.WriteAllText($"{PluginInfo.BaseDirectory}/iiMenu_Preferences.txt", SavePreferencesToText());
-        }
 
         public static void LoadPreferencesFromText(string text)
         {
