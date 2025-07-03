@@ -139,6 +139,28 @@ namespace iiMenu.Mods
                 FixHandTaps();
         }
 
+        public static void StumpKickAll()
+        {
+            if (PhotonNetwork.InRoom)
+            {
+                if (GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(NetworkSystem.Instance.LocalPlayer.UserId))
+                {
+                    if (NetworkSystem.Instance.SessionIsPrivate)
+                        PhotonNetwork.CurrentRoom.IsVisible = false;
+                    PhotonNetworkController.Instance.shuffler = UnityEngine.Random.Range(0, 99).ToString().PadLeft(2, '0') + UnityEngine.Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+                    PhotonNetworkController.Instance.keyStr = UnityEngine.Random.Range(0, 99999999).ToString().PadLeft(8, '0');
+                    RoomSystem.SendNearbyFollowCommand(PhotonNetworkController.Instance.currentJoinTrigger.myCollider, PhotonNetworkController.Instance.shuffler, PhotonNetworkController.Instance.keyStr);
+                }
+                else
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in stump.");
+            }
+            else
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in a room.");
+
+
+
+        }
+
         private static float instantPartyDelay = 0f;
         public static void InstantParty()
         {
@@ -178,10 +200,10 @@ namespace iiMenu.Mods
                 partyTime = Time.time + 0.25f;
                 phaseTwo = false;
                 amountPartying = FriendshipGroupDetection.Instance.myPartyMemberIDs.Count - 1;
-                NotifiLib.SendNotification("<color=grey>[</color><color=purple>PARTY</color><color=grey>]</color> <color=white>Kicking " + amountPartying.ToString() + " party members, this may take a second...</color>");
+                NotifiLib.SendNotification("<color=grey>[</color><color=purple>PARTY</color><color=grey>]</color> Kicking " + amountPartying.ToString() + " party members, please be patient..");
             }
             else
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not in a party!</color>");
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in a party.");
         }
 
         public static void BanAllInParty()
@@ -194,10 +216,10 @@ namespace iiMenu.Mods
                 partyTime = Time.time + 0.25f;
                 phaseTwo = false;
                 amountPartying = FriendshipGroupDetection.Instance.myPartyMemberIDs.Count - 1;
-                NotifiLib.SendNotification("<color=grey>[</color><color=purple>PARTY</color><color=grey>]</color> <color=white>Banning " + amountPartying.ToString() + " party members, this may take a second...</color>");
+                NotifiLib.SendNotification("<color=grey>[</color><color=purple>PARTY</color><color=grey>]</color> Banning " + amountPartying.ToString() + " party members, please be patient..");
             }
             else
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not in a party!</color>");
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in a party.");
         }
 
         public static Coroutine partyKickDelayCoroutine;
