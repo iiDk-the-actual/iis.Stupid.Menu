@@ -4,6 +4,7 @@ using iiMenu.Classes;
 using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
+using Photon.Voice.Unity;
 using System.IO;
 using UnityEngine;
 using static iiMenu.Classes.RigManager;
@@ -418,6 +419,54 @@ namespace iiMenu.Mods
                 }
             }
         }
+
+        private static float lastVol;
+        private static float startSilenceTime = -1f;
+        private static bool reloaded;
+
+        public static void BypassAutomod()
+        {
+            GorillaTagger.moderationMutedTime = -1f;
+
+            if (GorillaComputer.instance.autoMuteType != "OFF")
+            {
+                GorillaComputer.instance.autoMuteType = "OFF";
+                PlayerPrefs.SetInt("autoMute", 0);
+                PlayerPrefs.Save();
+            }
+
+            Recorder mic = GorillaTagger.Instance.myRecorder;
+            if (mic == null)
+                return;
+
+            float volume = 0f;
+            GorillaSpeakerLoudness recorder = VRRig.LocalRig.GetComponent<GorillaSpeakerLoudness>();
+            if (recorder != null)
+                volume = recorder.Loudness;
+
+            if (volume == 0f)
+            {
+                if (lastVol != 0f)
+                {
+                    startSilenceTime = Time.time;
+                    reloaded = false;
+                }
+
+                if (startSilenceTime > 0f && !reloaded && Time.time - startSilenceTime >= 1f)
+                {
+                    mic.RestartRecording(true);
+                    reloaded = true;
+                }
+            }
+            else
+            {
+                startSilenceTime = -1f;
+                reloaded = false;
+            }
+
+            lastVol = volume;
+        }
+
 
         public static void ChangeIdentity()
         {
