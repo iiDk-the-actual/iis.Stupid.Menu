@@ -122,19 +122,59 @@ namespace iiMenu.Mods.Spammers
 
                     bool showSelf = options.Receivers == ReceiverGroup.All || options.TargetActors.Contains(PhotonNetwork.LocalPlayer.ActorNumber);
 
+                    if (showSelf)
+                    {
+                        if (options.Receivers == ReceiverGroup.All)
+                            options.Receivers = ReceiverGroup.Others;
+
+                        if (options.TargetActors.Contains(PhotonNetwork.LocalPlayer.ActorNumber))
+                        {
+                            List<int> targetActors = options.TargetActors.ToList();
+                            targetActors.Remove(PhotonNetwork.LocalPlayer.ActorNumber);
+                            options.TargetActors = targetActors.ToArray();
+                        }
+                    }
+
                     if (projectileName.Contains("GrowingSnowball"))
                     {
                         bool largeSnowballs = GetIndex("Large Snowballs").enabled;
+                        int scale = largeSnowballs ? 5 : 0;
                         GrowingSnowballThrowable GrowingSnowball = Throwable as GrowingSnowballThrowable;
+
+                        int index = Overpowered.GetProjectileIncrement(position, velocity, Throwable.transform.lossyScale.x);
+                        int actorOwner = PhotonNetwork.InRoom ? NetworkSystem.Instance.LocalPlayer.ActorNumber : 0;
+
+                        SlingshotProjectile slingshotProjectile = null;
                         if (showSelf)
+                            slingshotProjectile = GrowingSnowball.LaunchSnowballRemote(position, velocity, GrowingSnowball.snowballModelTransform.lossyScale.x, index, new PhotonMessageInfoWrapped(actorOwner, PhotonNetwork.ServerTimestamp));
+
+                        if (PhotonNetwork.InRoom && !GetIndex("Client Sided Projectiles").enabled)
                         {
-                            GrowingSnowball.changeSizeEvent.RaiseAll(largeSnowballs ? 5 : 0);
-                            GrowingSnowball.snowballThrowEvent.RaiseAll(position, velocity, Overpowered.GetProjectileIncrement(position, velocity, largeSnowballs ? 5f : 0f));
-                        } else
-                        {
-                            GrowingSnowball.changeSizeEvent.RaiseOthers(largeSnowballs ? 5 : 0);
-                            GrowingSnowball.snowballThrowEvent.RaiseOthers(position, velocity, Overpowered.GetProjectileIncrement(position, velocity, largeSnowballs ? 5f : 0f));
+                            PhotonNetwork.RaiseEvent(176, new object[]
+                            {
+                                GrowingSnowball.changeSizeEvent._eventId,
+                                scale
+                            }, options, new SendOptions
+                            {
+                                Reliability = false,
+                                Encrypt = true
+                            });
+
+                            PhotonNetwork.RaiseEvent(176, new object[]
+                            {
+                                GrowingSnowball.snowballThrowEvent._eventId,
+                                position,
+                                velocity,
+                                index
+                            }, options, new SendOptions
+                            {
+                                Reliability = false,
+                                Encrypt = true
+                            });
                         }
+                        
+                        GrowingSnowball.changeSizeEvent.RaiseOthers(largeSnowballs ? 5 : 0);
+                        GrowingSnowball.snowballThrowEvent.RaiseOthers(position, velocity, Overpowered.GetProjectileIncrement(position, velocity, largeSnowballs ? 5f : 0f));
                     }
                     else
                     {
@@ -142,7 +182,7 @@ namespace iiMenu.Mods.Spammers
                         if (showSelf)
                             slingshotProjectile = Throwable.LaunchSnowballLocal(position, velocity, Throwable.transform.lossyScale.x, true, color);
 
-                        if (PhotonNetwork.InRoom)
+                        if (PhotonNetwork.InRoom && !GetIndex("Client Sided Projectiles").enabled)
                         {
                             int index = showSelf ? slingshotProjectile.myProjectileCount : Overpowered.GetProjectileIncrement(position, velocity, Throwable.transform.lossyScale.x);
 
@@ -163,19 +203,6 @@ namespace iiMenu.Mods.Spammers
                             sendEventData[0] = NetworkSystem.Instance.ServerTimestamp;
                             sendEventData[1] = 0;
                             sendEventData[2] = projectileSendData;
-
-                            if (showSelf)
-                            {
-                                if (options.Receivers == ReceiverGroup.All)
-                                    options.Receivers = ReceiverGroup.Others;
-
-                                if (options.TargetActors.Contains(PhotonNetwork.LocalPlayer.ActorNumber))
-                                {
-                                    List<int> targetActors = options.TargetActors.ToList();
-                                    targetActors.Remove(PhotonNetwork.LocalPlayer.ActorNumber);
-                                    options.TargetActors = targetActors.ToArray();
-                                }
-                            }
 
                             PhotonNetwork.RaiseEvent(3, sendEventData, options, SendOptions.SendUnreliable);
                             RPCProtection();
