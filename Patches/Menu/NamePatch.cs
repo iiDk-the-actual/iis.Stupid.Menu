@@ -1,6 +1,5 @@
 ﻿using HarmonyLib;
 using iiMenu.Classes;
-using System;
 
 namespace iiMenu.Patches
 {
