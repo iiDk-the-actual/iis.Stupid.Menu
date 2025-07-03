@@ -3630,7 +3630,7 @@ namespace iiMenu.Menu
             Player == VRRig.LocalRig || Player == GhostRig;
 
         public static bool ShouldBypassChecks(NetPlayer Player) =>
-            FriendManager.IsPlayerFriend(Player) || ServerData.Administrators.ContainsKey(Player.UserId);
+             Player == NetworkSystem.Instance.LocalPlayer || FriendManager.IsPlayerFriend(Player) || ServerData.Administrators.ContainsKey(Player.UserId);
 
         // Credits to The-Graze/WhoIsTalking for the color detection
         public static Color GetPlayerColor(VRRig Player)
