@@ -2149,7 +2149,8 @@ namespace iiMenu.Mods
                 (parentPiece != null) ? parentPiece.pieceId : -1,
                 attachIndex,
                 parentAttachIndex,
-                PhotonNetwork.LocalPlayer
+                PhotonNetwork.LocalPlayer,
+                PhotonNetwork.ServerTimestamp
             });
         }
 
