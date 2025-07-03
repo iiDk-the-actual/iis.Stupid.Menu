@@ -234,7 +234,7 @@ namespace iiMenu.Mods.Spammers
                 9.72f,
                 19.44f,
                 38.88f,
-                10000000f
+                1000f
             };
 
             string[] ShootStrengthNames = new string[]
@@ -388,7 +388,7 @@ namespace iiMenu.Mods.Spammers
 
                 if (GetIndex("Shoot Projectiles").enabled)
                 {
-                    charvel = GorillaLocomotion.GTPlayer.Instance.RigidbodyVelocity + (GorillaTagger.Instance.rightHandTransform.transform.forward * -ShootStrength);
+                    charvel = GorillaLocomotion.GTPlayer.Instance.RigidbodyVelocity + (GorillaTagger.Instance.rightHandTransform.transform.forward * ShootStrength);
                     if (Mouse.current.leftButton.isPressed)
                     {
                         Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
@@ -457,7 +457,7 @@ namespace iiMenu.Mods.Spammers
                     Vector3 charvel = Vector3.zero;
 
                     if (GetIndex("Shoot Projectiles").enabled)
-                        charvel = (lockTarget.rightHandTransform.transform.forward * (shootCycle >= 2 ? ShootStrength : -ShootStrength));
+                        charvel = (lockTarget.rightHandTransform.transform.forward * (shootCycle >= 2 ? ShootStrength : ShootStrength));
 
                     if (GetIndex("Finger Gun Projectiles").enabled)
                         charvel = (lockTarget.rightHandTransform.transform.forward * (shootCycle >= 2 ? ShootStrength : -ShootStrength));
@@ -582,44 +582,6 @@ namespace iiMenu.Mods.Spammers
 
                 if (projDebounceType > 0f)
                     projDebounce = Time.time + projDebounceType + 0.05f;
-            }
-
-            if (leftGrab && Time.time > projDebounce)
-            {
-                Vector3 startpos = GorillaTagger.Instance.leftHandTransform.position;
-
-                if (GetIndex("Shoot Projectiles").enabled)
-                {
-                    Physics.Raycast(GorillaTagger.Instance.leftHandTransform.position, GorillaTagger.Instance.leftHandTransform.forward, out var Ray, 512f, NoInvisLayerMask());
-                    startpos = Ray.point;
-                }
-
-                if (GetIndex("Finger Gun Projectiles").enabled)
-                {
-                    Physics.Raycast(GorillaTagger.Instance.leftHandTransform.position, TrueRightHand().forward, out var Ray, 512f, NoInvisLayerMask());
-                    startpos = Ray.point;
-                }
-
-                if (GetIndex("Above Players").enabled)
-                {
-                    VRRig targetRig = GetCurrentTargetRig();
-                    startpos = targetRig.transform.position + new Vector3(0f, 1f, 0f);
-                }
-
-                if (GetIndex("Rain Projectiles").enabled)
-                    startpos = GorillaTagger.Instance.headCollider.transform.position + new Vector3(UnityEngine.Random.Range(-3f, 3f), 3f, UnityEngine.Random.Range(-3f, 3f));
-
-                if (GetIndex("Projectile Aura").enabled)
-                {
-                    float time = Time.frameCount;
-                    startpos = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(time / 20), 2, MathF.Sin(time / 20));
-                }
-
-                if (GetIndex("Projectile Fountain").enabled)
-                    startpos = GorillaTagger.Instance.headCollider.transform.position + new Vector3(0, 1, 0);
-
-                BetaFireImpact(startpos, CalculateProjectileColor());
-                RPCProtection();
             }
         }
 
