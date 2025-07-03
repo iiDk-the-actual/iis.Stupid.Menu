@@ -9,7 +9,7 @@ namespace iiMenu.Patches
         private static void Postfix(VRRig __instance, string name)
         {
             NetPlayer player = RigManager.GetPlayerFromVRRig(__instance) ?? null;
-            if (player != null && FriendManager.IsPlayerFriend(player))
+            if (player != null && Menu.Main.ShouldBypassChecks(player))
             {
                 player.SanitizedNickName = player.NickName;
                 __instance.playerNameVisible = player.NickName;
