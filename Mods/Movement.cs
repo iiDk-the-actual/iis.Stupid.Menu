@@ -569,7 +569,7 @@ namespace iiMenu.Mods
             bool Space = UnityInput.Current.GetKey(KeyCode.Space);
             bool Ctrl = UnityInput.Current.GetKey(KeyCode.LeftControl);
 
-            if (Mouse.current.rightButton.isPressed)
+            if (Mouse.current.rightButton.isPressed && !UnityInput.Current.GetKey(KeyCode.Q) || (isSearching && isPcWhenSearching))
             {
                 Transform parentTransform = GTPlayer.Instance.rightControllerTransform.parent;
                 Quaternion currentRotation = parentTransform.rotation;
