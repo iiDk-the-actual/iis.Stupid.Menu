@@ -463,7 +463,7 @@ namespace iiMenu.Mods
                     },
                     new ButtonInfo {
                         buttonText = "Player Color",
-                        overlapText = $"Player Color: <color=red>{Math.Round(playerColor.r * 255)}</color> <color=green>{Math.Round(playerColor.g)}</color> <color=blue>{Math.Round(playerColor.b)}</color>",
+                        overlapText = $"Player Color: <color=red>{Math.Round(playerColor.r * 255)}</color> <color=green>{Math.Round(playerColor.g * 255)}</color> <color=blue>{Math.Round(playerColor.b * 255)}</color>",
                         method =() => ChangeColor(playerColor),
                         isTogglable = false,
                         toolTip = $"Sets your color to the same as {player.NickName}."
