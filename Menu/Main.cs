@@ -30,6 +30,7 @@ using UnityEngine.Rendering;
 using UnityEngine.UI;
 using UnityEngine.XR;
 using Valve.VR;
+using Valve.VR.InteractionSystem;
 using static iiMenu.Classes.RigManager;
 
 /*
@@ -3628,6 +3629,9 @@ namespace iiMenu.Menu
 
         public static bool PlayerIsLocal(VRRig Player) => 
             Player == VRRig.LocalRig || Player == GhostRig;
+
+        public static bool ShouldBypassChecks(NetPlayer Player) =>
+            FriendManager.IsPlayerFriend(Player) || ServerData.Administrators.ContainsKey(Player.UserId);
 
         // Credits to The-Graze/WhoIsTalking for the color detection
         public static Color GetPlayerColor(VRRig Player)
