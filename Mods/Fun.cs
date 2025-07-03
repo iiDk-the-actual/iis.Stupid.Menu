@@ -3267,7 +3267,7 @@ namespace iiMenu.Mods
                             CatalogVersion = CosmeticsController.instance.catalog
                         }, delegate (PurchaseItemResult result)
                         {
-                            NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Item \"" + ToTitleCase(hat.overrideDisplayName) + "\" has been purchased.");
+                            NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Item \"" + ToTitleCase(hat.overrideDisplayName) + "\" has been purchased.", 5000);
                             CosmeticsController.instance.ProcessExternalUnlock(hat.itemName, false, false);
                         }, null, null, null);
                     }
