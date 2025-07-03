@@ -640,7 +640,7 @@ namespace iiMenu.Mods.Spammers
             if (rightGrab || Mouse.current.leftButton.isPressed)
             {
                 Vector3 startpos = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, -0.15f, 0f);
-                Vector3 charvel = GorillaTagger.Instance.bodyCollider.transform.forward * -8.33f;
+                Vector3 charvel = GorillaTagger.Instance.bodyCollider.transform.forward * 8.33f;
 
                 BetaFireProjectile("ScienceCandyLeftAnchor", startpos, charvel, Color.yellow);
             }
@@ -662,7 +662,7 @@ namespace iiMenu.Mods.Spammers
             if (rightGrab || Mouse.current.leftButton.isPressed)
             {
                 Vector3 startpos = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, -0.15f, 0f);
-                Vector3 charvel = GorillaTagger.Instance.bodyCollider.transform.forward * -8.33f;
+                Vector3 charvel = GorillaTagger.Instance.bodyCollider.transform.forward * 8.33f;
 
                 BetaFireProjectile("ScienceCandyLeftAnchor", startpos, charvel, Color.white);
             }
@@ -673,7 +673,7 @@ namespace iiMenu.Mods.Spammers
             if (rightGrab || Mouse.current.leftButton.isPressed)
             {
                 Vector3 startpos = GorillaTagger.Instance.headCollider.transform.position + (GorillaTagger.Instance.headCollider.transform.forward * 0.1f) + (GorillaTagger.Instance.headCollider.transform.up * -0.15f);
-                Vector3 charvel = GorillaTagger.Instance.headCollider.transform.forward * -8.33f;
+                Vector3 charvel = GorillaTagger.Instance.headCollider.transform.forward * 8.33f;
 
                 BetaFireProjectile("FishFoodLeftAnchor", startpos, charvel, Color.green);
             }
@@ -684,7 +684,7 @@ namespace iiMenu.Mods.Spammers
             if (rightGrab || Mouse.current.leftButton.isPressed)
             {
                 Vector3 startpos = GorillaTagger.Instance.headCollider.transform.position + (GorillaTagger.Instance.headCollider.transform.forward * 0.1f) + (GorillaTagger.Instance.headCollider.transform.up * -0.15f);
-                Vector3 charvel = GorillaTagger.Instance.headCollider.transform.forward * -8.33f;
+                Vector3 charvel = GorillaTagger.Instance.headCollider.transform.forward * 8.33f;
 
                 BetaFireProjectile("WaterBalloonLeftAnchor",  startpos, charvel, Color.cyan);
             }
@@ -701,7 +701,7 @@ namespace iiMenu.Mods.Spammers
                 if (gunLocked && lockTarget != null)
                 {
                     Vector3 startpos = lockTarget.transform.position + new Vector3(0f, -0.4f, 0f) + (lockTarget.transform.forward * 0.2f);
-                    Vector3 charvel = lockTarget.transform.forward * -8.33f;
+                    Vector3 charvel = lockTarget.transform.forward * 8.33f;
 
                     BetaFireProjectile("ScienceCandyLeftAnchor", startpos, charvel, Color.yellow);
                 }
@@ -771,7 +771,7 @@ namespace iiMenu.Mods.Spammers
                 if (gunLocked && lockTarget != null)
                 {
                     Vector3 startpos = lockTarget.transform.position + new Vector3(0f, -0.4f, 0f) + (lockTarget.transform.forward * 0.2f);
-                    Vector3 charvel = lockTarget.transform.forward *- 8.33f;
+                    Vector3 charvel = lockTarget.transform.forward * 8.33f;
 
                     BetaFireProjectile("ScienceCandyLeftAnchor", startpos, charvel, Color.white);
                 }
@@ -806,7 +806,7 @@ namespace iiMenu.Mods.Spammers
                 if (gunLocked && lockTarget != null)
                 {
                     Vector3 startpos = lockTarget.headMesh.transform.position + (lockTarget.headMesh.transform.forward * 0.4f) + (lockTarget.headMesh.transform.up * -0.05f);
-                    Vector3 charvel = lockTarget.headMesh.transform.forward * -8.33f;
+                    Vector3 charvel = lockTarget.headMesh.transform.forward * 8.33f;
 
                     BetaFireProjectile("FishFoodLeftAnchor", startpos, charvel, Color.green);
                 }
@@ -841,7 +841,7 @@ namespace iiMenu.Mods.Spammers
                 if (gunLocked && lockTarget != null)
                 {
                     Vector3 startpos = lockTarget.headMesh.transform.position + (lockTarget.headMesh.transform.forward * 0.4f) + (lockTarget.headMesh.transform.up * -0.05f);
-                    Vector3 charvel = lockTarget.headMesh.transform.forward * -8.33f;
+                    Vector3 charvel = lockTarget.headMesh.transform.forward * 8.33f;
 
                     BetaFireProjectile("WaterBalloonLeftAnchor", startpos, charvel, Color.cyan);
                 }
