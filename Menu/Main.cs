@@ -5351,7 +5351,7 @@ jgs \_   _/ |Oo\
         public static float laggyRigDelay;
         public static float jrDebounce;
         public static float projDebounce;
-        public static float projDebounceType = 0.1f;
+        public static float projDebounceType = 0.8f;
         public static float soundDebounce;
         public static float buttonCooldown;
         public static float colorChangerDelay;

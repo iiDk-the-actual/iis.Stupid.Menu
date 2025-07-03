@@ -1,6 +1,7 @@
 ﻿using ExitGames.Client.Photon;
 using GorillaExtensions;
 using iiMenu.Classes;
+using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -165,7 +166,7 @@ namespace iiMenu.Mods.Spammers
                 catch (Exception e) { LogManager.LogError($"Projectile error: {e.Message}"); }
 
                 if (projDebounceType > 0f)
-                    projDebounce = Time.time + Mathf.Max(projDebounceType, 0.81f);
+                    projDebounce = Time.time + projDebounceType;
             }
         }
 
@@ -303,22 +304,23 @@ namespace iiMenu.Mods.Spammers
             GetIndex("BlueProj").overlapText = "Blue <color=grey>[</color><color=green>" + blue.ToString() + "</color><color=grey>]</color>";
         }
 
-        public static int projDebounceIndex = 1;
-        public static void ChangeProjectileDelay(bool positive = true)
+        public static int projDebounceIndex = 8;
+        public static void ChangeProjectileDelay(bool positive = true, bool fromMenu = false)
         {
             if (positive)
                 projDebounceIndex++;
             else
                 projDebounceIndex--;
 
-            if (projDebounceIndex < 1)
+            projDebounceIndex %= 10;
+            if (projDebounceIndex < 0)
                 projDebounceIndex = 10;
 
-            if (projDebounceIndex > 10)
-                projDebounceIndex = 1;
+            if (projDebounceIndex < 8 && fromMenu)
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>WARNING</color><color=grey>]</color> Using a projectile delay lower than 0.8 could get you banned. Use at your own caution.", 5000);
 
             projDebounceType = projDebounceIndex / 10f;
-            Overpowered.snowballSpawnDelay = Mathf.Max(projDebounceIndex / 10f, 0.15f);
+            Overpowered.snowballSpawnDelay = Mathf.Max(projDebounceIndex / 10f, 0.1f);
             GetIndex("Change Projectile Delay").overlapText = "Change Projectile Delay <color=grey>[</color><color=green>" + projDebounceType.ToString() + "</color><color=grey>]</color>";
         }
 
