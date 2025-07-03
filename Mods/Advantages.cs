@@ -377,9 +377,7 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget) && !PlayerIsTagged(gunTarget))
                     {
                         if (PhotonNetwork.LocalPlayer.IsMasterClient)
-                        {
                             AddInfected(RigManager.GetPlayerFromVRRig(gunTarget));
-                        }
                         else
                         {
                             if (PlayerIsTagged(VRRig.LocalRig))
@@ -399,6 +397,65 @@ namespace iiMenu.Mods
                     VRRig.LocalRig.enabled = true;
                 }
             }
+        }
+
+        public static void TagPlayer(NetPlayer player)
+        {
+            if (PhotonNetwork.LocalPlayer.IsMasterClient)
+            {
+                AddInfected(player);
+                return;
+            }
+
+            if (!PlayerIsTagged(VRRig.LocalRig))
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be tagged.</color>");
+                Toggle("Tag Player");
+                return;
+            }
+
+            VRRig targetRig = RigManager.GetVRRigFromPlayer(player);
+            if (!PlayerIsTagged(targetRig))
+            {
+                VRRig.LocalRig.enabled = false;
+
+                if (!GetIndex("Obnoxious Tag").enabled)
+                    VRRig.LocalRig.transform.position = targetRig.transform.position - new Vector3(0f, 3f, 0f);
+                else
+                {
+                    Vector3 position = targetRig.transform.position + RandomVector3();
+
+                    VRRig.LocalRig.transform.position = position;
+
+                    VRRig.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
+                    VRRig.LocalRig.leftHand.rigTarget.transform.position = lockTarget.transform.position + RandomVector3();
+                    VRRig.LocalRig.rightHand.rigTarget.transform.position = lockTarget.transform.position + RandomVector3();
+
+                    VRRig.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
+                    VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
+
+                    VRRig.LocalRig.leftIndex.calcT = 0f;
+                    VRRig.LocalRig.leftMiddle.calcT = 0f;
+                    VRRig.LocalRig.leftThumb.calcT = 0f;
+
+                    VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
+                    VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
+                    VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
+
+                    VRRig.LocalRig.rightIndex.calcT = 0f;
+                    VRRig.LocalRig.rightMiddle.calcT = 0f;
+                    VRRig.LocalRig.rightThumb.calcT = 0f;
+
+                    VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+                    VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
+                    VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
+                }
+
+                if (ValidateTag(targetRig))
+                    GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = targetRig.transform.position;
+            }
+            else
+                Toggle("Tag Player");
         }
 
         public static void UntagGun()

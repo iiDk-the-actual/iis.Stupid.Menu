@@ -765,7 +765,7 @@ namespace iiMenu.Mods
             }
         }
 
-        public static float snowballSpawnDelay = 0.15f;
+        public static float snowballSpawnDelay = 0.1f;
         public static bool SnowballHandIndex;
         public static void BetaSpawnSnowball(Vector3 Pos, Vector3 Vel, float Scale, int Mode, Player Target = null, bool NetworkSize = true, int customNetworkedSize = -1)
         {
@@ -1051,6 +1051,15 @@ namespace iiMenu.Mods
                         }
                     }
                 }
+            }
+        }
+
+        public static void FlingPlayer(NetPlayer player)
+        {
+            if (Time.time > snowballDelay)
+            {
+                BetaSpawnSnowball(GetVRRigFromPlayer(player).transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(UnityEngine.Random.Range(-1f, 1f), 0f, UnityEngine.Random.Range(-1f, 1f)).normalized / 1.7f, new Vector3(0f, -500f, 0f), 5f, 2, NetPlayerToPlayer(player));
+                snowballDelay = Time.time + snowballSpawnDelay;
             }
         }
 
@@ -1763,6 +1772,9 @@ namespace iiMenu.Mods
                 PhotonNetwork.OpRemoveCompleteCacheOfPlayer(player.ActorNumber);
         }
 
+        public static void DestroyPlayer(NetPlayer player) =>
+            PhotonNetwork.OpRemoveCompleteCacheOfPlayer(player.ActorNumber);
+
         public static void TargetSpam()
         {
             if (NetworkSystem.Instance.IsMasterClient)
@@ -1883,6 +1895,9 @@ namespace iiMenu.Mods
             }
         }
         
+        public static void SetPlayerStatus(int status, NetPlayer player) =>
+            BetaSetStatus(status, new RaiseEventOptions { TargetActors = new int[1] { player.ActorNumber } });
+
         public static void GliderBlindGun()
         {
             if (GetGunInput(false))
