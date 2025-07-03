@@ -1,4 +1,5 @@
 ﻿using ExitGames.Client.Photon;
+using GorillaExtensions;
 using iiMenu.Classes;
 using Photon.Pun;
 using Photon.Realtime;
@@ -635,7 +636,7 @@ namespace iiMenu.Mods.Spammers
                 if (!Projectile.gameObject.activeSelf)
                 {
                     Projectile.SetSnowballActiveLocal(true);
-                    Projectile.velocityEstimator = GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").GetComponent<GorillaVelocityEstimator>();
+                    Projectile.velocityEstimator = GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").GetOrAddComponent<GorillaVelocityEstimator>();
                     Projectile.transform.position = GorillaTagger.Instance.leftHandTransform.position;
                     Projectile.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
 
@@ -653,7 +654,7 @@ namespace iiMenu.Mods.Spammers
                 if (!Projectile.gameObject.activeSelf)
                 {
                     Projectile.SetSnowballActiveLocal(true);
-                    Projectile.velocityEstimator = GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").GetComponent<GorillaVelocityEstimator>();
+                    Projectile.velocityEstimator = GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").GetOrAddComponent<GorillaVelocityEstimator>();
                     Projectile.transform.position = GorillaTagger.Instance.rightHandTransform.position;
                     Projectile.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
 
