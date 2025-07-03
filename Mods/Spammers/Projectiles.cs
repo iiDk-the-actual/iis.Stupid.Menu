@@ -125,15 +125,16 @@ namespace iiMenu.Mods.Spammers
 
                     if (projectileName.Contains("GrowingSnowball"))
                     {
+                        bool largeSnowballs = GetIndex("Large Snowballs").enabled;
                         GrowingSnowballThrowable GrowingSnowball = Throwable as GrowingSnowballThrowable;
                         if (showSelf)
                         {
-                            GrowingSnowball.changeSizeEvent.RaiseAll(1);
-                            GrowingSnowball.snowballThrowEvent.RaiseAll(position, velocity, Overpowered.GetProjectileIncrement(position, velocity, 1f));
+                            GrowingSnowball.changeSizeEvent.RaiseAll(largeSnowballs ? 5 : 0);
+                            GrowingSnowball.snowballThrowEvent.RaiseAll(position, velocity, Overpowered.GetProjectileIncrement(position, velocity, largeSnowballs ? 5f : 0f));
                         } else
                         {
-                            GrowingSnowball.changeSizeEvent.RaiseOthers(1);
-                            GrowingSnowball.snowballThrowEvent.RaiseOthers(position, velocity, Overpowered.GetProjectileIncrement(position, velocity, 1f));
+                            GrowingSnowball.changeSizeEvent.RaiseOthers(largeSnowballs ? 5 : 0);
+                            GrowingSnowball.snowballThrowEvent.RaiseOthers(position, velocity, Overpowered.GetProjectileIncrement(position, velocity, largeSnowballs ? 5f : 0f));
                         }
                     }
                     else
