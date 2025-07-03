@@ -4,8 +4,11 @@ using Photon.Pun;
 using Photon.Realtime;
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -139,6 +142,19 @@ namespace iiMenu.Mods.Spammers
                         sendEventData[0] = NetworkSystem.Instance.ServerTimestamp;
                         sendEventData[1] = 0;
                         sendEventData[2] = projectileSendData;
+
+                        if (showSelf)
+                        {
+                            if (options.Receivers == ReceiverGroup.All)
+                                options.Receivers = ReceiverGroup.Others;
+
+                            if (options.TargetActors.Contains(PhotonNetwork.LocalPlayer.ActorNumber))
+                            {
+                                List<int> targetActors = options.TargetActors.ToList();
+                                targetActors.Remove(PhotonNetwork.LocalPlayer.ActorNumber);
+                                options.TargetActors = targetActors.ToArray();
+                            }
+                        }
 
                         PhotonNetwork.RaiseEvent(3, sendEventData, options, SendOptions.SendUnreliable);
                         RPCProtection();
