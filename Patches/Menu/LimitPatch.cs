@@ -1,0 +1,34 @@
+﻿using HarmonyLib;
+using Photon.Pun;
+using UnityEngine;
+
+namespace iiMenu.Patches
+{
+    [HarmonyPatch(typeof(GrowingSnowballThrowable), "SnowballThrowEventReceiver")]
+    public class LimitPatch
+    {
+        public static bool Prefix(GrowingSnowballThrowable __instance, int sender, int receiver, object[] args, PhotonMessageInfoWrapped info)
+        {
+            NetPlayer player = info.Sender;
+            if (player != NetworkSystem.Instance.LocalPlayer && player != null && Menu.Main.ShouldBypassChecks(player))
+            {
+                object obj = args[0];
+                if (obj is Vector3)
+                {
+                    Vector3 vector = (Vector3)obj;
+                    obj = args[1];
+                    if (obj is Vector3)
+                    {
+                        Vector3 vector2 = (Vector3)obj;
+                        obj = args[2];
+                        if (obj is int)
+                            __instance.LaunchSnowballRemote(vector, vector2, __instance.snowballModelTransform.lossyScale.x, (int)obj, info);
+                    }
+                }
+                return false;
+            }
+
+            return true;
+        }
+    }
+}
