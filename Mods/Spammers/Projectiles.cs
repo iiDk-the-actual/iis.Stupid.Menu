@@ -169,7 +169,7 @@ namespace iiMenu.Mods.Spammers
                 catch (Exception e) { LogManager.LogError($"Projectile error: {e.Message}"); }
 
                 if (projDebounceType > 0f)
-                    projDebounce = Time.time + projDebounceType;
+                    projDebounce = Time.time + (projDebounceType + (projDebounceType == 0f ? 0f : 0.01f));
             }
         }
 
@@ -307,7 +307,7 @@ namespace iiMenu.Mods.Spammers
             GetIndex("BlueProj").overlapText = "Blue <color=grey>[</color><color=green>" + blue.ToString() + "</color><color=grey>]</color>";
         }
 
-        public static int projDebounceIndex = 8;
+        public static int projDebounceIndex = 16;
         public static void ChangeProjectileDelay(bool positive = true, bool fromMenu = false)
         {
             if (positive)
@@ -315,15 +315,15 @@ namespace iiMenu.Mods.Spammers
             else
                 projDebounceIndex--;
 
-            projDebounceIndex %= 10;
+            projDebounceIndex %= 21;
             if (projDebounceIndex < 0)
-                projDebounceIndex = 10;
+                projDebounceIndex = 20;
 
             if (projDebounceIndex < 8 && fromMenu)
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>WARNING</color><color=grey>]</color> Using a projectile delay lower than 0.8 could get you banned. Use at your own caution.", 5000);
 
-            projDebounceType = projDebounceIndex / 10f;
-            Overpowered.snowballSpawnDelay = Mathf.Max(projDebounceIndex / 10f, 0.1f);
+            projDebounceType = projDebounceIndex / 20f;
+            Overpowered.snowballSpawnDelay = Mathf.Max(projDebounceIndex / 20f, 0.1f);
             GetIndex("Change Projectile Delay").overlapText = "Change Projectile Delay <color=grey>[</color><color=green>" + projDebounceType.ToString() + "</color><color=grey>]</color>";
         }
 
@@ -403,10 +403,10 @@ namespace iiMenu.Mods.Spammers
                 }
 
                 if (GetIndex("Finger Gun Projectiles").enabled)
-                    charvel = GorillaLocomotion.GTPlayer.Instance.RigidbodyVelocity + (TrueRightHand().forward * (shootCycle >= 2 ? ShootStrength : -ShootStrength));
+                    charvel = GorillaLocomotion.GTPlayer.Instance.RigidbodyVelocity + (TrueRightHand().forward * ShootStrength);
 
                 if (GetIndex("Random Direction").enabled)
-                    charvel = new Vector3(UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33));
+                    charvel = RandomVector3(100f);
 
                 if (GetIndex("Above Players").enabled)
                 {
@@ -460,10 +460,10 @@ namespace iiMenu.Mods.Spammers
                     Vector3 charvel = Vector3.zero;
 
                     if (GetIndex("Shoot Projectiles").enabled)
-                        charvel = (lockTarget.rightHandTransform.transform.forward * (shootCycle >= 2 ? ShootStrength : ShootStrength));
+                        charvel = (lockTarget.rightHandTransform.transform.forward * ShootStrength);
 
                     if (GetIndex("Finger Gun Projectiles").enabled)
-                        charvel = (lockTarget.rightHandTransform.transform.forward * (shootCycle >= 2 ? ShootStrength : -ShootStrength));
+                        charvel = (lockTarget.rightHandTransform.transform.forward * ShootStrength);
 
                     if (GetIndex("Random Direction").enabled)
                         charvel = new Vector3(UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33));
