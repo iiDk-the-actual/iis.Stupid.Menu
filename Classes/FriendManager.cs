@@ -1,5 +1,6 @@
 ﻿using ExitGames.Client.Photon;
 using GorillaExtensions;
+using GorillaLocomotion;
 using GorillaNetworking;
 using iiMenu.Menu;
 using iiMenu.Notifications;
@@ -360,6 +361,11 @@ namespace iiMenu.Classes
                                     Destroy(Platform);
                                     targetDictionary.Remove(SenderRig);
                                 }
+                                break;
+                            }
+                        case "sendProjectile":
+                            {
+                                RoomSystem.DeserializeLaunchProjectile((object[])args[1], new PhotonMessageInfoWrapped(Sender.ActorNumber, 0));
                                 break;
                             }
                         default:
