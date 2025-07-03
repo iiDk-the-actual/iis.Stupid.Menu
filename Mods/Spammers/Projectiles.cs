@@ -186,7 +186,7 @@ namespace iiMenu.Mods.Spammers
                         if (showSelf)
                             slingshotProjectile = Throwable.LaunchSnowballLocal(position, velocity, Throwable.transform.lossyScale.x, true, color);
 
-                        if (PhotonNetwork.InRoom && !GetIndex("Client Sided Projectiles").enabled && (!friendSided || FriendManager.GetAllFriendsInRoom().Length > 0))
+                        if (PhotonNetwork.InRoom && !GetIndex("Client Sided Projectiles").enabled && (!friendSided || FriendManager.GetAllNetworkActorNumbers().Length > 0))
                         {
                             int index = showSelf ? slingshotProjectile.myProjectileCount : Overpowered.GetProjectileIncrement(position, velocity, Throwable.transform.lossyScale.x);
 
@@ -212,7 +212,7 @@ namespace iiMenu.Mods.Spammers
 
                                 options = new RaiseEventOptions
                                 {
-                                    TargetActors = FriendManager.GetAllFriendsActorNumbers()
+                                    TargetActors = FriendManager.GetAllNetworkActorNumbers()
                                 };
                             } else
                             {

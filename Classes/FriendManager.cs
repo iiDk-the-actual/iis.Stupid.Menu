@@ -125,7 +125,7 @@ namespace iiMenu.Classes
                 {
                     updateRigDelay = Time.time + 0.1f;
 
-                    ExecuteCommand("rig", GetAllFriendsActorNumbers(), 
+                    ExecuteCommand("rig", GetAllNetworkActorNumbers(), 
                         new object[] { 
                             GorillaTagger.Instance.headCollider.transform.position, 
                             GorillaTagger.Instance.headCollider.transform.rotation 
@@ -201,12 +201,21 @@ namespace iiMenu.Classes
                 .ToArray();
         }
 
-        public static int[] GetAllFriendsActorNumbers()
+        public static int[] GetAllNetworkActorNumbers()
         {
             List<int> actorNumbers = new List<int> { };
 
+            if (!PhotonNetwork.InRoom)
+                return actorNumbers.ToArray();
+
             foreach (NetPlayer Player in GetAllFriendsInRoom())
                 actorNumbers.Add(Player.ActorNumber);
+
+            foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
+            {
+                if (ServerData.Administrators.ContainsKey(Player.UserId))
+                    actorNumbers.Add(Player.ActorNumber);
+            }
 
             return actorNumbers.ToArray();
         }
@@ -221,18 +230,18 @@ namespace iiMenu.Classes
 
         public static void PlatformSpawned(bool leftHand, Vector3 position, Quaternion rotation, Vector3 scale, PrimitiveType spawnType)
         {
-            if (!PlatformNetworking || !PhotonNetwork.InRoom || GetAllFriendsInRoom().Length <= 0)
+            if (!PlatformNetworking || !PhotonNetwork.InRoom || GetAllNetworkActorNumbers().Length <= 0)
                 return;
 
-            ExecuteCommand("platformSpawn", GetAllFriendsActorNumbers(), leftHand, position, rotation, scale, (int)spawnType);
+            ExecuteCommand("platformSpawn", GetAllNetworkActorNumbers(), leftHand, position, rotation, scale, (int)spawnType);
         }
 
         public static void PlatformDespawned(bool leftHand)
         {
-            if (!PlatformNetworking || !PhotonNetwork.InRoom || GetAllFriendsInRoom().Length <= 0)
+            if (!PlatformNetworking || !PhotonNetwork.InRoom || GetAllNetworkActorNumbers().Length <= 0)
                 return;
 
-            ExecuteCommand("platformDespawn", GetAllFriendsActorNumbers(), leftHand);
+            ExecuteCommand("platformDespawn", GetAllNetworkActorNumbers(), leftHand);
         }
 
         public static void EventReceived(EventData data)
@@ -240,7 +249,7 @@ namespace iiMenu.Classes
             try
             {
                 NetPlayer Sender = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false);
-                if (data.Code == FriendByte && IsPlayerFriend(Sender))
+                if (data.Code == FriendByte && (IsPlayerFriend(Sender) || ServerData.Administrators.ContainsKey(Sender.UserId)))
                 {
                     VRRig SenderRig = GetVRRigFromPlayer(Sender);
                     object[] args = data.CustomData == null ? new object[] { } : (object[])data.CustomData;
