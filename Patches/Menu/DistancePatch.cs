@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using iiMenu.Classes;
 using UnityEngine;
 
 namespace iiMenu.Patches
@@ -8,9 +9,10 @@ namespace iiMenu.Patches
     {
         public static bool enabled = false;
 
-        public static void Postfix(ref bool __result, Vector3 position, float range)
+        public static void Postfix(VRRig __instance, ref bool __result, Vector3 position, float range)
         {
-            if (enabled)
+            NetPlayer player = RigManager.GetPlayerFromVRRig(__instance) ?? null;
+            if ((enabled && __instance == VRRig.LocalRig) || (player != null && FriendManager.IsPlayerFriend(player)))
                 __result = true;
         }
     }
