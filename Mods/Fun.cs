@@ -60,7 +60,7 @@ namespace iiMenu.Mods
                 lastBangTime = Time.time + (60f/BPM);
             } 
             else
-                VRRig.LocalRig.head.trackingRotationOffset.x = Mathf.Lerp(VRRig.LocalRig.head.trackingRotationOffset.x,0f,0.1f);
+                VRRig.LocalRig.head.trackingRotationOffset.x = Mathf.Lerp(VRRig.LocalRig.head.trackingRotationOffset.x, 0f, 0.1f);
         }
 
         public static void SpinHeadX()
