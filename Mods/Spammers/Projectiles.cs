@@ -316,7 +316,7 @@ namespace iiMenu.Mods.Spammers
             if (projDebounceIndex < 0)
                 projDebounceIndex = 10;
 
-            if (projDebounceIndex < 8)
+            if (projDebounceIndex < 8 && fromMenu)
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>WARNING</color><color=grey>]</color> Using a projectile delay lower than 0.8 could get you banned. Use at your own caution.", 5000);
 
             projDebounceType = projDebounceIndex / 10f;
