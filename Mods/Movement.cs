@@ -556,7 +556,7 @@ namespace iiMenu.Mods
         public static float subThingy;
         public static float subThingyZ;
 
-        public static Vector3 lastPosition = GorillaTagger.Instance.rigidbody.transform.position;
+        public static Vector3 lastPosition = Vector3.zero;
         public static void WASDFly()
         {
             GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
@@ -623,11 +623,10 @@ namespace iiMenu.Mods
 
             VRRig.LocalRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
 
-            if (!W && !A && !S && !D && !Space && !Ctrl)
+            if (!W && !A && !S && !D && !Space && !Ctrl && lastPosition != Vector3.zero)
                 GorillaTagger.Instance.rigidbody.transform.position = lastPosition;
             else
                 lastPosition = GorillaTagger.Instance.rigidbody.transform.position;
-
         }
 
         private static float driveSpeed = 0f;

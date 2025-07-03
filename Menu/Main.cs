@@ -4199,6 +4199,7 @@ namespace iiMenu.Menu
         {
             GorillaLocomotion.GTPlayer.Instance.TeleportTo(World2Player(pos), GorillaLocomotion.GTPlayer.Instance.transform.rotation);
             closePosition = Vector3.zero;
+            Movement.lastPosition = Vector3.zero;
             if (isSearching && !isPcWhenSearching)
             {
                 VRKeyboard.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;

@@ -1750,6 +1750,198 @@ namespace iiMenu.Mods
             }
         }
 
+        private static float startTimeBuilding = 0f;
+        public static void EnableAtticAntiReport() =>
+            startTimeBuilding = Time.time + 5f;
+
+        public static void AtticAntiReport()
+        {
+            if (Time.time > startTimeBuilding)
+                GetIndex("Attic Anti Report").enabled = false;
+
+            foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+            {
+                if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
+                {
+                    RequestCreatePiece(-566818631, line.reportButton.transform.position + RandomVector3(0.3f), RandomQuaternion(), 0);
+                    RPCProtection();
+                }
+            }
+        }
+
+        public static void AtticDrawGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    if (!PhotonNetwork.IsMasterClient)
+                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                    else
+                        CoroutineManager.RunCoroutine(DrawSmallDelay(NewPointer.transform.position));
+                }
+            }
+        }
+
+        public static void AtticBuildGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    if (!PhotonNetwork.IsMasterClient)
+                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                    else
+                    {
+                        RequestCreatePiece(pieceIdSet, NewPointer.transform.position + RandomVector3(0.3f), RandomQuaternion(), 0);
+                        RPCProtection();
+                    }
+                }
+            }
+        }
+
+        public static IEnumerator DrawSmallDelay(Vector3 position)
+        {
+            GameObject Temporary = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            Temporary.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
+            Temporary.transform.position = position;
+            UnityEngine.Object.Destroy(Temporary.GetComponent<Collider>());
+            yield return new WaitForSeconds(0.5f);
+            RequestCreatePiece(pieceIdSet, Temporary.transform.position + RandomVector3(0.3f), RandomQuaternion(), 0);
+            RPCProtection();
+        }
+
+        public static void AtticFreezeGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    if (!PhotonNetwork.IsMasterClient)
+                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                    else
+                    {
+                        Player target = NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget));
+                        RequestCreatePiece(-566818631, lockTarget.headMesh.transform.position + RandomVector3(0.4f), RandomQuaternion(), 0, target);
+                        RequestCreatePiece(-566818631, lockTarget.leftHandTransform.position + RandomVector3(0.4f), RandomQuaternion(), 0, target);
+                        RequestCreatePiece(-566818631, lockTarget.rightHandTransform.position + RandomVector3(0.4f), RandomQuaternion(), 0, target);
+                        RPCProtection();
+                    }
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        gunLocked = true;
+                        lockTarget = possibly;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
+        public static void AtticFreezeAll()
+        {
+            if (rightTrigger > 0.5f)
+            {
+                Player target = GetRandomPlayer(false);
+
+                if (!PhotonNetwork.IsMasterClient)
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                else
+                {
+                    VRRig rigTarget = GetVRRigFromPlayer(target);
+                    RequestCreatePiece(-566818631, lockTarget.headMesh.transform.position + RandomVector3(0.4f), RandomQuaternion(), 0, target);
+                    RequestCreatePiece(-566818631, lockTarget.leftHandTransform.position + RandomVector3(0.4f), RandomQuaternion(), 0, target);
+                    RequestCreatePiece(-566818631, lockTarget.rightHandTransform.position + RandomVector3(0.4f), RandomQuaternion(), 0, target);
+                    RPCProtection();
+                }
+            }
+        }
+
+        private static float floatPower = 0.35f;
+        public static void AtticFloatGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    if (!PhotonNetwork.IsMasterClient)
+                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                    else
+                    {
+                        floatPower += (0.3f - floatPower) * 0.05f;
+                        RequestCreatePiece(-566818631, lockTarget.transform.position + Vector3.down * floatPower, Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 350f), 0f), 0, NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)));
+                        RPCProtection();
+                    }
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
+                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    {
+                        gunLocked = true;
+                        lockTarget = possibly;
+                    }
+                }
+            }
+            else
+            {
+                floatPower = 0.35f;
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
+        public static Vector3 position = Vector3.zero;
+        public static void AtticTowerGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (position != Vector3.zero)
+                {
+                    RequestCreatePiece(pieceIdSet, position, Quaternion.Euler(0f, Time.frameCount % 360, 0f), 0, NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)));
+                    RPCProtection();
+
+                    position += new Vector3(0f, 0.1f, 0f);
+                }
+
+                if (GetGunInput(true))
+                {
+                    position = NewPointer.transform.position;
+                }
+            }
+            else
+            {
+                position = Vector3.zero;
+            }
+        }
+
         private static bool isFiring = false;
         public static IEnumerator FireShotgun()
         {
@@ -1816,13 +2008,13 @@ namespace iiMenu.Mods
             //RPCProtection();
         }
 
-        public static void RequestCreatePiece(int pieceType, Vector3 position, Quaternion rotation, int materialType)
+        public static void RequestCreatePiece(int pieceType, Vector3 position, Quaternion rotation, int materialType, Player target = null)
         {
             if (NetworkSystem.Instance.IsMasterClient)
             {
                 int pieceId = GetBuilderTable().CreatePieceId();
 
-                GetBuilderTable().builderNetworking.photonView.RPC("PieceCreatedByShelfRPC", RpcTarget.All, new object[]
+                object[] args = new object[]
                 {
                     pieceType,
                     pieceId,
@@ -1832,7 +2024,12 @@ namespace iiMenu.Mods
                     (byte)4,
                     1,
                     PhotonNetwork.LocalPlayer
-                });
+                };
+
+                if (target == null)
+                    GetBuilderTable().builderNetworking.photonView.RPC("PieceCreatedByShelfRPC", RpcTarget.All, args);
+                else
+                    GetBuilderTable().builderNetworking.photonView.RPC("PieceCreatedByShelfRPC", target, args);
             } else
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
         }
