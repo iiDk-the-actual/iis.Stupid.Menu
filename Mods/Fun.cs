@@ -1915,7 +1915,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    if (possibly && possibly != VRRig.LocalRig)
                     {
                         gunLocked = true;
                         lockTarget = possibly;
@@ -1971,7 +1971,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != GorillaTagger.Instance.offlineVRRig)
+                    if (possibly && possibly != VRRig.LocalRig)
                     {
                         gunLocked = true;
                         lockTarget = possibly;
