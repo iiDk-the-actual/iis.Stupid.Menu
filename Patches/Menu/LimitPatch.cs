@@ -9,7 +9,7 @@ namespace iiMenu.Patches
         public static bool Prefix(GrowingSnowballThrowable __instance, int sender, int receiver, object[] args, PhotonMessageInfoWrapped info)
         {
             NetPlayer player = info.Sender;
-            if (player == NetworkSystem.Instance.LocalPlayer && player != null && Menu.Main.ShouldBypassChecks(player))
+            if (player != null && Menu.Main.ShouldBypassChecks(player))
             {
                 object obj = args[0];
                 if (obj is Vector3)
