@@ -152,8 +152,13 @@ namespace iiMenu.Mods.Spammers
                             slingshotProjectile.Launch(position, velocity, NetworkSystem.Instance.LocalPlayer, false, false, index, scale, true, color);
                         }
 
-                        if (PhotonNetwork.InRoom && !GetIndex("Client Sided Projectiles").enabled)
+                        if (PhotonNetwork.InRoom && !GetIndex("Client Sided Projectiles").enabled && (!friendSided || FriendManager.GetAllNetworkActorNumbers().Length > 0))
                         {
+                            options = new RaiseEventOptions
+                            {
+                                TargetActors = FriendManager.GetAllNetworkActorNumbers()
+                            };
+
                             PhotonNetwork.RaiseEvent(176, new object[]
                             {
                                 GrowingSnowball.changeSizeEvent._eventId,
