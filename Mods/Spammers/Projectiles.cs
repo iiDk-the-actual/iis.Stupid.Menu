@@ -305,6 +305,7 @@ namespace iiMenu.Mods.Spammers
                 9.72f,
                 19.44f,
                 38.88f,
+                77.76f,
                 1000000f
             };
 
@@ -313,6 +314,7 @@ namespace iiMenu.Mods.Spammers
                 "Slow",
                 "Medium",
                 "Fast",
+                "Ultra Fast",
                 "Instant"
             };
 
