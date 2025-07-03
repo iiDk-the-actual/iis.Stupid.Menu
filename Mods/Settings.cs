@@ -405,7 +405,13 @@ namespace iiMenu.Mods
                     buttonText = "Projectile Blind Player",
                     overlapText = $"Projectile Blind {player.NickName}",
                     method =() => Projectiles.ProjectileBlindPlayer(player),
-                    toolTip = $"Blinds {player.NickName} with projectiles."
+                    toolTip = $"Blinds {player.NickName} using the egg projectiles."
+                },
+                new ButtonInfo {
+                    buttonText = "Projectile Lag Player",
+                    overlapText = $"Projectile Lag {player.NickName}",
+                    method =() => Projectiles.ProjectileLagPlayer(player),
+                    toolTip = $"Lags {player.NickName} using the firework projectiles."
                 },
                 new ButtonInfo {
                     buttonText = "Destroy Player",

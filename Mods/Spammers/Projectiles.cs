@@ -909,26 +909,55 @@ namespace iiMenu.Mods.Spammers
             }
         }
 
-        private static float playerSwapDelay;
-        private static VRRig targetRig;
         public static void ProjectileBlindAll()
         {
             if (rightTrigger > 0.5f)
-            {
-                if (Time.time > playerSwapDelay || targetRig == null)
-                {
-                    playerSwapDelay = Time.time + 1f;
-                    targetRig = GetRandomVRRig(false);
-                }
-
-                BetaFireProjectile("EggLeftHand_Anchor Variant", targetRig.headMesh.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, -15f, 0f), Color.black);
-            }
+                BetaFireProjectile("EggLeftHand_Anchor Variant", GetCurrentTargetRig().headMesh.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, -15f, 0f), Color.black);
         }
 
         public static void ProjectileBlindPlayer(NetPlayer player)
         {
             VRRig rig = GetVRRigFromPlayer(player);
             BetaFireProjectile("EggLeftHand_Anchor Variant", rig.headMesh.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, -15f, 0f), Color.black);
+        }
+
+        public static void ProjectileLagGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                    BetaFireProjectile("Fireworks_Anchor Variant_Left Hand", lockTarget.headMesh.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, 15f, 0f), Color.black);
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
+        public static void ProjectileLagAll()
+        {
+            if (rightTrigger > 0.5f)
+                BetaFireProjectile("Fireworks_Anchor Variant_Left Hand", GetCurrentTargetRig().headMesh.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, 15f, 0f), Color.black);
+        }
+
+        public static void ProjectileLagPlayer(NetPlayer player)
+        {
+            VRRig rig = GetVRRigFromPlayer(player);
+            BetaFireProjectile("Fireworks_Anchor Variant_Left Hand", rig.headMesh.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, 15f, 0f), Color.black);
         }
     }
 }
