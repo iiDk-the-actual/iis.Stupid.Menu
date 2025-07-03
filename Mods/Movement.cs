@@ -12,6 +12,7 @@ using Photon.Realtime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TagEffects;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
@@ -676,11 +677,15 @@ namespace iiMenu.Mods
         {
             if (leftPrimary)
             {
+                if (dynamicAnimations)
+                    TagEffectsLibrary.PlayEffect(GTPlayer.Instance.leftControllerTransform.transform, true, .6f, TagEffectsLibrary.EffectType.FIRST_PERSON, GorillaTagger.Instance.offlineVRRig.CosmeticEffectPack, GorillaTagger.Instance.offlineVRRig.CosmeticEffectPack, Quaternion.identity);
                 GorillaTagger.Instance.rigidbody.AddForce(flySpeed * -GorillaTagger.Instance.leftHandTransform.right, ForceMode.Acceleration);
                 GorillaTagger.Instance.StartVibration(true, GorillaTagger.Instance.tapHapticStrength / 50f * GorillaTagger.Instance.rigidbody.velocity.magnitude, GorillaTagger.Instance.tapHapticDuration);
             }
             if (rightPrimary)
             {
+                if (dynamicAnimations)
+                    TagEffectsLibrary.PlayEffect(GTPlayer.Instance.rightControllerTransform.transform, true, .6f, TagEffectsLibrary.EffectType.FIRST_PERSON, GorillaTagger.Instance.offlineVRRig.CosmeticEffectPack, GorillaTagger.Instance.offlineVRRig.CosmeticEffectPack, Quaternion.identity);
                 GorillaTagger.Instance.rigidbody.AddForce(flySpeed * GorillaTagger.Instance.rightHandTransform.right, ForceMode.Acceleration);
                 GorillaTagger.Instance.StartVibration(false, GorillaTagger.Instance.tapHapticStrength / 50f * GorillaTagger.Instance.rigidbody.velocity.magnitude, GorillaTagger.Instance.tapHapticDuration);
             }
