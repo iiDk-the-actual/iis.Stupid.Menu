@@ -220,8 +220,14 @@ namespace iiMenu.Classes
             return actorNumbers.ToArray();
         }
 
-        public static bool IsPlayerFriend(NetPlayer Player) =>
-            instance.Friends.friends.Values.Any(friend => friend.currentUserID == Player.UserId);
+        public static bool IsPlayerFriend(NetPlayer Player)
+        {
+            try
+            {
+               return instance.Friends.friends.Values.Any(friend => friend.currentUserID == Player.UserId);
+            }
+            catch { return false; }
+        }
 
         private static Dictionary<VRRig, float> ghostRigDelay = new Dictionary<VRRig, float> { };
 
