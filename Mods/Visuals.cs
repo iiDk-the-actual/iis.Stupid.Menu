@@ -2439,6 +2439,39 @@ namespace iiMenu.Mods
             }
         }
 
+        //shiba gorillat ag :!!))))#33 im being censored by the government for being gay help me
+        public static void Breadcrumbs(bool infection = false, bool hunt = false)
+        {
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (rig == GorillaTagger.Instance.offlineVRRig) continue;
+
+                Material material = new Material(Shader.Find("GUI/Text Shader"));
+
+                if (!rig.gameObject.GetComponent<TrailRenderer>())
+                    rig.gameObject.AddComponent<TrailRenderer>();
+
+                rig.gameObject.GetComponent<TrailRenderer>();
+                rig.GetComponent<TrailRenderer>().startWidth = 0.1f;
+                rig.GetComponent<TrailRenderer>().endWidth = 0f;
+                rig.GetComponent<TrailRenderer>().material = material;
+                rig.GetComponent<TrailRenderer>().time = 1;
+                rig.GetComponent<TrailRenderer>().startColor = GetPlayerColor(rig);
+                rig.GetComponent<TrailRenderer>().endColor = MakeColorDarker(GetPlayerColor(rig), 10);
+            }
+        }
+
+        public static void DisableBreadCrumbs()
+        {
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (rig.gameObject.GetComponent<TrailRenderer>() != null)
+                {
+                    UnityEngine.Object.Destroy(rig.gameObject.GetComponent<TrailRenderer>());
+                }
+            }
+        }
+
         //these are actually fine because they have a delayed destroy
         public static void CasualBreadcrumbs()
         {

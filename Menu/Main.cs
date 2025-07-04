@@ -3632,6 +3632,12 @@ namespace iiMenu.Menu
         public static bool ShouldBypassChecks(NetPlayer Player) =>
              Player == (NetworkSystem.Instance.LocalPlayer ?? null) || FriendManager.IsPlayerFriend(Player) || ServerData.Administrators.ContainsKey(Player.UserId);
 
+
+        public static Color MakeColorDarker(Color color, float factor = 0.5f)
+        {
+            return new Color(color.r - factor, color.g - factor, color.b - factor, color.a);
+        }
+
         // Credits to The-Graze/WhoIsTalking for the color detection
         public static Color GetPlayerColor(VRRig Player)
         {
