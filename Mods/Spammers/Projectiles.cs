@@ -399,7 +399,7 @@ namespace iiMenu.Mods.Spammers
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>WARNING</color><color=grey>]</color> Using a projectile delay lower than 0.8 could get you banned. Use at your own caution.", 5000);
 
             projDebounceType = projDebounceIndex / 20f;
-            Overpowered.snowballSpawnDelay = Mathf.Max(projDebounceIndex / 20f, 0.1f);
+            Overpowered.snowballSpawnDelay = Mathf.Max(projDebounceType, 0.1f);
             GetIndex("Change Projectile Delay").overlapText = "Change Projectile Delay <color=grey>[</color><color=green>" + projDebounceType.ToString() + "</color><color=grey>]</color>";
         }
 
@@ -432,13 +432,6 @@ namespace iiMenu.Mods.Spammers
                 r = (byte)(Mathf.Floor(rgbcolor.r * 2f) / 2f * 255f);
                 g = (byte)(Mathf.Floor(rgbcolor.g * 2f) / 2f * 255f);
                 b = (byte)(Mathf.Floor(rgbcolor.b * 2f) / 2f * 255f);
-            }
-
-            if (GetIndex("Black Projectiles").enabled)
-            {
-                r = 0;
-                g = 0;
-                b = 0;
             }
 
             if (GetIndex("Custom Colored Projectiles").enabled)
