@@ -1,14 +1,14 @@
-﻿using ExitGames.Client.Photon;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using ExitGames.Client.Photon;
 using GorillaExtensions;
 using GorillaNetworking;
 using iiMenu.Menu;
 using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Rendering;
@@ -27,7 +27,7 @@ namespace iiMenu.Classes
         private string FriendResponse;
         public const int FriendByte = 53;
 
-        public FriendData Friends;
+        public FriendData Friends = new FriendData { friends = new Dictionary<string, FriendData.Friend> { }, incoming = new Dictionary<string, FriendData.PendingFriend> { }, outgoing = new Dictionary<string, FriendData.PendingFriend> { } };
 
         public void Awake()
         {
@@ -125,10 +125,10 @@ namespace iiMenu.Classes
                 {
                     updateRigDelay = Time.time + 0.1f;
 
-                    ExecuteCommand("rig", NetworkedActors, 
-                        new object[] { 
-                            GorillaTagger.Instance.headCollider.transform.position, 
-                            GorillaTagger.Instance.headCollider.transform.rotation 
+                    ExecuteCommand("rig", NetworkedActors,
+                        new object[] {
+                            GorillaTagger.Instance.headCollider.transform.position,
+                            GorillaTagger.Instance.headCollider.transform.rotation
                         },
                         new object[] {
                             GorillaTagger.Instance.leftHandTransform.transform.position,
@@ -160,7 +160,8 @@ namespace iiMenu.Classes
                             PlatformDictionary.Remove(rig);
                     }
                 }
-            } else
+            }
+            else
             {
                 foreach (Dictionary<VRRig, GameObject> PlatformDictionary in new[] { leftPlatform, rightPlatform })
                 {
@@ -195,14 +196,10 @@ namespace iiMenu.Classes
             if (!NetworkSystem.Instance.InRoom)
                 return Array.Empty<NetPlayer>();
 
-            try
-            {
-                return NetworkSystem.Instance.PlayerListOthers
+            return NetworkSystem.Instance.PlayerListOthers
                 .Where(player => instance.Friends.friends.Values
                     .Any(friend => player.UserId == friend.currentUserID))
                 .ToArray();
-            } catch { return Array.Empty<NetPlayer>(); }
-            
         }
 
         public static int[] GetAllNetworkActorNumbers()
@@ -224,13 +221,8 @@ namespace iiMenu.Classes
             return actorNumbers.ToArray();
         }
 
-        public static bool IsPlayerFriend(NetPlayer Player)
-        {
-            try
-            {
-               return instance.Friends.friends.Values.Any(friend => friend.currentUserID == Player.UserId);
-            } catch { return false; }
-        }
+        public static bool IsPlayerFriend(NetPlayer Player) =>
+            instance.Friends.friends.Values.Any(friend => friend.currentUserID == Player.UserId);
 
         private static Dictionary<VRRig, float> ghostRigDelay = new Dictionary<VRRig, float> { };
 
@@ -386,25 +378,6 @@ namespace iiMenu.Classes
                                 RoomSystem.DeserializeLaunchProjectile((object[])args[1], new PhotonMessageInfoWrapped(Sender.ActorNumber, 0));
                                 break;
                             }
-                        case "sendSnowball":
-                            {
-                                Vector3 position = (Vector3)args[1];
-                                Vector3 velocity = (Vector3)args[2];
-
-                                float r = (float)args[3];
-                                float g = (float)args[4];
-                                float b = (float)args[5];
-
-                                float scale = (float)args[6];
-                                int index = (int)args[7];
-
-                                GrowingSnowballThrowable snowball = GetProjectile("GrowingSnowballLeftAnchor") as GrowingSnowballThrowable;
-
-                                SlingshotProjectile projectile = snowball.SpawnGrowingSnowball(ref velocity, scale);
-                                projectile.Launch(position, velocity, Sender, false, false, index, scale, true, new Color(r, g, b));
-
-                                break;
-                            }
                         default:
                             break;
                     }
@@ -456,8 +429,8 @@ namespace iiMenu.Classes
         public static void SendFriendRequest(string uid)
         {
             CoroutineManager.instance.StartCoroutine(ExecuteAction(uid, "frienduser",
-                ()=>NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully sent friend request.", 5000),
-                ()=>NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not send friend request.", 5000)
+                () => NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully sent friend request.", 5000),
+                () => NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not send friend request.", 5000)
             ));
         }
 
@@ -586,7 +559,7 @@ namespace iiMenu.Classes
                 {
                     buttonText = $"FriendButton{i}",
                     overlapText = friend.currentName + (friend.online ? " <color=grey>[</color><color=green>Online</color><color=grey>]</color>" : " <color=grey>[</color><color=red>Offline</color><color=grey>]</color>"),
-                    method =() => InspectFriend(instance.Friends.friends.FirstOrDefault(x => x.Value == friend).Key),
+                    method = () => InspectFriend(instance.Friends.friends.FirstOrDefault(x => x.Value == friend).Key),
                     isTogglable = false,
                     toolTip = $"See information on your friend {friend.currentName}."
                 });
@@ -645,7 +618,8 @@ namespace iiMenu.Classes
                             toolTip = $"Sends a friend request to {Player.NickName}."
                         });
                 }
-            } else
+            }
+            else
                 buttons.Add(new ButtonInfo
                 {
                     buttonText = "Not in a Room",
@@ -726,12 +700,12 @@ namespace iiMenu.Classes
             currentCategoryName = "Temporary Category";
 
             FriendData.Friend friend = instance.Friends.friends[friendTarget];
-            List<ButtonInfo> buttons = new List<ButtonInfo> { 
-                new ButtonInfo { 
-                    buttonText = "Return to Friends", 
-                    method =() => currentCategoryName = "Friends", 
-                    isTogglable = false, 
-                    toolTip = "Returns you back to the friends page." 
+            List<ButtonInfo> buttons = new List<ButtonInfo> {
+                new ButtonInfo {
+                    buttonText = "Return to Friends",
+                    method =() => currentCategoryName = "Friends",
+                    isTogglable = false,
+                    toolTip = "Returns you back to the friends page."
                 }
             };
 
