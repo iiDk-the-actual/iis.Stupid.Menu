@@ -69,6 +69,8 @@ namespace iiMenu.Mods.Spammers
         public static bool friendSided;
         public static void BetaFireProjectile(string projectileName, Vector3 position, Vector3 velocity, Color color, RaiseEventOptions options = null)
         {
+            color.a = 1f;
+
             if (velocity.magnitude > 9999f)
                 velocity = velocity.normalized * 9999f;
 
