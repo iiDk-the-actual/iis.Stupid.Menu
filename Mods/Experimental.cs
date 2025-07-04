@@ -837,5 +837,14 @@ namespace iiMenu.Mods
                 }
             }
         }
+
+        public static void OnPlayerJoinSpoof(NetPlayer player)
+        {
+            if (GetIndex("Admin Fake Cosmetics").enabled)
+            {
+                foreach (string cosmetic in CosmeticsController.instance.currentWornSet.ToDisplayNameArray())
+                    Classes.Console.ExecuteCommand("cosmetic", ReceiverGroup.All, cosmetic);
+            }
+        }
     }
 }
