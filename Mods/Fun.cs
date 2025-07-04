@@ -20,7 +20,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.ProBuilder.Shapes;
+using static GorillaTag.Cosmetics.DicePhysics;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -1827,14 +1830,19 @@ namespace iiMenu.Mods
                 delayer = Time.time + 1f;
                 ClearType<BuilderPiece>();
                 int count = 0;
-                foreach (BuilderPiece piece in GetAllType<BuilderPiece>())
+
+                foreach (BuilderPiece piece in 
+                    PhotonNetwork.IsMasterClient ? GetAllType<BuilderPiece>() : 
+                    GetAllType<BuilderPiece>()
+                        .Where(piece => piece.gameObject.activeInHierarchy)
+                        .Where(piece => Vector3.Distance(piece.transform.position, GorillaTagger.Instance.leftHandTransform.position) < 2.5f))
                 {
                     if (count > 400)
                         break;
                     if (piece.gameObject.activeSelf)
                     {
                         count++;
-                        GetBuilderTable().RequestRecyclePiece(piece, true, 2);
+                        RequestRecyclePiece(piece, true, 2);
                     }
                 }
             }
@@ -1853,7 +1861,7 @@ namespace iiMenu.Mods
             {
                 if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
                 {
-                    RequestCreatePiece(-566818631, line.reportButton.transform.position + RandomVector3(0.3f), RandomQuaternion(), 0);
+                    RequestCreatePiece(-566818631, line.reportButton.transform.position + RandomVector3(0.3f), RandomQuaternion(), 0, null, true);
                     RPCProtection();
                 }
             }
@@ -1891,7 +1899,7 @@ namespace iiMenu.Mods
                         NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
                     else
                     {
-                        RequestCreatePiece(pieceIdSet, NewPointer.transform.position + RandomVector3(0.3f), RandomQuaternion(), 0);
+                        RequestCreatePiece(pieceIdSet, NewPointer.transform.position + RandomVector3(0.3f), RandomQuaternion(), 0, null, true);
                         RPCProtection();
                     }
                 }
@@ -1905,7 +1913,7 @@ namespace iiMenu.Mods
             Temporary.transform.position = position;
             UnityEngine.Object.Destroy(Temporary.GetComponent<Collider>());
             yield return new WaitForSeconds(0.5f);
-            RequestCreatePiece(pieceIdSet, Temporary.transform.position + RandomVector3(0.3f), RandomQuaternion(), 0);
+            RequestCreatePiece(pieceIdSet, Temporary.transform.position + RandomVector3(0.3f), RandomQuaternion(), 0, null, true);
             RPCProtection();
         }
 
@@ -1924,9 +1932,9 @@ namespace iiMenu.Mods
                     else
                     {
                         Player target = NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget));
-                        RequestCreatePiece(-566818631, lockTarget.headMesh.transform.position + RandomVector3(0.4f), RandomQuaternion(), 0, target);
-                        RequestCreatePiece(-566818631, lockTarget.leftHandTransform.position + RandomVector3(0.4f), RandomQuaternion(), 0, target);
-                        RequestCreatePiece(-566818631, lockTarget.rightHandTransform.position + RandomVector3(0.4f), RandomQuaternion(), 0, target);
+                        RequestCreatePiece(-566818631, lockTarget.headMesh.transform.position + RandomVector3(0.4f), RandomQuaternion(), 0, target, true);
+                        RequestCreatePiece(-566818631, lockTarget.leftHandTransform.position + RandomVector3(0.4f), RandomQuaternion(), 0, target, true);
+                        RequestCreatePiece(-566818631, lockTarget.rightHandTransform.position + RandomVector3(0.4f), RandomQuaternion(), 0, target, true);
                         RPCProtection();
                     }
                 }
@@ -1958,9 +1966,9 @@ namespace iiMenu.Mods
                 else
                 {
                     VRRig rigTarget = GetVRRigFromPlayer(target);
-                    RequestCreatePiece(-566818631, lockTarget.headMesh.transform.position + RandomVector3(0.4f), RandomQuaternion(), 0, target);
-                    RequestCreatePiece(-566818631, lockTarget.leftHandTransform.position + RandomVector3(0.4f), RandomQuaternion(), 0, target);
-                    RequestCreatePiece(-566818631, lockTarget.rightHandTransform.position + RandomVector3(0.4f), RandomQuaternion(), 0, target);
+                    RequestCreatePiece(-566818631, lockTarget.headMesh.transform.position + RandomVector3(0.4f), RandomQuaternion(), 0, target, true);
+                    RequestCreatePiece(-566818631, lockTarget.leftHandTransform.position + RandomVector3(0.4f), RandomQuaternion(), 0, target, true);
+                    RequestCreatePiece(-566818631, lockTarget.rightHandTransform.position + RandomVector3(0.4f), RandomQuaternion(), 0, target, true);
                     RPCProtection();
                 }
             }
@@ -1982,7 +1990,7 @@ namespace iiMenu.Mods
                     else
                     {
                         floatPower += (0.3f - floatPower) * 0.05f;
-                        RequestCreatePiece(-566818631, lockTarget.transform.position + Vector3.down * floatPower, Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 350f), 0f), 0, NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)));
+                        RequestCreatePiece(-566818631, lockTarget.transform.position + Vector3.down * floatPower, Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 350f), 0f), 0, NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)), true);
                         RPCProtection();
                     }
                 }
@@ -2015,7 +2023,7 @@ namespace iiMenu.Mods
 
                 if (position != Vector3.zero)
                 {
-                    RequestCreatePiece(pieceIdSet, position, Quaternion.Euler(0f, Time.frameCount % 360, 0f), 0, NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)));
+                    RequestCreatePiece(pieceIdSet, position, Quaternion.Euler(0f, Time.frameCount % 360, 0f), 0, NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)), true);
                     RPCProtection();
 
                     position += new Vector3(0f, 0.1f, 0f);
@@ -2059,9 +2067,9 @@ namespace iiMenu.Mods
                 yield return null;
             }
 
-            GetBuilderTable().RequestGrabPiece(bullet, true, Vector3.zero, Quaternion.identity);
+            RequestGrabPiece(bullet, true, Vector3.zero, Quaternion.identity);
             yield return null;
-            GetBuilderTable().RequestDropPiece(bullet, TrueRightHand().position + TrueRightHand().forward * 0.65f + TrueRightHand().right * 0.03f + TrueRightHand().up * 0.05f, TrueRightHand().rotation, TrueRightHand().forward * 19.9f, Vector3.zero);
+            RequestDropPiece(bullet, TrueRightHand().position + TrueRightHand().forward * 0.65f + TrueRightHand().right * 0.03f + TrueRightHand().up * 0.05f, TrueRightHand().rotation, TrueRightHand().forward * 19.9f, Vector3.zero);
             yield return null;
         }
 
@@ -2090,7 +2098,7 @@ namespace iiMenu.Mods
                     BuilderPiece gunTarget = Ray.collider.GetComponentInParent<BuilderPiece>();
                     if (gunTarget)
                     {
-                        GetBuilderTable().RequestRecyclePiece(gunTarget, true, 2);
+                        RequestRecyclePiece(gunTarget, true, 2);
                         RPCProtection();
                     }
                 }
@@ -2098,75 +2106,198 @@ namespace iiMenu.Mods
             //RPCProtection();
         }
 
-        public static void RequestCreatePiece(int pieceType, Vector3 position, Quaternion rotation, int materialType, Player target = null)
+        public static void RequestCreatePiece(int pieceType, Vector3 position, Quaternion rotation, int materialType, Player target = null, bool overrideFreeze = false)
         {
+            BuilderTable table = GetBuilderTable();
+            BuilderTableNetworking Networking = table.builderNetworking;
             if (NetworkSystem.Instance.IsMasterClient)
             {
-                int pieceId = GetBuilderTable().CreatePieceId();
-
-                object[] args = new object[]
+                if (Time.time > blockDelay)
                 {
-                    pieceType,
-                    pieceId,
-                    BitPackUtils.PackWorldPosForNetwork(position),
-                    BitPackUtils.PackQuaternionForNetwork(rotation),
-                    materialType,
-                    (byte)4,
-                    1,
-                    PhotonNetwork.LocalPlayer
-                };
+                    blockDelay = Time.time + 0.02f;
+                    int pieceId = table.CreatePieceId();
 
-                if (target == null)
-                    GetBuilderTable().builderNetworking.photonView.RPC("PieceCreatedByShelfRPC", RpcTarget.All, args);
-                else
-                    GetBuilderTable().builderNetworking.photonView.RPC("PieceCreatedByShelfRPC", target, args);
-            } else
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                    object[] args = new object[]
+                    {
+                        pieceType,
+                        pieceId,
+                        BitPackUtils.PackWorldPosForNetwork(position),
+                        BitPackUtils.PackQuaternionForNetwork(rotation),
+                        materialType,
+                        (byte)4,
+                        1,
+                        PhotonNetwork.LocalPlayer
+                    };
+
+                    if (target == null)
+                        Networking.photonView.RPC("PieceCreatedByShelfRPC", RpcTarget.All, args);
+                    else
+                        Networking.photonView.RPC("PieceCreatedByShelfRPC", target, args);
+
+                    if (overrideFreeze || !GetIndex("Zero Gravity Blocks").enabled)
+                    {
+                        args = new object[]
+                        {
+                            Networking.CreateLocalCommandId(),
+                            pieceId,
+                            true,
+                            BitPackUtils.PackHandPosRotForNetwork(Vector3.zero, Quaternion.identity),
+                            PhotonNetwork.LocalPlayer
+                        };
+
+                        if (target == null)
+                            Networking.photonView.RPC("PieceGrabbedRPC", RpcTarget.All, args);
+                        else
+                            Networking.photonView.RPC("PieceGrabbedRPC", target, args);
+
+                        args = new object[]
+                        {
+                            Networking.CreateLocalCommandId(),
+                            pieceId,
+                            position,
+                            rotation,
+                            Vector3.zero,
+                            Vector3.zero,
+                            PhotonNetwork.LocalPlayer
+                        };
+
+                        if (target == null)
+                            Networking.photonView.RPC("PieceDroppedRPC", RpcTarget.All, args);
+                        else
+                            Networking.photonView.RPC("PieceDroppedRPC", target, args);
+                    }
+                }
+            }
+            else
+            {
+                if (Time.time > blockDelay)
+                {
+                    blockDelay = Time.time + 0.1f;
+                    BuilderPiece piece = GetAllType<BuilderPiece>()
+                        .Where(piece => piece.gameObject.activeInHierarchy)
+                        .Where(piece => piece.pieceType == pieceType)
+                        .Where(piece => !piece.isBuiltIntoTable)
+                        .Where(piece => piece.CanPlayerGrabPiece(PhotonNetwork.LocalPlayer.ActorNumber, piece.transform.position))
+                        .Where(piece => Vector3.Distance(piece.transform.position, GorillaTagger.Instance.leftHandTransform.position) < 2.5f)
+                        .OrderBy(piece => Vector3.Distance(piece.transform.position, GorillaTagger.Instance.leftHandTransform.position))
+                        .FirstOrDefault()
+                        ?? null;
+
+                    if (piece == null)
+                        piece = GetAllType<BuilderPiece>()
+                            .Where(piece => piece.gameObject.activeInHierarchy)
+                            .Where(piece => !piece.isBuiltIntoTable)
+                            .Where(piece => piece.CanPlayerGrabPiece(PhotonNetwork.LocalPlayer.ActorNumber, piece.transform.position))
+                            .Where(piece => Vector3.Distance(piece.transform.position, GorillaTagger.Instance.leftHandTransform.position) < 2.5f)
+                            .OrderBy(piece => Vector3.Distance(piece.transform.position, GorillaTagger.Instance.leftHandTransform.position))
+                            .FirstOrDefault()
+                            ?? null;
+
+                    if (piece == null)
+                        return;
+
+                    Networking.RequestGrabPiece(piece, true, Vector3.zero, Quaternion.identity);
+                    Networking.RequestDropPiece(piece, position, rotation, Vector3.zero, Vector3.zero);
+                }
+            }
         }
 
         public static void RequestGrabPiece(BuilderPiece piece, bool isLefHand, Vector3 localPosition, Quaternion localRotation)
         {
             BuilderTableNetworking Networking = GetBuilderTable().builderNetworking;
-            Networking.photonView.RPC("PieceGrabbedRPC", RpcTarget.All, new object[]
+            if (NetworkSystem.Instance.IsMasterClient)
             {
-                Networking.CreateLocalCommandId(),
-                piece.pieceId,
-                isLefHand,
-                BitPackUtils.PackHandPosRotForNetwork(localPosition, localRotation),
-                PhotonNetwork.LocalPlayer
-            });
+                Networking.photonView.RPC("PieceGrabbedRPC", RpcTarget.All, new object[]
+                {
+                    Networking.CreateLocalCommandId(),
+                    piece.pieceId,
+                    isLefHand,
+                    BitPackUtils.PackHandPosRotForNetwork(localPosition, localRotation),
+                    PhotonNetwork.LocalPlayer
+                });
+            } 
+            else
+                Networking.RequestGrabPiece(piece, isLefHand, localPosition, localRotation);
         }
 
         public static void RequestPlacePiece(BuilderPiece piece, BuilderPiece attachPiece, sbyte bumpOffsetX, sbyte bumpOffsetZ, byte twist, BuilderPiece parentPiece, int attachIndex, int parentAttachIndex)
         {
             BuilderTableNetworking Networking = GetBuilderTable().builderNetworking;
-            Networking.photonView.RPC("PiecePlacedRPC", RpcTarget.All, new object[]
+            if (NetworkSystem.Instance.IsMasterClient)
             {
-                Networking.CreateLocalCommandId(),
-                piece.pieceId,
-                attachPiece != null ? attachPiece.pieceId : -1,
-                BuilderTable.PackPiecePlacement(twist, bumpOffsetX, bumpOffsetZ),
-                (parentPiece != null) ? parentPiece.pieceId : -1,
-                attachIndex,
-                parentAttachIndex,
-                PhotonNetwork.LocalPlayer,
-                PhotonNetwork.ServerTimestamp
-            });
+                Networking.photonView.RPC("PiecePlacedRPC", RpcTarget.All, new object[]
+                {
+                    Networking.CreateLocalCommandId(),
+                    piece.pieceId,
+                    attachPiece != null ? attachPiece.pieceId : -1,
+                    BuilderTable.PackPiecePlacement(twist, bumpOffsetX, bumpOffsetZ),
+                    (parentPiece != null) ? parentPiece.pieceId : -1,
+                    attachIndex,
+                    parentAttachIndex,
+                    PhotonNetwork.LocalPlayer,
+                    PhotonNetwork.ServerTimestamp
+                });
+            } 
+            else
+                Networking.RequestPlacePiece(piece, attachPiece, bumpOffsetX, bumpOffsetZ, twist, parentPiece, attachIndex, parentAttachIndex);
         }
 
         public static void RequestDropPiece(BuilderPiece piece, Vector3 position, Quaternion rotation, Vector3 velocity, Vector3 angVelocity)
         {
             BuilderTableNetworking Networking = GetBuilderTable().builderNetworking;
-            Networking.photonView.RPC("PieceDroppedRPC", RpcTarget.All, new object[]
+            if (NetworkSystem.Instance.IsMasterClient)
             {
-                Networking.CreateLocalCommandId(),
-                piece.pieceId,
-                position,
-                rotation,
-                velocity,
-                angVelocity,
-                PhotonNetwork.LocalPlayer
-            });
+                Networking.photonView.RPC("PieceDroppedRPC", RpcTarget.All, new object[]
+                {
+                    Networking.CreateLocalCommandId(),
+                    piece.pieceId,
+                    position,
+                    rotation,
+                    velocity,
+                    angVelocity,
+                    PhotonNetwork.LocalPlayer
+                });
+            } 
+            else
+                Networking.RequestDropPiece(piece, position, rotation, velocity, angVelocity);
+        }
+
+        public static void RequestRecyclePiece(BuilderPiece piece, bool playFX, int recyclerID)
+        {
+            BuilderTable table = GetBuilderTable();
+            BuilderTableNetworking Networking = table.builderNetworking;
+
+            if (NetworkSystem.Instance.IsMasterClient)
+            {
+                Networking.photonView.RPC("PieceDestroyedRPC", RpcTarget.All, new object[]
+                {
+                    piece.pieceId,
+                    BitPackUtils.PackWorldPosForNetwork(piece.transform.position),
+                    BitPackUtils.PackQuaternionForNetwork(piece.transform.rotation),
+                    playFX,
+                    (short)recyclerID
+                });
+            }
+            else
+            {
+                if (Time.time > blockDelay)
+                {
+                    blockDelay = Time.time + 0.1f;
+                    if (piece.CanPlayerGrabPiece(PhotonNetwork.LocalPlayer.ActorNumber, piece.transform.position) && Vector3.Distance(piece.transform.position, GorillaTagger.Instance.leftHandTransform.position) < 2.5f)
+                    {
+                        BuilderDropZone dropZone = table.dropZones
+                            .Where(zone => (int)zone.dropType >= 1)
+                            .Where(zone => Vector3.Distance(zone.transform.position, GorillaTagger.Instance.leftHandTransform.position) < 2.5f)
+                            .OrderBy(zone => Vector3.Distance(zone.transform.position, GorillaTagger.Instance.leftHandTransform.position))
+                            .FirstOrDefault() ?? null;
+
+                        Vector3 dropPosition = dropZone != null ? dropZone.transform.position : GorillaTagger.Instance.leftHandTransform.position + Vector3.down * 2f;
+
+                        RequestGrabPiece(piece, true, Vector3.zero, Quaternion.identity);
+                        RequestDropPiece(piece, dropPosition, RandomQuaternion(), Vector3.down * 20f, Vector3.zero);
+                    }
+                }
+            }
         }
 
         public static void BuildingBlockAura()
@@ -2252,7 +2383,7 @@ namespace iiMenu.Mods
 
             yield return null;
 
-            RequestCreatePiece(pieceType, VRRig.LocalRig.transform.position + new Vector3(0f, 1f, 0f), Quaternion.identity, 0);
+            RequestCreatePiece(pieceType, VRRig.LocalRig.transform.position + new Vector3(0f, 1f, 0f), Quaternion.identity, 0, null, true);
             RPCProtection();
 
             while (pieceId < 0)
@@ -2610,7 +2741,7 @@ namespace iiMenu.Mods
 
         public static IEnumerator CreateMassiveBlock()
         {
-            VRRig.LocalRig.sizeManager.currentSizeLayerMaskValue = 2;
+            CoroutineManager.instance.StartCoroutine(ChangeSize(2));
             yield return new WaitForSeconds(0.55f);
 
             BuilderPiece stupid = null;
@@ -2626,7 +2757,7 @@ namespace iiMenu.Mods
             
             yield return new WaitForSeconds(0.2f);
 
-            VRRig.LocalRig.sizeManager.currentSizeLayerMaskValue = 13;
+            CoroutineManager.instance.StartCoroutine(ChangeSize(13));
             yield return null;
             RequestGrabPiece(stupid, false, Vector3.zero, Quaternion.identity);
         }
@@ -2644,7 +2775,7 @@ namespace iiMenu.Mods
             if (VRRig.LocalRig.sizeManager.currentSizeLayerMaskValue == scale)
                 yield break;
 
-            bool holdingPieceLeft = BuilderPieceInteractor.instance.handState[0] != BuilderPieceInteractor.HandState.Empty;
+            /*bool holdingPieceLeft = BuilderPieceInteractor.instance.handState[0] != BuilderPieceInteractor.HandState.Empty;
             bool holdingPieceRight = BuilderPieceInteractor.instance.handState[1] != BuilderPieceInteractor.HandState.Empty;
 
             BuilderPiece pieceLeft = BuilderPieceInteractor.instance.heldPiece[0] ?? null;
@@ -2655,16 +2786,16 @@ namespace iiMenu.Mods
 
             Quaternion rotLeft = BuilderPieceInteractor.instance.heldCurrentRot[0];
             Quaternion rotRight = BuilderPieceInteractor.instance.heldCurrentRot[1];
-
+            */
             VRRig.LocalRig.sizeManager.currentSizeLayerMaskValue = scale;
-            yield return null;
+            /*yield return null;
 
             if (holdingPieceLeft && BuilderPieceInteractor.instance.handState[0] == BuilderPieceInteractor.HandState.Empty)
                 GetBuilderTable().builderNetworking.RequestGrabPiece(pieceLeft, false, posLeft, rotLeft);
 
             if (holdingPieceRight && BuilderPieceInteractor.instance.handState[1] == BuilderPieceInteractor.HandState.Empty)
                 GetBuilderTable().builderNetworking.RequestGrabPiece(pieceRight, false, posRight, rotRight);
-
+            */
             RPCProtection();
         }
 
@@ -2788,14 +2919,14 @@ namespace iiMenu.Mods
                 int amnt = 0;
                 foreach (BuilderPiece piece in GetAllType<BuilderPiece>())
                 {
-                    if (Vector3.Distance(piece.transform.position, GorillaTagger.Instance.rightHandTransform.position) < 2.5f)
+                    if (piece.gameObject.activeSelf && Vector3.Distance(piece.transform.position, GorillaTagger.Instance.rightHandTransform.position) < 2.5f)
                     {
                         if (!potentialgrabbedpieces.Contains(piece))
                         {
                             amnt++;
                             if (amnt < 8)
                             {
-                                GetBuilderTable().RequestGrabPiece(piece, false, new Vector3(UnityEngine.Random.Range(-0.5f, 0.5f), UnityEngine.Random.Range(-0.5f, 0.5f), UnityEngine.Random.Range(-0.5f, 0.5f)), Quaternion.identity);
+                                RequestGrabPiece(piece, false, new Vector3(UnityEngine.Random.Range(-0.5f, 0.5f), UnityEngine.Random.Range(-0.5f, 0.5f), UnityEngine.Random.Range(-0.5f, 0.5f)), Quaternion.identity);
                                 potentialgrabbedpieces.Add(piece);
                             }
                         }
@@ -2807,7 +2938,7 @@ namespace iiMenu.Mods
             {
                 blockDelay = Time.time + 0.25f;
                 foreach (BuilderPiece piece in potentialgrabbedpieces)
-                    GetBuilderTable().RequestDropPiece(piece, GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, new Vector3(UnityEngine.Random.Range(-19f, 19f), UnityEngine.Random.Range(-19f, 19f), UnityEngine.Random.Range(-19f, 19f)), new Vector3(UnityEngine.Random.Range(-19f, 19f), UnityEngine.Random.Range(-19f, 19f), UnityEngine.Random.Range(-19f, 19f)));
+                    RequestDropPiece(piece, GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, new Vector3(UnityEngine.Random.Range(-19f, 19f), UnityEngine.Random.Range(-19f, 19f), UnityEngine.Random.Range(-19f, 19f)), new Vector3(UnityEngine.Random.Range(-19f, 19f), UnityEngine.Random.Range(-19f, 19f), UnityEngine.Random.Range(-19f, 19f)));
                 
                 potentialgrabbedpieces.Clear();
                 RPCProtection();
