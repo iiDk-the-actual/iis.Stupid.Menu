@@ -138,8 +138,7 @@ namespace iiMenu.Mods.Spammers
 
                     if (projectileName.Contains("GrowingSnowball"))
                     {
-                        bool largeSnowballs = GetIndex("Large Snowballs").enabled;
-                        int scale = largeSnowballs ? 5 : 0;
+                        int scale = Overpowered.snowballScale;
                         GrowingSnowballThrowable GrowingSnowball = Throwable as GrowingSnowballThrowable;
 
                         int index = Overpowered.GetProjectileIncrement(position, velocity, Throwable.transform.lossyScale.x);
@@ -177,8 +176,8 @@ namespace iiMenu.Mods.Spammers
                             });
                         }
                         
-                        GrowingSnowball.changeSizeEvent.RaiseOthers(largeSnowballs ? 5 : 0);
-                        GrowingSnowball.snowballThrowEvent.RaiseOthers(position, velocity, Overpowered.GetProjectileIncrement(position, velocity, largeSnowballs ? 5f : 0f));
+                        GrowingSnowball.changeSizeEvent.RaiseOthers(scale);
+                        GrowingSnowball.snowballThrowEvent.RaiseOthers(position, velocity, Overpowered.GetProjectileIncrement(position, velocity, scale));
                     }
                     else
                     {
