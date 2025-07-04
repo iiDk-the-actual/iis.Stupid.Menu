@@ -1,6 +1,7 @@
 using GorillaExtensions;
 using GorillaGameModes;
 using GorillaNetworking;
+using iiMenu.Classes;
 using Photon.Pun;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,6 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
-using static UnityEngine.ParticleSystem;
 
 namespace iiMenu.Mods
 {
@@ -1715,6 +1715,325 @@ namespace iiMenu.Mods
             boneESP.Clear();
         }
 
+        private static Dictionary<VRRig, SkinnedWireframeRenderer> wireframes = new Dictionary<VRRig, SkinnedWireframeRenderer> { };
+        public static void CasualWireframeESP()
+        {
+            List<VRRig> toRemove = new List<VRRig>();
+
+            foreach (KeyValuePair<VRRig, SkinnedWireframeRenderer> lines in wireframes)
+            {
+                if (!GorillaParent.instance.vrrigs.Contains(lines.Key))
+                {
+                    toRemove.Add(lines.Key);
+                    UnityEngine.Object.Destroy(lines.Value);
+                }
+            }
+
+            foreach (VRRig rig in toRemove)
+                wireframes.Remove(rig);
+
+            bool fmt = GetIndex("Follow Menu Theme").enabled;
+            bool hoc = GetIndex("Hidden on Camera").enabled;
+            bool tt = GetIndex("Transparent Theme").enabled;
+
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (rig == VRRig.LocalRig)
+                    continue;
+
+                if (!wireframes.TryGetValue(rig, out SkinnedWireframeRenderer wireframe))
+                {
+                    wireframe = rig.mainSkin.AddComponent<SkinnedWireframeRenderer>();
+                    wireframes.Add(rig, wireframe);
+                }
+
+                if (hoc)
+                    wireframe.wireframeObj.layer = 19;
+
+                Color color = GetPlayerColor(rig);
+
+                if (fmt)
+                    color = GetBGColor(0f);
+                if (tt)
+                    color = new Color(color.r, color.g, color.b, 0.5f);
+
+                wireframe.meshRenderer.material.color = color;
+
+                Vector3 toTarget = rig.transform.position - GorillaTagger.Instance.headCollider.transform.position;
+                float angle = Vector3.Angle(GorillaTagger.Instance.headCollider.transform.forward, toTarget);
+
+                bool enabled = angle <= Camera.main.fieldOfView / 2f;
+                enabled &= Vector3.Distance(rig.transform.position, GorillaTagger.Instance.headCollider.transform.position) < 35f;
+
+                wireframe.enabled = enabled;
+                wireframe.meshRenderer.enabled = enabled;
+
+                if (!enabled)
+                {
+                    FixRigMaterialESPColors(rig);
+
+                    rig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
+                    rig.mainSkin.material.color = color;
+                }
+                else
+                {
+                    rig.mainSkin.material.shader = Shader.Find("GorillaTag/UberShader");
+                    if (rig.mainSkin.material.name.Contains("gorilla_body"))
+                        rig.mainSkin.material.color = rig.playerColor;
+                }
+            }
+        }
+
+        public static void InfectionWireframeESP()
+        {
+            List<VRRig> toRemove = new List<VRRig>();
+
+            foreach (KeyValuePair<VRRig, SkinnedWireframeRenderer> lines in wireframes)
+            {
+                if (!GorillaParent.instance.vrrigs.Contains(lines.Key))
+                {
+                    toRemove.Add(lines.Key);
+                    UnityEngine.Object.Destroy(lines.Value);
+                }
+            }
+
+            foreach (VRRig rig in toRemove)
+                wireframes.Remove(rig);
+
+            bool fmt = GetIndex("Follow Menu Theme").enabled;
+            bool hoc = GetIndex("Hidden on Camera").enabled;
+            bool tt = GetIndex("Transparent Theme").enabled;
+            bool selfTagged = PlayerIsTagged(VRRig.LocalRig);
+
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (rig == VRRig.LocalRig)
+                    continue;
+
+                if (!wireframes.TryGetValue(rig, out SkinnedWireframeRenderer wireframe))
+                {
+                    wireframe = rig.mainSkin.AddComponent<SkinnedWireframeRenderer>();
+                    wireframes.Add(rig, wireframe);
+                }
+
+                bool playerTagged = PlayerIsTagged(rig);
+                Color thecolor = selfTagged ? rig.playerColor : GetPlayerColor(rig);
+
+                if (fmt)
+                    thecolor = GetBGColor(0f);
+                if (tt)
+                    thecolor.a = 0.5f;
+                if (hoc)
+                    wireframe.wireframeObj.layer = 19;
+
+                wireframe.meshRenderer.material.color = thecolor;
+
+                bool enabled = (selfTagged ? !playerTagged : playerTagged) || InfectedList().Count <= 0;
+
+                Vector3 toTarget = rig.transform.position - GorillaTagger.Instance.headCollider.transform.position;
+                float angle = Vector3.Angle(GorillaTagger.Instance.headCollider.transform.forward, toTarget);
+
+                enabled &= angle <= Camera.main.fieldOfView / 2f;
+                enabled &= Vector3.Distance(rig.transform.position, GorillaTagger.Instance.headCollider.transform.position) < 35f;
+
+                wireframe.enabled = enabled;
+                wireframe.meshRenderer.enabled = enabled;
+
+                if (!enabled)
+                {
+                    FixRigMaterialESPColors(rig);
+
+                    rig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
+                    rig.mainSkin.material.color = thecolor;
+                }
+                else
+                {
+                    rig.mainSkin.material.shader = Shader.Find("GorillaTag/UberShader");
+                    if (rig.mainSkin.material.name.Contains("gorilla_body"))
+                        rig.mainSkin.material.color = rig.playerColor;
+                }
+            }
+        }
+
+        public static void HuntWireframeESP()
+        {
+            if (!PhotonNetwork.InRoom || GorillaGameManager.instance.GameType() != GameModeType.HuntDown)
+                return;
+
+            List<VRRig> toRemove = new List<VRRig>();
+
+            foreach (KeyValuePair<VRRig, SkinnedWireframeRenderer> lines in wireframes)
+            {
+                if (!GorillaParent.instance.vrrigs.Contains(lines.Key))
+                {
+                    toRemove.Add(lines.Key);
+                    UnityEngine.Object.Destroy(lines.Value);
+                }
+            }
+
+            foreach (VRRig rig in toRemove)
+                wireframes.Remove(rig);
+
+            bool fmt = GetIndex("Follow Menu Theme").enabled;
+            bool hoc = GetIndex("Hidden on Camera").enabled;
+            bool tt = GetIndex("Transparent Theme").enabled;
+
+            GorillaHuntManager hunt = (GorillaHuntManager)GorillaGameManager.instance;
+            NetPlayer target = hunt.GetTargetOf(NetworkSystem.Instance.LocalPlayer);
+
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (rig == VRRig.LocalRig)
+                    continue;
+
+                if (!wireframes.TryGetValue(rig, out SkinnedWireframeRenderer wireframe))
+                {
+                    wireframe = rig.mainSkin.AddComponent<SkinnedWireframeRenderer>();
+                    wireframes.Add(rig, wireframe);
+                }
+
+                NetPlayer owner = GetPlayerFromVRRig(rig);
+                NetPlayer theirTarget = hunt.GetTargetOf(owner);
+
+                Color thecolor = owner == target ? GetPlayerColor(rig) : (theirTarget == NetworkSystem.Instance.LocalPlayer ? Color.red : Color.clear);
+
+                if (fmt)
+                    thecolor = GetBGColor(0f);
+                if (tt)
+                    thecolor.a = 0.5f;
+                if (hoc)
+                    wireframe.wireframeObj.layer = 19;
+
+                wireframe.meshRenderer.material.color = thecolor;
+
+                bool enabled = owner == target || theirTarget == NetworkSystem.Instance.LocalPlayer;
+
+                Vector3 toTarget = rig.transform.position - GorillaTagger.Instance.headCollider.transform.position;
+                float angle = Vector3.Angle(GorillaTagger.Instance.headCollider.transform.forward, toTarget);
+
+                enabled &= angle <= Camera.main.fieldOfView / 2f;
+                enabled &= Vector3.Distance(rig.transform.position, GorillaTagger.Instance.headCollider.transform.position) < 35f;
+
+                wireframe.enabled = enabled;
+                wireframe.meshRenderer.enabled = enabled;
+
+                if (!enabled)
+                {
+                    FixRigMaterialESPColors(rig);
+
+                    rig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
+                    rig.mainSkin.material.color = thecolor;
+                }
+                else
+                {
+                    rig.mainSkin.material.shader = Shader.Find("GorillaTag/UberShader");
+                    if (rig.mainSkin.material.name.Contains("gorilla_body"))
+                        rig.mainSkin.material.color = rig.playerColor;
+                }
+            }
+        }
+
+        public static void DisableWireframeESP()
+        {
+            foreach (KeyValuePair<VRRig, SkinnedWireframeRenderer> pred in wireframes)
+            {
+                pred.Key.mainSkin.material.shader = Shader.Find("GorillaTag/UberShader");
+                UnityEngine.Object.Destroy(pred.Value);
+            }
+
+            wireframes.Clear();
+        }
+
+        public class SkinnedWireframeRenderer : MonoBehaviour
+        {
+            public SkinnedMeshRenderer skinnedMeshRenderer;
+            public Mesh lineMesh;
+            public MeshFilter meshFilter;
+            public MeshRenderer meshRenderer;
+            public GameObject wireframeObj;
+            public Color color
+            {
+                get => meshRenderer.material.color;
+                set => meshRenderer.material.color = value;
+            }
+
+            void Awake()
+            {
+                skinnedMeshRenderer = GetComponent<SkinnedMeshRenderer>();
+
+                wireframeObj = new GameObject("Wireframe");
+                wireframeObj.transform.SetParent(transform, false);
+
+                meshFilter = wireframeObj.AddComponent<MeshFilter>();
+                meshRenderer = wireframeObj.AddComponent<MeshRenderer>();
+                meshRenderer.material = new Material(Shader.Find("GUI/Text Shader"));
+                meshRenderer.material.color = Color.green;
+
+                lineMesh = new Mesh();
+                meshFilter.mesh = lineMesh;
+            }
+
+            void Update()
+            {
+                if (Time.frameCount % 3 > 0)
+                    return;
+
+                Mesh bakedMesh = new Mesh();
+                skinnedMeshRenderer.BakeMesh(bakedMesh);
+
+                Vector3[] vertices = bakedMesh.vertices;
+                int[] triangles = bakedMesh.triangles;
+
+                List<Vector3> lineVertices = new List<Vector3>();
+                List<int> lineIndices = new List<int>();
+
+                for (int i = 0; i < triangles.Length; i += 3)
+                {
+                    int i0 = triangles[i];
+                    int i1 = triangles[i + 1];
+                    int i2 = triangles[i + 2];
+
+                    lineVertices.Add(vertices[i0]);
+                    lineVertices.Add(vertices[i1]);
+
+                    lineVertices.Add(vertices[i1]);
+                    lineVertices.Add(vertices[i2]);
+
+                    lineVertices.Add(vertices[i2]);
+                    lineVertices.Add(vertices[i0]);
+
+                    int baseIndex = lineVertices.Count - 6;
+                    for (int j = 0; j < 6; j++)
+                        lineIndices.Add(baseIndex + j);
+                }
+
+                lineMesh.Clear();
+                lineMesh.SetVertices(lineVertices);
+                lineMesh.SetIndices(lineIndices.ToArray(), MeshTopology.Lines, 0);
+            }
+
+            void OnDestroy()
+            {
+                if (lineMesh != null)
+                {
+                    Destroy(lineMesh);
+                    lineMesh = null;
+                }
+
+                if (wireframeObj != null)
+                {
+                    Destroy(wireframeObj);
+                    wireframeObj = null;
+                }
+
+                if (meshRenderer != null && meshRenderer.material != null)
+                {
+                    Destroy(meshRenderer.material);
+                    meshRenderer.material = null;
+                }
+            }
+        }
+
         private static Dictionary<VRRig, float> delays = new Dictionary<VRRig, float> { };
         public static void FixRigMaterialESPColors(VRRig rig)
         {
@@ -1773,7 +2092,11 @@ namespace iiMenu.Mods
                             if (GetIndex("Transparent Theme").enabled) { vrrig.mainSkin.material.color = new Color(vrrig.mainSkin.material.color.r, vrrig.mainSkin.material.color.g, vrrig.mainSkin.material.color.b, 0.5f); }
                         }
                         else
+                        {
                             vrrig.mainSkin.material.shader = Shader.Find("GorillaTag/UberShader");
+                            if (vrrig.mainSkin.material.name.Contains("gorilla_body"))
+                                vrrig.mainSkin.material.color = vrrig.playerColor;
+                        }
                     }
                 }
                 else
@@ -1801,7 +2124,8 @@ namespace iiMenu.Mods
                         FixRigMaterialESPColors(vrrig);
 
                         vrrig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
-                        vrrig.mainSkin.material.color = vrrig.playerColor;
+                        if (vrrig.mainSkin.material.name.Contains("gorilla_body"))
+                            vrrig.mainSkin.material.color = vrrig.playerColor;
                     }
                 }
             }
@@ -1825,7 +2149,9 @@ namespace iiMenu.Mods
                     vrrig.mainSkin.material.color = vrrig.playerColor;
                     if (GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = GetBGColor(0f); }
                     if (GetIndex("Transparent Theme").enabled) { vrrig.mainSkin.material.color = new Color(vrrig.mainSkin.material.color.r, vrrig.mainSkin.material.color.g, vrrig.mainSkin.material.color.b, 0.5f); }
-                } else {
+                } 
+                else 
+                {
                     if (sillyComputer.GetTargetOf(player) == (NetPlayer)PhotonNetwork.LocalPlayer)
                     {
                         vrrig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
@@ -1835,6 +2161,8 @@ namespace iiMenu.Mods
                     else
                     {
                         vrrig.mainSkin.material.shader = Shader.Find("GorillaTag/UberShader");
+                        if (vrrig.mainSkin.material.name.Contains("gorilla_body"))
+                            vrrig.mainSkin.material.color = vrrig.playerColor;
                     }
                 }
             }
@@ -1847,6 +2175,8 @@ namespace iiMenu.Mods
                 if (vrrig != VRRig.LocalRig)
                 {
                     vrrig.mainSkin.material.shader = Shader.Find("GorillaTag/UberShader");
+                    if (vrrig.mainSkin.material.name.Contains("gorilla_body"))
+                        vrrig.mainSkin.material.color = vrrig.playerColor;
                 }
             }
         }
@@ -2477,7 +2807,7 @@ namespace iiMenu.Mods
 
                     trail.minVertexDistance = 0.05f;
 
-                    trail.material.shader = Shader.Find("Sprites/Default");
+                    trail.material.shader = Shader.Find("GUI/Text Shader");
                     trail.time = 10f;
 
                     breadcrumbs.Add(rig, trail);
@@ -2534,7 +2864,7 @@ namespace iiMenu.Mods
 
                     trail.minVertexDistance = 0.05f;
 
-                    trail.material.shader = Shader.Find("Sprites/Default");
+                    trail.material.shader = Shader.Find("GUI/Text Shader");
                     trail.time = 10f;
 
                     breadcrumbs.Add(rig, trail);
@@ -2598,7 +2928,7 @@ namespace iiMenu.Mods
 
                     trail.minVertexDistance = 0.05f;
 
-                    trail.material.shader = Shader.Find("Sprites/Default");
+                    trail.material.shader = Shader.Find("GUI/Text Shader");
                     trail.time = 10f;
 
                     breadcrumbs.Add(rig, trail);

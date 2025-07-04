@@ -650,6 +650,10 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Infection Bone ESP", method =() => Visuals.InfectionBoneESP(), disableMethod =() => Visuals.DisableBoneESP(), toolTip = "Acts like infection tracers color wise, but with bones."},
                 new ButtonInfo { buttonText = "Hunt Bone ESP", method =() => Visuals.HuntBoneESP(), disableMethod =() => Visuals.DisableBoneESP(), toolTip = "Acts like hunt tracers color wise, but with bones."},
 
+                new ButtonInfo { buttonText = "Casual Wireframe ESP", method =() => Visuals.CasualWireframeESP(), disableMethod =() => Visuals.DisableWireframeESP(), toolTip = "Acts like casual tracers color wise, but with wireframes."},
+                new ButtonInfo { buttonText = "Infection Wireframe ESP", method =() => Visuals.InfectionWireframeESP(), disableMethod =() => Visuals.DisableWireframeESP(), toolTip = "Acts like infection tracers color wise, but with wireframes."},
+                new ButtonInfo { buttonText = "Hunt Wireframe ESP", method =() => Visuals.HuntWireframeESP(), disableMethod =() => Visuals.DisableWireframeESP(), toolTip = "Acts like hunt tracers color wise, but with wireframes."},
+
                 new ButtonInfo { buttonText = "Casual Chams", method =() => Visuals.CasualChams(), disableMethod =() => Visuals.DisableChams(), toolTip = "Acts like casual tracers color wise, but lets you see their fur through walls."},
                 new ButtonInfo { buttonText = "Infection Chams", method =() => Visuals.InfectionChams(), disableMethod =() => Visuals.DisableChams(), toolTip = "Acts like infection tracers color wise, but lets you see their fur through walls."},
                 new ButtonInfo { buttonText = "Hunt Chams", method =() => Visuals.HuntChams(), disableMethod =() => Visuals.DisableChams(), toolTip = "Acts like hunt tracers color wise, but lets you see their fur through walls."},
