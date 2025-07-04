@@ -3064,7 +3064,7 @@ namespace iiMenu.Menu
 
             if (SmoothGunPointer)
             {
-                GunPositionSmoothed = Vector3.Lerp(GunPositionSmoothed, EndPosition, Time.deltaTime * 4f);
+                GunPositionSmoothed = Vector3.Lerp(GunPositionSmoothed, EndPosition, Time.deltaTime * 6f);
                 EndPosition = GunPositionSmoothed;
             }
 
