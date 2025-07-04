@@ -684,11 +684,11 @@ namespace iiMenu.Classes
                 FriendData.PendingFriend friend = organizedFriends[i];
                 buttons.Add(new ButtonInfo
                 {
-                    buttonText = $"DenyFriend{i}",
+                    buttonText = $"CancelFriend{i}",
                     overlapText = friend.currentName,
                     method = () => CancelFriendRequest(instance.Friends.outgoing.FirstOrDefault(x => x.Value == friend).Key),
                     isTogglable = false,
-                    toolTip = $"Deny {friend.currentName}'s friend request."
+                    toolTip = $"Cancels {friend.currentName}'s friend request."
                 });
             }
 
