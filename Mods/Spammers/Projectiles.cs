@@ -152,13 +152,8 @@ namespace iiMenu.Mods.Spammers
                             slingshotProjectile.Launch(position, velocity, NetworkSystem.Instance.LocalPlayer, false, false, index, scale, true, color);
                         }
 
-                        if (PhotonNetwork.InRoom && !GetIndex("Client Sided Projectiles").enabled && (!friendSided || FriendManager.GetAllNetworkActorNumbers().Length > 0))
+                        if (PhotonNetwork.InRoom && !GetIndex("Client Sided Projectiles").enabled)
                         {
-                            options = new RaiseEventOptions
-                            {
-                                Receivers = ReceiverGroup.All
-                            };
-
                             PhotonNetwork.RaiseEvent(176, new object[]
                             {
                                 GrowingSnowball.changeSizeEvent._eventId,
@@ -191,7 +186,7 @@ namespace iiMenu.Mods.Spammers
                         if (showSelf)
                             slingshotProjectile = Throwable.LaunchSnowballLocal(position, velocity, Throwable.transform.lossyScale.x, true, color);
 
-                        if (PhotonNetwork.InRoom && !GetIndex("Client Sided Projectiles").enabled && (!friendSided || FriendManager.GetAllNetworkActorNumbers().Length > 0))
+                        if (PhotonNetwork.InRoom && !GetIndex("Client Sided Projectiles").enabled)
                         {
                             int index = showSelf ? slingshotProjectile.myProjectileCount : Overpowered.GetProjectileIncrement(position, velocity, Throwable.transform.lossyScale.x);
 
@@ -214,11 +209,6 @@ namespace iiMenu.Mods.Spammers
                                 sendEventData = new object[2];
                                 sendEventData[0] = "sendProjectile";
                                 sendEventData[1] = projectileSendData;
-
-                                options = new RaiseEventOptions
-                                {
-                                    TargetActors = FriendManager.GetAllNetworkActorNumbers()
-                                };
                             } else
                             {
                                 sendEventData = new object[3];
