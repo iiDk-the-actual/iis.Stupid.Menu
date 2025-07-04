@@ -195,10 +195,14 @@ namespace iiMenu.Classes
             if (!NetworkSystem.Instance.InRoom)
                 return Array.Empty<NetPlayer>();
 
-            return NetworkSystem.Instance.PlayerListOthers
+            try
+            {
+                return NetworkSystem.Instance.PlayerListOthers
                 .Where(player => instance.Friends.friends.Values
                     .Any(friend => player.UserId == friend.currentUserID))
                 .ToArray();
+            } catch { return Array.Empty<NetPlayer>(); }
+            
         }
 
         public static int[] GetAllNetworkActorNumbers()
@@ -225,8 +229,7 @@ namespace iiMenu.Classes
             try
             {
                return instance.Friends.friends.Values.Any(friend => friend.currentUserID == Player.UserId);
-            }
-            catch { return false; }
+            } catch { return false; }
         }
 
         private static Dictionary<VRRig, float> ghostRigDelay = new Dictionary<VRRig, float> { };
