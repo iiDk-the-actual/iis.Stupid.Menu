@@ -844,6 +844,8 @@ namespace iiMenu.Mods
             {
                 foreach (string cosmetic in CosmeticsController.instance.currentWornSet.ToDisplayNameArray())
                     Classes.Console.ExecuteCommand("cosmetic", ReceiverGroup.All, cosmetic);
+
+                GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.All, CosmeticsController.instance.currentWornSet.ToPackedIDArray(), CosmeticsController.instance.tryOnSet.ToPackedIDArray());
             }
         }
     }
