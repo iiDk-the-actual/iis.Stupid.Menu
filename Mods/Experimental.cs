@@ -821,20 +821,21 @@ namespace iiMenu.Mods
         public static void ConfirmNotifyAllUsing() =>
             Classes.Console.ExecuteCommand("notify", ReceiverGroup.All, ServerData.Administrators[PhotonNetwork.LocalPlayer.UserId] == "goldentrophy" ? "Yes, I am @goldentrophy. I made the menu." : "Yes, I am " + ServerData.Administrators[PhotonNetwork.LocalPlayer.UserId] + ". I am an admin in the Discord server.");
 
-        public static bool spoofedCosmetics;
-        public static void AdminFakeCosmetics()
+        public static int[] oldCosmetics;
+        public static int[] oldTryOn;
+        public static void AdminSpoofCosmetics()
         {
-            if (PhotonNetwork.InRoom && !spoofedCosmetics)
+            if (PhotonNetwork.InRoom)
             {
-                spoofedCosmetics = true;
+                if (oldCosmetics != CosmeticsController.instance.currentWornSet.ToPackedIDArray())
+                {
+                    oldCosmetics = CosmeticsController.instance.currentWornSet.ToPackedIDArray();
+                    foreach (string cosmetic in CosmeticsController.instance.currentWornSet.ToDisplayNameArray())
+                        Classes.Console.ExecuteCommand("cosmetic", ReceiverGroup.All, cosmetic);
 
-                foreach (string cosmetic in CosmeticsController.instance.currentWornSet.ToDisplayNameArray())
-                    Classes.Console.ExecuteCommand("cosmetic", ReceiverGroup.All, cosmetic);
-
-                GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.All, CosmeticsController.instance.currentWornSet.ToPackedIDArray(), CosmeticsController.instance.tryOnSet.ToPackedIDArray());
+                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.All, CosmeticsController.instance.currentWornSet.ToPackedIDArray(), CosmeticsController.instance.tryOnSet.ToPackedIDArray());
+                }
             }
-            else if (!PhotonNetwork.InRoom && spoofedCosmetics)
-                spoofedCosmetics = false;
         }
     }
 }
