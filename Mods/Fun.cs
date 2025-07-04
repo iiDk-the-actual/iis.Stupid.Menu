@@ -193,7 +193,7 @@ namespace iiMenu.Mods
                             RPCProtection();
                         }, () =>
                         {
-                            GorillaComputer.instance.primaryTriggersByZone.TryGetValue("forest", out GorillaNetworkJoinTrigger trigger);
+                            GorillaComputer.instance.primaryTriggersByZone.TryGetValue(GorillaComputer.instance.allowedMapsToJoin[0], out GorillaNetworkJoinTrigger trigger);
                             PhotonNetworkController.Instance.AttemptToJoinPublicRoom(trigger, GorillaNetworking.JoinType.JoinWithNearby, null);
                         }));
                     }
@@ -221,7 +221,7 @@ namespace iiMenu.Mods
                     RPCProtection();
                 }, () =>
                 {
-                    GorillaComputer.instance.primaryTriggersByZone.TryGetValue("forest", out GorillaNetworkJoinTrigger trigger);
+                    GorillaComputer.instance.primaryTriggersByZone.TryGetValue(GorillaComputer.instance.allowedMapsToJoin[0], out GorillaNetworkJoinTrigger trigger);
                     PhotonNetworkController.Instance.AttemptToJoinPublicRoom(trigger, GorillaNetworking.JoinType.JoinWithNearby, null);
                 }));
             }
@@ -2623,11 +2623,12 @@ namespace iiMenu.Mods
             {
                 yield return null;
             }
-
-            RequestGrabPiece(stupid, false, Vector3.zero, Quaternion.identity);
-            yield return new WaitForSeconds(0.7f);
+            
+            yield return new WaitForSeconds(0.2f);
 
             VRRig.LocalRig.sizeManager.currentSizeLayerMaskValue = 13;
+            yield return null;
+            RequestGrabPiece(stupid, false, Vector3.zero, Quaternion.identity);
         }
 
         public static void MassiveBlock()
@@ -2638,13 +2639,42 @@ namespace iiMenu.Mods
             lastgripcrap = rightGrab;
         }
 
+        public static IEnumerator ChangeSize(int scale)
+        {
+            if (VRRig.LocalRig.sizeManager.currentSizeLayerMaskValue == scale)
+                yield break;
+
+            bool holdingPieceLeft = BuilderPieceInteractor.instance.handState[0] != BuilderPieceInteractor.HandState.Empty;
+            bool holdingPieceRight = BuilderPieceInteractor.instance.handState[1] != BuilderPieceInteractor.HandState.Empty;
+
+            BuilderPiece pieceLeft = BuilderPieceInteractor.instance.heldPiece[0] ?? null;
+            BuilderPiece pieceRight = BuilderPieceInteractor.instance.heldPiece[1] ?? null;
+
+            Vector3 posLeft = BuilderPieceInteractor.instance.heldCurrentPos[0];
+            Vector3 posRight = BuilderPieceInteractor.instance.heldCurrentPos[1];
+
+            Quaternion rotLeft = BuilderPieceInteractor.instance.heldCurrentRot[0];
+            Quaternion rotRight = BuilderPieceInteractor.instance.heldCurrentRot[1];
+
+            VRRig.LocalRig.sizeManager.currentSizeLayerMaskValue = scale;
+            yield return null;
+
+            if (holdingPieceLeft && BuilderPieceInteractor.instance.handState[0] == BuilderPieceInteractor.HandState.Empty)
+                GetBuilderTable().builderNetworking.RequestGrabPiece(pieceLeft, false, posLeft, rotLeft);
+
+            if (holdingPieceRight && BuilderPieceInteractor.instance.handState[1] == BuilderPieceInteractor.HandState.Empty)
+                GetBuilderTable().builderNetworking.RequestGrabPiece(pieceRight, false, posRight, rotRight);
+
+            RPCProtection();
+        }
+
         public static void AtticSizeToggle()
         {
             if (rightTrigger > 0.5f)
-                VRRig.LocalRig.sizeManager.currentSizeLayerMaskValue = 13;
+                CoroutineManager.instance.StartCoroutine(ChangeSize(13));
 
             if (rightGrab)
-                VRRig.LocalRig.sizeManager.currentSizeLayerMaskValue = 2;
+                CoroutineManager.instance.StartCoroutine(ChangeSize(2));
         }
 
         public static void SlowMonsters()
