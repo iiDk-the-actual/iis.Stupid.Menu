@@ -773,7 +773,9 @@ namespace iiMenu.Mods
             else
                 snowballScale--;
 
-            snowballScale %= 6;
+            if (snowballScale > 5)
+                snowballScale = 1;
+
             if (snowballScale < 1)
                 snowballScale = 5;
 
