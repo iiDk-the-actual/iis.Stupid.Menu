@@ -235,10 +235,7 @@ namespace iiMenu.Menu
                 
                 new ButtonInfo { buttonText = "Rainbow Projectiles", toolTip = "Makes projectiles be rainbow (real RGB)." },
                 new ButtonInfo { buttonText = "Hard Rainbow Projectiles", toolTip = "Makes projectiles be rainbow but ye rainbow tis very harsh (real RGB)." },
-                
-                new ButtonInfo { buttonText = "Black Projectiles", toolTip = "Makes projectiles black." },
-                new ButtonInfo { buttonText = "No Texture Projectiles", toolTip = "Makes projectiles look like they have no texture." },
-                
+
                 new ButtonInfo { buttonText = "RedProj", overlapText = "Red <color=grey>[</color><color=green>10</color><color=grey>]</color>", method =() => Projectiles.IncreaseRed(), enableMethod =() => Projectiles.IncreaseRed(), disableMethod =() => Projectiles.IncreaseRed(false), incremental = true, isTogglable = false, toolTip = "Makes projectiles more red." },
                 new ButtonInfo { buttonText = "GreenProj", overlapText = "Green <color=grey>[</color><color=green>5</color><color=grey>]</color>", method =() => Projectiles.IncreaseGreen(), enableMethod =() => Projectiles.IncreaseGreen(), disableMethod =() => Projectiles.IncreaseGreen(false), incremental = true, isTogglable = false, toolTip = "Makes projectiles more green." },
                 new ButtonInfo { buttonText = "BlueProj", overlapText = "Blue <color=grey>[</color><color=green>0</color><color=grey>]</color>", method =() => Projectiles.IncreaseBlue(), enableMethod =() => Projectiles.IncreaseBlue(), disableMethod =() => Projectiles.IncreaseBlue(false), incremental = true, isTogglable = false, toolTip = "Makes projectiles more blue." },
