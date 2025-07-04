@@ -9,6 +9,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
+using static UnityEngine.ParticleSystem;
 
 namespace iiMenu.Mods
 {
@@ -1596,6 +1597,8 @@ namespace iiMenu.Mods
 
                         liner.material.shader = Shader.Find("GUI/Text Shader");
 
+                        liner.enabled = (selfTagged ? !playerTagged : playerTagged) || InfectedList().Count <= 0;
+
                         liner.SetPosition(0, vrrig.mainSkin.bones[bones[i * 2]].position);
                         liner.SetPosition(1, vrrig.mainSkin.bones[bones[(i * 2) + 1]].position);
                     }
@@ -1691,6 +1694,8 @@ namespace iiMenu.Mods
                         liner.endColor = thecolor;
 
                         liner.material.shader = Shader.Find("GUI/Text Shader");
+
+                        liner.enabled = owner == target || theirTarget == NetworkSystem.Instance.LocalPlayer;
 
                         liner.SetPosition(0, vrrig.mainSkin.bones[bones[i * 2]].position);
                         liner.SetPosition(1, vrrig.mainSkin.bones[bones[(i * 2) + 1]].position);
@@ -2439,97 +2444,119 @@ namespace iiMenu.Mods
             }
         }
 
-        //these are actually fine because they have a delayed destroy
+        private static Dictionary<VRRig, TrailRenderer> breadcrumbs = new Dictionary<VRRig, TrailRenderer> { };
         public static void CasualBreadcrumbs()
         {
-            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            List<VRRig> toRemove = new List<VRRig>();
+
+            foreach (KeyValuePair<VRRig, TrailRenderer> lines in breadcrumbs)
             {
-                if (vrrig != VRRig.LocalRig)
+                if (!GorillaParent.instance.vrrigs.Contains(lines.Key))
                 {
-                    Color thecolor = vrrig.playerColor;
-                    if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
-                    if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
-                    GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                    if (GetIndex("Hidden on Camera").enabled) { sphere.layer = 19; }
-                    UnityEngine.Object.Destroy(sphere.GetComponent<SphereCollider>());
-                    sphere.GetComponent<Renderer>().material.color = thecolor;
-                    sphere.transform.position = vrrig.transform.position;
-                    sphere.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                    UnityEngine.Object.Destroy(sphere, 10f);
+                    toRemove.Add(lines.Key);
+                    UnityEngine.Object.Destroy(lines.Value);
                 }
+            }
+
+            foreach (VRRig rig in toRemove)
+                breadcrumbs.Remove(rig);
+
+            bool fmt = GetIndex("Follow Menu Theme").enabled;
+            bool hoc = GetIndex("Hidden on Camera").enabled;
+            bool tt = GetIndex("Transparent Theme").enabled;
+            bool thinTracers = GetIndex("Thin Tracers").enabled;
+
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (rig == VRRig.LocalRig)
+                    continue;
+
+                if (!breadcrumbs.TryGetValue(rig, out TrailRenderer trail))
+                {
+                    trail = rig.head.rigTarget.gameObject.GetOrAddComponent<TrailRenderer>();
+
+                    trail.minVertexDistance = 0.05f;
+
+                    trail.material.shader = Shader.Find("Sprites/Default");
+                    trail.time = 10f;
+
+                    breadcrumbs.Add(rig, trail);
+                }
+
+                trail.startWidth = thinTracers ? 0.0075f : 0.025f;
+                trail.endWidth = thinTracers ? 0.0075f : 0.025f;
+
+                if (hoc)
+                    trail.gameObject.layer = 19;
+
+                Color color = GetPlayerColor(rig);
+
+                if (fmt)
+                    color = GetBGColor(0f);
+                if (tt)
+                    color = new Color(color.r, color.g, color.b, 0.5f);
+
+                trail.startColor = color;
+                trail.endColor = color;
             }
         }
 
         public static void InfectionBreadcrumbs()
         {
-            bool isInfectedPlayers = false;
-            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            List<VRRig> toRemove = new List<VRRig>();
+
+            foreach (KeyValuePair<VRRig, TrailRenderer> lines in breadcrumbs)
             {
-                if (PlayerIsTagged(vrrig))
+                if (!GorillaParent.instance.vrrigs.Contains(lines.Key))
                 {
-                    isInfectedPlayers = true;
-                    break;
+                    toRemove.Add(lines.Key);
+                    UnityEngine.Object.Destroy(lines.Value);
                 }
             }
-            if (isInfectedPlayers)
+
+            foreach (VRRig rig in toRemove)
+                breadcrumbs.Remove(rig);
+
+            bool fmt = GetIndex("Follow Menu Theme").enabled;
+            bool hoc = GetIndex("Hidden on Camera").enabled;
+            bool tt = GetIndex("Transparent Theme").enabled;
+            bool thinTracers = GetIndex("Thin Tracers").enabled;
+            bool selfTagged = PlayerIsTagged(VRRig.LocalRig);
+
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
-                if (!PlayerIsTagged(VRRig.LocalRig))
+                if (rig == VRRig.LocalRig)
+                    continue;
+
+                if (!breadcrumbs.TryGetValue(rig, out TrailRenderer trail))
                 {
-                    foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-                    {
-                        if (PlayerIsTagged(vrrig) && vrrig != VRRig.LocalRig)
-                        {
-                            Color thecolor = GetPlayerColor(vrrig);
-                            if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
-                            if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
-                            GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                            if (GetIndex("Hidden on Camera").enabled) { sphere.layer = 19; }
-                            UnityEngine.Object.Destroy(sphere.GetComponent<SphereCollider>());
-                            sphere.GetComponent<Renderer>().material.color = thecolor;
-                            sphere.transform.position = vrrig.transform.position;
-                            sphere.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                            UnityEngine.Object.Destroy(sphere, 10f);
-                        }
-                    }
+                    trail = rig.head.rigTarget.gameObject.GetOrAddComponent<TrailRenderer>();
+
+                    trail.minVertexDistance = 0.05f;
+
+                    trail.material.shader = Shader.Find("Sprites/Default");
+                    trail.time = 10f;
+
+                    breadcrumbs.Add(rig, trail);
                 }
-                else
-                {
-                    foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-                    {
-                        if (!PlayerIsTagged(vrrig) && vrrig != VRRig.LocalRig)
-                        {
-                            Color thecolor = vrrig.playerColor;
-                            if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
-                            if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
-                            GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                            if (GetIndex("Hidden on Camera").enabled) { sphere.layer = 19; }
-                            UnityEngine.Object.Destroy(sphere.GetComponent<SphereCollider>());
-                            sphere.GetComponent<Renderer>().material.color = thecolor;
-                            sphere.transform.position = vrrig.transform.position;
-                            sphere.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                            UnityEngine.Object.Destroy(sphere, 10f);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-                {
-                    if (vrrig != VRRig.LocalRig)
-                    {
-                        Color thecolor = vrrig.playerColor;
-                        if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
-                        if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
-                        GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                        if (GetIndex("Hidden on Camera").enabled) { sphere.layer = 19; }
-                        UnityEngine.Object.Destroy(sphere.GetComponent<SphereCollider>());
-                        sphere.GetComponent<Renderer>().material.color = thecolor;
-                        sphere.transform.position = vrrig.transform.position;
-                        sphere.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                        UnityEngine.Object.Destroy(sphere, 10f);
-                    }
-                }
+
+                trail.startWidth = thinTracers ? 0.0075f : 0.025f;
+                trail.endWidth = thinTracers ? 0.0075f : 0.025f;
+
+                bool playerTagged = PlayerIsTagged(rig);
+                Color thecolor = selfTagged ? rig.playerColor : GetPlayerColor(rig);
+
+                if (fmt)
+                    thecolor = GetBGColor(0f);
+                if (tt)
+                    thecolor.a = 0.5f;
+                if (hoc)
+                    trail.gameObject.layer = 19;
+
+                trail.startColor = thecolor;
+                trail.endColor = thecolor;
+
+                trail.enabled = (selfTagged ? !playerTagged : playerTagged) || InfectedList().Count <= 0;
             }
         }
 
@@ -2538,37 +2565,73 @@ namespace iiMenu.Mods
             if (!PhotonNetwork.InRoom || GorillaGameManager.instance.GameType() != GameModeType.HuntDown)
                 return;
 
-            GorillaHuntManager sillyComputer = (GorillaHuntManager)GorillaGameManager.instance;
-            NetPlayer target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
-            foreach (NetPlayer player in PhotonNetwork.PlayerList)
+            List<VRRig> toRemove = new List<VRRig>();
+
+            foreach (KeyValuePair<VRRig, TrailRenderer> lines in breadcrumbs)
             {
-                VRRig vrrig = GetVRRigFromPlayer(player);
-                if (player == target)
+                if (!GorillaParent.instance.vrrigs.Contains(lines.Key))
                 {
-                    Color thecolor = vrrig.playerColor;
-                    if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
-                    if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
-                    GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                    if (GetIndex("Hidden on Camera").enabled) { sphere.layer = 19; }
-                    UnityEngine.Object.Destroy(sphere.GetComponent<SphereCollider>());
-                    sphere.GetComponent<Renderer>().material.color = thecolor;
-                    sphere.transform.position = vrrig.transform.position;
-                    sphere.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                    UnityEngine.Object.Destroy(sphere, 10f);
-                }
-                if (sillyComputer.GetTargetOf(player) == (NetPlayer)PhotonNetwork.LocalPlayer)
-                {
-                    Color thecolor = Color.red;
-                    if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
-                    GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                    if (GetIndex("Hidden on Camera").enabled) { sphere.layer = 19; }
-                    UnityEngine.Object.Destroy(sphere.GetComponent<SphereCollider>());
-                    sphere.GetComponent<Renderer>().material.color = thecolor;
-                    sphere.transform.position = vrrig.transform.position;
-                    sphere.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                    UnityEngine.Object.Destroy(sphere, 10f);
+                    toRemove.Add(lines.Key);
+                    UnityEngine.Object.Destroy(lines.Value);
                 }
             }
+
+            foreach (VRRig rig in toRemove)
+                breadcrumbs.Remove(rig);
+
+            bool fmt = GetIndex("Follow Menu Theme").enabled;
+            bool hoc = GetIndex("Hidden on Camera").enabled;
+            bool tt = GetIndex("Transparent Theme").enabled;
+            bool thinTracers = GetIndex("Thin Tracers").enabled;
+
+            GorillaHuntManager hunt = (GorillaHuntManager)GorillaGameManager.instance;
+            NetPlayer target = hunt.GetTargetOf(NetworkSystem.Instance.LocalPlayer);
+
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (rig == VRRig.LocalRig)
+                    continue;
+
+                if (!breadcrumbs.TryGetValue(rig, out TrailRenderer trail))
+                {
+                    trail = rig.head.rigTarget.gameObject.GetOrAddComponent<TrailRenderer>();
+
+                    trail.minVertexDistance = 0.05f;
+
+                    trail.material.shader = Shader.Find("Sprites/Default");
+                    trail.time = 10f;
+
+                    breadcrumbs.Add(rig, trail);
+                }
+
+                trail.startWidth = thinTracers ? 0.0075f : 0.025f;
+                trail.endWidth = thinTracers ? 0.0075f : 0.025f;
+
+                NetPlayer owner = GetPlayerFromVRRig(rig);
+                NetPlayer theirTarget = hunt.GetTargetOf(owner);
+
+                Color thecolor = owner == target ? GetPlayerColor(rig) : (theirTarget == NetworkSystem.Instance.LocalPlayer ? Color.red : Color.clear);
+
+                if (fmt)
+                    thecolor = GetBGColor(0f);
+                if (tt)
+                    thecolor.a = 0.5f;
+                if (hoc)
+                    trail.gameObject.layer = 19;
+
+                trail.startColor = thecolor;
+                trail.endColor = thecolor;
+
+                trail.enabled = owner == target || theirTarget == NetworkSystem.Instance.LocalPlayer;
+            }
+        }
+
+        public static void DisableBreadcrumbs()
+        {
+            foreach (KeyValuePair<VRRig, TrailRenderer> pred in breadcrumbs)
+                UnityEngine.Object.Destroy(pred.Value);
+
+            breadcrumbs.Clear();
         }
 
         // Thanks DrPerky for rewriting visual mods <@427495360517111809>
