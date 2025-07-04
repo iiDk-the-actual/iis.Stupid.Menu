@@ -167,7 +167,7 @@ namespace iiMenu.Mods.Spammers
                                 projectileSendData[6] = GrowingSnowball.snowballSizeLevels[index].snowballScale;
                                 projectileSendData[7] = index;
 
-                                PhotonNetwork.RaiseEvent((byte)(friendSided ? FriendManager.FriendByte : 3), projectileSendData, options, SendOptions.SendUnreliable);
+                                PhotonNetwork.RaiseEvent(FriendManager.FriendByte, projectileSendData, options, SendOptions.SendUnreliable);
                             } else
                             {
                                 PhotonNetwork.RaiseEvent(176, new object[]
