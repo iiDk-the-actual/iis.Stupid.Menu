@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using iiMenu.Mods;
 
 namespace iiMenu.Patches
 {
@@ -10,7 +11,7 @@ namespace iiMenu.Patches
         public static void Postfix(GrowingSnowballThrowable __instance)
         {
             if (enabled)
-                __instance.IncreaseSize(9999);
+                __instance.IncreaseSize(Overpowered.snowballScale);
         }
     }
 }
