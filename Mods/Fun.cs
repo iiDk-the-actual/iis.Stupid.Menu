@@ -3107,7 +3107,7 @@ namespace iiMenu.Mods
         {
             if (Time.time > colorChangerDelay)
             {
-                colorChangerDelay = Time.time + 0.1f;
+                colorChangerDelay = Time.time + 0.05f;
                 strobeColor = !strobeColor;
                 ChangeColor(new Color(strobeColor ? 1 : 0, strobeColor ? 1 : 0, strobeColor ? 1 : 0));
             }
@@ -3117,7 +3117,7 @@ namespace iiMenu.Mods
         {
             if (Time.time > colorChangerDelay)
             {
-                colorChangerDelay = Time.time + 0.1f;
+                colorChangerDelay = Time.time + 0.05f;
                 float h = (Time.frameCount / 180f) % 1f;
                 ChangeColor(Color.HSVToRGB(h, 1f, 1f));
             }
@@ -3127,7 +3127,7 @@ namespace iiMenu.Mods
         {
             if (Time.time > colorChangerDelay)
             {
-                colorChangerDelay = Time.time + 1f;
+                colorChangerDelay = Time.time + 0.5f;
                 colorChangeType++;
                 if (colorChangeType > 3)
                     colorChangeType = 0;
