@@ -22,8 +22,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.ProBuilder.Shapes;
-using static GorillaTag.Cosmetics.DicePhysics;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
