@@ -153,31 +153,46 @@ namespace iiMenu.Mods.Spammers
 
                         if (PhotonNetwork.InRoom && !GetIndex("Client Sided Projectiles").enabled)
                         {
-                            PhotonNetwork.RaiseEvent(176, new object[]
+                            if (friendSided)
                             {
-                                GrowingSnowball.changeSizeEvent._eventId,
-                                scale
-                            }, options, new SendOptions
-                            {
-                                Reliability = false,
-                                Encrypt = true
-                            });
+                                Color32 color32 = (Color32)color;
 
-                            PhotonNetwork.RaiseEvent(176, new object[]
+                                object[] projectileSendData = new object[8];
+                                projectileSendData[0] = "sendSnowball";
+                                projectileSendData[1] = position;
+                                projectileSendData[2] = velocity;
+                                projectileSendData[3] = color32.r;
+                                projectileSendData[4] = color32.g;
+                                projectileSendData[5] = color32.b;
+                                projectileSendData[6] = GrowingSnowball.snowballSizeLevels[index].snowballScale;
+                                projectileSendData[7] = index;
+
+                                PhotonNetwork.RaiseEvent((byte)(friendSided ? FriendManager.FriendByte : 3), projectileSendData, options, SendOptions.SendUnreliable);
+                            } else
                             {
-                                GrowingSnowball.snowballThrowEvent._eventId,
-                                position,
-                                velocity,
-                                index
-                            }, options, new SendOptions
-                            {
-                                Reliability = false,
-                                Encrypt = true
-                            });
+                                PhotonNetwork.RaiseEvent(176, new object[]
+                                {
+                                    GrowingSnowball.changeSizeEvent._eventId,
+                                    scale
+                                }, options, new SendOptions
+                                {
+                                    Reliability = false,
+                                    Encrypt = true
+                                });
+
+                                PhotonNetwork.RaiseEvent(176, new object[]
+                                {
+                                    GrowingSnowball.snowballThrowEvent._eventId,
+                                    position,
+                                    velocity,
+                                    index
+                                }, options, new SendOptions
+                                {
+                                    Reliability = false,
+                                    Encrypt = true
+                                });
+                            }
                         }
-                        
-                        GrowingSnowball.changeSizeEvent.RaiseOthers(scale);
-                        GrowingSnowball.snowballThrowEvent.RaiseOthers(position, velocity, Overpowered.GetProjectileIncrement(position, velocity, scale));
                     }
                     else
                     {

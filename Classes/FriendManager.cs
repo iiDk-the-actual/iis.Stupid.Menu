@@ -377,6 +377,25 @@ namespace iiMenu.Classes
                                 RoomSystem.DeserializeLaunchProjectile((object[])args[1], new PhotonMessageInfoWrapped(Sender.ActorNumber, 0));
                                 break;
                             }
+                        case "sendSnowball":
+                            {
+                                Vector3 position = (Vector3)args[1];
+                                Vector3 velocity = (Vector3)args[2];
+
+                                float r = (float)args[3];
+                                float g = (float)args[4];
+                                float b = (float)args[5];
+
+                                float scale = (float)args[6];
+                                int index = (int)args[7];
+
+                                GrowingSnowballThrowable snowball = GetProjectile("GrowingSnowballLeftAnchor") as GrowingSnowballThrowable;
+
+                                SlingshotProjectile projectile = snowball.SpawnGrowingSnowball(ref velocity, scale);
+                                projectile.Launch(position, velocity, Sender, false, false, index, scale, true, new Color(r, g, b));
+
+                                break;
+                            }
                         default:
                             break;
                     }
