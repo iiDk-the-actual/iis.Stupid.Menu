@@ -4213,17 +4213,7 @@ namespace iiMenu.Menu
         public static void OnPlayerJoin(NetPlayer Player)
         {
             if (Player != NetworkSystem.Instance.LocalPlayer)
-            {
                 NotifiLib.SendNotification($"<color=grey>[</color><color=green>JOIN</color><color=grey>]</color> Name: {Player.NickName}");
-                if (Experimental.spoofedCosmetics)
-                {
-                    foreach (string cosmetic in CosmeticsController.instance.currentWornSet.ToDisplayNameArray())
-                        Classes.Console.ExecuteCommand("cosmetic", ReceiverGroup.All, cosmetic);
-
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.All, CosmeticsController.instance.currentWornSet.ToPackedIDArray(), CosmeticsController.instance.tryOnSet.ToPackedIDArray());
-                }
-                
-            }
         }
 
         public static void OnPlayerLeave(NetPlayer Player)
