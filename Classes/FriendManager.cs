@@ -120,11 +120,12 @@ namespace iiMenu.Classes
                     }
                 }
 
-                if (RigNetworking && !VRRig.LocalRig.enabled && Time.time > updateRigDelay && AllFriends.Length > 0)
+                int[] NetworkedActors = GetAllNetworkActorNumbers();
+                if (RigNetworking && !VRRig.LocalRig.enabled && Time.time > updateRigDelay && NetworkedActors.Length > 0)
                 {
                     updateRigDelay = Time.time + 0.1f;
 
-                    ExecuteCommand("rig", GetAllNetworkActorNumbers(), 
+                    ExecuteCommand("rig", NetworkedActors, 
                         new object[] { 
                             GorillaTagger.Instance.headCollider.transform.position, 
                             GorillaTagger.Instance.headCollider.transform.rotation 
