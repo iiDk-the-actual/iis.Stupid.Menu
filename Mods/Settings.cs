@@ -2430,7 +2430,8 @@ namespace iiMenu.Mods
                 "Zigzag",
                 "Spring",
                 "Bouncy",
-                "Audio"
+                "Audio",
+                "Bezier"
             };
 
             if (positive)
