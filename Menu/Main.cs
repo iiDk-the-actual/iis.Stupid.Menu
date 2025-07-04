@@ -3227,6 +3227,35 @@ namespace iiMenu.Menu
                             lineRenderer.SetPosition(Step - 1, EndPosition);
                         }
                         break;
+                    case 8: // Bezier, credits to Crisp / Kman / Steal / Untitled One of those 4 I don't really know who
+                        Vector3 BaseMid = Vector3.Lerp(StartPosition, EndPosition, 0.5f);
+
+                        float angle = Time.time * 3f;
+                        Vector3 wobbleOffset = Mathf.Sin(angle) * Up * 0.15f + Mathf.Cos(angle * 1.3f) * Right * 0.15f;
+                        Vector3 targetMid = BaseMid + wobbleOffset;
+
+                        if (MidPosition == Vector3.zero) MidPosition = targetMid;
+
+                        Vector3 force = (targetMid - MidPosition) * 40f;
+                        MidVelocity += force * Time.deltaTime;
+                        MidVelocity *= Mathf.Exp(-6f * Time.deltaTime);
+                        MidPosition += MidVelocity * Time.deltaTime;
+
+                        lineRenderer.positionCount = Step;
+                        lineRenderer.SetPosition(0, StartPosition);
+
+                        Vector3[] points = new Vector3[Step];
+                        for (int i = 0; i < Step; i++)
+                        {
+                            float t = (float)i / (Step - 1);
+                            points[i] = Mathf.Pow(1 - t, 2) * StartPosition +
+                                        2 * (1 - t) * t * MidPosition +
+                                        Mathf.Pow(t, 2) * EndPosition;
+                        }
+
+                        lineRenderer.positionCount = Step;
+                        lineRenderer.SetPositions(points);
+                        break;
                 }
             }
 
@@ -5084,6 +5113,9 @@ jgs \_   _/ |Oo\
         public static bool checkMode;
         public static bool lastChecker;
         public static bool highQualityText;
+
+        public static Vector3 MidPosition;
+        public static Vector3 MidVelocity;
 
         public static bool SmoothGunPointer;
         public static bool smallGunPointer;
