@@ -774,10 +774,10 @@ namespace iiMenu.Mods
                 snowballScale--;
 
             snowballScale %= 6;
-            if (snowballScale < 0)
+            if (snowballScale < 1)
                 snowballScale = 5;
 
-            GetIndex("Change Snowball Scale").overlapText = "Change Snowball Scale <color=grey>[</color><color=green>" + (snowballScale + 1).ToString() + "</color><color=grey>]</color>";
+            GetIndex("Change Snowball Scale").overlapText = "Change Snowball Scale <color=grey>[</color><color=green>" + (snowballScale).ToString() + "</color><color=grey>]</color>";
         }
 
         public static float snowballSpawnDelay = 0.1f;
