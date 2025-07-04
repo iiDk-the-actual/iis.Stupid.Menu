@@ -1,6 +1,6 @@
-﻿using iiMenu.Classes;
+﻿using System.IO;
+using iiMenu.Classes;
 using iiMenu.Notifications;
-using System.IO;
 using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods

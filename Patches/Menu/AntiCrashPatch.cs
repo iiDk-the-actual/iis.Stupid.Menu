@@ -1,6 +1,6 @@
-﻿using GorillaExtensions;
+﻿using System.Collections.Generic;
+using GorillaExtensions;
 using HarmonyLib;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace iiMenu.Patches

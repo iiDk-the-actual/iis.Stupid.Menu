@@ -1,4 +1,7 @@
-﻿using BepInEx;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using BepInEx;
 using ExitGames.Client.Photon;
 using GorillaLocomotion;
 using GorillaLocomotion.Climbing;
@@ -9,9 +12,6 @@ using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using TagEffects;
 using UnityEngine;
 using UnityEngine.InputSystem;

@@ -1,6 +1,6 @@
-﻿using HarmonyLib;
+﻿using System;
+using HarmonyLib;
 using Photon.Pun;
-using System;
 
 namespace iiMenu.Patches.Safety
 {

@@ -1,8 +1,8 @@
-using HarmonyLib;
-using iiMenu.Classes;
 using System;
 using System.Linq;
 using System.Reflection;
+using HarmonyLib;
+using iiMenu.Classes;
 
 namespace iiMenu.Patches
 {

@@ -1,6 +1,6 @@
-﻿using Photon.Pun;
+﻿using System.Linq;
+using Photon.Pun;
 using Photon.Realtime;
-using System.Linq;
 using UnityEngine;
 
 namespace iiMenu.Classes
