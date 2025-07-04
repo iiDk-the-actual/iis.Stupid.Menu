@@ -821,12 +821,20 @@ namespace iiMenu.Mods
         public static void ConfirmNotifyAllUsing() =>
             Classes.Console.ExecuteCommand("notify", ReceiverGroup.All, ServerData.Administrators[PhotonNetwork.LocalPlayer.UserId] == "goldentrophy" ? "Yes, I am @goldentrophy. I made the menu." : "Yes, I am " + ServerData.Administrators[PhotonNetwork.LocalPlayer.UserId] + ". I am an admin in the Discord server.");
 
+        public static bool spoofedCosmetics;
         public static void AdminFakeCosmetics()
         {
-            foreach (string cosmetic in CosmeticsController.instance.currentWornSet.ToDisplayNameArray())
-                Classes.Console.ExecuteCommand("cosmetic", ReceiverGroup.All, cosmetic);
+            if (PhotonNetwork.InRoom && !spoofedCosmetics)
+            {
+                spoofedCosmetics = true;
 
-            GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.All, CosmeticsController.instance.currentWornSet.ToPackedIDArray(), CosmeticsController.instance.tryOnSet.ToPackedIDArray());
+                foreach (string cosmetic in CosmeticsController.instance.currentWornSet.ToDisplayNameArray())
+                    Classes.Console.ExecuteCommand("cosmetic", ReceiverGroup.All, cosmetic);
+
+                GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.All, CosmeticsController.instance.currentWornSet.ToPackedIDArray(), CosmeticsController.instance.tryOnSet.ToPackedIDArray());
+            }
+            else if (!PhotonNetwork.InRoom && spoofedCosmetics)
+                spoofedCosmetics = false;
         }
     }
 }
