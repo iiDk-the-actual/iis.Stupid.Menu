@@ -1,5 +1,5 @@
-﻿using HarmonyLib;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using HarmonyLib;
 
 namespace iiMenu.Patches
 {

@@ -1,3 +1,6 @@
+using System;
+using System.Collections;
+using System.Linq;
 using ExitGames.Client.Photon;
 using GorillaExtensions;
 using GorillaGameModes;
@@ -7,9 +10,6 @@ using iiMenu.Notifications;
 using iiMenu.Patches;
 using Photon.Pun;
 using Photon.Realtime;
-using System;
-using System.Collections;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static iiMenu.Classes.RigManager;
