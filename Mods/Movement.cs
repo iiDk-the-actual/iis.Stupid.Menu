@@ -625,12 +625,11 @@ namespace iiMenu.Mods
                     GorillaTagger.Instance.rigidbody.transform.position += new Vector3(0f, Time.deltaTime * -speed, 0f);
 
                 VRRig.LocalRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
-
-                if (!W && !A && !S && !D && !Space && !Ctrl && lastPosition != Vector3.zero)
-                    GorillaTagger.Instance.rigidbody.transform.position = lastPosition;
-                else
-                    lastPosition = GorillaTagger.Instance.rigidbody.transform.position;
             }
+            if (!W && !A && !S && !D && !Space && !Ctrl && lastPosition != Vector3.zero)
+                GorillaTagger.Instance.rigidbody.transform.position = lastPosition;
+            else
+                lastPosition = GorillaTagger.Instance.rigidbody.transform.position;
         }
 
         private static float driveSpeed = 0f;
