@@ -2810,7 +2810,8 @@ namespace iiMenu.Mods
                 Projectiles.red.ToString(),
                 Projectiles.green.ToString(),
                 Projectiles.blue.ToString(),
-                Safety.rankIndex.ToString()
+                Safety.rankIndex.ToString(),
+                Overpowered.snowballScale.ToString()
             };
 
             string settingstext = string.Join(seperator, settings);
@@ -2970,6 +2971,9 @@ namespace iiMenu.Mods
 
                 Safety.rankIndex = int.Parse(data[36]) - 1;
                 Safety.ChangeRankedTier();
+
+                Overpowered.snowballScale = int.Parse(data[37]) - 1;
+                Overpowered.ChangeSnowballScale();
             } catch { LogManager.Log("Save file out of date"); }
 
             pageButtonType = int.Parse(textData[3]) - 1;

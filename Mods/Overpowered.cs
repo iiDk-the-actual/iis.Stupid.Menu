@@ -765,12 +765,29 @@ namespace iiMenu.Mods
             }
         }
 
+        public static int snowballScale = 5;
+        public static void ChangeSnowballScale(bool positive = true)
+        {
+            if (positive)
+                snowballScale++;
+            else
+                snowballScale--;
+
+            snowballScale %= 6;
+            if (snowballScale < 0)
+                snowballScale = 5;
+
+            GetIndex("Change Snowball Scale").overlapText = "Change Snowball Scale <color=grey>[</color><color=green>" + (snowballScale + 1).ToString() + "</color><color=grey>]</color>";
+        }
+
         public static float snowballSpawnDelay = 0.1f;
         public static bool SnowballHandIndex;
         public static void BetaSpawnSnowball(Vector3 Pos, Vector3 Vel, float Scale, int Mode, Player Target = null, bool NetworkSize = true, int customNetworkedSize = -1)
         {
             try
             {
+                Scale = snowballScale;
+
                 SnowballHandIndex = !SnowballHandIndex;
                 Vel = Vel.ClampMagnitudeSafe(50f);
 
