@@ -156,7 +156,7 @@ namespace iiMenu.Mods.Spammers
                         {
                             options = new RaiseEventOptions
                             {
-                                TargetActors = FriendManager.GetAllNetworkActorNumbers()
+                                Receivers = ReceiverGroup.All
                             };
 
                             PhotonNetwork.RaiseEvent(176, new object[]
