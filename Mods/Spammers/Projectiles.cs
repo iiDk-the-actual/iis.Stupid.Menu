@@ -151,7 +151,7 @@ namespace iiMenu.Mods.Spammers
                             slingshotProjectile.Launch(position, velocity, NetworkSystem.Instance.LocalPlayer, false, false, index, scale, true, color);
                         }
 
-                        if (PhotonNetwork.InRoom && !GetIndex("Client Sided Projectiles").enabled && !friendSided)
+                        if (PhotonNetwork.InRoom && !GetIndex("Client Sided Projectiles").enabled)
                         {
                             if (friendSided)
                             {
