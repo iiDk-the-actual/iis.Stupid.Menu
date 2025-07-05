@@ -583,16 +583,6 @@ namespace iiMenu.Mods.Spammers
             }
         }
 
-        public static void SlingshotHelper()
-        {
-            GameObject slingy = GetObject("Player Objects/Local VRRig/Local Gorilla Player/RigAnchor/rig/body/shoulder.L/upper_arm.L/forearm.L/hand.L/palm.01.L/TransferrableItemLeftHand/Slingshot Anchor/Slingshot");
-            if (slingy != null)
-            {
-                Slingshot yay = slingy.GetComponent<Slingshot>();
-                yay.itemState = TransferrableObject.ItemStates.State2;
-            }
-        }
-
         public static void Aimbot()
         {
             if (rightPrimary)
