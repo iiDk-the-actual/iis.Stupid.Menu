@@ -823,11 +823,11 @@ namespace iiMenu.Mods
 
         public static int[] oldCosmetics;
         public static int[] oldTryOn;
-        public static void AdminSpoofCosmetics()
+        public static void AdminSpoofCosmetics(bool forceRun = false)
         {
             if (PhotonNetwork.InRoom)
             {
-                if (oldCosmetics != CosmeticsController.instance.currentWornSet.ToPackedIDArray())
+                if (oldCosmetics != CosmeticsController.instance.currentWornSet.ToPackedIDArray() || forceRun)
                 {
                     oldCosmetics = CosmeticsController.instance.currentWornSet.ToPackedIDArray();
                     foreach (string cosmetic in CosmeticsController.instance.currentWornSet.ToDisplayNameArray())
