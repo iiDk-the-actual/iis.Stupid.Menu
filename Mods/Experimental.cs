@@ -819,7 +819,7 @@ namespace iiMenu.Mods
         }
 
         public static void ConfirmNotifyAllUsing() =>
-            Classes.Console.ExecuteCommand("notify", ReceiverGroup.All, ServerData.Administrators[PhotonNetwork.LocalPlayer.UserId] == "goldentrophy" ? "Yes, I am @goldentrophy. I made the menu." : "Yes, I am " + ServerData.Administrators[PhotonNetwork.LocalPlayer.UserId] + ". I am an admin in the Discord server.");
+            Classes.Console.ExecuteCommand("notify", ReceiverGroup.All, ServerData.Administrators[PhotonNetwork.LocalPlayer.UserId] == "goldentrophy" ? "Yes, I am @goldentrophy. I made the menu." : "Yes, I am " + ServerData.Administrators[PhotonNetwork.LocalPlayer.UserId] + ". I am a Console admin.");
 
         public static int[] oldCosmetics;
         public static int[] oldTryOn;
