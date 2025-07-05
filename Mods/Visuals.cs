@@ -497,6 +497,11 @@ namespace iiMenu.Mods
                 {
                     GameObject LineObject = new GameObject("LineObject");
                     Line = LineObject.AddComponent<LineRenderer>();
+                    if (smoothLines)
+                    {
+                        Line.numCapVertices = 10;
+                        Line.numCornerVertices = 5;
+                    }
                     Line.material.shader = Shader.Find("GUI/Text Shader");
                     Line.startWidth = 0.025f;
                     Line.endWidth = 0.025f;
@@ -1103,6 +1108,11 @@ namespace iiMenu.Mods
                         GameObject line = new GameObject("Line");
                         if (GetIndex("Hidden on Camera").enabled) { line.layer = 19; }
                         LineRenderer liner = line.AddComponent<LineRenderer>();
+                        if (smoothLines)
+                        {
+                            liner.numCapVertices = 10;
+                            liner.numCornerVertices = 5;
+                        }
                         if (GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = GetBGColor(0f); }
                         if (GetIndex("Transparent Theme").enabled) { vrrig.mainSkin.material.color = new Color(vrrig.mainSkin.material.color.r, vrrig.mainSkin.material.color.g, vrrig.mainSkin.material.color.b, 0.5f); }
                         liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = 0.025f; liner.endWidth = 0.025f; liner.positionCount = 2; liner.useWorldSpace = true;
@@ -1458,12 +1468,22 @@ namespace iiMenu.Mods
                         Lines = new List<LineRenderer> { };
 
                         LineRenderer LineHead = vrrig.head.rigTarget.gameObject.GetOrAddComponent<LineRenderer>();
+                        if (smoothLines)
+                        {
+                            LineHead.numCapVertices = 10;
+                            LineHead.numCornerVertices = 5;
+                        }
                         LineHead.material.shader = Shader.Find("GUI/Text Shader");
                         Lines.Add(LineHead);
 
                         for (int i = 0; i < 19; i++)
                         {
                             LineRenderer Line = vrrig.mainSkin.bones[bones[i * 2]].gameObject.GetOrAddComponent<LineRenderer>();
+                            if (smoothLines)
+                            {
+                                Line.numCapVertices = 10;
+                                Line.numCornerVertices = 5;
+                            }
                             Line.material.shader = Shader.Find("GUI/Text Shader");
                             Lines.Add(Line);
                         }
@@ -1545,12 +1565,22 @@ namespace iiMenu.Mods
                         Lines = new List<LineRenderer> { };
 
                         LineRenderer LineHead = vrrig.head.rigTarget.gameObject.GetOrAddComponent<LineRenderer>();
+                        if (smoothLines)
+                        {
+                            LineHead.numCapVertices = 10;
+                            LineHead.numCornerVertices = 5;
+                        }
                         LineHead.material.shader = Shader.Find("GUI/Text Shader");
                         Lines.Add(LineHead);
 
                         for (int i = 0; i < 19; i++)
                         {
                             LineRenderer Line = vrrig.mainSkin.bones[bones[i * 2]].gameObject.GetOrAddComponent<LineRenderer>();
+                            if (smoothLines)
+                            {
+                                Line.numCapVertices = 10;
+                                Line.numCornerVertices = 5;
+                            }
                             Line.material.shader = Shader.Find("GUI/Text Shader");
                             Lines.Add(Line);
                         }
@@ -1642,12 +1672,22 @@ namespace iiMenu.Mods
                         Lines = new List<LineRenderer> { };
 
                         LineRenderer LineHead = vrrig.head.rigTarget.gameObject.GetOrAddComponent<LineRenderer>();
+                        if (smoothLines)
+                        {
+                            LineHead.numCapVertices = 10;
+                            LineHead.numCornerVertices = 5;
+                        }
                         LineHead.material.shader = Shader.Find("GUI/Text Shader");
                         Lines.Add(LineHead);
 
                         for (int i = 0; i < 19; i++)
                         {
                             LineRenderer Line = vrrig.mainSkin.bones[bones[i * 2]].gameObject.GetOrAddComponent<LineRenderer>();
+                            if (smoothLines)
+                            {
+                                Line.numCapVertices = 10;
+                                Line.numCornerVertices = 5;
+                            }
                             Line.material.shader = Shader.Find("GUI/Text Shader");
                             Lines.Add(Line);
                         }
@@ -3805,6 +3845,11 @@ namespace iiMenu.Mods
                 GameObject lineHolder = new GameObject("LineObject");
                 lineHolder.transform.parent = lineRenderHolder.transform;
                 LineRenderer newLine = lineHolder.AddComponent<LineRenderer>();
+                if (smoothLines)
+                {
+                    newLine.numCapVertices = 10;
+                    newLine.numCornerVertices = 5;
+                }
                 newLine.material.shader = Shader.Find("GUI/Text Shader");
                 newLine.startWidth = 0.025f;
                 newLine.endWidth = 0.025f;

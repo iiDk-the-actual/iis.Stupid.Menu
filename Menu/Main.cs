@@ -2475,13 +2475,10 @@ namespace iiMenu.Menu
                     menu.transform.localPosition = Vector3.zero;
                     menu.transform.localRotation = Quaternion.identity;
                     if (rightHand)
-                    {
                         menu.transform.position = GorillaTagger.Instance.rightHandTransform.position + new Vector3(0f, 0.3f, 0f);
-                    }
                     else
-                    {
                         menu.transform.position = GorillaTagger.Instance.leftHandTransform.position + new Vector3(0f, 0.3f, 0f);
-                    }
+                    
                     menu.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
                     Vector3 rotModify = menu.transform.rotation.eulerAngles;
                     rotModify += new Vector3(-90f, 0f, -90f);
@@ -3096,6 +3093,11 @@ namespace iiMenu.Menu
                 lineRenderer.endWidth = 0.025f;
                 lineRenderer.positionCount = 2;
                 lineRenderer.useWorldSpace = true;
+                if (smoothLines)
+                {
+                    lineRenderer.numCapVertices = 10;
+                    lineRenderer.numCornerVertices = 5;
+                }
                 lineRenderer.SetPosition(0, StartPosition);
                 lineRenderer.SetPosition(1, EndPosition);
                 Destroy(line, Time.deltaTime);
@@ -5034,6 +5036,7 @@ jgs \_   _/ |Oo\
         public static bool dropOnRemove = true;
         public static bool shouldOutline;
         public static bool innerOutline;
+        public static bool smoothLines;
         public static bool shouldRound;
         public static bool lastclicking;
         public static bool openedwithright;
