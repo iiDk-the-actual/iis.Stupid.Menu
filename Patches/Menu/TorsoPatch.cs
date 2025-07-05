@@ -8,7 +8,7 @@ namespace iiMenu.Patches
     public class TorsoPatch
     {
         public static event System.Action VRRigLateUpdate;
-        public static bool enabled = false;
+        public static bool enabled;
         public static int mode = 0;
 
         public static void Postfix(VRRig __instance)

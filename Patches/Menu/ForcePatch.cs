@@ -5,7 +5,7 @@ namespace iiMenu.Patches
     [HarmonyPatch(typeof(ForceVolume), "OnTriggerEnter")]
     public class ForcePatch
     {
-        public static bool enabled = false;
+        public static bool enabled;
 
         public static bool Prefix() =>
             !enabled;

@@ -6,11 +6,7 @@ namespace iiMenu.Patches
     public class GroupPatch
     {
         public static bool enabled;
-        public static bool Prefix()
-        {
-            if (enabled)
-                return false;
-            return true;
-        }
+        public static bool Prefix() =>
+            !enabled;
     }
 }

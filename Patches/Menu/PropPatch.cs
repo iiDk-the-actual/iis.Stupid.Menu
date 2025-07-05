@@ -6,7 +6,7 @@ namespace iiMenu.Patches
     [HarmonyPatch(typeof(PropHuntHandFollower), "GeoCollisionPoint")]
     public class PropPatch
     {
-        public static bool enabled = false;
+        public static bool enabled;
 
         public static void Postfix(ref Vector3 __result, Vector3 sourcePos, Vector3 targetPos)
         {

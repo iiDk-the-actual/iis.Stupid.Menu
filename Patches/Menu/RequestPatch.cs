@@ -12,7 +12,7 @@ namespace iiMenu.Patches
     [HarmonyPatch(typeof(VRRig), "RequestCosmetics")]
     public class RequestPatch
     {
-        public static bool enabled = false;
+        public static bool enabled;
         public static Coroutine currentCoroutine = null;
 
         public static bool Prefix(VRRig __instance, PhotonMessageInfoWrapped info)
