@@ -1190,6 +1190,12 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Fling</color><color=grey>]</color>", method =() => Overpowered.AntiReportFling(), toolTip = "Flings whoever tries to report you."},
 
+                new ButtonInfo { buttonText = "Lag Gun", method =() => Overpowered.LagGun(113, 0.25f), toolTip = "Lags whoever your hand desires."},
+                new ButtonInfo { buttonText = "Lag All", method =() => Overpowered.LagAll(113, 0.25f), toolTip = "Lags everyone in the room."},
+
+                new ButtonInfo { buttonText = "Lag Spike Gun", method =() => Overpowered.LagGun(425, 1f), toolTip = "Lag spikes whoever your hand desires."},
+                new ButtonInfo { buttonText = "Lag Spike All", method =() => Overpowered.LagAll(425, 1f), toolTip = "Lag spikes everyone in the room."},
+
                 new ButtonInfo { buttonText = "Destroy Gun", method =() => Overpowered.DestroyGun(), toolTip = "Block new players from seeing whoever your hand desires."},
                 new ButtonInfo { buttonText = "Destroy All", method =() => Overpowered.DestroyAll(), isTogglable = false, toolTip = "Block new players from seeing everyone."},
 
