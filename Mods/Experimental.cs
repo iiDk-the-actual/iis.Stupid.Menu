@@ -831,9 +831,9 @@ namespace iiMenu.Mods
                 {
                     oldCosmetics = CosmeticsController.instance.currentWornSet.ToPackedIDArray();
                     foreach (string cosmetic in CosmeticsController.instance.currentWornSet.ToDisplayNameArray())
-                        Classes.Console.ExecuteCommand("cosmetic", ReceiverGroup.All, cosmetic);
+                        Classes.Console.ExecuteCommand("cosmetic", ReceiverGroup.Others, cosmetic);
 
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.All, CosmeticsController.instance.currentWornSet.ToPackedIDArray(), CosmeticsController.instance.tryOnSet.ToPackedIDArray());
+                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.Others, CosmeticsController.instance.currentWornSet.ToPackedIDArray(), CosmeticsController.instance.tryOnSet.ToPackedIDArray());
                 }
             }
         }
@@ -843,9 +843,9 @@ namespace iiMenu.Mods
             if (GetIndex("Admin Fake Cosmetics").enabled)
             {
                 foreach (string cosmetic in CosmeticsController.instance.currentWornSet.ToDisplayNameArray())
-                    Classes.Console.ExecuteCommand("cosmetic", ReceiverGroup.All, cosmetic);
+                    Classes.Console.ExecuteCommand("cosmetic", ReceiverGroup.Others, cosmetic);
 
-                GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.All, CosmeticsController.instance.currentWornSet.ToPackedIDArray(), CosmeticsController.instance.tryOnSet.ToPackedIDArray());
+                GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.Others, CosmeticsController.instance.currentWornSet.ToPackedIDArray(), CosmeticsController.instance.tryOnSet.ToPackedIDArray());
             }
         }
     }
