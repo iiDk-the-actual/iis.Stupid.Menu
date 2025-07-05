@@ -2490,8 +2490,9 @@ namespace iiMenu.Menu
             }
             if (isKeyboardCondition)
             {
+                if (!XRSettings.isDeviceActive)
+                    PrivateUIRoom.instance.ToggleLevelVisibility(false);
                 GetObject("Shoulder Camera").transform.Find("CM vcam1").gameObject.SetActive(false);
-
                 if (TPC != null)
                 {
                     isOnPC = true;
@@ -2568,7 +2569,6 @@ namespace iiMenu.Menu
                 menu.transform.rotation = physicalOpenRotation;
             }
 
-            PrivateUIRoom.instance.ToggleLevelVisibility(isOnPC);
         }
 
         private static void AddPageButtons()
