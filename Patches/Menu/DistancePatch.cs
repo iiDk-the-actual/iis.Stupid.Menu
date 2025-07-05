@@ -7,7 +7,7 @@ namespace iiMenu.Patches
     [HarmonyPatch(typeof(VRRig), "IsPositionInRange")]
     public class DistancePatch
     {
-        public static bool enabled = false;
+        public static bool enabled;
 
         public static void Postfix(VRRig __instance, ref bool __result, Vector3 position, float range)
         {

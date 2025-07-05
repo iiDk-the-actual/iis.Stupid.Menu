@@ -5,7 +5,7 @@ namespace iiMenu.Patches
 {
     public class UnlimitPatches
     {
-        public static bool enabled = false;
+        public static bool enabled;
 
         [HarmonyPatch(typeof(BuilderPiece), "CanPlayerGrabPiece")]
         public class UnlimitPatch1

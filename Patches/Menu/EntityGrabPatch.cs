@@ -7,7 +7,7 @@ namespace iiMenu.Patches
     [HarmonyPatch(typeof(GameEntityManager), "TryGrabLocal")]
     public class EntityGrabPatch
     {
-        public static bool enabled = false;
+        public static bool enabled;
 
         public static bool Prefix(GameEntityManager __instance, Vector3 handPosition, ref GameEntityId __result)
         {
