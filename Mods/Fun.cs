@@ -2112,7 +2112,6 @@ namespace iiMenu.Mods
             {
                 if (Time.time > blockDelay)
                 {
-                    blockDelay = Time.time + 0.02f;
                     int pieceId = table.CreatePieceId();
 
                     object[] args = new object[]
@@ -2134,6 +2133,8 @@ namespace iiMenu.Mods
 
                     if (overrideFreeze || !GetIndex("Zero Gravity Blocks").enabled)
                     {
+                        blockDelay = Time.time + 0.02f;
+
                         args = new object[]
                         {
                             Networking.CreateLocalCommandId(),
