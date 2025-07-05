@@ -784,6 +784,22 @@ namespace iiMenu.Mods
             GetIndex("Change Snowball Scale").overlapText = "Change Snowball Scale <color=grey>[</color><color=green>" + (snowballScale).ToString() + "</color><color=grey>]</color>";
         }
 
+        public static int lagIndex = 1;
+        public static int lagAmount;
+        public static float lagDelay;
+        public static void ChangeLagPower(bool positive = true)
+        {
+            if (positive)
+                lagIndex++;
+            else
+                lagIndex--;
+
+            lagAmount = new int[] { 40, 113, 425 } [lagIndex];
+            lagDelay = new float[] { 0.1f, 0.25f, 1f } [lagIndex];
+
+            GetIndex("Change Lag Power").overlapText = "Change Lag Power <color=grey>[</color><color=green>" + new string[] { "Light", "Heavy", "Spike" } [lagIndex] + "</color><color=grey>]</color>";
+        }
+
         public static float snowballSpawnDelay = 0.1f;
         public static bool SnowballHandIndex;
         public static void BetaSpawnSnowball(Vector3 Pos, Vector3 Vel, float Scale, int Mode, Player Target = null, bool NetworkSize = true, int customNetworkedSize = -1)
@@ -1787,7 +1803,8 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void LagGun(int packets, float delay)
+        private static float lagDebounce;
+        public static void LagGun()
         {
             if (GetGunInput(false))
             {
@@ -1797,12 +1814,13 @@ namespace iiMenu.Mods
 
                 if (gunLocked && lockTarget != null)
                 {
-                    if (Time.time > kgDebounce)
+                    if (Time.time > lagDebounce)
                     {
-                        for (int i = 0; i < packets; i++)
-                            GhostReactorManager.instance.gameAgentManager.photonView.RPC("ApplyBehaviorRPC", RigManager.NetPlayerToPlayer(RigManager.GetPlayerFromVRRig(lockTarget)), new object[] { null, null });
+                        for (int i = 0; i < lagAmount; i++)
+                            GhostReactorManager.instance.gameAgentManager.photonView.RPC("ApplyBehaviorRPC", NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)), new object[] { null, null });
+                        
                         RPCProtection();
-                        kgDebounce = Time.time + delay;
+                        lagDebounce = Time.time + lagDelay;
                     }
                 }
                 if (GetGunInput(true))
@@ -1822,14 +1840,15 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void LagAll(int packets, float delay)
+        public static void LagAll()
         {
-            if (Time.time > kgDebounce)
+            if (Time.time > lagDebounce)
             {
-                for (int i = 0; i < packets; i++)
+                for (int i = 0; i < lagAmount; i++)
                     GhostReactorManager.instance.gameAgentManager.photonView.RPC("ApplyBehaviorRPC", RpcTarget.Others, new object[] { null, null });
+
                 RPCProtection();
-                kgDebounce = Time.time + delay;
+                lagDebounce = Time.time + lagDelay;
             }
         }
 
