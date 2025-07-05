@@ -5,9 +5,11 @@ using ExitGames.Client.Photon;
 using GorillaExtensions;
 using GorillaGameModes;
 using GorillaLocomotion.Gameplay;
+using GorillaTagScripts;
 using iiMenu.Classes;
 using iiMenu.Notifications;
 using iiMenu.Patches;
+using Oculus.Platform;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
@@ -1782,6 +1784,52 @@ namespace iiMenu.Mods
                         kgDebounce = Time.time + 0.5f;
                     }
                 }
+            }
+        }
+
+        public static void LagGun(int packets, float delay)
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    if (Time.time > kgDebounce)
+                    {
+                        for (int i = 0; i < packets; i++)
+                            GhostReactorManager.instance.gameAgentManager.photonView.RPC("ApplyBehaviorRPC", RigManager.NetPlayerToPlayer(RigManager.GetPlayerFromVRRig(lockTarget)), new object[] { null, null });
+                        RPCProtection();
+                        kgDebounce = Time.time + delay;
+                    }
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
+        public static void LagAll(int packets, float delay)
+        {
+            if (Time.time > kgDebounce)
+            {
+                for (int i = 0; i < packets; i++)
+                    GhostReactorManager.instance.gameAgentManager.photonView.RPC("ApplyBehaviorRPC", RpcTarget.Others, new object[] { null, null });
+                RPCProtection();
+                kgDebounce = Time.time + delay;
             }
         }
 
