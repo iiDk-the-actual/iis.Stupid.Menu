@@ -1761,7 +1761,7 @@ namespace iiMenu.Mods
                 Vector3 toTarget = rig.transform.position - GorillaTagger.Instance.headCollider.transform.position;
                 float angle = Vector3.Angle(GorillaTagger.Instance.headCollider.transform.forward, toTarget);
 
-                bool enabled = angle <= Camera.main.fieldOfView / 2f;
+                bool enabled = angle <= Camera.main.fieldOfView / 1.75f;
                 enabled &= Vector3.Distance(rig.transform.position, GorillaTagger.Instance.headCollider.transform.position) < 35f;
 
                 wireframe.enabled = enabled;
@@ -1832,7 +1832,7 @@ namespace iiMenu.Mods
                 Vector3 toTarget = rig.transform.position - GorillaTagger.Instance.headCollider.transform.position;
                 float angle = Vector3.Angle(GorillaTagger.Instance.headCollider.transform.forward, toTarget);
 
-                enabled &= angle <= Camera.main.fieldOfView / 2f;
+                enabled &= angle <= Camera.main.fieldOfView / 1.75f;
                 enabled &= Vector3.Distance(rig.transform.position, GorillaTagger.Instance.headCollider.transform.position) < 35f;
 
                 wireframe.enabled = enabled;
@@ -1910,7 +1910,7 @@ namespace iiMenu.Mods
                 Vector3 toTarget = rig.transform.position - GorillaTagger.Instance.headCollider.transform.position;
                 float angle = Vector3.Angle(GorillaTagger.Instance.headCollider.transform.forward, toTarget);
 
-                enabled &= angle <= Camera.main.fieldOfView / 2f;
+                enabled &= angle <= Camera.main.fieldOfView / 1.75f;
                 enabled &= Vector3.Distance(rig.transform.position, GorillaTagger.Instance.headCollider.transform.position) < 35f;
 
                 wireframe.enabled = enabled;
