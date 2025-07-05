@@ -3072,13 +3072,15 @@ namespace iiMenu.Menu
             }
 
             GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-            NewPointer.GetComponent<Renderer>().material.color = (gunLocked || GetGunInput(true)) ? GetBDColor(0f) : GetBRColor(0f);
             NewPointer.transform.localScale = smallGunPointer ? new Vector3(0.1f, 0.1f, 0.1f) : new Vector3(0.2f, 0.2f, 0.2f);
             NewPointer.transform.position = EndPosition;
 
+            Renderer PointerRenderer = NewPointer.GetComponent<Renderer>();
+            PointerRenderer.material.shader = Shader.Find("GUI/Text Shader");
+            PointerRenderer.material.color = (gunLocked || GetGunInput(true)) ? GetBDColor(0f) : GetBRColor(0f);
+
             if (disableGunPointer)
-                NewPointer.GetComponent<Renderer>().enabled = false;
+                PointerRenderer.enabled = false;
 
             Destroy(NewPointer.GetComponent<Collider>());
             Destroy(NewPointer, Time.deltaTime);
