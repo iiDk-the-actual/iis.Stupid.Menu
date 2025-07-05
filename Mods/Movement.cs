@@ -14,6 +14,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using TagEffects;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 using static iiMenu.Classes.RigManager;
@@ -757,6 +758,11 @@ namespace iiMenu.Mods
 
                 GameObject line = new GameObject("Line");
                 LineRenderer liner = line.AddComponent<LineRenderer>();
+                if (smoothLines)
+                {
+                    liner.numCapVertices = 10;
+                    liner.numCornerVertices = 5;
+                }
                 Color thecolor = Color.red;
                 liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = 0.025f; liner.endWidth = 0.025f; liner.positionCount = 2; liner.useWorldSpace = true;
                 liner.SetPosition(0, GorillaTagger.Instance.leftHandTransform.position);
@@ -778,6 +784,11 @@ namespace iiMenu.Mods
 
                 GameObject line = new GameObject("Line");
                 LineRenderer liner = line.AddComponent<LineRenderer>();
+                if (smoothLines)
+                {
+                    liner.numCapVertices = 10;
+                    liner.numCornerVertices = 5;
+                }
                 liner.material.shader = Shader.Find("GUI/Text Shader");
                 liner.startColor = GetBGColor(0f) - new Color32(0, 0, 0, 128);
                 liner.endColor = GetBGColor(0.5f) - new Color32(0, 0, 0, 128);
@@ -832,6 +843,11 @@ namespace iiMenu.Mods
 
                 GameObject line = new GameObject("Line");
                 LineRenderer liner = line.AddComponent<LineRenderer>();
+                if (smoothLines)
+                {
+                    liner.numCapVertices = 10;
+                    liner.numCornerVertices = 5;
+                }
                 Color thecolor = Color.red;
                 liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = 0.025f; liner.endWidth = 0.025f; liner.positionCount = 2; liner.useWorldSpace = true;
                 liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
@@ -853,6 +869,11 @@ namespace iiMenu.Mods
 
                 GameObject line = new GameObject("Line");
                 LineRenderer liner = line.AddComponent<LineRenderer>();
+                if (smoothLines)
+                {
+                    liner.numCapVertices = 10;
+                    liner.numCornerVertices = 5;
+                }
                 liner.material.shader = Shader.Find("GUI/Text Shader");
                 liner.startColor = GetBGColor(0f) - new Color32(0, 0, 0, 128);
                 liner.endColor = GetBGColor(0.5f) - new Color32(0, 0, 0, 128);
@@ -896,6 +917,11 @@ namespace iiMenu.Mods
 
                 GameObject line = new GameObject("Line");
                 LineRenderer liner = line.AddComponent<LineRenderer>();
+                if (smoothLines)
+                {
+                    liner.numCapVertices = 10;
+                    liner.numCornerVertices = 5;
+                }
                 Color thecolor = Color.red;
                 liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = 0.025f; liner.endWidth = 0.025f; liner.positionCount = 2; liner.useWorldSpace = true;
                 liner.SetPosition(0, GorillaTagger.Instance.leftHandTransform.position);
@@ -917,6 +943,11 @@ namespace iiMenu.Mods
 
                 GameObject line = new GameObject("Line");
                 LineRenderer liner = line.AddComponent<LineRenderer>();
+                if (smoothLines)
+                {
+                    liner.numCapVertices = 10;
+                    liner.numCornerVertices = 5;
+                }
                 liner.material.shader = Shader.Find("GUI/Text Shader");
                 liner.startColor = GetBGColor(0f) - new Color32(0, 0, 0, 128);
                 liner.endColor = GetBGColor(0.5f) - new Color32(0, 0, 0, 128);
@@ -957,6 +988,11 @@ namespace iiMenu.Mods
 
                 GameObject line = new GameObject("Line");
                 LineRenderer liner = line.AddComponent<LineRenderer>();
+                if (smoothLines)
+                {
+                    liner.numCapVertices = 10;
+                    liner.numCornerVertices = 5;
+                }
                 Color thecolor = Color.red;
                 liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = 0.025f; liner.endWidth = 0.025f; liner.positionCount = 2; liner.useWorldSpace = true;
                 liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
@@ -978,6 +1014,11 @@ namespace iiMenu.Mods
 
                 GameObject line = new GameObject("Line");
                 LineRenderer liner = line.AddComponent<LineRenderer>();
+                if (smoothLines)
+                {
+                    liner.numCapVertices = 10;
+                    liner.numCornerVertices = 5;
+                }
                 liner.material.shader = Shader.Find("GUI/Text Shader");
                 liner.startColor = GetBGColor(0f) - new Color32(0, 0, 0, 128);
                 liner.endColor = GetBGColor(0.5f) - new Color32(0, 0, 0, 128);
