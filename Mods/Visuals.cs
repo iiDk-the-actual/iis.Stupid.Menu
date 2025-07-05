@@ -1762,7 +1762,7 @@ namespace iiMenu.Mods
                 float angle = Vector3.Angle(GorillaTagger.Instance.headCollider.transform.forward, toTarget);
 
                 bool enabled = angle <= Camera.main.fieldOfView / 1.75f;
-                enabled &= Vector3.Distance(rig.transform.position, GorillaTagger.Instance.headCollider.transform.position) < 35f;
+                enabled &= Vector3.Distance(rig.transform.position, GorillaTagger.Instance.headCollider.transform.position) < 35f && Vector3.Distance(rig.headMesh.transform.position, GorillaTagger.Instance.headCollider.transform.position) < 35f && Vector3.Distance(rig.leftHandTransform.position, GorillaTagger.Instance.headCollider.transform.position) < 35f && Vector3.Distance(rig.rightHandTransform.position, GorillaTagger.Instance.headCollider.transform.position) < 35f;
 
                 wireframe.enabled = enabled;
                 wireframe.meshRenderer.enabled = enabled;
@@ -1833,7 +1833,7 @@ namespace iiMenu.Mods
                 float angle = Vector3.Angle(GorillaTagger.Instance.headCollider.transform.forward, toTarget);
 
                 enabled &= angle <= Camera.main.fieldOfView / 1.75f;
-                enabled &= Vector3.Distance(rig.transform.position, GorillaTagger.Instance.headCollider.transform.position) < 35f;
+                enabled &= Vector3.Distance(rig.transform.position, GorillaTagger.Instance.headCollider.transform.position) < 35f && Vector3.Distance(rig.headMesh.transform.position, GorillaTagger.Instance.headCollider.transform.position) < 35f && Vector3.Distance(rig.leftHandTransform.position, GorillaTagger.Instance.headCollider.transform.position) < 35f && Vector3.Distance(rig.rightHandTransform.position, GorillaTagger.Instance.headCollider.transform.position) < 35f;
 
                 wireframe.enabled = enabled;
                 wireframe.meshRenderer.enabled = enabled;
@@ -1911,7 +1911,7 @@ namespace iiMenu.Mods
                 float angle = Vector3.Angle(GorillaTagger.Instance.headCollider.transform.forward, toTarget);
 
                 enabled &= angle <= Camera.main.fieldOfView / 1.75f;
-                enabled &= Vector3.Distance(rig.transform.position, GorillaTagger.Instance.headCollider.transform.position) < 35f;
+                enabled &= Vector3.Distance(rig.transform.position, GorillaTagger.Instance.headCollider.transform.position) < 35f && Vector3.Distance(rig.headMesh.transform.position, GorillaTagger.Instance.headCollider.transform.position) < 35f && Vector3.Distance(rig.leftHandTransform.position, GorillaTagger.Instance.headCollider.transform.position) < 35f && Vector3.Distance(rig.rightHandTransform.position, GorillaTagger.Instance.headCollider.transform.position) < 35f;
 
                 wireframe.enabled = enabled;
                 wireframe.meshRenderer.enabled = enabled;
