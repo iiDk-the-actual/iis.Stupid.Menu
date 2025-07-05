@@ -2491,7 +2491,6 @@ namespace iiMenu.Menu
             if (isKeyboardCondition)
             {
                 GetObject("Shoulder Camera").transform.Find("CM vcam1").gameObject.SetActive(false);
-                PrivateUIRoom.instance.ToggleLevelVisibility(true);
 
                 if (TPC != null)
                 {
@@ -2568,6 +2567,8 @@ namespace iiMenu.Menu
                 menu.transform.position = physicalOpenPosition;
                 menu.transform.rotation = physicalOpenRotation;
             }
+
+            PrivateUIRoom.instance.ToggleLevelVisibility(isOnPC);
         }
 
         private static void AddPageButtons()
