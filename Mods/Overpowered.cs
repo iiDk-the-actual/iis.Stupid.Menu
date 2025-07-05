@@ -794,9 +794,9 @@ namespace iiMenu.Mods
             else
                 lagIndex--;
 
-            lagIndex %= 4;
+            lagIndex %= 3;
             if (lagIndex < 0)
-                lagIndex = 3;
+                lagIndex = 2;
 
             lagAmount = new int[] { 40, 113, 425 } [lagIndex];
             lagDelay = new float[] { 0.1f, 0.25f, 1f } [lagIndex];
