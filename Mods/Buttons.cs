@@ -1190,11 +1190,8 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Fling</color><color=grey>]</color>", method =() => Overpowered.AntiReportFling(), toolTip = "Flings whoever tries to report you."},
 
-                new ButtonInfo { buttonText = "Lag Gun", method =() => Overpowered.LagGun(113, 0.25f), toolTip = "Lags whoever your hand desires."},
-                new ButtonInfo { buttonText = "Lag All", method =() => Overpowered.LagAll(113, 0.25f), toolTip = "Lags everyone in the room."},
-
-                new ButtonInfo { buttonText = "Lag Spike Gun", method =() => Overpowered.LagGun(425, 1f), toolTip = "Lag spikes whoever your hand desires."},
-                new ButtonInfo { buttonText = "Lag Spike All", method =() => Overpowered.LagAll(425, 1f), toolTip = "Lag spikes everyone in the room."},
+                new ButtonInfo { buttonText = "Lag Gun", method =() => Overpowered.LagGun(), toolTip = "Lags whoever your hand desires."},
+                new ButtonInfo { buttonText = "Lag All", method =() => Overpowered.LagAll(), toolTip = "Lags everyone in the room."},
 
                 new ButtonInfo { buttonText = "Destroy Gun", method =() => Overpowered.DestroyGun(), toolTip = "Block new players from seeing whoever your hand desires."},
                 new ButtonInfo { buttonText = "Destroy All", method =() => Overpowered.DestroyAll(), isTogglable = false, toolTip = "Block new players from seeing everyone."},
@@ -1378,9 +1375,11 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Exit Overpowered Settings", method =() => currentCategoryName = "Settings", isTogglable = false, toolTip = "Returns you back to the settings menu."},
 
                 new ButtonInfo { buttonText = "Disable Snowball Impact Effect", method =() => Overpowered.DisableSnowballImpactEffect(), toolTip = "Disables the impact effect that people get when hit with snowballs."},
-                new ButtonInfo { buttonText = "Change Snowball Scale", overlapText = "Change Snowball Scale <color=grey>[</color><color=green>6</color><color=grey>]</color>", method =() => Overpowered.ChangeSnowballScale(true), enableMethod =() => Overpowered.ChangeSnowballScale(true), disableMethod =() => Overpowered.ChangeSnowballScale(false), incremental = true, isTogglable = false, toolTip = "Changes the scale of the snowballs" },
+                new ButtonInfo { buttonText = "Change Snowball Scale", overlapText = "Change Snowball Scale <color=grey>[</color><color=green>6</color><color=grey>]</color>", method =() => Overpowered.ChangeSnowballScale(true), enableMethod =() => Overpowered.ChangeSnowballScale(true), disableMethod =() => Overpowered.ChangeSnowballScale(false), incremental = true, isTogglable = false, toolTip = "Changes the scale of the snowballs." },
 
-                new ButtonInfo { buttonText = "Zero Gravity Blocks", toolTip = "Gives the blocks gravity."}
+                new ButtonInfo { buttonText = "Zero Gravity Blocks", toolTip = "Gives the blocks gravity."},
+
+                new ButtonInfo { buttonText = "Change Lag Power", overlapText = "Change Lag Power <color=grey>[</color><color=green>Heavy</color><color=grey>]</color>", method =() => Overpowered.ChangeLagPower(true), enableMethod =() => Overpowered.ChangeLagPower(true), disableMethod =() => Overpowered.ChangeLagPower(false), incremental = true, isTogglable = false, toolTip = "Changes the power of the lag mods." },
             },
 
             new ButtonInfo[] { // Keybind Settings [32]

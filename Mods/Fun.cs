@@ -218,7 +218,7 @@ namespace iiMenu.Mods
                     PhotonNetworkController.Instance.keyStr = UnityEngine.Random.Range(0, 99999999).ToString().PadLeft(8, '0');
 
                     foreach (VRRig rig in GorillaParent.instance.vrrigs)
-                        BetaNearbyFollowCommand(GorillaComputer.instance.friendJoinCollider, NetPlayerToPlayer(RigManager.GetPlayerFromVRRig(rig)));
+                        BetaNearbyFollowCommand(GorillaComputer.instance.friendJoinCollider, NetPlayerToPlayer(GetPlayerFromVRRig(rig)));
                     RPCProtection();
                 }, () =>
                 {

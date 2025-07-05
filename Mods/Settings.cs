@@ -2811,7 +2811,8 @@ namespace iiMenu.Mods
                 Projectiles.green.ToString(),
                 Projectiles.blue.ToString(),
                 Safety.rankIndex.ToString(),
-                Overpowered.snowballScale.ToString()
+                Overpowered.snowballScale.ToString(),
+                Overpowered.lagIndex.ToString()
             };
 
             string settingstext = string.Join(seperator, settings);
@@ -2974,6 +2975,9 @@ namespace iiMenu.Mods
 
                 Overpowered.snowballScale = int.Parse(data[37]) - 1;
                 Overpowered.ChangeSnowballScale();
+
+                Overpowered.lagIndex = int.Parse(data[38]) - 1;
+                Overpowered.ChangeLagPower();
             } catch { LogManager.Log("Save file out of date"); }
 
             pageButtonType = int.Parse(textData[3]) - 1;
