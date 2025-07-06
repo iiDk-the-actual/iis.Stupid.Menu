@@ -103,7 +103,7 @@ namespace iiMenu.Classes
 
         public static string CleanString(string input, int maxLength = 12)
         {
-            input = new string(Array.FindAll<char>(input.ToCharArray(), (char c) => Utils.IsASCIILetterOrDigit(c)));
+            input = new string(Array.FindAll(input.ToCharArray(), (char c) => Utils.IsASCIILetterOrDigit(c)));
 
             if (input.Length > maxLength)
                 input = input[..(maxLength - 1)];

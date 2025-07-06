@@ -1452,7 +1452,7 @@ namespace iiMenu.Mods
         {
             if (rightTrigger > 0.5f && Time.time > delay)
             {
-                PhotonView that = GetObject("Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/Arcade_prefab/MainRoom/VRArea/ModIOArcadeTeleporter/NetObject_VRTeleporter").GetComponent<Photon.Pun.PhotonView>();
+                PhotonView that = GetObject("Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/Arcade_prefab/MainRoom/VRArea/ModIOArcadeTeleporter/NetObject_VRTeleporter").GetComponent<PhotonView>();
                 delay = Time.time + 0.05f;
                 returnOrTeleport = !returnOrTeleport;
                 that.RPC(returnOrTeleport ? "ActivateTeleportVFX" : "ActivateReturnVFX", RpcTarget.All, new object[] { (short)UnityEngine.Random.Range(0, 7) });
@@ -1464,7 +1464,7 @@ namespace iiMenu.Mods
         {
             if (rightTrigger > 0.5f && Time.time > delay)
             {
-                PhotonView that = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/StumpVRHeadset/ModIOArcadeTeleporter (1)/NetObject_VRTeleporter").GetComponent<Photon.Pun.PhotonView>();
+                PhotonView that = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/StumpVRHeadset/ModIOArcadeTeleporter (1)/NetObject_VRTeleporter").GetComponent<PhotonView>();
                 delay = Time.time + 0.05f;
                 returnOrTeleport = !returnOrTeleport;
                 that.RPC(returnOrTeleport ? "ActivateTeleportVFX" : "ActivateReturnVFX", RpcTarget.All, new object[] { (short)0 });
