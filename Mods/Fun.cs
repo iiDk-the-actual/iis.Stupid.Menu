@@ -602,6 +602,34 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void ReportGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true) && Time.time > muteDelay)
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        NetPlayer player = GetPlayerFromVRRig(gunTarget);
+
+                        GorillaPlayerScoreboardLine.ReportPlayer(player.UserId, GorillaPlayerLineButton.ButtonType.Cheating, player.NickName);
+                        muteDelay = Time.time + 0.2f;
+                    }
+                }
+            }
+        }
+
+        public static void ReportAll()
+        {
+            foreach (NetPlayer player in NetworkSystem.Instance.PlayerListOthers)
+                GorillaPlayerScoreboardLine.ReportPlayer(player.UserId, GorillaPlayerLineButton.ButtonType.Cheating, player.NickName);
+        }
+
         public static void MuteDJSets()
         {
             foreach (RadioButtonGroupWearable djSet in GetAllType<RadioButtonGroupWearable>())
