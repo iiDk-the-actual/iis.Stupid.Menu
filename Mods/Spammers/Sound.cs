@@ -68,9 +68,7 @@ namespace iiMenu.Mods.Spammers
                         soundbuttons.Add(new ButtonInfo { buttonText = "SoundboardSound" + index.ToString(), overlapText = soundName, enableMethod = () => PlayAudio(file[14..]), disableMethod = () => FixMicrophone(), enabled = enabled, toolTip = "Plays \"" + RemoveFileExtension(FileName).Replace("_", " ") + "\" through your microphone." });
                     }
                     else
-                    {
                         soundbuttons.Add(new ButtonInfo { buttonText = "SoundboardSound" + index.ToString(), overlapText = RemoveFileExtension(FileName).Replace("_", " "), method = () => PlayAudio(file[14..]), isTogglable = false, toolTip = "Plays \"" + RemoveFileExtension(FileName).Replace("_", " ") + "\" through your microphone." });
-                    }
                 }
             }
             soundbuttons.Add(new ButtonInfo { buttonText = "Stop All Sounds", method = () => FixMicrophone(), isTogglable = false, toolTip = "Stops all currently playing sounds." });

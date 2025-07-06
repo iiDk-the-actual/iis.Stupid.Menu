@@ -180,9 +180,7 @@ namespace iiMenu.Mods
                         }
                     }
                     else
-                    {
                         VRRig.LocalRig.enabled = true;
-                    }
                 }
             }
         }
@@ -430,9 +428,7 @@ namespace iiMenu.Mods
                             RPCProtection();
                         }
                         else
-                        {
                             NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be guardian.</color>");
-                        }
                         kgDebounce = Time.time + 0.1f;
                     }
                 }
@@ -457,9 +453,7 @@ namespace iiMenu.Mods
                     }
                 }
                 else
-                {
                     NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be guardian.</color>");
-                }
             }
         }
 
@@ -483,9 +477,8 @@ namespace iiMenu.Mods
                             RPCProtection();
                         }
                         else
-                        {
                             NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be guardian.</color>");
-                        }
+                        
                         kgDebounce = Time.time + 0.1f;
                     }
                 }
@@ -510,9 +503,7 @@ namespace iiMenu.Mods
                     }
                 }
                 else
-                {
                     NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be guardian.</color>");
-                }
             }
         }
 
@@ -549,9 +540,7 @@ namespace iiMenu.Mods
                     RPCProtection();
                 }
                 else
-                {
                     NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be guardian.</color>");
-                }
             }
         }
 
@@ -585,9 +574,7 @@ namespace iiMenu.Mods
             else
             {
                 if (gunLocked)
-                {
                     gunLocked = false;
-                }
             }
         }
 
@@ -686,9 +673,7 @@ namespace iiMenu.Mods
                 {
                     miniaturedelay = Time.time + 0.022f;
                     for (int i = 0; i < 4; i++)
-                    {
                         Fun.RequestCreatePiece(691844031, new Vector3(-127.6248f, 16.99441f, -217.2094f), Quaternion.identity, 0);
-                    }
                 }
 
                 if (Time.time > lastBeforeClearTime)
@@ -1419,17 +1404,14 @@ namespace iiMenu.Mods
                 };
 
                 if (photonView.Prefix > 0)
-                {
                     rpcData[1] = (short)photonView.Prefix;
-                }
+                
                 if (PhotonNetwork.PhotonServerSettings.RpcList.Contains(method))
-                {
                     rpcData[5] = (byte)PhotonNetwork.PhotonServerSettings.RpcList.IndexOf(method);
-                }
+                
                 if (targetActors.Contains(PhotonNetwork.LocalPlayer.ActorNumber))
-                {
                     PhotonNetwork.ExecuteRpc(rpcData, PhotonNetwork.LocalPlayer);
-                }
+                
                 else
                 {
                     PhotonNetwork.NetworkingClient.LoadBalancingPeer.OpRaiseEvent(200, rpcData, new RaiseEventOptions
@@ -1502,9 +1484,7 @@ namespace iiMenu.Mods
             else
             {
                 if (gunLocked)
-                {
                     gunLocked = false;
-                }
             }
         }
 
@@ -1602,9 +1582,7 @@ namespace iiMenu.Mods
             else
             {
                 if (gunLocked)
-                {
                     gunLocked = false;
-                }
             }
         }
 
@@ -1667,9 +1645,8 @@ namespace iiMenu.Mods
                         flip = !flip;
                     }
                     else
-                    {
                         NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be guardian.</color>");
-                    }
+                    
                     slamDel = Time.time + 0.05f;
                 }
             }
@@ -1685,9 +1662,8 @@ namespace iiMenu.Mods
                         flip = !flip;
                     }
                     else
-                    {
                         NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be guardian.</color>");
-                    }
+                    
                     slamDel = Time.time + 0.05f;
                 }
             }

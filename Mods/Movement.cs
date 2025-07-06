@@ -1587,10 +1587,10 @@ namespace iiMenu.Mods
                     "VSTUMP"
                 },
             };
+
             foreach (string[] Data in mapData)
-            {
                 tpbuttons.Add(new ButtonInfo { buttonText = "TeleportMap" + tpbuttons.Count.ToString(), overlapText = Data[0], method = () => TeleportToMap(Data[1], Data[2]), isTogglable = false, toolTip = "Teleports you to the " + Data[0] + " map." });
-            }
+            
             Buttons.buttons[29] = tpbuttons.ToArray();
         }
 
@@ -1670,9 +1670,7 @@ namespace iiMenu.Mods
                     GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
                 }
                 else
-                {
                     CheckPoint.GetComponent<Renderer>().material.color = buttonDefaultA;
-                }
             }
         }
 
@@ -1905,9 +1903,8 @@ namespace iiMenu.Mods
                             });
                         }
                         else
-                        {
                             VRRig.LocalRig.PlayHandTapLocal(84, true, 999999f);
-                        }
+                        
                         RPCProtection();
                         UnityEngine.Object.Destroy(pearl);
                     }
@@ -1923,9 +1920,7 @@ namespace iiMenu.Mods
         public static void DestroyEnderPearl()
         {
             if (pearl != null)
-            {
                 UnityEngine.Object.Destroy(pearl);
-            }
         }
 
         public static void SpeedBoost()
@@ -2154,9 +2149,7 @@ namespace iiMenu.Mods
                 VRRig.LocalRig.rightHand.rigTarget.transform.position = GorillaTagger.Instance.rightHandTransform.position + VRRig.LocalRig.rightHand.rigTarget.transform.forward * 3f;
             }
             else
-            {
                 VRRig.LocalRig.enabled = true;
-            }
         }
 
         public static void SpazRealHands()
@@ -2767,18 +2760,16 @@ namespace iiMenu.Mods
                     float distance = Vector3.Distance(they, notthem);
 
                     if (distance < 0.25f)
-                    {
                         GorillaTagger.Instance.rigidbody.velocity += Vector3.Normalize(vrrig.rightHandTransform.position - lastRight[index]) * 10f;
-                    }
+                    
                     lastRight[index] = vrrig.rightHandTransform.position;
 
                     they = vrrig.leftHandTransform.position;
                     distance = Vector3.Distance(they, notthem);
 
                     if (distance < 0.25f)
-                    {
                         GorillaTagger.Instance.rigidbody.velocity += Vector3.Normalize(vrrig.leftHandTransform.position - lastLeft[index]) * 10f;
-                    }
+                    
                     lastLeft[index] = vrrig.leftHandTransform.position;
                 }
             }
@@ -3401,9 +3392,7 @@ namespace iiMenu.Mods
             else
             {
                 if (gunLocked)
-                {
                     gunLocked = false;
-                }
             }
         }
 
@@ -3896,9 +3885,7 @@ namespace iiMenu.Mods
                             RPCProtection();
                         }
                         else
-                        {
                             VRRig.LocalRig.PlayHandTapLocal(64, false, 999999f);
-                        }
                     }
                 }
                 if (GetGunInput(true))
@@ -3973,9 +3960,7 @@ namespace iiMenu.Mods
                             RPCProtection();
                         }
                         else
-                        {
                             VRRig.LocalRig.PlayHandTapLocal(64, true, 999999f);
-                        }
                     }
                 }
                 if (GetGunInput(true))
@@ -4014,9 +3999,7 @@ namespace iiMenu.Mods
                 VRRig.LocalRig.head.trackingRotationOffset.z = UnityEngine.Random.Range(0f, 360f);
             }
             else
-            {
                 VRRig.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
-            }
         }
 
         public static float headspazDelay;
@@ -4043,20 +4026,14 @@ namespace iiMenu.Mods
         }
 
         private static Vector3 headoffs = Vector3.zero;
-        public static void EnableSpazHead()
-        {
+        public static void EnableSpazHead() =>
             headoffs = VRRig.LocalRig.head.trackingPositionOffset;
-        }
 
-        public static void SpazHeadPosition()
-        {
+        public static void SpazHeadPosition() =>
             VRRig.LocalRig.head.trackingPositionOffset = headoffs + new Vector3(UnityEngine.Random.Range(-0.1f, 0.1f), UnityEngine.Random.Range(-0.1f, 0.1f), UnityEngine.Random.Range(-0.1f, 0.1f));
-        }
 
-        public static void FixHeadPosition()
-        {
+        public static void FixHeadPosition() =>
             VRRig.LocalRig.head.trackingPositionOffset = headoffs;
-        }
 
         public static void RandomSpazHeadPosition()
         {
@@ -4092,24 +4069,10 @@ namespace iiMenu.Mods
             } else
             {
                 if (idiotfixthingy)
-                {
                     idiotfixthingy = false;
-                }
                 else
-                {
                     VRRig.LocalRig.enabled = false;
-                }
             }
-        }
-
-        public static void SmoothRig()
-        {
-            PhotonNetwork.SerializationRate = 30;
-        }
-
-        public static void DisableSmoothRig()
-        {
-            PhotonNetwork.SerializationRate = 10;
         }
 
         public static void UpdateRig()
@@ -4123,13 +4086,9 @@ namespace iiMenu.Mods
             else
             {
                 if (idiotfixthingy)
-                {
                     idiotfixthingy = false;
-                } else
-                {
+                else
                     VRRig.LocalRig.enabled = false;
-                }
-                
             }
             lastprimaryhit = rightPrimary;
         }

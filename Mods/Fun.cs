@@ -22,6 +22,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UIElements;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -874,9 +875,7 @@ namespace iiMenu.Mods
                 }
             }
             else
-            {
                 VRRig.LocalRig.enabled = true;
-            }
         }
 
         public static void SetPropDistanceLimit(float distance)
@@ -1374,9 +1373,7 @@ namespace iiMenu.Mods
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
-                {
                     GetObject(objectName).transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
-                }
             }
         }
 
@@ -1393,12 +1390,9 @@ namespace iiMenu.Mods
                     foreach (GliderHoldable glider in GetAllType<GliderHoldable>())
                     {
                         if (glider.GetView.Owner == PhotonNetwork.LocalPlayer)
-                        {
                             glider.gameObject.transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
-                        } else
-                        {
+                        else
                             glider.OnHover(null, null);
-                        }
                     }
                 }
             }
@@ -1810,13 +1804,9 @@ namespace iiMenu.Mods
                 foreach (GliderHoldable glider in GetAllType<GliderHoldable>())
                 {
                     if (glider.GetView.Owner == PhotonNetwork.LocalPlayer)
-                    {
                         glider.gameObject.transform.position = GorillaTagger.Instance.rightHandTransform.position;
-                    }
                     else
-                    {
                         glider.OnHover(null, null);
-                    }
                 }
             }
         }
@@ -1838,13 +1828,9 @@ namespace iiMenu.Mods
             foreach (GliderHoldable glider in GetAllType<GliderHoldable>())
             {
                 if (glider.GetView.Owner == PhotonNetwork.LocalPlayer)
-                {
                     glider.Respawn();
-                }
                 else
-                {
                     glider.OnHover(null, null);
-                }
             }
         }
 
@@ -2056,14 +2042,10 @@ namespace iiMenu.Mods
                 }
 
                 if (GetGunInput(true))
-                {
                     position = NewPointer.transform.position;
-                }
             }
             else
-            {
                 position = Vector3.zero;
-            }
         }
 
         private static bool isFiring = false;
@@ -2084,14 +2066,9 @@ namespace iiMenu.Mods
 
             BuilderPiece bullet = null;
 
-            yield return CreateGetPiece(1925587737, piece =>
-            {
-                bullet = piece;
-            });
+            yield return CreateGetPiece(1925587737, piece => bullet = piece);
             while (bullet == null)
-            {
                 yield return null;
-            }
 
             RequestGrabPiece(bullet, true, Vector3.zero, Quaternion.identity);
             yield return null;
@@ -2347,13 +2324,9 @@ namespace iiMenu.Mods
             foreach (GliderHoldable glider in GetAllType<GliderHoldable>())
             {
                 if (glider.GetView.Owner == PhotonNetwork.LocalPlayer)
-                {
                     glider.gameObject.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
-                }
                 else
-                {
                     glider.OnHover(null, null);
-                }
             }
         }
 
@@ -2372,9 +2345,8 @@ namespace iiMenu.Mods
                     glider.gameObject.transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)) * 5f, 2, MathF.Sin(offset + ((float)Time.frameCount / 30)) * 5f);
                 }
                 else
-                {
                     glider.OnHover(null, null);
-                }
+                
                 index++;
             }
         }
@@ -2414,9 +2386,8 @@ namespace iiMenu.Mods
             RPCProtection();
 
             while (pieceId < 0)
-            {
                 yield return null;
-            }
+            
             yield return null;
 
             target = GetBuilderTable().GetPiece(pieceId);
@@ -2437,14 +2408,9 @@ namespace iiMenu.Mods
 
             BuilderPiece basea = null;
 
-            yield return CreateGetPiece(-1927069002, piece =>
-            {
-                basea = piece;
-            });
+            yield return CreateGetPiece(-1927069002, piece => basea = piece);
             while (basea == null)
-            {
                 yield return null;
-            }
 
             RequestGrabPiece(basea, false, Vector3.zero, Quaternion.identity);
             yield return null;
@@ -2455,15 +2421,9 @@ namespace iiMenu.Mods
 
             BuilderPiece base2a = null;
 
-            yield return CreateGetPiece(-1621444201, piece =>
-            {
-                base2a = piece;
-
-            });
+            yield return CreateGetPiece(-1621444201, piece => base2a = piece);
             while (base2a == null)
-            {
                 yield return null;
-            }
 
             RequestGrabPiece(base2a, false, Vector3.zero, Quaternion.identity);
             yield return null;
@@ -2472,15 +2432,9 @@ namespace iiMenu.Mods
 
             BuilderPiece slopea = null;
 
-            yield return CreateGetPiece(-993249117, piece =>
-            {
-                slopea = piece;
-
-            });
+            yield return CreateGetPiece(-993249117, piece => slopea = piece);
             while (slopea == null)
-            {
                 yield return null;
-            }
 
             RequestGrabPiece(slopea, false, Vector3.zero, Quaternion.identity);
             yield return null;
@@ -2489,14 +2443,9 @@ namespace iiMenu.Mods
 
             BuilderPiece trigger = null;
 
-            yield return CreateGetPiece(251444537, piece =>
-            {
-                trigger = piece;
-            });
+            yield return CreateGetPiece(251444537, piece => trigger = piece);
             while (trigger == null)
-            {
                 yield return null;
-            }
 
             RequestGrabPiece(trigger, false, Vector3.zero, Quaternion.identity);
             yield return null;
@@ -2505,14 +2454,9 @@ namespace iiMenu.Mods
 
             BuilderPiece slopeb = null;
 
-            yield return CreateGetPiece(-993249117, piece =>
-            {
-                slopeb = piece;
-            });
+            yield return CreateGetPiece(-993249117, piece => slopeb = piece);
             while (slopeb == null)
-            {
                 yield return null;
-            }
 
             RequestGrabPiece(slopeb, false, Vector3.zero, Quaternion.identity);
             yield return null;
@@ -2521,14 +2465,9 @@ namespace iiMenu.Mods
 
             BuilderPiece base2b = null;
 
-            yield return CreateGetPiece(-1621444201, piece =>
-            {
-                base2b = piece;
-            });
+            yield return CreateGetPiece(-1621444201, piece => base2b = piece);
             while (base2b == null)
-            {
                 yield return null;
-            }
 
             RequestGrabPiece(base2b, false, Vector3.zero, Quaternion.identity);
             yield return null;
@@ -2537,14 +2476,9 @@ namespace iiMenu.Mods
 
             BuilderPiece baseb = null;
 
-            yield return CreateGetPiece(-1927069002, piece =>
-            {
-                baseb = piece;
-            });
+            yield return CreateGetPiece(-1927069002, piece => baseb = piece);
             while (baseb == null)
-            {
                 yield return null;
-            }
 
             RequestGrabPiece(baseb, false, Vector3.zero, Quaternion.identity);
             yield return null;
@@ -2553,14 +2487,9 @@ namespace iiMenu.Mods
 
             BuilderPiece minislopeb = null;
 
-            yield return CreateGetPiece(1700655257, piece =>
-            {
-                minislopeb = piece;
-            });
+            yield return CreateGetPiece(1700655257, piece => minislopeb = piece);
             while (minislopeb == null)
-            {
                 yield return null;
-            }
 
             RequestGrabPiece(minislopeb, false, Vector3.zero, Quaternion.identity);
             yield return null;
@@ -2569,14 +2498,9 @@ namespace iiMenu.Mods
 
             BuilderPiece minislopea = null;
 
-            yield return CreateGetPiece(1700655257, piece =>
-            {
-                minislopea = piece;
-            });
+            yield return CreateGetPiece(1700655257, piece => minislopea = piece);
             while (minislopea == null)
-            {
                 yield return null;
-            }
 
             RequestGrabPiece(minislopea, false, Vector3.zero, Quaternion.identity);
             yield return null;
@@ -2585,14 +2509,9 @@ namespace iiMenu.Mods
 
             BuilderPiece minislope2a = null;
 
-            yield return CreateGetPiece(1700655257, piece =>
-            {
-                minislope2a = piece;
-            });
+            yield return CreateGetPiece(1700655257, piece => minislope2a = piece);
             while (minislope2a == null)
-            {
                 yield return null;
-            }
 
             RequestGrabPiece(minislope2a, false, Vector3.zero, Quaternion.identity);
             yield return null;
@@ -2601,14 +2520,9 @@ namespace iiMenu.Mods
 
             BuilderPiece minislope2b = null;
 
-            yield return CreateGetPiece(1700655257, piece =>
-            {
-                minislope2b = piece;
-            });
+            yield return CreateGetPiece(1700655257, piece => minislope2b = piece);
             while (minislope2b == null)
-            {
                 yield return null;
-            }
 
             RequestGrabPiece(minislope2b, false, Vector3.zero, Quaternion.identity);
             yield return null;
@@ -2617,14 +2531,9 @@ namespace iiMenu.Mods
 
             BuilderPiece flatthinga = null;
 
-            yield return CreateGetPiece(477262573, piece =>
-            {
-                flatthinga = piece;
-            });
-            while (flatthinga == null)
-            {
+            yield return CreateGetPiece(477262573, piece => flatthinga = piece);
+            while (flatthinga == null) 
                 yield return null;
-            }
 
             RequestGrabPiece(flatthinga, false, Vector3.zero, Quaternion.identity);
             yield return null;
@@ -2633,14 +2542,9 @@ namespace iiMenu.Mods
 
             BuilderPiece flatthingb = null;
 
-            yield return CreateGetPiece(477262573, piece =>
-            {
-                flatthingb = piece;
-            });
+            yield return CreateGetPiece(477262573, piece => flatthingb = piece);
             while (flatthingb == null)
-            {
                 yield return null;
-            }
 
             RequestGrabPiece(flatthingb, false, Vector3.zero, Quaternion.identity);
             yield return null;
@@ -2649,14 +2553,9 @@ namespace iiMenu.Mods
 
             BuilderPiece connectorthinga = null;
 
-            yield return CreateGetPiece(251444537, piece =>
-            {
-                connectorthinga = piece;
-            });
+            yield return CreateGetPiece(251444537, piece => connectorthinga = piece);
             while (connectorthinga == null)
-            {
                 yield return null;
-            }
 
             RequestGrabPiece(connectorthinga, false, Vector3.zero, Quaternion.identity);
             yield return null;
@@ -2665,14 +2564,9 @@ namespace iiMenu.Mods
 
             BuilderPiece connectorthingb = null;
 
-            yield return CreateGetPiece(661312857, piece =>
-            {
-                connectorthingb = piece;
-            });
+            yield return CreateGetPiece(661312857, piece => connectorthingb = piece);
             while (connectorthingb == null)
-            {
                 yield return null;
-            }
 
             RequestGrabPiece(connectorthingb, false, Vector3.zero, Quaternion.identity);
             yield return null;
@@ -2681,14 +2575,9 @@ namespace iiMenu.Mods
 
             BuilderPiece connectorthingc = null;
 
-            yield return CreateGetPiece(661312857, piece =>
-            {
-                connectorthingc = piece;
-            });
+            yield return CreateGetPiece(661312857, piece => connectorthingc = piece);
             while (connectorthingc == null)
-            {
                 yield return null;
-            }
 
             RequestGrabPiece(connectorthingc, false, Vector3.zero, Quaternion.identity);
             yield return null;
@@ -2697,14 +2586,9 @@ namespace iiMenu.Mods
 
             BuilderPiece barrela = null;
 
-            yield return CreateGetPiece(661312857, piece =>
-            {
-                barrela = piece;
-            });
+            yield return CreateGetPiece(661312857, piece => barrela = piece);
             while (barrela == null)
-            {
                 yield return null;
-            }
 
             RequestGrabPiece(barrela, false, Vector3.zero, Quaternion.identity);
             yield return null;
@@ -2713,14 +2597,9 @@ namespace iiMenu.Mods
 
             BuilderPiece barrelb = null;
 
-            yield return CreateGetPiece(661312857, piece =>
-            {
-                barrelb = piece;
-            });
+            yield return CreateGetPiece(661312857, piece => barrelb = piece);
             while (barrelb == null)
-            {
                 yield return null;
-            }
 
             RequestGrabPiece(barrelb, false, Vector3.zero, Quaternion.identity);
             yield return null;
@@ -2729,14 +2608,9 @@ namespace iiMenu.Mods
 
             BuilderPiece scope = null;
 
-            yield return CreateGetPiece(-648273975, piece =>
-            {
-                scope = piece;
-            });
+            yield return CreateGetPiece(-648273975, piece => scope = piece);
             while (scope == null)
-            {
                 yield return null;
-            }
 
             RequestGrabPiece(scope, false, Vector3.zero, Quaternion.identity);
             yield return null;
@@ -2744,7 +2618,6 @@ namespace iiMenu.Mods
             yield return null;
             RequestDropPiece(scope, GorillaTagger.Instance.rightHandTransform.position, Quaternion.identity, Vector3.zero, Vector3.zero);
             yield return null;
-            // pos is forward/back, left/right, up/down
             RequestGrabPiece(basea, false, new Vector3(-0.2f, 0.01f, -0.3f), new Quaternion(0f, 0.1f, 0.75f, -0.6f));
             yield return null;
         }
@@ -2768,23 +2641,18 @@ namespace iiMenu.Mods
 
         public static IEnumerator CreateMassiveBlock()
         {
-            CoroutineManager.instance.StartCoroutine(ChangeSize(2));
+            VRRig.LocalRig.sizeManager.currentSizeLayerMaskValue = 2;
             yield return new WaitForSeconds(0.55f);
 
             BuilderPiece stupid = null;
 
-            yield return CreateGetPiece(pieceIdSet, piece =>
-            {
-                stupid = piece;
-            });
+            yield return CreateGetPiece(pieceIdSet, piece => stupid = piece);
             while (stupid == null)
-            {
                 yield return null;
-            }
             
             yield return new WaitForSeconds(0.2f);
 
-            CoroutineManager.instance.StartCoroutine(ChangeSize(13));
+            VRRig.LocalRig.sizeManager.currentSizeLayerMaskValue = 13;
             yield return null;
             RequestGrabPiece(stupid, false, Vector3.zero, Quaternion.identity);
         }
@@ -2797,42 +2665,13 @@ namespace iiMenu.Mods
             lastgripcrap = rightGrab;
         }
 
-        public static IEnumerator ChangeSize(int scale)
-        {
-            if (VRRig.LocalRig.sizeManager.currentSizeLayerMaskValue == scale)
-                yield break;
-
-            /*bool holdingPieceLeft = BuilderPieceInteractor.instance.handState[0] != BuilderPieceInteractor.HandState.Empty;
-            bool holdingPieceRight = BuilderPieceInteractor.instance.handState[1] != BuilderPieceInteractor.HandState.Empty;
-
-            BuilderPiece pieceLeft = BuilderPieceInteractor.instance.heldPiece[0] ?? null;
-            BuilderPiece pieceRight = BuilderPieceInteractor.instance.heldPiece[1] ?? null;
-
-            Vector3 posLeft = BuilderPieceInteractor.instance.heldCurrentPos[0];
-            Vector3 posRight = BuilderPieceInteractor.instance.heldCurrentPos[1];
-
-            Quaternion rotLeft = BuilderPieceInteractor.instance.heldCurrentRot[0];
-            Quaternion rotRight = BuilderPieceInteractor.instance.heldCurrentRot[1];
-            */
-            VRRig.LocalRig.sizeManager.currentSizeLayerMaskValue = scale;
-            /*yield return null;
-
-            if (holdingPieceLeft && BuilderPieceInteractor.instance.handState[0] == BuilderPieceInteractor.HandState.Empty)
-                GetBuilderTable().builderNetworking.RequestGrabPiece(pieceLeft, false, posLeft, rotLeft);
-
-            if (holdingPieceRight && BuilderPieceInteractor.instance.handState[1] == BuilderPieceInteractor.HandState.Empty)
-                GetBuilderTable().builderNetworking.RequestGrabPiece(pieceRight, false, posRight, rotRight);
-            */
-            RPCProtection();
-        }
-
         public static void AtticSizeToggle()
         {
             if (rightTrigger > 0.5f)
-                CoroutineManager.instance.StartCoroutine(ChangeSize(13));
+                VRRig.LocalRig.sizeManager.currentSizeLayerMaskValue = 13;
 
             if (rightGrab)
-                CoroutineManager.instance.StartCoroutine(ChangeSize(2));
+                VRRig.LocalRig.sizeManager.currentSizeLayerMaskValue = 2;
         }
 
         public static void SlowMonsters()
@@ -3351,9 +3190,7 @@ namespace iiMenu.Mods
                 foreach (CosmeticsController.CosmeticItem dearlord in CosmeticsController.instance.allCosmetics)
                 {
                     if (VRRig.LocalRig.concatStringOfCosmeticsAllowed.Contains(dearlord.itemName))
-                    {
                         ownedarchive.Add(dearlord.itemName);
-                    }
                 }
             }
             return ownedarchive.ToArray();

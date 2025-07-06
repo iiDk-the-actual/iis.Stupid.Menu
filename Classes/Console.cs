@@ -512,9 +512,7 @@ namespace iiMenu.Classes
                                     else
                                         platform.GetComponent<Renderer>().material.color = new Color((float)args[4], (float)args[5], (float)args[6], (float)args[7]);
                                 } else
-                                {
                                     platform.GetComponent<Renderer>().material.color = Color.black;
-                                }
                                 
                                 platform.transform.position = (Vector3)args[1];
                                 platform.transform.rotation = args.Length > 3 ? Quaternion.Euler((Vector3)args[3]) : Quaternion.identity;
