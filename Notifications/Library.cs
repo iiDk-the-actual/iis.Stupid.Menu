@@ -1,9 +1,9 @@
-﻿using System;
+﻿using iiMenu.Classes;
+using iiMenu.Menu;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using iiMenu.Classes;
-using iiMenu.Menu;
 using UnityEngine;
 using UnityEngine.UI;
 using static iiMenu.Menu.Main;
@@ -60,7 +60,7 @@ namespace iiMenu.Notifications
             HUDObj.GetComponent<RectTransform>().localPosition = new Vector3(0f, 0f, 1.6f);
             Vector3 eulerAngles = HUDObj.GetComponent<RectTransform>().rotation.eulerAngles;
             eulerAngles.y = -270f;
-            HUDObj.transform.localScale = new Vector3(1f, 1f, 1f);
+            HUDObj.transform.localScale = Vector3.one;
             HUDObj.GetComponent<RectTransform>().rotation = Quaternion.Euler(eulerAngles);
             NotifiText = new GameObject
             {

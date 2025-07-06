@@ -1,9 +1,9 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using BepInEx;
+﻿using BepInEx;
 using BepInEx.Logging;
 using iiMenu.Patches;
+using System;
+using System.IO;
+using System.Linq;
 using UnityEngine;
 
 namespace iiMenu

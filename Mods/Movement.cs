@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using BepInEx;
+﻿using BepInEx;
 using ExitGames.Client.Photon;
 using GorillaLocomotion;
 using GorillaLocomotion.Climbing;
@@ -12,9 +9,11 @@ using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using TagEffects;
 using UnityEngine;
-using UnityEngine.Animations.Rigging;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 using static iiMenu.Classes.RigManager;
@@ -3081,7 +3080,7 @@ namespace iiMenu.Mods
             GTPlayer.Instance.transform.localScale = new Vector3(armlength, armlength, armlength);
 
         public static void DisableSteamLongArms() =>
-            GTPlayer.Instance.transform.localScale = new Vector3(1f, 1f, 1f);
+            GTPlayer.Instance.transform.localScale = Vector3.one;
 
         public static void MultipliedLongArms()
         {
