@@ -3695,7 +3695,7 @@ namespace iiMenu.Mods
         public static void GrabPlayerInfo()
         {
             string text = "Room: " + PhotonNetwork.CurrentRoom.Name;
-            foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
+            foreach (Player player in PhotonNetwork.PlayerList)
             {
                 float r = 0f;
                 float g = 0f;
