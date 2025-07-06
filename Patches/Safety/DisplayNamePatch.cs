@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using HarmonyLib;
+﻿using HarmonyLib;
 using PlayFab;
 using PlayFab.ClientModels;
+using System;
+using System.Collections.Generic;
 using static iiMenu.Menu.Main;
 
 namespace iiMenu.Patches.Safety
