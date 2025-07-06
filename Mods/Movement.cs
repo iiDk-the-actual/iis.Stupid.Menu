@@ -2857,7 +2857,7 @@ namespace iiMenu.Mods
                     bodyCollider.transform.localScale = new Vector3(0.3f, 0.55f, 0.3f);
                     UnityEngine.Object.Destroy(bodyCollider, Time.deltaTime * 2);
 
-                    for (int i = 0; i < bones.Count<int>(); i += 2)
+                    for (int i = 0; i < bones.Count(); i += 2)
                     {
                         pointA = vrrig.mainSkin.bones[bones[i]].position;
                         pointB = vrrig.mainSkin.bones[bones[i + 1]].position;
@@ -3326,7 +3326,7 @@ namespace iiMenu.Mods
 
         public static void DisableWater()
         {
-            foreach (WaterVolume waterVolume in UnityEngine.Object.FindObjectsOfType<WaterVolume>())
+            foreach (WaterVolume waterVolume in GetAllType<WaterVolume>())
             {
                 GameObject v = waterVolume.gameObject;
                 v.layer = LayerMask.NameToLayer("TransparentFX");
@@ -3335,7 +3335,7 @@ namespace iiMenu.Mods
 
         public static void SolidWater()
         {
-            foreach (WaterVolume waterVolume in UnityEngine.Object.FindObjectsOfType<WaterVolume>())
+            foreach (WaterVolume waterVolume in GetAllType<WaterVolume>())
             {
                 GameObject v = waterVolume.gameObject;
                 v.layer = LayerMask.NameToLayer("Default");
@@ -3344,7 +3344,7 @@ namespace iiMenu.Mods
 
         public static void FixWater()
         {
-            foreach (WaterVolume waterVolume in UnityEngine.Object.FindObjectsOfType<WaterVolume>())
+            foreach (WaterVolume waterVolume in GetAllType<WaterVolume>())
             {
                 GameObject v = waterVolume.gameObject;
                 v.layer = LayerMask.NameToLayer("Water");
@@ -3356,7 +3356,7 @@ namespace iiMenu.Mods
         {
             if (airSwimPart == null)
             {
-                airSwimPart = UnityEngine.Object.Instantiate<GameObject>(GetObject("Environment Objects/LocalObjects_Prefab/ForestToBeach/ForestToBeach_Prefab_V4/CaveWaterVolume"));
+                airSwimPart = UnityEngine.Object.Instantiate(GetObject("Environment Objects/LocalObjects_Prefab/ForestToBeach/ForestToBeach_Prefab_V4/CaveWaterVolume"));
                 airSwimPart.transform.localScale = new Vector3(5f, 5f, 5f);
                 airSwimPart.GetComponent<Renderer>().enabled = false;
             }
@@ -3370,18 +3370,11 @@ namespace iiMenu.Mods
         public static void DisableAirSwim()
         {
             if (airSwimPart != null)
-            {
                 UnityEngine.Object.Destroy(airSwimPart);
-            }
         }
 
-        public static void FastSwim()
-        {
-            if (GTPlayer.Instance.InWater)
-            {
-                GTPlayer.Instance.gameObject.GetComponent<Rigidbody>().velocity *= 1.069f;
-            }
-        }
+        public static void SetSwimSpeed(float speed = 3f) =>
+            GTPlayer.Instance.swimmingParams.swimmingVelocityOutOfWaterDrainRate = speed;
 
         public static void PiggybackGun()
         {
