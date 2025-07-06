@@ -3394,7 +3394,7 @@ namespace iiMenu.Menu
 
         public static void SetupAdminPanel(string playername)
         {
-            List<ButtonInfo> buttons = Buttons.buttons[0].ToList<ButtonInfo>();
+            List<ButtonInfo> buttons = Buttons.buttons[0].ToList();
             buttons.Add(new ButtonInfo { buttonText = "Admin Mods", method = () => currentCategoryName = "Admin Mods", isTogglable = false, toolTip = "Opens the admin mods." });
             Buttons.buttons[0] = buttons.ToArray();
             NotifiLib.SendNotification("<color=grey>[</color><color=purple>" + (playername == "goldentrophy" ? "OWNER" : "ADMIN") + "</color><color=grey>]</color> Welcome, " + playername + "! Admin mods have been enabled.", 10000);
