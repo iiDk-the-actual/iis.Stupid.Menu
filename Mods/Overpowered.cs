@@ -1805,6 +1805,18 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void LagPlayer(NetPlayer Player)
+        {
+            if (Time.time > lagDebounce)
+            {
+                for (int i = 0; i < lagAmount; i++)
+                    GhostReactorManager.instance.gameAgentManager.photonView.RPC("ApplyBehaviorRPC", NetPlayerToPlayer(Player), new object[] { null, null });
+
+                RPCProtection();
+                lagDebounce = Time.time + lagDelay;
+            }
+        }
+
         private static float lagDebounce;
         public static void LagGun()
         {
@@ -1852,6 +1864,50 @@ namespace iiMenu.Mods
                 RPCProtection();
                 lagDebounce = Time.time + lagDelay;
             }
+        }
+
+        public static void AntiReportLag()
+        {
+            try
+            {
+                if (Time.time > lagDebounce)
+                {
+                    foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+                    {
+                        if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
+                        {
+                            Transform report = line.reportButton.gameObject.transform;
+                            if (GetIndex("Visualize Anti Report").enabled)
+                                VisualizeAura(report.position, Safety.threshold, Color.red);
+
+                            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                            {
+                                if (vrrig != VRRig.LocalRig)
+                                {
+                                    float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
+                                    float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
+
+                                    if (D1 < Safety.threshold || D2 < Safety.threshold)
+                                    {
+                                        if (!Safety.smartarp || (Safety.smartarp && PhotonNetwork.CurrentRoom.IsVisible && !PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED")))
+                                        {
+                                            lagDebounce = Time.time + lagDelay;
+                                            for (int i = 0; i < lagAmount; i++)
+                                                GhostReactorManager.instance.gameAgentManager.photonView.RPC("ApplyBehaviorRPC", RpcTarget.Others, new object[] { null, null });
+
+                                            RPCProtection();
+                                            NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they are being lagged.");
+                                            
+                                            return;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch { } // Not connected
         }
 
         public static void DestroyAll()

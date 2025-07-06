@@ -418,6 +418,12 @@ namespace iiMenu.Mods
                     overlapText = $"Destroy {player.NickName}",
                     method =() => Overpowered.DestroyPlayer(player),
                     toolTip = $"Stops all new players from seeing {player.NickName}."
+                },
+                new ButtonInfo {
+                    buttonText = "Lag Player",
+                    overlapText = $"Lag {player.NickName}",
+                    method =() => Overpowered.LagPlayer(player),
+                    toolTip = $"Lags {player.NickName}."
                 }
             };
 
