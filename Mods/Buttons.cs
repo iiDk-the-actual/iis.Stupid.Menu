@@ -488,7 +488,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Solid Water", enableMethod =() => Movement.SolidWater(), disableMethod =() => Movement.FixWater(), toolTip = "Makes the water solid in the beach map." },
                 new ButtonInfo { buttonText = "Disable Water", enableMethod =() => Movement.DisableWater(), disableMethod =() => Movement.FixWater(), toolTip = "Disables the water in the beach map." },
                 new ButtonInfo { buttonText = "Air Swim", method =() => Movement.AirSwim(), disableMethod =() => Movement.DisableAirSwim(), toolTip = "Puts you in a block of water, letting you swim in the air." },
-                new ButtonInfo { buttonText = "Fast Swim", method =() => Movement.FastSwim(), toolTip = "Whenever you are in water, your velocity is slowly multiplied." },
+                new ButtonInfo { buttonText = "Fast Swim", method =() => Movement.SetSwimSpeed(10f), disableMethod =() => Movement.SetSwimSpeed(), toolTip = "Lets you swim faster in water." },
                 new ButtonInfo { buttonText = "Disable Air", overlapText = "Disable Wind Barriers", enableMethod =() => { Patches.ForcePatch.enabled = true; GetObject("Environment Objects/LocalObjects_Prefab/Forest/Environment/Forest_ForceVolumes/").SetActive(false); }, disableMethod =() => { Patches.ForcePatch.enabled = false; GetObject("Environment Objects/LocalObjects_Prefab/Forest/Environment/Forest_ForceVolumes/").SetActive(true); }, toolTip = "Disables the wind barriers in every map." },
 
                 new ButtonInfo { buttonText = "Ghost <color=grey>[</color><color=green>A</color><color=grey>]</color>", method =() => Movement.Ghost(), disableMethod =() => Movement.EnableRig(), toolTip = "Keeps your rig still when holding <color=green>A</color>."},
