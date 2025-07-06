@@ -5427,6 +5427,10 @@ jgs \_   _/ |Oo\
 
         public static int tindex = 1;
 
+        public static bool SSNotifSounds;
+
+        public static bool beta_snowballknocklocal;
+
         public static bool lastHitL;
         public static bool lastHitR;
         public static bool lastHitLP;

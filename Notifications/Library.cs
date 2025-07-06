@@ -191,6 +191,10 @@ namespace iiMenu.Notifications
                 clearTime = notificationDecayTime;
             
             if (!disableNotifications)
+                if (Menu.Main.SSNotifSounds)
+                {
+                    Mods.Spammers.Sound.SendSoundSpamOther(148);
+                }
             {
                 try
                 {

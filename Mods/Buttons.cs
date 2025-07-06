@@ -137,6 +137,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Clear Notifications on Disconnect", enableMethod =() => clearNotificationsOnDisconnect = true, disableMethod =() => clearNotificationsOnDisconnect = false, toolTip = "Clears all notifications on disconnect."},
                 new ButtonInfo { buttonText = "Hide Notifications on Camera", overlapText = "Streamer Mode Notifications", toolTip = "Makes notifications only render in VR."},
                 new ButtonInfo { buttonText = "Stack Notifications", enableMethod =() => stackNotifications = true, disableMethod =() => stackNotifications = false, toolTip = "Stacks repeated notifications into one notification."},
+                new ButtonInfo { buttonText = "Server Sided Notification Sounds", enableMethod =() => SSNotifSounds = true, disableMethod =() => SSNotifSounds = false, toolTip = "Makes a tick sound (similar to the quest tick) for others when you get a notification."},
                 new ButtonInfo { buttonText = "Narrate Notifications", enableMethod =() => narrateNotifications = true, disableMethod =() => narrateNotifications = false, toolTip = "Narrates all notifications with text to speech."},
                 
                 new ButtonInfo { buttonText = "Disable Notifications", enableMethod =() => disableNotifications = true, disableMethod =() => disableNotifications = false, toolTip = "Disables all notifications."},
@@ -227,6 +228,9 @@ namespace iiMenu.Menu
                 
                 new ButtonInfo { buttonText = "Include Hand Velocity", toolTip = "Adds the hand velocity to the projectile velocity." },
                 
+                new ButtonInfo { buttonText = "Anti Self Snowball Knockback", enableMethod =() => Menu.Main.beta_snowballknocklocal = true, disableMethod =() => Menu.Main.beta_snowballknocklocal = false, isTogglable = true, toolTip = "Prevents you from getting knocked back by your own projectiles." },
+
+
                 new ButtonInfo { buttonText = "Above Players", toolTip = "Makes projectiles go above players." },
                 new ButtonInfo { buttonText = "Rain Projectiles", toolTip = "Makes projectiles fall around you like rain." },
                 
@@ -365,7 +369,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Change Identity on Disconnect <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method =() => Safety.ChangeIdentityRegularOnDisconnect(), toolTip = "When you leave, your name and color will be set to something a regular player would have."},
                 new ButtonInfo { buttonText = "Change Identity on Disconnect <color=grey>[</color><color=green>Child</color><color=grey>]</color>", method =() => Safety.ChangeIdentityMinigamesOnDisconnect(), toolTip = "When you leave, your name and color will be set to something a kid would have."},
 
-                new ButtonInfo { buttonText = "FPS Spoof", method =() => Safety.FPSSpoof(), disableMethod =() => Patches.FPSPatch.enabled = false, toolTip = "Makes your FPS appear to be 90 for other players and the competitive bot."},
+                new ButtonInfo { buttonText = "FPS Spoof", method =() => Safety.FPSSpoof(88, 92), disableMethod =() => Patches.FPSPatch.enabled = false, toolTip = "Makes your FPS appear to be 90 for other players and the competitive bot."},
                 new ButtonInfo { buttonText = "Name Spoof", enableMethod =() => Patches.ColorPatch.nameSpoofEnabled = true, disableMethod =() => Patches.ColorPatch.nameSpoofEnabled = false, toolTip = "Changes your name on the leaderboard to something random, but not on your rig."},
                 new ButtonInfo { buttonText = "Color Spoof", enableMethod =() => Patches.ColorPatch.patchEnabled = true, disableMethod =() => Patches.ColorPatch.patchEnabled = false, toolTip = "Makes your color appear different to every player."},
 
@@ -770,7 +774,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Anti Grab", enableMethod =() => Patches.GrabPatch.enabled = true, disableMethod =() => Patches.GrabPatch.enabled = false, toolTip = "Prevents players from picking you up in guardian."},
                 new ButtonInfo { buttonText = "Anti Sting", enableMethod =() => Patches.BeesPatch.enabled = true, disableMethod =() => Patches.BeesPatch.enabled = false, toolTip = "Prevents the bees from making you float."},
-                new ButtonInfo { buttonText = "Anti Knockback", enableMethod =() => Patches.KnockbackPatch.enabled = true, disableMethod =() => Patches.KnockbackPatch.enabled = false, toolTip = "Prevents players from knocking you back with snowballs."},
+                new ButtonInfo { buttonText = "Anti Knockback", enableMethod =() => Overpowered.BetaPreventProjectile(true), disableMethod =() =>Overpowered.BetaPreventProjectile(false), toolTip = "Prevents players from knocking you back with snowballs."},
 
                 new ButtonInfo { buttonText = "Large Snowballs", enableMethod =() => Patches.EnablePatch.enabled = true, disableMethod =() => Patches.EnablePatch.enabled = false, toolTip = "Makes snowballs by default the largest size."},
                 new ButtonInfo { buttonText = "Fast Snowballs", method =() => Fun.FastSnowballs(), disableMethod =() => Fun.FixSnowballs(), toolTip = "Makes snowballs go really fast when thrown."},

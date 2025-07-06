@@ -278,6 +278,29 @@ namespace iiMenu.Mods.Spammers
             }
         }
 
+        public static void SendSoundSpamOther(int soundId)
+        {
+            if (rightGrab)
+            {
+                if (Time.time > soundSpamDelay)
+                    soundSpamDelay = Time.time + 0.05f;
+                else
+                    return;
+
+                if (PhotonNetwork.InRoom)
+                {
+                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.Others, new object[]{
+                        soundId,
+                        false,
+                        999999f
+                    });
+                    RPCProtection();
+                }
+                else
+                    VRRig.LocalRig.PlayHandTapLocal(soundId, false, 999999f);
+            }
+        }
+
         public static void RandomSoundSpam() =>
             SoundSpam(Random.Range(0, GorillaLocomotion.GTPlayer.Instance.materialData.Count));
 

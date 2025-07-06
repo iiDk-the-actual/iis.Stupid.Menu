@@ -1,17 +1,18 @@
-using System;
-using System.Collections;
-using System.Linq;
 using ExitGames.Client.Photon;
 using GorillaExtensions;
 using GorillaGameModes;
 using GorillaLocomotion.Gameplay;
 using GorillaTagScripts;
+using HarmonyLib;
 using iiMenu.Classes;
 using iiMenu.Notifications;
 using iiMenu.Patches;
 using Oculus.Platform;
 using Photon.Pun;
 using Photon.Realtime;
+using System;
+using System.Collections;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static iiMenu.Classes.RigManager;
@@ -27,6 +28,21 @@ namespace iiMenu.Mods
                 NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>You are master client.</color>");
             else
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+        }
+
+        public static void BetaPreventProjectile(bool status)
+        {
+            if (Menu.Main.beta_snowballknocklocal)
+            {
+                if (status)
+                {
+                    Patches.KnockbackPatch.enabled = true;
+                }
+                else
+                {
+                    Patches.KnockbackPatch.enabled = false;
+                }
+            }
         }
 
         public static void SetGuardianTarget(NetPlayer target)
@@ -892,6 +908,7 @@ namespace iiMenu.Mods
         }
 
         private static float snowballDelay = 0f;
+
         public static void SnowballAirstrikeGun()
         {
             if (GetGunInput(false))
@@ -902,45 +919,44 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true) && Time.time > snowballDelay)
                 {
+                    BetaPreventProjectile(true);
                     BetaSpawnSnowball(NewPointer.transform.position + new Vector3(0f, 50f, 0f), Vector3.zero, 50f, 0);
                     snowballDelay = Time.time + snowballSpawnDelay;
+                    BetaPreventProjectile(false);
                 }
             }
         }
 
         public static void SnowballRain()
         {
-            if (rightTrigger > 0.5f)
+            if (rightTrigger > 0.5f && Time.time > snowballDelay)
             {
-                if (Time.time > snowballDelay)
-                {
-                    BetaSpawnSnowball(VRRig.LocalRig.transform.position + new Vector3(UnityEngine.Random.Range(-5f, 5f), 5f, UnityEngine.Random.Range(-5f, 5f)), Vector3.zero, 1f, 0);
-                    snowballDelay = Time.time + snowballSpawnDelay;
-                }
+                BetaPreventProjectile(true);
+                BetaSpawnSnowball(VRRig.LocalRig.transform.position + new Vector3(UnityEngine.Random.Range(-5f, 5f), 5f, UnityEngine.Random.Range(-5f, 5f)), Vector3.zero, 1f, 0);
+                snowballDelay = Time.time + snowballSpawnDelay;
+                BetaPreventProjectile(false);
             }
         }
 
         public static void SnowballHail()
         {
-            if (rightTrigger > 0.5f)
+            if (rightTrigger > 0.5f && Time.time > snowballDelay)
             {
-                if (Time.time > snowballDelay)
-                {
-                    BetaSpawnSnowball(VRRig.LocalRig.transform.position + new Vector3(UnityEngine.Random.Range(-5f, 5f), 5f, UnityEngine.Random.Range(-5f, 5f)), new Vector3(0f, -50f, 0f), 3f, 0);
-                    snowballDelay = Time.time + snowballSpawnDelay;
-                }
+                BetaPreventProjectile(true);
+                BetaSpawnSnowball(VRRig.LocalRig.transform.position + new Vector3(UnityEngine.Random.Range(-5f, 5f), 5f, UnityEngine.Random.Range(-5f, 5f)), new Vector3(0f, -50f, 0f), 3f, 0);
+                snowballDelay = Time.time + snowballSpawnDelay;
+                BetaPreventProjectile(false);
             }
         }
 
         public static void SnowballOrbit()
         {
-            if (rightTrigger > 0.5f)
+            if (rightTrigger > 0.5f && Time.time > snowballDelay)
             {
-                if (Time.time > snowballDelay)
-                {
-                    BetaSpawnSnowball(GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos((float)Time.frameCount / 30f), 2f, MathF.Sin((float)Time.frameCount / 30f)), new Vector3(0f, 50f, 0f), 5f, 0);
-                    snowballDelay = Time.time + snowballSpawnDelay;
-                }
+                BetaPreventProjectile(true);
+                BetaSpawnSnowball(GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos((float)Time.frameCount / 30f), 2f, MathF.Sin((float)Time.frameCount / 30f)), new Vector3(0f, 50f, 0f), 5f, 0);
+                snowballDelay = Time.time + snowballSpawnDelay;
+                BetaPreventProjectile(false);
             }
         }
 
@@ -954,8 +970,10 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true) && Time.time > snowballDelay)
                 {
+                    BetaPreventProjectile(true);
                     BetaSpawnSnowball(NewPointer.transform.position + new Vector3(0f, 1f, 0f), new Vector3(0f, 30f, 0f), 10f, 0);
                     snowballDelay = Time.time + snowballSpawnDelay;
+                    BetaPreventProjectile(false);
                 }
             }
         }
@@ -964,6 +982,7 @@ namespace iiMenu.Mods
         {
             if ((rightGrab || Mouse.current.leftButton.isPressed) && Time.time > snowballDelay)
             {
+                BetaPreventProjectile(true);
                 Vector3 velocity = GorillaTagger.Instance.rightHandTransform.transform.forward * ShootStrength * 5f;
                 if (Mouse.current.leftButton.isPressed)
                 {
@@ -973,9 +992,9 @@ namespace iiMenu.Mods
                     velocity.Normalize();
                     velocity *= ShootStrength * 2f;
                 }
-
                 BetaSpawnSnowball(GorillaTagger.Instance.rightHandTransform.position, velocity, 5f, 0);
                 snowballDelay = Time.time + snowballSpawnDelay;
+                BetaPreventProjectile(false);
             }
         }
 
@@ -983,6 +1002,7 @@ namespace iiMenu.Mods
         {
             if (GetGunInput(false))
             {
+                BetaPreventProjectile(false);
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
@@ -996,6 +1016,7 @@ namespace iiMenu.Mods
                 }
                 if (GetGunInput(true))
                 {
+                    BetaPreventProjectile(true);
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
@@ -1018,12 +1039,14 @@ namespace iiMenu.Mods
         {
             if (GetGunInput(false))
             {
+                BetaPreventProjectile(false);
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > snowballDelay)
                 {
+                    BetaPreventProjectile(true);
                     BetaSpawnSnowball(NewPointer.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, 0f, 0f), 15f, 0);
                     snowballDelay = Time.time + snowballSpawnDelay;
                 }
@@ -1034,12 +1057,14 @@ namespace iiMenu.Mods
         {
             if (GetGunInput(false))
             {
+                BetaPreventProjectile(false);
                 var GunData = RenderGun();
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true) && Time.time > snowballDelay)
                 {
+                    BetaPreventProjectile(true);
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {

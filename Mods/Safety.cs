@@ -146,6 +146,36 @@ namespace iiMenu.Mods
             GetIndex("Change Anti Report Distance").overlapText = "Change Anti Report Distance <color=grey>[</color><color=green>" + names[antireportrangeindex] + "</color><color=grey>]</color>";
         }
 
+        /* Scrapped this for another day
+        public static void ChangeFPSSpoofAmount()
+        {
+            string[] names = new string[]
+            {
+                "0",
+                "15",
+                "30",
+                "45",
+                "60",
+                "90",
+                "120",
+                "144",
+                "255",
+            };
+            int[] distances = new int[]
+            {
+                0,
+                15,
+                30,
+                45,
+                60,
+                90,
+                120,
+                144,
+                255
+            };
+        }
+        */
+
         public static bool smartarp;
         public static int buttonClickTime;
         public static string buttonClickPlayer;
@@ -531,10 +561,10 @@ namespace iiMenu.Mods
             lastinlobbyagain = PhotonNetwork.InRoom;
         }
 
-        public static void FPSSpoof()
+        public static void FPSSpoof(int min, int max)
         {
             Patches.FPSPatch.enabled = true;
-            Patches.FPSPatch.spoofFPSValue = Random.Range(88, 92);
+            Patches.FPSPatch.spoofFPSValue = Random.Range(min, max);
         }
 
         public static string[] names = new string[]
