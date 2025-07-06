@@ -3079,6 +3079,13 @@ namespace iiMenu.Menu
             if (disableGunPointer)
                 PointerRenderer.enabled = false;
 
+            if (GunParticles && (GetGunInput(true) || gunLocked))
+            {
+                GameObject Particle = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                Particle.transform.position = EndPosition;
+                Particle.AddComponent<CustomParticle>();
+            }
+
             Destroy(NewPointer.GetComponent<Collider>());
             Destroy(NewPointer, Time.deltaTime);
 
@@ -5131,6 +5138,7 @@ jgs \_   _/ |Oo\
         public static bool disableGunLine;
         public static bool SwapGunHand;
         public static bool GunSounds;
+        public static bool GunParticles;
         public static int gunVariation;
         public static int GunDirection;
         public static int GunLineQuality = 50;
