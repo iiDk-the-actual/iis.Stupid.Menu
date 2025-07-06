@@ -262,13 +262,11 @@ namespace iiMenu.Mods
                 {
                     bool playerIsTagged = PlayerIsTagged(VRRig.LocalRig);
                     if (playerIsTagged && !lastWasTagged)
-                    {
                         endTime = Time.time - startTime;
-                    }
+
                     if (!playerIsTagged && lastWasTagged)
-                    {
                         startTime = Time.time;
-                    }
+                    
                     lastWasTagged = playerIsTagged;
 
                     GameObject go = new GameObject("Lbl");
@@ -291,9 +289,7 @@ namespace iiMenu.Mods
                     UnityEngine.Object.Destroy(go, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
                 }
                 else
-                {
                     startTime = Time.time;
-                }
             }
         }
 
@@ -567,9 +563,7 @@ namespace iiMenu.Mods
                 {
                     Transform child = triggers.transform.GetChild(i);
                     if (child.gameObject.activeSelf)
-                    {
                         VisualizeCube(child.position, child.rotation, child.localScale, Color.red);
-                    }
                 } catch { }
             }
         }
@@ -583,9 +577,7 @@ namespace iiMenu.Mods
                 {
                     Transform child = triggers.transform.GetChild(i);
                     if (child.gameObject.activeSelf)
-                    {
                         VisualizeCube(child.position, child.rotation, child.localScale, GetBGColor(0f));
-                    }
                 } catch { }
             }
         }
@@ -861,9 +853,7 @@ namespace iiMenu.Mods
                             if (tagger != null)
                                 nameTag.GetComponent<TextMesh>().text = "Tagged by " + tagger?.NickName;
                         } else
-                        {
                             nameTag.GetComponent<TextMesh>().text = "";
-                        }
                             
                         nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
                         nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
@@ -3148,9 +3138,7 @@ namespace iiMenu.Mods
                 LineRenderer line = GetLineRender(hiddenOnCamera);
 
                 if (transparentTheme)
-                {
                     lineColor.a = 0.5f;
-                }
 
                 line.startColor = lineColor;
                 line.endColor = lineColor;
@@ -3195,9 +3183,7 @@ namespace iiMenu.Mods
                     LineRenderer line = GetLineRender(hiddenOnCamera);
 
                     if (transparentTheme)
-                    {
                         lineColor.a = 0.5f;
-                    }
 
                     line.startColor = lineColor;
                     line.endColor = lineColor;
@@ -3213,9 +3199,7 @@ namespace iiMenu.Mods
                     LineRenderer line = GetLineRender(hiddenOnCamera);
 
                     if (transparentTheme)
-                    {
                         lineColor.a = 0.5f;
-                    }
 
                     line.startColor = lineColor;
                     line.endColor = lineColor;
@@ -3452,9 +3436,7 @@ namespace iiMenu.Mods
                         foreach (Transform secondTransform in transform.gameObject.GetComponentsInChildren<Transform>())
                         {
                             if (secondTransform.parent == transform)
-                            {
                                 secondTransform.gameObject.GetComponent<TextMesh>().text = finalString;
-                            }
                         }
                     }
                 }
@@ -3532,9 +3514,7 @@ namespace iiMenu.Mods
                         foreach (Transform secondTransform in transform.gameObject.GetComponentsInChildren<Transform>())
                         {
                             if (secondTransform.parent == transform)
-                            {
                                 secondTransform.gameObject.GetComponent<TextMesh>().text = finalString;
-                            }
                         }
                     }
                 }
@@ -3611,9 +3591,7 @@ namespace iiMenu.Mods
                             foreach (Transform secondTransform in transform.gameObject.GetComponentsInChildren<Transform>())
                             {
                                 if (secondTransform.parent == transform)
-                                {
                                     secondTransform.gameObject.GetComponent<TextMesh>().text = finalString;
-                                }
                             }
                         }
                     }
@@ -3653,9 +3631,7 @@ namespace iiMenu.Mods
                             foreach (Transform secondTransform in transform.gameObject.GetComponentsInChildren<Transform>())
                             {
                                 if (secondTransform.parent == transform)
-                                {
                                     secondTransform.gameObject.GetComponent<TextMesh>().text = finalString;
-                                }
                             }
                         }
                     }
@@ -3674,9 +3650,7 @@ namespace iiMenu.Mods
         private static TextMesh GetNameTag(bool hideOnCamera)
         {
             if (nameTagHolder == null)
-            {
                 nameTagHolder = new GameObject("NameTag_Holder");
-            }
 
             TextMesh finalTextMesh = null;
 

@@ -170,9 +170,7 @@ namespace iiMenu.Mods
         public static void SpamTagAll()
         {
             if (!NetworkSystem.Instance.IsMasterClient)
-            {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-            }
             else
             {
                 if (Time.time > spamtagdelay)
@@ -472,12 +470,9 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget) && PlayerIsTagged(gunTarget))
                     {
                         if (PhotonNetwork.LocalPlayer.IsMasterClient)
-                        {
                             RemoveInfected(RigManager.GetPlayerFromVRRig(gunTarget));
-                        } else
-                        {
+                        else
                             NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-                        }
                     }
                 }
             }

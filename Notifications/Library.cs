@@ -173,9 +173,8 @@ namespace iiMenu.Notifications
                     ModText.color = GetIndex("Swap GUI Colors").enabled ? textColor : GetBGColor(0f);
                 }
                 else
-                {
                     ModText.text = "";
-                }
+                
                 if (lowercaseMode)
                 {
                     ModText.text = ModText.text.ToLower();

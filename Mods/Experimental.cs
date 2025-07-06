@@ -323,9 +323,7 @@ namespace iiMenu.Mods
                         });
                     }
                     else
-                    {
                         VRRig.LocalRig.PlayHandTapLocal(89, true, 999999f);
-                    }
                 }
             }
 
@@ -626,9 +624,8 @@ namespace iiMenu.Mods
         public static void DisableAdminMenuUserTags()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in nametags)
-            {
                 UnityEngine.Object.Destroy(nametag.Value);
-            }
+
             nametags.Clear();
         }
 

@@ -222,9 +222,7 @@ namespace iiMenu.Mods
                     string[] PluginInfo = GetPluginInfo(Plugin.Value);
                     AddButton(33, new ButtonInfo { buttonText = Plugin.Key, overlapText = (disabledPlugins.Contains(Plugin.Key) ? "<color=grey>[</color><color=red>OFF</color><color=grey>]</color>" : "<color=grey>[</color><color=green>ON</color><color=grey>]</color>") + " " + PluginInfo[0], method = () => TogglePlugin(Plugin), isTogglable = false, toolTip = PluginInfo[1] });
                     if (!disabledPlugins.Contains(Plugin.Key))
-                    {
                         EnablePlugin(Plugin.Value);
-                    }
                 }
                 catch (Exception e) { LogManager.Log("Error with enabling plugin " + Plugin.Key + ": " + e.ToString()); }
             }
@@ -2519,9 +2517,7 @@ namespace iiMenu.Mods
                     GorillaTagger.Instance.rigidbody.transform.position = closePosition;
                 GorillaTagger.Instance.rigidbody.velocity = new Vector3(0f, 0f, 0f);
             } else
-            {
                 closePosition = Vector3.zero;
-            }
         }
 
         public static bool currentmentalstate = false;
@@ -2555,9 +2551,7 @@ namespace iiMenu.Mods
                     if (buttonArray.Length > 0)
                     {
                         for (int i = 0; i < buttonArray.Length; i++)
-                        {
                             Buttons.buttons[0] = Buttons.buttons[0].Concat(new[] { buttonArray[i] }).ToArray();
-                        }
 
                         Array.Clear(buttonArray, 0, buttonArray.Length);
                     }
@@ -2608,11 +2602,6 @@ namespace iiMenu.Mods
                 File.WriteAllText($"{PluginInfo.BaseDirectory}/iiMenu_CustomMenuName.txt", "Your Text Here");
             
             customMenuName = File.ReadAllText($"{PluginInfo.BaseDirectory}/iiMenu_CustomMenuName.txt");
-        }
-
-        public static void NoCustomMenuName()
-        {
-            doCustomName = false;
         }
 
         // Thanks to kingofnetflix for inspiration and support with voice recognition
@@ -2831,9 +2820,7 @@ namespace iiMenu.Mods
 
                 string toAppend = Bind.Key;
                 foreach (string modName in Bind.Value)
-                {
                     toAppend += seperator + modName;
-                }
 
                 bindingtext += toAppend;
             }
