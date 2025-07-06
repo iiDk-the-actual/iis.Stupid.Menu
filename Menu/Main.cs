@@ -187,6 +187,12 @@ namespace iiMenu.Menu
                                         trail.endWidth = 0f;
                                         trail.minVertexDistance = 0.05f;
 
+                                        if (smoothLines)
+                                        {
+                                            trail.numCapVertices = 10;
+                                            trail.numCornerVertices = 5;
+                                        }
+
                                         trail.material.shader = Shader.Find("Sprites/Default");
                                         trail.time = 2f;
                                     } catch { }
