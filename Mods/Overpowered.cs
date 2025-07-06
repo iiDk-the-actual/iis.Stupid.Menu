@@ -1781,12 +1781,20 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void LagPlayer(NetPlayer Player)
+        public static void LagPlayer(object general)
         {
             if (Time.time > lagDebounce)
             {
-                for (int i = 0; i < lagAmount; i++)
-                    GhostReactorManager.instance.gameAgentManager.photonView.RPC("ApplyBehaviorRPC", NetPlayerToPlayer(Player), new object[] { null, null });
+                if (general is NetPlayer player)
+                {
+                    for (int i = 0; i < lagAmount; i++)
+                        GhostReactorManager.instance.gameAgentManager.photonView.RPC("ApplyBehaviorRPC", NetPlayerToPlayer(player), new object[] { null, null });
+                }
+                else if (general is RpcTarget target)
+                {
+                    for (int i = 0; i < lagAmount; i++)
+                        GhostReactorManager.instance.gameAgentManager.photonView.RPC("ApplyBehaviorRPC", target, new object[] { null, null });
+                }
 
                 RPCProtection();
                 lagDebounce = Time.time + lagDelay;
@@ -1803,16 +1811,8 @@ namespace iiMenu.Mods
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
-                {
-                    if (Time.time > lagDebounce)
-                    {
-                        for (int i = 0; i < lagAmount; i++)
-                            GhostReactorManager.instance.gameAgentManager.photonView.RPC("ApplyBehaviorRPC", NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)), new object[] { null, null });
-                        
-                        RPCProtection();
-                        lagDebounce = Time.time + lagDelay;
-                    }
-                }
+                    LagPlayer(GetPlayerFromVRRig(lockTarget));
+
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
@@ -1830,52 +1830,37 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void LagAll()
-        {
-            if (Time.time > lagDebounce)
-            {
-                for (int i = 0; i < lagAmount; i++)
-                    GhostReactorManager.instance.gameAgentManager.photonView.RPC("ApplyBehaviorRPC", RpcTarget.Others, new object[] { null, null });
-
-                RPCProtection();
-                lagDebounce = Time.time + lagDelay;
-            }
-        }
+        public static void LagAll() => LagPlayer(RpcTarget.Others);
 
         public static void AntiReportLag()
         {
             try
             {
-                if (Time.time > lagDebounce)
+                foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
                 {
-                    foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+                    if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
                     {
-                        if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
+                        Transform report = line.reportButton.gameObject.transform;
+                        if (GetIndex("Visualize Anti Report").enabled)
+                            VisualizeAura(report.position, Safety.threshold, Color.red);
+
+                        foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                         {
-                            Transform report = line.reportButton.gameObject.transform;
-                            if (GetIndex("Visualize Anti Report").enabled)
-                                VisualizeAura(report.position, Safety.threshold, Color.red);
-
-                            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                            if (vrrig != VRRig.LocalRig)
                             {
-                                if (vrrig != VRRig.LocalRig)
+                                float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
+                                float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
+
+                                if (D1 < Safety.threshold || D2 < Safety.threshold)
                                 {
-                                    float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
-                                    float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
-
-                                    if (D1 < Safety.threshold || D2 < Safety.threshold)
+                                    if (!Safety.smartarp || (Safety.smartarp && PhotonNetwork.CurrentRoom.IsVisible && !PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED")))
                                     {
-                                        if (!Safety.smartarp || (Safety.smartarp && PhotonNetwork.CurrentRoom.IsVisible && !PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED")))
-                                        {
-                                            lagDebounce = Time.time + lagDelay;
-                                            for (int i = 0; i < lagAmount; i++)
-                                                GhostReactorManager.instance.gameAgentManager.photonView.RPC("ApplyBehaviorRPC", RpcTarget.Others, new object[] { null, null });
+                                        LagPlayer(GetPlayerFromVRRig(vrrig));
 
-                                            RPCProtection();
-                                            NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they are being lagged.");
+                                        RPCProtection();
+                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they are being lagged.");
                                             
-                                            return;
-                                        }
+                                        return;
                                     }
                                 }
                             }
