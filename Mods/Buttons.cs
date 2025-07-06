@@ -583,9 +583,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Custom Skybox Color", enableMethod =() => Visuals.DoCustomSkyboxColor(), method =() => Visuals.CustomSkyboxColor(), disableMethod =() => Visuals.UnCustomSkyboxColor(), toolTip = "Changes the skybox color to match the menu."},
 
-                new ButtonInfo { buttonText = "Green Screen", method =() => Visuals.GreenScreen(), toolTip = "Puts a green screen in city." },
-                new ButtonInfo { buttonText = "Blue Screen", method =() => Visuals.BlueScreen(), toolTip = "Puts a blue screen in city." },
-                new ButtonInfo { buttonText = "Red Screen", method =() => Visuals.RedScreen(), toolTip = "Puts a red screen in city." },
+                new ButtonInfo { buttonText = "Draw Gun", method =() => Visuals.DrawGun(), toolTip = "Lets you draw on whatever your hand desires." },
 
                 new ButtonInfo { buttonText = "Velocity Label", method =() => Visuals.VelocityLabel(), toolTip = "Puts text on your right hand, showing your velocity."},
                 new ButtonInfo { buttonText = "Nearby Label", method =() => Visuals.NearbyTaggerLabel(), toolTip = "Puts text on your left hand, showing you the distance of the nearest tagger."},

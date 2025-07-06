@@ -125,15 +125,58 @@ namespace iiMenu.Mods
             oldSkyMat = sky.GetComponent<Renderer>().material;
         }
 
-        public static void CustomSkyboxColor()
-        {
+        public static void CustomSkyboxColor() =>
             GetObject("Environment Objects/LocalObjects_Prefab/Standard Sky").GetComponent<Renderer>().material = OrangeUI;
-        }
 
         public static void UnCustomSkyboxColor()
         {
             GameObject sky = GetObject("Environment Objects/LocalObjects_Prefab/Standard Sky");
             sky.GetComponent<Renderer>().material = oldSkyMat;
+        }
+
+        public static TrailRenderer trailRenderer;
+        public static void DrawGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun(GorillaLocomotion.GTPlayer.Instance.locomotionEnabledLayers);
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+                
+                if (trailRenderer == null)
+                {
+                    GameObject trailHolder = new GameObject("iiMenu_DrawGunTrail");
+
+                    trailRenderer = trailHolder.AddComponent<TrailRenderer>();
+                    trailRenderer.startWidth = 0.1f;
+                    trailRenderer.endWidth = 0.1f;
+
+                    trailRenderer.minVertexDistance = 0.05f;
+
+                    trailRenderer.material.shader = Shader.Find("Sprites/Default");
+                    trailRenderer.time = float.PositiveInfinity;
+                    
+                    trailRenderer.startColor = Color.black;
+                    trailRenderer.endColor = Color.black;
+
+                    if (smoothLines)
+                    {
+                        trailRenderer.numCapVertices = 10;
+                        trailRenderer.numCornerVertices = 5;
+                    }
+                }
+
+                trailRenderer.emitting = GetGunInput(true);
+                trailRenderer.gameObject.transform.position = NewPointer.transform.position;
+            }
+        }
+
+        public static void DisableDrawGun()
+        {
+            if (trailRenderer != null)
+                UnityEngine.Object.Destroy(trailRenderer.gameObject);
+
+            trailRenderer = null;
         }
 
         public static bool PerformanceVisuals;
@@ -156,68 +199,6 @@ namespace iiMenu.Mods
         }
         public static float PerformanceVisualDelay;
         public static int DelayChangeStep;
-
-
-        private static void FakeScreenColor(Color bgColor)
-        {
-            if (PerformanceVisuals)
-            {
-                if (Time.time < PerformanceVisualDelay)
-                {
-                    if (Time.frameCount != DelayChangeStep)
-                        return;
-                }
-                else
-                {
-                    PerformanceVisualDelay = Time.time + PerformanceModeStep;
-                    DelayChangeStep = Time.frameCount;
-                }
-            }
-
-            GameObject a = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            UnityEngine.Object.Destroy(a.GetComponent<BoxCollider>());
-            a.transform.position = new Vector3(-54.0404f, 16.2321f, -124.5915f);
-            a.transform.localScale = new Vector3(14.0131f, 0.0347f, 15.8359f);
-            a.GetComponent<Renderer>().material.color = bgColor;
-            UnityEngine.Object.Destroy(a, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime * 2f);
-
-            a = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            UnityEngine.Object.Destroy(a.GetComponent<BoxCollider>());
-            a.transform.position = new Vector3(-52.7365f, 17.5233f, -122.333f);
-            a.transform.localScale = new Vector3(14.0131f, 6.4907f, 0.0305f);
-            a.GetComponent<Renderer>().material.color = bgColor;
-            UnityEngine.Object.Destroy(a, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime * 2f);
-
-            a = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            UnityEngine.Object.Destroy(a.GetComponent<BoxCollider>());
-            a.transform.position = new Vector3(-51.6623f, 17.5233f, -125.9925f);
-            a.transform.localScale = new Vector3(15.5363f, 6.4907f, 0.0305f);
-            a.transform.rotation = Quaternion.Euler(0f, 270f, 0f);
-            a.GetComponent<Renderer>().material.color = bgColor;
-            UnityEngine.Object.Destroy(a, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime * 2f);
-
-            a = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            UnityEngine.Object.Destroy(a.GetComponent<BoxCollider>());
-            a.transform.position = new Vector3(-54.0606f, 18.8161f, -124.6264f);
-            a.transform.localScale = new Vector3(14.0131f, 0.0347f, 15.5983f);
-            a.GetComponent<Renderer>().material.color = bgColor;
-            UnityEngine.Object.Destroy(a, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime * 2f);
-        }
-
-        public static void GreenScreen()
-        {
-            FakeScreenColor(Color.green);
-        }
-
-        public static void BlueScreen()
-        {
-            FakeScreenColor(Color.blue);
-        }
-
-        public static void RedScreen()
-        {
-            FakeScreenColor(Color.red);
-        }
 
         public static void VelocityLabel()
         {
@@ -2846,6 +2827,12 @@ namespace iiMenu.Mods
 
                     trail.minVertexDistance = 0.05f;
 
+                    if (smoothLines)
+                    {
+                        trail.numCapVertices = 10;
+                        trail.numCornerVertices = 5;
+                    }
+
                     trail.material.shader = Shader.Find("GUI/Text Shader");
                     trail.time = 10f;
 
@@ -2902,6 +2889,12 @@ namespace iiMenu.Mods
                     trail = rig.head.rigTarget.gameObject.GetOrAddComponent<TrailRenderer>();
 
                     trail.minVertexDistance = 0.05f;
+
+                    if (smoothLines)
+                    {
+                        trail.numCapVertices = 10;
+                        trail.numCornerVertices = 5;
+                    }
 
                     trail.material.shader = Shader.Find("GUI/Text Shader");
                     trail.time = 10f;
@@ -2966,6 +2959,12 @@ namespace iiMenu.Mods
                     trail = rig.head.rigTarget.gameObject.GetOrAddComponent<TrailRenderer>();
 
                     trail.minVertexDistance = 0.05f;
+
+                    if (smoothLines)
+                    {
+                        trail.numCapVertices = 10;
+                        trail.numCornerVertices = 5;
+                    }
 
                     trail.material.shader = Shader.Find("GUI/Text Shader");
                     trail.time = 10f;
