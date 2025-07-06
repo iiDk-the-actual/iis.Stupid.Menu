@@ -9,6 +9,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -1087,6 +1088,8 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void FlingPlayer(VRRig player) => FlingPlayer(GetPlayerFromVRRig(player));
+
         public static void SnowballFlingGun()
         {
             if (GetGunInput(false))
@@ -1096,13 +1099,8 @@ namespace iiMenu.Mods
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
-                {
-                    if (Time.time > snowballDelay)
-                    {
-                        BetaSpawnSnowball(lockTarget.transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(UnityEngine.Random.Range(-1f, 1f), 0f, UnityEngine.Random.Range(-1f, 1f)).normalized / 1.7f, new Vector3(0f, -500f, 0f), 5f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)));
-                        snowballDelay = Time.time + snowballSpawnDelay;
-                    }
-                }
+                    FlingPlayer(lockTarget);
+
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
@@ -1122,12 +1120,8 @@ namespace iiMenu.Mods
 
         public static void SnowballFlingAll()
         {
-            if (rightTrigger > 0.5f && Time.time > snowballDelay)
-            {
-                snowballDelay = Time.time + snowballSpawnDelay;
-                Player target = NetPlayerToPlayer(GetPlayerFromVRRig(GetCurrentTargetRig(0.5f)));
-                BetaSpawnSnowball(GetVRRigFromPlayer(target).transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(UnityEngine.Random.Range(-1f, 1f), 0f, UnityEngine.Random.Range(-1f, 1f)).normalized / 1.7f, new Vector3(0f, -500f, 0f), 5f, 2, target);
-            }
+            if (rightTrigger > 0.5f)
+                FlingPlayer(GetCurrentTargetRig(0.5f));
         }
 
         public static void SnowballFlingVerticalGun()
@@ -1398,7 +1392,7 @@ namespace iiMenu.Mods
                 ExitGames.Client.Photon.Hashtable rpcData = new ExitGames.Client.Photon.Hashtable
                 {
                     { 0, photonView.ViewID },
-                    { 2, (int)(PhotonNetwork.ServerTimestamp + -int.MaxValue) },
+                    { 2, PhotonNetwork.ServerTimestamp },
                     { 3, method },
                     { 4, parameters }
                 };
@@ -1760,27 +1754,6 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void DestroyGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (GetGunInput(true) && Time.time > kgDebounce)
-                {
-                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
-                    {
-                        NetPlayer player = GetPlayerFromVRRig(gunTarget);
-                        PhotonNetwork.OpRemoveCompleteCacheOfPlayer(player.ActorNumber);
-                        kgDebounce = Time.time + 0.5f;
-                    }
-                }
-            }
-        }
-
         public static void LagPlayer(object general)
         {
             if (Time.time > lagDebounce)
@@ -1794,6 +1767,10 @@ namespace iiMenu.Mods
                 {
                     for (int i = 0; i < lagAmount; i++)
                         GhostReactorManager.instance.gameAgentManager.photonView.RPC("ApplyBehaviorRPC", target, new object[] { null, null });
+                } else if (general is int[] targets)
+                {
+                    for (int i = 0; i < lagAmount; i++)
+                        SpecialTargetRPC(GhostReactorManager.instance.gameAgentManager.photonView, "ApplyBehaviorRPC", targets, new object[] { null, null });
                 }
 
                 RPCProtection();
@@ -1836,6 +1813,8 @@ namespace iiMenu.Mods
         {
             try
             {
+                List<int> actors = new List<int> { };
+
                 foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
                 {
                     if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
@@ -1855,26 +1834,45 @@ namespace iiMenu.Mods
                                 {
                                     if (!Safety.smartarp || (Safety.smartarp && PhotonNetwork.CurrentRoom.IsVisible && !PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED")))
                                     {
-                                        LagPlayer(GetPlayerFromVRRig(vrrig));
-
-                                        RPCProtection();
+                                        actors.Add(GetPlayerFromVRRig(vrrig).ActorNumber);
                                         NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they are being lagged.");
-                                            
-                                        return;
                                     }
                                 }
                             }
                         }
                     }
                 }
+
+                if (actors.Count > 0)
+                    LagPlayer(actors.ToArray());
             }
             catch { } // Not connected
+        }
+
+        public static void DestroyGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true) && Time.time > kgDebounce)
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        DestroyPlayer(NetPlayerToPlayer(GetPlayerFromVRRig(gunTarget)));
+                        kgDebounce = Time.time + 0.5f;
+                    }
+                }
+            }
         }
 
         public static void DestroyAll()
         {
             foreach (Player player in PhotonNetwork.PlayerListOthers)
-                PhotonNetwork.OpRemoveCompleteCacheOfPlayer(player.ActorNumber);
+                DestroyPlayer(player);
         }
 
         public static void DestroyPlayer(NetPlayer player) =>
