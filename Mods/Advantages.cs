@@ -515,6 +515,7 @@ namespace iiMenu.Mods
                     AddInfected(v);
                 
                 GetIndex("Tag All").enabled = false;
+                NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Everyone is tagged!</color>");
             }
             else
             {
@@ -645,49 +646,20 @@ namespace iiMenu.Mods
 
         public static void TagBot()
         {
-            if (rightSecondary)
-            {
-                GetIndex("Tag Bot").enabled = false;
-            }
             if (PhotonNetwork.InRoom)
             {
                 if (!PlayerIsTagged(VRRig.LocalRig))
                 {
-                    bool isInfectedPlayers = false;
-                    foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-                    {
-                        if (PlayerIsTagged(vrrig))
-                        {
-                            isInfectedPlayers = true;
-                            break;
-                        }
-                    }
-                    if (isInfectedPlayers)
-                    {
-                        GetIndex("Tag Self").method.Invoke();
-                        GetIndex("Tag All").enabled = false;
-                    }
+                    if (InfectedList().Count > 0)
+                        TagSelf();
                 }
                 else
                 {
-                    bool isInfectedPlayers = false;
-                    foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-                    {
-                        if (!PlayerIsTagged(vrrig))
-                        {
-                            isInfectedPlayers = true;
-                            break;
-                        }
-                    }
-                    if (isInfectedPlayers)
-                    {
-                        GetIndex("Tag All").enabled = true;
-                    }
+                    if (InfectedList().Count != PhotonNetwork.PlayerList.Length)
+                        TagAll();
                 }
             } else
-            {
                 VRRig.LocalRig.enabled = true;
-            }
         }
 
         public static void NoTagOnJoin()
