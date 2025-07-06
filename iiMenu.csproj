@@ -47,9 +47,6 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <Reference Include="Assembly-CSharp" Publicize="true">
-      <HintPath>$(GameAssemblyPath)\Assembly-CSharp.dll</HintPath>
-    </Reference>
     <Reference Include="0Harmony">
       <HintPath>$(BepInExAssemblyPath)\0Harmony.dll</HintPath>
     </Reference>
@@ -61,6 +58,9 @@
     </Reference>
     <Reference Include="andywiecko.BurstTriangulator">
       <HintPath>$(GameAssemblyPath)\andywiecko.BurstTriangulator.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>$(GameAssemblyPath)\Assembly-CSharp-firstpass.dll</HintPath>
@@ -257,11 +257,11 @@
     <Reference Include="Photon3Unity3D">
       <HintPath>$(GameAssemblyPath)\Photon3Unity3D.dll</HintPath>
     </Reference>
-    <Reference Include="PhotonRealtime" Publicize="true">
-      <HintPath>$(GameAssemblyPath)\PhotonRealtime.dll</HintPath>
+    <Reference Include="PhotonRealtime">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\PhotonRealtime.dll</HintPath>
     </Reference>
-    <Reference Include="PhotonUnityNetworking" Publicize="true">
-      <HintPath>$(GameAssemblyPath)\PhotonUnityNetworking.dll</HintPath>
+    <Reference Include="PhotonUnityNetworking">
+      <HintPath>D:\SteamLibrary\steamapps\common\Gorilla Tag\Gorilla Tag_Data\Managed\PhotonUnityNetworking.dll</HintPath>
     </Reference>
     <Reference Include="PhotonUnityNetworking.Utilities">
       <HintPath>$(GameAssemblyPath)\PhotonUnityNetworking.Utilities.dll</HintPath>
