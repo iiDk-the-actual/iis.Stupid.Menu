@@ -292,17 +292,19 @@ namespace iiMenu.Mods.Spammers
         private static bool squeakToggle = false;
         public static void SqueakSoundSpam()
         {
-            squeakToggle = !squeakToggle;
             if (Time.time > soundSpamDelay)
-                SoundSpam(squeakToggle ? 75 : 76);
+                squeakToggle = !squeakToggle;
+            
+            SoundSpam(squeakToggle ? 75 : 76);
         }
 
         private static bool sirenToggle = false;
         public static void SirenSoundSpam()
         {
-            sirenToggle = !sirenToggle;
             if (Time.time > soundSpamDelay)
-                SoundSpam(sirenToggle ? 48 : 50);
+                sirenToggle = !sirenToggle;
+
+            SoundSpam(sirenToggle ? 48 : 50);
         }
 
 
