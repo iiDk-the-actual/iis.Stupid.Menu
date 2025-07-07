@@ -1,4 +1,4 @@
-﻿using GorillaLocomotion;
+using GorillaLocomotion;
 using GorillaNetworking;
 using iiMenu.Classes;
 using iiMenu.Notifications;
@@ -484,7 +484,10 @@ namespace iiMenu.Mods
 
         public static void ChangeIdentityRegular()
         {
-            ChangeName(names[Random.Range(0, names.Length - 1)]);
+            string prefix = Random.Range(0, 3) == 0 ? namePrefix[Random.Range(0, namePrefix.Length - 1)] : "";
+            string suffix = Random.Range(0, 3) == 0 ? nameSuffix[Random.Range(0, nameSuffix.Length - 1)] : "";
+            string fName = prefix + names[Random.Range(0, names.Length - 1)] + suffix;
+            ChangeName( fName.Length > 12 ? fName[..12] : fName );
 
             Color[] colors = new Color[]
             {
@@ -537,17 +540,25 @@ namespace iiMenu.Mods
             Patches.FPSPatch.spoofFPSValue = Random.Range(88, 92);
         }
 
+        public static string[] namePrefix = new string[]
+        {
+            "EPIC", "EPIK", "REAL", "NOT", "SILLY", "LITTLE", "BIG", "MAYBE", "MONKE", "SUB2", "OG"
+        };
+        public static string[] nameSuffix = new string[]
+        {
+            "GT", "VR", "LOL", "GTVR", "FAN", "XD", "LOL", "MONK", "YT"
+        };
         public static string[] names = new string[]
         {
-            "0", "SHIBAGT", "PBBV", "J3VU", "BEES", "NAMO", "MANGO", "FROSTY", "FRISH", "LITTLETIMMY",
-            "SILLYBILLY", "TIMMY", "MINIGAMES", "MINIGAMESKID", "JMANCURLY", "VMT", "ELLIOT", "POLAR", "3CLIPCE", "GORILLAVR",
-            "GORILLAVRGT", "GORILLAGTVR", "GORILLAGT", "SHARKPUPPET", "DUCKY", "EDDIE", "EDDY", "RAKZZ", "CASEOH", "SKETCH",
+            "0", "SHIBA", "PBBV", "J3VU", "BEES", "NAMO", "MANGO", "FROSTY", "FRISH", "LEMMING", 
+            "BILLY", "TIMMY", "MINIGAMES", "JMANCURLY", "VMT", "ELLIOT", "POLAR", "3CLIPCE", "DAISY09",
+            "SHARKPUPPET", "DUCKY", "EDDIE", "EDDY", "RAKZZ", "CASEOH", "SKETCH", "SKY", "RETURN",
             "WATERMELON", "CRAZY", "MONK", "MONKE", "MONKI", "MONKEY", "MONKIY", "GORILL", "GOORILA", "GORILLA",
             "REDBERRY", "FOX", "RUFUS", "TTT", "TTTPIG", "PPPTIG", "K9", "BTC", "TICKLETIPJR", "BANANA",
             "PEANUTBUTTER", "GHOSTMONKE", "STATUE", "TURBOALLEN", "NOVA", "LUNAR", "MOON", "SUN", "RANDOM", "UNKNOWN",
             "GLITCH", "BUG", "ERROR", "CODE", "HACKER", "MODDER", "INVIS", "INVISIBLE", "TAGGER", "UNTAGGED",
             "BLUE", "RED", "GREEN", "PURPLE", "YELLOW", "BLACK", "WHITE", "BROWN", "CYAN", "GRAY",
-            "GREY", "OG", "BANNED", "LEMON", "PLUSHIE", "CHEETO", "TIKTOK", "YOUTUBE", "TWITCH", "DISCORD"
+            "GREY", "BANNED", "LEMON", "PLUSHIE", "CHEETO", "TIKTOK", "YOUTUBE", "TWITCH", "DISCORD"
         };
 
         public static string targetRank = "High";
