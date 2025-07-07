@@ -3337,7 +3337,7 @@ namespace iiMenu.Menu
                 }
             }
 
-            AudioClip clip = LoadSoundFromFile($"TTS{(narratorName == "Default" ? "" : narratorName)}");
+            AudioClip clip = LoadSoundFromFile($"TTS{(narratorName == "Default" ? "" : narratorName)}/{fileName}");
             Play2DAudio(clip, buttonClickVolume / 10f);
         }
 
@@ -3389,7 +3389,7 @@ namespace iiMenu.Menu
                 }
             }
 
-            Sound.PlayAudio($"TTS{(narratorName == "Default" ? "" : narratorName)}");
+            Sound.PlayAudio($"TTS{(narratorName == "Default" ? "" : narratorName)}/{fileName}");
         }
 
         public static void SetupAdminPanel(string playername)
