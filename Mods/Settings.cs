@@ -2343,34 +2343,34 @@ namespace iiMenu.Mods
             GetIndex("Change Notification Time").overlapText = "Change Notification Time <color=grey>[</color><color=green>" + (notificationDecayTime / 1000).ToString() + "</color><color=grey>]</color>";
         }
 
+        public static Dictionary<string, string> notificationSounds = new Dictionary<string, string>
+        {
+            { "None",        "none" },
+            { "Pop",         "pop" },
+            { "Ding",        "ding" },
+            { "Twitter",     "twitter" },
+            { "Discord",     "discord" },
+            { "Whatsapp",    "whatsapp" },
+            { "Grindr",      "grindr" },
+            { "iOS",         "ios" },
+            { "XP Notify",   "xpnotify" },
+            { "XP Ding",     "xpding" },
+            { "XP Error",    "xperror" },
+            { "Roblox Bass", "robloxbass" },
+            { "Oculus",      "oculus" }
+        };
         public static void ChangeNotificationSound(bool positive = true)
         {
-            string[] notificationSoundNames = new string[]
-            {
-                "None",
-                "Pop",
-                "Ding",
-                "Twitter",
-                "Discord",
-                "Whatsapp",
-                "Grindr",
-                "iOS",
-                "XP Notify",
-                "XP Ding",
-                "XP Error",
-                "Roblox Bass"
-            };
-
             if (positive)
                 notificationSoundIndex++;
             else
                 notificationSoundIndex--;
 
-            notificationSoundIndex %= notificationSoundNames.Length;
+            notificationSoundIndex %= notificationSounds.Keys.Count;
             if (notificationSoundIndex < 0)
-                notificationSoundIndex = notificationSoundNames.Length - 1;
+                notificationSoundIndex = notificationSounds.Keys.Count - 1;
 
-            GetIndex("Change Notification Sound").overlapText = "Change Notification Sound <color=grey>[</color><color=green>" + notificationSoundNames[notificationSoundIndex] + "</color><color=grey>]</color>";
+            GetIndex("Change Notification Sound").overlapText = "Change Notification Sound <color=grey>[</color><color=green>" + notificationSounds.Keys.ToArray()[notificationSoundIndex] + "</color><color=grey>]</color>";
         }
 
         public static void ChangeNarrationVoice(bool positive = true)
