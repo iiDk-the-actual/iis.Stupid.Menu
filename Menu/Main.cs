@@ -462,7 +462,7 @@ namespace iiMenu.Menu
                                                 searchText = searchText[..^1];
                                                 break;
                                             case KeyCode.Escape:
-                                                Toggle("Global Search");
+                                                Toggle("Search");
                                                 break;
                                             case KeyCode.Return:
                                                 List<ButtonInfo> searchedMods = new List<ButtonInfo> { };
@@ -4537,9 +4537,9 @@ namespace iiMenu.Menu
                 if (doButtonsVibrate)
                     GorillaTagger.Instance.StartVibration(rightHand, GorillaTagger.Instance.tagHapticStrength / 2f, GorillaTagger.Instance.tagHapticDuration / 2f);
 
-                if (dynamicSounds && (buttonText == "PreviousPage" || buttonText == "NextPage"))
+                if (exclusivePageSounds && (buttonText == "PreviousPage" || buttonText == "NextPage"))
                 {
-                    var url = buttonText == "PreviousPage" ? "prev.wav" : buttonText == "NextPage" ? "next.wav" : null;
+                    string url = buttonText == "PreviousPage" ? "prev.wav" : buttonText == "NextPage" ? "next.wav" : null;
                     if (url != null) Play2DAudio(LoadSoundFromURL($"https://github.com/iiDk-the-actual/ModInfo/raw/main/{url}", url), buttonClickVolume / 10f);
                     return;
                 }
@@ -5187,6 +5187,7 @@ jgs \_   _/ |Oo\
         public static bool scaleWithPlayer;
 
         public static bool dynamicSounds;
+        public static bool exclusivePageSounds;
         public static bool dynamicAnimations;
         public static bool dynamicGradients;
         public static bool horizontalGradients;
