@@ -4537,6 +4537,13 @@ namespace iiMenu.Menu
                 if (doButtonsVibrate)
                     GorillaTagger.Instance.StartVibration(rightHand, GorillaTagger.Instance.tagHapticStrength / 2f, GorillaTagger.Instance.tagHapticDuration / 2f);
 
+                if (dynamicSounds && (buttonText == "PreviousPage" || buttonText == "NextPage"))
+                {
+                    var url = buttonText == "PreviousPage" ? "prev.wav" : buttonText == "NextPage" ? "next.wav" : null;
+                    if (url != null) Play2DAudio(LoadSoundFromURL($"https://github.com/iiDk-the-actual/ModInfo/raw/main/{url}", url), buttonClickVolume / 10f);
+                    return;
+                }
+
                 if (buttonClickIndex <= 3 || buttonClickIndex == 11)
                 {
                     VRRig.LocalRig.PlayHandTapLocal(buttonClickSound, rightHand, buttonClickVolume / 10f);
