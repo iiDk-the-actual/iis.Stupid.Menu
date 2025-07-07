@@ -153,22 +153,24 @@ namespace iiMenu.Mods
             }
         }
 
+        public static float alwaysGuardianDelay;
         public static void AlwaysGuardian()
         {
             if (NetworkSystem.Instance.IsMasterClient)
             {
-                GorillaGuardianManager gman = (GorillaGuardianManager)GorillaGameManager.instance;
-                if (!gman.IsPlayerGuardian(PhotonNetwork.LocalPlayer))
+                GorillaGuardianManager guardianManager = (GorillaGuardianManager)GorillaGameManager.instance;
+                if (!guardianManager.IsPlayerGuardian(PhotonNetwork.LocalPlayer))
                     SetGuardianTarget(PhotonNetwork.LocalPlayer);
             }
             else
             {
+                GorillaGuardianManager guardianManager = (GorillaGuardianManager)GorillaGameManager.instance;
                 foreach (TappableGuardianIdol tgi in GetAllType<TappableGuardianIdol>())
                 {
                     if (!tgi.isChangingPositions)
                     {
-                        GorillaGuardianManager gman = (GorillaGuardianManager)GorillaGameManager.instance;
-                        if (!gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer)) // gzm.enabled && 
+                        GorillaGuardianZoneManager zoneManager = tgi.zoneManager;
+                        if (!guardianManager.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer) && zoneManager.IsZoneValid())
                         {
                             VRRig.LocalRig.enabled = false;
                             VRRig.LocalRig.transform.position = tgi.transform.position;
@@ -176,8 +178,12 @@ namespace iiMenu.Mods
                             VRRig.LocalRig.leftHand.rigTarget.transform.position = tgi.transform.position;
                             VRRig.LocalRig.rightHand.rigTarget.transform.position = tgi.transform.position;
 
-                            tgi.manager.photonView.RPC("SendOnTapRPC", RpcTarget.All, tgi.tappableId, UnityEngine.Random.Range(0.2f, 0.4f));
-                            RPCProtection();
+                            if (Time.time > alwaysGuardianDelay)
+                            {
+                                alwaysGuardianDelay = Time.time + (zoneManager._currentActivationTime >= zoneManager.requiredActivationTime - 0.6f ? 0f : 0.5f);
+                                tgi.manager.photonView.RPC("SendOnTapRPC", RpcTarget.All, tgi.tappableId, UnityEngine.Random.Range(0.2f, 0.4f));
+                                RPCProtection();
+                            }
                         }
                     }
                     else
