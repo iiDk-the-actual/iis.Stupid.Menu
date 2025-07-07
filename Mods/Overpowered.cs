@@ -1767,7 +1767,8 @@ namespace iiMenu.Mods
                 {
                     for (int i = 0; i < lagAmount; i++)
                         GhostReactorManager.instance.gameAgentManager.photonView.RPC("ApplyBehaviorRPC", target, new object[] { null, null });
-                } else if (general is int[] targets)
+                } 
+                else if (general is int[] targets)
                 {
                     for (int i = 0; i < lagAmount; i++)
                         SpecialTargetRPC(GhostReactorManager.instance.gameAgentManager.photonView, "ApplyBehaviorRPC", targets, new object[] { null, null });
