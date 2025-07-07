@@ -2179,8 +2179,10 @@ namespace iiMenu.Mods
             else
                 pageButtonType--;
 
-            pageButtonType %= 7;
-            if (pageButtonType < 0)
+            if (pageButtonType > 6)
+                pageButtonType = 1;
+
+            if (pageButtonType < 1)
                 pageButtonType = 6;
 
             if (pageButtonType == 1)
