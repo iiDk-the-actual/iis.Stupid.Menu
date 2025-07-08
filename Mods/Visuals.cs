@@ -681,7 +681,7 @@ namespace iiMenu.Mods
                     nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
                     nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
 
-                    nameTag.transform.localScale = Vector3.one * vrrig.scaleFactor;
+                    nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
                     nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
                     nameTag.transform.LookAt(Camera.main.transform.position);
@@ -734,7 +734,7 @@ namespace iiMenu.Mods
                         nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
                         nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
 
-                        nameTag.transform.localScale = Vector3.one * vrrig.scaleFactor;
+                        nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
                         nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
                         nameTag.transform.LookAt(Camera.main.transform.position);
@@ -788,7 +788,7 @@ namespace iiMenu.Mods
                         nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
                         nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
 
-                        nameTag.transform.localScale = Vector3.one * vrrig.scaleFactor;
+                        nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
                         nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
                         nameTag.transform.LookAt(Camera.main.transform.position);
@@ -845,7 +845,7 @@ namespace iiMenu.Mods
                         nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
                         nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
 
-                        nameTag.transform.localScale = Vector3.one * vrrig.scaleFactor;
+                        nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
                         nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
                         nameTag.transform.LookAt(Camera.main.transform.position);
@@ -909,7 +909,7 @@ namespace iiMenu.Mods
                         nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
                         nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
 
-                        nameTag.transform.localScale = Vector3.one * vrrig.scaleFactor;
+                        nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
 
                         nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
                         nameTag.transform.LookAt(Camera.main.transform.position);
