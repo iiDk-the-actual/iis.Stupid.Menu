@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.UIElements;
 using static iiMenu.Classes.RigManager;
@@ -2463,9 +2464,11 @@ namespace iiMenu.Mods
             GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
         }
 
+        private static bool lastWasNull;
         public static void BecomeObject(string objectName)
         {
             ThrowableBug bug = GetBug(objectName);
+            
             if (bug != null)
             {
                 VRRig.LocalRig.enabled = false;
@@ -2473,7 +2476,13 @@ namespace iiMenu.Mods
 
                 bug.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
                 bug.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
+            } else
+            {
+                if (lastWasNull)
+                    VRRig.LocalRig.enabled = true;
             }
+
+            lastWasNull = bug != null;
         }
 
         public static void MultiGrab()
