@@ -432,8 +432,8 @@ namespace iiMenu.Mods
             if (flySpeedCycle < 0)
                 flySpeedCycle = speedamounts.Length - 1;
 
-            flySpeed = scaleWithPlayer ? speedamounts[flySpeedCycle] * GTPlayer.Instance.scale : speedamounts[flySpeedCycle];
-            
+            flySpeed = speedamounts[flySpeedCycle];
+
             GetIndex("Change Fly Speed").overlapText = "Change Fly Speed <color=grey>[</color><color=green>" + speedNames[flySpeedCycle] + "</color><color=grey>]</color>";
         }
 
