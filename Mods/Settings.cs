@@ -1,3 +1,4 @@
+using GorillaLocomotion;
 using GorillaNetworking;
 using iiMenu.Classes;
 using iiMenu.Menu;
@@ -42,6 +43,9 @@ namespace iiMenu.Mods
 
                         menuSpawnPosition = VRKeyboard.transform.Find("MenuSpawnPosition").gameObject;
                         VRKeyboard.transform.Find("Canvas/Text").GetComponent<Text>().color = textColor;
+
+                        VRKeyboard.transform.localScale *= scaleWithPlayer ? GTPlayer.Instance.scale : 1f;
+                        menuSpawnPosition.transform.localScale *= scaleWithPlayer ? GTPlayer.Instance.scale : 1f;
 
                         ColorChanger backgroundColorChanger = VRKeyboard.transform.Find("Background").gameObject.AddComponent<ColorChanger>();
                         backgroundColorChanger.colors = new Gradient
