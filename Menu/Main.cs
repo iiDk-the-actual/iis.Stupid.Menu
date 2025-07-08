@@ -1191,6 +1191,16 @@ namespace iiMenu.Menu
                     else
                         ServerPos = Vector3.Lerp(ServerPos, VRRig.LocalRig.SanitizeVector3(ServerSyncPos), VRRig.LocalRig.lerpValueBody * 0.66f);
 
+                    if (ServerLeftHandPos == Vector3.zero)
+                        ServerLeftHandPos = ServerSyncLeftHandPos;
+                    else
+                        ServerLeftHandPos = Vector3.Lerp(ServerLeftHandPos, VRRig.LocalRig.SanitizeVector3(ServerSyncLeftHandPos), VRRig.LocalRig.lerpValueBody * 0.66f);
+
+                    if (ServerRightHandPos == Vector3.zero)
+                        ServerRightHandPos = ServerSyncRightHandPos;
+                    else
+                        ServerRightHandPos = Vector3.Lerp(ServerRightHandPos, VRRig.LocalRig.SanitizeVector3(ServerSyncRightHandPos), VRRig.LocalRig.lerpValueBody * 0.66f);
+
                     /*
                      * if (Lockdown)
                      *  return;
@@ -4344,9 +4354,19 @@ namespace iiMenu.Menu
         }
 
         public static Vector3 ServerSyncPos;
+        public static Vector3 ServerSyncLeftHandPos;
+        public static Vector3 ServerSyncRightHandPos;
+
         public static Vector3 ServerPos;
-        public static void OnSerialize() =>
-            ServerSyncPos = VRRig.LocalRig?.transform.position ?? ServerSyncPos;  
+        public static Vector3 ServerLeftHandPos;
+        public static Vector3 ServerRightHandPos;
+
+        public static void OnSerialize()
+        {
+            ServerSyncPos = VRRig.LocalRig?.transform.position ?? ServerSyncPos;
+            ServerSyncLeftHandPos = VRRig.LocalRig?.leftHand.rigTarget.transform.position ?? ServerSyncLeftHandPos;
+            ServerSyncRightHandPos = VRRig.LocalRig?.rightHand.rigTarget.transform.position ?? ServerSyncRightHandPos;
+        }
 
         public static void TeleportPlayer(Vector3 pos) // Prevents your hands from getting stuck on trees
         {
@@ -5518,8 +5538,6 @@ jgs \_   _/ |Oo\
         public static float beesDelay;
         public static float laggyRigDelay;
         public static float jrDebounce;
-        public static float projDebounce;
-        public static float projDebounceType = 0.1f;
         public static float soundDebounce;
         public static float buttonCooldown;
         public static float colorChangerDelay;
