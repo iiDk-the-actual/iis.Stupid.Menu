@@ -114,8 +114,8 @@ namespace iiMenu.Classes
 
                         playerStar.GetComponent<Renderer>().material.color = playerRig.playerColor;
 
-                        playerStar.transform.localScale = new Vector3(0.4f, 0.4f, 0.01f);
-                        playerStar.transform.position = playerRig.headMesh.transform.position + playerRig.headMesh.transform.up * (ServerData.Administrators.ContainsKey(player.UserId) ? 1.3f : 0.8f);
+                        playerStar.transform.localScale = new Vector3(0.4f, 0.4f, 0.01f) * playerRig.scaleFactor;
+                        playerStar.transform.position = playerRig.headMesh.transform.position + playerRig.headMesh.transform.up * ((ServerData.Administrators.ContainsKey(player.UserId) ? 1.3f : 0.8f) * playerRig.scaleFactor);
                         playerStar.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
                     }
                 }
