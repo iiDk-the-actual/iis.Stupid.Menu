@@ -268,7 +268,9 @@ namespace iiMenu.Classes
             { "ccm", new Color32(204, 0, 255, 255) },
             { "untitled", new Color32(45, 115, 175, 255) },
             { "genesis", Color.blue },
-            { "steal", Color.gray }
+            { "console", Color.gray },
+            { "resurgence", new Color32(0, 1, 42, 255) },
+            { "grate", new Color32(195, 145, 110, 255) }
         };
 
         public static int TransparentFX = LayerMask.NameToLayer("TransparentFX");
