@@ -5506,7 +5506,6 @@ jgs \_   _/ |Oo\
         public static GameObject menu;
         public static GameObject menuBackground;
         public static GameObject reference;
-        public static Renderer referenceRenderer;
         public static SphereCollider buttonCollider;
         public static GameObject canvasObj;
         public static AssetBundle assetBundle;
