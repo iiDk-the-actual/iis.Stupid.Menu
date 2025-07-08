@@ -3093,7 +3093,7 @@ namespace iiMenu.Mods
             bool followMenuTheme = GetIndex("Follow Menu Theme").enabled;
             bool transparentTheme = GetIndex("Transparent Theme").enabled;
             bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
-            float lineWidth = GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f;
+            float lineWidth = (GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f) * (scaleWithPlayer ? GorillaLocomotion.GTPlayer.Instance.scale : 1f);
 
             Color menuColor = GetBGColor(0f);
 
@@ -3132,7 +3132,7 @@ namespace iiMenu.Mods
             bool followMenuTheme = GetIndex("Follow Menu Theme").enabled;
             bool transparentTheme = GetIndex("Transparent Theme").enabled;
             bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
-            float lineWidth = GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f;
+            float lineWidth = (GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f) * (scaleWithPlayer ? GorillaLocomotion.GTPlayer.Instance.scale : 1f);
 
             bool LocalTagged = PlayerIsTagged(VRRig.LocalRig);
             bool NoInfected = InfectedList().Count == 0;
@@ -3192,7 +3192,7 @@ namespace iiMenu.Mods
 
             bool transparentTheme = GetIndex("Transparent Theme").enabled;
             bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
-            float lineWidth = GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f;
+            float lineWidth = (GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f) * (scaleWithPlayer ? GorillaLocomotion.GTPlayer.Instance.scale : 1f);
 
             NetPlayer currentTarget = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
 
