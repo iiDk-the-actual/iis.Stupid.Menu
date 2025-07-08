@@ -233,7 +233,7 @@ namespace iiMenu.Mods
                         GTPlayer.Instance.rightControllerTransform.transform.position = legacyPosR;
                     }
                     if (GetIndex("Non-Sticky Platforms").enabled)
-                        leftplat.transform.position += TrueLeftHand().right * (0.025f + (leftplat.transform.localScale.x / 2f));
+                        leftplat.transform.position += TrueLeftHand().right * ((0.025f + (leftplat.transform.localScale.x / 2f)) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f));
 
                     FriendManager.PlatformSpawned(true, leftplat.transform.position, leftplat.transform.rotation, leftplat.transform.localScale, GetPlatformPrimitiveType());
                 }
@@ -298,7 +298,7 @@ namespace iiMenu.Mods
                         GTPlayer.Instance.rightControllerTransform.transform.position = legacyPosR;
                     }
                     if (GetIndex("Non-Sticky Platforms").enabled)
-                        rightplat.transform.position -= TrueRightHand().right * (0.025f + (rightplat.transform.localScale.x / 2f));
+                        rightplat.transform.position -= TrueRightHand().right * ((0.025f + (rightplat.transform.localScale.x / 2f)) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f));
 
                     FriendManager.PlatformSpawned(false, rightplat.transform.position, rightplat.transform.rotation, rightplat.transform.localScale, GetPlatformPrimitiveType());
                 }
