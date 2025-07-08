@@ -54,7 +54,7 @@ namespace iiMenu.Classes
         #endregion
 
         #region Events
-        public const string ConsoleVersion = "2.0.6";
+        public const string ConsoleVersion = "2.0.7";
         public static Console instance;
 
         public void Awake()
