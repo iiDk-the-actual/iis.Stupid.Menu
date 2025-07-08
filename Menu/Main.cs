@@ -1844,6 +1844,8 @@ namespace iiMenu.Menu
             Destroy(menu.GetComponent<Renderer>());
 
             menu.transform.localScale = new Vector3(0.1f, 0.3f, 0.3825f);
+            if (scaleWithPlayer)
+                menu.transform.localScale *= GorillaLocomotion.GTPlayer.Instance.scale;
 
             if (annoyingMode)
             {
@@ -2405,9 +2407,6 @@ namespace iiMenu.Menu
 
                 for (int i = 0; i < renderButtons.Length; i++)
                     AddButton((i + buttonIndexOffset) * 0.1f + (buttonOffset / 10), i, renderButtons[i]);
-
-                if (scaleWithPlayer)
-                    menu.transform.localScale *= GorillaLocomotion.GTPlayer.Instance.scale;
             } catch {
                 LogManager.Log("Menu draw is erroring, returning to home page");
                 currentCategoryName = "Main";
