@@ -633,17 +633,17 @@ namespace iiMenu.Mods
                 if (ntDistanceList[rig][0] == Time.frameCount)
                 {
                     ntDistanceList[rig].Add(Time.frameCount);
-                    return 0.25f + (ntDistanceList[rig].Count * 0.15f);
+                    return (0.25f + (ntDistanceList[rig].Count * 0.15f)) * rig.scaleFactor;
                 } else
                 {
                     ntDistanceList[rig].Clear();
                     ntDistanceList[rig].Add(Time.frameCount);
-                    return 0.25f + (ntDistanceList[rig].Count * 0.15f);
+                    return (0.25f + (ntDistanceList[rig].Count * 0.15f)) * rig.scaleFactor;
                 }
             } else
             {
                 ntDistanceList.Add(rig, new List<int> { Time.frameCount });
-                return 0.4f;
+                return 0.4f * rig.scaleFactor;
             }
         }
 
@@ -680,6 +680,8 @@ namespace iiMenu.Mods
                     nameTag.GetComponent<TextMesh>().text = GetPlayerFromVRRig(vrrig).NickName;
                     nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
                     nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
+
+                    nameTag.transform.localScale = Vector3.one * vrrig.scaleFactor;
 
                     nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
                     nameTag.transform.LookAt(Camera.main.transform.position);
@@ -732,6 +734,8 @@ namespace iiMenu.Mods
                         nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
                         nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
 
+                        nameTag.transform.localScale = Vector3.one * vrrig.scaleFactor;
+
                         nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
                         nameTag.transform.LookAt(Camera.main.transform.position);
                         nameTag.transform.Rotate(0f, 180f, 0f);
@@ -783,6 +787,8 @@ namespace iiMenu.Mods
                         nameTag.GetComponent<TextMesh>().text = $"{vrrig.fps} FPS";
                         nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
                         nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
+
+                        nameTag.transform.localScale = Vector3.one * vrrig.scaleFactor;
 
                         nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
                         nameTag.transform.LookAt(Camera.main.transform.position);
@@ -838,6 +844,8 @@ namespace iiMenu.Mods
                         nameTag.GetComponent<TextMesh>().text = turnType == "NONE" ? "None" : ToTitleCase(turnType) + " " + turnFactor.ToString();
                         nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
                         nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
+
+                        nameTag.transform.localScale = Vector3.one * vrrig.scaleFactor;
 
                         nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
                         nameTag.transform.LookAt(Camera.main.transform.position);
@@ -900,6 +908,8 @@ namespace iiMenu.Mods
                             
                         nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
                         nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
+
+                        nameTag.transform.localScale = Vector3.one * vrrig.scaleFactor;
 
                         nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
                         nameTag.transform.LookAt(Camera.main.transform.position);
@@ -1181,8 +1191,8 @@ namespace iiMenu.Mods
                     indicator.GetComponent<Renderer>().material.mainTexture = IsPlayerSteam(vrrig) ? oculustxt : steamtxt;
                     indicator.GetComponent<Renderer>().material.color = GetPlayerColor(vrrig);
 
-                    indicator.transform.localScale = new Vector3(0.5f, 0.5f, 0.01f);
-                    indicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * 0.8f;
+                    indicator.transform.localScale = new Vector3(0.5f, 0.5f, 0.01f) * vrrig.scaleFactor;
+                    indicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * (0.8f * vrrig.scaleFactor);
                     indicator.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
                 }
             }
@@ -1226,8 +1236,8 @@ namespace iiMenu.Mods
                     indicator.GetComponent<Renderer>().material.mainTexture = IsPlayerSteam(vrrig) ? oculustxt : steamtxt;
                     indicator.GetComponent<Renderer>().material.color = GetPlayerColor(vrrig);
 
-                    indicator.transform.localScale = new Vector3(0.5f, 0.5f, 0.01f);
-                    indicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * 0.8f;
+                    indicator.transform.localScale = new Vector3(0.5f, 0.5f, 0.01f) * vrrig.scaleFactor;
+                    indicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * (0.8f * vrrig.scaleFactor);
                     indicator.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
                 }
             }
@@ -1298,8 +1308,8 @@ namespace iiMenu.Mods
                         }
 
                         volIndicator.GetComponent<Renderer>().material.color = GetPlayerColor(vrrig);
-                        volIndicator.transform.localScale = new Vector3(size, size, 0.01f);
-                        volIndicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * 0.8f;
+                        volIndicator.transform.localScale = new Vector3(size, size, 0.01f) * vrrig.scaleFactor;
+                        volIndicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * (0.8f * vrrig.scaleFactor);
                         volIndicator.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
                     } else
                     {
@@ -1353,8 +1363,8 @@ namespace iiMenu.Mods
                         }
 
                         volIndicator.GetComponent<Renderer>().material.color = GetPlayerColor(vrrig);
-                        volIndicator.transform.localScale = new Vector3(size, size, 0.01f);
-                        volIndicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * 0.8f;
+                        volIndicator.transform.localScale = new Vector3(size, size, 0.01f) * vrrig.scaleFactor;
+                        volIndicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * (0.8f * vrrig.scaleFactor);
                         volIndicator.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
                     }
                     else
