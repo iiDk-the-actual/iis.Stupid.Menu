@@ -53,6 +53,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Movement Settings", method =() => currentCategoryName = "Movement Settings", isTogglable = false, toolTip = "Opens the settings for the movement mods."},
                 new ButtonInfo { buttonText = "Advantage Settings", method =() => currentCategoryName = "Advantage Settings", isTogglable = false, toolTip = "Opens the settings for the advantage mods."},
                 new ButtonInfo { buttonText = "Visual Settings", method =() => currentCategoryName = "Visual Settings", isTogglable = false, toolTip = "Opens the settings for the visual mods."},
+                new ButtonInfo { buttonText = "Fun Settings", method =() => currentCategoryName = "Fun Settings", isTogglable = false, toolTip = "Opens the settings for the fun mods."},
                 new ButtonInfo { buttonText = "Overpowered Settings", method =() => currentCategoryName = "Overpowered Settings", isTogglable = false, toolTip = "Opens the settings for the overpowered mods."},
 
                 new ButtonInfo { buttonText = "Projectile Settings", method =() => currentCategoryName = "Projectile Settings", isTogglable = false, toolTip = "Opens the settings for the projectiles."}
@@ -601,7 +602,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Jump Predictions", method =() => Visuals.JumpPredictions(), disableMethod =() => Visuals.DisableJumpPredictions(), toolTip = "Shows a visualizer of where the other players will jump."},
                 new ButtonInfo { buttonText = "Audio Visualizer", enableMethod =() => Visuals.CreateAudioVisualizer(), method =() => Visuals.AudioVisualizer(), disableMethod =() => Visuals.DestroyAudioVisualizer(), toolTip = "Shows a visualizer of your microphone loudness below your player."},
-                new ButtonInfo { buttonText = "Show Playspace Center", method =() => Visuals.ShowPlayspaceCenter(), toolTip = "Shows the center of your playspace below your player."},
+                new ButtonInfo { buttonText = "Show Server Position", method =() => Visuals.ShowServerPosition(), disableMethod =() => Visuals.DisableShowServerPosition(), toolTip = "Shows your current syncronized position on the server."},
 
                 new ButtonInfo { buttonText = "Visualize Network Triggers", method =() => Visuals.VisualizeNetworkTriggers(), toolTip = "Visualizes the network joining and leaving triggers."},
                 new ButtonInfo { buttonText = "Visualize Map Triggers", method =() => Visuals.VisualizeMapTriggers(), toolTip = "Visualizes the map loading and unloading triggers."},
@@ -1385,8 +1386,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Disable Snowball Impact Effect", method =() => Overpowered.DisableSnowballImpactEffect(), toolTip = "Disables the impact effect that people get when hit with snowballs."},
                 new ButtonInfo { buttonText = "Change Snowball Scale", overlapText = "Change Snowball Scale <color=grey>[</color><color=green>6</color><color=grey>]</color>", method =() => Overpowered.ChangeSnowballScale(true), enableMethod =() => Overpowered.ChangeSnowballScale(true), disableMethod =() => Overpowered.ChangeSnowballScale(false), incremental = true, isTogglable = false, toolTip = "Changes the scale of the snowballs." },
 
-                new ButtonInfo { buttonText = "Zero Gravity Blocks", toolTip = "Gives the blocks gravity."},
-
                 new ButtonInfo { buttonText = "Change Lag Power", overlapText = "Change Lag Power <color=grey>[</color><color=green>Heavy</color><color=grey>]</color>", method =() => Overpowered.ChangeLagPower(true), enableMethod =() => Overpowered.ChangeLagPower(true), disableMethod =() => Overpowered.ChangeLagPower(false), incremental = true, isTogglable = false, toolTip = "Changes the power of the lag mods." },
             },
 
@@ -1426,6 +1425,13 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Friend Sided Projectiles", enableMethod =() => Projectiles.friendSided = true, disableMethod =() => Projectiles.friendSided = false, toolTip = "Makes projectiles only appear between friends."},
 
                 new ButtonInfo { buttonText = "Physical Platforms", enableMethod =() => FriendManager.PhysicalPlatforms = true, disableMethod =() => FriendManager.PhysicalPlatforms = false, toolTip = "Allows networked platforms to be collided with between friends."},
+            },
+
+            new ButtonInfo[] { // Fun Settings [36]
+                new ButtonInfo { buttonText = "Exit Fun Settings", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
+
+                new ButtonInfo { buttonText = "Zero Gravity Blocks", toolTip = "Gives the blocks gravity."},
+                new ButtonInfo { buttonText = "Change Block Delay", overlapText = "Change Block Delay <color=grey>[</color><color=green>0</color><color=grey>]</color>", method =() => Fun.ChangeBlockDelay(true), enableMethod =() => Fun.ChangeBlockDelay(true), disableMethod =() => Fun.ChangeBlockDelay(false), incremental = true, isTogglable = false, toolTip = "Gives the blocks a delay before spawning." }
             }
         };
 
@@ -1466,7 +1472,8 @@ namespace iiMenu.Menu
             "Keybind Settings",
             "Plugin Settings",
             "Friends",
-            "Friend Settings"
+            "Friend Settings",
+            "Fun Settings"
         };
     }
 }
