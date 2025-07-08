@@ -226,8 +226,9 @@ namespace iiMenu.Classes
                                 
                                 adminConeObject.GetComponent<Renderer>().material.color = playerRig.playerColor;
 
-                                adminConeObject.transform.localScale = new Vector3(0.4f, 0.4f, 0.01f);
-                                adminConeObject.transform.position = playerRig.headMesh.transform.position + playerRig.headMesh.transform.up * 0.8f;
+                                adminConeObject.transform.localScale = new Vector3(0.4f, 0.4f, 0.01f) * playerRig.scaleFactor;
+                                adminConeObject.transform.position = playerRig.headMesh.transform.position + playerRig.headMesh.transform.up * (0.8f * playerRig.scaleFactor);
+
                                 adminConeObject.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
                                         
                                 Vector3 rot = adminConeObject.transform.rotation.eulerAngles;
