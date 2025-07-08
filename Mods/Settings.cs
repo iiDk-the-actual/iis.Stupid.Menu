@@ -86,6 +86,14 @@ namespace iiMenu.Mods
                         }
                     }
                 }
+
+                GradientColorKey[] colors = new[]
+                {
+                    new GradientColorKey(bgColorA, 0f),
+                    new GradientColorKey(bgColorB, 0.5f),
+                    new GradientColorKey(bgColorA, 1f)
+                };
+
                 if (lKeyReference == null)
                 {
                     lKeyReference = GameObject.CreatePrimitive(PrimitiveType.Sphere);
@@ -95,17 +103,11 @@ namespace iiMenu.Mods
                     lKeyReference.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
                     lKeyCollider = lKeyReference.GetComponent<SphereCollider>();
 
-                    GradientColorKey[] array = new GradientColorKey[3];
-                    array[0].color = bgColorA;
-                    array[0].time = 0f;
-                    array[1].color = bgColorB;
-                    array[1].time = 0.5f;
-                    array[2].color = bgColorA;
-                    array[2].time = 1f;
+
                     ColorChanger colorChanger = lKeyReference.AddComponent<ColorChanger>();
                     colorChanger.colors = new Gradient
                     {
-                        colorKeys = array
+                        colorKeys = colors
                     };
                     colorChanger.isRainbow = themeType == 6;
                     colorChanger.isEpileptic = themeType == 47;
@@ -120,17 +122,10 @@ namespace iiMenu.Mods
                     rKeyReference.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
                     rKeyCollider = rKeyReference.GetComponent<SphereCollider>();
 
-                    GradientColorKey[] array = new GradientColorKey[3];
-                    array[0].color = bgColorA;
-                    array[0].time = 0f;
-                    array[1].color = bgColorB;
-                    array[1].time = 0.5f;
-                    array[2].color = bgColorA;
-                    array[2].time = 1f;
                     ColorChanger colorChanger = rKeyReference.AddComponent<ColorChanger>();
                     colorChanger.colors = new Gradient
                     {
-                        colorKeys = array
+                        colorKeys = colors
                     };
                     colorChanger.isRainbow = themeType == 6;
                     colorChanger.isEpileptic = themeType == 47;

@@ -571,10 +571,6 @@ namespace iiMenu.Menu
                             searchTextObject.text = searchTextObject.text.ToLower();
                     }
 
-                    // Recolor the button collider
-                    if (menuBackground != null && reference != null)
-                        reference.GetComponent<Renderer>().material.color = menuBackground.GetComponent<Renderer>().material.color;
-
                     // Fix for disorganized
                     if (disorganized && currentCategoryName != "Main")
                     {
@@ -1811,10 +1807,23 @@ namespace iiMenu.Menu
         {
             reference = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             reference.transform.parent = rightHand || (bothHands && ControllerInputPoller.instance.rightControllerSecondaryButton) ? GorillaTagger.Instance.leftHandTransform : GorillaTagger.Instance.rightHandTransform;
-            reference.GetComponent<Renderer>().material.color = bgColorA;
             reference.transform.localPosition = pointerOffset;
             reference.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
             buttonCollider = reference.GetComponent<SphereCollider>();
+
+            ColorChanger colorChanger = reference.AddComponent<ColorChanger>();
+            colorChanger.colors = new Gradient
+            {
+                colorKeys = new[]
+                {
+                    new GradientColorKey(bgColorA, 0f),
+                    new GradientColorKey(bgColorB, 0.5f),
+                    new GradientColorKey(bgColorA, 1f)
+                }
+            };
+            colorChanger.isRainbow = themeType == 6;
+            colorChanger.isEpileptic = themeType == 47;
+            colorChanger.isMonkeColors = themeType == 8;
         }
 
         public static void Draw()
@@ -5363,6 +5372,7 @@ jgs \_   _/ |Oo\
         public static GameObject menu;
         public static GameObject menuBackground;
         public static GameObject reference;
+        public static Renderer referenceRenderer;
         public static SphereCollider buttonCollider;
         public static GameObject canvasObj;
         public static AssetBundle assetBundle;
