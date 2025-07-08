@@ -393,7 +393,7 @@ namespace iiMenu.Classes
                                 GrowingSnowballThrowable snowball = GetProjectile("GrowingSnowballLeftAnchor") as GrowingSnowballThrowable;
 
                                 SlingshotProjectile projectile = snowball.SpawnGrowingSnowball(ref velocity, scale);
-                                projectile.Launch(position, velocity, Sender, false, false, index, scale, true, new Color(r, g, b));
+                                projectile.Launch(position, velocity, Sender, false, false, index, scale, true, new Color(r, g, b, 1f));
 
                                 break;
                             }
