@@ -3187,6 +3187,11 @@ namespace iiMenu.Mods
                         v.GetComponent<Renderer>().material = ForestMat;
                 }
             }
+
+            foreach (GameObject board in objectBoards.Values)
+                UnityEngine.Object.Destroy(board);
+
+            objectBoards.Clear();
         }
 
         public static void EnableBoardColors()
