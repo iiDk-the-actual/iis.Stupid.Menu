@@ -99,7 +99,7 @@ namespace iiMenu.Mods
                 new Vector3(0.025f, 0.15f, 0.2f),
                 new Vector3(0.025f, 0.3f, 0.8f),
                 new Vector3(0.1f, 0.1f, 0.1f)
-            }[platformShape];
+            }[platformShape] * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
         }
 
         public static GameObject CreatePlatform()
@@ -172,7 +172,13 @@ namespace iiMenu.Mods
         }
 
         public static int flySpeedCycle = 1;
-        public static float flySpeed = 10f;
+        public static float _flySpeed = 10f;
+
+        public static float flySpeed
+        {
+            get => _flySpeed * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
+            set => _flySpeed = value;
+        }
 
         public static int speedboostCycle = 1;
         public static float jspeed = 7.5f;
