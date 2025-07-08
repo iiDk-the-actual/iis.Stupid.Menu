@@ -3157,7 +3157,7 @@ namespace iiMenu.Menu
                     break;
             }
 
-            Physics.Raycast(StartPosition + (Direction / 4f), Direction, out var Ray, 512f, overrideLayerMask > 0 ? overrideLayerMask : NoInvisLayerMask());
+            Physics.Raycast(StartPosition + ((Direction / 4f) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f)), Direction, out var Ray, 512f, overrideLayerMask > 0 ? overrideLayerMask : NoInvisLayerMask());
             if (shouldBePC)
             {
                 Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
@@ -3177,7 +3177,7 @@ namespace iiMenu.Menu
             }
 
             GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            NewPointer.transform.localScale = smallGunPointer ? new Vector3(0.1f, 0.1f, 0.1f) : new Vector3(0.2f, 0.2f, 0.2f);
+            NewPointer.transform.localScale = (smallGunPointer ? new Vector3(0.1f, 0.1f, 0.1f) : new Vector3(0.2f, 0.2f, 0.2f)) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
             NewPointer.transform.position = EndPosition;
 
             Renderer PointerRenderer = NewPointer.GetComponent<Renderer>();
@@ -3191,6 +3191,7 @@ namespace iiMenu.Menu
             {
                 GameObject Particle = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                 Particle.transform.position = EndPosition;
+                Particle.transform.localScale = Vector3.one * 0.025f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
                 Particle.AddComponent<CustomParticle>();
                 Destroy(Particle.GetComponent<Collider>());
             }
@@ -3205,8 +3206,8 @@ namespace iiMenu.Menu
                 lineRenderer.material.shader = Shader.Find("GUI/Text Shader");
                 lineRenderer.startColor = GetBGColor(0f);
                 lineRenderer.endColor = GetBGColor(0.5f);
-                lineRenderer.startWidth = 0.025f;
-                lineRenderer.endWidth = 0.025f;
+                lineRenderer.startWidth = 0.025f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
+                lineRenderer.endWidth = 0.025f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
                 lineRenderer.positionCount = 2;
                 lineRenderer.useWorldSpace = true;
                 if (smoothLines)
@@ -3916,13 +3917,13 @@ namespace iiMenu.Menu
         public static (Vector3 position, Quaternion rotation, Vector3 up, Vector3 forward, Vector3 right) TrueLeftHand()
         {
             Quaternion rot = GorillaTagger.Instance.leftHandTransform.rotation * GTPlayer.Instance.leftHandRotOffset;
-            return (GorillaTagger.Instance.leftHandTransform.position + GorillaTagger.Instance.leftHandTransform.rotation * GTPlayer.Instance.leftHandOffset, rot, rot * Vector3.up, rot * Vector3.forward, rot * Vector3.right);
+            return (GorillaTagger.Instance.leftHandTransform.position + GorillaTagger.Instance.leftHandTransform.rotation * (GTPlayer.Instance.leftHandOffset * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f)), rot, rot * Vector3.up, rot * Vector3.forward, rot * Vector3.right);
         }
 
         public static (Vector3 position, Quaternion rotation, Vector3 up, Vector3 forward, Vector3 right) TrueRightHand()
         {
             Quaternion rot = GorillaTagger.Instance.rightHandTransform.rotation * GTPlayer.Instance.rightHandRotOffset;
-            return (GorillaTagger.Instance.rightHandTransform.position + GorillaTagger.Instance.rightHandTransform.rotation * GTPlayer.Instance.rightHandOffset, rot, rot * Vector3.up, rot * Vector3.forward, rot * Vector3.right);
+            return (GorillaTagger.Instance.rightHandTransform.position + GorillaTagger.Instance.rightHandTransform.rotation * (GTPlayer.Instance.rightHandOffset * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f)), rot, rot * Vector3.up, rot * Vector3.forward, rot * Vector3.right);
         }
 
         public static void WorldScale(GameObject obj, Vector3 targetWorldScale)
@@ -3954,11 +3955,11 @@ namespace iiMenu.Menu
             for (int i = 0; i < localPositions.Length; i++)
             {
                 GameObject side = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                float size = 0.025f;
+                float size = 0.025f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
                 side.transform.SetParent(platform.transform);
                 side.transform.position = localPositions[i] * (size / 2);
                 side.transform.rotation = localRotations[i];
-                WorldScale(side, new Vector3(size, size, 0.01f));
+                WorldScale(side, new Vector3(size, size, 0.01f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f)));
                 side.GetComponent<Renderer>().enabled = false;
             }
         }
