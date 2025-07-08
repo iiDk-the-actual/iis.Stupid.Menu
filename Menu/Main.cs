@@ -4413,6 +4413,7 @@ namespace iiMenu.Menu
             board.transform.localRotation = Quaternion.Euler(rotation ?? new Vector3(270f, 0f, 0f));
             board.transform.localScale = scale ?? new Vector3(21.6f, 2.4f, 22f);
 
+            Destroy(board.GetComponent<Collider>());
             board.GetComponent<Renderer>().material = OrangeUI;
 
             objectBoards.Add(scene, board);
