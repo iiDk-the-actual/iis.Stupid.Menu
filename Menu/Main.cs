@@ -28,6 +28,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Networking;
 using UnityEngine.Rendering;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.XR;
 using Valve.VR;
@@ -229,6 +230,14 @@ namespace iiMenu.Menu
                     {
                         try
                         {
+                            foreach (GameObject board in objectBoards.Values)
+                                Destroy(board);
+
+                            objectBoards.Clear();
+
+                            CreateObjectBoard("City", "Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/CosmeticsScoreboardAnchor/GorillaScoreBoard");
+                            CreateObjectBoard("Arcade", "Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/Arcade_prefab/Arcade_Room/CosmeticsScoreboardAnchor/GorillaScoreBoard", new Vector3(-22.1964f, -21.4581f, 1.4f), new Vector3(270.0593f, 0f, 0f), new Vector3(23f, 2.1f, 21.6f));
+
                             //LogManager.Log("Looking for boards");
                             bool found = false;
                             int indexOfThatThing = 0;
@@ -4311,6 +4320,104 @@ namespace iiMenu.Menu
             } catch { }
         }
 
+        public static void SceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            if (disableBoardColor)
+                return;
+
+            Vector3 position = Vector3.zero;
+            Vector3 rotation = Vector3.zero;
+            Vector3 scale = Vector3.zero;
+            string gameObject = "";
+
+            switch (scene.name)
+            {
+                case "Canyon2":
+                    gameObject = "Canyon/CanyonScoreboardAnchor/GorillaScoreBoard";
+                    position = new Vector3(-24.5019f, -28.7746f, 0.1f);
+                    rotation = new Vector3(270f, 0f, 0f);
+                    scale = new Vector3(21.5946f, 1f, 22.1782f);
+                    break;
+                case "Skyjungle":
+                    gameObject = "skyjungle/UI/Scoreboard/GorillaScoreBoard";
+                    position = new Vector3(-21.2764f, -32.1928f, 0f);
+                    rotation = new Vector3(270.2987f, 0.2f, 359.9f);
+                    scale = new Vector3(21.6f, 0.1f, 20.4909f);
+                    break;
+                case "Mountain":
+                    gameObject = "Mountain/MountainScoreboardAnchor/GorillaScoreBoard";
+                    position = Vector3.zero;
+                    rotation = Vector3.zero;
+                    scale = Vector3.one;
+                    break;
+                case "Metropolis":
+                    gameObject = "MetroMain/ComputerArea/Scoreboard/GorillaScoreBoard";
+                    position = new Vector3(-25.1f, -31f, 0.1502f);
+                    rotation = new Vector3(270.1958f, 0.2086f, 0f);
+                    scale = new Vector3(21f, 102.9727f, 21.4f);
+                    break;
+                case "Bayou":
+                    gameObject = "BayouMain/ComputerArea/GorillaScoreBoardPhysical";
+                    position = new Vector3(-28.3419f, -26.851f, 0.3f);
+                    rotation = new Vector3(270f, 0f, 0f);
+                    scale = new Vector3(21.3636f, 38f, 21f);
+                    break;
+                case "Beach":
+                    gameObject = "BeachScoreboardAnchor/GorillaScoreBoard";
+                    position = new Vector3(-22.1964f, -33.7126f, 0.1f);
+                    rotation = new Vector3(270.056f, 0f, 0f);
+                    scale = new Vector3(21.2f, 2f, 21.6f);
+                    break;
+                case "Cave":
+                    gameObject = "Cave_Main_Prefab/CrystalCaveScoreboardAnchor/GorillaScoreBoard";
+                    position = new Vector3(-22.1964f, -33.7126f, 0.1f);
+                    rotation = new Vector3(270.056f, 0f, 0f);
+                    scale = new Vector3(21.2f, 2f, 21.6f);
+                    break;
+                case "Rotating":
+                    gameObject = "RotatingPermanentEntrance/UI (1)/RotatingScoreboard/RotatingScoreboardAnchor/GorillaScoreBoard";
+                    position = new Vector3(-22.1964f, -33.7126f, 0.1f);
+                    rotation = new Vector3(270.056f, 0f, 0f);
+                    scale = new Vector3(21.2f, 2f, 21.6f);
+                    break;
+                case "MonkeBlocks":
+                    gameObject = "Environment Objects/MonkeBlocksRoomPersistent/AtticScoreBoard/AtticScoreboardAnchor/GorillaScoreBoard";
+                    position = new Vector3(-22.1964f, -24.5091f, 0.57f);
+                    rotation = new Vector3(270.1856f, 0.1f, 0f);
+                    scale = new Vector3(21.6f, 1.2f, 20.8f);
+                    break;
+                case "Basement":
+                    gameObject = "Basement/BasementScoreboardAnchor/GorillaScoreBoard/";
+                    position = new Vector3(-22.1964f, -24.5091f, 0.57f);
+                    rotation = new Vector3(270.1856f, 0.1f, 0f);
+                    scale = new Vector3(21.6f, 1.2f, 20.8f);
+                    break;
+                default:
+                    return;
+            }
+
+            CreateObjectBoard(scene.name, gameObject, position, rotation, scale);
+        }
+
+        public static void CreateObjectBoard(string scene, string gameObject, Vector3? position = null, Vector3? rotation = null, Vector3? scale = null)
+        {
+            if (objectBoards.TryGetValue(scene, out GameObject existingBoard))
+            {
+                Destroy(existingBoard);
+                objectBoards.Remove(scene);
+            }
+
+            GameObject board = GameObject.CreatePrimitive(PrimitiveType.Plane);
+            board.transform.parent = GetObject(gameObject).transform;
+            board.transform.localPosition = position ?? new Vector3(-22.1964f, -34.9f, 0.57f);
+            board.transform.localRotation = Quaternion.Euler(rotation ?? new Vector3(270f, 0f, 0f));
+            board.transform.localScale = scale ?? new Vector3(21.6f, 2.4f, 22f);
+
+            board.GetComponent<Renderer>().material = OrangeUI;
+
+            objectBoards.Add(scene, board);
+        }
+
         public static bool inRoomStatus;
 
         public static void OnJoinRoom()
@@ -5007,6 +5114,7 @@ namespace iiMenu.Menu
                 AgencyFB = LoadAsset<Font>("Agency");
 
             PhotonNetwork.NetworkingClient.EventReceived += EventReceived;
+            SceneManager.sceneLoaded += SceneLoaded;
 
             NetworkSystem.Instance.OnJoinedRoomEvent += OnJoinRoom;
             NetworkSystem.Instance.OnReturnedToSinglePlayer += OnLeaveRoom;
@@ -5466,6 +5574,7 @@ jgs \_   _/ |Oo\
 
         public static List<string> favorites = new List<string> { "Exit Favorite Mods" };
 
+        public static Dictionary<string, GameObject> objectBoards = new Dictionary<string, GameObject> { };
         public static List<GorillaNetworkJoinTrigger> triggers = new List<GorillaNetworkJoinTrigger> { };
         public static List<TextMeshPro> udTMP = new List<TextMeshPro> { };
         public static GameObject computerMonitor;
