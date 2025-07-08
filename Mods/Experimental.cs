@@ -614,7 +614,9 @@ namespace iiMenu.Mods
                 {
                     nametag.Value.GetComponent<TextMesh>().fontStyle = activeFontStyle;
 
-                    nametag.Value.transform.position = nametag.Key.headMesh.transform.position + nametag.Key.headMesh.transform.up * 0.6f;
+                    nametag.Value.transform.localScale = Vector3.one * nametag.Key.scaleFactor;
+
+                    nametag.Value.transform.position = nametag.Key.headMesh.transform.position + nametag.Key.headMesh.transform.up * Visuals.GetTagDistance(nametag.Key);
                     nametag.Value.transform.LookAt(Camera.main.transform.position);
                     nametag.Value.transform.Rotate(0f, 180f, 0f);
                 }
