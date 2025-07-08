@@ -3685,7 +3685,6 @@ namespace iiMenu.Mods
                 newMesh.alignment = TextAlignment.Center;
                 newMesh.color = Color.white;
 
-
                 GameObject backgroundObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 UnityEngine.Object.Destroy(backgroundObject.GetComponent<Collider>());
 
