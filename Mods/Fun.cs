@@ -2109,6 +2109,24 @@ namespace iiMenu.Mods
             //RPCProtection();
         }
 
+        public static int blockDebounceIndex = 2;
+        public static float blockDebounce = 0.1f;
+        public static void ChangeBlockDelay(bool positive = true)
+        {
+            if (positive)
+                blockDebounceIndex++;
+            else
+                blockDebounceIndex--;
+
+            if (blockDebounceIndex > 20)
+                blockDebounceIndex = 1;
+            if (blockDebounceIndex < 1)
+                blockDebounceIndex = 20;
+
+            blockDebounce = blockDebounceIndex / 20f;
+            GetIndex("Change Block Delay").overlapText = "Change Block Delay <color=grey>[</color><color=green>" + blockDebounce.ToString() + "</color><color=grey>]</color>";
+        }
+
         public static void RequestCreatePiece(int pieceType, Vector3 position, Quaternion rotation, int materialType, Player target = null, bool overrideFreeze = false)
         {
             BuilderTable table = GetBuilderTable();
@@ -2176,14 +2194,14 @@ namespace iiMenu.Mods
             {
                 if (Time.time > blockDelay)
                 {
-                    blockDelay = Time.time + 0.05f;
+                    blockDelay = Time.time + blockDebounce;
                     BuilderPiece piece = GetAllType<BuilderPiece>()
                         .Where(piece => piece.gameObject.activeInHierarchy)
                         .Where(piece => piece.pieceType == pieceType)
                         .Where(piece => !piece.isBuiltIntoTable)
                         .Where(piece => piece.CanPlayerGrabPiece(PhotonNetwork.LocalPlayer.ActorNumber, piece.transform.position))
-                        .Where(piece => Vector3.Distance(piece.transform.position, GorillaTagger.Instance.leftHandTransform.position) < 2.5f)
-                        .OrderBy(piece => Vector3.Distance(piece.transform.position, GorillaTagger.Instance.leftHandTransform.position))
+                        .Where(piece => Vector3.Distance(piece.transform.position, ServerLeftHandPos) < 2.5f)
+                        .OrderBy(piece => Vector3.Distance(piece.transform.position, ServerLeftHandPos))
                         .FirstOrDefault()
                         ?? null;
 
@@ -2192,16 +2210,16 @@ namespace iiMenu.Mods
                             .Where(piece => piece.gameObject.activeInHierarchy)
                             .Where(piece => !piece.isBuiltIntoTable)
                             .Where(piece => piece.CanPlayerGrabPiece(PhotonNetwork.LocalPlayer.ActorNumber, piece.transform.position))
-                            .Where(piece => Vector3.Distance(piece.transform.position, GorillaTagger.Instance.leftHandTransform.position) < 2.5f)
-                            .OrderBy(piece => Vector3.Distance(piece.transform.position, GorillaTagger.Instance.leftHandTransform.position))
+                            .Where(piece => Vector3.Distance(piece.transform.position, ServerLeftHandPos) < 2.5f)
+                            .OrderBy(piece => Vector3.Distance(piece.transform.position, ServerLeftHandPos))
                             .FirstOrDefault()
                             ?? null;
 
                     if (piece == null)
                         return;
 
-                    if (Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position, position) > 2.5f)
-                        position = GorillaTagger.Instance.leftHandTransform.position + ((position - GorillaTagger.Instance.leftHandTransform.position).normalized * 2.5f);
+                    if (Vector3.Distance(ServerLeftHandPos, position) > 2.5f)
+                        position = ServerLeftHandPos + ((position - ServerLeftHandPos).normalized * 2.5f);
 
                     Networking.RequestGrabPiece(piece, true, Vector3.zero, Quaternion.identity);
                     Networking.RequestDropPiece(piece, position, rotation, Vector3.zero, Vector3.zero);
@@ -2289,16 +2307,16 @@ namespace iiMenu.Mods
             {
                 if (Time.time > blockDelay)
                 {
-                    blockDelay = Time.time + 0.1f;
-                    if (piece.CanPlayerGrabPiece(PhotonNetwork.LocalPlayer.ActorNumber, piece.transform.position) && Vector3.Distance(piece.transform.position, GorillaTagger.Instance.leftHandTransform.position) < 2.5f)
+                    blockDelay = Time.time + blockDebounce;
+                    if (piece.CanPlayerGrabPiece(PhotonNetwork.LocalPlayer.ActorNumber, piece.transform.position) && Vector3.Distance(piece.transform.position, ServerLeftHandPos) < 2.5f)
                     {
                         BuilderDropZone dropZone = table.dropZones
                             .Where(zone => (int)zone.dropType >= 1)
-                            .Where(zone => Vector3.Distance(zone.transform.position, GorillaTagger.Instance.leftHandTransform.position) < 2.5f)
-                            .OrderBy(zone => Vector3.Distance(zone.transform.position, GorillaTagger.Instance.leftHandTransform.position))
+                            .Where(zone => Vector3.Distance(zone.transform.position, ServerLeftHandPos) < 2.5f)
+                            .OrderBy(zone => Vector3.Distance(zone.transform.position, ServerLeftHandPos))
                             .FirstOrDefault() ?? null;
 
-                        Vector3 dropPosition = dropZone != null ? dropZone.transform.position : GorillaTagger.Instance.leftHandTransform.position + Vector3.down * 2f;
+                        Vector3 dropPosition = dropZone != null ? dropZone.transform.position : ServerLeftHandPos + Vector3.down * 2f;
 
                         RequestGrabPiece(piece, true, Vector3.zero, Quaternion.identity);
                         RequestDropPiece(piece, dropPosition, RandomQuaternion(), Vector3.down * 20f, Vector3.zero);
@@ -2784,14 +2802,14 @@ namespace iiMenu.Mods
         {
             if (rightGrab && Time.time > blockDelay)
             {
-                blockDelay = Time.time + 0.05f;
+                blockDelay = Time.time + blockDebounce;
                 BuilderPiece piece = GetAllType<BuilderPiece>()
                     .Where(piece => piece.gameObject.activeInHierarchy)
                     .Where(piece => !piece.isBuiltIntoTable)
                     .Where(piece => piece.heldByPlayerActorNumber != PhotonNetwork.LocalPlayer.ActorNumber)
                     .Where(piece => piece.CanPlayerGrabPiece(PhotonNetwork.LocalPlayer.ActorNumber, piece.transform.position))
-                    .Where(piece => Vector3.Distance(piece.transform.position, GorillaTagger.Instance.leftHandTransform.position) < 2.5f)
-                    .OrderBy(piece => Vector3.Distance(piece.transform.position, GorillaTagger.Instance.leftHandTransform.position))
+                    .Where(piece => Vector3.Distance(piece.transform.position, ServerLeftHandPos) < 2.5f)
+                    .OrderBy(piece => Vector3.Distance(piece.transform.position, ServerLeftHandPos))
                     .FirstOrDefault();
 
                 if (piece == null)
