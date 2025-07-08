@@ -3256,17 +3256,26 @@ namespace iiMenu.Mods
 
         public static void Strafe()
         {
-            Vector3 funnyDir = GorillaTagger.Instance.bodyCollider.transform.forward * GTPlayer.Instance.maxJumpSpeed;
-            GorillaTagger.Instance.rigidbody.velocity = new Vector3(funnyDir.x, GorillaTagger.Instance.rigidbody.velocity.y, funnyDir.z);
-            Vector3 dir = GorillaTagger.Instance.rigidbody.velocity;
-            dir.y = (dir.y < 0 ? 0 : dir.y);
+            Vector3 direction = GetIndex("Hand Oriented Strafe").enabled 
+                ? new Vector3(-GorillaTagger.Instance.rightHandTransform.up.x, 0f, -GorillaTagger.Instance.rightHandTransform.up.z).normalized 
+                : GorillaTagger.Instance.bodyCollider.transform.forward;
+
+            float power = GTPlayer.Instance.maxJumpSpeed;
+            Vector3 velocity = direction * power;
+
+            GorillaTagger.Instance.rigidbody.velocity = new Vector3(velocity.x, GorillaTagger.Instance.rigidbody.velocity.y, velocity.z);
         }
 
         public static void DynamicStrafe()
         {
+            Vector3 direction = GetIndex("Hand Oriented Strafe").enabled
+                ? new Vector3(-GorillaTagger.Instance.rightHandTransform.up.x, 0f, -GorillaTagger.Instance.rightHandTransform.up.z).normalized
+                : GorillaTagger.Instance.bodyCollider.transform.forward;
+
             float power = new Vector3(GorillaTagger.Instance.rigidbody.velocity.x, 0, GorillaTagger.Instance.rigidbody.velocity.z).magnitude;
-            Vector3 funnyDir = GorillaTagger.Instance.bodyCollider.transform.forward * power;
-            GorillaTagger.Instance.rigidbody.velocity = new Vector3(funnyDir.x, GorillaTagger.Instance.rigidbody.velocity.y, funnyDir.z);
+            Vector3 velocity = direction * power;
+
+            GorillaTagger.Instance.rigidbody.velocity = new Vector3(velocity.x, GorillaTagger.Instance.rigidbody.velocity.y, velocity.z);
         }
 
         public static void GripBunnyHop()
