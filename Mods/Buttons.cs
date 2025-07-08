@@ -825,41 +825,48 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Auto Hit Moles", method =() => Fun.AutoHitMoleType(false), toolTip = "Hits all of the moles automatically."},
                 new ButtonInfo { buttonText = "Auto Hit Hazards", method =() => Fun.AutoHitMoleType(true), toolTip = "Hits all of the hazards automatically."},
 
-                new ButtonInfo { buttonText = "Break Bug", enableMethod =() => Fun.AllowStealingThrowableBug("Floating Bug Holdable", false), disableMethod =() => Fun.AllowStealingThrowableBug("Floating Bug Holdable", true), toolTip = "Makes the bug ungrabbable."},
-                new ButtonInfo { buttonText = "Break Bat", enableMethod =() => Fun.AllowStealingThrowableBug("Cave Bat Holdable", false), disableMethod =() => Fun.AllowStealingThrowableBug("Cave Bat Holdable", true), toolTip = "Makes the bat ungrabbable."},
-
                 new ButtonInfo { buttonText = "Grab Bug <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.ObjectToHand("Floating Bug Holdable"), toolTip = "Forces the bug into your hand when holding <color=green>grip</color>." },
+                new ButtonInfo { buttonText = "Grab Firefly <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.ObjectToHand("Firefly"), toolTip = "Forces the firefly into your hand when holding <color=green>grip</color>." },
                 new ButtonInfo { buttonText = "Grab Bat <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.ObjectToHand("Cave Bat Holdable"), toolTip = "Forces the bat into your hand when holding <color=green>grip</color>." },
                 new ButtonInfo { buttonText = "Grab Balloons <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.GrabBalloons(), toolTip = "Forces every single balloon cosmetic into your hand when holding <color=green>grip</color>." },
                 new ButtonInfo { buttonText = "Grab Gliders <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.GrabGliders(), toolTip = "Forces the bug into your hand when holding <color=green>grip</color>." },
 
                 new ButtonInfo { buttonText = "Bug Gun", method =() => Fun.ObjectToPointGun("Floating Bug Holdable"), toolTip = "Moves the bug to wherever your hand desires." },
+                new ButtonInfo { buttonText = "Firefly Gun", method =() => Fun.ObjectToPointGun("Firefly"), toolTip = "Moves the firefly to wherever your hand desires." },
                 new ButtonInfo { buttonText = "Bat Gun", method =() => Fun.ObjectToPointGun("Cave Bat Holdable"), toolTip = "Moves the bat to wherever your hand desires." },
                 new ButtonInfo { buttonText = "Balloon Gun", method =() => Fun.BalloonGun(), toolTip = "Moves every single balloon cosmetic to wherever your hand desires." },
                 new ButtonInfo { buttonText = "Glider Gun", method =() => Fun.GliderGun(), toolTip = "Moves the gliders to wherever your hand desires." },
 
                 new ButtonInfo { buttonText = "Spaz Bug", method =() => Fun.SpazObject("Floating Bug Holdable"), toolTip = "Gives the bug a seizure." },
+                new ButtonInfo { buttonText = "Spaz Firefly", method =() => Fun.SpazObject("Firefly"), toolTip = "Gives the firefly a seizure." },
                 new ButtonInfo { buttonText = "Spaz Bat", method =() => Fun.SpazObject("Cave Bat Holdable"), toolTip = "Gives the bat a seizure." },
                 new ButtonInfo { buttonText = "Spaz Balloons", method =() => Fun.SpazBalloons(), toolTip = "Gives the gliders a seizure." },
                 new ButtonInfo { buttonText = "Spaz Gliders", method =() => Fun.SpazGliders(), toolTip = "Gives the gliders a seizure." },
 
                 new ButtonInfo { buttonText = "Orbit Bug", method =() => Fun.OrbitObject("Floating Bug Holdable"), toolTip = "Orbits the bug around you." },
-                new ButtonInfo { buttonText = "Orbit Bat", method =() => Fun.OrbitObject("Cave Bat Holdable", 120f), toolTip = "Orbits the bat around you." },
+                new ButtonInfo { buttonText = "Orbit Firefly", method =() => Fun.OrbitObject("Firefly", 120f), toolTip = "Orbits the firefly around you." },
+                new ButtonInfo { buttonText = "Orbit Bat", method =() => Fun.OrbitObject("Cave Bat Holdable", 240f), toolTip = "Orbits the bat around you." },
                 new ButtonInfo { buttonText = "Orbit Balloons", method =() => Fun.OrbitBalloons(), toolTip = "Orbits the balloons around you." },
                 new ButtonInfo { buttonText = "Orbit Gliders", method =() => Fun.OrbitGliders(), toolTip = "Orbits the gliders around you." },
 
                 new ButtonInfo { buttonText = "Ride Bug", method =() => Fun.RideObject("Floating Bug Holdable"), toolTip = "Repeatedly teleports you on top of the bug." },
+                new ButtonInfo { buttonText = "Ride Firefly", method =() => Fun.RideObject("Firefly"), toolTip = "Repeatedly teleports you on top of the firefly." },
                 new ButtonInfo { buttonText = "Ride Bat", method =() => Fun.RideObject("Cave Bat Holdable"), toolTip = "Repeatedly teleports you on top of the bat." },
 
-                new ButtonInfo { buttonText = "Destroy Bug", method =() => Fun.DestroyObject("Floating Bug Holdable"), isTogglable = false, toolTip = "Sends the bug to hell." },
-                new ButtonInfo { buttonText = "Destroy Bat", method =() => Fun.DestroyObject("Cave Bat Holdable"), isTogglable = false, toolTip = "Sends the bat to hell." },
+                new ButtonInfo { buttonText = "Become Bug", method =() => Fun.BecomeObject("Floating Bug Holdable"), toolTip = "Turns you into the bug." },
+                new ButtonInfo { buttonText = "Become Firefly", method =() => Fun.BecomeObject("Firefly"), toolTip = "Turns you into the firefly." },
+                new ButtonInfo { buttonText = "Become Bat", method =() => Fun.BecomeObject("Cave Bat Holdable"), toolTip = "Turns you into the bat." },
+                new ButtonInfo { buttonText = "Become Balloon", method =() => Fun.BecomeBalloon(), disableMethod =() => Movement.EnableRig(), toolTip = "Turns you into a balloon when holding <color=green>trigger</color>." },
+
+                new ButtonInfo { buttonText = "Destroy Bug", method =() => Fun.DestroyObject("Floating Bug Holdable"), toolTip = "Sends the bug to hell." },
+                new ButtonInfo { buttonText = "Destroy Firefly", method =() => Fun.DestroyObject("Firefly"), toolTip = "Sends the bug to hell." },
+                new ButtonInfo { buttonText = "Destroy Bat", method =() => Fun.DestroyObject("Cave Bat Holdable"), toolTip = "Sends the bat to hell." },
                 new ButtonInfo { buttonText = "Destroy Balloons", method =() => Fun.DestroyBalloons(), isTogglable = false, toolTip = "Sends every single balloon cosmetic to hell." },
                 new ButtonInfo { buttonText = "Destroy Gliders", method =() => Fun.DestroyGliders(), isTogglable = false, toolTip = "Sends every single glider to hell." },
 
                 new ButtonInfo { buttonText = "Respawn Gliders", method =() => Fun.RespawnGliders(), isTogglable = false, toolTip = "Respawns all the gliders." },
                 new ButtonInfo { buttonText = "Pop All Balloons", method =() => Fun.PopAllBalloons(), isTogglable = false, toolTip = "Pops every single balloon cosmetic." },
-                new ButtonInfo { buttonText = "Become Balloon <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Fun.BecomeBalloon(), toolTip = "Turns you into a balloon when holding <color=green>trigger</color>." },
-
+                
                 new ButtonInfo { buttonText = "Remove Name", method =() => ChangeName(""), isTogglable = false, toolTip = "Sets your name to nothing." },
                 new ButtonInfo { buttonText = "Set Name to \"STATUE\"", method =() => ChangeName("STATUE"), isTogglable = false, toolTip = "Sets your name to \"STATUE\"." },
                 new ButtonInfo { buttonText = "Set Name to \"RUN\"", method =() => ChangeName("RUN"), isTogglable = false, toolTip = "Sets your name to \"RUN\"." },

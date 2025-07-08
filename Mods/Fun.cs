@@ -25,6 +25,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
+using static Mono.Security.X509.X520;
 
 namespace iiMenu.Mods
 {
@@ -1373,7 +1374,11 @@ namespace iiMenu.Mods
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
-                    GetObject(objectName).transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
+                {
+                    ThrowableBug bug = GetBug(objectName);
+                    if (bug != null)
+                        bug.transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
+                }
             }
         }
 
@@ -1791,10 +1796,78 @@ namespace iiMenu.Mods
             }
         }
 
+        public static Coroutine bugCoroutine;
+        public static IEnumerator ReturnRig()
+        {
+            yield return new WaitForSeconds(0.2f);
+            VRRig.LocalRig.enabled = true;
+            bugCoroutine = null;
+        }
+
+        public static float getOwnershipDelay;
+        public static ThrowableBug GetBug(string name)
+        {
+            GameObject bugObject = null;
+            if (name == "Firefly")
+                bugObject = GetAllType<ThrowableBug>().Where(bug => bug.gameObject.activeInHierarchy && bug.gameObject.name == "Floating Bug Holdable").ToArray()[1].gameObject;
+            else
+                bugObject = GetObject(name);
+            if (bugObject == null)
+                return null;
+
+            ThrowableBug bug = bugObject.GetComponent<ThrowableBug>();
+            if (bug == null)
+                return null;
+
+            if (!PhotonNetwork.InRoom)
+                return bug;
+
+            RequestableOwnershipGuard guard = bug.worldShareableInstance.guard;
+            if (guard == null)
+                return null;
+
+            if (!bug.IsMyItem())
+            {
+                if (Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, bugObject.transform.position) > 15f)
+                {
+                    VRRig.LocalRig.enabled = false;
+                    VRRig.LocalRig.transform.position = bugObject.transform.position;
+
+                    if (bugCoroutine != null)
+                        CoroutineManager.instance.StopCoroutine(bugCoroutine);
+
+                    bugCoroutine = CoroutineManager.instance.StartCoroutine(ReturnRig());
+                }
+
+                if (Vector3.Distance(ServerPos, bugObject.transform.position) > 15f)
+                    return null;
+
+                if (Time.time < getOwnershipDelay)
+                    return null;
+
+                getOwnershipDelay = Time.time + 0.5f;
+
+                guard.RequestOwnership(() => bug.currentState = TransferrableObject.PositionState.Dropped, null);
+                return null;
+            }
+            else
+            {
+                if (bugCoroutine != null)
+                {
+                    CoroutineManager.instance.StopCoroutine(bugCoroutine);
+                    VRRig.LocalRig.enabled = true;
+                }
+
+                bug.worldShareableInstance.transferableObjectState = TransferrableObject.PositionState.Dropped;
+                return bug;
+            }
+        }
+
         public static void ObjectToHand(string objectName)
         {
-            if (rightGrab)
-                GetObject(objectName).transform.position = GorillaTagger.Instance.rightHandTransform.position;
+            ThrowableBug bug = GetBug(objectName);
+            if (rightGrab && bug != null)
+                bug.transform.position = GorillaTagger.Instance.rightHandTransform.position;
         }
 
         public static void GrabGliders()
@@ -1820,8 +1893,12 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void DestroyObject(string objectName) =>
-            GetObject(objectName).transform.position = new Vector3(99999f, 99999f, 99999f);
+        public static void DestroyObject(string objectName)
+        {
+            ThrowableBug bug = GetBug(objectName);
+            if (bug != null)
+                bug.transform.position = new Vector3(99999f, 99999f, 99999f);
+        }
 
         public static void RespawnGliders()
         {
@@ -2337,8 +2414,12 @@ namespace iiMenu.Mods
             RPCProtection();
         }
 
-        public static void SpazObject(string objectName) =>
-             GetObject(objectName).transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+        public static void SpazObject(string objectName)
+        {
+            ThrowableBug bug = GetBug(objectName);
+            if (bug != null)
+                bug.transform.rotation = RandomQuaternion();
+        }
 
         public static void SpazGliders()
         {
@@ -2351,8 +2432,12 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void OrbitObject(string objectName, float offset = 0) =>
-            GetObject(objectName).transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)), 2, MathF.Sin(offset + ((float)Time.frameCount / 30)));
+        public static void OrbitObject(string objectName, float offset = 0)
+        {
+            ThrowableBug bug = GetBug(objectName);
+            if (bug != null)
+                bug.transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)), 2, MathF.Sin(offset + ((float)Time.frameCount / 30)));
+        }
 
         public static void OrbitGliders()
         {
@@ -2380,12 +2465,28 @@ namespace iiMenu.Mods
 
         public static void RideObject(string objectName)
         {
-            TeleportPlayer(GetObject(objectName).transform.position);
+            GameObject bugObject = null;
+            if (objectName == "Firefly")
+                bugObject = GetAllType<ThrowableBug>().Where(bug => bug.gameObject.activeInHierarchy && bug.gameObject.name == "Floating Bug Holdable").ToArray()[1].gameObject;
+            else
+                bugObject = GetObject(objectName);
+
+            TeleportPlayer(bugObject.transform.position);
             GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
         }
 
-        public static void AllowStealingThrowableBug(string objectName, bool allowPlayerStealing) =>
-            GetObject(objectName).GetComponent<ThrowableBug>().allowPlayerStealing = allowPlayerStealing;
+        public static void BecomeObject(string objectName)
+        {
+            ThrowableBug bug = GetBug(objectName);
+            if (bug != null)
+            {
+                VRRig.LocalRig.enabled = false;
+                VRRig.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position - Vector3.up * 99999f;
+
+                bug.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
+                bug.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
+            }
+        }
 
         public static void MultiGrab()
         {
@@ -2916,40 +3017,32 @@ namespace iiMenu.Mods
         // "Tubski" will be long loved forever because that was the original name of this mod I don't know what that means
         public static void BecomeBalloon()
         {
-            if (rightTrigger > 0.5f)
+            VRRig.LocalRig.enabled = false;
+            VRRig.LocalRig.inTryOnRoom = true;
+            VRRig.LocalRig.transform.position = new Vector3(-51.4897f, 16.9286f, -120.1083f);
+
+            bool FoundBalloon = false;
+            foreach (BalloonHoldable Balloon in GetAllType<BalloonHoldable>())
             {
-                VRRig.LocalRig.enabled = false;
-                VRRig.LocalRig.inTryOnRoom = true;
-                VRRig.LocalRig.transform.position = new Vector3(-51.4897f, 16.9286f, -120.1083f);
-
-                bool FoundBalloon = false;
-                foreach (BalloonHoldable Balloon in GetAllType<BalloonHoldable>())
+                if (Balloon.ownerRig == VRRig.LocalRig && Balloon.gameObject.name.Contains("LMAMI"))
                 {
-                    if (Balloon.ownerRig == VRRig.LocalRig && Balloon.gameObject.name.Contains("LMAMI"))
-                    {
-                        FoundBalloon = true;
+                    FoundBalloon = true;
 
-                        Balloon.maxDistanceFromOwner = float.MaxValue;
-                        Balloon.currentState = TransferrableObject.PositionState.Dropped;
+                    Balloon.maxDistanceFromOwner = float.MaxValue;
+                    Balloon.currentState = TransferrableObject.PositionState.Dropped;
 
-                        Balloon.gameObject.transform.position = GorillaTagger.Instance.headCollider.transform.position + (GorillaTagger.Instance.headCollider.transform.up * - 1f);
-                        Balloon.gameObject.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
-                    }
-                }
-
-                if (!FoundBalloon)
-                {
-                    CosmeticsController.instance.ApplyCosmeticItemToSet(VRRig.LocalRig.tryOnSet, CosmeticsController.instance.GetItemFromDict("LMAAP."), true, false);
-                    CosmeticsController.instance.UpdateWornCosmetics(true);
-                    RPCProtection();
-
-                    ClearType<BalloonHoldable>();
+                    Balloon.gameObject.transform.position = GorillaTagger.Instance.headCollider.transform.position + (GorillaTagger.Instance.headCollider.transform.up * - 1f);
+                    Balloon.gameObject.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
                 }
             }
-            else
+
+            if (!FoundBalloon)
             {
-                if (!VRRig.LocalRig.enabled)
-                    VRRig.LocalRig.enabled = true;
+                CosmeticsController.instance.ApplyCosmeticItemToSet(VRRig.LocalRig.tryOnSet, CosmeticsController.instance.GetItemFromDict("LMAAP."), true, false);
+                CosmeticsController.instance.UpdateWornCosmetics(true);
+                RPCProtection();
+
+                ClearType<BalloonHoldable>();
             }
         }
 
