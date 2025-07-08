@@ -1844,8 +1844,6 @@ namespace iiMenu.Menu
             Destroy(menu.GetComponent<Renderer>());
 
             menu.transform.localScale = new Vector3(0.1f, 0.3f, 0.3825f);
-            if (scaleWithPlayer)
-                menu.transform.localScale *= GorillaLocomotion.GTPlayer.Instance.scale;
 
             if (annoyingMode)
             {
@@ -2055,9 +2053,6 @@ namespace iiMenu.Menu
             CanvasScaler canvasScaler = canvasObj.AddComponent<CanvasScaler>();
             canvas.renderMode = RenderMode.WorldSpace;
             canvasScaler.dynamicPixelsPerUnit = highQualityText ? 2500f : 1000f;
-
-            if (scaleWithPlayer)
-                canvas.transform.localScale *= GorillaLocomotion.GTPlayer.Instance.scale;
 
             canvasObj.AddComponent<GraphicRaycaster>();
 
