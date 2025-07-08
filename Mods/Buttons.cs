@@ -853,9 +853,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Ride Firefly", method =() => Fun.RideObject("Firefly"), toolTip = "Repeatedly teleports you on top of the firefly." },
                 new ButtonInfo { buttonText = "Ride Bat", method =() => Fun.RideObject("Cave Bat Holdable"), toolTip = "Repeatedly teleports you on top of the bat." },
 
-                new ButtonInfo { buttonText = "Become Bug", method =() => Fun.BecomeObject("Floating Bug Holdable"), toolTip = "Turns you into the bug." },
-                new ButtonInfo { buttonText = "Become Firefly", method =() => Fun.BecomeObject("Firefly"), toolTip = "Turns you into the firefly." },
-                new ButtonInfo { buttonText = "Become Bat", method =() => Fun.BecomeObject("Cave Bat Holdable"), toolTip = "Turns you into the bat." },
+                new ButtonInfo { buttonText = "Become Bug", method =() => Fun.BecomeObject("Floating Bug Holdable"), disableMethod =() => Movement.EnableRig(), toolTip = "Turns you into the bug." },
+                new ButtonInfo { buttonText = "Become Firefly", method =() => Fun.BecomeObject("Firefly"), disableMethod =() => Movement.EnableRig(), toolTip = "Turns you into the firefly." },
+                new ButtonInfo { buttonText = "Become Bat", method =() => Fun.BecomeObject("Cave Bat Holdable"), disableMethod =() => Movement.EnableRig(), toolTip = "Turns you into the bat." },
                 new ButtonInfo { buttonText = "Become Balloon", method =() => Fun.BecomeBalloon(), disableMethod =() => Movement.EnableRig(), toolTip = "Turns you into a balloon when holding <color=green>trigger</color>." },
 
                 new ButtonInfo { buttonText = "Destroy Bug", method =() => Fun.DestroyObject("Floating Bug Holdable"), toolTip = "Sends the bug to hell." },
