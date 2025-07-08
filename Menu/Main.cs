@@ -364,7 +364,7 @@ namespace iiMenu.Menu
 
                         motdTC.richText = true;
                         motdTC.fontSize = 70;
-                        motdTC.text = "Thanks for using ii's <b>Stupid</b> Menu!";
+                        motdTC.text = "Thanks for using ii's Stupid Menu!";
 
                         if (doCustomName)
                             motdTC.text = "Thanks for using " + NoRichtextTags(customMenuName) + "!";
@@ -1528,6 +1528,9 @@ namespace iiMenu.Menu
 
             textTransform.localPosition = new Vector3(.064f, 0, .111f - offset / 2.6f);
             textTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+
+            if (outlineText)
+                OutlineCanvasObject(buttonText);
         }
 
         private static void AddSearchButton() // Me :D -Twig
@@ -1621,6 +1624,9 @@ namespace iiMenu.Menu
                 imageTransform.localPosition = new Vector3(.064f, -0.54444444444f / 2.6f, -0.58f / 2.6f);
 
             imageTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+
+            if (outlineText)
+                OutlineCanvasObject(searchImage, 0);
         }
 
         private static void AddReturnButton(bool offcenteredPosition)
@@ -1702,6 +1708,9 @@ namespace iiMenu.Menu
                 imageTransform.localPosition += new Vector3(0f, 0.0475f, 0f);
 
             imageTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+
+            if (outlineText)
+                OutlineCanvasObject(returnImage, 1);
         }
 
         private static void RenderIncrementalButton(bool increment, float offset, int buttonIndex, ButtonInfo method)
@@ -1793,6 +1802,9 @@ namespace iiMenu.Menu
             else
                 textTransform.localPosition = new Vector3(.064f, increment ? -0.18f : 0.18f, .111f - offset / 2.6f);
             textTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+
+            if (outlineText)
+                OutlineCanvasObject(buttonText);
         }
 
         public static void CreateReference()
@@ -2098,6 +2110,9 @@ namespace iiMenu.Menu
             component.localPosition = new Vector3(0.06f, 0f, 0.165f);
             component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
+            if (outlineText)
+                OutlineCanvasObject(title);
+
             Text buildLabel = new GameObject
             {
                 transform =
@@ -2133,6 +2148,9 @@ namespace iiMenu.Menu
 
             component.rotation = Quaternion.Euler(new Vector3(0f, 90f, 90f));
 
+            if (outlineText)
+                OutlineCanvasObject(buildLabel);
+
             if (!disableFpsCounter)
             {
                 Text fps = new GameObject
@@ -2163,6 +2181,9 @@ namespace iiMenu.Menu
                 if (NoAutoSizeText)
                     component2.sizeDelta = new Vector2(9f, 0.015f);
                 component2.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+
+                if (outlineText)
+                    OutlineCanvasObject(fps, true);
             }
 
             if (!disableDisconnectButton)
@@ -2282,6 +2303,9 @@ namespace iiMenu.Menu
 
                 textTransform.localPosition = new Vector3(.064f, 0, .111f - (buttonOffset / 10) / 2.6f);
                 textTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+
+                if (outlineText)
+                    OutlineCanvasObject(searchTextObject, true);
             }
 
             try
@@ -2706,6 +2730,9 @@ namespace iiMenu.Menu
             textRect.localPosition = textPosition;
             textRect.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
+            if (outlineText)
+                OutlineCanvasObject(text);
+
             return button;
         }
 
@@ -2768,6 +2795,64 @@ namespace iiMenu.Menu
             colorChanger.isPastelRainbow = shouldBeEnabled && themeType == 51;
             colorChanger.isMonkeColors = shouldBeEnabled && themeType == 8;
             colorChanger.isEpileptic = shouldBeEnabled && themeType == 47;
+        }
+
+        public static Material outlineMat = new Material(Shader.Find("Sprites/Default"));
+        public static void OutlineCanvasObject(Text text, bool clamp = false)
+        {
+            foreach (Vector3 offset in new[] { new Vector3(0f, 1f, 1f), new Vector3(0f, -1f, 1f), new Vector3(0f, 1f, -1f), new Vector3(0f, -1f, -1f) })
+            {
+                Text newText = Instantiate(text);
+                newText.text = NoColorTags(text.text);
+
+                newText.transform.SetParent(text.transform.parent, false);
+                newText.rectTransform.localPosition = text.rectTransform.localPosition + (offset * 0.001f);// + new Vector3(-0.0025f, 0f, 0f);
+
+                newText.material = outlineMat;
+                newText.color = Color.black;
+                newText.material.renderQueue = text.material.renderQueue - 2;
+
+                if (clamp)
+                    newText.AddComponent<ClampText>().targetText = text;
+            }
+        }
+
+        private static List<Material> imageMaterials = new List<Material> { };
+        public static void OutlineCanvasObject(Image image, int index)
+        {
+            while (imageMaterials.Count <= index)
+                imageMaterials.Add(null);
+
+            if (imageMaterials[index] == null)
+            {
+                Material material = new Material(Shader.Find("Sprites/Default"));
+
+                material.SetInt("_SrcBlend", (int)BlendMode.SrcAlpha);
+                material.SetInt("_DstBlend", (int)BlendMode.OneMinusSrcAlpha);
+                material.SetInt("_ZWrite", 0);
+                material.DisableKeyword("_ALPHATEST_ON");
+                material.EnableKeyword("_ALPHABLEND_ON");
+                material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+
+                material.mainTexture = image.material.mainTexture;
+
+                imageMaterials[index] = material;
+            }
+
+            Material targetMaterial = imageMaterials[index];
+
+            foreach (Vector3 offset in new[] { new Vector3(0f, 1f, 1f), new Vector3(0f, -1f, 1f), new Vector3(0f, 1f, -1f), new Vector3(0f, -1f, -1f) })
+            {
+                Image newImage = Instantiate(image);
+
+                newImage.transform.SetParent(image.transform.parent, false);
+                newImage.rectTransform.localPosition = image.rectTransform.localPosition + (offset * 0.001f);
+                
+                newImage.material = targetMaterial;
+                newImage.color = Color.black;
+
+                newImage.material.renderQueue = image.material.renderQueue - 2;
+            }
         }
 
         public static void RoundObj(GameObject toRound, float Bevel = 0.02f)
@@ -3090,6 +3175,7 @@ namespace iiMenu.Menu
                 GameObject Particle = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                 Particle.transform.position = EndPosition;
                 Particle.AddComponent<CustomParticle>();
+                Destroy(Particle.GetComponent<Collider>());
             }
 
             Destroy(NewPointer.GetComponent<Collider>());
@@ -4053,7 +4139,13 @@ namespace iiMenu.Menu
 
         public static string NoRichtextTags(string input, string replace = "")
         {
-            Regex notags = new Regex("<.*?>");
+            Regex notags = new Regex("<.*?>", RegexOptions.IgnoreCase);
+            return notags.Replace(input, replace);
+        }
+
+        public static string NoColorTags(string input, string replace = "")
+        {
+            Regex notags = new Regex(@"<color=.*?>|</color>", RegexOptions.IgnoreCase);
             return notags.Replace(input, replace);
         }
 
@@ -5055,6 +5147,7 @@ jgs \_   _/ |Oo\
         public static bool zeroGravityMenu;
         public static bool dropOnRemove = true;
         public static bool shouldOutline;
+        public static bool outlineText;
         public static bool innerOutline;
         public static bool smoothLines;
         public static bool shouldRound;
