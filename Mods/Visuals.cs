@@ -153,7 +153,7 @@ namespace iiMenu.Mods
 
                     trailRenderer.minVertexDistance = 0.05f;
 
-                    trailRenderer.material.shader = Shader.Find("Sprites/Default");
+                    trailRenderer.material.shader = Shader.Find("GUI/Text Shader");
                     trailRenderer.time = float.PositiveInfinity;
                     
                     trailRenderer.startColor = Color.black;
