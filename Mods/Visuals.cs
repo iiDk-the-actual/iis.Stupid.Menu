@@ -443,6 +443,49 @@ namespace iiMenu.Mods
             UnityEngine.Object.Destroy(visualizerOutline);
         }
 
+        private static GameObject headPos;
+        private static GameObject leftHandPos;
+        private static GameObject rightHandPos;
+        public static void ShowServerPosition()
+        {
+            if (headPos == null)
+            {
+                headPos = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                UnityEngine.Object.Destroy(headPos.GetComponent<Collider>());
+                headPos.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+            }
+
+            if (leftHandPos == null)
+            {
+                leftHandPos = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                UnityEngine.Object.Destroy(leftHandPos.GetComponent<Collider>());
+                leftHandPos.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+            }
+
+            if (rightHandPos == null)
+            {
+                rightHandPos = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                UnityEngine.Object.Destroy(rightHandPos.GetComponent<Collider>());
+                rightHandPos.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+            }
+
+            headPos.transform.position = ServerPos;
+            leftHandPos.transform.position = ServerLeftHandPos;
+            rightHandPos.transform.position = ServerRightHandPos;
+        }
+
+        public static void DisableShowServerPosition()
+        {
+            if (headPos != null)
+                UnityEngine.Object.Destroy(headPos);
+
+            if (leftHandPos != null)
+                UnityEngine.Object.Destroy(leftHandPos);
+
+            if (rightHandPos != null)
+                UnityEngine.Object.Destroy(rightHandPos);
+        }
+
         private static Dictionary<VRRig, LineRenderer> predictions = new Dictionary<VRRig, LineRenderer> { };
         public static void JumpPredictions()
         {
@@ -872,34 +915,6 @@ namespace iiMenu.Mods
                 UnityEngine.Object.Destroy(nametag.Value);
 
             taggedNameTags.Clear();
-        }
-
-        public static void ShowPlayspaceCenter()
-        {
-            if (PerformanceVisuals)
-            {
-                if (Time.time < PerformanceVisualDelay)
-                {
-                    if (Time.frameCount != DelayChangeStep)
-                        return;
-                }
-                else
-                { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
-            }
-
-            GameObject playspaceCenter = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            UnityEngine.Object.Destroy(playspaceCenter.GetComponent<Collider>());
-            UnityEngine.Object.Destroy(playspaceCenter.GetComponent<Renderer>());
-
-            playspaceCenter.GetComponent<Renderer>().material.color = GetBGColor(0f);
-            playspaceCenter.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-            playspaceCenter.transform.localScale = new Vector3(0.1f, 0.1f, 0.15f);
-
-            Physics.Raycast(new Vector3(GorillaTagger.Instance.transform.position.x, GorillaTagger.Instance.headCollider.transform.position.y, GorillaTagger.Instance.transform.position.x), Vector3.down, out var Ray, 512f, NoInvisLayerMask());
-            playspaceCenter.transform.position = Ray.point;
-            playspaceCenter.transform.rotation = GorillaTagger.Instance.transform.rotation;
-
-            UnityEngine.Object.Destroy(playspaceCenter, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
         }
 
         public static void FixRigColors()
