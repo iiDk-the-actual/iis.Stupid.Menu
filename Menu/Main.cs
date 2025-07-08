@@ -1,6 +1,7 @@
 using BepInEx;
 using ExitGames.Client.Photon;
 using GorillaExtensions;
+using GorillaLocomotion;
 using GorillaNetworking;
 using GorillaTagScripts;
 using HarmonyLib;
@@ -44,7 +45,7 @@ https://github.com/iiDk-the-actual/iis.Stupid.Menu
 
 namespace iiMenu.Menu
 {
-    [HarmonyPatch(typeof(GorillaLocomotion.GTPlayer), "LateUpdate")]
+    [HarmonyPatch(typeof(GTPlayer), "LateUpdate")]
     public class Main : MonoBehaviour
     {
         public static void Prefix()
@@ -158,12 +159,12 @@ namespace iiMenu.Menu
 
                                     if (rightHand || (bothHands && openedwithright))
                                     {
-                                        comp.velocity = GorillaLocomotion.GTPlayer.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0);
+                                        comp.velocity = GTPlayer.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0);
                                         comp.angularVelocity = GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").GetOrAddComponent<GorillaVelocityEstimator>().angularVelocity;
                                     }
                                     else
                                     {
-                                        comp.velocity = GorillaLocomotion.GTPlayer.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0);
+                                        comp.velocity = GTPlayer.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0);
                                         comp.angularVelocity = GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").GetOrAddComponent<GorillaVelocityEstimator>().angularVelocity;
                                     }
 
@@ -711,7 +712,7 @@ namespace iiMenu.Menu
                     {
                         if (!legacyGhostview && GhostRig == null)
                         {
-                            GhostRig = Instantiate(VRRig.LocalRig, GorillaLocomotion.GTPlayer.Instance.transform.position, GorillaLocomotion.GTPlayer.Instance.transform.rotation);
+                            GhostRig = Instantiate(VRRig.LocalRig, GTPlayer.Instance.transform.position, GTPlayer.Instance.transform.rotation);
                             GhostRig.headBodyOffset = Vector3.zero;
 
                             GhostRig.transform.Find("VR Constraints/LeftArm/Left Arm IK/SlideAudio").gameObject.SetActive(false);
@@ -2454,6 +2455,8 @@ namespace iiMenu.Menu
                     comp.angularVelocity = new Vector3(UnityEngine.Random.Range(-3f, 3f), UnityEngine.Random.Range(-3f, 3f), UnityEngine.Random.Range(-3f, 3f));
                 }
             }
+
+            menu.transform.localScale *= (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
         }
 
         public static void RecenterMenu()
@@ -3585,7 +3588,7 @@ namespace iiMenu.Menu
         public static System.Collections.IEnumerator GrowCoroutine()
         {
             float elapsedTime = 0f;
-            Vector3 target = (scaleWithPlayer) ? new Vector3(0.1f, 0.3f, 0.3825f) * GorillaLocomotion.GTPlayer.Instance.scale : new Vector3(0.1f, 0.3f, 0.3825f);
+            Vector3 target = scaleWithPlayer ? new Vector3(0.1f, 0.3f, 0.3825f) * GTPlayer.Instance.scale : new Vector3(0.1f, 0.3f, 0.3825f);
             while (elapsedTime < 0.05f)
             {
                 menu.transform.localScale = Vector3.Lerp(Vector3.zero, target, elapsedTime / 0.05f);
@@ -3912,14 +3915,14 @@ namespace iiMenu.Menu
         // True left and right hand get the exact position and rotation of the middle of the hand
         public static (Vector3 position, Quaternion rotation, Vector3 up, Vector3 forward, Vector3 right) TrueLeftHand()
         {
-            Quaternion rot = GorillaTagger.Instance.leftHandTransform.rotation * GorillaLocomotion.GTPlayer.Instance.leftHandRotOffset;
-            return (GorillaTagger.Instance.leftHandTransform.position + GorillaTagger.Instance.leftHandTransform.rotation * GorillaLocomotion.GTPlayer.Instance.leftHandOffset, rot, rot * Vector3.up, rot * Vector3.forward, rot * Vector3.right);
+            Quaternion rot = GorillaTagger.Instance.leftHandTransform.rotation * GTPlayer.Instance.leftHandRotOffset;
+            return (GorillaTagger.Instance.leftHandTransform.position + GorillaTagger.Instance.leftHandTransform.rotation * GTPlayer.Instance.leftHandOffset, rot, rot * Vector3.up, rot * Vector3.forward, rot * Vector3.right);
         }
 
         public static (Vector3 position, Quaternion rotation, Vector3 up, Vector3 forward, Vector3 right) TrueRightHand()
         {
-            Quaternion rot = GorillaTagger.Instance.rightHandTransform.rotation * GorillaLocomotion.GTPlayer.Instance.rightHandRotOffset;
-            return (GorillaTagger.Instance.rightHandTransform.position + GorillaTagger.Instance.rightHandTransform.rotation * GorillaLocomotion.GTPlayer.Instance.rightHandOffset, rot, rot * Vector3.up, rot * Vector3.forward, rot * Vector3.right);
+            Quaternion rot = GorillaTagger.Instance.rightHandTransform.rotation * GTPlayer.Instance.rightHandRotOffset;
+            return (GorillaTagger.Instance.rightHandTransform.position + GorillaTagger.Instance.rightHandTransform.rotation * GTPlayer.Instance.rightHandOffset, rot, rot * Vector3.up, rot * Vector3.forward, rot * Vector3.right);
         }
 
         public static void WorldScale(GameObject obj, Vector3 targetWorldScale)
@@ -4365,7 +4368,7 @@ namespace iiMenu.Menu
 
         public static void TeleportPlayer(Vector3 pos) // Prevents your hands from getting stuck on trees
         {
-            GorillaLocomotion.GTPlayer.Instance.TeleportTo(World2Player(pos), GorillaLocomotion.GTPlayer.Instance.transform.rotation);
+            GTPlayer.Instance.TeleportTo(World2Player(pos), GTPlayer.Instance.transform.rotation);
             closePosition = Vector3.zero;
             Movement.lastPosition = Vector3.zero;
             if (isSearching && !isPcWhenSearching)
