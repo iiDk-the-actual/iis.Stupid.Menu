@@ -383,6 +383,8 @@ namespace iiMenu.Mods.Spammers
             GetIndex("BlueProj").overlapText = "Blue <color=grey>[</color><color=green>" + blue.ToString() + "</color><color=grey>]</color>";
         }
 
+        public static float projDebounce;
+        public static float projDebounceType = 0.1f;
         public static int projDebounceIndex = 2;
         public static void ChangeProjectileDelay(bool positive = true, bool fromMenu = false)
         {
