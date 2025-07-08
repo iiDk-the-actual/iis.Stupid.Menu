@@ -2176,7 +2176,7 @@ namespace iiMenu.Mods
             {
                 if (Time.time > blockDelay)
                 {
-                    blockDelay = Time.time + 0.1f;
+                    blockDelay = Time.time + 0.05f;
                     BuilderPiece piece = GetAllType<BuilderPiece>()
                         .Where(piece => piece.gameObject.activeInHierarchy)
                         .Where(piece => piece.pieceType == pieceType)
@@ -2199,6 +2199,9 @@ namespace iiMenu.Mods
 
                     if (piece == null)
                         return;
+
+                    if (Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position, position) > 2.5f)
+                        position = GorillaTagger.Instance.leftHandTransform.position + ((position - GorillaTagger.Instance.leftHandTransform.position).normalized * 2.5f);
 
                     Networking.RequestGrabPiece(piece, true, Vector3.zero, Quaternion.identity);
                     Networking.RequestDropPiece(piece, position, rotation, Vector3.zero, Vector3.zero);
@@ -2781,30 +2784,29 @@ namespace iiMenu.Mods
         {
             if (rightGrab && Time.time > blockDelay)
             {
-                blockDelay = Time.time + 0.25f;
-                int amnt = 0;
-                foreach (BuilderPiece piece in GetAllType<BuilderPiece>())
-                {
-                    if (piece.gameObject.activeSelf && Vector3.Distance(piece.transform.position, GorillaTagger.Instance.rightHandTransform.position) < 2.5f)
-                    {
-                        if (!potentialgrabbedpieces.Contains(piece))
-                        {
-                            amnt++;
-                            if (amnt < 8)
-                            {
-                                RequestGrabPiece(piece, false, new Vector3(UnityEngine.Random.Range(-0.5f, 0.5f), UnityEngine.Random.Range(-0.5f, 0.5f), UnityEngine.Random.Range(-0.5f, 0.5f)), Quaternion.identity);
-                                potentialgrabbedpieces.Add(piece);
-                            }
-                        }
-                    }
-                }
+                blockDelay = Time.time + 0.05f;
+                BuilderPiece piece = GetAllType<BuilderPiece>()
+                    .Where(piece => piece.gameObject.activeInHierarchy)
+                    .Where(piece => !piece.isBuiltIntoTable)
+                    .Where(piece => piece.heldByPlayerActorNumber != PhotonNetwork.LocalPlayer.ActorNumber)
+                    .Where(piece => piece.CanPlayerGrabPiece(PhotonNetwork.LocalPlayer.ActorNumber, piece.transform.position))
+                    .Where(piece => Vector3.Distance(piece.transform.position, GorillaTagger.Instance.leftHandTransform.position) < 2.5f)
+                    .OrderBy(piece => Vector3.Distance(piece.transform.position, GorillaTagger.Instance.leftHandTransform.position))
+                    .FirstOrDefault();
+
+                if (piece == null)
+                    return;
+
+                RequestGrabPiece(piece, false, RandomVector3(0.5f), Quaternion.identity);
+                potentialgrabbedpieces.Add(piece);
+
                 RPCProtection();
             }
             if (rightTrigger > 0.5f && Time.time > blockDelay)
             {
                 blockDelay = Time.time + 0.25f;
-                foreach (BuilderPiece piece in potentialgrabbedpieces)
-                    RequestDropPiece(piece, GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, new Vector3(UnityEngine.Random.Range(-19f, 19f), UnityEngine.Random.Range(-19f, 19f), UnityEngine.Random.Range(-19f, 19f)), new Vector3(UnityEngine.Random.Range(-19f, 19f), UnityEngine.Random.Range(-19f, 19f), UnityEngine.Random.Range(-19f, 19f)));
+                foreach (BuilderPiece piece in GetAllType<BuilderPiece>().Where(piece => piece.gameObject.activeInHierarchy).Where(piece => piece.heldByPlayerActorNumber != PhotonNetwork.LocalPlayer.ActorNumber))
+                    RequestDropPiece(piece, GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, RandomVector3(19f), RandomVector3(19f));
                 
                 potentialgrabbedpieces.Clear();
                 RPCProtection();
