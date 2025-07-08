@@ -769,8 +769,9 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Fast Ropes", enableMethod =() => Patches.RopePatch.enabled = true, disableMethod =() => Patches.RopePatch.enabled = false, toolTip = "Makes ropes go five times faster when jumping on them."},
 
-                new ButtonInfo { buttonText = "No Respawn Bug", enableMethod =() => Fun.NoRespawnBug(), disableMethod =() => Fun.DisableNoRespawnBug(), toolTip = "Doesn't respawn the bug if it goes too far outside the bounds of forest."},
-                new ButtonInfo { buttonText = "No Respawn Bat", enableMethod =() => Fun.NoRespawnBat(), disableMethod =() => Fun.DisableNoRespawnBat(), toolTip = "Doesn't respawn the bat if it goes too far outside the bounds of caves."},
+                new ButtonInfo { buttonText = "No Respawn Bug", enableMethod =() => Fun.SetRespawnDistance("Floating Bug Holdable"), disableMethod =() => Fun.SetRespawnDistance("Floating Bug Holdable", 50f), toolTip = "Doesn't respawn the bug if it goes too far outside the bounds of forest."},
+                new ButtonInfo { buttonText = "No Respawn Firefly", enableMethod =() => Fun.SetRespawnDistance("Firefly"), disableMethod =() => Fun.SetRespawnDistance("Firefly", 50f), toolTip = "Doesn't respawn the firefly if it goes too far outside the bounds of forest."},
+                new ButtonInfo { buttonText = "No Respawn Bat", enableMethod =() => Fun.SetRespawnDistance("Cave Bat Holdable"), disableMethod =() => Fun.SetRespawnDistance("Cave Bat Holdable", 50f), toolTip = "Doesn't respawn the bat if it goes too far outside the bounds of caves."},
                 new ButtonInfo { buttonText = "No Respawn Gliders", enableMethod =() => Patches.GliderPatch.enabled = true, disableMethod =() => Patches.GliderPatch.enabled = false, toolTip = "Doesn't respawn gliders that go too far outside the bounds of clouds."},
 
                 new ButtonInfo { buttonText = "Anti Grab", enableMethod =() => Patches.GrabPatch.enabled = true, disableMethod =() => Patches.GrabPatch.enabled = false, toolTip = "Prevents players from picking you up in guardian."},

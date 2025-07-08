@@ -1465,28 +1465,16 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void NoRespawnBug()
+        public static void SetRespawnDistance(string objectName, float respawnDistance = float.MaxValue)
         {
-            GetObject("Floating Bug Holdable").GetComponent<ThrowableBug>().maxDistanceFromOriginBeforeRespawn = float.MaxValue;
-            GetObject("Floating Bug Holdable").GetComponent<ThrowableBug>().maxDistanceFromTargetPlayerBeforeRespawn = float.MaxValue;
-        }
+            GameObject bugObject = null;
+            if (objectName == "Firefly")
+                bugObject = GetAllType<ThrowableBug>().Where(bug => bug.gameObject.activeInHierarchy && bug.gameObject.name == "Floating Bug Holdable").ToArray()[1].gameObject;
+            else
+                bugObject = GetObject(objectName);
 
-        public static void DisableNoRespawnBug()
-        {
-            GetObject("Floating Bug Holdable").GetComponent<ThrowableBug>().maxDistanceFromOriginBeforeRespawn = 50f;
-            GetObject("Floating Bug Holdable").GetComponent<ThrowableBug>().maxDistanceFromTargetPlayerBeforeRespawn = 50f;
-        }
-
-        public static void NoRespawnBat()
-        {
-            GetObject("Cave Bat Holdable").GetComponent<ThrowableBug>().maxDistanceFromOriginBeforeRespawn = float.MaxValue;
-            GetObject("Cave Bat Holdable").GetComponent<ThrowableBug>().maxDistanceFromTargetPlayerBeforeRespawn = float.MaxValue;
-        }
-
-        public static void DisableNoRespawnBat()
-        {
-            GetObject("Cave Bat Holdable").GetComponent<ThrowableBug>().maxDistanceFromOriginBeforeRespawn = 50f;
-            GetObject("Cave Bat Holdable").GetComponent<ThrowableBug>().maxDistanceFromTargetPlayerBeforeRespawn = 50f;
+            bugObject.GetComponent<ThrowableBug>().maxDistanceFromOriginBeforeRespawn = float.MaxValue;
+            bugObject.GetComponent<ThrowableBug>().maxDistanceFromTargetPlayerBeforeRespawn = float.MaxValue;
         }
 
         public static void FastSnowballs()
