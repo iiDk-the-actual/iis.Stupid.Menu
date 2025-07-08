@@ -1262,6 +1262,32 @@ namespace iiMenu.Mods
             CoroutineManager.instance.StartCoroutine(DelayReloadMicrophone());
         }
 
+        public static void MuteMicrophone(bool mute)
+        {
+            if (!PhotonNetwork.InRoom)
+                return;
+
+            Recorder mic = GorillaTagger.Instance.myRecorder;
+
+            if (mute)
+            {
+                if (mic.gameObject.GetComponent<MicAmplifier>() != null)
+                    return;
+                MicAmplifier microphoneAmplifier = mic.gameObject.GetOrAddComponent<MicAmplifier>();
+                microphoneAmplifier.AmplificationFactor = 0;
+                microphoneAmplifier.BoostValue = 0;
+            }
+            else
+            {
+                if (mic.gameObject.GetComponent<MicAmplifier>() == null)
+                    return;
+                MicAmplifier microphoneAmplifier = mic.gameObject.GetComponent<MicAmplifier>();
+                microphoneAmplifier.enabled = false;
+                UnityEngine.Object.Destroy(mic.gameObject.GetComponent<MicAmplifier>());
+            }
+            CoroutineManager.instance.StartCoroutine(DelayReloadMicrophone());
+        }
+
         public static void SetMicrophonePitch(float pitch)
         {
             if (!PhotonNetwork.InRoom)
