@@ -4661,6 +4661,7 @@ namespace iiMenu.Menu
                 {
                     string url = buttonText == "PreviousPage" ? "prev.wav" : buttonText == "NextPage" ? "next.wav" : null;
                     if (url != null) Play2DAudio(LoadSoundFromURL($"https://github.com/iiDk-the-actual/ModInfo/raw/main/{url}", url), buttonClickVolume / 10f);
+                    rightHand = archiveRightHand;
                     return;
                 }
 
