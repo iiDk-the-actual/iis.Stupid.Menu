@@ -155,7 +155,7 @@ namespace iiMenu.Mods
                 gameObject.transform.parent = platform.transform;
                 gameObject.transform.localPosition = Vector3.zero;
                 gameObject.transform.localRotation = Quaternion.identity;
-                gameObject.transform.localScale = new Vector3(1.05f, 0.95f, 1.05f);
+                gameObject.transform.localScale = new Vector3(0.95f, 1.05f, 1.05f);
 
                 ColorChanger outlineColorChanger = gameObject.AddComponent<ColorChanger>();
                 outlineColorChanger.colors = new Gradient
