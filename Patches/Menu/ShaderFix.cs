@@ -9,7 +9,11 @@ namespace iiMenu.Patches
     {
         private static void Postfix(GameObject __result)
         {
-            __result.GetComponent<Renderer>().material.shader = Shader.Find(shinymenu ? "Universal Render Pipeline/Lit" : "GorillaTag/UberShader");
+            if (crystallizemenu && CrystalMaterial != null)
+                __result.GetComponent<Renderer>().material = CrystalMaterial;
+            else
+                __result.GetComponent<Renderer>().material.shader = Shader.Find(shinymenu ? "Universal Render Pipeline/Lit" : "GorillaTag/UberShader");
+            
             __result.GetComponent<Renderer>().material.color = bgColorA;
         }
     }

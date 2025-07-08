@@ -5015,6 +5015,10 @@ namespace iiMenu.Menu
 
             SerializePatch.OnSerialize += OnSerialize;
 
+            GameObject CrystalChunk = GameObject.Find("Environment Objects/LocalObjects_Prefab/ForestToCave/C_Crystal_Chunk");
+            if (CrystalChunk != null)
+                CrystalMaterial = CrystalChunk.GetComponent<Renderer>().material;
+
             string ConsoleGUID = $"goldentrophy_Console_{Classes.Console.ConsoleVersion}";
             GameObject ConsoleObject = GameObject.Find(ConsoleGUID);
 
@@ -5171,6 +5175,7 @@ jgs \_   _/ |Oo\
         public static bool disorganized;
         public static bool flipMenu;
         public static bool shinymenu;
+        public static bool crystallizemenu;
         public static bool zeroGravityMenu;
         public static bool dropOnRemove = true;
         public static bool shouldOutline;
@@ -5404,6 +5409,7 @@ jgs \_   _/ |Oo\
         public static GameObject legacyGhostViewLeft;
         public static GameObject legacyGhostViewRight;
         public static Material GhostMaterial;
+        public static Material CrystalMaterial;
         public static Material searchMat;
         public static Material returnMat;
 
