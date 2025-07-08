@@ -166,7 +166,7 @@ namespace iiMenu.Mods.Spammers
                                 projectileSendData[3] = color32.r;
                                 projectileSendData[4] = color32.g;
                                 projectileSendData[5] = color32.b;
-                                projectileSendData[6] = GrowingSnowball.snowballSizeLevels[index].snowballScale;
+                                projectileSendData[6] = GrowingSnowball.snowballSizeLevels[scale].snowballScale;
                                 projectileSendData[7] = index;
 
                                 PhotonNetwork.RaiseEvent(FriendManager.FriendByte, projectileSendData, options, SendOptions.SendUnreliable);
