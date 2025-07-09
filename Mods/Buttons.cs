@@ -1361,6 +1361,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Get Decryptable Cosmetic Data", method =() => Experimental.DecryptableCosmeticData(), isTogglable = false, toolTip = "Dumps the cosmetics and their data to a easily decryptable file for databases."},
                 new ButtonInfo { buttonText = "Get RPC Data", method =() => Experimental.DumpRPCData(), isTogglable = false, toolTip = "Dumps the data of every RPC to a file."},
 
+                //room things are wip
                 new ButtonInfo { buttonText = "Unlock Room", method =() => Experimental.SetRoomVisible(true), isTogglable = false, toolTip = "Makes the room unlocked and joinable."},
                 new ButtonInfo { buttonText = "Lock Room", method =() => Experimental.SetRoomVisible(false), isTogglable = false, toolTip = "Makes the room locked and non-joinable."},
 
