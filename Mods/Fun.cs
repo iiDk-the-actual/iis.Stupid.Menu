@@ -1992,6 +1992,7 @@ namespace iiMenu.Mods
             UnityEngine.Object.Destroy(Temporary.GetComponent<Collider>());
             yield return new WaitForSeconds(0.5f);
             RequestCreatePiece(pieceIdSet, Temporary.transform.position + RandomVector3(0.3f), RandomQuaternion(), 0, null, true);
+            UnityEngine.Object.Destroy(Temporary);
             RPCProtection();
         }
 
