@@ -728,6 +728,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Low Quality Microphone", method =() => Fun.SetMicrophoneQuality(6000, 08000), disableMethod =() => Fun.SetMicrophoneQuality(20000, 16000), toolTip = "Makes your microphone have really bad quality."},
                 new ButtonInfo { buttonText = "Loud Microphone", method =() => Fun.SetMicrophoneAmplification(true), disableMethod =() => Fun.SetMicrophoneAmplification(false), toolTip = "Makes your microphone really loud."},
+                new ButtonInfo { buttonText = "Mute Microphone", method =() => Fun.MuteMicrophone(true), disableMethod =() => Fun.MuteMicrophone(false), toolTip = "Disables your microphone."},
                 
                 new ButtonInfo { buttonText = "High Pitch Microphone", method =() => Fun.SetMicrophonePitch(1.5f), disableMethod =() => Fun.SetMicrophonePitch(1f), toolTip = "Makes your microphone high pitched."},
                 new ButtonInfo { buttonText = "Low Pitch Microphone", method =() => Fun.SetMicrophonePitch(0.5f), disableMethod =() => Fun.SetMicrophonePitch(1f), toolTip = "Makes your microphone low pitched."},
