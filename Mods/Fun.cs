@@ -50,9 +50,7 @@ namespace iiMenu.Mods
 
         public static void SidewaysHead() =>
             VRRig.LocalRig.head.trackingRotationOffset.y = 90f;
-        
-        public static void RandomYHead() =>
-            VRRig.LocalRig.head.trackingRotationOffset.y = UnityEngine.Random.Range(20, 340);
+ 
 
         public static float lastBangTime;
         public static float BPM = 159f;
