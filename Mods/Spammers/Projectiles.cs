@@ -166,7 +166,7 @@ namespace iiMenu.Mods.Spammers
                                 projectileSendData[3] = color32.r;
                                 projectileSendData[4] = color32.g;
                                 projectileSendData[5] = color32.b;
-                                projectileSendData[6] = GrowingSnowball.snowballSizeLevels[index].snowballScale;
+                                projectileSendData[6] = GrowingSnowball.snowballSizeLevels[scale].snowballScale;
                                 projectileSendData[7] = index;
 
                                 PhotonNetwork.RaiseEvent(FriendManager.FriendByte, projectileSendData, options, SendOptions.SendUnreliable);
@@ -383,6 +383,8 @@ namespace iiMenu.Mods.Spammers
             GetIndex("BlueProj").overlapText = "Blue <color=grey>[</color><color=green>" + blue.ToString() + "</color><color=grey>]</color>";
         }
 
+        public static float projDebounce;
+        public static float projDebounceType = 0.1f;
         public static int projDebounceIndex = 2;
         public static void ChangeProjectileDelay(bool positive = true, bool fromMenu = false)
         {
@@ -395,7 +397,7 @@ namespace iiMenu.Mods.Spammers
             if (projDebounceIndex < 0)
                 projDebounceIndex = 20;
 
-            if (projDebounceIndex < 8 && fromMenu && !GetIndex("Friend Sided Projectiles").enabled)
+            if (projDebounceIndex < 8 && fromMenu && (!GetIndex("Friend Sided Projectiles").enabled || !GetIndex("Client Sided Projectiles").enabled))
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>WARNING</color><color=grey>]</color> Using a projectile delay lower than 0.8 could get you banned. Use at your own caution.", 5000);
 
             projDebounceType = projDebounceIndex / 20f;
@@ -932,8 +934,8 @@ namespace iiMenu.Mods.Spammers
                 RaycastHit Ray = GunData.Ray;
 
                 if (gunLocked && lockTarget != null)
-                    BetaFireProjectile("EggLeftHand_Anchor Variant", lockTarget.headMesh.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, -15f, 0f), Color.black, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)).ActorNumber } });
-                
+                    ProjectileBlindPlayer(lockTarget);
+
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
@@ -954,7 +956,7 @@ namespace iiMenu.Mods.Spammers
         public static void ProjectileBlindAll()
         {
             if (rightTrigger > 0.5f)
-                BetaFireProjectile("EggLeftHand_Anchor Variant", GetCurrentTargetRig().headMesh.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, -15f, 0f), Color.black, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(GetCurrentTargetRig())).ActorNumber } });
+                ProjectileBlindPlayer(GetCurrentTargetRig());
         }
 
         public static void ProjectileBlindPlayer(NetPlayer player)
@@ -962,6 +964,8 @@ namespace iiMenu.Mods.Spammers
             VRRig rig = GetVRRigFromPlayer(player);
             BetaFireProjectile("EggLeftHand_Anchor Variant", rig.headMesh.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, -15f, 0f), Color.black, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(rig)).ActorNumber } });
         }
+
+        public static void ProjectileBlindPlayer(VRRig player) => ProjectileBlindPlayer(GetPlayerFromVRRig(player));
 
         public static void ProjectileLagGun()
         {
@@ -971,7 +975,7 @@ namespace iiMenu.Mods.Spammers
                 RaycastHit Ray = GunData.Ray;
 
                 if (gunLocked && lockTarget != null)
-                    BetaFireProjectile("Fireworks_Anchor Variant_Left Hand", lockTarget.headMesh.transform.position + new Vector3(0f, 0.1f, 0f) + lockTarget.headMesh.transform.forward * -0.7f, new Vector3(0f, 15f, 0f), Color.black, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)).ActorNumber } } );
+                    ProjectileLagPlayer(lockTarget);
 
                 if (GetGunInput(true))
                 {
@@ -993,7 +997,7 @@ namespace iiMenu.Mods.Spammers
         public static void ProjectileLagAll()
         {
             if (rightTrigger > 0.5f)
-                BetaFireProjectile("Fireworks_Anchor Variant_Left Hand", GetCurrentTargetRig().headMesh.transform.position + new Vector3(0f, 0.1f, 0f) + GetCurrentTargetRig().headMesh.transform.forward * -0.7f, new Vector3(0f, 15f, 0f), Color.black, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(GetCurrentTargetRig())).ActorNumber } });
+                ProjectileLagPlayer(GetCurrentTargetRig());
         }
 
         public static void ProjectileLagPlayer(NetPlayer player)
@@ -1001,5 +1005,7 @@ namespace iiMenu.Mods.Spammers
             VRRig rig = GetVRRigFromPlayer(player);
             BetaFireProjectile("Fireworks_Anchor Variant_Left Hand", rig.headMesh.transform.position + new Vector3(0f, 0.1f, 0f) + rig.headMesh.transform.forward * -0.7f, new Vector3(0f, 15f, 0f), Color.black, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(rig)).ActorNumber } });
         }
+
+        public static void ProjectileLagPlayer(VRRig player) => ProjectileLagPlayer(GetPlayerFromVRRig(player));
     }
 }

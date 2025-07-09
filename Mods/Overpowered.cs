@@ -9,6 +9,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -152,22 +153,24 @@ namespace iiMenu.Mods
             }
         }
 
+        public static float alwaysGuardianDelay;
         public static void AlwaysGuardian()
         {
             if (NetworkSystem.Instance.IsMasterClient)
             {
-                GorillaGuardianManager gman = (GorillaGuardianManager)GorillaGameManager.instance;
-                if (!gman.IsPlayerGuardian(PhotonNetwork.LocalPlayer))
+                GorillaGuardianManager guardianManager = (GorillaGuardianManager)GorillaGameManager.instance;
+                if (!guardianManager.IsPlayerGuardian(PhotonNetwork.LocalPlayer))
                     SetGuardianTarget(PhotonNetwork.LocalPlayer);
             }
             else
             {
+                GorillaGuardianManager guardianManager = (GorillaGuardianManager)GorillaGameManager.instance;
                 foreach (TappableGuardianIdol tgi in GetAllType<TappableGuardianIdol>())
                 {
                     if (!tgi.isChangingPositions)
                     {
-                        GorillaGuardianManager gman = (GorillaGuardianManager)GorillaGameManager.instance;
-                        if (!gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer)) // gzm.enabled && 
+                        GorillaGuardianZoneManager zoneManager = tgi.zoneManager;
+                        if (!guardianManager.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer) && zoneManager.IsZoneValid())
                         {
                             VRRig.LocalRig.enabled = false;
                             VRRig.LocalRig.transform.position = tgi.transform.position;
@@ -175,8 +178,12 @@ namespace iiMenu.Mods
                             VRRig.LocalRig.leftHand.rigTarget.transform.position = tgi.transform.position;
                             VRRig.LocalRig.rightHand.rigTarget.transform.position = tgi.transform.position;
 
-                            tgi.manager.photonView.RPC("SendOnTapRPC", RpcTarget.All, tgi.tappableId, UnityEngine.Random.Range(0.2f, 0.4f));
-                            RPCProtection();
+                            if (Time.time > alwaysGuardianDelay)
+                            {
+                                alwaysGuardianDelay = Time.time + (zoneManager._currentActivationTime >= zoneManager.requiredActivationTime - 0.6f ? 0f : 0.5f);
+                                tgi.manager.photonView.RPC("SendOnTapRPC", RpcTarget.All, tgi.tappableId, UnityEngine.Random.Range(0.2f, 0.4f));
+                                RPCProtection();
+                            }
                         }
                     }
                     else
@@ -1087,6 +1094,8 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void FlingPlayer(VRRig player) => FlingPlayer(GetPlayerFromVRRig(player));
+
         public static void SnowballFlingGun()
         {
             if (GetGunInput(false))
@@ -1096,13 +1105,8 @@ namespace iiMenu.Mods
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
-                {
-                    if (Time.time > snowballDelay)
-                    {
-                        BetaSpawnSnowball(lockTarget.transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(UnityEngine.Random.Range(-1f, 1f), 0f, UnityEngine.Random.Range(-1f, 1f)).normalized / 1.7f, new Vector3(0f, -500f, 0f), 5f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)));
-                        snowballDelay = Time.time + snowballSpawnDelay;
-                    }
-                }
+                    FlingPlayer(lockTarget);
+
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
@@ -1122,12 +1126,8 @@ namespace iiMenu.Mods
 
         public static void SnowballFlingAll()
         {
-            if (rightTrigger > 0.5f && Time.time > snowballDelay)
-            {
-                snowballDelay = Time.time + snowballSpawnDelay;
-                Player target = NetPlayerToPlayer(GetPlayerFromVRRig(GetCurrentTargetRig(0.5f)));
-                BetaSpawnSnowball(GetVRRigFromPlayer(target).transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(UnityEngine.Random.Range(-1f, 1f), 0f, UnityEngine.Random.Range(-1f, 1f)).normalized / 1.7f, new Vector3(0f, -500f, 0f), 5f, 2, target);
-            }
+            if (rightTrigger > 0.5f)
+                FlingPlayer(GetCurrentTargetRig(0.5f));
         }
 
         public static void SnowballFlingVerticalGun()
@@ -1398,7 +1398,7 @@ namespace iiMenu.Mods
                 ExitGames.Client.Photon.Hashtable rpcData = new ExitGames.Client.Photon.Hashtable
                 {
                     { 0, photonView.ViewID },
-                    { 2, (int)(PhotonNetwork.ServerTimestamp + -int.MaxValue) },
+                    { 2, PhotonNetwork.ServerTimestamp },
                     { 3, method },
                     { 4, parameters }
                 };
@@ -1760,33 +1760,25 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void DestroyGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (GetGunInput(true) && Time.time > kgDebounce)
-                {
-                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
-                    {
-                        NetPlayer player = GetPlayerFromVRRig(gunTarget);
-                        PhotonNetwork.OpRemoveCompleteCacheOfPlayer(player.ActorNumber);
-                        kgDebounce = Time.time + 0.5f;
-                    }
-                }
-            }
-        }
-
-        public static void LagPlayer(NetPlayer Player)
+        public static void LagPlayer(object general)
         {
             if (Time.time > lagDebounce)
             {
-                for (int i = 0; i < lagAmount; i++)
-                    GhostReactorManager.instance.gameAgentManager.photonView.RPC("ApplyBehaviorRPC", NetPlayerToPlayer(Player), new object[] { null, null });
+                if (general is NetPlayer player)
+                {
+                    for (int i = 0; i < lagAmount; i++)
+                        GhostReactorManager.instance.gameAgentManager.photonView.RPC("ApplyBehaviorRPC", NetPlayerToPlayer(player), new object[] { null, null });
+                }
+                else if (general is RpcTarget target)
+                {
+                    for (int i = 0; i < lagAmount; i++)
+                        GhostReactorManager.instance.gameAgentManager.photonView.RPC("ApplyBehaviorRPC", target, new object[] { null, null });
+                } 
+                else if (general is int[] targets)
+                {
+                    for (int i = 0; i < lagAmount; i++)
+                        SpecialTargetRPC(GhostReactorManager.instance.gameAgentManager.photonView, "ApplyBehaviorRPC", targets, new object[] { null, null });
+                }
 
                 RPCProtection();
                 lagDebounce = Time.time + lagDelay;
@@ -1803,16 +1795,8 @@ namespace iiMenu.Mods
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
-                {
-                    if (Time.time > lagDebounce)
-                    {
-                        for (int i = 0; i < lagAmount; i++)
-                            GhostReactorManager.instance.gameAgentManager.photonView.RPC("ApplyBehaviorRPC", NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)), new object[] { null, null });
-                        
-                        RPCProtection();
-                        lagDebounce = Time.time + lagDelay;
-                    }
-                }
+                    LagPlayer(GetPlayerFromVRRig(lockTarget));
+
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
@@ -1830,66 +1814,72 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void LagAll()
-        {
-            if (Time.time > lagDebounce)
-            {
-                for (int i = 0; i < lagAmount; i++)
-                    GhostReactorManager.instance.gameAgentManager.photonView.RPC("ApplyBehaviorRPC", RpcTarget.Others, new object[] { null, null });
-
-                RPCProtection();
-                lagDebounce = Time.time + lagDelay;
-            }
-        }
+        public static void LagAll() => LagPlayer(RpcTarget.Others);
 
         public static void AntiReportLag()
         {
             try
             {
-                if (Time.time > lagDebounce)
+                List<int> actors = new List<int> { };
+
+                foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
                 {
-                    foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+                    if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
                     {
-                        if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
+                        Transform report = line.reportButton.gameObject.transform;
+                        if (GetIndex("Visualize Anti Report").enabled)
+                            VisualizeAura(report.position, Safety.threshold, Color.red);
+
+                        foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                         {
-                            Transform report = line.reportButton.gameObject.transform;
-                            if (GetIndex("Visualize Anti Report").enabled)
-                                VisualizeAura(report.position, Safety.threshold, Color.red);
-
-                            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                            if (vrrig != VRRig.LocalRig)
                             {
-                                if (vrrig != VRRig.LocalRig)
+                                float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
+                                float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
+
+                                if (D1 < Safety.threshold || D2 < Safety.threshold)
                                 {
-                                    float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
-                                    float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
-
-                                    if (D1 < Safety.threshold || D2 < Safety.threshold)
+                                    if (!Safety.smartarp || (Safety.smartarp && PhotonNetwork.CurrentRoom.IsVisible && !PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED")))
                                     {
-                                        if (!Safety.smartarp || (Safety.smartarp && PhotonNetwork.CurrentRoom.IsVisible && !PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED")))
-                                        {
-                                            lagDebounce = Time.time + lagDelay;
-                                            for (int i = 0; i < lagAmount; i++)
-                                                GhostReactorManager.instance.gameAgentManager.photonView.RPC("ApplyBehaviorRPC", RpcTarget.Others, new object[] { null, null });
-
-                                            RPCProtection();
-                                            NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they are being lagged.");
-                                            
-                                            return;
-                                        }
+                                        actors.Add(GetPlayerFromVRRig(vrrig).ActorNumber);
+                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they are being lagged.");
                                     }
                                 }
                             }
                         }
                     }
                 }
+
+                if (actors.Count > 0)
+                    LagPlayer(actors.ToArray());
             }
             catch { } // Not connected
+        }
+
+        public static void DestroyGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true) && Time.time > kgDebounce)
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        DestroyPlayer(NetPlayerToPlayer(GetPlayerFromVRRig(gunTarget)));
+                        kgDebounce = Time.time + 0.5f;
+                    }
+                }
+            }
         }
 
         public static void DestroyAll()
         {
             foreach (Player player in PhotonNetwork.PlayerListOthers)
-                PhotonNetwork.OpRemoveCompleteCacheOfPlayer(player.ActorNumber);
+                DestroyPlayer(player);
         }
 
         public static void DestroyPlayer(NetPlayer player) =>

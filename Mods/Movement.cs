@@ -99,7 +99,7 @@ namespace iiMenu.Mods
                 new Vector3(0.025f, 0.15f, 0.2f),
                 new Vector3(0.025f, 0.3f, 0.8f),
                 new Vector3(0.1f, 0.1f, 0.1f)
-            }[platformShape];
+            }[platformShape] * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
         }
 
         public static GameObject CreatePlatform()
@@ -155,7 +155,7 @@ namespace iiMenu.Mods
                 gameObject.transform.parent = platform.transform;
                 gameObject.transform.localPosition = Vector3.zero;
                 gameObject.transform.localRotation = Quaternion.identity;
-                gameObject.transform.localScale = new Vector3(-1.05f, -1.05f, -1.05f);
+                gameObject.transform.localScale = new Vector3(0.95f, 1.05f, 1.05f);
 
                 ColorChanger outlineColorChanger = gameObject.AddComponent<ColorChanger>();
                 outlineColorChanger.colors = new Gradient
@@ -172,7 +172,13 @@ namespace iiMenu.Mods
         }
 
         public static int flySpeedCycle = 1;
-        public static float flySpeed = 10f;
+        public static float _flySpeed = 10f;
+
+        public static float flySpeed
+        {
+            get => _flySpeed * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
+            set => _flySpeed = value;
+        }
 
         public static int speedboostCycle = 1;
         public static float jspeed = 7.5f;
@@ -227,7 +233,7 @@ namespace iiMenu.Mods
                         GTPlayer.Instance.rightControllerTransform.transform.position = legacyPosR;
                     }
                     if (GetIndex("Non-Sticky Platforms").enabled)
-                        leftplat.transform.position += TrueLeftHand().right * (0.025f + (leftplat.transform.localScale.x / 2f));
+                        leftplat.transform.position += TrueLeftHand().right * ((0.025f + (leftplat.transform.localScale.x / 2f)) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f));
 
                     FriendManager.PlatformSpawned(true, leftplat.transform.position, leftplat.transform.rotation, leftplat.transform.localScale, GetPlatformPrimitiveType());
                 }
@@ -292,7 +298,7 @@ namespace iiMenu.Mods
                         GTPlayer.Instance.rightControllerTransform.transform.position = legacyPosR;
                     }
                     if (GetIndex("Non-Sticky Platforms").enabled)
-                        rightplat.transform.position -= TrueRightHand().right * (0.025f + (rightplat.transform.localScale.x / 2f));
+                        rightplat.transform.position -= TrueRightHand().right * ((0.025f + (rightplat.transform.localScale.x / 2f)) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f));
 
                     FriendManager.PlatformSpawned(false, rightplat.transform.position, rightplat.transform.rotation, rightplat.transform.localScale, GetPlatformPrimitiveType());
                 }
@@ -433,6 +439,7 @@ namespace iiMenu.Mods
                 flySpeedCycle = speedamounts.Length - 1;
 
             flySpeed = speedamounts[flySpeedCycle];
+
             GetIndex("Change Fly Speed").overlapText = "Change Fly Speed <color=grey>[</color><color=green>" + speedNames[flySpeedCycle] + "</color><color=grey>]</color>";
         }
 
@@ -3249,17 +3256,26 @@ namespace iiMenu.Mods
 
         public static void Strafe()
         {
-            Vector3 funnyDir = GorillaTagger.Instance.bodyCollider.transform.forward * GTPlayer.Instance.maxJumpSpeed;
-            GorillaTagger.Instance.rigidbody.velocity = new Vector3(funnyDir.x, GorillaTagger.Instance.rigidbody.velocity.y, funnyDir.z);
-            Vector3 dir = GorillaTagger.Instance.rigidbody.velocity;
-            dir.y = (dir.y < 0 ? 0 : dir.y);
+            Vector3 direction = GetIndex("Hand Oriented Strafe").enabled 
+                ? new Vector3(-GorillaTagger.Instance.rightHandTransform.up.x, 0f, -GorillaTagger.Instance.rightHandTransform.up.z).normalized 
+                : GorillaTagger.Instance.bodyCollider.transform.forward;
+
+            float power = GTPlayer.Instance.maxJumpSpeed;
+            Vector3 velocity = direction * power;
+
+            GorillaTagger.Instance.rigidbody.velocity = new Vector3(velocity.x, GorillaTagger.Instance.rigidbody.velocity.y, velocity.z);
         }
 
         public static void DynamicStrafe()
         {
+            Vector3 direction = GetIndex("Hand Oriented Strafe").enabled
+                ? new Vector3(-GorillaTagger.Instance.rightHandTransform.up.x, 0f, -GorillaTagger.Instance.rightHandTransform.up.z).normalized
+                : GorillaTagger.Instance.bodyCollider.transform.forward;
+
             float power = new Vector3(GorillaTagger.Instance.rigidbody.velocity.x, 0, GorillaTagger.Instance.rigidbody.velocity.z).magnitude;
-            Vector3 funnyDir = GorillaTagger.Instance.bodyCollider.transform.forward * power;
-            GorillaTagger.Instance.rigidbody.velocity = new Vector3(funnyDir.x, GorillaTagger.Instance.rigidbody.velocity.y, funnyDir.z);
+            Vector3 velocity = direction * power;
+
+            GorillaTagger.Instance.rigidbody.velocity = new Vector3(velocity.x, GorillaTagger.Instance.rigidbody.velocity.y, velocity.z);
         }
 
         public static void GripBunnyHop()

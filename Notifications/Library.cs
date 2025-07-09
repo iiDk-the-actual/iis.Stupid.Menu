@@ -1,5 +1,6 @@
 ﻿using iiMenu.Classes;
 using iiMenu.Menu;
+using iiMenu.Mods;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -205,24 +206,7 @@ namespace iiMenu.Notifications
                     }
 
                     if (notificationSoundIndex != 0 && (Time.time > (timeMenuStarted + 5f)))
-                    {
-                        string[] notificationServerNames = new string[]
-                        {
-                            "none",
-                            "pop",
-                            "ding",
-                            "twitter",
-                            "discord",
-                            "whatsapp",
-                            "grindr",
-                            "ios",
-                            "xpnotify",
-                            "xpding",
-                            "xperror",
-                            "robloxbass"
-                        };
-                        Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/" + notificationServerNames[notificationSoundIndex] + ".wav", notificationServerNames[notificationSoundIndex] + ".wav"), buttonClickVolume / 10f);
-                    }
+                        Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/" + Settings.notificationSounds.Values.ToArray()[notificationSoundIndex] + ".wav", Settings.notificationSounds.Values.ToArray()[notificationSoundIndex] + ".wav"), buttonClickVolume / 10f);
 
                     if (inputTextColor != "green")
                         NotificationText = NotificationText.Replace("<color=green>", "<color=" + inputTextColor + ">");
@@ -261,9 +245,9 @@ namespace iiMenu.Notifications
                         catch { }
                     }
                 }
-                catch
+                catch (Exception e)
                 {
-                    LogManager.LogError("Notification failed, object probably nil due to third person ; " + NotificationText);
+                    LogManager.LogError($"Notification failed, object probably nil due to third person ; {NotificationText} {e.Message}");
                 }
             }
         }

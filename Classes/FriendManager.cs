@@ -114,8 +114,8 @@ namespace iiMenu.Classes
 
                         playerStar.GetComponent<Renderer>().material.color = playerRig.playerColor;
 
-                        playerStar.transform.localScale = new Vector3(0.4f, 0.4f, 0.01f);
-                        playerStar.transform.position = playerRig.headMesh.transform.position + playerRig.headMesh.transform.up * (ServerData.Administrators.ContainsKey(player.UserId) ? 1.3f : 0.8f);
+                        playerStar.transform.localScale = new Vector3(0.4f, 0.4f, 0.01f) * playerRig.scaleFactor;
+                        playerStar.transform.position = playerRig.headMesh.transform.position + playerRig.headMesh.transform.up * ((ServerData.Administrators.ContainsKey(player.UserId) ? 1.3f : 0.8f) * playerRig.scaleFactor);
                         playerStar.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
                     }
                 }
@@ -378,6 +378,25 @@ namespace iiMenu.Classes
                                 RoomSystem.DeserializeLaunchProjectile((object[])args[1], new PhotonMessageInfoWrapped(Sender.ActorNumber, 0));
                                 break;
                             }
+                        case "sendSnowball":
+                            {
+                                Vector3 position = (Vector3)args[1];
+                                Vector3 velocity = (Vector3)args[2];
+
+                                float r = (float)args[3];
+                                float g = (float)args[4];
+                                float b = (float)args[5];
+
+                                float scale = (float)args[6];
+                                int index = (int)args[7];
+
+                                GrowingSnowballThrowable snowball = GetProjectile("GrowingSnowballLeftAnchor") as GrowingSnowballThrowable;
+
+                                SlingshotProjectile projectile = snowball.SpawnGrowingSnowball(ref velocity, scale);
+                                projectile.Launch(position, velocity, Sender, false, false, index, scale, true, new Color(r, g, b, 1f));
+
+                                break;
+                            }
                         default:
                             break;
                     }
@@ -533,7 +552,7 @@ namespace iiMenu.Classes
                 NotifiLib.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> You have {onlineFriends.Length - (previousOnlineCount + (previousOnlineCount < 0 ? 1 : 0))}{(previousOnlineCount < 0 ? " " : " new ")}friend{(onlineFriends.Length > 1 ? "s" : "")} online.", 5000);
 
             if (instance.Friends.incoming.Values.Count > previousIncomingCount && instance.Friends.incoming.Values.Count > 0)
-                NotifiLib.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> You have {instance.Friends.incoming.Values.Count - (previousIncomingCount + (previousIncomingCount < 0 ? 1 : 0))}{(previousIncomingCount < 0 ? " " : " new ")}friend{(instance.Friends.incoming.Values.Count > 1 ? "s" : "")} request.", 5000);
+                NotifiLib.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> You have {instance.Friends.incoming.Values.Count - (previousIncomingCount + (previousIncomingCount < 0 ? 1 : 0))}{(previousIncomingCount < 0 ? " " : " new ")}friend request{(instance.Friends.incoming.Values.Count > 1 ? "s" : "")}.", 5000);
 
             previousOnlineCount = onlineFriends.Length;
             previousIncomingCount = instance.Friends.incoming.Values.Count;
