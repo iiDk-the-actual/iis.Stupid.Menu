@@ -140,6 +140,15 @@ namespace iiMenu.Mods
             reportMenuToggle = leftPrimary;
         }
 
+        public static void OculusIce(bool Status)
+        {
+            float DefaultSlideSpeed = 0.00425f;
+            if (Status)
+                GorillaLocomotion.GTPlayer.Instance.slideControl = 0.009f;
+            else 
+                GorillaLocomotion.GTPlayer.Instance.slideControl = DefaultSlideSpeed;
+        }
+
         private static bool acceptedTOS;
         public static void AcceptTOS()
         {

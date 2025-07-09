@@ -298,6 +298,8 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Oculus Report Menu <color=grey>[</color><color=green>X</color><color=grey>]</color>", method =() => Important.OculusReportMenu(), toolTip = "Opens the Oculus report menu when holding <color=green>X</color>."},
 
+                new ButtonInfo { buttonText = "Oculus Ice Physics", enableMethod =() => Important.OculusIce(true), disableMethod =() => Important.OculusIce(false), toolTip = "Makes the ice physics like quest."},
+
                 new ButtonInfo { buttonText = "Accept TOS", method =() => Important.AcceptTOS(), disableMethod =() => Patches.TOSPatch.enabled = false, toolTip = "Accepts the Terms of Service for you."},
                 new ButtonInfo { buttonText = "Redeem Shiny Rocks", method =() => CoroutineManager.RunCoroutine(Important.RedeemShinyRocks()), isTogglable = false, toolTip = "Redeems the Shiny Rocks K-ID gives you."},
 
