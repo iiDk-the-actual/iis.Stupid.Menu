@@ -91,6 +91,16 @@ namespace iiMenu.Mods
                 VRRig.LocalRig.head.rigTarget.transform.rotation = Quaternion.Euler(VRRig.LocalRig.head.rigTarget.transform.rotation.eulerAngles + new Vector3(0f, 0f, 10f));
         }
 
+        public static void SpazHead(string Axis)
+        {
+            if (Axis.ToLower() == "x")
+                VRRig.LocalRig.head.trackingRotationOffset.x = UnityEngine.Random.Range(0, 360);
+            if (Axis.ToLower() == "y")
+                VRRig.LocalRig.head.trackingRotationOffset.y = UnityEngine.Random.Range(0, 360);
+            if (Axis.ToLower() == "z")
+                VRRig.LocalRig.head.trackingRotationOffset.z = UnityEngine.Random.Range(0, 360);
+        }
+
         public static void FlipHands()
         {
             Vector3 lh = GorillaTagger.Instance.leftHandTransform.position;
