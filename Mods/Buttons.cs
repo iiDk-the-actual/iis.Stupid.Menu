@@ -194,9 +194,9 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Change Platform Type", overlapText = "Change Platform Type <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method =() => Movement.ChangePlatformType(), enableMethod =() => Movement.ChangePlatformType(), disableMethod =() => Movement.ChangePlatformType(false), incremental = true, isTogglable = false, toolTip = "Changes the type of the platforms."},
                 new ButtonInfo { buttonText = "Change Platform Shape", overlapText = "Change Platform Shape <color=grey>[</color><color=green>Sphere</color><color=grey>]</color>", method =() => Movement.ChangePlatformShape(), enableMethod =() => Movement.ChangePlatformShape(), disableMethod =() => Movement.ChangePlatformShape(false), incremental = true, isTogglable = false, toolTip = "Changes the shape of the platforms."},
+                
                 new ButtonInfo { buttonText = "Platform Gravity", toolTip = "Makes platforms fall instead of instantly deleting them."},
                 new ButtonInfo { buttonText = "Platform Outlines", toolTip = "Makes platforms have outlines."},
-
                 new ButtonInfo { buttonText = "Non-Sticky Platforms", toolTip = "Makes your platforms no longer sticky."},
 
                 new ButtonInfo { buttonText = "Change Fly Speed", overlapText = "Change Fly Speed <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method =() => Movement.ChangeFlySpeed(), enableMethod =() => Movement.ChangeFlySpeed(), disableMethod =() => Movement.ChangeFlySpeed(false), incremental = true, isTogglable = false, toolTip = "Changes the speed of the fly mods, including iron man."},
@@ -209,6 +209,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Factored Speed Boost", toolTip = "Factors your current speed into the speed boost, giving you a positive effect even if you're tagged."},
                 new ButtonInfo { buttonText = "Disable Max Speed Modification", toolTip = "Makes your max speed not change, so you can't be detected of using a speed boost."},
                 new ButtonInfo { buttonText = "Disable Size Changer Buttons", toolTip = "Disables the size changer's buttons, so hitting grip or trigger or whatever won't do anything."},
+
+                new ButtonInfo { buttonText = "Hand Oriented Strafe", toolTip = "Makes the strafe mods move you in the forward direction of your hand."},
 
                 new ButtonInfo { buttonText = "Networked Grapple Mods", method =() => Movement.NetworkedGrappleMods(), toolTip = "Makes the spider man and grappling hook mods networked, showing the line for everyone. This requires a balloon."},
 
@@ -587,7 +589,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Custom Skybox Color", enableMethod =() => Visuals.DoCustomSkyboxColor(), method =() => Visuals.CustomSkyboxColor(), disableMethod =() => Visuals.UnCustomSkyboxColor(), toolTip = "Changes the skybox color to match the menu."},
 
-                new ButtonInfo { buttonText = "Draw Gun", method =() => Visuals.DrawGun(), toolTip = "Lets you draw on whatever your hand desires." },
+                new ButtonInfo { buttonText = "Draw Gun", method =() => Visuals.DrawGun(), disableMethod =() => Visuals.DisableDrawGun(), toolTip = "Lets you draw on whatever your hand desires." },
 
                 new ButtonInfo { buttonText = "Velocity Label", method =() => Visuals.VelocityLabel(), toolTip = "Puts text on your right hand, showing your velocity."},
                 new ButtonInfo { buttonText = "Nearby Label", method =() => Visuals.NearbyTaggerLabel(), toolTip = "Puts text on your left hand, showing you the distance of the nearest tagger."},
@@ -1359,6 +1361,10 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Get Cosmetic Data", method =() => Experimental.DumpCosmeticData(), isTogglable = false, toolTip = "Dumps the cosmetics and their data to a file."},
                 new ButtonInfo { buttonText = "Get Decryptable Cosmetic Data", method =() => Experimental.DecryptableCosmeticData(), isTogglable = false, toolTip = "Dumps the cosmetics and their data to a easily decryptable file for databases."},
                 new ButtonInfo { buttonText = "Get RPC Data", method =() => Experimental.DumpRPCData(), isTogglable = false, toolTip = "Dumps the data of every RPC to a file."},
+
+                //room things are wip
+                new ButtonInfo { buttonText = "Unlock Room", method =() => Experimental.SetRoomVisible(true), isTogglable = false, toolTip = "Makes the room unlocked and joinable."},
+                new ButtonInfo { buttonText = "Lock Room", method =() => Experimental.SetRoomVisible(false), isTogglable = false, toolTip = "Makes the room locked and non-joinable."},
 
                 new ButtonInfo { buttonText = "Copy Custom Gamemode Script", method =() => Experimental.CopyCustomGamemodeScript(), isTogglable = false, toolTip = "Copies the lua script source code of the current custom map being played."},
 
