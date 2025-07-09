@@ -8,6 +8,12 @@
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <StartAction>Program</StartAction>
+    <StartProgram>C:\Windows\explorer.exe</StartProgram>
+    <StartArguments>steam://run/1533390</StartArguments>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Remove="Resources\icon.png" />
     <None Remove="Resources\iimenu" />
