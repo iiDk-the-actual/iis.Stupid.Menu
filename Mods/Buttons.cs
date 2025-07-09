@@ -698,6 +698,10 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Spin Head Y", method =() => Fun.SpinHeadY(), disableMethod =() => Fun.FixHead(), toolTip = "Spins your head on the Y axis."},
                 new ButtonInfo { buttonText = "Spin Head Z", method =() => Fun.SpinHeadZ(), disableMethod =() => Fun.FixHead(), toolTip = "Spins your head on the Z axis."},
 
+                new ButtonInfo { buttonText = "Spaz Head X", method =() => Fun.SpazHead("x"), disableMethod =() => Fun.FixHead(), toolTip = "Spaz your head on the X axis."},
+                new ButtonInfo { buttonText = "Spaz Head Y", method =() => Fun.SpazHead("y"), disableMethod =() => Fun.FixHead(), toolTip = "Spaz your head on the Y axis."},
+                new ButtonInfo { buttonText = "Spaz Head Z", method =() => Fun.SpazHead("z"), disableMethod =() => Fun.FixHead(), toolTip = "Spaz your head on the Z axis."},
+
                 new ButtonInfo { buttonText = "Flip Hands", method =() => Fun.FlipHands(), toolTip = "Swaps your hands, left is right and right is left."},
                 new ButtonInfo { buttonText = "Loud Hand Taps", method =() => Fun.LoudHandTaps(), disableMethod =() => Fun.FixHandTaps(), toolTip = "Makes your hand taps really loud."},
                 new ButtonInfo { buttonText = "Silent Hand Taps", method =() => Fun.SilentHandTaps(), disableMethod =() => Fun.FixHandTaps(), toolTip = "Makes your hand taps really quiet."},
