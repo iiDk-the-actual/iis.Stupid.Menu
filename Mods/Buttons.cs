@@ -688,8 +688,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Backwards Head", method =() => Fun.BackwardsHead(), disableMethod =() => Fun.FixHead(), toolTip = "Rotates your head 180 degrees on the Y axis."},
                 new ButtonInfo { buttonText = "Sideways Head", method =() => Fun.SidewaysHead(), disableMethod =() => Fun.FixHead(), toolTip = "Rotates your head 90 degrees on the Y axis."},
 
-                new ButtonInfo { buttonText = "Random Y Rotation Head Spaz", method =() => Fun.RandomYHead(), disableMethod =() => Fun.FixHead(), toolTip = "Spazzes your head a random degree between 20 - 140 on the Y axis."},
-
                 new ButtonInfo { buttonText = "Broken Neck", method =() => Fun.BrokenNeck(), disableMethod =() => Fun.FixHead(), toolTip = "Rotates your head 90 degrees on the Z axis."},
 
                 new ButtonInfo { buttonText = "Head Bang", method =() => Fun.HeadBang(), disableMethod =() => Fun.FixHead(), toolTip = "Bangs your head at the BPM of Paint it Black (159)."},
