@@ -1,4 +1,4 @@
-using GorillaExtensions;
+using GorillaLocomotion;
 using UnityEngine;
 using static iiMenu.Menu.Main;
 
@@ -7,25 +7,21 @@ namespace iiMenu.Classes
     public class CustomParticle : MonoBehaviour
 	{
 		public float spawnTime;
-		public Renderer renderer;
-		public Rigidbody rigidbody;
+        public float startScale;
+
+        public Renderer renderer;
+		public Vector3 velocity;
+
 		public void Awake()
 		{
 			spawnTime = Time.time;
 
-			if (gameObject.GetComponent<Collider>())
-				Destroy(gameObject.GetComponent<Collider>());
+			startScale = transform.localScale.x;
 
-			renderer = gameObject.GetComponent<Renderer>() ?? null;
-			rigidbody = gameObject.GetOrAddComponent<Rigidbody>() ?? null;
+            renderer = gameObject.GetComponent<Renderer>() ?? null;
+			velocity = RandomVector3(scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
 
-			if (rigidbody != null)
-			{
-                rigidbody.velocity = RandomVector3(1f);
-				rigidbody.useGravity = false;
-            }
-            
-			Update();
+            Update();
 		}
 
 		public void Update()
@@ -39,7 +35,8 @@ namespace iiMenu.Classes
 				return;
 			}
 
-			transform.localScale = Vector3.one * Mathf.Lerp(0.025f, 0f, Time.time - spawnTime);
+			transform.position += velocity * Time.unscaledDeltaTime;
+			transform.localScale = Vector3.one * Mathf.Lerp(startScale, 0f, Time.time - spawnTime);
 		}
 	}
 }

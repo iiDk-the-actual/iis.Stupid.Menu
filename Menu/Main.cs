@@ -1,6 +1,7 @@
 using BepInEx;
 using ExitGames.Client.Photon;
 using GorillaExtensions;
+using GorillaLocomotion;
 using GorillaNetworking;
 using GorillaTagScripts;
 using HarmonyLib;
@@ -27,6 +28,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Networking;
 using UnityEngine.Rendering;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.XR;
 using Valve.VR;
@@ -44,7 +46,7 @@ https://github.com/iiDk-the-actual/iis.Stupid.Menu
 
 namespace iiMenu.Menu
 {
-    [HarmonyPatch(typeof(GorillaLocomotion.GTPlayer), "LateUpdate")]
+    [HarmonyPatch(typeof(GTPlayer), "LateUpdate")]
     public class Main : MonoBehaviour
     {
         public static void Prefix()
@@ -158,12 +160,12 @@ namespace iiMenu.Menu
 
                                     if (rightHand || (bothHands && openedwithright))
                                     {
-                                        comp.velocity = GorillaLocomotion.GTPlayer.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0);
+                                        comp.velocity = GTPlayer.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0);
                                         comp.angularVelocity = GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").GetOrAddComponent<GorillaVelocityEstimator>().angularVelocity;
                                     }
                                     else
                                     {
-                                        comp.velocity = GorillaLocomotion.GTPlayer.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0);
+                                        comp.velocity = GTPlayer.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0);
                                         comp.angularVelocity = GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").GetOrAddComponent<GorillaVelocityEstimator>().angularVelocity;
                                     }
 
@@ -228,6 +230,14 @@ namespace iiMenu.Menu
                     {
                         try
                         {
+                            foreach (GameObject board in objectBoards.Values)
+                                Destroy(board);
+
+                            objectBoards.Clear();
+
+                            CreateObjectBoard("City", "Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/CosmeticsScoreboardAnchor/GorillaScoreBoard");
+                            CreateObjectBoard("Arcade", "Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/Arcade_prefab/Arcade_Room/CosmeticsScoreboardAnchor/GorillaScoreBoard", new Vector3(-22.1964f, -21.4581f, 1.4f), new Vector3(270.0593f, 0f, 0f), new Vector3(23f, 2.1f, 21.6f));
+
                             //LogManager.Log("Looking for boards");
                             bool found = false;
                             int indexOfThatThing = 0;
@@ -364,7 +374,7 @@ namespace iiMenu.Menu
 
                         motdTC.richText = true;
                         motdTC.fontSize = 70;
-                        motdTC.text = "Thanks for using ii's <b>Stupid</b> Menu!";
+                        motdTC.text = "Thanks for using ii's Stupid Menu!";
 
                         if (doCustomName)
                             motdTC.text = "Thanks for using " + NoRichtextTags(customMenuName) + "!";
@@ -462,7 +472,7 @@ namespace iiMenu.Menu
                                                 searchText = searchText[..^1];
                                                 break;
                                             case KeyCode.Escape:
-                                                Toggle("Global Search");
+                                                Toggle("Search");
                                                 break;
                                             case KeyCode.Return:
                                                 List<ButtonInfo> searchedMods = new List<ButtonInfo> { };
@@ -570,10 +580,6 @@ namespace iiMenu.Menu
                         if (lowercaseMode)
                             searchTextObject.text = searchTextObject.text.ToLower();
                     }
-
-                    // Recolor the button collider
-                    if (menuBackground != null && reference != null)
-                        reference.GetComponent<Renderer>().material.color = menuBackground.GetComponent<Renderer>().material.color;
 
                     // Fix for disorganized
                     if (disorganized && currentCategoryName != "Main")
@@ -715,7 +721,7 @@ namespace iiMenu.Menu
                     {
                         if (!legacyGhostview && GhostRig == null)
                         {
-                            GhostRig = Instantiate(VRRig.LocalRig, GorillaLocomotion.GTPlayer.Instance.transform.position, GorillaLocomotion.GTPlayer.Instance.transform.rotation);
+                            GhostRig = Instantiate(VRRig.LocalRig, GTPlayer.Instance.transform.position, GTPlayer.Instance.transform.rotation);
                             GhostRig.headBodyOffset = Vector3.zero;
 
                             GhostRig.transform.Find("VR Constraints/LeftArm/Left Arm IK/SlideAudio").gameObject.SetActive(false);
@@ -894,14 +900,14 @@ namespace iiMenu.Menu
                         {
                             if (leftGrab == true && plastLeftGrip == false)
                             {
-                                MakeButtonSound(null, true, true);
+                                MakeButtonSound("PreviousPage", true, true);
                                 Toggle("PreviousPage");
                             }
                             plastLeftGrip = leftGrab;
 
                             if (rightGrab == true && plastRightGrip == false)
                             {
-                                MakeButtonSound(null, true, false);
+                                MakeButtonSound("NextPage", true, false);
                                 Toggle("NextPage");
                             }
                             plastRightGrip = rightGrab;
@@ -911,14 +917,14 @@ namespace iiMenu.Menu
                         {
                             if (leftTrigger > 0.5f && plastLeftGrip == false)
                             {
-                                MakeButtonSound(null, true, true);
+                                MakeButtonSound("PreviousPage", true, true);
                                 Toggle("PreviousPage");
                             }
                             plastLeftGrip = leftTrigger > 0.5f;
 
                             if (rightTrigger > 0.5f && plastRightGrip == false)
                             {
-                                MakeButtonSound(null, true, false);
+                                MakeButtonSound("NextPage", true, false);
                                 Toggle("NextPage");
                             }
                             plastRightGrip = rightTrigger > 0.5f;
@@ -1194,6 +1200,16 @@ namespace iiMenu.Menu
                         ServerPos = ServerSyncPos;
                     else
                         ServerPos = Vector3.Lerp(ServerPos, VRRig.LocalRig.SanitizeVector3(ServerSyncPos), VRRig.LocalRig.lerpValueBody * 0.66f);
+
+                    if (ServerLeftHandPos == Vector3.zero)
+                        ServerLeftHandPos = ServerSyncLeftHandPos;
+                    else
+                        ServerLeftHandPos = Vector3.Lerp(ServerLeftHandPos, VRRig.LocalRig.SanitizeVector3(ServerSyncLeftHandPos), VRRig.LocalRig.lerpValueBody * 0.66f);
+
+                    if (ServerRightHandPos == Vector3.zero)
+                        ServerRightHandPos = ServerSyncRightHandPos;
+                    else
+                        ServerRightHandPos = Vector3.Lerp(ServerRightHandPos, VRRig.LocalRig.SanitizeVector3(ServerSyncRightHandPos), VRRig.LocalRig.lerpValueBody * 0.66f);
 
                     /*
                      * if (Lockdown)
@@ -1528,6 +1544,9 @@ namespace iiMenu.Menu
 
             textTransform.localPosition = new Vector3(.064f, 0, .111f - offset / 2.6f);
             textTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+
+            if (outlineText)
+                OutlineCanvasObject(buttonText);
         }
 
         private static void AddSearchButton() // Me :D -Twig
@@ -1621,6 +1640,9 @@ namespace iiMenu.Menu
                 imageTransform.localPosition = new Vector3(.064f, -0.54444444444f / 2.6f, -0.58f / 2.6f);
 
             imageTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+
+            if (outlineText)
+                OutlineCanvasObject(searchImage, 0);
         }
 
         private static void AddReturnButton(bool offcenteredPosition)
@@ -1702,6 +1724,9 @@ namespace iiMenu.Menu
                 imageTransform.localPosition += new Vector3(0f, 0.0475f, 0f);
 
             imageTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+
+            if (outlineText)
+                OutlineCanvasObject(returnImage, 1);
         }
 
         private static void RenderIncrementalButton(bool increment, float offset, int buttonIndex, ButtonInfo method)
@@ -1793,16 +1818,32 @@ namespace iiMenu.Menu
             else
                 textTransform.localPosition = new Vector3(.064f, increment ? -0.18f : 0.18f, .111f - offset / 2.6f);
             textTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+
+            if (outlineText)
+                OutlineCanvasObject(buttonText);
         }
 
         public static void CreateReference()
         {
             reference = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             reference.transform.parent = rightHand || (bothHands && ControllerInputPoller.instance.rightControllerSecondaryButton) ? GorillaTagger.Instance.leftHandTransform : GorillaTagger.Instance.rightHandTransform;
-            reference.GetComponent<Renderer>().material.color = bgColorA;
             reference.transform.localPosition = pointerOffset;
             reference.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
             buttonCollider = reference.GetComponent<SphereCollider>();
+
+            ColorChanger colorChanger = reference.AddComponent<ColorChanger>();
+            colorChanger.colors = new Gradient
+            {
+                colorKeys = new[]
+                {
+                    new GradientColorKey(bgColorA, 0f),
+                    new GradientColorKey(bgColorB, 0.5f),
+                    new GradientColorKey(bgColorA, 1f)
+                }
+            };
+            colorChanger.isRainbow = themeType == 6;
+            colorChanger.isEpileptic = themeType == 47;
+            colorChanger.isMonkeColors = themeType == 8;
         }
 
         public static void Draw()
@@ -1813,8 +1854,6 @@ namespace iiMenu.Menu
             Destroy(menu.GetComponent<Renderer>());
 
             menu.transform.localScale = new Vector3(0.1f, 0.3f, 0.3825f);
-            if (scaleWithPlayer)
-                menu.transform.localScale *= GorillaLocomotion.GTPlayer.Instance.scale;
 
             if (annoyingMode)
             {
@@ -2025,9 +2064,6 @@ namespace iiMenu.Menu
             canvas.renderMode = RenderMode.WorldSpace;
             canvasScaler.dynamicPixelsPerUnit = highQualityText ? 2500f : 1000f;
 
-            if (scaleWithPlayer)
-                canvas.transform.localScale *= GorillaLocomotion.GTPlayer.Instance.scale;
-
             canvasObj.AddComponent<GraphicRaycaster>();
 
             title = new GameObject
@@ -2098,6 +2134,9 @@ namespace iiMenu.Menu
             component.localPosition = new Vector3(0.06f, 0f, 0.165f);
             component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
+            if (outlineText)
+                OutlineCanvasObject(title);
+
             Text buildLabel = new GameObject
             {
                 transform =
@@ -2133,6 +2172,9 @@ namespace iiMenu.Menu
 
             component.rotation = Quaternion.Euler(new Vector3(0f, 90f, 90f));
 
+            if (outlineText)
+                OutlineCanvasObject(buildLabel);
+
             if (!disableFpsCounter)
             {
                 Text fps = new GameObject
@@ -2163,6 +2205,9 @@ namespace iiMenu.Menu
                 if (NoAutoSizeText)
                     component2.sizeDelta = new Vector2(9f, 0.015f);
                 component2.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+
+                if (outlineText)
+                    OutlineCanvasObject(fps, true);
             }
 
             if (!disableDisconnectButton)
@@ -2282,6 +2327,9 @@ namespace iiMenu.Menu
 
                 textTransform.localPosition = new Vector3(.064f, 0, .111f - (buttonOffset / 10) / 2.6f);
                 textTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+
+                if (outlineText)
+                    OutlineCanvasObject(searchTextObject, true);
             }
 
             try
@@ -2365,7 +2413,7 @@ namespace iiMenu.Menu
                 for (int i = 0; i < renderButtons.Length; i++)
                     AddButton((i + buttonIndexOffset) * 0.1f + (buttonOffset / 10), i, renderButtons[i]);
             } catch {
-                LogManager.Log("Menu draw is erroring, return to home page");
+                LogManager.Log("Menu draw is erroring, returning to home page");
                 currentCategoryName = "Main";
             }
 
@@ -2416,6 +2464,8 @@ namespace iiMenu.Menu
                     comp.angularVelocity = new Vector3(UnityEngine.Random.Range(-3f, 3f), UnityEngine.Random.Range(-3f, 3f), UnityEngine.Random.Range(-3f, 3f));
                 }
             }
+
+            menu.transform.localScale *= (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
         }
 
         public static void RecenterMenu()
@@ -2706,6 +2756,9 @@ namespace iiMenu.Menu
             textRect.localPosition = textPosition;
             textRect.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
+            if (outlineText)
+                OutlineCanvasObject(text);
+
             return button;
         }
 
@@ -2768,6 +2821,64 @@ namespace iiMenu.Menu
             colorChanger.isPastelRainbow = shouldBeEnabled && themeType == 51;
             colorChanger.isMonkeColors = shouldBeEnabled && themeType == 8;
             colorChanger.isEpileptic = shouldBeEnabled && themeType == 47;
+        }
+
+        public static Material outlineMat = new Material(Shader.Find("Sprites/Default"));
+        public static void OutlineCanvasObject(Text text, bool clamp = false)
+        {
+            foreach (Vector3 offset in new[] { new Vector3(0f, 1f, 1f), new Vector3(0f, -1f, 1f), new Vector3(0f, 1f, -1f), new Vector3(0f, -1f, -1f) })
+            {
+                Text newText = Instantiate(text);
+                newText.text = NoColorTags(text.text);
+
+                newText.transform.SetParent(text.transform.parent, false);
+                newText.rectTransform.localPosition = text.rectTransform.localPosition + (offset * 0.001f);// + new Vector3(-0.0025f, 0f, 0f);
+
+                newText.material = outlineMat;
+                newText.color = Color.black;
+                newText.material.renderQueue = text.material.renderQueue - 2;
+
+                if (clamp)
+                    newText.AddComponent<ClampText>().targetText = text;
+            }
+        }
+
+        private static List<Material> imageMaterials = new List<Material> { };
+        public static void OutlineCanvasObject(Image image, int index)
+        {
+            while (imageMaterials.Count <= index)
+                imageMaterials.Add(null);
+
+            if (imageMaterials[index] == null)
+            {
+                Material material = new Material(Shader.Find("Sprites/Default"));
+
+                material.SetInt("_SrcBlend", (int)BlendMode.SrcAlpha);
+                material.SetInt("_DstBlend", (int)BlendMode.OneMinusSrcAlpha);
+                material.SetInt("_ZWrite", 0);
+                material.DisableKeyword("_ALPHATEST_ON");
+                material.EnableKeyword("_ALPHABLEND_ON");
+                material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+
+                material.mainTexture = image.material.mainTexture;
+
+                imageMaterials[index] = material;
+            }
+
+            Material targetMaterial = imageMaterials[index];
+
+            foreach (Vector3 offset in new[] { new Vector3(0f, 1f, 1f), new Vector3(0f, -1f, 1f), new Vector3(0f, 1f, -1f), new Vector3(0f, -1f, -1f) })
+            {
+                Image newImage = Instantiate(image);
+
+                newImage.transform.SetParent(image.transform.parent, false);
+                newImage.rectTransform.localPosition = image.rectTransform.localPosition + (offset * 0.001f);
+                
+                newImage.material = targetMaterial;
+                newImage.color = Color.black;
+
+                newImage.material.renderQueue = image.material.renderQueue - 2;
+            }
         }
 
         public static void RoundObj(GameObject toRound, float Bevel = 0.02f)
@@ -3055,7 +3166,7 @@ namespace iiMenu.Menu
                     break;
             }
 
-            Physics.Raycast(StartPosition + (Direction / 4f), Direction, out var Ray, 512f, overrideLayerMask > 0 ? overrideLayerMask : NoInvisLayerMask());
+            Physics.Raycast(StartPosition + ((Direction / 4f) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f)), Direction, out var Ray, 512f, overrideLayerMask > 0 ? overrideLayerMask : NoInvisLayerMask());
             if (shouldBePC)
             {
                 Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
@@ -3075,7 +3186,7 @@ namespace iiMenu.Menu
             }
 
             GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            NewPointer.transform.localScale = smallGunPointer ? new Vector3(0.1f, 0.1f, 0.1f) : new Vector3(0.2f, 0.2f, 0.2f);
+            NewPointer.transform.localScale = (smallGunPointer ? new Vector3(0.1f, 0.1f, 0.1f) : new Vector3(0.2f, 0.2f, 0.2f)) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
             NewPointer.transform.position = EndPosition;
 
             Renderer PointerRenderer = NewPointer.GetComponent<Renderer>();
@@ -3089,7 +3200,9 @@ namespace iiMenu.Menu
             {
                 GameObject Particle = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                 Particle.transform.position = EndPosition;
+                Particle.transform.localScale = Vector3.one * 0.025f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
                 Particle.AddComponent<CustomParticle>();
+                Destroy(Particle.GetComponent<Collider>());
             }
 
             Destroy(NewPointer.GetComponent<Collider>());
@@ -3102,8 +3215,8 @@ namespace iiMenu.Menu
                 lineRenderer.material.shader = Shader.Find("GUI/Text Shader");
                 lineRenderer.startColor = GetBGColor(0f);
                 lineRenderer.endColor = GetBGColor(0.5f);
-                lineRenderer.startWidth = 0.025f;
-                lineRenderer.endWidth = 0.025f;
+                lineRenderer.startWidth = 0.025f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
+                lineRenderer.endWidth = 0.025f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
                 lineRenderer.positionCount = 2;
                 lineRenderer.useWorldSpace = true;
                 if (smoothLines)
@@ -3337,7 +3450,7 @@ namespace iiMenu.Menu
                 }
             }
 
-            AudioClip clip = LoadSoundFromFile($"TTS{(narratorName == "Default" ? "" : narratorName)}");
+            AudioClip clip = LoadSoundFromFile($"TTS{(narratorName == "Default" ? "" : narratorName)}/{fileName}");
             Play2DAudio(clip, buttonClickVolume / 10f);
         }
 
@@ -3389,7 +3502,7 @@ namespace iiMenu.Menu
                 }
             }
 
-            Sound.PlayAudio($"TTS{(narratorName == "Default" ? "" : narratorName)}");
+            Sound.PlayAudio($"TTS{(narratorName == "Default" ? "" : narratorName)}/{fileName}");
         }
 
         public static void SetupAdminPanel(string playername)
@@ -3485,7 +3598,7 @@ namespace iiMenu.Menu
         public static System.Collections.IEnumerator GrowCoroutine()
         {
             float elapsedTime = 0f;
-            Vector3 target = (scaleWithPlayer) ? new Vector3(0.1f, 0.3f, 0.3825f) * GorillaLocomotion.GTPlayer.Instance.scale : new Vector3(0.1f, 0.3f, 0.3825f);
+            Vector3 target = scaleWithPlayer ? new Vector3(0.1f, 0.3f, 0.3825f) * GTPlayer.Instance.scale : new Vector3(0.1f, 0.3f, 0.3825f);
             while (elapsedTime < 0.05f)
             {
                 menu.transform.localScale = Vector3.Lerp(Vector3.zero, target, elapsedTime / 0.05f);
@@ -3812,14 +3925,14 @@ namespace iiMenu.Menu
         // True left and right hand get the exact position and rotation of the middle of the hand
         public static (Vector3 position, Quaternion rotation, Vector3 up, Vector3 forward, Vector3 right) TrueLeftHand()
         {
-            Quaternion rot = GorillaTagger.Instance.leftHandTransform.rotation * GorillaLocomotion.GTPlayer.Instance.leftHandRotOffset;
-            return (GorillaTagger.Instance.leftHandTransform.position + GorillaTagger.Instance.leftHandTransform.rotation * GorillaLocomotion.GTPlayer.Instance.leftHandOffset, rot, rot * Vector3.up, rot * Vector3.forward, rot * Vector3.right);
+            Quaternion rot = GorillaTagger.Instance.leftHandTransform.rotation * GTPlayer.Instance.leftHandRotOffset;
+            return (GorillaTagger.Instance.leftHandTransform.position + GorillaTagger.Instance.leftHandTransform.rotation * (GTPlayer.Instance.leftHandOffset * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f)), rot, rot * Vector3.up, rot * Vector3.forward, rot * Vector3.right);
         }
 
         public static (Vector3 position, Quaternion rotation, Vector3 up, Vector3 forward, Vector3 right) TrueRightHand()
         {
-            Quaternion rot = GorillaTagger.Instance.rightHandTransform.rotation * GorillaLocomotion.GTPlayer.Instance.rightHandRotOffset;
-            return (GorillaTagger.Instance.rightHandTransform.position + GorillaTagger.Instance.rightHandTransform.rotation * GorillaLocomotion.GTPlayer.Instance.rightHandOffset, rot, rot * Vector3.up, rot * Vector3.forward, rot * Vector3.right);
+            Quaternion rot = GorillaTagger.Instance.rightHandTransform.rotation * GTPlayer.Instance.rightHandRotOffset;
+            return (GorillaTagger.Instance.rightHandTransform.position + GorillaTagger.Instance.rightHandTransform.rotation * (GTPlayer.Instance.rightHandOffset * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f)), rot, rot * Vector3.up, rot * Vector3.forward, rot * Vector3.right);
         }
 
         public static void WorldScale(GameObject obj, Vector3 targetWorldScale)
@@ -3851,11 +3964,11 @@ namespace iiMenu.Menu
             for (int i = 0; i < localPositions.Length; i++)
             {
                 GameObject side = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                float size = 0.025f;
+                float size = 0.025f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
                 side.transform.SetParent(platform.transform);
                 side.transform.position = localPositions[i] * (size / 2);
                 side.transform.rotation = localRotations[i];
-                WorldScale(side, new Vector3(size, size, 0.01f));
+                WorldScale(side, new Vector3(size, size, 0.01f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f)));
                 side.GetComponent<Renderer>().enabled = false;
             }
         }
@@ -4053,7 +4166,13 @@ namespace iiMenu.Menu
 
         public static string NoRichtextTags(string input, string replace = "")
         {
-            Regex notags = new Regex("<.*?>");
+            Regex notags = new Regex("<.*?>", RegexOptions.IgnoreCase);
+            return notags.Replace(input, replace);
+        }
+
+        public static string NoColorTags(string input, string replace = "")
+        {
+            Regex notags = new Regex(@"<color=.*?>|</color>", RegexOptions.IgnoreCase);
             return notags.Replace(input, replace);
         }
 
@@ -4201,6 +4320,105 @@ namespace iiMenu.Menu
             } catch { }
         }
 
+        public static void SceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            if (disableBoardColor)
+                return;
+
+            Vector3 position = Vector3.zero;
+            Vector3 rotation = Vector3.zero;
+            Vector3 scale = Vector3.zero;
+            string gameObject = "";
+
+            switch (scene.name)
+            {
+                case "Canyon2":
+                    gameObject = "Canyon/CanyonScoreboardAnchor/GorillaScoreBoard";
+                    position = new Vector3(-24.5019f, -28.7746f, 0.1f);
+                    rotation = new Vector3(270f, 0f, 0f);
+                    scale = new Vector3(21.5946f, 1f, 22.1782f);
+                    break;
+                case "Skyjungle":
+                    gameObject = "skyjungle/UI/Scoreboard/GorillaScoreBoard";
+                    position = new Vector3(-21.2764f, -32.1928f, 0f);
+                    rotation = new Vector3(270.2987f, 0.2f, 359.9f);
+                    scale = new Vector3(21.6f, 0.1f, 20.4909f);
+                    break;
+                case "Mountain":
+                    gameObject = "Mountain/MountainScoreboardAnchor/GorillaScoreBoard";
+                    position = Vector3.zero;
+                    rotation = Vector3.zero;
+                    scale = Vector3.one;
+                    break;
+                case "Metropolis":
+                    gameObject = "MetroMain/ComputerArea/Scoreboard/GorillaScoreBoard";
+                    position = new Vector3(-25.1f, -31f, 0.1502f);
+                    rotation = new Vector3(270.1958f, 0.2086f, 0f);
+                    scale = new Vector3(21f, 102.9727f, 21.4f);
+                    break;
+                case "Bayou":
+                    gameObject = "BayouMain/ComputerArea/GorillaScoreBoardPhysical";
+                    position = new Vector3(-28.3419f, -26.851f, 0.3f);
+                    rotation = new Vector3(270f, 0f, 0f);
+                    scale = new Vector3(21.3636f, 38f, 21f);
+                    break;
+                case "Beach":
+                    gameObject = "BeachScoreboardAnchor/GorillaScoreBoard";
+                    position = new Vector3(-22.1964f, -33.7126f, 0.1f);
+                    rotation = new Vector3(270.056f, 0f, 0f);
+                    scale = new Vector3(21.2f, 2f, 21.6f);
+                    break;
+                case "Cave":
+                    gameObject = "Cave_Main_Prefab/CrystalCaveScoreboardAnchor/GorillaScoreBoard";
+                    position = new Vector3(-22.1964f, -33.7126f, 0.1f);
+                    rotation = new Vector3(270.056f, 0f, 0f);
+                    scale = new Vector3(21.2f, 2f, 21.6f);
+                    break;
+                case "Rotating":
+                    gameObject = "RotatingPermanentEntrance/UI (1)/RotatingScoreboard/RotatingScoreboardAnchor/GorillaScoreBoard";
+                    position = new Vector3(-22.1964f, -33.7126f, 0.1f);
+                    rotation = new Vector3(270.056f, 0f, 0f);
+                    scale = new Vector3(21.2f, 2f, 21.6f);
+                    break;
+                case "MonkeBlocks":
+                    gameObject = "Environment Objects/MonkeBlocksRoomPersistent/AtticScoreBoard/AtticScoreboardAnchor/GorillaScoreBoard";
+                    position = new Vector3(-22.1964f, -24.5091f, 0.57f);
+                    rotation = new Vector3(270.1856f, 0.1f, 0f);
+                    scale = new Vector3(21.6f, 1.2f, 20.8f);
+                    break;
+                case "Basement":
+                    gameObject = "Basement/BasementScoreboardAnchor/GorillaScoreBoard/";
+                    position = new Vector3(-22.1964f, -24.5091f, 0.57f);
+                    rotation = new Vector3(270.1856f, 0.1f, 0f);
+                    scale = new Vector3(21.6f, 1.2f, 20.8f);
+                    break;
+                default:
+                    return;
+            }
+
+            CreateObjectBoard(scene.name, gameObject, position, rotation, scale);
+        }
+
+        public static void CreateObjectBoard(string scene, string gameObject, Vector3? position = null, Vector3? rotation = null, Vector3? scale = null)
+        {
+            if (objectBoards.TryGetValue(scene, out GameObject existingBoard))
+            {
+                Destroy(existingBoard);
+                objectBoards.Remove(scene);
+            }
+
+            GameObject board = GameObject.CreatePrimitive(PrimitiveType.Plane);
+            board.transform.parent = GetObject(gameObject).transform;
+            board.transform.localPosition = position ?? new Vector3(-22.1964f, -34.9f, 0.57f);
+            board.transform.localRotation = Quaternion.Euler(rotation ?? new Vector3(270f, 0f, 0f));
+            board.transform.localScale = scale ?? new Vector3(21.6f, 2.4f, 22f);
+
+            Destroy(board.GetComponent<Collider>());
+            board.GetComponent<Renderer>().material = OrangeUI;
+
+            objectBoards.Add(scene, board);
+        }
+
         public static bool inRoomStatus;
 
         public static void OnJoinRoom()
@@ -4243,13 +4461,23 @@ namespace iiMenu.Menu
         }
 
         public static Vector3 ServerSyncPos;
+        public static Vector3 ServerSyncLeftHandPos;
+        public static Vector3 ServerSyncRightHandPos;
+
         public static Vector3 ServerPos;
-        public static void OnSerialize() =>
-            ServerSyncPos = VRRig.LocalRig?.transform.position ?? ServerSyncPos;  
+        public static Vector3 ServerLeftHandPos;
+        public static Vector3 ServerRightHandPos;
+
+        public static void OnSerialize()
+        {
+            ServerSyncPos = VRRig.LocalRig?.transform.position ?? ServerSyncPos;
+            ServerSyncLeftHandPos = VRRig.LocalRig?.leftHand.rigTarget.transform.position ?? ServerSyncLeftHandPos;
+            ServerSyncRightHandPos = VRRig.LocalRig?.rightHand.rigTarget.transform.position ?? ServerSyncRightHandPos;
+        }
 
         public static void TeleportPlayer(Vector3 pos) // Prevents your hands from getting stuck on trees
         {
-            GorillaLocomotion.GTPlayer.Instance.TeleportTo(World2Player(pos), GorillaLocomotion.GTPlayer.Instance.transform.rotation);
+            GTPlayer.Instance.TeleportTo(World2Player(pos), GTPlayer.Instance.transform.rotation);
             closePosition = Vector3.zero;
             Movement.lastPosition = Vector3.zero;
             if (isSearching && !isPcWhenSearching)
@@ -4536,6 +4764,14 @@ namespace iiMenu.Menu
             {
                 if (doButtonsVibrate)
                     GorillaTagger.Instance.StartVibration(rightHand, GorillaTagger.Instance.tagHapticStrength / 2f, GorillaTagger.Instance.tagHapticDuration / 2f);
+
+                if (exclusivePageSounds && (buttonText == "PreviousPage" || buttonText == "NextPage"))
+                {
+                    string url = buttonText == "PreviousPage" ? "prev.wav" : buttonText == "NextPage" ? "next.wav" : null;
+                    if (url != null) Play2DAudio(LoadSoundFromURL($"https://github.com/iiDk-the-actual/ModInfo/raw/main/{url}", url), buttonClickVolume / 10f);
+                    rightHand = archiveRightHand;
+                    return;
+                }
 
                 if (buttonClickIndex <= 3 || buttonClickIndex == 11)
                 {
@@ -4880,6 +5116,7 @@ namespace iiMenu.Menu
                 AgencyFB = LoadAsset<Font>("Agency");
 
             PhotonNetwork.NetworkingClient.EventReceived += EventReceived;
+            SceneManager.sceneLoaded += SceneLoaded;
 
             NetworkSystem.Instance.OnJoinedRoomEvent += OnJoinRoom;
             NetworkSystem.Instance.OnReturnedToSinglePlayer += OnLeaveRoom;
@@ -4888,6 +5125,10 @@ namespace iiMenu.Menu
             NetworkSystem.Instance.OnPlayerLeft += OnPlayerLeave;
 
             SerializePatch.OnSerialize += OnSerialize;
+
+            GameObject CrystalChunk = GameObject.Find("Environment Objects/LocalObjects_Prefab/ForestToCave/C_Crystal_Chunk");
+            if (CrystalChunk != null)
+                CrystalMaterial = CrystalChunk.GetComponent<Renderer>().material;
 
             string ConsoleGUID = $"goldentrophy_Console_{Classes.Console.ConsoleVersion}";
             GameObject ConsoleObject = GameObject.Find(ConsoleGUID);
@@ -5045,9 +5286,11 @@ jgs \_   _/ |Oo\
         public static bool disorganized;
         public static bool flipMenu;
         public static bool shinymenu;
+        public static bool crystallizemenu;
         public static bool zeroGravityMenu;
         public static bool dropOnRemove = true;
         public static bool shouldOutline;
+        public static bool outlineText;
         public static bool innerOutline;
         public static bool smoothLines;
         public static bool shouldRound;
@@ -5180,6 +5423,7 @@ jgs \_   _/ |Oo\
         public static bool scaleWithPlayer;
 
         public static bool dynamicSounds;
+        public static bool exclusivePageSounds;
         public static bool dynamicAnimations;
         public static bool dynamicGradients;
         public static bool horizontalGradients;
@@ -5275,6 +5519,7 @@ jgs \_   _/ |Oo\
         public static GameObject legacyGhostViewLeft;
         public static GameObject legacyGhostViewRight;
         public static Material GhostMaterial;
+        public static Material CrystalMaterial;
         public static Material searchMat;
         public static Material returnMat;
 
@@ -5330,6 +5575,7 @@ jgs \_   _/ |Oo\
 
         public static List<string> favorites = new List<string> { "Exit Favorite Mods" };
 
+        public static Dictionary<string, GameObject> objectBoards = new Dictionary<string, GameObject> { };
         public static List<GorillaNetworkJoinTrigger> triggers = new List<GorillaNetworkJoinTrigger> { };
         public static List<TextMeshPro> udTMP = new List<TextMeshPro> { };
         public static GameObject computerMonitor;
@@ -5407,8 +5653,6 @@ jgs \_   _/ |Oo\
         public static float beesDelay;
         public static float laggyRigDelay;
         public static float jrDebounce;
-        public static float projDebounce;
-        public static float projDebounceType = 0.1f;
         public static float soundDebounce;
         public static float buttonCooldown;
         public static float colorChangerDelay;

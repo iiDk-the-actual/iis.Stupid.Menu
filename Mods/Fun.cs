@@ -21,10 +21,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.UIElements;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
+using static Mono.Security.X509.X520;
 
 namespace iiMenu.Mods
 {
@@ -1373,7 +1375,11 @@ namespace iiMenu.Mods
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
-                    GetObject(objectName).transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
+                {
+                    ThrowableBug bug = GetBug(objectName);
+                    if (bug != null)
+                        bug.transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
+                }
             }
         }
 
@@ -1460,28 +1466,16 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void NoRespawnBug()
+        public static void SetRespawnDistance(string objectName, float respawnDistance = float.MaxValue)
         {
-            GetObject("Floating Bug Holdable").GetComponent<ThrowableBug>().maxDistanceFromOriginBeforeRespawn = float.MaxValue;
-            GetObject("Floating Bug Holdable").GetComponent<ThrowableBug>().maxDistanceFromTargetPlayerBeforeRespawn = float.MaxValue;
-        }
+            GameObject bugObject = null;
+            if (objectName == "Firefly")
+                bugObject = GetAllType<ThrowableBug>().Where(bug => bug.gameObject.activeInHierarchy && bug.gameObject.name == "Floating Bug Holdable").ToArray()[1].gameObject;
+            else
+                bugObject = GetObject(objectName);
 
-        public static void DisableNoRespawnBug()
-        {
-            GetObject("Floating Bug Holdable").GetComponent<ThrowableBug>().maxDistanceFromOriginBeforeRespawn = 50f;
-            GetObject("Floating Bug Holdable").GetComponent<ThrowableBug>().maxDistanceFromTargetPlayerBeforeRespawn = 50f;
-        }
-
-        public static void NoRespawnBat()
-        {
-            GetObject("Cave Bat Holdable").GetComponent<ThrowableBug>().maxDistanceFromOriginBeforeRespawn = float.MaxValue;
-            GetObject("Cave Bat Holdable").GetComponent<ThrowableBug>().maxDistanceFromTargetPlayerBeforeRespawn = float.MaxValue;
-        }
-
-        public static void DisableNoRespawnBat()
-        {
-            GetObject("Cave Bat Holdable").GetComponent<ThrowableBug>().maxDistanceFromOriginBeforeRespawn = 50f;
-            GetObject("Cave Bat Holdable").GetComponent<ThrowableBug>().maxDistanceFromTargetPlayerBeforeRespawn = 50f;
+            bugObject.GetComponent<ThrowableBug>().maxDistanceFromOriginBeforeRespawn = float.MaxValue;
+            bugObject.GetComponent<ThrowableBug>().maxDistanceFromTargetPlayerBeforeRespawn = float.MaxValue;
         }
 
         public static void FastSnowballs()
@@ -1791,10 +1785,78 @@ namespace iiMenu.Mods
             }
         }
 
+        public static Coroutine bugCoroutine;
+        public static IEnumerator ReturnRig()
+        {
+            yield return new WaitForSeconds(0.2f);
+            VRRig.LocalRig.enabled = true;
+            bugCoroutine = null;
+        }
+
+        public static float getOwnershipDelay;
+        public static ThrowableBug GetBug(string name)
+        {
+            GameObject bugObject = null;
+            if (name == "Firefly")
+                bugObject = GetAllType<ThrowableBug>().Where(bug => bug.gameObject.activeInHierarchy && bug.gameObject.name == "Floating Bug Holdable").ToArray()[1].gameObject;
+            else
+                bugObject = GetObject(name);
+            if (bugObject == null)
+                return null;
+
+            ThrowableBug bug = bugObject.GetComponent<ThrowableBug>();
+            if (bug == null)
+                return null;
+
+            if (!PhotonNetwork.InRoom)
+                return bug;
+
+            RequestableOwnershipGuard guard = bug.worldShareableInstance.guard;
+            if (guard == null)
+                return null;
+
+            if (!bug.IsMyItem())
+            {
+                if (Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, bugObject.transform.position) > 15f)
+                {
+                    VRRig.LocalRig.enabled = false;
+                    VRRig.LocalRig.transform.position = bugObject.transform.position;
+
+                    if (bugCoroutine != null)
+                        CoroutineManager.instance.StopCoroutine(bugCoroutine);
+
+                    bugCoroutine = CoroutineManager.instance.StartCoroutine(ReturnRig());
+                }
+
+                if (Vector3.Distance(ServerPos, bugObject.transform.position) > 15f)
+                    return null;
+
+                if (Time.time < getOwnershipDelay)
+                    return null;
+
+                getOwnershipDelay = Time.time + 0.5f;
+
+                guard.RequestOwnership(() => bug.currentState = TransferrableObject.PositionState.Dropped, null);
+                return null;
+            }
+            else
+            {
+                if (bugCoroutine != null)
+                {
+                    CoroutineManager.instance.StopCoroutine(bugCoroutine);
+                    VRRig.LocalRig.enabled = true;
+                }
+
+                bug.worldShareableInstance.transferableObjectState = TransferrableObject.PositionState.Dropped;
+                return bug;
+            }
+        }
+
         public static void ObjectToHand(string objectName)
         {
-            if (rightGrab)
-                GetObject(objectName).transform.position = GorillaTagger.Instance.rightHandTransform.position;
+            ThrowableBug bug = GetBug(objectName);
+            if (rightGrab && bug != null)
+                bug.transform.position = GorillaTagger.Instance.rightHandTransform.position;
         }
 
         public static void GrabGliders()
@@ -1820,8 +1882,12 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void DestroyObject(string objectName) =>
-            GetObject(objectName).transform.position = new Vector3(99999f, 99999f, 99999f);
+        public static void DestroyObject(string objectName)
+        {
+            ThrowableBug bug = GetBug(objectName);
+            if (bug != null)
+                bug.transform.position = new Vector3(99999f, 99999f, 99999f);
+        }
 
         public static void RespawnGliders()
         {
@@ -2109,6 +2175,24 @@ namespace iiMenu.Mods
             //RPCProtection();
         }
 
+        public static int blockDebounceIndex = 2;
+        public static float blockDebounce = 0.1f;
+        public static void ChangeBlockDelay(bool positive = true)
+        {
+            if (positive)
+                blockDebounceIndex++;
+            else
+                blockDebounceIndex--;
+
+            if (blockDebounceIndex > 20)
+                blockDebounceIndex = 1;
+            if (blockDebounceIndex < 1)
+                blockDebounceIndex = 20;
+
+            blockDebounce = blockDebounceIndex / 20f;
+            GetIndex("Change Block Delay").overlapText = "Change Block Delay <color=grey>[</color><color=green>" + blockDebounce.ToString() + "</color><color=grey>]</color>";
+        }
+
         public static void RequestCreatePiece(int pieceType, Vector3 position, Quaternion rotation, int materialType, Player target = null, bool overrideFreeze = false)
         {
             BuilderTable table = GetBuilderTable();
@@ -2176,14 +2260,14 @@ namespace iiMenu.Mods
             {
                 if (Time.time > blockDelay)
                 {
-                    blockDelay = Time.time + 0.1f;
+                    blockDelay = Time.time + blockDebounce;
                     BuilderPiece piece = GetAllType<BuilderPiece>()
                         .Where(piece => piece.gameObject.activeInHierarchy)
                         .Where(piece => piece.pieceType == pieceType)
                         .Where(piece => !piece.isBuiltIntoTable)
                         .Where(piece => piece.CanPlayerGrabPiece(PhotonNetwork.LocalPlayer.ActorNumber, piece.transform.position))
-                        .Where(piece => Vector3.Distance(piece.transform.position, GorillaTagger.Instance.leftHandTransform.position) < 2.5f)
-                        .OrderBy(piece => Vector3.Distance(piece.transform.position, GorillaTagger.Instance.leftHandTransform.position))
+                        .Where(piece => Vector3.Distance(piece.transform.position, ServerLeftHandPos) < 2.5f)
+                        .OrderBy(piece => Vector3.Distance(piece.transform.position, ServerLeftHandPos))
                         .FirstOrDefault()
                         ?? null;
 
@@ -2192,13 +2276,16 @@ namespace iiMenu.Mods
                             .Where(piece => piece.gameObject.activeInHierarchy)
                             .Where(piece => !piece.isBuiltIntoTable)
                             .Where(piece => piece.CanPlayerGrabPiece(PhotonNetwork.LocalPlayer.ActorNumber, piece.transform.position))
-                            .Where(piece => Vector3.Distance(piece.transform.position, GorillaTagger.Instance.leftHandTransform.position) < 2.5f)
-                            .OrderBy(piece => Vector3.Distance(piece.transform.position, GorillaTagger.Instance.leftHandTransform.position))
+                            .Where(piece => Vector3.Distance(piece.transform.position, ServerLeftHandPos) < 2.5f)
+                            .OrderBy(piece => Vector3.Distance(piece.transform.position, ServerLeftHandPos))
                             .FirstOrDefault()
                             ?? null;
 
                     if (piece == null)
                         return;
+
+                    if (Vector3.Distance(ServerLeftHandPos, position) > 2.5f)
+                        position = ServerLeftHandPos + ((position - ServerLeftHandPos).normalized * 2.5f);
 
                     Networking.RequestGrabPiece(piece, true, Vector3.zero, Quaternion.identity);
                     Networking.RequestDropPiece(piece, position, rotation, Vector3.zero, Vector3.zero);
@@ -2286,16 +2373,16 @@ namespace iiMenu.Mods
             {
                 if (Time.time > blockDelay)
                 {
-                    blockDelay = Time.time + 0.1f;
-                    if (piece.CanPlayerGrabPiece(PhotonNetwork.LocalPlayer.ActorNumber, piece.transform.position) && Vector3.Distance(piece.transform.position, GorillaTagger.Instance.leftHandTransform.position) < 2.5f)
+                    blockDelay = Time.time + blockDebounce;
+                    if (piece.CanPlayerGrabPiece(PhotonNetwork.LocalPlayer.ActorNumber, piece.transform.position) && Vector3.Distance(piece.transform.position, ServerLeftHandPos) < 2.5f)
                     {
                         BuilderDropZone dropZone = table.dropZones
                             .Where(zone => (int)zone.dropType >= 1)
-                            .Where(zone => Vector3.Distance(zone.transform.position, GorillaTagger.Instance.leftHandTransform.position) < 2.5f)
-                            .OrderBy(zone => Vector3.Distance(zone.transform.position, GorillaTagger.Instance.leftHandTransform.position))
+                            .Where(zone => Vector3.Distance(zone.transform.position, ServerLeftHandPos) < 2.5f)
+                            .OrderBy(zone => Vector3.Distance(zone.transform.position, ServerLeftHandPos))
                             .FirstOrDefault() ?? null;
 
-                        Vector3 dropPosition = dropZone != null ? dropZone.transform.position : GorillaTagger.Instance.leftHandTransform.position + Vector3.down * 2f;
+                        Vector3 dropPosition = dropZone != null ? dropZone.transform.position : ServerLeftHandPos + Vector3.down * 2f;
 
                         RequestGrabPiece(piece, true, Vector3.zero, Quaternion.identity);
                         RequestDropPiece(piece, dropPosition, RandomQuaternion(), Vector3.down * 20f, Vector3.zero);
@@ -2316,8 +2403,12 @@ namespace iiMenu.Mods
             RPCProtection();
         }
 
-        public static void SpazObject(string objectName) =>
-             GetObject(objectName).transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+        public static void SpazObject(string objectName)
+        {
+            ThrowableBug bug = GetBug(objectName);
+            if (bug != null)
+                bug.transform.rotation = RandomQuaternion();
+        }
 
         public static void SpazGliders()
         {
@@ -2330,8 +2421,12 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void OrbitObject(string objectName, float offset = 0) =>
-            GetObject(objectName).transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)), 2, MathF.Sin(offset + ((float)Time.frameCount / 30)));
+        public static void OrbitObject(string objectName, float offset = 0)
+        {
+            ThrowableBug bug = GetBug(objectName);
+            if (bug != null)
+                bug.transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)), 2, MathF.Sin(offset + ((float)Time.frameCount / 30)));
+        }
 
         public static void OrbitGliders()
         {
@@ -2359,12 +2454,36 @@ namespace iiMenu.Mods
 
         public static void RideObject(string objectName)
         {
-            TeleportPlayer(GetObject(objectName).transform.position);
+            GameObject bugObject = null;
+            if (objectName == "Firefly")
+                bugObject = GetAllType<ThrowableBug>().Where(bug => bug.gameObject.activeInHierarchy && bug.gameObject.name == "Floating Bug Holdable").ToArray()[1].gameObject;
+            else
+                bugObject = GetObject(objectName);
+
+            TeleportPlayer(bugObject.transform.position);
             GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
         }
 
-        public static void AllowStealingThrowableBug(string objectName, bool allowPlayerStealing) =>
-            GetObject(objectName).GetComponent<ThrowableBug>().allowPlayerStealing = allowPlayerStealing;
+        private static bool lastWasNull;
+        public static void BecomeObject(string objectName)
+        {
+            ThrowableBug bug = GetBug(objectName);
+            
+            if (bug != null)
+            {
+                VRRig.LocalRig.enabled = false;
+                VRRig.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position - Vector3.up * 99999f;
+
+                bug.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
+                bug.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
+            } else
+            {
+                if (lastWasNull)
+                    VRRig.LocalRig.enabled = true;
+            }
+
+            lastWasNull = bug != null;
+        }
 
         public static void MultiGrab()
         {
@@ -2781,30 +2900,29 @@ namespace iiMenu.Mods
         {
             if (rightGrab && Time.time > blockDelay)
             {
-                blockDelay = Time.time + 0.25f;
-                int amnt = 0;
-                foreach (BuilderPiece piece in GetAllType<BuilderPiece>())
-                {
-                    if (piece.gameObject.activeSelf && Vector3.Distance(piece.transform.position, GorillaTagger.Instance.rightHandTransform.position) < 2.5f)
-                    {
-                        if (!potentialgrabbedpieces.Contains(piece))
-                        {
-                            amnt++;
-                            if (amnt < 8)
-                            {
-                                RequestGrabPiece(piece, false, new Vector3(UnityEngine.Random.Range(-0.5f, 0.5f), UnityEngine.Random.Range(-0.5f, 0.5f), UnityEngine.Random.Range(-0.5f, 0.5f)), Quaternion.identity);
-                                potentialgrabbedpieces.Add(piece);
-                            }
-                        }
-                    }
-                }
+                blockDelay = Time.time + blockDebounce;
+                BuilderPiece piece = GetAllType<BuilderPiece>()
+                    .Where(piece => piece.gameObject.activeInHierarchy)
+                    .Where(piece => !piece.isBuiltIntoTable)
+                    .Where(piece => piece.heldByPlayerActorNumber != PhotonNetwork.LocalPlayer.ActorNumber)
+                    .Where(piece => piece.CanPlayerGrabPiece(PhotonNetwork.LocalPlayer.ActorNumber, piece.transform.position))
+                    .Where(piece => Vector3.Distance(piece.transform.position, ServerLeftHandPos) < 2.5f)
+                    .OrderBy(piece => Vector3.Distance(piece.transform.position, ServerLeftHandPos))
+                    .FirstOrDefault();
+
+                if (piece == null)
+                    return;
+
+                RequestGrabPiece(piece, false, RandomVector3(0.5f), Quaternion.identity);
+                potentialgrabbedpieces.Add(piece);
+
                 RPCProtection();
             }
             if (rightTrigger > 0.5f && Time.time > blockDelay)
             {
                 blockDelay = Time.time + 0.25f;
-                foreach (BuilderPiece piece in potentialgrabbedpieces)
-                    RequestDropPiece(piece, GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, new Vector3(UnityEngine.Random.Range(-19f, 19f), UnityEngine.Random.Range(-19f, 19f), UnityEngine.Random.Range(-19f, 19f)), new Vector3(UnityEngine.Random.Range(-19f, 19f), UnityEngine.Random.Range(-19f, 19f), UnityEngine.Random.Range(-19f, 19f)));
+                foreach (BuilderPiece piece in GetAllType<BuilderPiece>().Where(piece => piece.gameObject.activeInHierarchy).Where(piece => piece.heldByPlayerActorNumber != PhotonNetwork.LocalPlayer.ActorNumber))
+                    RequestDropPiece(piece, GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, RandomVector3(19f), RandomVector3(19f));
                 
                 potentialgrabbedpieces.Clear();
                 RPCProtection();
@@ -2896,40 +3014,32 @@ namespace iiMenu.Mods
         // "Tubski" will be long loved forever because that was the original name of this mod I don't know what that means
         public static void BecomeBalloon()
         {
-            if (rightTrigger > 0.5f)
+            VRRig.LocalRig.enabled = false;
+            VRRig.LocalRig.inTryOnRoom = true;
+            VRRig.LocalRig.transform.position = new Vector3(-51.4897f, 16.9286f, -120.1083f);
+
+            bool FoundBalloon = false;
+            foreach (BalloonHoldable Balloon in GetAllType<BalloonHoldable>())
             {
-                VRRig.LocalRig.enabled = false;
-                VRRig.LocalRig.inTryOnRoom = true;
-                VRRig.LocalRig.transform.position = new Vector3(-51.4897f, 16.9286f, -120.1083f);
-
-                bool FoundBalloon = false;
-                foreach (BalloonHoldable Balloon in GetAllType<BalloonHoldable>())
+                if (Balloon.ownerRig == VRRig.LocalRig && Balloon.gameObject.name.Contains("LMAMI"))
                 {
-                    if (Balloon.ownerRig == VRRig.LocalRig && Balloon.gameObject.name.Contains("LMAMI"))
-                    {
-                        FoundBalloon = true;
+                    FoundBalloon = true;
 
-                        Balloon.maxDistanceFromOwner = float.MaxValue;
-                        Balloon.currentState = TransferrableObject.PositionState.Dropped;
+                    Balloon.maxDistanceFromOwner = float.MaxValue;
+                    Balloon.currentState = TransferrableObject.PositionState.Dropped;
 
-                        Balloon.gameObject.transform.position = GorillaTagger.Instance.headCollider.transform.position + (GorillaTagger.Instance.headCollider.transform.up * - 1f);
-                        Balloon.gameObject.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
-                    }
-                }
-
-                if (!FoundBalloon)
-                {
-                    CosmeticsController.instance.ApplyCosmeticItemToSet(VRRig.LocalRig.tryOnSet, CosmeticsController.instance.GetItemFromDict("LMAAP."), true, false);
-                    CosmeticsController.instance.UpdateWornCosmetics(true);
-                    RPCProtection();
-
-                    ClearType<BalloonHoldable>();
+                    Balloon.gameObject.transform.position = GorillaTagger.Instance.headCollider.transform.position + (GorillaTagger.Instance.headCollider.transform.up * - 1f);
+                    Balloon.gameObject.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
                 }
             }
-            else
+
+            if (!FoundBalloon)
             {
-                if (!VRRig.LocalRig.enabled)
-                    VRRig.LocalRig.enabled = true;
+                CosmeticsController.instance.ApplyCosmeticItemToSet(VRRig.LocalRig.tryOnSet, CosmeticsController.instance.GetItemFromDict("LMAAP."), true, false);
+                CosmeticsController.instance.UpdateWornCosmetics(true);
+                RPCProtection();
+
+                ClearType<BalloonHoldable>();
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using ExitGames.Client.Photon;
+using GorillaGameModes;
 using iiMenu.Classes;
 using iiMenu.Notifications;
 using Photon.Pun;
@@ -312,7 +313,7 @@ namespace iiMenu.Mods
         }
 
         public static bool ValidateTag(VRRig Rig) =>
-            Vector3.Distance(ServerSyncPos, lockTarget.transform.position) < 6f && VRRig.LocalRig.CheckTagDistanceRollback(Rig, 6f, 0.2f);
+            Vector3.Distance(ServerSyncPos, lockTarget.transform.position) < 6f;
 
         public static void TagGun()
         {
@@ -361,7 +362,7 @@ namespace iiMenu.Mods
                         }
 
                         if (ValidateTag(lockTarget))
-                            GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = lockTarget.transform.position;
+                            ReportTag(lockTarget);
                     }
                     else
                     {
@@ -394,6 +395,16 @@ namespace iiMenu.Mods
                     gunLocked = false;
                     VRRig.LocalRig.enabled = true;
                 }
+            }
+        }
+
+        private static float reportTagDelay;
+        public static void ReportTag(VRRig rig)
+        {
+            if (Time.time > reportTagDelay)
+            {
+                reportTagDelay = Time.time + 0.1f;
+                GameMode.ReportTag(RigManager.GetPlayerFromVRRig(rig));
             }
         }
 
@@ -450,7 +461,7 @@ namespace iiMenu.Mods
                 }
 
                 if (ValidateTag(targetRig))
-                    GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = targetRig.transform.position;
+                    ReportTag(targetRig);
             }
             else
                 Toggle("Tag Player");
@@ -570,10 +581,10 @@ namespace iiMenu.Mods
                                     VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
                                     VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
                                 }
-                            }
 
-                            if (ValidateTag(vrrig))
-                                GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = vrrig.transform.position;
+                                if (ValidateTag(vrrig))
+                                    ReportTag(vrrig);
+                            }
                         }
                     }
                     else
@@ -628,7 +639,7 @@ namespace iiMenu.Mods
                 }
 
                 if (ValidateTag(vrrig))
-                    GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = vrrig.transform.position;
+                    ReportTag(vrrig);
             }
             else
             {

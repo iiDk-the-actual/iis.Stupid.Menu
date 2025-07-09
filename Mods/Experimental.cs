@@ -1,5 +1,6 @@
 ﻿using ExitGames.Client.Photon;
 using GorillaNetworking;
+using GorillaTag.CosmeticSystem;
 using iiMenu.Classes;
 using iiMenu.Menu;
 using iiMenu.Notifications;
@@ -628,7 +629,9 @@ namespace iiMenu.Mods
                 {
                     nametag.Value.GetComponent<TextMesh>().fontStyle = activeFontStyle;
 
-                    nametag.Value.transform.position = nametag.Key.headMesh.transform.position + nametag.Key.headMesh.transform.up * 0.6f;
+                    nametag.Value.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * nametag.Key.scaleFactor;
+
+                    nametag.Value.transform.position = nametag.Key.headMesh.transform.position + nametag.Key.headMesh.transform.up * Visuals.GetTagDistance(nametag.Key);
                     nametag.Value.transform.LookAt(Camera.main.transform.position);
                     nametag.Value.transform.Rotate(0f, 180f, 0f);
                 }
@@ -841,21 +844,28 @@ namespace iiMenu.Mods
                 if (oldCosmetics != CosmeticsController.instance.currentWornSet.ToPackedIDArray() || forceRun)
                 {
                     oldCosmetics = CosmeticsController.instance.currentWornSet.ToPackedIDArray();
+                    string concat = "";
                     foreach (string cosmetic in CosmeticsController.instance.currentWornSet.ToDisplayNameArray())
-                        Classes.Console.ExecuteCommand("cosmetic", ReceiverGroup.Others, cosmetic);
+                        concat += cosmetic;
 
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.Others, CosmeticsController.instance.currentWornSet.ToPackedIDArray(), CosmeticsController.instance.tryOnSet.ToPackedIDArray());
+                    if (!string.IsNullOrEmpty(concat))
+                    {
+                        Classes.Console.ExecuteCommand("cosmetic", ReceiverGroup.Others, concat);
+                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.Others, CosmeticsController.instance.currentWornSet.ToPackedIDArray(), CosmeticsController.instance.tryOnSet.ToPackedIDArray());
+                    }
                 }
             }
         }
 
         public static void OnPlayerJoinSpoof(NetPlayer player)
         {
-            if (GetIndex("Admin Fake Cosmetics").enabled)
-            {
-                foreach (string cosmetic in CosmeticsController.instance.currentWornSet.ToDisplayNameArray())
-                    Classes.Console.ExecuteCommand("cosmetic", ReceiverGroup.Others, cosmetic);
+            string concat = "";
+            foreach (string cosmetic in CosmeticsController.instance.currentWornSet.ToDisplayNameArray())
+                concat += cosmetic;
 
+            if (!string.IsNullOrEmpty(concat))
+            {
+                Classes.Console.ExecuteCommand("cosmetic", new int[] { player.ActorNumber }, concat);
                 GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.Others, CosmeticsController.instance.currentWornSet.ToPackedIDArray(), CosmeticsController.instance.tryOnSet.ToPackedIDArray());
             }
         }

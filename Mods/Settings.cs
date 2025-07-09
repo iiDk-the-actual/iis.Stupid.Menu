@@ -1,3 +1,4 @@
+using GorillaLocomotion;
 using GorillaNetworking;
 using iiMenu.Classes;
 using iiMenu.Menu;
@@ -43,6 +44,9 @@ namespace iiMenu.Mods
                         menuSpawnPosition = VRKeyboard.transform.Find("MenuSpawnPosition").gameObject;
                         VRKeyboard.transform.Find("Canvas/Text").GetComponent<Text>().color = textColor;
 
+                        VRKeyboard.transform.localScale *= scaleWithPlayer ? GTPlayer.Instance.scale : 1f;
+                        menuSpawnPosition.transform.localScale *= scaleWithPlayer ? GTPlayer.Instance.scale : 1f;
+
                         ColorChanger backgroundColorChanger = VRKeyboard.transform.Find("Background").gameObject.AddComponent<ColorChanger>();
                         backgroundColorChanger.colors = new Gradient
                         {
@@ -86,6 +90,14 @@ namespace iiMenu.Mods
                         }
                     }
                 }
+
+                GradientColorKey[] colors = new[]
+                {
+                    new GradientColorKey(bgColorA, 0f),
+                    new GradientColorKey(bgColorB, 0.5f),
+                    new GradientColorKey(bgColorA, 1f)
+                };
+
                 if (lKeyReference == null)
                 {
                     lKeyReference = GameObject.CreatePrimitive(PrimitiveType.Sphere);
@@ -95,17 +107,11 @@ namespace iiMenu.Mods
                     lKeyReference.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
                     lKeyCollider = lKeyReference.GetComponent<SphereCollider>();
 
-                    GradientColorKey[] array = new GradientColorKey[3];
-                    array[0].color = bgColorA;
-                    array[0].time = 0f;
-                    array[1].color = bgColorB;
-                    array[1].time = 0.5f;
-                    array[2].color = bgColorA;
-                    array[2].time = 1f;
+
                     ColorChanger colorChanger = lKeyReference.AddComponent<ColorChanger>();
                     colorChanger.colors = new Gradient
                     {
-                        colorKeys = array
+                        colorKeys = colors
                     };
                     colorChanger.isRainbow = themeType == 6;
                     colorChanger.isEpileptic = themeType == 47;
@@ -120,17 +126,10 @@ namespace iiMenu.Mods
                     rKeyReference.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
                     rKeyCollider = rKeyReference.GetComponent<SphereCollider>();
 
-                    GradientColorKey[] array = new GradientColorKey[3];
-                    array[0].color = bgColorA;
-                    array[0].time = 0f;
-                    array[1].color = bgColorB;
-                    array[1].time = 0.5f;
-                    array[2].color = bgColorA;
-                    array[2].time = 1f;
                     ColorChanger colorChanger = rKeyReference.AddComponent<ColorChanger>();
                     colorChanger.colors = new Gradient
                     {
-                        colorKeys = array
+                        colorKeys = colors
                     };
                     colorChanger.isRainbow = themeType == 6;
                     colorChanger.isEpileptic = themeType == 47;
@@ -2179,8 +2178,10 @@ namespace iiMenu.Mods
             else
                 pageButtonType--;
 
-            pageButtonType %= 7;
-            if (pageButtonType < 0)
+            if (pageButtonType > 6)
+                pageButtonType = 1;
+
+            if (pageButtonType < 1)
                 pageButtonType = 6;
 
             if (pageButtonType == 1)
@@ -2341,34 +2342,34 @@ namespace iiMenu.Mods
             GetIndex("Change Notification Time").overlapText = "Change Notification Time <color=grey>[</color><color=green>" + (notificationDecayTime / 1000).ToString() + "</color><color=grey>]</color>";
         }
 
+        public static Dictionary<string, string> notificationSounds = new Dictionary<string, string>
+        {
+            { "None",        "none" },
+            { "Pop",         "pop" },
+            { "Ding",        "ding" },
+            { "Twitter",     "twitter" },
+            { "Discord",     "discord" },
+            { "Whatsapp",    "whatsapp" },
+            { "Grindr",      "grindr" },
+            { "iOS",         "ios" },
+            { "XP Notify",   "xpnotify" },
+            { "XP Ding",     "xpding" },
+            { "XP Error",    "xperror" },
+            { "Roblox Bass", "robloxbass" },
+            { "Oculus",      "oculus" }
+        };
         public static void ChangeNotificationSound(bool positive = true)
         {
-            string[] notificationSoundNames = new string[]
-            {
-                "None",
-                "Pop",
-                "Ding",
-                "Twitter",
-                "Discord",
-                "Whatsapp",
-                "Grindr",
-                "iOS",
-                "XP Notify",
-                "XP Ding",
-                "XP Error",
-                "Roblox Bass"
-            };
-
             if (positive)
                 notificationSoundIndex++;
             else
                 notificationSoundIndex--;
 
-            notificationSoundIndex %= notificationSoundNames.Length;
+            notificationSoundIndex %= notificationSounds.Keys.Count;
             if (notificationSoundIndex < 0)
-                notificationSoundIndex = notificationSoundNames.Length - 1;
+                notificationSoundIndex = notificationSounds.Keys.Count - 1;
 
-            GetIndex("Change Notification Sound").overlapText = "Change Notification Sound <color=grey>[</color><color=green>" + notificationSoundNames[notificationSoundIndex] + "</color><color=grey>]</color>";
+            GetIndex("Change Notification Sound").overlapText = "Change Notification Sound <color=grey>[</color><color=green>" + notificationSounds.Keys.ToArray()[notificationSoundIndex] + "</color><color=grey>]</color>";
         }
 
         public static void ChangeNarrationVoice(bool positive = true)
@@ -2807,7 +2808,8 @@ namespace iiMenu.Mods
                 Projectiles.blue.ToString(),
                 Safety.rankIndex.ToString(),
                 Overpowered.snowballScale.ToString(),
-                Overpowered.lagIndex.ToString()
+                Overpowered.lagIndex.ToString(),
+                Fun.blockDebounceIndex.ToString()
             };
 
             string settingstext = string.Join(seperator, settings);
@@ -2971,6 +2973,9 @@ namespace iiMenu.Mods
 
                 Overpowered.lagIndex = int.Parse(data[38]) - 1;
                 Overpowered.ChangeLagPower();
+
+                Fun.blockDebounceIndex = int.Parse(data[39]) - 1;
+                Fun.ChangeBlockDelay();
             } catch { LogManager.Log("Save file out of date"); }
 
             pageButtonType = int.Parse(textData[3]) - 1;
@@ -3182,6 +3187,11 @@ namespace iiMenu.Mods
                         v.GetComponent<Renderer>().material = ForestMat;
                 }
             }
+
+            foreach (GameObject board in objectBoards.Values)
+                UnityEngine.Object.Destroy(board);
+
+            objectBoards.Clear();
         }
 
         public static void EnableBoardColors()
