@@ -1262,6 +1262,16 @@ namespace iiMenu.Mods
             CoroutineManager.instance.StartCoroutine(DelayReloadMicrophone());
         }
 
+        public static void MuteMicrophone(bool mute)
+        {
+            if (!PhotonNetwork.InRoom)
+                return;
+            Recorder mic = GorillaTagger.Instance.myRecorder;
+            if (mic.IsRecording != mute)
+                return;
+            mic.IsRecording = !mute;
+        }
+
         public static void SetMicrophonePitch(float pitch)
         {
             if (!PhotonNetwork.InRoom)
