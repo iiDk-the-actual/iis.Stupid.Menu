@@ -1,6 +1,5 @@
 ﻿using ExitGames.Client.Photon;
 using GorillaNetworking;
-using GorillaTag.CosmeticSystem;
 using iiMenu.Classes;
 using iiMenu.Menu;
 using iiMenu.Notifications;
