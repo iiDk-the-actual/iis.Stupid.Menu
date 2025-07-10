@@ -2465,7 +2465,7 @@ namespace iiMenu.Menu
                 }
             }
 
-            menu.transform.localScale *= (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
+            menu.transform.localScale *= (scaleWithPlayer && !isOnPC ? GTPlayer.Instance.scale : 1f);
         }
 
         public static void RecenterMenu()
