@@ -1176,6 +1176,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Guardian Crash Gun", method =() => Overpowered.GuardianCrashGun(), toolTip = "Crashes whoever your hand desires." },
                 new ButtonInfo { buttonText = "Guardian Crash All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.GuardianCrashAll(), toolTip = "Crashes everyone in the room when holding <color=green>trigger</color>." },
 
+                new ButtonInfo { buttonText = "Guardian Obliterate Gun", method =() => Overpowered.GuardianObliterateGun(), toolTip = "Sends whoever your hand desires past and beyond the quit box, making them fall infinitely until they close their game." },
+                new ButtonInfo { buttonText = "Guardian Obliterate All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.GuardianObliterateAll(), toolTip = "Sends everyone in the room past and beyond the quit box, making them fall infinitely until they close their game, when holding <color=green>trigger</color>." },
+
                 new ButtonInfo { buttonText = "Freeze All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.FreezeAll(), toolTip = "Freezes everyone in the room when holding <color=green>trigger</color>." },
 
                 new ButtonInfo { buttonText = "Arcade Teleporter Effect Spammer <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.ArcadeTeleporterEffectSpammer(), toolTip = "Spams the effects on the virtual stump teleporters in the arcade when holding <color=green>trigger</color>."},
