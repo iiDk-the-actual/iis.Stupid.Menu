@@ -537,7 +537,7 @@ namespace iiMenu.Mods
         public static void FPSSpoof()
         {
             Patches.FPSPatch.enabled = true;
-            Patches.FPSPatch.spoofFPSValue = Random.Range(88, 92);
+            Patches.FPSPatch.spoofFPSValue = Random.Range(80, 95);
         }
 
         public static string[] namePrefix = new string[]
