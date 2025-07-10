@@ -167,14 +167,13 @@ namespace iiMenu.Mods
                 GorillaGuardianManager guardianManager = (GorillaGuardianManager)GorillaGameManager.instance;
                 foreach (TappableGuardianIdol tgi in GetAllType<TappableGuardianIdol>())
                 {
-                    if (!tgi.isChangingPositions)
+                    if (tgi.manager && tgi.manager.photonView && !tgi.isChangingPositions)
                     {
                         GorillaGuardianZoneManager zoneManager = tgi.zoneManager;
                         if (!guardianManager.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer) && zoneManager.IsZoneValid() && tgi.manager)
                         {
                             VRRig.LocalRig.enabled = false;
                             VRRig.LocalRig.transform.position = tgi.transform.position;
-
                             VRRig.LocalRig.leftHand.rigTarget.transform.position = tgi.transform.position;
                             VRRig.LocalRig.rightHand.rigTarget.transform.position = tgi.transform.position;
 
@@ -188,6 +187,46 @@ namespace iiMenu.Mods
                     }
                     else
                         VRRig.LocalRig.enabled = true;
+                }
+            }
+        }
+
+        public static float guardianProtectorDelay;
+        public static void GuardianProtector()
+        {
+            GorillaGuardianManager manager = (GorillaGuardianManager)GorillaGameManager.instance;
+
+            if (manager.IsPlayerGuardian(PhotonNetwork.LocalPlayer))
+            {
+                foreach (TappableGuardianIdol tgi in GetAllType<TappableGuardianIdol>())
+                {
+                    if (tgi.manager && tgi.manager.photonView)
+                    {
+                        foreach (VRRig rig in GorillaParent.instance.vrrigs)
+                        {
+                            if (!rig.isLocal && Vector3.Distance(rig.transform.position, tgi.transform.position) < 2f && Time.time > guardianProtectorDelay)
+                            {
+                                BetaSetVelocityPlayer(GetPlayerFromVRRig(lockTarget), (rig.transform.position - tgi.transform.position).normalized * 50f);
+                                guardianProtectorDelay = Time.time + 0.1f;
+                            }
+                        }
+                    }
+                }
+            }
+        } 
+
+        public static void GuardianCrashAll()
+        {
+            GorillaGuardianManager manager = (GorillaGuardianManager)GorillaGameManager.instance;
+            if (manager.IsPlayerGuardian(PhotonNetwork.LocalPlayer) && rightTrigger > 0.5f)
+            {
+                foreach (VRRig rig in GorillaParent.instance.vrrigs)
+                {
+                    if (!rig.isLocal)
+                    {
+                        BetaSetVelocityPlayer(GetPlayerFromVRRig(lockTarget), (rig.transform.position.y > 50f ? Vector3.right : Vector3.up) * 50f);
+                        guardianProtectorDelay = Time.time + 0.1f;
+                    }
                 }
             }
         }
@@ -563,7 +602,7 @@ namespace iiMenu.Mods
                 {
                     if (Time.time > kgDebounce)
                     {
-                        BetaSetVelocityPlayer(GetPlayerFromVRRig(lockTarget), new Vector3(UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f)));
+                        BetaSetVelocityPlayer(GetPlayerFromVRRig(lockTarget), RandomVector3(50f));
                         RPCProtection();
                         kgDebounce = Time.time + 0.1f;
                     }
@@ -590,7 +629,7 @@ namespace iiMenu.Mods
             if (rightTrigger > 0.5f && Time.time > kgDebounce)
             {
                 kgDebounce = Time.time + 0.1f;
-                BetaSetVelocityTargetGroup(RpcTarget.Others, new Vector3(UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f)));
+                BetaSetVelocityTargetGroup(RpcTarget.Others, RandomVector3(50f));
                 RPCProtection();
             }
         }
