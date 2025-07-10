@@ -2697,7 +2697,7 @@ namespace iiMenu.Mods
             if (modTarget != null)
             {
                 ButtonInfo mod = GetIndex(modTarget);
-                NotifiLib.SendNotification("<color=grey>[</color><color=" + (mod.enabled ? "red" : "green") + "> VOICE</color><color=grey>]</color> " + (mod.enabled ? "Disabling " : "Enabling ") + (mod.overlapText ?? mod.buttonText) +"...", 3000);
+                NotifiLib.SendNotification("<color=grey>[</color><color=" + (mod.enabled ? "red" : "green") + ">VOICE</color><color=grey>]</color> " + (mod.enabled ? "Disabling " : "Enabling ") + (mod.overlapText ?? mod.buttonText) +"...", 3000);
                 if (dynamicSounds)
                     Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/confirm.wav", "confirm.wav"), buttonClickVolume / 10f);
                 
