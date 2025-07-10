@@ -165,20 +165,6 @@ namespace iiMenu.Mods
             Process.Start(filePath);
         }
 
-        public static void SetRoomVisible(bool PublicUnlockedRoom)
-        {
-            if (PhotonNetwork.InRoom && PhotonNetwork.IsMasterClient)           
-            {
-                PhotonNetwork.CurrentRoom.isOpen = PublicUnlockedRoom;
-                PhotonNetwork.CurrentRoom.IsVisible = PublicUnlockedRoom;
-                RPCProtection();
-            }
-            else if (!PhotonNetwork.IsMasterClient && PhotonNetwork.InRoom)
-            {
-                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-            }
-        }
-
         public static void CopyCustomGamemodeScript() =>
             GUIUtility.systemCopyBuffer = CustomGameMode.LuaScript;
 
