@@ -326,6 +326,61 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void GuardianObliterateGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    if (Time.time > crashAllDelay)
+                    {
+                        crashAllDelay = Time.time + 0.1f;
+                        BetaSetVelocityPlayer(GetPlayerFromVRRig(lockTarget), (lockTarget.transform.position.y > 55f ? Vector3.right : Vector3.up) * 50f);
+                        RPCProtection();
+                    }
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
+        public static void GuardianObliterateAll()
+        {
+            if (Time.time > crashAllDelay)
+                crashAllDelay = Time.time + 0.1f;
+            else
+                return;
+
+            GorillaGuardianManager manager = (GorillaGuardianManager)GorillaGameManager.instance;
+            if (manager.IsPlayerGuardian(PhotonNetwork.LocalPlayer) && rightTrigger > 0.5f)
+            {
+                foreach (VRRig rig in GorillaParent.instance.vrrigs)
+                {
+                    if (!rig.isLocal)
+                    {
+                        BetaSetVelocityPlayer(GetPlayerFromVRRig(rig), (rig.transform.position.y > 55f ? Vector3.right : Vector3.up) * 50f);
+                        RPCProtection();
+                    }
+                }
+            }
+        }
+
         private static float propHuntSpazDelay;
         private static bool propHuntSpazMode;
         public static void SpazPropHuntObjects()
