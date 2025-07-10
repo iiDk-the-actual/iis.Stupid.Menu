@@ -313,7 +313,7 @@ namespace iiMenu.Mods
                 return;
 
             GorillaGuardianManager manager = (GorillaGuardianManager)GorillaGameManager.instance;
-            if (manager.IsPlayerGuardian(PhotonNetwork.LocalPlayer) && rightTrigger > 0.5f)
+            if (PhotonNetwork.InRoom && manager.IsPlayerGuardian(PhotonNetwork.LocalPlayer) && rightTrigger > 0.5f)
             {
                 foreach (VRRig rig in GorillaParent.instance.vrrigs)
                 {
