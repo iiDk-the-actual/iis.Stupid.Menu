@@ -229,7 +229,7 @@ namespace iiMenu.Mods
                     if (Time.time > crashAllDelay && lockTarget.transform.position.x < -5)
                     {
                         crashAllDelay = Time.time + 0.1f;
-                        BetaSetVelocityPlayer(GetPlayerFromVRRig(lockTarget), (lockTarget.transform.position.z > -22f ? Vector3.left : (new Vector3(-48.25159f, 7.288813f, -20.5525f) - lockTarget.transform.position).normalized) + new Vector3(0f, UnityEngine.Random.Range(-0.05f, 0.05f)) * 50f);
+                        BetaSetVelocityPlayer(GetPlayerFromVRRig(lockTarget), (lockTarget.transform.position.z > -22f ? Vector3.left : (new Vector3(-48.25159f, 7.288813f, -20.5525f) - lockTarget.transform.position).normalized) * 50f);
                         RPCProtection();
                     }
                 }
@@ -264,7 +264,7 @@ namespace iiMenu.Mods
                 {
                     if (!rig.isLocal)
                     {
-                        BetaSetVelocityPlayer(GetPlayerFromVRRig(rig), (rig.transform.position.z > -22f ? Vector3.left : (new Vector3(-48.25159f, 7.288813f, -20.5525f) - rig.transform.position).normalized) + new Vector3(0f, UnityEngine.Random.Range(-0.05f, 0.05f)) * 50f);
+                        BetaSetVelocityPlayer(GetPlayerFromVRRig(rig), (rig.transform.position.z > -22f ? Vector3.left : (new Vector3(-48.25159f, 7.288813f, -20.5525f) - rig.transform.position).normalized) * 50f);
                         RPCProtection();
                     }
                 }
