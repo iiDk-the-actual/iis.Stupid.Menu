@@ -21,13 +21,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using UnityEngine;
-using UnityEngine.UIElements;
-using static Fusion.Sockets.NetBitBuffer;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
-using static Mono.Security.X509.X520;
 
 namespace iiMenu.Mods
 {
