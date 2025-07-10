@@ -230,6 +230,7 @@ namespace iiMenu.Mods
                     {
                         crashAllDelay = Time.time + 0.1f;
                         BetaSetVelocityPlayer(GetPlayerFromVRRig(lockTarget), (lockTarget.transform.position.y > 55f ? Vector3.right : Vector3.up) * 50f);
+                        RPCProtection();
                     }
                 }
                 if (GetGunInput(true))
@@ -262,7 +263,10 @@ namespace iiMenu.Mods
                 foreach (VRRig rig in GorillaParent.instance.vrrigs)
                 {
                     if (!rig.isLocal && rig.transform.position.x < -5)
+                    {
                         BetaSetVelocityPlayer(GetPlayerFromVRRig(rig), (rig.transform.position.y > 55f ? Vector3.right : Vector3.up) * 50f);
+                        RPCProtection();
+                    }
                 }
             }
         }
