@@ -1157,7 +1157,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Fling All <color=grey>[</color><color=green>T</color><color=grey>]</color>", overlapText = "Guardian Fling All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.FlingAll(), toolTip = "Flings everyone in the room."},
 
                 new ButtonInfo { buttonText = "Bring Gun", overlapText = "Guardian Bring Gun", method =() => Overpowered.BringGun(), toolTip = "Brings whoever your hand desires towards you."},
-                new ButtonInfo { buttonText = "Bring All <color=grey>[</color><color=green>T</color><color=grey>]</color>", overlapText = "Guardian Bring All <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.BringAll(), toolTip = "Brings everyone in the room towards you."},
+                new ButtonInfo { buttonText = "Bring All <color=grey>[</color><color=green>T</color><color=grey>]</color>", overlapText = "Guardian Bring All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.BringAll(), toolTip = "Brings everyone in the room towards you."},
 
                 new ButtonInfo { buttonText = "Bring All Gun", overlapText = "Guardian Bring All Gun", method =() => Overpowered.BringAllGun(), toolTip = "Brings everyone in the room towards wherever your hand desires."},
 
