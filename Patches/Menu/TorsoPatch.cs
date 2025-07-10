@@ -13,7 +13,7 @@ namespace iiMenu.Patches
 
         public static void Postfix(VRRig __instance)
         {
-            if (__instance == VRRig.LocalRig)
+            if (__instance.isLocal)
             {
                 if (enabled)
                 {

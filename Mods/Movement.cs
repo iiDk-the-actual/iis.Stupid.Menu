@@ -1964,7 +1964,7 @@ namespace iiMenu.Mods
             bool isTagged = PlayerIsTagged(VRRig.LocalRig);
 
             VRRig closestRig = GorillaParent.instance.vrrigs
-                .Where(rig => rig != null && rig != VRRig.LocalRig && 
+                .Where(rig => rig != null && !rig.isLocal && 
                                   (isTagged ? !PlayerIsTagged(rig) : PlayerIsTagged(rig)))
                 .OrderBy(rig => Vector3.Distance(rig.transform.position, GorillaTagger.Instance.bodyCollider.transform.position))
                 .FirstOrDefault();
@@ -2758,7 +2758,7 @@ namespace iiMenu.Mods
             int index = -1;
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (vrrig != VRRig.LocalRig)
+                if (!vrrig.isLocal)
                 {
                     index++;
 
@@ -2793,7 +2793,7 @@ namespace iiMenu.Mods
                 {
                     try
                     {
-                        if (vrrig != VRRig.LocalRig)
+                        if (!vrrig.isLocal)
                         {
                             if (vrrig.rightIndex.calcT < 0.5f && vrrig.rightMiddle.calcT > 0.5f)
                             {
@@ -2801,7 +2801,7 @@ namespace iiMenu.Mods
                                 Physics.SphereCast(vrrig.rightHandTransform.position + (dir * 0.1f), 0.3f, dir, out var Ray, 512f, NoInvisLayerMask());
                                 {
                                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                                    if (gunTarget && gunTarget == VRRig.LocalRig)
+                                    if (gunTarget && gunTarget.isLocal)
                                     {
                                         sithlord = vrrig;
                                         sithright = true;
@@ -2815,7 +2815,7 @@ namespace iiMenu.Mods
                                 Physics.SphereCast(vrrig.leftHandTransform.position + (dir * 0.1f), 0.3f, dir, out var Ray, 512f, NoInvisLayerMask());
                                 {
                                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                                    if (gunTarget && gunTarget == VRRig.LocalRig)
+                                    if (gunTarget && gunTarget.isLocal)
                                     {
                                         sithlord = vrrig;
                                         sithright = false;
@@ -2844,7 +2844,7 @@ namespace iiMenu.Mods
         {
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (vrrig != VRRig.LocalRig && Vector3.Distance(vrrig.transform.position, GorillaTagger.Instance.headCollider.transform.position) < 5f)
+                if (!vrrig.isLocal && Vector3.Distance(vrrig.transform.position, GorillaTagger.Instance.headCollider.transform.position) < 5f)
                 {
                     Vector3 pointA = vrrig.head.rigTarget.transform.position + new Vector3(0f, 0.16f, 0f);
                     Vector3 pointB = vrrig.head.rigTarget.transform.position - new Vector3(0f, 0.4f, 0f);
@@ -3174,7 +3174,7 @@ namespace iiMenu.Mods
             bool isTagged = PlayerIsTagged(VRRig.LocalRig);
 
             VRRig closestRig = GorillaParent.instance.vrrigs
-                .Where(rig => rig != null && rig != VRRig.LocalRig &&
+                .Where(rig => rig != null && !rig.isLocal &&
                                   (isTagged ? !PlayerIsTagged(rig) : PlayerIsTagged(rig)))
                 .OrderBy(rig => Vector3.Distance(rig.transform.position, GorillaTagger.Instance.bodyCollider.transform.position))
                 .FirstOrDefault();

@@ -3789,7 +3789,7 @@ namespace iiMenu.Menu
         }
 
         public static bool PlayerIsLocal(VRRig Player) => 
-            Player == VRRig.LocalRig || Player == GhostRig;
+            Player.isLocal || Player == GhostRig;
 
         public static bool ShouldBypassChecks(NetPlayer Player) =>
              Player == (NetworkSystem.Instance.LocalPlayer ?? null) || FriendManager.IsPlayerFriend(Player) || ServerData.Administrators.ContainsKey(Player.UserId);

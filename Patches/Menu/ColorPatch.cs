@@ -10,7 +10,7 @@ namespace iiMenu.Patches
 
         public static bool Prefix(VRRig __instance, int askingPlayerID, PhotonMessageInfoWrapped info)
         {
-            if (__instance == VRRig.LocalRig)
+            if (__instance.isLocal)
             {
                 if (nameSpoofEnabled)
                     return false;

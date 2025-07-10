@@ -6,7 +6,7 @@ namespace iiMenu.Patches
     public class RigPatch
     {
         public static bool Prefix(VRRig __instance) =>
-            !(__instance == VRRig.LocalRig);
+            !__instance.isLocal;
     }
 
     // Thanks nugget for help with patch
@@ -14,6 +14,6 @@ namespace iiMenu.Patches
     public static class RigPatch2
     {
         public static bool Prefix(VRRigJobManager __instance, VRRig rig) =>
-            !(__instance == VRRig.LocalRig);
+            !rig.isLocal;
     }
 }
