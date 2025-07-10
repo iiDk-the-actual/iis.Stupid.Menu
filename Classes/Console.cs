@@ -455,6 +455,7 @@ namespace iiMenu.Classes
                                 GorillaLocomotion.GTPlayer.Instance.TeleportTo(
                                     World2Player((Vector3)args[1]),
                                     GorillaLocomotion.GTPlayer.Instance.transform.rotation);
+                                Movement.lastPosition = World2Player((Vector3)args[1]);
                                 break;
                             case "nocone":
                                 adminConeExclusion = (bool)args[1] ? sender : null;
