@@ -170,7 +170,7 @@ namespace iiMenu.Mods
                     if (!tgi.isChangingPositions)
                     {
                         GorillaGuardianZoneManager zoneManager = tgi.zoneManager;
-                        if (!guardianManager.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer) && zoneManager.IsZoneValid())
+                        if (!guardianManager.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer) && zoneManager.IsZoneValid() && tgi.manager)
                         {
                             VRRig.LocalRig.enabled = false;
                             VRRig.LocalRig.transform.position = tgi.transform.position;
@@ -596,19 +596,43 @@ namespace iiMenu.Mods
         }
 
         private static float delaything = 0f;
-
-        private static float miniaturedelay = 0f;
         private static float lastBeforeClearTime = -1f;
-        public static void AtticCrashAll()
+        public static void BlockCrashGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    if (!NetworkSystem.Instance.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
+                    Fun.RequestCreatePiece(691844031, new Vector3(-127.6248f, 16.99441f, -217.2094f), Quaternion.identity, 0, NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)));
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
+        public static void BlockCrashAll()
         {
             if (rightTrigger > 0.5f)
             {
-                if (Time.time > miniaturedelay)
-                {
-                    miniaturedelay = Time.time + 0.022f;
-                    for (int i = 0; i < 4; i++)
-                        Fun.RequestCreatePiece(691844031, new Vector3(-127.6248f, 16.99441f, -217.2094f), Quaternion.identity, 0);
-                }
+                if (!NetworkSystem.Instance.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
+                Fun.RequestCreatePiece(691844031, new Vector3(-127.6248f, 16.99441f, -217.2094f), Quaternion.identity, 0);
 
                 if (Time.time > lastBeforeClearTime)
                 {
