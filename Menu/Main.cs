@@ -600,8 +600,9 @@ namespace iiMenu.Menu
                     {
                         if (PhotonNetwork.InRoom)
                         {
-                            if (PhotonNetwork.LocalPlayer.IsMasterClient && !lastMasterClient)
-                                NotifiLib.SendNotification("<color=grey>[</color><color=purple>MASTER</color><color=grey>]</color> You are now master client.");
+                            if (!disableMasterClientNotifications)
+                                if (PhotonNetwork.LocalPlayer.IsMasterClient && !lastMasterClient)
+                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>MASTER</color><color=grey>]</color> You are now master client.");
 
                             lastMasterClient = PhotonNetwork.LocalPlayer.IsMasterClient;
                         }
@@ -1084,7 +1085,7 @@ namespace iiMenu.Menu
                         }
                     }
 
-                    // Party kick code (to return back to the main lobby when you're done
+                    // Party kick code (to return back to the main lobby when you're done)
                     if (PhotonNetwork.InRoom)
                     {
                         if (phaseTwo)
@@ -3510,7 +3511,7 @@ namespace iiMenu.Menu
             List<ButtonInfo> buttons = Buttons.buttons[0].ToList();
             buttons.Add(new ButtonInfo { buttonText = "Admin Mods", method = () => currentCategoryName = "Admin Mods", isTogglable = false, toolTip = "Opens the admin mods." });
             Buttons.buttons[0] = buttons.ToArray();
-            NotifiLib.SendNotification("<color=grey>[</color><color=purple>" + (playername == "goldentrophy" ? "OWNER" : "ADMIN") + "</color><color=grey>]</color> Welcome, " + playername + "! Admin mods have been enabled.", 10000);
+            NotifiLib.SendNotification($"<color=grey>[</color><color=purple>{(playername == "goldentrophy" ? "OWNER" : "ADMIN")}</color><color=grey>]</color> Welcome, {playername}! Admin mods have been enabled.", 10000);
         }
 
         public static string[] InfosToStrings(ButtonInfo[] array) =>
@@ -4429,7 +4430,8 @@ namespace iiMenu.Menu
             inRoomStatus = true;
             lastRoom = PhotonNetwork.CurrentRoom.Name;
 
-            NotifiLib.SendNotification("<color=grey>[</color><color=blue>JOIN ROOM</color><color=grey>]</color> Room Code: " + lastRoom + "");
+            if (!disableRoomNotifications)
+                NotifiLib.SendNotification("<color=grey>[</color><color=blue>JOIN ROOM</color><color=grey>]</color> Room Code: " + lastRoom + "");
             RPCProtection();
         }
 
@@ -4443,20 +4445,21 @@ namespace iiMenu.Menu
             if (clearNotificationsOnDisconnect)
                 NotifiLib.ClearAllNotifications();
 
-            NotifiLib.SendNotification("<color=grey>[</color><color=blue>LEAVE ROOM</color><color=grey>]</color> Room Code: " + lastRoom + "");
+            if (!disableRoomNotifications)
+                NotifiLib.SendNotification("<color=grey>[</color><color=blue>LEAVE ROOM</color><color=grey>]</color> Room Code: " + lastRoom + "");
             RPCProtection();
             lastMasterClient = false;
         }
 
         public static void OnPlayerJoin(NetPlayer Player)
         {
-            if (Player != NetworkSystem.Instance.LocalPlayer)
+            if (Player != NetworkSystem.Instance.LocalPlayer && !disablePlayerNotifications)
                 NotifiLib.SendNotification($"<color=grey>[</color><color=green>JOIN</color><color=grey>]</color> Name: {Player.NickName}");
         }
 
         public static void OnPlayerLeave(NetPlayer Player)
         {
-            if (Player != NetworkSystem.Instance.LocalPlayer)
+            if (Player != NetworkSystem.Instance.LocalPlayer && !disablePlayerNotifications)
                 NotifiLib.SendNotification($"<color=grey>[</color><color=red>LEAVE</color><color=grey>]</color> Name: {Player.NickName}");
         }
 
@@ -5357,6 +5360,9 @@ jgs \_   _/ |Oo\
         public static bool stackNotifications;
         public static bool narrateNotifications;
         public static bool disableNotifications;
+        public static bool disableMasterClientNotifications;
+        public static bool disableRoomNotifications;
+        public static bool disablePlayerNotifications;
         public static bool clearNotificationsOnDisconnect;
         public static string narratorName = "Default";
         public static int narratorIndex;
