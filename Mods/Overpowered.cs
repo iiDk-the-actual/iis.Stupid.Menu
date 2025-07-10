@@ -160,6 +160,8 @@ namespace iiMenu.Mods
             {
                 if (NetworkSystem.Instance.IsMasterClient)
                 {
+                    if (!VRRig.LocalRig.enabled)
+                        VRRig.LocalRig.enabled = true;
                     GorillaGuardianManager guardianManager = (GorillaGuardianManager)GorillaGameManager.instance;
                     if (!guardianManager.IsPlayerGuardian(PhotonNetwork.LocalPlayer))
                         SetGuardianTarget(PhotonNetwork.LocalPlayer);
@@ -313,20 +315,23 @@ namespace iiMenu.Mods
 
         public static void GuardianCrashAll()
         {
-            if (Time.time > crashAllDelay)
-                crashAllDelay = Time.time + 0.1f;
-            else
-                return;
-
-            GorillaGuardianManager manager = (GorillaGuardianManager)GorillaGameManager.instance;
-            if (PhotonNetwork.InRoom && manager.IsPlayerGuardian(PhotonNetwork.LocalPlayer) && rightTrigger > 0.5f)
+            if (PhotonNetwork.InRoom)
             {
-                foreach (VRRig rig in GorillaParent.instance.vrrigs)
+                if (Time.time > crashAllDelay)
+                    crashAllDelay = Time.time + 0.1f;
+                else
+                    return;
+
+                GorillaGuardianManager manager = (GorillaGuardianManager)GorillaGameManager.instance;
+                if (PhotonNetwork.InRoom && manager.IsPlayerGuardian(PhotonNetwork.LocalPlayer) && rightTrigger > 0.5f)
                 {
-                    if (!rig.isLocal && rig.transform.position.x < -5)
+                    foreach (VRRig rig in GorillaParent.instance.vrrigs)
                     {
-                        BetaSetVelocityPlayer(GetPlayerFromVRRig(rig), (rig.transform.position.y > 55f ? Vector3.right : Vector3.up) * 50f);
-                        RPCProtection();
+                        if (!rig.isLocal && rig.transform.position.x < -5)
+                        {
+                            BetaSetVelocityPlayer(GetPlayerFromVRRig(rig), (rig.transform.position.y > 55f ? Vector3.right : Vector3.up) * 50f);
+                            RPCProtection();
+                        }
                     }
                 }
             }
@@ -342,7 +347,7 @@ namespace iiMenu.Mods
 
                 if (gunLocked && lockTarget != null)
                 {
-                    if (Time.time > crashAllDelay)
+                    if (Time.time > crashAllDelay) /*&& lockTarget.transform.position.x < 80)*/
                     {
                         crashAllDelay = Time.time + 0.1f;
                         BetaSetVelocityPlayer(GetPlayerFromVRRig(lockTarget), (lockTarget.transform.position.y > 55f ? Vector3.right : Vector3.up) * 50f);
@@ -368,20 +373,23 @@ namespace iiMenu.Mods
 
         public static void GuardianObliterateAll()
         {
-            if (Time.time > crashAllDelay)
-                crashAllDelay = Time.time + 0.1f;
-            else
-                return;
-
-            GorillaGuardianManager manager = (GorillaGuardianManager)GorillaGameManager.instance;
-            if (manager.IsPlayerGuardian(PhotonNetwork.LocalPlayer) && rightTrigger > 0.5f)
+            if (PhotonNetwork.InRoom)
             {
-                foreach (VRRig rig in GorillaParent.instance.vrrigs)
+                if (Time.time > crashAllDelay)
+                    crashAllDelay = Time.time + 0.1f;
+                else
+                    return;
+
+                GorillaGuardianManager manager = (GorillaGuardianManager)GorillaGameManager.instance;
+                if (manager.IsPlayerGuardian(PhotonNetwork.LocalPlayer) && rightTrigger > 0.5f)
                 {
-                    if (!rig.isLocal)
+                    foreach (VRRig rig in GorillaParent.instance.vrrigs)
                     {
-                        BetaSetVelocityPlayer(GetPlayerFromVRRig(rig), (rig.transform.position.y > 55f ? Vector3.right : Vector3.up) * 50f);
-                        RPCProtection();
+                        if (!rig.isLocal) /*&& rig.transform.position.x < 80)*/
+                        {
+                            BetaSetVelocityPlayer(GetPlayerFromVRRig(rig), (rig.transform.position.y > 55f ? Vector3.right : Vector3.up) * 50f);
+                            RPCProtection();
+                        }
                     }
                 }
             }
@@ -1689,7 +1697,7 @@ namespace iiMenu.Mods
                 {
                     if (Time.time > kgDebounce)
                     {
-                        BetaSetVelocityPlayer(GetPlayerFromVRRig(lockTarget), (GorillaTagger.Instance.bodyCollider.transform.position - lockTarget.transform.position).normalized * 50f);
+                        BetaSetVelocityPlayer(GetPlayerFromVRRig(lockTarget), (GorillaTagger.Instance.bodyCollider.transform.position - lockTarget.transform.position).normalized * 20f);
                         RPCProtection();
                         kgDebounce = Time.time + 0.1f;
                     }
@@ -1720,7 +1728,7 @@ namespace iiMenu.Mods
                 {
                     if (!plr.isLocal)
                     {
-                        BetaSetVelocityPlayer(GetPlayerFromVRRig(plr), (GorillaTagger.Instance.bodyCollider.transform.position - plr.transform.position).normalized * 50f);
+                        BetaSetVelocityPlayer(GetPlayerFromVRRig(plr), (GorillaTagger.Instance.bodyCollider.transform.position - plr.transform.position).normalized * 20f);
                         RPCProtection();
                     }
                 }
