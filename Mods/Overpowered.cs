@@ -1941,7 +1941,7 @@ namespace iiMenu.Mods
 
         public static void LagPlayer(object general)
         {
-            if (Time.time > lagDebounce)
+            if (PhotonNetwork.InRoom && Time.time > lagDebounce)
             {
                 if (general is NetPlayer player)
                 {
