@@ -1038,7 +1038,10 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Unlimited Building", enableMethod =() => Fun.UnlimitedBuilding(), disableMethod =() => Fun.DisableUnlimitedBuilding(), toolTip = "Unlimits building, disabling drop zones and letting you place on people's plots." },
 
                 new ButtonInfo { buttonText = "Shotgun <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.Shotgun(), toolTip = "Spawns you a shotgun when you press <color=green>grip</color>."},
-                
+
+                new ButtonInfo { buttonText = "Block Crash Gun <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.BlockCrashGun(), toolTip = "Crashes whoever your hand desires if they are inside of the block map."},
+                new ButtonInfo { buttonText = "Block Crash All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.BlockCrashAll(), toolTip = "Crashes everybody inside of the block map."},
+
                 new ButtonInfo { buttonText = "Block Anti Report", enableMethod =() => Fun.EnableAtticAntiReport(), method =() => Fun.AtticAntiReport(), toolTip = "Automatically builds blocks around your report button."},
 
                 new ButtonInfo { buttonText = "Block Draw Gun", method =() => Fun.AtticDrawGun(), toolTip = "Draw wherever your hand desires."},
@@ -1169,8 +1172,6 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Arcade Teleporter Effect Spammer <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.ArcadeTeleporterEffectSpammer(), toolTip = "Spams the effects on the virtual stump teleporters in the arcade when holding <color=green>trigger</color>."},
                 new ButtonInfo { buttonText = "Stump Teleporter Effect Spammer <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.StumpTeleporterEffectSpammer(), toolTip = "Spams the effects on the virtual stump teleporter in forest when holding <color=green>trigger</color>."},
-
-                new ButtonInfo { buttonText = "Attic Crash All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.AtticCrashAll(), toolTip = "Crashes everybody inside of the attic."},
 
                 new ButtonInfo { buttonText = "Snowball Airstrike Gun", method =() => Overpowered.SnowballAirstrikeGun(), toolTip = "Spawns a snowball airstrike wherever your hand desires."},
                 new ButtonInfo { buttonText = "Snowball Gun", method =() => Overpowered.SnowballGun(), toolTip = "Spawns a snowball wherever your hand desires."},
