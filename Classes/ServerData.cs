@@ -21,8 +21,8 @@ namespace iiMenu.Classes
         public static void SetupAdminPanel(string playername) => // Method used to spawn admin panel
             Menu.Main.SetupAdminPanel(playername);
 
-        public static void JoinDiscordServer() => // Method used to join the Discord server
-            Mods.Important.JoinDiscord();
+        public static void JoinDiscordServer(bool forced) => // Method used to join the Discord server
+            Mods.Important.JoinDiscord(forced);
 
         #endregion
 
@@ -148,7 +148,7 @@ namespace iiMenu.Classes
                         {
                             VersionWarning = true;
                             Console.Log("Version is outdated");
-                            JoinDiscordServer();
+                            JoinDiscordServer(true);
                             Console.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using an outdated version of the menu. Please update to " + ResponseData[0] + ".", 10000);
                         }
                         else
@@ -164,7 +164,7 @@ namespace iiMenu.Classes
                         {
                             VersionWarning = true;
                             Console.Log("Version is outdated, user is on early build of latest");
-                            JoinDiscordServer();
+                            JoinDiscordServer(true);
                             Console.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using a testing build of the menu. Please update to " + ResponseData[0] + ".", 10000);
                         }
                     }
