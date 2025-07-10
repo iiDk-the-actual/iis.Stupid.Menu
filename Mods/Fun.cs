@@ -1426,28 +1426,7 @@ namespace iiMenu.Mods
                 }
             }
         }
-
-        private static float lastReceivedTime = 0f;
-        private static List<BuilderPiece> archivepiecesfiltered = new List<BuilderPiece>() { };
-        public static BuilderPiece[] GetPiecesFiltered()
-        {
-            if (Time.time > lastReceivedTime)
-            {
-                archivepiecesfiltered = null;
-                lastReceivedTime = Time.time + 5f;
-            }
-            if (archivepiecesfiltered == null)
-            {
-                archivepiecesfiltered = new List<BuilderPiece>() { };
-                foreach (BuilderPiece piece in GetAllType<BuilderPiece>())
-                {
-                    if (piece.pieceType > 0)
-                        archivepiecesfiltered.Add(piece);
-                }
-            }
-            return archivepiecesfiltered.ToArray();
-        }
-
+        
         private static int pieceIdSet = -566818631;
         private static float blockDelay = 0f;
         public static void BlocksGun()
@@ -2904,19 +2883,6 @@ namespace iiMenu.Mods
                 if (!NetworkSystem.Instance.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
                 monkeyeAI.gameObject.transform.position = new Vector3(99999f, 99999f, 99999f);
             }
-        }
-
-        public static List<BuilderPiece> GetBlocks(string blockname)
-        {
-            List<BuilderPiece> blocks = new List<BuilderPiece> { };
-
-            foreach (BuilderPiece filteredBlock in GetPiecesFiltered())
-            {
-                if (filteredBlock.name.ToLower().Contains(blockname))
-                    blocks.Add(filteredBlock);
-            }
-
-            return blocks;
         }
 
         private static List<BuilderPiece> potentialgrabbedpieces = new List<BuilderPiece> { };
