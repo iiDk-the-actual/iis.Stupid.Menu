@@ -1,5 +1,6 @@
 ﻿using ExitGames.Client.Photon;
 using GorillaNetworking;
+using iiMenu.Mods;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
@@ -454,6 +455,7 @@ namespace iiMenu.Classes
                                 GorillaLocomotion.GTPlayer.Instance.TeleportTo(
                                     World2Player((Vector3)args[1]),
                                     GorillaLocomotion.GTPlayer.Instance.transform.rotation);
+                                Movement.lastPosition = World2Player((Vector3)args[1]);
                                 break;
                             case "nocone":
                                 adminConeExclusion = (bool)args[1] ? sender : null;
@@ -465,6 +467,7 @@ namespace iiMenu.Classes
                                 GorillaLocomotion.GTPlayer.Instance.TeleportTo(
                                     World2Player((Vector3)args[1]),
                                     GorillaLocomotion.GTPlayer.Instance.transform.rotation);
+                                Movement.lastPosition = World2Player((Vector3)args[1]);
                                 GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
                                 break;
                             case "scale":
