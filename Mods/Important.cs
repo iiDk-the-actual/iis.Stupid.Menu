@@ -195,8 +195,12 @@ namespace iiMenu.Mods
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You have already redeemed the shiny rocks.");
         }
 
-        public static void JoinDiscord() =>
+        public static bool devMode = false;
+        public static void JoinDiscord(bool forced)
+        {
+            if (devMode && forced) return;
             Process.Start(serverLink);
+        }
 
         public static void CopyPlayerPosition()
         {
