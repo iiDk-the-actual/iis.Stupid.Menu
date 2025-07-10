@@ -3237,7 +3237,7 @@ namespace iiMenu.Mods
             {
                 if (longJumpPower == Vector3.zero)
                 {
-                    longJumpPower = GorillaTagger.Instance.rigidbody.velocity / 125f;
+                    longJumpPower = GorillaTagger.Instance.rigidbody.velocity / 250f;
                     longJumpPower.y = 0f;
                 }
                 GTPlayer.Instance.transform.position += longJumpPower;
