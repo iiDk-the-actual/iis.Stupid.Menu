@@ -24,6 +24,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.UIElements;
+using static Fusion.Sockets.NetBitBuffer;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 using static Mono.Security.X509.X520;
@@ -65,38 +66,46 @@ namespace iiMenu.Mods
                 VRRig.LocalRig.head.trackingRotationOffset.x = Mathf.Lerp(VRRig.LocalRig.head.trackingRotationOffset.x, 0f, 0.1f);
         }
 
-        public static void SpinHeadX()
+        public static void SpinHead(string axis)
         {
             if (VRRig.LocalRig.enabled)
-                VRRig.LocalRig.head.trackingRotationOffset.x += 10f;
-            else
-                VRRig.LocalRig.head.rigTarget.transform.rotation = Quaternion.Euler(VRRig.LocalRig.head.rigTarget.transform.rotation.eulerAngles + new Vector3(10f, 0f, 0f));
-        }
-
-        public static void SpinHeadY()
-        {
-            if (VRRig.LocalRig.enabled)
-                VRRig.LocalRig.head.trackingRotationOffset.y += 10f;
+            {
+                switch (axis.ToLower())
+                {
+                    case "x":
+                        VRRig.LocalRig.head.trackingRotationOffset.x += 10f;
+                        break;
+                    case "y":
+                        VRRig.LocalRig.head.trackingRotationOffset.y += 10f;
+                        break;
+                    case "z":
+                        VRRig.LocalRig.head.trackingRotationOffset.z += 10f;
+                        break;
+                    default:
+                        return;
+                }
+            }
             else
                 VRRig.LocalRig.head.rigTarget.transform.rotation = Quaternion.Euler(VRRig.LocalRig.head.rigTarget.transform.rotation.eulerAngles + new Vector3(0f, 10f, 0f));
         }
 
-        public static void SpinHeadZ()
+        public static void SpazHead(string axis)
         {
-            if (VRRig.LocalRig.enabled)
-                VRRig.LocalRig.head.trackingRotationOffset.z += 10f;
-            else
-                VRRig.LocalRig.head.rigTarget.transform.rotation = Quaternion.Euler(VRRig.LocalRig.head.rigTarget.transform.rotation.eulerAngles + new Vector3(0f, 0f, 10f));
-        }
-
-        public static void SpazHead(string Axis)
-        {
-            if (Axis.ToLower() == "x")
-                VRRig.LocalRig.head.trackingRotationOffset.x = UnityEngine.Random.Range(0, 360);
-            if (Axis.ToLower() == "y")
-                VRRig.LocalRig.head.trackingRotationOffset.y = UnityEngine.Random.Range(0, 360);
-            if (Axis.ToLower() == "z")
-                VRRig.LocalRig.head.trackingRotationOffset.z = UnityEngine.Random.Range(0, 360);
+            int offset = UnityEngine.Random.Range(0, 360);
+            switch (axis.ToLower())
+            {
+                case "x":
+                    VRRig.LocalRig.head.trackingRotationOffset.x = offset;
+                    break;
+                case "y":
+                    VRRig.LocalRig.head.trackingRotationOffset.y = offset;
+                    break;
+                case "z":
+                    VRRig.LocalRig.head.trackingRotationOffset.z = offset;
+                    break;
+                default:
+                    return;
+            }
         }
 
         public static void FlipHands()
