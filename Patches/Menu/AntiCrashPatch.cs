@@ -12,7 +12,7 @@ namespace iiMenu.Patches
 
         public static bool Prefix(VRRig __instance, VRRig grabbedByRig, Vector3 throwVelocity)
         {
-            if (enabled && __instance == VRRig.LocalRig && !GTExt.IsValid(throwVelocity))
+            if (enabled && __instance.isLocal && !GTExt.IsValid(throwVelocity))
                 return false;
             
             return true;
@@ -25,7 +25,7 @@ namespace iiMenu.Patches
         private static List<float> callTimestamps = new List<float>();
         public static bool Prefix(VRRig __instance)
         {
-            if (AntiCrashPatch.enabled && __instance == VRRig.LocalRig)
+            if (AntiCrashPatch.enabled && __instance.isLocal)
             {
                 callTimestamps.Add(Time.time);
                 callTimestamps.RemoveAll(t => (Time.time - t) > 1);
@@ -42,7 +42,7 @@ namespace iiMenu.Patches
         private static List<float> callTimestamps = new List<float>();
         public static bool Prefix(VRRig __instance)
         {
-            if (AntiCrashPatch.enabled && __instance == VRRig.LocalRig)
+            if (AntiCrashPatch.enabled && __instance.isLocal)
             {
                 callTimestamps.Add(Time.time);
                 callTimestamps.RemoveAll(t => (Time.time - t) > 1);

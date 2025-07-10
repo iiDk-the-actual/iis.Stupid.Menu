@@ -18,7 +18,7 @@ namespace iiMenu.Patches
         {
             if (enabled)
             {
-                if (__instance == VRRig.LocalRig)
+                if (__instance.isLocal)
                 {
                     if (doOverride)
                     {

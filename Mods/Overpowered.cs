@@ -491,7 +491,7 @@ namespace iiMenu.Mods
                 {
                     foreach (VRRig plr in GorillaParent.instance.vrrigs)
                     {
-                        if (plr != VRRig.LocalRig)
+                        if (!plr.isLocal)
                         {
                             GetNetworkViewFromVRRig(plr).SendRPC("GrabbedByPlayer", RpcTarget.Others, new object[] { true, false, false });
                             RPCProtection();
@@ -541,7 +541,7 @@ namespace iiMenu.Mods
                 {
                     foreach (VRRig plr in GorillaParent.instance.vrrigs)
                     {
-                        if (plr != VRRig.LocalRig)
+                        if (!plr.isLocal)
                         {
                             GetNetworkViewFromVRRig(plr).SendRPC("DroppedByPlayer", RpcTarget.Others, new object[] { new Vector3(0f, 0f, 0f) });
                             RPCProtection();
@@ -634,7 +634,6 @@ namespace iiMenu.Mods
             }
         }
 
-        private static float delaything = 0f;
         private static float lastBeforeClearTime = -1f;
         public static void BlockCrashGun()
         {
@@ -1036,7 +1035,7 @@ namespace iiMenu.Mods
             {
                 foreach (VRRig rig in GorillaParent.instance.vrrigs)
                 {
-                    if (rig != VRRig.LocalRig && (Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position, rig.headMesh.transform.position) < 0.25f || Vector3.Distance(GorillaTagger.Instance.rightHandTransform.position, rig.headMesh.transform.position) < 0.25f))
+                    if (!rig.isLocal && (Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position, rig.headMesh.transform.position) < 0.25f || Vector3.Distance(GorillaTagger.Instance.rightHandTransform.position, rig.headMesh.transform.position) < 0.25f))
                     {
                         Vector3 targetDirection = GorillaTagger.Instance.headCollider.transform.position - rig.headMesh.transform.position;
                         BetaSpawnSnowball(GorillaTagger.Instance.headCollider.transform.position + new Vector3(0f, 0.5f, 0f) + new Vector3(targetDirection.x, 0f, targetDirection.z).normalized / 1.7f, new Vector3(0f, -500f, 0f), 5f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(rig)));
@@ -1052,7 +1051,7 @@ namespace iiMenu.Mods
             {
                 foreach (VRRig rig in GorillaParent.instance.vrrigs)
                 {
-                    if (rig != VRRig.LocalRig)
+                    if (!rig.isLocal)
                     {
                         if (Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, rig.transform.position) < 3f)
                         {
@@ -1358,7 +1357,7 @@ namespace iiMenu.Mods
                             
                             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                             {
-                                if (vrrig != VRRig.LocalRig)
+                                if (!vrrig.isLocal)
                                 {
                                     float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
                                     float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
@@ -1529,7 +1528,7 @@ namespace iiMenu.Mods
                 kgDebounce = Time.time + 0.2f;
                 foreach (VRRig plr in GorillaParent.instance.vrrigs)
                 {
-                    if (plr != VRRig.LocalRig)
+                    if (!plr.isLocal)
                     {
                         BetaSetVelocityPlayer(GetPlayerFromVRRig(plr), (GorillaTagger.Instance.bodyCollider.transform.position - plr.transform.position) * 3f);
                         RPCProtection();
@@ -1583,7 +1582,7 @@ namespace iiMenu.Mods
                 thingdeb = Time.time + 0.1f;
                 foreach (VRRig plr in GorillaParent.instance.vrrigs)
                 {
-                    if (plr != VRRig.LocalRig)
+                    if (!plr.isLocal)
                     {
                         if (plr.rightThumb.calcT > 0.5f)
                         {
@@ -1609,7 +1608,7 @@ namespace iiMenu.Mods
                     {
                         foreach (VRRig plr in GorillaParent.instance.vrrigs)
                         {
-                            if (plr != VRRig.LocalRig)
+                            if (!plr.isLocal)
                                 BetaSetVelocityPlayer(GetPlayerFromVRRig(plr), Vector3.Normalize(NewPointer.transform.position - plr.transform.position) * 50f);
                         }
                         RPCProtection();
@@ -1822,7 +1821,7 @@ namespace iiMenu.Mods
 
                         foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                         {
-                            if (vrrig != VRRig.LocalRig)
+                            if (!vrrig.isLocal)
                             {
                                 float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
                                 float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
@@ -2043,7 +2042,7 @@ namespace iiMenu.Mods
             int index = 0;
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (vrrig != VRRig.LocalRig)
+                if (!vrrig.isLocal)
                 {
                     try
                     {

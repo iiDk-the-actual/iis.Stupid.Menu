@@ -279,7 +279,7 @@ namespace iiMenu.Mods
                 {
                     foreach (VRRig rig in GorillaParent.instance.vrrigs)
                     {
-                        if (rig != VRRig.LocalRig)
+                        if (!rig.isLocal)
                         {
                             if (Vector3.Distance(rig.headMesh.transform.position, GorillaTagger.Instance.leftHandTransform.position) < 0.2f)
                             {
@@ -334,7 +334,7 @@ namespace iiMenu.Mods
                 {
                     foreach (VRRig rig in GorillaParent.instance.vrrigs)
                     {
-                        if (rig != VRRig.LocalRig)
+                        if (!rig.isLocal)
                         {
                             if (Vector3.Distance(rig.headMesh.transform.position, GorillaTagger.Instance.rightHandTransform.position) < 0.2f)
                             {

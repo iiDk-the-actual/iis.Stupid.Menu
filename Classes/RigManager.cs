@@ -43,7 +43,7 @@ namespace iiMenu.Classes
 
         public static VRRig GetClosestVRRig() =>
             GorillaParent.instance.vrrigs
-                .Where(rig => rig != null && rig != VRRig.LocalRig)
+                .Where(rig => rig != null && !rig.isLocal)
                 .OrderBy(rig => Vector3.Distance(rig.transform.position, GorillaTagger.Instance.bodyCollider.transform.position))
                 .FirstOrDefault();
     }

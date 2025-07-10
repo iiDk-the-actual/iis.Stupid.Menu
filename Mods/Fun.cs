@@ -476,7 +476,7 @@ namespace iiMenu.Mods
             bool isBoopRight = false;
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (vrrig != VRRig.LocalRig)
+                if (!vrrig.isLocal)
                 {
                     float D1 = Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position, vrrig.headMesh.transform.position);
                     float D2 = Vector3.Distance(GorillaTagger.Instance.rightHandTransform.position, vrrig.headMesh.transform.position);
@@ -2046,11 +2046,11 @@ namespace iiMenu.Mods
                 }
                 if (GetGunInput(true))
                 {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != VRRig.LocalRig)
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         gunLocked = true;
-                        lockTarget = possibly;
+                        lockTarget = gunTarget;
                     }
                 }
             }
@@ -2102,11 +2102,11 @@ namespace iiMenu.Mods
                 }
                 if (GetGunInput(true))
                 {
-                    VRRig possibly = Ray.collider.GetComponentInParent<VRRig>();
-                    if (possibly && possibly != VRRig.LocalRig)
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         gunLocked = true;
-                        lockTarget = possibly;
+                        lockTarget = gunTarget;
                     }
                 }
             }
@@ -2969,7 +2969,7 @@ namespace iiMenu.Mods
             {
                 foreach (BalloonHoldable balloon in GetAllType<BalloonHoldable>())
                 {
-                    if (balloon.ownerRig == VRRig.LocalRig)
+                    if (balloon.ownerRig.isLocal)
                         balloon.gameObject.transform.position = GorillaTagger.Instance.rightHandTransform.position;
                     else
                         balloon.WorldShareableRequestOwnership();
@@ -2981,7 +2981,7 @@ namespace iiMenu.Mods
         {
             foreach (BalloonHoldable balloon in GetAllType<BalloonHoldable>())
             {
-                if (balloon.ownerRig == VRRig.LocalRig)
+                if (balloon.ownerRig.isLocal)
                     balloon.gameObject.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
                 else
                     balloon.WorldShareableRequestOwnership();
@@ -2994,7 +2994,7 @@ namespace iiMenu.Mods
             int index = 0;
             foreach (BalloonHoldable balloon in them)
             {
-                if (balloon.ownerRig == VRRig.LocalRig)
+                if (balloon.ownerRig.isLocal)
                 {
                     float offset = (360f / them.Length) * index;
                     balloon.gameObject.transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)) * 5f, 2, MathF.Sin(offset + ((float)Time.frameCount / 30)) * 5f);
@@ -3018,7 +3018,7 @@ namespace iiMenu.Mods
                 {
                     foreach (BalloonHoldable balloon in GetAllType<BalloonHoldable>())
                     {
-                        if (balloon.ownerRig == VRRig.LocalRig)
+                        if (balloon.ownerRig.isLocal)
                             balloon.gameObject.transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
                         else
                             balloon.WorldShareableRequestOwnership();
@@ -3031,7 +3031,7 @@ namespace iiMenu.Mods
         {
             foreach (BalloonHoldable balloon in GetAllType<BalloonHoldable>())
             {
-                if (balloon.ownerRig == VRRig.LocalRig)
+                if (balloon.ownerRig.isLocal)
                     balloon.gameObject.transform.position = new Vector3(99999f, 99999f, 99999f);
                 else
                     balloon.WorldShareableRequestOwnership();
@@ -3049,7 +3049,7 @@ namespace iiMenu.Mods
             bool FoundBalloon = false;
             foreach (BalloonHoldable Balloon in GetAllType<BalloonHoldable>())
             {
-                if (Balloon.ownerRig == VRRig.LocalRig && Balloon.gameObject.name.Contains("LMAMI"))
+                if (Balloon.ownerRig.isLocal && Balloon.gameObject.name.Contains("LMAMI"))
                 {
                     FoundBalloon = true;
 
