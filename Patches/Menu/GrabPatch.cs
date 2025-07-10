@@ -18,4 +18,11 @@ namespace iiMenu.Patches
         public static bool Prefix(VRRig __instance, VRRig grabbedByRig, Vector3 throwVelocity) =>
             !(GrabPatch.enabled && __instance.isLocal);
     }
+
+    [HarmonyPatch(typeof(GuardianRPCs), "GuardianLaunchPlayer")]
+    public class LaunchPatch
+    {
+        public static bool Prefix(Vector3 velocity) =>
+            !GrabPatch.enabled;
+    }
 }
