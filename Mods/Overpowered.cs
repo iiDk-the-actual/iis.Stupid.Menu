@@ -206,7 +206,7 @@ namespace iiMenu.Mods
                         {
                             if (!rig.isLocal && Vector3.Distance(rig.transform.position, tgi.transform.position) < 2f && Time.time > guardianProtectorDelay)
                             {
-                                BetaSetVelocityPlayer(GetPlayerFromVRRig(lockTarget), (rig.transform.position - tgi.transform.position).normalized * 50f);
+                                BetaSetVelocityPlayer(GetPlayerFromVRRig(rig), (rig.transform.position - tgi.transform.position).normalized * 50f);
                                 guardianProtectorDelay = Time.time + 0.1f;
                             }
                         }
