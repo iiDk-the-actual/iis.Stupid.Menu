@@ -1142,6 +1142,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Exit Overpowered Mods", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
 
                 new ButtonInfo { buttonText = "Always Guardian", method =() => Overpowered.AlwaysGuardian(), disableMethod =() => Movement.EnableRig(), toolTip = "Makes you always the guardian."},
+                new ButtonInfo { buttonText = "Guardian Protector", method =() => Overpowered.GuardianProtector(), toolTip = "Pushes people away from the guardian moon if they try to approach it."},
+
                 new ButtonInfo { buttonText = "Grab Gun", overlapText = "Guardian Grab Gun", method =() => Overpowered.GrabGun(), toolTip = "Grabs whoever your hand desires if you're the guardian you."},
                 new ButtonInfo { buttonText = "Grab All <color=grey>[</color><color=green>G</color><color=grey>]</color>", overlapText = "Guardian Grab All <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.GrabAll(), toolTip = "Grabs everyone in the room if you're the guardian."},
 
@@ -1167,6 +1169,9 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Physical Freeze Gun", overlapText = "Guardian Freeze Gun", method =() => Overpowered.PhysicalFreezeGun(), toolTip = "Freezes whoever your hand desires." },
                 new ButtonInfo { buttonText = "Physical Freeze All <color=grey>[</color><color=green>T</color><color=grey>]</color>", overlapText = "Guardian Freeze All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.PhysicalFreezeAll(), toolTip = "Freezes everyone in the room when holding <color=green>trigger</color>." },
+
+                new ButtonInfo { buttonText = "Guardian Kick Gun", method =() => Overpowered.GuardianKickGun(), toolTip = "Kicks whoever your hand desires." },
+                new ButtonInfo { buttonText = "Guardian Kick All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.GuardianKickAll(), toolTip = "Kicks everyone in the room when holding <color=green>trigger</color>." },
 
                 new ButtonInfo { buttonText = "Guardian Crash Gun", method =() => Overpowered.GuardianCrashGun(), toolTip = "Crashes whoever your hand desires." },
                 new ButtonInfo { buttonText = "Guardian Crash All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.GuardianCrashAll(), toolTip = "Crashes everyone in the room when holding <color=green>trigger</color>." },

@@ -216,6 +216,61 @@ namespace iiMenu.Mods
         }
 
         private static float crashAllDelay;
+        public static void GuardianKickGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    if (Time.time > crashAllDelay && lockTarget.transform.position.x < -5)
+                    {
+                        crashAllDelay = Time.time + 0.1f;
+                        BetaSetVelocityPlayer(GetPlayerFromVRRig(lockTarget), (lockTarget.transform.position.z > -22f ? Vector3.left : (new Vector3(-48.25159f, 7.288813f, -20.5525f) - lockTarget.transform.position).normalized) + new Vector3(0f, UnityEngine.Random.Range(-0.05f, 0.05f)) * 50f);
+                        RPCProtection();
+                    }
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
+        public static void GuardianKickAll()
+        {
+            if (Time.time > crashAllDelay)
+                crashAllDelay = Time.time + 0.1f;
+            else
+                return;
+
+            GorillaGuardianManager manager = (GorillaGuardianManager)GorillaGameManager.instance;
+            if (manager.IsPlayerGuardian(PhotonNetwork.LocalPlayer) && rightTrigger > 0.5f)
+            {
+                foreach (VRRig rig in GorillaParent.instance.vrrigs)
+                {
+                    if (!rig.isLocal)
+                    {
+                        BetaSetVelocityPlayer(GetPlayerFromVRRig(rig), (rig.transform.position.z > -22f ? Vector3.left : (new Vector3(-48.25159f, 7.288813f, -20.5525f) - rig.transform.position).normalized) + new Vector3(0f, UnityEngine.Random.Range(-0.05f, 0.05f)) * 50f);
+                        RPCProtection();
+                    }
+                }
+            }
+        }
+
         public static void GuardianCrashGun()
         {
             if (GetGunInput(false))
@@ -1573,7 +1628,7 @@ namespace iiMenu.Mods
                 {
                     if (Time.time > kgDebounce)
                     {
-                        BetaSetVelocityPlayer(GetPlayerFromVRRig(lockTarget), (GorillaTagger.Instance.bodyCollider.transform.position - lockTarget.transform.position) * 2f);
+                        BetaSetVelocityPlayer(GetPlayerFromVRRig(lockTarget), (GorillaTagger.Instance.bodyCollider.transform.position - lockTarget.transform.position).normalized * 50f);
                         RPCProtection();
                         kgDebounce = Time.time + 0.1f;
                     }
@@ -1604,7 +1659,7 @@ namespace iiMenu.Mods
                 {
                     if (!plr.isLocal)
                     {
-                        BetaSetVelocityPlayer(GetPlayerFromVRRig(plr), (GorillaTagger.Instance.bodyCollider.transform.position - plr.transform.position) * 3f);
+                        BetaSetVelocityPlayer(GetPlayerFromVRRig(plr), (GorillaTagger.Instance.bodyCollider.transform.position - plr.transform.position).normalized * 50f);
                         RPCProtection();
                     }
                 }
