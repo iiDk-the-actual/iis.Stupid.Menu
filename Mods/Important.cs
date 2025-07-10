@@ -52,13 +52,13 @@ namespace iiMenu.Mods
                 return;
             }
 
-            string gamemode = PhotonNetworkController.Instance.currentJoinTrigger == null ? "forest" : PhotonNetworkController.Instance.currentJoinTrigger.networkZone;
-            PhotonNetworkController.Instance.AttemptToJoinPublicRoom(GorillaComputer.instance.GetJoinTriggerForZone(gamemode), JoinType.Solo);
+            GorillaNetworkJoinTrigger trigger = PhotonNetworkController.Instance.currentJoinTrigger ?? GorillaComputer.instance.GetJoinTriggerForZone("forest");
+            PhotonNetworkController.Instance.AttemptToJoinPublicRoom(trigger, JoinType.Solo);
         }
 
         public static IEnumerator JoinRandomDelay()
         {
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(1.5f);
             JoinRandom();
         }
 
