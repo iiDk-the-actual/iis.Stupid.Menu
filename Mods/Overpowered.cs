@@ -156,37 +156,40 @@ namespace iiMenu.Mods
         public static float alwaysGuardianDelay;
         public static void AlwaysGuardian()
         {
-            if (NetworkSystem.Instance.IsMasterClient)
+            if (PhotonNetwork.InRoom)
             {
-                GorillaGuardianManager guardianManager = (GorillaGuardianManager)GorillaGameManager.instance;
-                if (!guardianManager.IsPlayerGuardian(PhotonNetwork.LocalPlayer))
-                    SetGuardianTarget(PhotonNetwork.LocalPlayer);
-            }
-            else
-            {
-                GorillaGuardianManager guardianManager = (GorillaGuardianManager)GorillaGameManager.instance;
-                foreach (TappableGuardianIdol tgi in GetAllType<TappableGuardianIdol>())
+                if (NetworkSystem.Instance.IsMasterClient)
                 {
-                    if (tgi.manager && tgi.manager.photonView && !tgi.isChangingPositions)
+                    GorillaGuardianManager guardianManager = (GorillaGuardianManager)GorillaGameManager.instance;
+                    if (!guardianManager.IsPlayerGuardian(PhotonNetwork.LocalPlayer))
+                        SetGuardianTarget(PhotonNetwork.LocalPlayer);
+                }
+                else
+                {
+                    GorillaGuardianManager guardianManager = (GorillaGuardianManager)GorillaGameManager.instance;
+                    foreach (TappableGuardianIdol tgi in GetAllType<TappableGuardianIdol>())
                     {
-                        GorillaGuardianZoneManager zoneManager = tgi.zoneManager;
-                        if (!guardianManager.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer) && zoneManager.IsZoneValid() && tgi.manager)
+                        if (tgi.manager && tgi.manager.photonView && !tgi.isChangingPositions)
                         {
-                            VRRig.LocalRig.enabled = false;
-                            VRRig.LocalRig.transform.position = tgi.transform.position + RandomVector3(0.1f);
-                            VRRig.LocalRig.leftHand.rigTarget.transform.position = tgi.transform.position;
-                            VRRig.LocalRig.rightHand.rigTarget.transform.position = tgi.transform.position;
-
-                            if (Time.time > alwaysGuardianDelay)
+                            GorillaGuardianZoneManager zoneManager = tgi.zoneManager;
+                            if (!guardianManager.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer) && zoneManager.IsZoneValid() && tgi.manager)
                             {
-                                alwaysGuardianDelay = Time.time + (zoneManager._currentActivationTime >= zoneManager.requiredActivationTime - 1f ? 0f : 0.2f);
-                                tgi.OnTap(UnityEngine.Random.Range(0f, 1f));
-                                RPCProtection();
+                                VRRig.LocalRig.enabled = false;
+                                VRRig.LocalRig.transform.position = tgi.transform.position + RandomVector3(0.1f);
+                                VRRig.LocalRig.leftHand.rigTarget.transform.position = tgi.transform.position;
+                                VRRig.LocalRig.rightHand.rigTarget.transform.position = tgi.transform.position;
+
+                                if (Time.time > alwaysGuardianDelay)
+                                {
+                                    alwaysGuardianDelay = Time.time + (zoneManager._currentActivationTime >= zoneManager.requiredActivationTime - 1f ? 0f : 0.2f);
+                                    tgi.OnTap(UnityEngine.Random.Range(0f, 1f));
+                                    RPCProtection();
+                                }
                             }
                         }
+                        else
+                            VRRig.LocalRig.enabled = true;
                     }
-                    else
-                        VRRig.LocalRig.enabled = true;
                 }
             }
         }
@@ -194,20 +197,23 @@ namespace iiMenu.Mods
         public static float guardianProtectorDelay;
         public static void GuardianProtector()
         {
-            GorillaGuardianManager manager = (GorillaGuardianManager)GorillaGameManager.instance;
-
-            if (manager.IsPlayerGuardian(PhotonNetwork.LocalPlayer))
+            if (PhotonNetwork.InRoom)
             {
-                foreach (TappableGuardianIdol tgi in GetAllType<TappableGuardianIdol>())
+                GorillaGuardianManager manager = (GorillaGuardianManager)GorillaGameManager.instance;
+
+                if (manager.IsPlayerGuardian(PhotonNetwork.LocalPlayer))
                 {
-                    if (tgi.manager && tgi.manager.photonView)
+                    foreach (TappableGuardianIdol tgi in GetAllType<TappableGuardianIdol>())
                     {
-                        foreach (VRRig rig in GorillaParent.instance.vrrigs)
+                        if (tgi.manager && tgi.manager.photonView)
                         {
-                            if (!rig.isLocal && Vector3.Distance(rig.transform.position, tgi.transform.position) < 2f && Time.time > guardianProtectorDelay)
+                            foreach (VRRig rig in GorillaParent.instance.vrrigs)
                             {
-                                BetaSetVelocityPlayer(GetPlayerFromVRRig(rig), (rig.transform.position - tgi.transform.position).normalized * 50f);
-                                guardianProtectorDelay = Time.time + 0.1f;
+                                if (!rig.isLocal && Vector3.Distance(rig.transform.position, tgi.transform.position) < 2f && Time.time > guardianProtectorDelay)
+                                {
+                                    BetaSetVelocityPlayer(GetPlayerFromVRRig(rig), (rig.transform.position - tgi.transform.position).normalized * 50f);
+                                    guardianProtectorDelay = Time.time + 0.1f;
+                                }
                             }
                         }
                     }
