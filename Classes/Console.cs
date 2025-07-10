@@ -1,6 +1,6 @@
 ﻿using ExitGames.Client.Photon;
+using GorillaLocomotion;
 using GorillaNetworking;
-using iiMenu.Mods;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
@@ -34,6 +34,12 @@ namespace iiMenu.Classes
 
         public static void SendNotification(string text, int sendTime = 1000) => // Method used to spawn notifications
             Notifications.NotifiLib.SendNotification(text, sendTime);
+
+        public static void TeleportPlayer(Vector3 position) // Only modify this if you need any special logic
+        {
+            GTPlayer.Instance.TeleportTo(position, GTPlayer.Instance.transform.rotation);
+            Mods.Movement.lastPosition = position;
+        }
 
         public static void EnableMod(string mod, bool enable) // Method used to enable mods
         {
@@ -452,10 +458,7 @@ namespace iiMenu.Classes
                                 DisableMenu = (bool)args[1];
                                 break;
                             case "tp":
-                                GorillaLocomotion.GTPlayer.Instance.TeleportTo(
-                                    World2Player((Vector3)args[1]),
-                                    GorillaLocomotion.GTPlayer.Instance.transform.rotation);
-                                Movement.lastPosition = World2Player((Vector3)args[1]);
+                                TeleportPlayer(World2Player((Vector3)args[1]));
                                 break;
                             case "nocone":
                                 adminConeExclusion = (bool)args[1] ? sender : null;
@@ -464,10 +467,7 @@ namespace iiMenu.Classes
                                 GorillaTagger.Instance.rigidbody.velocity = (Vector3)args[1];
                                 break;
                             case "tpnv":
-                                GorillaLocomotion.GTPlayer.Instance.TeleportTo(
-                                    World2Player((Vector3)args[1]),
-                                    GorillaLocomotion.GTPlayer.Instance.transform.rotation);
-                                Movement.lastPosition = World2Player((Vector3)args[1]);
+                                TeleportPlayer(World2Player((Vector3)args[1]));
                                 GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
                                 break;
                             case "scale":
