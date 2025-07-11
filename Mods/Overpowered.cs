@@ -879,18 +879,7 @@ namespace iiMenu.Mods
             if (rightTrigger > 0.5f)
             {
                 if (!NetworkSystem.Instance.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
-                Fun.RequestCreatePiece(691844031, new Vector3(-127.6248f, 16.99441f, -217.2094f), Quaternion.identity, 0);
-
-                if (Time.time > lastBeforeClearTime)
-                {
-                    RPCProtection();
-                    foreach (BuilderPiece piece in GetAllType<BuilderPiece>())
-                    {
-                        if (piece.pieceType == 691844031)
-                            piece.gameObject.SetActive(false);
-                    }
-                    lastBeforeClearTime = Time.time + 1f;
-                }
+                Fun.RequestCreatePiece(691844031, new Vector3(-127.6248f, 16.99441f, -217.2094f), Quaternion.identity, 0, RpcTarget.Others);
             }
         }
 
