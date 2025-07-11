@@ -31,10 +31,21 @@ namespace iiMenu.Mods
         public static void SetGuardianTarget(NetPlayer target)
         {
             if (!NetworkSystem.Instance.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
-            foreach (GorillaGuardianZoneManager zoneManager in GorillaGuardianZoneManager.zoneManagers)
+            GorillaGuardianManager guardianManager = (GorillaGuardianManager)GorillaGameManager.instance;
+            if (guardianManager.IsPlayerGuardian(target))
+                return;
+            
+            foreach (TappableGuardianIdol tgi in GetAllType<TappableGuardianIdol>())
             {
-                if (zoneManager.enabled)
-                    zoneManager.SetGuardian(NetworkSystem.Instance.LocalPlayer);
+                if (tgi.manager && tgi.manager.photonView && !tgi.isChangingPositions)
+                {
+                    GorillaGuardianZoneManager zoneManager = tgi.zoneManager;
+                    if (zoneManager.IsZoneValid() && tgi.manager && zoneManager.CurrentGuardian == null)
+                    {
+                        zoneManager.SetGuardian(target);
+                        return;
+                    }
+                }
             }
         }
 
