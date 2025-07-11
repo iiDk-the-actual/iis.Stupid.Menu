@@ -458,7 +458,8 @@ namespace iiMenu.Menu
                                                 searchText = GUIUtility.systemCopyBuffer;
                                                 break;
                                             case KeyCode.Backspace:
-                                                searchText = string.Join(" ", searchText.Split(' ').SkipLast(1));
+                                                if (searchText.Length > 0)
+                                                    searchText = string.Join(" ", searchText.Split(' ').SkipLast(1));
                                                 break;
                                         }
                                     } else
@@ -469,7 +470,8 @@ namespace iiMenu.Menu
                                                 searchText += " ";
                                                 break;
                                             case KeyCode.Backspace:
-                                                searchText = searchText[..^1];
+                                                if (searchText.Length > 0)
+                                                    searchText = searchText[..^1];
                                                 break;
                                             case KeyCode.Escape:
                                                 Toggle("Search");
