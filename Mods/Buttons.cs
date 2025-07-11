@@ -612,6 +612,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Nearby Label", method =() => Visuals.NearbyTaggerLabel(), toolTip = "Puts text on your left hand, showing you the distance of the nearest tagger."},
                 new ButtonInfo { buttonText = "Last Label", method =() => Visuals.LastLabel(), toolTip = "Puts text on your left hand, showing you how many untagged people are left."},
                 new ButtonInfo { buttonText = "Time Label", method =() => Visuals.TimeLabel(), toolTip = "Puts text on your right hand, showing how long you've been playing for without getting tagged."},
+                
+                new ButtonInfo { buttonText = "Player Count", method =() => Visuals.PlayerCount(), toolTip = "Shows the amount of players connected to the lobby."},
+
 
                 new ButtonInfo { buttonText = "Info Watch", enableMethod =() => Visuals.WatchOn(), method =() => Visuals.WatchStep(), disableMethod =() => Visuals.WatchOff(), toolTip = "Puts a watch on your hand that tells you the time and your FPS."},
 
