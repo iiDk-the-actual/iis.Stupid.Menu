@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using iiMenu.Classes;
 using UnityEngine.XR.Interaction.Toolkit;
 
 namespace iiMenu.Patches
@@ -13,13 +14,13 @@ namespace iiMenu.Patches
         {
             if (enabled)
             {
-                GorillaSnapTurn GorillaSnapTurningComp = VRRig.LocalRig.GorillaSnapTurningComp;
+                GorillaSnapTurn GorillaSnapTurningComp = RigManager.LocalRig.GorillaSnapTurningComp;
 
                 int turnTypeInt = 0;
                 if (GorillaSnapTurningComp != null)
                 {
-                    VRRig.LocalRig.turnFactor = GorillaSnapTurningComp.turnFactor;
-                    VRRig.LocalRig.turnType = GorillaSnapTurningComp.turnType;
+                    RigManager.LocalRig.turnFactor = GorillaSnapTurningComp.turnFactor;
+                    RigManager.LocalRig.turnType = GorillaSnapTurningComp.turnType;
 
                     if (!(GorillaSnapTurningComp.turnType == "SNAP"))
                     {

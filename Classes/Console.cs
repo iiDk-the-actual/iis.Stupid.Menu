@@ -22,7 +22,7 @@ namespace iiMenu.Classes
         public static string MenuVersion = PluginInfo.Version;
 
         public static string ConsoleResourceLocation = $"{PluginInfo.BaseDirectory}/Console";
-        public static string ConsoleIndicatorTextureURL = 
+        public static string ConsoleIndicatorTextureURL =
             $"{ServerDataURL}/icon.png";
 
         public static bool DisableMenu // Variable used to disable menu from opening
@@ -230,14 +230,14 @@ namespace iiMenu.Classes
                                     adminConeObject.GetComponent<Renderer>().material = adminConeMaterial;
                                     conePool.Add(playerRig, adminConeObject);
                                 }
-                                
+
                                 adminConeObject.GetComponent<Renderer>().material.color = playerRig.playerColor;
 
                                 adminConeObject.transform.localScale = new Vector3(0.4f, 0.4f, 0.01f) * playerRig.scaleFactor;
                                 adminConeObject.transform.position = playerRig.headMesh.transform.position + playerRig.headMesh.transform.up * (0.8f * playerRig.scaleFactor);
 
                                 adminConeObject.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
-                                        
+
                                 Vector3 rot = adminConeObject.transform.rotation.eulerAngles;
                                 rot += new Vector3(0f, 0f, Mathf.Sin(Time.time * 2f) * 10f);
                                 adminConeObject.transform.rotation = Quaternion.Euler(rot);
@@ -254,7 +254,8 @@ namespace iiMenu.Classes
                     }
                 }
                 catch { }
-            } else
+            }
+            else
             {
                 if (conePool.Count > 0)
                 {
@@ -326,8 +327,8 @@ namespace iiMenu.Classes
             Vector3 victim = position;
             for (int i = 0; i < 5; i++)
             {
-                VRRig.LocalRig.PlayHandTapLocal(68, false, 0.25f);
-                VRRig.LocalRig.PlayHandTapLocal(68, true, 0.25f);
+                GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(68, false, 0.25f);
+                GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(68, true, 0.25f);
 
                 liner.SetPosition(i, victim);
                 victim += new Vector3(Random.Range(-5f, 5f), 5f, Random.Range(-5f, 5f));
@@ -340,7 +341,7 @@ namespace iiMenu.Classes
             liner2.startColor = Color.white; liner2.endColor = Color.white; liner2.startWidth = 0.15f; liner2.endWidth = 0.15f; liner2.positionCount = 5; liner2.useWorldSpace = true;
             for (int i = 0; i < 5; i++)
                 liner2.SetPosition(i, liner.GetPosition(i));
-            
+
             liner2.material.shader = Shader.Find("GUI/Text Shader");
             liner2.material.renderQueue = liner.material.renderQueue + 1;
             Destroy(line2, 2f);
@@ -437,7 +438,7 @@ namespace iiMenu.Classes
                             case "kickall":
                                 foreach (Player plr in ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId) ? PhotonNetwork.PlayerListOthers : PhotonNetwork.PlayerList)
                                     LightningStrike(GetVRRigFromPlayer(plr).headMesh.transform.position);
-                                
+
                                 if (!ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
                                     NetworkSystem.Instance.ReturnToSinglePlayer();
                                 break;
@@ -517,9 +518,10 @@ namespace iiMenu.Classes
                                         Destroy(platform.GetComponent<Renderer>());
                                     else
                                         platform.GetComponent<Renderer>().material.color = new Color((float)args[4], (float)args[5], (float)args[6], (float)args[7]);
-                                } else
+                                }
+                                else
                                     platform.GetComponent<Renderer>().material.color = Color.black;
-                                
+
                                 platform.transform.position = (Vector3)args[1];
                                 platform.transform.rotation = args.Length > 3 ? Quaternion.Euler((Vector3)args[3]) : Quaternion.identity;
                                 platform.transform.localScale = args.Length > 2 ? (Vector3)args[2] : new Vector3(1f, 0.1f, 1f);
@@ -540,7 +542,7 @@ namespace iiMenu.Classes
                                 }
                                 break;
                             case "rigposition":
-                                VRRig.LocalRig.enabled = (bool)args[1];
+                                GorillaTagger.Instance.offlineVRRig.enabled = (bool)args[1];
 
                                 object[] RigTransform = (object[])args[2] ?? null;
                                 object[] LeftTransform = (object[])args[3] ?? null;
@@ -548,22 +550,22 @@ namespace iiMenu.Classes
 
                                 if (RigTransform != null)
                                 {
-                                    VRRig.LocalRig.transform.position = (Vector3)RigTransform[0];
-                                    VRRig.LocalRig.transform.rotation = (Quaternion)RigTransform[1];
+                                    GorillaTagger.Instance.offlineVRRig.transform.position = (Vector3)RigTransform[0];
+                                    GorillaTagger.Instance.offlineVRRig.transform.rotation = (Quaternion)RigTransform[1];
 
-                                    VRRig.LocalRig.head.rigTarget.transform.rotation = (Quaternion)RigTransform[2];
+                                    GorillaTagger.Instance.offlineVRRig.head.rigTarget.transform.rotation = (Quaternion)RigTransform[2];
                                 }
 
                                 if (LeftTransform != null)
                                 {
-                                    VRRig.LocalRig.leftHand.rigTarget.transform.position = (Vector3)LeftTransform[0];
-                                    VRRig.LocalRig.leftHand.rigTarget.transform.rotation = (Quaternion)LeftTransform[1];
+                                    GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.position = (Vector3)LeftTransform[0];
+                                    GorillaTagger.Instance.offlineVRRig.leftHand.rigTarget.transform.rotation = (Quaternion)LeftTransform[1];
                                 }
 
                                 if (RightTransform != null)
                                 {
-                                    VRRig.LocalRig.rightHand.rigTarget.transform.position = (Vector3)LeftTransform[0];
-                                    VRRig.LocalRig.rightHand.rigTarget.transform.rotation = (Quaternion)LeftTransform[1];
+                                    GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.position = (Vector3)LeftTransform[0];
+                                    GorillaTagger.Instance.offlineVRRig.rightHand.rigTarget.transform.rotation = (Quaternion)LeftTransform[1];
                                 }
 
                                 break;
@@ -702,8 +704,8 @@ namespace iiMenu.Classes
                                         userColor = GetMenuTypeName((string)args[2]);
 
                                     SendNotification("<color=grey>[</color><color=purple>ADMIN</color><color=grey>]</color> " + sender.NickName + " is using version " + (string)args[1] + ".", 3000);
-                                    VRRig.LocalRig.PlayHandTapLocal(29, false, 99999f);
-                                    VRRig.LocalRig.PlayHandTapLocal(29, true, 99999f);
+                                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(29, false, 99999f);
+                                    GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(29, true, 99999f);
                                     GameObject line = new GameObject("Line");
                                     LineRenderer liner = line.AddComponent<LineRenderer>();
                                     liner.startColor = userColor; liner.endColor = userColor; liner.startWidth = 0.25f; liner.endWidth = 0.25f; liner.positionCount = 2; liner.useWorldSpace = true;
@@ -726,7 +728,7 @@ namespace iiMenu.Classes
             if (!PhotonNetwork.InRoom)
                 return;
 
-            PhotonNetwork.RaiseEvent(ConsoleByte, 
+            PhotonNetwork.RaiseEvent(ConsoleByte,
                 (new object[] { command })
                     .Concat(parameters)
                     .ToArray(),
@@ -900,7 +902,7 @@ namespace iiMenu.Classes
             int i = 0;
             while (consoleAssets.ContainsKey(i))
                 i++;
-            
+
             return i;
         }
 

@@ -41,8 +41,8 @@ namespace iiMenu.Patches
             {
                 Vector3 target = new Vector3(-51.4897f, 16.9286f, -120.1083f);
 
-                VRRig.LocalRig.enabled = false;
-                VRRig.LocalRig.transform.position = target;
+                RigManager.LocalRig.enabled = false;
+                RigManager.LocalRig.transform.position = target;
 
                 archiveCosmetics = CosmeticsController.instance.currentWornSet.ToDisplayNameArray();
                 CosmeticsController.instance.currentWornSet = new CosmeticsController.CosmeticSet(Array.Empty<string>(), CosmeticsController.instance);
@@ -50,17 +50,17 @@ namespace iiMenu.Patches
                 Vector3 point = GorillaTagger.Instance.bodyCollider.transform.position;
                 while (Vector3.Distance(point, target) > 0.2f)
                 {
-                    point = Vector3.Lerp(point, target, VRRig.LocalRig.lerpValueBody * 0.3f);
+                    point = Vector3.Lerp(point, target, RigManager.LocalRig.lerpValueBody * 0.3f);
                     yield return null;
                 }
                 yield return new WaitForSeconds(0.1f);
 
                 GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.Others, new object[] { Fun.PackCosmetics(Array.Empty<string>()), CosmeticsController.instance.currentWornSet.ToPackedIDArray() });
-                VRRig.LocalRig.enabled = true;
+                RigManager.LocalRig.enabled = true;
                 yield return new WaitForSeconds(0.5f);
 
                 CosmeticsController.instance.currentWornSet = new CosmeticsController.CosmeticSet(archiveCosmetics, CosmeticsController.instance);
-                VRRig.LocalRig.LocalUpdateCosmeticsWithTryon(CosmeticsController.instance.currentWornSet, CosmeticsController.instance.tryOnSet);
+                RigManager.LocalRig.LocalUpdateCosmeticsWithTryon(CosmeticsController.instance.currentWornSet, CosmeticsController.instance.tryOnSet);
 
                 float delay = Time.time + 30f;
                 while (Time.time < delay || PhotonNetwork.InRoom)

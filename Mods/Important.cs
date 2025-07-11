@@ -211,12 +211,12 @@ namespace iiMenu.Mods
             text += $"new Quaternion({p.rotation.x}f, {p.rotation.y}f, {p.rotation.z}f, {p.rotation.w}f);\n\n";
 
             text += "Left Hand\n";
-            p = VRRig.LocalRig.leftHand.rigTarget.transform;
+            p = RigManager.LocalRig.leftHand.rigTarget.transform;
             text += $"new Vector3({p.position.x}f, {p.position.y}f, {p.position.z}f);";
             text += $"new Quaternion({p.rotation.x}f, {p.rotation.y}f, {p.rotation.z}f, {p.rotation.w}f);\n\n";
 
             text += "Right Hand\n";
-            p = VRRig.LocalRig.rightHand.rigTarget.transform;
+            p = RigManager.LocalRig.rightHand.rigTarget.transform;
             text += $"new Vector3({p.position.x}f, {p.position.y}f, {p.position.z}f);";
             text += $"new Quaternion({p.rotation.x}f, {p.rotation.y}f, {p.rotation.z}f, {p.rotation.w}f);";
 
@@ -258,19 +258,19 @@ namespace iiMenu.Mods
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
                 if (!vrrig.isLocal)
-                    vrrig.voicePitchForRelativeScale = VRRig.LocalRig.voicePitchForRelativeScale;
+                    vrrig.voicePitchForRelativeScale = RigManager.LocalRig.voicePitchForRelativeScale;
             }
         }
 
         public static void DisableMouthMovement()
         {
-            VRRig.LocalRig.shouldSendSpeakingLoudness = false;
+            RigManager.LocalRig.shouldSendSpeakingLoudness = false;
             Patches.MicPatch.returnAsNone = true;
         }
 
         public static void EnableMouthMovement()
         {
-            VRRig.LocalRig.shouldSendSpeakingLoudness = true;
+            RigManager.LocalRig.shouldSendSpeakingLoudness = true;
             Patches.MicPatch.returnAsNone = false;
         }
 

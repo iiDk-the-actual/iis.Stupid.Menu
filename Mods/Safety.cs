@@ -85,21 +85,21 @@ namespace iiMenu.Mods
                     deadPosition = GorillaTagger.Instance.rigidbody.transform.position;
                     lvel = GorillaTagger.Instance.rigidbody.velocity;
                 }
-                VRRig.LocalRig.enabled = false;
+                RigManager.LocalRig.enabled = false;
                 GorillaTagger.Instance.rigidbody.transform.position = deadPosition;
                 GorillaTagger.Instance.rigidbody.velocity = lvel;
             }
             else
             {
                 deadPosition = Vector3.zero;
-                VRRig.LocalRig.enabled = true;
+                RigManager.LocalRig.enabled = true;
             }
         }
 
         public static void FakeValveTracking()
         {
             if (rightJoystickClick)
-                VRRig.LocalRig.head.rigTarget.transform.rotation = Quaternion.identity;
+                RigManager.LocalRig.head.rigTarget.transform.rotation = Quaternion.identity;
         }
 
         public static void SpoofSupportPage() =>
@@ -440,7 +440,7 @@ namespace iiMenu.Mods
                 return;
 
             float volume = 0f;
-            GorillaSpeakerLoudness recorder = VRRig.LocalRig.GetComponent<GorillaSpeakerLoudness>();
+            GorillaSpeakerLoudness recorder = RigManager.LocalRig.GetComponent<GorillaSpeakerLoudness>();
             if (recorder != null)
                 volume = recorder.Loudness;
 
