@@ -4469,15 +4469,13 @@ namespace iiMenu.Menu
         public static void OnPlayerJoin(NetPlayer Player)
         {
             if (Player != NetworkSystem.Instance.LocalPlayer && !disablePlayerNotifications)
-                NotifiLib.SendNotification($"<color=grey>[</color><color=green>JOIN</color><color=grey>]</color> Name: {Player.NickName}");
-            NotifiLib.SendNotification($"<color=grey>[</color><color=green>JOIN</color><color=grey>]</color> Name: {CleanPlayerName(Player.NickName)}");
+                NotifiLib.SendNotification($"<color=grey>[</color><color=green>JOIN</color><color=grey>]</color> Name: {CleanPlayerName(Player.NickName)}");
         }
 
         public static void OnPlayerLeave(NetPlayer Player)
         {
             if (Player != NetworkSystem.Instance.LocalPlayer && !disablePlayerNotifications)
-                NotifiLib.SendNotification($"<color=grey>[</color><color=red>LEAVE</color><color=grey>]</color> Name: {Player.NickName}");
-            NotifiLib.SendNotification($"<color=grey>[</color><color=red>LEAVE</color><color=grey>]</color> Name: {CleanPlayerName(Player.NickName)}");
+                NotifiLib.SendNotification($"<color=grey>[</color><color=red>LEAVE</color><color=grey>]</color> Name: {CleanPlayerName(Player.NickName)}");
         }
 
         public static Vector3 ServerSyncPos;
