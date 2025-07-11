@@ -46,8 +46,5 @@ namespace iiMenu.Classes
                 .Where(rig => rig != null && rig != LocalRig)
                 .OrderBy(rig => Vector3.Distance(rig.transform.position, GorillaTagger.Instance.bodyCollider.transform.position))
                 .FirstOrDefault();
-
-        public static VRRig LocalRig =>
-            GorillaTagger.Instance.offlineVRRig;
     }
 }

@@ -634,7 +634,7 @@ namespace iiMenu.Mods
                 if (Ctrl)
                     GorillaTagger.Instance.rigidbody.transform.position += new Vector3(0f, Time.deltaTime * -speed, 0f);
 
-                RigManager.LocalRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
+                VRRig.LocalRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
             }
 
             if (!W && !A && !S && !D && !Space && !Ctrl && lastPosition != Vector3.zero && stationary)
@@ -691,7 +691,7 @@ namespace iiMenu.Mods
             if (leftPrimary)
             {
                 if (dynamicAnimations)
-                    TagEffectsLibrary.PlayEffect(GTPlayer.Instance.leftControllerTransform.transform, true, .1f, TagEffectsLibrary.EffectType.FIRST_PERSON, RigManager.LocalRig.CosmeticEffectPack, RigManager.LocalRig.CosmeticEffectPack, RigManager.LocalRig.leftHandTransform.rotation);
+                    TagEffectsLibrary.PlayEffect(GTPlayer.Instance.leftControllerTransform.transform, true, .1f, TagEffectsLibrary.EffectType.FIRST_PERSON, VRRig.LocalRig.CosmeticEffectPack, VRRig.LocalRig.CosmeticEffectPack, VRRig.LocalRig.leftHandTransform.rotation);
 
                 GorillaTagger.Instance.rigidbody.AddForce(flySpeed * -GorillaTagger.Instance.leftHandTransform.right, ForceMode.Acceleration);
                 GorillaTagger.Instance.StartVibration(true, GorillaTagger.Instance.tapHapticStrength / 50f * GorillaTagger.Instance.rigidbody.velocity.magnitude, GorillaTagger.Instance.tapHapticDuration);
@@ -699,7 +699,7 @@ namespace iiMenu.Mods
             if (rightPrimary)
             {
                 if (dynamicAnimations)
-                    TagEffectsLibrary.PlayEffect(GTPlayer.Instance.rightControllerTransform.transform, true, .1f, TagEffectsLibrary.EffectType.FIRST_PERSON, RigManager.LocalRig.CosmeticEffectPack, RigManager.LocalRig.CosmeticEffectPack, RigManager.LocalRig.rightHandTransform.rotation);
+                    TagEffectsLibrary.PlayEffect(GTPlayer.Instance.rightControllerTransform.transform, true, .1f, TagEffectsLibrary.EffectType.FIRST_PERSON, VRRig.LocalRig.CosmeticEffectPack, VRRig.LocalRig.CosmeticEffectPack, VRRig.LocalRig.rightHandTransform.rotation);
 
                 GorillaTagger.Instance.rigidbody.AddForce(flySpeed * GorillaTagger.Instance.rightHandTransform.right, ForceMode.Acceleration);
                 GorillaTagger.Instance.StartVibration(false, GorillaTagger.Instance.tapHapticStrength / 50f * GorillaTagger.Instance.rigidbody.velocity.magnitude, GorillaTagger.Instance.tapHapticDuration);
@@ -744,7 +744,7 @@ namespace iiMenu.Mods
                             999999f
                         });
                     } else
-                        RigManager.LocalRig.PlayHandTapLocal(89, true, 999999f);
+                        VRRig.LocalRig.PlayHandTapLocal(89, true, 999999f);
                     
                     RPCProtection();
                     if (Physics.Raycast(GorillaTagger.Instance.leftHandTransform.position, GorillaTagger.Instance.leftHandTransform.forward, out RaycastHit lefthit, 512f, NoInvisLayerMask()))
@@ -830,7 +830,7 @@ namespace iiMenu.Mods
                         RPCProtection();
                     }
                     else
-                        RigManager.LocalRig.PlayHandTapLocal(89, false, 999999f);
+                        VRRig.LocalRig.PlayHandTapLocal(89, false, 999999f);
                     
                     if (Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out RaycastHit righthit, 512f, NoInvisLayerMask()))
                     {
@@ -916,7 +916,7 @@ namespace iiMenu.Mods
                         });
                     }
                     else
-                        RigManager.LocalRig.PlayHandTapLocal(89, true, 999999f);
+                        VRRig.LocalRig.PlayHandTapLocal(89, true, 999999f);
                     
                     RPCProtection();
                     if (Physics.Raycast(GorillaTagger.Instance.leftHandTransform.position, GorillaTagger.Instance.leftHandTransform.forward, out RaycastHit lefthit, 512f, NoInvisLayerMask()))
@@ -988,7 +988,7 @@ namespace iiMenu.Mods
                         RPCProtection();
                     }
                     else
-                        RigManager.LocalRig.PlayHandTapLocal(89, false, 999999f);
+                        VRRig.LocalRig.PlayHandTapLocal(89, false, 999999f);
                     
                     if (Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out RaycastHit righthit, 512f, NoInvisLayerMask()))
                         rightgrapplePoint = righthit.point;
@@ -1914,7 +1914,7 @@ namespace iiMenu.Mods
                             });
                         }
                         else
-                            RigManager.LocalRig.PlayHandTapLocal(84, true, 999999f);
+                            VRRig.LocalRig.PlayHandTapLocal(84, true, 999999f);
                         
                         RPCProtection();
                         UnityEngine.Object.Destroy(pearl);
@@ -1965,7 +1965,7 @@ namespace iiMenu.Mods
 
         public static void DynamicSpeedBoost()
         {
-            bool isTagged = PlayerIsTagged(RigManager.LocalRig);
+            bool isTagged = PlayerIsTagged(VRRig.LocalRig);
 
             VRRig closestRig = GorillaParent.instance.vrrigs
                 .Where(rig => rig != null && rig != LocalRig && 
@@ -2040,16 +2040,16 @@ namespace iiMenu.Mods
                 invisMonke = hit;
             if (invisMonke)
             {
-                RigManager.LocalRig.enabled = false;
-                RigManager.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position - Vector3.up * 99999f;
+                VRRig.LocalRig.enabled = false;
+                VRRig.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position - Vector3.up * 99999f;
             }
             if (hit == true && lastHit2 == false)
             {
                 invisMonke = !invisMonke;
                 if (invisMonke)
-                    wasDisabledAlready = RigManager.LocalRig.enabled;
+                    wasDisabledAlready = VRRig.LocalRig.enabled;
                 else
-                    RigManager.LocalRig.enabled = wasDisabledAlready;
+                    VRRig.LocalRig.enabled = wasDisabledAlready;
             }
             lastHit2 = hit;
         }
@@ -2061,7 +2061,7 @@ namespace iiMenu.Mods
             if (GetIndex("Non-Togglable Ghost").enabled)
                 ghostMonke = hit;
             
-            RigManager.LocalRig.enabled = !ghostMonke;
+            VRRig.LocalRig.enabled = !ghostMonke;
             if (hit == true && lastHit == false)
                 ghostMonke = !ghostMonke;
             
@@ -2070,7 +2070,7 @@ namespace iiMenu.Mods
 
         public static void EnableRig()
         {
-            RigManager.LocalRig.enabled = true;
+            VRRig.LocalRig.enabled = true;
             ghostException = false;
         }
 
@@ -2083,11 +2083,11 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true))
                 {
-                    RigManager.LocalRig.enabled = false;
-                    RigManager.LocalRig.transform.position = NewPointer.transform.position + new Vector3(0, 1, 0);
+                    VRRig.LocalRig.enabled = false;
+                    VRRig.LocalRig.transform.position = NewPointer.transform.position + new Vector3(0, 1, 0);
                 }
                 else
-                    RigManager.LocalRig.enabled = true;
+                    VRRig.LocalRig.enabled = true;
             }
         }
 
@@ -2095,13 +2095,13 @@ namespace iiMenu.Mods
         {
             if (rightGrab)
             {
-                RigManager.LocalRig.enabled = false;
+                VRRig.LocalRig.enabled = false;
 
-                RigManager.LocalRig.transform.position = GorillaTagger.Instance.rightHandTransform.position;
-                RigManager.LocalRig.transform.rotation = Quaternion.Euler(new Vector3(0f, GorillaTagger.Instance.rightHandTransform.rotation.eulerAngles.y, 0f));
+                VRRig.LocalRig.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                VRRig.LocalRig.transform.rotation = Quaternion.Euler(new Vector3(0f, GorillaTagger.Instance.rightHandTransform.rotation.eulerAngles.y, 0f));
             }
             else
-                RigManager.LocalRig.enabled = true;
+                VRRig.LocalRig.enabled = true;
         }
 
         public static Vector3 offsetLH = Vector3.zero;
@@ -2110,9 +2110,9 @@ namespace iiMenu.Mods
         public static void EnableSpazRig()
         {
             ghostException = true;
-            offsetLH = RigManager.LocalRig.leftHand.trackingPositionOffset;
-            offsetRH = RigManager.LocalRig.rightHand.trackingPositionOffset;
-            offsetH = RigManager.LocalRig.head.trackingPositionOffset;
+            offsetLH = VRRig.LocalRig.leftHand.trackingPositionOffset;
+            offsetRH = VRRig.LocalRig.rightHand.trackingPositionOffset;
+            offsetH = VRRig.LocalRig.head.trackingPositionOffset;
         }
 
         public static void SpazRig()
@@ -2121,46 +2121,46 @@ namespace iiMenu.Mods
             {
                 float spazAmount = 0.1f;
                 ghostException = true;
-                RigManager.LocalRig.leftHand.trackingPositionOffset = offsetLH + RandomVector3(spazAmount);
-                RigManager.LocalRig.rightHand.trackingPositionOffset = offsetRH + RandomVector3(spazAmount);
-                RigManager.LocalRig.head.trackingPositionOffset = offsetH + RandomVector3(spazAmount);
+                VRRig.LocalRig.leftHand.trackingPositionOffset = offsetLH + RandomVector3(spazAmount);
+                VRRig.LocalRig.rightHand.trackingPositionOffset = offsetRH + RandomVector3(spazAmount);
+                VRRig.LocalRig.head.trackingPositionOffset = offsetH + RandomVector3(spazAmount);
             }
             else
             {
                 ghostException = false;
-                RigManager.LocalRig.leftHand.trackingPositionOffset = offsetLH;
-                RigManager.LocalRig.rightHand.trackingPositionOffset = offsetRH;
-                RigManager.LocalRig.head.trackingPositionOffset = offsetH;
+                VRRig.LocalRig.leftHand.trackingPositionOffset = offsetLH;
+                VRRig.LocalRig.rightHand.trackingPositionOffset = offsetRH;
+                VRRig.LocalRig.head.trackingPositionOffset = offsetH;
             }
         }
 
         public static void DisableSpazRig()
         {
             ghostException = false;
-            RigManager.LocalRig.leftHand.trackingPositionOffset = offsetLH;
-            RigManager.LocalRig.rightHand.trackingPositionOffset = offsetRH;
-            RigManager.LocalRig.head.trackingPositionOffset = offsetH;
+            VRRig.LocalRig.leftHand.trackingPositionOffset = offsetLH;
+            VRRig.LocalRig.rightHand.trackingPositionOffset = offsetRH;
+            VRRig.LocalRig.head.trackingPositionOffset = offsetH;
         }
 
         public static void SpazHands()
         {
             if (rightPrimary)
             {
-                RigManager.LocalRig.enabled = false;
+                VRRig.LocalRig.enabled = false;
 
-                RigManager.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, 0.15f, 0f);
-                RigManager.LocalRig.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
+                VRRig.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, 0.15f, 0f);
+                VRRig.LocalRig.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
 
-                RigManager.LocalRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
+                VRRig.LocalRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
 
-                RigManager.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
-                RigManager.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
+                VRRig.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
+                VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
 
-                RigManager.LocalRig.leftHand.rigTarget.transform.position = GorillaTagger.Instance.leftHandTransform.position + RigManager.LocalRig.leftHand.rigTarget.transform.forward * 3f;
-                RigManager.LocalRig.rightHand.rigTarget.transform.position = GorillaTagger.Instance.rightHandTransform.position + RigManager.LocalRig.rightHand.rigTarget.transform.forward * 3f;
+                VRRig.LocalRig.leftHand.rigTarget.transform.position = GorillaTagger.Instance.leftHandTransform.position + VRRig.LocalRig.leftHand.rigTarget.transform.forward * 3f;
+                VRRig.LocalRig.rightHand.rigTarget.transform.position = GorillaTagger.Instance.rightHandTransform.position + VRRig.LocalRig.rightHand.rigTarget.transform.forward * 3f;
             }
             else
-                RigManager.LocalRig.enabled = true;
+                VRRig.LocalRig.enabled = true;
         }
 
         public static void SpazRealHands()
@@ -2174,91 +2174,91 @@ namespace iiMenu.Mods
                 GTPlayer.Instance.rightControllerTransform.position = GorillaTagger.Instance.rightHandTransform.position + GTPlayer.Instance.rightControllerTransform.forward * 3f;
             }
             else
-                RigManager.LocalRig.enabled = true;
+                VRRig.LocalRig.enabled = true;
         }
 
         public static void FreezeRigLimbs()
         {
             if (rightPrimary)
             {
-                RigManager.LocalRig.enabled = false;
+                VRRig.LocalRig.enabled = false;
 
-                RigManager.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, 0.15f, 0f);
-                RigManager.LocalRig.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
+                VRRig.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, 0.15f, 0f);
+                VRRig.LocalRig.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
             }
             else
-                RigManager.LocalRig.enabled = true;
+                VRRig.LocalRig.enabled = true;
         }
 
         public static void FixRigHandRotation()
         {
-            RigManager.LocalRig.leftHand.rigTarget.transform.rotation *= Quaternion.Euler(RigManager.LocalRig.leftHand.trackingRotationOffset);
-            RigManager.LocalRig.rightHand.rigTarget.transform.rotation *= Quaternion.Euler(RigManager.LocalRig.rightHand.trackingRotationOffset);
+            VRRig.LocalRig.leftHand.rigTarget.transform.rotation *= Quaternion.Euler(VRRig.LocalRig.leftHand.trackingRotationOffset);
+            VRRig.LocalRig.rightHand.rigTarget.transform.rotation *= Quaternion.Euler(VRRig.LocalRig.rightHand.trackingRotationOffset);
         }
 
         public static void FreezeRigBody()
         {
             if (rightPrimary)
             {
-                RigManager.LocalRig.enabled = false;
+                VRRig.LocalRig.enabled = false;
 
                 var leftHandTransform = TrueLeftHand();
                 var rightHandTransform = TrueRightHand();
 
-                RigManager.LocalRig.leftHand.rigTarget.transform.position = leftHandTransform.position;
-                RigManager.LocalRig.rightHand.rigTarget.transform.position = rightHandTransform.position;
+                VRRig.LocalRig.leftHand.rigTarget.transform.position = leftHandTransform.position;
+                VRRig.LocalRig.rightHand.rigTarget.transform.position = rightHandTransform.position;
 
-                RigManager.LocalRig.leftHand.rigTarget.transform.rotation = leftHandTransform.rotation;
-                RigManager.LocalRig.rightHand.rigTarget.transform.rotation = rightHandTransform.rotation;
+                VRRig.LocalRig.leftHand.rigTarget.transform.rotation = leftHandTransform.rotation;
+                VRRig.LocalRig.rightHand.rigTarget.transform.rotation = rightHandTransform.rotation;
 
                 FixRigHandRotation();
 
-                RigManager.LocalRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
+                VRRig.LocalRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
             }
             else
-                RigManager.LocalRig.enabled = true;
+                VRRig.LocalRig.enabled = true;
         }
 
         public static void ParalyzeRig()
         {
-            RigManager.LocalRig.enabled = false;
-            RigManager.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, 0.15f, 0f);
-            RigManager.LocalRig.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
-            RigManager.LocalRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
+            VRRig.LocalRig.enabled = false;
+            VRRig.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, 0.15f, 0f);
+            VRRig.LocalRig.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
+            VRRig.LocalRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
 
-            RigManager.LocalRig.leftHand.rigTarget.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.bodyCollider.transform.right * -0.08f + GorillaTagger.Instance.bodyCollider.transform.up * 0.12f;
-            RigManager.LocalRig.rightHand.rigTarget.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.bodyCollider.transform.right * 0.08f + GorillaTagger.Instance.bodyCollider.transform.up * 0.12f;
+            VRRig.LocalRig.leftHand.rigTarget.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.bodyCollider.transform.right * -0.08f + GorillaTagger.Instance.bodyCollider.transform.up * 0.12f;
+            VRRig.LocalRig.rightHand.rigTarget.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.bodyCollider.transform.right * 0.08f + GorillaTagger.Instance.bodyCollider.transform.up * 0.12f;
 
-            RigManager.LocalRig.leftHand.rigTarget.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation * Quaternion.Euler(0f, 180f, 180f);
-            RigManager.LocalRig.rightHand.rigTarget.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation * Quaternion.Euler(0f, 180f, 180f);
+            VRRig.LocalRig.leftHand.rigTarget.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation * Quaternion.Euler(0f, 180f, 180f);
+            VRRig.LocalRig.rightHand.rigTarget.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation * Quaternion.Euler(0f, 180f, 180f);
         }
 
         public static void ChickenRig()
         {
-            RigManager.LocalRig.enabled = false;
-            RigManager.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, 0.15f, 0f);
-            RigManager.LocalRig.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
-            RigManager.LocalRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
+            VRRig.LocalRig.enabled = false;
+            VRRig.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, 0.15f, 0f);
+            VRRig.LocalRig.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
+            VRRig.LocalRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
         
-            RigManager.LocalRig.leftHand.rigTarget.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.bodyCollider.transform.right * 0.2f + GorillaTagger.Instance.bodyCollider.transform.up * -0.2f;
-            RigManager.LocalRig.rightHand.rigTarget.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.bodyCollider.transform.right * -0.2f + GorillaTagger.Instance.bodyCollider.transform.up * -0.2f;
+            VRRig.LocalRig.leftHand.rigTarget.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.bodyCollider.transform.right * 0.2f + GorillaTagger.Instance.bodyCollider.transform.up * -0.2f;
+            VRRig.LocalRig.rightHand.rigTarget.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.bodyCollider.transform.right * -0.2f + GorillaTagger.Instance.bodyCollider.transform.up * -0.2f;
         
-            RigManager.LocalRig.leftHand.rigTarget.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
-            RigManager.LocalRig.rightHand.rigTarget.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
+            VRRig.LocalRig.leftHand.rigTarget.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
+            VRRig.LocalRig.rightHand.rigTarget.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
         }
 
         public static void AmputateRig()
         {
-            RigManager.LocalRig.enabled = false;
-            RigManager.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, 0.15f, 0f);
-            RigManager.LocalRig.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
-            RigManager.LocalRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation * Quaternion.Euler(160f, 90f, 0f);
+            VRRig.LocalRig.enabled = false;
+            VRRig.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, 0.15f, 0f);
+            VRRig.LocalRig.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
+            VRRig.LocalRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation * Quaternion.Euler(160f, 90f, 0f);
 
-            RigManager.LocalRig.leftHand.rigTarget.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.bodyCollider.transform.right * -0.08f + GorillaTagger.Instance.bodyCollider.transform.up * 0.12f;
-            RigManager.LocalRig.rightHand.rigTarget.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.bodyCollider.transform.right * 0.08f + GorillaTagger.Instance.bodyCollider.transform.up * 0.12f;
+            VRRig.LocalRig.leftHand.rigTarget.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.bodyCollider.transform.right * -0.08f + GorillaTagger.Instance.bodyCollider.transform.up * 0.12f;
+            VRRig.LocalRig.rightHand.rigTarget.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.bodyCollider.transform.right * 0.08f + GorillaTagger.Instance.bodyCollider.transform.up * 0.12f;
 
-            RigManager.LocalRig.leftHand.rigTarget.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation * Quaternion.Euler(0f, 180f, 180f);
-            RigManager.LocalRig.rightHand.rigTarget.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation * Quaternion.Euler(0f, 180f, 180f);
+            VRRig.LocalRig.leftHand.rigTarget.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation * Quaternion.Euler(0f, 180f, 180f);
+            VRRig.LocalRig.rightHand.rigTarget.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation * Quaternion.Euler(0f, 180f, 180f);
         }
 
         public static void SetBodyPatch(bool enabled, int mode = 0)
@@ -2295,138 +2295,138 @@ namespace iiMenu.Mods
         {
             if (rightPrimary)
             {
-                RigManager.LocalRig.enabled = false;
+                VRRig.LocalRig.enabled = false;
 
                 Vector3 bodyOffset = (GorillaTagger.Instance.bodyCollider.transform.right * (Mathf.Cos((float)Time.frameCount / 20f) * 0.3f)) + (new Vector3(0f, Mathf.Abs(Mathf.Sin((float)Time.frameCount / 20f) * 0.2f), 0f));
-                RigManager.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, 0.15f, 0f) + bodyOffset;
-                RigManager.LocalRig.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
+                VRRig.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, 0.15f, 0f) + bodyOffset;
+                VRRig.LocalRig.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
 
-                RigManager.LocalRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
+                VRRig.LocalRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
                 
-                RigManager.LocalRig.leftHand.rigTarget.transform.position = RigManager.LocalRig.transform.position + RigManager.LocalRig.transform.forward * 0.2f + RigManager.LocalRig.transform.right * -0.4f + RigManager.LocalRig.transform.up * (0.3f + (Mathf.Sin((float)Time.frameCount / 20f) * 0.2f));
-                RigManager.LocalRig.rightHand.rigTarget.transform.position = RigManager.LocalRig.transform.position + RigManager.LocalRig.transform.forward * 0.2f + RigManager.LocalRig.transform.right * 0.4f + RigManager.LocalRig.transform.up * (0.3f + (Mathf.Sin((float)Time.frameCount / 20f) * -0.2f));
+                VRRig.LocalRig.leftHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + VRRig.LocalRig.transform.forward * 0.2f + VRRig.LocalRig.transform.right * -0.4f + VRRig.LocalRig.transform.up * (0.3f + (Mathf.Sin((float)Time.frameCount / 20f) * 0.2f));
+                VRRig.LocalRig.rightHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + VRRig.LocalRig.transform.forward * 0.2f + VRRig.LocalRig.transform.right * 0.4f + VRRig.LocalRig.transform.up * (0.3f + (Mathf.Sin((float)Time.frameCount / 20f) * -0.2f));
 
-                RigManager.LocalRig.leftHand.rigTarget.transform.rotation = RigManager.LocalRig.transform.rotation;
-                RigManager.LocalRig.rightHand.rigTarget.transform.rotation = RigManager.LocalRig.transform.rotation;
+                VRRig.LocalRig.leftHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
+                VRRig.LocalRig.rightHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
 
                 FixRigHandRotation();
             }
             else
-                RigManager.LocalRig.enabled = true;
+                VRRig.LocalRig.enabled = true;
         }
 
         public static void AutoGriddy()
         {
             if (rightPrimary)
             {
-                RigManager.LocalRig.enabled = false;
+                VRRig.LocalRig.enabled = false;
 
-                Vector3 bodyOffset = RigManager.LocalRig.transform.forward * (5f * Time.deltaTime);
-                RigManager.LocalRig.transform.position = RigManager.LocalRig.transform.position + bodyOffset;
-                RigManager.LocalRig.head.rigTarget.transform.rotation = RigManager.LocalRig.transform.rotation;
+                Vector3 bodyOffset = VRRig.LocalRig.transform.forward * (5f * Time.deltaTime);
+                VRRig.LocalRig.transform.position = VRRig.LocalRig.transform.position + bodyOffset;
+                VRRig.LocalRig.head.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
 
-                RigManager.LocalRig.leftHand.rigTarget.transform.position = RigManager.LocalRig.transform.position + (RigManager.LocalRig.transform.right * -0.33f) + (RigManager.LocalRig.transform.forward * (0.5f * Mathf.Cos((float)Time.frameCount / 10f))) + (RigManager.LocalRig.transform.up * (-0.5f * Mathf.Abs(Mathf.Sin((float)Time.frameCount / 10f))));
-                RigManager.LocalRig.rightHand.rigTarget.transform.position = RigManager.LocalRig.transform.position + (RigManager.LocalRig.transform.right * 0.33f) + (RigManager.LocalRig.transform.forward * (0.5f * Mathf.Cos((float)Time.frameCount / 10f))) + (RigManager.LocalRig.transform.up * (-0.5f * Mathf.Abs(Mathf.Sin((float)Time.frameCount / 10f))));
+                VRRig.LocalRig.leftHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + (VRRig.LocalRig.transform.right * -0.33f) + (VRRig.LocalRig.transform.forward * (0.5f * Mathf.Cos((float)Time.frameCount / 10f))) + (VRRig.LocalRig.transform.up * (-0.5f * Mathf.Abs(Mathf.Sin((float)Time.frameCount / 10f))));
+                VRRig.LocalRig.rightHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + (VRRig.LocalRig.transform.right * 0.33f) + (VRRig.LocalRig.transform.forward * (0.5f * Mathf.Cos((float)Time.frameCount / 10f))) + (VRRig.LocalRig.transform.up * (-0.5f * Mathf.Abs(Mathf.Sin((float)Time.frameCount / 10f))));
 
-                RigManager.LocalRig.leftHand.rigTarget.transform.rotation = RigManager.LocalRig.transform.rotation;
-                RigManager.LocalRig.rightHand.rigTarget.transform.rotation = RigManager.LocalRig.transform.rotation;
+                VRRig.LocalRig.leftHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
+                VRRig.LocalRig.rightHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
 
                 FixRigHandRotation();
             }
             else
-                RigManager.LocalRig.enabled = true;
+                VRRig.LocalRig.enabled = true;
         }
 
         public static void AutoTPose()
         {
             if (rightPrimary)
             {
-                RigManager.LocalRig.enabled = false;
+                VRRig.LocalRig.enabled = false;
 
-                RigManager.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, 0.15f, 0f);
-                RigManager.LocalRig.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
+                VRRig.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, 0.15f, 0f);
+                VRRig.LocalRig.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
 
-                RigManager.LocalRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
+                VRRig.LocalRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
 
-                RigManager.LocalRig.leftHand.rigTarget.transform.position = RigManager.LocalRig.transform.position + RigManager.LocalRig.transform.right * -1f;
-                RigManager.LocalRig.rightHand.rigTarget.transform.position = RigManager.LocalRig.transform.position + RigManager.LocalRig.transform.right * 1f;
+                VRRig.LocalRig.leftHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + VRRig.LocalRig.transform.right * -1f;
+                VRRig.LocalRig.rightHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + VRRig.LocalRig.transform.right * 1f;
 
-                RigManager.LocalRig.leftHand.rigTarget.transform.rotation = RigManager.LocalRig.transform.rotation;
-                RigManager.LocalRig.rightHand.rigTarget.transform.rotation = RigManager.LocalRig.transform.rotation;
+                VRRig.LocalRig.leftHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
+                VRRig.LocalRig.rightHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
 
                 FixRigHandRotation();
             }
             else
-                RigManager.LocalRig.enabled = true;
+                VRRig.LocalRig.enabled = true;
         }
 
         public static void Helicopter()
         {
             if (rightPrimary)
             {
-                RigManager.LocalRig.enabled = false;
+                VRRig.LocalRig.enabled = false;
 
-                RigManager.LocalRig.transform.position += new Vector3(0f, 0.05f, 0f);
-                RigManager.LocalRig.transform.rotation = Quaternion.Euler(RigManager.LocalRig.transform.rotation.eulerAngles + new Vector3(0f, 10f, 0f));
+                VRRig.LocalRig.transform.position += new Vector3(0f, 0.05f, 0f);
+                VRRig.LocalRig.transform.rotation = Quaternion.Euler(VRRig.LocalRig.transform.rotation.eulerAngles + new Vector3(0f, 10f, 0f));
 
-                RigManager.LocalRig.head.rigTarget.transform.rotation = RigManager.LocalRig.transform.rotation;
+                VRRig.LocalRig.head.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
 
-                RigManager.LocalRig.leftHand.rigTarget.transform.position = RigManager.LocalRig.transform.position + RigManager.LocalRig.transform.right * -1f;
-                RigManager.LocalRig.rightHand.rigTarget.transform.position = RigManager.LocalRig.transform.position + RigManager.LocalRig.transform.right * 1f;
+                VRRig.LocalRig.leftHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + VRRig.LocalRig.transform.right * -1f;
+                VRRig.LocalRig.rightHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + VRRig.LocalRig.transform.right * 1f;
 
-                RigManager.LocalRig.leftHand.rigTarget.transform.rotation = RigManager.LocalRig.transform.rotation;
-                RigManager.LocalRig.rightHand.rigTarget.transform.rotation = RigManager.LocalRig.transform.rotation;
+                VRRig.LocalRig.leftHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
+                VRRig.LocalRig.rightHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
 
                 FixRigHandRotation();
             }
             else
-                RigManager.LocalRig.enabled = true;
+                VRRig.LocalRig.enabled = true;
         }
 
         public static void Beyblade()
         {
             if (rightPrimary)
             {
-                RigManager.LocalRig.enabled = false;
+                VRRig.LocalRig.enabled = false;
 
-                RigManager.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, 0.15f, 0f);
-                RigManager.LocalRig.transform.rotation = Quaternion.Euler(RigManager.LocalRig.transform.rotation.eulerAngles + new Vector3(0f, 10f, 0f));
+                VRRig.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, 0.15f, 0f);
+                VRRig.LocalRig.transform.rotation = Quaternion.Euler(VRRig.LocalRig.transform.rotation.eulerAngles + new Vector3(0f, 10f, 0f));
 
-                RigManager.LocalRig.head.rigTarget.transform.rotation = RigManager.LocalRig.transform.rotation;
+                VRRig.LocalRig.head.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
 
-                RigManager.LocalRig.leftHand.rigTarget.transform.position = RigManager.LocalRig.transform.position + RigManager.LocalRig.transform.right * -1f;
-                RigManager.LocalRig.rightHand.rigTarget.transform.position = RigManager.LocalRig.transform.position + RigManager.LocalRig.transform.right * 1f;
+                VRRig.LocalRig.leftHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + VRRig.LocalRig.transform.right * -1f;
+                VRRig.LocalRig.rightHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + VRRig.LocalRig.transform.right * 1f;
 
-                RigManager.LocalRig.leftHand.rigTarget.transform.rotation = RigManager.LocalRig.transform.rotation;
-                RigManager.LocalRig.rightHand.rigTarget.transform.rotation = RigManager.LocalRig.transform.rotation;
+                VRRig.LocalRig.leftHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
+                VRRig.LocalRig.rightHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
 
                 FixRigHandRotation();
             }
             else
-                RigManager.LocalRig.enabled = true;
+                VRRig.LocalRig.enabled = true;
         }
 
         public static void Fan()
         {
             if (rightPrimary)
             {
-                RigManager.LocalRig.enabled = false;
+                VRRig.LocalRig.enabled = false;
 
-                RigManager.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, 0.15f, 0f);
-                RigManager.LocalRig.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
+                VRRig.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, 0.15f, 0f);
+                VRRig.LocalRig.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
 
-                RigManager.LocalRig.head.rigTarget.transform.rotation = RigManager.LocalRig.transform.rotation;
+                VRRig.LocalRig.head.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
 
-                RigManager.LocalRig.leftHand.rigTarget.transform.position = RigManager.LocalRig.transform.position + (RigManager.LocalRig.transform.up * (Mathf.Cos(Time.time * 15f) * 2f) + RigManager.LocalRig.transform.right * (Mathf.Sin(Time.time * 15f) * 2f));
-                RigManager.LocalRig.rightHand.rigTarget.transform.position = RigManager.LocalRig.transform.position - (RigManager.LocalRig.transform.up * (Mathf.Cos(Time.time * 15f) * 2f) + RigManager.LocalRig.transform.right * (Mathf.Sin(Time.time * 15f) * 2f));
+                VRRig.LocalRig.leftHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + (VRRig.LocalRig.transform.up * (Mathf.Cos(Time.time * 15f) * 2f) + VRRig.LocalRig.transform.right * (Mathf.Sin(Time.time * 15f) * 2f));
+                VRRig.LocalRig.rightHand.rigTarget.transform.position = VRRig.LocalRig.transform.position - (VRRig.LocalRig.transform.up * (Mathf.Cos(Time.time * 15f) * 2f) + VRRig.LocalRig.transform.right * (Mathf.Sin(Time.time * 15f) * 2f));
 
-                RigManager.LocalRig.leftHand.rigTarget.transform.rotation = RigManager.LocalRig.transform.rotation;
-                RigManager.LocalRig.rightHand.rigTarget.transform.rotation = RigManager.LocalRig.transform.rotation;
+                VRRig.LocalRig.leftHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
+                VRRig.LocalRig.rightHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
 
                 FixRigHandRotation();
             }
             else
-                RigManager.LocalRig.enabled = true;
+                VRRig.LocalRig.enabled = true;
         }
 
         private static Vector3 headPos = Vector3.zero;
@@ -2440,7 +2440,7 @@ namespace iiMenu.Mods
 
         public static void GhostAnimations()
         {
-            RigManager.LocalRig.enabled = false;
+            VRRig.LocalRig.enabled = false;
 
             if (headPos == Vector3.zero)
                 headPos = GorillaTagger.Instance.headCollider.transform.position;
@@ -2479,32 +2479,32 @@ namespace iiMenu.Mods
             if (Quaternion.Angle(Quaternion.Euler(handRot_R), GorillaTagger.Instance.rightHandTransform.transform.rotation) > rotationThreshold)
                 handRot_R = Quaternion.RotateTowards(Quaternion.Euler(handRot_R), GorillaTagger.Instance.rightHandTransform.transform.rotation, rotationSpeed).eulerAngles;
 
-            RigManager.LocalRig.transform.position = headPos - new Vector3(0f, 0.15f, 0f);
-            RigManager.LocalRig.transform.rotation = Quaternion.Euler(new Vector3(0f, headRot.y, 0f));
+            VRRig.LocalRig.transform.position = headPos - new Vector3(0f, 0.15f, 0f);
+            VRRig.LocalRig.transform.rotation = Quaternion.Euler(new Vector3(0f, headRot.y, 0f));
 
-            RigManager.LocalRig.head.rigTarget.transform.rotation = Quaternion.Euler(headRot);
+            VRRig.LocalRig.head.rigTarget.transform.rotation = Quaternion.Euler(headRot);
 
-            RigManager.LocalRig.leftHand.rigTarget.transform.position = handPos_L;
-            RigManager.LocalRig.rightHand.rigTarget.transform.position = handPos_R;
+            VRRig.LocalRig.leftHand.rigTarget.transform.position = handPos_L;
+            VRRig.LocalRig.rightHand.rigTarget.transform.position = handPos_R;
 
-            RigManager.LocalRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(handRot_L);
-            RigManager.LocalRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(handRot_R);
+            VRRig.LocalRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(handRot_L);
+            VRRig.LocalRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(handRot_R);
 
-            RigManager.LocalRig.leftIndex.calcT = leftTrigger;
-            RigManager.LocalRig.leftMiddle.calcT = leftGrab ? 1 : 0;
-            RigManager.LocalRig.leftThumb.calcT = leftPrimary || leftSecondary ? 1 : 0;
+            VRRig.LocalRig.leftIndex.calcT = leftTrigger;
+            VRRig.LocalRig.leftMiddle.calcT = leftGrab ? 1 : 0;
+            VRRig.LocalRig.leftThumb.calcT = leftPrimary || leftSecondary ? 1 : 0;
 
-            RigManager.LocalRig.leftIndex.LerpFinger(1f, false);
-            RigManager.LocalRig.leftMiddle.LerpFinger(1f, false);
-            RigManager.LocalRig.leftThumb.LerpFinger(1f, false);
+            VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
+            VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
+            VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
 
-            RigManager.LocalRig.rightIndex.calcT = rightTrigger;
-            RigManager.LocalRig.rightMiddle.calcT = rightGrab ? 1 : 0;
-            RigManager.LocalRig.rightThumb.calcT = rightPrimary || rightSecondary ? 1 : 0;
+            VRRig.LocalRig.rightIndex.calcT = rightTrigger;
+            VRRig.LocalRig.rightMiddle.calcT = rightGrab ? 1 : 0;
+            VRRig.LocalRig.rightThumb.calcT = rightPrimary || rightSecondary ? 1 : 0;
 
-            RigManager.LocalRig.rightIndex.LerpFinger(1f, false);
-            RigManager.LocalRig.rightMiddle.LerpFinger(1f, false);
-            RigManager.LocalRig.rightThumb.LerpFinger(1f, false);
+            VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+            VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
+            VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
 
             FixRigHandRotation();
         }
@@ -2520,45 +2520,45 @@ namespace iiMenu.Mods
             handPos_R = Vector3.zero;
             handRot_R = Vector3.zero;
 
-            RigManager.LocalRig.enabled = true;
+            VRRig.LocalRig.enabled = true;
         }
 
         public static void MinecraftAnimations()
         {
-            RigManager.LocalRig.enabled = false;
+            VRRig.LocalRig.enabled = false;
 
-            RigManager.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, 0.15f, 0f);
-            RigManager.LocalRig.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
+            VRRig.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + new Vector3(0f, 0.15f, 0f);
+            VRRig.LocalRig.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
 
-            RigManager.LocalRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
+            VRRig.LocalRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
 
-            RigManager.LocalRig.leftHand.rigTarget.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
-            RigManager.LocalRig.rightHand.rigTarget.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
+            VRRig.LocalRig.leftHand.rigTarget.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
+            VRRig.LocalRig.rightHand.rigTarget.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
 
             if (rightPrimary)
             {
-                RigManager.LocalRig.leftHand.rigTarget.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + (GorillaTagger.Instance.bodyCollider.transform.right * -0.25f) + (GorillaTagger.Instance.bodyCollider.transform.up * -1f) + (GorillaTagger.Instance.bodyCollider.transform.forward * Mathf.Sin((float)Time.frameCount / 10f));
-                RigManager.LocalRig.rightHand.rigTarget.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + (GorillaTagger.Instance.bodyCollider.transform.right * 0.25f) + (GorillaTagger.Instance.bodyCollider.transform.up * -1f) + -(GorillaTagger.Instance.bodyCollider.transform.forward * Mathf.Sin((float)Time.frameCount / 10f));
+                VRRig.LocalRig.leftHand.rigTarget.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + (GorillaTagger.Instance.bodyCollider.transform.right * -0.25f) + (GorillaTagger.Instance.bodyCollider.transform.up * -1f) + (GorillaTagger.Instance.bodyCollider.transform.forward * Mathf.Sin((float)Time.frameCount / 10f));
+                VRRig.LocalRig.rightHand.rigTarget.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + (GorillaTagger.Instance.bodyCollider.transform.right * 0.25f) + (GorillaTagger.Instance.bodyCollider.transform.up * -1f) + -(GorillaTagger.Instance.bodyCollider.transform.forward * Mathf.Sin((float)Time.frameCount / 10f));
             } else
             {
-                RigManager.LocalRig.leftHand.rigTarget.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + (GorillaTagger.Instance.bodyCollider.transform.right * -0.25f) + (GorillaTagger.Instance.bodyCollider.transform.up * -1f);
-                RigManager.LocalRig.rightHand.rigTarget.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + (GorillaTagger.Instance.bodyCollider.transform.right * 0.25f) + (GorillaTagger.Instance.bodyCollider.transform.up * -1f);
+                VRRig.LocalRig.leftHand.rigTarget.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + (GorillaTagger.Instance.bodyCollider.transform.right * -0.25f) + (GorillaTagger.Instance.bodyCollider.transform.up * -1f);
+                VRRig.LocalRig.rightHand.rigTarget.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + (GorillaTagger.Instance.bodyCollider.transform.right * 0.25f) + (GorillaTagger.Instance.bodyCollider.transform.up * -1f);
             }
 
             if (rightSecondary)
             {
-                RigManager.LocalRig.rightHand.rigTarget.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + (GorillaTagger.Instance.bodyCollider.transform.right * 0.25f) + Vector3.Lerp(GorillaTagger.Instance.rightHandTransform.forward, - GorillaTagger.Instance.rightHandTransform.up, 0.5f) * 2f;
-                RigManager.LocalRig.rightHand.rigTarget.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
+                VRRig.LocalRig.rightHand.rigTarget.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + (GorillaTagger.Instance.bodyCollider.transform.right * 0.25f) + Vector3.Lerp(GorillaTagger.Instance.rightHandTransform.forward, - GorillaTagger.Instance.rightHandTransform.up, 0.5f) * 2f;
+                VRRig.LocalRig.rightHand.rigTarget.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
             }
 
             FixRigHandRotation();
         }
 
         public static void StareAtNearby() =>
-            RigManager.LocalRig.head.rigTarget.LookAt(GetClosestVRRig().headMesh.transform.position);
+            VRRig.LocalRig.head.rigTarget.LookAt(GetClosestVRRig().headMesh.transform.position);
 
         public static void StareAtTarget() =>
-            RigManager.LocalRig.head.rigTarget.LookAt(lockTarget.headMesh.transform.position);
+            VRRig.LocalRig.head.rigTarget.LookAt(lockTarget.headMesh.transform.position);
 
         private static bool hasAdded;
         public static void StareAtGun()
@@ -2599,25 +2599,25 @@ namespace iiMenu.Mods
         }
 
         public static void EnableFloatingRig() =>
-            offsetH = RigManager.LocalRig.head.trackingPositionOffset;
+            offsetH = VRRig.LocalRig.head.trackingPositionOffset;
 
         public static void FloatingRig() =>
-            RigManager.LocalRig.head.trackingPositionOffset = offsetH + new Vector3(0f, 0.65f + (Mathf.Sin((float)Time.frameCount / 40f) * 0.2f), 0f);
+            VRRig.LocalRig.head.trackingPositionOffset = offsetH + new Vector3(0f, 0.65f + (Mathf.Sin((float)Time.frameCount / 40f) * 0.2f), 0f);
 
         public static void DisableFloatingRig() =>
-            RigManager.LocalRig.head.trackingPositionOffset = offsetH;
+            VRRig.LocalRig.head.trackingPositionOffset = offsetH;
 
         public static void Bees()
         {
-            RigManager.LocalRig.enabled = false;
+            VRRig.LocalRig.enabled = false;
             if (Time.time > beesDelay)
             {
                 VRRig target = GetRandomVRRig(false);
 
-                RigManager.LocalRig.transform.position = target.transform.position + new Vector3(0f, 1f, 0f);
+                VRRig.LocalRig.transform.position = target.transform.position + new Vector3(0f, 1f, 0f);
 
-                RigManager.LocalRig.leftHand.rigTarget.transform.position = target.transform.position;
-                RigManager.LocalRig.rightHand.rigTarget.transform.position = target.transform.position;
+                VRRig.LocalRig.leftHand.rigTarget.transform.position = target.transform.position;
+                VRRig.LocalRig.rightHand.rigTarget.transform.position = target.transform.position;
 
                 beesDelay = Time.time + 0.777f;
             }
@@ -2647,8 +2647,8 @@ namespace iiMenu.Mods
             if (sizeScale < 0.05f)
                 sizeScale = 0.05f;
 
-            RigManager.LocalRig.transform.localScale = Vector3.one * sizeScale;
-            RigManager.LocalRig.NativeScale = sizeScale;
+            VRRig.LocalRig.transform.localScale = Vector3.one * sizeScale;
+            VRRig.LocalRig.NativeScale = sizeScale;
             GTPlayer.Instance.nativeScale = sizeScale;
         }
 
@@ -2656,8 +2656,8 @@ namespace iiMenu.Mods
         {
             sizeScale = 1f;
 
-            RigManager.LocalRig.transform.localScale = Vector3.one * sizeScale;
-            RigManager.LocalRig.NativeScale = sizeScale;
+            VRRig.LocalRig.transform.localScale = Vector3.one * sizeScale;
+            VRRig.LocalRig.NativeScale = sizeScale;
             GTPlayer.Instance.nativeScale = sizeScale;
         }
 
@@ -2767,7 +2767,7 @@ namespace iiMenu.Mods
                     index++;
 
                     Vector3 they = vrrig.rightHandTransform.position;
-                    Vector3 notthem = RigManager.LocalRig.head.rigTarget.position;
+                    Vector3 notthem = VRRig.LocalRig.head.rigTarget.position;
                     float distance = Vector3.Distance(they, notthem);
 
                     if (distance < 0.25f)
@@ -3175,7 +3175,7 @@ namespace iiMenu.Mods
 
         public static void LagRange()
         {
-            bool isTagged = PlayerIsTagged(RigManager.LocalRig);
+            bool isTagged = PlayerIsTagged(VRRig.LocalRig);
 
             VRRig closestRig = GorillaParent.instance.vrrigs
                 .Where(rig => rig != null && rig != LocalRig &&
@@ -3425,34 +3425,34 @@ namespace iiMenu.Mods
 
                 if (gunLocked && lockTarget != null)
                 {
-                    RigManager.LocalRig.enabled = false;
+                    VRRig.LocalRig.enabled = false;
 
-                    RigManager.LocalRig.transform.position = lockTarget.transform.position;
-                    RigManager.LocalRig.transform.rotation = lockTarget.transform.rotation;
+                    VRRig.LocalRig.transform.position = lockTarget.transform.position;
+                    VRRig.LocalRig.transform.rotation = lockTarget.transform.rotation;
 
-                    RigManager.LocalRig.leftHand.rigTarget.transform.position = lockTarget.leftHandTransform.position;
-                    RigManager.LocalRig.rightHand.rigTarget.transform.position = lockTarget.rightHandTransform.position;
+                    VRRig.LocalRig.leftHand.rigTarget.transform.position = lockTarget.leftHandTransform.position;
+                    VRRig.LocalRig.rightHand.rigTarget.transform.position = lockTarget.rightHandTransform.position;
 
-                    RigManager.LocalRig.leftHand.rigTarget.transform.rotation = lockTarget.leftHandTransform.rotation;
-                    RigManager.LocalRig.rightHand.rigTarget.transform.rotation = lockTarget.rightHandTransform.rotation;
+                    VRRig.LocalRig.leftHand.rigTarget.transform.rotation = lockTarget.leftHandTransform.rotation;
+                    VRRig.LocalRig.rightHand.rigTarget.transform.rotation = lockTarget.rightHandTransform.rotation;
 
-                    RigManager.LocalRig.leftIndex.calcT = lockTarget.leftIndex.calcT;
-                    RigManager.LocalRig.leftMiddle.calcT = lockTarget.leftMiddle.calcT;
-                    RigManager.LocalRig.leftThumb.calcT = lockTarget.leftThumb.calcT;
+                    VRRig.LocalRig.leftIndex.calcT = lockTarget.leftIndex.calcT;
+                    VRRig.LocalRig.leftMiddle.calcT = lockTarget.leftMiddle.calcT;
+                    VRRig.LocalRig.leftThumb.calcT = lockTarget.leftThumb.calcT;
 
-                    RigManager.LocalRig.leftIndex.LerpFinger(1f, false);
-                    RigManager.LocalRig.leftMiddle.LerpFinger(1f, false);
-                    RigManager.LocalRig.leftThumb.LerpFinger(1f, false);
+                    VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
+                    VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
+                    VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
 
-                    RigManager.LocalRig.rightIndex.calcT = lockTarget.rightIndex.calcT;
-                    RigManager.LocalRig.rightMiddle.calcT = lockTarget.rightMiddle.calcT;
-                    RigManager.LocalRig.rightThumb.calcT = lockTarget.rightThumb.calcT;
+                    VRRig.LocalRig.rightIndex.calcT = lockTarget.rightIndex.calcT;
+                    VRRig.LocalRig.rightMiddle.calcT = lockTarget.rightMiddle.calcT;
+                    VRRig.LocalRig.rightThumb.calcT = lockTarget.rightThumb.calcT;
 
-                    RigManager.LocalRig.rightIndex.LerpFinger(1f, false);
-                    RigManager.LocalRig.rightMiddle.LerpFinger(1f, false);
-                    RigManager.LocalRig.rightThumb.LerpFinger(1f, false);
+                    VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+                    VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
+                    VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
 
-                    RigManager.LocalRig.head.rigTarget.transform.rotation = lockTarget.headMesh.transform.rotation;
+                    VRRig.LocalRig.head.rigTarget.transform.rotation = lockTarget.headMesh.transform.rotation;
                 }
                 if (GetGunInput(true))
                 {
@@ -3469,7 +3469,7 @@ namespace iiMenu.Mods
                 if (gunLocked)
                 {
                     gunLocked = false;
-                    RigManager.LocalRig.enabled = true;
+                    VRRig.LocalRig.enabled = true;
                 }
             }
         }
@@ -3477,73 +3477,73 @@ namespace iiMenu.Mods
         public static void CopyMovementPlayer(NetPlayer player)
         {
             VRRig targetRig = GetVRRigFromPlayer(player);
-            RigManager.LocalRig.enabled = false;
+            VRRig.LocalRig.enabled = false;
 
-            RigManager.LocalRig.transform.position = targetRig.transform.position;
-            RigManager.LocalRig.transform.rotation = targetRig.transform.rotation;
+            VRRig.LocalRig.transform.position = targetRig.transform.position;
+            VRRig.LocalRig.transform.rotation = targetRig.transform.rotation;
 
-            RigManager.LocalRig.leftHand.rigTarget.transform.position = targetRig.leftHandTransform.position;
-            RigManager.LocalRig.rightHand.rigTarget.transform.position = targetRig.rightHandTransform.position;
+            VRRig.LocalRig.leftHand.rigTarget.transform.position = targetRig.leftHandTransform.position;
+            VRRig.LocalRig.rightHand.rigTarget.transform.position = targetRig.rightHandTransform.position;
 
-            RigManager.LocalRig.leftHand.rigTarget.transform.rotation = targetRig.leftHandTransform.rotation;
-            RigManager.LocalRig.rightHand.rigTarget.transform.rotation = targetRig.rightHandTransform.rotation;
+            VRRig.LocalRig.leftHand.rigTarget.transform.rotation = targetRig.leftHandTransform.rotation;
+            VRRig.LocalRig.rightHand.rigTarget.transform.rotation = targetRig.rightHandTransform.rotation;
 
-            RigManager.LocalRig.leftIndex.calcT = targetRig.leftIndex.calcT;
-            RigManager.LocalRig.leftMiddle.calcT = targetRig.leftMiddle.calcT;
-            RigManager.LocalRig.leftThumb.calcT = targetRig.leftThumb.calcT;
+            VRRig.LocalRig.leftIndex.calcT = targetRig.leftIndex.calcT;
+            VRRig.LocalRig.leftMiddle.calcT = targetRig.leftMiddle.calcT;
+            VRRig.LocalRig.leftThumb.calcT = targetRig.leftThumb.calcT;
 
-            RigManager.LocalRig.leftIndex.LerpFinger(1f, false);
-            RigManager.LocalRig.leftMiddle.LerpFinger(1f, false);
-            RigManager.LocalRig.leftThumb.LerpFinger(1f, false);
+            VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
+            VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
+            VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
 
-            RigManager.LocalRig.rightIndex.calcT = targetRig.rightIndex.calcT;
-            RigManager.LocalRig.rightMiddle.calcT = targetRig.rightMiddle.calcT;
-            RigManager.LocalRig.rightThumb.calcT = targetRig.rightThumb.calcT;
+            VRRig.LocalRig.rightIndex.calcT = targetRig.rightIndex.calcT;
+            VRRig.LocalRig.rightMiddle.calcT = targetRig.rightMiddle.calcT;
+            VRRig.LocalRig.rightThumb.calcT = targetRig.rightThumb.calcT;
 
-            RigManager.LocalRig.rightIndex.LerpFinger(1f, false);
-            RigManager.LocalRig.rightMiddle.LerpFinger(1f, false);
-            RigManager.LocalRig.rightThumb.LerpFinger(1f, false);
+            VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+            VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
+            VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
 
-            RigManager.LocalRig.head.rigTarget.transform.rotation = targetRig.headMesh.transform.rotation;
+            VRRig.LocalRig.head.rigTarget.transform.rotation = targetRig.headMesh.transform.rotation;
         }
 
         public static void FollowPlayer(NetPlayer player)
         {
             VRRig targetRig = GetVRRigFromPlayer(player);
-            RigManager.LocalRig.enabled = false;
+            VRRig.LocalRig.enabled = false;
 
-            Vector3 look = targetRig.transform.position - RigManager.LocalRig.transform.position;
+            Vector3 look = targetRig.transform.position - VRRig.LocalRig.transform.position;
             look.Normalize();
 
-            Vector3 position = RigManager.LocalRig.transform.position + (look * ((flySpeed / 2f) * Time.deltaTime));
+            Vector3 position = VRRig.LocalRig.transform.position + (look * ((flySpeed / 2f) * Time.deltaTime));
 
-            RigManager.LocalRig.transform.position = position;
-            RigManager.LocalRig.transform.LookAt(targetRig.transform.position);
+            VRRig.LocalRig.transform.position = position;
+            VRRig.LocalRig.transform.LookAt(targetRig.transform.position);
 
-            RigManager.LocalRig.head.rigTarget.transform.rotation = RigManager.LocalRig.transform.rotation;
-            RigManager.LocalRig.leftHand.rigTarget.transform.position = RigManager.LocalRig.transform.position + (RigManager.LocalRig.transform.right * -1f);
-            RigManager.LocalRig.rightHand.rigTarget.transform.position = RigManager.LocalRig.transform.position + (RigManager.LocalRig.transform.right * 1f);
+            VRRig.LocalRig.head.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
+            VRRig.LocalRig.leftHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + (VRRig.LocalRig.transform.right * -1f);
+            VRRig.LocalRig.rightHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + (VRRig.LocalRig.transform.right * 1f);
 
-            RigManager.LocalRig.leftHand.rigTarget.transform.rotation = RigManager.LocalRig.transform.rotation;
-            RigManager.LocalRig.rightHand.rigTarget.transform.rotation = RigManager.LocalRig.transform.rotation;
+            VRRig.LocalRig.leftHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
+            VRRig.LocalRig.rightHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
 
             FixRigHandRotation();
 
-            RigManager.LocalRig.leftIndex.calcT = 0f;
-            RigManager.LocalRig.leftMiddle.calcT = 0f;
-            RigManager.LocalRig.leftThumb.calcT = 0f;
+            VRRig.LocalRig.leftIndex.calcT = 0f;
+            VRRig.LocalRig.leftMiddle.calcT = 0f;
+            VRRig.LocalRig.leftThumb.calcT = 0f;
 
-            RigManager.LocalRig.leftIndex.LerpFinger(1f, false);
-            RigManager.LocalRig.leftMiddle.LerpFinger(1f, false);
-            RigManager.LocalRig.leftThumb.LerpFinger(1f, false);
+            VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
+            VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
+            VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
 
-            RigManager.LocalRig.rightIndex.calcT = 0f;
-            RigManager.LocalRig.rightMiddle.calcT = 0f;
-            RigManager.LocalRig.rightThumb.calcT = 0f;
+            VRRig.LocalRig.rightIndex.calcT = 0f;
+            VRRig.LocalRig.rightMiddle.calcT = 0f;
+            VRRig.LocalRig.rightThumb.calcT = 0f;
 
-            RigManager.LocalRig.rightIndex.LerpFinger(1f, false);
-            RigManager.LocalRig.rightMiddle.LerpFinger(1f, false);
-            RigManager.LocalRig.rightThumb.LerpFinger(1f, false);
+            VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+            VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
+            VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
         }
 
         public static void FollowPlayerGun()
@@ -3555,40 +3555,40 @@ namespace iiMenu.Mods
 
                 if (gunLocked && lockTarget != null)
                 {
-                    RigManager.LocalRig.enabled = false;
+                    VRRig.LocalRig.enabled = false;
 
-                    Vector3 look = lockTarget.transform.position - RigManager.LocalRig.transform.position;
+                    Vector3 look = lockTarget.transform.position - VRRig.LocalRig.transform.position;
                     look.Normalize();
 
-                    Vector3 position = RigManager.LocalRig.transform.position + (look * ((flySpeed / 2f) * Time.deltaTime));
+                    Vector3 position = VRRig.LocalRig.transform.position + (look * ((flySpeed / 2f) * Time.deltaTime));
 
-                    RigManager.LocalRig.transform.position = position;
-                    RigManager.LocalRig.transform.LookAt(lockTarget.transform.position);
+                    VRRig.LocalRig.transform.position = position;
+                    VRRig.LocalRig.transform.LookAt(lockTarget.transform.position);
 
-                    RigManager.LocalRig.head.rigTarget.transform.rotation = RigManager.LocalRig.transform.rotation;
-                    RigManager.LocalRig.leftHand.rigTarget.transform.position = RigManager.LocalRig.transform.position + (RigManager.LocalRig.transform.right * -1f);
-                    RigManager.LocalRig.rightHand.rigTarget.transform.position = RigManager.LocalRig.transform.position + (RigManager.LocalRig.transform.right * 1f);
+                    VRRig.LocalRig.head.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
+                    VRRig.LocalRig.leftHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + (VRRig.LocalRig.transform.right * -1f);
+                    VRRig.LocalRig.rightHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + (VRRig.LocalRig.transform.right * 1f);
 
-                    RigManager.LocalRig.leftHand.rigTarget.transform.rotation = RigManager.LocalRig.transform.rotation;
-                    RigManager.LocalRig.rightHand.rigTarget.transform.rotation = RigManager.LocalRig.transform.rotation;
+                    VRRig.LocalRig.leftHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
+                    VRRig.LocalRig.rightHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
 
                     FixRigHandRotation();
 
-                    RigManager.LocalRig.leftIndex.calcT = 0f;
-                    RigManager.LocalRig.leftMiddle.calcT = 0f;
-                    RigManager.LocalRig.leftThumb.calcT = 0f;
+                    VRRig.LocalRig.leftIndex.calcT = 0f;
+                    VRRig.LocalRig.leftMiddle.calcT = 0f;
+                    VRRig.LocalRig.leftThumb.calcT = 0f;
 
-                    RigManager.LocalRig.leftIndex.LerpFinger(1f, false);
-                    RigManager.LocalRig.leftMiddle.LerpFinger(1f, false);
-                    RigManager.LocalRig.leftThumb.LerpFinger(1f, false);
+                    VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
+                    VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
+                    VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
 
-                    RigManager.LocalRig.rightIndex.calcT = 0f;
-                    RigManager.LocalRig.rightMiddle.calcT = 0f;
-                    RigManager.LocalRig.rightThumb.calcT = 0f;
+                    VRRig.LocalRig.rightIndex.calcT = 0f;
+                    VRRig.LocalRig.rightMiddle.calcT = 0f;
+                    VRRig.LocalRig.rightThumb.calcT = 0f;
 
-                    RigManager.LocalRig.rightIndex.LerpFinger(1f, false);
-                    RigManager.LocalRig.rightMiddle.LerpFinger(1f, false);
-                    RigManager.LocalRig.rightThumb.LerpFinger(1f, false);
+                    VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+                    VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
+                    VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
                 }
                 if (GetGunInput(true))
                 {
@@ -3605,7 +3605,7 @@ namespace iiMenu.Mods
                 if (gunLocked)
                 {
                     gunLocked = false;
-                    RigManager.LocalRig.enabled = true;
+                    VRRig.LocalRig.enabled = true;
                 }
             }
         }
@@ -3619,35 +3619,35 @@ namespace iiMenu.Mods
 
                 if (gunLocked && lockTarget != null)
                 {
-                    RigManager.LocalRig.enabled = false;
+                    VRRig.LocalRig.enabled = false;
 
-                    RigManager.LocalRig.transform.position = lockTarget.transform.position + new Vector3(Mathf.Cos((float)Time.frameCount / 20f), 0.5f, Mathf.Sin((float)Time.frameCount / 20f));
-                    RigManager.LocalRig.transform.LookAt(lockTarget.transform.position);
+                    VRRig.LocalRig.transform.position = lockTarget.transform.position + new Vector3(Mathf.Cos((float)Time.frameCount / 20f), 0.5f, Mathf.Sin((float)Time.frameCount / 20f));
+                    VRRig.LocalRig.transform.LookAt(lockTarget.transform.position);
 
-                    RigManager.LocalRig.head.rigTarget.transform.rotation = RigManager.LocalRig.transform.rotation;
-                    RigManager.LocalRig.leftHand.rigTarget.transform.position = RigManager.LocalRig.transform.position + (RigManager.LocalRig.transform.right * -1f);
-                    RigManager.LocalRig.rightHand.rigTarget.transform.position = RigManager.LocalRig.transform.position + (RigManager.LocalRig.transform.right * 1f);
+                    VRRig.LocalRig.head.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
+                    VRRig.LocalRig.leftHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + (VRRig.LocalRig.transform.right * -1f);
+                    VRRig.LocalRig.rightHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + (VRRig.LocalRig.transform.right * 1f);
 
-                    RigManager.LocalRig.leftHand.rigTarget.transform.rotation = RigManager.LocalRig.transform.rotation;
-                    RigManager.LocalRig.rightHand.rigTarget.transform.rotation = RigManager.LocalRig.transform.rotation;
+                    VRRig.LocalRig.leftHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
+                    VRRig.LocalRig.rightHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
 
                     FixRigHandRotation();
 
-                    RigManager.LocalRig.leftIndex.calcT = 0f;
-                    RigManager.LocalRig.leftMiddle.calcT = 0f;
-                    RigManager.LocalRig.leftThumb.calcT = 0f;
+                    VRRig.LocalRig.leftIndex.calcT = 0f;
+                    VRRig.LocalRig.leftMiddle.calcT = 0f;
+                    VRRig.LocalRig.leftThumb.calcT = 0f;
 
-                    RigManager.LocalRig.leftIndex.LerpFinger(1f, false);
-                    RigManager.LocalRig.leftMiddle.LerpFinger(1f, false);
-                    RigManager.LocalRig.leftThumb.LerpFinger(1f, false);
+                    VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
+                    VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
+                    VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
 
-                    RigManager.LocalRig.rightIndex.calcT = 0f;
-                    RigManager.LocalRig.rightMiddle.calcT = 0f;
-                    RigManager.LocalRig.rightThumb.calcT = 0f;
+                    VRRig.LocalRig.rightIndex.calcT = 0f;
+                    VRRig.LocalRig.rightMiddle.calcT = 0f;
+                    VRRig.LocalRig.rightThumb.calcT = 0f;
 
-                    RigManager.LocalRig.rightIndex.LerpFinger(1f, false);
-                    RigManager.LocalRig.rightMiddle.LerpFinger(1f, false);
-                    RigManager.LocalRig.rightThumb.LerpFinger(1f, false);
+                    VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+                    VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
+                    VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
                 }
                 if (GetGunInput(true))
                 {
@@ -3664,7 +3664,7 @@ namespace iiMenu.Mods
                 if (gunLocked)
                 {
                     gunLocked = false;
-                    RigManager.LocalRig.enabled = true;
+                    VRRig.LocalRig.enabled = true;
                 }
             }
         }
@@ -3678,39 +3678,39 @@ namespace iiMenu.Mods
 
                 if (gunLocked && lockTarget != null)
                 {
-                    RigManager.LocalRig.enabled = false;
+                    VRRig.LocalRig.enabled = false;
 
-                    RigManager.LocalRig.transform.position = lockTarget.headMesh.transform.position + (lockTarget.headMesh.transform.forward * (UnityEngine.Random.Range(10f, 50f) / 100f));
-                    RigManager.LocalRig.head.rigTarget.transform.LookAt(lockTarget.headMesh.transform.position);
-                    Quaternion dirLook = RigManager.LocalRig.head.rigTarget.transform.rotation;
+                    VRRig.LocalRig.transform.position = lockTarget.headMesh.transform.position + (lockTarget.headMesh.transform.forward * (UnityEngine.Random.Range(10f, 50f) / 100f));
+                    VRRig.LocalRig.head.rigTarget.transform.LookAt(lockTarget.headMesh.transform.position);
+                    Quaternion dirLook = VRRig.LocalRig.head.rigTarget.transform.rotation;
 
-                    RigManager.LocalRig.transform.rotation = dirLook;
+                    VRRig.LocalRig.transform.rotation = dirLook;
 
-                    RigManager.LocalRig.leftHand.rigTarget.transform.position = lockTarget.headMesh.transform.position + (lockTarget.headMesh.transform.right * 0.2f);
-                    RigManager.LocalRig.rightHand.rigTarget.transform.position = lockTarget.headMesh.transform.position + (lockTarget.headMesh.transform.right * -0.2f);
+                    VRRig.LocalRig.leftHand.rigTarget.transform.position = lockTarget.headMesh.transform.position + (lockTarget.headMesh.transform.right * 0.2f);
+                    VRRig.LocalRig.rightHand.rigTarget.transform.position = lockTarget.headMesh.transform.position + (lockTarget.headMesh.transform.right * -0.2f);
 
-                    RigManager.LocalRig.head.rigTarget.transform.rotation = dirLook;
+                    VRRig.LocalRig.head.rigTarget.transform.rotation = dirLook;
 
-                    RigManager.LocalRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(RigManager.LocalRig.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
-                    RigManager.LocalRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(RigManager.LocalRig.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
+                    VRRig.LocalRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(VRRig.LocalRig.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
+                    VRRig.LocalRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(VRRig.LocalRig.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
 
                     FixRigHandRotation();
 
-                    RigManager.LocalRig.leftIndex.calcT = 0f;
-                    RigManager.LocalRig.leftMiddle.calcT = 0f;
-                    RigManager.LocalRig.leftThumb.calcT = 0f;
+                    VRRig.LocalRig.leftIndex.calcT = 0f;
+                    VRRig.LocalRig.leftMiddle.calcT = 0f;
+                    VRRig.LocalRig.leftThumb.calcT = 0f;
 
-                    RigManager.LocalRig.leftIndex.LerpFinger(1f, false);
-                    RigManager.LocalRig.leftMiddle.LerpFinger(1f, false);
-                    RigManager.LocalRig.leftThumb.LerpFinger(1f, false);
+                    VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
+                    VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
+                    VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
 
-                    RigManager.LocalRig.rightIndex.calcT = 0f;
-                    RigManager.LocalRig.rightMiddle.calcT = 0f;
-                    RigManager.LocalRig.rightThumb.calcT = 0f;
+                    VRRig.LocalRig.rightIndex.calcT = 0f;
+                    VRRig.LocalRig.rightMiddle.calcT = 0f;
+                    VRRig.LocalRig.rightThumb.calcT = 0f;
 
-                    RigManager.LocalRig.rightIndex.LerpFinger(1f, false);
-                    RigManager.LocalRig.rightMiddle.LerpFinger(1f, false);
-                    RigManager.LocalRig.rightThumb.LerpFinger(1f, false);
+                    VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+                    VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
+                    VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
                 }
                 if (GetGunInput(true))
                 {
@@ -3727,7 +3727,7 @@ namespace iiMenu.Mods
                 if (gunLocked)
                 {
                     gunLocked = false;
-                    RigManager.LocalRig.enabled = true;
+                    VRRig.LocalRig.enabled = true;
                 }
             }
         }
@@ -3741,35 +3741,35 @@ namespace iiMenu.Mods
 
                 if (gunLocked && lockTarget != null)
                 {
-                    RigManager.LocalRig.enabled = false;
+                    VRRig.LocalRig.enabled = false;
 
                     Vector3 position = lockTarget.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
 
-                    RigManager.LocalRig.transform.position = position;
-                    RigManager.LocalRig.transform.LookAt(lockTarget.transform.position);
+                    VRRig.LocalRig.transform.position = position;
+                    VRRig.LocalRig.transform.LookAt(lockTarget.transform.position);
 
-                    RigManager.LocalRig.head.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
-                    RigManager.LocalRig.leftHand.rigTarget.transform.position = lockTarget.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
-                    RigManager.LocalRig.rightHand.rigTarget.transform.position = lockTarget.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
+                    VRRig.LocalRig.head.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+                    VRRig.LocalRig.leftHand.rigTarget.transform.position = lockTarget.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
+                    VRRig.LocalRig.rightHand.rigTarget.transform.position = lockTarget.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
 
-                    RigManager.LocalRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
-                    RigManager.LocalRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+                    VRRig.LocalRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+                    VRRig.LocalRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
 
-                    RigManager.LocalRig.leftIndex.calcT = 0f;
-                    RigManager.LocalRig.leftMiddle.calcT = 0f;
-                    RigManager.LocalRig.leftThumb.calcT = 0f;
+                    VRRig.LocalRig.leftIndex.calcT = 0f;
+                    VRRig.LocalRig.leftMiddle.calcT = 0f;
+                    VRRig.LocalRig.leftThumb.calcT = 0f;
 
-                    RigManager.LocalRig.leftIndex.LerpFinger(1f, false);
-                    RigManager.LocalRig.leftMiddle.LerpFinger(1f, false);
-                    RigManager.LocalRig.leftThumb.LerpFinger(1f, false);
+                    VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
+                    VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
+                    VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
 
-                    RigManager.LocalRig.rightIndex.calcT = 0f;
-                    RigManager.LocalRig.rightMiddle.calcT = 0f;
-                    RigManager.LocalRig.rightThumb.calcT = 0f;
+                    VRRig.LocalRig.rightIndex.calcT = 0f;
+                    VRRig.LocalRig.rightMiddle.calcT = 0f;
+                    VRRig.LocalRig.rightThumb.calcT = 0f;
 
-                    RigManager.LocalRig.rightIndex.LerpFinger(1f, false);
-                    RigManager.LocalRig.rightMiddle.LerpFinger(1f, false);
-                    RigManager.LocalRig.rightThumb.LerpFinger(1f, false);
+                    VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+                    VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
+                    VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
                 }
                 if (GetGunInput(true))
                 {
@@ -3786,7 +3786,7 @@ namespace iiMenu.Mods
                 if (gunLocked)
                 {
                     gunLocked = false;
-                    RigManager.LocalRig.enabled = true;
+                    VRRig.LocalRig.enabled = true;
                 }
             }
         }
@@ -3800,8 +3800,8 @@ namespace iiMenu.Mods
 
                 if (gunLocked && lockTarget != null)
                 {
-                    RigManager.LocalRig.enabled = false;
-                    RigManager.LocalRig.transform.position = lockTarget.transform.position - new Vector3(0f, 2f, 0f);
+                    VRRig.LocalRig.enabled = false;
+                    VRRig.LocalRig.transform.position = lockTarget.transform.position - new Vector3(0f, 2f, 0f);
 
                     if (Time.time > Fun.splashDel)
                     {
@@ -3833,7 +3833,7 @@ namespace iiMenu.Mods
                 if (gunLocked)
                 {
                     gunLocked = false;
-                    RigManager.LocalRig.enabled = true;
+                    VRRig.LocalRig.enabled = true;
                 }
             }
         }
@@ -3847,51 +3847,51 @@ namespace iiMenu.Mods
 
                 if (gunLocked && lockTarget != null)
                 {
-                    RigManager.LocalRig.enabled = false;
+                    VRRig.LocalRig.enabled = false;
 
                     if (!GetIndex("Reverse Intercourse").enabled)
                     {
-                        RigManager.LocalRig.transform.position = lockTarget.transform.position + (lockTarget.transform.forward * -(0.2f + (Mathf.Sin(Time.frameCount / 8f) * 0.1f)));
-                        RigManager.LocalRig.transform.rotation = lockTarget.transform.rotation;
+                        VRRig.LocalRig.transform.position = lockTarget.transform.position + (lockTarget.transform.forward * -(0.2f + (Mathf.Sin(Time.frameCount / 8f) * 0.1f)));
+                        VRRig.LocalRig.transform.rotation = lockTarget.transform.rotation;
 
-                        RigManager.LocalRig.leftHand.rigTarget.transform.position = (lockTarget.transform.position + lockTarget.transform.right * -0.2f) + lockTarget.transform.up * -0.4f;
-                        RigManager.LocalRig.rightHand.rigTarget.transform.position = (lockTarget.transform.position + lockTarget.transform.right * 0.2f) + lockTarget.transform.up * -0.4f;
+                        VRRig.LocalRig.leftHand.rigTarget.transform.position = (lockTarget.transform.position + lockTarget.transform.right * -0.2f) + lockTarget.transform.up * -0.4f;
+                        VRRig.LocalRig.rightHand.rigTarget.transform.position = (lockTarget.transform.position + lockTarget.transform.right * 0.2f) + lockTarget.transform.up * -0.4f;
 
-                        RigManager.LocalRig.leftHand.rigTarget.transform.rotation = lockTarget.transform.rotation;
-                        RigManager.LocalRig.rightHand.rigTarget.transform.rotation = lockTarget.transform.rotation;
+                        VRRig.LocalRig.leftHand.rigTarget.transform.rotation = lockTarget.transform.rotation;
+                        VRRig.LocalRig.rightHand.rigTarget.transform.rotation = lockTarget.transform.rotation;
                     } else
                     {
-                        RigManager.LocalRig.transform.position = lockTarget.transform.position + (lockTarget.transform.forward * (0.2f + (Mathf.Sin(Time.frameCount / 8f) * 0.1f)));
-                        RigManager.LocalRig.transform.rotation = lockTarget.transform.rotation;
+                        VRRig.LocalRig.transform.position = lockTarget.transform.position + (lockTarget.transform.forward * (0.2f + (Mathf.Sin(Time.frameCount / 8f) * 0.1f)));
+                        VRRig.LocalRig.transform.rotation = lockTarget.transform.rotation;
 
-                        RigManager.LocalRig.leftHand.rigTarget.transform.position = (lockTarget.transform.position + lockTarget.transform.right * -0.2f) + lockTarget.transform.up * -0.4f;
-                        RigManager.LocalRig.rightHand.rigTarget.transform.position = (lockTarget.transform.position + lockTarget.transform.right * 0.2f) + lockTarget.transform.up * -0.4f;
+                        VRRig.LocalRig.leftHand.rigTarget.transform.position = (lockTarget.transform.position + lockTarget.transform.right * -0.2f) + lockTarget.transform.up * -0.4f;
+                        VRRig.LocalRig.rightHand.rigTarget.transform.position = (lockTarget.transform.position + lockTarget.transform.right * 0.2f) + lockTarget.transform.up * -0.4f;
 
-                        RigManager.LocalRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(lockTarget.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
-                        RigManager.LocalRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(lockTarget.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
+                        VRRig.LocalRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(lockTarget.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
+                        VRRig.LocalRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(lockTarget.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
 
-                        RigManager.LocalRig.head.rigTarget.transform.rotation = lockTarget.transform.rotation;
+                        VRRig.LocalRig.head.rigTarget.transform.rotation = lockTarget.transform.rotation;
                     }
 
                     FixRigHandRotation();
 
-                    RigManager.LocalRig.leftIndex.calcT = 0f;
-                    RigManager.LocalRig.leftMiddle.calcT = 0f;
-                    RigManager.LocalRig.leftThumb.calcT = 0f;
+                    VRRig.LocalRig.leftIndex.calcT = 0f;
+                    VRRig.LocalRig.leftMiddle.calcT = 0f;
+                    VRRig.LocalRig.leftThumb.calcT = 0f;
 
-                    RigManager.LocalRig.leftIndex.LerpFinger(1f, false);
-                    RigManager.LocalRig.leftMiddle.LerpFinger(1f, false);
-                    RigManager.LocalRig.leftThumb.LerpFinger(1f, false);
+                    VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
+                    VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
+                    VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
 
-                    RigManager.LocalRig.rightIndex.calcT = 0f;
-                    RigManager.LocalRig.rightMiddle.calcT = 0f;
-                    RigManager.LocalRig.rightThumb.calcT = 0f;
+                    VRRig.LocalRig.rightIndex.calcT = 0f;
+                    VRRig.LocalRig.rightMiddle.calcT = 0f;
+                    VRRig.LocalRig.rightThumb.calcT = 0f;
 
-                    RigManager.LocalRig.rightIndex.LerpFinger(1f, false);
-                    RigManager.LocalRig.rightMiddle.LerpFinger(1f, false);
-                    RigManager.LocalRig.rightThumb.LerpFinger(1f, false);
+                    VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+                    VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
+                    VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
 
-                    RigManager.LocalRig.head.rigTarget.transform.rotation = lockTarget.transform.rotation;
+                    VRRig.LocalRig.head.rigTarget.transform.rotation = lockTarget.transform.rotation;
 
                     if ((Time.frameCount % 45) == 0)
                     {
@@ -3905,7 +3905,7 @@ namespace iiMenu.Mods
                             RPCProtection();
                         }
                         else
-                            RigManager.LocalRig.PlayHandTapLocal(64, false, 999999f);
+                            VRRig.LocalRig.PlayHandTapLocal(64, false, 999999f);
                     }
                 }
                 if (GetGunInput(true))
@@ -3923,7 +3923,7 @@ namespace iiMenu.Mods
                 if (gunLocked)
                 {
                     gunLocked = false;
-                    RigManager.LocalRig.enabled = true;
+                    VRRig.LocalRig.enabled = true;
                 }
             }
         }
@@ -3937,34 +3937,34 @@ namespace iiMenu.Mods
 
                 if (gunLocked && lockTarget != null)
                 {
-                    RigManager.LocalRig.enabled = false;
+                    VRRig.LocalRig.enabled = false;
 
-                    RigManager.LocalRig.transform.position = lockTarget.transform.position + (lockTarget.transform.forward * (0.2f + (Mathf.Sin(Time.frameCount / 8f) * 0.1f))) + (lockTarget.transform.up * -0.4f);
-                    RigManager.LocalRig.transform.rotation = Quaternion.Euler(lockTarget.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
+                    VRRig.LocalRig.transform.position = lockTarget.transform.position + (lockTarget.transform.forward * (0.2f + (Mathf.Sin(Time.frameCount / 8f) * 0.1f))) + (lockTarget.transform.up * -0.4f);
+                    VRRig.LocalRig.transform.rotation = Quaternion.Euler(lockTarget.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
 
-                    RigManager.LocalRig.leftHand.rigTarget.transform.position = (lockTarget.transform.position + lockTarget.transform.right * 0.2f) + lockTarget.transform.up * -0.4f;
-                    RigManager.LocalRig.rightHand.rigTarget.transform.position = (lockTarget.transform.position + lockTarget.transform.right * -0.2f) + lockTarget.transform.up * -0.4f;
+                    VRRig.LocalRig.leftHand.rigTarget.transform.position = (lockTarget.transform.position + lockTarget.transform.right * 0.2f) + lockTarget.transform.up * -0.4f;
+                    VRRig.LocalRig.rightHand.rigTarget.transform.position = (lockTarget.transform.position + lockTarget.transform.right * -0.2f) + lockTarget.transform.up * -0.4f;
 
-                    RigManager.LocalRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(lockTarget.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
-                    RigManager.LocalRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(lockTarget.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
+                    VRRig.LocalRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(lockTarget.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
+                    VRRig.LocalRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(lockTarget.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
 
-                    RigManager.LocalRig.head.rigTarget.transform.rotation = Quaternion.Euler(lockTarget.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
+                    VRRig.LocalRig.head.rigTarget.transform.rotation = Quaternion.Euler(lockTarget.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
 
-                    RigManager.LocalRig.leftIndex.calcT = 0f;
-                    RigManager.LocalRig.leftMiddle.calcT = 0f;
-                    RigManager.LocalRig.leftThumb.calcT = 0f;
+                    VRRig.LocalRig.leftIndex.calcT = 0f;
+                    VRRig.LocalRig.leftMiddle.calcT = 0f;
+                    VRRig.LocalRig.leftThumb.calcT = 0f;
 
-                    RigManager.LocalRig.leftIndex.LerpFinger(1f, false);
-                    RigManager.LocalRig.leftMiddle.LerpFinger(1f, false);
-                    RigManager.LocalRig.leftThumb.LerpFinger(1f, false);
+                    VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
+                    VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
+                    VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
 
-                    RigManager.LocalRig.rightIndex.calcT = 0f;
-                    RigManager.LocalRig.rightMiddle.calcT = 0f;
-                    RigManager.LocalRig.rightThumb.calcT = 0f;
+                    VRRig.LocalRig.rightIndex.calcT = 0f;
+                    VRRig.LocalRig.rightMiddle.calcT = 0f;
+                    VRRig.LocalRig.rightThumb.calcT = 0f;
 
-                    RigManager.LocalRig.rightIndex.LerpFinger(1f, false);
-                    RigManager.LocalRig.rightMiddle.LerpFinger(1f, false);
-                    RigManager.LocalRig.rightThumb.LerpFinger(1f, false);
+                    VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+                    VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
+                    VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
 
                     FixRigHandRotation();
 
@@ -3980,7 +3980,7 @@ namespace iiMenu.Mods
                             RPCProtection();
                         }
                         else
-                            RigManager.LocalRig.PlayHandTapLocal(64, true, 999999f);
+                            VRRig.LocalRig.PlayHandTapLocal(64, true, 999999f);
                     }
                 }
                 if (GetGunInput(true))
@@ -3998,7 +3998,7 @@ namespace iiMenu.Mods
                 if (gunLocked)
                 {
                     gunLocked = false;
-                    RigManager.LocalRig.enabled = true;
+                    VRRig.LocalRig.enabled = true;
                 }
             }
         }
@@ -4007,19 +4007,19 @@ namespace iiMenu.Mods
         {
             gunLocked = false;
             lockTarget = null;
-            RigManager.LocalRig.enabled = true;
+            VRRig.LocalRig.enabled = true;
         }
 
         public static void SpazHead()
         {
-            if (RigManager.LocalRig.enabled)
+            if (VRRig.LocalRig.enabled)
             {
-                RigManager.LocalRig.head.trackingRotationOffset.x = UnityEngine.Random.Range(0f, 360f);
-                RigManager.LocalRig.head.trackingRotationOffset.y = UnityEngine.Random.Range(0f, 360f);
-                RigManager.LocalRig.head.trackingRotationOffset.z = UnityEngine.Random.Range(0f, 360f);
+                VRRig.LocalRig.head.trackingRotationOffset.x = UnityEngine.Random.Range(0f, 360f);
+                VRRig.LocalRig.head.trackingRotationOffset.y = UnityEngine.Random.Range(0f, 360f);
+                VRRig.LocalRig.head.trackingRotationOffset.z = UnityEngine.Random.Range(0f, 360f);
             }
             else
-                RigManager.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
+                VRRig.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
         }
 
         public static float headspazDelay;
@@ -4047,13 +4047,13 @@ namespace iiMenu.Mods
 
         private static Vector3 headoffs = Vector3.zero;
         public static void EnableSpazHead() =>
-            headoffs = RigManager.LocalRig.head.trackingPositionOffset;
+            headoffs = VRRig.LocalRig.head.trackingPositionOffset;
 
         public static void SpazHeadPosition() =>
-            RigManager.LocalRig.head.trackingPositionOffset = headoffs + new Vector3(UnityEngine.Random.Range(-0.1f, 0.1f), UnityEngine.Random.Range(-0.1f, 0.1f), UnityEngine.Random.Range(-0.1f, 0.1f));
+            VRRig.LocalRig.head.trackingPositionOffset = headoffs + new Vector3(UnityEngine.Random.Range(-0.1f, 0.1f), UnityEngine.Random.Range(-0.1f, 0.1f), UnityEngine.Random.Range(-0.1f, 0.1f));
 
         public static void FixHeadPosition() =>
-            RigManager.LocalRig.head.trackingPositionOffset = headoffs;
+            VRRig.LocalRig.head.trackingPositionOffset = headoffs;
 
         public static void RandomSpazHeadPosition()
         {
@@ -4083,7 +4083,7 @@ namespace iiMenu.Mods
             ghostException = true;
             if (Time.time > laggyRigDelay)
             {
-                RigManager.LocalRig.enabled = true;
+                VRRig.LocalRig.enabled = true;
                 idiotfixthingy = true;
                 laggyRigDelay = Time.time + 0.5f;
             } else
@@ -4091,7 +4091,7 @@ namespace iiMenu.Mods
                 if (idiotfixthingy)
                     idiotfixthingy = false;
                 else
-                    RigManager.LocalRig.enabled = false;
+                    VRRig.LocalRig.enabled = false;
             }
         }
 
@@ -4100,7 +4100,7 @@ namespace iiMenu.Mods
             ghostException = true;
             if (rightPrimary && !lastprimaryhit)
             {
-                RigManager.LocalRig.enabled = true;
+                VRRig.LocalRig.enabled = true;
                 idiotfixthingy = true;
             }
             else
@@ -4108,7 +4108,7 @@ namespace iiMenu.Mods
                 if (idiotfixthingy)
                     idiotfixthingy = false;
                 else
-                    RigManager.LocalRig.enabled = false;
+                    VRRig.LocalRig.enabled = false;
             }
             lastprimaryhit = rightPrimary;
         }

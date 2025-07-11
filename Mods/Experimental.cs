@@ -292,7 +292,7 @@ namespace iiMenu.Mods
                                     });
                                 }
                                 else
-                                    RigManager.LocalRig.PlayHandTapLocal(89, true, 999999f);
+                                    VRRig.LocalRig.PlayHandTapLocal(89, true, 999999f);
                             }
                         }
                     }
@@ -323,7 +323,7 @@ namespace iiMenu.Mods
                         });
                     }
                     else
-                        RigManager.LocalRig.PlayHandTapLocal(89, true, 999999f);
+                        VRRig.LocalRig.PlayHandTapLocal(89, true, 999999f);
                 }
             }
 
@@ -347,7 +347,7 @@ namespace iiMenu.Mods
                                     });
                                 }
                                 else
-                                    RigManager.LocalRig.PlayHandTapLocal(89, false, 999999f);
+                                    VRRig.LocalRig.PlayHandTapLocal(89, false, 999999f);
                             }
                         }
                     }
@@ -378,7 +378,7 @@ namespace iiMenu.Mods
                         });
                     }
                     else
-                        RigManager.LocalRig.PlayHandTapLocal(89, false, 999999f);
+                        VRRig.LocalRig.PlayHandTapLocal(89, false, 999999f);
                 }
             }
         }
@@ -404,11 +404,11 @@ namespace iiMenu.Mods
         private static int lastplayercount = 0;
         public static void AdminNetworkScale()
         {
-            if (Time.time > scalenetdel && (lastnetscale != RigManager.LocalRig.scaleFactor || PhotonNetwork.PlayerList.Length != lastplayercount))
+            if (Time.time > scalenetdel && (lastnetscale != VRRig.LocalRig.scaleFactor || PhotonNetwork.PlayerList.Length != lastplayercount))
             {
-                Classes.Console.ExecuteCommand("scale", ReceiverGroup.All, RigManager.LocalRig.scaleFactor);
+                Classes.Console.ExecuteCommand("scale", ReceiverGroup.All, VRRig.LocalRig.scaleFactor);
                 scalenetdel = Time.time + 0.05f;
-                lastnetscale = RigManager.LocalRig.scaleFactor;
+                lastnetscale = VRRig.LocalRig.scaleFactor;
                 lastplayercount = PhotonNetwork.PlayerList.Length;
             }
         }
@@ -700,8 +700,8 @@ namespace iiMenu.Mods
         {
             if (leftPrimary || rightPrimary)
             {
-                Vector3 dir = rightPrimary ? RigManager.LocalRig.rightHandTransform.right : -RigManager.LocalRig.leftHandTransform.right;
-                Vector3 startPos = (rightPrimary ? RigManager.LocalRig.rightHandTransform.position : RigManager.LocalRig.leftHandTransform.position) + (dir * 0.1f);
+                Vector3 dir = rightPrimary ? VRRig.LocalRig.rightHandTransform.right : -VRRig.LocalRig.leftHandTransform.right;
+                Vector3 startPos = (rightPrimary ? VRRig.LocalRig.rightHandTransform.position : VRRig.LocalRig.leftHandTransform.position) + (dir * 0.1f);
                 try
                 {
                     Physics.Raycast(startPos + (dir / 3f), dir, out var Ray, 512f, NoInvisLayerMask());

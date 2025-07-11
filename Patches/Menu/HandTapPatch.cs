@@ -1,5 +1,4 @@
 ﻿using HarmonyLib;
-using iiMenu.Classes;
 using iiMenu.Menu;
 using Photon.Pun;
 using UnityEngine;
@@ -42,7 +41,7 @@ namespace iiMenu.Patches
                                 Main.RPCProtection();
                             }
                         } else
-                            RigManager.LocalRig.PlayHandTapLocal(audioClipIndex, isLeftHand, overrideVolume);
+                            VRRig.LocalRig.PlayHandTapLocal(audioClipIndex, isLeftHand, overrideVolume);
 
                         return false;
                     }

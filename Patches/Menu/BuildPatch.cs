@@ -1,5 +1,4 @@
 ﻿using HarmonyLib;
-using iiMenu.Classes;
 
 namespace iiMenu.Patches
 {
@@ -14,10 +13,10 @@ namespace iiMenu.Patches
         {
             if (enabled)
             {
-                previous = RigManager.LocalRig.NativeScale;
-                previous2 = RigManager.LocalRig.ScaleMultiplier;
-                RigManager.LocalRig.NativeScale = 1f;
-                RigManager.LocalRig.ScaleMultiplier = 1f;
+                previous = VRRig.LocalRig.NativeScale;
+                previous2 = VRRig.LocalRig.ScaleMultiplier;
+                VRRig.LocalRig.NativeScale = 1f;
+                VRRig.LocalRig.ScaleMultiplier = 1f;
             }
         }
 
@@ -25,8 +24,8 @@ namespace iiMenu.Patches
         {
             if (enabled)
             {
-                RigManager.LocalRig.NativeScale = previous;
-                RigManager.LocalRig.ScaleMultiplier = previous2;
+                VRRig.LocalRig.NativeScale = previous;
+                VRRig.LocalRig.ScaleMultiplier = previous2;
             }
         }
     }
