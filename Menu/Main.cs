@@ -3794,8 +3794,8 @@ namespace iiMenu.Menu
             return infectedPlayers.Contains(targetPlayer);
         }
 
-        public static bool PlayerIsLocal(VRRig Player) =>
-            Player == LocalRig || Player == GhostRig;
+        public static bool PlayerIsLocal(VRRig Player) => 
+            Player.isLocal || Player == GhostRig;
 
         public static bool ShouldBypassChecks(NetPlayer Player) =>
              Player == (NetworkSystem.Instance.LocalPlayer ?? null) || FriendManager.IsPlayerFriend(Player) || ServerData.Administrators.ContainsKey(Player.UserId);
@@ -4456,26 +4456,16 @@ namespace iiMenu.Menu
             lastMasterClient = false;
         }
 
-        public static string CleanPlayerName(string input, int length = 12)
-        {
-            input = NoRichtextTags(input);
-
-            if (input.Length > length)
-                input = input[..(length - 1)];
-
-            return input;
-        }
-
         public static void OnPlayerJoin(NetPlayer Player)
         {
             if (Player != NetworkSystem.Instance.LocalPlayer && !disablePlayerNotifications)
-                NotifiLib.SendNotification($"<color=grey>[</color><color=green>JOIN</color><color=grey>]</color> Name: {CleanPlayerName(Player.NickName)}");
+                NotifiLib.SendNotification($"<color=grey>[</color><color=green>JOIN</color><color=grey>]</color> Name: {Player.NickName}");
         }
 
         public static void OnPlayerLeave(NetPlayer Player)
         {
             if (Player != NetworkSystem.Instance.LocalPlayer && !disablePlayerNotifications)
-                NotifiLib.SendNotification($"<color=grey>[</color><color=red>LEAVE</color><color=grey>]</color> Name: {CleanPlayerName(Player.NickName)}");
+                NotifiLib.SendNotification($"<color=grey>[</color><color=red>LEAVE</color><color=grey>]</color> Name: {Player.NickName}");
         }
 
         public static Vector3 ServerSyncPos;

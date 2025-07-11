@@ -1,5 +1,4 @@
 ﻿using HarmonyLib;
-using iiMenu.Classes;
 
 namespace iiMenu.Patches
 {
@@ -11,7 +10,7 @@ namespace iiMenu.Patches
 
         public static bool Prefix(VRRig __instance, int askingPlayerID, PhotonMessageInfoWrapped info)
         {
-            if (__instance == RigManager.LocalRig)
+            if (__instance.isLocal)
             {
                 if (nameSpoofEnabled)
                     return false;
