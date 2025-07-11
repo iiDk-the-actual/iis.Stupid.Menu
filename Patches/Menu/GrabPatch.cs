@@ -1,5 +1,4 @@
 ﻿using HarmonyLib;
-using iiMenu.Classes;
 using UnityEngine;
 
 namespace iiMenu.Patches
@@ -10,14 +9,14 @@ namespace iiMenu.Patches
         public static bool enabled;
 
         public static bool Prefix(VRRig __instance, VRRig grabbedByRig, bool grabbedBody, bool grabbedLeftHand, bool grabbedWithLeftHand) =>
-            !(enabled && __instance == RigManager.LocalRig);
+            !(enabled && __instance.isLocal);
     }
 
     [HarmonyPatch(typeof(VRRig), "DroppedByPlayer")]
     public class DropPatch
     {
         public static bool Prefix(VRRig __instance, VRRig grabbedByRig, Vector3 throwVelocity) =>
-            !(GrabPatch.enabled && __instance == RigManager.LocalRig);
+            !(GrabPatch.enabled && __instance.isLocal);
     }
 
     [HarmonyPatch(typeof(GuardianRPCs), "GuardianLaunchPlayer")]

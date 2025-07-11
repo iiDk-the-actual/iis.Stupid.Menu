@@ -17,7 +17,7 @@ namespace iiMenu.Patches
 
         public static bool Prefix(VRRig __instance, PhotonMessageInfoWrapped info)
         {
-            if (__instance == RigManager.LocalRig)
+            if (__instance.isLocal)
             {
                 if (enabled)
                 {

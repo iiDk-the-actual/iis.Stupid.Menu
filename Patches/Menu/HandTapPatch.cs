@@ -18,7 +18,7 @@ namespace iiMenu.Patches
         {
             if (enabled)
             {
-                if (__instance == RigManager.LocalRig)
+                if (__instance.isLocal)
                 {
                     if (doOverride)
                     {

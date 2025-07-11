@@ -1,5 +1,4 @@
 ﻿using HarmonyLib;
-using iiMenu.Classes;
 
 namespace iiMenu.Patches
 {
@@ -7,7 +6,7 @@ namespace iiMenu.Patches
     public class RigPatch
     {
         public static bool Prefix(VRRig __instance) =>
-            __instance != RigManager.LocalRig;
+            !__instance.isLocal;
     }
 
     // Thanks nugget for help with patch
@@ -15,6 +14,6 @@ namespace iiMenu.Patches
     public static class RigPatch2
     {
         public static bool Prefix(VRRigJobManager __instance, VRRig rig) =>
-            rig != RigManager.LocalRig;
+            !rig.isLocal;
     }
 }
