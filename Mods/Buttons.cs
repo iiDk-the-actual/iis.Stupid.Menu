@@ -262,10 +262,14 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Disconnect", method =() => Important.DisconnectR(), isTogglable = false, toolTip = "Disconnects you from the the room."},
                 new ButtonInfo { buttonText = "Reconnect", method =() => Important.ReconnectR(), isTogglable = false, toolTip = "Reconnects you from and to the the room."},
+                
                 new ButtonInfo { buttonText = "Cancel Reconnect", method =() => Important.CancelReconnect(), isTogglable = false, toolTip = "Cancels the reconnection loop."},
+                
                 new ButtonInfo { buttonText = "Join Last Room", method =() => PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(lastRoom, JoinType.Solo), isTogglable = false, toolTip = "Joins the last room you left."},
                 new ButtonInfo { buttonText = "Join Random", method =() => Important.JoinRandomR(), isTogglable = false, toolTip = "Joins a random public room." },
+                
                 new ButtonInfo { buttonText = "Create Public", method =() => Important.CreateRoom(Important.RandomRoomName(), true), isTogglable = false, toolTip = "Creates a public room."},
+                new ButtonInfo { buttonText = "Create Duplicate", method =() => Patches.RoomPatch.enabled = true, disableMethod =() =>  Patches.RoomPatch.enabled = false, toolTip = "Creates a duplicate code whenever trying to join a room."},
 
                 new ButtonInfo { buttonText = "Join Menu Room", method =() => PhotonNetworkController.Instance.AttemptToJoinSpecificRoom($"<$II_{PluginInfo.Version}>", JoinType.Solo), isTogglable = false, toolTip = "Connects you to a room that is exclusive to ii's <b>Stupid</b> Menu users." },
 

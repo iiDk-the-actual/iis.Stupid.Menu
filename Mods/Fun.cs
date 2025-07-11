@@ -2296,6 +2296,97 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void RequestCreatePiece(int pieceType, Vector3 position, Quaternion rotation, int materialType, RpcTarget target, bool overrideFreeze = false)
+        {
+            BuilderTable table = GetBuilderTable();
+            BuilderTableNetworking Networking = table.builderNetworking;
+            if (NetworkSystem.Instance.IsMasterClient)
+            {
+                if (Time.time > blockDelay)
+                {
+                    int pieceId = table.CreatePieceId();
+
+                    object[] args = new object[]
+                    {
+                        pieceType,
+                        pieceId,
+                        BitPackUtils.PackWorldPosForNetwork(position),
+                        BitPackUtils.PackQuaternionForNetwork(rotation),
+                        materialType,
+                        (byte)4,
+                        1,
+                        PhotonNetwork.LocalPlayer
+                    };
+
+                    Networking.photonView.RPC("PieceCreatedByShelfRPC", target, args);
+
+                    if (overrideFreeze || !GetIndex("Zero Gravity Blocks").enabled)
+                    {
+                        blockDelay = Time.time + 0.02f;
+
+                        args = new object[]
+                        {
+                            Networking.CreateLocalCommandId(),
+                            pieceId,
+                            true,
+                            BitPackUtils.PackHandPosRotForNetwork(Vector3.zero, Quaternion.identity),
+                            PhotonNetwork.LocalPlayer
+                        };
+
+                        Networking.photonView.RPC("PieceGrabbedRPC", RpcTarget.All, args);
+
+                        args = new object[]
+                        {
+                            Networking.CreateLocalCommandId(),
+                            pieceId,
+                            position,
+                            rotation,
+                            Vector3.zero,
+                            Vector3.zero,
+                            PhotonNetwork.LocalPlayer
+                        };
+
+                        Networking.photonView.RPC("PieceDroppedRPC", RpcTarget.All, args);
+                    }
+                }
+            }
+            else
+            {
+                if (Time.time > blockDelay)
+                {
+                    blockDelay = Time.time + blockDebounce;
+                    BuilderPiece piece = GetAllType<BuilderPiece>()
+                        .Where(piece => piece.gameObject.activeInHierarchy)
+                        .Where(piece => piece.pieceType == pieceType)
+                        .Where(piece => !piece.isBuiltIntoTable)
+                        .Where(piece => piece.CanPlayerGrabPiece(PhotonNetwork.LocalPlayer.ActorNumber, piece.transform.position))
+                        .Where(piece => Vector3.Distance(piece.transform.position, ServerLeftHandPos) < 2.5f)
+                        .OrderBy(piece => Vector3.Distance(piece.transform.position, ServerLeftHandPos))
+                        .FirstOrDefault()
+                        ?? null;
+
+                    if (piece == null)
+                        piece = GetAllType<BuilderPiece>()
+                            .Where(piece => piece.gameObject.activeInHierarchy)
+                            .Where(piece => !piece.isBuiltIntoTable)
+                            .Where(piece => piece.CanPlayerGrabPiece(PhotonNetwork.LocalPlayer.ActorNumber, piece.transform.position))
+                            .Where(piece => Vector3.Distance(piece.transform.position, ServerLeftHandPos) < 2.5f)
+                            .OrderBy(piece => Vector3.Distance(piece.transform.position, ServerLeftHandPos))
+                            .FirstOrDefault()
+                            ?? null;
+
+                    if (piece == null)
+                        return;
+
+                    if (Vector3.Distance(ServerLeftHandPos, position) > 2.5f)
+                        position = ServerLeftHandPos + ((position - ServerLeftHandPos).normalized * 2.5f);
+
+                    Networking.RequestGrabPiece(piece, true, Vector3.zero, Quaternion.identity);
+                    Networking.RequestDropPiece(piece, position, rotation, Vector3.zero, Vector3.zero);
+                }
+            }
+        }
+
         public static void RequestGrabPiece(BuilderPiece piece, bool isLefHand, Vector3 localPosition, Quaternion localRotation)
         {
             BuilderTableNetworking Networking = GetBuilderTable().builderNetworking;
