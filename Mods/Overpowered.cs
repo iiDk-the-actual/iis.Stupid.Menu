@@ -843,7 +843,6 @@ namespace iiMenu.Mods
             }
         }
 
-        private static float lastBeforeClearTime = -1f;
         public static void BlockCrashGun()
         {
             if (GetGunInput(false))
