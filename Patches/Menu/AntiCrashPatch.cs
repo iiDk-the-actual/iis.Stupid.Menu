@@ -1,5 +1,6 @@
 ﻿using GorillaExtensions;
 using HarmonyLib;
+using iiMenu.Classes;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,7 +13,7 @@ namespace iiMenu.Patches
 
         public static bool Prefix(VRRig __instance, VRRig grabbedByRig, Vector3 throwVelocity)
         {
-            if (enabled && __instance.isLocal && !GTExt.IsValid(throwVelocity))
+            if (enabled && __instance == RigManager.LocalRig && !GTExt.IsValid(throwVelocity))
                 return false;
             
             return true;
@@ -25,7 +26,7 @@ namespace iiMenu.Patches
         private static List<float> callTimestamps = new List<float>();
         public static bool Prefix(VRRig __instance)
         {
-            if (AntiCrashPatch.enabled && __instance.isLocal)
+            if (AntiCrashPatch.enabled && __instance == RigManager.LocalRig)
             {
                 callTimestamps.Add(Time.time);
                 callTimestamps.RemoveAll(t => (Time.time - t) > 1);
@@ -42,7 +43,7 @@ namespace iiMenu.Patches
         private static List<float> callTimestamps = new List<float>();
         public static bool Prefix(VRRig __instance)
         {
-            if (AntiCrashPatch.enabled && __instance.isLocal)
+            if (AntiCrashPatch.enabled && __instance == RigManager.LocalRig)
             {
                 callTimestamps.Add(Time.time);
                 callTimestamps.RemoveAll(t => (Time.time - t) > 1);

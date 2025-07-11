@@ -1,7 +1,6 @@
 using GorillaExtensions;
 using GorillaGameModes;
 using GorillaNetworking;
-using iiMenu.Classes;
 using Photon.Pun;
 using System;
 using System.Collections.Generic;
@@ -312,7 +311,7 @@ namespace iiMenu.Mods
                 float closest = float.MaxValue;
                 foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                 {
-                    if (!vrrig.isLocal && PlayerIsTagged(vrrig))
+                    if (vrrig != LocalRig && PlayerIsTagged(vrrig))
                     {
                         float dist = Vector3.Distance(GorillaTagger.Instance.headCollider.transform.position, vrrig.headMesh.transform.position);
                         if (dist < closest)
@@ -511,7 +510,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
-                if (rig.isLocal)
+                if (rig == LocalRig)
                     continue;
 
                 if (!predictions.TryGetValue(rig, out LineRenderer Line))
@@ -662,7 +661,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (!vrrig.isLocal)
+                if (vrrig != LocalRig)
                 {
                     if (!nametags.ContainsKey(vrrig))
                     {
@@ -715,7 +714,7 @@ namespace iiMenu.Mods
             {
                 try
                 {
-                    if (!vrrig.isLocal)
+                    if (vrrig != LocalRig)
                     {
                         if (!velnametags.ContainsKey(vrrig))
                         {
@@ -769,7 +768,7 @@ namespace iiMenu.Mods
             {
                 try
                 {
-                    if (!vrrig.isLocal)
+                    if (vrrig != LocalRig)
                     {
                         if (!FPSnametags.ContainsKey(vrrig))
                         {
@@ -823,7 +822,7 @@ namespace iiMenu.Mods
             {
                 try
                 {
-                    if (!vrrig.isLocal)
+                    if (vrrig != LocalRig)
                     {
                         if (!turnNameTags.ContainsKey(vrrig))
                         {
@@ -880,7 +879,7 @@ namespace iiMenu.Mods
             {
                 try
                 {
-                    if (!vrrig.isLocal)
+                    if (vrrig != LocalRig)
                     {
                         if (!taggedNameTags.ContainsKey(vrrig))
                         {
@@ -1046,7 +1045,7 @@ namespace iiMenu.Mods
         {
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (!vrrig.isLocal)
+                if (vrrig != LocalRig)
                 {
                     vrrig.lerpValueBody = 2f;
                     vrrig.lerpValueFingers = 1f;
@@ -1058,7 +1057,7 @@ namespace iiMenu.Mods
         {
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (!vrrig.isLocal)
+                if (vrrig != LocalRig)
                 {
                     vrrig.lerpValueBody = LocalRig.lerpValueBody;
                     vrrig.lerpValueFingers = LocalRig.lerpValueFingers;
@@ -1081,7 +1080,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (!vrrig.isLocal)
+                if (vrrig != LocalRig)
                 {
                     bool showtracersplz = false;
                     Color thecolor = vrrig.playerColor;
@@ -1155,7 +1154,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (!vrrig.isLocal)
+                if (vrrig != LocalRig)
                 {
                     if (!platformIndicators.TryGetValue(vrrig, out GameObject indicator))
                     {
@@ -1212,7 +1211,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (!vrrig.isLocal)
+                if (vrrig != LocalRig)
                 {
                     if (!platformIndicators.TryGetValue(vrrig, out GameObject indicator))
                     {
@@ -1270,7 +1269,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (!vrrig.isLocal)
+                if (vrrig != LocalRig)
                 {
                     float size = 0f;
                     GorillaSpeakerLoudness recorder = vrrig.GetComponent<GorillaSpeakerLoudness>();
@@ -1337,7 +1336,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (!vrrig.isLocal)
+                if (vrrig != LocalRig)
                 {
                     float size = 0f;
                     GorillaSpeakerLoudness recorder = vrrig.GetComponent<GorillaSpeakerLoudness>();
@@ -1458,7 +1457,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (!vrrig.isLocal)
+                if (vrrig != LocalRig)
                 {
                     if (!boneESP.TryGetValue(vrrig, out List<LineRenderer> Lines))
                     {
@@ -1555,7 +1554,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (!vrrig.isLocal)
+                if (vrrig != LocalRig)
                 {
                     if (!boneESP.TryGetValue(vrrig, out List<LineRenderer> Lines))
                     {
@@ -1662,7 +1661,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (!vrrig.isLocal)
+                if (vrrig != LocalRig)
                 {
                     if (!boneESP.TryGetValue(vrrig, out List<LineRenderer> Lines))
                     {
@@ -1774,7 +1773,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
-                if (rig.isLocal)
+                if (rig == LocalRig)
                     continue;
 
                 if (!wireframes.TryGetValue(rig, out SkinnedWireframeRenderer wireframe))
@@ -1843,7 +1842,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
-                if (rig.isLocal)
+                if (rig == LocalRig)
                     continue;
 
                 if (!wireframes.TryGetValue(rig, out SkinnedWireframeRenderer wireframe))
@@ -1919,7 +1918,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
-                if (rig.isLocal)
+                if (rig == LocalRig)
                     continue;
 
                 if (!wireframes.TryGetValue(rig, out SkinnedWireframeRenderer wireframe))
@@ -2089,7 +2088,7 @@ namespace iiMenu.Mods
         {
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (!vrrig.isLocal)
+                if (vrrig != LocalRig)
                 {
                     FixRigMaterialESPColors(vrrig);
 
@@ -2118,7 +2117,7 @@ namespace iiMenu.Mods
                 {
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
-                        if (PlayerIsTagged(vrrig) && !vrrig.isLocal)
+                        if (PlayerIsTagged(vrrig) && vrrig != LocalRig)
                         {
                             FixRigMaterialESPColors(vrrig);
 
@@ -2139,7 +2138,7 @@ namespace iiMenu.Mods
                 {
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
-                        if (!PlayerIsTagged(vrrig) && !vrrig.isLocal)
+                        if (!PlayerIsTagged(vrrig) && vrrig != LocalRig)
                         {
                             FixRigMaterialESPColors(vrrig);
 
@@ -2155,7 +2154,7 @@ namespace iiMenu.Mods
             {
                 foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                 {
-                    if (!vrrig.isLocal)
+                    if (vrrig != LocalRig)
                     {
                         FixRigMaterialESPColors(vrrig);
 
@@ -2208,7 +2207,7 @@ namespace iiMenu.Mods
         {
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (!vrrig.isLocal)
+                if (vrrig != LocalRig)
                 {
                     vrrig.mainSkin.material.shader = Shader.Find("GorillaTag/UberShader");
                     if (vrrig.mainSkin.material.name.Contains("gorilla_body"))
@@ -2241,7 +2240,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (!vrrig.isLocal)
+                if (vrrig != LocalRig)
                 {
                     if (!boxESP.TryGetValue(vrrig, out GameObject box))
                     {
@@ -2294,7 +2293,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (!vrrig.isLocal)
+                if (vrrig != LocalRig)
                 {
                     if (!boxESP.TryGetValue(vrrig, out GameObject box))
                     {
@@ -2354,7 +2353,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (!vrrig.isLocal)
+                if (vrrig != LocalRig)
                 {
                     if (!boxESP.TryGetValue(vrrig, out GameObject box))
                     {
@@ -2412,7 +2411,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (!vrrig.isLocal)
+                if (vrrig != LocalRig)
                 {
                     Color thecolor = vrrig.playerColor;
                     if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
@@ -2498,7 +2497,7 @@ namespace iiMenu.Mods
                 {
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
-                        if (PlayerIsTagged(vrrig) && !vrrig.isLocal)
+                        if (PlayerIsTagged(vrrig) && vrrig != LocalRig)
                         {
                             Color thecolor = GetPlayerColor(vrrig);
                             if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
@@ -2559,7 +2558,7 @@ namespace iiMenu.Mods
                 {
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
-                        if (!PlayerIsTagged(vrrig) && !vrrig.isLocal)
+                        if (!PlayerIsTagged(vrrig) && vrrig != LocalRig)
                         {
                             Color thecolor = vrrig.playerColor;
                             if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
@@ -2621,7 +2620,7 @@ namespace iiMenu.Mods
             {
                 foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                 {
-                    if (!vrrig.isLocal)
+                    if (vrrig != LocalRig)
                     {
                         Color thecolor = vrrig.playerColor;
                         if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
@@ -2834,7 +2833,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
-                if (rig.isLocal)
+                if (rig == LocalRig)
                     continue;
 
                 if (!breadcrumbs.TryGetValue(rig, out TrailRenderer trail))
@@ -2897,7 +2896,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
-                if (rig.isLocal)
+                if (rig == LocalRig)
                     continue;
 
                 if (!breadcrumbs.TryGetValue(rig, out TrailRenderer trail))
@@ -2967,7 +2966,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
-                if (rig.isLocal)
+                if (rig == LocalRig)
                     continue;
 
                 if (!breadcrumbs.TryGetValue(rig, out TrailRenderer trail))
@@ -3100,7 +3099,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
             {
-                if (playerRig.isLocal)
+                if (playerRig == LocalRig)
                     continue;
 
                 Color lineColor = playerRig.playerColor;
@@ -3140,7 +3139,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
             {
-                if (playerRig.isLocal)
+                if (playerRig == LocalRig)
                     continue;
 
                 Color lineColor = playerRig.playerColor;
@@ -3199,7 +3198,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
             {
-                if (playerRig.isLocal)
+                if (playerRig == LocalRig)
                     continue;
 
                 if (GetPlayerFromVRRig(playerRig) == currentTarget)
@@ -3255,7 +3254,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
             {
-                if (playerRig.isLocal)
+                if (playerRig == LocalRig)
                     continue;
 
                 Color lineColor = playerRig.playerColor;
@@ -3298,7 +3297,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
             {
-                if (playerRig.isLocal)
+                if (playerRig == LocalRig)
                     continue;
 
                 Color lineColor = playerRig.playerColor;
@@ -3364,7 +3363,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
             {
-                if (playerRig.isLocal)
+                if (playerRig == LocalRig)
                     continue;
 
                 if (GetPlayerFromVRRig(playerRig) == currentTarget)
@@ -3426,7 +3425,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
             {
-                if (playerRig.isLocal) // Skip local player
+                if (playerRig == LocalRig) // Skip local player
                     continue;
 
                 Color tagColor = followMenuTheme ? titleColor : Color.white;
@@ -3488,7 +3487,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
             {
-                if (playerRig.isLocal) //skip local player
+                if (playerRig == LocalRig) //skip local player
                     continue;
 
                 Color tagColor = followMenuTheme ? titleColor : Color.white;
@@ -3579,7 +3578,7 @@ namespace iiMenu.Mods
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
             {
-                if (playerRig.isLocal) // Skip local player
+                if (playerRig == LocalRig) // Skip local player
                     continue;
 
                 if (GetPlayerFromVRRig(playerRig) == currentTarget) // Use ID for quick comparison

@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using iiMenu.Classes;
 using iiMenu.Mods;
 using UnityEngine;
 
@@ -13,7 +14,7 @@ namespace iiMenu.Patches
 
         public static void Postfix(VRRig __instance)
         {
-            if (__instance.isLocal)
+            if (__instance == RigManager.LocalRig)
             {
                 if (enabled)
                 {
