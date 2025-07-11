@@ -241,6 +241,27 @@ namespace iiMenu.Mods
             GetObject("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/QuitBox").SetActive(true);
         }
 
+        public static void DisablePitchScaling()
+        {
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (!vrrig.isLocal)
+                    vrrig.voicePitchForRelativeScale = new AnimationCurve(
+                        new Keyframe(0f, 1f, 0f, 0f),
+                        new Keyframe(1f, 1f, 0f, 0f)
+                    );
+            }
+        }
+
+        public static void EnablePitchScaling()
+        {
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (!vrrig.isLocal)
+                    vrrig.voicePitchForRelativeScale = VRRig.LocalRig.voicePitchForRelativeScale;
+            }
+        }
+
         public static void DisableMouthMovement()
         {
             VRRig.LocalRig.shouldSendSpeakingLoudness = false;
