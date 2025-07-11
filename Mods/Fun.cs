@@ -1462,10 +1462,49 @@ namespace iiMenu.Mods
                         gbgd = Time.time + 0.1f;
                         pieceIdSet = gunTarget.pieceType;
                         NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully selected piece " + gunTarget.name.Replace("(Clone)", "") + "!");
-                        RPCProtection();
                     }
                 }
             }
+        }
+
+        public static void SelectBlock(int type, string name)
+        {
+            pieceIdSet = type;
+            NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully selected piece " + name.Replace("(Clone)", "") + "!");
+        }
+
+        public static void BlockBrowser()
+        {
+            rememberdirectory = pageNumber;
+            currentCategoryName = "Temporary Category";
+
+            Dictionary<int, string> blocks = new Dictionary<int, string> { };
+
+            List<ButtonInfo> blockButtons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Building Block Browser", method = () => RemoveCosmeticBrowser(), isTogglable = false, toolTip = "Returns you back to the fun mods." } };
+            foreach (BuilderPiece piece in GetAllType<BuilderPiece>().Where(piece => piece.pieceId != -1))
+            {
+                if (!blocks.ContainsKey(piece.pieceType))
+                    blocks.Add(piece.pieceType, piece.gameObject.name);
+            }
+
+            int i = 0;
+            foreach (KeyValuePair<int, string> block in blocks)
+            {
+                blockButtons.Add
+                (
+                    new ButtonInfo
+                    {
+                        buttonText = $"SelectBlock{i}",
+                        overlapText = block.Value,
+                        method =() => SelectBlock(block.Key, block.Value),
+                        isTogglable = false,
+                        toolTip = $"Selects the block \"{block.Value}\" to be used for the building mods."
+                    }
+                );
+                i++;
+            }
+
+            Buttons.buttons[29] = blockButtons.ToArray();
         }
 
         public static void SetRespawnDistance(string objectName, float respawnDistance = float.MaxValue)
@@ -2157,6 +2196,26 @@ namespace iiMenu.Mods
             Patches.UnlimitPatches.enabled = false;
         }
 
+        public static void PlaceBlockGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    BuilderPiece gunTarget = Ray.collider.GetComponentInParent<BuilderPiece>();
+                    if (gunTarget)
+                    {
+                        RequestPlacePiece(Patches.PlacePatch._piece, gunTarget, Patches.PlacePatch._bumpOffsetX, Patches.PlacePatch._bumpOffsetZ, Patches.PlacePatch._twist, Patches.PlacePatch._parentPiece, Patches.PlacePatch._attachIndex, Patches.PlacePatch._parentAttachIndex);
+                        RPCProtection();
+                    }
+                }
+            }
+        }
+
         public static void DestroyBlockGun()
         {
             if (GetGunInput(false))
@@ -2175,7 +2234,6 @@ namespace iiMenu.Mods
                     }
                 }
             }
-            //RPCProtection();
         }
 
         public static int blockDebounceIndex = 2;
@@ -2422,9 +2480,12 @@ namespace iiMenu.Mods
                     PhotonNetwork.LocalPlayer,
                     PhotonNetwork.ServerTimestamp
                 });
-            } 
+            }
             else
+            {
+                Networking.RequestGrabPiece(piece, true, Vector3.zero, Quaternion.identity);
                 Networking.RequestPlacePiece(piece, attachPiece, bumpOffsetX, bumpOffsetZ, twist, parentPiece, attachIndex, parentAttachIndex);
+            }
         }
 
         public static void RequestDropPiece(BuilderPiece piece, Vector3 position, Quaternion rotation, Vector3 velocity, Vector3 angVelocity)
