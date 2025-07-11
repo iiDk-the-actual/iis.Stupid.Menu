@@ -394,6 +394,17 @@ namespace iiMenu.Mods
             }
         }
 
+        public static float PlayerCountRefreshDelay;
+        public static void PlayerCount()
+        {
+            if (!PhotonNetwork.InRoom) return;
+            if (Time.time > PlayerCountRefreshDelay)
+            {
+                PlayerCountRefreshDelay = Time.time + 1f;
+                NotifiLib.SendNotification(PhotonNetwork.CurrentRoom.PlayerCount.ToString() + " Players", 1000);
+            }
+        }
+
         public static void FakeUnbanSelf()
         {
             PhotonNetworkController.Instance.UpdateTriggerScreens();
