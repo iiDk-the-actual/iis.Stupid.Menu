@@ -1,6 +1,7 @@
 using GorillaExtensions;
 using GorillaGameModes;
 using GorillaNetworking;
+using iiMenu.Classes;
 using Photon.Pun;
 using System;
 using System.Collections.Generic;
@@ -260,7 +261,7 @@ namespace iiMenu.Mods
                 }
                 if (isThereTagged)
                 {
-                    bool playerIsTagged = PlayerIsTagged(VRRig.LocalRig);
+                    bool playerIsTagged = PlayerIsTagged(LocalRig);
                     if (playerIsTagged && !lastWasTagged)
                         endTime = Time.time - startTime;
 
@@ -273,7 +274,7 @@ namespace iiMenu.Mods
                     if (GetIndex("Hidden Labels").enabled) { go.layer = 19; }
                     go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
                     TextMesh textMesh = go.AddComponent<TextMesh>();
-                    textMesh.color = PlayerIsTagged(VRRig.LocalRig) ? Color.green : Color.white;
+                    textMesh.color = PlayerIsTagged(LocalRig) ? Color.green : Color.white;
                     textMesh.fontSize = 24;
                     textMesh.fontStyle = activeFontStyle;
                     textMesh.characterSize = 0.1f;
@@ -306,7 +307,7 @@ namespace iiMenu.Mods
                 { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
             }
 
-            if (!PlayerIsTagged(VRRig.LocalRig))
+            if (!PlayerIsTagged(LocalRig))
             {
                 float closest = float.MaxValue;
                 foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
@@ -379,7 +380,7 @@ namespace iiMenu.Mods
                 if (GetIndex("Hidden Labels").enabled) { go.layer = 19; }
                 go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
                 TextMesh textMesh = go.AddComponent<TextMesh>();
-                textMesh.color = left <= 1 && !PlayerIsTagged(VRRig.LocalRig) ? Color.green : Color.white;
+                textMesh.color = left <= 1 && !PlayerIsTagged(LocalRig) ? Color.green : Color.white;
                 textMesh.fontSize = 24;
                 textMesh.fontStyle = activeFontStyle;
                 textMesh.characterSize = 0.1f;
@@ -422,7 +423,7 @@ namespace iiMenu.Mods
             visualizerObject.transform.rotation = Quaternion.LookRotation(Ray.normal) * Quaternion.Euler(90f, 0f, 0f);
 
             float size = 0f;
-            GorillaSpeakerLoudness recorder = VRRig.LocalRig.GetComponent<GorillaSpeakerLoudness>();
+            GorillaSpeakerLoudness recorder = LocalRig.GetComponent<GorillaSpeakerLoudness>();
             if (recorder != null)
                 size = recorder.Loudness;
 
@@ -1021,9 +1022,9 @@ namespace iiMenu.Mods
         {
             try
             {
-                foreach (GameObject Cosmetic in VRRig.LocalRig.cosmetics)
+                foreach (GameObject Cosmetic in LocalRig.cosmetics)
                 {
-                    if (Cosmetic.activeSelf && Cosmetic.transform.parent == VRRig.LocalRig.mainCamera.transform.Find("HeadCosmetics"))
+                    if (Cosmetic.activeSelf && Cosmetic.transform.parent == LocalRig.mainCamera.transform.Find("HeadCosmetics"))
                     {
                         cosmetics.Add(Cosmetic);
                         Cosmetic.SetActive(false);
@@ -1059,8 +1060,8 @@ namespace iiMenu.Mods
             {
                 if (!vrrig.isLocal)
                 {
-                    vrrig.lerpValueBody = VRRig.LocalRig.lerpValueBody;
-                    vrrig.lerpValueFingers = VRRig.LocalRig.lerpValueFingers;
+                    vrrig.lerpValueBody = LocalRig.lerpValueBody;
+                    vrrig.lerpValueFingers = LocalRig.lerpValueFingers;
                 }
             }
         }
@@ -1392,7 +1393,7 @@ namespace iiMenu.Mods
 
         private static void UpdateLimbColor()
         {
-            Color limbcolor = GetPlayerColor(VRRig.LocalRig);
+            Color limbcolor = GetPlayerColor(LocalRig);
 
             l.GetComponent<Renderer>().material.color = limbcolor;
             r.GetComponent<Renderer>().material.color = limbcolor;
@@ -1417,8 +1418,8 @@ namespace iiMenu.Mods
         {
             l.transform.position = TrueLeftHand().position;
             r.transform.position = TrueRightHand().position;
-            VRRig.LocalRig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
-            VRRig.LocalRig.mainSkin.material.color = new Color(VRRig.LocalRig.mainSkin.material.color.r, VRRig.LocalRig.mainSkin.material.color.g, VRRig.LocalRig.mainSkin.material.color.b, 0f);
+            LocalRig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
+            LocalRig.mainSkin.material.color = new Color(LocalRig.mainSkin.material.color.r, LocalRig.mainSkin.material.color.g, LocalRig.mainSkin.material.color.b, 0f);
             UpdateLimbColor();
         }
 
@@ -1427,8 +1428,8 @@ namespace iiMenu.Mods
             UnityEngine.Object.Destroy(l);
             UnityEngine.Object.Destroy(r);
 
-            VRRig.LocalRig.mainSkin.material.shader = Shader.Find("GorillaTag/UberShader");
-            VRRig.LocalRig.mainSkin.material.color = new Color(VRRig.LocalRig.mainSkin.material.color.r, VRRig.LocalRig.mainSkin.material.color.g, VRRig.LocalRig.mainSkin.material.color.b, 1f);
+            LocalRig.mainSkin.material.shader = Shader.Find("GorillaTag/UberShader");
+            LocalRig.mainSkin.material.color = new Color(LocalRig.mainSkin.material.color.r, LocalRig.mainSkin.material.color.g, LocalRig.mainSkin.material.color.b, 1f);
         }
 
         private static Dictionary<VRRig, List<LineRenderer>> boneESP = new Dictionary<VRRig, List<LineRenderer>>() { };
@@ -1534,7 +1535,7 @@ namespace iiMenu.Mods
             bool hoc = GetIndex("Hidden on Camera").enabled;
             bool tt = GetIndex("Transparent Theme").enabled;
             bool thinTracers = GetIndex("Thin Tracers").enabled;
-            bool selfTagged = PlayerIsTagged(VRRig.LocalRig);
+            bool selfTagged = PlayerIsTagged(LocalRig);
 
             List<VRRig> toRemove = new List<VRRig>();
 
@@ -1838,7 +1839,7 @@ namespace iiMenu.Mods
             bool fmt = GetIndex("Follow Menu Theme").enabled;
             bool hoc = GetIndex("Hidden on Camera").enabled;
             bool tt = GetIndex("Transparent Theme").enabled;
-            bool selfTagged = PlayerIsTagged(VRRig.LocalRig);
+            bool selfTagged = PlayerIsTagged(LocalRig);
 
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
@@ -2113,7 +2114,7 @@ namespace iiMenu.Mods
             }
             if (isInfectedPlayers)
             {
-                if (!PlayerIsTagged(VRRig.LocalRig))
+                if (!PlayerIsTagged(LocalRig))
                 {
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
@@ -2275,7 +2276,7 @@ namespace iiMenu.Mods
             bool hoc = GetIndex("Hidden on Camera").enabled;
             bool tt = GetIndex("Transparent Theme").enabled;
             bool thinTracers = GetIndex("Thin Tracers").enabled;
-            bool selfTagged = PlayerIsTagged(VRRig.LocalRig);
+            bool selfTagged = PlayerIsTagged(LocalRig);
 
             List<VRRig> toRemove = new List<VRRig>();
 
@@ -2493,7 +2494,7 @@ namespace iiMenu.Mods
             }
             if (isInfectedPlayers)
             {
-                if (!PlayerIsTagged(VRRig.LocalRig))
+                if (!PlayerIsTagged(LocalRig))
                 {
                     foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                     {
@@ -2892,7 +2893,7 @@ namespace iiMenu.Mods
             bool hoc = GetIndex("Hidden on Camera").enabled;
             bool tt = GetIndex("Transparent Theme").enabled;
             bool thinTracers = GetIndex("Thin Tracers").enabled;
-            bool selfTagged = PlayerIsTagged(VRRig.LocalRig);
+            bool selfTagged = PlayerIsTagged(LocalRig);
 
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
@@ -3134,7 +3135,7 @@ namespace iiMenu.Mods
             bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
             float lineWidth = (GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f) * (scaleWithPlayer ? GorillaLocomotion.GTPlayer.Instance.scale : 1f);
 
-            bool LocalTagged = PlayerIsTagged(VRRig.LocalRig);
+            bool LocalTagged = PlayerIsTagged(LocalRig);
             bool NoInfected = InfectedList().Count == 0;
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
@@ -3290,7 +3291,7 @@ namespace iiMenu.Mods
             bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
             bool thinTracers = GetIndex("Thin Tracers").enabled;
 
-            bool LocalTagged = PlayerIsTagged(VRRig.LocalRig);
+            bool LocalTagged = PlayerIsTagged(LocalRig);
             bool NoInfected = InfectedList().Count == 0;
 
             Color menuColor = GetBGColor(0f);
@@ -3480,7 +3481,7 @@ namespace iiMenu.Mods
             bool transparentTheme = GetIndex("Transparent Theme").enabled;
             bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
 
-            bool LocalTagged = PlayerIsTagged(VRRig.LocalRig);
+            bool LocalTagged = PlayerIsTagged(LocalRig);
             bool NoInfected = InfectedList().Count == 0;
 
             Color menuColor = GetBGColor(0f);

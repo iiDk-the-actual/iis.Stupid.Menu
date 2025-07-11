@@ -56,7 +56,7 @@ namespace iiMenu.Mods.Spammers
         public static IEnumerator EnableRig()
         {
             yield return new WaitForSeconds(projDebounceType + 0.2f);
-            VRRig.LocalRig.enabled = true;
+            RigManager.LocalRig.enabled = true;
         }
 
         public static Coroutine DisableCoroutine;
@@ -108,8 +108,8 @@ namespace iiMenu.Mods.Spammers
                 {
                     if (Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, position) > 3.9f)
                     {
-                        VRRig.LocalRig.enabled = false;
-                        VRRig.LocalRig.transform.position = position + new Vector3(0f, velocity.y > 0f ? -3f : 3f, 0f);
+                        RigManager.LocalRig.enabled = false;
+                        RigManager.LocalRig.transform.position = position + new Vector3(0f, velocity.y > 0f ? -3f : 3f, 0f);
 
                         if (RigCoroutine != null)
                             CoroutineManager.instance.StopCoroutine(RigCoroutine);
@@ -121,7 +121,7 @@ namespace iiMenu.Mods.Spammers
                     Vector3 charvel = velocity;
 
                     Throwable.randomizeColor = true;
-                    VRRig.LocalRig.SetThrowableProjectileColor(true, color);
+                    RigManager.LocalRig.SetThrowableProjectileColor(true, color);
 
                     bool showSelf = options.Receivers == ReceiverGroup.All || options.TargetActors.Contains(PhotonNetwork.LocalPlayer.ActorNumber);
 
@@ -580,7 +580,7 @@ namespace iiMenu.Mods.Spammers
                 if (gunLocked)
                 {
                     gunLocked = false;
-                    VRRig.LocalRig.enabled = true;
+                    RigManager.LocalRig.enabled = true;
                 }
             }
         }
@@ -668,7 +668,7 @@ namespace iiMenu.Mods.Spammers
                     Projectile.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
 
                     Color TargetProjectileColor = CalculateProjectileColor();
-                    VRRig.LocalRig.SetThrowableProjectileColor(true, CalculateProjectileColor());
+                    RigManager.LocalRig.SetThrowableProjectileColor(true, CalculateProjectileColor());
                     Projectile.randomizeColor = true;
                     Projectile.ApplyColor(TargetProjectileColor);
                 }
@@ -686,7 +686,7 @@ namespace iiMenu.Mods.Spammers
                     Projectile.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
 
                     Color TargetProjectileColor = CalculateProjectileColor();
-                    VRRig.LocalRig.SetThrowableProjectileColor(false, CalculateProjectileColor());
+                    RigManager.LocalRig.SetThrowableProjectileColor(false, CalculateProjectileColor());
                     Projectile.randomizeColor = true;
                     Projectile.ApplyColor(TargetProjectileColor);
                 }
@@ -781,7 +781,7 @@ namespace iiMenu.Mods.Spammers
                 if (gunLocked)
                 {
                     gunLocked = false;
-                    VRRig.LocalRig.enabled = true;
+                    RigManager.LocalRig.enabled = true;
                 }
             }
         }
@@ -816,7 +816,7 @@ namespace iiMenu.Mods.Spammers
                 if (gunLocked)
                 {
                     gunLocked = false;
-                    VRRig.LocalRig.enabled = true;
+                    RigManager.LocalRig.enabled = true;
                 }
             }
         }
@@ -851,7 +851,7 @@ namespace iiMenu.Mods.Spammers
                 if (gunLocked)
                 {
                     gunLocked = false;
-                    VRRig.LocalRig.enabled = true;
+                    RigManager.LocalRig.enabled = true;
                 }
             }
         }
@@ -886,7 +886,7 @@ namespace iiMenu.Mods.Spammers
                 if (gunLocked)
                 {
                     gunLocked = false;
-                    VRRig.LocalRig.enabled = true;
+                    RigManager.LocalRig.enabled = true;
                 }
             }
         }
@@ -921,7 +921,7 @@ namespace iiMenu.Mods.Spammers
                 if (gunLocked)
                 {
                     gunLocked = false;
-                    VRRig.LocalRig.enabled = true;
+                    RigManager.LocalRig.enabled = true;
                 }
             }
         }

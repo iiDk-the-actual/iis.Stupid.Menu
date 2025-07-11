@@ -121,7 +121,7 @@ namespace iiMenu.Classes
                 }
 
                 int[] NetworkedActors = GetAllNetworkActorNumbers();
-                if (RigNetworking && !VRRig.LocalRig.enabled && Time.time > updateRigDelay && NetworkedActors.Length > 0)
+                if (RigNetworking && !RigManager.LocalRig.enabled && Time.time > updateRigDelay && NetworkedActors.Length > 0)
                 {
                     updateRigDelay = Time.time + 0.1f;
 

@@ -2523,7 +2523,7 @@ namespace iiMenu.Mods
                 if (!currentmentalstate)
                 {
                     currentmentalstate = true;
-                    VRRig.LocalRig.enabled = false;
+                    RigManager.LocalRig.enabled = false;
                 }
             }
             else
@@ -2531,7 +2531,7 @@ namespace iiMenu.Mods
                 if (currentmentalstate)
                 {
                     currentmentalstate = false;
-                    VRRig.LocalRig.enabled = true;
+                    RigManager.LocalRig.enabled = true;
                 }
             }
         }

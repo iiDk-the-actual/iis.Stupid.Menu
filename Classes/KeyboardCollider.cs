@@ -17,7 +17,7 @@ namespace iiMenu.Classes
                 if (doButtonsVibrate)
 					GorillaTagger.Instance.StartVibration(collider == lKeyCollider, GorillaTagger.Instance.tagHapticStrength / 2f, GorillaTagger.Instance.tagHapticDuration / 2f);
 				
-                VRRig.LocalRig.PlayHandTapLocal(66, collider == lKeyCollider, buttonClickVolume / 10f);
+                RigManager.LocalRig.PlayHandTapLocal(66, collider == lKeyCollider, buttonClickVolume / 10f);
 				PressKeyboardKey(key);
             }
 		}
