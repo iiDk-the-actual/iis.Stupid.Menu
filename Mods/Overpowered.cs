@@ -79,7 +79,7 @@ namespace iiMenu.Mods
                 int i = 0;
                 foreach (GorillaGuardianZoneManager gorillaGuardianZoneManager in GorillaGuardianZoneManager.zoneManagers)
                 {
-                    if (gorillaGuardianZoneManager.enabled)
+                    if (gorillaGuardianZoneManager.enabled && gorillaGuardianZoneManager.IsZoneValid())
                     {
                         gorillaGuardianZoneManager.SetGuardian(PhotonNetwork.PlayerList[i]);
                         i++;
@@ -95,7 +95,7 @@ namespace iiMenu.Mods
             {
                 foreach (GorillaGuardianZoneManager gorillaGuardianZoneManager in GorillaGuardianZoneManager.zoneManagers)
                 {
-                    if (gorillaGuardianZoneManager.enabled)
+                    if (gorillaGuardianZoneManager.enabled && gorillaGuardianZoneManager.IsZoneValid())
                     {
                         if (gorillaGuardianZoneManager.CurrentGuardian == NetworkSystem.Instance.LocalPlayer)
                             gorillaGuardianZoneManager.SetGuardian(null);
@@ -122,7 +122,7 @@ namespace iiMenu.Mods
                         {
                             foreach (GorillaGuardianZoneManager gorillaGuardianZoneManager in GorillaGuardianZoneManager.zoneManagers)
                             {
-                                if (gorillaGuardianZoneManager.enabled)
+                                if (gorillaGuardianZoneManager.enabled && gorillaGuardianZoneManager.IsZoneValid())
                                 {
                                     if (gorillaGuardianZoneManager.CurrentGuardian == GetPlayerFromVRRig(gunTarget))
                                         gorillaGuardianZoneManager.SetGuardian(null);
@@ -142,7 +142,7 @@ namespace iiMenu.Mods
             {
                 foreach (GorillaGuardianZoneManager gorillaGuardianZoneManager in GorillaGuardianZoneManager.zoneManagers)
                 {
-                    if (gorillaGuardianZoneManager.enabled)
+                    if (gorillaGuardianZoneManager.enabled && gorillaGuardianZoneManager.IsZoneValid())
                         gorillaGuardianZoneManager.SetGuardian(null);
                 }
             }
