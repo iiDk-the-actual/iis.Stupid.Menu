@@ -2323,9 +2323,9 @@ namespace iiMenu.Mods
             else
                 pcbg--;
 
-            pcbg %= 4;
+            pcbg %= 6;
             if (pcbg < 0)
-                pcbg = 3;
+                pcbg = 5;
         }
 
         public static void ChangeNotificationTime(bool positive = true)

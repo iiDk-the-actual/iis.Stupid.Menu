@@ -2571,10 +2571,15 @@ namespace iiMenu.Menu
                         new Vector3(10f, 10f, 10f),
                         new Vector3(10f, 10f, 10f),
                         new Vector3(-67.9299f, 11.9144f, -84.2019f),
-                        new Vector3(-63f, 3.634f, -65f)
+                        new Vector3(-63f, 3.634f, -65f),
+                        GorillaTagger.Instance.offlineVRRig.transform.position += GorillaTagger.Instance.offlineVRRig.transform.forward * 1.2f,
+                        TPC.transform.position
                     };
+
                     TPC.transform.position = pcpositions[pcbg];
-                    TPC.transform.rotation = Quaternion.identity;
+                    if (pcbg != 4 && pcbg != 5)
+                        TPC.transform.rotation = Quaternion.identity;
+
                     if (pcbg == 0)
                     {
                         GameObject bg = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -2586,9 +2591,7 @@ namespace iiMenu.Menu
                     }
                     menu.transform.parent = TPC.transform;
                     menu.transform.position = TPC.transform.position + (TPC.transform.forward * 0.5f) + (TPC.transform.up * 0f);
-                    Vector3 rot = TPC.transform.rotation.eulerAngles;
-                    rot += new Vector3(-90f, 90f, 0f);
-                    menu.transform.rotation = Quaternion.Euler(rot);
+                    menu.transform.rotation = TPC.transform.rotation * Quaternion.Euler(-90f, 90f, 0f);
 
                     if (reference != null)
                     {
