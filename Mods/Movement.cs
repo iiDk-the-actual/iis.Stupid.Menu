@@ -567,7 +567,7 @@ namespace iiMenu.Mods
         public static Vector3 lastPosition = Vector3.zero;
         public static void WASDFly()
         {
-            GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
+            bool stationary = !GetIndex("Disable Stationary WASD Fly").enabled;
 
             bool W = UnityInput.Current.GetKey(KeyCode.W);
             bool A = UnityInput.Current.GetKey(KeyCode.A);
@@ -575,6 +575,9 @@ namespace iiMenu.Mods
             bool D = UnityInput.Current.GetKey(KeyCode.D);
             bool Space = UnityInput.Current.GetKey(KeyCode.Space);
             bool Ctrl = UnityInput.Current.GetKey(KeyCode.LeftControl);
+
+            if (stationary || W || A || S || D || Space || Ctrl)
+                GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
 
             if (!menu)
             {
@@ -633,7 +636,8 @@ namespace iiMenu.Mods
 
                 VRRig.LocalRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
             }
-            if (!W && !A && !S && !D && !Space && !Ctrl && lastPosition != Vector3.zero)
+
+            if (!W && !A && !S && !D && !Space && !Ctrl && lastPosition != Vector3.zero && stationary)
                 GorillaTagger.Instance.rigidbody.transform.position = lastPosition;
             else
                 lastPosition = GorillaTagger.Instance.rigidbody.transform.position;
