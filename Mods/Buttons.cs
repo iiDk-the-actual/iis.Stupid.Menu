@@ -816,7 +816,8 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Start All Races", method =() => Fun.StartAllRaces(), isTogglable = false, toolTip = "Starts every race in the hoverboard map."},
 
-                new ButtonInfo { buttonText = "Small Building", enableMethod =() => Patches.BuildPatch.isEnabled = true, disableMethod =() => Patches.BuildPatch.isEnabled = false, toolTip = "Lets you build in the attic while small."},
+                new ButtonInfo { buttonText = "Overlap Building", enableMethod =() => Patches.OverlapPatch.enabled = true, disableMethod =() => Patches.OverlapPatch.enabled = false, toolTip = "Lets you place pieces inside of each other in the attic."},
+                new ButtonInfo { buttonText = "Small Building", enableMethod =() => Patches.BuildPatch.enabled = true, disableMethod =() => Patches.BuildPatch.enabled = false, toolTip = "Lets you build in the attic while small."},
                 new ButtonInfo { buttonText = "Multi Grab", method =() => Fun.MultiGrab(), toolTip = "Lets you grab multiple objects."},
 
                 new ButtonInfo { buttonText = "Attic Size Toggle", method =() => Fun.AtticSizeToggle(), toolTip = "Toggles your scale when pressing <color=green>grip</color> or <color=green>trigger</color>."},

@@ -5,12 +5,13 @@ namespace iiMenu.Patches
     [HarmonyPatch(typeof(BuilderPieceInteractor), "UpdateHandState")]
     public class BuildPatch
     {
-        public static bool isEnabled = false;
-        public static float previous = 0f;
-        public static float previous2 = 0f;
+        public static bool enabled;
+        public static float previous;
+        public static float previous2;
+
         private static void Prefix()
         {
-            if (isEnabled)
+            if (enabled)
             {
                 previous = VRRig.LocalRig.NativeScale;
                 previous2 = VRRig.LocalRig.ScaleMultiplier;
@@ -21,7 +22,7 @@ namespace iiMenu.Patches
 
         private static void Postfix()
         {
-            if (isEnabled)
+            if (enabled)
             {
                 VRRig.LocalRig.NativeScale = previous;
                 VRRig.LocalRig.ScaleMultiplier = previous2;
