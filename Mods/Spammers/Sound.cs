@@ -272,7 +272,7 @@ namespace iiMenu.Mods.Spammers
                     RPCProtection();
                 }
                 else
-                    RigManager.LocalRig.PlayHandTapLocal(soundId, false, 999999f);
+                    VRRig.LocalRig.PlayHandTapLocal(soundId, false, 999999f);
             }
         }
 

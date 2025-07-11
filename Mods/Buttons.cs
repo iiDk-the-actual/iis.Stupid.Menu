@@ -535,9 +535,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Freeze Rig Limbs <color=grey>[</color><color=green>A</color><color=grey>]</color>", method =() => Movement.FreezeRigLimbs(), toolTip = "Makes your hands and head freeze on your rig, but not your body, when holding <color=green>A</color>."},
                 new ButtonInfo { buttonText = "Freeze Rig Body <color=grey>[</color><color=green>A</color><color=grey>]</color>", method =() => Movement.FreezeRigBody(), toolTip = "Makes your body freeze on your rig, but not your hands and head, when holding <color=green>A</color>."},
 
-                new ButtonInfo { buttonText = "Paralyze Rig", method =() => Movement.ParalyzeRig(), disableMethod =() => RigManager.LocalRig.enabled = true, toolTip = "Removes your arms from your rig."},
-                new ButtonInfo { buttonText = "Chicken Rig", method =() => Movement.ChickenRig(), disableMethod =() => RigManager.LocalRig.enabled = true, toolTip = "Makes your rig look like a chicken."},
-                new ButtonInfo { buttonText = "Amputate Rig", method =() => Movement.AmputateRig(), disableMethod =() => RigManager.LocalRig.enabled = true, toolTip = "Removes all of your limbs from your rig."},
+                new ButtonInfo { buttonText = "Paralyze Rig", method =() => Movement.ParalyzeRig(), disableMethod =() => VRRig.LocalRig.enabled = true, toolTip = "Removes your arms from your rig."},
+                new ButtonInfo { buttonText = "Chicken Rig", method =() => Movement.ChickenRig(), disableMethod =() => VRRig.LocalRig.enabled = true, toolTip = "Makes your rig look like a chicken."},
+                new ButtonInfo { buttonText = "Amputate Rig", method =() => Movement.AmputateRig(), disableMethod =() => VRRig.LocalRig.enabled = true, toolTip = "Removes all of your limbs from your rig."},
 
                 new ButtonInfo { buttonText = "Spin Rig Body", method =() => Movement.SetBodyPatch(true), disableMethod =() => Movement.SetBodyPatch(false), toolTip = "Makes your body spin around, but not your head."},
                 new ButtonInfo { buttonText = "Spaz Rig Body", method =() => Movement.SetBodyPatch(true, 1), disableMethod =() => Movement.SetBodyPatch(false), toolTip = "Gives your body a seizure, randomizing its rotation."},

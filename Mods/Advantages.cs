@@ -23,7 +23,7 @@ namespace iiMenu.Mods
                 if (InfectedList().Contains(PhotonNetwork.LocalPlayer))
                 {
                     NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>You have been tagged.</color>");
-                    RigManager.LocalRig.enabled = true;
+                    VRRig.LocalRig.enabled = true;
                     GetIndex("Tag Self").enabled = false;
                 }
                 else
@@ -32,36 +32,36 @@ namespace iiMenu.Mods
                     {
                         if (PlayerIsTagged(rig))
                         {
-                            RigManager.LocalRig.enabled = false;
-                            RigManager.LocalRig.transform.position = rig.rightHandTransform.position;
+                            VRRig.LocalRig.enabled = false;
+                            VRRig.LocalRig.transform.position = rig.rightHandTransform.position;
 
                             if (GetIndex("Obnoxious Tag").enabled)
                             {
                                 Quaternion rotation = Quaternion.Euler(new Vector3(0, Random.Range(0, 360), 0));
-                                RigManager.LocalRig.transform.rotation = rotation;
+                                VRRig.LocalRig.transform.rotation = rotation;
 
-                                RigManager.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
-                                RigManager.LocalRig.leftHand.rigTarget.transform.position = RigManager.LocalRig.transform.position + RandomVector3();
-                                RigManager.LocalRig.rightHand.rigTarget.transform.position = RigManager.LocalRig.transform.position + RandomVector3();
+                                VRRig.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
+                                VRRig.LocalRig.leftHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + RandomVector3();
+                                VRRig.LocalRig.rightHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + RandomVector3();
 
-                                RigManager.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
-                                RigManager.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
+                                VRRig.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
+                                VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
 
-                                RigManager.LocalRig.leftIndex.calcT = 0f;
-                                RigManager.LocalRig.leftMiddle.calcT = 0f;
-                                RigManager.LocalRig.leftThumb.calcT = 0f;
+                                VRRig.LocalRig.leftIndex.calcT = 0f;
+                                VRRig.LocalRig.leftMiddle.calcT = 0f;
+                                VRRig.LocalRig.leftThumb.calcT = 0f;
 
-                                RigManager.LocalRig.leftIndex.LerpFinger(1f, false);
-                                RigManager.LocalRig.leftMiddle.LerpFinger(1f, false);
-                                RigManager.LocalRig.leftThumb.LerpFinger(1f, false);
+                                VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
+                                VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
+                                VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
 
-                                RigManager.LocalRig.rightIndex.calcT = 0f;
-                                RigManager.LocalRig.rightMiddle.calcT = 0f;
-                                RigManager.LocalRig.rightThumb.calcT = 0f;
+                                VRRig.LocalRig.rightIndex.calcT = 0f;
+                                VRRig.LocalRig.rightMiddle.calcT = 0f;
+                                VRRig.LocalRig.rightThumb.calcT = 0f;
 
-                                RigManager.LocalRig.rightIndex.LerpFinger(1f, false);
-                                RigManager.LocalRig.rightMiddle.LerpFinger(1f, false);
-                                RigManager.LocalRig.rightThumb.LerpFinger(1f, false);
+                                VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+                                VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
+                                VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
                             }
                         }
                     }
@@ -86,7 +86,7 @@ namespace iiMenu.Mods
         {
             if (PhotonNetwork.InRoom)
             {
-                if (PlayerIsTagged(RigManager.LocalRig))
+                if (PlayerIsTagged(VRRig.LocalRig))
                     UntagSelf();
             } else
                 NoTagOnJoin();
@@ -163,7 +163,7 @@ namespace iiMenu.Mods
                 if (gunLocked)
                 {
                     gunLocked = false;
-                    RigManager.LocalRig.enabled = true;
+                    VRRig.LocalRig.enabled = true;
                 }
             }
         }
@@ -270,10 +270,10 @@ namespace iiMenu.Mods
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
                 Vector3 they = vrrig.headMesh.transform.position;
-                Vector3 notthem = RigManager.LocalRig.head.rigTarget.position;
+                Vector3 notthem = VRRig.LocalRig.head.rigTarget.position;
                 float distance = Vector3.Distance(they, notthem);
 
-                if (PlayerIsTagged(RigManager.LocalRig) && !PlayerIsTagged(vrrig) && GorillaLocomotion.GTPlayer.Instance.disableMovement == false && distance < tagAuraDistance)
+                if (PlayerIsTagged(VRRig.LocalRig) && !PlayerIsTagged(vrrig) && GorillaLocomotion.GTPlayer.Instance.disableMovement == false && distance < tagAuraDistance)
                     if (rightHand == true) { GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = they; } else { GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.position = they; }
             }
         }
@@ -299,7 +299,7 @@ namespace iiMenu.Mods
 
         public static void TagReach()
         {
-            if (PlayerIsTagged(RigManager.LocalRig))
+            if (PlayerIsTagged(VRRig.LocalRig))
             {
                 Patches.SphereCastPatch.enabled = true;
                 Patches.SphereCastPatch.overrideRadius = tagReachDistance;
@@ -327,38 +327,38 @@ namespace iiMenu.Mods
                 {
                     if (!PlayerIsTagged(lockTarget))
                     {
-                        RigManager.LocalRig.enabled = false;
+                        VRRig.LocalRig.enabled = false;
 
                         if (!GetIndex("Obnoxious Tag").enabled)
-                            RigManager.LocalRig.transform.position = lockTarget.transform.position - new Vector3(0f, 3f, 0f);
+                            VRRig.LocalRig.transform.position = lockTarget.transform.position - new Vector3(0f, 3f, 0f);
                         else
                         {
                             Vector3 position = lockTarget.transform.position + RandomVector3();
 
-                            RigManager.LocalRig.transform.position = position;
+                            VRRig.LocalRig.transform.position = position;
 
-                            RigManager.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
-                            RigManager.LocalRig.leftHand.rigTarget.transform.position = lockTarget.transform.position + RandomVector3();
-                            RigManager.LocalRig.rightHand.rigTarget.transform.position = lockTarget.transform.position + RandomVector3();
+                            VRRig.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
+                            VRRig.LocalRig.leftHand.rigTarget.transform.position = lockTarget.transform.position + RandomVector3();
+                            VRRig.LocalRig.rightHand.rigTarget.transform.position = lockTarget.transform.position + RandomVector3();
 
-                            RigManager.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
-                            RigManager.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
+                            VRRig.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
+                            VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
 
-                            RigManager.LocalRig.leftIndex.calcT = 0f;
-                            RigManager.LocalRig.leftMiddle.calcT = 0f;
-                            RigManager.LocalRig.leftThumb.calcT = 0f;
+                            VRRig.LocalRig.leftIndex.calcT = 0f;
+                            VRRig.LocalRig.leftMiddle.calcT = 0f;
+                            VRRig.LocalRig.leftThumb.calcT = 0f;
 
-                            RigManager.LocalRig.leftIndex.LerpFinger(1f, false);
-                            RigManager.LocalRig.leftMiddle.LerpFinger(1f, false);
-                            RigManager.LocalRig.leftThumb.LerpFinger(1f, false);
+                            VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
+                            VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
+                            VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
 
-                            RigManager.LocalRig.rightIndex.calcT = 0f;
-                            RigManager.LocalRig.rightMiddle.calcT = 0f;
-                            RigManager.LocalRig.rightThumb.calcT = 0f;
+                            VRRig.LocalRig.rightIndex.calcT = 0f;
+                            VRRig.LocalRig.rightMiddle.calcT = 0f;
+                            VRRig.LocalRig.rightThumb.calcT = 0f;
 
-                            RigManager.LocalRig.rightIndex.LerpFinger(1f, false);
-                            RigManager.LocalRig.rightMiddle.LerpFinger(1f, false);
-                            RigManager.LocalRig.rightThumb.LerpFinger(1f, false);
+                            VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+                            VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
+                            VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
                         }
 
                         if (ValidateTag(lockTarget))
@@ -367,7 +367,7 @@ namespace iiMenu.Mods
                     else
                     {
                         gunLocked = false;
-                        RigManager.LocalRig.enabled = true;
+                        VRRig.LocalRig.enabled = true;
                     }
                 }
                 if (GetGunInput(true))
@@ -379,7 +379,7 @@ namespace iiMenu.Mods
                             AddInfected(RigManager.GetPlayerFromVRRig(gunTarget));
                         else
                         {
-                            if (PlayerIsTagged(RigManager.LocalRig))
+                            if (PlayerIsTagged(VRRig.LocalRig))
                             {
                                 gunLocked = true;
                                 lockTarget = gunTarget;
@@ -393,7 +393,7 @@ namespace iiMenu.Mods
                 if (gunLocked)
                 {
                     gunLocked = false;
-                    RigManager.LocalRig.enabled = true;
+                    VRRig.LocalRig.enabled = true;
                 }
             }
         }
@@ -416,7 +416,7 @@ namespace iiMenu.Mods
                 return;
             }
 
-            if (!PlayerIsTagged(RigManager.LocalRig))
+            if (!PlayerIsTagged(VRRig.LocalRig))
             {
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be tagged.</color>");
                 Toggle("Tag Player");
@@ -426,38 +426,38 @@ namespace iiMenu.Mods
             VRRig targetRig = RigManager.GetVRRigFromPlayer(player);
             if (!PlayerIsTagged(targetRig))
             {
-                RigManager.LocalRig.enabled = false;
+                VRRig.LocalRig.enabled = false;
 
                 if (!GetIndex("Obnoxious Tag").enabled)
-                    RigManager.LocalRig.transform.position = targetRig.transform.position - new Vector3(0f, 3f, 0f);
+                    VRRig.LocalRig.transform.position = targetRig.transform.position - new Vector3(0f, 3f, 0f);
                 else
                 {
                     Vector3 position = targetRig.transform.position + RandomVector3();
 
-                    RigManager.LocalRig.transform.position = position;
+                    VRRig.LocalRig.transform.position = position;
 
-                    RigManager.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
-                    RigManager.LocalRig.leftHand.rigTarget.transform.position = lockTarget.transform.position + RandomVector3();
-                    RigManager.LocalRig.rightHand.rigTarget.transform.position = lockTarget.transform.position + RandomVector3();
+                    VRRig.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
+                    VRRig.LocalRig.leftHand.rigTarget.transform.position = lockTarget.transform.position + RandomVector3();
+                    VRRig.LocalRig.rightHand.rigTarget.transform.position = lockTarget.transform.position + RandomVector3();
 
-                    RigManager.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
-                    RigManager.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
+                    VRRig.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
+                    VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
 
-                    RigManager.LocalRig.leftIndex.calcT = 0f;
-                    RigManager.LocalRig.leftMiddle.calcT = 0f;
-                    RigManager.LocalRig.leftThumb.calcT = 0f;
+                    VRRig.LocalRig.leftIndex.calcT = 0f;
+                    VRRig.LocalRig.leftMiddle.calcT = 0f;
+                    VRRig.LocalRig.leftThumb.calcT = 0f;
 
-                    RigManager.LocalRig.leftIndex.LerpFinger(1f, false);
-                    RigManager.LocalRig.leftMiddle.LerpFinger(1f, false);
-                    RigManager.LocalRig.leftThumb.LerpFinger(1f, false);
+                    VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
+                    VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
+                    VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
 
-                    RigManager.LocalRig.rightIndex.calcT = 0f;
-                    RigManager.LocalRig.rightMiddle.calcT = 0f;
-                    RigManager.LocalRig.rightThumb.calcT = 0f;
+                    VRRig.LocalRig.rightIndex.calcT = 0f;
+                    VRRig.LocalRig.rightMiddle.calcT = 0f;
+                    VRRig.LocalRig.rightThumb.calcT = 0f;
 
-                    RigManager.LocalRig.rightIndex.LerpFinger(1f, false);
-                    RigManager.LocalRig.rightMiddle.LerpFinger(1f, false);
-                    RigManager.LocalRig.rightThumb.LerpFinger(1f, false);
+                    VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+                    VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
+                    VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
                 }
 
                 if (ValidateTag(targetRig))
@@ -525,7 +525,7 @@ namespace iiMenu.Mods
             }
             else
             {
-                if (!PlayerIsTagged(RigManager.LocalRig))
+                if (!PlayerIsTagged(VRRig.LocalRig))
                 {
                     NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be tagged.</color>");
                     GetIndex("Tag All").enabled = false;
@@ -547,39 +547,39 @@ namespace iiMenu.Mods
                         {
                             if (!PlayerIsTagged(vrrig))
                             {
-                                RigManager.LocalRig.enabled = false;
+                                VRRig.LocalRig.enabled = false;
 
                                 if (!GetIndex("Obnoxious Tag").enabled)
-                                    RigManager.LocalRig.transform.position = vrrig.transform.position - new Vector3(0f, 3f, 0f);
+                                    VRRig.LocalRig.transform.position = vrrig.transform.position - new Vector3(0f, 3f, 0f);
                                 else
                                 {
                                     Vector3 position = vrrig.transform.position + RandomVector3();
                                     
-                                    RigManager.LocalRig.transform.position = position;
-                                    RigManager.LocalRig.transform.rotation = RandomQuaternion();
+                                    VRRig.LocalRig.transform.position = position;
+                                    VRRig.LocalRig.transform.rotation = RandomQuaternion();
 
-                                    RigManager.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
-                                    RigManager.LocalRig.leftHand.rigTarget.transform.position = vrrig.transform.position + RandomVector3();
-                                    RigManager.LocalRig.rightHand.rigTarget.transform.position = vrrig.transform.position + RandomVector3();
+                                    VRRig.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
+                                    VRRig.LocalRig.leftHand.rigTarget.transform.position = vrrig.transform.position + RandomVector3();
+                                    VRRig.LocalRig.rightHand.rigTarget.transform.position = vrrig.transform.position + RandomVector3();
 
-                                    RigManager.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
-                                    RigManager.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
+                                    VRRig.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
+                                    VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
 
-                                    RigManager.LocalRig.leftIndex.calcT = 0f;
-                                    RigManager.LocalRig.leftMiddle.calcT = 0f;
-                                    RigManager.LocalRig.leftThumb.calcT = 0f;
+                                    VRRig.LocalRig.leftIndex.calcT = 0f;
+                                    VRRig.LocalRig.leftMiddle.calcT = 0f;
+                                    VRRig.LocalRig.leftThumb.calcT = 0f;
 
-                                    RigManager.LocalRig.leftIndex.LerpFinger(1f, false);
-                                    RigManager.LocalRig.leftMiddle.LerpFinger(1f, false);
-                                    RigManager.LocalRig.leftThumb.LerpFinger(1f, false);
+                                    VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
+                                    VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
+                                    VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
 
-                                    RigManager.LocalRig.rightIndex.calcT = 0f;
-                                    RigManager.LocalRig.rightMiddle.calcT = 0f;
-                                    RigManager.LocalRig.rightThumb.calcT = 0f;
+                                    VRRig.LocalRig.rightIndex.calcT = 0f;
+                                    VRRig.LocalRig.rightMiddle.calcT = 0f;
+                                    VRRig.LocalRig.rightThumb.calcT = 0f;
 
-                                    RigManager.LocalRig.rightIndex.LerpFinger(1f, false);
-                                    RigManager.LocalRig.rightMiddle.LerpFinger(1f, false);
-                                    RigManager.LocalRig.rightThumb.LerpFinger(1f, false);
+                                    VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+                                    VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
+                                    VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
                                 }
 
                                 if (ValidateTag(vrrig))
@@ -590,7 +590,7 @@ namespace iiMenu.Mods
                     else
                     {
                         NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Everyone is tagged!</color>");
-                        RigManager.LocalRig.enabled = true;
+                        VRRig.LocalRig.enabled = true;
                         GetIndex("Tag All").enabled = false;
                     }
                 }
@@ -604,38 +604,38 @@ namespace iiMenu.Mods
             if (!GorillaLocomotion.GTPlayer.Instance.disableMovement)
             {
                 VRRig vrrig = RigManager.GetVRRigFromPlayer(target);
-                RigManager.LocalRig.enabled = false;
+                VRRig.LocalRig.enabled = false;
 
                 if (!GetIndex("Obnoxious Tag").enabled)
-                    RigManager.LocalRig.transform.position = vrrig.transform.position - new Vector3(0f, 3f, 0f);
+                    VRRig.LocalRig.transform.position = vrrig.transform.position - new Vector3(0f, 3f, 0f);
                 else
                 {
                     Vector3 position = vrrig.transform.position + RandomVector3();
 
-                    RigManager.LocalRig.transform.position = position;
+                    VRRig.LocalRig.transform.position = position;
 
-                    RigManager.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
-                    RigManager.LocalRig.leftHand.rigTarget.transform.position = vrrig.transform.position + RandomVector3();
-                    RigManager.LocalRig.rightHand.rigTarget.transform.position = vrrig.transform.position + RandomVector3();
+                    VRRig.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
+                    VRRig.LocalRig.leftHand.rigTarget.transform.position = vrrig.transform.position + RandomVector3();
+                    VRRig.LocalRig.rightHand.rigTarget.transform.position = vrrig.transform.position + RandomVector3();
 
-                    RigManager.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
-                    RigManager.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
+                    VRRig.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
+                    VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
 
-                    RigManager.LocalRig.leftIndex.calcT = 0f;
-                    RigManager.LocalRig.leftMiddle.calcT = 0f;
-                    RigManager.LocalRig.leftThumb.calcT = 0f;
+                    VRRig.LocalRig.leftIndex.calcT = 0f;
+                    VRRig.LocalRig.leftMiddle.calcT = 0f;
+                    VRRig.LocalRig.leftThumb.calcT = 0f;
 
-                    RigManager.LocalRig.leftIndex.LerpFinger(1f, false);
-                    RigManager.LocalRig.leftMiddle.LerpFinger(1f, false);
-                    RigManager.LocalRig.leftThumb.LerpFinger(1f, false);
+                    VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
+                    VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
+                    VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
 
-                    RigManager.LocalRig.rightIndex.calcT = 0f;
-                    RigManager.LocalRig.rightMiddle.calcT = 0f;
-                    RigManager.LocalRig.rightThumb.calcT = 0f;
+                    VRRig.LocalRig.rightIndex.calcT = 0f;
+                    VRRig.LocalRig.rightMiddle.calcT = 0f;
+                    VRRig.LocalRig.rightThumb.calcT = 0f;
 
-                    RigManager.LocalRig.rightIndex.LerpFinger(1f, false);
-                    RigManager.LocalRig.rightMiddle.LerpFinger(1f, false);
-                    RigManager.LocalRig.rightThumb.LerpFinger(1f, false);
+                    VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+                    VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
+                    VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
                 }
 
                 if (ValidateTag(vrrig))
@@ -644,7 +644,7 @@ namespace iiMenu.Mods
             else
             {
                 NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Everyone is tagged!</color>");
-                RigManager.LocalRig.enabled = true;
+                VRRig.LocalRig.enabled = true;
                 GetIndex("Tag All").enabled = false;
                 ReloadMenu();
             }
@@ -654,7 +654,7 @@ namespace iiMenu.Mods
         {
             if (PhotonNetwork.InRoom)
             {
-                if (!PlayerIsTagged(RigManager.LocalRig))
+                if (!PlayerIsTagged(VRRig.LocalRig))
                 {
                     if (InfectedList().Count > 0)
                         TagSelf();
@@ -665,7 +665,7 @@ namespace iiMenu.Mods
                         TagAll();
                 }
             } else
-                RigManager.LocalRig.enabled = true;
+                VRRig.LocalRig.enabled = true;
         }
 
         public static void NoTagOnJoin()

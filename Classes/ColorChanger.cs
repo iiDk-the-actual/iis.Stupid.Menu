@@ -36,7 +36,7 @@ namespace iiMenu.Classes
                         gameObjectRenderer.material.color = color;
                     }
                     else
-                        gameObjectRenderer.material.color = Main.GetPlayerColor(RigManager.LocalRig);
+                        gameObjectRenderer.material.color = Main.GetPlayerColor(VRRig.LocalRig);
                 }
                 else
                 {

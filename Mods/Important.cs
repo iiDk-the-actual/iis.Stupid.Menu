@@ -211,12 +211,12 @@ namespace iiMenu.Mods
             text += $"new Quaternion({p.rotation.x}f, {p.rotation.y}f, {p.rotation.z}f, {p.rotation.w}f);\n\n";
 
             text += "Left Hand\n";
-            p = RigManager.LocalRig.leftHand.rigTarget.transform;
+            p = VRRig.LocalRig.leftHand.rigTarget.transform;
             text += $"new Vector3({p.position.x}f, {p.position.y}f, {p.position.z}f);";
             text += $"new Quaternion({p.rotation.x}f, {p.rotation.y}f, {p.rotation.z}f, {p.rotation.w}f);\n\n";
 
             text += "Right Hand\n";
-            p = RigManager.LocalRig.rightHand.rigTarget.transform;
+            p = VRRig.LocalRig.rightHand.rigTarget.transform;
             text += $"new Vector3({p.position.x}f, {p.position.y}f, {p.position.z}f);";
             text += $"new Quaternion({p.rotation.x}f, {p.rotation.y}f, {p.rotation.z}f, {p.rotation.w}f);";
 
@@ -245,7 +245,7 @@ namespace iiMenu.Mods
         {
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (vrrig != RigManager.LocalRig)
+                if (!vrrig.isLocal)
                     vrrig.voicePitchForRelativeScale = new AnimationCurve(
                         new Keyframe(0f, 1f, 0f, 0f),
                         new Keyframe(1f, 1f, 0f, 0f)
@@ -257,20 +257,20 @@ namespace iiMenu.Mods
         {
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (vrrig != RigManager.LocalRig)
-                    vrrig.voicePitchForRelativeScale = RigManager.LocalRig.voicePitchForRelativeScale;
+                if (!vrrig.isLocal)
+                    vrrig.voicePitchForRelativeScale = VRRig.LocalRig.voicePitchForRelativeScale;
             }
         }
 
         public static void DisableMouthMovement()
         {
-            RigManager.LocalRig.shouldSendSpeakingLoudness = false;
+            VRRig.LocalRig.shouldSendSpeakingLoudness = false;
             Patches.MicPatch.returnAsNone = true;
         }
 
         public static void EnableMouthMovement()
         {
-            RigManager.LocalRig.shouldSendSpeakingLoudness = true;
+            VRRig.LocalRig.shouldSendSpeakingLoudness = true;
             Patches.MicPatch.returnAsNone = false;
         }
 

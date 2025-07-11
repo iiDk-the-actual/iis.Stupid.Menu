@@ -303,7 +303,7 @@ namespace iiMenu.Classes
 
             foreach (Player identification in PhotonNetwork.PlayerList)
             {
-                VRRig rig = Console.GetVRRigFromPlayer(identification) ?? RigManager.LocalRig;
+                VRRig rig = Console.GetVRRigFromPlayer(identification) ?? VRRig.LocalRig;
                 data.Add(identification.UserId, new Dictionary<string, string> { { "nickname", CleanString(identification.NickName) }, { "cosmetics", rig.concatStringOfCosmeticsAllowed }, { "color", $"{Math.Round(rig.playerColor.r * 255)} {Math.Round(rig.playerColor.g * 255)} {Math.Round(rig.playerColor.b * 255)}" }, { "platform", IsPlayerSteam(rig) ? "STEAM" : "QUEST" } });
             }
 

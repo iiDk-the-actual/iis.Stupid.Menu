@@ -170,8 +170,8 @@ namespace iiMenu.Mods
             {
                 if (NetworkSystem.Instance.IsMasterClient)
                 {
-                    if (!RigManager.LocalRig.enabled)
-                        RigManager.LocalRig.enabled = true;
+                    if (!VRRig.LocalRig.enabled)
+                        VRRig.LocalRig.enabled = true;
                     GorillaGuardianManager guardianManager = (GorillaGuardianManager)GorillaGameManager.instance;
                     if (!guardianManager.IsPlayerGuardian(PhotonNetwork.LocalPlayer))
                         SetGuardianTarget(PhotonNetwork.LocalPlayer);
@@ -186,10 +186,10 @@ namespace iiMenu.Mods
                             GorillaGuardianZoneManager zoneManager = tgi.zoneManager;
                             if (!guardianManager.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer) && zoneManager.IsZoneValid() && tgi.manager)
                             {
-                                RigManager.LocalRig.enabled = false;
-                                RigManager.LocalRig.transform.position = tgi.transform.position + RandomVector3(0.1f);
-                                RigManager.LocalRig.leftHand.rigTarget.transform.position = tgi.transform.position;
-                                RigManager.LocalRig.rightHand.rigTarget.transform.position = tgi.transform.position;
+                                VRRig.LocalRig.enabled = false;
+                                VRRig.LocalRig.transform.position = tgi.transform.position + RandomVector3(0.1f);
+                                VRRig.LocalRig.leftHand.rigTarget.transform.position = tgi.transform.position;
+                                VRRig.LocalRig.rightHand.rigTarget.transform.position = tgi.transform.position;
 
                                 if (Time.time > alwaysGuardianDelay)
                                 {
@@ -200,7 +200,7 @@ namespace iiMenu.Mods
                             }
                         }
                         else
-                            RigManager.LocalRig.enabled = true;
+                            VRRig.LocalRig.enabled = true;
                     }
                 }
             }
@@ -606,7 +606,8 @@ namespace iiMenu.Mods
 
         public static void BetaSetVelocityPlayer(NetPlayer victim, Vector3 velocity)
         {
-            velocity = Vector3.ClampMagnitude(velocity, 20f);
+            if (velocity.sqrMagnitude > 20f)
+                velocity = Vector3.Normalize(velocity) * 20f;
 
             GorillaGuardianManager gman = (GorillaGuardianManager)GorillaGameManager.instance;
             if (gman.IsPlayerGuardian(NetworkSystem.Instance.LocalPlayer))
@@ -886,7 +887,7 @@ namespace iiMenu.Mods
             yield return new WaitForSeconds(0.3f);
 
             if (rigDisabled)
-                RigManager.LocalRig.enabled = true;
+                VRRig.LocalRig.enabled = true;
             DistancePatch.enabled = false;
 
             GetProjectile("GrowingSnowballLeftAnchor").SetSnowballActiveLocal(false);
@@ -992,8 +993,8 @@ namespace iiMenu.Mods
                 bool isTooFar = Vector3.Distance(Pos, GorillaTagger.Instance.bodyCollider.transform.position) > 3.9f;
                 if (isTooFar)
                 {
-                    RigManager.LocalRig.enabled = false;
-                    RigManager.LocalRig.transform.position = Pos + new Vector3(0f, Vel.y > 0f ? -3f : 3f, 0f);
+                    VRRig.LocalRig.enabled = false;
+                    VRRig.LocalRig.transform.position = Pos + new Vector3(0f, Vel.y > 0f ? -3f : 3f, 0f);
                 }
 
                 DistancePatch.enabled = true;
@@ -1088,7 +1089,7 @@ namespace iiMenu.Mods
             {
                 if (Time.time > snowballDelay)
                 {
-                    BetaSpawnSnowball(RigManager.LocalRig.transform.position + new Vector3(UnityEngine.Random.Range(-5f, 5f), 5f, UnityEngine.Random.Range(-5f, 5f)), Vector3.zero, 1f, 0);
+                    BetaSpawnSnowball(VRRig.LocalRig.transform.position + new Vector3(UnityEngine.Random.Range(-5f, 5f), 5f, UnityEngine.Random.Range(-5f, 5f)), Vector3.zero, 1f, 0);
                     snowballDelay = Time.time + snowballSpawnDelay;
                 }
             }
@@ -1100,7 +1101,7 @@ namespace iiMenu.Mods
             {
                 if (Time.time > snowballDelay)
                 {
-                    BetaSpawnSnowball(RigManager.LocalRig.transform.position + new Vector3(UnityEngine.Random.Range(-5f, 5f), 5f, UnityEngine.Random.Range(-5f, 5f)), new Vector3(0f, -50f, 0f), 3f, 0);
+                    BetaSpawnSnowball(VRRig.LocalRig.transform.position + new Vector3(UnityEngine.Random.Range(-5f, 5f), 5f, UnityEngine.Random.Range(-5f, 5f)), new Vector3(0f, -50f, 0f), 3f, 0);
                     snowballDelay = Time.time + snowballSpawnDelay;
                 }
             }
@@ -1183,7 +1184,7 @@ namespace iiMenu.Mods
                 if (gunLocked)
                 {
                     gunLocked = false;
-                    RigManager.LocalRig.enabled = true;
+                    VRRig.LocalRig.enabled = true;
                 }
             }
         }
@@ -1262,7 +1263,7 @@ namespace iiMenu.Mods
                                 });
                             }
                             else
-                                RigManager.LocalRig.PlayHandTapLocal(248, false, 999999f);
+                                VRRig.LocalRig.PlayHandTapLocal(248, false, 999999f);
                         }
                     }
                 }
@@ -2191,7 +2192,7 @@ namespace iiMenu.Mods
                 if (gunLocked)
                 {
                     gunLocked = false;
-                    RigManager.LocalRig.enabled = true;
+                    VRRig.LocalRig.enabled = true;
                 }
             }
         }
@@ -2212,7 +2213,7 @@ namespace iiMenu.Mods
         public static IEnumerator RopeEnableRig()
         {
             yield return new WaitForSeconds(0.3f);
-            RigManager.LocalRig.enabled = true;
+            VRRig.LocalRig.enabled = true;
         }
 
         public static void BetaSetRopeVelocity(int RopeId, Vector3 Velocity)
@@ -2237,8 +2238,8 @@ namespace iiMenu.Mods
 
                     RopeCoroutine = CoroutineManager.instance.StartCoroutine(RopeEnableRig());
 
-                    RigManager.LocalRig.enabled = false;
-                    RigManager.LocalRig.transform.position = ClosestNode.transform.position;
+                    VRRig.LocalRig.enabled = false;
+                    VRRig.LocalRig.transform.position = ClosestNode.transform.position;
                 }
 
                 if (Vector3.Distance(ServerPos, ClosestNode.transform.position) < 5f)
