@@ -269,8 +269,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Join Random", method =() => Important.JoinRandomR(), isTogglable = false, toolTip = "Joins a random public room." },
                 
                 new ButtonInfo { buttonText = "Create Public", method =() => Important.CreateRoom(Important.RandomRoomName(), true), isTogglable = false, toolTip = "Creates a public room."},
-                new ButtonInfo { buttonText = "Create Duplicate", method =() => Patches.RoomPatch.enabled = true, disableMethod =() =>  Patches.RoomPatch.enabled = false, toolTip = "Creates a duplicate code whenever trying to join a room."},
+                new ButtonInfo { buttonText = "Create Duplicate", method =() => { Patches.RoomPatch.enabled = true; Patches.RoomPatch.duplicate = true; }, disableMethod =() =>  Patches.RoomPatch.enabled = false, toolTip = "Creates a duplicate code whenever trying to join a room."},
 
+                new ButtonInfo { buttonText = "Fast Join Rooms", method =() => { Patches.RoomPatch.enabled = true; Patches.RoomPatch.duplicate = false; }, disableMethod =() =>  Patches.RoomPatch.enabled = false, toolTip = "Uses the fastest method of joining rooms possible when trying to join a room."},
                 new ButtonInfo { buttonText = "Join Menu Room", method =() => PhotonNetworkController.Instance.AttemptToJoinSpecificRoom($"<$II_{PluginInfo.Version}>", JoinType.Solo), isTogglable = false, toolTip = "Connects you to a room that is exclusive to ii's <b>Stupid</b> Menu users." },
 
                 new ButtonInfo { buttonText = "Auto Join Room \"RUN\"", method =() => rejRoom = "RUN", isTogglable = false, toolTip = "Automatically attempts to connect to room \"RUN\" every couple of seconds until connected." },
