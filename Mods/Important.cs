@@ -245,7 +245,7 @@ namespace iiMenu.Mods
         {
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (!vrrig.isLocal)
+                if (vrrig != RigManager.LocalRig)
                     vrrig.voicePitchForRelativeScale = new AnimationCurve(
                         new Keyframe(0f, 1f, 0f, 0f),
                         new Keyframe(1f, 1f, 0f, 0f)
@@ -257,7 +257,7 @@ namespace iiMenu.Mods
         {
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (!vrrig.isLocal)
+                if (vrrig != RigManager.LocalRig)
                     vrrig.voicePitchForRelativeScale = RigManager.LocalRig.voicePitchForRelativeScale;
             }
         }

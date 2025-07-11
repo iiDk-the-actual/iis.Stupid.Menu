@@ -1,16 +1,12 @@
-﻿using HarmonyLib;
-using Photon.Realtime;
-using PlayFab.ClientModels;
-using PlayFab;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using UnityEngine;
-using GorillaNetworking;
-using System.Linq;
+﻿using GorillaNetworking;
+using HarmonyLib;
 using Photon.Pun;
-using System.Runtime.CompilerServices;
+using PlayFab;
+using PlayFab.ClientModels;
 using System;
-using GorillaTag.GuidedRefs;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace iiMenu.Patches
 {

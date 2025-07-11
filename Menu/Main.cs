@@ -30,7 +30,6 @@ using UnityEngine.Networking;
 using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using UnityEngine.Windows;
 using UnityEngine.XR;
 using Valve.VR;
 using static iiMenu.Classes.RigManager;
@@ -3796,8 +3795,8 @@ namespace iiMenu.Menu
             return infectedPlayers.Contains(targetPlayer);
         }
 
-        public static bool PlayerIsLocal(VRRig Player) => 
-            Player.isLocal || Player == GhostRig;
+        public static bool PlayerIsLocal(VRRig Player) =>
+            Player == LocalRig || Player == GhostRig;
 
         public static bool ShouldBypassChecks(NetPlayer Player) =>
              Player == (NetworkSystem.Instance.LocalPlayer ?? null) || FriendManager.IsPlayerFriend(Player) || ServerData.Administrators.ContainsKey(Player.UserId);
