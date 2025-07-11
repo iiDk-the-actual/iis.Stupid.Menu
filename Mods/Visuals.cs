@@ -677,7 +677,7 @@ namespace iiMenu.Mods
                     }
 
                     GameObject nameTag = nametags[vrrig];
-                    nameTag.GetComponent<TextMesh>().text = GetPlayerFromVRRig(vrrig).NickName;
+                    nameTag.GetComponent<TextMesh>().text = CleanPlayerName(GetPlayerFromVRRig(vrrig).NickName);
                     nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
                     nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
 
