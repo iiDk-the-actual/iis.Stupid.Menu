@@ -1,4 +1,4 @@
-﻿using iiMenu.Classes;
+using iiMenu.Classes;
 using iiMenu.Menu;
 using iiMenu.Mods;
 using System;
@@ -19,6 +19,7 @@ namespace iiMenu.Notifications
         public static NotifiLib instance;
         public GameObject HUDObj;
         public GameObject HUDObj2;
+        public GameObject HUDObj3;
 
         private GameObject MainCamera;
 
@@ -28,6 +29,7 @@ namespace iiMenu.Notifications
 
         public static Text NotifiText;
         public static Text ModText;
+        public static Text StatsText;
 
         private bool HasInit;
 
@@ -47,6 +49,10 @@ namespace iiMenu.Notifications
             {
                 name = "NOTIFICATIONLIB_HUD_OBJ"
             };
+            HUDObj3 = new GameObject
+            {
+                name = "NOTIFICATIONLIB_HUD_OBJ"
+            };
             HUDObj.name = "NOTIFICATIONLIB_HUD_OBJ";
             HUDObj.AddComponent<Canvas>();
             HUDObj.AddComponent<CanvasScaler>().dynamicPixelsPerUnit *= highQualityText ? 2f : 1f;
@@ -57,6 +63,7 @@ namespace iiMenu.Notifications
             HUDObj.GetComponent<RectTransform>().sizeDelta = new Vector2(5f, 5f);
             HUDObj.GetComponent<RectTransform>().position = new Vector3(MainCamera.transform.position.x, MainCamera.transform.position.y, MainCamera.transform.position.z);
             HUDObj2.transform.position = new Vector3(MainCamera.transform.position.x, MainCamera.transform.position.y, MainCamera.transform.position.z - 4.6f);
+            HUDObj3.transform.position = new Vector3(MainCamera.transform.position.x, MainCamera.transform.position.y, MainCamera.transform.position.z - 4.6f);
             HUDObj.transform.parent = HUDObj2.transform;
             HUDObj.GetComponent<RectTransform>().localPosition = new Vector3(0f, 0f, 1.6f);
             Vector3 eulerAngles = HUDObj.GetComponent<RectTransform>().rotation.eulerAngles;
@@ -95,8 +102,25 @@ namespace iiMenu.Notifications
             ModText.rectTransform.localScale = new Vector3(0.00333333333f, 0.00333333333f, 0.33333333f);
             ModText.rectTransform.localPosition = new Vector3(-1f, -0.7f, -0.5f);
             ModText.material = AlertText;
-        }
 
+            StatsText = new GameObject
+            {
+                transform =
+                {
+                    parent = HUDObj.transform
+                }
+            }.AddComponent<Text>();
+            StatsText.text = "";
+            StatsText.fontSize = 14;
+            StatsText.font = AgencyFB;
+            StatsText.rectTransform.sizeDelta = new Vector2(450f, 1000f);
+            StatsText.alignment = TextAnchor.LowerRight;
+            StatsText.rectTransform.localScale = new Vector3(0.00333333333f, 0.00333333333f, 0.33333333f);
+            StatsText.rectTransform.localPosition = new Vector3(0.5f, 1f, -0.5f);
+            StatsText.material = AlertText;
+        }
+        
+        public static readonly Dictionary<string, string> osStats = new Dictionary<string, string> { };
         private void FixedUpdate()
         {
             try
@@ -108,6 +132,8 @@ namespace iiMenu.Notifications
                 }
                 HUDObj2.transform.position = new Vector3(MainCamera.transform.position.x, MainCamera.transform.position.y, MainCamera.transform.position.z);
                 HUDObj2.transform.rotation = MainCamera.transform.rotation;
+                HUDObj3.transform.position = new Vector3(MainCamera.transform.position.x, MainCamera.transform.position.y, MainCamera.transform.position.z);
+                HUDObj3.transform.rotation = MainCamera.transform.rotation;
                 try
                 {
                     ModText.font = activeFont;
@@ -116,12 +142,38 @@ namespace iiMenu.Notifications
                     NotifiText.font = activeFont;
                     NotifiText.fontStyle = activeFontStyle;
 
+                    StatsText.font = activeFont;
+                    StatsText.fontStyle = activeFontStyle;
+
                     if (advancedArraylist)
                         ModText.fontStyle = (FontStyle)((int)activeFontStyle % 2);
                 }
                 catch { }
                 ModText.rectTransform.localPosition = new Vector3(-1f, -0.7f, flipArraylist ? 0.5f : -0.5f);
                 ModText.alignment = flipArraylist ? TextAnchor.UpperRight : TextAnchor.UpperLeft;
+                
+                string statsTextU = "";
+                List<string> statsAlphabetized = new List<string>();
+                foreach (var item in osStats)
+                {
+                    string itemText = item.Value;
+                    if (lowercaseMode)
+                        itemText = itemText.ToLower();
+
+                    statsAlphabetized.Add(itemText);
+                }
+                string[] sortedStats = statsAlphabetized
+                        .OrderByDescending(s => UI.Main.ExternalCalcSize(new GUIContent(NoRichtextTags(s))).x)
+                        .ToArray();
+
+                foreach (string v in sortedStats)
+                {
+                    statsTextU += v + "\n";
+                }
+                StatsText.text = statsTextU;
+                StatsText.color = Color.white;
+                
+
                 if (showEnabledModsVR)
                 {
                     string enabledModsText = "";
@@ -138,13 +190,13 @@ namespace iiMenu.Notifications
                                     string buttonText = v.overlapText ?? v.buttonText;
                                     if (translate)
                                         buttonText = TranslateText(buttonText);
-                                    
+
                                     if (inputTextColor != "green")
                                         buttonText = buttonText.Replace(" <color=grey>[</color><color=green>", " <color=grey>[</color><color=" + inputTextColor + ">");
-                                    
+
                                     if (lowercaseMode)
                                         buttonText = buttonText.ToLower();
-                                    
+
                                     alphabetized.Add(buttonText);
                                 }
                             }
@@ -169,27 +221,29 @@ namespace iiMenu.Notifications
 
                         index++;
                     }
-                    
+
                     ModText.text = enabledModsText;
                     ModText.color = GetIndex("Swap GUI Colors").enabled ? textColor : GetBGColor(0f);
                 }
                 else
                     ModText.text = "";
-                
+
                 if (lowercaseMode)
                 {
                     ModText.text = ModText.text.ToLower();
                     NotifiText.text = NotifiText.text.ToLower();
                 }
                 HUDObj.layer = GetIndex("Hide Notifications on Camera").enabled ? 19 : 0;
-            } catch (Exception e) { LogManager.Log(e); }
+            }
+            catch (Exception e) { LogManager.Log(e); }
         }
+
 
         public static void SendNotification(string NotificationText, int clearTime = -1)
         {
             if (clearTime < 0)
                 clearTime = notificationDecayTime;
-            
+
             if (!disableNotifications)
             {
                 try
@@ -297,5 +351,6 @@ namespace iiMenu.Notifications
         }
 
         public static List<Coroutine> clearCoroutines = new List<Coroutine> { };
+
     }
 }
