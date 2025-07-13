@@ -19,7 +19,6 @@ namespace iiMenu.Notifications
         public static NotifiLib instance;
         public GameObject HUDObj;
         public GameObject HUDObj2;
-        public GameObject HUDObj3;
 
         private GameObject MainCamera;
 
@@ -49,10 +48,6 @@ namespace iiMenu.Notifications
             {
                 name = "NOTIFICATIONLIB_HUD_OBJ"
             };
-            HUDObj3 = new GameObject
-            {
-                name = "NOTIFICATIONLIB_HUD_OBJ"
-            };
             HUDObj.name = "NOTIFICATIONLIB_HUD_OBJ";
             HUDObj.AddComponent<Canvas>();
             HUDObj.AddComponent<CanvasScaler>().dynamicPixelsPerUnit *= highQualityText ? 2f : 1f;
@@ -63,7 +58,6 @@ namespace iiMenu.Notifications
             HUDObj.GetComponent<RectTransform>().sizeDelta = new Vector2(5f, 5f);
             HUDObj.GetComponent<RectTransform>().position = new Vector3(MainCamera.transform.position.x, MainCamera.transform.position.y, MainCamera.transform.position.z);
             HUDObj2.transform.position = new Vector3(MainCamera.transform.position.x, MainCamera.transform.position.y, MainCamera.transform.position.z - 4.6f);
-            HUDObj3.transform.position = new Vector3(MainCamera.transform.position.x, MainCamera.transform.position.y, MainCamera.transform.position.z - 4.6f);
             HUDObj.transform.parent = HUDObj2.transform;
             HUDObj.GetComponent<RectTransform>().localPosition = new Vector3(0f, 0f, 1.6f);
             Vector3 eulerAngles = HUDObj.GetComponent<RectTransform>().rotation.eulerAngles;
@@ -132,8 +126,6 @@ namespace iiMenu.Notifications
                 }
                 HUDObj2.transform.position = new Vector3(MainCamera.transform.position.x, MainCamera.transform.position.y, MainCamera.transform.position.z);
                 HUDObj2.transform.rotation = MainCamera.transform.rotation;
-                HUDObj3.transform.position = new Vector3(MainCamera.transform.position.x, MainCamera.transform.position.y, MainCamera.transform.position.z);
-                HUDObj3.transform.rotation = MainCamera.transform.rotation;
                 try
                 {
                     ModText.font = activeFont;
