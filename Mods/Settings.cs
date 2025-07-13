@@ -415,7 +415,37 @@ namespace iiMenu.Mods
                     overlapText = $"Destroy {player.NickName}",
                     method =() => Overpowered.DestroyPlayer(player),
                     toolTip = $"Stops all new players from seeing {player.NickName}."
-                }
+                },
+                new ButtonInfo {
+                    buttonText = "Guardian Bring Player",
+                    overlapText = $"Guardian Bring {player.NickName}",
+                    method =() => Overpowered.BringPlayer(player),
+                    toolTip = $"Brings {player.NickName} to you."
+                },
+                new ButtonInfo {
+                    buttonText = "Guardian Bring Player Gun",
+                    overlapText = $"Guardian Bring {player.NickName} Gun",
+                    method =() => Overpowered.BringPlayerGun(player),
+                    toolTip = $"Brings {player.NickName} to wherever your hand desires."
+                },
+                new ButtonInfo {
+                    buttonText = "Guardian Kick Player",
+                    overlapText = $"Guardian Kick {player.NickName}",
+                    method =() => Overpowered.KickPlayer(player),
+                    toolTip = $"Kicks {player.NickName}."
+                },
+                new ButtonInfo {
+                    buttonText = "Guardian Obliterate Player",
+                    overlapText = $"Guardian Obliterate {player.NickName}",
+                    method =() => Overpowered.ObliteratePlayer(player),
+                    toolTip = $"Obliterates {player.NickName}."
+                },
+                new ButtonInfo {
+                    buttonText = "Guardian Crash Player",
+                    overlapText = $"Guardian Crash {player.NickName}",
+                    method =() => Overpowered.CrashPlayer(player),
+                    toolTip = $"Crashes {player.NickName}."
+                },
             };
 
             if (PhotonNetwork.IsMasterClient)
