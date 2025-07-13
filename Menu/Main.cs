@@ -2598,7 +2598,7 @@ namespace iiMenu.Menu
                         if (Mouse.current.leftButton.isPressed && !lastclicking)
                         {
                             Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
-                            bool worked = Physics.Raycast(ray, out RaycastHit hit, 512f);
+                            bool worked = Physics.Raycast(ray, out RaycastHit hit, 512f, NoInvisLayerMask());
                             if (worked)
                             {
                                 Classes.Button collide = hit.transform.gameObject.GetComponent<Classes.Button>();
@@ -3207,6 +3207,7 @@ namespace iiMenu.Menu
                 GameObject Particle = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                 Particle.transform.position = EndPosition;
                 Particle.transform.localScale = Vector3.one * 0.025f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
+                Particle.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
                 Particle.AddComponent<CustomParticle>();
                 Destroy(Particle.GetComponent<Collider>());
             }
