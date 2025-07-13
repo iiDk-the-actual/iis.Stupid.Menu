@@ -816,6 +816,9 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Start All Races", method =() => Fun.StartAllRaces(), isTogglable = false, toolTip = "Starts every race in the hoverboard map."},
 
+                new ButtonInfo { buttonText = "Override Hand Link", method =() => Patches.GroundedPatch.enabled = true, disableMethod =() => Patches.GroundedPatch.enabled = false, toolTip = "Prioritizes you when you or others grab onto you."},
+                new ButtonInfo { buttonText = "Anti Hand Link", method =() => Patches.HandLinkPatch.enabled = true, disableMethod =() => Patches.HandLinkPatch.enabled = false, toolTip = "Disables you from teleporting when grabbing onto other players."},
+
                 new ButtonInfo { buttonText = "Overlap Building", enableMethod =() => Patches.OverlapPatch.enabled = true, disableMethod =() => Patches.OverlapPatch.enabled = false, toolTip = "Lets you place pieces inside of each other in the attic."},
                 new ButtonInfo { buttonText = "Small Building", enableMethod =() => Patches.BuildPatch.enabled = true, disableMethod =() => Patches.BuildPatch.enabled = false, toolTip = "Lets you build in the attic while small."},
                 new ButtonInfo { buttonText = "Multi Grab", method =() => Fun.MultiGrab(), toolTip = "Lets you grab multiple objects."},
@@ -1157,7 +1160,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Always Guardian", method =() => Overpowered.AlwaysGuardian(), disableMethod =() => Movement.EnableRig(), toolTip = "Makes you always the guardian."},
                 new ButtonInfo { buttonText = "Guardian Protector", method =() => Overpowered.GuardianProtector(), toolTip = "Pushes people away from the guardian moon if they try to approach it."},
 
-                new ButtonInfo { buttonText = "Grab Gun", overlapText = "Guardian Grab Gun", method =() => Overpowered.GrabGun(), toolTip = "Grabs whoever your hand desires if you're the guardian you."},
+                new ButtonInfo { buttonText = "Grab Gun", overlapText = "Guardian Grab Gun", method =() => Overpowered.GrabGun(), toolTip = "Grabs whoever your hand desires if you're the guardian."},
                 new ButtonInfo { buttonText = "Grab All <color=grey>[</color><color=green>G</color><color=grey>]</color>", overlapText = "Guardian Grab All <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.GrabAll(), toolTip = "Grabs everyone in the room if you're the guardian."},
 
                 new ButtonInfo { buttonText = "Release Gun", overlapText = "Guardian Release Gun", method =() => Overpowered.ReleaseGun(), toolTip = "Releases whoever your hand desires if you're the guardian."},
@@ -1171,8 +1174,18 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Bring All Gun", overlapText = "Guardian Bring All Gun", method =() => Overpowered.BringAllGun(), toolTip = "Brings everyone in the room towards wherever your hand desires."},
 
-                new ButtonInfo { buttonText = "Give Fly Gun", overlapText = "Guardian Give Fly Gun", method =() => Overpowered.GiveFlyGun(), toolTip = "Gives whoever you want fly when they hold their right thumb down."},
-                new ButtonInfo { buttonText = "Give Fly All", overlapText = "Guardian Give Fly All", method =() => Overpowered.GiveFlyAll(), toolTip = "Gives everyone in the room fly when they hold their right thumb down."},
+                new ButtonInfo { buttonText = "Guardian Bring Away Gun", method =() => Overpowered.BringAwayGun(), toolTip = "Brings whoever your hand desires towards you."},
+                new ButtonInfo { buttonText = "Guardian Bring Away All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.BringAwayAll(), toolTip = "Brings everyone in the room towards you."},
+
+                new ButtonInfo { buttonText = "Bring Away All Gun", method =() => Overpowered.BringAwayAllGun(), toolTip = "Brings everyone in the room towards wherever your hand desires."},
+
+                new ButtonInfo { buttonText = "Guardian Guardian Orbit All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.OrbitAll(), toolTip = "Orbits everyone in the room around you."},
+
+                new ButtonInfo { buttonText = "Guardian Punch Mod", method =() => Overpowered.PunchMod(), toolTip = "Flings people when you punch them."},
+                new ButtonInfo { buttonText = "Guardian Boxing", method =() => Overpowered.Boxing(), toolTip = "Lets everyone in the room punch eachother."},
+                
+                new ButtonInfo { buttonText = "Guardian Give Fly Gun", method =() => Overpowered.GiveFlyGun(), toolTip = "Gives whoever you want fly when they hold their right thumb down."},
+                new ButtonInfo { buttonText = "Guardian Give Fly All", method =() => Overpowered.GiveFlyAll(), toolTip = "Gives everyone in the room fly when they hold their right thumb down."},
 
                 new ButtonInfo { buttonText = "Spaz Player Gun", overlapText = "Guardian Spaz Player Gun", method =() => Overpowered.SpazPlayerGun(), toolTip = "Spazzes out whoever your hand desires."},
                 new ButtonInfo { buttonText = "Spaz All Players <color=grey>[</color><color=green>T</color><color=grey>]</color>", overlapText = "Guardian Spaz All Players <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.SpazAllPlayers(), toolTip = "Spazzes out everyone in the room."},
@@ -1189,8 +1202,10 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Guardian Crash Gun", method =() => Overpowered.GuardianCrashGun(), toolTip = "Crashes whoever your hand desires." },
                 new ButtonInfo { buttonText = "Guardian Crash All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.GuardianCrashAll(), toolTip = "Crashes everyone in the room when holding <color=green>trigger</color>." },
 
-                new ButtonInfo { buttonText = "Guardian Obliterate Gun", method =() => Overpowered.GuardianObliterateGun(), toolTip = "Sends whoever your hand desires past and beyond the quit box, making them fall infinitely until they close their game." },
-                new ButtonInfo { buttonText = "Guardian Obliterate All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.GuardianObliterateAll(), toolTip = "Sends everyone in the room past and beyond the quit box, making them fall infinitely until they close their game, when holding <color=green>trigger</color>." },
+                new ButtonInfo { buttonText = "Blind on Grab", method =() => Overpowered.BlindOnGrab(), toolTip = "Blinds the player when they grab you." },
+                new ButtonInfo { buttonText = "Kick on Grab", method =() => Overpowered.KickOnGrab(), toolTip = "Kicks the player when they grab you." },
+                new ButtonInfo { buttonText = "Crash on Grab", method =() => Overpowered.CrashOnGrab(), toolTip = "Crashes the player when they grab you." },
+                new ButtonInfo { buttonText = "Obliterate on Grab", method =() => Overpowered.ObliterateOnGrab(), toolTip = "Obliterates the player when they grab you." },
 
                 new ButtonInfo { buttonText = "Freeze All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.FreezeAll(), toolTip = "Freezes everyone in the room when holding <color=green>trigger</color>." },
 
@@ -1225,8 +1240,9 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Snowball Fling Player Towards Gun", method =() => Overpowered.SnowballFlingPlayerTowardsGun(), toolTip = "Flings whoever your hand desires towards you."},
                 new ButtonInfo { buttonText = "Snowball Fling Player Away Gun", method =() => Overpowered.SnowballFlingPlayerAwayGun(), toolTip = "Flings whoever your hand desires away from you."},
-
+                
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Fling</color><color=grey>]</color>", method =() => Overpowered.AntiReportFling(), toolTip = "Flings whoever tries to report you."},
+                new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Snowball Fling</color><color=grey>]</color>", method =() => Overpowered.AntiReportSnowballFling(), toolTip = "Flings whoever tries to report you with the snowballs."},
 
                 new ButtonInfo { buttonText = "Destroy Gun", method =() => Overpowered.DestroyGun(), toolTip = "Block new players from seeing whoever your hand desires."},
                 new ButtonInfo { buttonText = "Destroy All", method =() => Overpowered.DestroyAll(), isTogglable = false, toolTip = "Block new players from seeing everyone."},
