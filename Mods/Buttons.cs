@@ -274,6 +274,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Fast Join Rooms", method =() => { Patches.RoomPatch.enabled = true; Patches.RoomPatch.duplicate = false; }, disableMethod =() =>  Patches.RoomPatch.enabled = false, toolTip = "Uses the fastest method of joining rooms possible when trying to join a room."},
                 new ButtonInfo { buttonText = "Join Menu Room", method =() => PhotonNetworkController.Instance.AttemptToJoinSpecificRoom($"<$II_{PluginInfo.Version}>", JoinType.Solo), isTogglable = false, toolTip = "Connects you to a room that is exclusive to ii's <b>Stupid</b> Menu users." },
 
+                new ButtonInfo { buttonText = "Bypass Join Room Type", method =() => Patches.JoinedRoomPatch.enabled = true, disableMethod =() => Patches.JoinedRoomPatch.enabled = false, toolTip = "Bypasses the immediate disconnection when trying to join a room that is in another map."},
+
                 new ButtonInfo { buttonText = "Auto Join Room \"RUN\"", method =() => rejRoom = "RUN", isTogglable = false, toolTip = "Automatically attempts to connect to room \"RUN\" every couple of seconds until connected." },
                 new ButtonInfo { buttonText = "Auto Join Room \"DAISY\"", method =() => rejRoom = "DAISY", isTogglable = false, toolTip = "Automatically attempts to connect to room \"DAISY\" every couple of seconds until connected." },
                 new ButtonInfo { buttonText = "Auto Join Room \"DAISY09\"", method =() => rejRoom = "DAISY09", isTogglable = false, toolTip = "Automatically attempts to connect to room \"DAISY09\" every couple of seconds until connected." },
@@ -301,7 +303,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Exit Gorilla Tag", method =() => Application.Quit(), isTogglable = false, toolTip = "Closes Gorilla Tag."},
                 new ButtonInfo { buttonText = "Restart Gorilla Tag", method =() => Important.RestartGame(), isTogglable = false, toolTip = "Restarts Gorilla Tag."},
 
-                new ButtonInfo { buttonText = "Anti Hand Tap", enableMethod =() => Patches.AntiSoundPatch.enabled = true, disableMethod =() => Patches.AntiSoundPatch.enabled = false, toolTip = "Stops all hand tap sounds from being played."},
+                new ButtonInfo { buttonText = "Anti Hand Tap", enableMethod =() => Patches.HandTapPatch.enabled = true, disableMethod =() => Patches.HandTapPatch.enabled = false, toolTip = "Stops all hand tap sounds from being played."},
                 new ButtonInfo { buttonText = "First Person Camera", enableMethod =() => Important.EnableFPC(), method =() => Important.MoveFPC(), disableMethod =() => Important.DisableFPC(), toolTip = "Makes your camera output what you see in VR."},
                 new ButtonInfo { buttonText = "Force Enable Hands", method =() => Important.ForceEnableHands(), toolTip = "Prevents your hands from disconnecting."},
 
@@ -629,6 +631,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Custom Skybox Color", enableMethod =() => Visuals.DoCustomSkyboxColor(), method =() => Visuals.CustomSkyboxColor(), disableMethod =() => Visuals.UnCustomSkyboxColor(), toolTip = "Changes the skybox color to match the menu."},
 
                 new ButtonInfo { buttonText = "Draw Gun", method =() => Visuals.DrawGun(), disableMethod =() => Visuals.DisableDrawGun(), toolTip = "Lets you draw on whatever your hand desires." },
+
+                new ButtonInfo { buttonText = "Gamesense Ring", enableMethod =() => Patches.HandTapPatch.OnHandTap += Visuals.OnHandTapGamesenseRing, method =() => Visuals.GamesenseRing(), disableMethod =() => Visuals.DisableGamesenseRing(), toolTip = "Lets you draw on whatever your hand desires." },
 
                 new ButtonInfo { buttonText = "Velocity Label", method =() => Visuals.VelocityLabel(), toolTip = "Puts text on your right hand, showing your velocity."},
                 new ButtonInfo { buttonText = "Nearby Label", method =() => Visuals.NearbyTaggerLabel(), toolTip = "Puts text on your left hand, showing you the distance of the nearest tagger."},
