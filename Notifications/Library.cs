@@ -8,6 +8,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using static iiMenu.Menu.Main;
+using static MB3_MeshBakerRoot.ZSortObjects;
 
 namespace iiMenu.Notifications
 {
@@ -25,6 +26,8 @@ namespace iiMenu.Notifications
         private Material AlertText = new Material(Shader.Find("GUI/Text Shader"));
 
         public static string PreviousNotifi;
+
+        public static Dictionary<string, string> information = new Dictionary<string, string> { };
 
         public static Text NotifiText;
         public static Text ModText;
@@ -50,7 +53,7 @@ namespace iiMenu.Notifications
             };
             HUDObj.name = "NOTIFICATIONLIB_HUD_OBJ";
             HUDObj.AddComponent<Canvas>();
-            HUDObj.AddComponent<CanvasScaler>().dynamicPixelsPerUnit *= highQualityText ? 2f : 1f;
+            HUDObj.AddComponent<CanvasScaler>();
             HUDObj.AddComponent<GraphicRaycaster>();
             HUDObj.GetComponent<Canvas>().enabled = true;
             HUDObj.GetComponent<Canvas>().renderMode = RenderMode.WorldSpace;
@@ -105,16 +108,15 @@ namespace iiMenu.Notifications
                 }
             }.AddComponent<Text>();
             StatsText.text = "";
-            StatsText.fontSize = 14;
+            StatsText.fontSize = 30;
             StatsText.font = AgencyFB;
             StatsText.rectTransform.sizeDelta = new Vector2(450f, 1000f);
-            StatsText.alignment = TextAnchor.LowerRight;
+            StatsText.alignment = TextAnchor.UpperRight;
             StatsText.rectTransform.localScale = new Vector3(0.00333333333f, 0.00333333333f, 0.33333333f);
-            StatsText.rectTransform.localPosition = new Vector3(0.5f, 1f, -0.5f);
+            StatsText.rectTransform.localPosition = new Vector3(-1f, -0.7f, 0.5f);
             StatsText.material = AlertText;
         }
-        
-        public static readonly Dictionary<string, string> osStats = new Dictionary<string, string> { };
+
         private void FixedUpdate()
         {
             try
@@ -124,6 +126,9 @@ namespace iiMenu.Notifications
                     Init();
                     HasInit = true;
                 }
+
+                HUDObj.GetComponent<CanvasScaler>().dynamicPixelsPerUnit = highQualityText ? 2f : 1f;
+
                 HUDObj2.transform.position = new Vector3(MainCamera.transform.position.x, MainCamera.transform.position.y, MainCamera.transform.position.z);
                 HUDObj2.transform.rotation = MainCamera.transform.rotation;
                 try
@@ -143,28 +148,26 @@ namespace iiMenu.Notifications
                 catch { }
                 ModText.rectTransform.localPosition = new Vector3(-1f, -0.7f, flipArraylist ? 0.5f : -0.5f);
                 ModText.alignment = flipArraylist ? TextAnchor.UpperRight : TextAnchor.UpperLeft;
-                
-                string statsTextU = "";
-                List<string> statsAlphabetized = new List<string>();
-                foreach (var item in osStats)
+
+                StatsText.rectTransform.localPosition = new Vector3(-1f, -0.7f, flipArraylist ? -0.5f : 0.5f);
+                StatsText.alignment = flipArraylist ? TextAnchor.UpperLeft : TextAnchor.UpperRight;
+
+                if (information.Count > 0)
                 {
-                    string itemText = item.Value;
+                    Color targetColor = GetIndex("Swap GUI Colors").enabled ? GetBDColor(0f) : GetBGColor(0f);
+
+                    List<string> statsAlphabetized = information
+                        .Select(item => $"<color=#{ColorToHex(targetColor)}>{item.Key}</color> <color=#{ColorToHex(textColor)}>{item.Value}</color>")
+                        .OrderByDescending(item => item.Length)
+                        .ToList();
+
+                    StatsText.text = string.Join("\n", statsAlphabetized.ToArray());
+                    StatsText.color = Color.white;
+
                     if (lowercaseMode)
-                        itemText = itemText.ToLower();
-
-                    statsAlphabetized.Add(itemText);
-                }
-                string[] sortedStats = statsAlphabetized
-                        .OrderByDescending(s => UI.Main.ExternalCalcSize(new GUIContent(NoRichtextTags(s))).x)
-                        .ToArray();
-
-                foreach (string v in sortedStats)
-                {
-                    statsTextU += v + "\n";
-                }
-                StatsText.text = statsTextU;
-                StatsText.color = Color.white;
-                
+                        StatsText.text = StatsText.text.ToLower();
+                } else
+                    StatsText.text = "";
 
                 if (showEnabledModsVR)
                 {
@@ -204,9 +207,11 @@ namespace iiMenu.Notifications
                     int index = 0;
                     foreach (string v in sortedButtons)
                     {
+                        Color targetColor = GetIndex("Swap GUI Colors").enabled ? GetBDColor(index * -0.1f) : GetBGColor(index * -0.1f);
+
                         if (advancedArraylist)
                             enabledModsText += (flipArraylist ?
-                                  $"<color=#{ColorToHex(textColor)}>{v}</color><color=#{ColorToHex(GetBGColor(index * -0.1f))}> |</color>"
+                                  $"<color=#{ColorToHex(textColor)}>{v}</color><color=#{ColorToHex(targetColor)}> |</color>"
                                 : $"<color=#{ColorToHex(GetBGColor(index * -0.1f))}>| </color><color=#{ColorToHex(textColor)}>{v}</color>") + "\n";
                         else
                             enabledModsText += v + "\n";
@@ -229,7 +234,6 @@ namespace iiMenu.Notifications
             }
             catch (Exception e) { LogManager.Log(e); }
         }
-
 
         public static void SendNotification(string NotificationText, int clearTime = -1)
         {
