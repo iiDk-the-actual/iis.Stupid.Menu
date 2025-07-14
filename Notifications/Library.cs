@@ -8,7 +8,6 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using static iiMenu.Menu.Main;
-using static MB3_MeshBakerRoot.ZSortObjects;
 
 namespace iiMenu.Notifications
 {
