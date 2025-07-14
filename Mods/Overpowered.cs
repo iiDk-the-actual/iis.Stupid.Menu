@@ -3,6 +3,7 @@ using GorillaExtensions;
 using GorillaGameModes;
 using GorillaLocomotion;
 using GorillaLocomotion.Gameplay;
+using GorillaTagScripts;
 using iiMenu.Classes;
 using iiMenu.Notifications;
 using iiMenu.Patches;
@@ -2370,6 +2371,102 @@ namespace iiMenu.Mods
                     freezeAllDelay = Time.time + 0.1f;
                 }
             }
+        }
+
+        public static void LagPlayer(object general)
+        {
+            if (PhotonNetwork.InRoom && Time.time > lagDebounce)
+            {
+                if (general is NetPlayer player)
+                {
+                    for (int i = 0; i < lagAmount; i++)
+                       FriendshipGroupDetection.Instance.photonView.RPC("NotifyPartyMerging", NetPlayerToPlayer(player), new object[] { null });
+                }
+                else if (general is RpcTarget target)
+                {
+                    for (int i = 0; i < lagAmount; i++)
+                        FriendshipGroupDetection.Instance.photonView.RPC("NotifyPartyMerging", target, new object[] { null });
+                }
+                else if (general is int[] targets)
+                {
+                    for (int i = 0; i < lagAmount; i++)
+                        SpecialTargetRPC(FriendshipGroupDetection.Instance.photonView, "NotifyPartyMerging", targets, new object[] { null });
+                }
+
+                RPCProtection();
+                lagDebounce = Time.time + lagDelay;
+            }
+        }
+
+        private static float lagDebounce;
+        public static void LagGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (gunLocked && lockTarget != null)
+                    LagPlayer(GetPlayerFromVRRig(lockTarget));
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
+        public static void LagAll() => LagPlayer(RpcTarget.Others);
+
+        public static void AntiReportLag()
+        {
+            try
+            {
+                List<int> actors = new List<int> { };
+
+                foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+                {
+                    if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
+                    {
+                        Transform report = line.reportButton.gameObject.transform;
+                        if (GetIndex("Visualize Anti Report").enabled)
+                            VisualizeAura(report.position, Safety.threshold, Color.red);
+
+                        foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                        {
+                            if (!vrrig.isLocal)
+                            {
+                                float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
+                                float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
+
+                                if (D1 < Safety.threshold || D2 < Safety.threshold)
+                                {
+                                    if (!Safety.smartarp || (Safety.smartarp && PhotonNetwork.CurrentRoom.IsVisible && !PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED")))
+                                    {
+                                        actors.Add(GetPlayerFromVRRig(vrrig).ActorNumber);
+                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they are being lagged.");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (actors.Count > 0)
+                    LagPlayer(actors.ToArray());
+            }
+            catch { } // Not connected
         }
 
         public static void DestroyGun()
