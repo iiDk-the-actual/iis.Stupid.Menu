@@ -312,7 +312,7 @@ namespace iiMenu.Mods
 
         public static void PlayersTab()
         {
-            currentCategoryName = "Temporary Category";
+            currentCategoryName = "Players";
 
             List<ButtonInfo> buttons = new List<ButtonInfo> { 
                 new ButtonInfo { 
@@ -348,17 +348,18 @@ namespace iiMenu.Mods
                 }
             }
 
-            Buttons.buttons[29] = buttons.ToArray();
+            Buttons.buttons[37] = buttons.ToArray();
         }
 
         public static void NavigatePlayer(NetPlayer player)
         {
             currentCategoryName = "Temporary Category";
+            string targetName = ToTitleCase(player.NickName);
 
             List<ButtonInfo> buttons = new List<ButtonInfo> {
                 new ButtonInfo {
                     buttonText = "Exit PlayerInspect",
-                    overlapText = $"Exit {player.NickName}",
+                    overlapText = $"Exit {targetName}",
                     method =() => PlayersTab(),
                     isTogglable = false,
                     toolTip = "Returns you back to the players tab."
@@ -366,85 +367,92 @@ namespace iiMenu.Mods
 
                 new ButtonInfo {
                     buttonText = "Teleport to Player",
-                    overlapText = $"Teleport to {player.NickName}",
+                    overlapText = $"Teleport to {targetName}",
                     method =() => Movement.TeleportToPlayer(player),
                     isTogglable = false,
-                    toolTip = $"Teleports you to {player.NickName}."
+                    toolTip = $"Teleports you to {targetName}."
+                },
+                new ButtonInfo {
+                    buttonText = "Give Player Guns",
+                    overlapText = $"Give {targetName} Guns",
+                    method =() => giveGunTarget = GetVRRigFromPlayer(player),
+                    disableMethod =() => giveGunTarget = null,
+                    toolTip = $"Gives {targetName} every gun on the menu."
                 },
                 new ButtonInfo {
                     buttonText = "Copy Movement",
-                    overlapText = $"Copy Movement {player.NickName}",
+                    overlapText = $"Copy Movement {targetName}",
                     method =() => Movement.CopyMovementPlayer(player),
                     disableMethod =() => Movement.EnableRig(),
-                    toolTip = $"Copies the movement of {player.NickName}."
+                    toolTip = $"Copies the movement of {targetName}."
                 },
                 new ButtonInfo {
                     buttonText = "Follow Player",
-                    overlapText = $"Follow {player.NickName}",
+                    overlapText = $"Follow {targetName}",
                     method =() => Movement.FollowPlayer(player),
                     disableMethod =() => Movement.EnableRig(),
-                    toolTip = $"Follows {player.NickName}."
+                    toolTip = $"Follows {targetName}."
                 },
                 new ButtonInfo {
                     buttonText = "Tag Player",
-                    overlapText = $"Tag {player.NickName}",
+                    overlapText = $"Tag {targetName}",
                     method =() => Advantages.TagPlayer(player),
                     disableMethod =() => Movement.EnableRig(),
-                    toolTip = $"Tags {player.NickName}."
+                    toolTip = $"Tags {targetName}."
                 },
                 new ButtonInfo {
                     buttonText = "Snowball Fling Player",
-                    overlapText = $"Snowball Fling {player.NickName}",
+                    overlapText = $"Snowball Fling {targetName}",
                     method =() => Overpowered.FlingPlayer(player),
-                    toolTip = $"Flings {player.NickName} with snowballs."
+                    toolTip = $"Flings {targetName} with snowballs."
                 },
                 new ButtonInfo {
                     buttonText = "Projectile Blind Player",
-                    overlapText = $"Projectile Blind {player.NickName}",
+                    overlapText = $"Projectile Blind {targetName}",
                     method =() => Projectiles.ProjectileBlindPlayer(player),
-                    toolTip = $"Blinds {player.NickName} using the egg projectiles."
+                    toolTip = $"Blinds {targetName} using the egg projectiles."
                 },
                 new ButtonInfo {
                     buttonText = "Projectile Lag Player",
-                    overlapText = $"Projectile Lag {player.NickName}",
+                    overlapText = $"Projectile Lag {targetName}",
                     method =() => Projectiles.ProjectileLagPlayer(player),
-                    toolTip = $"Lags {player.NickName} using the firework projectiles."
+                    toolTip = $"Lags {targetName} using the firework projectiles."
                 },
                 new ButtonInfo {
                     buttonText = "Destroy Player",
-                    overlapText = $"Destroy {player.NickName}",
+                    overlapText = $"Destroy {targetName}",
                     method =() => Overpowered.DestroyPlayer(player),
-                    toolTip = $"Stops all new players from seeing {player.NickName}."
+                    toolTip = $"Stops all new players from seeing {targetName}."
                 },
                 new ButtonInfo {
                     buttonText = "Guardian Bring Player",
-                    overlapText = $"Guardian Bring {player.NickName}",
+                    overlapText = $"Guardian Bring {targetName}",
                     method =() => Overpowered.BringPlayer(player),
-                    toolTip = $"Brings {player.NickName} to you."
+                    toolTip = $"Brings {targetName} to you."
                 },
                 new ButtonInfo {
                     buttonText = "Guardian Bring Player Gun",
-                    overlapText = $"Guardian Bring {player.NickName} Gun",
+                    overlapText = $"Guardian Bring {targetName} Gun",
                     method =() => Overpowered.BringPlayerGun(player),
-                    toolTip = $"Brings {player.NickName} to wherever your hand desires."
+                    toolTip = $"Brings {targetName} to wherever your hand desires."
                 },
                 new ButtonInfo {
                     buttonText = "Guardian Kick Player",
-                    overlapText = $"Guardian Kick {player.NickName}",
+                    overlapText = $"Guardian Kick {targetName}",
                     method =() => Overpowered.KickPlayer(player),
-                    toolTip = $"Kicks {player.NickName}."
+                    toolTip = $"Kicks {targetName}."
                 },
                 new ButtonInfo {
                     buttonText = "Guardian Obliterate Player",
-                    overlapText = $"Guardian Obliterate {player.NickName}",
+                    overlapText = $"Guardian Obliterate {targetName}",
                     method =() => Overpowered.ObliteratePlayer(player),
-                    toolTip = $"Obliterates {player.NickName}."
+                    toolTip = $"Obliterates {targetName}."
                 },
                 new ButtonInfo {
                     buttonText = "Guardian Crash Player",
-                    overlapText = $"Guardian Crash {player.NickName}",
+                    overlapText = $"Guardian Crash {targetName}",
                     method =() => Overpowered.CrashPlayer(player),
-                    toolTip = $"Crashes {player.NickName}."
+                    toolTip = $"Crashes {targetName}."
                 },
             };
 
@@ -455,17 +463,17 @@ namespace iiMenu.Mods
                     {
                         new ButtonInfo {
                             buttonText = "Vibrate Player",
-                            overlapText = $"Vibrate {player.NickName}",
+                            overlapText = $"Vibrate {targetName}",
                             method =() => Overpowered.SetPlayerStatus(1, player),
                             disableMethod =() => Movement.EnableRig(),
-                            toolTip = $"Vibrates {player.NickName}'s controllers."
+                            toolTip = $"Vibrates {targetName}'s controllers."
                         },
                         new ButtonInfo {
                             buttonText = "Slow Player",
-                            overlapText = $"Slow {player.NickName}",
+                            overlapText = $"Slow {targetName}",
                             method =() => Overpowered.SetPlayerStatus(0, player),
                             disableMethod =() => Movement.EnableRig(),
-                            toolTip = $"Gives {player.NickName} tag freeze."
+                            toolTip = $"Gives {targetName} tag freeze."
                         }
                     }
                 );
@@ -486,14 +494,14 @@ namespace iiMenu.Mods
                         overlapText = $"Name: {player.NickName}",
                         method =() => ChangeName(player.NickName),
                         isTogglable = false,
-                        toolTip = $"Sets your name to {player.NickName}."
+                        toolTip = $"Sets your name to \"{player.NickName}\"."
                     },
                     new ButtonInfo {
                         buttonText = "Player Color",
                         overlapText = $"Player Color: <color=red>{Math.Round(playerColor.r * 255)}</color> <color=green>{Math.Round(playerColor.g * 255)}</color> <color=blue>{Math.Round(playerColor.b * 255)}</color>",
                         method =() => ChangeColor(playerColor),
                         isTogglable = false,
-                        toolTip = $"Sets your color to the same as {player.NickName}."
+                        toolTip = $"Sets your color to the same as {targetName}."
                     },
                     new ButtonInfo {
                         buttonText = "Player User ID",
