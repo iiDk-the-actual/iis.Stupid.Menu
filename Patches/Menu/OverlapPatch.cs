@@ -1,5 +1,4 @@
-﻿using GorillaLocomotion;
-using GorillaTagScripts;
+﻿using GorillaTagScripts;
 using HarmonyLib;
 
 namespace iiMenu.Patches
