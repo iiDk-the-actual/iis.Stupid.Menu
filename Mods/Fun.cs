@@ -359,6 +359,61 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void GiveWaterSplashHandsGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    if (lockTarget.rightMiddle.calcT > 0.5f || lockTarget.leftMiddle.calcT > 0.5f)
+                    {
+                        if (Time.time > splashDel)
+                        {
+                            Vector3 position = lockTarget.rightMiddle.calcT > 0.5f ? GorillaTagger.Instance.rightHandTransform.position : GorillaTagger.Instance.leftHandTransform.position;
+                            Quaternion rotation = lockTarget.rightMiddle.calcT > 0.5f ? GorillaTagger.Instance.rightHandTransform.rotation : GorillaTagger.Instance.leftHandTransform.rotation;
+
+                            VRRig.LocalRig.enabled = false;
+                            VRRig.LocalRig.transform.position = position - Vector3.down * 2f;
+
+                            GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", RpcTarget.All, new object[]
+                            {
+                                rightGrab ? GorillaTagger.Instance.rightHandTransform.position : GorillaTagger.Instance.leftHandTransform.position,
+                                rightGrab ? GorillaTagger.Instance.rightHandTransform.rotation : GorillaTagger.Instance.leftHandTransform.rotation,
+                                4f,
+                                100f,
+                                true,
+                                false
+                            });
+                            RPCProtection();
+                            splashDel = Time.time + 0.1f;
+                        }
+                    } else
+                        VRRig.LocalRig.enabled = true;
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                {
+                    gunLocked = false;
+                    VRRig.LocalRig.enabled = true;
+                }
+            }
+        }
+
         public static void WaterSplashAura()
         {
             if (Time.time > splashDel)
@@ -406,7 +461,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true))
                 {
                     VRRig.LocalRig.enabled = false;
-                    VRRig.LocalRig.transform.position = NewPointer.transform.position - new Vector3(0, 1, 0);
+                    VRRig.LocalRig.transform.position = NewPointer.transform.position - Vector3.up * 2f;
                     if (Time.time > splashDel)
                     {
                         GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", RpcTarget.All, new object[]
@@ -425,6 +480,8 @@ namespace iiMenu.Mods
                 else
                     VRRig.LocalRig.enabled = true;
             }
+            else
+                VRRig.LocalRig.enabled = true;
         }
 
         public static void WaterSplashWalk()
