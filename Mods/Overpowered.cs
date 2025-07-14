@@ -2469,6 +2469,22 @@ namespace iiMenu.Mods
             catch { } // Not connected
         }
 
+        public static void SetRoomLock(bool status)
+        {
+            ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable { { 254, status ? NetworkSystem.Instance.SessionIsPrivate : !NetworkSystem.Instance.SessionIsPrivate } };
+
+            Dictionary<byte, object> dictionary = new Dictionary<byte, object>();
+            dictionary.Add(251, hash);
+            dictionary.Add(250, false);
+            dictionary.Add(231, null);
+
+            PhotonNetwork.CurrentRoom.LoadBalancingClient.LoadBalancingPeer.SendOperation(
+                252,
+                dictionary,
+                SendOptions.SendReliable
+            );
+        }
+
         public static void DestroyGun()
         {
             if (GetGunInput(false))
