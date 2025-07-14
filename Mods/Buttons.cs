@@ -639,9 +639,11 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Last Label", method =() => Visuals.LastLabel(), toolTip = "Puts text on your left hand, showing you how many untagged people are left."},
                 new ButtonInfo { buttonText = "Time Label", method =() => Visuals.TimeLabel(), toolTip = "Puts text on your right hand, showing how long you've been playing for without getting tagged."},
 
-                new ButtonInfo { buttonText = "FPS Overlay", method =() => NotifiLib.information["FPS"] = Mathf.Ceil(1f / Time.unscaledDeltaTime).ToString(), disableMethod =() => NotifiLib.information.Remove("FPS"), toolTip = "Displays your FPS on your screen."},
+                new ButtonInfo { buttonText = "FPS Overlay", method =() => NotifiLib.information["FPS"] = lastDeltaTime.ToString(), disableMethod =() => NotifiLib.information.Remove("FPS"), toolTip = "Displays your FPS on your screen."},
                 new ButtonInfo { buttonText = "Room Information Overlay", method =() => { NotifiLib.information["Room Code"] = PhotonNetwork.InRoom ? PhotonNetwork.CurrentRoom.Name : "None"; NotifiLib.information["Players"] = PhotonNetwork.PlayerList.Length.ToString(); }, disableMethod =() => { NotifiLib.information.Remove("Room Code"); NotifiLib.information.Remove("Players"); }, toolTip = "Displays information about the room on your screen."},
                 new ButtonInfo { buttonText = "Networking Overlay", method =() => { NotifiLib.information["Ping"] = PhotonNetwork.GetPing().ToString(); NotifiLib.information["Region"] = NetworkSystem.Instance.regionNames[NetworkSystem.Instance.currentRegionIndex].ToUpper(); }, disableMethod =() => { NotifiLib.information.Remove("Ping"); NotifiLib.information.Remove("Region"); }, toolTip = "Displays information about networking on your screen."},
+                new ButtonInfo { buttonText = "Clipboard Overlay", method =() => NotifiLib.information["Clip"] = GUIUtility.systemCopyBuffer.Length > 20 ? GUIUtility.systemCopyBuffer[..20] : GUIUtility.systemCopyBuffer, disableMethod =() => NotifiLib.information.Remove("Clip"), toolTip = "Displays your current clipboard on your screen."},
+
 
                 new ButtonInfo { buttonText = "Info Watch", enableMethod =() => Visuals.WatchOn(), method =() => Visuals.WatchStep(), disableMethod =() => Visuals.WatchOff(), toolTip = "Puts a watch on your hand that tells you the time and your FPS."},
 
