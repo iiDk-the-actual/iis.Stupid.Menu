@@ -3,6 +3,7 @@ using GorillaGameModes;
 using iiMenu.Classes;
 using iiMenu.Notifications;
 using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine;
 using static iiMenu.Menu.Main;
 
@@ -597,6 +598,69 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void InstantTagPlayer(NetPlayer Target)
+        {
+            if (!PlayerIsTagged(VRRig.LocalRig) || PlayerIsTagged(RigManager.GetVRRigFromPlayer(Target)))
+                return;
+
+            Vector3 archiveRigPosition = VRRig.LocalRig.transform.position;
+            VRRig.LocalRig.transform.position = RigManager.GetVRRigFromPlayer(Target).transform.position;
+
+            SendSerialize(RigManager.GetPhotonViewFromVRRig(VRRig.LocalRig), new Photon.Realtime.RaiseEventOptions { TargetActors = new int[] { PhotonNetwork.MasterClient.ActorNumber } });
+            GameMode.ReportTag(Target);
+
+            VRRig.LocalRig.transform.position = archiveRigPosition;
+
+            RPCProtection();
+        }
+
+        private static float tagGunDelay = 0f;
+        public static void InstantTagGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true) && Time.time > tagGunDelay)
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        tagGunDelay = Time.time + 0.2f;
+                        InstantTagPlayer(RigManager.NetPlayerToPlayer(RigManager.GetPlayerFromVRRig(gunTarget)));
+                    }
+                }
+            }
+        }
+
+        public static void InstantTagAll()
+        {
+            if (!PlayerIsTagged(VRRig.LocalRig))
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You must be tagged.</color>");
+                return;
+            }
+
+            Vector3 archiveRigPosition = VRRig.LocalRig.transform.position;
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                if (!PlayerIsTagged(vrrig))
+                {
+                    VRRig.LocalRig.transform.position = vrrig.transform.position;
+                    SendSerialize(RigManager.GetPhotonViewFromVRRig(VRRig.LocalRig), new Photon.Realtime.RaiseEventOptions { TargetActors = new int[] { PhotonNetwork.MasterClient.ActorNumber } });
+                    GameMode.ReportTag(RigManager.GetPlayerFromVRRig(vrrig));
+                }
+            }
+
+            VRRig.LocalRig.transform.position = archiveRigPosition;
+
+            SendSerialize(RigManager.GetPhotonViewFromVRRig(VRRig.LocalRig), new Photon.Realtime.RaiseEventOptions { TargetActors = new int[] { PhotonNetwork.MasterClient.ActorNumber } });
+            RPCProtection();
+        }
+
         public static void HuntTagAll()
         {
             GorillaHuntManager sillyComputer = (GorillaHuntManager)GorillaGameManager.instance;
@@ -690,6 +754,28 @@ namespace iiMenu.Mods
             };
             PhotonNetwork.LocalPlayer.SetCustomProperties(h, null, null);
             PlayerPrefs.Save();
+        }
+
+        public static void ReportAntiTag()
+        {
+            Patches.SerializePatch.OverrideSerialization = () =>
+            {
+                if (PlayerIsTagged(VRRig.LocalRig))
+                    return true;
+
+                MassSerialize(true, new PhotonView[] { RigManager.GetPhotonViewFromVRRig(VRRig.LocalRig) });
+
+                Vector3 positionArchive = VRRig.LocalRig.transform.position;
+                SendSerialize(RigManager.GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = AllActorNumbersExcept(PhotonNetwork.MasterClient.ActorNumber) });
+
+                VRRig.LocalRig.transform.position = new Vector3(99999f, 99999f, 99999f);
+                SendSerialize(RigManager.GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = new int[] { PhotonNetwork.MasterClient.ActorNumber } });
+
+                RPCProtection();
+                VRRig.LocalRig.transform.position = positionArchive;
+
+                return false;
+            };
         }
 
         public static void BattleStartGame()
