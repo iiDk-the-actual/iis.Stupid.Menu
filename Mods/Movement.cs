@@ -2602,13 +2602,13 @@ namespace iiMenu.Mods
         public static void StareAtAll()
         {
             SerializePatch.OverrideSerialization = () => {
-                MassSerialize(true, new[] { GetPhotonViewFromVRRig(VRRig.LocalRig) });
+                MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
 
                 Quaternion headRotArchive = VRRig.LocalRig.head.rigTarget.transform.rotation;
                 foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
                 {
                     VRRig.LocalRig.head.rigTarget.transform.rotation = Quaternion.LookRotation(Vector3.Normalize(GetVRRigFromPlayer(Player).headMesh.transform.position)); //  - (VRRig.LocalRig.headConstraint.transform.position - new Vector3(0f, 1.5f, 0f))
-                    SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
                 }
 
                 RPCProtection();
@@ -3439,14 +3439,14 @@ namespace iiMenu.Mods
         public static void PiggybackAll()
         {
             SerializePatch.OverrideSerialization = () => {
-                MassSerialize(true, new[] { GetPhotonViewFromVRRig(VRRig.LocalRig) });
+                MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
 
                 Vector3 archivePos = VRRig.LocalRig.transform.position;
 
                 foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
                 {
                     VRRig.LocalRig.transform.position = GetVRRigFromPlayer(Player).headMesh.transform.position;
-                    SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
                 }
 
                 RPCProtection();
@@ -3526,7 +3526,7 @@ namespace iiMenu.Mods
         public static void CopyMovementAll()
         {
             SerializePatch.OverrideSerialization = () => {
-                MassSerialize(true, new[] { GetPhotonViewFromVRRig(VRRig.LocalRig) });
+                MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
 
                 Vector3 archivePos = VRRig.LocalRig.transform.position;
                 Quaternion archiveRot = VRRig.LocalRig.transform.rotation;
@@ -3542,7 +3542,7 @@ namespace iiMenu.Mods
                 foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
                 {
                     CopyMovementPlayer(Player, false);
-                    SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
                 }
 
                 RPCProtection();
@@ -3638,7 +3638,7 @@ namespace iiMenu.Mods
         public static void FollowAllPlayers()
         {
             SerializePatch.OverrideSerialization = () => {
-                MassSerialize(true, new[] { GetPhotonViewFromVRRig(VRRig.LocalRig) });
+                MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
 
                 Vector3 archivePos = VRRig.LocalRig.transform.position;
                 Quaternion archiveRot = VRRig.LocalRig.transform.rotation;
@@ -3680,7 +3680,7 @@ namespace iiMenu.Mods
 
                     FixRigHandRotation();
 
-                    SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
                 }
 
                 RPCProtection();
@@ -3762,7 +3762,7 @@ namespace iiMenu.Mods
         public static void OrbitAllPlayers()
         {
             SerializePatch.OverrideSerialization = () => {
-                MassSerialize(true, new[] { GetPhotonViewFromVRRig(VRRig.LocalRig) });
+                MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
 
                 Vector3 archivePos = VRRig.LocalRig.transform.position;
                 Quaternion archiveRot = VRRig.LocalRig.transform.rotation;
@@ -3789,7 +3789,7 @@ namespace iiMenu.Mods
                     VRRig.LocalRig.leftHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
                     VRRig.LocalRig.rightHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
 
-                    SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
                 }
 
                 RPCProtection();
@@ -3875,7 +3875,7 @@ namespace iiMenu.Mods
         public static void JumpscareAll()
         {
             SerializePatch.OverrideSerialization = () => {
-                MassSerialize(true, new[] { GetPhotonViewFromVRRig(VRRig.LocalRig) });
+                MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
 
                 Vector3 archivePos = VRRig.LocalRig.transform.position;
                 Quaternion archiveRot = VRRig.LocalRig.transform.rotation;
@@ -3906,7 +3906,7 @@ namespace iiMenu.Mods
                     VRRig.LocalRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(VRRig.LocalRig.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
                     VRRig.LocalRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(VRRig.LocalRig.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
 
-                    SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
                 }
 
                 RPCProtection();
@@ -3988,7 +3988,7 @@ namespace iiMenu.Mods
         public static void AnnoyAllPlayers()
         {
             SerializePatch.OverrideSerialization = () => {
-                MassSerialize(true, new[] { GetPhotonViewFromVRRig(VRRig.LocalRig) });
+                MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
 
                 Vector3 archivePos = VRRig.LocalRig.transform.position;
                 Quaternion archiveRot = VRRig.LocalRig.transform.rotation;
@@ -4017,7 +4017,7 @@ namespace iiMenu.Mods
                     VRRig.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
                     VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
 
-                    SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
                 }
 
                 RPCProtection();
@@ -4087,7 +4087,7 @@ namespace iiMenu.Mods
         public static void ConfuseAllPlayers()
         {
             SerializePatch.OverrideSerialization = () => {
-                MassSerialize(true, new[] { GetPhotonViewFromVRRig(VRRig.LocalRig) });
+                MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
 
                 Vector3 archivePos = VRRig.LocalRig.transform.position;
 
@@ -4096,7 +4096,7 @@ namespace iiMenu.Mods
                     VRRig targetRig = GetVRRigFromPlayer(Player);
 
                     VRRig.LocalRig.transform.position = targetRig.transform.position - Vector3.up * 2f;
-                    SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
                 }
 
                 RPCProtection();
@@ -4144,13 +4144,13 @@ namespace iiMenu.Mods
                         SerializePatch.OverrideSerialization = () => 
                         {
                             NetPlayer target = GetPlayerFromVRRig(lockTarget);
-                            MassSerialize(true, new PhotonView[] { GetPhotonViewFromVRRig(VRRig.LocalRig) });
+                            MassSerialize(true, new PhotonView[] { GorillaTagger.Instance.myVRRig.GetView });
 
                             Vector3 positionArchive = VRRig.LocalRig.transform.position;
-                            SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = AllActorNumbersExcept(target.ActorNumber) });
+                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = AllActorNumbersExcept(target.ActorNumber) });
 
                             VRRig.LocalRig.transform.position = new Vector3(UnityEngine.Random.Range(-99999f, 99999f), 99999f, UnityEngine.Random.Range(-99999f, 99999f));
-                            SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = new int[] { target.ActorNumber } });
+                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { target.ActorNumber } });
 
                             RPCProtection();
                             VRRig.LocalRig.transform.position = positionArchive;
@@ -4189,13 +4189,13 @@ namespace iiMenu.Mods
                         SerializePatch.OverrideSerialization = () =>
                         {
                             NetPlayer target = GetPlayerFromVRRig(lockTarget);
-                            MassSerialize(true, new PhotonView[] { GetPhotonViewFromVRRig(VRRig.LocalRig) });
+                            MassSerialize(true, new PhotonView[] { GorillaTagger.Instance.myVRRig.GetView });
 
                             Vector3 positionArchive = VRRig.LocalRig.transform.position;
-                            SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = new int[] { target.ActorNumber } });
+                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { target.ActorNumber } });
 
                             VRRig.LocalRig.transform.position = new Vector3(UnityEngine.Random.Range(-99999f, 99999f), 99999f, UnityEngine.Random.Range(-99999f, 99999f));
-                            SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = AllActorNumbersExcept(target.ActorNumber) });
+                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = AllActorNumbersExcept(target.ActorNumber) });
 
                             RPCProtection();
                             VRRig.LocalRig.transform.position = positionArchive;
@@ -4311,7 +4311,7 @@ namespace iiMenu.Mods
         public static void IntercourseAll()
         {
             SerializePatch.OverrideSerialization = () => {
-                MassSerialize(true, new[] { GetPhotonViewFromVRRig(VRRig.LocalRig) });
+                MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
 
                 Vector3 archivePos = VRRig.LocalRig.transform.position;
                 Quaternion archiveRot = VRRig.LocalRig.transform.rotation;
@@ -4355,7 +4355,7 @@ namespace iiMenu.Mods
 
                     FixRigHandRotation();
 
-                    SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
                 }
 
                 RPCProtection();
@@ -4439,7 +4439,7 @@ namespace iiMenu.Mods
         public static void HeadAll()
         {
             SerializePatch.OverrideSerialization = () => {
-                MassSerialize(true, new[] { GetPhotonViewFromVRRig(VRRig.LocalRig) });
+                MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
 
                 Vector3 archivePos = VRRig.LocalRig.transform.position;
                 Quaternion archiveRot = VRRig.LocalRig.transform.rotation;
@@ -4469,7 +4469,7 @@ namespace iiMenu.Mods
 
                     FixRigHandRotation();
 
-                    SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
                 }
 
                 RPCProtection();
