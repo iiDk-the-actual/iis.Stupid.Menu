@@ -7,6 +7,7 @@ using iiMenu.Classes;
 using iiMenu.Menu;
 using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
+using iiMenu.Patches;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -2598,6 +2599,25 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void StareAtAll()
+        {
+            SerializePatch.OverrideSerialization = () => {
+                MassSerialize(true, new[] { GetPhotonViewFromVRRig(VRRig.LocalRig) });
+
+                Quaternion headRotArchive = VRRig.LocalRig.head.rigTarget.transform.rotation;
+                foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
+                {
+                    VRRig.LocalRig.head.rigTarget.transform.rotation = Quaternion.LookRotation(Vector3.Normalize(GetVRRigFromPlayer(Player).headMesh.transform.position)); //  - (VRRig.LocalRig.headConstraint.transform.position - new Vector3(0f, 1.5f, 0f))
+                    SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                }
+
+                RPCProtection();
+                VRRig.LocalRig.head.rigTarget.transform.rotation = headRotArchive;
+
+                return false;
+            };
+        }
+
         public static void EnableFloatingRig() =>
             offsetH = VRRig.LocalRig.head.trackingPositionOffset;
 
@@ -3416,6 +3436,27 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void PiggybackAll()
+        {
+            SerializePatch.OverrideSerialization = () => {
+                MassSerialize(true, new[] { GetPhotonViewFromVRRig(VRRig.LocalRig) });
+
+                Vector3 archivePos = VRRig.LocalRig.transform.position;
+
+                foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
+                {
+                    VRRig.LocalRig.transform.position = GetVRRigFromPlayer(Player).headMesh.transform.position;
+                    SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                }
+
+                RPCProtection();
+
+                VRRig.LocalRig.transform.position = archivePos;
+
+                return false;
+            };
+        }
+
         public static void CopyMovementGun()
         {
             if (GetGunInput(false))
@@ -3424,36 +3465,8 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
 
                 if (gunLocked && lockTarget != null)
-                {
-                    VRRig.LocalRig.enabled = false;
-
-                    VRRig.LocalRig.transform.position = lockTarget.transform.position;
-                    VRRig.LocalRig.transform.rotation = lockTarget.transform.rotation;
-
-                    VRRig.LocalRig.leftHand.rigTarget.transform.position = lockTarget.leftHandTransform.position;
-                    VRRig.LocalRig.rightHand.rigTarget.transform.position = lockTarget.rightHandTransform.position;
-
-                    VRRig.LocalRig.leftHand.rigTarget.transform.rotation = lockTarget.leftHandTransform.rotation;
-                    VRRig.LocalRig.rightHand.rigTarget.transform.rotation = lockTarget.rightHandTransform.rotation;
-
-                    VRRig.LocalRig.leftIndex.calcT = lockTarget.leftIndex.calcT;
-                    VRRig.LocalRig.leftMiddle.calcT = lockTarget.leftMiddle.calcT;
-                    VRRig.LocalRig.leftThumb.calcT = lockTarget.leftThumb.calcT;
-
-                    VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
-                    VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
-                    VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
-
-                    VRRig.LocalRig.rightIndex.calcT = lockTarget.rightIndex.calcT;
-                    VRRig.LocalRig.rightMiddle.calcT = lockTarget.rightMiddle.calcT;
-                    VRRig.LocalRig.rightThumb.calcT = lockTarget.rightThumb.calcT;
-
-                    VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
-                    VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
-                    VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
-
-                    VRRig.LocalRig.head.rigTarget.transform.rotation = lockTarget.headMesh.transform.rotation;
-                }
+                    CopyMovementPlayer(GetPlayerFromVRRig(lockTarget));
+                
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
@@ -3474,7 +3487,7 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void CopyMovementPlayer(NetPlayer player)
+        public static void CopyMovementPlayer(NetPlayer player, bool fingers = true)
         {
             VRRig targetRig = GetVRRigFromPlayer(player);
             VRRig.LocalRig.enabled = false;
@@ -3488,26 +3501,71 @@ namespace iiMenu.Mods
             VRRig.LocalRig.leftHand.rigTarget.transform.rotation = targetRig.leftHandTransform.rotation;
             VRRig.LocalRig.rightHand.rigTarget.transform.rotation = targetRig.rightHandTransform.rotation;
 
-            VRRig.LocalRig.leftIndex.calcT = targetRig.leftIndex.calcT;
-            VRRig.LocalRig.leftMiddle.calcT = targetRig.leftMiddle.calcT;
-            VRRig.LocalRig.leftThumb.calcT = targetRig.leftThumb.calcT;
+            if (fingers)
+            {
+                VRRig.LocalRig.leftIndex.calcT = targetRig.leftIndex.calcT;
+                VRRig.LocalRig.leftMiddle.calcT = targetRig.leftMiddle.calcT;
+                VRRig.LocalRig.leftThumb.calcT = targetRig.leftThumb.calcT;
 
-            VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
-            VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
-            VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
+                VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
+                VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
+                VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
 
-            VRRig.LocalRig.rightIndex.calcT = targetRig.rightIndex.calcT;
-            VRRig.LocalRig.rightMiddle.calcT = targetRig.rightMiddle.calcT;
-            VRRig.LocalRig.rightThumb.calcT = targetRig.rightThumb.calcT;
+                VRRig.LocalRig.rightIndex.calcT = targetRig.rightIndex.calcT;
+                VRRig.LocalRig.rightMiddle.calcT = targetRig.rightMiddle.calcT;
+                VRRig.LocalRig.rightThumb.calcT = targetRig.rightThumb.calcT;
 
-            VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
-            VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
-            VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
+                VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+                VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
+                VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
+            }
 
             VRRig.LocalRig.head.rigTarget.transform.rotation = targetRig.headMesh.transform.rotation;
         }
 
-        public static void FollowPlayer(NetPlayer player)
+        public static void CopyMovementAll()
+        {
+            SerializePatch.OverrideSerialization = () => {
+                MassSerialize(true, new[] { GetPhotonViewFromVRRig(VRRig.LocalRig) });
+
+                Vector3 archivePos = VRRig.LocalRig.transform.position;
+                Quaternion archiveRot = VRRig.LocalRig.transform.rotation;
+
+                Vector3 archivePosLeft = VRRig.LocalRig.leftHand.rigTarget.position;
+                Quaternion archiveRotLeft = VRRig.LocalRig.leftHand.rigTarget.rotation;
+
+                Vector3 archivePosRight = VRRig.LocalRig.rightHand.rigTarget.position;
+                Quaternion archiveRotRight = VRRig.LocalRig.rightHand.rigTarget.rotation;
+
+                Quaternion headRot = VRRig.LocalRig.head.rigTarget.transform.rotation;
+
+                foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
+                {
+                    CopyMovementPlayer(Player, false);
+                    SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                }
+
+                RPCProtection();
+
+                VRRig.LocalRig.enabled = true;
+
+                VRRig.LocalRig.transform.position = archivePos;
+                VRRig.LocalRig.transform.rotation = archiveRot;
+
+                VRRig.LocalRig.leftHand.rigTarget.position = archivePosLeft;
+                VRRig.LocalRig.leftHand.rigTarget.rotation = archiveRotLeft;
+
+                VRRig.LocalRig.rightHand.rigTarget.position = archivePosRight;
+                VRRig.LocalRig.rightHand.rigTarget.rotation = archiveRotRight;
+
+                VRRig.LocalRig.head.rigTarget.transform.rotation = headRot;
+
+
+                return false;
+            };
+        }
+
+        public static void FollowPlayer(NetPlayer player, bool fingers = true)
         {
             VRRig targetRig = GetVRRigFromPlayer(player);
             VRRig.LocalRig.enabled = false;
@@ -3554,42 +3612,8 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
 
                 if (gunLocked && lockTarget != null)
-                {
-                    VRRig.LocalRig.enabled = false;
-
-                    Vector3 look = lockTarget.transform.position - VRRig.LocalRig.transform.position;
-                    look.Normalize();
-
-                    Vector3 position = VRRig.LocalRig.transform.position + (look * ((flySpeed / 2f) * Time.deltaTime));
-
-                    VRRig.LocalRig.transform.position = position;
-                    VRRig.LocalRig.transform.LookAt(lockTarget.transform.position);
-
-                    VRRig.LocalRig.head.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
-                    VRRig.LocalRig.leftHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + (VRRig.LocalRig.transform.right * -1f);
-                    VRRig.LocalRig.rightHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + (VRRig.LocalRig.transform.right * 1f);
-
-                    VRRig.LocalRig.leftHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
-                    VRRig.LocalRig.rightHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
-
-                    FixRigHandRotation();
-
-                    VRRig.LocalRig.leftIndex.calcT = 0f;
-                    VRRig.LocalRig.leftMiddle.calcT = 0f;
-                    VRRig.LocalRig.leftThumb.calcT = 0f;
-
-                    VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
-                    VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
-                    VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
-
-                    VRRig.LocalRig.rightIndex.calcT = 0f;
-                    VRRig.LocalRig.rightMiddle.calcT = 0f;
-                    VRRig.LocalRig.rightThumb.calcT = 0f;
-
-                    VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
-                    VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
-                    VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
-                }
+                    FollowPlayer(GetPlayerFromVRRig(lockTarget));
+                
                 if (GetGunInput(true))
                 {
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
@@ -3608,6 +3632,72 @@ namespace iiMenu.Mods
                     VRRig.LocalRig.enabled = true;
                 }
             }
+        }
+
+        public static Dictionary<VRRig, Vector3> followPositions = new Dictionary<VRRig, Vector3> { };
+        public static void FollowAllPlayers()
+        {
+            SerializePatch.OverrideSerialization = () => {
+                MassSerialize(true, new[] { GetPhotonViewFromVRRig(VRRig.LocalRig) });
+
+                Vector3 archivePos = VRRig.LocalRig.transform.position;
+                Quaternion archiveRot = VRRig.LocalRig.transform.rotation;
+
+                Vector3 archivePosLeft = VRRig.LocalRig.leftHand.rigTarget.position;
+                Quaternion archiveRotLeft = VRRig.LocalRig.leftHand.rigTarget.rotation;
+
+                Vector3 archivePosRight = VRRig.LocalRig.rightHand.rigTarget.position;
+                Quaternion archiveRotRight = VRRig.LocalRig.rightHand.rigTarget.rotation;
+
+                Quaternion headRot = VRRig.LocalRig.head.rigTarget.transform.rotation;
+
+                foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
+                {
+                    VRRig targetRig = GetVRRigFromPlayer(Player);
+
+                    if (!followPositions.TryGetValue(targetRig, out Vector3 position))
+                        position = archivePos;
+
+                    Vector3 look = targetRig.transform.position - position;
+                    look.Normalize();
+
+                    position += look * ((flySpeed / 2f) * Time.deltaTime);
+
+                    if (followPositions.ContainsKey(targetRig))
+                        followPositions.Remove(targetRig);
+
+                    followPositions.Add(targetRig, position);
+
+                    VRRig.LocalRig.transform.position = position;
+                    VRRig.LocalRig.transform.LookAt(targetRig.transform.position);
+
+                    VRRig.LocalRig.head.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
+                    VRRig.LocalRig.leftHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + (VRRig.LocalRig.transform.right * -1f);
+                    VRRig.LocalRig.rightHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + (VRRig.LocalRig.transform.right * 1f);
+
+                    VRRig.LocalRig.leftHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
+                    VRRig.LocalRig.rightHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
+
+                    FixRigHandRotation();
+
+                    SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                }
+
+                RPCProtection();
+
+                VRRig.LocalRig.transform.position = archivePos;
+                VRRig.LocalRig.transform.rotation = archiveRot;
+
+                VRRig.LocalRig.leftHand.rigTarget.position = archivePosLeft;
+                VRRig.LocalRig.leftHand.rigTarget.rotation = archiveRotLeft;
+
+                VRRig.LocalRig.rightHand.rigTarget.position = archivePosRight;
+                VRRig.LocalRig.rightHand.rigTarget.rotation = archiveRotRight;
+
+                VRRig.LocalRig.head.rigTarget.transform.rotation = headRot;
+
+                return false;
+            };
         }
 
         public static void OrbitPlayerGun()
@@ -3669,6 +3759,56 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void OrbitAllPlayers()
+        {
+            SerializePatch.OverrideSerialization = () => {
+                MassSerialize(true, new[] { GetPhotonViewFromVRRig(VRRig.LocalRig) });
+
+                Vector3 archivePos = VRRig.LocalRig.transform.position;
+                Quaternion archiveRot = VRRig.LocalRig.transform.rotation;
+
+                Vector3 archivePosLeft = VRRig.LocalRig.leftHand.rigTarget.position;
+                Quaternion archiveRotLeft = VRRig.LocalRig.leftHand.rigTarget.rotation;
+
+                Vector3 archivePosRight = VRRig.LocalRig.rightHand.rigTarget.position;
+                Quaternion archiveRotRight = VRRig.LocalRig.rightHand.rigTarget.rotation;
+
+                Quaternion headRot = VRRig.LocalRig.head.rigTarget.transform.rotation;
+
+                foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
+                {
+                    VRRig targetRig = GetVRRigFromPlayer(Player);
+
+                    VRRig.LocalRig.transform.position = targetRig.transform.position + new Vector3(Mathf.Cos((float)Time.frameCount / 20f), 0.5f, Mathf.Sin((float)Time.frameCount / 20f));
+                    VRRig.LocalRig.transform.LookAt(targetRig.transform.position);
+
+                    VRRig.LocalRig.head.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
+                    VRRig.LocalRig.leftHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + (VRRig.LocalRig.transform.right * -1f);
+                    VRRig.LocalRig.rightHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + (VRRig.LocalRig.transform.right * 1f);
+
+                    VRRig.LocalRig.leftHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
+                    VRRig.LocalRig.rightHand.rigTarget.transform.rotation = VRRig.LocalRig.transform.rotation;
+
+                    SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                }
+
+                RPCProtection();
+
+                VRRig.LocalRig.transform.position = archivePos;
+                VRRig.LocalRig.transform.rotation = archiveRot;
+
+                VRRig.LocalRig.leftHand.rigTarget.position = archivePosLeft;
+                VRRig.LocalRig.leftHand.rigTarget.rotation = archiveRotLeft;
+
+                VRRig.LocalRig.rightHand.rigTarget.position = archivePosRight;
+                VRRig.LocalRig.rightHand.rigTarget.rotation = archiveRotRight;
+
+                VRRig.LocalRig.head.rigTarget.transform.rotation = headRot;
+
+                return false;
+            };
+        }
+
         public static void JumpscareGun()
         {
             if (GetGunInput(false))
@@ -3680,7 +3820,7 @@ namespace iiMenu.Mods
                 {
                     VRRig.LocalRig.enabled = false;
 
-                    VRRig.LocalRig.transform.position = lockTarget.headMesh.transform.position + (lockTarget.headMesh.transform.forward * (UnityEngine.Random.Range(10f, 50f) / 100f));
+                    VRRig.LocalRig.transform.position = lockTarget.headMesh.transform.position + (lockTarget.headMesh.transform.forward * UnityEngine.Random.Range(0.1f, 0.5f));
                     VRRig.LocalRig.head.rigTarget.transform.LookAt(lockTarget.headMesh.transform.position);
                     Quaternion dirLook = VRRig.LocalRig.head.rigTarget.transform.rotation;
 
@@ -3732,6 +3872,60 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void JumpscareAll()
+        {
+            SerializePatch.OverrideSerialization = () => {
+                MassSerialize(true, new[] { GetPhotonViewFromVRRig(VRRig.LocalRig) });
+
+                Vector3 archivePos = VRRig.LocalRig.transform.position;
+                Quaternion archiveRot = VRRig.LocalRig.transform.rotation;
+
+                Vector3 archivePosLeft = VRRig.LocalRig.leftHand.rigTarget.position;
+                Quaternion archiveRotLeft = VRRig.LocalRig.leftHand.rigTarget.rotation;
+
+                Vector3 archivePosRight = VRRig.LocalRig.rightHand.rigTarget.position;
+                Quaternion archiveRotRight = VRRig.LocalRig.rightHand.rigTarget.rotation;
+
+                Quaternion headRot = VRRig.LocalRig.head.rigTarget.transform.rotation;
+
+                foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
+                {
+                    VRRig targetRig = GetVRRigFromPlayer(Player);
+
+                    VRRig.LocalRig.transform.position = targetRig.headMesh.transform.position + targetRig.headMesh.transform.forward * UnityEngine.Random.Range(0.1f, 0.5f);
+                    VRRig.LocalRig.head.rigTarget.transform.LookAt(targetRig.headMesh.transform.position);
+                    Quaternion dirLook = VRRig.LocalRig.head.rigTarget.transform.rotation;
+
+                    VRRig.LocalRig.transform.rotation = dirLook;
+
+                    VRRig.LocalRig.leftHand.rigTarget.transform.position = targetRig.headMesh.transform.position + (targetRig.headMesh.transform.right * 0.2f);
+                    VRRig.LocalRig.rightHand.rigTarget.transform.position = targetRig.headMesh.transform.position + (targetRig.headMesh.transform.right * -0.2f);
+
+                    VRRig.LocalRig.head.rigTarget.transform.rotation = dirLook;
+
+                    VRRig.LocalRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(VRRig.LocalRig.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
+                    VRRig.LocalRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(VRRig.LocalRig.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
+
+                    SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                }
+
+                RPCProtection();
+
+                VRRig.LocalRig.transform.position = archivePos;
+                VRRig.LocalRig.transform.rotation = archiveRot;
+
+                VRRig.LocalRig.leftHand.rigTarget.position = archivePosLeft;
+                VRRig.LocalRig.leftHand.rigTarget.rotation = archiveRotLeft;
+
+                VRRig.LocalRig.rightHand.rigTarget.position = archivePosRight;
+                VRRig.LocalRig.rightHand.rigTarget.rotation = archiveRotRight;
+
+                VRRig.LocalRig.head.rigTarget.transform.rotation = headRot;
+
+                return false;
+            };
+        }
+
         public static void AnnoyPlayerGun()
         {
             if (GetGunInput(false))
@@ -3743,17 +3937,17 @@ namespace iiMenu.Mods
                 {
                     VRRig.LocalRig.enabled = false;
 
-                    Vector3 position = lockTarget.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
+                    Vector3 position = lockTarget.transform.position + RandomVector3();
 
                     VRRig.LocalRig.transform.position = position;
                     VRRig.LocalRig.transform.LookAt(lockTarget.transform.position);
 
-                    VRRig.LocalRig.head.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
-                    VRRig.LocalRig.leftHand.rigTarget.transform.position = lockTarget.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
-                    VRRig.LocalRig.rightHand.rigTarget.transform.position = lockTarget.transform.position + new Vector3(UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f, UnityEngine.Random.Range(-10f, 10f) / 10f);
+                    VRRig.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
+                    VRRig.LocalRig.leftHand.rigTarget.transform.position = lockTarget.transform.position + RandomVector3();
+                    VRRig.LocalRig.rightHand.rigTarget.transform.position = lockTarget.transform.position + RandomVector3();
 
-                    VRRig.LocalRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
-                    VRRig.LocalRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+                    VRRig.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
+                    VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
 
                     VRRig.LocalRig.leftIndex.calcT = 0f;
                     VRRig.LocalRig.leftMiddle.calcT = 0f;
@@ -3791,6 +3985,58 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void AnnoyAllPlayers()
+        {
+            SerializePatch.OverrideSerialization = () => {
+                MassSerialize(true, new[] { GetPhotonViewFromVRRig(VRRig.LocalRig) });
+
+                Vector3 archivePos = VRRig.LocalRig.transform.position;
+                Quaternion archiveRot = VRRig.LocalRig.transform.rotation;
+
+                Vector3 archivePosLeft = VRRig.LocalRig.leftHand.rigTarget.position;
+                Quaternion archiveRotLeft = VRRig.LocalRig.leftHand.rigTarget.rotation;
+
+                Vector3 archivePosRight = VRRig.LocalRig.rightHand.rigTarget.position;
+                Quaternion archiveRotRight = VRRig.LocalRig.rightHand.rigTarget.rotation;
+
+                Quaternion headRot = VRRig.LocalRig.head.rigTarget.transform.rotation;
+
+                foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
+                {
+                    VRRig targetRig = GetVRRigFromPlayer(Player);
+
+                    Vector3 position = targetRig.transform.position + RandomVector3();
+
+                    VRRig.LocalRig.transform.position = position;
+                    VRRig.LocalRig.transform.LookAt(targetRig.transform.position);
+
+                    VRRig.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
+                    VRRig.LocalRig.leftHand.rigTarget.transform.position = targetRig.transform.position + RandomVector3();
+                    VRRig.LocalRig.rightHand.rigTarget.transform.position = targetRig.transform.position + RandomVector3();
+
+                    VRRig.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
+                    VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
+
+                    SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                }
+
+                RPCProtection();
+
+                VRRig.LocalRig.transform.position = archivePos;
+                VRRig.LocalRig.transform.rotation = archiveRot;
+
+                VRRig.LocalRig.leftHand.rigTarget.position = archivePosLeft;
+                VRRig.LocalRig.leftHand.rigTarget.rotation = archiveRotLeft;
+
+                VRRig.LocalRig.rightHand.rigTarget.position = archivePosRight;
+                VRRig.LocalRig.rightHand.rigTarget.rotation = archiveRotRight;
+
+                VRRig.LocalRig.head.rigTarget.transform.rotation = headRot;
+
+                return false;
+            };
+        }
+
         public static void ConfusePlayerGun()
         {
             if (GetGunInput(false))
@@ -3807,8 +4053,8 @@ namespace iiMenu.Mods
                     {
                         GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", GetPlayerFromVRRig(lockTarget), new object[]
                         {
-                            lockTarget.transform.position + new Vector3(UnityEngine.Random.Range(-0.5f, 0.5f),UnityEngine.Random.Range(-0.5f, 0.5f),UnityEngine.Random.Range(-0.5f, 0.5f)),
-                            Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0,360), UnityEngine.Random.Range(0,360), UnityEngine.Random.Range(0,360))),
+                            lockTarget.transform.position + RandomVector3(0.5f),
+                            RandomQuaternion(),
                             4f,
                             100f,
                             true,
@@ -3834,6 +4080,137 @@ namespace iiMenu.Mods
                 {
                     gunLocked = false;
                     VRRig.LocalRig.enabled = true;
+                }
+            }
+        }
+
+        public static void ConfuseAllPlayers()
+        {
+            SerializePatch.OverrideSerialization = () => {
+                MassSerialize(true, new[] { GetPhotonViewFromVRRig(VRRig.LocalRig) });
+
+                Vector3 archivePos = VRRig.LocalRig.transform.position;
+
+                foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
+                {
+                    VRRig targetRig = GetVRRigFromPlayer(Player);
+
+                    VRRig.LocalRig.transform.position = targetRig.transform.position - Vector3.up * 2f;
+                    SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                }
+
+                RPCProtection();
+
+                VRRig.LocalRig.transform.position = archivePos;
+
+                return false;
+            };
+        }
+
+        public static void ConfuseAllPlayersSplash()
+        {
+            if (Time.time > Fun.splashDel)
+            {
+                Fun.splashDel = Time.time + 0.05f;
+                VRRig rig = GetRandomVRRig(false);
+                GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", GetPlayerFromVRRig(rig), new object[]
+                {
+                    rig.transform.position + RandomVector3(0.5f),
+                    RandomQuaternion(),
+                    4f,
+                    100f,
+                    true,
+                    false
+                });
+            }
+        }
+
+        public static void SchizophrenicGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget) && !gunLocked)
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+
+                        SerializePatch.OverrideSerialization = () => 
+                        {
+                            NetPlayer target = GetPlayerFromVRRig(lockTarget);
+                            MassSerialize(true, new PhotonView[] { GetPhotonViewFromVRRig(VRRig.LocalRig) });
+
+                            Vector3 positionArchive = VRRig.LocalRig.transform.position;
+                            SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = AllActorNumbersExcept(target.ActorNumber) });
+
+                            VRRig.LocalRig.transform.position = new Vector3(UnityEngine.Random.Range(-99999f, 99999f), 99999f, UnityEngine.Random.Range(-99999f, 99999f));
+                            SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = new int[] { target.ActorNumber } });
+
+                            RPCProtection();
+                            VRRig.LocalRig.transform.position = positionArchive;
+
+                            return false;
+                        };
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                {
+                    gunLocked = false;
+                    SerializePatch.OverrideSerialization = null;
+                }
+            }
+        }
+
+        public static void ReverseSchizoGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget) && !gunLocked)
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+
+                        SerializePatch.OverrideSerialization = () =>
+                        {
+                            NetPlayer target = GetPlayerFromVRRig(lockTarget);
+                            MassSerialize(true, new PhotonView[] { GetPhotonViewFromVRRig(VRRig.LocalRig) });
+
+                            Vector3 positionArchive = VRRig.LocalRig.transform.position;
+                            SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = new int[] { target.ActorNumber } });
+
+                            VRRig.LocalRig.transform.position = new Vector3(UnityEngine.Random.Range(-99999f, 99999f), 99999f, UnityEngine.Random.Range(-99999f, 99999f));
+                            SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = AllActorNumbersExcept(target.ActorNumber) });
+
+                            RPCProtection();
+                            VRRig.LocalRig.transform.position = positionArchive;
+
+                            return false;
+                        };
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                {
+                    gunLocked = false;
+                    SerializePatch.OverrideSerialization = null;
                 }
             }
         }
@@ -3892,21 +4269,6 @@ namespace iiMenu.Mods
                     VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
 
                     VRRig.LocalRig.head.rigTarget.transform.rotation = lockTarget.transform.rotation;
-
-                    if ((Time.frameCount % 45) == 0)
-                    {
-                        if (PhotonNetwork.InRoom)
-                        {
-                            GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
-                                64,
-                                false,
-                                999999f
-                            });
-                            RPCProtection();
-                        }
-                        else
-                            VRRig.LocalRig.PlayHandTapLocal(64, false, 999999f);
-                    }
                 }
                 if (GetGunInput(true))
                 {
@@ -3926,6 +4288,91 @@ namespace iiMenu.Mods
                     VRRig.LocalRig.enabled = true;
                 }
             }
+        }
+
+        public static void IntercourseNoises()
+        {
+            if ((Time.frameCount % 45) == 0)
+            {
+                if (PhotonNetwork.InRoom)
+                {
+                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
+                        64,
+                        true,
+                        999999f
+                    });
+                    RPCProtection();
+                }
+                else
+                    VRRig.LocalRig.PlayHandTapLocal(64, true, 999999f);
+            }
+        }
+
+        public static void IntercourseAll()
+        {
+            SerializePatch.OverrideSerialization = () => {
+                MassSerialize(true, new[] { GetPhotonViewFromVRRig(VRRig.LocalRig) });
+
+                Vector3 archivePos = VRRig.LocalRig.transform.position;
+                Quaternion archiveRot = VRRig.LocalRig.transform.rotation;
+
+                Vector3 archivePosLeft = VRRig.LocalRig.leftHand.rigTarget.position;
+                Quaternion archiveRotLeft = VRRig.LocalRig.leftHand.rigTarget.rotation;
+
+                Vector3 archivePosRight = VRRig.LocalRig.rightHand.rigTarget.position;
+                Quaternion archiveRotRight = VRRig.LocalRig.rightHand.rigTarget.rotation;
+
+                Quaternion headRot = VRRig.LocalRig.head.rigTarget.transform.rotation;
+
+                foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
+                {
+                    VRRig targetRig = GetVRRigFromPlayer(Player);
+
+                    if (!GetIndex("Reverse Intercourse").enabled)
+                    {
+                        VRRig.LocalRig.transform.position = targetRig.transform.position + (targetRig.transform.forward * -(0.2f + (Mathf.Sin(Time.frameCount / 8f) * 0.1f)));
+                        VRRig.LocalRig.transform.rotation = targetRig.transform.rotation;
+
+                        VRRig.LocalRig.leftHand.rigTarget.transform.position = (targetRig.transform.position + targetRig.transform.right * -0.2f) + targetRig.transform.up * -0.4f;
+                        VRRig.LocalRig.rightHand.rigTarget.transform.position = (targetRig.transform.position + targetRig.transform.right * 0.2f) + targetRig.transform.up * -0.4f;
+
+                        VRRig.LocalRig.leftHand.rigTarget.transform.rotation = targetRig.transform.rotation;
+                        VRRig.LocalRig.rightHand.rigTarget.transform.rotation = targetRig.transform.rotation;
+                    }
+                    else
+                    {
+                        VRRig.LocalRig.transform.position = targetRig.transform.position + (targetRig.transform.forward * (0.2f + (Mathf.Sin(Time.frameCount / 8f) * 0.1f)));
+                        VRRig.LocalRig.transform.rotation = targetRig.transform.rotation;
+
+                        VRRig.LocalRig.leftHand.rigTarget.transform.position = (targetRig.transform.position + targetRig.transform.right * -0.2f) + targetRig.transform.up * -0.4f;
+                        VRRig.LocalRig.rightHand.rigTarget.transform.position = (targetRig.transform.position + targetRig.transform.right * 0.2f) + targetRig.transform.up * -0.4f;
+
+                        VRRig.LocalRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(targetRig.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
+                        VRRig.LocalRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(targetRig.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
+
+                        VRRig.LocalRig.head.rigTarget.transform.rotation = targetRig.transform.rotation;
+                    }
+
+                    FixRigHandRotation();
+
+                    SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                }
+
+                RPCProtection();
+
+                VRRig.LocalRig.transform.position = archivePos;
+                VRRig.LocalRig.transform.rotation = archiveRot;
+
+                VRRig.LocalRig.leftHand.rigTarget.position = archivePosLeft;
+                VRRig.LocalRig.leftHand.rigTarget.rotation = archiveRotLeft;
+
+                VRRig.LocalRig.rightHand.rigTarget.position = archivePosRight;
+                VRRig.LocalRig.rightHand.rigTarget.rotation = archiveRotRight;
+
+                VRRig.LocalRig.head.rigTarget.transform.rotation = headRot;
+
+                return false;
+            };
         }
 
         public static void HeadGun()
@@ -3967,21 +4414,7 @@ namespace iiMenu.Mods
                     VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
 
                     FixRigHandRotation();
-
-                    if ((Time.frameCount % 45) == 0)
-                    {
-                        if (PhotonNetwork.InRoom)
-                        {
-                            GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
-                                64,
-                                true,
-                                999999f
-                            });
-                            RPCProtection();
-                        }
-                        else
-                            VRRig.LocalRig.PlayHandTapLocal(64, true, 999999f);
-                    }
+                    IntercourseNoises();
                 }
                 if (GetGunInput(true))
                 {
@@ -4001,6 +4434,59 @@ namespace iiMenu.Mods
                     VRRig.LocalRig.enabled = true;
                 }
             }
+        }
+
+        public static void HeadAll()
+        {
+            SerializePatch.OverrideSerialization = () => {
+                MassSerialize(true, new[] { GetPhotonViewFromVRRig(VRRig.LocalRig) });
+
+                Vector3 archivePos = VRRig.LocalRig.transform.position;
+                Quaternion archiveRot = VRRig.LocalRig.transform.rotation;
+
+                Vector3 archivePosLeft = VRRig.LocalRig.leftHand.rigTarget.position;
+                Quaternion archiveRotLeft = VRRig.LocalRig.leftHand.rigTarget.rotation;
+
+                Vector3 archivePosRight = VRRig.LocalRig.rightHand.rigTarget.position;
+                Quaternion archiveRotRight = VRRig.LocalRig.rightHand.rigTarget.rotation;
+
+                Quaternion headRot = VRRig.LocalRig.head.rigTarget.transform.rotation;
+
+                foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
+                {
+                    VRRig targetRig = GetVRRigFromPlayer(Player);
+
+                    VRRig.LocalRig.transform.position = targetRig.transform.position + (targetRig.transform.forward * (0.2f + (Mathf.Sin(Time.frameCount / 8f) * 0.1f))) + (targetRig.transform.up * -0.4f);
+                    VRRig.LocalRig.transform.rotation = Quaternion.Euler(targetRig.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
+
+                    VRRig.LocalRig.leftHand.rigTarget.transform.position = (targetRig.transform.position + targetRig.transform.right * 0.2f) + targetRig.transform.up * -0.4f;
+                    VRRig.LocalRig.rightHand.rigTarget.transform.position = (targetRig.transform.position + targetRig.transform.right * -0.2f) + targetRig.transform.up * -0.4f;
+
+                    VRRig.LocalRig.leftHand.rigTarget.transform.rotation = Quaternion.Euler(targetRig.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
+                    VRRig.LocalRig.rightHand.rigTarget.transform.rotation = Quaternion.Euler(targetRig.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
+
+                    VRRig.LocalRig.head.rigTarget.transform.rotation = Quaternion.Euler(targetRig.transform.rotation.eulerAngles + new Vector3(0f, 180f, 0f));
+
+                    FixRigHandRotation();
+
+                    SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                }
+
+                RPCProtection();
+
+                VRRig.LocalRig.transform.position = archivePos;
+                VRRig.LocalRig.transform.rotation = archiveRot;
+
+                VRRig.LocalRig.leftHand.rigTarget.position = archivePosLeft;
+                VRRig.LocalRig.leftHand.rigTarget.rotation = archiveRotLeft;
+
+                VRRig.LocalRig.rightHand.rigTarget.position = archivePosRight;
+                VRRig.LocalRig.rightHand.rigTarget.rotation = archiveRotRight;
+
+                VRRig.LocalRig.head.rigTarget.transform.rotation = headRot;
+
+                return false;
+            };
         }
 
         public static void RemoveCopy()
