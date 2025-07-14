@@ -13,7 +13,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Animations.Rigging;
 using UnityEngine.InputSystem;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
@@ -359,6 +358,121 @@ namespace iiMenu.Mods
             }
         }
 
+        private static float reportDelay;
+        public static void DelayBanGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget) && !gunLocked)
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+
+                        if (PlayerIsTagged(VRRig.LocalRig))
+                        {
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must not be tagged.");
+                            return;
+                        }
+
+                        if (!PlayerIsTagged(lockTarget))
+                        {
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> The target must be tagged.");
+                            return;
+                        }
+
+                        if (PhotonNetwork.IsMasterClient)
+                        {
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must not be master client.");
+                            return;
+                        }
+
+                        if (Time.time > reportDelay)
+                        {
+                            reportDelay = Time.time + 0.5f;
+                            GorillaPlayerScoreboardLine.ReportPlayer(GetPlayerFromVRRig(lockTarget).UserId, GorillaPlayerLineButton.ButtonType.Cheating, GetPlayerFromVRRig(lockTarget).NickName);
+                        }
+                        
+                        SerializePatch.OverrideSerialization = () =>
+                        {
+                            NetPlayer target = GetPlayerFromVRRig(lockTarget);
+                            MassSerialize(true, new PhotonView[] { GetPhotonViewFromVRRig(VRRig.LocalRig) });
+
+                            Vector3 positionArchive = VRRig.LocalRig.transform.position;
+                            SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = AllActorNumbersExcept(new int[] { PhotonNetwork.MasterClient.ActorNumber, RigManager.GetPlayerFromVRRig(lockTarget).ActorNumber }) });
+
+                            VRRig.LocalRig.transform.position = new Vector3(99999f, 99999f, 99999f);
+                            SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = new int[] { PhotonNetwork.MasterClient.ActorNumber } });
+
+                            VRRig.LocalRig.transform.position = lockTarget.rightHandTransform.position;
+                            SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = new int[] { GetPlayerFromVRRig(lockTarget).ActorNumber } });
+
+                            RPCProtection();
+                            VRRig.LocalRig.transform.position = positionArchive;
+
+                            return false;
+                        };
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                {
+                    gunLocked = false;
+                    SerializePatch.OverrideSerialization = null;
+                }
+            }
+        }
+
+        public static void DelayBanAll()
+        {
+            SerializePatch.OverrideSerialization = () =>
+            {
+                if (PlayerIsTagged(VRRig.LocalRig))
+                {
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must not be tagged.");
+                    return true;
+                }
+
+                if (PhotonNetwork.IsMasterClient)
+                {
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must not be master client.");
+                    return true;
+                }
+
+                NetPlayer target = GetPlayerFromVRRig(lockTarget);
+                MassSerialize(true, new PhotonView[] { GetPhotonViewFromVRRig(VRRig.LocalRig) });
+
+                Vector3 positionArchive = VRRig.LocalRig.transform.position;
+                SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = PhotonNetwork.PlayerList.Where(player => !player.IsMasterClient && PlayerIsTagged(GetVRRigFromPlayer(player))).Select(player => player.ActorNumber).ToArray() });
+
+                VRRig.LocalRig.transform.position = new Vector3(99999f, 99999f, 99999f);
+                SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = new int[] { PhotonNetwork.MasterClient.ActorNumber } });
+
+                foreach (NetPlayer player in NetworkSystem.Instance.PlayerListOthers)
+                {
+                    VRRig rig = GetVRRigFromPlayer(player);
+                    if (!player.IsMasterClient && PlayerIsTagged(rig))
+                    {
+                        VRRig.LocalRig.transform.position = rig.rightHandTransform.position;
+                        SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = new int[] { player.ActorNumber } });
+                    }
+                }
+
+                RPCProtection();
+                VRRig.LocalRig.transform.position = positionArchive;
+
+                return false;
+            };
+        }
+
         public static void ObliteratePlayer(NetPlayer target)
         {
             if (Time.time > crashAllDelay)
@@ -420,6 +534,7 @@ namespace iiMenu.Mods
             }
         }
 
+        private static float obliteratePower = 0.25f;
         public static void ObliterateOnGrab()
         {
             VRRig.LocalRig.enabled = true;
@@ -430,12 +545,17 @@ namespace iiMenu.Mods
                     if (rig.leftHandLink.grabbedPlayer == NetworkSystem.Instance.LocalPlayer || rig.rightHandLink.grabbedPlayer == NetworkSystem.Instance.LocalPlayer)
                     {
                         VRRig.LocalRig.enabled = false;
-                        VRRig.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + Vector3.up * UnityEngine.Random.Range(99999f, 0f);
-                        VRRig.LocalRig.leftHand.rigTarget.transform.position = VRRig.LocalRig.transform.position;
-                        VRRig.LocalRig.rightHand.rigTarget.transform.position = VRRig.LocalRig.transform.position;
+                        VRRig.LocalRig.transform.position += Vector3.up * obliteratePower;
+
+                        obliteratePower = Mathf.Lerp(obliteratePower, 0.35f, 0.05f);
+
+                        SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig));
                     }
                 }
             }
+
+            if (VRRig.LocalRig.enabled)
+                obliteratePower = 0.25f;
         }
 
         public static void BlindOnGrab()
@@ -486,6 +606,19 @@ namespace iiMenu.Mods
                         VRRig.LocalRig.enabled = false;
                         VRRig.LocalRig.transform.position = GetObject("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/QuitBox").transform.position + RandomVector3(100f);
                     }
+                }
+            }
+        }
+
+        public static void FlingOnGrab()
+        {
+            VRRig.LocalRig.enabled = true;
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (!rig.isLocal) /*&& rig.transform.position.x < 80)*/
+                {
+                    if (rig.leftHandLink.grabbedPlayer == NetworkSystem.Instance.LocalPlayer || rig.rightHandLink.grabbedPlayer == NetworkSystem.Instance.LocalPlayer)
+                        GetNetworkViewFromVRRig(VRRig.LocalRig).SendRPC("DroppedByPlayer", GetPlayerFromVRRig(rig), new object[] { (Vector3.up + (GorillaTagger.Instance.bodyCollider.transform.forward * -1)).normalized * 20f }); 
                 }
             }
         }
