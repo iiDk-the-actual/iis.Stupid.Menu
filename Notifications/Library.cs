@@ -97,7 +97,7 @@ namespace iiMenu.Notifications
             ModText.rectTransform.sizeDelta = new Vector2(450f, 1000f);
             ModText.alignment = TextAnchor.UpperLeft;
             ModText.rectTransform.localScale = new Vector3(0.00333333333f, 0.00333333333f, 0.33333333f);
-            ModText.rectTransform.localPosition = new Vector3(-1f, -0.7f, -0.5f);
+            ModText.rectTransform.localPosition = new Vector3(-1f, -1f, -0.5f);
             ModText.material = AlertText;
 
             StatsText = new GameObject
@@ -113,7 +113,7 @@ namespace iiMenu.Notifications
             StatsText.rectTransform.sizeDelta = new Vector2(450f, 1000f);
             StatsText.alignment = TextAnchor.UpperRight;
             StatsText.rectTransform.localScale = new Vector3(0.00333333333f, 0.00333333333f, 0.33333333f);
-            StatsText.rectTransform.localPosition = new Vector3(-1f, -0.7f, 0.5f);
+            StatsText.rectTransform.localPosition = new Vector3(-1f, -1f, 0.5f);
             StatsText.material = AlertText;
         }
 
@@ -146,10 +146,10 @@ namespace iiMenu.Notifications
                         ModText.fontStyle = (FontStyle)((int)activeFontStyle % 2);
                 }
                 catch { }
-                ModText.rectTransform.localPosition = new Vector3(-1f, -0.7f, flipArraylist ? 0.5f : -0.5f);
+                ModText.rectTransform.localPosition = new Vector3(-1f, -1f, flipArraylist ? 0.5f : -0.5f);
                 ModText.alignment = flipArraylist ? TextAnchor.UpperRight : TextAnchor.UpperLeft;
 
-                StatsText.rectTransform.localPosition = new Vector3(-1f, -0.7f, flipArraylist ? -0.5f : 0.5f);
+                StatsText.rectTransform.localPosition = new Vector3(-1f, -1f, flipArraylist ? -0.5f : 0.5f);
                 StatsText.alignment = flipArraylist ? TextAnchor.UpperLeft : TextAnchor.UpperRight;
 
                 if (information.Count > 0)
