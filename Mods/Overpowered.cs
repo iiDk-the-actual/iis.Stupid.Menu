@@ -402,16 +402,16 @@ namespace iiMenu.Mods
                         SerializePatch.OverrideSerialization = () =>
                         {
                             NetPlayer target = GetPlayerFromVRRig(lockTarget);
-                            MassSerialize(true, new PhotonView[] { GetPhotonViewFromVRRig(VRRig.LocalRig) });
+                            MassSerialize(true, new PhotonView[] { GorillaTagger.Instance.myVRRig.GetView });
 
                             Vector3 positionArchive = VRRig.LocalRig.transform.position;
-                            SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = AllActorNumbersExcept(new int[] { PhotonNetwork.MasterClient.ActorNumber, RigManager.GetPlayerFromVRRig(lockTarget).ActorNumber }) });
+                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = AllActorNumbersExcept(new int[] { PhotonNetwork.MasterClient.ActorNumber, RigManager.GetPlayerFromVRRig(lockTarget).ActorNumber }) });
 
                             VRRig.LocalRig.transform.position = new Vector3(99999f, 99999f, 99999f);
-                            SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = new int[] { PhotonNetwork.MasterClient.ActorNumber } });
+                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { PhotonNetwork.MasterClient.ActorNumber } });
 
                             VRRig.LocalRig.transform.position = lockTarget.rightHandTransform.position;
-                            SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = new int[] { GetPlayerFromVRRig(lockTarget).ActorNumber } });
+                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { GetPlayerFromVRRig(lockTarget).ActorNumber } });
 
                             RPCProtection();
                             VRRig.LocalRig.transform.position = positionArchive;
@@ -448,13 +448,13 @@ namespace iiMenu.Mods
                 }
 
                 NetPlayer target = GetPlayerFromVRRig(lockTarget);
-                MassSerialize(true, new PhotonView[] { GetPhotonViewFromVRRig(VRRig.LocalRig) });
+                MassSerialize(true, new PhotonView[] { GorillaTagger.Instance.myVRRig.GetView });
 
                 Vector3 positionArchive = VRRig.LocalRig.transform.position;
-                SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = PhotonNetwork.PlayerList.Where(player => !player.IsMasterClient && PlayerIsTagged(GetVRRigFromPlayer(player))).Select(player => player.ActorNumber).ToArray() });
+                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = PhotonNetwork.PlayerList.Where(player => !player.IsMasterClient && PlayerIsTagged(GetVRRigFromPlayer(player))).Select(player => player.ActorNumber).ToArray() });
 
                 VRRig.LocalRig.transform.position = new Vector3(99999f, 99999f, 99999f);
-                SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = new int[] { PhotonNetwork.MasterClient.ActorNumber } });
+                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { PhotonNetwork.MasterClient.ActorNumber } });
 
                 foreach (NetPlayer player in NetworkSystem.Instance.PlayerListOthers)
                 {
@@ -462,7 +462,7 @@ namespace iiMenu.Mods
                     if (!player.IsMasterClient && PlayerIsTagged(rig))
                     {
                         VRRig.LocalRig.transform.position = rig.rightHandTransform.position;
-                        SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig), new RaiseEventOptions() { TargetActors = new int[] { player.ActorNumber } });
+                        SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { player.ActorNumber } });
                     }
                 }
 
@@ -549,7 +549,7 @@ namespace iiMenu.Mods
 
                         obliteratePower = Mathf.Lerp(obliteratePower, 0.35f, 0.05f);
 
-                        SendSerialize(GetPhotonViewFromVRRig(VRRig.LocalRig));
+                        SendSerialize(GorillaTagger.Instance.myVRRig.GetView);
                     }
                 }
             }
