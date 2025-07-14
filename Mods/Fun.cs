@@ -120,31 +120,31 @@ namespace iiMenu.Mods
 
         public static void FixHandTaps()
         {
-            Patches.HandTapPatch.enabled = false;
-            Patches.HandTapPatch.tapsEnabled = true;
-            Patches.HandTapPatch.doOverride = false;
-            Patches.HandTapPatch.overrideVolume = 0.1f;
-            Patches.HandTapPatch.tapMultiplier = 1;
+            Patches.EffectDataPatch.enabled = false;
+            Patches.EffectDataPatch.tapsEnabled = true;
+            Patches.EffectDataPatch.doOverride = false;
+            Patches.EffectDataPatch.overrideVolume = 0.1f;
+            Patches.EffectDataPatch.tapMultiplier = 1;
             GorillaTagger.Instance.handTapVolume = 0.1f;
         }
 
         public static void LoudHandTaps()
         {
-            Patches.HandTapPatch.enabled = true;
-            Patches.HandTapPatch.tapsEnabled = true;
-            Patches.HandTapPatch.doOverride = true;
-            Patches.HandTapPatch.overrideVolume = 99999f;
-            Patches.HandTapPatch.tapMultiplier = 10;
+            Patches.EffectDataPatch.enabled = true;
+            Patches.EffectDataPatch.tapsEnabled = true;
+            Patches.EffectDataPatch.doOverride = true;
+            Patches.EffectDataPatch.overrideVolume = 99999f;
+            Patches.EffectDataPatch.tapMultiplier = 10;
             GorillaTagger.Instance.handTapVolume = 99999f;
         }
 
         public static void SilentHandTaps()
         {
-            Patches.HandTapPatch.enabled = true;
-            Patches.HandTapPatch.tapsEnabled = false;
-            Patches.HandTapPatch.doOverride = false;
-            Patches.HandTapPatch.overrideVolume = 0f;
-            Patches.HandTapPatch.tapMultiplier = 0;
+            Patches.EffectDataPatch.enabled = true;
+            Patches.EffectDataPatch.tapsEnabled = false;
+            Patches.EffectDataPatch.doOverride = false;
+            Patches.EffectDataPatch.overrideVolume = 0f;
+            Patches.EffectDataPatch.tapMultiplier = 0;
             GorillaTagger.Instance.handTapVolume = 0;
         }
 
