@@ -2355,51 +2355,6 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void SpawnSecondLook()
-        {
-            GameObject secondlook = GetObject("Environment Objects/05Maze_PersistentObjects/MinesSecondLookSkeleton");
-            secondlook.GetComponent<SecondLookSkeletonSynchValues>().GetView.RPC("RemoteActivateGhost", RpcTarget.All, new object[] { });
-        }
-
-        public static void AngerSecondLook()
-        {
-            GameObject secondlook = GetObject("Environment Objects/05Maze_PersistentObjects/MinesSecondLookSkeleton");
-            secondlook.GetComponent<SecondLookSkeleton>().tapped = true;
-            if (secondlook.GetComponent<SecondLookSkeleton>().currentState == SecondLookSkeleton.GhostState.Unactivated)
-                secondlook.GetComponent<SecondLookSkeletonSynchValues>().GetView.RPC("RemoteActivateGhost", RpcTarget.All, new object[] { });
-            
-            secondlook.GetComponent<SecondLookSkeletonSynchValues>().GetView.RPC("RemotePlayerSeen", RpcTarget.All, new object[] { });
-        }
-
-        public static void ThrowSecondLook()
-        {
-            GameObject secondlook = GetObject("Environment Objects/05Maze_PersistentObjects/MinesSecondLookSkeleton");
-            secondlook.GetComponent<SecondLookSkeleton>().tapped = true;
-            if (secondlook.GetComponent<SecondLookSkeleton>().currentState == SecondLookSkeleton.GhostState.Unactivated)
-                secondlook.GetComponent<SecondLookSkeletonSynchValues>().GetView.RPC("RemoteActivateGhost", RpcTarget.All, new object[] { });
-            
-            secondlook.GetComponent<SecondLookSkeletonSynchValues>().GetView.RPC("RemotePlayerCaught", RpcTarget.All, new object[] { });
-        }
-
-        public static float lasttimeaa = 0f;
-        public static void SpazSecondLook()
-        {
-            if (Time.time > lasttimeaa)
-            {
-                lasttimeaa = Time.time + 0.75f;
-                GameObject secondlook = GetObject("Environment Objects/05Maze_PersistentObjects/MinesSecondLookSkeleton");
-                secondlook.GetComponent<SecondLookSkeleton>().tapped = true;
-                if (secondlook.GetComponent<SecondLookSkeleton>().currentState == SecondLookSkeleton.GhostState.Unactivated || secondlook.GetComponent<SecondLookSkeleton>().currentState == SecondLookSkeleton.GhostState.PlayerThrown || secondlook.GetComponent<SecondLookSkeleton>().currentState == SecondLookSkeleton.GhostState.Reset)
-                    secondlook.GetComponent<SecondLookSkeletonSynchValues>().GetView.RPC("RemoteActivateGhost", RpcTarget.All, new object[] { });
-                
-                if (secondlook.GetComponent<SecondLookSkeleton>().currentState == SecondLookSkeleton.GhostState.Activated || secondlook.GetComponent<SecondLookSkeleton>().currentState == SecondLookSkeleton.GhostState.Patrolling)
-                    secondlook.GetComponent<SecondLookSkeletonSynchValues>().GetView.RPC("RemotePlayerSeen", RpcTarget.All, new object[] { });
-                
-                if (secondlook.GetComponent<SecondLookSkeleton>().currentState == SecondLookSkeleton.GhostState.Chasing)
-                    secondlook.GetComponent<SecondLookSkeletonSynchValues>().GetView.RPC("RemoteActivateGhost", RpcTarget.All, new object[] { });
-            }
-        }
-
         private static bool previousMuteValue;
         private static float freezeAllDelay;
         public static void FreezeAll()
