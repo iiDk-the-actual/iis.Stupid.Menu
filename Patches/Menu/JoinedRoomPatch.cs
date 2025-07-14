@@ -1,12 +1,5 @@
 ﻿using GorillaNetworking;
 using HarmonyLib;
-using Photon.Pun;
-using PlayFab;
-using PlayFab.ClientModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace iiMenu.Patches
 {
