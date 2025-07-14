@@ -449,7 +449,7 @@ namespace iiMenu.Classes
         {
             CoroutineManager.instance.StartCoroutine(ExecuteAction(uid, "frienduser",
                 () => NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully sent friend request.", 5000),
-                () => NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not send friend request.", 5000)
+                (string error) => NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not send friend request: {error}", 5000)
             ));
         }
 
@@ -457,7 +457,7 @@ namespace iiMenu.Classes
         {
             CoroutineManager.instance.StartCoroutine(ExecuteAction(uid, "frienduser",
                 () => NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully accepted friend request.", 5000),
-                () => NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not accept friend request.", 5000)
+                (string error) => NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not accept friend request: {error}", 5000)
             ));
         }
 
@@ -465,7 +465,7 @@ namespace iiMenu.Classes
         {
             CoroutineManager.instance.StartCoroutine(ExecuteAction(uid, "unfrienduser",
                 () => NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Removed friend from friends list.", 5000),
-                () => NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not remove friend from friends list.", 5000)
+                (string error) => NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not remove friend from friends list: {error}", 5000)
             ));
         }
 
@@ -473,7 +473,7 @@ namespace iiMenu.Classes
         {
             CoroutineManager.instance.StartCoroutine(ExecuteAction(uid, "unfrienduser",
                 () => NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Denied friend request.", 5000),
-                () => NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not deny friend request.", 5000)
+                (string error) => NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not deny friend request: {error}", 5000)
             ));
         }
 
@@ -481,11 +481,11 @@ namespace iiMenu.Classes
         {
             CoroutineManager.instance.StartCoroutine(ExecuteAction(uid, "unfrienduser",
                 () => NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Cancelled friend request.", 5000),
-                () => NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not cancel friend request.", 5000)
+                (string error) => NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not cancel friend request: {error}", 5000)
             ));
         }
 
-        public static System.Collections.IEnumerator ExecuteAction(string uid, string action, Action success, Action failure)
+        public static System.Collections.IEnumerator ExecuteAction(string uid, string action, Action success, Action<string> failure)
         {
             UnityWebRequest request = new UnityWebRequest($"https://iidk.online/{action}", "POST");
 
@@ -505,7 +505,21 @@ namespace iiMenu.Classes
                 instance.UpdateTime = 0f;
             }
             else
-                failure.Invoke();
+            {
+                string reason = request.error.IsNullOrEmpty() ? "Unknown error" : request.error;
+
+                try
+                {
+                    string responseText = request.downloadHandler.text;
+                    Dictionary<string, object> responseJson = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseText);
+
+                    if (responseJson != null && responseJson.ContainsKey("error"))
+                        reason = responseJson["error"].ToString();
+                }
+                catch { }
+
+                failure.Invoke(reason);
+            }
         }
 
         public class FriendData
