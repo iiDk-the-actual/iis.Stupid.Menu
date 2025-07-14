@@ -640,7 +640,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Time Label", method =() => Visuals.TimeLabel(), toolTip = "Puts text on your right hand, showing how long you've been playing for without getting tagged."},
 
                 new ButtonInfo { buttonText = "FPS Overlay", method =() => NotifiLib.information["FPS"] = Mathf.Ceil(1f / Time.unscaledDeltaTime).ToString(), disableMethod =() => NotifiLib.information.Remove("FPS"), toolTip = "Displays your FPS on your screen."},
-                new ButtonInfo { buttonText = "Room Information Overlay", method =() => { NotifiLib.information["Room Code"] = PhotonNetwork.InRoom ? Mathf.Ceil(1f / Time.unscaledDeltaTime).ToString() : "None"; NotifiLib.information["Players"] = PhotonNetwork.PlayerList.Length.ToString(); }, disableMethod =() => { NotifiLib.information.Remove("Room Code"); NotifiLib.information.Remove("Players"); }, toolTip = "Displays information about the room on your screen."},
+                new ButtonInfo { buttonText = "Room Information Overlay", method =() => { NotifiLib.information["Room Code"] = PhotonNetwork.InRoom ? PhotonNetwork.CurrentRoom.Name : "None"; NotifiLib.information["Players"] = PhotonNetwork.PlayerList.Length.ToString(); }, disableMethod =() => { NotifiLib.information.Remove("Room Code"); NotifiLib.information.Remove("Players"); }, toolTip = "Displays information about the room on your screen."},
                 new ButtonInfo { buttonText = "Networking Overlay", method =() => { NotifiLib.information["Ping"] = PhotonNetwork.GetPing().ToString(); NotifiLib.information["Region"] = NetworkSystem.Instance.regionNames[NetworkSystem.Instance.currentRegionIndex].ToUpper(); }, disableMethod =() => { NotifiLib.information.Remove("Ping"); NotifiLib.information.Remove("Region"); }, toolTip = "Displays information about networking on your screen."},
 
                 new ButtonInfo { buttonText = "Info Watch", enableMethod =() => Visuals.WatchOn(), method =() => Visuals.WatchStep(), disableMethod =() => Visuals.WatchOff(), toolTip = "Puts a watch on your hand that tells you the time and your FPS."},
@@ -1289,6 +1289,14 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Fling</color><color=grey>]</color>", method =() => Overpowered.AntiReportFling(), toolTip = "Flings whoever tries to report you."},
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Snowball Fling</color><color=grey>]</color>", method =() => Overpowered.AntiReportSnowballFling(), toolTip = "Flings whoever tries to report you with the snowballs."},
+                
+                new ButtonInfo { buttonText = "Lag Gun", method =() => Overpowered.LagGun(), toolTip = "Lags whoever your hand desires."},
+                new ButtonInfo { buttonText = "Lag All", method =() => Overpowered.LagAll(), toolTip = "Lags everyone in the room."},
+
+                new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Lag</color><color=grey>]</color>", method =() => Overpowered.AntiReportLag(), toolTip = "Lags whoever tries to report you."},
+
+                new ButtonInfo { buttonText = "Lock Room", method =() => Overpowered.SetRoomLock(true), isTogglable = false, toolTip = "Locks the room so no one else can join."},           
+                new ButtonInfo { buttonText = "Unlock Room", method =() => Overpowered.SetRoomLock(false), isTogglable = false, toolTip = "Unlocks the room so everyone can join."},
 
                 new ButtonInfo { buttonText = "Destroy Gun", method =() => Overpowered.DestroyGun(), toolTip = "Block new players from seeing whoever your hand desires."},
                 new ButtonInfo { buttonText = "Destroy All", method =() => Overpowered.DestroyAll(), isTogglable = false, toolTip = "Block new players from seeing everyone."},
