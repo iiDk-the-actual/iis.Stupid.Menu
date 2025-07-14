@@ -179,6 +179,142 @@ namespace iiMenu.Mods
             trailRenderer = null;
         }
 
+        private static Material tapMat;
+        private static Texture2D tapTxt;
+        private static Texture2D warningTxt;
+
+        private static List<object[]> handTaps = new List<object[]> { };
+        public static void OnHandTapGamesenseRing(VRRig rig, Vector3 position)
+        {
+            if (rig.isLocal)
+                return;
+
+            if (Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, position) > 20f)
+                return;
+
+            handTaps.Add(new object[]
+            {
+                rig,
+                position,
+                Time.time,
+                null
+            });
+        }
+
+        public static void GamesenseRing()
+        {
+            List<object[]> toRemove = new List<object[]> { };
+            for (int i = 0; i < handTaps.Count; i++)
+            {
+                object[] handTapData = handTaps[i];
+                VRRig rig = (VRRig)handTapData[0];
+                Vector3 position = (Vector3)handTapData[1];
+
+                float timestamp = (float)handTapData[2];
+                GameObject gameObject = (GameObject)handTapData[3] ?? null;
+
+                if (Time.time > timestamp + 1f)
+                {
+                    toRemove.Add(handTapData);
+                    continue;
+                }
+
+                if (gameObject == null)
+                {
+                    gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    UnityEngine.Object.Destroy(gameObject.GetComponent<Collider>());
+
+                    if (tapMat == null)
+                    {
+                        tapMat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+
+                        if (tapTxt == null)
+                            tapTxt = LoadTextureFromURL("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/refs/heads/main/footstep.png", "footstep.png");
+
+                        if (warningTxt == null)
+                            warningTxt = LoadTextureFromURL("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/refs/heads/main/warning.png", "warning.png");
+
+                        tapMat.SetFloat("_Surface", 1);
+                        tapMat.SetFloat("_Blend", 0);
+                        tapMat.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
+                        tapMat.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
+                        tapMat.SetFloat("_ZWrite", 0);
+                        tapMat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+                        tapMat.renderQueue = (int)RenderQueue.Transparent;
+
+                        tapMat.SetFloat("_Glossiness", 0f);
+                        tapMat.SetFloat("_Metallic", 0f);
+                    }
+
+                    gameObject.GetComponent<Renderer>().material = tapMat;
+                    gameObject.GetComponent<Renderer>().material.mainTexture = PlayerIsTagged(VRRig.LocalRig) ? (PlayerIsTagged(rig) ? tapTxt : warningTxt) : (PlayerIsTagged(rig) ? warningTxt : tapTxt);
+                    gameObject.GetComponent<Renderer>().material.color = GetPlayerColor(rig);
+
+                    handTaps[i][3] = gameObject;
+                }
+
+                Renderer renderer = gameObject.GetComponent<Renderer>();
+
+                Vector3 toTarget = position - Camera.main.transform.position;
+                toTarget.Normalize();
+
+                Vector3 camForward = Camera.main.transform.forward.normalized;
+                Vector3 camRight = Camera.main.transform.right.normalized;
+                Vector3 camUp = Camera.main.transform.up.normalized;
+
+                float x = Vector3.Dot(toTarget, camRight);
+                float y = Vector3.Dot(toTarget, camUp);
+                float z = Vector3.Dot(toTarget, camForward);
+
+                Vector2 dirInPlane = new Vector2(x, y).normalized;
+
+                float ringRadius = 0.2f;
+                Vector3 ringOffset = (camRight * dirInPlane.x + camUp * dirInPlane.y) * ringRadius;
+                Vector3 ringCenter = Camera.main.transform.position + camForward * 0.5f;
+
+                Vector3 finalPos = ringCenter + ringOffset;
+                gameObject.transform.position = finalPos;
+
+                gameObject.transform.rotation = Quaternion.LookRotation(finalPos - Camera.main.transform.position, -Camera.main.transform.up);
+                Vector3 forwardFlat = Camera.main.transform.forward;
+                forwardFlat.y = 0;
+
+                float t = Mathf.Lerp(1f, 0f, Time.time - timestamp);
+
+                Color color = renderer.material.color;
+                color.a = Mathf.Clamp01(t);
+                renderer.material.color = color;
+
+                gameObject.transform.localScale = new Vector3(0.05f, 0.05f, 0.01f);
+            }
+
+            foreach (object[] removal in toRemove)
+            {
+                handTaps.Remove(removal);
+                if ((GameObject)removal[3] != null)
+                    UnityEngine.Object.Destroy((GameObject)removal[3]);
+            }
+        }
+
+        public static void DisableGamesenseRing()
+        {
+            Patches.HandTapPatch.OnHandTap -= OnHandTapGamesenseRing;
+
+            foreach (object[] handTapData in handTaps)
+            {
+                VRRig rig = (VRRig)handTapData[0];
+                Vector3 position = (Vector3)handTapData[1];
+
+                float timestamp = (float)handTapData[2];
+                GameObject gameObject = (GameObject)handTapData[3] ?? null;
+
+                if (gameObject != null)
+                    UnityEngine.Object.Destroy(gameObject);
+            }
+
+            handTaps.Clear();
+        }
+
         public static bool PerformanceVisuals;
 
         public static float PerformanceModeStep = 0.2f;
@@ -1160,8 +1296,6 @@ namespace iiMenu.Mods
                     {
                         indicator = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         UnityEngine.Object.Destroy(indicator.GetComponent<Collider>());
-
-                        indicator.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
 
                         if (platformMat == null)
                         {
