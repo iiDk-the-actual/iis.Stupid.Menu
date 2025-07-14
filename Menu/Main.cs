@@ -2572,7 +2572,7 @@ namespace iiMenu.Menu
                         new Vector3(10f, 10f, 10f),
                         new Vector3(-67.9299f, 11.9144f, -84.2019f),
                         new Vector3(-63f, 3.634f, -65f),
-                        GorillaTagger.Instance.offlineVRRig.transform.position += GorillaTagger.Instance.offlineVRRig.transform.forward * 1.2f,
+                        VRRig.LocalRig.transform.position += VRRig.LocalRig.transform.forward * 1.2f,
                         TPC.transform.position
                     };
 
@@ -3172,6 +3172,17 @@ namespace iiMenu.Menu
                     break;
             }
 
+            if (giveGunTarget != null)
+            {
+                GunTransform = SwapGunHand ? giveGunTarget.leftHandTransform : giveGunTarget.rightHandTransform;
+
+                StartPosition = GunTransform.position;
+                Direction = GunTransform.up;
+
+                Up = GunTransform.forward;
+                Right = GunTransform.right;
+            }
+
             Physics.Raycast(StartPosition + ((Direction / 4f) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f)), Direction, out var Ray, 512f, overrideLayerMask > 0 ? overrideLayerMask : NoInvisLayerMask());
             if (shouldBePC)
             {
@@ -3404,6 +3415,14 @@ namespace iiMenu.Menu
 
         public static bool GetGunInput(bool isShooting)
         {
+            if (giveGunTarget != null)
+            {
+                if (isShooting)
+                    return SwapGunHand ? giveGunTarget.leftIndex.calcT > 0.5f : giveGunTarget.rightIndex.calcT > 0.5f;
+                else
+                    return SwapGunHand ? giveGunTarget.leftMiddle.calcT > 0.5f : giveGunTarget.rightMiddle.calcT > 0.5f;
+            }
+
             if (isShooting)
                 return (SwapGunHand ? leftTrigger > 0.5f : rightTrigger > 0.5f) || Mouse.current.leftButton.isPressed;
             else
@@ -4494,6 +4513,88 @@ namespace iiMenu.Menu
             ServerSyncRightHandPos = VRRig.LocalRig?.rightHand.rigTarget.transform.position ?? ServerSyncRightHandPos;
         }
 
+        public static void MassSerialize(bool exclude = false, PhotonView[] viewFilter = null, int timeOffset = 0)
+        {
+            if (!PhotonNetwork.InRoom)
+                return;
+
+            if (viewFilter != null)
+            {
+                NonAllocDictionary<int, PhotonView> photonViewList = Traverse.Create(typeof(PhotonNetwork)).Field("photonViewList").GetValue<NonAllocDictionary<int, PhotonView>>();
+                List<PhotonView> viewsToSerialize = new List<PhotonView> { };
+
+                List<int> filteredViewIDs = viewFilter.Select(view => view.ViewID).ToList();
+
+                foreach (PhotonView photonView in photonViewList.Values)
+                {
+                    if (exclude)
+                    {
+                        if (photonView.IsMine && !filteredViewIDs.Contains(photonView.ViewID))
+                            viewsToSerialize.Add(photonView);
+                    }
+                    else
+                    {
+                        if (photonView.IsMine && filteredViewIDs.Contains(photonView.ViewID))
+                            viewsToSerialize.Add(photonView);
+                    }
+                }
+
+                foreach (PhotonView view in viewsToSerialize)
+                    SendSerialize(view, null, timeOffset);
+            }
+        }
+
+        public static void SendSerialize(PhotonView pv, RaiseEventOptions options = null, int timeOffset = 0)
+        {
+            if (!PhotonNetwork.InRoom)
+                return;
+
+            if (pv == null)
+            {
+                LogManager.LogError("PhotonView is null. Cannot serialize.");
+                return;
+            }
+
+            List<object> serializedData = PhotonNetwork.OnSerializeWrite(pv);
+
+            PhotonNetwork.RaiseEventBatch raiseEventBatch = new PhotonNetwork.RaiseEventBatch();
+
+            bool mixedReliable = pv.mixedModeIsReliable;
+            raiseEventBatch.Reliable = pv.Synchronization == ViewSynchronization.ReliableDeltaCompressed || mixedReliable;
+            raiseEventBatch.Group = pv.Group;
+
+            System.Collections.IDictionary dictionary = PhotonNetwork.serializeViewBatches;
+
+            PhotonNetwork.SerializeViewBatch serializeViewBatch = new PhotonNetwork.SerializeViewBatch(raiseEventBatch, 2);
+
+            if (!dictionary.Contains(raiseEventBatch))
+                dictionary[raiseEventBatch] = serializeViewBatch;
+
+            serializeViewBatch.Add(serializedData);
+
+            RaiseEventOptions sendOptions = PhotonNetwork.serializeRaiseEvOptions;
+            RaiseEventOptions finalOptions = options != null ? new RaiseEventOptions
+            {
+                CachingOption = sendOptions.CachingOption,
+                Flags = sendOptions.Flags,
+                InterestGroup = sendOptions.InterestGroup,
+                TargetActors = options.TargetActors,
+                Receivers = options.Receivers
+            } : sendOptions;
+
+            bool reliable = serializeViewBatch.Batch.Reliable;
+            List<object> objectUpdate = serializeViewBatch.ObjectUpdates;
+            byte currentLevelPrefix = PhotonNetwork.currentLevelPrefix;
+
+            objectUpdate[0] = PhotonNetwork.ServerTimestamp + timeOffset;
+            objectUpdate[1] = currentLevelPrefix != 0 ? (object)currentLevelPrefix : null;
+
+            PhotonNetwork.NetworkingClient.OpRaiseEvent((byte)(reliable ? 206 : 201), objectUpdate, finalOptions,
+                reliable ? SendOptions.SendReliable : SendOptions.SendUnreliable);
+
+            serializeViewBatch.Clear();
+        }
+
         public static void TeleportPlayer(Vector3 pos) // Prevents your hands from getting stuck on trees
         {
             GTPlayer.Instance.TeleportTo(World2Player(pos), GTPlayer.Instance.transform.rotation);
@@ -4505,6 +4606,15 @@ namespace iiMenu.Menu
                 VRKeyboard.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
             }
         }
+
+        public static int[] AllActorNumbers() =>
+            PhotonNetwork.PlayerList.Select(plr => plr.ActorNumber).ToArray();
+
+        public static int[] AllActorNumbersExcept(int actorNumber) =>
+            AllActorNumbersExcept(new int[] { actorNumber });
+
+        public static int[] AllActorNumbersExcept(int[] actorNumbers) =>
+            PhotonNetwork.PlayerList.Where(plr => !actorNumbers.Contains(plr.ActorNumber)).Select(plr => plr.ActorNumber).ToArray();
 
         private static Dictionary<string, (int Category, int Index)> cacheGetIndex = new Dictionary<string, (int Category, int Index)> { }; // Looping through 800 elements is not a light task :/
         public static ButtonInfo GetIndex(string buttonText)
@@ -5323,6 +5433,19 @@ jgs \_   _/ |Oo\
         public static bool disablePageButtons;
         public static bool swapButtonColors;
         public static int pageButtonType = 1;
+
+        private static VRRig _giveGunTarget;
+        public static VRRig giveGunTarget
+        {
+            get
+            {
+                if (!GorillaParent.instance.vrrigs.Contains(_giveGunTarget))
+                    _giveGunTarget = null;
+
+                return _giveGunTarget;
+            }
+            set => _giveGunTarget = value;
+        }
 
         public static int _currentCategoryIndex;
         public static int currentCategoryIndex
