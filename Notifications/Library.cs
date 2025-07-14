@@ -8,6 +8,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using static iiMenu.Menu.Main;
+using static MB3_MeshBakerRoot.ZSortObjects;
 
 namespace iiMenu.Notifications
 {
@@ -25,6 +26,8 @@ namespace iiMenu.Notifications
         private Material AlertText = new Material(Shader.Find("GUI/Text Shader"));
 
         public static string PreviousNotifi;
+
+        public static Dictionary<string, string> information = new Dictionary<string, string> { };
 
         public static Text NotifiText;
         public static Text ModText;
@@ -113,8 +116,7 @@ namespace iiMenu.Notifications
             StatsText.rectTransform.localPosition = new Vector3(0.5f, 1f, -0.5f);
             StatsText.material = AlertText;
         }
-        
-        public static readonly Dictionary<string, string> osStats = new Dictionary<string, string> { };
+
         private void FixedUpdate()
         {
             try
@@ -143,28 +145,18 @@ namespace iiMenu.Notifications
                 catch { }
                 ModText.rectTransform.localPosition = new Vector3(-1f, -0.7f, flipArraylist ? 0.5f : -0.5f);
                 ModText.alignment = flipArraylist ? TextAnchor.UpperRight : TextAnchor.UpperLeft;
-                
-                string statsTextU = "";
-                List<string> statsAlphabetized = new List<string>();
-                foreach (var item in osStats)
+
+                if (information.Count > 0)
                 {
-                    string itemText = item.Value;
+                    List<string> statsAlphabetized = information.Select(item => $"<color=#{ColorToHex(GetBGColor(0f))}>{item.Key}</color> <color=#{ColorToHex(textColor)}>{item.Value}</color>").ToList();
+
+                    StatsText.text = string.Join("\n", statsAlphabetized.ToArray());
+                    StatsText.color = Color.white;
+
                     if (lowercaseMode)
-                        itemText = itemText.ToLower();
-
-                    statsAlphabetized.Add(itemText);
-                }
-                string[] sortedStats = statsAlphabetized
-                        .OrderByDescending(s => UI.Main.ExternalCalcSize(new GUIContent(NoRichtextTags(s))).x)
-                        .ToArray();
-
-                foreach (string v in sortedStats)
-                {
-                    statsTextU += v + "\n";
-                }
-                StatsText.text = statsTextU;
-                StatsText.color = Color.white;
-                
+                        StatsText.text = StatsText.text.ToLower();
+                } else
+                    StatsText.text = "";
 
                 if (showEnabledModsVR)
                 {
@@ -229,7 +221,6 @@ namespace iiMenu.Notifications
             }
             catch (Exception e) { LogManager.Log(e); }
         }
-
 
         public static void SendNotification(string NotificationText, int clearTime = -1)
         {
