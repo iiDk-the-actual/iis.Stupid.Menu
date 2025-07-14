@@ -1291,6 +1291,9 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Lag</color><color=grey>]</color>", method =() => Overpowered.AntiReportLag(), toolTip = "Lags whoever tries to report you."},
 
+                new ButtonInfo { buttonText = "Lock Room", method =() => Overpowered.SetRoomLock(true), isTogglable = false, toolTip = "Locks the room so no one else can join."},
+                               
+                new ButtonInfo { buttonText = "Unlock Room", method =() => Overpowered.SetRoomLock(false), isTogglable = false, toolTip = "Unlocks the room so everyone can join."},
 
                 new ButtonInfo { buttonText = "Destroy Gun", method =() => Overpowered.DestroyGun(), toolTip = "Block new players from seeing whoever your hand desires."},
                 new ButtonInfo { buttonText = "Destroy All", method =() => Overpowered.DestroyAll(), isTogglable = false, toolTip = "Block new players from seeing everyone."},
