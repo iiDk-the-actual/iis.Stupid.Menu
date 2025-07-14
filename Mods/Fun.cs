@@ -195,7 +195,7 @@ namespace iiMenu.Mods
                         NetPlayer player = GetPlayerFromVRRig(gunTarget);
                         kgDebounce = Time.time + 0.5f;
 
-                        if (NetworkSystem.Instance.SessionIsPrivate)
+                        if (!NetworkSystem.Instance.SessionIsPrivate)
                         {
                             NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must be in a private room.");
                             return;
@@ -222,7 +222,7 @@ namespace iiMenu.Mods
         {
             if (PhotonNetwork.InRoom)
             {
-                if (NetworkSystem.Instance.SessionIsPrivate)
+                if (!NetworkSystem.Instance.SessionIsPrivate)
                 {
                     NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You must be in a private room.");
                     return;
