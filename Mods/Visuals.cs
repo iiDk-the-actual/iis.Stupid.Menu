@@ -203,6 +203,10 @@ namespace iiMenu.Mods
 
         public static void GamesenseRing()
         {
+            bool fmt = GetIndex("Follow Menu Theme").enabled;
+            bool hoc = GetIndex("Hidden on Camera").enabled;
+            bool tt = GetIndex("Transparent Theme").enabled;
+
             List<object[]> toRemove = new List<object[]> { };
             for (int i = 0; i < handTaps.Count; i++)
             {
@@ -246,9 +250,20 @@ namespace iiMenu.Mods
                         tapMat.SetFloat("_Metallic", 0f);
                     }
 
+                    Color targetColor = GetPlayerColor(rig);
+
+                    if (hoc)
+                        gameObject.layer = 19;
+
+                    if (fmt)
+                        targetColor = GetBGColor(0f);
+                    if (tt)
+                        targetColor = new Color(targetColor.r, targetColor.g, targetColor.b, 0.5f);
+
+
                     gameObject.GetComponent<Renderer>().material = tapMat;
                     gameObject.GetComponent<Renderer>().material.mainTexture = PlayerIsTagged(VRRig.LocalRig) ? (PlayerIsTagged(rig) ? tapTxt : warningTxt) : (PlayerIsTagged(rig) ? warningTxt : tapTxt);
-                    gameObject.GetComponent<Renderer>().material.color = GetPlayerColor(rig);
+                    gameObject.GetComponent<Renderer>().material.color = targetColor;
 
                     handTaps[i][3] = gameObject;
                 }
