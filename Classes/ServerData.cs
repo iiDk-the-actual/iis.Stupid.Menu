@@ -142,7 +142,7 @@ namespace iiMenu.Classes
                 // Version Check
                 if (!VersionWarning)
                 {
-                    if (ResponseData[0] != PluginInfo.Version)
+                    if (int.Parse(ResponseData[0]) > int.Parse(PluginInfo.Version))
                     {
                         if (!PluginInfo.BetaBuild)
                         {
