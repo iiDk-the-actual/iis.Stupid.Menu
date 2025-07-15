@@ -869,9 +869,11 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Attic Size Toggle", method =() => Fun.AtticSizeToggle(), toolTip = "Toggles your scale when pressing <color=green>grip</color> or <color=green>trigger</color>."},
                 new ButtonInfo { buttonText = "Grab All Nearby Blocks <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.GrabAllBlocksNearby(), toolTip = "Grabs every nearby building block when holding <color=green>G</color>."},
+                new ButtonInfo { buttonText = "Grab All Selected Blocks <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.GrabAllSelectedNearby(), toolTip = "Grabs every nearby building block that matches your selection when holding <color=green>G</color>."},
 
                 new ButtonInfo { buttonText = "Massive Block <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.MassiveBlock(), toolTip = "Spawns you a massive block when you press <color=green>grip</color>."},
                 new ButtonInfo { buttonText = "Select Block Gun", method =() => Fun.SelectBlockGun(), toolTip = "Selects whatever building block your hand desires to be used for the building mods." },
+                new ButtonInfo { buttonText = "Copy Block Info Gun", method =() => Fun.CopyBlockInfoGun(), toolTip = "Copies whatever building block your hand desires to be used for the building mods to your clipboard." },
                 new ButtonInfo { buttonText = "Building Block Browser", method =() => Fun.BlockBrowser(), isTogglable = false, toolTip = "Browse through every block that you can spawn and select it." },
 
                 new ButtonInfo { buttonText = "Grab Building Blocks <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.SpamGrabBlocks(), toolTip = "Forces the building block into your hand when holding <color=green>grip</color>." },
@@ -1530,6 +1532,11 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Exit Fun Settings", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
 
                 new ButtonInfo { buttonText = "Zero Gravity Blocks", toolTip = "Gives the blocks gravity."},
+                new ButtonInfo { buttonText = "Random Block Type", toolTip = "Selects a random block when using block mods."},
+
+                new ButtonInfo { buttonText = "No Random Position Grab", toolTip = "Disables the position randomization in the \"Grab All ### Blocks\" mods."},
+                new ButtonInfo { buttonText = "No Random Rotation Grab", toolTip = "Disables the rotation randomization in the \"Grab All ### Blocks\" mods."},
+
                 new ButtonInfo { buttonText = "Change Block Delay", overlapText = "Change Block Delay <color=grey>[</color><color=green>0</color><color=grey>]</color>", method =() => Fun.ChangeBlockDelay(true), enableMethod =() => Fun.ChangeBlockDelay(true), disableMethod =() => Fun.ChangeBlockDelay(false), incremental = true, isTogglable = false, toolTip = "Gives the blocks a delay before spawning." }
             },
 

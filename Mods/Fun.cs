@@ -1518,7 +1518,30 @@ namespace iiMenu.Mods
                     {
                         gbgd = Time.time + 0.1f;
                         pieceIdSet = gunTarget.pieceType;
-                        NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully selected piece " + gunTarget.name.Replace("(Clone)", "") + "!");
+                        NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully selected piece " + gunTarget.displayName + ".");
+                    }
+                }
+            }
+        }
+
+        public static void CopyBlockInfoGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    BuilderPiece gunTarget = Ray.collider.GetComponentInParent<BuilderPiece>();
+                    if (gunTarget && Time.time > gbgd)
+                    {
+                        gbgd = Time.time + 0.1f;
+                        GUIUtility.systemCopyBuffer = @$"{gunTarget.displayName}
+Piece Type: {gunTarget.pieceType}
+Piece Name: {gunTarget.name}";
+                        NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully copied piece data of " + gunTarget.displayName + ".");
                     }
                 }
             }
@@ -1527,7 +1550,41 @@ namespace iiMenu.Mods
         public static void SelectBlock(int type, string name)
         {
             pieceIdSet = type;
-            NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully selected piece " + name.Replace("(Clone)", "") + "!");
+            NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully selected piece " + name.Replace("(Clone)", "") + ".");
+        }
+
+        private static Dictionary<int, string> blocks;
+        public static Dictionary<int, string> GetAllBlockData()
+        {
+            if (blocks == null)
+            {
+                if (GetBuilderTable() == null)
+                    return new Dictionary<int, string> { };
+
+                blocks = new Dictionary<int, string> { };
+                foreach (List<BuilderPiece> list in GetBuilderTable().builderPool.piecePools)
+                {
+                    foreach (BuilderPiece piece in list)
+                    {
+                        try
+                        {
+                            blocks.Add(piece.name.Replace("(Clone)", "").GetStaticHash(), piece.displayName ?? piece.displayName);
+                        }
+                        catch { }
+                    }
+                }
+            }
+
+            return blocks;
+        }
+
+        public static int[] GetAllBlockTypes() =>
+            GetAllBlockData().Keys.ToArray();
+
+        public static int GetRandomBlockType()
+        {
+            int[] blockTypes = GetAllBlockTypes();
+            return blockTypes[UnityEngine.Random.Range(0, blockTypes.Length - 1)];
         }
 
         public static void BlockBrowser()
@@ -1535,19 +1592,8 @@ namespace iiMenu.Mods
             rememberdirectory = pageNumber;
             currentCategoryName = "Temporary Category";
 
-            Dictionary<int, string> blocks = new Dictionary<int, string> { };
-
+            Dictionary<int, string> blocks = GetAllBlockData();
             List<ButtonInfo> blockButtons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Building Block Browser", method = () => RemoveCosmeticBrowser(), isTogglable = false, toolTip = "Returns you back to the fun mods." } };
-            foreach (List<BuilderPiece> list in GetBuilderTable().builderPool.piecePools)
-            {
-                foreach (BuilderPiece piece in list)
-                {
-                    try
-                    {
-                        blocks.Add(piece.name.Replace("(Clone)", "").GetStaticHash(), piece.displayName ?? piece.name.Replace("(Clone)", ""));
-                    } catch { }
-                }
-            }
 
             int i = 0;
             foreach (KeyValuePair<int, string> block in blocks)
@@ -2318,6 +2364,9 @@ namespace iiMenu.Mods
 
         public static void RequestCreatePiece(int pieceType, Vector3 position, Quaternion rotation, int materialType, Player target = null, bool overrideFreeze = false)
         {
+            if (GetIndex("Random Block Type").enabled)
+                pieceType = GetRandomBlockType();
+
             BuilderTable table = GetBuilderTable();
             BuilderTableNetworking Networking = table.builderNetworking;
             if (NetworkSystem.Instance.IsMasterClient)
@@ -2418,6 +2467,9 @@ namespace iiMenu.Mods
 
         public static void RequestCreatePiece(int pieceType, Vector3 position, Quaternion rotation, int materialType, RpcTarget target, bool overrideFreeze = false)
         {
+            if (GetIndex("Random Block Type").enabled)
+                pieceType = GetRandomBlockType();
+
             BuilderTable table = GetBuilderTable();
             BuilderTableNetworking Networking = table.builderNetworking;
             if (NetworkSystem.Instance.IsMasterClient)
@@ -3123,17 +3175,69 @@ namespace iiMenu.Mods
                 if (piece == null)
                     return;
 
-                RequestGrabPiece(piece, false, RandomVector3(0.5f), Quaternion.identity);
+                RequestGrabPiece(piece, false, GetIndex("No Random Position Grab").enabled ? Vector3.zero : RandomVector3(0.5f), GetIndex("No Random Rotation Grab").enabled ? Quaternion.identity : RandomQuaternion());
                 potentialgrabbedpieces.Add(piece);
 
                 RPCProtection();
             }
+
             if (rightTrigger > 0.5f && Time.time > blockDelay)
             {
-                blockDelay = Time.time + 0.25f;
-                foreach (BuilderPiece piece in GetAllType<BuilderPiece>().Where(piece => piece.gameObject.activeInHierarchy).Where(piece => piece.heldByPlayerActorNumber != PhotonNetwork.LocalPlayer.ActorNumber))
+                int amount = 0;
+                blockDelay = Time.time + 0.3f;
+                foreach (BuilderPiece piece in GetAllType<BuilderPiece>().Where(piece => piece.gameObject.activeInHierarchy).Where(piece => piece.heldByPlayerActorNumber == PhotonNetwork.LocalPlayer.ActorNumber))
+                {
+                    if (amount > 100)
+                        break;
+
+                    amount++;
+
                     RequestDropPiece(piece, GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, RandomVector3(19f), RandomVector3(19f));
-                
+                }
+
+                potentialgrabbedpieces.Clear();
+                RPCProtection();
+            }
+        }
+
+        public static void GrabAllSelectedNearby()
+        {
+            if (rightGrab && Time.time > blockDelay)
+            {
+                blockDelay = Time.time + blockDebounce;
+                BuilderPiece piece = GetAllType<BuilderPiece>()
+                    .Where(piece => piece.gameObject.activeInHierarchy)
+                    .Where(piece => piece.pieceType == pieceIdSet)
+                    .Where(piece => !piece.isBuiltIntoTable)
+                    .Where(piece => piece.heldByPlayerActorNumber != PhotonNetwork.LocalPlayer.ActorNumber)
+                    .Where(piece => piece.CanPlayerGrabPiece(PhotonNetwork.LocalPlayer.ActorNumber, piece.transform.position))
+                    .Where(piece => Vector3.Distance(piece.transform.position, ServerLeftHandPos) < 2.5f)
+                    .OrderBy(piece => Vector3.Distance(piece.transform.position, ServerLeftHandPos))
+                    .FirstOrDefault();
+
+                if (piece == null)
+                    return;
+
+                RequestGrabPiece(piece, false, GetIndex("No Random Position Grab").enabled ? Vector3.zero : RandomVector3(0.5f), GetIndex("No Random Rotation Grab").enabled ? Quaternion.identity : RandomQuaternion());
+                potentialgrabbedpieces.Add(piece);
+
+                RPCProtection();
+            }
+
+            if (rightTrigger > 0.5f && Time.time > blockDelay)
+            {
+                int amount = 0;
+                blockDelay = Time.time + 0.3f;
+                foreach (BuilderPiece piece in GetAllType<BuilderPiece>().Where(piece => piece.gameObject.activeInHierarchy).Where(piece => piece.heldByPlayerActorNumber == PhotonNetwork.LocalPlayer.ActorNumber))
+                {
+                    if (amount > 100)
+                        break;
+
+                    amount++;
+
+                    RequestDropPiece(piece, GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, RandomVector3(19f), RandomVector3(19f));
+                }
+
                 potentialgrabbedpieces.Clear();
                 RPCProtection();
             }
