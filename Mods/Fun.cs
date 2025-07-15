@@ -1538,9 +1538,7 @@ namespace iiMenu.Mods
             Dictionary<int, string> blocks = new Dictionary<int, string> { };
 
             List<ButtonInfo> blockButtons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Building Block Browser", method = () => RemoveCosmeticBrowser(), isTogglable = false, toolTip = "Returns you back to the fun mods." } };
-            BuilderPool builderPool = GetBuilderTable().builderPool;
-
-            foreach (List<BuilderPiece> list in builderPool.piecePools)
+            foreach (List<BuilderPiece> list in GetBuilderTable().builderPool.piecePools)
             {
                 foreach (BuilderPiece piece in list)
                 {
