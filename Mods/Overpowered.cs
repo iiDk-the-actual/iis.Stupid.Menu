@@ -582,7 +582,8 @@ namespace iiMenu.Mods
                 point.transform.position = GorillaTagger.Instance.rightHandTransform.position;
                 point.transform.localScale = Vector3.one * 0.2f;
             }
-                
+
+            point.GetComponent<Renderer>().material.color = GetBDColor(0f);
 
             if (GetGunInput(false))
             {
