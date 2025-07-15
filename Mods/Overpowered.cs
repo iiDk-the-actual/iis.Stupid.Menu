@@ -2481,6 +2481,21 @@ namespace iiMenu.Mods
 
         public static void LagAll() => LagPlayer(RpcTarget.Others);
 
+        public static void LagAura()
+        {
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                Vector3 they = vrrig.headMesh.transform.position;
+                Vector3 notthem = VRRig.LocalRig.head.rigTarget.position;
+                float distance = Vector3.Distance(they, notthem);
+
+                if (distance < 3f && !PlayerIsLocal(vrrig))
+                {
+                    LagPlayer(GetPlayerFromVRRig(vrrig));
+                }
+            }
+        }
+
         public static void AntiReportLag()
         {
             try
