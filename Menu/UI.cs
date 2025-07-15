@@ -13,11 +13,11 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 using static iiMenu.Menu.Main;
 
-namespace iiMenu.UI
+namespace iiMenu.Menu
 {
-    public class Main : MonoBehaviour
+    public class UI : MonoBehaviour
     {
-        private static Main instance;
+        private static UI instance;
 
         private string inputText = "goldentrophy";
         private static GUIStyle labelStyle;

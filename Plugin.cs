@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
+using iiMenu.Menu;
 using iiMenu.Patches;
 using System;
 using System.IO;
@@ -66,7 +67,7 @@ namespace iiMenu
             PatchHandler.PatchAll();
 
             GameObject Loader = new GameObject("iiMenu_Loader");
-            Loader.AddComponent<UI.Main>();
+            Loader.AddComponent<UI>();
             Loader.AddComponent<Notifications.NotifiLib>();
             Loader.AddComponent<Classes.CoroutineManager>();
 
