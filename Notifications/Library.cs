@@ -200,7 +200,7 @@ namespace iiMenu.Notifications
                     }
 
                     string[] sortedButtons = alphabetized
-                        .OrderByDescending(s => UI.Main.ExternalCalcSize(new GUIContent(NoRichtextTags(s))).x)
+                        .OrderByDescending(s => UI.ExternalCalcSize(new GUIContent(NoRichtextTags(s))).x)
                         .ToArray();
 
                     int index = 0;
