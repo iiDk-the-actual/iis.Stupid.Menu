@@ -3418,15 +3418,15 @@ namespace iiMenu.Menu
             if (giveGunTarget != null)
             {
                 if (isShooting)
-                    return SwapGunHand ? giveGunTarget.leftIndex.calcT > 0.5f : giveGunTarget.rightIndex.calcT > 0.5f;
+                    return TriggerlessGuns || (SwapGunHand ? giveGunTarget.leftIndex.calcT > 0.5f : giveGunTarget.rightIndex.calcT > 0.5f);
                 else
-                    return SwapGunHand ? giveGunTarget.leftMiddle.calcT > 0.5f : giveGunTarget.rightMiddle.calcT > 0.5f;
+                    return GriplessGuns || (SwapGunHand ? giveGunTarget.leftMiddle.calcT > 0.5f : giveGunTarget.rightMiddle.calcT > 0.5f);
             }
 
             if (isShooting)
-                return (SwapGunHand ? leftTrigger > 0.5f : rightTrigger > 0.5f) || Mouse.current.leftButton.isPressed;
+                return TriggerlessGuns || (SwapGunHand ? leftTrigger > 0.5f : rightTrigger > 0.5f) || Mouse.current.leftButton.isPressed;
             else
-                return (SwapGunHand ? leftGrab : rightGrab) || Mouse.current.rightButton.isPressed;
+                return GriplessGuns || (SwapGunHand ? leftGrab : rightGrab) || Mouse.current.rightButton.isPressed;
         }
 
         public static System.Collections.IEnumerator NarrateText(string text)
@@ -5531,6 +5531,8 @@ jgs \_   _/ |Oo\
         public static bool disableGunPointer;
         public static bool disableGunLine;
         public static bool SwapGunHand;
+        public static bool GriplessGuns;
+        public static bool TriggerlessGuns;
         public static bool GunSounds;
         public static bool GunParticles;
         public static int gunVariation;
