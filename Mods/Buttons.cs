@@ -1298,6 +1298,7 @@ namespace iiMenu.Menu
                 
                 new ButtonInfo { buttonText = "Lag Gun", method =() => Overpowered.LagGun(), toolTip = "Lags whoever your hand desires."},
                 new ButtonInfo { buttonText = "Lag All", method =() => Overpowered.LagAll(), toolTip = "Lags everyone in the room."},
+                new ButtonInfo { buttonText = "Lag Aura", method =() => Overpowered.LagAura(), toolTip = "Lags players nearby you."},
 
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Lag</color><color=grey>]</color>", method =() => Overpowered.AntiReportLag(), toolTip = "Lags whoever tries to report you."},
 
