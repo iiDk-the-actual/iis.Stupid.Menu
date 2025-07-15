@@ -1251,11 +1251,11 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Delay Ban Gun", method =() => Overpowered.DelayBanGun(), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Delay bans whoever your hand desires."},
                 new ButtonInfo { buttonText = "Delay Ban All", enableMethod =() => Overpowered.DelayBanAll(), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Delay bans everyone in the room."},
 
-                new ButtonInfo { buttonText = "Blind on Grab", method =() => Overpowered.BlindOnGrab(), toolTip = "Blinds the player when they grab you." },
-                new ButtonInfo { buttonText = "Kick on Grab", method =() => Overpowered.KickOnGrab(), toolTip = "Kicks the player when they grab you." },
-                new ButtonInfo { buttonText = "Crash on Grab", method =() => Overpowered.CrashOnGrab(), toolTip = "Crashes the player when they grab you." },
+                new ButtonInfo { buttonText = "Kick on Grab", method =() => Overpowered.TowardsPositionOnGrab(new Vector3(-71.33718f, 101.4977f, -93.09029f)), toolTip = "Kicks the player when they grab you." },
+                new ButtonInfo { buttonText = "Crash on Grab", method =() => Overpowered.DirectionOnGrab(Vector3.down), toolTip = "Crashes the player when they grab you." },
                 new ButtonInfo { buttonText = "Fling on Grab", method =() => Overpowered.FlingOnGrab(), toolTip = "Flings the player when they grab you." },
-                new ButtonInfo { buttonText = "Obliterate on Grab", method =() => Overpowered.ObliterateOnGrab(), toolTip = "Obliterates the player when they grab you." },
+                new ButtonInfo { buttonText = "Obliterate on Grab", method =() => Overpowered.DirectionOnGrab(Vector3.up), toolTip = "Obliterates the player when they grab you." },
+                new ButtonInfo { buttonText = "Towards Point on Grab Gun", method =() => Overpowered.TowardsPointOnGrab(), disableMethod =() => Overpowered.DisableTowardsPointOnGrab(), toolTip = "Sends the player to your target position when they grab you." },
 
                 new ButtonInfo { buttonText = "Freeze All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.FreezeAll(), toolTip = "Freezes everyone in the room when holding <color=green>trigger</color>." },
 
