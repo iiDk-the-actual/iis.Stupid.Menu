@@ -1538,10 +1538,17 @@ namespace iiMenu.Mods
             Dictionary<int, string> blocks = new Dictionary<int, string> { };
 
             List<ButtonInfo> blockButtons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Building Block Browser", method = () => RemoveCosmeticBrowser(), isTogglable = false, toolTip = "Returns you back to the fun mods." } };
-            foreach (BuilderPiece piece in GetAllType<BuilderPiece>().Where(piece => piece.pieceId != -1))
+            BuilderPool builderPool = GetBuilderTable().builderPool;
+
+            foreach (List<BuilderPiece> list in builderPool.piecePools)
             {
-                if (!blocks.ContainsKey(piece.pieceType))
-                    blocks.Add(piece.pieceType, piece.gameObject.name);
+                foreach (BuilderPiece piece in list)
+                {
+                    try
+                    {
+                        blocks.Add(piece.name.Replace("(Clone)", "").GetStaticHash(), piece.displayName ?? piece.name.Replace("(Clone)", ""));
+                    } catch { }
+                }
             }
 
             int i = 0;
@@ -2522,6 +2529,9 @@ namespace iiMenu.Mods
 
         public static void RequestPlacePiece(BuilderPiece piece, BuilderPiece attachPiece, sbyte bumpOffsetX, sbyte bumpOffsetZ, byte twist, BuilderPiece parentPiece, int attachIndex, int parentAttachIndex)
         {
+            if (attachPiece.isBuiltIntoTable)
+                return;
+
             BuilderTableNetworking Networking = GetBuilderTable().builderNetworking;
             if (NetworkSystem.Instance.IsMasterClient)
             {
@@ -2567,6 +2577,9 @@ namespace iiMenu.Mods
 
         public static void RequestRecyclePiece(BuilderPiece piece, bool playFX, int recyclerID)
         {
+            if (piece.isBuiltIntoTable)
+                return;
+
             BuilderTable table = GetBuilderTable();
             BuilderTableNetworking Networking = table.builderNetworking;
 
