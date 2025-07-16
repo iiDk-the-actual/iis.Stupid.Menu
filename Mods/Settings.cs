@@ -2841,7 +2841,8 @@ namespace iiMenu.Mods
                 Safety.rankIndex.ToString(),
                 Overpowered.snowballScale.ToString(),
                 Overpowered.lagIndex.ToString(),
-                Fun.blockDebounceIndex.ToString()
+                Fun.blockDebounceIndex.ToString(),
+                Fun.nameCycleIndex.ToString()
             };
 
             string settingstext = string.Join(seperator, settings);
@@ -3008,7 +3009,11 @@ namespace iiMenu.Mods
 
                 Fun.blockDebounceIndex = int.Parse(data[39]) - 1;
                 Fun.ChangeBlockDelay();
-            } catch { LogManager.Log("Save file out of date"); }
+
+                Fun.cycleSpeedIndex = int.Parse(data[40]) - 1;
+                Fun.ChangeCycleDelay();
+            }
+            catch { LogManager.Log("Save file out of date"); }
 
             pageButtonType = int.Parse(textData[3]) - 1;
             Toggle("Change Page Type");
