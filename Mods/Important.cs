@@ -100,6 +100,18 @@ namespace iiMenu.Mods
                 wasenabled = TPC.gameObject.transform.Find("CM vcam1").GetComponent<CinemachineVirtualCamera>().enabled;
         }
 
+        public static void ConnectToMenuServers()
+        {
+            foreach (string server in PhotonNetworkController.Instance.serverRegions)
+            {
+                if (!server.Contains("iiMenu"))
+                {
+                    PhotonNetworkController.Instance.serverRegions.AddItem("iiMenu");
+                }
+            }
+            PhotonNetwork.ConnectToRegion("iiMenu_public");
+        }
+
         public static void MoveFPC()
         {
             if (TPC != null)

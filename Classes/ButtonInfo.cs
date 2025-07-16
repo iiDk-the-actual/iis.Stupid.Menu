@@ -17,6 +17,7 @@ namespace iiMenu.Classes
         public bool isTogglable = true;
 
         public bool label;
+        public bool IgnoreScale = false;
         public bool incremental;
 
         public string customBind;

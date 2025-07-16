@@ -6,6 +6,7 @@ using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
+using Photon.Voice.PUN.UtilityScripts;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -159,6 +160,13 @@ namespace iiMenu.Mods
                     TPC.transform.rotation = TPC.transform.parent.rotation;
                 }
             }
+        }
+
+        public static void Prompt(string Message = "Loading...", Action OnYes = null)
+        {
+                GetIndex("PromptText").overlapText = Message;
+                GetIndex("button1").method = OnYes;
+                currentCategoryName = "Prompt";
         }
 
         public static void GlobalReturn()

@@ -51,6 +51,14 @@ namespace iiMenu.Menu
     {
         public static void Prefix()
         {
+            if (PhotonNetwork.IsMasterClient && currentCategoryName == "Master Mods")
+            {
+                GetIndex("MasterClientVisual").overlapText = "<color=green>You are master client</color>";
+            }
+            if (!PhotonNetwork.IsMasterClient || !PhotonNetwork.InRoom && currentCategoryName == "Master Mods")
+            {
+                GetIndex("MasterClientVisual").overlapText = "<color=red>You are not master client</color>";
+            }
             try
             {
                 bool isKeyboardCondition = UnityInput.Current.GetKey(KeyCode.Q) || (isSearching && isPcWhenSearching);
@@ -5823,6 +5831,8 @@ jgs \_   _/ |Oo\
         public static bool strobeColor;
 
         public static bool AntiOculusReport;
+
+        public static bool ReconnectOnAntiCheat;
 
         public static bool lastHit;
         public static bool lastHit2;

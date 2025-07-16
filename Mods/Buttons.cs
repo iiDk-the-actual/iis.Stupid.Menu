@@ -342,6 +342,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Connect to US", method =() => PhotonNetwork.ConnectToRegion("us"), isTogglable = false, toolTip = "Connects you to the United States servers."},
                 new ButtonInfo { buttonText = "Connect to US West", method =() => PhotonNetwork.ConnectToRegion("usw"), isTogglable = false, toolTip = "Connects you to the western United States servers."},
                 new ButtonInfo { buttonText = "Connect to EU", method =() => PhotonNetwork.ConnectToRegion("eu"), isTogglable = false, toolTip = "Connects you to the Europe servers."},
+                new ButtonInfo { buttonText = "Connect to Menu Region", method =() => Important.ConnectToMenuServers(), isTogglable = false, toolTip = "Connects you to the iiMenu servers."},
             },
 
             new ButtonInfo[] { // Safety Mods [8]
@@ -651,7 +652,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Freeze In Background", enableMethod =() => Application.runInBackground = false, disableMethod =() => Application.runInBackground = true, toolTip = "Freezes the game when the application is not focused."},
 
                 new ButtonInfo { buttonText = "Fake Unban Self", method =() => Visuals.FakeUnbanSelf(), isTogglable = false, toolTip = "Makes it appear as if you're not banned." },
-                
+
                 new ButtonInfo { buttonText = "Jump Predictions", method =() => Visuals.JumpPredictions(), disableMethod =() => Visuals.DisableJumpPredictions(), toolTip = "Shows a visualizer of where the other players will jump."},
                 new ButtonInfo { buttonText = "Audio Visualizer", enableMethod =() => Visuals.CreateAudioVisualizer(), method =() => Visuals.AudioVisualizer(), disableMethod =() => Visuals.DestroyAudioVisualizer(), toolTip = "Shows a visualizer of your microphone loudness below your player."},
                 new ButtonInfo { buttonText = "Show Server Position", method =() => Visuals.ShowServerPosition(), disableMethod =() => Visuals.DisableShowServerPosition(), toolTip = "Shows your current syncronized position on the server."},
@@ -933,7 +934,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Respawn Gliders", method =() => Fun.RespawnGliders(), isTogglable = false, toolTip = "Respawns all the gliders." },
                 new ButtonInfo { buttonText = "Pop All Balloons", method =() => Fun.PopAllBalloons(), isTogglable = false, toolTip = "Pops every single balloon cosmetic." },
 
-                new ButtonInfo { buttonText = "Remove Name", method =() => ChangeName(""), isTogglable = false, toolTip = "Sets your name to nothing." },
                 new ButtonInfo { buttonText = "Set Name to \"STATUE\"", method =() => ChangeName("STATUE"), isTogglable = false, toolTip = "Sets your name to \"STATUE\"." },
                 new ButtonInfo { buttonText = "Set Name to \"RUN\"", method =() => ChangeName("RUN"), isTogglable = false, toolTip = "Sets your name to \"RUN\"." },
                 new ButtonInfo { buttonText = "Set Name to \"BEHINDYOU\"", method =() => ChangeName("BEHINDYOU"), isTogglable = false, toolTip = "Sets your name to \"BEHINDYOU\"." },
@@ -1049,7 +1049,7 @@ namespace iiMenu.Menu
             new ButtonInfo[] { // Master Mods [16]
                 new ButtonInfo { buttonText = "Exit Master Mods", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
 
-                new ButtonInfo { buttonText = "Master Check", method =() => Overpowered.MasterCheck(), isTogglable = false, toolTip = "Checks if you are master client."},
+                new ButtonInfo { buttonText = "MasterClientVisual", overlapText = "You are not master client.", label = true},
 
                 new ButtonInfo { buttonText = "Guardian Self", method =() => Overpowered.GuardianSelf(), isTogglable = false, toolTip = "Makes you the guardian."},
                 new ButtonInfo { buttonText = "Guardian Gun", method =() => Overpowered.GuardianGun(), toolTip = "Makes whoever your hand desires the guardian."},
@@ -1291,13 +1291,13 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Fling</color><color=grey>]</color>", method =() => Overpowered.AntiReportFling(), toolTip = "Flings whoever tries to report you."},
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Snowball Fling</color><color=grey>]</color>", method =() => Overpowered.AntiReportSnowballFling(), toolTip = "Flings whoever tries to report you with the snowballs."},
-                
+
                 new ButtonInfo { buttonText = "Lag Gun", method =() => Overpowered.LagGun(), toolTip = "Lags whoever your hand desires."},
                 new ButtonInfo { buttonText = "Lag All", method =() => Overpowered.LagAll(), toolTip = "Lags everyone in the room."},
 
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Lag</color><color=grey>]</color>", method =() => Overpowered.AntiReportLag(), toolTip = "Lags whoever tries to report you."},
 
-                new ButtonInfo { buttonText = "Lock Room", method =() => Overpowered.SetRoomLock(true), isTogglable = false, toolTip = "Locks the room so no one else can join."},           
+                new ButtonInfo { buttonText = "Lock Room", method =() => Overpowered.SetRoomLock(true), isTogglable = false, toolTip = "Locks the room so no one else can join."},
                 new ButtonInfo { buttonText = "Unlock Room", method =() => Overpowered.SetRoomLock(false), isTogglable = false, toolTip = "Unlocks the room so everyone can join."},
 
                 new ButtonInfo { buttonText = "Destroy Gun", method =() => Overpowered.DestroyGun(), toolTip = "Block new players from seeing whoever your hand desires."},
@@ -1462,6 +1462,8 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Change Anti Report Distance", overlapText = "Change Anti Report Distance <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method =() => Safety.ChangeAntiReportRange(), enableMethod =() => Safety.ChangeAntiReportRange(), disableMethod =() => Safety.ChangeAntiReportRange(false), incremental = true, isTogglable = false, toolTip = "Changes the distance threshold for the anti report mods."},
 
+                new ButtonInfo { buttonText = "Reconnect On Anti-Cheat Report", enableMethod =() => Main.ReconnectOnAntiCheat = true, disableMethod =() => Main.ReconnectOnAntiCheat = false, toolTip = "If you are using the anti-cheat anti-report, You will be reconnected upon kick."},
+
                 new ButtonInfo { buttonText = "Visualize Anti Report", toolTip = "Visualizes the distance threshold for the anti report mods."},
                 new ButtonInfo { buttonText = "Smart Anti Report", enableMethod =() => Safety.smartarp = true, disableMethod =() => Safety.smartarp = false, toolTip = "Makes the anti report mods only activate in non-modded public lobbies."},
 
@@ -1535,7 +1537,14 @@ namespace iiMenu.Menu
 
             new ButtonInfo[] { // Players [37]
                 new ButtonInfo { buttonText = "Exit Players", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page." }
-            }
+            },
+
+            new ButtonInfo[] // Prompt [38]
+            {
+                new ButtonInfo { buttonText = "PromptText", overlapText = "Loading...", label = true },
+                new ButtonInfo { buttonText = "button1", overlapText = "<color=green>Yes", isTogglable = false },
+                new ButtonInfo { buttonText = "button2", overlapText = "<color=red>No", method =() => currentCategoryName = "Main",  isTogglable = false },
+            },
         };
 
         public static string[] categoryNames = new string[]
@@ -1577,7 +1586,8 @@ namespace iiMenu.Menu
             "Friends",
             "Friend Settings",
             "Fun Settings",
-            "Players"
+            "Players",
+            "Prompt"
         };
     }
 }
@@ -1586,6 +1596,7 @@ namespace iiMenu.Menu
 The mod cemetary
 Every mod listed below has been removed from the menu, for one reason or another
 
+new ButtonInfo { buttonText = "Remove Name", method =() => ChangeName(""), isTogglable = false, toolTip = "Sets your name to nothing." },
 new ButtonInfo { buttonText = "Lowercase Name", method =() => Fun.LowercaseName(), isTogglable = false, toolTip = "Makes your name lowercase." },
 new ButtonInfo { buttonText = "Long Name", method =() => Fun.LongName(), isTogglable = false, toolTip = "Makes your name really long." },
 

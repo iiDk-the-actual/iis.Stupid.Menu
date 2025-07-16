@@ -35,7 +35,11 @@ namespace iiMenu.Patches.Safety
 
             if (AntiACReport)
             {
-                Mods.Safety.AntiReportFRT(null, false);
+                RPCProtection();
+                if (Menu.Main.ReconnectOnAntiCheat)
+                { Mods.Important.Reconnect(); }
+                else
+                { Mods.Safety.AntiReportFRT(null, false); }
                 NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> <color=white>The anti cheat attempted to report you, you have been disconnected.</color>");
             }
 
