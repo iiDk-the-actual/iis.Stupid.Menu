@@ -128,6 +128,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Gun Sounds", enableMethod =() => GunSounds = true, disableMethod =() => GunSounds = false, toolTip = "Gives the gun laser sounds for when you press grip and trigger."},
                 new ButtonInfo { buttonText = "Gun Particles", enableMethod =() => GunParticles = true, disableMethod =() => GunParticles = false, toolTip = "Gives the gun particles when you shoot it."},
                 new ButtonInfo { buttonText = "Swap Gun Hand", enableMethod =() => SwapGunHand = true, disableMethod =() => SwapGunHand = false, toolTip = "Swaps the hand gun mods work with."},
+                new ButtonInfo { buttonText = "Gripless Guns", enableMethod =() => GriplessGuns = true, disableMethod =() => GriplessGuns = false, toolTip = "Forces your grip to be held for guns."},
+                new ButtonInfo { buttonText = "Triggerless Guns", enableMethod =() => TriggerlessGuns = true, disableMethod =() => TriggerlessGuns = false, toolTip = "Forces your trigger to be held for guns."},
                 new ButtonInfo { buttonText = "Small Gun Pointer", enableMethod =() => smallGunPointer = true, disableMethod =() => smallGunPointer = false, toolTip = "Makes the ball at the end of every gun mod smaller."},
                 new ButtonInfo { buttonText = "Smooth Gun Pointer", enableMethod =() => SmoothGunPointer = true, disableMethod =() => SmoothGunPointer = false, toolTip = "Makes the ball at the end of every gun mod smoother."},
                 new ButtonInfo { buttonText = "Disable Gun Pointer", enableMethod =() => disableGunPointer = true, disableMethod =() => disableGunPointer = false, toolTip = "Disables the ball at the end of every gun mod."},
@@ -870,9 +872,11 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Attic Size Toggle", method =() => Fun.AtticSizeToggle(), toolTip = "Toggles your scale when pressing <color=green>grip</color> or <color=green>trigger</color>."},
                 new ButtonInfo { buttonText = "Grab All Nearby Blocks <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.GrabAllBlocksNearby(), toolTip = "Grabs every nearby building block when holding <color=green>G</color>."},
+                new ButtonInfo { buttonText = "Grab All Selected Blocks <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.GrabAllSelectedNearby(), toolTip = "Grabs every nearby building block that matches your selection when holding <color=green>G</color>."},
 
                 new ButtonInfo { buttonText = "Massive Block <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.MassiveBlock(), toolTip = "Spawns you a massive block when you press <color=green>grip</color>."},
                 new ButtonInfo { buttonText = "Select Block Gun", method =() => Fun.SelectBlockGun(), toolTip = "Selects whatever building block your hand desires to be used for the building mods." },
+                new ButtonInfo { buttonText = "Copy Block Info Gun", method =() => Fun.CopyBlockInfoGun(), toolTip = "Copies whatever building block your hand desires to be used for the building mods to your clipboard." },
                 new ButtonInfo { buttonText = "Building Block Browser", method =() => Fun.BlockBrowser(), isTogglable = false, toolTip = "Browse through every block that you can spawn and select it." },
 
                 new ButtonInfo { buttonText = "Grab Building Blocks <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.SpamGrabBlocks(), toolTip = "Forces the building block into your hand when holding <color=green>grip</color>." },
@@ -1249,11 +1253,11 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Delay Ban Gun", method =() => Overpowered.DelayBanGun(), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Delay bans whoever your hand desires."},
                 new ButtonInfo { buttonText = "Delay Ban All", enableMethod =() => Overpowered.DelayBanAll(), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Delay bans everyone in the room."},
 
-                new ButtonInfo { buttonText = "Blind on Grab", method =() => Overpowered.BlindOnGrab(), toolTip = "Blinds the player when they grab you." },
-                new ButtonInfo { buttonText = "Kick on Grab", method =() => Overpowered.KickOnGrab(), toolTip = "Kicks the player when they grab you." },
-                new ButtonInfo { buttonText = "Crash on Grab", method =() => Overpowered.CrashOnGrab(), toolTip = "Crashes the player when they grab you." },
+                new ButtonInfo { buttonText = "Kick on Grab", method =() => Overpowered.TowardsPositionOnGrab(new Vector3(-71.33718f, 101.4977f, -93.09029f)), toolTip = "Kicks the player when they grab you." },
+                new ButtonInfo { buttonText = "Crash on Grab", method =() => Overpowered.DirectionOnGrab(Vector3.down), toolTip = "Crashes the player when they grab you." },
                 new ButtonInfo { buttonText = "Fling on Grab", method =() => Overpowered.FlingOnGrab(), toolTip = "Flings the player when they grab you." },
-                new ButtonInfo { buttonText = "Obliterate on Grab", method =() => Overpowered.ObliterateOnGrab(), toolTip = "Obliterates the player when they grab you." },
+                new ButtonInfo { buttonText = "Obliterate on Grab", method =() => Overpowered.DirectionOnGrab(Vector3.up), toolTip = "Obliterates the player when they grab you." },
+                new ButtonInfo { buttonText = "Towards Point on Grab Gun", method =() => Overpowered.TowardsPointOnGrab(), disableMethod =() => Overpowered.DisableTowardsPointOnGrab(), toolTip = "Sends the player to your target position when they grab you." },
 
                 new ButtonInfo { buttonText = "Freeze All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.FreezeAll(), toolTip = "Freezes everyone in the room when holding <color=green>trigger</color>." },
 
@@ -1294,6 +1298,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Lag Gun", method =() => Overpowered.LagGun(), toolTip = "Lags whoever your hand desires."},
                 new ButtonInfo { buttonText = "Lag All", method =() => Overpowered.LagAll(), toolTip = "Lags everyone in the room."},
+                new ButtonInfo { buttonText = "Lag Aura", method =() => Overpowered.LagAura(), toolTip = "Lags players nearby you."},
 
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Lag</color><color=grey>]</color>", method =() => Overpowered.AntiReportLag(), toolTip = "Lags whoever tries to report you."},
 
@@ -1532,6 +1537,11 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Exit Fun Settings", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
 
                 new ButtonInfo { buttonText = "Zero Gravity Blocks", toolTip = "Gives the blocks gravity."},
+                new ButtonInfo { buttonText = "Random Block Type", toolTip = "Selects a random block when using block mods."},
+
+                new ButtonInfo { buttonText = "No Random Position Grab", toolTip = "Disables the position randomization in the \"Grab All ### Blocks\" mods."},
+                new ButtonInfo { buttonText = "No Random Rotation Grab", toolTip = "Disables the rotation randomization in the \"Grab All ### Blocks\" mods."},
+
                 new ButtonInfo { buttonText = "Change Block Delay", overlapText = "Change Block Delay <color=grey>[</color><color=green>0</color><color=grey>]</color>", method =() => Fun.ChangeBlockDelay(true), enableMethod =() => Fun.ChangeBlockDelay(true), disableMethod =() => Fun.ChangeBlockDelay(false), incremental = true, isTogglable = false, toolTip = "Gives the blocks a delay before spawning." }
             },
 

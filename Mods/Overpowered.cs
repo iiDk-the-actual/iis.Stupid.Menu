@@ -535,8 +535,8 @@ namespace iiMenu.Mods
             }
         }
 
-        private static float obliteratePower = 0.25f;
-        public static void ObliterateOnGrab()
+        private static float serializeDelay;
+        public static void DirectionOnGrab(Vector3 direction)
         {
             VRRig.LocalRig.enabled = true;
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
@@ -546,17 +546,103 @@ namespace iiMenu.Mods
                     if (rig.leftHandLink.grabbedPlayer == NetworkSystem.Instance.LocalPlayer || rig.rightHandLink.grabbedPlayer == NetworkSystem.Instance.LocalPlayer)
                     {
                         VRRig.LocalRig.enabled = false;
-                        VRRig.LocalRig.transform.position += Vector3.up * obliteratePower;
 
-                        obliteratePower = Mathf.Lerp(obliteratePower, 0.35f, 0.05f);
+                        if (Time.time > serializeDelay)
+                        {
+                            serializeDelay = Time.time + 0.3f;
 
-                        SendSerialize(GorillaTagger.Instance.myVRRig.GetView);
+                            for (int i = 0; i < 100; i++)
+                            {
+                                VRRig.LocalRig.transform.position += direction.normalized;
+                                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(rig).ActorNumber } });
+                            }
+
+                            RPCProtection();
+                        }
+
+                        if (rig.LatestVelocity().y > 6f)
+                        {
+                            VRRig.LocalRig.transform.position += direction.normalized * 100f;
+                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(rig).ActorNumber } });
+
+                            RPCProtection();
+                        }
                     }
                 }
             }
+        }
 
-            if (VRRig.LocalRig.enabled)
-                obliteratePower = 0.25f;
+        private static GameObject point;
+        public static void TowardsPointOnGrab()
+        {
+            if (point == null)
+            {
+                point = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                UnityEngine.Object.Destroy(point.GetComponent<Collider>());
+                point.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                point.transform.localScale = Vector3.one * 0.2f;
+            }
+
+            point.GetComponent<Renderer>().material.color = GetBDColor(0f);
+
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                    point.transform.position = NewPointer.transform.position + (Vector3.up * 0.5f);
+            }
+
+            TowardsPositionOnGrab(point.transform.position);
+        }
+
+        public static void DisableTowardsPointOnGrab()
+        {
+            if (point != null)
+            {
+                UnityEngine.Object.Destroy(point);
+                point = null;
+            }
+        }
+
+        public static void TowardsPositionOnGrab(Vector3 position)
+        {
+            VRRig.LocalRig.enabled = true;
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (!rig.isLocal) /*&& rig.transform.position.x < 80)*/
+                {
+                    if (rig.leftHandLink.grabbedPlayer == NetworkSystem.Instance.LocalPlayer || rig.rightHandLink.grabbedPlayer == NetworkSystem.Instance.LocalPlayer)
+                    {
+                        Vector3 direction = position - rig.transform.position;
+
+                        VRRig.LocalRig.enabled = false;
+
+                        if (Time.time > serializeDelay)
+                        {
+                            serializeDelay = Time.time + 0.3f;
+
+                            for (int i = 0; i < 100; i++)
+                            {
+                                VRRig.LocalRig.transform.position += direction.normalized;
+                                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(rig).ActorNumber } });
+                            }
+
+                            RPCProtection();
+                        }
+
+                        if (rig.LatestVelocity().y > 6f)
+                        {
+                            VRRig.LocalRig.transform.position += direction.normalized * 100f;
+                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new int[] { GetPlayerFromVRRig(rig).ActorNumber } });
+
+                            RPCProtection();
+                        }
+                    }
+                }
+            }
         }
 
         public static void BlindOnGrab()
@@ -572,40 +658,6 @@ namespace iiMenu.Mods
                         VRRig.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position - Vector3.up * UnityEngine.Random.Range(99999f, 99f);
                         VRRig.LocalRig.leftHand.rigTarget.transform.position = VRRig.LocalRig.transform.position;
                         VRRig.LocalRig.rightHand.rigTarget.transform.position = VRRig.LocalRig.transform.position;
-                    }
-                }
-            }
-        }
-
-        public static void KickOnGrab()
-        {
-            VRRig.LocalRig.enabled = true;
-            foreach (VRRig rig in GorillaParent.instance.vrrigs)
-            {
-                if (!rig.isLocal) /*&& rig.transform.position.x < 80)*/
-                {
-                    if (rig.leftHandLink.grabbedPlayer == NetworkSystem.Instance.LocalPlayer || rig.rightHandLink.grabbedPlayer == NetworkSystem.Instance.LocalPlayer)
-                    {
-                        VRRig.LocalRig.enabled = false;
-                        VRRig.LocalRig.transform.position = new Vector3(-71.33718f, 101.4977f, -93.09029f);
-                        VRRig.LocalRig.leftHand.rigTarget.transform.position = VRRig.LocalRig.transform.position;
-                        VRRig.LocalRig.rightHand.rigTarget.transform.position = VRRig.LocalRig.transform.position;
-                    }
-                }
-            }
-        }
-
-        public static void CrashOnGrab()
-        {
-            VRRig.LocalRig.enabled = true;
-            foreach (VRRig rig in GorillaParent.instance.vrrigs)
-            {
-                if (!rig.isLocal) /*&& rig.transform.position.x < 80)*/
-                {
-                    if (rig.leftHandLink.grabbedPlayer == NetworkSystem.Instance.LocalPlayer || rig.rightHandLink.grabbedPlayer == NetworkSystem.Instance.LocalPlayer)
-                    {
-                        VRRig.LocalRig.enabled = false;
-                        VRRig.LocalRig.transform.position = GetObject("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/QuitBox").transform.position + RandomVector3(100f);
                     }
                 }
             }
@@ -1067,7 +1119,7 @@ namespace iiMenu.Mods
                 if (gunLocked && lockTarget != null)
                 {
                     if (!NetworkSystem.Instance.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
-                    Fun.RequestCreatePiece(691844031, new Vector3(-127.6248f, 16.99441f, -217.2094f), Quaternion.identity, 0, NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)));
+                    Fun.RequestCreatePiece(1934114066, new Vector3(-127.6248f, 16.99441f, -217.2094f), Quaternion.identity, 0, NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)));
                 }
                 if (GetGunInput(true))
                 {
@@ -1091,7 +1143,7 @@ namespace iiMenu.Mods
             if (rightTrigger > 0.5f)
             {
                 if (!NetworkSystem.Instance.IsMasterClient) { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); return; }
-                Fun.RequestCreatePiece(691844031, new Vector3(-127.6248f, 16.99441f, -217.2094f), Quaternion.identity, 0, RpcTarget.Others);
+                Fun.RequestCreatePiece(1934114066, new Vector3(-127.6248f, 16.99441f, -217.2094f), Quaternion.identity, 0, RpcTarget.Others);
             }
         }
 
@@ -2428,6 +2480,21 @@ namespace iiMenu.Mods
         }
 
         public static void LagAll() => LagPlayer(RpcTarget.Others);
+
+        public static void LagAura()
+        {
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                Vector3 they = vrrig.headMesh.transform.position;
+                Vector3 notthem = VRRig.LocalRig.head.rigTarget.position;
+                float distance = Vector3.Distance(they, notthem);
+
+                if (distance < 3f && !PlayerIsLocal(vrrig))
+                {
+                    LagPlayer(GetPlayerFromVRRig(vrrig));
+                }
+            }
+        }
 
         public static void AntiReportLag()
         {
