@@ -1,4 +1,4 @@
-﻿using GorillaExtensions;
+using GorillaExtensions;
 using GorillaGameModes;
 using GorillaNetworking;
 using GorillaTag;
@@ -3370,6 +3370,25 @@ Piece Name: {gunTarget.name}";
 
         public static float nameCycleDelay;
         public static int nameCycleIndex;
+        public static int cycleSpeedIndex = 2;
+        public static float nameCycleDebounce = 1f;
+
+        public static void ChangeCycleDelay(bool positive = true)
+        {
+            if (positive)
+                cycleSpeedIndex++;
+            else
+                cycleSpeedIndex--;
+
+            if (cycleSpeedIndex > 4)
+                cycleSpeedIndex = 1;
+            if (cycleSpeedIndex < 1)
+                cycleSpeedIndex = 4;
+
+            nameCycleDebounce = cycleSpeedIndex / 2f;
+            GetIndex("Change Cycle Delay").overlapText = "Change Name Cycle Delay <color=grey>[</color><color=green>" + nameCycleDebounce.ToString() + "s</color><color=grey>]</color>";
+        }
+
         public static void NameCycle(string[] names)
         {
             if (Time.time > nameCycleDelay)
@@ -3377,9 +3396,10 @@ Piece Name: {gunTarget.name}";
                 nameCycleIndex++;
                 if (nameCycleIndex > names.Length - 1)
                     nameCycleIndex = 0;
-
+                
+                NotifiLib.SendNotification("changing name to " + names[nameCycleIndex]);
                 ChangeName(names[nameCycleIndex]);
-                nameCycleDelay = Time.time + 1f;
+                nameCycleDelay = Time.time + nameCycleDebounce;
             }
         }
 
