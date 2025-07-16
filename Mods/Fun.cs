@@ -3397,7 +3397,6 @@ Piece Name: {gunTarget.name}";
                 if (nameCycleIndex > names.Length - 1)
                     nameCycleIndex = 0;
                 
-                NotifiLib.SendNotification("changing name to " + names[nameCycleIndex]);
                 ChangeName(names[nameCycleIndex]);
                 nameCycleDelay = Time.time + nameCycleDebounce;
             }
