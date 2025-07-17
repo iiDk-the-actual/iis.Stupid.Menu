@@ -86,33 +86,27 @@ namespace iiMenu.Mods
         public static bool infoWatchCode = false;
         public static void WatchStep()
         {
+            bool deafultWatch = false;
+            string watchText = "";
             if (!infoWatchMenuName && !infoWatchTime && !infoWatchClip && !infoWatchFPS && !infoWatchCode)
-            {
-                regwatchText.GetComponent<UnityEngine.UI.Text>().text = "ii's Stupid Menu";
-                if (doCustomName)
-                    regwatchText.GetComponent<UnityEngine.UI.Text>().text = NoRichtextTags(customMenuName);
-                regwatchText.GetComponent<UnityEngine.UI.Text>().text += "\n<color=grey>";
-                regwatchText.GetComponent<UnityEngine.UI.Text>().text += lastDeltaTime.ToString() + " FPS\n";
-                regwatchText.GetComponent<UnityEngine.UI.Text>().text += DateTime.Now.ToString("hh:mm tt") + "\n</color>";
-            }
-            else
-            {
-                if (infoWatchMenuName) regwatchText.GetComponent<UnityEngine.UI.Text>().text = "ii's Stupid Menu\n<color=grey>";
-                if (doCustomName && infoWatchMenuName)
-                    regwatchText.GetComponent<UnityEngine.UI.Text>().text = NoRichtextTags(customMenuName) + "\n<color=grey>";
-                
-                if (!infoWatchMenuName)
-                    regwatchText.GetComponent<UnityEngine.UI.Text>().text = "<color=grey>";
-                
-                if (infoWatchFPS) regwatchText.GetComponent<UnityEngine.UI.Text>().text += lastDeltaTime.ToString() + " FPS\n";
-                if (infoWatchTime) regwatchText.GetComponent<UnityEngine.UI.Text>().text += DateTime.Now.ToString("hh:mm tt") + "\n";
-                if (infoWatchClip) regwatchText.GetComponent<UnityEngine.UI.Text>().text += "Clip: " + (GUIUtility.systemCopyBuffer.Length > 20 ? GUIUtility.systemCopyBuffer[..20] : GUIUtility.systemCopyBuffer) + "\n";
-                if (infoWatchCode) regwatchText.GetComponent<UnityEngine.UI.Text>().text += (PhotonNetwork.InRoom ? PhotonNetwork.CurrentRoom.Name : "Not in room") + "\n";
-                regwatchText.GetComponent<UnityEngine.UI.Text>().text += "</color>";
-                regwatchText.GetComponent<UnityEngine.UI.Text>().color = titleColor;
-            }
+                deafultWatch = true;
+            
+            if (infoWatchMenuName || deafultWatch) regwatchText.GetComponent<UnityEngine.UI.Text>().text = "ii's Stupid Menu\n<color=grey>";
+            if (doCustomName && (infoWatchMenuName || deafultWatch))
+                regwatchText.GetComponent<UnityEngine.UI.Text>().text = NoRichtextTags(customMenuName) + "\n<color=grey>";
+            if (!infoWatchMenuName && !deafultWatch)
+                regwatchText.GetComponent<UnityEngine.UI.Text>().text = "<color=grey>";
+            
+            if (infoWatchFPS || deafultWatch) watchText += lastDeltaTime.ToString() + " FPS\n";
+            if (infoWatchTime || deafultWatch) watchText += DateTime.Now.ToString("hh:mm tt") + "\n";
+            if (infoWatchCode) watchText += (PhotonNetwork.InRoom ? PhotonNetwork.CurrentRoom.Name : "Not in room") + "\n";
+            if (infoWatchClip) watchText += "Clip: " + (GUIUtility.systemCopyBuffer.Length > 20 ? GUIUtility.systemCopyBuffer[..20] : GUIUtility.systemCopyBuffer) + "\n";
+
+            watchText += "</color>";
+            regwatchText.GetComponent<UnityEngine.UI.Text>().color = titleColor;
+            regwatchText.GetComponent<UnityEngine.UI.Text>().text += watchText;
             if (lowercaseMode)
-                    regwatchText.GetComponent<UnityEngine.UI.Text>().text = regwatchText.GetComponent<UnityEngine.UI.Text>().text.ToLower();
+                regwatchText.GetComponent<UnityEngine.UI.Text>().text = regwatchText.GetComponent<UnityEngine.UI.Text>().text.ToLower();
         }
 
         public static void WatchOff() =>
