@@ -80,6 +80,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Outline Menu", enableMethod =() => shouldOutline = true, disableMethod =() => shouldOutline = false, toolTip = "Gives the menu objects an outline."},
                 new ButtonInfo { buttonText = "Outline Text", enableMethod =() => outlineText = true, disableMethod =() => outlineText = false, toolTip = "Gives the text objects an outline."},
                 new ButtonInfo { buttonText = "Inner Outline Menu", enableMethod =() => innerOutline = true, disableMethod =() => innerOutline = false, toolTip = "Gives the menu an outline on the inside."},
+                new ButtonInfo { buttonText = "Smooth Menu Rotation", enableMethod =() => smoothMenuRotation = true, disableMethod =() => smoothMenuRotation = false, toolTip = "Smoothes the menu's rotation."},
 
                 new ButtonInfo { buttonText = "Freeze Player in Menu", method =() => Settings.FreezePlayerInMenu(), enableMethod =() => closePosition = GorillaTagger.Instance.rigidbody.transform.position, toolTip = "Freezes your character when inside the menu."},
                 new ButtonInfo { buttonText = "Freeze Rig in Menu", method =() => Settings.FreezeRigInMenu(), disableMethod =() => Movement.EnableRig(), toolTip = "Freezes your rig when inside the menu."},

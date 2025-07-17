@@ -212,6 +212,7 @@ namespace iiMenu.Menu
                                 Destroy(reference);
                                 reference = null;
                             }
+                            smoothTargetRotation = Quaternion.identity;
                         } else
                         {
                             CoroutineManager.RunCoroutine(ShrinkCoroutine());
@@ -254,6 +255,7 @@ namespace iiMenu.Menu
                                             StumpMat = v.GetComponent<Renderer>().material;
 
                                         v.GetComponent<Renderer>().material = OrangeUI;
+                                        break;
                                     }
                                 }
                             }
@@ -273,6 +275,7 @@ namespace iiMenu.Menu
                                             ForestMat = v.GetComponent<Renderer>().material;
 
                                         v.GetComponent<Renderer>().material = OrangeUI;
+                                        break;
                                     }
                                 }
                             }
@@ -2630,6 +2633,15 @@ namespace iiMenu.Menu
                 menu.transform.rotation = physicalOpenRotation;
             }
 
+            if (smoothMenuRotation)
+            {
+                if (smoothTargetRotation == Quaternion.identity)
+                    smoothTargetRotation = menu.transform.rotation;
+                else
+                    smoothTargetRotation = Quaternion.Lerp(smoothTargetRotation, menu.transform.rotation, Time.deltaTime * 10f);
+
+                menu.transform.rotation = smoothTargetRotation;
+            }
         }
 
         private static void AddPageButtons()
@@ -5483,7 +5495,9 @@ jgs \_   _/ |Oo\
         public static bool physicalMenu;
         public static Vector3 physicalOpenPosition = Vector3.zero;
         public static Quaternion physicalOpenRotation = Quaternion.identity;
+        public static Quaternion smoothTargetRotation = Quaternion.identity;
         public static bool joystickOpen;
+        public static bool smoothMenuRotation;
         public static int joystickButtonSelected;
         public static string joystickSelectedButton = "";
         public static float joystickDelay;
