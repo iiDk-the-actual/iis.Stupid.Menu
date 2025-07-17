@@ -3193,8 +3193,8 @@ namespace iiMenu.Mods
             disableBoardColor = true;
             motd.SetActive(false);
             motdText.SetActive(false);
-            GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/motd (1)").SetActive(true);
-            GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/motdtext").SetActive(true);
+            GetObject("Environment Objects/LocalObjects_Prefab/TreeRoommotdHeadingText").SetActive(true);
+            GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/motdBodyText").SetActive(true);
 
             int boardIndex = 0;
             for (int i = 0; i < GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.childCount; i++)
@@ -3250,8 +3250,8 @@ namespace iiMenu.Mods
             disableBoardColor = false;
             motd.SetActive(true);
             motdText.SetActive(true);
-            GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/motd (1)").SetActive(false);
-            GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/motdtext").SetActive(false);
+            GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/motdBodyText").SetActive(false);
+            GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/motdHeadingText").SetActive(false);
         }
     }
 }
