@@ -1966,6 +1966,7 @@ Piece Name: {gunTarget.name}";
 
             if (!bug.IsMyItem())
             {
+                VRRig.LocalRig.enabled = true;
                 if (Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, bugObject.transform.position) > 15f)
                 {
                     VRRig.LocalRig.enabled = false;
