@@ -363,7 +363,7 @@ namespace iiMenu.Mods
         }
 
         public static bool ValidateTag(VRRig Rig) =>
-            Vector3.Distance(ServerSyncPos, lockTarget.transform.position) < 6f;
+            Vector3.Distance(ServerSyncPos, Rig.transform.position) < 6f;
 
         public static void TagGun()
         {
