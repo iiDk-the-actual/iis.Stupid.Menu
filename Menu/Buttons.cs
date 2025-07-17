@@ -1228,7 +1228,9 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Bring Away All Gun", method =() => Overpowered.BringAwayAllGun(), toolTip = "Brings everyone in the room towards wherever your hand desires."},
 
-                new ButtonInfo { buttonText = "Guardian Guardian Orbit All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.OrbitAll(), toolTip = "Orbits everyone in the room around you."},
+                new ButtonInfo { buttonText = "Guardian Anti Stump", method =() => Overpowered.AntiStump(), toolTip = "Anyone who gets too close to the stump entrance will be launched away."},
+                
+                new ButtonInfo { buttonText = "Guardian Orbit All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.OrbitAll(), toolTip = "Orbits everyone in the room around you."},
 
                 new ButtonInfo { buttonText = "Guardian Punch Mod", method =() => Overpowered.PunchMod(), toolTip = "Flings people when you punch them."},
                 new ButtonInfo { buttonText = "Guardian Boxing", method =() => Overpowered.Boxing(), toolTip = "Lets everyone in the room punch eachother."},
@@ -1541,7 +1543,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "No Random Position Grab", toolTip = "Disables the position randomization in the \"Grab All ### Blocks\" mods."},
                 new ButtonInfo { buttonText = "No Random Rotation Grab", toolTip = "Disables the rotation randomization in the \"Grab All ### Blocks\" mods."},
 
-                new ButtonInfo { buttonText = "Change Block Delay", overlapText = "Change Block Delay <color=grey>[</color><color=green>0</color><color=grey>]</color>", method =() => Fun.ChangeBlockDelay(true), enableMethod =() => Fun.ChangeBlockDelay(true), disableMethod =() => Fun.ChangeBlockDelay(false), incremental = true, isTogglable = false, toolTip = "Gives the blocks a delay before spawning." }
+                new ButtonInfo { buttonText = "Change Block Delay", overlapText = "Change Block Delay <color=grey>[</color><color=green>0</color><color=grey>]</color>", method =() => Fun.ChangeBlockDelay(true), enableMethod =() => Fun.ChangeBlockDelay(true), disableMethod =() => Fun.ChangeBlockDelay(false), incremental = true, isTogglable = false, toolTip = "Gives the blocks a delay before spawning." },
+
+                new ButtonInfo { buttonText = "Change Cycle Delay", overlapText = "Change Name Cycle Delay <color=grey>[</color><color=green>1s</color><color=grey>]</color>", method =() => Fun.ChangeCycleDelay(true), enableMethod =() => Fun.ChangeCycleDelay(true), disableMethod =() => Fun.ChangeCycleDelay(false), incremental = true, isTogglable = false, toolTip = "Changes the delay on name cycle mods." }
             },
 
             new ButtonInfo[] { // Players [37]

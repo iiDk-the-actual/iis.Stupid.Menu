@@ -2339,6 +2339,25 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void AntiStump()
+        {
+            if (Time.time > kgDebounce)
+            {
+                foreach (VRRig rig in GorillaParent.instance.vrrigs)
+                {
+                    if (!rig.isLocal)
+                    {
+                        Vector3 stump = new Vector3(-66f, 12f, -79f);
+                        if (Vector3.Distance(stump, rig.transform.position) < 3f)
+                        {
+                            BetaSetVelocityPlayer(GetPlayerFromVRRig(rig), (rig.transform.position - stump).normalized * 20f);
+                            kgDebounce = Time.time + 0.2f;
+                        }
+                    }
+                }
+            }
+        }
+        
         private static float slamDel = 0f;
         private static bool flip = false;
         public static void EffectSpamHands()
