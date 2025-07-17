@@ -13,12 +13,6 @@ namespace iiMenu.Patches
         {
             if (enabled)
             {
-                if (!__instance.OnRelease(zoneReleased, releasingHand))
-                {
-                    __result = false;
-                    return false;
-                }
-
                 if (!__instance.myRig.isOfflineVRRig)
                 {
                     HandLink handLink = ((releasingHand == EquipmentInteractor.instance.leftHand) ? VRRig.LocalRig.leftHandLink : VRRig.LocalRig.rightHandLink);
