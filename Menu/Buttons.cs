@@ -1227,7 +1227,9 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Bring Away All Gun", method =() => Overpowered.BringAwayAllGun(), toolTip = "Brings everyone in the room towards wherever your hand desires."},
 
-                new ButtonInfo { buttonText = "Guardian Guardian Orbit All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.OrbitAll(), toolTip = "Orbits everyone in the room around you."},
+                new ButtonInfo { buttonText = "Guardian Anti Stump", method =() => Overpowered.AntiStump(), toolTip = "Anyone who gets too close to the stump entrance will be launched away."},
+                
+                new ButtonInfo { buttonText = "Guardian Orbit All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.OrbitAll(), toolTip = "Orbits everyone in the room around you."},
 
                 new ButtonInfo { buttonText = "Guardian Punch Mod", method =() => Overpowered.PunchMod(), toolTip = "Flings people when you punch them."},
                 new ButtonInfo { buttonText = "Guardian Boxing", method =() => Overpowered.Boxing(), toolTip = "Lets everyone in the room punch eachother."},
