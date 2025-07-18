@@ -80,6 +80,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Outline Menu", enableMethod =() => shouldOutline = true, disableMethod =() => shouldOutline = false, toolTip = "Gives the menu objects an outline."},
                 new ButtonInfo { buttonText = "Outline Text", enableMethod =() => outlineText = true, disableMethod =() => outlineText = false, toolTip = "Gives the text objects an outline."},
                 new ButtonInfo { buttonText = "Inner Outline Menu", enableMethod =() => innerOutline = true, disableMethod =() => innerOutline = false, toolTip = "Gives the menu an outline on the inside."},
+                new ButtonInfo { buttonText = "Smooth Menu Position", enableMethod =() => smoothMenuPosition = true, disableMethod =() => smoothMenuPosition = false, toolTip = "Smoothes the menu's position."},
                 new ButtonInfo { buttonText = "Smooth Menu Rotation", enableMethod =() => smoothMenuRotation = true, disableMethod =() => smoothMenuRotation = false, toolTip = "Smoothes the menu's rotation."},
 
                 new ButtonInfo { buttonText = "Freeze Player in Menu", method =() => Settings.FreezePlayerInMenu(), enableMethod =() => closePosition = GorillaTagger.Instance.rigidbody.transform.position, toolTip = "Freezes your character when inside the menu."},
@@ -274,6 +275,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Create Public", method =() => Important.CreateRoom(Important.RandomRoomName(), true), isTogglable = false, toolTip = "Creates a public room."},
                 new ButtonInfo { buttonText = "Create Duplicate", method =() => { Patches.RoomPatch.enabled = true; Patches.RoomPatch.duplicate = true; }, disableMethod =() =>  Patches.RoomPatch.enabled = false, toolTip = "Creates a duplicate code whenever trying to join a room."},
 
+                new ButtonInfo { buttonText = "Fast Disconnect", method =() => Patches.SinglePlayerPatch.enabled = true, disableMethod =() =>  Patches.SinglePlayerPatch.enabled = false, toolTip = "Uses the fastest method of disconnecting possible."},
                 new ButtonInfo { buttonText = "Fast Join Rooms", method =() => { Patches.RoomPatch.enabled = true; Patches.RoomPatch.duplicate = false; }, disableMethod =() =>  Patches.RoomPatch.enabled = false, toolTip = "Uses the fastest method of joining rooms possible when trying to join a room."},
                 new ButtonInfo { buttonText = "Join Menu Room", method =() => PhotonNetworkController.Instance.AttemptToJoinSpecificRoom($"<$II_{PluginInfo.Version}>", JoinType.Solo), isTogglable = false, toolTip = "Connects you to a room that is exclusive to ii's <b>Stupid</b> Menu users." },
 

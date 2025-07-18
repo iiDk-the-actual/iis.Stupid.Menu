@@ -147,6 +147,8 @@ namespace iiMenu.Menu
                             }
                         } catch { }
 
+                        smoothTargetPosition = Vector3.zero;
+                        smoothTargetRotation = Quaternion.identity;
                         if (!dynamicAnimations)
                         {
                             if (dropOnRemove)
@@ -212,7 +214,6 @@ namespace iiMenu.Menu
                                 Destroy(reference);
                                 reference = null;
                             }
-                            smoothTargetRotation = Quaternion.identity;
                         } else
                         {
                             CoroutineManager.RunCoroutine(ShrinkCoroutine());
@@ -2631,6 +2632,16 @@ namespace iiMenu.Menu
 
                 menu.transform.position = physicalOpenPosition;
                 menu.transform.rotation = physicalOpenRotation;
+            }
+
+            if (smoothMenuPosition)
+            {
+                if (smoothTargetPosition == Vector3.zero)
+                    smoothTargetPosition = menu.transform.position;
+                else
+                    smoothTargetPosition = Vector3.Lerp(smoothTargetPosition, menu.transform.position, Time.deltaTime * 10f);
+
+                menu.transform.position = smoothTargetPosition;
             }
 
             if (smoothMenuRotation)
@@ -5495,8 +5506,10 @@ jgs \_   _/ |Oo\
         public static bool physicalMenu;
         public static Vector3 physicalOpenPosition = Vector3.zero;
         public static Quaternion physicalOpenRotation = Quaternion.identity;
+        public static Vector3 smoothTargetPosition = Vector3.zero;
         public static Quaternion smoothTargetRotation = Quaternion.identity;
         public static bool joystickOpen;
+        public static bool smoothMenuPosition;
         public static bool smoothMenuRotation;
         public static int joystickButtonSelected;
         public static string joystickSelectedButton = "";

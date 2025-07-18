@@ -4,7 +4,7 @@ using HarmonyLib;
 namespace iiMenu.Patches
 {
     [HarmonyPatch(typeof(PhotonNetworkController), "OnJoinedRoom")]
-    internal class JoinedRoomPatch
+    public class JoinedRoomPatch
     {
         public static bool enabled;
 
