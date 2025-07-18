@@ -1,4 +1,4 @@
-﻿using ExitGames.Client.Photon;
+using ExitGames.Client.Photon;
 using GorillaGameModes;
 using iiMenu.Classes;
 using iiMenu.Notifications;
@@ -279,6 +279,55 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void TagAuraPlayer(VRRig giving)
+        {
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                Vector3 they = vrrig.headMesh.transform.position;
+                Vector3 notthem = giving.head.rigTarget.position;
+                float distance = Vector3.Distance(they, notthem);
+
+                if (PlayerIsTagged(giving) && !PlayerIsTagged(vrrig) && GorillaLocomotion.GTPlayer.Instance.disableMovement == false && distance < tagAuraDistance && !PlayerIsLocal(vrrig) && PlayerIsTagged(VRRig.LocalRig))
+                    TagPlayer(RigManager.GetPlayerFromVRRig(vrrig));
+            }
+        }
+
+        public static void TagAuraGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (gunLocked && lockTarget != null)
+                    TagAuraPlayer(lockTarget);
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
+        public static void TagAuraAll()
+        {
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                TagAuraPlayer(vrrig);
+            }
+        }
+
         public static void GripTagAura()
         {
             if (rightGrab)
@@ -314,7 +363,7 @@ namespace iiMenu.Mods
         }
 
         public static bool ValidateTag(VRRig Rig) =>
-            Vector3.Distance(ServerSyncPos, lockTarget.transform.position) < 6f;
+            Vector3.Distance(ServerSyncPos, Rig.transform.position) < 6f;
 
         public static void TagGun()
         {
