@@ -5,7 +5,7 @@ namespace iiMenu.Classes
 {
     public class CoroutineManager : MonoBehaviour // Thanks to ShibaGT for helping with the coroutines
     {
-        public static CoroutineManager instance = null;
+        public static CoroutineManager instance;
 
         private void Awake() =>
             instance = this;
