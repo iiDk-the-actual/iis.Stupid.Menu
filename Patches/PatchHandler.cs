@@ -11,7 +11,7 @@ namespace iiMenu.Patches
         public static bool IsPatched { get; private set; }
         public static int PatchErrors { get; private set; }
 
-        internal static void PatchAll()
+        public static void PatchAll()
         {
             if (!IsPatched)
             {
@@ -37,7 +37,7 @@ namespace iiMenu.Patches
             }
         }
 
-        internal static void UnpatchAll()
+        public static void UnpatchAll()
         {
             if (instance != null && IsPatched)
             {

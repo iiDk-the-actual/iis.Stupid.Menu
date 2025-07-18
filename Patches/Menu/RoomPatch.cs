@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace iiMenu.Patches
 {
     [HarmonyPatch(typeof(NetworkSystemPUN), "MakeOrFindRoom")]
-    internal class RoomPatch
+    public class RoomPatch
     {
         public static bool enabled;
         public static bool duplicate;
