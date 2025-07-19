@@ -803,7 +803,7 @@ namespace iiMenu.Mods
                 if (Time.time > minigunDelay)
                 {
                     minigunDelay = Time.time + 0.02f;
-                    CreateItem(RpcTarget.All, objectId, GorillaTagger.Instance.rightHandTransform.position, Quaternion.Euler(UnityEngine.Random.Range(0f, 360f), UnityEngine.Random.Range(0f, 360f), UnityEngine.Random.Range(0f, 360f)), GorillaTagger.Instance.rightHandTransform.forward * ShootStrength * 5f, Vector3.zero);
+                    CreateItem(RpcTarget.All, objectId, GorillaTagger.Instance.rightHandTransform.position, RandomQuaternion(), GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength * 5f, Vector3.zero);
                 }
             }
         }
@@ -1405,7 +1405,7 @@ namespace iiMenu.Mods
         {
             if ((rightGrab || Mouse.current.leftButton.isPressed) && Time.time > snowballDelay)
             {
-                Vector3 velocity = GorillaTagger.Instance.rightHandTransform.transform.forward * ShootStrength * 5f;
+                Vector3 velocity = GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength * 5f;
                 if (Mouse.current.leftButton.isPressed)
                 {
                     Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
@@ -3298,7 +3298,7 @@ namespace iiMenu.Mods
                 if (PhotonNetwork.LocalPlayer.IsMasterClient)
                 {
                     CrittersPawn Critter = CrittersManager.instance.SpawnCritter(UnityEngine.Random.Range(0, 3), GorillaTagger.Instance.rightHandTransform.transform.position, Quaternion.identity);
-                    Critter.SetVelocity(GorillaTagger.Instance.rightHandTransform.transform.forward * ShootStrength);
+                    Critter.SetVelocity(GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength);
                 }
                 else
                 {
@@ -3345,7 +3345,7 @@ namespace iiMenu.Mods
                     Object.MoveActor(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation);
 
                     if (Object.usesRB)
-                        Object.SetImpulseVelocity(GorillaTagger.Instance.rightHandTransform.transform.forward * ShootStrength, RandomVector3(100f));
+                        Object.SetImpulseVelocity(GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength, RandomVector3(100f));
                 }
                 else
                 {

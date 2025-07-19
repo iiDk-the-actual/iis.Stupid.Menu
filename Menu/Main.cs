@@ -3436,6 +3436,9 @@ namespace iiMenu.Menu
                 return GriplessGuns || (SwapGunHand ? leftGrab : rightGrab) || Mouse.current.rightButton.isPressed;
         }
 
+        public static Vector3 GetGunDirection(Transform transform) =>
+            new[] { transform.forward, - transform.up, transform == GorillaTagger.Instance.rightHandTransform ? TrueRightHand().forward : TrueLeftHand().forward, GorillaTagger.Instance.headCollider.transform.forward } [GunDirection];
+
         public static System.Collections.IEnumerator NarrateText(string text)
         {
             if (Time.time < (timeMenuStarted + 5f))

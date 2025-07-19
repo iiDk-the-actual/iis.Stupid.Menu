@@ -462,7 +462,7 @@ namespace iiMenu.Mods.Spammers
 
                 if (GetIndex("Shoot Projectiles").enabled)
                 {
-                    charvel = GorillaLocomotion.GTPlayer.Instance.RigidbodyVelocity + (GorillaTagger.Instance.rightHandTransform.transform.forward * ShootStrength);
+                    charvel = GorillaLocomotion.GTPlayer.Instance.RigidbodyVelocity + (GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength);
                     if (Mouse.current.leftButton.isPressed)
                     {
                         Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
@@ -472,9 +472,6 @@ namespace iiMenu.Mods.Spammers
                         charvel *= ShootStrength * (shootCycle >= 2 ? 2f : -2f);
                     }
                 }
-
-                if (GetIndex("Finger Gun Projectiles").enabled)
-                    charvel = GorillaLocomotion.GTPlayer.Instance.RigidbodyVelocity + (TrueRightHand().forward * ShootStrength);
 
                 if (GetIndex("Random Direction").enabled)
                     charvel = RandomVector3(100f);
@@ -531,9 +528,6 @@ namespace iiMenu.Mods.Spammers
                     Vector3 charvel = Vector3.zero;
 
                     if (GetIndex("Shoot Projectiles").enabled)
-                        charvel = (lockTarget.rightHandTransform.transform.forward * ShootStrength);
-
-                    if (GetIndex("Finger Gun Projectiles").enabled)
                         charvel = (lockTarget.rightHandTransform.transform.forward * ShootStrength);
 
                     if (GetIndex("Random Direction").enabled)
@@ -608,18 +602,12 @@ namespace iiMenu.Mods.Spammers
 
                 if (GetIndex("Shoot Projectiles").enabled)
                 {
-                    Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray, 512f, NoInvisLayerMask());
+                    Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GetGunDirection(GorillaTagger.Instance.rightHandTransform), out var Ray, 512f, NoInvisLayerMask());
                     if (Mouse.current.leftButton.isPressed)
                     {
                         Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
                         Physics.Raycast(ray, out Ray, 512f, NoInvisLayerMask());
                     }
-                    startpos = Ray.point;
-                }
-
-                if (GetIndex("Finger Gun Projectiles").enabled)
-                {
-                    Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, TrueRightHand().forward, out var Ray, 512f, NoInvisLayerMask());
                     startpos = Ray.point;
                 }
 
