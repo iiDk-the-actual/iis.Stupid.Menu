@@ -2037,17 +2037,33 @@ Piece Name: {gunTarget.name}";
                     targetBug = bugSpamToggle ? bug : firefly;
                     
                     GameObject bugSpamObject = new GameObject("iiMenu_BugSpamObject");
+                    bugSpamObject.transform.localScale = Vector3.one * 0.2f;
+                    bugSpamObject.layer = 3;
+
+                    if (GetIndex("Bug Colliders").enabled)
+                    {
+                        SphereCollider collider = bugSpamObject.AddComponent<SphereCollider>();
+
+                        if (GetIndex("Bouncy Bug").enabled)
+                        {
+                            collider.material.bounciness = 1f;
+                            collider.material.bounceCombine = PhysicMaterialCombine.Maximum;
+                            collider.material.dynamicFriction = 0f;
+                        }
+                    }
+                    
 
                     bugSpamObject.transform.position = GorillaTagger.Instance.rightHandTransform.position + GorillaTagger.Instance.rightHandTransform.forward * 0.5f;
                     bugSpamObject.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
 
-                    Rigidbody rigidbody = bugSpamObject.GetOrAddComponent<Rigidbody>();
+                    Rigidbody rigidbody = bugSpamObject.AddComponent<Rigidbody>();
                     rigidbody.velocity = GorillaTagger.Instance.rightHandTransform.forward * ShootStrength;
                     rigidbody.angularVelocity = RandomVector3(100f);
 
                     targetBug.gameObject.GetOrAddComponent<ClampPosition>().targetTransform = bugSpamObject.transform;
 
-                    UnityEngine.Object.Destroy(bugSpamObject, 5f);
+                    bugSpamObject.AddComponent<DestroyOnRest>();
+                    UnityEngine.Object.Destroy(bugSpamObject, 30f);
                 }
             }
         }
