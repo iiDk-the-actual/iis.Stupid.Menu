@@ -2095,6 +2095,13 @@ Piece Name: {gunTarget.name}";
             }
         }
 
+        public static void HolsterObject(string objectName, TransferrableObject.PositionState state)
+        {
+            ThrowableBug bug = GetBug(objectName);
+            if (bug != null)
+                bug.currentState = state;
+        }
+
         public static void ObjectToHand(string objectName)
         {
             ThrowableBug bug = GetBug(objectName);
