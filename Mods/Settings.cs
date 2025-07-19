@@ -1379,6 +1379,23 @@ namespace iiMenu.Mods
             }
         }
 
+        private static int menuScaleIndex = 10;
+        public static void ChangeMenuScale(bool positive = true)
+        {
+            if (positive)
+                menuScaleIndex++;
+            else
+                menuScaleIndex--;
+
+            if (menuScaleIndex > 15)
+                menuScaleIndex = 5;
+            if (menuScaleIndex < 5)
+                menuScaleIndex = 15;
+
+            menuScale = menuScaleIndex / 10f;
+
+            GetIndex("Change Menu Scale").overlapText = "Change Menu Scale <color=grey>[</color><color=green>" + menuScale.ToString() + "</color><color=grey>]</color>";
+        }
 
         private static int modifyWhatId = 0;
         public static void CMTRed(bool increase = true)
@@ -2843,7 +2860,8 @@ namespace iiMenu.Mods
                 Overpowered.snowballScale.ToString(),
                 Overpowered.lagIndex.ToString(),
                 Fun.blockDebounceIndex.ToString(),
-                Fun.nameCycleIndex.ToString()
+                Fun.nameCycleIndex.ToString(),
+                menuScaleIndex.ToString()
             };
 
             string settingstext = string.Join(seperator, settings);
@@ -3013,6 +3031,9 @@ namespace iiMenu.Mods
 
                 Fun.cycleSpeedIndex = int.Parse(data[40]) - 1;
                 Fun.ChangeCycleDelay();
+
+                menuScaleIndex = int.Parse(data[41]) - 1;
+                ChangeMenuScale();
             }
             catch { LogManager.Log("Save file out of date"); }
 

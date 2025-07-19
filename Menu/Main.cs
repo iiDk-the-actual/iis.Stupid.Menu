@@ -2456,7 +2456,7 @@ namespace iiMenu.Menu
                 }
             }
 
-            menu.transform.localScale *= scaleWithPlayer && XRSettings.isDeviceActive ? GTPlayer.Instance.scale : 1f;
+            menu.transform.localScale *= scaleWithPlayer && XRSettings.isDeviceActive ? GTPlayer.Instance.scale * menuScale : menuScale;
         }
 
         public static void RecenterMenu()
@@ -3634,7 +3634,7 @@ namespace iiMenu.Menu
         public static System.Collections.IEnumerator GrowCoroutine()
         {
             float elapsedTime = 0f;
-            Vector3 target = scaleWithPlayer && XRSettings.isDeviceActive ? new Vector3(0.1f, 0.3f, 0.3825f) * GTPlayer.Instance.scale : new Vector3(0.1f, 0.3f, 0.3825f);
+            Vector3 target = scaleWithPlayer && XRSettings.isDeviceActive ? new Vector3(0.1f, 0.3f, 0.3825f) * menuScale * GTPlayer.Instance.scale : new Vector3(0.1f, 0.3f, 0.3825f);
             while (elapsedTime < 0.05f)
             {
                 menu.transform.localScale = Vector3.Lerp(Vector3.zero, target, elapsedTime / 0.05f);
@@ -5582,6 +5582,7 @@ jgs \_   _/ |Oo\
         public static int amountPartying;
         public static bool waitForPlayerJoin;
         public static bool scaleWithPlayer;
+        public static float menuScale = 1f;
 
         public static bool dynamicSounds;
         public static bool exclusivePageSounds;

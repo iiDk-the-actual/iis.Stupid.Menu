@@ -3495,7 +3495,7 @@ Piece Name: {gunTarget.name}";
                 cycleSpeedIndex = 4;
 
             nameCycleDebounce = cycleSpeedIndex / 2f;
-            GetIndex("Change Cycle Delay").overlapText = "Change Name Cycle Delay <color=grey>[</color><color=green>" + nameCycleDebounce.ToString() + "s</color><color=grey>]</color>";
+            GetIndex("Change Cycle Delay").overlapText = "Change Name Cycle Delay <color=grey>[</color><color=green>" + nameCycleDebounce.ToString() + "</color><color=grey>]</color>";
         }
 
         public static void NameCycle(string[] names)
