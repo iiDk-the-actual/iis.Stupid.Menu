@@ -190,6 +190,8 @@ namespace iiMenu.Mods
 
             if (NetworkSystem.Instance.InRoom)
                 NetworkSystem.Instance.netState = NetSystemState.InGame;
+            else
+                NetworkSystem.Instance.netState = NetSystemState.Idle;
 
             partyLastCode = null;
             phaseTwo = false;
