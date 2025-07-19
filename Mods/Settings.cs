@@ -1387,10 +1387,10 @@ namespace iiMenu.Mods
             else
                 menuScaleIndex--;
 
-            if (menuScaleIndex > 15)
-                menuScaleIndex = 5;
-            if (menuScaleIndex < 5)
-                menuScaleIndex = 15;
+            if (menuScaleIndex > 30)
+                menuScaleIndex = 2;
+            if (menuScaleIndex < 2)
+                menuScaleIndex = 30;
 
             menuScale = menuScaleIndex / 10f;
 
