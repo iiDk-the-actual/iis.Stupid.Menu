@@ -691,16 +691,16 @@ namespace iiMenu.Mods
         {
             if (leftPrimary)
             {
-                if (dynamicAnimations)
-                    TagEffectsLibrary.PlayEffect(GTPlayer.Instance.leftControllerTransform.transform, true, .1f, TagEffectsLibrary.EffectType.FIRST_PERSON, VRRig.LocalRig.CosmeticEffectPack, VRRig.LocalRig.CosmeticEffectPack, VRRig.LocalRig.leftHandTransform.rotation);
+                //if (dynamicAnimations)
+                //    TagEffectsLibrary.PlayEffect(GTPlayer.Instance.leftControllerTransform.transform, true, .1f, TagEffectsLibrary.EffectType.FIRST_PERSON, VRRig.LocalRig.CosmeticEffectPack, VRRig.LocalRig.CosmeticEffectPack, VRRig.LocalRig.leftHandTransform.rotation);
 
                 GorillaTagger.Instance.rigidbody.AddForce(flySpeed * -GorillaTagger.Instance.leftHandTransform.right, ForceMode.Acceleration);
                 GorillaTagger.Instance.StartVibration(true, GorillaTagger.Instance.tapHapticStrength / 50f * GorillaTagger.Instance.rigidbody.velocity.magnitude, GorillaTagger.Instance.tapHapticDuration);
             }
             if (rightPrimary)
             {
-                if (dynamicAnimations)
-                    TagEffectsLibrary.PlayEffect(GTPlayer.Instance.rightControllerTransform.transform, true, .1f, TagEffectsLibrary.EffectType.FIRST_PERSON, VRRig.LocalRig.CosmeticEffectPack, VRRig.LocalRig.CosmeticEffectPack, VRRig.LocalRig.rightHandTransform.rotation);
+                //if (dynamicAnimations)
+                //    TagEffectsLibrary.PlayEffect(GTPlayer.Instance.rightControllerTransform.transform, true, .1f, TagEffectsLibrary.EffectType.FIRST_PERSON, VRRig.LocalRig.CosmeticEffectPack, VRRig.LocalRig.CosmeticEffectPack, VRRig.LocalRig.rightHandTransform.rotation);
 
                 GorillaTagger.Instance.rigidbody.AddForce(flySpeed * GorillaTagger.Instance.rightHandTransform.right, ForceMode.Acceleration);
                 GorillaTagger.Instance.StartVibration(false, GorillaTagger.Instance.tapHapticStrength / 50f * GorillaTagger.Instance.rigidbody.velocity.magnitude, GorillaTagger.Instance.tapHapticDuration);
