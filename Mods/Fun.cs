@@ -1864,7 +1864,7 @@ Piece Name: {gunTarget.name}";
             {
                 hoverboardSpamDelay = Time.time + 0.5f;
 
-                FreeHoverboardManager.instance.SendDropBoardRPC(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, GorillaTagger.Instance.rightHandTransform.forward * ShootStrength, Vector3.zero, RandomColor());
+                FreeHoverboardManager.instance.SendDropBoardRPC(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength, Vector3.zero, RandomColor());
             }
         }
 
@@ -2041,12 +2041,12 @@ Piece Name: {gunTarget.name}";
         {
             ThrowableBug bugObject = GetBugObject("Floating Bug Holdable");
 
-            if (!bugObject.IsMyItem() && bugObject.GetComponent<ClampPosition>() != null)
+            if ((!bugObject.IsMyItem() || (bugObject.currentState != TransferrableObject.PositionState.Dropped && bugObject.currentState != TransferrableObject.PositionState.None)) && bugObject.GetComponent<ClampPosition>() != null)
                 UnityEngine.Object.Destroy(bugObject.GetComponent<ClampPosition>());
 
             ThrowableBug fireflyObject = GetBugObject("Firefly");
 
-            if (!fireflyObject.IsMyItem() && fireflyObject.GetComponent<ClampPosition>() != null)
+            if ((!fireflyObject.IsMyItem() || (fireflyObject.currentState != TransferrableObject.PositionState.Dropped && fireflyObject.currentState != TransferrableObject.PositionState.None)) && fireflyObject.GetComponent<ClampPosition>() != null)
                 UnityEngine.Object.Destroy(fireflyObject.GetComponent<ClampPosition>());
 
             ThrowableBug bug = GetBug("Floating Bug Holdable");
@@ -2077,14 +2077,15 @@ Piece Name: {gunTarget.name}";
                             collider.material.dynamicFriction = 0f;
                         }
                     }
-                    
 
-                    bugSpamObject.transform.position = GorillaTagger.Instance.rightHandTransform.position + GorillaTagger.Instance.rightHandTransform.forward * 0.5f;
+                    bugSpamObject.transform.position = GorillaTagger.Instance.rightHandTransform.position + GetGunDirection(GorillaTagger.Instance.rightHandTransform) * 0.5f;
                     bugSpamObject.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
 
                     Rigidbody rigidbody = bugSpamObject.AddComponent<Rigidbody>();
-                    rigidbody.velocity = GorillaTagger.Instance.rightHandTransform.forward * ShootStrength;
+                    rigidbody.velocity = GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength;
                     rigidbody.angularVelocity = RandomVector3(100f);
+
+                    rigidbody.useGravity = !GetIndex("Zero Gravity Bugs").enabled;
 
                     targetBug.gameObject.GetOrAddComponent<ClampPosition>().targetTransform = bugSpamObject.transform;
 
@@ -2128,7 +2129,7 @@ Piece Name: {gunTarget.name}";
         {
             if (rightGrab)
             {
-                RequestCreatePiece(pieceIdSet, GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, 0, null, false, GorillaTagger.Instance.rightHandTransform.forward * ShootStrength);
+                RequestCreatePiece(pieceIdSet, GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, 0, null, false, GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength);
                 RPCProtection();
             }
         }

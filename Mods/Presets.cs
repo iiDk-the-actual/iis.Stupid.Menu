@@ -92,7 +92,6 @@ namespace iiMenu.Mods
                 "Clear Notifications on Disconnect",
                 "Disable Enabled GUI",
                 "Legacy Ghostview",
-                "Finger Gun Projectiles",
                 "Rainbow Projectiles",
                 "Force Enable Hands",
                 "Anti AFK",
