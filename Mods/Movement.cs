@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TagEffects;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 using static iiMenu.Classes.RigManager;
@@ -4020,16 +4021,7 @@ namespace iiMenu.Mods
 
                     if (Time.time > Fun.splashDel)
                     {
-                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", GetPlayerFromVRRig(lockTarget), new object[]
-                        {
-                            lockTarget.transform.position + RandomVector3(0.5f),
-                            RandomQuaternion(),
-                            4f,
-                            100f,
-                            true,
-                            false
-                        });
-                        RPCProtection();
+                        Fun.BetaWaterSplash(lockTarget.transform.position + RandomVector3(2.5f), RandomQuaternion(), 4f, 100f, true, false);
                         Fun.splashDel = Time.time + 0.1f;
                     }
                 }
@@ -4082,15 +4074,7 @@ namespace iiMenu.Mods
             {
                 Fun.splashDel = Time.time + 0.05f;
                 VRRig rig = GetRandomVRRig(false);
-                GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", GetPlayerFromVRRig(rig), new object[]
-                {
-                    rig.transform.position + RandomVector3(0.5f),
-                    RandomQuaternion(),
-                    4f,
-                    100f,
-                    true,
-                    false
-                });
+                Fun.BetaWaterSplash(rig.transform.position + RandomVector3(2.5f), RandomQuaternion(), 4f, 100f, true, false);
             }
         }
 
