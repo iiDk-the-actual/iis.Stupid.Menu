@@ -24,6 +24,7 @@ using System.Linq;
 using UnityEngine;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
+using static Mono.Security.X509.X520;
 
 namespace iiMenu.Mods
 {
@@ -1960,7 +1961,7 @@ Piece Name: {gunTarget.name}";
         }
 
         public static float getOwnershipDelay;
-        public static ThrowableBug GetBug(string name)
+        public static ThrowableBug GetBugObject(string name)
         {
             GameObject bugObject = null;
             if (name == "Firefly")
@@ -1974,6 +1975,18 @@ Piece Name: {gunTarget.name}";
             if (bug == null)
                 return null;
 
+            return bug;
+        }
+
+        public static ThrowableBug GetBug(string name)
+        {
+            ThrowableBug bug = GetBugObject(name);
+
+            if (bug == null)
+                return null;
+
+            GameObject bugObject = bug?.gameObject;
+
             if (!PhotonNetwork.InRoom)
                 return bug;
 
@@ -1983,6 +1996,9 @@ Piece Name: {gunTarget.name}";
 
             if (!bug.IsMyItem())
             {
+                if (bug.currentState != TransferrableObject.PositionState.Dropped || bug.currentState != TransferrableObject.PositionState.None)
+                    return null;
+                
                 VRRig.LocalRig.enabled = true;
                 if (Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, bugObject.transform.position) > 15f)
                 {
@@ -2023,6 +2039,16 @@ Piece Name: {gunTarget.name}";
         private static bool bugSpamToggle;
         public static void BugSpam()
         {
+            ThrowableBug bugObject = GetBugObject("Floating Bug Holdable");
+
+            if (!bugObject.IsMyItem() && bugObject.GetComponent<ClampPosition>() != null)
+                UnityEngine.Object.Destroy(bugObject.GetComponent<ClampPosition>());
+
+            ThrowableBug fireflyObject = GetBugObject("Firefly");
+
+            if (!fireflyObject.IsMyItem() && fireflyObject.GetComponent<ClampPosition>() != null)
+                UnityEngine.Object.Destroy(fireflyObject.GetComponent<ClampPosition>());
+
             ThrowableBug bug = GetBug("Floating Bug Holdable");
             ThrowableBug firefly = bug != null ? GetBug("Firefly") : bug;
 
