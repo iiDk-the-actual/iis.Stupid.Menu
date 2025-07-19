@@ -1996,7 +1996,7 @@ Piece Name: {gunTarget.name}";
 
             if (!bug.IsMyItem())
             {
-                if (bug.currentState != TransferrableObject.PositionState.Dropped || bug.currentState != TransferrableObject.PositionState.None)
+                if (bug.currentState != TransferrableObject.PositionState.Dropped && bug.currentState != TransferrableObject.PositionState.None)
                     return null;
                 
                 VRRig.LocalRig.enabled = true;
