@@ -1276,8 +1276,13 @@ namespace iiMenu.Mods
                 switch (Mode)
                 {
                     case 0:
-                        GrowingSnowball.changeSizeEvent.RaiseAll(customNetworkedSize > 0 ? customNetworkedSize : (int)Scale);
-                        GrowingSnowball.snowballThrowEvent.RaiseAll(Pos, Vel, GetProjectileIncrement(Pos, Vel, Scale));
+                        int increment = GetProjectileIncrement(Pos, Vel, Scale);
+
+                        GrowingSnowball.SnowballThrowEventReceiver(NetworkSystem.Instance.LocalPlayer.ActorNumber, NetworkSystem.Instance.LocalPlayer.ActorNumber, new object[] { Pos, Vel, increment }, new PhotonMessageInfoWrapped { senderID = NetworkSystem.Instance.LocalPlayer.ActorNumber });
+                        GrowingSnowball.ChangeSizeEventReceiver(NetworkSystem.Instance.LocalPlayer.ActorNumber, NetworkSystem.Instance.LocalPlayer.ActorNumber, new object[] { customNetworkedSize > 0 ? customNetworkedSize : (int)Scale }, new PhotonMessageInfoWrapped { senderID = NetworkSystem.Instance.LocalPlayer.ActorNumber });
+                        
+                        GrowingSnowball.changeSizeEvent.RaiseOthers(customNetworkedSize > 0 ? customNetworkedSize : (int)Scale);
+                        GrowingSnowball.snowballThrowEvent.RaiseOthers(Pos, Vel, increment);
                         break;
                     case 1:
                         GrowingSnowball.changeSizeEvent.RaiseOthers(customNetworkedSize > 0 ? customNetworkedSize : (int)Scale);
