@@ -2817,7 +2817,7 @@ namespace iiMenu.Mods
                 fontStyleType.ToString(),
                 arrowType.ToString(),
                 pcbg.ToString(),
-                internetTime.ToString(),
+                Important.reconnectDelay.ToString(),
                 hotkeyButton.ToString(),
                 buttonClickIndex.ToString(),
                 buttonClickVolume.ToString(),
@@ -2935,7 +2935,7 @@ namespace iiMenu.Mods
                 pcbg = int.Parse(data[13]) - 1;
                 ChangePCUI();
 
-                internetTime = int.Parse(data[14]) - 1;
+                Important.reconnectDelay = int.Parse(data[14]) - 1;
                 ChangeReconnectTime();
 
                 hotkeyButton = data[15];
@@ -3074,15 +3074,16 @@ namespace iiMenu.Mods
         public static void ChangeReconnectTime(bool positive = true)
         {
             if (positive)
-                internetTime++;
+                Important.reconnectDelay++;
             else
-                internetTime--;
+                Important.reconnectDelay--;
 
-            internetTime %= 6;
-            if (internetTime < 0)
-                internetTime = 5;
+            if (Important.reconnectDelay > 5)
+                Important.reconnectDelay = 1;
+            if (Important.reconnectDelay < 1)
+                Important.reconnectDelay = 5;
 
-            GetIndex("crTime").overlapText = "Change Reconnect Time <color=grey>[</color><color=green>" + internetTime.ToString() + "</color><color=grey>]</color>";
+            GetIndex("crTime").overlapText = "Change Reconnect Time <color=grey>[</color><color=green>" + Important.reconnectDelay.ToString() + "</color><color=grey>]</color>";
         }
 
         public static void ChangeButtonSound(bool positive = true)

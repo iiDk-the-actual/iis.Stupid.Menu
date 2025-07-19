@@ -3,7 +3,10 @@ using GorillaNetworking;
 using HarmonyLib;
 using iiMenu.Classes;
 using iiMenu.Notifications;
+using iiMenu.Patches;
 using Photon.Pun;
+using PlayFab;
+using PlayFab.ClientModels;
 using System.Collections;
 using System.Diagnostics;
 using System.Reflection;
@@ -18,10 +21,154 @@ namespace iiMenu.Mods
 {
     public class Important
     {
+        public static Coroutine queueCoroutine;
+        public static int reconnectDelay = 1;
+
+        public static IEnumerator QueueRoomCoroutine(string roomName)
+        {
+            NetworkSystemPUN instance = (NetworkSystemPUN)NetworkSystem.Instance;
+
+            if (instance.InRoom)
+            {
+                instance.ReturnToSinglePlayer();
+                yield return new WaitUntil(() => instance.netState == NetSystemState.Idle);
+            }
+
+            instance.netState = NetSystemState.Connecting;
+
+            byte maxPlayers = RoomSystem.GetRoomSizeForCreate(PhotonNetworkController.Instance.currentJoinTrigger?.networkZone ?? "forest");
+            RoomConfig opts = new RoomConfig()
+            {
+                createIfMissing = true,
+                isJoinable = true,
+                isPublic = false,
+                MaxPlayers = maxPlayers,
+                CustomProps = new ExitGames.Client.Photon.Hashtable()
+                {
+                    { "gameMode", (PhotonNetworkController.Instance.currentJoinTrigger ?? GorillaComputer.instance.GetJoinTriggerForZone("forest")).GetFullDesiredGameModeString() },
+                    { "platform", PhotonNetworkController.Instance.platformTag },
+                    { "queueName", GorillaComputer.instance.currentQueue }
+                }
+            };
+
+            Task<(string region, int count)> regionTask = RoomPatch.GetLargestRegion(roomName);
+            yield return new WaitUntil(() => regionTask.IsCompleted);
+
+            if (regionTask.Exception != null)
+            {
+                LogManager.LogError("Could not retrieve region");
+                instance.netState = NetSystemState.Idle;
+
+                PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(roomName, JoinType.Solo);
+                yield break;
+            }
+
+            var (region, count) = regionTask.Result;
+            LogManager.Log($"Room {roomName} Region: {region} Count: {count}");
+
+            if (count <= 0)
+            {
+                LogManager.Log("Room is empty");
+
+                Task joinTask = RoomPatch.ForceJoinDuplicate(instance, roomName, opts);
+                yield return new WaitUntil(() => joinTask.IsCompleted);
+
+                if (joinTask.Exception != null)
+                {
+                    LogManager.LogError("Could not create room");
+                    instance.netState = NetSystemState.Idle;
+
+                    PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(roomName, JoinType.Solo);
+                }
+
+                yield break;
+            }
+
+            if (count < maxPlayers)
+            {
+                LogManager.Log("Room is not full");
+
+                Task joinTask = instance.TryJoinRoomInRegion(roomName, opts, System.Array.IndexOf(NetworkSystem.Instance.regionNames, region));
+                yield return new WaitUntil(() => joinTask.IsCompleted);
+
+                if (joinTask.Exception != null)
+                {
+                    LogManager.LogError("Could not join room");
+                    instance.netState = NetSystemState.Idle;
+
+                    PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(roomName, JoinType.Solo);
+                }
+
+                yield break;
+            }
+
+            LogManager.Log("Room is full");
+            int errorCount = 0;
+            while (!instance.InRoom)
+            {
+                int currentPlayerCount = -1;
+                PlayFabClientAPI.GetSharedGroupData(new PlayFab.ClientModels.GetSharedGroupDataRequest
+                {
+                    SharedGroupId = roomName + region.ToUpper()
+                }, delegate (GetSharedGroupDataResult result)
+                {
+                    currentPlayerCount = result.Data.Count;
+                    LogManager.Log($"{currentPlayerCount} players in room {roomName} {region}");
+                }, null, null, null);
+
+                yield return new WaitForSeconds(reconnectDelay);
+
+                if (currentPlayerCount < 0)
+                {
+                    errorCount++;
+                    LogManager.LogError($"Could not get player count ({errorCount}/5)");
+
+                    if (errorCount >= 5)
+                    {
+                        LogManager.LogError("Rate limited");
+                        errorCount = 0;
+
+                        yield return new WaitForSeconds(10f);
+                    }
+                }
+                else
+                {
+                    if (currentPlayerCount < maxPlayers)
+                    {
+                        Task joinTask = instance.TryJoinRoomInRegion(roomName, opts, System.Array.IndexOf(instance.regionNames, region));
+                        yield return new WaitUntil(() => joinTask.IsCompleted);
+
+                        if (joinTask.Exception != null)
+                        {
+                            LogManager.LogError("Could not join room");
+                            instance.netState = NetSystemState.Idle;
+
+                            PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(roomName, JoinType.Solo);
+                        }
+
+                        yield return new WaitForSeconds(reconnectDelay);
+                    }
+                }
+            }
+
+            if (instance.InRoom)
+                instance.netState = NetSystemState.InGame;
+        }
+
+        public static void QueueRoom(string roomName)
+        {
+            if (queueCoroutine != null)
+                CoroutineManager.instance.StopCoroutine(queueCoroutine);
+
+            queueCoroutine = CoroutineManager.instance.StartCoroutine(QueueRoomCoroutine(roomName));
+        }
+
         public static void Reconnect()
         {
-            rejRoom = PhotonNetwork.CurrentRoom.Name;
+            string roomName = NetworkSystem.Instance.RoomName;
+
             NetworkSystem.Instance.ReturnToSinglePlayer();
+            QueueRoom(roomName);
         }
 
         public static void DisconnectR()
@@ -38,7 +185,12 @@ namespace iiMenu.Mods
 
         public static void CancelReconnect()
         {
-            rejRoom = null;
+            if (queueCoroutine != null)
+                CoroutineManager.instance.StopCoroutine(queueCoroutine);
+
+            if (NetworkSystem.Instance.InRoom)
+                NetworkSystem.Instance.netState = NetSystemState.InGame;
+
             partyLastCode = null;
             phaseTwo = false;
         }

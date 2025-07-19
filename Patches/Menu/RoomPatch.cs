@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+// There is literally no reason I should have to rewrite Photon
+
 namespace iiMenu.Patches
 {
     [HarmonyPatch(typeof(NetworkSystemPUN), "MakeOrFindRoom")]
@@ -16,7 +18,7 @@ namespace iiMenu.Patches
         public static bool enabled;
         public static bool duplicate;
 
-        private static bool Prefix(NetworkSystemPUN __instance, string roomName, RoomConfig opts, int regionIndex, ref Task<NetJoinResult> __result)
+        public static bool Prefix(NetworkSystemPUN __instance, string roomName, RoomConfig opts, int regionIndex, ref Task<NetJoinResult> __result)
         {
             if (!enabled)
                 return true;
@@ -29,7 +31,7 @@ namespace iiMenu.Patches
             return false;
         }
 
-        private static async Task<NetJoinResult> ForceJoinDuplicate(NetworkSystemPUN instance, string roomName, RoomConfig opts)
+        public static async Task<NetJoinResult> ForceJoinDuplicate(NetworkSystemPUN instance, string roomName, RoomConfig opts)
         {
             if (instance.InRoom)
                 await instance.InternalDisconnect();
@@ -73,7 +75,7 @@ namespace iiMenu.Patches
             return netJoinResult;
         }
 
-        private static async Task<NetJoinResult> FastJoinRoom(NetworkSystemPUN instance, string roomName, RoomConfig opts)
+        public static async Task<NetJoinResult> FastJoinRoom(NetworkSystemPUN instance, string roomName, RoomConfig opts)
         {
             if (instance.InRoom)
                 await instance.InternalDisconnect();
@@ -94,7 +96,7 @@ namespace iiMenu.Patches
             return await instance.TryJoinRoomInRegion(roomName, opts, regionIndex) ? NetJoinResult.Success : NetJoinResult.Failed_Other;
         }
 
-        private static async Task<List<string>> GetEmptyRegions(string roomName)
+        public static async Task<List<string>> GetEmptyRegions(string roomName)
         {
             string[] regions = NetworkSystem.Instance.regionNames;
             List<string> emptyRegions = regions.ToList();
@@ -115,7 +117,7 @@ namespace iiMenu.Patches
             return emptyRegions;
         }
 
-        private static async Task<(string region, int count)> GetLargestRegion(string roomName)
+        public static async Task<(string region, int count)> GetLargestRegion(string roomName)
         {
             string[] regions = NetworkSystem.Instance.regionNames;
             Dictionary<string, int> regionData = new Dictionary<string, int> { };

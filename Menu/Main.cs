@@ -1075,22 +1075,6 @@ namespace iiMenu.Menu
                         }
                     } catch { }
 
-                    // Reconnect code
-                    if (PhotonNetwork.InRoom)
-                    {
-                        if (rejRoom != null)
-                            rejRoom = null;
-                    }
-                    else
-                    {
-                        if (rejRoom != null && Time.time > rejDebounce/* && PhotonNetwork.NetworkingClient.State == ClientState.Disconnected*/)
-                        {
-                            LogManager.Log("Attempting rejoin");
-                            PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(rejRoom, GorillaNetworking.JoinType.Solo);
-                            rejDebounce = Time.time + (float)internetTime;
-                        }
-                    }
-
                     // Party kick code (to return back to the main lobby when you're done)
                     if (PhotonNetwork.InRoom)
                     {
@@ -1119,7 +1103,7 @@ namespace iiMenu.Menu
                             {
                                 LogManager.Log("Attempting rejoin");
                                 PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(partyLastCode, GorillaNetworking.JoinType.Solo);
-                                partyTime = Time.time + (float)internetTime;
+                                partyTime = Time.time + (float)Important.reconnectDelay;
                             }
                         }
                     }
@@ -5814,9 +5798,6 @@ jgs \_   _/ |Oo\
         public static bool lastMasterClient;
         public static string lastRoom = "";
 
-        public static string rejRoom;
-        public static float rejDebounce;
-
         public static string partyLastCode;
         public static float partyTime;
         public static bool phaseTwo;
@@ -5830,7 +5811,6 @@ jgs \_   _/ |Oo\
         public static float soundDebounce;
         public static float buttonCooldown;
         public static float colorChangerDelay;
-        public static float internetTime = 5f;
         public static float autoSaveDelay = Time.time + 60f;
         public static bool BackupPreferences;
 
