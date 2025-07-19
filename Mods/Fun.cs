@@ -1483,6 +1483,23 @@ namespace iiMenu.Mods
                 }
             }
         }
+
+        private static float hoverboardGunDelay;
+        public static void HoverboardGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true) && Time.time > hoverboardGunDelay)
+                {
+                    hoverboardGunDelay = Time.time + 0.25f;
+                    FreeHoverboardManager.instance.SendDropBoardRPC(NewPointer.transform.position, RandomQuaternion(), Vector3.zero, Vector3.zero, RandomColor());
+                }
+            }
+        }
         
         private static int pieceIdSet = -566818631;
         private static float blockDelay = 0f;
@@ -1846,7 +1863,7 @@ Piece Name: {gunTarget.name}";
             {
                 hoverboardSpamDelay = Time.time + 0.5f;
 
-                FreeHoverboardManager.instance.SendDropBoardRPC(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, GorillaTagger.Instance.rightHandTransform.forward * ShootStrength, RandomVector3(100f), RandomColor());
+                FreeHoverboardManager.instance.SendDropBoardRPC(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, GorillaTagger.Instance.rightHandTransform.forward * ShootStrength, Vector3.zero, RandomColor());
             }
         }
 
@@ -1854,7 +1871,7 @@ Piece Name: {gunTarget.name}";
         {
             if (Time.time > hoverboardSpamDelay)
             {
-                hoverboardSpamDelay = Time.time + 0.2f;
+                hoverboardSpamDelay = Time.time + 0.25f;
 
                 float offset = 0f;
                 Vector3 position = new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)) * 2f, 1f, MathF.Sin(offset + ((float)Time.frameCount / 30)) * 2f);
@@ -2002,6 +2019,39 @@ Piece Name: {gunTarget.name}";
             }
         }
 
+        private static float bugSpamDelay;
+        private static bool bugSpamToggle;
+        public static void BugSpam()
+        {
+            ThrowableBug bug = GetBug("Floating Bug Holdable");
+            ThrowableBug firefly = bug != null ? GetBug("Firefly") : bug;
+
+            if (rightGrab)
+            {
+                ThrowableBug targetBug = bugSpamToggle ? bug : firefly;
+                if (Time.time > bugSpamDelay)
+                {
+                    bugSpamToggle = !bugSpamToggle;
+                    bugSpamDelay = Time.time + 0.5f;
+
+                    targetBug = bugSpamToggle ? bug : firefly;
+                    
+                    GameObject bugSpamObject = new GameObject("iiMenu_BugSpamObject");
+
+                    bugSpamObject.transform.position = GorillaTagger.Instance.rightHandTransform.position + GorillaTagger.Instance.rightHandTransform.forward * 0.5f;
+                    bugSpamObject.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
+
+                    Rigidbody rigidbody = bugSpamObject.GetOrAddComponent<Rigidbody>();
+                    rigidbody.velocity = GorillaTagger.Instance.rightHandTransform.forward * ShootStrength;
+                    rigidbody.angularVelocity = RandomVector3(100f);
+
+                    targetBug.gameObject.GetOrAddComponent<ClampPosition>().targetTransform = bugSpamObject.transform;
+
+                    UnityEngine.Object.Destroy(bugSpamObject, 5f);
+                }
+            }
+        }
+
         public static void ObjectToHand(string objectName)
         {
             ThrowableBug bug = GetBug(objectName);
@@ -2028,6 +2078,15 @@ Piece Name: {gunTarget.name}";
             if (rightGrab)
             {
                 RequestCreatePiece(pieceIdSet, GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, 0);
+                RPCProtection();
+            }
+        }
+
+        public static void BuildingBlockMinigun()
+        {
+            if (rightGrab)
+            {
+                RequestCreatePiece(pieceIdSet, GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, 0, null, false, GorillaTagger.Instance.rightHandTransform.forward * ShootStrength);
                 RPCProtection();
             }
         }
@@ -2363,7 +2422,7 @@ Piece Name: {gunTarget.name}";
             GetIndex("Change Block Delay").overlapText = "Change Block Delay <color=grey>[</color><color=green>" + blockDebounce.ToString() + "</color><color=grey>]</color>";
         }
 
-        public static void RequestCreatePiece(int pieceType, Vector3 position, Quaternion rotation, int materialType, Player target = null, bool overrideFreeze = false)
+        public static void RequestCreatePiece(int pieceType, Vector3 position, Quaternion rotation, int materialType, Player target = null, bool overrideFreeze = false, Vector3? velocity = null, Vector3? angVelocity = null)
         {
             if (GetIndex("Random Block Type").enabled)
                 pieceType = GetRandomBlockType();
@@ -2417,8 +2476,8 @@ Piece Name: {gunTarget.name}";
                             pieceId,
                             position,
                             rotation,
-                            Vector3.zero,
-                            Vector3.zero,
+                            velocity ?? Vector3.zero,
+                            angVelocity ?? Vector3.zero,
                             PhotonNetwork.LocalPlayer
                         };
 
@@ -2461,7 +2520,7 @@ Piece Name: {gunTarget.name}";
                         position = ServerLeftHandPos + ((position - ServerLeftHandPos).normalized * 2.5f);
 
                     Networking.RequestGrabPiece(piece, true, Vector3.zero, Quaternion.identity);
-                    Networking.RequestDropPiece(piece, position, rotation, Vector3.zero, Vector3.zero);
+                    Networking.RequestDropPiece(piece, position, rotation, velocity ?? Vector3.zero, angVelocity ?? Vector3.zero);
                 }
             }
         }
@@ -2669,7 +2728,7 @@ Piece Name: {gunTarget.name}";
 
         public static void BuildingBlockAura()
         {
-            RequestCreatePiece(pieceIdSet, VRRig.LocalRig.transform.position + Vector3.Normalize(new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f))) * 2f, Quaternion.identity, 0);
+            RequestCreatePiece(pieceIdSet, VRRig.LocalRig.transform.position + RandomVector3().normalized * 2f, Quaternion.identity, 0);
             RPCProtection();
         }
 
@@ -2691,10 +2750,16 @@ Piece Name: {gunTarget.name}";
             foreach (GliderHoldable glider in GetAllType<GliderHoldable>())
             {
                 if (glider.GetView.Owner == PhotonNetwork.LocalPlayer)
-                    glider.gameObject.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360), UnityEngine.Random.Range(0, 360)));
+                    glider.gameObject.transform.rotation = RandomQuaternion();
                 else
                     glider.OnHover(null, null);
             }
+        }
+
+        public static void SpazHoverboard()
+        {
+            if (VRRig.LocalRig.hoverboardVisual != null && VRRig.LocalRig.hoverboardVisual.IsHeld)
+                VRRig.LocalRig.hoverboardVisual.SetIsHeld(VRRig.LocalRig.hoverboardVisual.IsLeftHanded, VRRig.LocalRig.hoverboardVisual.NominalLocalPosition, RandomQuaternion(), RandomColor());
         }
 
         public static void OrbitObject(string objectName, float offset = 0)
