@@ -2498,7 +2498,7 @@ namespace iiMenu.Menu
                         }
                         if (isSearching && !isPcWhenSearching)
                         {
-                            if (Vector3.Distance(VRKeyboard.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 1f)
+                            if (Vector3.Distance(VRKeyboard.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > menuScale)
                             {
                                 VRKeyboard.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
                                 VRKeyboard.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;

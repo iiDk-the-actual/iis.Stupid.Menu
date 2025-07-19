@@ -44,8 +44,8 @@ namespace iiMenu.Mods
                         menuSpawnPosition = VRKeyboard.transform.Find("MenuSpawnPosition").gameObject;
                         VRKeyboard.transform.Find("Canvas/Text").GetComponent<Text>().color = textColor;
 
-                        VRKeyboard.transform.localScale *= scaleWithPlayer ? GTPlayer.Instance.scale : 1f;
-                        menuSpawnPosition.transform.localScale *= scaleWithPlayer ? GTPlayer.Instance.scale : 1f;
+                        VRKeyboard.transform.localScale *= scaleWithPlayer ? GTPlayer.Instance.scale * menuScale : menuScale;
+                        menuSpawnPosition.transform.localScale *= scaleWithPlayer ? GTPlayer.Instance.scale * menuScale : menuScale;
 
                         ColorChanger backgroundColorChanger = VRKeyboard.transform.Find("Background").gameObject.AddComponent<ColorChanger>();
                         backgroundColorChanger.colors = new Gradient
