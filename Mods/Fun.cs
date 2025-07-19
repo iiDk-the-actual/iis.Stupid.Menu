@@ -2098,7 +2098,7 @@ Piece Name: {gunTarget.name}";
         public static void HolsterObject(string objectName, TransferrableObject.PositionState state)
         {
             ThrowableBug bug = GetBug(objectName);
-            if (bug != null)
+            if (bug != null && (bug.currentState == TransferrableObject.PositionState.Dropped || bug.currentState == TransferrableObject.PositionState.None))
                 bug.currentState = state;
         }
 
