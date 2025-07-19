@@ -689,23 +689,27 @@ namespace iiMenu.Mods
 
         public static void IronMan()
         {
+            Rigidbody rb = GorillaTagger.Instance.rigidbody;
+
             if (leftPrimary)
             {
-                //if (dynamicAnimations)
-                //    TagEffectsLibrary.PlayEffect(GTPlayer.Instance.leftControllerTransform.transform, true, .1f, TagEffectsLibrary.EffectType.FIRST_PERSON, VRRig.LocalRig.CosmeticEffectPack, VRRig.LocalRig.CosmeticEffectPack, VRRig.LocalRig.leftHandTransform.rotation);
+                Vector3 leftForce = flySpeed * -GorillaTagger.Instance.leftHandTransform.right;
+                rb.AddForce(leftForce * Time.deltaTime, ForceMode.VelocityChange);
 
-                GorillaTagger.Instance.rigidbody.AddForce(flySpeed * -GorillaTagger.Instance.leftHandTransform.right, ForceMode.Acceleration);
-                GorillaTagger.Instance.StartVibration(true, GorillaTagger.Instance.tapHapticStrength / 50f * GorillaTagger.Instance.rigidbody.velocity.magnitude, GorillaTagger.Instance.tapHapticDuration);
+                float hapticStrength = GorillaTagger.Instance.tapHapticStrength / 50f * rb.velocity.magnitude;
+                GorillaTagger.Instance.StartVibration(true, hapticStrength, GorillaTagger.Instance.tapHapticDuration);
             }
+
             if (rightPrimary)
             {
-                //if (dynamicAnimations)
-                //    TagEffectsLibrary.PlayEffect(GTPlayer.Instance.rightControllerTransform.transform, true, .1f, TagEffectsLibrary.EffectType.FIRST_PERSON, VRRig.LocalRig.CosmeticEffectPack, VRRig.LocalRig.CosmeticEffectPack, VRRig.LocalRig.rightHandTransform.rotation);
+                Vector3 rightForce = flySpeed * GorillaTagger.Instance.rightHandTransform.right;
+                rb.AddForce(rightForce * Time.deltaTime, ForceMode.VelocityChange);
 
-                GorillaTagger.Instance.rigidbody.AddForce(flySpeed * GorillaTagger.Instance.rightHandTransform.right, ForceMode.Acceleration);
-                GorillaTagger.Instance.StartVibration(false, GorillaTagger.Instance.tapHapticStrength / 50f * GorillaTagger.Instance.rigidbody.velocity.magnitude, GorillaTagger.Instance.tapHapticDuration);
+                float hapticStrength = GorillaTagger.Instance.tapHapticStrength / 50f * rb.velocity.magnitude;
+                GorillaTagger.Instance.StartVibration(false, hapticStrength, GorillaTagger.Instance.tapHapticDuration);
             }
         }
+
 
         private static float loaoalsode = 0f;
         private static BalloonHoldable GetTargetBalloon()
