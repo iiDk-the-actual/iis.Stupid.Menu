@@ -1,5 +1,6 @@
 using GorillaExtensions;
 using GorillaGameModes;
+using GorillaLocomotion;
 using GorillaNetworking;
 using GorillaTag;
 using GorillaTagScripts;
@@ -341,21 +342,68 @@ namespace iiMenu.Mods
             lastPartyKickThingy = FriendshipGroupDetection.Instance.IsInParty;
         }
 
+        public static Coroutine waterSplashCoroutine;
+        public static IEnumerator DisableWaterSplash()
+        {
+            yield return new WaitForSeconds(0.3f);
+            VRRig.LocalRig.enabled = true;
+        }
+
+        public static void BetaWaterSplash(Vector3 splashPosition, Quaternion splashRotation, float splashScale, float boundingRadius, bool bigSplash, bool enteringWater, object general = null)
+        {
+            if (general == null)
+                general = RpcTarget.All;
+
+            splashScale = Mathf.Clamp(splashScale, 1E-05f, 1f);
+            boundingRadius = Mathf.Clamp(boundingRadius, 0.0001f, 0.5f);
+
+            if ((VRRig.LocalRig.transform.position - splashPosition).sqrMagnitude >= 8.5f)
+            {
+                VRRig.LocalRig.enabled = false;
+                VRRig.LocalRig.transform.position = splashPosition - Vector3.down * 2f;
+
+                if (waterSplashCoroutine != null)
+                    CoroutineManager.instance.StopCoroutine(waterSplashCoroutine);
+
+                waterSplashCoroutine = CoroutineManager.instance.StartCoroutine(DisableWaterSplash());
+            }
+
+            object[] parameters = new object[]
+            {
+                splashPosition,
+                splashRotation,
+                splashScale,
+                boundingRadius,
+                bigSplash,
+                enteringWater
+            };
+
+            if (general is NetPlayer player)
+                GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", NetPlayerToPlayer(player), parameters);
+            else if (general is RpcTarget target)
+            {
+                if (target == RpcTarget.All)
+                    ObjectPools.instance.Instantiate(GTPlayer.Instance.waterParams.rippleEffect, splashPosition, splashRotation, GTPlayer.Instance.waterParams.rippleEffectScale * boundingRadius * 2f, true);
+
+                GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", target, parameters);
+            }
+            else if (general is int[] targets)
+            {
+                if (targets.Contains(NetworkSystem.Instance.LocalPlayer.ActorNumber))
+                    ObjectPools.instance.Instantiate(GTPlayer.Instance.waterParams.rippleEffect, splashPosition, splashRotation, GTPlayer.Instance.waterParams.rippleEffectScale * boundingRadius * 2f, true);
+
+                Overpowered.SpecialTargetRPC(GorillaTagger.Instance.myVRRig.GetView, "RPC_PlaySplashEffect", targets, parameters);
+            }
+
+            RPCProtection();
+        }
+
         public static float splashDel;
         public static void WaterSplashHands()
         {
             if (Time.time > splashDel && (rightGrab || leftGrab))
             {
-                GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", RpcTarget.All, new object[]
-                {
-                    rightGrab ? GorillaTagger.Instance.rightHandTransform.position : GorillaTagger.Instance.leftHandTransform.position,
-                    rightGrab ? GorillaTagger.Instance.rightHandTransform.rotation : GorillaTagger.Instance.leftHandTransform.rotation,
-                    4f,
-                    100f,
-                    true,
-                    false
-                });
-                RPCProtection();
+                BetaWaterSplash(rightGrab ? GorillaTagger.Instance.rightHandTransform.position : GorillaTagger.Instance.leftHandTransform.position, rightGrab ? GorillaTagger.Instance.rightHandTransform.rotation : GorillaTagger.Instance.leftHandTransform.rotation, 4f, 100f, true, false);
                 splashDel = Time.time + 0.1f;
             }
         }
@@ -377,19 +425,7 @@ namespace iiMenu.Mods
                             Vector3 position = lockTarget.rightMiddle.calcT > 0.5f ? GorillaTagger.Instance.rightHandTransform.position : GorillaTagger.Instance.leftHandTransform.position;
                             Quaternion rotation = lockTarget.rightMiddle.calcT > 0.5f ? GorillaTagger.Instance.rightHandTransform.rotation : GorillaTagger.Instance.leftHandTransform.rotation;
 
-                            VRRig.LocalRig.enabled = false;
-                            VRRig.LocalRig.transform.position = position - Vector3.down * 2f;
-
-                            GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", RpcTarget.All, new object[]
-                            {
-                                rightGrab ? GorillaTagger.Instance.rightHandTransform.position : GorillaTagger.Instance.leftHandTransform.position,
-                                rightGrab ? GorillaTagger.Instance.rightHandTransform.rotation : GorillaTagger.Instance.leftHandTransform.rotation,
-                                4f,
-                                100f,
-                                true,
-                                false
-                            });
-                            RPCProtection();
+                            BetaWaterSplash(position, rotation, 4f, 100f, true, false);
                             splashDel = Time.time + 0.1f;
                         }
                     } else
@@ -419,16 +455,7 @@ namespace iiMenu.Mods
         {
             if (Time.time > splashDel)
             {
-                GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", RpcTarget.All, new object[]
-                {
-                    VRRig.LocalRig.transform.position + new Vector3(UnityEngine.Random.Range(-0.5f, 0.5f),UnityEngine.Random.Range(-0.5f, 0.5f),UnityEngine.Random.Range(-0.5f, 0.5f)),
-                    RandomQuaternion(),
-                    4f,
-                    100f,
-                    true,
-                    false
-                });
-                RPCProtection();
+                BetaWaterSplash(VRRig.LocalRig.transform.position + RandomVector3(2f), RandomQuaternion(), 4f, 100f, true, false);
                 splashDel = Time.time + 0.1f;
             }
         }
@@ -437,16 +464,7 @@ namespace iiMenu.Mods
         {
             if (Time.time > splashDel)
             {
-                GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", RpcTarget.All, new object[]
-                {
-                    GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos((float)Time.frameCount / 30), 1f, MathF.Sin((float)Time.frameCount / 30)),
-                    RandomQuaternion(),
-                    4f,
-                    100f,
-                    true,
-                    false
-                });
-                RPCProtection();
+                BetaWaterSplash(GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos((float)Time.frameCount / 30), 1f, MathF.Sin((float)Time.frameCount / 30)), RandomQuaternion(), 4f, 100f, true, false);
                 splashDel = Time.time + 0.1f;
             }
         }
@@ -459,24 +477,10 @@ namespace iiMenu.Mods
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
 
-                if (GetGunInput(true))
+                if (GetGunInput(true) && Time.time > splashDel)
                 {
-                    VRRig.LocalRig.enabled = false;
-                    VRRig.LocalRig.transform.position = NewPointer.transform.position - Vector3.up * 2f;
-                    if (Time.time > splashDel)
-                    {
-                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", RpcTarget.All, new object[]
-                        {
-                            NewPointer.transform.position,
-                            RandomQuaternion(),
-                            4f,
-                            100f,
-                            true,
-                            false
-                        });
-                        RPCProtection();
-                        splashDel = Time.time + 0.1f;
-                    }
+                    BetaWaterSplash(NewPointer.transform.position, RandomQuaternion(), 4f, 100f, true, false);
+                    splashDel = Time.time + 0.1f;
                 }
                 else
                     VRRig.LocalRig.enabled = true;
@@ -489,34 +493,15 @@ namespace iiMenu.Mods
         {
             if (Time.time > splashDel)
             {
-                if (GorillaLocomotion.GTPlayer.Instance.IsHandTouching(true))
+                if (GTPlayer.Instance.IsHandTouching(true))
                 {
-                    RaycastHit ray = GorillaLocomotion.GTPlayer.Instance.lastHitInfoHand;
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", RpcTarget.All, new object[]
-                    {
-                        GorillaTagger.Instance.leftHandTransform.position,
-                        Quaternion.Euler(ray.normal),
-                        4f,
-                        100f,
-                        true,
-                        false
-                    });
-                    RPCProtection();
+                    RaycastHit ray = GTPlayer.Instance.lastHitInfoHand;
+                    BetaWaterSplash(GorillaTagger.Instance.leftHandTransform.position, Quaternion.Euler(ray.normal), 4f, 100f, true, false);
                     splashDel = Time.time + 0.1f;
-                }
-                if (GorillaLocomotion.GTPlayer.Instance.IsHandTouching(false))
+                } else if (GTPlayer.Instance.IsHandTouching(false))
                 {
-                    RaycastHit ray = GorillaLocomotion.GTPlayer.Instance.lastHitInfoHand;
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", RpcTarget.All, new object[]
-                    {
-                        GorillaTagger.Instance.rightHandTransform.position,
-                        Quaternion.Euler(ray.normal),
-                        4f,
-                        100f,
-                        true,
-                        false
-                    });
-                    RPCProtection();
+                    RaycastHit ray = GTPlayer.Instance.lastHitInfoHand;
+                    BetaWaterSplash(GorillaTagger.Instance.rightHandTransform.position, Quaternion.Euler(ray.normal), 4f, 100f, true, false);
                     splashDel = Time.time + 0.1f;
                 }
             }
