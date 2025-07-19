@@ -729,6 +729,7 @@ namespace iiMenu.Mods
         public static SpringJoint leftjoint;
         public static bool isLeftGrappling = false;
         public static bool isRightGrappling = false;
+
         public static void SpiderMan()
         {
             if (leftGrab)
@@ -748,23 +749,21 @@ namespace iiMenu.Mods
                         VRRig.LocalRig.PlayHandTapLocal(89, true, 999999f);
                     
                     RPCProtection();
-                    if (Physics.Raycast(GorillaTagger.Instance.leftHandTransform.position, GorillaTagger.Instance.leftHandTransform.forward, out RaycastHit lefthit, 512f, NoInvisLayerMask()))
-                    {
-                        leftgrapplePoint = lefthit.point;
 
-                        leftjoint = GorillaTagger.Instance.gameObject.AddComponent<SpringJoint>();
-                        leftjoint.autoConfigureConnectedAnchor = false;
-                        leftjoint.connectedAnchor = leftgrapplePoint;
+                    leftgrapplePoint = GorillaTagger.Instance.leftHandTransform.position + GorillaTagger.Instance.leftHandTransform.forward * 16f;
 
-                        float leftdistanceFromPoint = Vector3.Distance(GorillaTagger.Instance.rigidbody.position, leftgrapplePoint);
+                    leftjoint = GorillaTagger.Instance.gameObject.AddComponent<SpringJoint>();
+                    leftjoint.autoConfigureConnectedAnchor = false;
+                    leftjoint.connectedAnchor = leftgrapplePoint;
 
-                        leftjoint.maxDistance = leftdistanceFromPoint * 0.8f;
-                        leftjoint.minDistance = leftdistanceFromPoint * 0.25f;
+                    float leftdistanceFromPoint = Vector3.Distance(GorillaTagger.Instance.rigidbody.position, leftgrapplePoint);
 
-                        leftjoint.spring = 10f;
-                        leftjoint.damper = 50f;
-                        leftjoint.massScale = 12f;
-                    }
+                    leftjoint.maxDistance = leftdistanceFromPoint * 0.8f;
+                    leftjoint.minDistance = leftdistanceFromPoint * 0.25f;
+
+                    leftjoint.spring = 10f;
+                    leftjoint.damper = 50f;
+                    leftjoint.massScale = 12f;
                 }
 
                 GameObject line = new GameObject("Line");
@@ -783,15 +782,7 @@ namespace iiMenu.Mods
             }
             else
             {
-                Physics.Raycast(GorillaTagger.Instance.leftHandTransform.position, GorillaTagger.Instance.leftHandTransform.forward, out var Ray, 512f, NoInvisLayerMask());
-                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                NewPointer.GetComponent<Renderer>().material.color = buttonDefaultA - new Color32(0, 0, 0, 128);
-                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = Ray.point;
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
-                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+                Vector3 EndPosition = GorillaTagger.Instance.leftHandTransform.position + GorillaTagger.Instance.leftHandTransform.forward * 16f;
 
                 GameObject line = new GameObject("Line");
                 LineRenderer liner = line.AddComponent<LineRenderer>();
@@ -800,7 +791,7 @@ namespace iiMenu.Mods
                     liner.numCapVertices = 10;
                     liner.numCornerVertices = 5;
                 }
-                liner.material.shader = Shader.Find("GUI/Text Shader");
+                liner.material.shader = Shader.Find("Sprites/Default");
                 liner.startColor = GetBGColor(0f) - new Color32(0, 0, 0, 128);
                 liner.endColor = GetBGColor(0.5f) - new Color32(0, 0, 0, 128);
                 liner.startWidth = 0.025f;
@@ -808,7 +799,7 @@ namespace iiMenu.Mods
                 liner.positionCount = 2;
                 liner.useWorldSpace = true;
                 liner.SetPosition(0, GorillaTagger.Instance.leftHandTransform.position);
-                liner.SetPosition(1, Ray.point);
+                liner.SetPosition(1, EndPosition);
                 UnityEngine.Object.Destroy(line, Time.deltaTime);
 
                 isLeftGrappling = false;
@@ -832,24 +823,24 @@ namespace iiMenu.Mods
                     }
                     else
                         VRRig.LocalRig.PlayHandTapLocal(89, false, 999999f);
-                    
-                    if (Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out RaycastHit righthit, 512f, NoInvisLayerMask()))
-                    {
-                        rightgrapplePoint = righthit.point;
 
-                        rightjoint = GorillaTagger.Instance.gameObject.AddComponent<SpringJoint>();
-                        rightjoint.autoConfigureConnectedAnchor = false;
-                        rightjoint.connectedAnchor = rightgrapplePoint;
+                    rightgrapplePoint = GorillaTagger.Instance.rightHandTransform.position + GorillaTagger.Instance.rightHandTransform.forward * 16f;
 
-                        float rightdistanceFromPoint = Vector3.Distance(GorillaTagger.Instance.rigidbody.position, rightgrapplePoint);
+                    if (rightgrapplePoint == Vector3.zero)
+                        rightgrapplePoint = GorillaTagger.Instance.rightHandTransform.position + (GorillaTagger.Instance.rightHandTransform.forward * 512f);
 
-                        rightjoint.maxDistance = rightdistanceFromPoint * 0.8f;
-                        rightjoint.minDistance = rightdistanceFromPoint * 0.25f;
+                    rightjoint = GorillaTagger.Instance.gameObject.AddComponent<SpringJoint>();
+                    rightjoint.autoConfigureConnectedAnchor = false;
+                    rightjoint.connectedAnchor = rightgrapplePoint;
 
-                        rightjoint.spring = 10f;
-                        rightjoint.damper = 50f;
-                        rightjoint.massScale = 12f;
-                    }
+                    float rightdistanceFromPoint = Vector3.Distance(GorillaTagger.Instance.rigidbody.position, rightgrapplePoint);
+
+                    rightjoint.maxDistance = rightdistanceFromPoint * 0.8f;
+                    rightjoint.minDistance = rightdistanceFromPoint * 0.25f;
+
+                    rightjoint.spring = 10f;
+                    rightjoint.damper = 50f;
+                    rightjoint.massScale = 12f;
                 }
 
                 GameObject line = new GameObject("Line");
@@ -868,15 +859,7 @@ namespace iiMenu.Mods
             }
             else
             {
-                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray, 512f, NoInvisLayerMask());
-                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                NewPointer.GetComponent<Renderer>().material.color = buttonDefaultA - new Color32(0, 0, 0, 128);
-                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = Ray.point;
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
-                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+                Vector3 EndPosition = GorillaTagger.Instance.rightHandTransform.position + GorillaTagger.Instance.rightHandTransform.forward * 16f;
 
                 GameObject line = new GameObject("Line");
                 LineRenderer liner = line.AddComponent<LineRenderer>();
@@ -885,7 +868,7 @@ namespace iiMenu.Mods
                     liner.numCapVertices = 10;
                     liner.numCornerVertices = 5;
                 }
-                liner.material.shader = Shader.Find("GUI/Text Shader");
+                liner.material.shader = Shader.Find("Sprites/Default");
                 liner.startColor = GetBGColor(0f) - new Color32(0, 0, 0, 128);
                 liner.endColor = GetBGColor(0.5f) - new Color32(0, 0, 0, 128);
                 liner.startWidth = 0.025f;
@@ -893,7 +876,7 @@ namespace iiMenu.Mods
                 liner.positionCount = 2;
                 liner.useWorldSpace = true;
                 liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
-                liner.SetPosition(1, Ray.point);
+                liner.SetPosition(1, EndPosition);
                 UnityEngine.Object.Destroy(line, Time.deltaTime);
 
                 isRightGrappling = false;
@@ -908,6 +891,7 @@ namespace iiMenu.Mods
                 if (!isLeftGrappling)
                 {
                     isLeftGrappling = true;
+                    GorillaTagger.Instance.rigidbody.velocity += GorillaTagger.Instance.leftHandTransform.forward * 5f;
                     if (PhotonNetwork.InRoom)
                     {
                         GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
@@ -918,13 +902,12 @@ namespace iiMenu.Mods
                     }
                     else
                         VRRig.LocalRig.PlayHandTapLocal(89, true, 999999f);
-                    
-                    RPCProtection();
-                    if (Physics.Raycast(GorillaTagger.Instance.leftHandTransform.position, GorillaTagger.Instance.leftHandTransform.forward, out RaycastHit lefthit, 512f, NoInvisLayerMask()))
-                        leftgrapplePoint = lefthit.point;
-                }
 
-                GorillaTagger.Instance.rigidbody.velocity += Vector3.Normalize(leftgrapplePoint - GorillaTagger.Instance.leftHandTransform.position) * 0.5f;
+                    RPCProtection();
+                    leftgrapplePoint = GorillaTagger.Instance.leftHandTransform.position + GorillaTagger.Instance.leftHandTransform.forward * 16f;
+                }
+                else
+                    GorillaTagger.Instance.rigidbody.velocity += Vector3.Normalize(leftgrapplePoint - GorillaTagger.Instance.leftHandTransform.position) * 0.5f;
 
                 GameObject line = new GameObject("Line");
                 LineRenderer liner = line.AddComponent<LineRenderer>();
@@ -942,15 +925,7 @@ namespace iiMenu.Mods
             }
             else
             {
-                Physics.Raycast(GorillaTagger.Instance.leftHandTransform.position, GorillaTagger.Instance.leftHandTransform.forward, out var Ray, 512f, NoInvisLayerMask());
-                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                NewPointer.GetComponent<Renderer>().material.color = buttonDefaultA - new Color32(0, 0, 0, 128);
-                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = Ray.point;
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
-                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+                Vector3 EndPosition = GorillaTagger.Instance.leftHandTransform.position + GorillaTagger.Instance.leftHandTransform.forward * 16f;
 
                 GameObject line = new GameObject("Line");
                 LineRenderer liner = line.AddComponent<LineRenderer>();
@@ -959,7 +934,7 @@ namespace iiMenu.Mods
                     liner.numCapVertices = 10;
                     liner.numCornerVertices = 5;
                 }
-                liner.material.shader = Shader.Find("GUI/Text Shader");
+                liner.material.shader = Shader.Find("Sprites/Default");
                 liner.startColor = GetBGColor(0f) - new Color32(0, 0, 0, 128);
                 liner.endColor = GetBGColor(0.5f) - new Color32(0, 0, 0, 128);
                 liner.startWidth = 0.025f;
@@ -967,7 +942,7 @@ namespace iiMenu.Mods
                 liner.positionCount = 2;
                 liner.useWorldSpace = true;
                 liner.SetPosition(0, GorillaTagger.Instance.leftHandTransform.position);
-                liner.SetPosition(1, Ray.point);
+                liner.SetPosition(1, EndPosition);
                 UnityEngine.Object.Destroy(line, Time.deltaTime);
 
                 isLeftGrappling = false;
@@ -979,6 +954,7 @@ namespace iiMenu.Mods
                 if (!isRightGrappling)
                 {
                     isRightGrappling = true;
+                    GorillaTagger.Instance.rigidbody.velocity += GorillaTagger.Instance.rightHandTransform.forward * 5f;
                     if (PhotonNetwork.InRoom)
                     {
                         GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
@@ -990,12 +966,10 @@ namespace iiMenu.Mods
                     }
                     else
                         VRRig.LocalRig.PlayHandTapLocal(89, false, 999999f);
-                    
-                    if (Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out RaycastHit righthit, 512f, NoInvisLayerMask()))
-                        rightgrapplePoint = righthit.point;
-                }
 
-                GorillaTagger.Instance.rigidbody.velocity += Vector3.Normalize(rightgrapplePoint - GorillaTagger.Instance.rightHandTransform.position) * 0.5f;
+                    rightgrapplePoint = GorillaTagger.Instance.rightHandTransform.position + GorillaTagger.Instance.rightHandTransform.forward * 16f;
+                } else
+                    GorillaTagger.Instance.rigidbody.velocity += Vector3.Normalize(rightgrapplePoint - GorillaTagger.Instance.rightHandTransform.position) * 0.5f;
 
                 GameObject line = new GameObject("Line");
                 LineRenderer liner = line.AddComponent<LineRenderer>();
@@ -1013,15 +987,7 @@ namespace iiMenu.Mods
             }
             else
             {
-                Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.forward, out var Ray, 512f, NoInvisLayerMask());
-                GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                NewPointer.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                NewPointer.GetComponent<Renderer>().material.color = buttonDefaultA - new Color32(0, 0, 0, 128);
-                NewPointer.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-                NewPointer.transform.position = Ray.point;
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<BoxCollider>());
-                UnityEngine.Object.Destroy(NewPointer.GetComponent<Collider>());
-                UnityEngine.Object.Destroy(NewPointer, Time.deltaTime);
+                Vector3 EndPosition = GorillaTagger.Instance.rightHandTransform.position + GorillaTagger.Instance.rightHandTransform.forward * 16f;
 
                 GameObject line = new GameObject("Line");
                 LineRenderer liner = line.AddComponent<LineRenderer>();
@@ -1030,7 +996,7 @@ namespace iiMenu.Mods
                     liner.numCapVertices = 10;
                     liner.numCornerVertices = 5;
                 }
-                liner.material.shader = Shader.Find("GUI/Text Shader");
+                liner.material.shader = Shader.Find("Sprites/Default");
                 liner.startColor = GetBGColor(0f) - new Color32(0, 0, 0, 128);
                 liner.endColor = GetBGColor(0.5f) - new Color32(0, 0, 0, 128);
                 liner.startWidth = 0.025f;
@@ -1038,11 +1004,10 @@ namespace iiMenu.Mods
                 liner.positionCount = 2;
                 liner.useWorldSpace = true;
                 liner.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
-                liner.SetPosition(1, Ray.point);
+                liner.SetPosition(1, EndPosition);
                 UnityEngine.Object.Destroy(line, Time.deltaTime);
 
                 isRightGrappling = false;
-                UnityEngine.Object.Destroy(rightjoint);
             }
         }
 
