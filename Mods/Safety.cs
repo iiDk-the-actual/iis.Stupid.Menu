@@ -281,6 +281,7 @@ namespace iiMenu.Mods
             {
                 if (Time.time > delaysonospam)
                 {
+                    string notifyText = "";
                     foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
                     {
                         if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
@@ -301,13 +302,25 @@ namespace iiMenu.Mods
                                         if (!smartarp || (smartarp && line.linePlayer.UserId == buttonClickPlayer && Time.frameCount == buttonClickTime && PhotonNetwork.CurrentRoom.IsVisible && !PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED")))
                                         {
                                             delaysonospam = Time.time + 0.1f;
-                                            NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " is reporting you.");
+
+                                            if (notifyText == "")
+                                                notifyText = GetPlayerFromVRRig(vrrig).NickName;
+                                            else
+                                            {
+                                                if (notifyText.Contains("&"))
+                                                    notifyText = GetPlayerFromVRRig(vrrig).NickName + ", " + notifyText;
+                                                else
+                                                    notifyText += " & " + GetPlayerFromVRRig(vrrig).NickName;
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
                     }
+
+                    if (notifyText != "")
+                        NotifiLib.SendNotification($"<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> {notifyText} {((notifyText.Contains("&") || notifyText.Contains(",")) ? "are" : "is")} reporting you.");
                 }
             }
             catch { } // Not connected
