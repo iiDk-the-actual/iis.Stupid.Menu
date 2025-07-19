@@ -165,7 +165,7 @@ namespace iiMenu.Menu
                                "Queue"))
                 {
                     NetworkSystem.Instance.ReturnToSinglePlayer();
-                    rejRoom = inputText;
+                    Important.QueueRoom(inputText);
                 }
 
                 try
@@ -174,6 +174,7 @@ namespace iiMenu.Menu
                     {
                         richText = true
                     };
+
                     if (advancedArraylist)
                         labelStyle.fontStyle = (FontStyle)((int)activeFontStyle % 2);
                     if (flipArraylist)
