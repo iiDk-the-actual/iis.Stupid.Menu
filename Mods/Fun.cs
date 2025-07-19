@@ -343,7 +343,7 @@ namespace iiMenu.Mods
         }
 
         public static Coroutine waterSplashCoroutine;
-        public static IEnumerator DisableWaterSplash()
+        public static IEnumerator EnableRig()
         {
             yield return new WaitForSeconds(0.3f);
             VRRig.LocalRig.enabled = true;
@@ -357,15 +357,15 @@ namespace iiMenu.Mods
             splashScale = Mathf.Clamp(splashScale, 1E-05f, 1f);
             boundingRadius = Mathf.Clamp(boundingRadius, 0.0001f, 0.5f);
 
-            if ((VRRig.LocalRig.transform.position - splashPosition).sqrMagnitude >= 8.5f)
+            if ((GorillaTagger.Instance.bodyCollider.transform.position - splashPosition).sqrMagnitude >= 8.5f)
             {
                 VRRig.LocalRig.enabled = false;
-                VRRig.LocalRig.transform.position = splashPosition - Vector3.down * 2f;
+                VRRig.LocalRig.transform.position = splashPosition + Vector3.down * 2f;
 
                 if (waterSplashCoroutine != null)
                     CoroutineManager.instance.StopCoroutine(waterSplashCoroutine);
 
-                waterSplashCoroutine = CoroutineManager.instance.StartCoroutine(DisableWaterSplash());
+                waterSplashCoroutine = CoroutineManager.instance.StartCoroutine(EnableRig());
             }
 
             object[] parameters = new object[]
@@ -378,22 +378,30 @@ namespace iiMenu.Mods
                 enteringWater
             };
 
-            if (general is NetPlayer player)
-                GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", NetPlayerToPlayer(player), parameters);
-            else if (general is RpcTarget target)
+            try
             {
-                if (target == RpcTarget.All)
-                    ObjectPools.instance.Instantiate(GTPlayer.Instance.waterParams.rippleEffect, splashPosition, splashRotation, GTPlayer.Instance.waterParams.rippleEffectScale * boundingRadius * 2f, true);
+                if (general is NetPlayer player)
+                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", NetPlayerToPlayer(player), parameters);
+                else if (general is RpcTarget target)
+                {
+                    if (target == RpcTarget.All)
+                    {
+                        ObjectPools.instance.Instantiate(GTPlayer.Instance.waterParams.rippleEffect, splashPosition, splashRotation, GTPlayer.Instance.waterParams.rippleEffectScale * boundingRadius * 2f, true);
+                        ObjectPools.instance.Instantiate(GTPlayer.Instance.waterParams.splashEffect, splashPosition, splashRotation, splashScale, true).GetComponent<WaterSplashEffect>().PlayEffect(bigSplash, enteringWater, splashScale, null);
 
-                GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", target, parameters);
-            }
-            else if (general is int[] targets)
-            {
-                if (targets.Contains(NetworkSystem.Instance.LocalPlayer.ActorNumber))
-                    ObjectPools.instance.Instantiate(GTPlayer.Instance.waterParams.rippleEffect, splashPosition, splashRotation, GTPlayer.Instance.waterParams.rippleEffectScale * boundingRadius * 2f, true);
+                        target = RpcTarget.Others;
+                    }
 
-                Overpowered.SpecialTargetRPC(GorillaTagger.Instance.myVRRig.GetView, "RPC_PlaySplashEffect", targets, parameters);
-            }
+                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlaySplashEffect", target, parameters);
+                }
+                else if (general is int[] targets)
+                {
+                    if (targets.Contains(NetworkSystem.Instance.LocalPlayer.ActorNumber))
+                        ObjectPools.instance.Instantiate(GTPlayer.Instance.waterParams.rippleEffect, splashPosition, splashRotation, GTPlayer.Instance.waterParams.rippleEffectScale * boundingRadius * 2f, true);
+
+                    Overpowered.SpecialTargetRPC(GorillaTagger.Instance.myVRRig.GetView, "RPC_PlaySplashEffect", targets, parameters);
+                }
+            } catch { }
 
             RPCProtection();
         }
@@ -428,8 +436,7 @@ namespace iiMenu.Mods
                             BetaWaterSplash(position, rotation, 4f, 100f, true, false);
                             splashDel = Time.time + 0.1f;
                         }
-                    } else
-                        VRRig.LocalRig.enabled = true;
+                    }
                 }
                 if (GetGunInput(true))
                 {
@@ -444,10 +451,7 @@ namespace iiMenu.Mods
             else
             {
                 if (gunLocked)
-                {
                     gunLocked = false;
-                    VRRig.LocalRig.enabled = true;
-                }
             }
         }
 
@@ -479,14 +483,10 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true) && Time.time > splashDel)
                 {
-                    BetaWaterSplash(NewPointer.transform.position, RandomQuaternion(), 4f, 100f, true, false);
                     splashDel = Time.time + 0.1f;
+                    BetaWaterSplash(NewPointer.transform.position, RandomQuaternion(), 4f, 100f, true, false);
                 }
-                else
-                    VRRig.LocalRig.enabled = true;
             }
-            else
-                VRRig.LocalRig.enabled = true;
         }
 
         public static void WaterSplashWalk()
@@ -1470,6 +1470,24 @@ namespace iiMenu.Mods
             }
         }
 
+        public static Coroutine dropBoard;
+        public static void BetaDropBoard(Vector3 position, Quaternion rotation, Vector3 velocity, Vector3 avelocity, Color boardColor)
+        {
+            if (Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, position) > 5f)
+            {
+                VRRig.LocalRig.enabled = false;
+                VRRig.LocalRig.transform.position = position + Vector3.down * 4f;
+
+                if (dropBoard != null)
+                    CoroutineManager.instance.StopCoroutine(dropBoard);
+
+                dropBoard = CoroutineManager.instance.StartCoroutine(EnableRig());
+            }
+
+            FreeHoverboardManager.instance.SendDropBoardRPC(position, rotation, velocity, avelocity, boardColor);
+            RPCProtection();
+        }
+
         private static float hoverboardGunDelay;
         public static void HoverboardGun()
         {
@@ -1482,7 +1500,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true) && Time.time > hoverboardGunDelay)
                 {
                     hoverboardGunDelay = Time.time + 0.25f;
-                    FreeHoverboardManager.instance.SendDropBoardRPC(NewPointer.transform.position, RandomQuaternion(), Vector3.zero, Vector3.zero, RandomColor());
+                    BetaDropBoard(NewPointer.transform.position + Vector3.up, RandomQuaternion(), Vector3.zero, Vector3.zero, RandomColor());
                 }
             }
         }
@@ -1499,7 +1517,7 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true))
                 {
-                    RequestCreatePiece(pieceIdSet, NewPointer.transform.position + new Vector3(0f, 1f, 0f), Quaternion.identity, 0);
+                    RequestCreatePiece(pieceIdSet, NewPointer.transform.position + Vector3.up * 0.1f, Quaternion.identity, 0);
                     RPCProtection();
                 }
             }
@@ -1838,7 +1856,7 @@ Piece Name: {gunTarget.name}";
 
         public static void SpawnHoverboard()
         {
-            FreeHoverboardManager.instance.SendDropBoardRPC(VRRig.LocalRig.transform.position, VRRig.LocalRig.transform.rotation, Vector3.zero, Vector3.zero, RandomColor());
+            BetaDropBoard(VRRig.LocalRig.transform.position, VRRig.LocalRig.transform.rotation, Vector3.zero, Vector3.zero, RandomColor());
             GorillaLocomotion.GTPlayer.Instance.SetHoverAllowed(true);
         }
 
@@ -1849,7 +1867,7 @@ Piece Name: {gunTarget.name}";
             {
                 hoverboardSpamDelay = Time.time + 0.5f;
 
-                FreeHoverboardManager.instance.SendDropBoardRPC(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength, Vector3.zero, RandomColor());
+                BetaDropBoard(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength, Vector3.zero, RandomColor());
             }
         }
 
@@ -1865,7 +1883,7 @@ Piece Name: {gunTarget.name}";
                 offset = -25f;
                 Vector3 position2 = new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)) * 2f, 1f, MathF.Sin(offset + ((float)Time.frameCount / 30)) * 2f);
 
-                FreeHoverboardManager.instance.SendDropBoardRPC(GorillaTagger.Instance.headCollider.transform.position + position, Quaternion.Euler((GorillaTagger.Instance.headCollider.transform.position - position).normalized), (position2 - position).normalized * 6.5f, new Vector3(0f, 360f, 0f), RandomColor());
+                BetaDropBoard(GorillaTagger.Instance.headCollider.transform.position + position, Quaternion.Euler((GorillaTagger.Instance.headCollider.transform.position - position).normalized), (position2 - position).normalized * 6.5f, new Vector3(0f, 360f, 0f), RandomColor());
 
                 offset = 180f;
                 position = new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)) * 2f, 1f, MathF.Sin(offset + ((float)Time.frameCount / 30)) * 2f);
@@ -1873,7 +1891,7 @@ Piece Name: {gunTarget.name}";
                 offset = 155f;
                 position2 = new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)) * 2f, 1f, MathF.Sin(offset + ((float)Time.frameCount / 30)) * 2f);
 
-                FreeHoverboardManager.instance.SendDropBoardRPC(GorillaTagger.Instance.headCollider.transform.position + position, Quaternion.Euler((GorillaTagger.Instance.headCollider.transform.position - position).normalized), (position2 - position).normalized * 6.5f, new Vector3(0f, 360f, 0f), RandomColor());
+                BetaDropBoard(GorillaTagger.Instance.headCollider.transform.position + position, Quaternion.Euler((GorillaTagger.Instance.headCollider.transform.position - position).normalized), (position2 - position).normalized * 6.5f, new Vector3(0f, 360f, 0f), RandomColor());
             }
         }
 
