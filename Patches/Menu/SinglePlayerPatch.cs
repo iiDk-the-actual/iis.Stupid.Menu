@@ -22,7 +22,15 @@ namespace iiMenu.Patches
             __instance.UpdatePlayers();
             __instance.SinglePlayerStarted();
 
+            __result = InternalDisconnect(__instance);
+
             return false;
+        }
+
+        private static async Task InternalDisconnect(NetworkSystemPUN instance)
+        {
+            await instance.WaitForStateCheck(new NetworkSystemPUN.InternalState[] { NetworkSystemPUN.InternalState.Internal_Disconnected });
+            instance.internalState = NetworkSystemPUN.InternalState.Idle;
         }
     }
 }
