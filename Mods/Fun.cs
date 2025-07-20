@@ -2105,6 +2105,18 @@ Piece Name: {gunTarget.name}";
                 bug.currentState = state;
         }
 
+        public static void FreezeObject(string objectName)
+        {
+            ThrowableBug bug = GetBug(objectName);
+            if (bug != null)
+            {
+                bug.bugRotationalVelocity = Quaternion.identity;
+                bug.targetVelocity = Vector3.zero;
+                bug.thrownVeloicity = Vector3.zero;
+                bug.thrownYVelocity = 0f;
+            }
+        }
+
         public static void ObjectToHand(string objectName)
         {
             ThrowableBug bug = GetBug(objectName);
