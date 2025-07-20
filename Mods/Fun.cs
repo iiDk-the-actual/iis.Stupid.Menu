@@ -2879,7 +2879,25 @@ Piece Name: {gunTarget.name}";
             lastWasNull = bug != null;
         }
 
-        public static void MultiGrab()
+        private static float noclipBuildingDelay;
+        public static void NoclipBuilding()
+        {
+            if (Time.time > noclipBuildingDelay)
+                noclipBuildingDelay = Time.time + 5f;
+            else
+                return;
+
+            foreach (BuilderPiece piece in GetAllType<BuilderPiece>().Where(block => block.gameObject.activeInHierarchy && !block.isBuiltIntoTable))
+                piece.SetColliderLayers(piece.colliders, BuilderTable.heldLayerLocal);
+        }
+
+		public static void DisableNoclipBuilding()
+		{
+			foreach (BuilderPiece piece in GetAllType<BuilderPiece>().Where(block => block.gameObject.activeInHierarchy && !block.isBuiltIntoTable))
+				piece.SetColliderLayers(piece.colliders, piece.state == BuilderPiece.State.AttachedAndPlaced ? BuilderTable.placedLayer : BuilderTable.droppedLayer);
+		}
+
+		public static void MultiGrab()
         {
             BuilderPieceInteractor.instance.handState[1] = BuilderPieceInteractor.HandState.Empty;
             BuilderPieceInteractor.instance.heldPiece[1] = null;

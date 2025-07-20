@@ -3740,18 +3740,19 @@ namespace iiMenu.Menu
         }
 
         public static Dictionary<Type, object[]> typePool = new Dictionary<Type, object[]> { };
-        private static float receiveTypeDelay = -1f;
+        private static Dictionary<Type, float> receiveTypeDelay = new Dictionary<Type, float> { };
 
         public static T[] GetAllType<T>(float decayTime = 5f) where T : UnityEngine.Object
         {
             Type type = typeof(T);
 
-            if (Time.time > receiveTypeDelay)
-            {
-                if (typePool.ContainsKey(type))
-                    typePool.Remove(type);
+            if (!receiveTypeDelay.TryGetValue(type, out float lastReceivedTime))
+                lastReceivedTime = -1f;
 
-                receiveTypeDelay = Time.time + decayTime;
+            if (Time.time > lastReceivedTime)
+            {
+                typePool.Remove(type);
+                receiveTypeDelay[type] = Time.time + decayTime;
             }
 
             if (!typePool.ContainsKey(type))
