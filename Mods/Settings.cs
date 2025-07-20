@@ -2253,8 +2253,8 @@ namespace iiMenu.Mods
                 arrowType--;
 
             arrowType %= arrowTypes.Length;
-            if (fontCycle < 0)
-                fontCycle = arrowTypes.Length - 1;
+            if (arrowType < 0)
+                arrowType = arrowTypes.Length - 1;
         }
 
         public static void ChangeFontType(bool positive = true)
