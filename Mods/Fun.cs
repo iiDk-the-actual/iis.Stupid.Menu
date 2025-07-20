@@ -2098,6 +2098,19 @@ Piece Name: {gunTarget.name}";
             }
         }
 
+        public static void DisableBugSpam()
+        {
+            ThrowableBug bugObject = GetBugObject("Floating Bug Holdable");
+
+            if (bugObject.GetComponent<ClampPosition>() != null)
+                UnityEngine.Object.Destroy(bugObject.GetComponent<ClampPosition>());
+
+            ThrowableBug fireflyObject = GetBugObject("Firefly");
+
+            if (fireflyObject.GetComponent<ClampPosition>() != null)
+                UnityEngine.Object.Destroy(fireflyObject.GetComponent<ClampPosition>());
+        }
+
         public static void HolsterObject(string objectName, TransferrableObject.PositionState state)
         {
             ThrowableBug bug = GetBug(objectName);
