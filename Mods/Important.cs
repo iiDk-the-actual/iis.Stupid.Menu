@@ -276,8 +276,11 @@ namespace iiMenu.Mods
 
         public static void ForceEnableHands()
         {
-            GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").SetActive(true);
-            GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").SetActive(true);
+            ConnectedControllerHandler.Instance.leftControllerValid = true;
+            ConnectedControllerHandler.Instance.rightControllerValid = true;
+
+            ConnectedControllerHandler.Instance.leftValid = true;
+            ConnectedControllerHandler.Instance.rightValid = true;
         }
 
         private static bool reportMenuToggle;

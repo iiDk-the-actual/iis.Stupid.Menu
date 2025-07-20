@@ -60,10 +60,10 @@ namespace iiMenu.Mods
             Vector3 Position = leftPrimary ? GorillaTagger.Instance.leftHandTransform.position : GorillaTagger.Instance.rightHandTransform.position;
             Quaternion Rotation = leftPrimary ? GorillaTagger.Instance.leftHandTransform.rotation : GorillaTagger.Instance.rightHandTransform.rotation;
 
-            GTPlayer.Instance.leftControllerTransform.localPosition = new Vector3(238f, -90f, 0f);
+            GTPlayer.Instance.leftControllerTransform.position = GTPlayer.Instance.headCollider.transform.position + GTPlayer.Instance.headCollider.transform.up * -0.5f * GTPlayer.Instance.scale;
             GTPlayer.Instance.leftControllerTransform.rotation = Camera.main.transform.rotation * Quaternion.Euler(-55f, 90f, 0f);
 
-            GTPlayer.Instance.rightControllerTransform.localPosition = Position;
+            GTPlayer.Instance.rightControllerTransform.position = Position;
             GTPlayer.Instance.rightControllerTransform.rotation = Rotation;
 
             ControllerInputPoller.instance.leftControllerGripFloat = 0f;
