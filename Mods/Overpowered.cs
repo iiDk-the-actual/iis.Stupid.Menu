@@ -2449,7 +2449,8 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void LagPlayer(object general)
+        private static float lagDebounce;
+        public static void LagTarget(object general)
         {
             if (PhotonNetwork.InRoom && Time.time > lagDebounce)
             {
@@ -2474,7 +2475,6 @@ namespace iiMenu.Mods
             }
         }
 
-        private static float lagDebounce;
         public static void LagGun()
         {
             if (GetGunInput(false))
@@ -2484,7 +2484,7 @@ namespace iiMenu.Mods
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
-                    LagPlayer(GetPlayerFromVRRig(lockTarget));
+                    LagTarget(GetPlayerFromVRRig(lockTarget));
 
                 if (GetGunInput(true))
                 {
@@ -2503,20 +2503,14 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void LagAll() => LagPlayer(RpcTarget.Others);
+        public static void LagAll() => LagTarget(RpcTarget.Others);
 
         public static void LagAura()
         {
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                Vector3 they = vrrig.headMesh.transform.position;
-                Vector3 notthem = VRRig.LocalRig.head.rigTarget.position;
-                float distance = Vector3.Distance(they, notthem);
-
-                if (distance < 3f && !PlayerIsLocal(vrrig))
-                {
-                    LagPlayer(GetPlayerFromVRRig(vrrig));
-                }
+                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !PlayerIsLocal(vrrig))
+                    LagTarget(GetPlayerFromVRRig(vrrig));
             }
         }
 
@@ -2526,6 +2520,7 @@ namespace iiMenu.Mods
             {
                 List<int> actors = new List<int> { };
 
+                if (Time.time > Safety.delaysonospam)
                 foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
                 {
                     if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
@@ -2547,6 +2542,7 @@ namespace iiMenu.Mods
                                     {
                                         actors.Add(GetPlayerFromVRRig(vrrig).ActorNumber);
                                         NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they are being lagged.");
+                                        Safety.delaysonospam = Time.time + 0.1f;
                                     }
                                 }
                             }
@@ -2555,10 +2551,12 @@ namespace iiMenu.Mods
                 }
 
                 if (actors.Count > 0)
-                    LagPlayer(actors.ToArray());
+                    LagTarget(actors.ToArray());
             }
             catch { } // Not connected
         }
+
+      
 
         public static void SetRoomLock(bool status)
         {
