@@ -2628,6 +2628,7 @@ namespace iiMenu.Mods
             {
                 List<int> actors = new List<int> { };
 
+                if (Time.time > Safety.delaysonospam)
                 foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
                 {
                     if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
@@ -2649,6 +2650,7 @@ namespace iiMenu.Mods
                                     {
                                         actors.Add(GetPlayerFromVRRig(vrrig).ActorNumber);
                                         NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they are being lagged.");
+                                        Safety.delaysonospam = Time.time + 0.1f;
                                     }
                                 }
                             }
@@ -2668,27 +2670,31 @@ namespace iiMenu.Mods
             {
                 List<int> actors = new List<int> { };
 
-                foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+                if (Time.time > Safety.delaysonospam)
                 {
-                    if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
+                    foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
                     {
-                        Transform report = line.reportButton.gameObject.transform;
-                        if (GetIndex("Visualize Anti Report").enabled)
-                            VisualizeAura(report.position, Safety.threshold, Color.red);
-
-                        foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                        if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
                         {
-                            if (!vrrig.isLocal)
-                            {
-                                float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
-                                float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
+                            Transform report = line.reportButton.gameObject.transform;
+                            if (GetIndex("Visualize Anti Report").enabled)
+                                VisualizeAura(report.position, Safety.threshold, Color.red);
 
-                                if (D1 < Safety.threshold || D2 < Safety.threshold)
+                            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                            {
+                                if (!vrrig.isLocal)
                                 {
-                                    if (!Safety.smartarp || (Safety.smartarp && PhotonNetwork.CurrentRoom.IsVisible && !PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED")))
+                                    float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
+                                    float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
+
+                                    if (D1 < Safety.threshold || D2 < Safety.threshold)
                                     {
-                                        actors.Add(GetPlayerFromVRRig(vrrig).ActorNumber);
-                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they are being lagged.");
+                                        if (!Safety.smartarp || (Safety.smartarp && PhotonNetwork.CurrentRoom.IsVisible && !PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED")))
+                                        {
+                                            actors.Add(GetPlayerFromVRRig(vrrig).ActorNumber);
+                                            NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they are being crashed.");
+                                            Safety.delaysonospam = Time.time + 0.1f;
+                                        }
                                     }
                                 }
                             }
