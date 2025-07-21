@@ -274,7 +274,7 @@ namespace iiMenu.Mods
             catch { } // Not connected
         }
 
-        private static float delaysonospam = 0f;
+        public static float delaysonospam = 0f;
         public static void AntiReportNotify()
         {
             try
