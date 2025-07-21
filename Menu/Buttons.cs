@@ -1317,7 +1317,13 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Fling</color><color=grey>]</color>", method =() => Overpowered.AntiReportFling(), toolTip = "Flings whoever tries to report you."},
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Snowball Fling</color><color=grey>]</color>", method =() => Overpowered.AntiReportSnowballFling(), toolTip = "Flings whoever tries to report you with the snowballs."},
-                
+
+                new ButtonInfo { buttonText = "Crash Gun", method =() => Overpowered.CrashGun(), toolTip = "Crashes whoever your hand desires."},
+                new ButtonInfo { buttonText = "Crash All", method =() => Overpowered.CrashTarget(Photon.Realtime.ReceiverGroup.Others), toolTip = "Crashes everyone in the lobby."},
+                new ButtonInfo { buttonText = "Crash Aura", method =() => Overpowered.CrashAura(), toolTip = "Crashes players nearby you."},
+
+                new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Crash</color><color=grey>]</color>", method =() => Overpowered.AntiReportCrash(), toolTip = "Crashes whoever tries to report you."},
+
                 new ButtonInfo { buttonText = "Lag Gun", method =() => Overpowered.LagGun(), toolTip = "Lags whoever your hand desires."},
                 new ButtonInfo { buttonText = "Lag All", method =() => Overpowered.LagAll(), toolTip = "Lags everyone in the room."},
                 new ButtonInfo { buttonText = "Lag Aura", method =() => Overpowered.LagAura(), toolTip = "Lags players nearby you."},
@@ -1325,7 +1331,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Lag</color><color=grey>]</color>", method =() => Overpowered.AntiReportLag(), toolTip = "Lags whoever tries to report you."},
 
                 new ButtonInfo { buttonText = "Lock Room", method =() => Overpowered.SetRoomLock(true), isTogglable = false, toolTip = "Locks the room so no one else can join."},           
-                new ButtonInfo { buttonText = "Unlock Room", method =() => Overpowered.SetRoomLock(false), isTogglable = false, toolTip = "Unlocks the room so everyone can join."},
+                new ButtonInfo { buttonText = "Unlock Room", method =() => Overpowered.SetRoomLock(false), isTogglable = false, toolTip = "Unlocks the room so anyone can join."},
 
                 new ButtonInfo { buttonText = "Destroy Gun", method =() => Overpowered.DestroyGun(), toolTip = "Block new players from seeing whoever your hand desires."},
                 new ButtonInfo { buttonText = "Destroy All", method =() => Overpowered.DestroyAll(), isTogglable = false, toolTip = "Block new players from seeing everyone."},
@@ -1513,6 +1519,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Change Snowball Scale", overlapText = "Change Snowball Scale <color=grey>[</color><color=green>6</color><color=grey>]</color>", method =() => Overpowered.ChangeSnowballScale(true), enableMethod =() => Overpowered.ChangeSnowballScale(true), disableMethod =() => Overpowered.ChangeSnowballScale(false), incremental = true, isTogglable = false, toolTip = "Changes the scale of the snowballs." },
 
                 new ButtonInfo { buttonText = "Change Lag Power", overlapText = "Change Lag Power <color=grey>[</color><color=green>Heavy</color><color=grey>]</color>", method =() => Overpowered.ChangeLagPower(true), enableMethod =() => Overpowered.ChangeLagPower(true), disableMethod =() => Overpowered.ChangeLagPower(false), incremental = true, isTogglable = false, toolTip = "Changes the power of the lag mods." },
+                new ButtonInfo { buttonText = "Change Crash Power", overlapText = "Change Crash Power <color=grey>[</color><color=green>Fast</color><color=grey>]</color>", method =() => Overpowered.ChangeCrashPower(true), enableMethod =() => Overpowered.ChangeCrashPower(true), disableMethod =() => Overpowered.ChangeCrashPower(false), incremental = true, isTogglable = false, toolTip = "Changes the power of the crash mods." },
             },
 
             new ButtonInfo[] { // Keybind Settings [32]
