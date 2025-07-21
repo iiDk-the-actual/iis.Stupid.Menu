@@ -1245,26 +1245,6 @@ namespace iiMenu.Mods
             GetIndex("Change Lag Power").overlapText = "Change Lag Power <color=grey>[</color><color=green>" + new string[] { "Light", "Heavy", "Spike" } [lagIndex] + "</color><color=grey>]</color>";
         }
 
-        public static int crashIndex = 0;
-        public static int crashAmount;
-        public static float crashDelay;
-        public static void ChangeCrashPower(bool positive = true)
-        {
-            if (positive)
-                crashIndex++;
-            else
-                crashIndex--;
-
-            crashIndex %= 2;
-            if (crashIndex < 0)
-                crashIndex = 1;
-
-            crashAmount = new int[] { 465, 1900 }[crashIndex];
-            crashDelay = new float[] { 1f, 4.5f }[crashIndex];
-
-            GetIndex("Change Crash Power").overlapText = "Change Crash Power <color=grey>[</color><color=green>" + new string[] { "Fast", "Heavy" }[crashIndex] + "</color><color=grey>]</color>";
-        }
-
         public static float snowballSpawnDelay = 0.1f;
         public static bool SnowballHandIndex;
         public static void BetaSpawnSnowball(Vector3 Pos, Vector3 Vel, float Scale, int Mode, Player Target = null, bool NetworkSize = true, int customNetworkedSize = -1)
@@ -2469,94 +2449,6 @@ namespace iiMenu.Mods
             }
         }
 
-        public static float crashDebounce;
-        public static void CrashGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (gunLocked && lockTarget != null)
-                    CrashTarget(GetPlayerFromVRRig(lockTarget));
-
-                if (GetGunInput(true))
-                {
-                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
-                    {
-                        gunLocked = true;
-                        lockTarget = gunTarget;
-                    }
-                }
-            }
-            else
-            {
-                if (gunLocked)
-                    gunLocked = false;
-            }
-        }
-
-        public static void CrashAura()
-        {
-            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-            {
-                if (Vector3.Distance(vrrig.transform.position, VRRig.LocalRig.transform.position) < 4 && !PlayerIsLocal(vrrig))
-                    CrashTarget(GetPlayerFromVRRig(vrrig));
-            }
-        }
-
-        public static void CrashTarget(object general)
-        {
-            foreach (string snowball in new[] { "GrowingSnowballLeftAnchor", "GrowingSnowballRightAnchor" })
-                GetProjectile(snowball).SetSnowballActiveLocal(true);
-
-            if (DisableCoroutine != null)
-                CoroutineManager.EndCoroutine(DisableCoroutine);
-
-            DisableCoroutine = CoroutineManager.RunCoroutine(DisableSnowball(false));
-
-            if (PhotonNetwork.InRoom && Time.time > crashDebounce)
-            {
-                if (general is NetPlayer player)
-                {
-                    for (int i = 0; i < crashAmount; i++)
-                    {
-                        PhotonNetwork.RaiseEvent(176, new object[]
-                        {
-                           float.NaN,
-                           serverLink
-                        }, new RaiseEventOptions
-                        {
-                            TargetActors = new int[] { player.ActorNumber },
-                            CachingOption = EventCaching.DoNotCache
-                        }, SendOptions.SendUnreliable);
-                        RPCProtection();
-                    }
-                }
-                else if (general is ReceiverGroup target)
-                {
-                    for (int i = 0; i < crashAmount; i++)
-                    {
-                        PhotonNetwork.RaiseEvent(176, new object[]
-                        {
-                           float.NaN,
-                           serverLink
-                        }, new RaiseEventOptions
-                        {
-                            Receivers = target,
-                            CachingOption = EventCaching.DoNotCache
-                        }, SendOptions.SendUnreliable);
-                        RPCProtection();
-                    }
-                }
-
-                crashDebounce = Time.time + crashDelay;
-
-            }
-        }
-
         private static float lagDebounce;
         public static void LagTarget(object general)
         {
@@ -2664,49 +2556,7 @@ namespace iiMenu.Mods
             catch { } // Not connected
         }
 
-        public static void AntiReportCrash()
-        {
-            try
-            {
-                List<int> actors = new List<int> { };
-
-                if (Time.time > Safety.delaysonospam)
-                {
-                    foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
-                    {
-                        if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
-                        {
-                            Transform report = line.reportButton.gameObject.transform;
-                            if (GetIndex("Visualize Anti Report").enabled)
-                                VisualizeAura(report.position, Safety.threshold, Color.red);
-
-                            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-                            {
-                                if (!vrrig.isLocal)
-                                {
-                                    float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
-                                    float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
-
-                                    if (D1 < Safety.threshold || D2 < Safety.threshold)
-                                    {
-                                        if (!Safety.smartarp || (Safety.smartarp && PhotonNetwork.CurrentRoom.IsVisible && !PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED")))
-                                        {
-                                            actors.Add(GetPlayerFromVRRig(vrrig).ActorNumber);
-                                            NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they are being crashed.");
-                                            Safety.delaysonospam = Time.time + 0.1f;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (actors.Count > 0)
-                    CrashTarget(actors.ToArray());
-            }
-            catch { } // Not connected
-        }
+      
 
         public static void SetRoomLock(bool status)
         {
