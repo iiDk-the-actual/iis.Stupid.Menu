@@ -368,9 +368,9 @@ namespace iiMenu.Mods
 
         public static void ChangeSpeedBoostAmount(bool positive = true)
         {
-            float[] jspeedamounts = new float[] { 2f, 7.5f, 9f, 200f };
-            float[] jmultiamounts = new float[] { 0.5f, 1.1f, 2f, 10f };
-            string[] speedNames = new string[] { "Slow", "Normal", "Fast", "Ultra Fast" };
+            float[] jspeedamounts = new float[] { 2f, 7.5f, 8f, 9f, 200f };
+            float[] jmultiamounts = new float[] { 0.5f, 1.1f, 1.5f, 2f, 10f };
+            string[] speedNames = new string[] { "Slow", "Normal", "Middle", "Fast", "Ultra Fast" };
 
             if (positive)
                 speedboostCycle++;
