@@ -1259,7 +1259,7 @@ namespace iiMenu.Mods
             if (crashIndex < 0)
                 crashIndex = 1;
 
-            crashAmount = new int[] { 465, 1900, }[crashIndex];
+            crashAmount = new int[] { 465, 1900 }[crashIndex];
             crashDelay = new float[] { 1f, 4.5f }[crashIndex];
 
             GetIndex("Change Crash Power").overlapText = "Change Crash Power <color=grey>[</color><color=green>" + new string[] { "Fast", "Heavy" }[crashIndex] + "</color><color=grey>]</color>";
