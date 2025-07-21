@@ -764,6 +764,8 @@ namespace iiMenu.Menu
 
                         if ((!VRRig.LocalRig.enabled || ghostException) && !disableGhostview)
                         {
+                            Color color = GetIndex("Swap Ghostview Colors").enabled ? GetBDColor(0f) : GetBGColor(0f);
+
                             if (legacyGhostview)
                             {
                                 if (GhostRig.enabled)
@@ -775,19 +777,20 @@ namespace iiMenu.Menu
 
                                 legacyGhostViewLeft.SetActive(true);
                                 legacyGhostViewLeft.transform.position = TrueLeftHand().position;
-                                legacyGhostViewLeft.GetComponent<Renderer>().material.color = GetBGColor(0f);
+                                legacyGhostViewLeft.GetComponent<Renderer>().material.color = color;
 
                                 legacyGhostViewRight.SetActive(true);
                                 legacyGhostViewRight.transform.position = TrueRightHand().position;
-                                legacyGhostViewRight.GetComponent<Renderer>().material.color = GetBGColor(0f);
+                                legacyGhostViewRight.GetComponent<Renderer>().material.color = color;
                             }
                             else
                             {
                                 GhostRig.enabled = true;
                                 GhostRig.mainSkin.enabled = true;
 
-                                Color ghm = GetBGColor(0f);
+                                Color ghm = color;
                                 ghm.a = 0.5f;
+
                                 GhostMaterial.color = ghm;
                                 GhostRig.mainSkin.material = GhostMaterial;
                             }
