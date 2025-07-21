@@ -469,7 +469,7 @@ namespace iiMenu.Mods.Spammers
                         Physics.Raycast(ray, out var hit, 512f, NoInvisLayerMask());
                         charvel = hit.point - GorillaTagger.Instance.rightHandTransform.transform.position;
                         charvel.Normalize();
-                        charvel *= ShootStrength * (shootCycle >= 2 ? 2f : -2f);
+                        charvel *= ShootStrength * 2f;
                     }
                 }
 
