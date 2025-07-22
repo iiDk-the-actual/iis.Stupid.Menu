@@ -1825,19 +1825,24 @@ namespace iiMenu.Menu
             reference.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
             buttonCollider = reference.GetComponent<SphereCollider>();
 
-            ColorChanger colorChanger = reference.AddComponent<ColorChanger>();
-            colorChanger.colors = new Gradient
+            if (hidePointer)
+                reference.GetComponent<Renderer>().enabled = false;
+            else
             {
-                colorKeys = new[]
+                ColorChanger colorChanger = reference.AddComponent<ColorChanger>();
+                colorChanger.colors = new Gradient
                 {
-                    new GradientColorKey(bgColorA, 0f),
-                    new GradientColorKey(bgColorB, 0.5f),
-                    new GradientColorKey(bgColorA, 1f)
-                }
-            };
-            colorChanger.isRainbow = themeType == 6;
-            colorChanger.isEpileptic = themeType == 47;
-            colorChanger.isMonkeColors = themeType == 8;
+                    colorKeys = new[]
+                    {
+                        new GradientColorKey(bgColorA, 0f),
+                        new GradientColorKey(bgColorB, 0.5f),
+                        new GradientColorKey(bgColorA, 1f)
+                    }
+                };
+                colorChanger.isRainbow = themeType == 6;
+                colorChanger.isEpileptic = themeType == 47;
+                colorChanger.isMonkeColors = themeType == 8;
+            }
         }
 
         public static void Draw()
@@ -5528,6 +5533,7 @@ jgs \_   _/ |Oo\
         public static bool flipArraylist;
         public static bool hideSettings;
         public static bool hideTextOnCamera;
+        public static bool hidePointer;
         public static bool incrementalButtons = true;
         public static bool disableDisconnectButton;
         public static bool disableFpsCounter;

@@ -167,6 +167,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Disable Custom Text Colors", enableMethod =() => disableBoardTextColor = true, disableMethod =() => disableBoardTextColor = false, toolTip = "Disables the text colors on the boards to make them match their original theme."},
 
                 new ButtonInfo { buttonText = "Hide Text on Camera", enableMethod =() => hideTextOnCamera = true, disableMethod =() => hideTextOnCamera = false, overlapText = "Streamer Mode Menu Text", toolTip = "Makes the menu's text only render on VR."},
+                new ButtonInfo { buttonText = "Hide Pointer", enableMethod =() => hidePointer = true, disableMethod =() => hidePointer = false, toolTip = "Hides the pointer above your head."},
                 new ButtonInfo { buttonText = "Hide Settings", enableMethod =() => hideSettings = true, disableMethod =() => hideSettings = false, toolTip = "Hides all settings from the Enabled Mods tab, and all arraylists."},
                 new ButtonInfo { buttonText = "High Quality Text", enableMethod =() => highQualityText = true, disableMethod =() => highQualityText = false, toolTip = "Makes the menu's text really high quality."},
 
