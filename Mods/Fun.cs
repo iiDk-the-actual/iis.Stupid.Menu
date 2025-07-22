@@ -2111,6 +2111,63 @@ Piece Name: {gunTarget.name}";
                 UnityEngine.Object.Destroy(fireflyObject.GetComponent<ClampPosition>());
         }
 
+        public static void BugPhallus()
+        {
+            ThrowableBug Bug = GetBug("Floating Bug Holdable");
+            ThrowableBug Firefly = GetBug("Firefly");
+
+            if (Bug && Firefly != null)
+            {
+                Bug.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.bodyCollider.transform.TransformDirection(new Vector3(0f, -0.22f, 0.123f));
+                Firefly.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.bodyCollider.transform.TransformDirection(new Vector3(0f, -0.22f, 0.24f));
+
+                Bug.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation * Quaternion.Euler(0, 270, 0);
+                Firefly.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation * Quaternion.Euler(0, 90, 0);
+            }
+        }
+
+        public static void BugPhallusGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    ThrowableBug Bug = GetBug("Floating Bug Holdable");
+                    ThrowableBug Firefly = GetBug("Firefly");
+
+                    if (Bug && Firefly != null)
+                    {
+                        Bug.transform.position = lockTarget.transform.position + GorillaTagger.Instance.bodyCollider.transform.TransformDirection(new Vector3(0f, -0.4f, 0.123f));
+                        Firefly.transform.position = lockTarget.transform.position + GorillaTagger.Instance.bodyCollider.transform.TransformDirection(new Vector3(0f, -0.4f, 0.24f));
+
+                        Bug.transform.rotation = lockTarget.transform.rotation * Quaternion.Euler(0, 270, 0);
+                        Firefly.transform.rotation = lockTarget.transform.rotation * Quaternion.Euler(0, 90, 0);
+                    }
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                {
+                    gunLocked = false;
+                    VRRig.LocalRig.enabled = true;
+                }
+            }
+        }
+
         public static void HolsterObject(string objectName, TransferrableObject.PositionState state)
         {
             ThrowableBug bug = GetBug(objectName);
