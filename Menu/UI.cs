@@ -241,12 +241,12 @@ namespace iiMenu.Menu
                             GUI.DrawTexture(labelRect, Texture2D.whiteTexture);
                             GUI.color = oldColor;
 
-                            GUI.Label(labelRect, text, labelStyle);
+                            GUI.Label(new Rect(labelRect.x, labelRect.y, labelRect.width + 100f, labelRect.height + 100f), text, labelStyle);
                         }
                         else
                         {
                             Vector2 size = labelStyle.CalcSize(new GUIContent(v));
-                            GUI.Label(new Rect(flipArraylist ? Screen.width - (size.x + 15) : 10, y, size.x, size.y), v, labelStyle);
+                            GUI.Label(new Rect(flipArraylist ? Screen.width - (size.x + 15) : 10, y, size.x + 100f, size.y + 100f), v, labelStyle);
 
                             y += size.y;
                         }
