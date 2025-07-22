@@ -4045,7 +4045,7 @@ namespace iiMenu.Menu
             visualizeGO.GetComponent<Renderer>().material.color = clr;
         }
 
-        private static GameObject audiomgr = null;
+        public static GameObject audiomgr;
         public static void Play2DAudio(AudioClip sound, float volume)
         {
             if (audiomgr == null)
@@ -4059,7 +4059,7 @@ namespace iiMenu.Menu
             ausrc.PlayOneShot(sound);
         }
 
-        private static GameObject audiomgrhand = null;
+        public static GameObject audiomgrhand;
         public static void PlayHandAudio(AudioClip sound, float volume, bool left)
         {
             if (audiomgrhand == null)
@@ -4638,6 +4638,9 @@ namespace iiMenu.Menu
         private static Dictionary<string, (int Category, int Index)> cacheGetIndex = new Dictionary<string, (int Category, int Index)> { }; // Looping through 800 elements is not a light task :/
         public static ButtonInfo GetIndex(string buttonText)
         {
+            if (buttonText == null)
+                return null;
+
             if (cacheGetIndex.ContainsKey(buttonText))
             {
                 var CacheData = cacheGetIndex[buttonText];
@@ -4913,7 +4916,7 @@ namespace iiMenu.Menu
                 if (doButtonsVibrate)
                     GorillaTagger.Instance.StartVibration(rightHand, GorillaTagger.Instance.tagHapticStrength / 2f, GorillaTagger.Instance.tagHapticDuration / 2f);
 
-                if (exclusivePageSounds && (buttonText == "PreviousPage" || buttonText == "NextPage"))
+                if (exclusivePageSounds && buttonText != null && (buttonText == "PreviousPage" || buttonText == "NextPage"))
                 {
                     string url = buttonText == "PreviousPage" ? "prev.wav" : buttonText == "NextPage" ? "next.wav" : null;
                     if (url != null) Play2DAudio(LoadSoundFromURL($"https://github.com/iiDk-the-actual/ModInfo/raw/main/{url}", url), buttonClickVolume / 10f);
@@ -4952,8 +4955,10 @@ namespace iiMenu.Menu
                         { 17, "robloxbutton" },
                         { 18, "robloxtick" },
                         { 19, "mouse" },
-                        { 20, "valve" }
+                        { 20, "valve" },
+                        { 21, "nintendo" }
                     };
+
                     try
                     {
                         ButtonInfo button = GetIndex(buttonText);

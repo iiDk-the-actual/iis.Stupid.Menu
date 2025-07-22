@@ -2406,9 +2406,11 @@ namespace iiMenu.Mods
             { "XP Ding",     "xpding" },
             { "XP Error",    "xperror" },
             { "Roblox Bass", "robloxbass" },
-            { "Oculus",      "oculus" }
+            { "Oculus",      "oculus" },
+            { "Nintendo",    "nintendo" }
         };
-        public static void ChangeNotificationSound(bool positive = true)
+
+        public static void ChangeNotificationSound(bool positive = true, bool fromMenu = false)
         {
             if (positive)
                 notificationSoundIndex++;
@@ -2420,6 +2422,12 @@ namespace iiMenu.Mods
                 notificationSoundIndex = notificationSounds.Keys.Count - 1;
 
             GetIndex("Change Notification Sound").overlapText = "Change Notification Sound <color=grey>[</color><color=green>" + notificationSounds.Keys.ToArray()[notificationSoundIndex] + "</color><color=grey>]</color>";
+
+            if (fromMenu)
+            {
+                audiomgr.GetComponent<AudioSource>().Stop();
+                NotifiLib.PlayNotificationSound();
+            }
         }
 
         public static void ChangeNarrationVoice(bool positive = true)
@@ -3107,7 +3115,7 @@ namespace iiMenu.Mods
             GetIndex("crTime").overlapText = "Change Reconnect Time <color=grey>[</color><color=green>" + Important.reconnectDelay.ToString() + "</color><color=grey>]</color>";
         }
 
-        public static void ChangeButtonSound(bool positive = true)
+        public static void ChangeButtonSound(bool positive = true, bool fromMenu = false)
         {
             int[] sounds = new int[]
             {
@@ -3124,6 +3132,7 @@ namespace iiMenu.Mods
                 66,
                 106,
                 189,
+                66,
                 66,
                 66,
                 66,
@@ -3155,7 +3164,8 @@ namespace iiMenu.Mods
                 "Roblox Button",
                 "Roblox Tick",
                 "Mouse",
-                "Valve"
+                "Valve",
+                "Nintendo"
             };
 
             if (positive)
@@ -3169,9 +3179,16 @@ namespace iiMenu.Mods
 
             buttonClickSound = sounds[buttonClickIndex];
             GetIndex("Change Button Sound").overlapText = "Change Button Sound <color=grey>[</color><color=green>" + buttonSoundNames[buttonClickIndex] + "</color><color=grey>]</color>";
+
+            if (fromMenu)
+            {
+                VRRig.LocalRig.leftHandPlayer.Stop();
+                VRRig.LocalRig.rightHandPlayer.Stop();
+                MakeButtonSound();
+            }
         }
 
-        public static void ChangeButtonVolume(bool positive = true)
+        public static void ChangeButtonVolume(bool positive = true, bool fromMenu = false)
         {
             if (positive)
                 buttonClickVolume++;
@@ -3183,6 +3200,13 @@ namespace iiMenu.Mods
                 buttonClickVolume = 10;
 
             GetIndex("Change Button Volume").overlapText = "Change Button Volume <color=grey>[</color><color=green>" + buttonClickVolume.ToString() + "</color><color=grey>]</color>";
+
+            if (fromMenu)
+            {
+                VRRig.LocalRig.leftHandPlayer.Stop();
+                VRRig.LocalRig.rightHandPlayer.Stop();
+                MakeButtonSound();
+            }
         }
 
         public static Material screenRed = null;
