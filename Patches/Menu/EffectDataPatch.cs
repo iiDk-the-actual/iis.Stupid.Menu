@@ -45,6 +45,7 @@ namespace iiMenu.Patches
 
                         return false;
                     }
+
                     if (!tapsEnabled)
                     {
                         effectContext.speed = 0f;
