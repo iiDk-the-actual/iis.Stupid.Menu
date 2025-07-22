@@ -21,19 +21,11 @@ namespace iiMenu.Classes
 
         public static Player GetRandomPlayer(bool includeSelf) =>
             includeSelf ?
-            PhotonNetwork.PlayerList[Random.Range(0, PhotonNetwork.PlayerList.Length - 1)] :
-            PhotonNetwork.PlayerListOthers[Random.Range(0, PhotonNetwork.PlayerListOthers.Length - 1)];
+            PhotonNetwork.PlayerList[Random.Range(0, PhotonNetwork.PlayerList.Length)] :
+            PhotonNetwork.PlayerListOthers[Random.Range(0, PhotonNetwork.PlayerListOthers.Length)];
 
-        public static VRRig GetRandomVRRig(bool includeSelf)
-        {
-            Player randomPlayer;
-            if (includeSelf)
-                randomPlayer = PhotonNetwork.PlayerList[Random.Range(0, PhotonNetwork.PlayerList.Length -1)];
-            else
-                randomPlayer = PhotonNetwork.PlayerListOthers[Random.Range(0, PhotonNetwork.PlayerListOthers.Length - 1)];
-            
-            return GetVRRigFromPlayer(randomPlayer);
-        }
+        public static VRRig GetRandomVRRig(bool includeSelf) =>
+            GetVRRigFromPlayer(GetRandomPlayer(includeSelf));
 
         public static NetworkView GetNetworkViewFromVRRig(VRRig p) =>
             p.netView;
