@@ -905,7 +905,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Auto Hit Hazards", method =() => Fun.AutoHitMoleType(true), toolTip = "Hits all of the hazards automatically."},
 
                 new ButtonInfo { buttonText = "Bug Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.BugSpam(), disableMethod =() => Fun.DisableBugSpam(), toolTip = "Shoots the bug and firefly out of your hand repeatedly." },
-
+                
                 new ButtonInfo { buttonText = "Bug Phallus", method =() => Fun.BugPhallus(), toolTip = "Gives you a phallus in the form of the bugs." },
                 new ButtonInfo { buttonText = "Bug Phallus Gun", method =() => Fun.BugPhallusGun(), toolTip = "Gives whoever your hand desires a phallus in the form of the bugs." },
 
@@ -1448,6 +1448,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Admin Flip Menu Gun", method =() => Experimental.FlipMenuGun(), toolTip = "Flips the menu of whoever your hand desires if they're using the menu."},
                 new ButtonInfo { buttonText = "Admin Disable Menu Gun", method =() => Experimental.AdminLockdownGun(true), toolTip = "Disables the menu of whoever your hand desires if they're using one."},
                 new ButtonInfo { buttonText = "Admin Enable Menu Gun", method =() => Experimental.AdminLockdownGun(false), toolTip = "Enables the menu of whoever your hand desires if they're using one."},
+
+                new ButtonInfo { buttonText = "Admin Fully Disable Menu Gun", method =() => Experimental.AdminFullLockdownGun(true), toolTip = "Disables the menu of whoever your hand desires and turns off their mods if they're using one."},
+                new ButtonInfo { buttonText = "Admin Fully Enable Menu Gun", method =() => Experimental.AdminFullLockdownGun(false), toolTip = "Enables the menu of whoever your hand desires and turns off their mods if they're using one."},
 
                 new ButtonInfo { buttonText = "Admin Teleport Gun", method =() => Experimental.AdminTeleportGun(), toolTip = "Teleports whoever using the menu to wherever your hand desires."},
                 new ButtonInfo { buttonText = "Admin Fling Gun", method =() => Experimental.AdminFlingGun(), toolTip = "Flings whoever your hand desires upwards."},
