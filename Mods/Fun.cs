@@ -8,6 +8,7 @@ using iiMenu.Classes;
 using iiMenu.Menu;
 using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
+using iiMenu.Patches;
 using Photon.Pun;
 using Photon.Realtime;
 using Photon.Voice;
@@ -2116,7 +2117,7 @@ Piece Name: {gunTarget.name}";
             ThrowableBug Bug = GetBug("Floating Bug Holdable");
             ThrowableBug Firefly = GetBug("Firefly");
 
-            if (Bug && Firefly != null)
+            if (Bug != null && Firefly != null)
             {
                 Bug.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.bodyCollider.transform.TransformDirection(new Vector3(0f, -0.22f, 0.123f));
                 Firefly.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.bodyCollider.transform.TransformDirection(new Vector3(0f, -0.22f, 0.24f));
@@ -2139,10 +2140,10 @@ Piece Name: {gunTarget.name}";
                     ThrowableBug Bug = GetBug("Floating Bug Holdable");
                     ThrowableBug Firefly = GetBug("Firefly");
 
-                    if (Bug && Firefly != null)
+                    if (Bug != null && Firefly != null)
                     {
-                        Bug.transform.position = lockTarget.transform.position + GorillaTagger.Instance.bodyCollider.transform.TransformDirection(new Vector3(0f, -0.4f, 0.123f));
-                        Firefly.transform.position = lockTarget.transform.position + GorillaTagger.Instance.bodyCollider.transform.TransformDirection(new Vector3(0f, -0.4f, 0.24f));
+                        Bug.transform.position = lockTarget.transform.position + lockTarget.transform.TransformDirection(new Vector3(0f, -0.4f, 0.123f));
+                        Firefly.transform.position = lockTarget.transform.position + lockTarget.transform.TransformDirection(new Vector3(0f, -0.4f, 0.24f));
 
                         Bug.transform.rotation = lockTarget.transform.rotation * Quaternion.Euler(0, 270, 0);
                         Firefly.transform.rotation = lockTarget.transform.rotation * Quaternion.Euler(0, 90, 0);
@@ -2166,6 +2167,91 @@ Piece Name: {gunTarget.name}";
                     VRRig.LocalRig.enabled = true;
                 }
             }
+        }
+
+        public static void BugVibrateGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    ThrowableBug Bug = GetBug("Floating Bug Holdable");
+                    ThrowableBug Firefly = Bug != null ? GetBug("Firefly") : null;
+
+                    if (Bug != null)
+                    {
+                        Bug.transform.position = lockTarget.leftHandTransform.position;
+                        Bug.transform.rotation = RandomQuaternion();
+                    }
+
+                    if (Firefly != null)
+                    {
+                        Firefly.transform.position = lockTarget.rightHandTransform.position;
+                        Firefly.transform.rotation = RandomQuaternion();
+                    }
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
+        public static void BugVibrateAll()
+        {
+            ThrowableBug Bug = GetBug("Floating Bug Holdable");
+            ThrowableBug Firefly = Bug != null ? GetBug("Firefly") : null;
+        }
+
+        public static void EnableBugVibrateAll()
+        {
+            SerializePatch.OverrideSerialization = () => {
+                ThrowableBug Bug = GetBug("Floating Bug Holdable");
+                ThrowableBug Firefly = Bug != null ? GetBug("Firefly") : null;
+
+                MassSerialize(true, new[]
+                {
+                    Bug?.worldShareableInstance?.teleportSerializer?.GetView,
+                    Firefly?.worldShareableInstance?.teleportSerializer?.GetView
+                }.Where(v => v != null).ToArray());
+
+                foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
+                {
+                    VRRig targetRig = GetVRRigFromPlayer(Player);
+
+                    if (Bug != null)
+                    {
+                        Bug.transform.position = targetRig.leftHandTransform.position;
+                        Bug.transform.rotation = RandomQuaternion();
+                        SendSerialize(Bug?.worldShareableInstance?.teleportSerializer?.GetView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                    }
+
+                    if (Firefly != null)
+                    {
+                        Firefly.transform.position = targetRig.leftHandTransform.position;
+                        Firefly.transform.rotation = RandomQuaternion();
+                        SendSerialize(Firefly?.worldShareableInstance?.teleportSerializer?.GetView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                    }
+                }
+
+                RPCProtection();
+
+                return false;
+            };
         }
 
         public static void HolsterObject(string objectName, TransferrableObject.PositionState state)
