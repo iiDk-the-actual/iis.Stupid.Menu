@@ -302,7 +302,7 @@ namespace iiMenu.Mods
         private static int lastPlayerCount2 = -1;
         public static void AdminLockdownAll(bool enable)
         {
-            if (PhotonNetwork.InRoom && (!lastInRoom || PhotonNetwork.PlayerList.Length != lastPlayerCount))
+            if (PhotonNetwork.InRoom && (!lastInRoom2 || PhotonNetwork.PlayerList.Length != lastPlayerCount2))
                 Classes.Console.ExecuteCommand("togglemenu", ReceiverGroup.Others, enable);
 
             lastInRoom2 = PhotonNetwork.InRoom;
@@ -313,7 +313,7 @@ namespace iiMenu.Mods
 
         public static void AdminFullLockdownAll(bool enable)
         {
-            if (PhotonNetwork.InRoom && (!lastInRoom || PhotonNetwork.PlayerList.Length != lastPlayerCount))
+            if (PhotonNetwork.InRoom && (!lastInRoom2 || PhotonNetwork.PlayerList.Length != lastPlayerCount2))
             {
                 if (enable)
                 {
