@@ -406,7 +406,7 @@ namespace iiMenu.Mods
                             MassSerialize(true, new PhotonView[] { GorillaTagger.Instance.myVRRig.GetView });
 
                             Vector3 positionArchive = VRRig.LocalRig.transform.position;
-                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = AllActorNumbersExcept(new int[] { PhotonNetwork.MasterClient.ActorNumber, RigManager.GetPlayerFromVRRig(lockTarget).ActorNumber }) });
+                            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = AllActorNumbersExcept(new int[] { PhotonNetwork.MasterClient.ActorNumber, GetPlayerFromVRRig(lockTarget).ActorNumber }) });
 
                             VRRig.LocalRig.transform.position = new Vector3(99999f, 99999f, 99999f);
                             SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { PhotonNetwork.MasterClient.ActorNumber } });

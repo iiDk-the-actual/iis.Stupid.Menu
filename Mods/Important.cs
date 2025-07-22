@@ -315,11 +315,11 @@ namespace iiMenu.Mods
                 PrivateUIRoom.StopOverlay();
 
                 RoomObject?.SetActive(false);
-                if (!Patches.TOSPatch.enabled)
+                if (!TOSPatch.enabled)
                 {
                     GorillaTagger.Instance.tapHapticStrength = 0.5f;
                     GorillaSnapTurn.LoadSettingsFromCache();
-                    Patches.TOSPatch.enabled = true;
+                    TOSPatch.enabled = true;
                 }
 
                 acceptedTOS = true;
@@ -422,13 +422,13 @@ namespace iiMenu.Mods
         public static void DisableMouthMovement()
         {
             VRRig.LocalRig.shouldSendSpeakingLoudness = false;
-            Patches.MicPatch.returnAsNone = true;
+            MicPatch.returnAsNone = true;
         }
 
         public static void EnableMouthMovement()
         {
             VRRig.LocalRig.shouldSendSpeakingLoudness = true;
-            Patches.MicPatch.returnAsNone = false;
+            MicPatch.returnAsNone = false;
         }
 
         private static float lastTime;
