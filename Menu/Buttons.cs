@@ -909,6 +909,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Bug Phallus", method =() => Fun.BugPhallus(), toolTip = "Gives you a phallus in the form of the bugs." },
                 new ButtonInfo { buttonText = "Bug Phallus Gun", method =() => Fun.BugPhallusGun(), toolTip = "Gives whoever your hand desires a phallus in the form of the bugs." },
 
+                new ButtonInfo { buttonText = "Bug Vibrate Gun", method =() => Fun.BugVibrateGun(), toolTip = "Vibrates the controllers of whoever your hand desires using the bugs." },
+                new ButtonInfo { buttonText = "Bug Vibrate All", enableMethod =() => Fun.EnableBugVibrateAll(), method =() => Fun.BugVibrateAll(), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Vibrates the controllers of everyone in the room using the bugs." },
+
                 new ButtonInfo { buttonText = "Holster Bug", method =() => Fun.HolsterObject("Floating Bug Holdable", TransferrableObject.PositionState.OnLeftArm), toolTip = "Holsters the bug on your left arm." },
                 new ButtonInfo { buttonText = "Holster Firefly", method =() => Fun.HolsterObject("Firefly", TransferrableObject.PositionState.OnRightArm), toolTip = "Holsters the firefly on your right arm." },
                 new ButtonInfo { buttonText = "Holster Bat", method =() => Fun.HolsterObject("Cave Bat Holdable", TransferrableObject.PositionState.OnChest), toolTip = "Holsters the bat on your chest." },
