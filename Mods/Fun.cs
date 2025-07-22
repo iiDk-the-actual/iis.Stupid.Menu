@@ -2904,6 +2904,16 @@ Piece Name: {gunTarget.name}";
                 bug.transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)), 2, MathF.Sin(offset + ((float)Time.frameCount / 30)));
         }
 
+        public static void ObjectAura(string objectName)
+        {
+            ThrowableBug bug = GetBug(objectName);
+            if (bug != null)
+            {
+                bug.transform.position = GorillaTagger.Instance.headCollider.transform.position + RandomVector3();
+                bug.transform.rotation = RandomQuaternion();
+            }
+        }
+
         public static void OrbitGliders()
         {
             GliderHoldable[] them = GetAllType<GliderHoldable>();
