@@ -488,7 +488,11 @@ namespace iiMenu.Mods
 
                     VRRig.LocalRig.transform.position = lockTarget.transform.position + RandomVector3(125f);
 
-                    NetPlayer target = RigManager.GetPlayerFromVRRig(lockTarget);
+                    NetPlayer target = GetPlayerFromVRRig(lockTarget);
+
+                    VRRig rig = GetVRRigFromPlayer(target);
+                    rig.leftHand.rigTarget.transform.position = lockTarget.transform.position + RandomVector3(125f);
+                    rig.rightHand.rigTarget.transform.position = lockTarget.transform.position + RandomVector3(125f);
 
                     VRRig.LocalRig.leftHandLink.grabbedLink = lockTarget.leftHandLink;
                     VRRig.LocalRig.leftHandLink.grabbedPlayer = target;
@@ -527,19 +531,24 @@ namespace iiMenu.Mods
 
         public static void BreakControllersAll()
         {
-            VRRig RandomRig = RigManager.GetRandomVRRig(false);
+            VRRig RandomRig = GetRandomVRRig(false);
 
             VRRig.LocalRig.enabled = false;
             VRRig.LocalRig.transform.position = RandomRig.transform.position + RandomVector3(125f);
 
             VRRig.LocalRig.leftHandLink.grabbedLink = RandomRig.leftHandLink;
-            VRRig.LocalRig.leftHandLink.grabbedPlayer = RigManager.GetPlayerFromVRRig(RandomRig);
+            VRRig.LocalRig.leftHandLink.grabbedPlayer = GetPlayerFromVRRig(RandomRig);
 
-            RandomRig = RigManager.GetRandomVRRig(false);
+            RandomRig.leftHand.rigTarget.transform.position = lockTarget.transform.position + RandomVector3(125f);
+
+            RandomRig = GetRandomVRRig(false);
 
             VRRig.LocalRig.rightHandLink.grabbedLink = RandomRig.leftHandLink;
-            VRRig.LocalRig.rightHandLink.grabbedPlayer = RigManager.GetPlayerFromVRRig(RandomRig);
+            VRRig.LocalRig.rightHandLink.grabbedPlayer = GetPlayerFromVRRig(RandomRig);
+
             VRRig.LocalRig.rightHandLink.grabbedHandIsLeft = true;
+
+            RandomRig.rightHand.rigTarget.transform.position = lockTarget.transform.position + RandomVector3(125f);
 
             SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { Receivers = ReceiverGroup.Others });
 
