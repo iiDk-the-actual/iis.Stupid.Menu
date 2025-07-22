@@ -810,6 +810,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Quest Noises <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Fun.QuestNoises(), toolTip = "Makes noises at the quest machine in city when holding <color=green>trigger</color>."},
                 new ButtonInfo { buttonText = "Max Quest Score", method =() => Fun.MaxQuestScore(), toolTip = "Gives you the maximum quest score in the game (99999)."},
+                new ButtonInfo { buttonText = "Custom Quest Score", method =() => Fun.CustomQuestScore(), toolTip = "Gives you a custom quest score. You can change this in the settings."},
                 new ButtonInfo { buttonText = "Fake FPS", method =() => Fun.FakeFPS(), disableMethod =() => Patches.FPSPatch.enabled = false, toolTip = "Makes your FPS appear to be completely random to other players and the competitive bot."},
 
                 new ButtonInfo { buttonText = "Get Builder Watch", method =() => Fun.GiveBuilderWatch(), isTogglable = false, toolTip = "Gives you the builder watch without needing to be in attic."},
@@ -1604,15 +1605,17 @@ namespace iiMenu.Menu
             new ButtonInfo[] { // Fun Settings [36]
                 new ButtonInfo { buttonText = "Exit Fun Settings", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
 
+                new ButtonInfo { buttonText = "Zero Gravity Bugs", toolTip = "Removes the gravity from the bugs on the Bug Spam mod."},
+                new ButtonInfo { buttonText = "Bug Colliders", toolTip = "Gives the bug colliders on the Bug Spam mod."},
+                new ButtonInfo { buttonText = "Bouncy Bug", toolTip = "Makes the bug bounce off of surfaces if using the bug colliders setting on the Bug Spam mod."},
+
+                new ButtonInfo { buttonText = "Change Custom Quest Score", overlapText = "Change Custom Quest Score <color=grey>[</color><color=green>0</color><color=grey>]</color>", method =() => Fun.ChangeCustomQuestScore(true), enableMethod =() => Fun.ChangeCustomQuestScore(true), disableMethod =() => Fun.ChangeCustomQuestScore(false), incremental = true, isTogglable = false, toolTip = "Changes the value of the \"Custom Quest Score\" mod." },
+
                 new ButtonInfo { buttonText = "Zero Gravity Blocks", toolTip = "Removes the gravity from the blocks."},
                 new ButtonInfo { buttonText = "Random Block Type", toolTip = "Selects a random block when using block mods."},
 
                 new ButtonInfo { buttonText = "No Random Position Grab", toolTip = "Disables the position randomization in the \"Grab All ### Blocks\" mods."},
                 new ButtonInfo { buttonText = "No Random Rotation Grab", toolTip = "Disables the rotation randomization in the \"Grab All ### Blocks\" mods."},
-
-                new ButtonInfo { buttonText = "Zero Gravity Bugs", toolTip = "Removes the gravity from the bugs on the Bug Spam mod."},
-                new ButtonInfo { buttonText = "Bug Colliders", toolTip = "Gives the bug colliders on the Bug Spam mod."},
-                new ButtonInfo { buttonText = "Bouncy Bug", toolTip = "Makes the bug bounce off of surfaces if using the bug colliders setting on the Bug Spam mod."},
 
                 new ButtonInfo { buttonText = "Change Block Delay", overlapText = "Change Block Delay <color=grey>[</color><color=green>0</color><color=grey>]</color>", method =() => Fun.ChangeBlockDelay(true), enableMethod =() => Fun.ChangeBlockDelay(true), disableMethod =() => Fun.ChangeBlockDelay(false), incremental = true, isTogglable = false, toolTip = "Gives the blocks a delay before spawning." },
                 new ButtonInfo { buttonText = "Change Cycle Delay", overlapText = "Change Name Cycle Delay <color=grey>[</color><color=green>1</color><color=grey>]</color>", method =() => Fun.ChangeCycleDelay(true), enableMethod =() => Fun.ChangeCycleDelay(true), disableMethod =() => Fun.ChangeCycleDelay(false), incremental = true, isTogglable = false, toolTip = "Changes the delay on name cycle mods." }
