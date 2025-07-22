@@ -1051,6 +1051,8 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Custom Sound ID", method =() => Sound.IncreaseSoundID(), enableMethod =() => Sound.IncreaseSoundID(), disableMethod =() => Sound.DecreaseSoundID(), incremental = true, isTogglable = false, toolTip = "Changes the Sound ID of the Custom Sound Spam." },
                 new ButtonInfo { buttonText = "Custom Sound Spam", overlapText = "Custom Sound Spam <color=grey>[</color><color=green>0</color><color=grey>]</color>", method =() => Sound.CustomSoundSpam(), toolTip = "Plays the selected sound when holding <color=green>grip</color>." },
+
+                new ButtonInfo { buttonText = "Override Tap Sound", method =() => { Patches.EffectDataPatch.enabled = true; Patches.EffectDataPatch.material = soundId; }, disableMethod =() => {  Patches.EffectDataPatch.enabled = false;  Patches.EffectDataPatch.material = -1; }, toolTip = "Plays the selected sound when holding <color=green>grip</color>." },
             },
 
             new ButtonInfo[] { // Projectile Spam Mods [15]
