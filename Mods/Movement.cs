@@ -524,7 +524,7 @@ namespace iiMenu.Mods
 
             ZeroGravity();
 
-            Vector3 velocity = inputDirection.x * playerRight + rightJoystick.y * Vector3.up + inputDirection.z * playerForward;
+            Vector3 velocity = inputDirection.x * playerRight + inputDirection.y * Vector3.up + inputDirection.z * playerForward;
             velocity *= GTPlayer.Instance.scale * flySpeed;
             GorillaTagger.Instance.rigidbody.velocity = Vector3.Lerp(GorillaTagger.Instance.rigidbody.velocity, velocity, 0.12875f);
         }
