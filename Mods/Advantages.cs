@@ -99,7 +99,7 @@ namespace iiMenu.Mods
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             else
             {
-                foreach (Photon.Realtime.Player v in PhotonNetwork.PlayerList)
+                foreach (Player v in PhotonNetwork.PlayerList)
                     RemoveInfected(v);
             }
         }
@@ -178,7 +178,7 @@ namespace iiMenu.Mods
                 if (Time.time > spamtagdelay)
                 {
                     spamtagdelay = Time.time + 0.1f;
-                    foreach (Photon.Realtime.Player v in PhotonNetwork.PlayerList)
+                    foreach (Player v in PhotonNetwork.PlayerList)
                     {
                         if (InfectedList().Contains(v))
                             AddInfected(v);
@@ -567,7 +567,7 @@ namespace iiMenu.Mods
 
             if (NetworkSystem.Instance.IsMasterClient)
             {
-                foreach (Photon.Realtime.Player v in PhotonNetwork.PlayerList)
+                foreach (Player v in PhotonNetwork.PlayerList)
                     AddInfected(v);
                 
                 GetIndex("Tag All").enabled = false;
@@ -655,7 +655,7 @@ namespace iiMenu.Mods
             Vector3 archiveRigPosition = VRRig.LocalRig.transform.position;
             VRRig.LocalRig.transform.position = RigManager.GetVRRigFromPlayer(Target).transform.position;
 
-            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new Photon.Realtime.RaiseEventOptions { TargetActors = new int[] { PhotonNetwork.MasterClient.ActorNumber } });
+            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new int[] { PhotonNetwork.MasterClient.ActorNumber } });
             GameMode.ReportTag(Target);
 
             VRRig.LocalRig.transform.position = archiveRigPosition;
@@ -699,14 +699,14 @@ namespace iiMenu.Mods
                 if (!PlayerIsTagged(vrrig))
                 {
                     VRRig.LocalRig.transform.position = vrrig.transform.position;
-                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new Photon.Realtime.RaiseEventOptions { TargetActors = new int[] { PhotonNetwork.MasterClient.ActorNumber } });
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new int[] { PhotonNetwork.MasterClient.ActorNumber } });
                     GameMode.ReportTag(RigManager.GetPlayerFromVRRig(vrrig));
                 }
             }
 
             VRRig.LocalRig.transform.position = archiveRigPosition;
 
-            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new Photon.Realtime.RaiseEventOptions { TargetActors = new int[] { PhotonNetwork.MasterClient.ActorNumber } });
+            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { TargetActors = new int[] { PhotonNetwork.MasterClient.ActorNumber } });
             RPCProtection();
         }
 
@@ -879,7 +879,7 @@ namespace iiMenu.Mods
             else
             {
                 GorillaPaintbrawlManager brawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
-                foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
+                foreach (Player player in PhotonNetwork.PlayerList)
                     brawlManager.playerLives[player.ActorNumber] = Random.Range(0, 4);
             }
         }
@@ -928,7 +928,7 @@ namespace iiMenu.Mods
             else
             {
                 GorillaPaintbrawlManager brawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
-                foreach (Photon.Realtime.Player loln in PhotonNetwork.PlayerList)
+                foreach (Player loln in PhotonNetwork.PlayerList)
                     brawlManager.playerLives[loln.ActorNumber] = 0;
             }
         }
@@ -977,7 +977,7 @@ namespace iiMenu.Mods
             else
             {
                 GorillaPaintbrawlManager brawlManager = (GorillaPaintbrawlManager)GorillaGameManager.instance;
-                foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
+                foreach (Player player in PhotonNetwork.PlayerList)
                     brawlManager.playerLives[player.ActorNumber] = 4;
             }
         }
