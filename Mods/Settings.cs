@@ -2264,9 +2264,9 @@ namespace iiMenu.Mods
             else
                 fontCycle--;
 
-            fontCycle %= 10;
+            fontCycle %= 12;
             if (fontCycle < 0)
-                fontCycle = 9;
+                fontCycle = 11;
 
             switch (fontCycle) {
                 case 0:
@@ -2279,10 +2279,10 @@ namespace iiMenu.Mods
                     activeFont = Verdana;
                     return;
                 case 3:
-                    if (gtagfont == null)
-                        gtagfont = LoadAsset<Font>("Utopium");
+                    if (GTFont == null)
+                        GTFont = LoadAsset<Font>("Utopium");
 
-                    activeFont = gtagfont;
+                    activeFont = GTFont;
                     return;
                 case 4:
                     activeFont = ComicSans;
@@ -2301,6 +2301,12 @@ namespace iiMenu.Mods
                     return;
                 case 9:
                     activeFont = SimSun;
+                    return;
+                case 10:
+                    activeFont = Minecraft;
+                    return;
+                case 11:
+                    activeFont = Terminal;
                     return;
             }
         }

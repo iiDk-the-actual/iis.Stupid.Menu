@@ -5709,7 +5709,9 @@ jgs \_   _/ |Oo\
         public static Font MSGothic = Font.CreateDynamicFontFromOSFont("MS Gothic", 24);
         public static Font Impact = Font.CreateDynamicFontFromOSFont("Impact", 24);
         public static Font SimSun = Font.CreateDynamicFontFromOSFont("SimSun", 24);
-        public static Font gtagfont;
+        public static Font GTFont;
+        public static Font Minecraft;
+        public static Font Terminal;
         public static Font activeFont = AgencyFB;
         public static FontStyle activeFontStyle = FontStyle.Italic;
 
