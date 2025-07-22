@@ -2184,6 +2184,7 @@ Piece Name: {gunTarget.name}";
                 bug.targetVelocity = Vector3.zero;
                 bug.thrownVeloicity = Vector3.zero;
                 bug.thrownYVelocity = 0f;
+                bug.reliableState.travelingDirection = Vector3.zero;
             }
         }
 
