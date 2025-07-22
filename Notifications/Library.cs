@@ -255,7 +255,7 @@ namespace iiMenu.Notifications
                     }
 
                     if (notificationSoundIndex != 0 && (Time.time > (timeMenuStarted + 5f)))
-                        Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/" + Settings.notificationSounds.Values.ToArray()[notificationSoundIndex] + ".wav", Settings.notificationSounds.Values.ToArray()[notificationSoundIndex] + ".wav"), buttonClickVolume / 10f);
+                        PlayNotificationSound();
 
                     if (inputTextColor != "green")
                         NotificationText = NotificationText.Replace("<color=green>", "<color=" + inputTextColor + ">");
@@ -300,6 +300,9 @@ namespace iiMenu.Notifications
                 }
             }
         }
+
+        public static void PlayNotificationSound() =>
+            Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/" + Settings.notificationSounds.Values.ToArray()[notificationSoundIndex] + ".wav", Settings.notificationSounds.Values.ToArray()[notificationSoundIndex] + ".wav"), buttonClickVolume / 10f);
 
         public static void ClearAllNotifications() =>
             NotifiText.text = "";
