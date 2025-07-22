@@ -490,9 +490,8 @@ namespace iiMenu.Mods
 
                     NetPlayer target = GetPlayerFromVRRig(lockTarget);
 
-                    VRRig rig = GetVRRigFromPlayer(target);
-                    rig.leftHand.rigTarget.transform.position = lockTarget.transform.position + RandomVector3(125f);
-                    rig.rightHand.rigTarget.transform.position = lockTarget.transform.position + RandomVector3(125f);
+                    lockTarget.leftHand.rigTarget.transform.position = lockTarget.transform.position + RandomVector3(125f);
+                    lockTarget.rightHand.rigTarget.transform.position = lockTarget.transform.position + RandomVector3(125f);
 
                     VRRig.LocalRig.leftHandLink.grabbedLink = lockTarget.leftHandLink;
                     VRRig.LocalRig.leftHandLink.grabbedPlayer = target;
@@ -539,7 +538,7 @@ namespace iiMenu.Mods
             VRRig.LocalRig.leftHandLink.grabbedLink = RandomRig.leftHandLink;
             VRRig.LocalRig.leftHandLink.grabbedPlayer = GetPlayerFromVRRig(RandomRig);
 
-            RandomRig.leftHand.rigTarget.transform.position = lockTarget.transform.position + RandomVector3(125f);
+            RandomRig.leftHand.rigTarget.transform.position = RandomRig.transform.position + RandomVector3(125f);
 
             RandomRig = GetRandomVRRig(false);
 
@@ -548,7 +547,7 @@ namespace iiMenu.Mods
 
             VRRig.LocalRig.rightHandLink.grabbedHandIsLeft = true;
 
-            RandomRig.rightHand.rigTarget.transform.position = lockTarget.transform.position + RandomVector3(125f);
+            RandomRig.rightHand.rigTarget.transform.position = RandomRig.transform.position + RandomVector3(125f);
 
             SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { Receivers = ReceiverGroup.Others });
 
