@@ -2233,8 +2233,8 @@ namespace iiMenu.Mods
 
         public static void SetBodyPatch(bool enabled, int mode = 0)
         {
-            Patches.TorsoPatch.enabled = enabled;
-            Patches.TorsoPatch.mode = mode;
+            TorsoPatch.enabled = enabled;
+            TorsoPatch.mode = mode;
 
             if (!enabled && recBodyRotary != null)
                 UnityEngine.Object.Destroy(recBodyRotary);
@@ -2546,7 +2546,7 @@ namespace iiMenu.Mods
                         if (!hasAdded)
                         {
                             hasAdded = true;
-                            Patches.TorsoPatch.VRRigLateUpdate += StareAtTarget;
+                            TorsoPatch.VRRigLateUpdate += StareAtTarget;
                         }
 
                         gunLocked = true;
@@ -2562,7 +2562,7 @@ namespace iiMenu.Mods
                     if (hasAdded)
                     {
                         hasAdded = false;
-                        Patches.TorsoPatch.VRRigLateUpdate -= StareAtTarget;
+                        TorsoPatch.VRRigLateUpdate -= StareAtTarget;
                     }
                 }
             }

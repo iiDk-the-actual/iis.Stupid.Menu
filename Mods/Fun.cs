@@ -114,40 +114,40 @@ namespace iiMenu.Mods
             Quaternion lhr = GorillaTagger.Instance.leftHandTransform.rotation;
             Quaternion rhr = GorillaTagger.Instance.rightHandTransform.rotation;
 
-            GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.transform.position = lh;
-            GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.transform.position = rh;
+            GTPlayer.Instance.rightControllerTransform.transform.position = lh;
+            GTPlayer.Instance.leftControllerTransform.transform.position = rh;
 
-            GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.transform.rotation = lhr;
-            GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.transform.rotation = rhr;
+            GTPlayer.Instance.rightControllerTransform.transform.rotation = lhr;
+            GTPlayer.Instance.leftControllerTransform.transform.rotation = rhr;
         }
 
         public static void FixHandTaps()
         {
-            Patches.EffectDataPatch.enabled = false;
-            Patches.EffectDataPatch.tapsEnabled = true;
-            Patches.EffectDataPatch.doOverride = false;
-            Patches.EffectDataPatch.overrideVolume = 0.1f;
-            Patches.EffectDataPatch.tapMultiplier = 1;
+            EffectDataPatch.enabled = false;
+            EffectDataPatch.tapsEnabled = true;
+            EffectDataPatch.doOverride = false;
+            EffectDataPatch.overrideVolume = 0.1f;
+            EffectDataPatch.tapMultiplier = 1;
             GorillaTagger.Instance.handTapVolume = 0.1f;
         }
 
         public static void LoudHandTaps()
         {
-            Patches.EffectDataPatch.enabled = true;
-            Patches.EffectDataPatch.tapsEnabled = true;
-            Patches.EffectDataPatch.doOverride = true;
-            Patches.EffectDataPatch.overrideVolume = 99999f;
-            Patches.EffectDataPatch.tapMultiplier = 10;
+            EffectDataPatch.enabled = true;
+            EffectDataPatch.tapsEnabled = true;
+            EffectDataPatch.doOverride = true;
+            EffectDataPatch.overrideVolume = 99999f;
+            EffectDataPatch.tapMultiplier = 10;
             GorillaTagger.Instance.handTapVolume = 99999f;
         }
 
         public static void SilentHandTaps()
         {
-            Patches.EffectDataPatch.enabled = true;
-            Patches.EffectDataPatch.tapsEnabled = false;
-            Patches.EffectDataPatch.doOverride = false;
-            Patches.EffectDataPatch.overrideVolume = 0f;
-            Patches.EffectDataPatch.tapMultiplier = 0;
+            EffectDataPatch.enabled = true;
+            EffectDataPatch.tapsEnabled = false;
+            EffectDataPatch.doOverride = false;
+            EffectDataPatch.overrideVolume = 0f;
+            EffectDataPatch.tapMultiplier = 0;
             GorillaTagger.Instance.handTapVolume = 0;
         }
 
@@ -823,7 +823,7 @@ namespace iiMenu.Mods
 
         public static void RainbowBracelet()
         {
-            Patches.BraceletPatch.enabled = true;
+            BraceletPatch.enabled = true;
             if (!VRRig.LocalRig.nonCosmeticRightHandItem.IsEnabled)
             {
                 SetBraceletState(true, false);
@@ -843,7 +843,7 @@ namespace iiMenu.Mods
 
         public static void RemoveRainbowBracelet()
         {
-            Patches.BraceletPatch.enabled = false;
+            BraceletPatch.enabled = false;
             if (!VRRig.LocalRig.nonCosmeticRightHandItem.IsEnabled)
             {
                 SetBraceletState(false, false);
@@ -892,8 +892,8 @@ namespace iiMenu.Mods
 
         public static void FakeFPS()
         {
-            Patches.FPSPatch.enabled = true;
-            Patches.FPSPatch.spoofFPSValue = UnityEngine.Random.Range(0, 255);
+            FPSPatch.enabled = true;
+            FPSPatch.spoofFPSValue = UnityEngine.Random.Range(0, 255);
         }
 
         public static void EverythingGrabbable()
@@ -1386,9 +1386,9 @@ namespace iiMenu.Mods
                         gunLocked = true;
                         lockTarget = gunTarget;
 
-                        Patches.SpeakerPatch.enabled = true;
+                        SpeakerPatch.enabled = true;
 
-                        Patches.SpeakerPatch.targetSpeaker = lockTarget.gameObject.GetComponent<GorillaSpeakerLoudness>().speaker;
+                        SpeakerPatch.targetSpeaker = lockTarget.gameObject.GetComponent<GorillaSpeakerLoudness>().speaker;
 
                         if (factory != null)
                             factory.Dispose();
@@ -1414,7 +1414,7 @@ namespace iiMenu.Mods
                     if (factory != null)
                         factory.Dispose();
 
-                    Patches.SpeakerPatch.enabled = false;
+                    SpeakerPatch.enabled = false;
 
                     Sound.FixMicrophone();
                 }
@@ -1810,26 +1810,26 @@ Piece Name: {gunTarget.name}";
 
         public static void FastHoverboard()
         {
-            GorillaLocomotion.GTPlayer.Instance.hoverboardPaddleBoostMax = float.MaxValue;
-            GorillaLocomotion.GTPlayer.Instance.hoverboardPaddleBoostMultiplier = 5f;
-            GorillaLocomotion.GTPlayer.Instance.hoverboardBoostGracePeriod = 0f;
-            GorillaLocomotion.GTPlayer.Instance.hoverTiltAdjustsForwardFactor = 1f;
+            GTPlayer.Instance.hoverboardPaddleBoostMax = float.MaxValue;
+            GTPlayer.Instance.hoverboardPaddleBoostMultiplier = 5f;
+            GTPlayer.Instance.hoverboardBoostGracePeriod = 0f;
+            GTPlayer.Instance.hoverTiltAdjustsForwardFactor = 1f;
         }
 
         public static void SlowHoverboard()
         {
-            GorillaLocomotion.GTPlayer.Instance.hoverboardPaddleBoostMax = 3.5f;
-            GorillaLocomotion.GTPlayer.Instance.hoverboardPaddleBoostMultiplier = 0.025f;
-            GorillaLocomotion.GTPlayer.Instance.hoverboardBoostGracePeriod = 3f;
-            GorillaLocomotion.GTPlayer.Instance.hoverTiltAdjustsForwardFactor = 0.1f;
+            GTPlayer.Instance.hoverboardPaddleBoostMax = 3.5f;
+            GTPlayer.Instance.hoverboardPaddleBoostMultiplier = 0.025f;
+            GTPlayer.Instance.hoverboardBoostGracePeriod = 3f;
+            GTPlayer.Instance.hoverTiltAdjustsForwardFactor = 0.1f;
         }
 
         public static void FixHoverboard()
         {
-            GorillaLocomotion.GTPlayer.Instance.hoverboardPaddleBoostMax = 10f;
-            GorillaLocomotion.GTPlayer.Instance.hoverboardPaddleBoostMultiplier = 0.1f;
-            GorillaLocomotion.GTPlayer.Instance.hoverboardBoostGracePeriod = 1f;
-            GorillaLocomotion.GTPlayer.Instance.hoverTiltAdjustsForwardFactor = 0.2f;
+            GTPlayer.Instance.hoverboardPaddleBoostMax = 10f;
+            GTPlayer.Instance.hoverboardPaddleBoostMultiplier = 0.1f;
+            GTPlayer.Instance.hoverboardBoostGracePeriod = 1f;
+            GTPlayer.Instance.hoverTiltAdjustsForwardFactor = 0.2f;
         }
 
         private static bool hasGrabbedHoverboard;
@@ -1837,12 +1837,12 @@ Piece Name: {gunTarget.name}";
         {
             if (!hasGrabbedHoverboard)
             {
-                GorillaLocomotion.GTPlayer.Instance.GrabPersonalHoverboard(false, Vector3.zero, Quaternion.identity, Color.black);
+                GTPlayer.Instance.GrabPersonalHoverboard(false, Vector3.zero, Quaternion.identity, Color.black);
                 hasGrabbedHoverboard = true;
             }
 
-            GorillaLocomotion.GTPlayer.Instance.SetHoverAllowed(true);
-            GorillaLocomotion.GTPlayer.Instance.SetHoverActive(true);
+            GTPlayer.Instance.SetHoverAllowed(true);
+            GTPlayer.Instance.SetHoverActive(true);
             VRRig.LocalRig.hoverboardVisual.gameObject.SetActive(true);
         }
 
@@ -1850,15 +1850,15 @@ Piece Name: {gunTarget.name}";
         {
             hasGrabbedHoverboard = false;
 
-            GorillaLocomotion.GTPlayer.Instance.SetHoverAllowed(false);
-            GorillaLocomotion.GTPlayer.Instance.SetHoverActive(false);
+            GTPlayer.Instance.SetHoverAllowed(false);
+            GTPlayer.Instance.SetHoverActive(false);
             VRRig.LocalRig.hoverboardVisual.gameObject.SetActive(false);
         }
 
         public static void SpawnHoverboard()
         {
             BetaDropBoard(VRRig.LocalRig.transform.position, VRRig.LocalRig.transform.rotation, Vector3.zero, Vector3.zero, RandomColor());
-            GorillaLocomotion.GTPlayer.Instance.SetHoverAllowed(true);
+            GTPlayer.Instance.SetHoverAllowed(true);
         }
 
         private static float hoverboardSpamDelay;
@@ -2577,13 +2577,13 @@ Piece Name: {gunTarget.name}";
         public static void UnlimitedBuilding()
         {
             BuilderPieceInteractor.instance.maxHoldablePieceStackCount = int.MaxValue;
-            Patches.UnlimitPatches.enabled = true;
+            UnlimitPatches.enabled = true;
         }
 
         public static void DisableUnlimitedBuilding()
         {
             BuilderPieceInteractor.instance.maxHoldablePieceStackCount = 50;
-            Patches.UnlimitPatches.enabled = false;
+            UnlimitPatches.enabled = false;
         }
 
         public static void PlaceBlockGun()
@@ -2599,7 +2599,7 @@ Piece Name: {gunTarget.name}";
                     BuilderPiece gunTarget = Ray.collider.GetComponentInParent<BuilderPiece>();
                     if (gunTarget)
                     {
-                        RequestPlacePiece(Patches.PlacePatch._piece, gunTarget, Patches.PlacePatch._bumpOffsetX, Patches.PlacePatch._bumpOffsetZ, Patches.PlacePatch._twist, Patches.PlacePatch._parentPiece, Patches.PlacePatch._attachIndex, Patches.PlacePatch._parentAttachIndex);
+                        RequestPlacePiece(PlacePatch._piece, gunTarget, PlacePatch._bumpOffsetX, PlacePatch._bumpOffsetZ, PlacePatch._twist, PlacePatch._parentPiece, PlacePatch._attachIndex, PlacePatch._parentAttachIndex);
                         RPCProtection();
                     }
                 }
@@ -3087,8 +3087,8 @@ Piece Name: {gunTarget.name}";
         {
             BuilderPiece target = null;
 
-            Patches.CreatePatch.enabled = true;
-            Patches.CreatePatch.pieceTypeSearch = pieceType;
+            CreatePatch.enabled = true;
+            CreatePatch.pieceTypeSearch = pieceType;
 
             yield return null;
 
@@ -3102,8 +3102,8 @@ Piece Name: {gunTarget.name}";
 
             target = GetBuilderTable().GetPiece(pieceId);
             pieceId = -1;
-            Patches.CreatePatch.enabled = false;
-            Patches.CreatePatch.pieceTypeSearch = 0;
+            CreatePatch.enabled = false;
+            CreatePatch.pieceTypeSearch = 0;
 
             onComplete?.Invoke(target); // so bad
         }
@@ -4110,15 +4110,15 @@ Piece Name: {gunTarget.name}";
 
         public static void AutoLoadCosmetics()
         {
-            Patches.RequestPatch.enabled = true;
-            Patches.RequestPatch.currentCoroutine ??= CoroutineManager.RunCoroutine(Patches.RequestPatch.LoadCosmetics());
+            RequestPatch.enabled = true;
+            RequestPatch.currentCoroutine ??= CoroutineManager.RunCoroutine(RequestPatch.LoadCosmetics());
             GetObject("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Cosmetics Room Triggers/TryOnRoom").GetComponent<CosmeticBoundaryTrigger>().enabled = false;
         }
 
         public static void NoAutoLoadCosmetics()
         {
             GetObject("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Cosmetics Room Triggers/TryOnRoom").GetComponent<CosmeticBoundaryTrigger>().enabled = true;
-            Patches.RequestPatch.enabled = false;
+            RequestPatch.enabled = false;
         }
 
         private static float lastTimeCosmeticsChecked;
