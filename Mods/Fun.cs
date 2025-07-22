@@ -890,6 +890,30 @@ namespace iiMenu.Mods
             }
         }
 
+        public static int targetQuestScore = 69;
+        public static void CustomQuestScore()
+        {
+            if (Time.time > delaybetweenscore)
+            {
+                delaybetweenscore = Time.time + 1f;
+                VRRig.LocalRig.SetQuestScore(targetQuestScore);
+            }
+        }
+
+        public static void ChangeCustomQuestScore(bool positive = true)
+        {
+            if (positive)
+                targetQuestScore++;
+            else
+                targetQuestScore--;
+
+            targetQuestScore %= 100000;
+            if (targetQuestScore < 0)
+                targetQuestScore = 99999;
+
+            GetIndex("Change Custom Quest Score").overlapText = "Change Custom Quest Score <color=grey>[</color><color=green>" + targetQuestScore.ToString() + "</color><color=grey>]</color>";
+        }
+
         public static void FakeFPS()
         {
             FPSPatch.enabled = true;

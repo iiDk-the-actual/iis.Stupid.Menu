@@ -2876,7 +2876,8 @@ namespace iiMenu.Mods
                 Fun.blockDebounceIndex.ToString(),
                 Fun.nameCycleIndex.ToString(),
                 menuScaleIndex.ToString(),
-                soundId.ToString()
+                soundId.ToString(),
+                Fun.targetQuestScore.ToString()
             };
 
             string settingstext = string.Join(seperator, settings);
@@ -3052,6 +3053,9 @@ namespace iiMenu.Mods
 
                 soundId = int.Parse(data[42]) - 1;
                 Sound.IncreaseSoundID();
+
+                Fun.targetQuestScore = int.Parse(data[43]) - 1;
+                Fun.ChangeCustomQuestScore();
             }
             catch { LogManager.Log("Save file out of date"); }
 
