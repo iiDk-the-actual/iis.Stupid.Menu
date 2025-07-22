@@ -5101,7 +5101,7 @@ namespace iiMenu.Menu
                             return;
                         }
 
-                        if (fromMenu && !ignoreForce && ((leftGrab && !joystickMenu) || (joystickMenu && rightJoystick.y > 0.5f)))
+                        if (fromMenu && !ignoreForce && ((leftGrab && !joystickMenu) || (joystickMenu && rightJoystick.y > 0.5f && leftTrigger > 0.5f)))
                         {
                             if (IsBinding)
                             {
