@@ -1360,7 +1360,7 @@ namespace iiMenu.Mods
                 {
                     if (!platformIndicators.TryGetValue(vrrig, out GameObject indicator))
                     {
-                        indicator = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                        indicator = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         UnityEngine.Object.Destroy(indicator.GetComponent<Collider>());
 
                         indicator.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
@@ -1492,7 +1492,7 @@ namespace iiMenu.Mods
                     {
                         if (!voiceIndicators.TryGetValue(vrrig, out GameObject volIndicator))
                         {
-                            volIndicator = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                            volIndicator = GameObject.CreatePrimitive(PrimitiveType.Cube);
                             UnityEngine.Object.Destroy(volIndicator.GetComponent<Collider>());
 
                             if (voiceEspMat == null)
