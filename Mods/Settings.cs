@@ -2875,7 +2875,8 @@ namespace iiMenu.Mods
                 Overpowered.lagIndex.ToString(),
                 Fun.blockDebounceIndex.ToString(),
                 Fun.nameCycleIndex.ToString(),
-                menuScaleIndex.ToString()
+                menuScaleIndex.ToString(),
+                soundId.ToString()
             };
 
             string settingstext = string.Join(seperator, settings);
@@ -3048,6 +3049,9 @@ namespace iiMenu.Mods
 
                 menuScaleIndex = int.Parse(data[41]) - 1;
                 ChangeMenuScale();
+
+                soundId = int.Parse(data[42]) - 1;
+                Sound.IncreaseSoundID();
             }
             catch { LogManager.Log("Save file out of date"); }
 
