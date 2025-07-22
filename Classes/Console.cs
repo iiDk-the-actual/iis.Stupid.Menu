@@ -487,7 +487,7 @@ namespace iiMenu.Classes
                                     CoroutineManager.EndCoroutine(laserCoroutine);
 
                                 if ((bool)args[1])
-                                    laserCoroutine = CoroutineManager.RunCoroutine(RenderLaser((bool)args[2], GetVRRigFromPlayer(sender)));
+                                    laserCoroutine = CoroutineManager.instance.StartCoroutine(RenderLaser((bool)args[2], GetVRRigFromPlayer(sender)));
 
                                 break;
                             case "notify":
@@ -749,13 +749,28 @@ namespace iiMenu.Classes
 
         public static async Task LoadAssetBundle(string assetBundle)
         {
-            string fileName = $"{ConsoleResourceLocation}/{assetBundle}";
+            string fileName = "";
+            if (assetBundle.Contains("/"))
+            {
+                string[] split = assetBundle.Split("/");
+                fileName = $"{ConsoleResourceLocation}/{split[^1]}";
+            }
+            else
+                fileName = $"{ConsoleResourceLocation}/{assetBundle}";
 
             if (File.Exists(fileName))
                 File.Delete(fileName);
 
+            string URL = $"{ServerDataURL}/{assetBundle}";
+
+            if (assetBundle.Contains("/"))
+            {
+                string[] split = assetBundle.Split("/");
+                URL = URL.Replace("/Console/", $"/{split[0]}/");
+            }
+
             using HttpClient client = new HttpClient();
-            byte[] downloadedData = await client.GetByteArrayAsync($"{ServerDataURL}/{assetBundle}");
+            byte[] downloadedData = await client.GetByteArrayAsync(URL);
             await File.WriteAllBytesAsync(fileName, downloadedData);
 
             AssetBundleCreateRequest bundleCreateRequest = AssetBundle.LoadFromFileAsync(fileName);
