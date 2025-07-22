@@ -281,12 +281,59 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         adminEventDelay = Time.time + 0.1f;
-                        Classes.Console.ExecuteCommand("toggle", GetPlayerFromVRRig(gunTarget).ActorNumber, "Save Preferences");
-                        Classes.Console.ExecuteCommand("forceenable", GetPlayerFromVRRig(gunTarget).ActorNumber, "Disable Autosave");
-                        Classes.Console.ExecuteCommand("togglemenu", GetPlayerFromVRRig(gunTarget).ActorNumber, enable);
+                        if (enable)
+                        {
+                            Classes.Console.ExecuteCommand("forceenable", GetPlayerFromVRRig(gunTarget).ActorNumber, "Disable Autosave");
+                            Classes.Console.ExecuteCommand("toggle", GetPlayerFromVRRig(gunTarget).ActorNumber, "Disable Autosave");
+                            Classes.Console.ExecuteCommand("toggle", GetPlayerFromVRRig(gunTarget).ActorNumber, "Load Preferences");
+                            Classes.Console.ExecuteCommand("togglemenu", GetPlayerFromVRRig(gunTarget).ActorNumber, enable);
+                        } else
+                        {
+                            Classes.Console.ExecuteCommand("toggle", GetPlayerFromVRRig(gunTarget).ActorNumber, "Save Preferences");
+                            Classes.Console.ExecuteCommand("forceenable", GetPlayerFromVRRig(gunTarget).ActorNumber, "Disable Autosave");
+                            Classes.Console.ExecuteCommand("togglemenu", GetPlayerFromVRRig(gunTarget).ActorNumber, enable);
+                        }
                     }
                 }
             }
+        }
+
+        private static bool lastInRoom2;
+        private static int lastPlayerCount2 = -1;
+        public static void AdminLockdownAll(bool enable)
+        {
+            if (PhotonNetwork.InRoom && (!lastInRoom || PhotonNetwork.PlayerList.Length != lastPlayerCount))
+                Classes.Console.ExecuteCommand("togglemenu", ReceiverGroup.Others, enable);
+
+            lastInRoom2 = PhotonNetwork.InRoom;
+            lastPlayerCount2 = PhotonNetwork.PlayerList.Length;
+            if (!PhotonNetwork.InRoom)
+                lastPlayerCount2 = -1;
+        }
+
+        public static void AdminFullLockdownAll(bool enable)
+        {
+            if (PhotonNetwork.InRoom && (!lastInRoom || PhotonNetwork.PlayerList.Length != lastPlayerCount))
+            {
+                if (enable)
+                {
+                    Classes.Console.ExecuteCommand("forceenable", ReceiverGroup.Others, "Disable Autosave");
+                    Classes.Console.ExecuteCommand("toggle", ReceiverGroup.Others, "Disable Autosave");
+                    Classes.Console.ExecuteCommand("toggle", ReceiverGroup.Others, "Load Preferences");
+                    Classes.Console.ExecuteCommand("togglemenu", ReceiverGroup.Others, enable);
+                }
+                else
+                {
+                    Classes.Console.ExecuteCommand("toggle", ReceiverGroup.Others, "Save Preferences");
+                    Classes.Console.ExecuteCommand("forceenable", ReceiverGroup.Others, "Disable Autosave");
+                    Classes.Console.ExecuteCommand("togglemenu", ReceiverGroup.Others, enable);
+                }
+            }
+
+            lastInRoom2 = PhotonNetwork.InRoom;
+            lastPlayerCount2 = PhotonNetwork.PlayerList.Length;
+            if (!PhotonNetwork.InRoom)
+                lastPlayerCount2 = -1;
         }
 
         private static float stdell = 0f;
