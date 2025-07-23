@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.XR.Interaction.Toolkit;
@@ -352,6 +353,21 @@ namespace iiMenu.Mods
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You have already redeemed the shiny rocks.");
         }
 
+        public static void DisableMapBarriers(bool status)
+        {
+            var envpar = GameObject.Find("Environment");
+            if (envpar != null)
+            {
+                foreach (Transform child in envpar.GetComponentsInChildren<Transform>(true))
+                {
+                    if (child.name.StartsWith("Cube"))
+                    {
+                        child.gameObject.SetActive(status);
+                    }
+                }
+            }
+
+        }
         public static void JoinDiscord() =>
             Process.Start(serverLink);
 

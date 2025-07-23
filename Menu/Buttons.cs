@@ -18,7 +18,7 @@ namespace iiMenu.Menu
         {
             new ButtonInfo[] { // Main [0]
                 new ButtonInfo { buttonText = "Join Discord", method =() => Important.JoinDiscord(), isTogglable = false, toolTip = "Invites you to join the ii's <b>Stupid</b> Mods Discord server."},
-
+               
                 new ButtonInfo { buttonText = "Settings", method =() => currentCategoryName = "Settings", isTogglable = false, toolTip = "Opens the settings tab."},
                 new ButtonInfo { buttonText = "Friends", method =() => currentCategoryName = "Friends", isTogglable = false, toolTip = "Opens the friends tab."},
                 new ButtonInfo { buttonText = "Players", method =() => Settings.PlayersTab(), isTogglable = false, toolTip = "Opens the players tab."},
@@ -152,6 +152,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Clear Notifications on Disconnect", enableMethod =() => clearNotificationsOnDisconnect = true, disableMethod =() => clearNotificationsOnDisconnect = false, toolTip = "Clears all notifications on disconnect."},
                 new ButtonInfo { buttonText = "Hide Notifications on Camera", overlapText = "Streamer Mode Notifications", toolTip = "Makes notifications only render in VR."},
                 new ButtonInfo { buttonText = "Stack Notifications", enableMethod =() => stackNotifications = true, disableMethod =() => stackNotifications = false, toolTip = "Stacks repeated notifications into one notification."},
+                new ButtonInfo { buttonText = "Auto Block Spam Notifications", enableMethod =() => noSpamNotifs = true, disableMethod =() => noSpamNotifs = false, toolTip = "Clears a notification if it gets over 500 characters big to prevent people from spamming with names."},
                 new ButtonInfo { buttonText = "Narrate Notifications", enableMethod =() => narrateNotifications = true, disableMethod =() => narrateNotifications = false, toolTip = "Narrates all notifications with text to speech."},
 
                 new ButtonInfo { buttonText = "Disable Notifications", enableMethod =() => disableNotifications = true, disableMethod =() => disableNotifications = false, toolTip = "Disables all notifications."},
@@ -323,6 +324,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Accept TOS", method =() => Important.AcceptTOS(), disableMethod =() => Patches.TOSPatch.enabled = false, toolTip = "Accepts the Terms of Service for you."},
                 new ButtonInfo { buttonText = "Redeem Shiny Rocks", method =() => CoroutineManager.RunCoroutine(Important.RedeemShinyRocks()), isTogglable = false, toolTip = "Redeems the 500 Shiny Rocks K-ID gives you."},
 
+
                 new ButtonInfo { buttonText = "Copy Player Position", method =() => Important.CopyPlayerPosition(), isTogglable = false, toolTip = "Copies the current player position to the clipboard." },
 
                 new ButtonInfo { buttonText = "Clear Notifications", method =() => NotifiLib.ClearAllNotifications(), isTogglable = false, toolTip = "Clears your notifications. Good for when they get stuck."},
@@ -331,7 +333,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Disable Network Triggers", enableMethod =() => Patches.NetworkTriggerPatch.enabled = true, disableMethod =() => Patches.NetworkTriggerPatch.enabled = false, toolTip = "Disables the network triggers, so you can change maps without disconnecting."},
                 new ButtonInfo { buttonText = "Disable Map Triggers", enableMethod =() => GetObject("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab").SetActive(false), disableMethod =() => GetObject("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab").SetActive(true), toolTip = "Disables the map triggers, so you can change maps without loading them."},
                 new ButtonInfo { buttonText = "Disable Quit Box", enableMethod =() => GetObject("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/QuitBox").SetActive(false), disableMethod =() => GetObject("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/QuitBox").SetActive(true), toolTip = "Disables the box under the map that closes your game."},
+                new ButtonInfo { buttonText = "Disable Map Barriers", enableMethod =() => Important.DisableMapBarriers(false), disableMethod =() => Important.DisableMapBarriers(true), isTogglable = true, toolTip = "Disables the map barriers outside the map."},
                 new ButtonInfo { buttonText = "Physical Quit Box", enableMethod =() => Important.PhysicalQuitbox(), disableMethod =() => Important.NotPhysicalQuitbox(), toolTip = "Makes the quitbox physical, letting you see and walk on it."},
+
 
                 new ButtonInfo { buttonText = "Disable Pitch Scaling", method =() => Important.DisablePitchScaling(), disableMethod =() => Important.EnablePitchScaling(), toolTip = "Disables the pitch effects on players' voices when they are a different scale."},
                 new ButtonInfo { buttonText = "Disable Mouth Movement", method =() => Important.DisableMouthMovement(), disableMethod =() => Important.EnableMouthMovement(), toolTip = "Disables your mouth from moving."},

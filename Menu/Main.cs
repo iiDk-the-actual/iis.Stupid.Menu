@@ -225,6 +225,8 @@ namespace iiMenu.Menu
                 if (buttonCondition && menu != null)
                     RecenterMenu();
 
+
+
                 {
                     hasRemovedThisFrame = false;
 
@@ -350,6 +352,12 @@ namespace iiMenu.Menu
                             LogManager.LogError(string.Format("Error with board colors at {0}: {1}", exc.StackTrace, exc.Message));
                             hasFoundAllBoards = false;
                         }
+                    }
+
+                    if (noSpamNotifs && NotifiLib.NotifiText.text.Length > 500)
+                    {
+                        NotifiLib.ClearAllNotifications();
+                        NotifiLib.SendNotification("[<color=yellow>SPAM</color>] Auto-cleared spam!", 5000);
                     }
 
                     if (computerMonitor == null)
@@ -5526,6 +5534,7 @@ jgs \_   _/ |Oo\
         public static bool stackNotifications;
         public static bool narrateNotifications;
         public static bool disableNotifications;
+        public static bool noSpamNotifs;
         public static bool disableMasterClientNotifications;
         public static bool disableRoomNotifications;
         public static bool disablePlayerNotifications;
