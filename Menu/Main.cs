@@ -5587,6 +5587,9 @@ jgs \_   _/ |Oo\
         public static bool waitForPlayerJoin;
         public static bool scaleWithPlayer;
         public static float menuScale = 1f;
+        public static int notificationScale = 30;
+        public static int overlayScale = 30;
+        public static int arraylistScale = 20;
 
         public static bool dynamicSounds;
         public static bool exclusivePageSounds;

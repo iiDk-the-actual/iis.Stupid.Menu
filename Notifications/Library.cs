@@ -134,12 +134,15 @@ namespace iiMenu.Notifications
                 {
                     ModText.font = activeFont;
                     ModText.fontStyle = activeFontStyle;
+                    ModText.fontSize = arraylistScale;
 
                     NotifiText.font = activeFont;
                     NotifiText.fontStyle = activeFontStyle;
+                    NotifiText.fontSize = notificationScale;
 
                     StatsText.font = activeFont;
                     StatsText.fontStyle = activeFontStyle;
+                    StatsText.fontSize = overlayScale;
 
                     if (advancedArraylist)
                         ModText.fontStyle = (FontStyle)((int)activeFontStyle % 2);
@@ -199,8 +202,9 @@ namespace iiMenu.Notifications
                         categoryIndex++;
                     }
 
+                    TextGenerationSettings settings = ModText.GetGenerationSettings(ModText.rectTransform.rect.size);
                     string[] sortedButtons = alphabetized
-                        .OrderByDescending(s => UI.ExternalCalcSize(new GUIContent(NoRichtextTags(s))).x)
+                        .OrderByDescending(s => ModText.cachedTextGenerator.GetPreferredWidth(NoRichtextTags(s), settings))
                         .ToArray();
 
                     int index = 0;
