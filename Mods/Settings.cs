@@ -1397,6 +1397,60 @@ namespace iiMenu.Mods
             GetIndex("Change Menu Scale").overlapText = "Change Menu Scale <color=grey>[</color><color=green>" + menuScale.ToString() + "</color><color=grey>]</color>";
         }
 
+        private static int notificationScaleIndex = 6;
+        public static void ChangeNotificationScale(bool positive = true)
+        {
+            if (positive)
+                notificationScaleIndex++;
+            else
+                notificationScaleIndex--;
+
+            if (notificationScaleIndex > 20)
+                notificationScaleIndex = 1;
+            if (notificationScaleIndex < 1)
+                notificationScaleIndex = 20;
+
+            notificationScale = notificationScaleIndex * 5;
+
+            GetIndex("Change Notification Scale").overlapText = "Change Notification Scale <color=grey>[</color><color=green>" + notificationScaleIndex.ToString() + "</color><color=grey>]</color>";
+        }
+
+        private static int arraylistScaleIndex = 4;
+        public static void ChangeArraylistScale(bool positive = true)
+        {
+            if (positive)
+                arraylistScaleIndex++;
+            else
+                arraylistScaleIndex--;
+
+            if (arraylistScaleIndex > 20)
+                arraylistScaleIndex = 1;
+            if (arraylistScaleIndex < 1)
+                arraylistScaleIndex = 20;
+
+            arraylistScale = arraylistScaleIndex * 5;
+
+            GetIndex("Change Arraylist Scale").overlapText = "Change Arraylist Scale <color=grey>[</color><color=green>" + arraylistScaleIndex.ToString() + "</color><color=grey>]</color>";
+        }
+
+        private static int overlayScaleIndex = 6;
+        public static void ChangeOverlayScale(bool positive = true)
+        {
+            if (positive)
+                overlayScaleIndex++;
+            else
+                overlayScaleIndex--;
+
+            if (overlayScaleIndex > 20)
+                overlayScaleIndex = 1;
+            if (overlayScaleIndex < 1)
+                overlayScaleIndex = 20;
+
+            overlayScale = overlayScaleIndex * 5;
+
+            GetIndex("Change Overlay Scale").overlapText = "Change Overlay Scale <color=grey>[</color><color=green>" + overlayScaleIndex.ToString() + "</color><color=grey>]</color>";
+        }
+
         private static int modifyWhatId = 0;
         public static void CMTRed(bool increase = true)
         {
@@ -2883,7 +2937,10 @@ namespace iiMenu.Mods
                 Fun.nameCycleIndex.ToString(),
                 menuScaleIndex.ToString(),
                 soundId.ToString(),
-                Fun.targetQuestScore.ToString()
+                Fun.targetQuestScore.ToString(),
+                notificationScaleIndex.ToString(),
+                overlayScaleIndex.ToString(),
+                arraylistScaleIndex.ToString()
             };
 
             string settingstext = string.Join(seperator, settings);
@@ -3062,6 +3119,15 @@ namespace iiMenu.Mods
 
                 Fun.targetQuestScore = int.Parse(data[43]) - 1;
                 Fun.ChangeCustomQuestScore();
+
+                notificationScaleIndex = int.Parse(data[44]) - 1;
+                ChangeNotificationScale();
+
+                overlayScaleIndex = int.Parse(data[45]) - 1;
+                ChangeOverlayScale();
+
+                arraylistScaleIndex = int.Parse(data[46]) - 1;
+                ChangeArraylistScale();
             }
             catch { LogManager.Log("Save file out of date"); }
 

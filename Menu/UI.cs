@@ -21,15 +21,6 @@ namespace iiMenu.Menu
         private string inputText = "goldentrophy";
         private static GUIStyle labelStyle;
 
-        private static Dictionary<string, Vector2> textWidthPool = new Dictionary<string, Vector2> { };
-        public static Vector2 ExternalCalcSize(GUIContent text)
-        {
-            if (textWidthPool.ContainsKey(text.text))
-                return textWidthPool[text.text];
-
-            return new Vector2(text.text.Length, 12);
-        }
-
         private string r = "255";
         private string g = "128";
         private string b = "0";
@@ -219,12 +210,6 @@ namespace iiMenu.Menu
                     float y = 10;
                     foreach (string v in sortedButtons)
                     {
-                        if (!textWidthPool.ContainsKey(NoRichtextTags(v)))
-                            textWidthPool.Add(NoRichtextTags(v), labelStyle.CalcSize(new GUIContent(NoRichtextTags(v))));
-
-                        if (!textWidthPool.ContainsKey(v))
-                            textWidthPool.Add(v, labelStyle.CalcSize(new GUIContent(v)));
-
                         if (advancedArraylist)
                         {
                             string text = flipArraylist ? 
