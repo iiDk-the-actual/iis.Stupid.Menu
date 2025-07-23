@@ -158,9 +158,10 @@ namespace iiMenu.Notifications
                 {
                     Color targetColor = GetIndex("Swap GUI Colors").enabled ? GetBDColor(0f) : GetBGColor(0f);
 
+                    TextGenerationSettings settings = ModText.GetGenerationSettings(ModText.rectTransform.rect.size);
                     List<string> statsAlphabetized = information
                         .Select(item => $"<color=#{ColorToHex(targetColor)}>{item.Key}</color> <color=#{ColorToHex(textColor)}>{item.Value}</color>")
-                        .OrderByDescending(item => item.Length)
+                        .OrderByDescending(item => StatsText.cachedTextGenerator.GetPreferredWidth(NoRichtextTags(item), settings))
                         .ToList();
 
                     StatsText.text = string.Join("\n", statsAlphabetized.ToArray());
