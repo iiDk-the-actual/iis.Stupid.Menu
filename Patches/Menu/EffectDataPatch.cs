@@ -62,7 +62,7 @@ namespace iiMenu.Patches
 
                     if (material > 0)
                     {
-                        GorillaTagger.Instance.audioClipIndex = -1;
+                        GorillaTagger.Instance.audioClipIndex = material;
                         GTPlayer.Instance.leftHandMaterialTouchIndex = material;
                         GTPlayer.Instance.rightHandMaterialTouchIndex = material;
                         audioClipIndex = material;
