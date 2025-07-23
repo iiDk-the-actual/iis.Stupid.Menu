@@ -226,7 +226,7 @@ namespace iiMenu.Mods
 
                     if (tapMat == null)
                     {
-                        tapMat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+                        tapMat = new Material(Shader.Find("Universal Render Pipeline/UnlL=it"));
 
                         if (tapTxt == null)
                             tapTxt = LoadTextureFromURL("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/refs/heads/main/footstep.png", "footstep.png");
@@ -241,9 +241,6 @@ namespace iiMenu.Mods
                         tapMat.SetFloat("_ZWrite", 0);
                         tapMat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
                         tapMat.renderQueue = (int)RenderQueue.Transparent;
-
-                        tapMat.SetFloat("_Glossiness", 0f);
-                        tapMat.SetFloat("_Metallic", 0f);
                     }
 
                     Color targetColor = GetPlayerColor(rig);
@@ -1310,7 +1307,7 @@ namespace iiMenu.Mods
 
                         if (platformMat == null)
                         {
-                            platformMat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+                            platformMat = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
 
                             platformMat.SetFloat("_Surface", 1);
                             platformMat.SetFloat("_Blend", 0);
@@ -1319,9 +1316,6 @@ namespace iiMenu.Mods
                             platformMat.SetFloat("_ZWrite", 0);
                             platformMat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
                             platformMat.renderQueue = (int)RenderQueue.Transparent;
-
-                            platformMat.SetFloat("_Glossiness", 0f);
-                            platformMat.SetFloat("_Metallic", 0f);
                         }
                         indicator.GetComponent<Renderer>().material = platformMat;
                         platformIndicators.Add(vrrig, indicator);
@@ -1430,7 +1424,7 @@ namespace iiMenu.Mods
                             
                             if (voiceMat == null)
                             {
-                                voiceMat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+                                voiceMat = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
 
                                 if (voicetxt == null)
                                     voicetxt = LoadTextureFromResource("iiMenu.Resources.speak.png");
@@ -1444,9 +1438,6 @@ namespace iiMenu.Mods
                                 voiceMat.SetFloat("_ZWrite", 0);
                                 voiceMat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
                                 voiceMat.renderQueue = (int)RenderQueue.Transparent;
-
-                                voiceMat.SetFloat("_Glossiness", 0f);
-                                voiceMat.SetFloat("_Metallic", 0f);
                             }
                             volIndicator.GetComponent<Renderer>().material = voiceMat;
                             voiceIndicators.Add(vrrig, volIndicator);
