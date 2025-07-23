@@ -2201,16 +2201,26 @@ namespace iiMenu.Menu
                     OutlineCanvasObject(fps, true);
             }
 
+            float hkbStartTime = -0.3f;
             if (!disableDisconnectButton)
             {
-                if (hotkeyButton == "none")
-                    AddButton(-0.30f, -1, GetIndex("Disconnect"));
-                else
+                AddButton(-0.3f, -1, GetIndex("Disconnect"));
+                hkbStartTime -= 0.1f;
+            }
+
+            if (quickActions.Count > 0)
+            {
+                foreach (string action in quickActions)
                 {
-                    AddButton(-0.30f, -1, GetIndex("Disconnect"));
-                    ButtonInfo hkb = GetIndex(hotkeyButton);
-                    if (hkb != null)
-                        AddButton(-0.40f, -1, hkb);
+                    ButtonInfo button = GetIndex(action);
+                    if (button == null)
+                    {
+                        quickActions.Remove(action);
+                        continue;
+                    }
+
+                    AddButton(hkbStartTime, -1, button);
+                    hkbStartTime -= 0.1f;
                 }
             }
 
@@ -5151,20 +5161,20 @@ namespace iiMenu.Menu
                         {
                             if (fromMenu && !ignoreForce && (leftTrigger > 0.5f) && !joystickMenu)
                             {
-                                if (hotkeyButton != target.buttonText)
+                                if (!quickActions.Contains(target.buttonText))
                                 {
-                                    hotkeyButton = target.buttonText;
+                                    quickActions.Add(target.buttonText);
                                     VRRig.LocalRig.PlayHandTapLocal(50, rightHand, 0.4f);
 
                                     if (fromMenu)
-                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>HOTKEY</color><color=grey>]</color> Set hotkey button.");
+                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>QUICK ACTIONS</color><color=grey>]</color> Added quick action button.");
                                 } else
                                 {
-                                    hotkeyButton = "none";
+                                    quickActions.Remove(target.buttonText);
                                     VRRig.LocalRig.PlayHandTapLocal(48, rightHand, 0.4f);
                                     
                                     if (fromMenu)
-                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>HOTKEY</color><color=grey>]</color> Reset hotkey button.");
+                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>HOTKEY</color><color=grey>]</color> Removed quick action button.");
                                 }
                             }
                             else
@@ -5661,7 +5671,7 @@ jgs \_   _/ |Oo\
             { "RJ", false },
         };
 
-        public static string hotkeyButton = "none";
+        public static List<string> quickActions = new List<string> { };
 
         public static int TransparentFX = LayerMask.NameToLayer("TransparentFX");
         public static int IgnoreRaycast = LayerMask.NameToLayer("Ignore Raycast");

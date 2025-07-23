@@ -2909,7 +2909,7 @@ namespace iiMenu.Mods
                 arrowType.ToString(),
                 pcbg.ToString(),
                 Important.reconnectDelay.ToString(),
-                hotkeyButton.ToString(),
+                "", // blank
                 buttonClickIndex.ToString(),
                 buttonClickVolume.ToString(),
                 Safety.antireportrangeindex.ToString(),
@@ -2941,6 +2941,7 @@ namespace iiMenu.Mods
                 notificationScaleIndex.ToString(),
                 overlayScaleIndex.ToString(),
                 arraylistScaleIndex.ToString()
+                // Go up there's a blank spot up there
             };
 
             string settingstext = string.Join(seperator, settings);
@@ -2958,6 +2959,8 @@ namespace iiMenu.Mods
                 bindingtext += toAppend;
             }
 
+            string quickActionString = string.Join(seperator, quickActions);
+
             string finaltext =
                 enabledtext + "\n" +
                 favoritetext + "\n" +
@@ -2965,7 +2968,8 @@ namespace iiMenu.Mods
                 pageButtonType.ToString() + "\n" +
                 themeType.ToString() + "\n" +
                 fontCycle.ToString() + "\n" +
-                bindingtext;
+                bindingtext + "\n" +
+                quickActionString;
 
             return finaltext;
         }
@@ -3035,7 +3039,8 @@ namespace iiMenu.Mods
                 Important.reconnectDelay = int.Parse(data[14]) - 1;
                 ChangeReconnectTime();
 
-                hotkeyButton = data[15];
+                // The blank spot is here, it was used for the old hotkey system
+
                 buttonClickIndex = int.Parse(data[16]) - 1;
                 ChangeButtonSound();
 
@@ -3158,6 +3163,16 @@ namespace iiMenu.Mods
 
                         ModBindings[BindName] = Binds;
                     }
+                }
+            } catch { }
+
+            try
+            {
+                foreach (string quickAction in textData[7].Split(";;"))
+                {
+                    ButtonInfo button = GetIndex(quickAction);
+                    if (button != null)
+                        quickActions.Add(quickAction);
                 }
             } catch { }
 
