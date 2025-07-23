@@ -63,9 +63,13 @@ namespace iiMenu.Patches
                     if (material > 0)
                     {
                         GorillaTagger.Instance.audioClipIndex = material;
-                        GTPlayer.Instance.leftHandMaterialTouchIndex = material;
-                        GTPlayer.Instance.rightHandMaterialTouchIndex = material;
                         audioClipIndex = material;
+
+                        if (isLeftHand)
+                            GTPlayer.Instance.leftHandMaterialTouchIndex = material;
+                        else
+                            GTPlayer.Instance.rightHandMaterialTouchIndex = material;
+
                         effectContext.soundFX = VRRig.LocalRig.GetHandSurfaceData(material).audio;
 
                         return false;
