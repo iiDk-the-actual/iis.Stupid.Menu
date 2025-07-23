@@ -44,13 +44,9 @@ namespace iiMenu.Classes
                         gameObjectRenderer.material.color = colors.colorKeys[0].color;
                     else
                     {
-                        if (gameObjectRenderer.material.shader.name != "Universal Render Pipeline/Lit")
+                        if (gameObjectRenderer.material.shader.name != "Universal Render Pipeline/Unlit")
                         {
-                            gameObjectRenderer.material = new Material(Shader.Find("Universal Render Pipeline/Lit"));
-
-                            gameObjectRenderer.material.SetFloat("_Glossiness", 0f);
-                            gameObjectRenderer.material.SetFloat("_Metallic", 0f);
-
+                            gameObjectRenderer.material = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
                             gameObjectRenderer.material.mainTexture = Main.GetGradientTexture(colors.colorKeys[0].color, colors.colorKeys[1].color);
                         }
                     }

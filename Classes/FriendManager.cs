@@ -91,7 +91,7 @@ namespace iiMenu.Classes
                                 if (starTexture == null)
                                     starTexture = LoadTextureFromResource("iiMenu.Resources.star.png");
 
-                                starMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit"))
+                                starMaterial = new Material(Shader.Find("Universal Render Pipeline/Unlit"))
                                 {
                                     mainTexture = starTexture
                                 };
@@ -103,9 +103,6 @@ namespace iiMenu.Classes
                                 starMaterial.SetFloat("_ZWrite", 0);
                                 starMaterial.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
                                 starMaterial.renderQueue = (int)RenderQueue.Transparent;
-
-                                starMaterial.SetFloat("_Glossiness", 0f);
-                                starMaterial.SetFloat("_Metallic", 0f);
                             }
 
                             playerStar.GetComponent<Renderer>().material = starMaterial;

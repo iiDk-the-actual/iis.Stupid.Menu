@@ -1831,7 +1831,7 @@ namespace iiMenu.Mods
                     pearl.transform.localScale = new Vector3(0.1f, 0.1f, 0.01f);
                     if (pearlmat == null)
                     {
-                        pearlmat = new Material(Shader.Find("Universal Render Pipeline/Lit"))
+                        pearlmat = new Material(Shader.Find("Universal Render Pipeline/Unlit"))
                         {
                             color = Color.white
                         };
@@ -1850,9 +1850,6 @@ namespace iiMenu.Mods
                         pearlmat.SetFloat("_ZWrite", 0);
                         pearlmat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
                         pearlmat.renderQueue = (int)RenderQueue.Transparent;
-
-                        pearlmat.SetFloat("_Glossiness", 0f);
-                        pearlmat.SetFloat("_Metallic", 0f);
                     }
                     pearl.GetComponent<Renderer>().material = pearlmat;
                 }

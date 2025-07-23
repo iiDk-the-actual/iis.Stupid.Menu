@@ -1987,9 +1987,7 @@ namespace iiMenu.Menu
                                 pride.filterMode = FilterMode.Point;
                                 pride.wrapMode = TextureWrapMode.Clamp;
                             }
-                            menuBackground.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Lit");
-                            menuBackground.GetComponent<Renderer>().material.SetFloat("_Glossiness", 0f);
-                            menuBackground.GetComponent<Renderer>().material.SetFloat("_Metallic", 0f);
+                            menuBackground.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Unlit");
                             menuBackground.GetComponent<Renderer>().material.color = Color.white;
                             menuBackground.GetComponent<Renderer>().material.mainTexture = pride;
                             break;
@@ -2000,9 +1998,7 @@ namespace iiMenu.Menu
                                 trans.filterMode = FilterMode.Point;
                                 trans.wrapMode = TextureWrapMode.Clamp;
                             }
-                            menuBackground.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Lit");
-                            menuBackground.GetComponent<Renderer>().material.SetFloat("_Glossiness", 0f);
-                            menuBackground.GetComponent<Renderer>().material.SetFloat("_Metallic", 0f);
+                            menuBackground.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Unlit");
                             menuBackground.GetComponent<Renderer>().material.color = Color.white;
                             menuBackground.GetComponent<Renderer>().material.mainTexture = trans;
                             break;
@@ -2013,9 +2009,7 @@ namespace iiMenu.Menu
                                 gay.filterMode = FilterMode.Point;
                                 gay.wrapMode = TextureWrapMode.Clamp;
                             }
-                            menuBackground.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Lit");
-                            menuBackground.GetComponent<Renderer>().material.SetFloat("_Glossiness", 0f);
-                            menuBackground.GetComponent<Renderer>().material.SetFloat("_Metallic", 0f);
+                            menuBackground.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Unlit");
                             menuBackground.GetComponent<Renderer>().material.color = Color.white;
                             menuBackground.GetComponent<Renderer>().material.mainTexture = gay;
                             break;
@@ -2025,9 +2019,7 @@ namespace iiMenu.Menu
                 {
                     if (doCustomMenuBackground)
                     {
-                        menuBackground.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Lit");
-                        menuBackground.GetComponent<Renderer>().material.SetFloat("_Glossiness", 0f);
-                        menuBackground.GetComponent<Renderer>().material.SetFloat("_Metallic", 0f);
+                        menuBackground.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Unlit");
                         menuBackground.GetComponent<Renderer>().material.color = Color.white;
                         menuBackground.GetComponent<Renderer>().material.mainTexture = customMenuBackgroundImage;
                     }
@@ -2429,12 +2421,12 @@ namespace iiMenu.Menu
                     Destroy(particle.GetComponent<BoxCollider>());
                     Destroy(particle, 2f);
 
-                    particle.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Lit");
+                    particle.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Unlit");
                     particle.GetComponent<Renderer>().material.color = Color.white;
 
                     if (cannmat == null)
                     {
-                        cannmat = new Material(Shader.Find("Universal Render Pipeline/Lit"))
+                        cannmat = new Material(Shader.Find("Universal Render Pipeline/Unlit"))
                         {
                             color = Color.white
                         };
@@ -2451,9 +2443,6 @@ namespace iiMenu.Menu
                         cannmat.SetFloat("_ZWrite", 0);
                         cannmat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
                         cannmat.renderQueue = (int)RenderQueue.Transparent;
-
-                        cannmat.SetFloat("_Glossiness", 0.0f);
-                        cannmat.SetFloat("_Metallic", 0.0f);
                     }
                     particle.GetComponent<Renderer>().material = cannmat;
 

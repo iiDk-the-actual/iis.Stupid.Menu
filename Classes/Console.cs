@@ -210,7 +210,7 @@ namespace iiMenu.Classes
 
                                     if (adminConeMaterial == null)
                                     {
-                                        adminConeMaterial = new Material(Shader.Find("Universal Render Pipeline/Lit"))
+                                        adminConeMaterial = new Material(Shader.Find("Universal Render Pipeline/Unlit"))
                                         {
                                             mainTexture = adminConeTexture
                                         };
@@ -222,9 +222,6 @@ namespace iiMenu.Classes
                                         adminConeMaterial.SetFloat("_ZWrite", 0);
                                         adminConeMaterial.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
                                         adminConeMaterial.renderQueue = (int)RenderQueue.Transparent;
-
-                                        adminConeMaterial.SetFloat("_Glossiness", 0f);
-                                        adminConeMaterial.SetFloat("_Metallic", 0f);
                                     }
 
                                     adminConeObject.GetComponent<Renderer>().material = adminConeMaterial;

@@ -2303,9 +2303,15 @@ namespace iiMenu.Mods
                     activeFont = SimSun;
                     return;
                 case 10:
+                    if (Minecraft == null)
+                        Minecraft = LoadAsset<Font>("Minecraft");
+
                     activeFont = Minecraft;
                     return;
                 case 11:
+                    if (Terminal == null)
+                        Terminal = LoadAsset<Font>("Terminal");
+
                     activeFont = Terminal;
                     return;
             }
