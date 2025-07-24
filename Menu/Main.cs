@@ -389,6 +389,9 @@ namespace iiMenu.Menu
                         if (lowercaseMode)
                             motdTC.text = motdTC.text.ToLower();
 
+                        if (uppercaseMode)
+                            motdTC.text = motdTC.text.ToUpper();
+
                         motdTC.color = titleColor;
                         motdTC.overflowMode = TextOverflowModes.Overflow;
 
@@ -423,6 +426,9 @@ namespace iiMenu.Menu
 
                         if (lowercaseMode)
                             motdTextB.text = motdTextB.text.ToLower();
+
+                        if (uppercaseMode)
+                            motdTextB.text = motdTextB.text.ToUpper();
                     } catch { }
 
                     try
@@ -565,8 +571,12 @@ namespace iiMenu.Menu
                     if (fpsCount != null)
                     {
                         fpsCount.text = "FPS: " + lastDeltaTime.ToString();
+
                         if (lowercaseMode)
                             fpsCount.text = fpsCount.text.ToLower();
+
+                        if (uppercaseMode)
+                            fpsCount.text = fpsCount.text.ToUpper();
                     }
 
                     // Title gradient
@@ -583,8 +593,12 @@ namespace iiMenu.Menu
                     if (searchTextObject != null)
                     {
                         searchTextObject.text = searchText + (((Time.frameCount / 45) % 2) == 0 ? "|" : " ");
+
                         if (lowercaseMode)
                             searchTextObject.text = searchTextObject.text.ToLower();
+
+                        if (uppercaseMode)
+                            searchTextObject.text = searchTextObject.text.ToUpper();
                     }
 
                     // Fix for disorganized
@@ -1030,15 +1044,20 @@ namespace iiMenu.Menu
                                 toSortOf = StringsToInfos(enabledMods.ToArray());
                             }
 
-                            watchText.GetComponent<Text>().text = toSortOf[watchMenuIndex].buttonText;
-                            if (toSortOf[watchMenuIndex].overlapText != null)
-                                watchText.GetComponent<Text>().text = toSortOf[watchMenuIndex].overlapText;
+                            Text watchTextText = watchText.GetComponent<Text>();
 
-                            watchText.GetComponent<Text>().text += $"\n<color=grey>[{(watchMenuIndex + 1)}/{toSortOf.Length}]\n{DateTime.Now:hh:mm tt}</color>";
-                            watchText.GetComponent<Text>().color = titleColor;
+                            watchTextText.text = toSortOf[watchMenuIndex].buttonText;
+                            if (toSortOf[watchMenuIndex].overlapText != null)
+                                watchTextText.text = toSortOf[watchMenuIndex].overlapText;
+
+                            watchTextText.text += $"\n<color=grey>[{(watchMenuIndex + 1)}/{toSortOf.Length}]\n{DateTime.Now:hh:mm tt}</color>";
+                            watchTextText.color = titleColor;
 
                             if (lowercaseMode)
-                                watchText.GetComponent<Text>().text = watchText.GetComponent<Text>().text.ToLower();
+                                watchTextText.text = watchTextText.text.ToLower();
+
+                            if (uppercaseMode)
+                                searchTextObject.text = searchTextObject.text.ToUpper();
 
                             if (watchIndicatorMat == null)
                                 watchIndicatorMat = new Material(Shader.Find("GorillaTag/UberShader"));
@@ -1514,6 +1533,9 @@ namespace iiMenu.Menu
 
             if (lowercaseMode)
                 buttonText.text = buttonText.text.ToLower();
+
+            if (uppercaseMode)
+                buttonText.text = buttonText.text.ToUpper();
 
             if (favorites.Contains(method.buttonText))
                 buttonText.text += " ✦";
@@ -2096,6 +2118,9 @@ namespace iiMenu.Menu
             if (lowercaseMode)
                 title.text = title.text.ToLower();
 
+            if (uppercaseMode)
+                title.text = title.text.ToUpper();
+
             if (!noPageNumber)
                 title.text += $" <color=grey>[</color><color=white>{pageNumber + 1}</color><color=grey>]</color>";
 
@@ -2146,6 +2171,9 @@ namespace iiMenu.Menu
             if (lowercaseMode)
                 buildLabel.text = buildLabel.text.ToLower();
 
+            if (uppercaseMode)
+                buildLabel.text = buildLabel.text.ToUpper();
+
             buildLabel.fontSize = 1;
             buildLabel.color = titleColor;
             buildLabel.supportRichText = true;
@@ -2179,6 +2207,9 @@ namespace iiMenu.Menu
                 fps.text = $"FPS: {lastDeltaTime}";
                 if (lowercaseMode)
                     fps.text = fps.text.ToLower();
+
+                if (uppercaseMode)
+                    fps.text = fps.text.ToUpper();
 
                 fps.color = titleColor;
                 fpsCount = fps;
@@ -2307,6 +2338,9 @@ namespace iiMenu.Menu
                 searchTextObject.text = searchText + (((Time.frameCount / 45) % 2) == 0 ? "|" : "");
                 if (lowercaseMode)
                     searchTextObject.text = searchTextObject.text.ToLower();
+
+                if (uppercaseMode)
+                    searchTextObject.text = searchTextObject.text.ToUpper();
 
                 searchTextObject.supportRichText = true;
                 searchTextObject.fontSize = 1;
@@ -5882,6 +5916,7 @@ jgs \_   _/ |Oo\
         public static float TagAuraDelay;
 
         public static bool lowercaseMode;
+        public static bool uppercaseMode;
         public static string inputTextColor = "green";
         
         public static bool annoyingMode; // Build with this enabled for a surprise

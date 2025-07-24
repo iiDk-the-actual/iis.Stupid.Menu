@@ -92,12 +92,14 @@ namespace iiMenu.Mods
             string watchText = "";
             if (!infoWatchMenuName && !infoWatchTime && !infoWatchClip && !infoWatchFPS && !infoWatchCode)
                 deafultWatch = true;
-            
-            if (infoWatchMenuName || deafultWatch) regwatchText.GetComponent<UnityEngine.UI.Text>().text = "ii's Stupid Menu\n<color=grey>";
+
+            UnityEngine.UI.Text watchTextComponent = regwatchText.GetComponent<UnityEngine.UI.Text>();
+
+            if (infoWatchMenuName || deafultWatch) watchTextComponent.text = "ii's Stupid Menu\n<color=grey>";
             if (doCustomName && (infoWatchMenuName || deafultWatch))
-                regwatchText.GetComponent<UnityEngine.UI.Text>().text = NoRichtextTags(customMenuName) + "\n<color=grey>";
+                watchTextComponent.text = NoRichtextTags(customMenuName) + "\n<color=grey>";
             if (!infoWatchMenuName && !deafultWatch)
-                regwatchText.GetComponent<UnityEngine.UI.Text>().text = "<color=grey>";
+                watchTextComponent.text = "<color=grey>";
             
             if (infoWatchFPS || deafultWatch) watchText += lastDeltaTime.ToString() + " FPS\n";
             if (infoWatchTime || deafultWatch) watchText += DateTime.Now.ToString("hh:mm tt") + "\n";
@@ -105,10 +107,12 @@ namespace iiMenu.Mods
             if (infoWatchClip) watchText += "Clip: " + (GUIUtility.systemCopyBuffer.Length > 20 ? GUIUtility.systemCopyBuffer[..20] : GUIUtility.systemCopyBuffer) + "\n";
 
             watchText += "</color>";
-            regwatchText.GetComponent<UnityEngine.UI.Text>().color = titleColor;
-            regwatchText.GetComponent<UnityEngine.UI.Text>().text += watchText;
+            watchTextComponent.color = titleColor;
+            watchTextComponent.text += watchText;
             if (lowercaseMode)
-                regwatchText.GetComponent<UnityEngine.UI.Text>().text = regwatchText.GetComponent<UnityEngine.UI.Text>().text.ToLower();
+                watchTextComponent.text = watchTextComponent.text.ToLower();
+            if (uppercaseMode)
+                watchTextComponent.text = watchTextComponent.text.ToUpper();
         }
 
         public static void WatchOff() =>

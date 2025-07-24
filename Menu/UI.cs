@@ -193,6 +193,9 @@ namespace iiMenu.Menu
                                     if (lowercaseMode)
                                         buttonText = buttonText.ToLower();
 
+                                    if (uppercaseMode)
+                                        buttonText = buttonText.ToUpper();
+
                                     alphabetized.Add(buttonText);
                                 }
                             }
