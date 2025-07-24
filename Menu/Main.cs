@@ -1481,6 +1481,7 @@ namespace iiMenu.Menu
                     {
                         colorChanger.isRainbow = themeType == 6;
                         colorChanger.isPastelRainbow = themeType == 51;
+                        colorChanger.isSlowFade = slowFadeColors;
                         colorChanger.isEpileptic = themeType == 47;
                         colorChanger.isMonkeColors = themeType == 8;
                         colorChanger.colors = new Gradient
@@ -1611,6 +1612,7 @@ namespace iiMenu.Menu
             {
                 colorChanger.isRainbow = themeType == 6;
                 colorChanger.isPastelRainbow = themeType == 51;
+                colorChanger.isSlowFade = slowFadeColors;
                 colorChanger.isEpileptic = themeType == 47;
                 colorChanger.isMonkeColors = themeType == 8;
                 colorChanger.colors = new Gradient
@@ -1937,6 +1939,7 @@ namespace iiMenu.Menu
                     };
                     colorChanger.isRainbow = themeType == 6;
                     colorChanger.isPastelRainbow = themeType == 51;
+                    colorChanger.isSlowFade = slowFadeColors;
                     colorChanger.isMonkeColors = themeType == 8;
                     colorChanger.isEpileptic = themeType == 47;
 
@@ -1954,6 +1957,7 @@ namespace iiMenu.Menu
                     };
                     colorChanger.isRainbow = themeType == 6;
                     colorChanger.isPastelRainbow = themeType == 51;
+                    colorChanger.isSlowFade = slowFadeColors;
                     colorChanger.isMonkeColors = themeType == 8;
                     colorChanger.isEpileptic = themeType == 47;
 
@@ -1971,6 +1975,7 @@ namespace iiMenu.Menu
                     };
                     colorChanger.isRainbow = themeType == 6;
                     colorChanger.isPastelRainbow = themeType == 51;
+                    colorChanger.isSlowFade = slowFadeColors;
                     colorChanger.isMonkeColors = themeType == 8;
                     colorChanger.isEpileptic = themeType == 47;
 
@@ -1988,6 +1993,7 @@ namespace iiMenu.Menu
                     };
                     colorChanger.isRainbow = themeType == 6;
                     colorChanger.isPastelRainbow = themeType == 51;
+                    colorChanger.isSlowFade = slowFadeColors;
                     colorChanger.isMonkeColors = themeType == 8;
                     colorChanger.isEpileptic = themeType == 47;
                 }
@@ -2060,6 +2066,7 @@ namespace iiMenu.Menu
                         };
                         colorChanger.isRainbow = themeType == 6;
                         colorChanger.isPastelRainbow = themeType == 51;
+                        colorChanger.isSlowFade = slowFadeColors;
                         colorChanger.isEpileptic = themeType == 47;
                         colorChanger.isMonkeColors = themeType == 8;
                     }
@@ -2873,6 +2880,7 @@ namespace iiMenu.Menu
             };
             colorChanger.isRainbow = shouldBeEnabled && themeType == 6;
             colorChanger.isPastelRainbow = shouldBeEnabled && themeType == 51;
+            colorChanger.isSlowFade = slowFadeColors;
             colorChanger.isMonkeColors = shouldBeEnabled && themeType == 8;
             colorChanger.isEpileptic = shouldBeEnabled && themeType == 47;
         }
@@ -5835,6 +5843,7 @@ jgs \_   _/ |Oo\
         };
 
         public static int themeType = 1;
+        public static bool slowFadeColors = false;
         public static Color bgColorA = new Color32(255, 128, 0, 128);
         public static Color bgColorB = new Color32(255, 102, 0, 128);
 
