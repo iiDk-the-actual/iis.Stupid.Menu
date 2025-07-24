@@ -166,9 +166,6 @@ namespace iiMenu.Notifications
 
                     StatsText.text = string.Join("\n", statsAlphabetized.ToArray());
                     StatsText.color = Color.white;
-
-                    if (lowercaseMode)
-                        StatsText.text = StatsText.text.ToLower();
                 } else
                     StatsText.text = "";
 
@@ -194,6 +191,8 @@ namespace iiMenu.Notifications
 
                                     if (lowercaseMode)
                                         buttonText = buttonText.ToLower();
+                                    if (uppercaseMode)
+                                        buttonText = buttonText.ToUpper();
 
                                     alphabetized.Add(buttonText);
                                 }
@@ -233,6 +232,13 @@ namespace iiMenu.Notifications
                 {
                     ModText.text = ModText.text.ToLower();
                     NotifiText.text = NotifiText.text.ToLower();
+                    StatsText.text = StatsText.text.ToLower();
+                }
+                if (uppercaseMode)
+                {
+                    ModText.text = ModText.text.ToUpper();
+                    NotifiText.text = NotifiText.text.ToUpper();
+                    StatsText.text = StatsText.text.ToUpper();
                 }
                 HUDObj.layer = GetIndex("Hide Notifications on Camera").enabled ? 19 : 0;
             }
@@ -287,6 +293,9 @@ namespace iiMenu.Notifications
 
                     if (lowercaseMode)
                         NotifiText.text = NotifiText.text.ToLower();
+
+                    if (uppercaseMode)
+                        NotifiText.text = NotifiText.text.ToUpper();
 
                     NotifiText.supportRichText = true;
 
