@@ -12,8 +12,16 @@ namespace iiMenu.Classes
             Update();
         }
 
-        public void Update() =>
+        public void Update()
+        {
+            if (gameObjectRenderer.material.shader != targetRenderer.material.shader)
+                gameObjectRenderer.material = new Material(targetRenderer.material.shader);
+
+            if (targetRenderer.material.mainTexture != null && gameObjectRenderer.material.mainTexture != targetRenderer.material.mainTexture)
+                gameObjectRenderer.material.mainTexture = targetRenderer.material.mainTexture;
+
             gameObjectRenderer.material.color = targetRenderer.material.color;
+        }
 
         public Renderer gameObjectRenderer;
         public Renderer targetRenderer;
