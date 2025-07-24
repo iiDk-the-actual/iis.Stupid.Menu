@@ -4955,7 +4955,8 @@ namespace iiMenu.Menu
                         { 18, "robloxtick" },
                         { 19, "mouse" },
                         { 20, "valve" },
-                        { 21, "nintendo" }
+                        { 21, "nintendo" },
+                        { 22, "windows" }
                     };
 
                     try

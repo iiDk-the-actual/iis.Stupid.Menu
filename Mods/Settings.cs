@@ -2469,7 +2469,8 @@ namespace iiMenu.Mods
             { "Grindr",      "grindr" },
             { "iOS",         "ios" },
             { "XP Notify",   "xpnotify" },
-            { "XP Ding",     "xpding" },
+            { "XP Ding",   "xptrueding" },
+            { "XP Question", "xpding" },
             { "XP Error",    "xperror" },
             { "Roblox Bass", "robloxbass" },
             { "Oculus",      "oculus" },
@@ -3241,6 +3242,7 @@ namespace iiMenu.Mods
                 66,
                 66,
                 66,
+                66,
                 66
             };
             string[] buttonSoundNames = new string[]
@@ -3266,7 +3268,8 @@ namespace iiMenu.Mods
                 "Roblox Tick",
                 "Mouse",
                 "Valve",
-                "Nintendo"
+                "Nintendo",
+                "Windows"
             };
 
             if (positive)
