@@ -152,7 +152,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Clear Notifications on Disconnect", enableMethod =() => clearNotificationsOnDisconnect = true, disableMethod =() => clearNotificationsOnDisconnect = false, toolTip = "Clears all notifications on disconnect."},
                 new ButtonInfo { buttonText = "Hide Notifications on Camera", overlapText = "Streamer Mode Notifications", toolTip = "Makes notifications only render in VR."},
                 new ButtonInfo { buttonText = "Stack Notifications", enableMethod =() => stackNotifications = true, disableMethod =() => stackNotifications = false, toolTip = "Stacks repeated notifications into one notification."},
-                new ButtonInfo { buttonText = "Auto Block Spam Notifications", enableMethod =() => noSpamNotifs = true, disableMethod =() => noSpamNotifs = false, toolTip = "Clears a notification if it gets over 500 characters big to prevent people from spamming with names."},
                 new ButtonInfo { buttonText = "Narrate Notifications", enableMethod =() => narrateNotifications = true, disableMethod =() => narrateNotifications = false, toolTip = "Narrates all notifications with text to speech."},
 
                 new ButtonInfo { buttonText = "Disable Notifications", enableMethod =() => disableNotifications = true, disableMethod =() => disableNotifications = false, toolTip = "Disables all notifications."},

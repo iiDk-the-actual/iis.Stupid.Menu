@@ -354,12 +354,6 @@ namespace iiMenu.Menu
                         }
                     }
 
-                    if (noSpamNotifs && NotifiLib.NotifiText.text.Length > 500)
-                    {
-                        NotifiLib.ClearAllNotifications();
-                        NotifiLib.SendNotification("[<color=yellow>SPAM</color>] Auto-cleared spam!", 5000);
-                    }
-
                     if (computerMonitor == null)
                         computerMonitor = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/GorillaComputerObject/ComputerUI/monitor/monitorScreen");
 
@@ -5534,7 +5528,6 @@ jgs \_   _/ |Oo\
         public static bool stackNotifications;
         public static bool narrateNotifications;
         public static bool disableNotifications;
-        public static bool noSpamNotifs;
         public static bool disableMasterClientNotifications;
         public static bool disableRoomNotifications;
         public static bool disablePlayerNotifications;
