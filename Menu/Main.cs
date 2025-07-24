@@ -5749,6 +5749,7 @@ jgs \_   _/ |Oo\
         public static Font GTFont;
         public static Font Minecraft;
         public static Font Terminal;
+        public static Font OpenDyslexic;
         public static Font activeFont = AgencyFB;
         public static FontStyle activeFontStyle = FontStyle.Italic;
 

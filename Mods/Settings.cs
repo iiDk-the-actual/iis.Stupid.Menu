@@ -2318,9 +2318,9 @@ namespace iiMenu.Mods
             else
                 fontCycle--;
 
-            fontCycle %= 12;
+            fontCycle %= 13;
             if (fontCycle < 0)
-                fontCycle = 11;
+                fontCycle = 12;
 
             switch (fontCycle) {
                 case 0:
@@ -2367,6 +2367,12 @@ namespace iiMenu.Mods
                         Terminal = LoadAsset<Font>("Terminal");
 
                     activeFont = Terminal;
+                    return;
+                case 12:
+                    if (OpenDyslexic == null)
+                        OpenDyslexic = LoadAsset<Font>("OpenDyslexic");
+
+                    activeFont = OpenDyslexic;
                     return;
             }
         }
