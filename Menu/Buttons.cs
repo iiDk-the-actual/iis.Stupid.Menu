@@ -648,7 +648,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Draw Gun", method =() => Visuals.DrawGun(), disableMethod =() => Visuals.DisableDrawGun(), toolTip = "Lets you draw on whatever your hand desires." },
 
-                new ButtonInfo { buttonText = "Gamesense Ring", enableMethod =() => Patches.HandTapPatch.OnHandTap += Visuals.OnHandTapGamesenseRing, method =() => Visuals.GamesenseRing(), disableMethod =() => Visuals.DisableGamesenseRing(), toolTip = "Lets you draw on whatever your hand desires." },
+                new ButtonInfo { buttonText = "Gamesense Ring", enableMethod =() => Patches.HandTapPatch.OnHandTap += Visuals.OnHandTapGamesenseRing, method =() => Visuals.GamesenseRing(), disableMethod =() => Visuals.DisableGamesenseRing(), toolTip = "Shows the direction of where people walk around you." },
 
                 new ButtonInfo { buttonText = "Velocity Label", method =() => Visuals.VelocityLabel(), toolTip = "Puts text on your right hand, showing your velocity."},
                 new ButtonInfo { buttonText = "Nearby Label", method =() => Visuals.NearbyTaggerLabel(), toolTip = "Puts text on your left hand, showing you the distance of the nearest tagger."},
