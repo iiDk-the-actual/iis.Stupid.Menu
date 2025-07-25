@@ -230,7 +230,7 @@ namespace iiMenu.Mods
 
                     if (tapMat == null)
                     {
-                        tapMat = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
+                        tapMat = new Material(Shader.Find("Universal Render Pipeline/UnlL=it"));
 
                         if (tapTxt == null)
                             tapTxt = LoadTextureFromURL("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/refs/heads/main/footstep.png", "footstep.png");
