@@ -195,9 +195,7 @@ namespace iiMenu.Mods
             if (platformMode == 6)
                 Projectiles.GrabProjectile();
 
-            bool triggerPlatforms = GetIndex("Trigger Platforms").enabled;
-
-            if (triggerPlatforms ? leftTrigger > 0.5f : leftGrab)
+            if (leftGrab)
             {
                 if (leftplat == null)
                 {
@@ -262,7 +260,7 @@ namespace iiMenu.Mods
                 }
             }
 
-            if (triggerPlatforms ? rightTrigger > 0.5f : rightGrab)
+            if (rightGrab)
             {
                 if (rightplat == null)
                 {
@@ -328,14 +326,20 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void TriggerPlatforms()
+        {
+            bool lt = leftGrab;
+            bool rt = rightGrab;
+            leftGrab = leftTrigger > 0.5f;
+            rightGrab = rightTrigger > 0.5f;
+            Platforms();
+            leftGrab = lt;
+            rightGrab = rt;
+        }
+
         public static void Frozone()
         {
-            bool triggerPlatforms = GetIndex("Trigger Platforms").enabled;
-
-            bool leftSpawning = triggerPlatforms ? leftTrigger > 0.5f : leftGrab;
-            bool rightSpawning = triggerPlatforms ? rightTrigger > 0.5f : rightGrab;
-
-            if (leftSpawning)
+            if (leftGrab)
             {
                 GameObject slipperyPlatform = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 slipperyPlatform.GetComponent<Renderer>().material.color = GetBGColor(0f);
@@ -347,7 +351,7 @@ namespace iiMenu.Mods
                 UnityEngine.Object.Destroy(slipperyPlatform, 1);
             }
 
-            if (rightSpawning)
+            if (rightGrab)
             {
                 GameObject slipperyPlatform = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 slipperyPlatform.GetComponent<Renderer>().material.color = GetBGColor(0f);
@@ -359,7 +363,7 @@ namespace iiMenu.Mods
                 UnityEngine.Object.Destroy(slipperyPlatform, 1);
             }
 
-            GorillaTagger.Instance.bodyCollider.enabled = !(leftSpawning || rightSpawning);
+            GorillaTagger.Instance.bodyCollider.enabled = !(leftGrab || rightGrab);
         }
 
         public static void ChangeSpeedBoostAmount(bool positive = true)
