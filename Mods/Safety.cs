@@ -326,6 +326,41 @@ namespace iiMenu.Mods
             catch { } // Not connected
         }
 
+        public static void AntiReportOverlay()
+        {
+            float closestDist = float.MaxValue;
+            bool withinRange = false;
+
+            foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+            {
+                if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
+                {
+                    Transform report = line.reportButton.gameObject.transform;
+                    if (GetIndex("Visualize Anti Report").enabled)
+                        VisualizeAura(report.position, threshold, Color.red);
+
+                    foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                    {
+                        if (!vrrig.isLocal)
+                        {
+                            float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
+                            float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
+                            float dist = D1 < D2 ? D1 : D2;
+
+                            if (dist < threshold)
+                            {
+                                if (!smartarp || (smartarp && line.linePlayer.UserId == buttonClickPlayer && Time.frameCount == buttonClickTime && PhotonNetwork.CurrentRoom.IsVisible && !PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED")))
+                                    withinRange = true;
+                            }
+                            if (dist < closestDist)
+                                closestDist = dist;
+                        }
+                    }
+                }
+            }
+            NotifiLib.information["REPORT"] = closestDist == float.MaxValue ? "No distance" : (closestDist % 1 == 0 ? closestDist : (int)closestDist + 1).ToString() + "m" + (withinRange ? " - Nearby" : "");
+        }
+
         public static void AntiReportFRT(Player subject, bool doNotification = true)
         {
             if (!smartarp || (smartarp && PhotonNetwork.CurrentRoom.IsVisible && !PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED")))
