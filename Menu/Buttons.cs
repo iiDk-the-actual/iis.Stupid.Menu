@@ -842,6 +842,11 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "No Respawn Bug", enableMethod =() => Fun.SetRespawnDistance("Floating Bug Holdable"), disableMethod =() => Fun.SetRespawnDistance("Floating Bug Holdable", 50f), toolTip = "Doesn't respawn the bug if it goes too far outside the bounds of forest."},
                 new ButtonInfo { buttonText = "No Respawn Firefly", enableMethod =() => Fun.SetRespawnDistance("Firefly"), disableMethod =() => Fun.SetRespawnDistance("Firefly", 50f), toolTip = "Doesn't respawn the firefly if it goes too far outside the bounds of forest."},
                 new ButtonInfo { buttonText = "No Respawn Bat", enableMethod =() => Fun.SetRespawnDistance("Cave Bat Holdable"), disableMethod =() => Fun.SetRespawnDistance("Cave Bat Holdable", 50f), toolTip = "Doesn't respawn the bat if it goes too far outside the bounds of caves."},
+
+                new ButtonInfo { buttonText = "Permanent Bug", method =() => Fun.PermanentOwnership("Floating Bug Holdable"), disableMethod =() => Patches.OwnershipPatch.blacklistedGuards.Clear(), toolTip = "Disables other players from grabbing the bug."},
+                new ButtonInfo { buttonText = "Permanent Firefly", method =() => Fun.PermanentOwnership("Firefly"), disableMethod =() => Patches.OwnershipPatch.blacklistedGuards.Clear(), toolTip = "Disables other players from grabbing the firefly."},
+                new ButtonInfo { buttonText = "Permanent Bat", method =() => Fun.PermanentOwnership("Cave Bat Holdable"), disableMethod =() => Patches.OwnershipPatch.blacklistedGuards.Clear(), toolTip = "Disables other players from grabbing the bat."},
+
                 new ButtonInfo { buttonText = "No Respawn Gliders", enableMethod =() => Patches.GliderPatch.enabled = true, disableMethod =() => Patches.GliderPatch.enabled = false, toolTip = "Doesn't respawn gliders that go too far outside the bounds of clouds."},
 
                 new ButtonInfo { buttonText = "Anti Grab", enableMethod =() => Patches.GrabPatch.enabled = true, disableMethod =() => Patches.GrabPatch.enabled = false, toolTip = "Prevents players from picking you up in guardian."},
