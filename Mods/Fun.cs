@@ -2243,39 +2243,70 @@ Piece Name: {gunTarget.name}";
 
         public static void EnableBugVibrateAll()
         {
-            SerializePatch.OverrideSerialization = () => {
+            SerializePatch.OverrideSerialization = () =>
+            {
                 ThrowableBug Bug = GetBug("Floating Bug Holdable");
                 ThrowableBug Firefly = Bug != null ? GetBug("Firefly") : null;
 
-                MassSerialize(true, new[]
+                PhotonView BugView = Bug?.worldShareableInstance?.gameObject != null
+                    ? Bug.worldShareableInstance.gameObject.GetComponent<GorillaNetworkTransform>()?.GetView
+                    : null;
+
+                PhotonView FireflyView = Firefly?.worldShareableInstance?.gameObject != null
+                    ? Firefly.worldShareableInstance.gameObject.GetComponent<GorillaNetworkTransform>()?.GetView
+                    : null;
+
+                if (BugView == null && FireflyView == null)
+                    return true;
+
+                MassSerialize(true, new[] { BugView, FireflyView }.Where(v => v != null).ToArray());
+
+                Vector3 bugArchivePosition = Bug?.transform?.position ?? Vector3.zero;
+                Quaternion bugArchiveRotation = Bug?.transform?.rotation ?? Quaternion.identity;
+
+                Vector3 fireflyArchivePosition = Firefly?.transform?.position ?? Vector3.zero;
+                Quaternion fireflyArchiveRotation = Firefly?.transform?.rotation ?? Quaternion.identity;
+
+                if (NetworkSystem.Instance?.PlayerListOthers != null)
                 {
-                    Bug?.worldShareableInstance?.teleportSerializer?.GetView,
-                    Firefly?.worldShareableInstance?.teleportSerializer?.GetView
-                }.Where(v => v != null).ToArray());
-
-                foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
-                {
-                    VRRig targetRig = GetVRRigFromPlayer(Player);
-
-                    if (Bug != null)
+                    foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
                     {
-                        Bug.transform.position = targetRig.leftHandTransform.position;
-                        Bug.transform.rotation = RandomQuaternion();
-                        SendSerialize(Bug?.worldShareableInstance?.teleportSerializer?.GetView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
-                    }
+                        VRRig targetRig = GetVRRigFromPlayer(Player);
+                        if (targetRig == null)
+                            continue;
 
-                    if (Firefly != null)
-                    {
-                        Firefly.transform.position = targetRig.leftHandTransform.position;
-                        Firefly.transform.rotation = RandomQuaternion();
-                        SendSerialize(Firefly?.worldShareableInstance?.teleportSerializer?.GetView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                        if (Bug != null && Bug.transform != null && targetRig.leftHandTransform != null && BugView != null)
+                        {
+                            Bug.transform.position = targetRig.leftHandTransform.position;
+                            Bug.transform.rotation = RandomQuaternion();
+                            SendSerialize(BugView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                        }
+
+                        if (Firefly != null && Firefly.transform != null && targetRig.rightHandTransform != null && FireflyView != null)
+                        {
+                            Firefly.transform.position = targetRig.rightHandTransform.position;
+                            Firefly.transform.rotation = RandomQuaternion();
+                            SendSerialize(FireflyView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                        }
                     }
                 }
 
-                RPCProtection();
+                if (Bug?.transform != null)
+                {
+                    Bug.transform.position = bugArchivePosition;
+                    Bug.transform.rotation = bugArchiveRotation;
+                }
 
+                if (Firefly?.transform != null)
+                {
+                    Firefly.transform.position = fireflyArchivePosition;
+                    Firefly.transform.rotation = fireflyArchiveRotation;
+                }
+
+                RPCProtection();
                 return false;
             };
+
         }
 
         public static void HolsterObject(string objectName, TransferrableObject.PositionState state)
@@ -2360,23 +2391,18 @@ Piece Name: {gunTarget.name}";
         {
             if (Time.time > delayer)
             {
-                delayer = Time.time + 1f;
-                ClearType<BuilderPiece>();
-                int count = 0;
+                delayer = Time.time + 0.3f;
 
-                foreach (BuilderPiece piece in 
-                    PhotonNetwork.IsMasterClient ? GetAllType<BuilderPiece>() : 
+                BuilderPiece[] totalPieces = PhotonNetwork.IsMasterClient ? GetAllType<BuilderPiece>() :
                     GetAllType<BuilderPiece>()
                         .Where(piece => piece.gameObject.activeInHierarchy)
-                        .Where(piece => Vector3.Distance(piece.transform.position, GorillaTagger.Instance.leftHandTransform.position) < 2.5f))
+                        .Where(piece => Vector3.Distance(piece.transform.position, GorillaTagger.Instance.leftHandTransform.position) < 2.5f).ToArray();
+
+                for (int i=0; i<100; i++)
                 {
-                    if (count > 400)
-                        break;
+                    BuilderPiece piece = totalPieces[i];
                     if (piece.gameObject.activeSelf)
-                    {
-                        count++;
                         RequestRecyclePiece(piece, true, 2);
-                    }
                 }
             }
         }
