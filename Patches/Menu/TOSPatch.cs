@@ -11,7 +11,7 @@ namespace iiMenu.Patches
         {
             if (enabled)
             {
-                __instance.controllerBehaviour.isDownStick = true;
+                __instance.controllerBehaviour.Poller.leftControllerPrimary2DAxis.y = -1f;
                 __instance.scrollSpeed = 10f;
                 __instance._maxScrollSpeed = 10f;
                 return false;
@@ -28,7 +28,7 @@ namespace iiMenu.Patches
             if (TOSPatch.enabled)
             {
                 __instance.TurnPage(999);
-                __instance.controllerBehaviour.isDownStick = true;
+                __instance.controllerBehaviour.Poller.leftControllerPrimary2DAxis.y = -1f;
                 __instance.holdTime = 0.1f;
                 return false;
             }
@@ -43,7 +43,7 @@ namespace iiMenu.Patches
         {
             if (TOSPatch.enabled)
             {
-                __instance.controllerBehaviour.buttonDown = true;
+                __instance._currentAge = 21;
                 __instance.holdTime = 0.1f;
                 return false;
             }
