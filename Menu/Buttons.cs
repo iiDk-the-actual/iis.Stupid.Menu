@@ -214,7 +214,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Platform Gravity", toolTip = "Makes platforms fall instead of instantly deleting them."},
                 new ButtonInfo { buttonText = "Platform Outlines", toolTip = "Makes platforms have outlines."},
                 new ButtonInfo { buttonText = "Non-Sticky Platforms", toolTip = "Makes your platforms no longer sticky."},
-                new ButtonInfo { buttonText = "Trigger Platforms", toolTip = "Makes your platforms activate with the <color=green>triggers</color> instead."},
 
                 new ButtonInfo { buttonText = "Change Fly Speed", overlapText = "Change Fly Speed <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method =() => Movement.ChangeFlySpeed(), enableMethod =() => Movement.ChangeFlySpeed(), disableMethod =() => Movement.ChangeFlySpeed(false), incremental = true, isTogglable = false, toolTip = "Changes the speed of the fly mods, including iron man."},
                 new ButtonInfo { buttonText = "Change Arm Length", overlapText = "Change Arm Length <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method =() => Movement.ChangeArmLength(), enableMethod =() => Movement.ChangeArmLength(), disableMethod =() => Movement.ChangeArmLength(false), incremental = true, isTogglable = false, toolTip = "Changes the length of the long arm mods, not including iron man."},
@@ -410,6 +409,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Exit Movement Mods", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
 
                 new ButtonInfo { buttonText = "Platforms", method =() => Movement.Platforms(), toolTip = "Platforms, they do not show for other players."},
+                new ButtonInfo { buttonText = "Trigger Platforms", method =() => Movement.TriggerPlatforms(), toolTip = "Platforms, they do not show for other players."},
                 new ButtonInfo { buttonText = "Frozone", method =() => Movement.Frozone(), toolTip = "Spawns slippery blocks under your hands using <color=green>grip</color>."},
                 new ButtonInfo { buttonText = "Platform Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Movement.PlatformSpam(), toolTip = "Spawns legacy platforms rapidly at your hand for those who have networked platforms."},
                 new ButtonInfo { buttonText = "Platform Gun", method =() => Movement.PlatformGun(), toolTip = "Spawns legacy platforms rapidly wherever your hand desires for those who have networked platforms."},
@@ -648,7 +648,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Draw Gun", method =() => Visuals.DrawGun(), disableMethod =() => Visuals.DisableDrawGun(), toolTip = "Lets you draw on whatever your hand desires." },
 
-                new ButtonInfo { buttonText = "Gamesense Ring", enableMethod =() => Patches.HandTapPatch.OnHandTap += Visuals.OnHandTapGamesenseRing, method =() => Visuals.GamesenseRing(), disableMethod =() => Visuals.DisableGamesenseRing(), toolTip = "Shows the direction of where people walk around you." },
+                new ButtonInfo { buttonText = "Gamesense Ring", enableMethod =() => Patches.HandTapPatch.OnHandTap += Visuals.OnHandTapGamesenseRing, method =() => Visuals.GamesenseRing(), disableMethod =() => Visuals.DisableGamesenseRing(), toolTip = "Lets you draw on whatever your hand desires." },
 
                 new ButtonInfo { buttonText = "Velocity Label", method =() => Visuals.VelocityLabel(), toolTip = "Puts text on your right hand, showing your velocity."},
                 new ButtonInfo { buttonText = "Nearby Label", method =() => Visuals.NearbyTaggerLabel(), toolTip = "Puts text on your left hand, showing you the distance of the nearest tagger."},
