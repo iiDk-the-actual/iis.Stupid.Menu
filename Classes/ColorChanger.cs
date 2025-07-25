@@ -1,4 +1,4 @@
-﻿using iiMenu.Menu;
+using iiMenu.Menu;
 using UnityEngine;
 
 namespace iiMenu.Classes
@@ -19,16 +19,16 @@ namespace iiMenu.Classes
                 {
                     if (!isMonkeColors)
                     {
-                        color = colors.Evaluate((Time.time / 2f) % 1);
+                        color = colors.Evaluate((Time.time / (isSlowFade ? 10f : 2f) ) % 1);
 
                         if (isRainbow)
                         {
-                            float h = (Time.frameCount / 180f) % 1f;
+                            float h = (Time.frameCount / (isSlowFade ? 900f : 180f) ) % 1f;
                             color = Color.HSVToRGB(h, 1f, 1f);
                         }
                         if (isPastelRainbow)
                         {
-                            float h = (Time.frameCount / 180f) % 1f;
+                            float h = (Time.frameCount / (isSlowFade ? 900f : 180f) ) % 1f;
                             color = Color.HSVToRGB(h, 0.3f, 1f);
                         }
                         if (isEpileptic)
@@ -59,6 +59,7 @@ namespace iiMenu.Classes
         public Color32 color;
         public bool isRainbow = false;
         public bool isPastelRainbow = false;
+        public bool isSlowFade = false;
         public bool isEpileptic = false;
         public bool isMonkeColors = false;
     }
