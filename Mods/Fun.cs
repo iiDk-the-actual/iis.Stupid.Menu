@@ -2400,7 +2400,7 @@ Piece Name: {gunTarget.name}";
 
                 for (int i = 0; i < 100; i++)
                 {
-                    BuilderPiece piece = totalPieces[i];
+                    BuilderPiece piece = totalPieces[UnityEngine.Random.Range(0, totalPieces.Length)];
                     if (piece.gameObject.activeSelf)
                         RequestRecyclePiece(piece, true, 2);
                 }
