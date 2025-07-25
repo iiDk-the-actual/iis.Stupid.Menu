@@ -1,4 +1,4 @@
-﻿using BepInEx;
+using BepInEx;
 using ExitGames.Client.Photon;
 using GorillaLocomotion;
 using GorillaLocomotion.Climbing;
@@ -1978,6 +1978,7 @@ namespace iiMenu.Mods
                 v.enabled = enabled;
         }
 
+        public static bool triggerNoclip = false;
         public static void Noclip()
         {
             if (rightTrigger > 0.5f || UnityInput.Current.GetKey(KeyCode.E))
@@ -1991,6 +1992,26 @@ namespace iiMenu.Mods
             else
             {
                 if (noclip == true)
+                {
+                    noclip = false;
+                    UpdateClipColliders(true);
+                }
+            }
+        }
+
+        public static void PlNoclip()
+        {
+            if (leftGrab || rightGrab)
+            {
+                if (noclip == false)
+                {
+                    noclip = true;
+                    UpdateClipColliders(false);
+                }
+            }
+            else
+            {
+                if (noclip == true && !triggerNoclip)
                 {
                     noclip = false;
                     UpdateClipColliders(true);
