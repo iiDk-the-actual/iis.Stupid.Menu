@@ -1980,7 +1980,8 @@ namespace iiMenu.Mods
 
         public static void Noclip()
         {
-            if (rightTrigger > 0.5f || UnityInput.Current.GetKey(KeyCode.E))
+            bool gripNoclip = GetIndex("Grip Noclip").enabled;
+            if (gripNoclip ? rightGrab : rightTrigger > 0.5f || UnityInput.Current.GetKey(KeyCode.E))
             {
                 if (noclip == false)
                 {
