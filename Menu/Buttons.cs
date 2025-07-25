@@ -215,6 +215,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Platform Outlines", toolTip = "Makes platforms have outlines."},
                 new ButtonInfo { buttonText = "Non-Sticky Platforms", toolTip = "Makes your platforms no longer sticky."},
 
+                new ButtonInfo { buttonText = "Grip Noclip", toolTip = "Activates noclip with your <color=green>grip</color> instead."},
+
                 new ButtonInfo { buttonText = "Change Fly Speed", overlapText = "Change Fly Speed <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method =() => Movement.ChangeFlySpeed(), enableMethod =() => Movement.ChangeFlySpeed(), disableMethod =() => Movement.ChangeFlySpeed(false), incremental = true, isTogglable = false, toolTip = "Changes the speed of the fly mods, including iron man."},
                 new ButtonInfo { buttonText = "Change Arm Length", overlapText = "Change Arm Length <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method =() => Movement.ChangeArmLength(), enableMethod =() => Movement.ChangeArmLength(), disableMethod =() => Movement.ChangeArmLength(false), incremental = true, isTogglable = false, toolTip = "Changes the length of the long arm mods, not including iron man."},
                 new ButtonInfo { buttonText = "Change Speed Boost Amount", overlapText = "Change Speed Boost Amount <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method =() => Movement.ChangeSpeedBoostAmount(), enableMethod =() => Movement.ChangeSpeedBoostAmount(), disableMethod =() => Movement.ChangeSpeedBoostAmount(false), incremental = true, isTogglable = false, toolTip = "Changes the speed of the speed boost mod."},
