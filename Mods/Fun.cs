@@ -2398,7 +2398,7 @@ Piece Name: {gunTarget.name}";
                         .Where(piece => piece.gameObject.activeInHierarchy)
                         .Where(piece => Vector3.Distance(piece.transform.position, GorillaTagger.Instance.leftHandTransform.position) < 2.5f).ToArray();
 
-                for (int i=0; i<100; i++)
+                for (int i = 0; i < 100; i++)
                 {
                     BuilderPiece piece = totalPieces[i];
                     if (piece.gameObject.activeSelf)
