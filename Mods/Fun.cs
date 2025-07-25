@@ -1663,14 +1663,24 @@ Piece Name: {gunTarget.name}";
 
         public static void SetRespawnDistance(string objectName, float respawnDistance = float.MaxValue)
         {
-            GameObject bugObject = null;
-            if (objectName == "Firefly")
-                bugObject = GetAllType<ThrowableBug>().Where(bug => bug.gameObject.activeInHierarchy && bug.gameObject.name == "Floating Bug Holdable").ToArray()[1].gameObject;
-            else
-                bugObject = GetObject(objectName);
+            ThrowableBug bugObject = GetBugObject(objectName);
 
-            bugObject.GetComponent<ThrowableBug>().maxDistanceFromOriginBeforeRespawn = float.MaxValue;
-            bugObject.GetComponent<ThrowableBug>().maxDistanceFromTargetPlayerBeforeRespawn = float.MaxValue;
+            bugObject.maxDistanceFromOriginBeforeRespawn = float.MaxValue;
+            bugObject.maxDistanceFromTargetPlayerBeforeRespawn = float.MaxValue;
+        }
+
+        public static void PermanentOwnership(string objectName)
+        {
+            ThrowableBug bugObject = GetBugObject(objectName);
+
+            if (!PhotonNetwork.InRoom)
+            {
+                OwnershipPatch.blacklistedGuards.Clear();
+                return;
+            }   
+
+            if (!OwnershipPatch.blacklistedGuards.Contains(bugObject.worldShareableInstance.guard))
+                OwnershipPatch.blacklistedGuards.Add(bugObject.worldShareableInstance.guard);
         }
 
         public static void FastSnowballs()
