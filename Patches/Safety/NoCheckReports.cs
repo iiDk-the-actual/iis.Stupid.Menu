@@ -2,7 +2,7 @@
 
 namespace iiMenu.Patches.Safety
 {
-    [HarmonyPatch(typeof(GorillaNot), "CheckReports", MethodType.Enumerator)]
+    [HarmonyPatch(typeof(GorillaNot), "CheckReports")]
     public class NoCheckReports
     {
         private static bool Prefix() =>
