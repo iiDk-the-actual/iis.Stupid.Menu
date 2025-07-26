@@ -2260,7 +2260,8 @@ Piece Name: {gunTarget.name}";
         public static void BugVibrateAll()
         {
             ThrowableBug Bug = GetBug("Floating Bug Holdable");
-            ThrowableBug Firefly = Bug != null ? GetBug("Firefly") : null;
+            if (Bug != null)
+                GetBug("Firefly");
         }
 
         public static void EnableBugVibrateAll()
@@ -2268,7 +2269,7 @@ Piece Name: {gunTarget.name}";
             SerializePatch.OverrideSerialization = () =>
             {
                 ThrowableBug Bug = GetBug("Floating Bug Holdable");
-                ThrowableBug Firefly = Bug != null ? GetBug("Firefly") : null;
+                ThrowableBug Firefly = Bug != null ? GetBug("Firefly") : Bug;
 
                 PhotonView BugView = Bug?.reliableState?.gameObject != null
                     ? Bug.reliableState.gameObject.GetComponent<GorillaNetworkTransform>().punView
