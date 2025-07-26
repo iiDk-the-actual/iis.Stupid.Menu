@@ -1998,12 +1998,24 @@ Piece Name: {gunTarget.name}";
             bugCoroutine = null;
         }
 
+        public static ThrowableBug _firefly;
+        public static ThrowableBug Firefly
+        {
+            get
+            {
+                if (_firefly == null)
+                    _firefly = GetAllType<ThrowableBug>().Where(bug => bug.gameObject.activeInHierarchy && bug.gameObject.name == "Floating Bug Holdable").ToArray()[1];
+
+                return _firefly;
+            }
+        }
+
         public static float getOwnershipDelay;
         public static ThrowableBug GetBugObject(string name)
         {
             GameObject bugObject = null;
             if (name == "Firefly")
-                bugObject = GetAllType<ThrowableBug>().Where(bug => bug.gameObject.activeInHierarchy && bug.gameObject.name == "Floating Bug Holdable").ToArray()[1].gameObject;
+                bugObject = Firefly.gameObject;
             else
                 bugObject = GetObject(name);
             if (bugObject == null)
@@ -2999,11 +3011,7 @@ Piece Name: {gunTarget.name}";
 
         public static void RideObject(string objectName)
         {
-            GameObject bugObject = null;
-            if (objectName == "Firefly")
-                bugObject = GetAllType<ThrowableBug>().Where(bug => bug.gameObject.activeInHierarchy && bug.gameObject.name == "Floating Bug Holdable").ToArray()[1].gameObject;
-            else
-                bugObject = GetObject(objectName);
+            GameObject bugObject = GetBugObject(objectName).gameObject;
 
             TeleportPlayer(bugObject.transform.position);
             GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
