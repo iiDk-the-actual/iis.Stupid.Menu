@@ -782,7 +782,7 @@ namespace iiMenu.Mods
                     NetPlayer target = GetPlayerFromVRRig(lockTarget);
 
                     lockTarget.leftHand.rigTarget.transform.position = lockTarget.transform.position + RandomVector3(125f);
-                    lockTarget.rightHand.rigTarget.transform.position = lockTarget.transform.position + RandomVector3(125f);
+                    lockTarget.rightHand.rigTarget.transform.position = lockTarget.transform.position + lockTarget.leftHand.rigTarget.transform.position;
 
                     VRRig.LocalRig.leftHandLink.grabbedLink = lockTarget.leftHandLink;
                     VRRig.LocalRig.leftHandLink.grabbedPlayer = target;
