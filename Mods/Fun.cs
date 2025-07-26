@@ -1677,7 +1677,13 @@ Piece Name: {gunTarget.name}";
             {
                 OwnershipPatch.blacklistedGuards.Clear();
                 return;
-            }   
+            }
+
+            if (!bugObject.IsMyItem())
+                return;
+
+            if (bugObject.targetRig != VRRig.LocalRig)
+                bugObject.SetTargetRig(VRRig.LocalRig);
 
             if (!OwnershipPatch.blacklistedGuards.Contains(bugObject.worldShareableInstance.guard))
                 OwnershipPatch.blacklistedGuards.Add(bugObject.worldShareableInstance.guard);
@@ -2279,7 +2285,7 @@ Piece Name: {gunTarget.name}";
                     ? Firefly.reliableState.gameObject.GetComponent<GorillaNetworkTransform>().punView
                     : null;
 
-                if (BugView == null && FireflyView == null)
+                if (BugView == null || FireflyView == null)
                     return true;
 
                 MassSerialize(true, new[] { BugView, FireflyView }.Where(v => v != null).ToArray());
