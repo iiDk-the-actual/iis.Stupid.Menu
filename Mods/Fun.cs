@@ -2270,12 +2270,12 @@ Piece Name: {gunTarget.name}";
                 ThrowableBug Bug = GetBug("Floating Bug Holdable");
                 ThrowableBug Firefly = Bug != null ? GetBug("Firefly") : null;
 
-                PhotonView BugView = Bug?.worldShareableInstance?.gameObject != null
-                    ? Bug.worldShareableInstance.gameObject.GetComponent<GorillaNetworkTransform>()?.GetView
+                PhotonView BugView = Bug?.reliableState?.gameObject != null
+                    ? Bug.reliableState.gameObject.GetComponent<GorillaNetworkTransform>().punView
                     : null;
 
-                PhotonView FireflyView = Firefly?.worldShareableInstance?.gameObject != null
-                    ? Firefly.worldShareableInstance.gameObject.GetComponent<GorillaNetworkTransform>()?.GetView
+                PhotonView FireflyView = Firefly?.reliableState?.gameObject != null
+                    ? Firefly.reliableState.gameObject.GetComponent<GorillaNetworkTransform>().punView
                     : null;
 
                 if (BugView == null && FireflyView == null)
@@ -2283,52 +2283,48 @@ Piece Name: {gunTarget.name}";
 
                 MassSerialize(true, new[] { BugView, FireflyView }.Where(v => v != null).ToArray());
 
-                Vector3 bugArchivePosition = Bug?.transform?.position ?? Vector3.zero;
-                Quaternion bugArchiveRotation = Bug?.transform?.rotation ?? Quaternion.identity;
+                Vector3 bugArchivePosition = Bug.reliableState.gameObject?.transform?.position ?? Vector3.zero;
+                Quaternion bugArchiveRotation = Bug.reliableState.gameObject?.transform?.rotation ?? Quaternion.identity;
 
-                Vector3 fireflyArchivePosition = Firefly?.transform?.position ?? Vector3.zero;
-                Quaternion fireflyArchiveRotation = Firefly?.transform?.rotation ?? Quaternion.identity;
+                Vector3 fireflyArchivePosition = Firefly.reliableState.gameObject?.transform?.position ?? Vector3.zero;
+                Quaternion fireflyArchiveRotation = Firefly.reliableState.gameObject?.transform?.rotation ?? Quaternion.identity;
 
-                if (NetworkSystem.Instance?.PlayerListOthers != null)
+                foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
                 {
-                    foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
+                    VRRig targetRig = GetVRRigFromPlayer(Player);
+                    if (targetRig == null)
+                        continue;
+
+                    if (Bug != null && Bug.transform != null && targetRig.leftHandTransform != null && BugView != null)
                     {
-                        VRRig targetRig = GetVRRigFromPlayer(Player);
-                        if (targetRig == null)
-                            continue;
+                        Bug.reliableState.gameObject.transform.position = targetRig.leftHandTransform.position;
+                        Bug.reliableState.gameObject.transform.rotation = RandomQuaternion();
+                        SendSerialize(BugView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                    }
 
-                        if (Bug != null && Bug.transform != null && targetRig.leftHandTransform != null && BugView != null)
-                        {
-                            Bug.transform.position = targetRig.leftHandTransform.position;
-                            Bug.transform.rotation = RandomQuaternion();
-                            SendSerialize(BugView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
-                        }
-
-                        if (Firefly != null && Firefly.transform != null && targetRig.rightHandTransform != null && FireflyView != null)
-                        {
-                            Firefly.transform.position = targetRig.rightHandTransform.position;
-                            Firefly.transform.rotation = RandomQuaternion();
-                            SendSerialize(FireflyView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
-                        }
+                    if (Firefly != null && Firefly.transform != null && targetRig.rightHandTransform != null && FireflyView != null)
+                    {
+                        Firefly.reliableState.gameObject.transform.position = targetRig.rightHandTransform.position;
+                        Firefly.reliableState.gameObject.transform.rotation = RandomQuaternion();
+                        SendSerialize(FireflyView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
                     }
                 }
 
                 if (Bug?.transform != null)
                 {
-                    Bug.transform.position = bugArchivePosition;
-                    Bug.transform.rotation = bugArchiveRotation;
+                    Bug.reliableState.gameObject.transform.position = bugArchivePosition;
+                    Bug.reliableState.gameObject.transform.rotation = bugArchiveRotation;
                 }
 
                 if (Firefly?.transform != null)
                 {
-                    Firefly.transform.position = fireflyArchivePosition;
-                    Firefly.transform.rotation = fireflyArchiveRotation;
+                    Firefly.reliableState.gameObject.transform.position = fireflyArchivePosition;
+                    Firefly.reliableState.gameObject.transform.rotation = fireflyArchiveRotation;
                 }
 
                 RPCProtection();
                 return false;
             };
-
         }
 
         public static void HolsterObject(string objectName, TransferrableObject.PositionState state)
