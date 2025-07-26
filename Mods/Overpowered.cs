@@ -474,6 +474,297 @@ namespace iiMenu.Mods
             };
         }
 
+        public static void HandsDownGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    VRRig.LocalRig.enabled = false;
+
+                    VRRig.LocalRig.transform.position = Vector3.down * 99999f;
+
+                    NetPlayer target = GetPlayerFromVRRig(lockTarget);
+
+                    lockTarget.leftHand.rigTarget.transform.position = Vector3.down * 99999f;
+                    lockTarget.rightHand.rigTarget.transform.position = Vector3.down * 99999f;
+
+                    VRRig.LocalRig.leftHandLink.grabbedLink = lockTarget.leftHandLink;
+                    VRRig.LocalRig.leftHandLink.grabbedPlayer = target;
+
+                    VRRig.LocalRig.rightHandLink.grabbedLink = lockTarget.rightHandLink;
+                    VRRig.LocalRig.rightHandLink.grabbedPlayer = target;
+                    VRRig.LocalRig.rightHandLink.grabbedHandIsLeft = true;
+
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { Receivers = ReceiverGroup.Others });
+
+                    VRRig.LocalRig.leftHandLink.grabbedLink = null;
+                    VRRig.LocalRig.leftHandLink.grabbedPlayer = null;
+
+                    VRRig.LocalRig.rightHandLink.grabbedLink = null;
+                    VRRig.LocalRig.rightHandLink.grabbedPlayer = null;
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                {
+                    gunLocked = false;
+                    VRRig.LocalRig.enabled = true;
+                }
+            }
+        }
+
+        public static void HandsDownAll()
+        {
+            VRRig RandomRig = GetRandomVRRig(false);
+
+            VRRig.LocalRig.enabled = false;
+            VRRig.LocalRig.transform.position = Vector3.down * 99999f;
+
+            VRRig.LocalRig.leftHandLink.grabbedLink = RandomRig.leftHandLink;
+            VRRig.LocalRig.leftHandLink.grabbedPlayer = GetPlayerFromVRRig(RandomRig);
+
+            RandomRig.leftHand.rigTarget.transform.position = Vector3.down * 99999f;
+
+            RandomRig = GetRandomVRRig(false);
+
+            VRRig.LocalRig.rightHandLink.grabbedLink = RandomRig.leftHandLink;
+            VRRig.LocalRig.rightHandLink.grabbedPlayer = GetPlayerFromVRRig(RandomRig);
+
+            VRRig.LocalRig.rightHandLink.grabbedHandIsLeft = true;
+
+            RandomRig.rightHand.rigTarget.transform.position = Vector3.down * 99999f;
+
+            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { Receivers = ReceiverGroup.Others });
+
+            VRRig.LocalRig.leftHandLink.grabbedLink = null;
+            VRRig.LocalRig.leftHandLink.grabbedPlayer = null;
+
+            VRRig.LocalRig.rightHandLink.grabbedLink = null;
+            VRRig.LocalRig.rightHandLink.grabbedPlayer = null;
+            VRRig.LocalRig.enabled = true;
+        }
+
+        public static void HandsUpGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    VRRig.LocalRig.enabled = false;
+
+                    VRRig.LocalRig.transform.position = Vector3.up * 99999f;
+
+                    NetPlayer target = GetPlayerFromVRRig(lockTarget);
+
+                    lockTarget.leftHand.rigTarget.transform.position = Vector3.up * 99999f;
+                    lockTarget.rightHand.rigTarget.transform.position = Vector3.up * 99999f;
+
+                    VRRig.LocalRig.leftHandLink.grabbedLink = lockTarget.leftHandLink;
+                    VRRig.LocalRig.leftHandLink.grabbedPlayer = target;
+
+                    VRRig.LocalRig.rightHandLink.grabbedLink = lockTarget.rightHandLink;
+                    VRRig.LocalRig.rightHandLink.grabbedPlayer = target;
+                    VRRig.LocalRig.rightHandLink.grabbedHandIsLeft = true;
+
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { Receivers = ReceiverGroup.Others });
+
+                    VRRig.LocalRig.leftHandLink.grabbedLink = null;
+                    VRRig.LocalRig.leftHandLink.grabbedPlayer = null;
+
+                    VRRig.LocalRig.rightHandLink.grabbedLink = null;
+                    VRRig.LocalRig.rightHandLink.grabbedPlayer = null;
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                {
+                    gunLocked = false;
+                    VRRig.LocalRig.enabled = true;
+                }
+            }
+        }
+
+        public static void HandsUpAll()
+        {
+            VRRig RandomRig = GetRandomVRRig(false);
+
+            VRRig.LocalRig.enabled = false;
+            VRRig.LocalRig.transform.position = Vector3.up * 99999f;
+
+            VRRig.LocalRig.leftHandLink.grabbedLink = RandomRig.leftHandLink;
+            VRRig.LocalRig.leftHandLink.grabbedPlayer = GetPlayerFromVRRig(RandomRig);
+
+            RandomRig.leftHand.rigTarget.transform.position = Vector3.up * 99999f;
+
+            RandomRig = GetRandomVRRig(false);
+
+            VRRig.LocalRig.rightHandLink.grabbedLink = RandomRig.leftHandLink;
+            VRRig.LocalRig.rightHandLink.grabbedPlayer = GetPlayerFromVRRig(RandomRig);
+
+            VRRig.LocalRig.rightHandLink.grabbedHandIsLeft = true;
+
+            RandomRig.rightHand.rigTarget.transform.position = Vector3.up * 99999f;
+
+            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { Receivers = ReceiverGroup.Others });
+
+            VRRig.LocalRig.leftHandLink.grabbedLink = null;
+            VRRig.LocalRig.leftHandLink.grabbedPlayer = null;
+
+            VRRig.LocalRig.rightHandLink.grabbedLink = null;
+            VRRig.LocalRig.rightHandLink.grabbedPlayer = null;
+            VRRig.LocalRig.enabled = true;
+        }
+
+        public static void BringHandsGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    NetPlayer target = GetPlayerFromVRRig(lockTarget);
+
+                    lockTarget.leftHand.rigTarget.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
+                    lockTarget.rightHand.rigTarget.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
+
+                    VRRig.LocalRig.leftHandLink.grabbedLink = lockTarget.leftHandLink;
+                    VRRig.LocalRig.leftHandLink.grabbedPlayer = target;
+
+                    VRRig.LocalRig.rightHandLink.grabbedLink = lockTarget.rightHandLink;
+                    VRRig.LocalRig.rightHandLink.grabbedPlayer = target;
+                    VRRig.LocalRig.rightHandLink.grabbedHandIsLeft = true;
+
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { Receivers = ReceiverGroup.Others });
+
+                    VRRig.LocalRig.leftHandLink.grabbedLink = null;
+                    VRRig.LocalRig.leftHandLink.grabbedPlayer = null;
+
+                    VRRig.LocalRig.rightHandLink.grabbedLink = null;
+                    VRRig.LocalRig.rightHandLink.grabbedPlayer = null;
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                {
+                    gunLocked = false;
+                    VRRig.LocalRig.enabled = true;
+                }
+            }
+        }
+
+        public static void BringHandsAll()
+        {
+            VRRig RandomRig = GetRandomVRRig(false);
+
+            VRRig.LocalRig.leftHandLink.grabbedLink = RandomRig.leftHandLink;
+            VRRig.LocalRig.leftHandLink.grabbedPlayer = GetPlayerFromVRRig(RandomRig);
+
+            RandomRig.leftHand.rigTarget.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
+
+            RandomRig = GetRandomVRRig(false);
+
+            VRRig.LocalRig.rightHandLink.grabbedLink = RandomRig.leftHandLink;
+            VRRig.LocalRig.rightHandLink.grabbedPlayer = GetPlayerFromVRRig(RandomRig);
+
+            VRRig.LocalRig.rightHandLink.grabbedHandIsLeft = true;
+
+            RandomRig.rightHand.rigTarget.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
+
+            SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { Receivers = ReceiverGroup.Others });
+
+            VRRig.LocalRig.leftHandLink.grabbedLink = null;
+            VRRig.LocalRig.leftHandLink.grabbedPlayer = null;
+
+            VRRig.LocalRig.rightHandLink.grabbedLink = null;
+            VRRig.LocalRig.rightHandLink.grabbedPlayer = null;
+            VRRig.LocalRig.enabled = true;
+        }
+
+        public static void HandsToPointAll()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    VRRig RandomRig = GetRandomVRRig(false);
+
+                    VRRig.LocalRig.enabled = false;
+                    VRRig.LocalRig.transform.position = NewPointer.transform.position + Vector3.up;
+
+                    VRRig.LocalRig.leftHandLink.grabbedLink = RandomRig.leftHandLink;
+                    VRRig.LocalRig.leftHandLink.grabbedPlayer = GetPlayerFromVRRig(RandomRig);
+
+                    RandomRig.leftHand.rigTarget.transform.position = NewPointer.transform.position + Vector3.up;
+
+                    RandomRig = GetRandomVRRig(false);
+
+                    VRRig.LocalRig.rightHandLink.grabbedLink = RandomRig.leftHandLink;
+                    VRRig.LocalRig.rightHandLink.grabbedPlayer = GetPlayerFromVRRig(RandomRig);
+
+                    VRRig.LocalRig.rightHandLink.grabbedHandIsLeft = true;
+
+                    RandomRig.rightHand.rigTarget.transform.position = NewPointer.transform.position + Vector3.up;
+
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions { Receivers = ReceiverGroup.Others });
+
+                    VRRig.LocalRig.leftHandLink.grabbedLink = null;
+                    VRRig.LocalRig.leftHandLink.grabbedPlayer = null;
+
+                    VRRig.LocalRig.rightHandLink.grabbedLink = null;
+                    VRRig.LocalRig.rightHandLink.grabbedPlayer = null;
+                    VRRig.LocalRig.enabled = true;
+                }
+            }
+            else
+                VRRig.LocalRig.enabled = true;
+        }
+
         public static void BreakControllersGun()
         {
             if (GetGunInput(false))

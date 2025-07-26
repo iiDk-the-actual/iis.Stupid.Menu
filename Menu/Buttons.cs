@@ -1303,8 +1303,19 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Delay Ban Gun", method =() => Overpowered.DelayBanGun(), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Delay bans whoever your hand desires."},
                 new ButtonInfo { buttonText = "Delay Ban All", enableMethod =() => Overpowered.DelayBanAll(), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Delay bans everyone in the room."},
 
-                new ButtonInfo { buttonText = "Break Hands Gun", method =() => Overpowered.BreakControllersGun(), toolTip = "Breaks the hands of whoever your hand desires." },
-                new ButtonInfo { buttonText = "Break Hands All", method =() => Overpowered.BreakControllersAll(), toolTip = "Breaks the hands of everyone in the room." },
+                new ButtonInfo { buttonText = "Hands Down Gun", method =() => Overpowered.HandsDownGun(), toolTip = "Makes the hands of whoever your hand desires go down into the ground." },
+                new ButtonInfo { buttonText = "Hands Down All", method =() => Overpowered.HandsDownAll(), toolTip = "Makes the hands of everyone in the room go down into the ground." },
+
+                new ButtonInfo { buttonText = "Hands Up Gun", method =() => Overpowered.HandsUpGun(), toolTip = "Makes the hands of whoever your hand desires go up into the sky." },
+                new ButtonInfo { buttonText = "Hands Up All", method =() => Overpowered.HandsUpAll(), toolTip = "Makes the hands of everyone in the room go up into the sky." },
+
+                new ButtonInfo { buttonText = "Bring Hands Gun", method =() => Overpowered.BringHandsGun(), toolTip = "Makes the hands of whoever your hand desires go to you." },
+                new ButtonInfo { buttonText = "Bring Hands All", method =() => Overpowered.BringHandsAll(), toolTip = "Makes the hands of whoever your hand desires go to you." },
+
+                new ButtonInfo { buttonText = "Bring Hands All Gun", method =() => Overpowered.HandsToPointAll(), toolTip = "Makes the hands of everyone in the room go to wherever your hand desires." },
+
+                new ButtonInfo { buttonText = "Spaz Hands Gun", method =() => Overpowered.BreakControllersGun(), toolTip = "Breaks the hands of whoever your hand desires." },
+                new ButtonInfo { buttonText = "Spaz Hands All", method =() => Overpowered.BreakControllersAll(), toolTip = "Breaks the hands of everyone in the room." },
 
                 new ButtonInfo { buttonText = "Kick on Grab", method =() => Overpowered.TowardsPositionOnGrab(new Vector3(-71.33718f, 101.4977f, -93.09029f)), toolTip = "Kicks the player when they grab you." },
                 new ButtonInfo { buttonText = "Crash on Grab", method =() => Overpowered.DirectionOnGrab(Vector3.down), toolTip = "Crashes the player when they grab you." },
