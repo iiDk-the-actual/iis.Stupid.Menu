@@ -1247,6 +1247,11 @@ namespace iiMenu.Mods
                         thecolor = Color.white;
                         showtracersplz = true;
                     }
+                    if (vrrig.concatStringOfCosmeticsAllowed.Contains("LBANI"))
+                    {
+                        thecolor = Color.magenta;
+                        showtracersplz = true;
+                    }
                     if (showtracersplz)
                     {
                         GameObject line = new GameObject("Line");
