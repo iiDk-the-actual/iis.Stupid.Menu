@@ -2373,7 +2373,7 @@ Piece Name: {gunTarget.name}";
         {
             if (rightGrab)
             {
-                RequestCreatePiece(pieceIdSet, GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, 0, null, false, GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength);
+                RequestCreatePiece(pieceIdSet, GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, 0, null, false, false, GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength);
                 RPCProtection();
             }
         }
@@ -2704,7 +2704,7 @@ Piece Name: {gunTarget.name}";
             GetIndex("Change Block Delay").overlapText = "Change Block Delay <color=grey>[</color><color=green>" + blockDebounce.ToString() + "</color><color=grey>]</color>";
         }
 
-        public static void RequestCreatePiece(int pieceType, Vector3 position, Quaternion rotation, int materialType, Player target = null, bool overrideFreeze = false, Vector3? velocity = null, Vector3? angVelocity = null)
+        public static void RequestCreatePiece(int pieceType, Vector3 position, Quaternion rotation, int materialType, object target = null, bool overrideFreeze = false, bool forceGravity = false, Vector3? velocity = null, Vector3? angVelocity = null)
         {
             if (GetIndex("Random Block Type").enabled)
                 pieceType = GetRandomBlockType();
@@ -2729,12 +2729,14 @@ Piece Name: {gunTarget.name}";
                         PhotonNetwork.LocalPlayer
                     };
 
-                    if (target == null)
-                        Networking.photonView.RPC("PieceCreatedByShelfRPC", RpcTarget.All, args);
+                    if (target is RpcTarget rpcTargetCreate)
+                        Networking.photonView.RPC("PieceCreatedByShelfRPC", rpcTargetCreate, args);
+                    else if (target is Player playerCreate)
+                        Networking.photonView.RPC("PieceCreatedByShelfRPC", playerCreate, args);
                     else
-                        Networking.photonView.RPC("PieceCreatedByShelfRPC", target, args);
+                        Networking.photonView.RPC("PieceCreatedByShelfRPC", RpcTarget.All, args);
 
-                    if (overrideFreeze || !GetIndex("Zero Gravity Blocks").enabled)
+                    if (!overrideFreeze || !GetIndex("Zero Gravity Blocks").enabled || forceGravity)
                     {
                         blockDelay = Time.time + 0.02f;
 
@@ -2747,10 +2749,12 @@ Piece Name: {gunTarget.name}";
                             PhotonNetwork.LocalPlayer
                         };
 
-                        if (target == null)
-                            Networking.photonView.RPC("PieceGrabbedRPC", RpcTarget.All, args);
+                        if (target is RpcTarget rpcTargetGrab)
+                            Networking.photonView.RPC("PieceGrabbedRPC", rpcTargetGrab, args);
+                        else if (target is Player playerGrab)
+                            Networking.photonView.RPC("PieceGrabbedRPC", playerGrab, args);
                         else
-                            Networking.photonView.RPC("PieceGrabbedRPC", target, args);
+                            Networking.photonView.RPC("PieceGrabbedRPC", RpcTarget.All, args);
 
                         args = new object[]
                         {
@@ -2763,10 +2767,12 @@ Piece Name: {gunTarget.name}";
                             PhotonNetwork.LocalPlayer
                         };
 
-                        if (target == null)
-                            Networking.photonView.RPC("PieceDroppedRPC", RpcTarget.All, args);
+                        if (target is RpcTarget rpcTargetDrop)
+                            Networking.photonView.RPC("PieceDroppedRPC", rpcTargetDrop, args);
+                        else if (target is Player playerDrop)
+                            Networking.photonView.RPC("PieceDroppedRPC", playerDrop, args);
                         else
-                            Networking.photonView.RPC("PieceDroppedRPC", target, args);
+                            Networking.photonView.RPC("PieceDroppedRPC", RpcTarget.All, args);
                     }
                 }
             }
@@ -2803,100 +2809,6 @@ Piece Name: {gunTarget.name}";
 
                     Networking.RequestGrabPiece(piece, true, Vector3.zero, Quaternion.identity);
                     Networking.RequestDropPiece(piece, position, rotation, velocity ?? Vector3.zero, angVelocity ?? Vector3.zero);
-                }
-            }
-        }
-
-        public static void RequestCreatePiece(int pieceType, Vector3 position, Quaternion rotation, int materialType, RpcTarget target, bool overrideFreeze = false)
-        {
-            if (GetIndex("Random Block Type").enabled)
-                pieceType = GetRandomBlockType();
-
-            BuilderTable table = GetBuilderTable();
-            BuilderTableNetworking Networking = table.builderNetworking;
-            if (NetworkSystem.Instance.IsMasterClient)
-            {
-                if (Time.time > blockDelay)
-                {
-                    int pieceId = table.CreatePieceId();
-
-                    object[] args = new object[]
-                    {
-                        pieceType,
-                        pieceId,
-                        BitPackUtils.PackWorldPosForNetwork(position),
-                        BitPackUtils.PackQuaternionForNetwork(rotation),
-                        materialType,
-                        (byte)4,
-                        1,
-                        PhotonNetwork.LocalPlayer
-                    };
-
-                    Networking.photonView.RPC("PieceCreatedByShelfRPC", target, args);
-
-                    if (overrideFreeze || !GetIndex("Zero Gravity Blocks").enabled)
-                    {
-                        blockDelay = Time.time + 0.02f;
-
-                        args = new object[]
-                        {
-                            Networking.CreateLocalCommandId(),
-                            pieceId,
-                            true,
-                            BitPackUtils.PackHandPosRotForNetwork(Vector3.zero, Quaternion.identity),
-                            PhotonNetwork.LocalPlayer
-                        };
-
-                        Networking.photonView.RPC("PieceGrabbedRPC", RpcTarget.All, args);
-
-                        args = new object[]
-                        {
-                            Networking.CreateLocalCommandId(),
-                            pieceId,
-                            position,
-                            rotation,
-                            Vector3.zero,
-                            Vector3.zero,
-                            PhotonNetwork.LocalPlayer
-                        };
-
-                        Networking.photonView.RPC("PieceDroppedRPC", RpcTarget.All, args);
-                    }
-                }
-            }
-            else
-            {
-                if (Time.time > blockDelay)
-                {
-                    blockDelay = Time.time + blockDebounce;
-                    BuilderPiece piece = GetAllType<BuilderPiece>()
-                        .Where(piece => piece.gameObject.activeInHierarchy)
-                        .Where(piece => piece.pieceType == pieceType)
-                        .Where(piece => !piece.isBuiltIntoTable)
-                        .Where(piece => piece.CanPlayerGrabPiece(PhotonNetwork.LocalPlayer.ActorNumber, piece.transform.position))
-                        .Where(piece => Vector3.Distance(piece.transform.position, ServerLeftHandPos) < 2.5f)
-                        .OrderBy(piece => Vector3.Distance(piece.transform.position, ServerLeftHandPos))
-                        .FirstOrDefault()
-                        ?? null;
-
-                    if (piece == null)
-                        piece = GetAllType<BuilderPiece>()
-                            .Where(piece => piece.gameObject.activeInHierarchy)
-                            .Where(piece => !piece.isBuiltIntoTable)
-                            .Where(piece => piece.CanPlayerGrabPiece(PhotonNetwork.LocalPlayer.ActorNumber, piece.transform.position))
-                            .Where(piece => Vector3.Distance(piece.transform.position, ServerLeftHandPos) < 2.5f)
-                            .OrderBy(piece => Vector3.Distance(piece.transform.position, ServerLeftHandPos))
-                            .FirstOrDefault()
-                            ?? null;
-
-                    if (piece == null)
-                        return;
-
-                    if (Vector3.Distance(ServerLeftHandPos, position) > 2.5f)
-                        position = ServerLeftHandPos + ((position - ServerLeftHandPos).normalized * 2.5f);
-
-                    Networking.RequestGrabPiece(piece, true, Vector3.zero, Quaternion.identity);
-                    Networking.RequestDropPiece(piece, position, rotation, Vector3.zero, Vector3.zero);
                 }
             }
         }
