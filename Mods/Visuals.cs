@@ -1237,6 +1237,11 @@ namespace iiMenu.Mods
                         thecolor = Color.green;
                         showtracersplz = true;
                     }
+                    if (vrrig.concatStringOfCosmeticsAllowed.Contains("LBANI"))
+                    {
+                        thecolor = Color.magenta;
+                        showtracersplz = true;
+                    }
                     if (vrrig.concatStringOfCosmeticsAllowed.Contains("LBAAK") || vrrig.concatStringOfCosmeticsAllowed.Contains("LMAPY."))
                     {
                         thecolor = Color.red;
@@ -1247,11 +1252,7 @@ namespace iiMenu.Mods
                         thecolor = Color.white;
                         showtracersplz = true;
                     }
-                    if (vrrig.concatStringOfCosmeticsAllowed.Contains("LBANI"))
-                    {
-                        thecolor = Color.magenta;
-                        showtracersplz = true;
-                    }
+                    
                     if (showtracersplz)
                     {
                         GameObject line = new GameObject("Line");
