@@ -1151,7 +1151,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Shotgun <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.Shotgun(), toolTip = "Spawns you a shotgun when you press <color=green>grip</color>."},
 
-                new ButtonInfo { buttonText = "Block Crash Gun <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.BlockCrashGun(), toolTip = "Crashes whoever your hand desires if they are inside of the block map."},
+                new ButtonInfo { buttonText = "Block Crash Gun", method =() => Overpowered.BlockCrashGun(), toolTip = "Crashes whoever your hand desires if they are inside of the block map."},
                 new ButtonInfo { buttonText = "Block Crash All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.BlockCrashAll(), toolTip = "Crashes everybody inside of the block map."},
 
                 new ButtonInfo { buttonText = "Block Anti Report", enableMethod =() => Fun.EnableAtticAntiReport(), method =() => Fun.AtticAntiReport(), toolTip = "Automatically builds blocks around your report button."},
