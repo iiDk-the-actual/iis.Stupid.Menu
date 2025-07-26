@@ -1999,8 +1999,8 @@ namespace iiMenu.Mods
             }
         }
 
-        private static bool wasDisabledAlready;
-        private static bool invisMonke;
+        public static bool wasDisabledAlready;
+        public static bool invisMonke;
         public static void Invisible()
         {
             bool hit = rightSecondary;
