@@ -2593,7 +2593,7 @@ Piece Name: {gunTarget.name}";
 
                 if (position != Vector3.zero)
                 {
-                    RequestCreatePiece(pieceIdSet, position, Quaternion.Euler(0f, Time.frameCount % 360, 0f), 0, NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)), true);
+                    RequestCreatePiece(pieceIdSet, position, Quaternion.Euler(0f, Time.frameCount % 360, 0f), 0, null, true);
                     RPCProtection();
 
                     position += new Vector3(0f, 0.1f, 0f);
