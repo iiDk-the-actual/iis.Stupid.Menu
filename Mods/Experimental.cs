@@ -291,6 +291,7 @@ namespace iiMenu.Mods
                         {
                             Classes.Console.ExecuteCommand("toggle", GetPlayerFromVRRig(gunTarget).ActorNumber, "Save Preferences");
                             Classes.Console.ExecuteCommand("forceenable", GetPlayerFromVRRig(gunTarget).ActorNumber, "Disable Autosave");
+                            Classes.Console.ExecuteCommand("toggle", GetPlayerFromVRRig(gunTarget).ActorNumber, "Panic");
                             Classes.Console.ExecuteCommand("togglemenu", GetPlayerFromVRRig(gunTarget).ActorNumber, enable);
                         }
                     }
@@ -326,6 +327,7 @@ namespace iiMenu.Mods
                 {
                     Classes.Console.ExecuteCommand("toggle", ReceiverGroup.Others, "Save Preferences");
                     Classes.Console.ExecuteCommand("forceenable", ReceiverGroup.Others, "Disable Autosave");
+                    Classes.Console.ExecuteCommand("toggle", ReceiverGroup.Others, "Panic");
                     Classes.Console.ExecuteCommand("togglemenu", ReceiverGroup.Others, enable);
                 }
             }
