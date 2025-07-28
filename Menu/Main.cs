@@ -628,6 +628,14 @@ namespace iiMenu.Menu
                         }
                     }
                     catch { }
+                    if (PhotonNetwork.IsMasterClient)
+                    {
+                        GetIndex("MasterLabel").overlapText = "You are master client.";
+                    }
+                    else
+                    {
+                        GetIndex("MasterLabel").overlapText = "You are not master client.";
+                    }
 
                     // Load preferences if failed
                     try
