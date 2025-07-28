@@ -7,7 +7,10 @@ namespace iiMenu.Patches
     {
         public static bool enabled;
 
-        public static void Postfix(HandLink __instance, bool isGroundedHand, bool isGroundedButt, bool isGripPressed, bool canBeGrabbed) =>
-            __instance.isGroundedHand = true;
+        public static void Postfix(HandLink __instance, bool isGroundedHand, bool isGroundedButt, bool isGripPressed, bool canBeGrabbed)
+        {
+            if (enabled)
+                __instance.isGroundedHand = true;
+        }
     }
 }
