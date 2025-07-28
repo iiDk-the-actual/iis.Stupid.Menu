@@ -310,6 +310,10 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Auto Join Room \"JUANGTAG\"", method =() => Important.QueueRoom("JUANGTAG"), isTogglable = false, toolTip = "Automatically attempts to connect to room \"JUANGTAG\" every couple of seconds until connected." },
                 new ButtonInfo { buttonText = "Auto Join Room \"GHOST\"", method =() => Important.QueueRoom("GHOST"), isTogglable = false, toolTip = "Automatically attempts to connect to room \"GHOST\" every couple of seconds until connected." },
                 new ButtonInfo { buttonText = "Auto Join Room \"GULLIBLE\"", method =() => Important.QueueRoom("GULLIBLE"), isTogglable = false, toolTip = "Automatically attempts to connect to room \"GULLIBLE\" every couple of seconds until connected." },
+
+                new ButtonInfo { buttonText = "Auto Join Room \"GAY\"", method =() => Important.QueueRoom("GAY"), isTogglable = false, toolTip = "Automatically attempts to connect to room \"GAY\" every couple of seconds until connected." },
+                new ButtonInfo { buttonText = "Auto Join Room \"FURRY\"", method =() => Important.QueueRoom("FURRY"), isTogglable = false, toolTip = "Automatically attempts to connect to room \"FURRY\" every couple of seconds until connected." },
+                new ButtonInfo { buttonText = "Auto Join Room \"FORSAKEN\"", method =() => Important.QueueRoom("FORSAKEN"), isTogglable = false, toolTip = "Automatically attempts to connect to room \"FORSAKEN\" every couple of seconds until connected." },
             },
 
             new ButtonInfo[] { // Important Mods [7]
@@ -933,6 +937,14 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Freeze Bug", method =() => Fun.FreezeObject("Floating Bug Holdable"), toolTip = "Freezes the bug in place." },
                 new ButtonInfo { buttonText = "Freeze Firefly", method =() => Fun.FreezeObject("Firefly"), toolTip = "Freezes the firefly in place." },
                 new ButtonInfo { buttonText = "Freeze Bat", method =() => Fun.FreezeObject("Cave Bat Holdable"), toolTip = "Freezes the bat in place." },
+
+                new ButtonInfo { buttonText = "Fast Bug", method =() => Fun.SetObjectSpeed("Floating Bug Holdable", 5f), disableMethod =() => Fun.SetObjectSpeed("Floating Bug Holdable"), toolTip = "Speeds up the bug." },
+                new ButtonInfo { buttonText = "Fast Firefly", method =() => Fun.SetObjectSpeed("Firefly", 5f), disableMethod =() => Fun.SetObjectSpeed("Firefly"), toolTip = "Speeds up the firefly." },
+                new ButtonInfo { buttonText = "Fast Bat", method =() => Fun.SetObjectSpeed("Cave Bat Holdable", 5f), disableMethod =() => Fun.SetObjectSpeed("Cave Bat Holdable"), toolTip = "Speeds up the bat." },
+
+                new ButtonInfo { buttonText = "Fast Bug", method =() => Fun.SetObjectSpeed("Floating Bug Holdable", 0.1f), disableMethod =() => Fun.SetObjectSpeed("Floating Bug Holdable"), toolTip = "Slows down the bug." },
+                new ButtonInfo { buttonText = "Fast Firefly", method =() => Fun.SetObjectSpeed("Firefly", 0.1f), disableMethod =() => Fun.SetObjectSpeed("Firefly"), toolTip = "Slows down the firefly." },
+                new ButtonInfo { buttonText = "Fast Bat", method =() => Fun.SetObjectSpeed("Cave Bat Holdable", 0.1f), disableMethod =() => Fun.SetObjectSpeed("Cave Bat Holdable"), toolTip = "Slows down the bat." },
 
                 new ButtonInfo { buttonText = "Grab Bug <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.ObjectToHand("Floating Bug Holdable"), toolTip = "Forces the bug into your hand when holding <color=green>grip</color>." },
                 new ButtonInfo { buttonText = "Grab Firefly <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.ObjectToHand("Firefly"), toolTip = "Forces the firefly into your hand when holding <color=green>grip</color>." },
