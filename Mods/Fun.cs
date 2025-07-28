@@ -2056,7 +2056,7 @@ Piece Name: {gunTarget.name}";
                     return null;
                 
                 VRRig.LocalRig.enabled = true;
-                if (Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, bugObject.transform.position) > 15f)
+                if (Vector3.SqrMagnitude(bugObject.transform.position - GorillaTagger.Instance.bodyCollider.transform.position) > 15f)
                 {
                     VRRig.LocalRig.enabled = false;
                     VRRig.LocalRig.transform.position = bugObject.transform.position;
@@ -2067,7 +2067,7 @@ Piece Name: {gunTarget.name}";
                     bugCoroutine = CoroutineManager.instance.StartCoroutine(ReturnRig());
                 }
 
-                if (Vector3.Distance(ServerPos, bugObject.transform.position) > 15f)
+                if (Vector3.SqrMagnitude(bugObject.transform.position - ServerPos) > 15f)
                     return null;
 
                 if (Time.time < getOwnershipDelay)
@@ -2352,6 +2352,13 @@ Piece Name: {gunTarget.name}";
                 bug.thrownYVelocity = 0f;
                 bug.reliableState.travelingDirection = Vector3.zero;
             }
+        }
+
+        public static void SetObjectSpeed(string objectName, float speed = 1f)
+        {
+            ThrowableBug bug = GetBug(objectName);
+            if (bug != null)
+                bug.maxNaturalSpeed = speed;
         }
 
         public static void ObjectToHand(string objectName)
