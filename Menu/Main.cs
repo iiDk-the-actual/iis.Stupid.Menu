@@ -5222,7 +5222,7 @@ namespace iiMenu.Menu
                                     VRRig.LocalRig.PlayHandTapLocal(48, rightHand, 0.4f);
                                     
                                     if (fromMenu)
-                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>HOTKEY</color><color=grey>]</color> Removed quick action button.");
+                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>QUICK ACTIONS</color><color=grey>]</color> Removed quick action button.");
                                 }
                             }
                             else
