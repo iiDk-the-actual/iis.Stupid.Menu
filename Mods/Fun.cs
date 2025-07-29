@@ -2758,7 +2758,7 @@ Piece Name: {gunTarget.name}";
                     else
                         Networking.photonView.RPC("PieceCreatedByShelfRPC", RpcTarget.All, args);
 
-                    if (!overrideFreeze || !GetIndex("Zero Gravity Blocks").enabled || forceGravity)
+                    if ((!overrideFreeze && !GetIndex("Zero Gravity Blocks").enabled) || forceGravity)
                     {
                         blockDelay = Time.time + 0.02f;
 
