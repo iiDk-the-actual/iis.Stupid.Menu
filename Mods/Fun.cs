@@ -2073,7 +2073,7 @@ Piece Name: {gunTarget.name}";
                 if (Time.time < getOwnershipDelay)
                     return null;
 
-                getOwnershipDelay = Time.time + 0.5f;
+                getOwnershipDelay = Time.time + 1f;
 
                 guard.RequestOwnership(() => bug.currentState = TransferrableObject.PositionState.Dropped, null);
                 return null;
