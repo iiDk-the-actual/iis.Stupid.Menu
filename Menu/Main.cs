@@ -4487,6 +4487,9 @@ namespace iiMenu.Menu
                     return;
             }
 
+            if (gameObject.IsNullOrEmpty())
+                return;
+
             CreateObjectBoard(scene.name, gameObject, position, rotation, scale);
         }
 
