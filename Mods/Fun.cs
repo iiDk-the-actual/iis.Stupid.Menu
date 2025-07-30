@@ -2073,9 +2073,14 @@ Piece Name: {gunTarget.name}";
                 if (Time.time < getOwnershipDelay)
                     return null;
 
-                getOwnershipDelay = Time.time + 1f;
+                getOwnershipDelay = Time.time + 0.5f;
 
-                guard.RequestOwnership(() => bug.currentState = TransferrableObject.PositionState.Dropped, null);
+                NetworkingState guardState = guard.currentState; // Thanks C# 8.0
+                Action failureAction = null;
+                if ((int)guardState < 3)
+                    failureAction = () => guard.currentState = guardState;
+
+                guard.RequestOwnership(() => bug.currentState = TransferrableObject.PositionState.Dropped, failureAction);
                 return null;
             }
             else
