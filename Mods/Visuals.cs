@@ -1276,6 +1276,7 @@ namespace iiMenu.Mods
         }
 
         // Credits to zvbex for the 'FIRST LOGIN' concat check
+        // Credits to HanSolo1000Falcon/WhoIsThatMonke for improved checks
 
         private static Material platformMat;
         private static Material platformEspMat;
