@@ -2075,7 +2075,12 @@ Piece Name: {gunTarget.name}";
 
                 getOwnershipDelay = Time.time + 0.5f;
 
-                guard.RequestOwnership(() => bug.currentState = TransferrableObject.PositionState.Dropped, null);
+                NetworkingState guardState = guard.currentState; // Thanks C# 8.0
+                Action failureAction = null;
+                if ((int)guardState < 3)
+                    failureAction = () => guard.currentState = guardState;
+
+                guard.RequestOwnership(() => bug.currentState = TransferrableObject.PositionState.Dropped, failureAction);
                 return null;
             }
             else
@@ -2758,7 +2763,7 @@ Piece Name: {gunTarget.name}";
                     else
                         Networking.photonView.RPC("PieceCreatedByShelfRPC", RpcTarget.All, args);
 
-                    if (!overrideFreeze || !GetIndex("Zero Gravity Blocks").enabled || forceGravity)
+                    if ((!overrideFreeze && !GetIndex("Zero Gravity Blocks").enabled) || forceGravity)
                     {
                         blockDelay = Time.time + 0.02f;
 
