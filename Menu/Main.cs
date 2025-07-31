@@ -4920,13 +4920,12 @@ namespace iiMenu.Menu
 
         public static void ChangeName(string PlayerName)
         {
-            GorillaComputer.instance.currentName = PlayerName;
-            PhotonNetwork.LocalPlayer.NickName = PlayerName;
-            VRRig.LocalRig.playerText1.text = PlayerName;
-            VRRig.LocalRig.playerText2.text = PlayerName;
-            GorillaComputer.instance.savedName = PlayerName;
-            PlayerPrefs.SetString("playerName", PlayerName);
+            GorillaComputer.instance.SetLocalNameTagText(GorillaComputer.instance.currentName);
+            GorillaComputer.instance.savedName = GorillaComputer.instance.currentName;
+            PlayerPrefs.SetString("playerName", GorillaComputer.instance.currentName);
             PlayerPrefs.Save();
+
+            PhotonNetwork.LocalPlayer.NickName = PlayerName;
 
             try
             {
