@@ -954,6 +954,61 @@ namespace iiMenu.Mods
             FPSnametags.Clear();
         }
 
+        private static Dictionary<VRRig, GameObject> Pingnametags = new Dictionary<VRRig, GameObject> { };
+        public static void PingTags()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> nametag in Pingnametags)
+            {
+                if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
+                {
+                    UnityEngine.Object.Destroy(nametag.Value);
+                    Pingnametags.Remove(nametag.Key);
+                }
+            }
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                try
+                {
+                    if (!vrrig.isLocal)
+                    {
+                        if (!Pingnametags.ContainsKey(vrrig))
+                        {
+                            GameObject go = new GameObject("iiMenu_Pingtag");
+                            go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+                            TextMesh textMesh = go.AddComponent<TextMesh>();
+                            textMesh.fontSize = 48;
+                            textMesh.characterSize = 0.1f;
+                            textMesh.anchor = TextAnchor.MiddleCenter;
+                            textMesh.alignment = TextAlignment.Center;
+
+                            Pingnametags.Add(vrrig, go);
+                        }
+
+                        GameObject nameTag = Pingnametags[vrrig];
+                        nameTag.GetComponent<TextMesh>().text = $"{playerPing[vrrig]}ms";
+                        nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
+                        nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
+
+                        nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
+
+                        nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
+                        nameTag.transform.LookAt(Camera.main.transform.position);
+                        nameTag.transform.Rotate(0f, 180f, 0f);
+                    }
+                }
+                catch { }
+            }
+        }
+
+        public static void DisablePingTags()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> nametag in Pingnametags)
+                UnityEngine.Object.Destroy(nametag.Value);
+
+            Pingnametags.Clear();
+        }
+
         private static Dictionary<VRRig, GameObject> turnNameTags = new Dictionary<VRRig, GameObject> { };
         public static void TurnTags()
         {
