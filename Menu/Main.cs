@@ -4581,6 +4581,10 @@ namespace iiMenu.Menu
             ServerSyncRightHandPos = VRRig.LocalRig?.rightHand.rigTarget.transform.position ?? ServerSyncRightHandPos;
         }
 
+        public static Dictionary<VRRig, int> playerPing = new Dictionary<VRRig, int> { };
+        public static void OnPlayerSerialize(VRRig rig) =>
+            playerPing[rig] = (int)Math.Abs((rig.velocityHistoryList[0].time * 1000) - PhotonNetwork.ServerTimestamp);
+
         public static void MassSerialize(bool exclude = false, PhotonView[] viewFilter = null, int timeOffset = 0)
         {
             if (!PhotonNetwork.InRoom)
@@ -5326,6 +5330,7 @@ namespace iiMenu.Menu
             NetworkSystem.Instance.OnPlayerLeft += OnPlayerLeave;
 
             SerializePatch.OnSerialize += OnSerialize;
+            PlayerSerializePatch.OnPlayerSerialize += OnPlayerSerialize;
 
             GameObject CrystalChunk = GameObject.Find("Environment Objects/LocalObjects_Prefab/ForestToCave/C_Crystal_Chunk");
             if (CrystalChunk != null)

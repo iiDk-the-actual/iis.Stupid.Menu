@@ -684,6 +684,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Name Tags", method =() => Visuals.NameTags(), disableMethod =() => Visuals.DisableNameTags(), toolTip = "Gives players name tags above their heads that show their nickname."},
                 new ButtonInfo { buttonText = "Velocity Name Tags", method =() => Visuals.VelocityTags(), disableMethod =() => Visuals.DisableVelocityTags(), toolTip = "Gives players name tags above their heads that show their velocity."},
                 new ButtonInfo { buttonText = "FPS Name Tags", method =() => Visuals.FPSTags(), disableMethod =() => Visuals.DisableFPSTags(), toolTip = "Gives players name tags above their heads that show their FPS."},
+                new ButtonInfo { buttonText = "Ping Name Tags", method =() => Visuals.PingTags(), disableMethod =() => Visuals.DisablePingTags(), toolTip = "Gives players name tags above their heads that show their ping."},
                 new ButtonInfo { buttonText = "Turn Name Tags", method =() => Visuals.TurnTags(), disableMethod =() => Visuals.DisableTurnTags(), toolTip = "Gives players name tags above their heads that show their turn settings."},
                 new ButtonInfo { buttonText = "Tagged Name Tags", method =() => Visuals.TaggedTags(), disableMethod =() => Visuals.DisableTaggedTags(), toolTip = "Gives players name tags above their heads that show who tagged them."},
 
