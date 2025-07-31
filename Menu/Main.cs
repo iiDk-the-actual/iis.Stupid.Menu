@@ -4943,7 +4943,6 @@ namespace iiMenu.Menu
             PlayerPrefs.SetFloat("greenValue", Mathf.Clamp(color.g, 0f, 1f));
             PlayerPrefs.SetFloat("blueValue", Mathf.Clamp(color.b, 0f, 1f));
 
-            //VRRig.LocalRig.mainSkin.material.color = color;
             GorillaTagger.Instance.UpdateColor(color.r, color.g, color.b);
             PlayerPrefs.Save();
 
