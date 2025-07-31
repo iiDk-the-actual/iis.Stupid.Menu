@@ -258,7 +258,7 @@ namespace iiMenu.Mods.Spammers
             if (rightGrab)
             {
                 if (Time.time > soundSpamDelay)
-                    soundSpamDelay = Time.time + 0.05f;
+                    soundSpamDelay = Time.time + 0.1f;
                 else
                     return;
 
