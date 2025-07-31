@@ -2947,8 +2947,10 @@ namespace iiMenu.Mods
                 Fun.targetQuestScore.ToString(),
                 notificationScaleIndex.ToString(),
                 overlayScaleIndex.ToString(),
-                arraylistScaleIndex.ToString()
+                arraylistScaleIndex.ToString(),
                 // Go up there's a blank spot up there
+                // Surely wouldn't that make some old saves have random new data?
+                ((int)MathF.Ceiling(playTime)).ToString()
             };
 
             string settingstext = string.Join(seperator, settings);
@@ -3140,6 +3142,8 @@ namespace iiMenu.Mods
 
                 arraylistScaleIndex = int.Parse(data[46]) - 1;
                 ChangeArraylistScale();
+
+                playTime = int.Parse(data[47]);
             }
             catch { LogManager.Log("Save file out of date"); }
 
