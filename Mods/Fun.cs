@@ -906,10 +906,10 @@ namespace iiMenu.Mods
         {
             if (Time.time > spamDelay)
             {
-                PhotonView that = GetObject("Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/Arcade_prefab/MainRoom/VRArea/ModIOArcadeTeleporter/NetObject_VRTeleporter").GetComponent<PhotonView>();
                 spamDelay = Time.time + 0.05f;
                 returnOrTeleport = !returnOrTeleport;
-                that.RPC(returnOrTeleport ? "ActivateTeleportVFX" : "ActivateReturnVFX", RpcTarget.All, new object[] { (short)UnityEngine.Random.Range(0, 7) });
+
+                GetObject("Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/Arcade_prefab/MainRoom/VRArea/ModIOArcadeTeleporter/NetObject_VRTeleporter").GetComponent<PhotonView>().RPC(returnOrTeleport ? "ActivateTeleportVFX" : "ActivateReturnVFX", RpcTarget.All, new object[] { (short)UnityEngine.Random.Range(0, 7) });
                 RPCProtection();
             }
         }
@@ -918,10 +918,10 @@ namespace iiMenu.Mods
         {
             if (Time.time > spamDelay)
             {
-                PhotonView that = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/StumpVRHeadset/ModIOArcadeTeleporter (1)/NetObject_VRTeleporter").GetComponent<PhotonView>();
                 spamDelay = Time.time + 0.05f;
                 returnOrTeleport = !returnOrTeleport;
-                that.RPC(returnOrTeleport ? "ActivateTeleportVFX" : "ActivateReturnVFX", RpcTarget.All, new object[] { (short)0 });
+
+                GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/StumpVRHeadset/ModIOArcadeTeleporter (1)/NetObject_VRTeleporter").GetComponent<PhotonView>().RPC(returnOrTeleport ? "ActivateTeleportVFX" : "ActivateReturnVFX", RpcTarget.All, new object[] { (short)0 });
                 RPCProtection();
             }
         }
@@ -931,8 +931,8 @@ namespace iiMenu.Mods
         {
             if (Time.time > spamDelay)
             {
-                openOrClose = !openOrClose;
                 delay = Time.time + 0.1f;
+                openOrClose = !openOrClose;
 
                 GetObject("Environment Objects/LocalObjects_Prefab/CityToBasement/DungeonEntrance/DungeonDoor_Prefab").GetComponent<PhotonView>().RPC("ChangeDoorState", RpcTarget.AllViaServer, new object[] { openOrClose ? GTDoor.DoorState.Opening : GTDoor.DoorState.Closing });
                 RPCProtection();
