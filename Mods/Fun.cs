@@ -2248,6 +2248,53 @@ Piece Name: {gunTarget.name}";
             }
         }
 
+        private static float cameraSpamDelay;
+        public static void CameraSpam()
+        {
+            if (rightGrab && Time.time > cameraSpamDelay)
+            {
+                cameraSpamDelay = Time.time + 0.25f;
+
+                LckSocialCamera camera = GorillaTagger.Instance.myVRRig.gameObject.transform.Find("LCKNetworkedSocialCamera").GetComponent<LckSocialCamera>();
+
+                GameObject cameraSpamObject = new GameObject("iiMenu_CameraSpamObject");
+                cameraSpamObject.transform.localScale = Vector3.one * 0.2f;
+                cameraSpamObject.layer = 3;
+
+                if (GetIndex("Bug Colliders").enabled)
+                {
+                    SphereCollider collider = cameraSpamObject.AddComponent<SphereCollider>();
+
+                    if (GetIndex("Bouncy Bug").enabled)
+                    {
+                        collider.material.bounciness = 1f;
+                        collider.material.bounceCombine = PhysicMaterialCombine.Maximum;
+                        collider.material.dynamicFriction = 0f;
+                    }
+                }
+
+                cameraSpamObject.transform.position = GorillaTagger.Instance.rightHandTransform.position + GetGunDirection(GorillaTagger.Instance.rightHandTransform) * 0.5f;
+                cameraSpamObject.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
+
+                Rigidbody rigidbody = cameraSpamObject.AddComponent<Rigidbody>();
+                rigidbody.velocity = GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength;
+                rigidbody.angularVelocity = RandomVector3(100f);
+
+                rigidbody.useGravity = !GetIndex("Zero Gravity Bugs").enabled;
+
+                camera.visible = true;
+                camera.recording = true;
+
+                camera.CoconutCamera.SetVisualsActive(true);
+                camera.CoconutCamera.SetRecordingState(true);
+
+                camera.gameObject.GetOrAddComponent<ClampPosition>().targetTransform = cameraSpamObject.transform;
+
+                cameraSpamObject.AddComponent<DestroyOnRest>();
+                UnityEngine.Object.Destroy(cameraSpamObject, 30f);
+            }
+        }
+
         private static int objectIndex;
         private static float everythingSpamDelay;
         public static void EverythingSpam()
@@ -2394,14 +2441,18 @@ Piece Name: {gunTarget.name}";
             }
         }
 
-        public static void DisableEverythingSpam()
+        public static void DisableCameraSpam()
         {
-            DisableBugSpam();
-
             LckSocialCamera camera = GorillaTagger.Instance.myVRRig.gameObject.transform.Find("LCKNetworkedSocialCamera").GetComponent<LckSocialCamera>();
 
             if (camera.GetComponent<ClampPosition>() != null)
                 UnityEngine.Object.Destroy(camera.GetComponent<ClampPosition>());
+        }
+
+        public static void DisableEverythingSpam()
+        {
+            DisableBugSpam();
+            DisableCameraSpam();
         }
 
         public static void DisableBugSpam()
