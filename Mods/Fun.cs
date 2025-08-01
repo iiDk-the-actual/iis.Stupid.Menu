@@ -2152,8 +2152,29 @@ Piece Name: {gunTarget.name}";
                 if ((int)guardState < 3)
                     failureAction = () => guard.currentState = guardState;
 
-                guard.RequestOwnership(() => bug.currentState = TransferrableObject.PositionState.Dropped, failureAction);
-                return null;
+                switch (guard.currentState)
+                {
+                    case NetworkingState.IsOwner:
+                        return null;
+                    case NetworkingState.IsBlindClient:
+                        guard.ownershipDenied = (Action)Delegate.Combine(guard.ownershipDenied, failureAction);
+                        guard.currentState = NetworkingState.RequestingOwnershipWaitingForSight;
+                        return null;
+                    case NetworkingState.IsClient:
+                        guard.ownershipDenied = (Action)Delegate.Combine(guard.ownershipDenied, failureAction);
+                        guard.ownershipRequestNonce = Guid.NewGuid().ToString();
+                        guard.currentState = NetworkingState.RequestingOwnership;
+                        guard.netView.SendRPC("OwnershipRequested", guard.actualOwner, new object[] { guard.ownershipRequestNonce });
+                        return null;
+                    case NetworkingState.ForcefullyTakingOver:
+                    case NetworkingState.RequestingOwnership:
+                    case NetworkingState.RequestingOwnershipWaitingForSight:
+                    case NetworkingState.ForcefullyTakingOverWaitingForSight:
+                        guard.ownershipDenied = (Action)Delegate.Combine(guard.ownershipDenied, failureAction);
+                        return null;
+                    default:
+                        return null;
+                }
             }
             else
             {
@@ -2187,13 +2208,12 @@ Piece Name: {gunTarget.name}";
 
             if (rightGrab)
             {
-                ThrowableBug targetBug = bugSpamToggle ? bug : firefly;
                 if (Time.time > bugSpamDelay)
                 {
                     bugSpamToggle = !bugSpamToggle;
                     bugSpamDelay = Time.time + 0.5f;
 
-                    targetBug = bugSpamToggle ? bug : firefly;
+                    ThrowableBug targetBug = bugSpamToggle ? bug : firefly;
                     
                     GameObject bugSpamObject = new GameObject("iiMenu_BugSpamObject");
                     bugSpamObject.transform.localScale = Vector3.one * 0.2f;
@@ -2226,6 +2246,162 @@ Piece Name: {gunTarget.name}";
                     UnityEngine.Object.Destroy(bugSpamObject, 30f);
                 }
             }
+        }
+
+        private static int objectIndex;
+        private static float everythingSpamDelay;
+        public static void EverythingSpam()
+        {
+            ThrowableBug bugObject = GetBugObject("Floating Bug Holdable");
+
+            if ((!bugObject.IsMyItem() || (bugObject.currentState != TransferrableObject.PositionState.Dropped && bugObject.currentState != TransferrableObject.PositionState.None)) && bugObject.GetComponent<ClampPosition>() != null)
+                UnityEngine.Object.Destroy(bugObject.GetComponent<ClampPosition>());
+
+            ThrowableBug fireflyObject = GetBugObject("Firefly");
+
+            if ((!fireflyObject.IsMyItem() || (fireflyObject.currentState != TransferrableObject.PositionState.Dropped && fireflyObject.currentState != TransferrableObject.PositionState.None)) && fireflyObject.GetComponent<ClampPosition>() != null)
+                UnityEngine.Object.Destroy(fireflyObject.GetComponent<ClampPosition>());
+
+            ThrowableBug bug = GetBug("Floating Bug Holdable");
+            ThrowableBug firefly = bug != null ? GetBug("Firefly") : bug;
+
+            if (rightGrab && Time.time > everythingSpamDelay)
+            {
+                everythingSpamDelay = Time.time + 0.1f;
+
+                objectIndex++;
+                objectIndex %= 5; 
+
+                switch (objectIndex)
+                {
+                    case 0:
+                        {
+                            ThrowableBug targetBug = bug;
+                            GameObject bugSpamObject = new GameObject("iiMenu_BugSpamObject");
+                            bugSpamObject.transform.localScale = Vector3.one * 0.2f;
+                            bugSpamObject.layer = 3;
+
+                            if (GetIndex("Bug Colliders").enabled)
+                            {
+                                SphereCollider collider = bugSpamObject.AddComponent<SphereCollider>();
+
+                                if (GetIndex("Bouncy Bug").enabled)
+                                {
+                                    collider.material.bounciness = 1f;
+                                    collider.material.bounceCombine = PhysicMaterialCombine.Maximum;
+                                    collider.material.dynamicFriction = 0f;
+                                }
+                            }
+
+                            bugSpamObject.transform.position = GorillaTagger.Instance.rightHandTransform.position + GetGunDirection(GorillaTagger.Instance.rightHandTransform) * 0.5f;
+                            bugSpamObject.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
+
+                            Rigidbody rigidbody = bugSpamObject.AddComponent<Rigidbody>();
+                            rigidbody.velocity = GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength;
+                            rigidbody.angularVelocity = RandomVector3(100f);
+
+                            rigidbody.useGravity = !GetIndex("Zero Gravity Bugs").enabled;
+
+                            targetBug.gameObject.GetOrAddComponent<ClampPosition>().targetTransform = bugSpamObject.transform;
+
+                            bugSpamObject.AddComponent<DestroyOnRest>();
+                            UnityEngine.Object.Destroy(bugSpamObject, 30f);
+                            break;
+                        }
+                    case 1:
+                        {
+                            ThrowableBug targetBug = firefly;
+                            GameObject bugSpamObject = new GameObject("iiMenu_FireflySpamObject");
+                            bugSpamObject.transform.localScale = Vector3.one * 0.2f;
+                            bugSpamObject.layer = 3;
+
+                            if (GetIndex("Bug Colliders").enabled)
+                            {
+                                SphereCollider collider = bugSpamObject.AddComponent<SphereCollider>();
+
+                                if (GetIndex("Bouncy Bug").enabled)
+                                {
+                                    collider.material.bounciness = 1f;
+                                    collider.material.bounceCombine = PhysicMaterialCombine.Maximum;
+                                    collider.material.dynamicFriction = 0f;
+                                }
+                            }
+
+                            bugSpamObject.transform.position = GorillaTagger.Instance.rightHandTransform.position + GetGunDirection(GorillaTagger.Instance.rightHandTransform) * 0.5f;
+                            bugSpamObject.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
+
+                            Rigidbody rigidbody = bugSpamObject.AddComponent<Rigidbody>();
+                            rigidbody.velocity = GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength;
+                            rigidbody.angularVelocity = RandomVector3(100f);
+
+                            rigidbody.useGravity = !GetIndex("Zero Gravity Bugs").enabled;
+
+                            targetBug.gameObject.GetOrAddComponent<ClampPosition>().targetTransform = bugSpamObject.transform;
+
+                            bugSpamObject.AddComponent<DestroyOnRest>();
+                            UnityEngine.Object.Destroy(bugSpamObject, 30f);
+                            break;
+                        }
+                    case 2:
+                        {
+                            if (!PhotonNetwork.InRoom)
+                                break;
+
+                            LckSocialCamera camera = GorillaTagger.Instance.myVRRig.gameObject.transform.Find("LCKNetworkedSocialCamera").GetComponent<LckSocialCamera>();
+
+                            GameObject cameraSpamObject = new GameObject("iiMenu_CameraSpamObject");
+                            cameraSpamObject.transform.localScale = Vector3.one * 0.2f;
+                            cameraSpamObject.layer = 3;
+
+                            if (GetIndex("Bug Colliders").enabled)
+                            {
+                                SphereCollider collider = cameraSpamObject.AddComponent<SphereCollider>();
+
+                                if (GetIndex("Bouncy Bug").enabled)
+                                {
+                                    collider.material.bounciness = 1f;
+                                    collider.material.bounceCombine = PhysicMaterialCombine.Maximum;
+                                    collider.material.dynamicFriction = 0f;
+                                }
+                            }
+
+                            cameraSpamObject.transform.position = GorillaTagger.Instance.rightHandTransform.position + GetGunDirection(GorillaTagger.Instance.rightHandTransform) * 0.5f;
+                            cameraSpamObject.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
+
+                            Rigidbody rigidbody = cameraSpamObject.AddComponent<Rigidbody>();
+                            rigidbody.velocity = GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength;
+                            rigidbody.angularVelocity = RandomVector3(100f);
+
+                            rigidbody.useGravity = !GetIndex("Zero Gravity Bugs").enabled;
+
+                            camera.visible = true;
+                            camera.recording = true;
+
+                            camera.CoconutCamera.SetVisualsActive(true);
+                            camera.CoconutCamera.SetRecordingState(true);
+
+                            camera.gameObject.GetOrAddComponent<ClampPosition>().targetTransform = cameraSpamObject.transform;
+
+                            cameraSpamObject.AddComponent<DestroyOnRest>();
+                            UnityEngine.Object.Destroy(cameraSpamObject, 30f);
+                            break;
+                        }
+                    case 3:
+                    case 4:
+                        BetaDropBoard(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength, Vector3.zero, RandomColor());
+                        break;
+                }
+            }
+        }
+
+        public static void DisableEverythingSpam()
+        {
+            DisableBugSpam();
+
+            LckSocialCamera camera = GorillaTagger.Instance.myVRRig.gameObject.transform.Find("LCKNetworkedSocialCamera").GetComponent<LckSocialCamera>();
+
+            if (camera.GetComponent<ClampPosition>() != null)
+                UnityEngine.Object.Destroy(camera.GetComponent<ClampPosition>());
         }
 
         public static void DisableBugSpam()
