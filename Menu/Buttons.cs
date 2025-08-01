@@ -714,9 +714,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Infection Box ESP", method =() => Visuals.InfectionBoxESP(), disableMethod =() => Visuals.DisableBoxESP(), toolTip = "Acts like infection tracers color wise, but with boxes."},
                 new ButtonInfo { buttonText = "Hunt Box ESP", method =() => Visuals.HuntBoxESP(), disableMethod =() => Visuals.DisableBoxESP(), toolTip = "Acts like hunt tracers color wise, but with boxes."},
 
-                new ButtonInfo { buttonText = "Casual Hollow Box ESP", method =() => Visuals.CasualHollowBoxESP(), toolTip = "Acts like casual box ESP, except the box is hollow."},
-                new ButtonInfo { buttonText = "Infection Hollow Box ESP", method =() => Visuals.HollowInfectionBoxESP(), toolTip = "Acts like infection box ESP, except the box is hollow."},
-                new ButtonInfo { buttonText = "Hunt Hollow Box ESP", method =() => Visuals.HollowHuntBoxESP(), toolTip = "Acts like hunt box ESP, except the box is hollow."},
+                new ButtonInfo { buttonText = "Casual Hollow Box ESP", method =() => Visuals.CasualHollowBoxESP(), disableMethod =() => Visuals.DisableHollowBoxESP(), toolTip = "Acts like casual box ESP, except the box is hollow."},
+                new ButtonInfo { buttonText = "Infection Hollow Box ESP", method =() => Visuals.HollowInfectionBoxESP(), disableMethod =() => Visuals.DisableHollowBoxESP(), toolTip = "Acts like infection box ESP, except the box is hollow."},
+                new ButtonInfo { buttonText = "Hunt Hollow Box ESP", method =() => Visuals.HollowHuntBoxESP(), disableMethod =() => Visuals.DisableHollowBoxESP(), toolTip = "Acts like hunt box ESP, except the box is hollow."},
 
                 new ButtonInfo { buttonText = "Casual Breadcrumbs", method =() => Visuals.CasualBreadcrumbs(), disableMethod =() => Visuals.DisableBreadcrumbs(), toolTip = "Acts like casual tracers color wise, but with breadcrumbs."},
                 new ButtonInfo { buttonText = "Infection Breadcrumbs", method =() => Visuals.InfectionBreadcrumbs(), disableMethod =() => Visuals.DisableBreadcrumbs(), toolTip = "Acts like infection tracers color wise, but with breadcrumbs."},
