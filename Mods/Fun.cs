@@ -900,6 +900,45 @@ namespace iiMenu.Mods
             }
         }
 
+        private static float spamDelay;
+        private static bool returnOrTeleport;
+        public static void ArcadeTeleporterEffectSpam()
+        {
+            if (Time.time > spamDelay)
+            {
+                PhotonView that = GetObject("Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/Arcade_prefab/MainRoom/VRArea/ModIOArcadeTeleporter/NetObject_VRTeleporter").GetComponent<PhotonView>();
+                spamDelay = Time.time + 0.05f;
+                returnOrTeleport = !returnOrTeleport;
+                that.RPC(returnOrTeleport ? "ActivateTeleportVFX" : "ActivateReturnVFX", RpcTarget.All, new object[] { (short)UnityEngine.Random.Range(0, 7) });
+                RPCProtection();
+            }
+        }
+
+        public static void StumpTeleporterEffectSpam()
+        {
+            if (Time.time > spamDelay)
+            {
+                PhotonView that = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/StumpVRHeadset/ModIOArcadeTeleporter (1)/NetObject_VRTeleporter").GetComponent<PhotonView>();
+                spamDelay = Time.time + 0.05f;
+                returnOrTeleport = !returnOrTeleport;
+                that.RPC(returnOrTeleport ? "ActivateTeleportVFX" : "ActivateReturnVFX", RpcTarget.All, new object[] { (short)0 });
+                RPCProtection();
+            }
+        }
+
+        private static bool openOrClose;
+        public static void BasementDoorSpam()
+        {
+            if (Time.time > spamDelay)
+            {
+                openOrClose = !openOrClose;
+                delay = Time.time + 0.1f;
+
+                GetObject("Environment Objects/LocalObjects_Prefab/CityToBasement/DungeonEntrance/DungeonDoor_Prefab").GetComponent<PhotonView>().RPC("ChangeDoorState", RpcTarget.AllViaServer, new object[] { openOrClose ? GTDoor.DoorState.Opening : GTDoor.DoorState.Closing });
+                RPCProtection();
+            }
+        }
+
         public static void ChangeCustomQuestScore(bool positive = true)
         {
             if (positive)
