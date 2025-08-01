@@ -360,6 +360,8 @@ namespace iiMenu.Classes
                 {
                     Physics.Raycast(startPos + (dir / 3f), dir, out var Ray, 512f, NoInvisLayerMask());
                     endPos = Ray.point;
+                    if (endPos == Vector3.zero)
+                        endPos = startPos + dir * 512f;
                 }
                 catch { }
                 liner.SetPosition(0, startPos + (dir * 0.1f));
