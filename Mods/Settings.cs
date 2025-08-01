@@ -2871,15 +2871,6 @@ namespace iiMenu.Mods
             modPhrases = null;
         }
 
-        public async static void CheckNewAcc(string oldID)
-        {
-            await System.Threading.Tasks.Task.Delay(10000);
-            if (PhotonNetwork.LocalPlayer.UserId != oldID)
-            {
-                playTime = 0f;
-            }
-        }
-
         public static string SavePreferencesToText()
         {
             string seperator = ";;";
@@ -3155,7 +3146,7 @@ namespace iiMenu.Mods
 
                 playTime = int.Parse(data[47]);
 
-                CheckNewAcc(data[48]);
+                Important.oldId = data[48];
             }
             catch { LogManager.Log("Save file out of date"); }
 
