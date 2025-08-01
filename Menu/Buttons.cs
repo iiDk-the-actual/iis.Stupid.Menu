@@ -931,7 +931,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Permanent Bat", method =() => Fun.PermanentOwnership("Cave Bat Holdable"), disableMethod =() => Patches.OwnershipPatch.blacklistedGuards.Clear(), toolTip = "Disables other players from grabbing the bat."},
 
                 new ButtonInfo { buttonText = "Bug Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.BugSpam(), disableMethod =() => Fun.DisableBugSpam(), toolTip = "Shoots the bug and firefly out of your hand repeatedly." },
-                
+                new ButtonInfo { buttonText = "Everything Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.EverythingSpam(), disableMethod =() => Fun.DisableEverythingSpam(), toolTip = "Shoots everything out of your hand repeatedly." },
+
                 new ButtonInfo { buttonText = "Bug Phallus", method =() => Fun.BugPhallus(), toolTip = "Gives you a phallus in the form of the bugs." },
                 new ButtonInfo { buttonText = "Bug Phallus Gun", method =() => Fun.BugPhallusGun(), toolTip = "Gives whoever your hand desires a phallus in the form of the bugs." },
 
