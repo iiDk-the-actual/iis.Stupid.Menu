@@ -827,7 +827,9 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Arcade Teleporter Effect Spam", method =() => Fun.ArcadeTeleporterEffectSpam(), toolTip = "Spams the effects on the virtual stump teleporters in the arcade when holding <color=green>trigger</color>."},
                 new ButtonInfo { buttonText = "Stump Teleporter Effect Spam", method =() => Fun.StumpTeleporterEffectSpam(), toolTip = "Spams the effects on the virtual stump teleporter in forest when holding <color=green>trigger</color>."},
+                
                 new ButtonInfo { buttonText = "Basement Door Spam", method =() => Fun.BasementDoorSpam(), toolTip = "Repeatedly opens and closes the basement door."},
+                new ButtonInfo { buttonText = "Elevator Door Spam", method =() => Fun.ElevatorDoorSpam(), toolTip = "Repeatedly opens and closes the elevator door."},
 
                 new ButtonInfo { buttonText = "Fake FPS", method =() => Fun.FakeFPS(), disableMethod =() => Patches.FPSPatch.enabled = false, toolTip = "Makes your FPS appear to be completely random to other players and the competitive bot."},
 

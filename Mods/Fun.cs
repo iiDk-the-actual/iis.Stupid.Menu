@@ -939,6 +939,18 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void ElevatorDoorSpam()
+        {
+            if (Time.time > spamDelay)
+            {
+                delay = Time.time + 0.1f;
+                openOrClose = !openOrClose;
+
+                GRElevatorManager.ElevatorButtonPressed(openOrClose ? GRElevator.ButtonType.Open : GRElevator.ButtonType.Close, GRElevatorManager._instance.currentLocation);
+                RPCProtection();
+            }
+        }
+
         public static void ChangeCustomQuestScore(bool positive = true)
         {
             if (positive)
