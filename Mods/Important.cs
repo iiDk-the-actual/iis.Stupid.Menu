@@ -25,11 +25,10 @@ namespace iiMenu.Mods
 
         public async static void CheckNewAcc()
         {
-            await System.Threading.Tasks.Task.Delay(10000);
+            await Task.Delay(10000);
+
             if (PhotonNetwork.LocalPlayer.UserId != oldId)
-            {
                 playTime = 0f;
-            }
         }
 
         public static Coroutine queueCoroutine;

@@ -2951,7 +2951,7 @@ namespace iiMenu.Mods
                 // Go up there's a blank spot up there
                 // Surely wouldn't that make some old saves have random new data?
                 ((int)MathF.Ceiling(playTime)).ToString(),
-                PhotonNetwork.LocalPlayer.UserId
+                PhotonNetwork.LocalPlayer?.UserId ?? "null"
             };
 
             string settingstext = string.Join(seperator, settings);
