@@ -906,10 +906,10 @@ namespace iiMenu.Mods
         {
             if (Time.time > spamDelay)
             {
-                spamDelay = Time.time + 0.05f;
+                spamDelay = Time.time + 0.1f;
                 returnOrTeleport = !returnOrTeleport;
 
-                GetObject("Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/Arcade_prefab/MainRoom/VRArea/ModIOArcadeTeleporter/NetObject_VRTeleporter").GetComponent<PhotonView>().RPC(returnOrTeleport ? "ActivateTeleportVFX" : "ActivateReturnVFX", RpcTarget.All, new object[] { (short)UnityEngine.Random.Range(0, 7) });
+                GetObject("Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/Arcade_prefab/MainRoom/VRArea/ModIOArcadeTeleporter/NetObject_VRTeleporter").GetComponent<PhotonView>().RPC("ActivateTeleportVFX", RpcTarget.All, new object[] { returnOrTeleport, (short)UnityEngine.Random.Range(0, 7) });
                 RPCProtection();
             }
         }
@@ -918,10 +918,10 @@ namespace iiMenu.Mods
         {
             if (Time.time > spamDelay)
             {
-                spamDelay = Time.time + 0.05f;
+                spamDelay = Time.time + 0.1f;
                 returnOrTeleport = !returnOrTeleport;
 
-                GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/StumpVRHeadset/VirtualStump_StumpTeleporter/NetObject_VRTeleporter").GetComponent<PhotonView>().RPC(returnOrTeleport ? "ActivateTeleportVFX" : "ActivateReturnVFX", RpcTarget.All, new object[] { (short)0 });
+                GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/StumpVRHeadset/VirtualStump_StumpTeleporter/NetObject_VRTeleporter").GetComponent<PhotonView>().RPC("ActivateTeleportVFX", RpcTarget.All, new object[] { returnOrTeleport, (short)0 });
                 RPCProtection();
             }
         }
