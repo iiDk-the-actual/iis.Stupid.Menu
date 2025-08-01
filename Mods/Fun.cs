@@ -9,6 +9,7 @@ using iiMenu.Menu;
 using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
 using iiMenu.Patches;
+using Liv.Lck.GorillaTag;
 using Photon.Pun;
 using Photon.Realtime;
 using Photon.Voice;
@@ -26,7 +27,6 @@ using System.Linq;
 using UnityEngine;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
-using static Mono.Security.X509.X520;
 
 namespace iiMenu.Mods
 {
@@ -1525,6 +1525,27 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void CameraGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    CoconutCamera camera = LckSocialCameraManager._instance._socialCameraInstance.CoconutCamera;
+                    camera.SetVisualsActive(true);
+                    camera.SetRecordingState(true);
+
+                    LckSocialCameraManager._instance.cameraActive = true;
+                    LckSocialCameraManager._instance._socialCameraInstance.visible = true;
+                    LckSocialCameraManager._instance._socialCameraInstance.transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
+                }
+            }
+        }
+
         public static void GliderGun()
         {
             if (GetGunInput(false))
@@ -2421,7 +2442,26 @@ Piece Name: {gunTarget.name}";
         {
             ThrowableBug bug = GetBug(objectName);
             if (rightGrab && bug != null)
+            {
                 bug.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                bug.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
+            }
+        }
+
+        public static void GrabCamera()
+        {
+            if (rightGrab)
+            {
+                LckSocialCamera camera = GorillaTagger.Instance.myVRRig.gameObject.transform.Find("LCKNetworkedSocialCamera").GetComponent<LckSocialCamera>();
+                camera.visible = true;
+                camera.recording = true;
+
+                camera.CoconutCamera.SetVisualsActive(true);
+                camera.CoconutCamera.SetRecordingState(true);
+
+                camera.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                camera.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
+            }
         }
 
         public static void GrabGliders()
@@ -2431,7 +2471,10 @@ Piece Name: {gunTarget.name}";
                 foreach (GliderHoldable glider in GetAllType<GliderHoldable>())
                 {
                     if (glider.GetView.Owner == PhotonNetwork.LocalPlayer)
+                    {
                         glider.gameObject.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                        glider.gameObject.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
+                    }
                     else
                         glider.OnHover(null, null);
                 }
@@ -2461,6 +2504,16 @@ Piece Name: {gunTarget.name}";
             ThrowableBug bug = GetBug(objectName);
             if (bug != null)
                 bug.transform.position = new Vector3(99999f, 99999f, 99999f);
+        }
+
+        public static void DestroyCamera()
+        {
+            LckSocialCamera camera = GorillaTagger.Instance.myVRRig.gameObject.transform.Find("LCKNetworkedSocialCamera").GetComponent<LckSocialCamera>();
+            camera.visible = false;
+            camera.recording = false;
+
+            camera.CoconutCamera.SetVisualsActive(false);
+            camera.CoconutCamera.SetRecordingState(false);
         }
 
         public static void RespawnGliders()
@@ -3017,6 +3070,18 @@ Piece Name: {gunTarget.name}";
                 bug.transform.rotation = RandomQuaternion();
         }
 
+        public static void SpazCamera()
+        {
+            LckSocialCamera camera = GorillaTagger.Instance.myVRRig.gameObject.transform.Find("LCKNetworkedSocialCamera").GetComponent<LckSocialCamera>();
+            camera.visible = true;
+            camera.recording = true;
+
+            camera.CoconutCamera.SetVisualsActive(true);
+            camera.CoconutCamera.SetRecordingState(true);
+
+            camera.transform.rotation = RandomQuaternion();
+        }
+
         public static void SpazGliders()
         {
             foreach (GliderHoldable glider in GetAllType<GliderHoldable>())
@@ -3038,7 +3103,19 @@ Piece Name: {gunTarget.name}";
         {
             ThrowableBug bug = GetBug(objectName);
             if (bug != null)
-                bug.transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)), 2, MathF.Sin(offset + ((float)Time.frameCount / 30)));
+                bug.transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(offset + ((float)Time.frameCount / 30)), 1, MathF.Sin(offset + ((float)Time.frameCount / 30)));
+        }
+
+        public static void OrbitCamera()
+        {
+            LckSocialCamera camera = GorillaTagger.Instance.myVRRig.gameObject.transform.Find("LCKNetworkedSocialCamera").GetComponent<LckSocialCamera>();
+            camera.visible = true;
+            camera.recording = true;
+
+            camera.CoconutCamera.SetVisualsActive(true);
+            camera.CoconutCamera.SetRecordingState(true);
+
+            camera.transform.position = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(240f + ((float)Time.frameCount / 30)), 1, MathF.Sin(240f + ((float)Time.frameCount / 30)));
         }
 
         public static void ObjectAura(string objectName)
@@ -3048,6 +3125,59 @@ Piece Name: {gunTarget.name}";
             {
                 bug.transform.position = GorillaTagger.Instance.headCollider.transform.position + RandomVector3();
                 bug.transform.rotation = RandomQuaternion();
+            }
+        }
+
+        public static void CameraAura()
+        {
+            LckSocialCamera camera = GorillaTagger.Instance.myVRRig.gameObject.transform.Find("LCKNetworkedSocialCamera").GetComponent<LckSocialCamera>();
+            camera.visible = true;
+            camera.recording = true;
+
+            camera.CoconutCamera.SetVisualsActive(true);
+            camera.CoconutCamera.SetRecordingState(true);
+
+            camera.transform.position = GorillaTagger.Instance.headCollider.transform.position + RandomVector3();
+            camera.transform.rotation = RandomQuaternion();
+        }
+
+        public static void BalloonAura()
+        {
+            foreach (BalloonHoldable balloon in GetAllType<BalloonHoldable>())
+            {
+                if (balloon.ownerRig.isLocal)
+                {
+                    balloon.gameObject.transform.position = GorillaTagger.Instance.headCollider.transform.position + RandomVector3();
+                    balloon.gameObject.transform.rotation = RandomQuaternion();
+                }
+                else
+                    balloon.WorldShareableRequestOwnership();
+            }
+        }
+
+        public static void GliderAura()
+        {
+            foreach (GliderHoldable glider in GetAllType<GliderHoldable>())
+            {
+                if (glider.GetView.Owner == PhotonNetwork.LocalPlayer)
+                {
+                    glider.gameObject.transform.position = GorillaTagger.Instance.headCollider.transform.position + RandomVector3();
+                    glider.gameObject.transform.rotation = RandomQuaternion();
+                }
+                else
+                    glider.OnHover(null, null);
+            }
+        }
+
+        private static float hoverboardAuraDelay;
+        public static void HoverboardAura()
+        {
+            if (Time.time > hoverboardAuraDelay)
+            {
+                hoverboardAuraDelay = Time.time + 0.25f;
+
+                for (int i = 0; i < 2; i++)
+                    BetaDropBoard(GorillaTagger.Instance.headCollider.transform.position + RandomVector3(), RandomQuaternion(), RandomVector3() * 20f, RandomVector3() * 20f, RandomColor());
             }
         }
 
@@ -3102,6 +3232,22 @@ Piece Name: {gunTarget.name}";
             }
 
             lastWasNull = bug != null;
+        }
+
+        public static void BecomeCamera()
+        {
+            VRRig.LocalRig.enabled = false;
+            VRRig.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position - Vector3.up * 99999f;
+
+            LckSocialCamera camera = GorillaTagger.Instance.myVRRig.gameObject.transform.Find("LCKNetworkedSocialCamera").GetComponent<LckSocialCamera>();
+            camera.visible = true;
+            camera.recording = true;
+
+            camera.CoconutCamera.SetVisualsActive(true);
+            camera.CoconutCamera.SetRecordingState(true);
+
+            camera.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
+            camera.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
         }
 
         private static float noclipBuildingDelay;
@@ -3686,37 +3832,40 @@ Piece Name: {gunTarget.name}";
             }
         }
 
-        // I would like to apologize to anyone who had this beforehand
-        // "Tubski" will be long loved forever because that was the original name of this mod I don't know what that means
         public static void BecomeBalloon()
         {
             VRRig.LocalRig.enabled = false;
-            VRRig.LocalRig.inTryOnRoom = true;
-            VRRig.LocalRig.transform.position = new Vector3(-51.4897f, 16.9286f, -120.1083f);
+            VRRig.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position - Vector3.up * 99999f;
 
-            bool FoundBalloon = false;
-            foreach (BalloonHoldable Balloon in GetAllType<BalloonHoldable>())
+            foreach (BalloonHoldable balloon in GetAllType<BalloonHoldable>())
             {
-                if (Balloon.ownerRig.isLocal && Balloon.gameObject.name.Contains("LMAMI"))
+                if (balloon.ownerRig.isLocal)
                 {
-                    FoundBalloon = true;
-
-                    Balloon.maxDistanceFromOwner = float.MaxValue;
-                    Balloon.currentState = TransferrableObject.PositionState.Dropped;
-
-                    Balloon.gameObject.transform.position = GorillaTagger.Instance.headCollider.transform.position + (GorillaTagger.Instance.headCollider.transform.up * - 1f);
-                    Balloon.gameObject.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
+                    balloon.gameObject.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
+                    balloon.gameObject.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
+                    break;
                 }
+                else
+                    balloon.WorldShareableRequestOwnership();
             }
+        }
 
-            if (!FoundBalloon)
-            {
-                CosmeticsController.instance.ApplyCosmeticItemToSet(VRRig.LocalRig.tryOnSet, CosmeticsController.instance.GetItemFromDict("LMAAP."), true, false);
-                CosmeticsController.instance.UpdateWornCosmetics(true);
-                RPCProtection();
+        public static void BecomeHoverboard()
+        {
+            VRRig.LocalRig.enabled = false;
+            VRRig.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position - Vector3.up * 1f;
 
-                ClearType<BalloonHoldable>();
-            }
+            GTPlayer.Instance.SetHoverAllowed(true);
+            GTPlayer.Instance.SetHoverActive(true);
+
+            HoverboardVisual hoverboardVisual = VRRig.LocalRig.hoverboardVisual;
+
+            hoverboardVisual.SetIsHeld(true, hoverboardVisual.NominalParentTransform.InverseTransformPoint(GorillaTagger.Instance.bodyCollider.transform.position), hoverboardVisual.NominalParentTransform.InverseTransformRotation(GorillaTagger.Instance.headCollider.transform.rotation), VRRig.LocalRig.playerColor);
+
+            hoverboardVisual.interpolatedLocalPosition = hoverboardVisual.NominalLocalPosition;
+            hoverboardVisual.interpolatedLocalRotation = hoverboardVisual.NominalLocalRotation;
+
+            GTPlayer.Instance.SetHoverboardPosRot(GorillaTagger.Instance.bodyCollider.transform.position, GorillaTagger.Instance.headCollider.transform.rotation);
         }
 
         public static void DestroyGliders()
