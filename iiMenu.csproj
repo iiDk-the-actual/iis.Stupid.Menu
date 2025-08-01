@@ -134,6 +134,15 @@
     <Reference Include="KID">
       <HintPath>$(GameAssemblyPath)\KID.dll</HintPath>
     </Reference>
+    <Reference Include="LIV.LCK">
+      <HintPath>$(GameAssemblyPath)\LIV.LCK.dll</HintPath>
+    </Reference>
+    <Reference Include="LIV.LCK_GorillaTag">
+      <HintPath>$(GameAssemblyPath)\LIV.LCK_GorillaTag.dll</HintPath>
+    </Reference>
+    <Reference Include="LIV.NativeAudioBridge">
+      <HintPath>$(GameAssemblyPath)\LIV.NativeAudioBridge.dll</HintPath>
+    </Reference>
     <Reference Include="MeshBakerCore">
       <HintPath>$(GameAssemblyPath)\MeshBakerCore.dll</HintPath>
     </Reference>
