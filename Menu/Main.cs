@@ -5488,7 +5488,7 @@ jgs \_   _/ |Oo\
         public static bool hasRemovedThisFrame;
         public static bool NoOverlapRPCs = true;
         public static float loadPreferencesTime;
-        public static float playTime = 0f;
+        public static float playTime;
 
         public static bool thinMenu = true;
         public static bool longmenu;
