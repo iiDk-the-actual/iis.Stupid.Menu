@@ -618,7 +618,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Tag Aura Gun", method =() => Advantages.TagAuraGun(), toolTip = "Gives a player tag aura."},
                 new ButtonInfo { buttonText = "Tag Aura All", method =() => Advantages.TagAuraAll(), toolTip = "Gives all players tag aura."},
 
-                new ButtonInfo { buttonText = "Tag Reach", method =() => Advantages.TagReach(), disableMethod =() => Patches.SphereCastPatch.enabled = false, toolTip = "Makes your hand tag hitbox larger."},
+                new ButtonInfo { buttonText = "Tag Reach", method =() => Advantages.TagReach(), toolTip = "Makes your hand tag hitbox larger."},
 
                 new ButtonInfo { buttonText = "Tag Gun", method =() => Advantages.TagGun(), toolTip = "Tags whoever your hand desires."},
                 new ButtonInfo { buttonText = "Flick Tag Gun", method =() => Advantages.FlickTagGun(), toolTip = "Moves your hand to wherever your hand desires in an attempt to tag whoever your hand desires."},
