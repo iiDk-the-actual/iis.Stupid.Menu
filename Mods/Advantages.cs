@@ -351,15 +351,15 @@ namespace iiMenu.Mods
         {
             if (PlayerIsTagged(VRRig.LocalRig))
             {
-                Patches.SphereCastPatch.enabled = true;
-                Patches.SphereCastPatch.overrideRadius = tagReachDistance;
+                GorillaTagger.Instance.tagRadiusOverride = tagReachDistance;
+                GorillaTagger.Instance.tagRadiusOverrideFrame = Time.frameCount + 16;
+
                 if (GetIndex("Visualize Tag Reach").enabled)
                 {
                     VisualizeAura(GorillaTagger.Instance.leftHandTransform.position, tagReachDistance, GetBGColor(0f));
                     VisualizeAura(GorillaTagger.Instance.rightHandTransform.position, tagReachDistance, GetBGColor(0f));
                 }
-            } else
-                Patches.SphereCastPatch.enabled = false;
+            }
         }
 
         public static bool ValidateTag(VRRig Rig) =>
