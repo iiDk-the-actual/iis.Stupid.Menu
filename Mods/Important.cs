@@ -21,6 +21,17 @@ namespace iiMenu.Mods
 {
     public class Important
     {
+        public static string oldId = "";
+
+        public async static void CheckNewAcc()
+        {
+            await System.Threading.Tasks.Task.Delay(10000);
+            if (PhotonNetwork.LocalPlayer.UserId != oldId)
+            {
+                playTime = 0f;
+            }
+        }
+
         public static Coroutine queueCoroutine;
         public static int reconnectDelay = 1;
 
