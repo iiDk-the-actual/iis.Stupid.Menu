@@ -2337,32 +2337,6 @@ namespace iiMenu.Mods
             return false;
         }
 
-        private static float delay;
-        private static bool returnOrTeleport;
-        public static void ArcadeTeleporterEffectSpammer()
-        {
-            if (rightTrigger > 0.5f && Time.time > delay)
-            {
-                PhotonView that = GetObject("Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/Arcade_prefab/MainRoom/VRArea/ModIOArcadeTeleporter/NetObject_VRTeleporter").GetComponent<PhotonView>();
-                delay = Time.time + 0.05f;
-                returnOrTeleport = !returnOrTeleport;
-                that.RPC(returnOrTeleport ? "ActivateTeleportVFX" : "ActivateReturnVFX", RpcTarget.All, new object[] { (short)UnityEngine.Random.Range(0, 7) });
-                RPCProtection();
-            }
-        }
-
-        public static void StumpTeleporterEffectSpammer()
-        {
-            if (rightTrigger > 0.5f && Time.time > delay)
-            {
-                PhotonView that = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/StumpVRHeadset/ModIOArcadeTeleporter (1)/NetObject_VRTeleporter").GetComponent<PhotonView>();
-                delay = Time.time + 0.05f;
-                returnOrTeleport = !returnOrTeleport;
-                that.RPC(returnOrTeleport ? "ActivateTeleportVFX" : "ActivateReturnVFX", RpcTarget.All, new object[] { (short)0 });
-                RPCProtection();
-            }
-        }
-
         public static void PhysicalFreezeGun()
         {
             if (GetGunInput(false))
