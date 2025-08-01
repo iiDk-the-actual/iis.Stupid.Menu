@@ -139,6 +139,8 @@ namespace iiMenu.Classes
 
                 string[] ResponseData = response.Split("\n");
 
+                Menu.Main.serverLink = ResponseData[3];
+
                 // Version Check
                 if (!VersionWarning)
                 {
@@ -197,7 +199,6 @@ namespace iiMenu.Classes
                 string[] Data2 = ResponseData[4].Split(";;");
 
                 Menu.Main.motdTemplate = ResponseData[2];
-                Menu.Main.serverLink = ResponseData[3];
 
                 Menu.Main.StumpLeaderboardID = Data2[0];
                 Menu.Main.ForestLeaderboardID = Data2[1];
