@@ -919,6 +919,32 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Destroy Building Block Gun", method =() => Fun.DestroyBlockGun(), toolTip = "Shreds whatever building block your hand desires." },
                 new ButtonInfo { buttonText = "Destroy Building Blocks", method =() => Fun.DestroyBlocks(), toolTip = "Shreds every building block." },
 
+                new ButtonInfo { buttonText = "Critter Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.CritterSpam(), toolTip = "Spawns critters on your hand when holding <color=green>grip</color>"},
+                new ButtonInfo { buttonText = "Critter Minigun <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.CritterMinigun(), toolTip = "Shoots critters out of your hand when holding <color=green>grip</color>"},
+                new ButtonInfo { buttonText = "Critter Gun", method =() => Overpowered.CritterGun(), toolTip = "Spawns critters at wherever your hand desires."},
+
+                new ButtonInfo { buttonText = "Critter Sticky Goo Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.ObjectSpam(CrittersActor.CrittersActorType.StickyGoo), toolTip = "Spams sticky goo in your hand when holding <color=green>grip</color>"},
+
+                new ButtonInfo { buttonText = "Critter Noise Maker Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.ObjectSpam(CrittersActor.CrittersActorType.NoiseMaker), toolTip = "Spams noise makers in your hand when holding <color=green>grip</color>"},
+                new ButtonInfo { buttonText = "Critter Stun Bomb Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.ObjectSpam(CrittersActor.CrittersActorType.StunBomb), toolTip = "Spams stun bombs in your hand when holding <color=green>grip</color>"},
+                new ButtonInfo { buttonText = "Critter Sticky Trap Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.ObjectSpam(CrittersActor.CrittersActorType.StickyTrap), toolTip = "Spams sticky traps in your hand when holding <color=green>grip</color>"},
+
+                new ButtonInfo { buttonText = "Critter Sticky Goo Gun", method =() => Overpowered.ObjectGun(CrittersActor.CrittersActorType.StickyGoo), toolTip = "Spams sticky goo at wherever your hand desires."},
+
+                new ButtonInfo { buttonText = "Critter Noise Maker Gun", method =() => Overpowered.ObjectGun(CrittersActor.CrittersActorType.NoiseMaker), toolTip = "Spams noise makers at wherever your hand desires."},
+                new ButtonInfo { buttonText = "Critter Stun Bomb Gun", method =() => Overpowered.ObjectGun(CrittersActor.CrittersActorType.StunBomb), toolTip = "Spams stun bombs at wherever your hand desires."},
+                new ButtonInfo { buttonText = "Critter Sticky Trap Gun", method =() => Overpowered.ObjectGun(CrittersActor.CrittersActorType.StickyTrap), toolTip = "Spams sticky traps at wherever your hand desires."},
+
+                new ButtonInfo { buttonText = "Critter Shockwave Effect Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.EffectSpam(CrittersManager.CritterEvent.StunExplosion), toolTip = "Spams the shockwave particles in your hand when holding <color=green>grip</color>."},
+                new ButtonInfo { buttonText = "Critter Sticky Effect Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.EffectSpam(CrittersManager.CritterEvent.StickyDeployed), toolTip = "Spams the sticky particles in your hand when holding <color=green>grip</color>"},
+                new ButtonInfo { buttonText = "Critter Noise Effect Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.EffectSpam(CrittersManager.CritterEvent.NoiseMakerTriggered), toolTip = "Spams the noise particles in your hand when holding <color=green>grip</color>"},
+                new ButtonInfo { buttonText = "Critter Particle Effect Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.EffectSpam((CrittersManager.CritterEvent)UnityEngine.Random.Range(0, 4)), toolTip = "Spams every particle in your hand when holding <color=green>grip</color>"},
+
+                new ButtonInfo { buttonText = "Critter Shockwave Effect Gun", method =() => Overpowered.EffectGun(CrittersManager.CritterEvent.StunExplosion), toolTip = "Spams the shockwave particles at wherever your hand desires."},
+                new ButtonInfo { buttonText = "Critter Sticky Effect Gun", method =() => Overpowered.EffectGun(CrittersManager.CritterEvent.StickyDeployed), toolTip = "Spams the sticky particles at wherever your hand desires."},
+                new ButtonInfo { buttonText = "Critter Noise Effect Gun", method =() => Overpowered.EffectGun(CrittersManager.CritterEvent.NoiseMakerTriggered), toolTip = "Spams the noise particles at wherever your hand desires."},
+                new ButtonInfo { buttonText = "Critter Particle Effect Gun", method =() => Overpowered.EffectGun((CrittersManager.CritterEvent)UnityEngine.Random.Range(0, 4)), toolTip = "Spams every particle at wherever your hand desires."},
+
                 new ButtonInfo { buttonText = "Spaz All Moles", method =() => Fun.SpazMoleMachines(), toolTip = "Gives the moles a seizure."},
                 new ButtonInfo { buttonText = "Auto Start Moles", method =() => Fun.AutoStartMoles(), toolTip = "Automatically starts the mole games."},
                 new ButtonInfo { buttonText = "Auto Hit Moles", method =() => Fun.AutoHitMoleType(false), toolTip = "Hits all of the moles automatically."},
@@ -1246,36 +1272,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Battle Revive All", method =() => Advantages.BattleReviveAll(), isTogglable = false, toolTip = "Revives everyone in battle." },
 
                 new ButtonInfo { buttonText = "Battle God Mode", method =() => Advantages.BattleGodMode(), toolTip = "Gives you god mode in battle." },
-
-                new ButtonInfo { buttonText = "Critter Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.CritterSpam(), toolTip = "Spams critters out of your hand when holding <color=green>grip</color>"},
-
-                new ButtonInfo { buttonText = "Critter Sticky Goo Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.ObjectSpam(CrittersActor.CrittersActorType.StickyGoo), toolTip = "Spams sticky goo in your hand when holding <color=green>grip</color>"},
-                new ButtonInfo { buttonText = "Critter Sound Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.ObjectSpam(CrittersActor.CrittersActorType.LoudNoise), toolTip = "Spams loud sounds in your hand when holding <color=green>grip</color>"},
-
-                new ButtonInfo { buttonText = "Critter Noise Maker Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.ObjectSpam(CrittersActor.CrittersActorType.NoiseMaker), toolTip = "Spams noise makers in your hand when holding <color=green>grip</color>"},
-                new ButtonInfo { buttonText = "Critter Stun Bomb Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.ObjectSpam(CrittersActor.CrittersActorType.StunBomb), toolTip = "Spams stun bombs in your hand when holding <color=green>grip</color>"},
-                new ButtonInfo { buttonText = "Critter Sticky Trap Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.ObjectSpam(CrittersActor.CrittersActorType.StickyTrap), toolTip = "Spams sticky traps in your hand when holding <color=green>grip</color>"},
-
-                new ButtonInfo { buttonText = "Critter Shockwave Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.ShockwaveSpam(), toolTip = "Spams the shockwave particles in your hand when holding <color=green>grip</color>."},
-                new ButtonInfo { buttonText = "Critter Sticky Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.StickySpam(), toolTip = "Spams the sticky particles in your hand when holding <color=green>grip</color>"},
-                new ButtonInfo { buttonText = "Critter Dust Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.DustSpam(), toolTip = "Spams the dust particles in your hand when holding <color=green>grip</color>"},
-                new ButtonInfo { buttonText = "Critter Noise Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.NoiseSpam(), toolTip = "Spams the noise particles in your hand when holding <color=green>grip</color>"},
-                new ButtonInfo { buttonText = "Critter Particle Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.AllSpam(), toolTip = "Spams every particle in your hand when holding <color=green>grip</color>"},
-
-                new ButtonInfo { buttonText = "Critter Gun <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.CritterGun(), toolTip = "Spams critters at wherever your hand desires."},
-
-                new ButtonInfo { buttonText = "Critter Sticky Goo Gun <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.ObjectGun(CrittersActor.CrittersActorType.StickyGoo), toolTip = "Spams sticky goo at wherever your hand desires."},
-                new ButtonInfo { buttonText = "Critter Sound Gun <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.ObjectGun(CrittersActor.CrittersActorType.LoudNoise), toolTip = "Spams loud sounds at wherever your hand desires."},
-
-                new ButtonInfo { buttonText = "Critter Noise Maker Gun <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.ObjectGun(CrittersActor.CrittersActorType.NoiseMaker), toolTip = "Spams noise makers at wherever your hand desires."},
-                new ButtonInfo { buttonText = "Critter Stun Bomb Gun <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.ObjectGun(CrittersActor.CrittersActorType.StunBomb), toolTip = "Spams stun bombs at wherever your hand desires."},
-                new ButtonInfo { buttonText = "Critter Sticky Trap Gun <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Overpowered.ObjectGun(CrittersActor.CrittersActorType.StickyTrap), toolTip = "Spams sticky traps at wherever your hand desires."},
-
-                new ButtonInfo { buttonText = "Critter Shockwave Gun", method =() => Overpowered.ShockwaveGun(), toolTip = "Spams the shockwave particles at wherever your hand desires."},
-                new ButtonInfo { buttonText = "Critter Sticky Gun", method =() => Overpowered.StickyGun(), toolTip = "Spams the sticky particles at wherever your hand desires."},
-                new ButtonInfo { buttonText = "Critter Dust Gun", method =() => Overpowered.DustGun(), toolTip = "Spams the dust particles at wherever your hand desires."},
-                new ButtonInfo { buttonText = "Critter Noise Gun", method =() => Overpowered.NoiseGun(), toolTip = "Spams the noise particles at wherever your hand desires."},
-                new ButtonInfo { buttonText = "Critter Particle Gun", method =() => Overpowered.AllSpamGun(), toolTip = "Spams every particle at wherever your hand desires."},
 
                 new ButtonInfo { buttonText = "Slow Gun", method =() => Overpowered.SlowGun(), toolTip = "Forces tag freeze on whoever your hand desires." },
                 new ButtonInfo { buttonText = "Slow All", method =() => Overpowered.SlowAll(), toolTip = "Forces tag freeze on everyone in the the room." },

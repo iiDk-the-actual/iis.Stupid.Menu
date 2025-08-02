@@ -9,12 +9,14 @@ using iiMenu.Notifications;
 using iiMenu.Patches;
 using Photon.Pun;
 using Photon.Realtime;
+using Photon.Voice;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -2966,141 +2968,81 @@ namespace iiMenu.Mods
             }
         }
 
-        public static float notifdelay;
-        public static void ShockwaveSpam()
+        public static void EffectSpam(CrittersManager.CritterEvent critterEvent)
         {
-            if (PhotonNetwork.LocalPlayer.IsMasterClient)
+            if (rightGrab)
             {
-                if (rightGrab)
+                if (PhotonNetwork.LocalPlayer.IsMasterClient)
                 {
                     CrittersPawn[] critters = GetAllType<CrittersPawn>();
                     if (critters.Length > 0)
                     {
                         CrittersPawn critter = critters[0];
-                        critter.transform.position = GorillaTagger.Instance.rightHandTransform.transform.position;
+                        critter.transform.position = GorillaTagger.Instance.rightHandTransform.position;
                         int actorId = critter.actorId;
-                        CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StunExplosion, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
+                        CrittersManager.instance.TriggerEvent(critterEvent, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
                     }
                 }
-            }
-            else
-            {
-                if (Time.time > notifdelay)
+                else
                 {
-                    notifdelay = Time.time + 0.1f;
-                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-                }
-            }
-        }
-
-        public static void StickySpam()
-        {
-            if (PhotonNetwork.LocalPlayer.IsMasterClient)
-            {
-                if (rightGrab)
-                {
-                    CrittersPawn[] critters = GetAllType<CrittersPawn>();
-                    if (critters.Length > 0)
+                    CrittersActor.CrittersActorType type = CrittersActor.CrittersActorType.StickyTrap;
+                    Vector3 velocity = Vector3.down * 20f;
+                    switch (critterEvent)
                     {
-                        CrittersPawn critter = critters[0];
-                        critter.transform.position = GorillaTagger.Instance.rightHandTransform.transform.position;
-                        int actorId = critter.actorId;
-                        CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StickyDeployed, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
+                        case CrittersManager.CritterEvent.StunExplosion:
+                            type = CrittersActor.CrittersActorType.StunBomb;
+                            break;
+                        case CrittersManager.CritterEvent.StickyDeployed:
+                        case CrittersManager.CritterEvent.StickyTriggered:
+                            type = CrittersActor.CrittersActorType.StickyTrap;
+                            break;
+                        case CrittersManager.CritterEvent.NoiseMakerTriggered:
+                            type = CrittersActor.CrittersActorType.NoiseMaker;
+                            break;
+                        default:
+                            break;
                     }
-                }
-            }
-            else
-            {
-                if (Time.time > notifdelay)
-                {
-                    notifdelay = Time.time + 0.1f;
-                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-                }
-            }
-        }
 
-        public static void DustSpam()
-        {
-            if (PhotonNetwork.LocalPlayer.IsMasterClient)
-            {
-                if (rightGrab)
-                {
-                    CrittersPawn[] critters = GetAllType<CrittersPawn>();
-                    if (critters.Length > 0)
+                    CrittersGrabber localGrabber = GetAllType<CrittersGrabber>().Where(grabber => grabber.rigPlayerId == PhotonNetwork.LocalPlayer.ActorNumber && grabber.isLeft).FirstOrDefault();
+                    List<CrittersActor> critters = GetAllType<CrittersActor>().Where(critter => critter != null && critter.crittersActorType == type && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 25f && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 3f).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
+
+                    if (critters.Count <= 0)
+                        critters = GetAllType<CrittersActor>().Where(critter => critter != null && critter.crittersActorType == type && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 25f).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
+
+                    if (critters.Count <= 0)
+                        critters = GetAllType<CrittersActor>().Where(critter => critter != null && critter.crittersActorType == type).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
+
+                    CrittersActor critter = critters[UnityEngine.Random.Range(0, critters.Count)];
+
+                    if (Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 25f)
                     {
-                        CrittersPawn critter = critters[0];
-                        critter.transform.position = GorillaTagger.Instance.rightHandTransform.transform.position;
-                        int actorId = critter.actorId;
-                        CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StickyTriggered, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
-                    }
-                }
-            }
-            else
-            {
-                if (Time.time > notifdelay)
-                {
-                    notifdelay = Time.time + 0.1f;
-                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-                }
-            }
-        }
+                        VRRig.LocalRig.enabled = false;
+                        VRRig.LocalRig.transform.position = critter.transform.position - Vector3.one * 5f;
 
-        public static void NoiseSpam()
-        {
-            if (PhotonNetwork.LocalPlayer.IsMasterClient)
-            {
-                if (rightGrab)
-                {
-                    CrittersPawn[] critters = GetAllType<CrittersPawn>();
-                    if (critters.Length > 0)
+                        if (CritterCoroutine != null)
+                            CoroutineManager.instance.StopCoroutine(CritterCoroutine);
+
+                        CritterCoroutine = CoroutineManager.instance.StartCoroutine(RopeEnableRig());
+                    }
+
+                    if (Vector3.Distance(critter.transform.position, ServerPos) < 25f && Time.time > critterGrabDelay)
                     {
-                        CrittersPawn critter = critters[0];
-                        critter.transform.position = GorillaTagger.Instance.rightHandTransform.transform.position;
-                        int actorId = critter.actorId;
-                        CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.NoiseMakerTriggered, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
+                        critterGrabDelay = Time.time + 0.1f;
+
+                        critter.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                        critter.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
+
+                        if (critter)
+                            critter.SetImpulseVelocity(velocity, Vector3.zero);
+
+                        CrittersManager.instance.SendRPC("RemoteCrittersActorGrabbedby", CrittersManager.instance.guard.currentOwner, new object[] { critter.actorId, localGrabber.actorId, Quaternion.identity, Vector3.zero, false });
+                        CrittersManager.instance.SendRPC("RemoteCritterActorReleased", CrittersManager.instance.guard.currentOwner, new object[] { critter.actorId, false, critter.transform.rotation, critter.transform.position, velocity, Vector3.zero });
                     }
-                }
-            }
-            else
-            {
-                if (Time.time > notifdelay)
-                {
-                    notifdelay = Time.time + 0.1f;
-                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
                 }
             }
         }
 
-        public static void AllSpam()
-        {
-            if (PhotonNetwork.LocalPlayer.IsMasterClient)
-            {
-                if (rightGrab)
-                {
-                    CrittersPawn[] critters = GetAllType<CrittersPawn>();
-                    if (critters.Length > 0)
-                    {
-                        CrittersPawn critter = critters[0];
-                        critter.transform.position = GorillaTagger.Instance.rightHandTransform.transform.position;
-                        int actorId = critter.actorId;
-                        CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.NoiseMakerTriggered, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
-                        CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StunExplosion, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
-                        CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StickyTriggered, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
-                        CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StickyDeployed, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
-                    }
-                }
-            }
-            else
-            {
-                if (Time.time > notifdelay)
-                {
-                    notifdelay = Time.time + 0.1f;
-                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-                }
-            }
-        }
-
-        public static void ShockwaveGun()
+        public static void EffectGun(CrittersManager.CritterEvent critterEvent)
         {
             if (GetGunInput(false))
             {
@@ -3118,150 +3060,63 @@ namespace iiMenu.Mods
                             CrittersPawn critter = critters[0];
                             critter.transform.position = NewPointer.transform.position;
                             int actorId = critter.actorId;
-                            CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StunExplosion, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
+                            CrittersManager.instance.TriggerEvent(critterEvent, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
                         }
                     }
                     else
                     {
-                        if (Time.time > notifdelay)
+                        CrittersActor.CrittersActorType type = CrittersActor.CrittersActorType.StickyTrap;
+                        Vector3 velocity = -Ray.normal * 20f;
+                        switch (critterEvent)
                         {
-                            notifdelay = Time.time + 0.1f;
-                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                            case CrittersManager.CritterEvent.StunExplosion:
+                                type = CrittersActor.CrittersActorType.StunBomb;
+                                break;
+                            case CrittersManager.CritterEvent.StickyDeployed:
+                            case CrittersManager.CritterEvent.StickyTriggered:
+                                type = CrittersActor.CrittersActorType.StickyTrap;
+                                break;
+                            case CrittersManager.CritterEvent.NoiseMakerTriggered:
+                                type = CrittersActor.CrittersActorType.NoiseMaker;
+                                break;
+                            default:
+                                break;
                         }
-                    }
-                }
-            }
-        }
 
-        public static void StickyGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
+                        CrittersGrabber localGrabber = GetAllType<CrittersGrabber>().Where(grabber => grabber.rigPlayerId == PhotonNetwork.LocalPlayer.ActorNumber && grabber.isLeft).FirstOrDefault();
+                        List<CrittersActor> critters = GetAllType<CrittersActor>().Where(critter => critter != null && critter.crittersActorType == type && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 25f && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 3f).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
 
-                if (GetGunInput(true))
-                {
-                    if (PhotonNetwork.LocalPlayer.IsMasterClient)
-                    {
-                        CrittersPawn[] critters = GetAllType<CrittersPawn>();
-                        if (critters.Length > 0)
+                        if (critters.Count <= 0)
+                            critters = GetAllType<CrittersActor>().Where(critter => critter != null && critter.crittersActorType == type && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 25f).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
+
+                        if (critters.Count <= 0)
+                            critters = GetAllType<CrittersActor>().Where(critter => critter != null && critter.crittersActorType == type).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
+
+                        CrittersActor critter = critters[UnityEngine.Random.Range(0, critters.Count)];
+
+                        if (Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 25f)
                         {
-                            CrittersPawn critter = critters[0];
-                            critter.transform.position = NewPointer.transform.position;
-                            int actorId = critter.actorId;
-                            CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StickyDeployed, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
+                            VRRig.LocalRig.enabled = false;
+                            VRRig.LocalRig.transform.position = critter.transform.position - Vector3.one * 5f;
+
+                            if (CritterCoroutine != null)
+                                CoroutineManager.instance.StopCoroutine(CritterCoroutine);
+
+                            CritterCoroutine = CoroutineManager.instance.StartCoroutine(RopeEnableRig());
                         }
-                    }
-                    else
-                    {
-                        if (Time.time > notifdelay)
-                        {
-                            notifdelay = Time.time + 0.1f;
-                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-                        }
-                    }
-                }
-            }
-        }
 
-        public static void DustGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
+                        if (Vector3.Distance(critter.transform.position, ServerPos) < 25f && Time.time > critterGrabDelay)
+                        {
+                            critterGrabDelay = Time.time + 0.1f;
 
-                if (GetGunInput(true))
-                {
-                    if (PhotonNetwork.LocalPlayer.IsMasterClient)
-                    {
-                        CrittersPawn[] critters = GetAllType<CrittersPawn>();
-                        if (critters.Length > 0)
-                        {
-                            CrittersPawn critter = critters[0];
-                            critter.transform.position = NewPointer.transform.position;
-                            int actorId = critter.actorId;
-                            CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StickyTriggered, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
-                        }
-                    }
-                    else
-                    {
-                        if (Time.time > notifdelay)
-                        {
-                            notifdelay = Time.time + 0.1f;
-                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-                        }
-                    }
-                }
-            }
-        }
+                            critter.transform.position = NewPointer.transform.position + Ray.normal;
+                            critter.transform.rotation = RandomQuaternion();
 
-        public static void NoiseGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
+                            if (critter)
+                                critter.SetImpulseVelocity(velocity, Vector3.zero);
 
-                if (GetGunInput(true))
-                {
-                    if (PhotonNetwork.LocalPlayer.IsMasterClient)
-                    {
-                        CrittersPawn[] critters = GetAllType<CrittersPawn>();
-                        if (critters.Length > 0)
-                        {
-                            CrittersPawn critter = critters[0];
-                            critter.transform.position = NewPointer.transform.position;
-                            int actorId = critter.actorId;
-                            CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.NoiseMakerTriggered, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
-                        }
-                    }
-                    else
-                    {
-                        if (Time.time > notifdelay)
-                        {
-                            notifdelay = Time.time + 0.1f;
-                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
-                        }
-                    }
-                }
-            }
-        }
-
-        public static void AllSpamGun()
-        {
-            if (GetGunInput(false))
-            {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
-
-                if (GetGunInput(true))
-                {
-                    if (PhotonNetwork.LocalPlayer.IsMasterClient)
-                    {
-                        CrittersPawn[] critters = GetAllType<CrittersPawn>();
-                        if (critters.Length > 0)
-                        {
-                            CrittersPawn critter = critters[0];
-                            critter.transform.position = NewPointer.transform.position;
-                            int actorId = critter.actorId;
-                            CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.NoiseMakerTriggered, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
-                            CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StunExplosion, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
-                            CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StickyTriggered, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
-                            CrittersManager.instance.TriggerEvent(CrittersManager.CritterEvent.StickyDeployed, actorId, critter.transform.position, Quaternion.LookRotation(critter.transform.up));
-                        }
-                    }
-                    else
-                    {
-                        if (Time.time > notifdelay)
-                        {
-                            notifdelay = Time.time + 0.1f;
-                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                            CrittersManager.instance.SendRPC("RemoteCrittersActorGrabbedby", CrittersManager.instance.guard.currentOwner, new object[] { critter.actorId, localGrabber.actorId, Quaternion.identity, Vector3.zero, false });
+                            CrittersManager.instance.SendRPC("RemoteCritterActorReleased", CrittersManager.instance.guard.currentOwner, new object[] { critter.actorId, false, critter.transform.rotation, critter.transform.position, velocity, Vector3.zero });
                         }
                     }
                 }
@@ -3272,22 +3127,107 @@ namespace iiMenu.Mods
         {
             if (rightGrab)
             {
-                if (PhotonNetwork.LocalPlayer.IsMasterClient)
+                if (PhotonNetwork.IsMasterClient)
                 {
-                    CrittersPawn Critter = CrittersManager.instance.SpawnCritter(UnityEngine.Random.Range(0, 3), GorillaTagger.Instance.rightHandTransform.transform.position, Quaternion.identity);
-                    Critter.SetVelocity(GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength);
+                    List<CrittersPawn> critters = GetAllType<CrittersPawn>().Where(critter => critter != null).ToList();
+
+                    CrittersPawn targetCritter = critters[UnityEngine.Random.Range(0, critters.Count)];
+                    targetCritter.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                    targetCritter.transform.rotation = RandomQuaternion();
                 }
                 else
                 {
-                    if (Time.time > notifdelay)
+                    CrittersGrabber localGrabber = GetAllType<CrittersGrabber>().Where(grabber => grabber.rigPlayerId == PhotonNetwork.LocalPlayer.ActorNumber && grabber.isLeft).FirstOrDefault();
+                    List<CrittersPawn> critters = GetAllType<CrittersPawn>().Where(critter => critter != null && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 25f && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 3f).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
+
+                    if (critters.Count <= 0)
+                        critters = GetAllType<CrittersPawn>().Where(critter => critter != null && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 25f).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
+
+                    if (critters.Count <= 0)
+                        critters = GetAllType<CrittersPawn>().Where(critter => critter != null).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
+
+                    CrittersPawn critter = critters[UnityEngine.Random.Range(0, critters.Count)];
+
+                    if (Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 25f)
                     {
-                        notifdelay = Time.time + 0.1f;
-                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                        VRRig.LocalRig.enabled = false;
+                        VRRig.LocalRig.transform.position = critter.transform.position - Vector3.one * 5f;
+
+                        if (CritterCoroutine != null)
+                            CoroutineManager.instance.StopCoroutine(CritterCoroutine);
+
+                        CritterCoroutine = CoroutineManager.instance.StartCoroutine(RopeEnableRig());
+                    }
+
+                    if (Vector3.Distance(critter.transform.position, ServerPos) < 25f && critter.currentState != CrittersPawn.CreatureState.Grabbed && Time.time > critterGrabDelay)
+                    {
+                        critterGrabDelay = Time.time + 0.1f;
+
+                        critter.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                        critter.transform.rotation = RandomQuaternion();
+
+                        CrittersManager.instance.SendRPC("RemoteCrittersActorGrabbedby", CrittersManager.instance.guard.currentOwner, new object[] { critter.actorId, localGrabber.actorId, Quaternion.identity, Vector3.zero, false });
+                        CrittersManager.instance.SendRPC("RemoteCritterActorReleased", CrittersManager.instance.guard.currentOwner, new object[] { critter.actorId, false, critter.transform.rotation, critter.transform.position, Vector3.zero, Vector3.zero });
                     }
                 }
             }
         }
 
+        public static void CritterMinigun()
+        {
+            if (rightGrab)
+            {
+                if (PhotonNetwork.IsMasterClient)
+                {
+                    List<CrittersPawn> critters = GetAllType<CrittersPawn>().Where(critter => critter != null).ToList();
+
+                    CrittersPawn targetCritter = critters[UnityEngine.Random.Range(0, critters.Count)];
+                    targetCritter.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                    targetCritter.transform.rotation = RandomQuaternion();
+
+                    if (targetCritter.usesRB)
+                        targetCritter.SetImpulseVelocity(GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength, RandomVector3(100f));
+                }
+                else
+                {
+                    CrittersGrabber localGrabber = GetAllType<CrittersGrabber>().Where(grabber => grabber.rigPlayerId == PhotonNetwork.LocalPlayer.ActorNumber && grabber.isLeft).FirstOrDefault();
+                    List<CrittersPawn> critters = GetAllType<CrittersPawn>().Where(critter => critter != null && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 25f && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 3f).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
+
+                    if (critters.Count <= 0)
+                        critters = GetAllType<CrittersPawn>().Where(critter => critter != null && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 25f).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
+
+                    if (critters.Count <= 0)
+                        critters = GetAllType<CrittersPawn>().Where(critter => critter != null).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
+
+                    CrittersPawn critter = critters[UnityEngine.Random.Range(0, critters.Count)];
+
+                    if (Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 25f)
+                    {
+                        VRRig.LocalRig.enabled = false;
+                        VRRig.LocalRig.transform.position = critter.transform.position - Vector3.one * 5f;
+
+                        if (CritterCoroutine != null)
+                            CoroutineManager.instance.StopCoroutine(CritterCoroutine);
+
+                        CritterCoroutine = CoroutineManager.instance.StartCoroutine(RopeEnableRig());
+                    }
+
+                    if (Vector3.Distance(critter.transform.position, ServerPos) < 25f && Time.time > critterGrabDelay)
+                    {
+                        critterGrabDelay = Time.time + 0.1f;
+
+                        critter.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                        critter.transform.rotation = RandomQuaternion();
+
+                        CrittersManager.instance.SendRPC("RemoteCrittersActorGrabbedby", CrittersManager.instance.guard.currentOwner, new object[] { critter.actorId, localGrabber.actorId, Quaternion.identity, Vector3.zero, false });
+                        CrittersManager.instance.SendRPC("RemoteCritterActorReleased", CrittersManager.instance.guard.currentOwner, new object[] { critter.actorId, false, critter.transform.rotation, critter.transform.position, GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength, Vector3.zero });
+                    }
+                }
+            }
+        }
+
+        private static Coroutine CritterCoroutine;
+        private static float critterGrabDelay;
         public static void CritterGun()
         {
             if (GetGunInput(false))
@@ -3298,14 +3238,47 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true))
                 {
-                    if (PhotonNetwork.LocalPlayer.IsMasterClient)
-                        CrittersManager.instance.SpawnCritter(UnityEngine.Random.Range(0, 3), NewPointer.transform.position, Quaternion.identity);
+                    if (PhotonNetwork.IsMasterClient)
+                    {
+                        List<CrittersPawn> critters = GetAllType<CrittersPawn>().Where(critter => critter != null).ToList();
+
+                        CrittersPawn targetCritter = critters[UnityEngine.Random.Range(0, critters.Count)];
+                        targetCritter.transform.position = NewPointer.transform.position;
+                        targetCritter.transform.rotation = RandomQuaternion();
+                    }
                     else
                     {
-                        if (Time.time > notifdelay)
+                        CrittersGrabber localGrabber = GetAllType<CrittersGrabber>().Where(grabber => grabber.rigPlayerId == PhotonNetwork.LocalPlayer.ActorNumber && grabber.isLeft).FirstOrDefault();
+                        List<CrittersPawn> critters = GetAllType<CrittersPawn>().Where(critter => critter != null && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 25f && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 3f).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
+
+                        if (critters.Count <= 0)
+                            critters = GetAllType<CrittersPawn>().Where(critter => critter != null && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 25f).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
+
+                        if (critters.Count <= 0)
+                            critters = GetAllType<CrittersPawn>().Where(critter => critter != null).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
+
+                        CrittersPawn critter = critters[UnityEngine.Random.Range(0, critters.Count)];
+
+                        if (Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 25f)
                         {
-                            notifdelay = Time.time + 0.1f;
-                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                            VRRig.LocalRig.enabled = false;
+                            VRRig.LocalRig.transform.position = critter.transform.position - Vector3.one * 5f;
+
+                            if (CritterCoroutine != null)
+                                CoroutineManager.instance.StopCoroutine(CritterCoroutine);
+
+                            CritterCoroutine = CoroutineManager.instance.StartCoroutine(RopeEnableRig());
+                        }
+
+                        if (Vector3.Distance(critter.transform.position, ServerPos) < 25f && Time.time > critterGrabDelay)
+                        {
+                            critterGrabDelay = Time.time + 0.1f;
+
+                            critter.transform.position = NewPointer.transform.position + Vector3.up;
+                            critter.transform.rotation = RandomQuaternion();
+
+                            CrittersManager.instance.SendRPC("RemoteCrittersActorGrabbedby", CrittersManager.instance.guard.currentOwner, new object[] { critter.actorId, localGrabber.actorId, Quaternion.identity, Vector3.zero, false });
+                            CrittersManager.instance.SendRPC("RemoteCritterActorReleased", CrittersManager.instance.guard.currentOwner, new object[] { critter.actorId, false, critter.transform.rotation, critter.transform.position, Vector3.zero, Vector3.zero });
                         }
                     }
                 }
@@ -3326,10 +3299,55 @@ namespace iiMenu.Mods
                 }
                 else
                 {
-                    if (Time.time > notifdelay)
+                    Vector3 velocity = GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength;
+                    switch (type)
                     {
-                        notifdelay = Time.time + 0.1f;
-                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                        case CrittersActor.CrittersActorType.LoudNoise:
+                            type = CrittersActor.CrittersActorType.NoiseMaker;
+                            velocity = Vector3.down * 20f;
+                            break;
+                        case CrittersActor.CrittersActorType.StickyGoo:
+                            type = CrittersActor.CrittersActorType.StickyTrap;
+                            velocity = Vector3.down * 20f;
+                            break;
+                        default:
+                            break;
+                    }
+
+                    CrittersGrabber localGrabber = GetAllType<CrittersGrabber>().Where(grabber => grabber.rigPlayerId == PhotonNetwork.LocalPlayer.ActorNumber && grabber.isLeft).FirstOrDefault();
+                    List<CrittersActor> critters = GetAllType<CrittersActor>().Where(critter => critter != null && critter.crittersActorType == type && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 25f && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 3f).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
+
+                    if (critters.Count <= 0)
+                        critters = GetAllType<CrittersActor>().Where(critter => critter != null && critter.crittersActorType == type && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 25f).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
+
+                    if (critters.Count <= 0)
+                        critters = GetAllType<CrittersActor>().Where(critter => critter != null && critter.crittersActorType == type).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
+
+                    CrittersActor critter = critters[UnityEngine.Random.Range(0, critters.Count)];
+
+                    if (Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 25f)
+                    {
+                        VRRig.LocalRig.enabled = false;
+                        VRRig.LocalRig.transform.position = critter.transform.position - Vector3.one * 5f;
+
+                        if (CritterCoroutine != null)
+                            CoroutineManager.instance.StopCoroutine(CritterCoroutine);
+
+                        CritterCoroutine = CoroutineManager.instance.StartCoroutine(RopeEnableRig());
+                    }
+
+                    if (Vector3.Distance(critter.transform.position, ServerPos) < 25f && Time.time > critterGrabDelay)
+                    {
+                        critterGrabDelay = Time.time + 0.1f;
+
+                        critter.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                        critter.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
+
+                        if (critter)
+                            critter.SetImpulseVelocity(velocity, Vector3.zero);
+
+                        CrittersManager.instance.SendRPC("RemoteCrittersActorGrabbedby", CrittersManager.instance.guard.currentOwner, new object[] { critter.actorId, localGrabber.actorId, Quaternion.identity, Vector3.zero, false });
+                        CrittersManager.instance.SendRPC("RemoteCritterActorReleased", CrittersManager.instance.guard.currentOwner, new object[] { critter.actorId, false, critter.transform.rotation, critter.transform.position, velocity, Vector3.zero });
                     }
                 }
             }
@@ -3348,14 +3366,63 @@ namespace iiMenu.Mods
                     if (PhotonNetwork.LocalPlayer.IsMasterClient)
                     {
                         CrittersActor Object = CrittersManager.instance.SpawnActor(type);
-                        Object.MoveActor(NewPointer.transform.position, RandomQuaternion());
+                        Object.MoveActor(NewPointer.transform.position + Vector3.up, RandomQuaternion());
                     }
                     else
                     {
-                        if (Time.time > notifdelay)
+                        Vector3 velocity = Vector3.zero;
+                        Vector3 position = NewPointer.transform.position + Vector3.up;
+
+                        switch (type)
                         {
-                            notifdelay = Time.time + 0.1f;
-                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                            case CrittersActor.CrittersActorType.LoudNoise:
+                                type = CrittersActor.CrittersActorType.NoiseMaker;
+                                velocity = Ray.normal * -20f;
+                                position = NewPointer.transform.position + Ray.normal;
+                                break;
+                            case CrittersActor.CrittersActorType.StickyGoo:
+                                type = CrittersActor.CrittersActorType.StickyTrap;
+                                velocity = Ray.normal * -20f;
+                                position = NewPointer.transform.position + Ray.normal;
+                                break;
+                            default:
+                                break;
+                        }
+
+                        CrittersGrabber localGrabber = GetAllType<CrittersGrabber>().Where(grabber => grabber.rigPlayerId == PhotonNetwork.LocalPlayer.ActorNumber && grabber.isLeft).FirstOrDefault();
+                        List<CrittersActor> critters = GetAllType<CrittersActor>().Where(critter => critter != null && critter.crittersActorType == type && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 25f && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 3f).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
+
+                        if (critters.Count <= 0)
+                            critters = GetAllType<CrittersActor>().Where(critter => critter != null && critter.crittersActorType == type && Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 25f).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
+
+                        if (critters.Count <= 0)
+                            critters = GetAllType<CrittersActor>().Where(critter => critter != null && critter.crittersActorType == type).OrderByDescending(critter => Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)).ToList();
+
+                        CrittersActor critter = critters[UnityEngine.Random.Range(0, critters.Count)];
+
+                        if (Vector3.Distance(critter.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 25f)
+                        {
+                            VRRig.LocalRig.enabled = false;
+                            VRRig.LocalRig.transform.position = critter.transform.position - Vector3.one * 5f;
+
+                            if (CritterCoroutine != null)
+                                CoroutineManager.instance.StopCoroutine(CritterCoroutine);
+
+                            CritterCoroutine = CoroutineManager.instance.StartCoroutine(RopeEnableRig());
+                        }
+
+                        if (Vector3.Distance(critter.transform.position, ServerPos) < 25f && Time.time > critterGrabDelay)
+                        {
+                            critterGrabDelay = Time.time + 0.1f;
+
+                            critter.transform.position = position;
+                            critter.transform.rotation = RandomQuaternion();
+
+                            if (critter)
+                                critter.SetImpulseVelocity(velocity, Vector3.zero);
+
+                            CrittersManager.instance.SendRPC("RemoteCrittersActorGrabbedby", CrittersManager.instance.guard.currentOwner, new object[] { critter.actorId, localGrabber.actorId, Quaternion.identity, Vector3.zero, false });
+                            CrittersManager.instance.SendRPC("RemoteCritterActorReleased", CrittersManager.instance.guard.currentOwner, new object[] { critter.actorId, false, critter.transform.rotation, critter.transform.position, velocity, Vector3.zero });
                         }
                     }
                 }
