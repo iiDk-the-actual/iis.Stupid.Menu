@@ -572,8 +572,12 @@ namespace iiMenu.Menu
 
                     if (fpsCount != null)
                     {
-                        fpsCount.text = "FPS: " + lastDeltaTime.ToString();
+                        string textToSet = $"FPS: {lastDeltaTime}";
+                        if (hidetitle && !noPageNumber) textToSet += "      ";
+                        if (disableFpsCounter) textToSet = "";
+                        if (hidetitle && !noPageNumber) textToSet += "Page " + (pageNumber + 1).ToString();
 
+                        fpsCount.text = textToSet;
                         if (lowercaseMode)
                             fpsCount.text = fpsCount.text.ToLower();
 
@@ -2137,6 +2141,9 @@ namespace iiMenu.Menu
 
             if (!noPageNumber)
                 title.text += $" <color=grey>[</color><color=white>{pageNumber + 1}</color><color=grey>]</color>";
+            
+            if (hidetitle)
+                title.text = "";
 
             if (gradientTitle)
                 title.text = RichtextGradient(NoRichtextTags(title.text),
@@ -2207,44 +2214,49 @@ namespace iiMenu.Menu
 
             if (outlineText)
                 OutlineCanvasObject(buildLabel);
-
-            if (!disableFpsCounter)
+            
+            Text fps = new GameObject
             {
-                Text fps = new GameObject
+                transform =
                 {
-                    transform =
-                    {
-                        parent = canvasObj.transform
-                    }
-                }.AddComponent<Text>();
-                fps.font = activeFont;
-                fps.text = $"FPS: {lastDeltaTime}";
-                if (lowercaseMode)
-                    fps.text = fps.text.ToLower();
+                    parent = canvasObj.transform
+                }
+            }.AddComponent<Text>();
+            fps.font = activeFont;
 
-                if (uppercaseMode)
-                    fps.text = fps.text.ToUpper();
+            string textToSet = $"FPS: {lastDeltaTime}";
+            if (hidetitle && !noPageNumber) textToSet += "      ";
+            if (disableFpsCounter) textToSet = "";
+            if (hidetitle && !noPageNumber) textToSet += "Page " + (pageNumber + 1).ToString();
 
-                fps.color = titleColor;
-                fpsCount = fps;
-                fps.fontSize = 1;
-                fps.supportRichText = true;
-                fps.fontStyle = activeFontStyle;
-                fps.alignment = TextAnchor.MiddleCenter;
-                fps.horizontalOverflow = HorizontalWrapMode.Overflow;
-                fps.resizeTextForBestFit = true;
-                fps.resizeTextMinSize = 0;
-                RectTransform component2 = fps.GetComponent<RectTransform>();
-                component2.localPosition = Vector3.zero;
-                component2.sizeDelta = new Vector2(0.28f, 0.02f);
-                component2.localPosition = new Vector3(0.06f, 0f, 0.135f);
-                if (NoAutoSizeText)
-                    component2.sizeDelta = new Vector2(9f, 0.015f);
-                component2.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+            fps.text = textToSet;
+            if (lowercaseMode)
+                fps.text = fps.text.ToLower();
 
-                if (outlineText)
-                    OutlineCanvasObject(fps, true);
-            }
+            if (uppercaseMode)
+                fps.text = fps.text.ToUpper();
+
+            fps.color = titleColor;
+            fpsCount = fps;
+            fps.fontSize = 1;
+            fps.supportRichText = true;
+            fps.fontStyle = activeFontStyle;
+            fps.alignment = TextAnchor.MiddleCenter;
+            fps.horizontalOverflow = HorizontalWrapMode.Overflow;
+            fps.resizeTextForBestFit = true;
+            fps.resizeTextMinSize = 0;
+            RectTransform component2 = fps.GetComponent<RectTransform>();
+            component2.localPosition = Vector3.zero;
+            component2.sizeDelta = new Vector2(0.28f, 0.02f);
+            component2.localPosition = new Vector3(0.06f, 0f, hidetitle ? 0.175f : 0.135f);
+
+            if (NoAutoSizeText)
+                component2.sizeDelta = new Vector2(9f, 0.015f);
+            component2.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+
+            if (outlineText)
+                OutlineCanvasObject(fps, true);
+            //}
 
             float hkbStartTime = -0.3f;
             if (!disableDisconnectButton)
@@ -5492,6 +5504,7 @@ jgs \_   _/ |Oo\
 
         public static bool thinMenu = true;
         public static bool longmenu;
+        public static bool hidetitle;
         public static bool disorganized;
         public static bool flipMenu;
         public static bool shinymenu;
