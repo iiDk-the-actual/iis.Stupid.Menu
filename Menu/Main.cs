@@ -2744,11 +2744,11 @@ namespace iiMenu.Menu
                 case 5:
                     CreatePageButtonPair(
                         "PreviousPage", "NextPage",
-                        new Vector3(0.09f, 0.3f, 0.05f),
-                        new Vector3(0.56f, thinMenu ? 0.299f : 0.499f, 0.355f),
-                        new Vector3(0.56f, thinMenu ? -0.299f : -0.499f, 0.355f),
-                        new Vector3(0.064f, thinMenu ? 0.09f : 0.15f, 0.135f),
-                        new Vector3(0.064f, thinMenu ? -0.09f : -0.15f, 0.135f),
+                        new Vector3(0.09f, hidetitle ? 0.1f : 0.3f, 0.05f),
+                        new Vector3(0.56f, (thinMenu ? 0.299f : 0.499f) + (hidetitle ? 0.1f : 0f), 0.355f + (hidetitle ? 0.1f : 0f)),
+                        new Vector3(0.56f, (thinMenu ? -0.299f : -0.499f) - (hidetitle ? 0.1f : 0f), 0.355f + (hidetitle ? 0.1f : 0f)),
+                        new Vector3(0.064f, (thinMenu ? 0.09f : 0.15f) + (hidetitle ? 0.035f : 0f), 0.135f + (hidetitle ? 0.0375f : 0f)),
+                        new Vector3(0.064f, (thinMenu ? -0.09f : -0.15f) - (hidetitle ? 0.035f : 0f), 0.135f + (hidetitle ? 0.0375f : 0f)),
                         Gradient
                     );
                     break;
