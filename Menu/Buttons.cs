@@ -684,6 +684,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Name Tags", method =() => Visuals.NameTags(), disableMethod =() => Visuals.DisableNameTags(), toolTip = "Gives players name tags above their heads that show their nickname."},
                 new ButtonInfo { buttonText = "Velocity Name Tags", method =() => Visuals.VelocityTags(), disableMethod =() => Visuals.DisableVelocityTags(), toolTip = "Gives players name tags above their heads that show their velocity."},
                 new ButtonInfo { buttonText = "FPS Name Tags", method =() => Visuals.FPSTags(), disableMethod =() => Visuals.DisableFPSTags(), toolTip = "Gives players name tags above their heads that show their FPS."},
+                new ButtonInfo { buttonText = "Ping Name Tags", method =() => Visuals.PingTags(), disableMethod =() => Visuals.DisablePingTags(), toolTip = "Gives players name tags above their heads that show their ping."},
                 new ButtonInfo { buttonText = "Turn Name Tags", method =() => Visuals.TurnTags(), disableMethod =() => Visuals.DisableTurnTags(), toolTip = "Gives players name tags above their heads that show their turn settings."},
                 new ButtonInfo { buttonText = "Tagged Name Tags", method =() => Visuals.TaggedTags(), disableMethod =() => Visuals.DisableTaggedTags(), toolTip = "Gives players name tags above their heads that show who tagged them."},
 
@@ -823,6 +824,13 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Quest Noises <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Fun.QuestNoises(), toolTip = "Makes noises at the quest machine in city when holding <color=green>trigger</color>."},
                 new ButtonInfo { buttonText = "Max Quest Score", method =() => Fun.MaxQuestScore(), toolTip = "Gives you the maximum quest score in the game (99999)."},
                 new ButtonInfo { buttonText = "Custom Quest Score", method =() => Fun.CustomQuestScore(), toolTip = "Gives you a custom quest score. You can change this in the settings."},
+
+                new ButtonInfo { buttonText = "Arcade Teleporter Effect Spam", method =() => Fun.ArcadeTeleporterEffectSpam(), toolTip = "Spams the effects on the virtual stump teleporters in the arcade when holding <color=green>trigger</color>."},
+                new ButtonInfo { buttonText = "Stump Teleporter Effect Spam", method =() => Fun.StumpTeleporterEffectSpam(), toolTip = "Spams the effects on the virtual stump teleporter in forest when holding <color=green>trigger</color>."},
+                
+                new ButtonInfo { buttonText = "Basement Door Spam", method =() => Fun.BasementDoorSpam(), toolTip = "Repeatedly opens and closes the basement door."},
+                new ButtonInfo { buttonText = "Elevator Door Spam", method =() => Fun.ElevatorDoorSpam(), toolTip = "Repeatedly opens and closes the elevator door."},
+
                 new ButtonInfo { buttonText = "Fake FPS", method =() => Fun.FakeFPS(), disableMethod =() => Patches.FPSPatch.enabled = false, toolTip = "Makes your FPS appear to be completely random to other players and the competitive bot."},
 
                 new ButtonInfo { buttonText = "Get Builder Watch", method =() => Fun.GiveBuilderWatch(), isTogglable = false, toolTip = "Gives you the builder watch without needing to be in attic."},
@@ -995,7 +1003,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Respawn Gliders", method =() => Fun.RespawnGliders(), isTogglable = false, toolTip = "Respawns all the gliders." },
                 new ButtonInfo { buttonText = "Pop All Balloons", method =() => Fun.PopAllBalloons(), isTogglable = false, toolTip = "Pops every single balloon cosmetic." },
 
-                new ButtonInfo { buttonText = "Remove Name", method =() => ChangeName(""), isTogglable = false, toolTip = "Sets your name to nothing." },
                 new ButtonInfo { buttonText = "Set Name to \"STATUE\"", method =() => ChangeName("STATUE"), isTogglable = false, toolTip = "Sets your name to \"STATUE\"." },
                 new ButtonInfo { buttonText = "Set Name to \"RUN\"", method =() => ChangeName("RUN"), isTogglable = false, toolTip = "Sets your name to \"RUN\"." },
                 new ButtonInfo { buttonText = "Set Name to \"BEHINDYOU\"", method =() => ChangeName("BEHINDYOU"), isTogglable = false, toolTip = "Sets your name to \"BEHINDYOU\"." },
@@ -1336,9 +1343,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Towards Point on Grab Gun", method =() => Overpowered.TowardsPointOnGrab(), disableMethod =() => Overpowered.DisableTowardsPointOnGrab(), toolTip = "Sends the player to your target position when they grab you." },
 
                 new ButtonInfo { buttonText = "Freeze All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.FreezeAll(), toolTip = "Freezes everyone in the room when holding <color=green>trigger</color>." },
-
-                new ButtonInfo { buttonText = "Arcade Teleporter Effect Spammer <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.ArcadeTeleporterEffectSpammer(), toolTip = "Spams the effects on the virtual stump teleporters in the arcade when holding <color=green>trigger</color>."},
-                new ButtonInfo { buttonText = "Stump Teleporter Effect Spammer <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.StumpTeleporterEffectSpammer(), toolTip = "Spams the effects on the virtual stump teleporter in forest when holding <color=green>trigger</color>."},
 
                 new ButtonInfo { buttonText = "Snowball Airstrike Gun", method =() => Overpowered.SnowballAirstrikeGun(), toolTip = "Spawns a snowball airstrike wherever your hand desires."},
                 new ButtonInfo { buttonText = "Snowball Gun", method =() => Overpowered.SnowballGun(), toolTip = "Spawns a snowball wherever your hand desires."},

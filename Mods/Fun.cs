@@ -900,6 +900,57 @@ namespace iiMenu.Mods
             }
         }
 
+        private static float spamDelay;
+        private static bool returnOrTeleport;
+        public static void ArcadeTeleporterEffectSpam()
+        {
+            if (Time.time > spamDelay)
+            {
+                spamDelay = Time.time + 0.1f;
+                returnOrTeleport = !returnOrTeleport;
+
+                GetObject("Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/Arcade_prefab/MainRoom/VRArea/ModIOArcadeTeleporter/NetObject_VRTeleporter").GetComponent<PhotonView>().RPC("ActivateTeleportVFX", RpcTarget.All, new object[] { returnOrTeleport, (short)UnityEngine.Random.Range(0, 7) });
+                RPCProtection();
+            }
+        }
+
+        public static void StumpTeleporterEffectSpam()
+        {
+            if (Time.time > spamDelay)
+            {
+                spamDelay = Time.time + 0.1f;
+                returnOrTeleport = !returnOrTeleport;
+
+                GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/StumpVRHeadset/VirtualStump_StumpTeleporter/NetObject_VRTeleporter").GetComponent<PhotonView>().RPC("ActivateTeleportVFX", RpcTarget.All, new object[] { returnOrTeleport, (short)0 });
+                RPCProtection();
+            }
+        }
+
+        private static bool openOrClose;
+        public static void BasementDoorSpam()
+        {
+            if (Time.time > spamDelay)
+            {
+                delay = Time.time + 0.1f;
+                openOrClose = !openOrClose;
+
+                GetObject("Environment Objects/LocalObjects_Prefab/CityToBasement/DungeonEntrance/DungeonDoor_Prefab").GetComponent<PhotonView>().RPC("ChangeDoorState", RpcTarget.AllViaServer, new object[] { openOrClose ? GTDoor.DoorState.Opening : GTDoor.DoorState.Closing });
+                RPCProtection();
+            }
+        }
+
+        public static void ElevatorDoorSpam()
+        {
+            if (Time.time > spamDelay)
+            {
+                delay = Time.time + 0.1f;
+                openOrClose = !openOrClose;
+
+                GRElevatorManager.ElevatorButtonPressed(openOrClose ? GRElevator.ButtonType.Open : GRElevator.ButtonType.Close, GRElevatorManager._instance.currentLocation);
+                RPCProtection();
+            }
+        }
+
         public static void ChangeCustomQuestScore(bool positive = true)
         {
             if (positive)

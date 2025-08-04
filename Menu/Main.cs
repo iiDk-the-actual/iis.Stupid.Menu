@@ -4581,6 +4581,10 @@ namespace iiMenu.Menu
             ServerSyncRightHandPos = VRRig.LocalRig?.rightHand.rigTarget.transform.position ?? ServerSyncRightHandPos;
         }
 
+        public static Dictionary<VRRig, int> playerPing = new Dictionary<VRRig, int> { };
+        public static void OnPlayerSerialize(VRRig rig) =>
+            playerPing[rig] = (int)Math.Abs((rig.velocityHistoryList[0].time * 1000) - PhotonNetwork.ServerTimestamp);
+
         public static void MassSerialize(bool exclude = false, PhotonView[] viewFilter = null, int timeOffset = 0)
         {
             if (!PhotonNetwork.InRoom)
@@ -4920,13 +4924,12 @@ namespace iiMenu.Menu
 
         public static void ChangeName(string PlayerName)
         {
-            GorillaComputer.instance.currentName = PlayerName;
-            PhotonNetwork.LocalPlayer.NickName = PlayerName;
-            VRRig.LocalRig.playerText1.text = PlayerName;
-            VRRig.LocalRig.playerText2.text = PlayerName;
-            GorillaComputer.instance.savedName = PlayerName;
-            PlayerPrefs.SetString("playerName", PlayerName);
+            GorillaComputer.instance.SetLocalNameTagText(GorillaComputer.instance.currentName);
+            GorillaComputer.instance.savedName = GorillaComputer.instance.currentName;
+            PlayerPrefs.SetString("playerName", GorillaComputer.instance.currentName);
             PlayerPrefs.Save();
+
+            PhotonNetwork.LocalPlayer.NickName = PlayerName;
 
             try
             {
@@ -4944,7 +4947,6 @@ namespace iiMenu.Menu
             PlayerPrefs.SetFloat("greenValue", Mathf.Clamp(color.g, 0f, 1f));
             PlayerPrefs.SetFloat("blueValue", Mathf.Clamp(color.b, 0f, 1f));
 
-            //VRRig.LocalRig.mainSkin.material.color = color;
             GorillaTagger.Instance.UpdateColor(color.r, color.g, color.b);
             PlayerPrefs.Save();
 
@@ -5328,6 +5330,7 @@ namespace iiMenu.Menu
             NetworkSystem.Instance.OnPlayerLeft += OnPlayerLeave;
 
             SerializePatch.OnSerialize += OnSerialize;
+            PlayerSerializePatch.OnPlayerSerialize += OnPlayerSerialize;
 
             GameObject CrystalChunk = GameObject.Find("Environment Objects/LocalObjects_Prefab/ForestToCave/C_Crystal_Chunk");
             if (CrystalChunk != null)
