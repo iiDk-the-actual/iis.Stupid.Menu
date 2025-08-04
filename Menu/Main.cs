@@ -561,6 +561,8 @@ namespace iiMenu.Menu
                         }
                     } catch { }
 
+                    playTime += Time.unscaledDeltaTime;
+
                     // FPS counter
                     if (Time.time > fpsAvgTime || !fpsCountTimed)
                     {
@@ -5486,6 +5488,7 @@ jgs \_   _/ |Oo\
         public static bool hasRemovedThisFrame;
         public static bool NoOverlapRPCs = true;
         public static float loadPreferencesTime;
+        public static float playTime;
 
         public static bool thinMenu = true;
         public static bool longmenu;

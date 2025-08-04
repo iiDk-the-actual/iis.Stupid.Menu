@@ -7,6 +7,7 @@ using Photon.Pun;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Burst.CompilerServices;
 using UnityEngine;
 using UnityEngine.Rendering;
 using static iiMenu.Classes.RigManager;
@@ -2598,417 +2599,286 @@ namespace iiMenu.Mods
             boxESP.Clear();
         }
 
+        private static Dictionary<VRRig, GameObject> hollowBoxESP = new Dictionary<VRRig, GameObject>() { };
         public static void CasualHollowBoxESP()
         {
-            if (PerformanceVisuals)
+            bool fmt = GetIndex("Follow Menu Theme").enabled;
+            bool hoc = GetIndex("Hidden on Camera").enabled;
+            bool tt = GetIndex("Transparent Theme").enabled;
+            bool thinTracers = GetIndex("Thin Tracers").enabled;
+
+            List<VRRig> toRemove = new List<VRRig>();
+
+            foreach (KeyValuePair<VRRig, GameObject> box in hollowBoxESP)
             {
-                if (Time.time < PerformanceVisualDelay)
+                if (!GorillaParent.instance.vrrigs.Contains(box.Key))
                 {
-                    if (Time.frameCount != DelayChangeStep)
-                        return;
+                    toRemove.Add(box.Key);
+                    UnityEngine.Object.Destroy(box.Value);
                 }
-                else
-                { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
             }
+
+            foreach (VRRig rig in toRemove)
+                hollowBoxESP.Remove(rig);
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
                 if (!vrrig.isLocal)
                 {
+                    if (!hollowBoxESP.TryGetValue(vrrig, out GameObject box))
+                    {
+                        box = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        box.transform.position = vrrig.transform.position;
+                        UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
+                        box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
+                        box.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
+                        Renderer boxRenderer = box.GetComponent<Renderer>();
+                        boxRenderer.enabled = false;
+                        boxRenderer.material.shader = Shader.Find("GUI/Text Shader");
+
+                        GameObject outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        outl.transform.SetParent(box.transform);
+                        outl.transform.localPosition = new Vector3(0f, 0.5f, 0f);
+                        UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                        outl.transform.localScale = new Vector3(1f, thinTracers ? 0.025f : 0.1f, 1f);
+                        outl.transform.localRotation = Quaternion.identity;
+                        outl.AddComponent<ClampColor>().targetRenderer = boxRenderer;
+
+                        outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        outl.transform.SetParent(box.transform);
+                        outl.transform.localPosition = new Vector3(0f, -0.5f, 0f);
+                        UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                        outl.transform.localScale = new Vector3(thinTracers ? 1.025f : 1.1f, thinTracers ? 0.025f : 0.1f, 1f);
+                        outl.transform.localRotation = Quaternion.identity;
+                        outl.AddComponent<ClampColor>().targetRenderer = boxRenderer;
+
+                        outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        outl.transform.SetParent(box.transform);
+                        outl.transform.localPosition = new Vector3(0.5f, 0f, 0f);
+                        UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                        outl.transform.localScale = new Vector3(thinTracers ? 0.025f : 0.1f, thinTracers ? 1.025f : 1.1f, 1f);
+                        outl.transform.localRotation = Quaternion.identity;
+                        outl.AddComponent<ClampColor>().targetRenderer = boxRenderer;
+
+                        outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        outl.transform.SetParent(box.transform);
+                        outl.transform.localPosition = new Vector3(-0.5f, 0f, 0f);
+                        UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                        outl.transform.localScale = new Vector3(thinTracers ? 0.025f : 0.1f, thinTracers ? 1.025f : 1.1f, 1f);
+                        outl.transform.localRotation = Quaternion.identity;
+                        outl.AddComponent<ClampColor>().targetRenderer = boxRenderer;
+
+                        hollowBoxESP.Add(vrrig, box);
+                    }
+
                     Color thecolor = vrrig.playerColor;
-                    if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
-                    if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
+                    if (fmt)
+                        thecolor = GetBGColor(0f);
+                    if (tt)
+                        thecolor.a = 0.5f;
+                    if (hoc)
+                        box.layer = 19;
 
-                    GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    box.GetComponent<Renderer>().material.color = thecolor;
+
                     box.transform.position = vrrig.transform.position;
-                    UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
-                    box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
                     box.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
-                    box.GetComponent<Renderer>().enabled = false;
-
-                    GameObject outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
-                    outl.transform.position = vrrig.transform.position + (box.transform.up * 0.25f);
-                    UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
-                    outl.transform.localScale = new Vector3(0.5f, 0.05f, 0f);
-                    outl.transform.rotation = box.transform.rotation;
-                    outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                    outl.GetComponent<Renderer>().material.color = thecolor;
-                    UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
-
-                    outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
-                    outl.transform.position = vrrig.transform.position + (box.transform.up * -0.25f);
-                    UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
-                    outl.transform.localScale = new Vector3(0.55f, 0.05f, 0f);
-                    outl.transform.rotation = box.transform.rotation;
-                    outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                    outl.GetComponent<Renderer>().material.color = thecolor;
-                    UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
-
-                    outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
-                    outl.transform.position = vrrig.transform.position + (box.transform.right * 0.25f);
-                    UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
-                    outl.transform.localScale = new Vector3(0.05f, 0.55f, 0f);
-                    outl.transform.rotation = box.transform.rotation;
-                    outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                    outl.GetComponent<Renderer>().material.color = thecolor;
-                    UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
-
-                    outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
-                    outl.transform.position = vrrig.transform.position + (box.transform.right * -0.25f);
-                    UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
-                    outl.transform.localScale = new Vector3(0.05f, 0.55f, 0f);
-                    outl.transform.rotation = box.transform.rotation;
-                    outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                    outl.GetComponent<Renderer>().material.color = thecolor;
-                    UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
-
-                    UnityEngine.Object.Destroy(box);
                 }
             }
         }
 
         public static void HollowInfectionBoxESP()
         {
-            if (PerformanceVisuals)
+            bool fmt = GetIndex("Follow Menu Theme").enabled;
+            bool hoc = GetIndex("Hidden on Camera").enabled;
+            bool tt = GetIndex("Transparent Theme").enabled;
+            bool thinTracers = GetIndex("Thin Tracers").enabled;
+            bool selfTagged = PlayerIsTagged(VRRig.LocalRig);
+
+            List<VRRig> toRemove = new List<VRRig>();
+
+            foreach (KeyValuePair<VRRig, GameObject> box in hollowBoxESP)
             {
-                if (Time.time < PerformanceVisualDelay)
+                if (!GorillaParent.instance.vrrigs.Contains(box.Key))
                 {
-                    if (Time.frameCount != DelayChangeStep)
-                        return;
+                    toRemove.Add(box.Key);
+                    UnityEngine.Object.Destroy(box.Value);
                 }
-                else
-                { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
             }
 
-            bool isInfectedPlayers = false;
+            foreach (VRRig rig in toRemove)
+                hollowBoxESP.Remove(rig);
+
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (PlayerIsTagged(vrrig))
+                if (!vrrig.isLocal)
                 {
-                    isInfectedPlayers = true;
-                    break;
-                }
-            }
-            if (isInfectedPlayers)
-            {
-                if (!PlayerIsTagged(VRRig.LocalRig))
-                {
-                    foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+                    if (!hollowBoxESP.TryGetValue(vrrig, out GameObject box))
                     {
-                        if (PlayerIsTagged(vrrig) && !vrrig.isLocal)
-                        {
-                            Color thecolor = GetPlayerColor(vrrig);
-                            if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
-                            if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
-
-                            GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                            box.transform.position = vrrig.transform.position;
-                            UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
-                            box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
-                            box.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
-                            box.GetComponent<Renderer>().enabled = false;
-
-                            GameObject outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                            if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
-                            outl.transform.position = vrrig.transform.position + (box.transform.up * 0.25f);
-                            UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
-                            outl.transform.localScale = new Vector3(0.5f, 0.05f, 0f);
-                            outl.transform.rotation = box.transform.rotation;
-                            outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                            outl.GetComponent<Renderer>().material.color = thecolor;
-                            UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
-
-                            outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                            if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
-                            outl.transform.position = vrrig.transform.position + (box.transform.up * -0.25f);
-                            UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
-                            outl.transform.localScale = new Vector3(0.55f, 0.05f, 0f);
-                            outl.transform.rotation = box.transform.rotation;
-                            outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                            outl.GetComponent<Renderer>().material.color = thecolor;
-                            UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
-
-                            outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                            if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
-                            outl.transform.position = vrrig.transform.position + (box.transform.right * 0.25f);
-                            UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
-                            outl.transform.localScale = new Vector3(0.05f, 0.55f, 0f);
-                            outl.transform.rotation = box.transform.rotation;
-                            outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                            outl.GetComponent<Renderer>().material.color = thecolor;
-                            UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
-
-                            outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                            if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
-                            outl.transform.position = vrrig.transform.position + (box.transform.right * -0.25f);
-                            UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
-                            outl.transform.localScale = new Vector3(0.05f, 0.55f, 0f);
-                            outl.transform.rotation = box.transform.rotation;
-                            outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                            outl.GetComponent<Renderer>().material.color = thecolor;
-                            UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
-
-                            UnityEngine.Object.Destroy(box);
-                        }
-                    }
-                }
-                else
-                {
-                    foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-                    {
-                        if (!PlayerIsTagged(vrrig) && !vrrig.isLocal)
-                        {
-                            Color thecolor = vrrig.playerColor;
-                            if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
-                            if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
-
-                            GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                            box.transform.position = vrrig.transform.position;
-                            UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
-                            box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
-                            box.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
-                            box.GetComponent<Renderer>().enabled = false;
-
-                            GameObject outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                            if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
-                            outl.transform.position = vrrig.transform.position + (box.transform.up * 0.25f);
-                            UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
-                            outl.transform.localScale = new Vector3(0.5f, 0.05f, 0f);
-                            outl.transform.rotation = box.transform.rotation;
-                            outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                            outl.GetComponent<Renderer>().material.color = thecolor;
-                            UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
-
-                            outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                            if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
-                            outl.transform.position = vrrig.transform.position + (box.transform.up * -0.25f);
-                            UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
-                            outl.transform.localScale = new Vector3(0.55f, 0.05f, 0f);
-                            outl.transform.rotation = box.transform.rotation;
-                            outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                            outl.GetComponent<Renderer>().material.color = thecolor;
-                            UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
-
-                            outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                            if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
-                            outl.transform.position = vrrig.transform.position + (box.transform.right * 0.25f);
-                            UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
-                            outl.transform.localScale = new Vector3(0.05f, 0.55f, 0f);
-                            outl.transform.rotation = box.transform.rotation;
-                            outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                            outl.GetComponent<Renderer>().material.color = thecolor;
-                            UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
-
-                            outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                            if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
-                            outl.transform.position = vrrig.transform.position + (box.transform.right * -0.25f);
-                            UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
-                            outl.transform.localScale = new Vector3(0.05f, 0.55f, 0f);
-                            outl.transform.rotation = box.transform.rotation;
-                            outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                            outl.GetComponent<Renderer>().material.color = thecolor;
-                            UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
-
-                            UnityEngine.Object.Destroy(box);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-                {
-                    if (!vrrig.isLocal)
-                    {
-                        Color thecolor = vrrig.playerColor;
-                        if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
-                        if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
-
-                        GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        box = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         box.transform.position = vrrig.transform.position;
                         UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
                         box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
                         box.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
-                        box.GetComponent<Renderer>().enabled = false;
+                        Renderer boxRenderer = box.GetComponent<Renderer>();
+                        boxRenderer.enabled = false;
+                        boxRenderer.material.shader = Shader.Find("GUI/Text Shader");
 
                         GameObject outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
-                        outl.transform.position = vrrig.transform.position + (box.transform.up * 0.25f);
+                        outl.transform.SetParent(box.transform);
+                        outl.transform.localPosition = new Vector3(0f, 0.5f, 0f);
                         UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
-                        outl.transform.localScale = new Vector3(0.5f, 0.05f, 0f);
-                        outl.transform.rotation = box.transform.rotation;
-                        outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                        outl.GetComponent<Renderer>().material.color = thecolor;
-                        UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
+                        outl.transform.localScale = new Vector3(1f, thinTracers ? 0.025f : 0.1f, 1f);
+                        outl.transform.localRotation = Quaternion.identity;
+                        outl.AddComponent<ClampColor>().targetRenderer = boxRenderer;
 
                         outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
-                        outl.transform.position = vrrig.transform.position + (box.transform.up * -0.25f);
+                        outl.transform.SetParent(box.transform);
+                        outl.transform.localPosition = new Vector3(0f, -0.5f, 0f);
                         UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
-                        outl.transform.localScale = new Vector3(0.55f, 0.05f, 0f);
-                        outl.transform.rotation = box.transform.rotation;
-                        outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                        outl.GetComponent<Renderer>().material.color = thecolor;
-                        UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
+                        outl.transform.localScale = new Vector3(thinTracers ? 1.025f : 1.1f, thinTracers ? 0.025f : 0.1f, 1f);
+                        outl.transform.localRotation = Quaternion.identity;
+                        outl.AddComponent<ClampColor>().targetRenderer = boxRenderer;
 
                         outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
-                        outl.transform.position = vrrig.transform.position + (box.transform.right * 0.25f);
+                        outl.transform.SetParent(box.transform);
+                        outl.transform.localPosition = new Vector3(0.5f, 0f, 0f);
                         UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
-                        outl.transform.localScale = new Vector3(0.05f, 0.55f, 0f);
-                        outl.transform.rotation = box.transform.rotation;
-                        outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                        outl.GetComponent<Renderer>().material.color = thecolor;
-                        UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
+                        outl.transform.localScale = new Vector3(thinTracers ? 0.025f : 0.1f, thinTracers ? 1.025f : 1.1f, 1f);
+                        outl.transform.localRotation = Quaternion.identity;
+                        outl.AddComponent<ClampColor>().targetRenderer = boxRenderer;
 
                         outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
-                        outl.transform.position = vrrig.transform.position + (box.transform.right * -0.25f);
+                        outl.transform.SetParent(box.transform);
+                        outl.transform.localPosition = new Vector3(-0.5f, 0f, 0f);
                         UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
-                        outl.transform.localScale = new Vector3(0.05f, 0.55f, 0f);
-                        outl.transform.rotation = box.transform.rotation;
-                        outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                        outl.GetComponent<Renderer>().material.color = thecolor;
-                        UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
+                        outl.transform.localScale = new Vector3(thinTracers ? 0.025f : 0.1f, thinTracers ? 1.025f : 1.1f, 1f);
+                        outl.transform.localRotation = Quaternion.identity;
+                        outl.AddComponent<ClampColor>().targetRenderer = boxRenderer;
 
-                        UnityEngine.Object.Destroy(box);
+                        hollowBoxESP.Add(vrrig, box);
                     }
+
+                    Color thecolor = selfTagged ? vrrig.playerColor : GetPlayerColor(vrrig);
+                    if (fmt)
+                        thecolor = GetBGColor(0f);
+                    if (tt)
+                        thecolor.a = 0.5f;
+                    if (hoc)
+                        box.layer = 19;
+
+                    box.GetComponent<Renderer>().material.color = thecolor;
+
+                    bool playerTagged = PlayerIsTagged(vrrig);
+                    box.SetActive((selfTagged ? !playerTagged : playerTagged) || InfectedList().Count <= 0);
+
+                    box.transform.position = vrrig.transform.position;
+                    box.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
                 }
             }
         }
 
         public static void HollowHuntBoxESP()
         {
-            if (PerformanceVisuals)
+            bool fmt = GetIndex("Follow Menu Theme").enabled;
+            bool hoc = GetIndex("Hidden on Camera").enabled;
+            bool tt = GetIndex("Transparent Theme").enabled;
+            bool thinTracers = GetIndex("Thin Tracers").enabled;
+
+            List<VRRig> toRemove = new List<VRRig>();
+            GorillaHuntManager hunt = (GorillaHuntManager)GorillaGameManager.instance;
+            NetPlayer target = hunt.GetTargetOf(NetworkSystem.Instance.LocalPlayer);
+
+            foreach (KeyValuePair<VRRig, GameObject> box in hollowBoxESP)
             {
-                if (Time.time < PerformanceVisualDelay)
+                if (!GorillaParent.instance.vrrigs.Contains(box.Key))
                 {
-                    if (Time.frameCount != DelayChangeStep)
-                        return;
+                    toRemove.Add(box.Key);
+                    UnityEngine.Object.Destroy(box.Value);
                 }
-                else
-                { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
             }
 
-            GorillaHuntManager sillyComputer = (GorillaHuntManager)GorillaGameManager.instance;
-            NetPlayer target = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
-            foreach (NetPlayer player in PhotonNetwork.PlayerList)
+            foreach (VRRig rig in toRemove)
+                hollowBoxESP.Remove(rig);
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                VRRig vrrig = GetVRRigFromPlayer(player);
-                if (player == target)
+                if (!vrrig.isLocal)
                 {
-                    Color thecolor = vrrig.playerColor;
-                    if (GetIndex("Follow Menu Theme").enabled) { thecolor = GetBGColor(0f); }
-                    if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
+                    if (!hollowBoxESP.TryGetValue(vrrig, out GameObject box))
+                    {
+                        box = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        box.transform.position = vrrig.transform.position;
+                        UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
+                        box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
+                        box.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
+                        Renderer boxRenderer = box.GetComponent<Renderer>();
+                        boxRenderer.enabled = false;
+                        boxRenderer.material.shader = Shader.Find("GUI/Text Shader");
 
-                    GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        GameObject outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        outl.transform.SetParent(box.transform);
+                        outl.transform.localPosition = new Vector3(0f, 0.5f, 0f);
+                        UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                        outl.transform.localScale = new Vector3(1f, thinTracers ? 0.025f : 0.1f, 1f);
+                        outl.transform.localRotation = Quaternion.identity;
+                        outl.AddComponent<ClampColor>().targetRenderer = boxRenderer;
+
+                        outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        outl.transform.SetParent(box.transform);
+                        outl.transform.localPosition = new Vector3(0f, -0.5f, 0f);
+                        UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                        outl.transform.localScale = new Vector3(thinTracers ? 1.025f : 1.1f, thinTracers ? 0.025f : 0.1f, 1f);
+                        outl.transform.localRotation = Quaternion.identity;
+                        outl.AddComponent<ClampColor>().targetRenderer = boxRenderer;
+
+                        outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        outl.transform.SetParent(box.transform);
+                        outl.transform.localPosition = new Vector3(0.5f, 0f, 0f);
+                        UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                        outl.transform.localScale = new Vector3(thinTracers ? 0.025f : 0.1f, thinTracers ? 1.025f : 1.1f, 1f);
+                        outl.transform.localRotation = Quaternion.identity;
+                        outl.AddComponent<ClampColor>().targetRenderer = boxRenderer;
+
+                        outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        outl.transform.SetParent(box.transform);
+                        outl.transform.localPosition = new Vector3(-0.5f, 0f, 0f);
+                        UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
+                        outl.transform.localScale = new Vector3(thinTracers ? 0.025f : 0.1f, thinTracers ? 1.025f : 1.1f, 1f);
+                        outl.transform.localRotation = Quaternion.identity;
+                        outl.AddComponent<ClampColor>().targetRenderer = boxRenderer;
+
+                        hollowBoxESP.Add(vrrig, box);
+                    }
+
+                    NetPlayer owner = GetPlayerFromVRRig(vrrig);
+                    NetPlayer theirTarget = hunt.GetTargetOf(owner);
+
+                    Color thecolor = owner == target ? GetPlayerColor(vrrig) : (theirTarget == NetworkSystem.Instance.LocalPlayer ? Color.red : Color.clear);
+                    if (fmt)
+                        thecolor = GetBGColor(0f);
+                    if (tt)
+                        thecolor.a = 0.5f;
+                    if (hoc)
+                        box.layer = 19;
+
+                    box.GetComponent<Renderer>().material.color = thecolor;
+
+                    bool playerTagged = PlayerIsTagged(vrrig);
+                    box.SetActive(owner == target || theirTarget == NetworkSystem.Instance.LocalPlayer);
+
                     box.transform.position = vrrig.transform.position;
-                    UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
-                    box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
                     box.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
-                    box.GetComponent<Renderer>().enabled = false;
-
-                    GameObject outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
-                    outl.transform.position = vrrig.transform.position + (box.transform.up * 0.25f);
-                    UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
-                    outl.transform.localScale = new Vector3(0.5f, 0.05f, 0f);
-                    outl.transform.rotation = box.transform.rotation;
-                    outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                    outl.GetComponent<Renderer>().material.color = thecolor;
-                    UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
-
-                    outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
-                    outl.transform.position = vrrig.transform.position + (box.transform.up * -0.25f);
-                    UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
-                    outl.transform.localScale = new Vector3(0.55f, 0.05f, 0f);
-                    outl.transform.rotation = box.transform.rotation;
-                    outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                    outl.GetComponent<Renderer>().material.color = thecolor;
-                    UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
-
-                    outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
-                    outl.transform.position = vrrig.transform.position + (box.transform.right * 0.25f);
-                    UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
-                    outl.transform.localScale = new Vector3(0.05f, 0.55f, 0f);
-                    outl.transform.rotation = box.transform.rotation;
-                    outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                    outl.GetComponent<Renderer>().material.color = thecolor;
-                    UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
-
-                    outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
-                    outl.transform.position = vrrig.transform.position + (box.transform.right * -0.25f);
-                    UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
-                    outl.transform.localScale = new Vector3(0.05f, 0.55f, 0f);
-                    outl.transform.rotation = box.transform.rotation;
-                    outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                    outl.GetComponent<Renderer>().material.color = thecolor;
-                    UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
-
-                    UnityEngine.Object.Destroy(box);
-                }
-                if (sillyComputer.GetTargetOf(player) == (NetPlayer)PhotonNetwork.LocalPlayer)
-                {
-                    Color thecolor = Color.red;
-                    if (GetIndex("Transparent Theme").enabled) { thecolor.a = 0.5f; }
-
-                    GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    box.transform.position = vrrig.transform.position;
-                    UnityEngine.Object.Destroy(box.GetComponent<BoxCollider>());
-                    box.transform.localScale = new Vector3(0.5f, 0.5f, 0f);
-                    box.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
-                    box.GetComponent<Renderer>().enabled = false;
-
-                    GameObject outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
-                    outl.transform.position = vrrig.transform.position + (box.transform.up * 0.25f);
-                    UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
-                    outl.transform.localScale = new Vector3(0.5f, 0.05f, 0f);
-                    outl.transform.rotation = box.transform.rotation;
-                    outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                    outl.GetComponent<Renderer>().material.color = thecolor;
-                    UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
-
-                    outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
-                    outl.transform.position = vrrig.transform.position + (box.transform.up * -0.25f);
-                    UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
-                    outl.transform.localScale = new Vector3(0.55f, 0.05f, 0f);
-                    outl.transform.rotation = box.transform.rotation;
-                    outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                    outl.GetComponent<Renderer>().material.color = thecolor;
-                    UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
-
-                    outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
-                    outl.transform.position = vrrig.transform.position + (box.transform.right * 0.25f);
-                    UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
-                    outl.transform.localScale = new Vector3(0.05f, 0.55f, 0f);
-                    outl.transform.rotation = box.transform.rotation;
-                    outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                    outl.GetComponent<Renderer>().material.color = thecolor;
-                    UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
-
-                    outl = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    if (GetIndex("Hidden on Camera").enabled) { outl.layer = 19; }
-                    outl.transform.position = vrrig.transform.position + (box.transform.right * -0.25f);
-                    UnityEngine.Object.Destroy(outl.GetComponent<BoxCollider>());
-                    outl.transform.localScale = new Vector3(0.05f, 0.55f, 0f);
-                    outl.transform.rotation = box.transform.rotation;
-                    outl.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                    outl.GetComponent<Renderer>().material.color = thecolor;
-                    UnityEngine.Object.Destroy(outl, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
-
-                    UnityEngine.Object.Destroy(box);
                 }
             }
+        }
+
+        public static void DisableHollowBoxESP()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> box in hollowBoxESP)
+                UnityEngine.Object.Destroy(box.Value);
+
+            hollowBoxESP.Clear();
         }
 
         private static Dictionary<VRRig, TrailRenderer> breadcrumbs = new Dictionary<VRRig, TrailRenderer> { };
