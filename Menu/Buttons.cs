@@ -1337,7 +1337,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Spaz Hands All", method =() => Overpowered.BreakControllersAll(), toolTip = "Breaks the hands of everyone in the room." },
 
                 new ButtonInfo { buttonText = "Kick on Grab", method =() => Overpowered.TowardsPositionOnGrab(new Vector3(-71.33718f, 101.4977f, -93.09029f)), toolTip = "Kicks the player when they grab you." },
-                new ButtonInfo { buttonText = "Crash on Grab", method =() => Overpowered.TowardsPositionOnGrab(new Vector3(0f, 100f, 0f)), toolTip = "Crashes the player when they grab you." },
+                new ButtonInfo { buttonText = "Crash on Grab", method =() => Overpowered.TowardsPositionOnGrab(new Vector3(0, 250, 0)), toolTip = "Crashes the player when they grab you." },
                 new ButtonInfo { buttonText = "Fling on Grab", method =() => Overpowered.FlingOnGrab(), toolTip = "Flings the player when they grab you." },
                 new ButtonInfo { buttonText = "Obliterate on Grab", method =() => Overpowered.DirectionOnGrab(Vector3.up), toolTip = "Obliterates the player when they grab you." },
                 new ButtonInfo { buttonText = "Towards Point on Grab Gun", method =() => Overpowered.TowardsPointOnGrab(), disableMethod =() => Overpowered.DisableTowardsPointOnGrab(), toolTip = "Sends the player to your target position when they grab you." },
