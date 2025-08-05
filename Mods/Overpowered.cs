@@ -3066,7 +3066,7 @@ namespace iiMenu.Mods
                     else
                     {
                         CrittersActor.CrittersActorType type = CrittersActor.CrittersActorType.StickyTrap;
-                        Vector3 velocity = -Ray.normal * 20f;
+                        Vector3 velocity = -Ray.normal * 50f;
                         switch (critterEvent)
                         {
                             case CrittersManager.CritterEvent.StunExplosion:
@@ -3107,7 +3107,7 @@ namespace iiMenu.Mods
 
                         if (Vector3.Distance(critter.transform.position, ServerPos) < 25f && Time.time > critterGrabDelay)
                         {
-                            critterGrabDelay = Time.time + 0.1f;
+                            critterGrabDelay = Time.time + 0.05f;
 
                             critter.transform.position = NewPointer.transform.position + Ray.normal;
                             critter.transform.rotation = RandomQuaternion();
@@ -3161,7 +3161,7 @@ namespace iiMenu.Mods
 
                     if (Vector3.Distance(critter.transform.position, ServerPos) < 25f && critter.currentState != CrittersPawn.CreatureState.Grabbed && Time.time > critterGrabDelay)
                     {
-                        critterGrabDelay = Time.time + 0.1f;
+                        critterGrabDelay = Time.time + 0.05f;
 
                         critter.transform.position = GorillaTagger.Instance.rightHandTransform.position;
                         critter.transform.rotation = RandomQuaternion();
@@ -3214,7 +3214,7 @@ namespace iiMenu.Mods
 
                     if (Vector3.Distance(critter.transform.position, ServerPos) < 25f && Time.time > critterGrabDelay)
                     {
-                        critterGrabDelay = Time.time + 0.1f;
+                        critterGrabDelay = Time.time + 0.05f;
 
                         critter.transform.position = GorillaTagger.Instance.rightHandTransform.position;
                         critter.transform.rotation = RandomQuaternion();
@@ -3272,7 +3272,7 @@ namespace iiMenu.Mods
 
                         if (Vector3.Distance(critter.transform.position, ServerPos) < 25f && Time.time > critterGrabDelay)
                         {
-                            critterGrabDelay = Time.time + 0.1f;
+                            critterGrabDelay = Time.time + 0.05f;
 
                             critter.transform.position = NewPointer.transform.position + Vector3.up;
                             critter.transform.rotation = RandomQuaternion();
@@ -3304,11 +3304,11 @@ namespace iiMenu.Mods
                     {
                         case CrittersActor.CrittersActorType.LoudNoise:
                             type = CrittersActor.CrittersActorType.NoiseMaker;
-                            velocity = Vector3.down * 20f;
+                            velocity = Vector3.down * 50f;
                             break;
                         case CrittersActor.CrittersActorType.StickyGoo:
                             type = CrittersActor.CrittersActorType.StickyTrap;
-                            velocity = Vector3.down * 20f;
+                            velocity = Vector3.down * 50f;
                             break;
                         default:
                             break;
@@ -3338,7 +3338,7 @@ namespace iiMenu.Mods
 
                     if (Vector3.Distance(critter.transform.position, ServerPos) < 25f && Time.time > critterGrabDelay)
                     {
-                        critterGrabDelay = Time.time + 0.1f;
+                        critterGrabDelay = Time.time + 0.05f;
 
                         critter.transform.position = GorillaTagger.Instance.rightHandTransform.position;
                         critter.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
