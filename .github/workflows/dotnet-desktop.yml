@@ -40,6 +40,7 @@ jobs:
       run: echo "commit_id=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
     - name: Create Pre-Release
+      if: github.event_name != 'pull_request'
       uses: softprops/action-gh-release@v2
       with:
         tag_name: beta-${{ steps.vars.outputs.commit_id }}
