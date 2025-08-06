@@ -1,3 +1,5 @@
+# Credits to The-Graze/Grate for the auto-build setup
+
 name: .NET
 
 on:
@@ -11,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: write  # Needed to create a release
+      contents: write
       actions: read
 
     steps:
@@ -43,9 +45,10 @@ jobs:
         tag_name: beta-${{ steps.vars.outputs.commit_id }}
         name: Pre-Release ${{ steps.vars.outputs.commit_id }}
         body: |
-          # This is a pre-release build!
-          This version may be unstable, with bugs and issues that could set you at risk.  
-          Only use if you know what you're doing.
+          # ⚠️ THIS IS A PRE-RELEASE BUILD! ⚠️
+          > ⚠️ This version may be unstable, with bugs and issues that could cause crashes, data loss, or other unexpected behavior.
+          > It is intended for testing and feedback purposes only.
+          > **Use at your own risk - only proceed if you know what you're doing!**
         draft: false
         prerelease: true
         files: release/iis_Stupid_Menu.dll
