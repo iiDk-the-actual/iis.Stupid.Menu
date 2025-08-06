@@ -144,31 +144,19 @@ namespace iiMenu.Classes
                 // Version Check
                 if (!VersionWarning)
                 {
-                    if (ResponseData[0] != PluginInfo.Version)
+                    VersionWarning = true;
+
+                    if (PluginInfo.BetaBuild)
                     {
-                        if (!PluginInfo.BetaBuild)
-                        {
-                            VersionWarning = true;
-                            Console.Log("Version is outdated");
-                            JoinDiscordServer();
-                            Console.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using an outdated version of the menu. Please update to " + ResponseData[0] + ".", 10000);
-                        }
-                        else
-                        {
-                            VersionWarning = true;
-                            Console.Log("Version is outdated, but user is on beta");
-                            Console.SendNotification("<color=grey>[</color><color=purple>BETA</color><color=grey>]</color> You are using a testing build of the menu. The latest release build is " + ResponseData[0] + ".", 10000);
-                        }
-                    }
-                    else
+                        VersionWarning = true;
+                        Console.Log("User is on beta build");
+                        Console.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using a testing build of the menu. Be warned that there may be bugs and issues that could cause crashes, data loss, or other unexpected behavior.", 10000);
+                    } else if (ResponseData[0] != PluginInfo.Version)
                     {
-                        if (PluginInfo.BetaBuild)
-                        {
-                            VersionWarning = true;
-                            Console.Log("Version is outdated, user is on early build of latest");
-                            JoinDiscordServer();
-                            Console.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using a testing build of the menu. Please update to " + ResponseData[0] + ".", 10000);
-                        }
+                        VersionWarning = true;
+                        Console.Log("Version is outdated");
+                        JoinDiscordServer();
+                        Console.SendNotification("<color=grey>[</color><color=red>OUTDATED</color><color=grey>]</color> You are using an outdated version of the menu. Please update to " + ResponseData[0] + ".", 10000);
                     }
                 }
 
