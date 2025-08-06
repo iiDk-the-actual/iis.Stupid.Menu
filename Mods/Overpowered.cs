@@ -9,14 +9,12 @@ using iiMenu.Notifications;
 using iiMenu.Patches;
 using Photon.Pun;
 using Photon.Realtime;
-using Photon.Voice;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UIElements;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
