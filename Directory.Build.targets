@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Project>
-  <Target Name="UpdateReferences" BeforeTargets="BeforeBuild" Condition="Exists('$(GameAssemblyPath)')">
+  <Target Name="UpdateGameReferences" BeforeTargets="BeforeBuild" Condition="Exists('$(GameAssemblyPath)')">
     <ItemGroup>
       <GameAssemblyFiles Include="$(GameAssemblyPath)\**\*" />
     </ItemGroup>
     <Copy
       SourceFiles="@(GameAssemblyFiles)"
-      DestinationFolder="$(ProjectDir)References\%(RecursiveDir)"
+      DestinationFolder="$(ProjectDir)References\Managed\%(RecursiveDir)"
+      SkipUnchangedFiles="true" />
+  </Target>
+
+  <Target Name="UpdateBepInExReferences" BeforeTargets="BeforeBuild" Condition="Exists('$(BepInExAssemblyPath)')">
+    <ItemGroup>
+      <BepInExAssemblyFiles Include="$(BepInExAssemblyPath)\**\*" />
+    </ItemGroup>
+    <Copy
+      SourceFiles="@(BepInExAssemblyFiles)"
+      DestinationFolder="$(ProjectDir)References\core\%(RecursiveDir)"
       SkipUnchangedFiles="true" />
   </Target>
 
