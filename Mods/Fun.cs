@@ -971,22 +971,6 @@ namespace iiMenu.Mods
             FPSPatch.spoofFPSValue = UnityEngine.Random.Range(0, 255);
         }
 
-        public static void EverythingGrabbable()
-        {
-            GamePlayerLocal.instance.gamePlayer.DisableGrabbing(false);
-            foreach (GameEntity entity in GhostReactorManager.instance.gameEntityManager.entities)
-            {
-                if (entity != null)
-                {
-                    try
-                    {
-                        entity.onlyGrabActorNumber = -1;
-                        entity.pickupable = true;
-                    } catch { }
-                }
-            }
-        }
-
         public static void GrabIDCard()
         {
             if (rightGrab)
