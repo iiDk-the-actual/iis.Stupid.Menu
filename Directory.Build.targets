@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Project>
+  <Target Name="UpdateReferences" BeforeTargets="BeforeBuild">
+    <ItemGroup>
+      <GameAssemblyFiles Include="$(GameAssemblyPath)\**\*" />
+    </ItemGroup>
+    <Copy
+      SourceFiles="@(GameAssemblyFiles)"
+      DestinationFolder="$(ProjectDir)References\%(RecursiveDir)"
+      SkipUnchangedFiles="true" />
+  </Target>
+
   <Target Name="UpdateBuildTimestamp" BeforeTargets="BeforeBuild">
     <PropertyGroup>
       <OriginalFileContent>$([System.IO.File]::ReadAllText('$(MSBuildProjectDirectory)\PluginInfo.cs'))</OriginalFileContent>
