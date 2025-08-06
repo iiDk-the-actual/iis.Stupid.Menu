@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Project>
-  <Target Name="UpdateReferences" BeforeTargets="BeforeBuild">
+  <Target Name="UpdateReferences" BeforeTargets="BeforeBuild" Condition="Exists('$(GameAssemblyPath)')">
     <ItemGroup>
       <GameAssemblyFiles Include="$(GameAssemblyPath)\**\*" />
     </ItemGroup>
