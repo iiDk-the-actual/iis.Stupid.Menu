@@ -2902,6 +2902,7 @@ namespace iiMenu.Mods
             bool hoc = GetIndex("Hidden on Camera").enabled;
             bool tt = GetIndex("Transparent Theme").enabled;
             bool thinTracers = GetIndex("Thin Tracers").enabled;
+            bool shortBreadcrumbs = GetIndex("Short Breadcrumbs").enabled;
 
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
             {
@@ -2921,7 +2922,7 @@ namespace iiMenu.Mods
                     }
 
                     trail.material.shader = Shader.Find("GUI/Text Shader");
-                    trail.time = 10f;
+                    trail.time = shortBreadcrumbs ? 1f : 10f;
 
                     breadcrumbs.Add(rig, trail);
                 }
@@ -2964,6 +2965,7 @@ namespace iiMenu.Mods
             bool hoc = GetIndex("Hidden on Camera").enabled;
             bool tt = GetIndex("Transparent Theme").enabled;
             bool thinTracers = GetIndex("Thin Tracers").enabled;
+            bool shortBreadcrumbs = GetIndex("Short Breadcrumbs").enabled;
             bool selfTagged = PlayerIsTagged(VRRig.LocalRig);
 
             foreach (VRRig rig in GorillaParent.instance.vrrigs)
@@ -2984,7 +2986,7 @@ namespace iiMenu.Mods
                     }
 
                     trail.material.shader = Shader.Find("GUI/Text Shader");
-                    trail.time = 10f;
+                    trail.time = shortBreadcrumbs ? 1f : 10f;
 
                     breadcrumbs.Add(rig, trail);
                 }
@@ -3032,6 +3034,7 @@ namespace iiMenu.Mods
             bool hoc = GetIndex("Hidden on Camera").enabled;
             bool tt = GetIndex("Transparent Theme").enabled;
             bool thinTracers = GetIndex("Thin Tracers").enabled;
+            bool shortBreadcrumbs = GetIndex("Short Breadcrumbs").enabled;
 
             GorillaHuntManager hunt = (GorillaHuntManager)GorillaGameManager.instance;
             NetPlayer target = hunt.GetTargetOf(NetworkSystem.Instance.LocalPlayer);
@@ -3054,7 +3057,7 @@ namespace iiMenu.Mods
                     }
 
                     trail.material.shader = Shader.Find("GUI/Text Shader");
-                    trail.time = 10f;
+                    trail.time = shortBreadcrumbs ? 1f : 10f;
 
                     breadcrumbs.Add(rig, trail);
                 }
