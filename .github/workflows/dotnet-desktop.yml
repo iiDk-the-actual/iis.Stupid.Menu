@@ -1,0 +1,50 @@
+name: .NET
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      actions: read
+      contents: read
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --no-restore -c Debug
+
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: iis_Stupid_Menu-Beta
+        path: bin/Debug/netstandard2.1/ii's Stupid Menu.dll
+        
+    - name: Get Artifact URL
+      id: artifact_url
+      run: |
+        ARTIFACT_RESPONSE=$(curl -s \
+          -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Accept: application/vnd.github+json" \
+          "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts")
+
+        ARTIFACT_ID=$(echo "$ARTIFACT_RESPONSE" | jq -r '.artifacts[0].id')
+        echo "artifact_id=$ARTIFACT_ID" >> $GITHUB_OUTPUT
+        echo "artifact_url=https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/$ARTIFACT_ID" >> $GITHUB_OUTPUT
+
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
