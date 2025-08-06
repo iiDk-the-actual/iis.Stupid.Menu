@@ -46,9 +46,9 @@ jobs:
         name: Pre-Release ${{ steps.vars.outputs.commit_id }}
         body: |
           # ⚠️ THIS IS A PRE-RELEASE BUILD! ⚠️
-          > ⚠️ This version may be unstable, with bugs and issues that could cause crashes, data loss, or other unexpected behavior.
-          > It is intended for testing and feedback purposes only.
-          > **Use at your own risk - only proceed if you know what you're doing!**
+          ⚠️ This version may be unstable, with bugs and issues that could cause crashes, data loss, or other unexpected behavior.
+          It is intended for testing and feedback purposes only.
+          **Use at your own risk - only proceed if you know what you're doing!**
         draft: false
         prerelease: true
         files: release/iis_Stupid_Menu.dll
