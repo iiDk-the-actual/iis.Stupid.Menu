@@ -4994,6 +4994,7 @@ namespace iiMenu.Menu
             PlayerPrefs.Save();
 
             PhotonNetwork.LocalPlayer.NickName = PlayerName;
+            GorillaComputer.instance.currentName = PlayerName;
 
             try
             {
