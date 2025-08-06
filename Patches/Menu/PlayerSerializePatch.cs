@@ -1,7 +1,5 @@
 ﻿using HarmonyLib;
-using Photon.Pun;
 using System;
-using UnityEngine;
 
 namespace iiMenu.Patches
 {
