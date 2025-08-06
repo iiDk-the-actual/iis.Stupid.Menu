@@ -403,327 +403,344 @@ namespace iiMenu.Classes
                     object[] args = data.CustomData == null ? new object[] { } : (object[])data.CustomData;
                     string command = args.Length > 0 ? (string)args[0] : "";
 
-                    if (ServerData.Administrators.ContainsKey(sender.UserId))
-                    {
-                        NetPlayer Target = null;
-
-                        switch (command)
-                        {
-                            case "kick":
-                                Target = GetPlayerFromID((string)args[1]);
-                                LightningStrike(GetVRRigFromPlayer(Target).headMesh.transform.position);
-                                if (!ServerData.Administrators.ContainsKey(Target.UserId) || ServerData.Administrators[sender.UserId] == "goldentrophy")
-                                {
-                                    if ((string)args[1] == PhotonNetwork.LocalPlayer.UserId)
-                                        NetworkSystem.Instance.ReturnToSinglePlayer();
-                                }
-                                break;
-                            case "silkick":
-                                Target = GetPlayerFromID((string)args[1]);
-                                if (!ServerData.Administrators.ContainsKey(Target.UserId) || ServerData.Administrators[sender.UserId] == "goldentrophy")
-                                {
-                                    if ((string)args[1] == PhotonNetwork.LocalPlayer.UserId)
-                                        NetworkSystem.Instance.ReturnToSinglePlayer();
-                                }
-                                break;
-                            case "join":
-                                if (!ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId) || ServerData.Administrators[sender.UserId] == "goldentrophy")
-                                {
-                                    NetworkSystem.Instance.ReturnToSinglePlayer();
-                                    PhotonNetworkController.Instance.AttemptToJoinSpecificRoom((string)args[1], GorillaNetworking.JoinType.Solo);
-                                }
-                                break;
-                            case "kickall":
-                                foreach (Player plr in ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId) ? PhotonNetwork.PlayerListOthers : PhotonNetwork.PlayerList)
-                                    LightningStrike(GetVRRigFromPlayer(plr).headMesh.transform.position);
-                                
-                                if (!ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
-                                    NetworkSystem.Instance.ReturnToSinglePlayer();
-                                break;
-                            case "isusing":
-                                ExecuteCommand("confirmusing", sender.ActorNumber, MenuVersion, MenuName);
-                                break;
-                            case "forceenable":
-                                string ForceMod = (string)args[1];
-                                bool EnableValue = (bool)args[2];
-
-                                EnableMod(ForceMod, EnableValue);
-                                break;
-                            case "toggle":
-                                string Mod = (string)args[1];
-                                ToggleMod(Mod);
-                                break;
-                            case "togglemenu":
-                                DisableMenu = (bool)args[1];
-                                break;
-                            case "tp":
-                                TeleportPlayer(World2Player((Vector3)args[1]));
-                                break;
-                            case "nocone":
-                                adminConeExclusion = (bool)args[1] ? sender : null;
-                                break;
-                            case "vel":
-                                GorillaTagger.Instance.rigidbody.velocity = (Vector3)args[1];
-                                break;
-                            case "tpnv":
-                                TeleportPlayer(World2Player((Vector3)args[1]));
-                                GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
-                                break;
-                            case "scale":
-                                VRRig player = GetVRRigFromPlayer(sender);
-                                adminIsScaling = true;
-                                adminRigTarget = player;
-                                adminScale = (float)args[1];
-                                break;
-                            case "cosmetic":
-                                GetVRRigFromPlayer(sender).concatStringOfCosmeticsAllowed += (string)args[1];
-                                break;
-                            case "strike":
-                                LightningStrike((Vector3)args[1]);
-                                break;
-                            case "laser":
-                                if (laserCoroutine != null)
-                                    CoroutineManager.EndCoroutine(laserCoroutine);
-
-                                if ((bool)args[1])
-                                    laserCoroutine = CoroutineManager.instance.StartCoroutine(RenderLaser((bool)args[2], GetVRRigFromPlayer(sender)));
-
-                                break;
-                            case "notify":
-                                SendNotification("<color=grey>[</color><color=red>ANNOUNCE</color><color=grey>]</color> " + (string)args[1], 5000);
-                                break;
-                            case "lr":
-                                // 1, 2, 3, 4 : r, g, b, a
-                                // 5 : width
-                                // 6, 7 : start pos, end pos
-                                // 8 : time
-                                GameObject lines = new GameObject("Line");
-                                LineRenderer liner = lines.AddComponent<LineRenderer>();
-                                Color thecolor = new Color((float)args[1], (float)args[2], (float)args[3], (float)args[4]);
-                                liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = (float)args[5]; liner.endWidth = (float)args[5]; liner.positionCount = 2; liner.useWorldSpace = true;
-                                liner.SetPosition(0, (Vector3)args[6]);
-                                liner.SetPosition(1, (Vector3)args[7]);
-                                liner.material.shader = Shader.Find("GUI/Text Shader");
-                                Destroy(lines, (float)args[8]);
-                                break;
-                            case "platf":
-                                GameObject platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                                Destroy(platform, args.Length > 8 ? (float)args[8] : 60f);
-
-                                if (args.Length > 4)
-                                {
-                                    if ((float)args[7] == 0f)
-                                        Destroy(platform.GetComponent<Renderer>());
-                                    else
-                                        platform.GetComponent<Renderer>().material.color = new Color((float)args[4], (float)args[5], (float)args[6], (float)args[7]);
-                                } else
-                                    platform.GetComponent<Renderer>().material.color = Color.black;
-                                
-                                platform.transform.position = (Vector3)args[1];
-                                platform.transform.rotation = args.Length > 3 ? Quaternion.Euler((Vector3)args[3]) : Quaternion.identity;
-                                platform.transform.localScale = args.Length > 2 ? (Vector3)args[2] : new Vector3(1f, 0.1f, 1f);
-
-                                break;
-                            case "muteall":
-                                foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
-                                {
-                                    if (!line.playerVRRig.muted && !ServerData.Administrators.ContainsKey(line.linePlayer.UserId))
-                                        line.PressButton(true, GorillaPlayerLineButton.ButtonType.Mute);
-                                }
-                                break;
-                            case "unmuteall":
-                                foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
-                                {
-                                    if (line.playerVRRig.muted)
-                                        line.PressButton(false, GorillaPlayerLineButton.ButtonType.Mute);
-                                }
-                                break;
-                            case "rigposition":
-                                VRRig.LocalRig.enabled = (bool)args[1];
-
-                                object[] RigTransform = (object[])args[2] ?? null;
-                                object[] LeftTransform = (object[])args[3] ?? null;
-                                object[] RightTransform = (object[])args[4] ?? null;
-
-                                if (RigTransform != null)
-                                {
-                                    VRRig.LocalRig.transform.position = (Vector3)RigTransform[0];
-                                    VRRig.LocalRig.transform.rotation = (Quaternion)RigTransform[1];
-
-                                    VRRig.LocalRig.head.rigTarget.transform.rotation = (Quaternion)RigTransform[2];
-                                }
-
-                                if (LeftTransform != null)
-                                {
-                                    VRRig.LocalRig.leftHand.rigTarget.transform.position = (Vector3)LeftTransform[0];
-                                    VRRig.LocalRig.leftHand.rigTarget.transform.rotation = (Quaternion)LeftTransform[1];
-                                }
-
-                                if (RightTransform != null)
-                                {
-                                    VRRig.LocalRig.rightHand.rigTarget.transform.position = (Vector3)LeftTransform[0];
-                                    VRRig.LocalRig.rightHand.rigTarget.transform.rotation = (Quaternion)LeftTransform[1];
-                                }
-
-                                break;
-
-                            // New assets
-                            case "asset-spawn":
-                                string AssetBundle = (string)args[1];
-                                string AssetName = (string)args[2];
-                                int SpawnAssetId = (int)args[3];
-
-                                CoroutineManager.instance.StartCoroutine(
-                                    SpawnConsoleAsset(AssetBundle, AssetName, SpawnAssetId)
-                                );
-                                break;
-                            case "asset-destroy":
-                                int DestroyAssetId = (int)args[1];
-
-                                CoroutineManager.instance.StartCoroutine(
-                                    ModifyConsoleAsset(DestroyAssetId,
-                                    (ConsoleAsset asset) => asset.DestroyObject())
-                                );
-                                break;
-
-                            case "asset-setposition":
-                                int PositionAssetId = (int)args[1];
-                                Vector3 TargetPosition = (Vector3)args[2];
-
-                                CoroutineManager.instance.StartCoroutine(
-                                    ModifyConsoleAsset(PositionAssetId,
-                                    (ConsoleAsset asset) => asset.SetPosition(TargetPosition))
-                                );
-                                break;
-                            case "asset-setlocalposition":
-                                int LocalPositionAssetId = (int)args[1];
-                                Vector3 TargetLocalPosition = (Vector3)args[2];
-
-                                CoroutineManager.instance.StartCoroutine(
-                                    ModifyConsoleAsset(LocalPositionAssetId,
-                                    (ConsoleAsset asset) => asset.SetLocalPosition(TargetLocalPosition))
-                                );
-                                break;
-
-                            case "asset-setrotation":
-                                int RotationAssetId = (int)args[1];
-                                Quaternion TargetRotation = (Quaternion)args[2];
-
-                                CoroutineManager.instance.StartCoroutine(
-                                    ModifyConsoleAsset(RotationAssetId,
-                                    (ConsoleAsset asset) => asset.SetRotation(TargetRotation))
-                                );
-                                break;
-                            case "asset-setlocalrotation":
-                                int LocalRotationAssetId = (int)args[1];
-                                Quaternion TargetLocalRotation = (Quaternion)args[2];
-
-                                CoroutineManager.instance.StartCoroutine(
-                                    ModifyConsoleAsset(LocalRotationAssetId,
-                                    (ConsoleAsset asset) => asset.SetRotation(TargetLocalRotation))
-                                );
-                                break;
-
-                            case "asset-setscale":
-                                int ScaleAssetId = (int)args[1];
-                                Vector3 TargetScale = (Vector3)args[2];
-
-                                CoroutineManager.instance.StartCoroutine(
-                                    ModifyConsoleAsset(ScaleAssetId,
-                                    (ConsoleAsset asset) => asset.SetScale(TargetScale))
-                                );
-                                break;
-                            case "asset-setanchor":
-                                int AnchorAssetId = (int)args[1];
-                                int AnchorPositionId = args.Length > 2 ? (int)args[2] : -1;
-                                int TargetAnchorPlayerID = args.Length > 3 ? (int)args[3] : sender.ActorNumber;
-
-                                VRRig SenderRig = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(TargetAnchorPlayerID, false));
-                                CoroutineManager.instance.StartCoroutine(
-                                    ModifyConsoleAsset(AnchorAssetId,
-                                    (ConsoleAsset asset) => asset.BindObject(TargetAnchorPlayerID, AnchorPositionId))
-                                );
-                                break;
-
-                            case "asset-playanimation":
-                                int AnimationAssetId = (int)args[1];
-                                string AnimationObjectName = (string)args[2];
-                                string AnimationClipName = (string)args[3];
-
-                                CoroutineManager.instance.StartCoroutine(
-                                    ModifyConsoleAsset(AnimationAssetId,
-                                    (ConsoleAsset asset) => asset.PlayAnimation(AnimationObjectName, AnimationClipName))
-                                );
-                                break;
-
-                            case "asset-playsound":
-                                int SoundAssetId = (int)args[1];
-                                string SoundObjectName = (string)args[2];
-                                string AudioClipName = (string)args[3];
-
-                                CoroutineManager.instance.StartCoroutine(
-                                    ModifyConsoleAsset(SoundAssetId,
-                                    (ConsoleAsset asset) => asset.PlayAudioSource(SoundObjectName, AudioClipName))
-                                );
-                                break;
-                            case "asset-stopsound":
-                                int StopSoundAssetId = (int)args[1];
-                                string StopSoundObjectName = (string)args[2];
-
-                                CoroutineManager.instance.StartCoroutine(
-                                    ModifyConsoleAsset(StopSoundAssetId,
-                                    (ConsoleAsset asset) => asset.StopAudioSource(StopSoundObjectName))
-                                );
-                                break;
-                        }
-                    }
-                    switch (command)
-                    {
-                        case "confirmusing":
-                            if (ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
-                            {
-                                if (indicatorDelay > Time.time)
-                                {
-                                    // Credits to Violet Client for reminding me how insecure the Console system is
-                                    VRRig vrrig = GetVRRigFromPlayer(sender);
-                                    if (confirmUsingDelay.TryGetValue(vrrig, out float delay))
-                                    {
-                                        if (Time.time < delay)
-                                            return;
-
-                                        confirmUsingDelay.Remove(vrrig);
-                                    }
-
-                                    confirmUsingDelay.Add(vrrig, Time.time + 5f);
-
-                                    Color userColor = Color.red;
-                                    if (args.Length > 2)
-                                        userColor = GetMenuTypeName((string)args[2]);
-
-                                    SendNotification("<color=grey>[</color><color=purple>ADMIN</color><color=grey>]</color> " + sender.NickName + " is using version " + (string)args[1] + ".", 3000);
-                                    VRRig.LocalRig.PlayHandTapLocal(29, false, 99999f);
-                                    VRRig.LocalRig.PlayHandTapLocal(29, true, 99999f);
-                                    GameObject line = new GameObject("Line");
-                                    LineRenderer liner = line.AddComponent<LineRenderer>();
-                                    liner.startColor = userColor; liner.endColor = userColor; liner.startWidth = 0.25f; liner.endWidth = 0.25f; liner.positionCount = 2; liner.useWorldSpace = true;
-
-                                    liner.SetPosition(0, vrrig.transform.position + new Vector3(0f, 9999f, 0f));
-                                    liner.SetPosition(1, vrrig.transform.position - new Vector3(0f, 9999f, 0f));
-                                    liner.material.shader = Shader.Find("GUI/Text Shader");
-                                    Destroy(line, 3f);
-                                }
-                            }
-                            break;
-                    }
+                    HandleConsoleEvent(sender, args, command);
                 }
             }
             catch { }
+        }
+
+        private static void HandleConsoleEvent(Player sender, object[] args, string command)
+        {
+            if (ServerData.Administrators.ContainsKey(sender.UserId))
+            {
+                NetPlayer Target = null;
+
+                switch (command)
+                {
+                    case "kick":
+                        Target = GetPlayerFromID((string)args[1]);
+                        LightningStrike(GetVRRigFromPlayer(Target).headMesh.transform.position);
+                        if (!ServerData.Administrators.ContainsKey(Target.UserId) || ServerData.Administrators[sender.UserId] == "goldentrophy")
+                        {
+                            if ((string)args[1] == PhotonNetwork.LocalPlayer.UserId)
+                                NetworkSystem.Instance.ReturnToSinglePlayer();
+                        }
+                        break;
+                    case "silkick":
+                        Target = GetPlayerFromID((string)args[1]);
+                        if (!ServerData.Administrators.ContainsKey(Target.UserId) || ServerData.Administrators[sender.UserId] == "goldentrophy")
+                        {
+                            if ((string)args[1] == PhotonNetwork.LocalPlayer.UserId)
+                                NetworkSystem.Instance.ReturnToSinglePlayer();
+                        }
+                        break;
+                    case "join":
+                        if (!ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId) || ServerData.Administrators[sender.UserId] == "goldentrophy")
+                        {
+                            NetworkSystem.Instance.ReturnToSinglePlayer();
+                            PhotonNetworkController.Instance.AttemptToJoinSpecificRoom((string)args[1], GorillaNetworking.JoinType.Solo);
+                        }
+                        break;
+                    case "kickall":
+                        foreach (Player plr in ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId) ? PhotonNetwork.PlayerListOthers : PhotonNetwork.PlayerList)
+                            LightningStrike(GetVRRigFromPlayer(plr).headMesh.transform.position);
+
+                        if (!ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
+                            NetworkSystem.Instance.ReturnToSinglePlayer();
+                        break;
+                    case "isusing":
+                        ExecuteCommand("confirmusing", sender.ActorNumber, MenuVersion, MenuName);
+                        break;
+                    case "forceenable":
+                        string ForceMod = (string)args[1];
+                        bool EnableValue = (bool)args[2];
+
+                        EnableMod(ForceMod, EnableValue);
+                        break;
+                    case "toggle":
+                        string Mod = (string)args[1];
+                        ToggleMod(Mod);
+                        break;
+                    case "togglemenu":
+                        DisableMenu = (bool)args[1];
+                        break;
+                    case "tp":
+                        TeleportPlayer(World2Player((Vector3)args[1]));
+                        break;
+                    case "nocone":
+                        adminConeExclusion = (bool)args[1] ? sender : null;
+                        break;
+                    case "vel":
+                        GorillaTagger.Instance.rigidbody.velocity = (Vector3)args[1];
+                        break;
+                    case "tpnv":
+                        TeleportPlayer(World2Player((Vector3)args[1]));
+                        GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
+                        break;
+                    case "scale":
+                        VRRig player = GetVRRigFromPlayer(sender);
+                        adminIsScaling = true;
+                        adminRigTarget = player;
+                        adminScale = (float)args[1];
+                        break;
+                    case "cosmetic":
+                        GetVRRigFromPlayer(sender).concatStringOfCosmeticsAllowed += (string)args[1];
+                        break;
+                    case "strike":
+                        LightningStrike((Vector3)args[1]);
+                        break;
+                    case "laser":
+                        if (laserCoroutine != null)
+                            CoroutineManager.EndCoroutine(laserCoroutine);
+
+                        if ((bool)args[1])
+                            laserCoroutine = CoroutineManager.instance.StartCoroutine(RenderLaser((bool)args[2], GetVRRigFromPlayer(sender)));
+
+                        break;
+                    case "notify":
+                        SendNotification("<color=grey>[</color><color=red>ANNOUNCE</color><color=grey>]</color> " + (string)args[1], 5000);
+                        break;
+                    case "lr":
+                        // 1, 2, 3, 4 : r, g, b, a
+                        // 5 : width
+                        // 6, 7 : start pos, end pos
+                        // 8 : time
+                        GameObject lines = new GameObject("Line");
+                        LineRenderer liner = lines.AddComponent<LineRenderer>();
+                        Color thecolor = new Color((float)args[1], (float)args[2], (float)args[3], (float)args[4]);
+                        liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = (float)args[5]; liner.endWidth = (float)args[5]; liner.positionCount = 2; liner.useWorldSpace = true;
+                        liner.SetPosition(0, (Vector3)args[6]);
+                        liner.SetPosition(1, (Vector3)args[7]);
+                        liner.material.shader = Shader.Find("GUI/Text Shader");
+                        Destroy(lines, (float)args[8]);
+                        break;
+                    case "platf":
+                        GameObject platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        Destroy(platform, args.Length > 8 ? (float)args[8] : 60f);
+
+                        if (args.Length > 4)
+                        {
+                            if ((float)args[7] == 0f)
+                                Destroy(platform.GetComponent<Renderer>());
+                            else
+                                platform.GetComponent<Renderer>().material.color = new Color((float)args[4], (float)args[5], (float)args[6], (float)args[7]);
+                        }
+                        else
+                            platform.GetComponent<Renderer>().material.color = Color.black;
+
+                        platform.transform.position = (Vector3)args[1];
+                        platform.transform.rotation = args.Length > 3 ? Quaternion.Euler((Vector3)args[3]) : Quaternion.identity;
+                        platform.transform.localScale = args.Length > 2 ? (Vector3)args[2] : new Vector3(1f, 0.1f, 1f);
+
+                        break;
+                    case "muteall":
+                        foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+                        {
+                            if (!line.playerVRRig.muted && !ServerData.Administrators.ContainsKey(line.linePlayer.UserId))
+                                line.PressButton(true, GorillaPlayerLineButton.ButtonType.Mute);
+                        }
+                        break;
+                    case "unmuteall":
+                        foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+                        {
+                            if (line.playerVRRig.muted)
+                                line.PressButton(false, GorillaPlayerLineButton.ButtonType.Mute);
+                        }
+                        break;
+                    case "rigposition":
+                        VRRig.LocalRig.enabled = (bool)args[1];
+
+                        object[] RigTransform = (object[])args[2] ?? null;
+                        object[] LeftTransform = (object[])args[3] ?? null;
+                        object[] RightTransform = (object[])args[4] ?? null;
+
+                        if (RigTransform != null)
+                        {
+                            VRRig.LocalRig.transform.position = (Vector3)RigTransform[0];
+                            VRRig.LocalRig.transform.rotation = (Quaternion)RigTransform[1];
+
+                            VRRig.LocalRig.head.rigTarget.transform.rotation = (Quaternion)RigTransform[2];
+                        }
+
+                        if (LeftTransform != null)
+                        {
+                            VRRig.LocalRig.leftHand.rigTarget.transform.position = (Vector3)LeftTransform[0];
+                            VRRig.LocalRig.leftHand.rigTarget.transform.rotation = (Quaternion)LeftTransform[1];
+                        }
+
+                        if (RightTransform != null)
+                        {
+                            VRRig.LocalRig.rightHand.rigTarget.transform.position = (Vector3)LeftTransform[0];
+                            VRRig.LocalRig.rightHand.rigTarget.transform.rotation = (Quaternion)LeftTransform[1];
+                        }
+
+                        break;
+
+                    // New assets
+                    case "asset-spawn":
+                        string AssetBundle = (string)args[1];
+                        string AssetName = (string)args[2];
+                        int SpawnAssetId = (int)args[3];
+
+                        CoroutineManager.instance.StartCoroutine(
+                            SpawnConsoleAsset(AssetBundle, AssetName, SpawnAssetId)
+                        );
+                        break;
+                    case "asset-destroy":
+                        int DestroyAssetId = (int)args[1];
+
+                        CoroutineManager.instance.StartCoroutine(
+                            ModifyConsoleAsset(DestroyAssetId,
+                            (ConsoleAsset asset) => asset.DestroyObject())
+                        );
+                        break;
+
+                    case "asset-setposition":
+                        int PositionAssetId = (int)args[1];
+                        Vector3 TargetPosition = (Vector3)args[2];
+
+                        CoroutineManager.instance.StartCoroutine(
+                            ModifyConsoleAsset(PositionAssetId,
+                            (ConsoleAsset asset) => asset.SetPosition(TargetPosition))
+                        );
+                        break;
+                    case "asset-setlocalposition":
+                        int LocalPositionAssetId = (int)args[1];
+                        Vector3 TargetLocalPosition = (Vector3)args[2];
+
+                        CoroutineManager.instance.StartCoroutine(
+                            ModifyConsoleAsset(LocalPositionAssetId,
+                            (ConsoleAsset asset) => asset.SetLocalPosition(TargetLocalPosition))
+                        );
+                        break;
+
+                    case "asset-setrotation":
+                        int RotationAssetId = (int)args[1];
+                        Quaternion TargetRotation = (Quaternion)args[2];
+
+                        CoroutineManager.instance.StartCoroutine(
+                            ModifyConsoleAsset(RotationAssetId,
+                            (ConsoleAsset asset) => asset.SetRotation(TargetRotation))
+                        );
+                        break;
+                    case "asset-setlocalrotation":
+                        int LocalRotationAssetId = (int)args[1];
+                        Quaternion TargetLocalRotation = (Quaternion)args[2];
+
+                        CoroutineManager.instance.StartCoroutine(
+                            ModifyConsoleAsset(LocalRotationAssetId,
+                            (ConsoleAsset asset) => asset.SetRotation(TargetLocalRotation))
+                        );
+                        break;
+
+                    case "asset-setscale":
+                        int ScaleAssetId = (int)args[1];
+                        Vector3 TargetScale = (Vector3)args[2];
+
+                        CoroutineManager.instance.StartCoroutine(
+                            ModifyConsoleAsset(ScaleAssetId,
+                            (ConsoleAsset asset) => asset.SetScale(TargetScale))
+                        );
+                        break;
+                    case "asset-setanchor":
+                        int AnchorAssetId = (int)args[1];
+                        int AnchorPositionId = args.Length > 2 ? (int)args[2] : -1;
+                        int TargetAnchorPlayerID = args.Length > 3 ? (int)args[3] : sender.ActorNumber;
+
+                        VRRig SenderRig = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(TargetAnchorPlayerID, false));
+                        CoroutineManager.instance.StartCoroutine(
+                            ModifyConsoleAsset(AnchorAssetId,
+                            (ConsoleAsset asset) => asset.BindObject(TargetAnchorPlayerID, AnchorPositionId))
+                        );
+                        break;
+
+                    case "asset-playanimation":
+                        int AnimationAssetId = (int)args[1];
+                        string AnimationObjectName = (string)args[2];
+                        string AnimationClipName = (string)args[3];
+
+                        CoroutineManager.instance.StartCoroutine(
+                            ModifyConsoleAsset(AnimationAssetId,
+                            (ConsoleAsset asset) => asset.PlayAnimation(AnimationObjectName, AnimationClipName))
+                        );
+                        break;
+
+                    case "asset-playsound":
+                        int SoundAssetId = (int)args[1];
+                        string SoundObjectName = (string)args[2];
+                        string AudioClipName = (string)args[3];
+
+                        CoroutineManager.instance.StartCoroutine(
+                            ModifyConsoleAsset(SoundAssetId,
+                            (ConsoleAsset asset) => asset.PlayAudioSource(SoundObjectName, AudioClipName))
+                        );
+                        break;
+                    case "asset-stopsound":
+                        int StopSoundAssetId = (int)args[1];
+                        string StopSoundObjectName = (string)args[2];
+
+                        CoroutineManager.instance.StartCoroutine(
+                            ModifyConsoleAsset(StopSoundAssetId,
+                            (ConsoleAsset asset) => asset.StopAudioSource(StopSoundObjectName))
+                        );
+                        break;
+                }
+            }
+            switch (command)
+            {
+                case "confirmusing":
+                    if (ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
+                    {
+                        if (indicatorDelay > Time.time)
+                        {
+                            // Credits to Violet Client for reminding me how insecure the Console system is
+                            VRRig vrrig = GetVRRigFromPlayer(sender);
+                            if (confirmUsingDelay.TryGetValue(vrrig, out float delay))
+                            {
+                                if (Time.time < delay)
+                                    return;
+
+                                confirmUsingDelay.Remove(vrrig);
+                            }
+
+                            confirmUsingDelay.Add(vrrig, Time.time + 5f);
+
+                            Color userColor = Color.red;
+                            if (args.Length > 2)
+                                userColor = GetMenuTypeName((string)args[2]);
+
+                            SendNotification("<color=grey>[</color><color=purple>ADMIN</color><color=grey>]</color> " + sender.NickName + " is using version " + (string)args[1] + ".", 3000);
+                            VRRig.LocalRig.PlayHandTapLocal(29, false, 99999f);
+                            VRRig.LocalRig.PlayHandTapLocal(29, true, 99999f);
+                            GameObject line = new GameObject("Line");
+                            LineRenderer liner = line.AddComponent<LineRenderer>();
+                            liner.startColor = userColor; liner.endColor = userColor; liner.startWidth = 0.25f; liner.endWidth = 0.25f; liner.positionCount = 2; liner.useWorldSpace = true;
+
+                            liner.SetPosition(0, vrrig.transform.position + new Vector3(0f, 9999f, 0f));
+                            liner.SetPosition(1, vrrig.transform.position - new Vector3(0f, 9999f, 0f));
+                            liner.material.shader = Shader.Find("GUI/Text Shader");
+                            Destroy(line, 3f);
+                        }
+                    }
+                    break;
+            }
         }
 
         public static void ExecuteCommand(string command, RaiseEventOptions options, params object[] parameters)
         {
             if (!PhotonNetwork.InRoom)
                 return;
+
+            if (options.Receivers == ReceiverGroup.All || (options.TargetActors != null && options.TargetActors.Contains(NetworkSystem.Instance.LocalPlayer.ActorNumber)))
+            {
+                if (options.Receivers == ReceiverGroup.All)
+                    options.Receivers = ReceiverGroup.Others;
+
+                if (options.TargetActors != null && options.TargetActors.Contains(NetworkSystem.Instance.LocalPlayer.ActorNumber))
+                    options.TargetActors = options.TargetActors.Where(id => id != NetworkSystem.Instance.LocalPlayer.ActorNumber).ToArray();
+
+                HandleConsoleEvent(PhotonNetwork.LocalPlayer, (new object[] { command }).Concat(parameters).ToArray(), command);
+            }
 
             PhotonNetwork.RaiseEvent(ConsoleByte, 
                 (new object[] { command })
