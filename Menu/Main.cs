@@ -1218,6 +1218,36 @@ namespace iiMenu.Menu
                     {
                         Visuals.ClearLinePool();
                         Visuals.ClearNameTagPool();
+
+                        List<(Vector3, float)> toRemoveAura = new List<(Vector3, float)> { };
+                        foreach (KeyValuePair<(Vector3, float), GameObject> key in auraPool)
+                        {
+                            if (!key.Value.activeSelf)
+                            {
+                                toRemoveAura.Add(key.Key);
+                                Destroy(key.Value);
+                            }
+                            else
+                                key.Value.SetActive(false);
+                        }
+
+                        foreach ((Vector3, float) item in toRemoveAura)
+                            auraPool.Remove(item);
+
+                        List<(Vector3, Quaternion, Vector3)> toRemoveCube = new List<(Vector3, Quaternion, Vector3)> { };
+                        foreach (KeyValuePair<(Vector3, Quaternion, Vector3), GameObject> key in cubePool)
+                        {
+                            if (!key.Value.activeSelf)
+                            {
+                                toRemoveCube.Add(key.Key);
+                                Destroy(key.Value);
+                            }
+                            else
+                                key.Value.SetActive(false);
+                        }
+
+                        foreach ((Vector3, Quaternion, Vector3) item in toRemoveCube)
+                            cubePool.Remove(item);
                     } catch { }
 
                     if (ServerPos == Vector3.zero)
@@ -1228,17 +1258,12 @@ namespace iiMenu.Menu
                     if (ServerLeftHandPos == Vector3.zero)
                         ServerLeftHandPos = ServerSyncLeftHandPos;
                     else
-                        ServerLeftHandPos = Vector3.Lerp(ServerLeftHandPos, VRRig.LocalRig.SanitizeVector3(ServerSyncLeftHandPos), VRRig.LocalRig.lerpValueBody * 0.66f);
+                        ServerLeftHandPos = Vector3.Lerp(ServerLeftHandPos, VRRig.LocalRig.SanitizeVector3(ServerSyncLeftHandPos), VRRig.LocalRig.lerpValueBody);
 
                     if (ServerRightHandPos == Vector3.zero)
                         ServerRightHandPos = ServerSyncRightHandPos;
                     else
-                        ServerRightHandPos = Vector3.Lerp(ServerRightHandPos, VRRig.LocalRig.SanitizeVector3(ServerSyncRightHandPos), VRRig.LocalRig.lerpValueBody * 0.66f);
-
-                    /*
-                     * if (Lockdown)
-                     *  return;
-                     */
+                        ServerRightHandPos = Vector3.Lerp(ServerRightHandPos, VRRig.LocalRig.SanitizeVector3(ServerSyncRightHandPos), VRRig.LocalRig.lerpValueBody);
 
                     // Execute plugin updates
                     foreach (KeyValuePair<string, Assembly> Plugin in Settings.LoadedPlugins)
@@ -3865,7 +3890,6 @@ namespace iiMenu.Menu
             return rigTarget;
         }
 
-
         public static BuilderTable GetBuilderTable()
         {
             BuilderTable.TryGetBuilderTableForZone(VRRig.LocalRig.zoneEntity.currentZone, out BuilderTable table);
@@ -4078,31 +4102,57 @@ namespace iiMenu.Menu
             }
         }
 
+        public static Dictionary<(Vector3, float), GameObject> auraPool;
         public static void VisualizeAura(Vector3 position, float range, Color color)
         {
-            GameObject visualizeGO = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            Destroy(visualizeGO, Time.deltaTime);
-            Destroy(visualizeGO.GetComponent<Collider>());
-            visualizeGO.transform.position = position;
-            visualizeGO.transform.localScale = new Vector3(range, range, range);
+            var key = (position, range);
+
+            if (!auraPool.TryGetValue(key, out GameObject visualizeGO))
+            {
+                visualizeGO = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                Destroy(visualizeGO.GetComponent<Collider>());
+
+                visualizeGO.transform.position = position;
+                visualizeGO.transform.localScale = new Vector3(range, range, range);
+
+                auraPool.Add(key, visualizeGO);
+            }
+
+            visualizeGO.SetActive(true);
+
+            Renderer auraRenderer = visualizeGO.GetComponent<Renderer>();
+
             Color clr = color;
             clr.a = 0.25f;
-            visualizeGO.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-            visualizeGO.GetComponent<Renderer>().material.color = clr;
+            auraRenderer.material.shader = Shader.Find("GUI/Text Shader");
+            auraRenderer.material.color = clr;
         }
 
+        public static Dictionary<(Vector3, Quaternion, Vector3), GameObject> cubePool;
         public static void VisualizeCube(Vector3 position, Quaternion rotation, Vector3 scale, Color color)
         {
-            GameObject visualizeGO = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            Destroy(visualizeGO, Visuals.PerformanceVisuals ? Visuals.PerformanceModeStep : Time.deltaTime);
-            Destroy(visualizeGO.GetComponent<Collider>());
-            visualizeGO.transform.position = position;
-            visualizeGO.transform.localScale = scale;
-            visualizeGO.transform.rotation = rotation;
+            var key = (position, rotation, scale);
+
+            if (!cubePool.TryGetValue(key, out GameObject visualizeGO))
+            {
+                visualizeGO = visualizeGO = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                Destroy(visualizeGO.GetComponent<Collider>());
+
+                visualizeGO.transform.position = position;
+                visualizeGO.transform.localScale = scale;
+                visualizeGO.transform.rotation = rotation;
+
+                cubePool.Add(key, visualizeGO);
+            }
+
+            visualizeGO.SetActive(true);
+
+            Renderer auraRenderer = visualizeGO.GetComponent<Renderer>();
+
             Color clr = color;
             clr.a = 0.25f;
-            visualizeGO.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-            visualizeGO.GetComponent<Renderer>().material.color = clr;
+            auraRenderer.material.shader = Shader.Find("GUI/Text Shader");
+            auraRenderer.material.color = clr;
         }
 
         public static GameObject audiomgr;
