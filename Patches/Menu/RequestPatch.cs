@@ -47,12 +47,9 @@ namespace iiMenu.Patches
                 archiveCosmetics = CosmeticsController.instance.currentWornSet.ToDisplayNameArray();
                 CosmeticsController.instance.currentWornSet = new CosmeticsController.CosmeticSet(Array.Empty<string>(), CosmeticsController.instance);
 
-                Vector3 point = GorillaTagger.Instance.bodyCollider.transform.position;
-                while (Vector3.Distance(point, target) > 0.2f)
-                {
-                    point = Vector3.Lerp(point, target, VRRig.LocalRig.lerpValueBody * 0.3f);
+                while (Vector3.Distance(Menu.Main.ServerPos, target) > 0.2f)
                     yield return null;
-                }
+                
                 yield return new WaitForSeconds(0.1f);
 
                 GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.Others, new object[] { Fun.PackCosmetics(Array.Empty<string>()), CosmeticsController.instance.currentWornSet.ToPackedIDArray() });
