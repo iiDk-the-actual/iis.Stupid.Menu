@@ -3070,6 +3070,17 @@ namespace iiMenu.Mods
         public static void DisableSteamLongArms() =>
             GTPlayer.Instance.transform.localScale = Vector3.one;
 
+        public static float extendingTime;
+        public static void Extenders()
+        {
+            extendingTime += rightJoystickClick ? 0 - Time.unscaledDeltaTime : Time.unscaledDeltaTime;
+            if (extendingTime > 1) extendingTime = 1;
+            if (extendingTime < 0) extendingTime = 0;
+
+            float delayedLength = ((armlength - 1f) * extendingTime) + 1f;
+            GTPlayer.Instance.transform.localScale = new Vector3(delayedLength, delayedLength, delayedLength);
+        }
+
         public static void MultipliedLongArms()
         {
             GTPlayer.Instance.leftControllerTransform.transform.position = GorillaTagger.Instance.headCollider.transform.position - (GorillaTagger.Instance.headCollider.transform.position - GorillaTagger.Instance.leftHandTransform.position) * armlength;
