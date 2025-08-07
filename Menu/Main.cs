@@ -4988,6 +4988,8 @@ namespace iiMenu.Menu
 
         public static void ChangeName(string PlayerName)
         {
+            GorillaComputer.instance.currentName = PlayerName;
+
             GorillaComputer.instance.SetLocalNameTagText(GorillaComputer.instance.currentName);
             GorillaComputer.instance.savedName = GorillaComputer.instance.currentName;
             PlayerPrefs.SetString("playerName", GorillaComputer.instance.currentName);
