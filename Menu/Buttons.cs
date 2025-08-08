@@ -1464,6 +1464,8 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Save Custom Preset 10", method =() => Presets.SaveCustomPreset(10), isTogglable = false, toolTip = "Saves a custom preset."},
                 new ButtonInfo { buttonText = "Load Custom Preset 10", method =() => Presets.LoadCustomPreset(10), isTogglable = false, toolTip = "Loads a custom preset."},
+                
+                new ButtonInfo { buttonText = "Quick Start Mods", method =() => Presets.SimplePreset(), isTogglable = false, toolTip = "Enables some mods that attempt to improve your experience using the menu."},
             },
 
             new ButtonInfo[] { // Advantage Settings [21]

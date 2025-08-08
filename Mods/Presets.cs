@@ -1,4 +1,4 @@
-﻿using iiMenu.Classes;
+using iiMenu.Classes;
 using iiMenu.Notifications;
 using System.IO;
 using static iiMenu.Menu.Main;
@@ -175,6 +175,25 @@ namespace iiMenu.Mods
                 Toggle(mod);
 
             NotifiLib.SendNotification("<color=grey>[</color><color=purple>PRESET</color><color=grey>]</color> Safety preset enabled successfully.");
+        }
+        
+        public static void SimplePreset()
+        {
+            string[] presetMods = new string[]
+            {
+                "Disable Enabled GUI",
+                "Accept TOS",
+                "Player Scale Menu",
+                "High Quality Text",
+                "PC Button Click"
+            };
+
+            pageButtonType = 2;
+            
+            foreach (string mod in presetMods)
+                Toggle(mod);
+            
+            NotifiLib.SendNotification("<color=grey>[</color><color=purple>PRESET</color><color=grey>]</color> Simple preset enabled successfully.");
         }
     }
 }
