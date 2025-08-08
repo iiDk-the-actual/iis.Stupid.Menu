@@ -35,9 +35,11 @@ jobs:
         mkdir -p release
         cp "bin/Debug/netstandard2.1/ii's Stupid Menu.dll" release/iis_Stupid_Menu.dll
 
-    - name: Get short commit hash
+    - name: Get commit data
       id: vars
-      run: echo "commit_id=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      run: |
+        echo "commit_id=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        echo "msg=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
 
     - name: Create Pre-Release
       if: github.event_name != 'pull_request'
