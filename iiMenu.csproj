@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>ii's Stupid Menu</AssemblyName>
     <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
@@ -17,29 +17,21 @@
   <ItemGroup>
     <None Remove="Resources\icon.png" />
     <None Remove="Resources\iimenu" />
-    <None Remove="Resources\mlm.png" />
-    <None Remove="Resources\pearl.png" />
-    <None Remove="Resources\pride.png" />
     <None Remove="Resources\return.png" />
     <None Remove="Resources\search.png" />
     <None Remove="Resources\debug.png" />
     <None Remove="Resources\speak.png" />
     <None Remove="Resources\star.png" />
-    <None Remove="Resources\trans.png" />
   </ItemGroup>
   
   <ItemGroup>
     <EmbeddedResource Include="Resources\icon.png" />
     <EmbeddedResource Include="Resources\iimenu" />
-    <EmbeddedResource Include="Resources\mlm.png" />
-    <EmbeddedResource Include="Resources\pearl.png" />
-    <EmbeddedResource Include="Resources\pride.png" />
     <EmbeddedResource Include="Resources\return.png" />
     <EmbeddedResource Include="Resources\search.png" />
     <EmbeddedResource Include="Resources\debug.png" />
     <EmbeddedResource Include="Resources\speak.png" />
     <EmbeddedResource Include="Resources\star.png" />
-    <EmbeddedResource Include="Resources\trans.png" />
   </ItemGroup>
   
   <!-- AssemblyPublicizer usage inspired from GorillaShirts -->

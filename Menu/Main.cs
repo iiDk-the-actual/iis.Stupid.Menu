@@ -2157,7 +2157,7 @@ namespace iiMenu.Menu
                         case 25:
                             if (pride == null)
                             {
-                                pride = LoadTextureFromResource("iiMenu.Resources.pride.png");
+                                pride = LoadTextureFromURL("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/main/pride.png", "pride.png");
                                 pride.filterMode = FilterMode.Point;
                                 pride.wrapMode = TextureWrapMode.Clamp;
                             }
@@ -2168,7 +2168,7 @@ namespace iiMenu.Menu
                         case 26:
                             if (trans == null)
                             {
-                                trans = LoadTextureFromResource("iiMenu.Resources.trans.png");
+                                trans = LoadTextureFromURL("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/main/trans.png", "trans.png");
                                 trans.filterMode = FilterMode.Point;
                                 trans.wrapMode = TextureWrapMode.Clamp;
                             }
@@ -2179,7 +2179,7 @@ namespace iiMenu.Menu
                         case 27:
                             if (gay == null)
                             {
-                                gay = LoadTextureFromResource("iiMenu.Resources.mlm.png");
+                                gay = LoadTextureFromURL("https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/main/mlm.png", "mlm.png");
                                 gay.filterMode = FilterMode.Point;
                                 gay.wrapMode = TextureWrapMode.Clamp;
                             }
