@@ -173,7 +173,7 @@ namespace iiMenu.Mods
 
             string version = PluginInfo.Version;
             if (PluginInfo.BetaBuild) version = "<color=blue>Beta</color> " + version;
-            AddButton(category, new ButtonInfo { buttonText = "DebugMenuName", overlapText = "<color=grey><b>Stupid Menu </b></color>" + version, label = true });
+            AddButton(category, new ButtonInfo { buttonText = "DebugMenuName", overlapText = "<color=grey><b>ii's Stupid Menu </b></color>" + version, label = true });
             AddButton(category, new ButtonInfo { buttonText = "DebugColor", overlapText = "Loading...", label = true });
             AddButton(category, new ButtonInfo { buttonText = "DebugName", overlapText = "Loading...", label = true });
             AddButton(category, new ButtonInfo { buttonText = "DebugId", overlapText = "Loading...", label = true });
