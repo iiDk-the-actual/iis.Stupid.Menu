@@ -666,7 +666,15 @@ namespace iiMenu.Menu
                             LogManager.Log("Automatically saved preferences");
 
                             if (BackupPreferences)
-                                File.WriteAllText($"{PluginInfo.BaseDirectory}/Backups/{ISO8601().Replace(":", ".")}.txt", Settings.SavePreferencesToText());
+                            {
+                                if (PreferenceBackupCount >= 5)
+                                {
+                                    File.WriteAllText($"{PluginInfo.BaseDirectory}/Backups/{ISO8601().Replace(":", ".")}.txt", Settings.SavePreferencesToText());
+                                    PreferenceBackupCount = 0;
+                                }
+
+                                PreferenceBackupCount++;
+                            }
                         }
                     }
                     catch { }
@@ -5960,6 +5968,7 @@ jgs \_   _/ |Oo\
         public static float colorChangerDelay;
         public static float autoSaveDelay = Time.time + 60f;
         public static bool BackupPreferences;
+        public static int PreferenceBackupCount;
 
         public static int notificationDecayTime = 1000;
         public static int notificationSoundIndex;
