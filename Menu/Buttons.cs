@@ -890,6 +890,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Start All Races", method =() => Fun.StartAllRaces(), isTogglable = false, toolTip = "Starts every race in the hoverboard map."},
 
                 new ButtonInfo { buttonText = "Override Hand Link", method =() => Patches.GroundedPatch.enabled = true, disableMethod =() => Patches.GroundedPatch.enabled = false, toolTip = "Prioritizes you when you or others grab onto you."},
+                new ButtonInfo { buttonText = "Disable Hand Link", method =() => { VRRig.LocalRig.leftHandLink.BreakLink(); VRRig.LocalRig.rightHandLink.BreakLink(); }, toolTip = "Disables you from grabbing onto other players and them from grabbing onto you."},
                 new ButtonInfo { buttonText = "Anti Hand Link", method =() => Patches.HandLinkPatch.enabled = true, disableMethod =() => Patches.HandLinkPatch.enabled = false, toolTip = "Disables you from moving when grabbing onto other players."},
 
                 new ButtonInfo { buttonText = "Fast Throw Players", method =() => Patches.ReleasePatch.enabled = true, disableMethod =() => Patches.ReleasePatch.enabled = false, toolTip = "Makes players go really fast when you throw them."},
@@ -1504,9 +1505,6 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Admin Disable Menu All", method =() => Experimental.AdminLockdownAll(true), toolTip = "Disables the menu of whoever your hand desires if they're using one."},
                 new ButtonInfo { buttonText = "Admin Enable Menu All", method =() => Experimental.AdminLockdownAll(false), toolTip = "Enables the menu of whoever your hand desires if they're using one."},
-
-                new ButtonInfo { buttonText = "Admin Fully Disable Menu All", method =() => Experimental.AdminFullLockdownAll(true), toolTip = "Disables the menu of whoever your hand desires and turns off their mods if they're using one."},
-                new ButtonInfo { buttonText = "Admin Fully Enable Menu All", method =() => Experimental.AdminFullLockdownAll(false), toolTip = "Enables the menu of whoever your hand desires and turns off their mods if they're using one."},
 
                 new ButtonInfo { buttonText = "Admin Teleport Gun", method =() => Experimental.AdminTeleportGun(), toolTip = "Teleports whoever using the menu to wherever your hand desires."},
                 new ButtonInfo { buttonText = "Admin Fling Gun", method =() => Experimental.AdminFlingGun(), toolTip = "Flings whoever your hand desires upwards."},
