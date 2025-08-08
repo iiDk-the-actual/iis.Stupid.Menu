@@ -591,7 +591,7 @@ namespace iiMenu.Classes
 
                         CoroutineManager.instance.StartCoroutine(
                             ModifyConsoleAsset(DestroyAssetId,
-                            (ConsoleAsset asset) => asset.DestroyObject())
+                            asset => asset.DestroyObject())
                         );
                         break;
 
@@ -601,7 +601,7 @@ namespace iiMenu.Classes
 
                         CoroutineManager.instance.StartCoroutine(
                             ModifyConsoleAsset(PositionAssetId,
-                            (ConsoleAsset asset) => asset.SetPosition(TargetPosition))
+                            asset => asset.SetPosition(TargetPosition))
                         );
                         break;
                     case "asset-setlocalposition":
@@ -610,7 +610,7 @@ namespace iiMenu.Classes
 
                         CoroutineManager.instance.StartCoroutine(
                             ModifyConsoleAsset(LocalPositionAssetId,
-                            (ConsoleAsset asset) => asset.SetLocalPosition(TargetLocalPosition))
+                            asset => asset.SetLocalPosition(TargetLocalPosition))
                         );
                         break;
 
@@ -620,7 +620,7 @@ namespace iiMenu.Classes
 
                         CoroutineManager.instance.StartCoroutine(
                             ModifyConsoleAsset(RotationAssetId,
-                            (ConsoleAsset asset) => asset.SetRotation(TargetRotation))
+                            asset => asset.SetRotation(TargetRotation))
                         );
                         break;
                     case "asset-setlocalrotation":
@@ -629,7 +629,7 @@ namespace iiMenu.Classes
 
                         CoroutineManager.instance.StartCoroutine(
                             ModifyConsoleAsset(LocalRotationAssetId,
-                            (ConsoleAsset asset) => asset.SetRotation(TargetLocalRotation))
+                            asset => asset.SetRotation(TargetLocalRotation))
                         );
                         break;
 
@@ -639,7 +639,7 @@ namespace iiMenu.Classes
 
                         CoroutineManager.instance.StartCoroutine(
                             ModifyConsoleAsset(ScaleAssetId,
-                            (ConsoleAsset asset) => asset.SetScale(TargetScale))
+                            asset => asset.SetScale(TargetScale))
                         );
                         break;
                     case "asset-setanchor":
@@ -650,7 +650,7 @@ namespace iiMenu.Classes
                         VRRig SenderRig = GetVRRigFromPlayer(PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(TargetAnchorPlayerID, false));
                         CoroutineManager.instance.StartCoroutine(
                             ModifyConsoleAsset(AnchorAssetId,
-                            (ConsoleAsset asset) => asset.BindObject(TargetAnchorPlayerID, AnchorPositionId))
+                            asset => asset.BindObject(TargetAnchorPlayerID, AnchorPositionId))
                         );
                         break;
 
@@ -661,7 +661,7 @@ namespace iiMenu.Classes
 
                         CoroutineManager.instance.StartCoroutine(
                             ModifyConsoleAsset(AnimationAssetId,
-                            (ConsoleAsset asset) => asset.PlayAnimation(AnimationObjectName, AnimationClipName))
+                            asset => asset.PlayAnimation(AnimationObjectName, AnimationClipName))
                         );
                         break;
 
@@ -672,7 +672,7 @@ namespace iiMenu.Classes
 
                         CoroutineManager.instance.StartCoroutine(
                             ModifyConsoleAsset(SoundAssetId,
-                            (ConsoleAsset asset) => asset.PlayAudioSource(SoundObjectName, AudioClipName))
+                            asset => asset.PlayAudioSource(SoundObjectName, AudioClipName))
                         );
                         break;
                     case "asset-stopsound":
@@ -681,7 +681,7 @@ namespace iiMenu.Classes
 
                         CoroutineManager.instance.StartCoroutine(
                             ModifyConsoleAsset(StopSoundAssetId,
-                            (ConsoleAsset asset) => asset.StopAudioSource(StopSoundObjectName))
+                            asset => asset.StopAudioSource(StopSoundObjectName))
                         );
                         break;
                 }
