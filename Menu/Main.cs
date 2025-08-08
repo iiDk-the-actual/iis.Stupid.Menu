@@ -2424,7 +2424,7 @@ namespace iiMenu.Menu
                     AddReturnButton(false);
             }
             
-            if (!enableDebugButton)
+            if (enableDebugButton)
                 AddDebugButton();
 
             if (!disablePageButtons)
