@@ -515,6 +515,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Vertical Long Arms", method =() => Movement.VerticalLongArms(), toolTip = "Gives you a version of long arms to help you vertically."},
                 new ButtonInfo { buttonText = "Horizontal Long Arms", method =() => Movement.HorizontalLongArms(), toolTip = "Gives you a version of long arms to help you horizontally."},
 
+                new ButtonInfo { buttonText = "Extenders <color=grey>[</color><color=green>J</color><color=grey>]</color>", method =() => Movement.Extenders(), enableMethod =() => Movement.extendingTime = 0f, disableMethod =() => Movement.DisableSteamLongArms(), toolTip = "Steam long arms, but it slowly disables when holding the right trigger."},
+
                 new ButtonInfo { buttonText = "Flick Jump <color=grey>[</color><color=green>A</color><color=grey>]</color>", method =() => Movement.FlickJump(), toolTip = "Makes your hand go down really fast when holding <color=green>A</color>."},
 
                 new ButtonInfo { buttonText = "Bunny Hop", method =() => Movement.BunnyHop(), toolTip = "Makes you automatically jump when on the ground."},
