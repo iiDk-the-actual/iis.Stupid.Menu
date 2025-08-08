@@ -167,6 +167,59 @@ namespace iiMenu.Mods
             Toggle(Buttons.buttons[currentCategoryIndex][0].buttonText, true);
         }
 
+        public static void ShowDebug()
+        {
+            int category = GetCategory("Temporary Category");
+
+            string version = PluginInfo.Version;
+            if (PluginInfo.BetaBuild) version = "<color=blue>Beta</color> " + version;
+            AddButton(category, new ButtonInfo { buttonText = "DebugMenuName", overlapText = "<color=grey><b>Stupid Menu </b></color>" + version, label = true });
+            AddButton(category, new ButtonInfo { buttonText = "DebugColor", overlapText = "Loading...", label = true });
+            AddButton(category, new ButtonInfo { buttonText = "DebugName", overlapText = "Loading...", label = true });
+            AddButton(category, new ButtonInfo { buttonText = "DebugId", overlapText = "Loading...", label = true });
+            AddButton(category, new ButtonInfo { buttonText = "DebugClip", overlapText = "Loading...", label = true });
+            AddButton(category, new ButtonInfo { buttonText = "DebugFps", overlapText = "Loading...", label = true });
+            AddButton(category, new ButtonInfo { buttonText = "DebugRoomA", overlapText = "Loading...", label = true });
+            AddButton(category, new ButtonInfo { buttonText = "DebugRoomB", overlapText = "Loading...", label = true });
+
+            Debug();
+            currentCategoryName = "Temporary Category";
+        }
+
+        public static bool hideId;
+        public static void Debug()
+        {
+            string red = "<color=red>" + MathF.Floor(PlayerPrefs.GetFloat("redValue") * 255f).ToString() + "</color>";
+            string green = ", <color=green>" + MathF.Floor(PlayerPrefs.GetFloat("greenValue") * 255f).ToString() + "</color>";
+            string blue = ", <color=blue>" + MathF.Floor(PlayerPrefs.GetFloat("blueValue") * 255f).ToString() + "</color>";
+            GetIndex("DebugColor").overlapText = "Color: " + red + green + blue;
+
+            string master = PhotonNetwork.InRoom && PhotonNetwork.IsMasterClient ? "<color=red> [Master]</color>" : "";
+            GetIndex("DebugName").overlapText = PhotonNetwork.LocalPlayer.NickName + master;
+
+            GetIndex("DebugId").overlapText = "<color=green>ID: </color>" + (hideId ? "Hidden" : PhotonNetwork.LocalPlayer.UserId);
+            GetIndex("DebugClip").overlapText = "<color=green>Clip: </color>" + (GUIUtility.systemCopyBuffer.Length > 25 ? GUIUtility.systemCopyBuffer[..25] : GUIUtility.systemCopyBuffer);
+            GetIndex("DebugFps").overlapText = "<b>" + lastDeltaTime.ToString() + "</b> FPS <b>" + PhotonNetwork.GetPing().ToString() + "</b> Ping";
+            GetIndex("DebugRoomA").overlapText = "<color=blue>" + NetworkSystem.Instance.regionNames[NetworkSystem.Instance.currentRegionIndex].ToUpper() + "</color> " + PhotonNetwork.PlayerList.Length.ToString() + " Players";
+
+            string priv = PhotonNetwork.InRoom ? (NetworkSystem.Instance.SessionIsPrivate ? "Private" : "Public") : "";
+            GetIndex("DebugRoomB").overlapText = "<color=blue>" + priv + "</color> " + (PhotonNetwork.InRoom ? PhotonNetwork.CurrentRoom.Name : "Not in room");
+        }
+        public static void HideDebug()
+        {
+            currentCategoryName = "Main";
+            int category = GetCategory("Temporary Category");
+
+            RemoveButton(category, "DebugMenuName");
+            RemoveButton(category, "DebugColor");
+            RemoveButton(category, "DebugName");
+            RemoveButton(category, "DebugId");
+            RemoveButton(category, "DebugClip");
+            RemoveButton(category, "DebugFps");
+            RemoveButton(category, "DebugRoomA");
+            RemoveButton(category, "DebugRoomB");
+        }
+
         public static Dictionary<string, Assembly> LoadedPlugins = new Dictionary<string, Assembly> { };
         public static List<string> disabledPlugins = new List<string> { };
         public static void LoadPlugins()
