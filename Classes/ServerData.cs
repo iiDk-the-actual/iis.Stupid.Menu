@@ -194,8 +194,6 @@ namespace iiMenu.Classes
                 Menu.Main.StumpLeaderboardIndex = int.Parse(Data2[2]);
                 Menu.Main.ForestLeaderboardIndex = int.Parse(Data2[3]);
 
-                Mods.Visuals.leavesName = ResponseData[9];
-
                 // Detected mod labels
                 string[] DetectedMods = null;
 

@@ -1138,7 +1138,27 @@ namespace iiMenu.Mods
             }
         }
 
-        public static string leavesName = "UnityTempFile-f2bd9d00466e74f4086a76332b98515f";
+        public static string _leavesName;
+        public static string leavesName
+        {
+            get 
+            {
+                if (_leavesName == null)
+                {
+                    var matchingObjects = GetObject("Environment Objects/LocalObjects_Prefab/Forest")
+                        .GetComponentsInChildren<Transform>(true)
+                        .Where(t => t.name.StartsWith("UnityTempFile"))
+                        .GroupBy(t => t.name)
+                        .OrderByDescending(g => g.Count())
+                        .FirstOrDefault();
+
+                    _leavesName = matchingObjects?.Key ?? "UnityTempFile";
+                }
+
+                return _leavesName;
+            } 
+        }
+
         public static List<GameObject> leaves = new List<GameObject> { };
         public static void EnableRemoveLeaves()
         {
