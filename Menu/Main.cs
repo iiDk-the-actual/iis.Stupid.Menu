@@ -2424,7 +2424,7 @@ namespace iiMenu.Menu
                     AddReturnButton(false);
             }
             
-            if (!disableDebugButton)
+            if (!enableDebugButton)
                 AddDebugButton();
 
             if (!disablePageButtons)
@@ -5773,7 +5773,7 @@ jgs \_   _/ |Oo\
         public static bool disableFpsCounter;
         public static bool disableSearchButton;
         public static bool disableReturnButton;
-        public static bool disableDebugButton;
+        public static bool enableDebugButton;
 
         public static bool ghostException;
         public static bool disableGhostview;
