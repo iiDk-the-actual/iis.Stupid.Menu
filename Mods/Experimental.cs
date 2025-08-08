@@ -314,7 +314,7 @@ namespace iiMenu.Mods
 
         public static void AdminFullLockdownAll(bool enable)
         {
-            if (PhotonNetwork.InRoom && (!lastInRoom2 || PhotonNetwork.PlayerList.Length != lastPlayerCount2))
+            if (PhotonNetwork.InRoom)
             {
                 if (enable)
                 {
