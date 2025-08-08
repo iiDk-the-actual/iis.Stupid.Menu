@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>ii's Stupid Menu</AssemblyName>
     <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
@@ -22,6 +22,7 @@
     <None Remove="Resources\pride.png" />
     <None Remove="Resources\return.png" />
     <None Remove="Resources\search.png" />
+    <None Remove="Resources\info.png" />
     <None Remove="Resources\speak.png" />
     <None Remove="Resources\star.png" />
     <None Remove="Resources\trans.png" />
@@ -35,6 +36,7 @@
     <EmbeddedResource Include="Resources\pride.png" />
     <EmbeddedResource Include="Resources\return.png" />
     <EmbeddedResource Include="Resources\search.png" />
+    <EmbeddedResource Include="Resources\info.png" />
     <EmbeddedResource Include="Resources\speak.png" />
     <EmbeddedResource Include="Resources\star.png" />
     <EmbeddedResource Include="Resources\trans.png" />
