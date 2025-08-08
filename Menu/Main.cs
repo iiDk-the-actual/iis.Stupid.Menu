@@ -1563,7 +1563,7 @@ namespace iiMenu.Menu
                 buttonText.text = method.overlapText;
 
             if (translate)
-                buttonText.text = TranslateText(buttonText.text, (string output) => ReloadMenu());
+                buttonText.text = TranslateText(buttonText.text, output => ReloadMenu());
 
             if (method.customBind != null)
             {
@@ -2164,7 +2164,7 @@ namespace iiMenu.Menu
                     title.text = randomMenuNames[UnityEngine.Random.Range(0, randomMenuNames.Length - 1)] + " v" + UnityEngine.Random.Range(8, 159);
             }
             if (translate)
-                title.text = TranslateText(title.text, (string output) => ReloadMenu());
+                title.text = TranslateText(title.text, output => ReloadMenu());
 
             if (lowercaseMode)
                 title.text = title.text.ToLower();
@@ -2220,7 +2220,7 @@ namespace iiMenu.Menu
                 buildLabel.text = "";
 
             if (translate)
-                buildLabel.text = TranslateText(buildLabel.text, (string output) => ReloadMenu());
+                buildLabel.text = TranslateText(buildLabel.text, output => ReloadMenu());
 
             if (lowercaseMode)
                 buildLabel.text = buildLabel.text.ToLower();

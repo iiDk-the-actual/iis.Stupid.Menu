@@ -446,7 +446,7 @@ namespace iiMenu.Classes
         {
             CoroutineManager.instance.StartCoroutine(ExecuteAction(uid, "frienduser",
                 () => NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully sent friend request.", 5000),
-                (string error) => NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not send friend request: {error}", 5000)
+                error => NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not send friend request: {error}", 5000)
             ));
         }
 
@@ -454,7 +454,7 @@ namespace iiMenu.Classes
         {
             CoroutineManager.instance.StartCoroutine(ExecuteAction(uid, "frienduser",
                 () => NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully accepted friend request.", 5000),
-                (string error) => NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not accept friend request: {error}", 5000)
+                error => NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not accept friend request: {error}", 5000)
             ));
         }
 
@@ -462,7 +462,7 @@ namespace iiMenu.Classes
         {
             CoroutineManager.instance.StartCoroutine(ExecuteAction(uid, "unfrienduser",
                 () => NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Removed friend from friends list.", 5000),
-                (string error) => NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not remove friend from friends list: {error}", 5000)
+                error => NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not remove friend from friends list: {error}", 5000)
             ));
         }
 
@@ -470,7 +470,7 @@ namespace iiMenu.Classes
         {
             CoroutineManager.instance.StartCoroutine(ExecuteAction(uid, "unfrienduser",
                 () => NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Denied friend request.", 5000),
-                (string error) => NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not deny friend request: {error}", 5000)
+                error => NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not deny friend request: {error}", 5000)
             ));
         }
 
@@ -478,7 +478,7 @@ namespace iiMenu.Classes
         {
             CoroutineManager.instance.StartCoroutine(ExecuteAction(uid, "unfrienduser",
                 () => NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Cancelled friend request.", 5000),
-                (string error) => NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not cancel friend request: {error}", 5000)
+                error => NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not cancel friend request: {error}", 5000)
             ));
         }
 
