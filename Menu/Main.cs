@@ -1785,7 +1785,7 @@ namespace iiMenu.Menu
                 }
             }.AddComponent<Image>();
             if (debugIcon == null)
-                debugIcon = LoadTextureFromResource("iiMenu.Resources.info.png");
+                debugIcon = LoadTextureFromResource("iiMenu.Resources.debug.png");
 
             if (debugMat == null)
                 debugMat = new Material(searchImage.material);
