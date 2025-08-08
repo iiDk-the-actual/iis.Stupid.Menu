@@ -1707,6 +1707,103 @@ namespace iiMenu.Menu
                 OutlineCanvasObject(searchImage, 0);
         }
 
+        private static void AddDebugButton()
+        {
+            GameObject buttonObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            if (!UnityInput.Current.GetKey(KeyCode.Q) && !isPcWhenSearching)
+                buttonObject.layer = 2;
+
+            if (themeType == 30)
+                buttonObject.GetComponent<Renderer>().enabled = false;
+
+            buttonObject.GetComponent<BoxCollider>().isTrigger = true;
+            buttonObject.transform.parent = menu.transform;
+            buttonObject.transform.rotation = Quaternion.identity;
+
+            buttonObject.transform.localScale = new Vector3(0.09f, 0.102f, 0.08f);
+            // Fat menu theorem
+            // To get the fat position of a button:
+            // original x * (0.7 / 0.45) or 1.555555556
+            if (thinMenu)
+                buttonObject.transform.localPosition = new Vector3(0.56f, 0.450f, -0.58f);
+            else
+                buttonObject.transform.localPosition = new Vector3(0.56f, 0.7f, -0.58f);
+
+            buttonObject.AddComponent<Classes.Button>().relatedText = "Debug Screen";
+
+            if (shouldOutline)
+                OutlineObj(buttonObject, swapButtonColors ? isSearching : !isSearching);
+
+            GradientColorKey[] pressedColors = new[]
+            {
+                new GradientColorKey(buttonClickedA, 0f),
+                new GradientColorKey(buttonClickedB, 0.5f),
+                new GradientColorKey(buttonClickedA, 1f)
+            };
+
+            GradientColorKey[] releasedColors = new[]
+            {
+                new GradientColorKey(buttonDefaultA, 0f),
+                new GradientColorKey(buttonDefaultB, 0.5f),
+                new GradientColorKey(buttonDefaultA, 1f)
+            };
+
+            ColorChanger colorChanger = buttonObject.AddComponent<ColorChanger>();
+            if (GetIndex("Debug Screen").enabled)
+            {
+                colorChanger.isRainbow = themeType == 6;
+                colorChanger.isPastelRainbow = themeType == 51;
+                colorChanger.isSlowFade = slowFadeColors;
+                colorChanger.isEpileptic = themeType == 47;
+                colorChanger.isMonkeColors = themeType == 8;
+                colorChanger.colors = new Gradient
+                {
+                    colorKeys = swapButtonColors ? releasedColors : pressedColors
+                };
+            }
+            else
+            {
+                colorChanger.colors = new Gradient
+                {
+                    colorKeys = swapButtonColors ? pressedColors : releasedColors
+                };
+            }
+
+            if (shouldRound)
+                RoundObj(buttonObject);
+
+            Image searchImage = new GameObject
+            {
+                transform =
+                {
+                    parent = canvasObj.transform
+                }
+            }.AddComponent<Image>();
+            if (debugIcon == null)
+                debugIcon = LoadTextureFromResource("iiMenu.Resources.info.png");
+
+            if (debugMat == null)
+                debugMat = new Material(searchImage.material);
+
+            searchImage.material = debugMat;
+            searchImage.material.SetTexture("_MainTex", debugIcon);
+            searchImage.color = isSearching ? textClicked : textColor;
+
+            RectTransform imageTransform = searchImage.GetComponent<RectTransform>();
+            imageTransform.localPosition = Vector3.zero;
+            imageTransform.sizeDelta = new Vector2(.03f, .03f);
+
+            if (thinMenu)
+                imageTransform.localPosition = new Vector3(.064f, 0.35f / 2.6f, -0.58f / 2.6f);
+            else
+                imageTransform.localPosition = new Vector3(.064f, 0.54444444444f / 2.6f, -0.58f / 2.6f);
+
+            imageTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+
+            if (outlineText)
+                OutlineCanvasObject(searchImage, 0);
+        }
+
         private static void AddReturnButton(bool offcenteredPosition)
         {
             GameObject buttonObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -2326,6 +2423,9 @@ namespace iiMenu.Menu
                 if (!disableReturnButton && currentCategoryName != "Main")
                     AddReturnButton(false);
             }
+            
+            if (enableDebugButton)
+                AddDebugButton();
 
             if (!disablePageButtons)
                 AddPageButtons();
@@ -5673,6 +5773,7 @@ jgs \_   _/ |Oo\
         public static bool disableFpsCounter;
         public static bool disableSearchButton;
         public static bool disableReturnButton;
+        public static bool enableDebugButton;
 
         public static bool ghostException;
         public static bool disableGhostview;
@@ -5831,6 +5932,7 @@ jgs \_   _/ |Oo\
         public static Material CrystalMaterial;
         public static Material searchMat;
         public static Material returnMat;
+        public static Material debugMat;
 
         public static Font AgencyFB = Font.CreateDynamicFontFromOSFont("Agency FB", 24);
         public static Font Arial = Resources.GetBuiltinResource(typeof(Font), "Arial.ttf") as Font;
@@ -5882,6 +5984,7 @@ jgs \_   _/ |Oo\
         public static Texture2D gay;
         public static Texture2D searchIcon;
         public static Texture2D returnIcon;
+        public static Texture2D debugIcon;
         public static Texture2D fixTexture;
         public static Texture2D customMenuBackgroundImage;
 
