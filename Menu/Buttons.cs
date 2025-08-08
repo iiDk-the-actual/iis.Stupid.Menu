@@ -890,7 +890,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Start All Races", method =() => Fun.StartAllRaces(), isTogglable = false, toolTip = "Starts every race in the hoverboard map."},
 
                 new ButtonInfo { buttonText = "Override Hand Link", method =() => Patches.GroundedPatch.enabled = true, disableMethod =() => Patches.GroundedPatch.enabled = false, toolTip = "Prioritizes you when you or others grab onto you."},
-                new ButtonInfo { buttonText = "Anti Hand Link", method =() => Patches.HandLinkPatch.enabled = true, disableMethod =() => Patches.HandLinkPatch.enabled = false, toolTip = "Disables you from teleporting when grabbing onto other players."},
+                new ButtonInfo { buttonText = "Anti Hand Link", method =() => Patches.HandLinkPatch.enabled = true, disableMethod =() => Patches.HandLinkPatch.enabled = false, toolTip = "Disables you from moving when grabbing onto other players."},
 
                 new ButtonInfo { buttonText = "Fast Throw Players", method =() => Patches.ReleasePatch.enabled = true, disableMethod =() => Patches.ReleasePatch.enabled = false, toolTip = "Makes players go really fast when you throw them."},
 
