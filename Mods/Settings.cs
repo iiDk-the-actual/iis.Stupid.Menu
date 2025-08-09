@@ -1,3 +1,4 @@
+using BepInEx;
 using GorillaLocomotion;
 using GorillaNetworking;
 using iiMenu.Classes;
@@ -15,9 +16,11 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using UnityEngine.Video;
 using UnityEngine.Windows.Speech;
+using UnityEngine.XR;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -166,6 +169,7 @@ namespace iiMenu.Mods
         {
             NotifiLib.ClearAllNotifications();
             Toggle(Buttons.buttons[currentCategoryIndex][0].buttonText, true);
+            IsPrompting = false;
         }
 
         public static GameObject TutorialObject;
@@ -181,8 +185,9 @@ namespace iiMenu.Mods
             TutorialObject.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation * Quaternion.Euler(0f, 180f, 0f);
 
             VideoPlayer videoPlayer = TutorialObject.transform.Find("Video").GetComponent<VideoPlayer>();
-            videoPlayer.url = $"https://github.com/iiDk-the-actual/ModInfo/raw/main/tutorial-q{(ControllerInputPoller.instance.leftControllerDevice.name.ToLower().Contains("quest2") ? "2" : "3")}.mp4";
-            
+            videoPlayer.url = $"https://github.com/iiDk-the-actual/ModInfo/raw/main/tutorial-q{(XRSettings.isDeviceActive && ControllerInputPoller.instance.leftControllerDevice.name.ToLower().Contains("quest2") ? "2" : "3")}.mp4";
+            videoPlayer.isLooping = true;
+
             videoPlayer.AddComponent<TutorialButton>().buttonType = TutorialButton.ButtonType.Pause;
 
             TutorialObject.transform.Find("Close").AddComponent<TutorialButton>().buttonType = TutorialButton.ButtonType.Close;
@@ -191,7 +196,7 @@ namespace iiMenu.Mods
         private static bool lastTrigger;
         public static void UpdateTutorial()
         {
-            if (Vector3.Distance(VRKeyboard.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > menuScale)
+            if (Vector3.Distance(TutorialObject.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > 2f)
             {
                 TutorialObject.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.bodyCollider.transform.forward * 1f + Vector3.up * 0.25f;
                 TutorialObject.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation * Quaternion.Euler(0f, 180f, 0f);
@@ -202,8 +207,8 @@ namespace iiMenu.Mods
                 TutorialSelector = new GameObject("iiMenu_TutorialSelector").AddComponent<LineRenderer>();
                 TutorialSelector.material.shader = Shader.Find("Sprites/Default");
 
-                TutorialSelector.startWidth = 0.025f;
-                TutorialSelector.endWidth = 0.025f;
+                TutorialSelector.startWidth = 0.01f;
+                TutorialSelector.endWidth = 0.01f;
 
                 TutorialSelector.positionCount = 2;
 
@@ -213,19 +218,24 @@ namespace iiMenu.Mods
             TutorialSelector.startColor = BrightenColor(GetBGColor(0f));
             TutorialSelector.endColor = BrightenColor(GetBGColor(0.5f));
 
-            Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position + ((-GorillaTagger.Instance.rightHandTransform.up / 4f) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f)), GorillaTagger.Instance.rightHandTransform.up, out var Ray, 512f, NoInvisLayerMask());
+            Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position + (-GorillaTagger.Instance.rightHandTransform.up / 4f), GorillaTagger.Instance.rightHandTransform.up, out var Ray, 512f, NoInvisLayerMask());
+            if (!XRSettings.isDeviceActive)
+            {
+                Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
+                Physics.Raycast(ray, out Ray, 512f, NoInvisLayerMask());
+            }
 
             TutorialSelector.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
-            TutorialSelector.SetPosition(1, Ray.point);
+            TutorialSelector.SetPosition(1, Ray.point == Vector3.zero ? GorillaTagger.Instance.rightHandTransform.position : Ray.point);
 
-            if (rightTrigger > 0.5f && !lastTrigger)
+            if ((rightTrigger > 0.5f || Mouse.current.leftButton.isPressed) && !lastTrigger)
             {
                 TutorialButton gunTarget = Ray.collider.GetComponentInParent<TutorialButton>();
                 if (gunTarget)
                     gunTarget.ClickButton();
             }
 
-            lastTrigger = rightTrigger > 0.5f;
+            lastTrigger = rightTrigger > 0.5f || Mouse.current.leftButton.isPressed;
         }
 
         public class TutorialButton : MonoBehaviour
@@ -3340,6 +3350,12 @@ namespace iiMenu.Mods
         {
             try
             {
+                if (!File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_Preferences.txt"))
+                {
+                    hasLoadedPreferences = true;
+                    return;
+                }
+
                 string text = File.ReadAllText($"{PluginInfo.BaseDirectory}/iiMenu_Preferences.txt");
                 LoadPreferencesFromText(text);
             } catch (Exception e) { LogManager.Log("Error loading preferences: " + e.Message); }
