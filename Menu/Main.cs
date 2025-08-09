@@ -2830,6 +2830,9 @@ namespace iiMenu.Menu
             } else
                 isOnPC = false;
 
+            if (Settings.TutorialObject != null)
+                Settings.UpdateTutorial();
+
             if (physicalMenu)
             {
                 if (physicalOpenPosition == Vector3.zero)
