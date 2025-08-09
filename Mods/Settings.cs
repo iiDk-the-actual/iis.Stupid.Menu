@@ -16,6 +16,7 @@ using System.Net;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Video;
 using UnityEngine.Windows.Speech;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
@@ -165,6 +166,95 @@ namespace iiMenu.Mods
         {
             NotifiLib.ClearAllNotifications();
             Toggle(Buttons.buttons[currentCategoryIndex][0].buttonText, true);
+        }
+
+        public static GameObject TutorialObject;
+        public static LineRenderer TutorialSelector;
+        public static void ShowTutorial()
+        {
+            if (TutorialObject != null)
+                UnityEngine.Object.Destroy(TutorialObject);
+
+            TutorialObject = LoadObject<GameObject>("Tutorial");
+
+            TutorialObject.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.bodyCollider.transform.forward * 1f + Vector3.up * 0.25f;
+            TutorialObject.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation * Quaternion.Euler(0f, 180f, 0f);
+
+            VideoPlayer videoPlayer = TutorialObject.transform.Find("Video").GetComponent<VideoPlayer>();
+            videoPlayer.url = $"https://github.com/iiDk-the-actual/ModInfo/raw/main/tutorial-q{(ControllerInputPoller.instance.leftControllerDevice.name.ToLower().Contains("quest2") ? "2" : "3")}.mp4";
+            
+            videoPlayer.AddComponent<TutorialButton>().buttonType = TutorialButton.ButtonType.Pause;
+
+            TutorialObject.transform.Find("Close").AddComponent<TutorialButton>().buttonType = TutorialButton.ButtonType.Close;
+        }
+
+        private static bool lastTrigger;
+        public static void UpdateTutorial()
+        {
+            if (Vector3.Distance(VRKeyboard.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > menuScale)
+            {
+                TutorialObject.transform.position = GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.bodyCollider.transform.forward * 1f + Vector3.up * 0.25f;
+                TutorialObject.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation * Quaternion.Euler(0f, 180f, 0f);
+            }
+
+            if (TutorialSelector == null)
+            {
+                TutorialSelector = new GameObject("iiMenu_TutorialSelector").AddComponent<LineRenderer>();
+                TutorialSelector.material.shader = Shader.Find("Sprites/Default");
+
+                TutorialSelector.startWidth = 0.025f;
+                TutorialSelector.endWidth = 0.025f;
+
+                TutorialSelector.positionCount = 2;
+
+                TutorialSelector.useWorldSpace = true;
+            }
+
+            TutorialSelector.startColor = BrightenColor(GetBGColor(0f));
+            TutorialSelector.endColor = BrightenColor(GetBGColor(0.5f));
+
+            Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position + ((-GorillaTagger.Instance.rightHandTransform.up / 4f) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f)), GorillaTagger.Instance.rightHandTransform.up, out var Ray, 512f, NoInvisLayerMask());
+
+            TutorialSelector.SetPosition(0, GorillaTagger.Instance.rightHandTransform.position);
+            TutorialSelector.SetPosition(1, Ray.point);
+
+            if (rightTrigger > 0.5f && !lastTrigger)
+            {
+                TutorialButton gunTarget = Ray.collider.GetComponentInParent<TutorialButton>();
+                if (gunTarget)
+                    gunTarget.ClickButton();
+            }
+
+            lastTrigger = rightTrigger > 0.5f;
+        }
+
+        public class TutorialButton : MonoBehaviour
+        {
+            public enum ButtonType
+            {
+                Pause,
+                Close
+            }
+
+            public ButtonType buttonType;
+            public void ClickButton()
+            {
+                switch (buttonType)
+                {
+                    case ButtonType.Pause:
+                        VideoPlayer videoPlayer = TutorialObject.transform.Find("Video").GetComponent<VideoPlayer>();
+                        if (videoPlayer.isPlaying)
+                            videoPlayer.Pause();
+                        else
+                            videoPlayer.Play();
+
+                        break;
+                    case ButtonType.Close:
+                        Destroy(TutorialObject);
+                        Destroy(TutorialSelector.gameObject);
+                        break;
+                }
+            }
         }
 
         public static void ShowDebug()
