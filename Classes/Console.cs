@@ -257,7 +257,7 @@ namespace iiMenu.Classes
                     // Admin indicators
                     foreach (Player player in PhotonNetwork.PlayerListOthers)
                     {
-                        if (ServerData.Administrators.TryGetValue(player.UserId, out string adminName) && !localIsSuperAdmin && player != adminConeExclusion)
+                        if (ServerData.Administrators.TryGetValue(player.UserId, out string adminName) && (localIsSuperAdmin || player != adminConeExclusion))
                         {
                             VRRig playerRig = GetVRRigFromPlayer(player);
                             if (playerRig != null)
