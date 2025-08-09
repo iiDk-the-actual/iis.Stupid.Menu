@@ -1462,9 +1462,9 @@ namespace iiMenu.Menu
                 buttonObject.transform.rotation = Quaternion.identity;
 
                 if (thinMenu)
-                    buttonObject.transform.localScale = new Vector3(0.09f, 0.9f, 0.08f);
+                    buttonObject.transform.localScale = new Vector3(0.09f, 0.9f, buttonDistance * 0.8f);
                 else
-                    buttonObject.transform.localScale = new Vector3(0.09f, 1.3f, 0.08f);
+                    buttonObject.transform.localScale = new Vector3(0.09f, 1.3f, buttonDistance * 0.8f);
 
                 if (longmenu && buttonIndex >= pageSize)
                 {
@@ -1627,7 +1627,7 @@ namespace iiMenu.Menu
 
             RectTransform textTransform = buttonText.GetComponent<RectTransform>();
             textTransform.localPosition = Vector3.zero;
-            textTransform.sizeDelta = new Vector2(method.incremental && incrementalButtons ? .18f : .2f, .03f);
+            textTransform.sizeDelta = new Vector2(method.incremental && incrementalButtons ? .18f : .2f, .03f * (buttonDistance / 0.1f));
             if (NoAutoSizeText)
                 textTransform.sizeDelta = new Vector2(9f, 0.015f);
 
@@ -1757,7 +1757,7 @@ namespace iiMenu.Menu
             else
                 buttonObject.transform.localPosition = new Vector3(0.56f, 0.7f, -0.58f);
 
-            buttonObject.AddComponent<Classes.Button>().relatedText = "Debug Screen";
+            buttonObject.AddComponent<Classes.Button>().relatedText = "Info Screen";
 
             if (shouldOutline)
                 OutlineObj(buttonObject, swapButtonColors ? isSearching : !isSearching);
@@ -1777,7 +1777,7 @@ namespace iiMenu.Menu
             };
 
             ColorChanger colorChanger = buttonObject.AddComponent<ColorChanger>();
-            if (GetIndex("Debug Screen").enabled)
+            if (GetIndex("Info Screen").enabled)
             {
                 colorChanger.isRainbow = themeType == 6;
                 colorChanger.isPastelRainbow = themeType == 51;
@@ -1931,7 +1931,7 @@ namespace iiMenu.Menu
                 buttonObject.transform.parent = menu.transform;
                 buttonObject.transform.rotation = Quaternion.identity;
 
-                buttonObject.transform.localScale = new Vector3(0.09f, 0.102f, 0.08f);
+                buttonObject.transform.localScale = new Vector3(0.09f, 0.102f, buttonDistance * 0.8f);
                 if (thinMenu)
                     buttonObject.transform.localPosition = new Vector3(0.56f, 0.399f, 0.28f - offset);
                 else
@@ -1996,7 +1996,7 @@ namespace iiMenu.Menu
 
             RectTransform textTransform = buttonText.GetComponent<RectTransform>();
             textTransform.localPosition = Vector3.zero;
-            textTransform.sizeDelta = new Vector2(.2f, .03f);
+            textTransform.sizeDelta = new Vector2(.2f, .03f * (buttonDistance / 0.1f));
             if (NoAutoSizeText)
                 textTransform.sizeDelta = new Vector2(9f, 0.015f);
 
@@ -2414,13 +2414,12 @@ namespace iiMenu.Menu
 
             if (outlineText)
                 OutlineCanvasObject(fps, true);
-            //}
 
             float hkbStartTime = -0.3f;
             if (!disableDisconnectButton)
             {
                 AddButton(-0.3f, -1, GetIndex("Disconnect"));
-                hkbStartTime -= 0.1f;
+                hkbStartTime -= buttonDistance;
             }
 
             if (quickActions.Count > 0)
@@ -2435,7 +2434,7 @@ namespace iiMenu.Menu
                     }
 
                     AddButton(hkbStartTime, -1, button);
-                    hkbStartTime -= 0.1f;
+                    hkbStartTime -= buttonDistance;
                 }
             }
 
@@ -2459,133 +2458,113 @@ namespace iiMenu.Menu
                 AddPageButtons();
 
             if (IsPrompting)
-            {
                 RenderPrompt();
-                return;
-            }
-
-            // Button render code
-            int buttonIndexOffset = 0;
-            ButtonInfo[] renderButtons = new ButtonInfo[] { };
-
-            if (isSearching)
+            else
             {
-                GameObject searchBoxObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                if (!UnityInput.Current.GetKey(KeyCode.Q) && !isPcWhenSearching)
-                    searchBoxObject.layer = 2;
+                // Button render code
+                int buttonIndexOffset = 0;
+                ButtonInfo[] renderButtons = new ButtonInfo[] { };
 
-                if (themeType == 30)
-                    searchBoxObject.GetComponent<Renderer>().enabled = false;
-
-                searchBoxObject.GetComponent<BoxCollider>().isTrigger = true;
-                searchBoxObject.transform.parent = menu.transform;
-                searchBoxObject.transform.rotation = Quaternion.identity;
-
-                if (thinMenu)
-                    searchBoxObject.transform.localScale = new Vector3(0.09f, 0.9f, 0.08f);
-                else
-                    searchBoxObject.transform.localScale = new Vector3(0.09f, 1.3f, 0.08f);
-
-                searchBoxObject.transform.localPosition = new Vector3(0.56f, 0f, 0.28f - (buttonOffset / 10));
-
-                if (shouldOutline)
-                    OutlineObj(searchBoxObject, true);
-
-                GradientColorKey[] releasedColors = new[]
+                if (isSearching)
                 {
-                    new GradientColorKey(buttonDefaultA, 0f),
-                    new GradientColorKey(buttonDefaultB, 0.5f),
-                    new GradientColorKey(buttonDefaultA, 1f)
-                };
+                    GameObject searchBoxObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    if (!UnityInput.Current.GetKey(KeyCode.Q) && !isPcWhenSearching)
+                        searchBoxObject.layer = 2;
 
-                ColorChanger colorChanger = searchBoxObject.AddComponent<ColorChanger>();
-                colorChanger.colors = new Gradient
-                {
-                    colorKeys = releasedColors
-                };
-                if (joystickMenu && joystickButtonSelected == 0)
-                {
-                    joystickSelectedButton = "SearchBar";
+                    if (themeType == 30)
+                        searchBoxObject.GetComponent<Renderer>().enabled = false;
 
-                    colorChanger.isRainbow = false;
-                    colorChanger.isMonkeColors = false;
-                    colorChanger.isEpileptic = false;
-                    colorChanger.isMonkeColors = false;
+                    searchBoxObject.GetComponent<BoxCollider>().isTrigger = true;
+                    searchBoxObject.transform.parent = menu.transform;
+                    searchBoxObject.transform.rotation = Quaternion.identity;
 
-                    colorChanger.colors.colorKeys[0].color = Color.red;
-                    colorChanger.colors.colorKeys[2].color = Color.red;
-                }
+                    if (thinMenu)
+                        searchBoxObject.transform.localScale = new Vector3(0.09f, 0.9f, buttonDistance * 0.8f);
+                    else
+                        searchBoxObject.transform.localScale = new Vector3(0.09f, 1.3f, buttonDistance * 0.8f);
 
-                if (shouldRound)
-                    RoundObj(searchBoxObject);
+                    searchBoxObject.transform.localPosition = new Vector3(0.56f, 0f, 0.28f - (buttonOffset * buttonDistance));
 
-                searchTextObject = new GameObject
-                {
-                    transform =
+                    if (shouldOutline)
+                        OutlineObj(searchBoxObject, true);
+
+                    GradientColorKey[] releasedColors = new[]
+                    {
+                        new GradientColorKey(buttonDefaultA, 0f),
+                        new GradientColorKey(buttonDefaultB, 0.5f),
+                        new GradientColorKey(buttonDefaultA, 1f)
+                    };
+
+                    ColorChanger colorChanger = searchBoxObject.AddComponent<ColorChanger>();
+                    colorChanger.colors = new Gradient
+                    {
+                        colorKeys = releasedColors
+                    };
+                    if (joystickMenu && joystickButtonSelected == 0)
+                    {
+                        joystickSelectedButton = "SearchBar";
+
+                        colorChanger.isRainbow = false;
+                        colorChanger.isMonkeColors = false;
+                        colorChanger.isEpileptic = false;
+                        colorChanger.isMonkeColors = false;
+
+                        colorChanger.colors.colorKeys[0].color = Color.red;
+                        colorChanger.colors.colorKeys[2].color = Color.red;
+                    }
+
+                    if (shouldRound)
+                        RoundObj(searchBoxObject);
+
+                    searchTextObject = new GameObject
+                    {
+                        transform =
                     {
                         parent = canvasObj.transform
                     }
-                }.AddComponent<Text>();
+                    }.AddComponent<Text>();
 
-                searchTextObject.font = activeFont;
-                searchTextObject.text = searchText + (((Time.frameCount / 45) % 2) == 0 ? "|" : "");
-                if (lowercaseMode)
-                    searchTextObject.text = searchTextObject.text.ToLower();
+                    searchTextObject.font = activeFont;
+                    searchTextObject.text = searchText + (((Time.frameCount / 45) % 2) == 0 ? "|" : "");
+                    if (lowercaseMode)
+                        searchTextObject.text = searchTextObject.text.ToLower();
 
-                if (uppercaseMode)
-                    searchTextObject.text = searchTextObject.text.ToUpper();
+                    if (uppercaseMode)
+                        searchTextObject.text = searchTextObject.text.ToUpper();
 
-                searchTextObject.supportRichText = true;
-                searchTextObject.fontSize = 1;
-                searchTextObject.color = textColor;
+                    searchTextObject.supportRichText = true;
+                    searchTextObject.fontSize = 1;
+                    searchTextObject.color = textColor;
 
-                if (joystickMenu && joystickButtonSelected == 0 && themeType == 30)
-                    searchTextObject.color = Color.red;
+                    if (joystickMenu && joystickButtonSelected == 0 && themeType == 30)
+                        searchTextObject.color = Color.red;
 
-                searchTextObject.alignment = TextAnchor.MiddleCenter;
-                searchTextObject.fontStyle = activeFontStyle;
-                searchTextObject.resizeTextForBestFit = true;
-                searchTextObject.resizeTextMinSize = 0;
+                    searchTextObject.alignment = TextAnchor.MiddleCenter;
+                    searchTextObject.fontStyle = activeFontStyle;
+                    searchTextObject.resizeTextForBestFit = true;
+                    searchTextObject.resizeTextMinSize = 0;
 
-                RectTransform textTransform = searchTextObject.GetComponent<RectTransform>();
-                textTransform.localPosition = Vector3.zero;
-                textTransform.sizeDelta = new Vector2(.2f, .03f);
-                if (NoAutoSizeText)
-                    textTransform.sizeDelta = new Vector2(9f, 0.015f);
+                    RectTransform textTransform = searchTextObject.GetComponent<RectTransform>();
+                    textTransform.localPosition = Vector3.zero;
+                    textTransform.sizeDelta = new Vector2(.2f, .03f);
+                    if (NoAutoSizeText)
+                        textTransform.sizeDelta = new Vector2(9f, 0.015f);
 
-                textTransform.localPosition = new Vector3(.064f, 0, .111f - (buttonOffset / 10) / 2.6f);
-                textTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+                    textTransform.localPosition = new Vector3(.064f, 0, .111f - buttonOffset * buttonDistance / 2.6f);
+                    textTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
-                if (outlineText)
-                    OutlineCanvasObject(searchTextObject, true);
-            }
+                    if (outlineText)
+                        OutlineCanvasObject(searchTextObject, true);
+                }
 
-            try
-            {
-                if (isSearching)
+                try
                 {
-                    List<ButtonInfo> searchedMods = new List<ButtonInfo> { };
-                    if (nonGlobalSearch && currentCategoryName != "Main")
+                    if (isSearching)
                     {
-                        foreach (ButtonInfo v in Buttons.buttons[currentCategoryIndex])
+                        List<ButtonInfo> searchedMods = new List<ButtonInfo> { };
+                        if (nonGlobalSearch && currentCategoryName != "Main")
                         {
-                            try
-                            {
-                                string buttonText = v.buttonText;
-                                if (v.overlapText != null)
-                                    buttonText = v.overlapText;
-
-                                if (buttonText.Replace(" ", "").ToLower().Contains(searchText.Replace(" ", "").ToLower()))
-                                    searchedMods.Add(v);
-                            }
-                            catch { }
-                        }
-                    }
-                    else
-                    {
-                        foreach (ButtonInfo[] buttonlist in Buttons.buttons)
-                        {
-                            foreach (ButtonInfo v in buttonlist)
+                            foreach (ButtonInfo v in Buttons.buttons[currentCategoryIndex])
                             {
                                 try
                                 {
@@ -2599,50 +2578,71 @@ namespace iiMenu.Menu
                                 catch { }
                             }
                         }
-                    }
+                        else
+                        {
+                            foreach (ButtonInfo[] buttonlist in Buttons.buttons)
+                            {
+                                foreach (ButtonInfo v in buttonlist)
+                                {
+                                    try
+                                    {
+                                        string buttonText = v.buttonText;
+                                        if (v.overlapText != null)
+                                            buttonText = v.overlapText;
 
-                    buttonIndexOffset = 1;
-                    renderButtons = searchedMods.ToArray();
-                }
-                else if (annoyingMode && UnityEngine.Random.Range(1, 5) == 3)
-                {
-                    ButtonInfo disconnectButton = GetIndex("Disconnect");
-                    renderButtons = Enumerable.Repeat(disconnectButton, 1000).ToArray();
-                }
-                else if (currentCategoryName == "Favorite Mods")
-                {
-                    foreach (string favoriteMod in favorites)
+                                        if (buttonText.Replace(" ", "").ToLower().Contains(searchText.Replace(" ", "").ToLower()))
+                                            searchedMods.Add(v);
+                                    }
+                                    catch { }
+                                }
+                            }
+                        }
+
+                        buttonIndexOffset += 1;
+                        renderButtons = searchedMods.ToArray();
+                    }
+                    else if (annoyingMode && UnityEngine.Random.Range(1, 5) == 3)
                     {
-                        if (GetIndex(favoriteMod) == null)
-                            favorites.Remove(favoriteMod);
+                        ButtonInfo disconnectButton = GetIndex("Disconnect");
+                        renderButtons = Enumerable.Repeat(disconnectButton, 15).ToArray();
                     }
+                    else if (currentCategoryName == "Favorite Mods")
+                    {
+                        foreach (string favoriteMod in favorites)
+                        {
+                            if (GetIndex(favoriteMod) == null)
+                                favorites.Remove(favoriteMod);
+                        }
 
-                    renderButtons = StringsToInfos(favorites.ToArray());
+                        renderButtons = StringsToInfos(favorites.ToArray());
+                    }
+                    else if (currentCategoryName == "Enabled Mods")
+                    {
+                        List<ButtonInfo> enabledMods = new List<ButtonInfo>() { GetIndex("Exit Enabled Mods") };
+                        enabledMods.AddRange(Buttons.buttons.SelectMany(buttonlist => buttonlist).Where(v => v.enabled));
+
+                        renderButtons = enabledMods.ToArray();
+                    }
+                    else
+                        renderButtons = Buttons.buttons[currentCategoryIndex];
+
+                    if (GetIndex("Alphabetize Menu").enabled || isSearching)
+                        renderButtons = StringsToInfos(Alphabetize(InfosToStrings(renderButtons)));
+
+                    if (!longmenu)
+                        renderButtons = renderButtons
+                            .Skip(pageNumber * (pageSize - buttonIndexOffset))
+                            .Take(pageSize - buttonIndexOffset)
+                            .ToArray();
+
+                    for (int i = 0; i < renderButtons.Length; i++)
+                        AddButton((i + buttonIndexOffset + buttonOffset) * buttonDistance, i, renderButtons[i]);
                 }
-                else if (currentCategoryName == "Enabled Mods")
+                catch
                 {
-                    List<ButtonInfo> enabledMods = new List<ButtonInfo>() { GetIndex("Exit Enabled Mods") };
-                    enabledMods.AddRange(Buttons.buttons.SelectMany(buttonlist => buttonlist).Where(v => v.enabled));
-
-                    renderButtons = enabledMods.ToArray();
+                    LogManager.Log("Menu draw is erroring, returning to home page");
+                    currentCategoryName = "Main";
                 }
-                else
-                    renderButtons = Buttons.buttons[currentCategoryIndex];
-
-                if (GetIndex("Alphabetize Menu").enabled || isSearching)
-                    renderButtons = StringsToInfos(Alphabetize(InfosToStrings(renderButtons)));
-
-                if (!longmenu)
-                    renderButtons = renderButtons
-                        .Skip(pageNumber * (pageSize - buttonIndexOffset))
-                        .Take(pageSize - buttonIndexOffset)
-                        .ToArray();
-
-                for (int i = 0; i < renderButtons.Length; i++)
-                    AddButton((i + buttonIndexOffset) * 0.1f + (buttonOffset / 10), i, renderButtons[i]);
-            } catch {
-                LogManager.Log("Menu draw is erroring, returning to home page");
-                currentCategoryName = "Main";
             }
 
             RecenterMenu();
@@ -2887,11 +2887,11 @@ namespace iiMenu.Menu
                 case 1:
                     CreatePageButtonPair(
                         "PreviousPage", "NextPage",
-                        new Vector3(0.09f, thinMenu ? 0.9f : 1.3f, 0.08f),
-                        new Vector3(0.56f, 0f, 0.28f),
-                        new Vector3(0.56f, 0f, 0.28f - 0.1f),
-                        new Vector3(0.064f, 0f, 0.109f),
-                        new Vector3(0.064f, 0f, 0.109f - 0.1f / 2.55f),
+                        new Vector3(0.09f, thinMenu ? 0.9f : 1.3f, buttonDistance * 0.8f),
+                        new Vector3(0.56f, 0f, 0.28f - (buttonDistance * (buttonOffset - 2))),
+                        new Vector3(0.56f, 0f, 0.28f - (buttonDistance * (buttonOffset - 1))),
+                        new Vector3(0.064f, 0f, 0.109f - buttonDistance * (buttonOffset - 2) / 2.55f),
+                        new Vector3(0.064f, 0f, 0.109f - buttonDistance * (buttonOffset - 1) / 2.55f),
                         Gradient
                     );
                     break;
@@ -5908,7 +5908,12 @@ jgs \_   _/ |Oo\
         public static bool openedwithright;
         public static bool oneHand;
 
-        public static int pageSize = 6;
+        public static int _pageSize = 8;
+        public static int pageSize
+        {
+            get => _pageSize - buttonOffset;
+            set => _pageSize = value;
+        }
         public static int pageNumber;
         public static bool noPageNumber;
         public static bool disablePageButtons;
@@ -5956,7 +5961,12 @@ jgs \_   _/ |Oo\
         public static int buttonClickSound = 8;
         public static int buttonClickIndex;
         public static int buttonClickVolume = 4;
-        public static float buttonOffset = 2;
+        public static int buttonOffset = 2;
+        public static float buttonDistance
+        {
+            get => 0.8f / (pageSize + buttonOffset);
+        }
+
         public static bool doButtonsVibrate = true;
         public static bool serversidedButtonSounds;
 

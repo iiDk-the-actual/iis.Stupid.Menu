@@ -2441,15 +2441,25 @@ namespace iiMenu.Mods
                 pageButtonType = 6;
 
             if (pageButtonType == 1)
-            {
-                pageSize = 6;
                 buttonOffset = 2;
-            }
             else
-            {
-                pageSize = 8;
                 buttonOffset = 0;
-            }
+        }
+
+        public static void ChangePageSize(bool positive = true)
+        {
+            if (positive)
+                _pageSize++;
+            else
+                _pageSize--;
+
+            if (_pageSize > 16)
+                _pageSize = 4;
+
+            if (_pageSize < 4)
+                _pageSize = 16;
+
+            GetIndex("Change Page Size").overlapText = $"Change Page Size <color=grey>[</color><color=green>{_pageSize}</color><color=grey>]</color>";
         }
 
         public static void ChangeArrowType(bool positive = true)
@@ -3104,7 +3114,8 @@ namespace iiMenu.Mods
                 // Go up there's a blank spot up there
                 // Surely wouldn't that make some old saves have random new data?
                 ((int)MathF.Ceiling(playTime)).ToString(),
-                PhotonNetwork.LocalPlayer?.UserId ?? "null"
+                PhotonNetwork.LocalPlayer?.UserId ?? "null",
+                _pageSize.ToString()
             };
 
             string settingstext = string.Join(seperator, settings);
@@ -3300,6 +3311,9 @@ namespace iiMenu.Mods
                 playTime = int.Parse(data[47]);
 
                 Important.oldId = data[48];
+
+                _pageSize = int.Parse(data[49]) - 1;
+                ChangePageSize();
             }
             catch { LogManager.Log("Save file out of date"); }
 
