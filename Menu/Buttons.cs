@@ -1556,7 +1556,10 @@ namespace iiMenu.Menu
             new ButtonInfo[] { // Internal Mods (hidden from user) [25]
                 new ButtonInfo { buttonText = "Search", method =() => Settings.Search(), isTogglable = false, toolTip = "Lets you search for specific mods."},
                 new ButtonInfo { buttonText = "Global Return", method =() => Settings.GlobalReturn(), isTogglable = false, toolTip = "Returns you to the previous category."},
-                new ButtonInfo { buttonText = "Debug Screen", method =() => Settings.Debug(), enableMethod =() => Settings.ShowDebug(), disableMethod =() => Settings.HideDebug(), toolTip = "Shows game and modding related information."}
+                new ButtonInfo { buttonText = "Debug Screen", method =() => Settings.Debug(), enableMethod =() => Settings.ShowDebug(), disableMethod =() => Settings.HideDebug(), toolTip = "Shows game and modding related information."},
+
+                new ButtonInfo { buttonText = "Accept Prompt", method =() => { NotifiLib.ClearAllNotifications(); IsPrompting = false; AcceptAction?.Invoke(); }, isTogglable = false},
+                new ButtonInfo { buttonText = "Decline Prompt", method =() => { NotifiLib.ClearAllNotifications(); IsPrompting = false; DeclineAction?.Invoke(); }, isTogglable = false}
             },
 
             new ButtonInfo[] { // Sound Library [26]

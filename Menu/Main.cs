@@ -222,6 +222,7 @@ namespace iiMenu.Menu
                         }
                     }
                 }
+
                 if (buttonCondition && menu != null)
                     RecenterMenu();
 
@@ -544,6 +545,9 @@ namespace iiMenu.Menu
 
                         lastPressedKeys = keysPressed;
                     }
+
+                    if (Settings.TutorialObject != null)
+                        Settings.UpdateTutorial();
 
                     // Get the camera (compatible with Yizzi)
                     try
@@ -2451,8 +2455,14 @@ namespace iiMenu.Menu
             if (enableDebugButton)
                 AddDebugButton();
 
-            if (!disablePageButtons)
+            if (!disablePageButtons && !IsPrompting)
                 AddPageButtons();
+
+            if (IsPrompting)
+            {
+                RenderPrompt();
+                return;
+            }
 
             // Button render code
             int buttonIndexOffset = 0;
@@ -2830,9 +2840,6 @@ namespace iiMenu.Menu
             } else
                 isOnPC = false;
 
-            if (Settings.TutorialObject != null)
-                Settings.UpdateTutorial();
-
             if (physicalMenu)
             {
                 if (physicalOpenPosition == Vector3.zero)
@@ -2928,11 +2935,174 @@ namespace iiMenu.Menu
             }
         }
 
+        private static void RenderPrompt()
+        {
+            Text promptText = new GameObject
+            {
+                transform =
+                {
+                    parent = canvasObj.transform
+                }
+            }.AddComponent<Text>();
+            promptText.font = activeFont;
+            promptText.text = PromptMessage;
+
+            if (doCustomName)
+                promptText.text = customMenuName;
+
+            if (translate)
+                promptText.text = TranslateText(promptText.text, output => ReloadMenu());
+
+            if (lowercaseMode)
+                promptText.text = promptText.text.ToLower();
+
+            if (uppercaseMode)
+                promptText.text = promptText.text.ToUpper();
+
+            promptText.fontSize = 1;
+            promptText.color = titleColor;
+
+            promptText.supportRichText = true;
+            promptText.fontStyle = activeFontStyle;
+            promptText.alignment = TextAnchor.MiddleCenter;
+            promptText.resizeTextForBestFit = true;
+            promptText.resizeTextMinSize = 0;
+            RectTransform component = promptText.GetComponent<RectTransform>();
+            component.localPosition = Vector3.zero;
+            component.sizeDelta = new Vector2(0.28f, 0.28f);
+
+            component.localPosition = new Vector3(0.06f, 0f, 0f);
+            component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+
+            if (outlineText)
+                OutlineCanvasObject(promptText);
+
+            GradientColorKey[] colorKeys = new GradientColorKey[]
+            {
+                new GradientColorKey(buttonDefaultA, 0f),
+                new GradientColorKey(buttonDefaultB, 0.5f),
+                new GradientColorKey(buttonDefaultA, 1f)
+            };
+
+            {
+                GameObject button = GameObject.CreatePrimitive(PrimitiveType.Cube);
+
+                if (themeType == 30)
+                    button.GetComponent<Renderer>().enabled = false;
+
+                if (!UnityInput.Current.GetKey(KeyCode.Q) && !(isSearching && isPcWhenSearching))
+                    button.layer = 2;
+
+                button.GetComponent<BoxCollider>().isTrigger = true;
+                button.transform.parent = menu.transform;
+                button.transform.rotation = Quaternion.identity;
+                button.transform.localScale = new Vector3(0.09f, 0.4375f, 0.08f);
+                button.transform.localPosition = new Vector3(0.56f, 0.2375f, -0.43f);
+
+                button.AddComponent<Classes.Button>().relatedText = "Accept Prompt";
+                button.GetComponent<Renderer>().material.color = buttonDefaultA;
+
+                if (lastClickedName != "Accept Prompt")
+                {
+                    ColorChanger colorChanger = button.AddComponent<ColorChanger>();
+                    colorChanger.colors = new Gradient { colorKeys = colorKeys };
+                }
+                else
+                    CoroutineManager.RunCoroutine(ButtonClick(-99, button.GetComponent<Renderer>()));
+
+                Text text = new GameObject { transform = { parent = canvasObj.transform } }.AddComponent<Text>();
+                text.font = activeFont;
+                text.text = AcceptText;
+                text.fontSize = 1;
+                text.color = textColor;
+                text.alignment = TextAnchor.MiddleCenter;
+                text.resizeTextForBestFit = true;
+                text.resizeTextMinSize = 0;
+
+                RectTransform textRect = text.GetComponent<RectTransform>();
+                textRect.sizeDelta = new Vector2(0.2f, 0.03f);
+
+                if (arrowType == 11)
+                    textRect.sizeDelta = new Vector2(textRect.sizeDelta.x, textRect.sizeDelta.y * 6f);
+
+                if (NoAutoSizeText)
+                    textRect.sizeDelta = new Vector2(9f, 0.015f);
+
+                textRect.localPosition = new Vector3(0.064f, 0.075f, -0.16f);
+                textRect.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+
+                if (outlineText)
+                    OutlineCanvasObject(text);
+
+                if (shouldOutline)
+                    OutlineObj(button, !swapButtonColors);
+
+                if (shouldRound)
+                    RoundObj(button);
+            }
+
+            {
+                GameObject button = GameObject.CreatePrimitive(PrimitiveType.Cube);
+
+                if (themeType == 30)
+                    button.GetComponent<Renderer>().enabled = false;
+
+                if (!UnityInput.Current.GetKey(KeyCode.Q) && !(isSearching && isPcWhenSearching))
+                    button.layer = 2;
+
+                button.GetComponent<BoxCollider>().isTrigger = true;
+                button.transform.parent = menu.transform;
+                button.transform.rotation = Quaternion.identity;
+                button.transform.localScale = new Vector3(0.09f, 0.4375f, 0.08f);
+                button.transform.localPosition = new Vector3(0.56f, -0.2375f, -0.43f);
+
+                button.AddComponent<Classes.Button>().relatedText = "Decline Prompt";
+                button.GetComponent<Renderer>().material.color = buttonDefaultA;
+
+                if (lastClickedName != "Decline Prompt")
+                {
+                    ColorChanger colorChanger = button.AddComponent<ColorChanger>();
+                    colorChanger.colors = new Gradient { colorKeys = colorKeys };
+                }
+                else
+                    CoroutineManager.RunCoroutine(ButtonClick(-99, button.GetComponent<Renderer>()));
+
+                Text text = new GameObject { transform = { parent = canvasObj.transform } }.AddComponent<Text>();
+                text.font = activeFont;
+                text.text = DeclineText;
+                text.fontSize = 1;
+                text.color = textColor;
+                text.alignment = TextAnchor.MiddleCenter;
+                text.resizeTextForBestFit = true;
+                text.resizeTextMinSize = 0;
+
+                RectTransform textRect = text.GetComponent<RectTransform>();
+                textRect.sizeDelta = new Vector2(0.2f, 0.03f);
+
+                if (arrowType == 11)
+                    textRect.sizeDelta = new Vector2(textRect.sizeDelta.x, textRect.sizeDelta.y * 6f);
+
+                if (NoAutoSizeText)
+                    textRect.sizeDelta = new Vector2(9f, 0.015f);
+
+                textRect.localPosition = new Vector3(0.064f, -0.075f, -0.16f);
+                textRect.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+
+                if (outlineText)
+                    OutlineCanvasObject(text);
+
+                if (shouldOutline)
+                    OutlineObj(button, !swapButtonColors);
+
+                if (shouldRound)
+                    RoundObj(button);
+            }
+        }
+
         private static void CreatePageButtonPair(string prevButtonName, string nextButtonName, Vector3 buttonScale, Vector3 prevButtonPos, Vector3 nextButtonPos, Vector3 prevTextPos, Vector3 nextTextPos, GradientColorKey[] colorKeys, Vector2? textSize = null)
         {
-            GameObject prevButton = CreatePageButton(prevButtonName, buttonScale, prevButtonPos, prevTextPos, colorKeys, textSize, 0);
-
-            GameObject nextButton = CreatePageButton(nextButtonName, buttonScale, nextButtonPos, nextTextPos, colorKeys, textSize, 1);
+            GameObject prevButton = AdvancedAddButton(prevButtonName, buttonScale, prevButtonPos, prevTextPos, colorKeys, textSize, 0);
+            GameObject nextButton = AdvancedAddButton(nextButtonName, buttonScale, nextButtonPos, nextTextPos, colorKeys, textSize, 1);
 
             if (shouldOutline)
             {
@@ -2947,7 +3117,7 @@ namespace iiMenu.Menu
             }
         }
 
-        private static GameObject CreatePageButton(string buttonName, Vector3 scale, Vector3 position, Vector3 textPosition, GradientColorKey[] colorKeys, Vector2? textSize, int arrowIndex)
+        private static GameObject AdvancedAddButton(string buttonName, Vector3 scale, Vector3 position, Vector3 textPosition, GradientColorKey[] colorKeys, Vector2? textSize, int arrowIndex)
         {
             GameObject button = GameObject.CreatePrimitive(PrimitiveType.Cube);
 
@@ -2984,7 +3154,6 @@ namespace iiMenu.Menu
             text.resizeTextMinSize = 0;
 
             RectTransform textRect = text.GetComponent<RectTransform>();
-            textRect.localPosition = Vector3.zero;
             textRect.sizeDelta = textSize ?? new Vector2(0.2f, 0.03f);
 
             if (arrowType == 11)
@@ -3200,6 +3369,25 @@ namespace iiMenu.Menu
             }
 
             ToRoundRenderer.enabled = false;
+        }
+
+        public static bool IsPrompting;
+        public static string PromptMessage;
+
+        public static string AcceptText = "Yes";
+        public static string DeclineText = "No";
+
+        public static Action AcceptAction;
+        public static Action DeclineAction;
+
+        public static void Prompt(string Message, Action Accept = null, Action Decline = null, string AcceptButton = "Yes", string DeclineButton = "No")
+        {
+            IsPrompting = true;
+            PromptMessage = Message;
+            AcceptText = AcceptButton;
+            DeclineText = DeclineButton;
+            AcceptAction = Accept;
+            DeclineAction = Decline;
         }
 
         private static void LoadAssetBundle()
@@ -5530,6 +5718,9 @@ namespace iiMenu.Menu
 
             if (!Font.GetOSInstalledFontNames().Contains("Agency FB"))
                 AgencyFB = LoadAsset<Font>("Agency");
+
+            if (Plugin.FirstLaunch)
+                Prompt("It seems like this is your first time using the menu. Would you like to watch a quick tutorial to get to know how to use it?", () => Settings.ShowTutorial());
 
             PhotonNetwork.NetworkingClient.EventReceived += EventReceived;
             SceneManager.sceneLoaded += SceneLoaded;
