@@ -1616,7 +1616,7 @@ namespace iiMenu.Menu
             if (joystickMenu && buttonIndex == joystickButtonSelected && themeType == 30)
                 buttonText.color = Color.red;
 
-            buttonText.alignment = TextAnchor.MiddleCenter;
+            buttonText.alignment = checkMode ? TextAnchor.MiddleLeft : TextAnchor.MiddleCenter;
             buttonText.fontStyle = activeFontStyle;
             buttonText.resizeTextForBestFit = true;
             buttonText.resizeTextMinSize = 0;
