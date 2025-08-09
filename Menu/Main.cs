@@ -3373,7 +3373,7 @@ namespace iiMenu.Menu
         private static GameObject GunPointer;
         private static LineRenderer GunLine;
 
-        public static (RaycastHit Ray, GameObject NewPointer) RenderGun(int overrideLayerMask = -1)
+        public static (RaycastHit Ray, GameObject NewPointer) RenderGun(int? overrideLayerMask = null)
         {
             GunSpawned = true;
             Transform GunTransform = SwapGunHand ? GorillaTagger.Instance.leftHandTransform : GorillaTagger.Instance.rightHandTransform;
@@ -3419,7 +3419,7 @@ namespace iiMenu.Menu
                 Right = GunTransform.right;
             }
 
-            Physics.Raycast(StartPosition + ((Direction / 4f) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f)), Direction, out var Ray, 512f, overrideLayerMask > 0 ? overrideLayerMask : NoInvisLayerMask());
+            Physics.Raycast(StartPosition + ((Direction / 4f) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f)), Direction, out var Ray, 512f, overrideLayerMask ?? NoInvisLayerMask());
             if (shouldBePC)
             {
                 Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
