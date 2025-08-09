@@ -266,16 +266,12 @@ namespace iiMenu.Mods
             GetIndex("ctrRange").overlapText = "Change Tag Reach Distance <color=grey>[</color><color=green>" + names[tagRangeIndex] + "</color><color=grey>]</color>";
         }
 
-        public static void PhysicalTagAura()
+        public static void TagAura()
         {
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                Vector3 they = vrrig.headMesh.transform.position;
-                Vector3 notthem = VRRig.LocalRig.head.rigTarget.position;
-                float distance = Vector3.Distance(they, notthem);
-
-                if (PlayerIsTagged(VRRig.LocalRig) && !PlayerIsTagged(vrrig) && GorillaLocomotion.GTPlayer.Instance.disableMovement == false && distance < tagAuraDistance)
-                    if (rightHand == true) { GorillaLocomotion.GTPlayer.Instance.rightControllerTransform.position = they; } else { GorillaLocomotion.GTPlayer.Instance.leftControllerTransform.position = they; }
+                if (PlayerIsTagged(VRRig.LocalRig) && !PlayerIsTagged(vrrig) && GorillaLocomotion.GTPlayer.Instance.disableMovement == false && Vector3.Distance(vrrig.headMesh.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < tagAuraDistance)
+                    ReportTag(vrrig);
             }
         }
 
@@ -283,9 +279,7 @@ namespace iiMenu.Mods
         {
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                Vector3 they = vrrig.headMesh.transform.position;
-                Vector3 notthem = giving.head.rigTarget.position;
-                float distance = Vector3.Distance(they, notthem);
+                float distance = Vector3.Distance(vrrig.headMesh.transform.position, giving.transform.position);
 
                 if (PlayerIsTagged(giving) && !PlayerIsTagged(vrrig) && GorillaLocomotion.GTPlayer.Instance.disableMovement == false && distance < tagAuraDistance && !PlayerIsLocal(vrrig) && PlayerIsTagged(VRRig.LocalRig))
                     TagPlayer(RigManager.GetPlayerFromVRRig(vrrig));
@@ -323,15 +317,13 @@ namespace iiMenu.Mods
         public static void TagAuraAll()
         {
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-            {
                 TagAuraPlayer(vrrig);
-            }
         }
 
         public static void GripTagAura()
         {
             if (rightGrab)
-                PhysicalTagAura();
+                TagAura();
         }
 
         public static bool lastj;
@@ -339,18 +331,22 @@ namespace iiMenu.Mods
         public static void JoystickTagAura()
         {
             bool l = rightJoystickClick;
+
             if (l && !lastj)
                 jta = !jta;
+
             lastj = l;
 
             if (jta)
-                PhysicalTagAura();
+                TagAura();
         }
 
         public static void TagReach()
         {
             if (PlayerIsTagged(VRRig.LocalRig))
             {
+                GorillaTagger.Instance.maxTagDistance = float.MaxValue;
+
                 GorillaTagger.Instance.tagRadiusOverride = tagReachDistance;
                 GorillaTagger.Instance.tagRadiusOverrideFrame = Time.frameCount + 16;
 
