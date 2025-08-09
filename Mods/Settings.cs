@@ -215,8 +215,8 @@ namespace iiMenu.Mods
                 TutorialSelector.useWorldSpace = true;
             }
 
-            TutorialSelector.startColor = BrightenColor(GetBGColor(0f));
-            TutorialSelector.endColor = BrightenColor(GetBGColor(0.5f));
+            TutorialSelector.startColor = BrightenColor(new Color32(255, 128, 0, 128));
+            TutorialSelector.endColor = BrightenColor(new Color32(255, 102, 0, 128));
 
             Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position + (-GorillaTagger.Instance.rightHandTransform.up / 4f), GorillaTagger.Instance.rightHandTransform.up, out var Ray, 512f, NoInvisLayerMask());
             if (!XRSettings.isDeviceActive)
