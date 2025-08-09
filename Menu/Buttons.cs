@@ -7,6 +7,8 @@ using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
 using Photon.Pun;
 using System;
+using System.Diagnostics;
+using System.IO;
 using UnityEngine;
 using static iiMenu.Menu.Main;
 
@@ -1559,6 +1561,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Search", method =() => Settings.Search(), isTogglable = false, toolTip = "Lets you search for specific mods."},
                 new ButtonInfo { buttonText = "Global Return", method =() => Settings.GlobalReturn(), isTogglable = false, toolTip = "Returns you to the previous category."},
                 new ButtonInfo { buttonText = "Info Screen", method =() => Settings.Debug(), enableMethod =() => Settings.ShowDebug(), disableMethod =() => Settings.HideDebug(), toolTip = "Shows game and modding related information."},
+                new ButtonInfo { buttonText = "Donate Button", method =() => { NotifiLib.ClearAllNotifications(); acceptedDonations = true; File.WriteAllText($"{PluginInfo.BaseDirectory}/iiMenu_HideDonationButton.txt", "true"); Prompt("I've spent nearly two years building this menu. Your Patreon support helps me keep it growing, want to check it out?", () => Process.Start("https://patreon.com/iiDk")); }, isTogglable = false },
 
                 new ButtonInfo { buttonText = "Accept Prompt", method =() => { NotifiLib.ClearAllNotifications(); IsPrompting = false; AcceptAction?.Invoke(); }, isTogglable = false},
                 new ButtonInfo { buttonText = "Decline Prompt", method =() => { NotifiLib.ClearAllNotifications(); IsPrompting = false; DeclineAction?.Invoke(); }, isTogglable = false}

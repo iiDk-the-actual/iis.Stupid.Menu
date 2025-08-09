@@ -1751,9 +1751,6 @@ namespace iiMenu.Menu
             buttonObject.transform.rotation = Quaternion.identity;
 
             buttonObject.transform.localScale = new Vector3(0.09f, 0.102f, 0.08f);
-            // Fat menu theorem
-            // To get the fat position of a button:
-            // original x * (0.7 / 0.45) or 1.555555556
             if (thinMenu)
                 buttonObject.transform.localPosition = new Vector3(0.56f, 0.450f, -0.58f);
             else
@@ -1817,7 +1814,7 @@ namespace iiMenu.Menu
 
             searchImage.material = debugMat;
             searchImage.material.SetTexture("_MainTex", debugIcon);
-            searchImage.color = isSearching ? textClicked : textColor;
+            searchImage.color = textColor;
 
             RectTransform imageTransform = searchImage.GetComponent<RectTransform>();
             imageTransform.localPosition = Vector3.zero;
@@ -1832,6 +1829,86 @@ namespace iiMenu.Menu
 
             if (outlineText)
                 OutlineCanvasObject(searchImage, 2);
+        }
+
+        private static void AddDonateButton()
+        {
+            GameObject buttonObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            if (!UnityInput.Current.GetKey(KeyCode.Q) && !isPcWhenSearching)
+                buttonObject.layer = 2;
+
+            if (themeType == 30)
+                buttonObject.GetComponent<Renderer>().enabled = false;
+
+            buttonObject.GetComponent<BoxCollider>().isTrigger = true;
+            buttonObject.transform.parent = menu.transform;
+            buttonObject.transform.rotation = Quaternion.identity;
+
+            buttonObject.transform.localScale = new Vector3(0.09f, 0.102f, 0.08f);
+            if (thinMenu)
+                buttonObject.transform.localPosition = new Vector3(0.56f, 0.450f, -0.58f);
+            else
+                buttonObject.transform.localPosition = new Vector3(0.56f, 0.7f, -0.58f);
+
+            buttonObject.AddComponent<Classes.Button>().relatedText = "Donate Button";
+
+            if (shouldOutline)
+                OutlineObj(buttonObject, !swapButtonColors);
+
+            GradientColorKey[] pressedColors = new[]
+            {
+                new GradientColorKey(buttonClickedA, 0f),
+                new GradientColorKey(buttonClickedB, 0.5f),
+                new GradientColorKey(buttonClickedA, 1f)
+            };
+
+            GradientColorKey[] releasedColors = new[]
+            {
+                new GradientColorKey(buttonDefaultA, 0f),
+                new GradientColorKey(buttonDefaultB, 0.5f),
+                new GradientColorKey(buttonDefaultA, 1f)
+            };
+
+            ColorChanger colorChanger = buttonObject.AddComponent<ColorChanger>();
+
+            colorChanger.colors = new Gradient
+            {
+                colorKeys = swapButtonColors ? pressedColors : releasedColors
+            };
+
+            if (shouldRound)
+                RoundObj(buttonObject);
+
+            Image searchImage = new GameObject
+            {
+                transform =
+                {
+                    parent = canvasObj.transform
+                }
+            }.AddComponent<Image>();
+            if (donateIcon == null)
+                donateIcon = LoadTextureFromResource("iiMenu.Resources.donate.png");
+
+            if (donateMat == null)
+                donateMat = new Material(searchImage.material);
+
+            searchImage.material = donateMat;
+            searchImage.material.SetTexture("_MainTex", donateIcon); 
+            searchImage.color = textColor;
+
+            RectTransform imageTransform = searchImage.GetComponent<RectTransform>();
+            imageTransform.localPosition = Vector3.zero;
+            imageTransform.sizeDelta = new Vector2(.03f, .03f);
+
+            if (thinMenu)
+                imageTransform.localPosition = new Vector3(.064f, 0.35f / 2.6f, -0.58f / 2.6f);
+            else
+                imageTransform.localPosition = new Vector3(.064f, 0.54444444444f / 2.6f, -0.58f / 2.6f);
+
+            imageTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+
+            if (outlineText)
+                OutlineCanvasObject(searchImage, 3);
         }
 
         private static void AddReturnButton(bool offcenteredPosition)
@@ -2455,6 +2532,11 @@ namespace iiMenu.Menu
             
             if (enableDebugButton)
                 AddDebugButton();
+            else
+            {
+                if (!acceptedDonations)
+                    AddDonateButton();
+            }
 
             if (!disablePageButtons && !IsPrompting)
                 AddPageButtons();
@@ -2962,6 +3044,7 @@ namespace iiMenu.Menu
                 promptText.text = promptText.text.ToUpper();
 
             promptText.fontSize = 1;
+            promptText.lineSpacing = 0.8f;
             promptText.color = titleColor;
 
             promptText.supportRichText = true;
@@ -5723,6 +5806,8 @@ namespace iiMenu.Menu
 
             if (Plugin.FirstLaunch)
                 Prompt("It seems like this is your first time using the menu. Would you like to watch a quick tutorial to get to know how to use it?", () => Settings.ShowTutorial());
+            else
+                acceptedDonations = File.Exists($"{PluginInfo.BaseDirectory}/iiMenu_HideDonationButton.txt");
 
             PhotonNetwork.NetworkingClient.EventReceived += EventReceived;
             SceneManager.sceneLoaded += SceneLoaded;
@@ -6160,8 +6245,9 @@ jgs \_   _/ |Oo\
         public static GameObject canvasObj;
         public static AssetBundle assetBundle;
         public static Text fpsCount;
-        private static float fpsAvgTime = 0f;
-        public static bool fpsCountTimed = false;
+        private static float fpsAvgTime;
+        public static bool fpsCountTimed;
+        public static bool acceptedDonations;
         public static float lastDeltaTime = 1f;
         public static Text searchTextObject;
         public static Text title;
@@ -6173,6 +6259,7 @@ jgs \_   _/ |Oo\
         public static Material searchMat;
         public static Material returnMat;
         public static Material debugMat;
+        public static Material donateMat;
 
         public static Font AgencyFB = Font.CreateDynamicFontFromOSFont("Agency FB", 24);
         public static Font Arial = Resources.GetBuiltinResource(typeof(Font), "Arial.ttf") as Font;
@@ -6225,6 +6312,7 @@ jgs \_   _/ |Oo\
         public static Texture2D searchIcon;
         public static Texture2D returnIcon;
         public static Texture2D debugIcon;
+        public static Texture2D donateIcon;
         public static Texture2D fixTexture;
         public static Texture2D customMenuBackgroundImage;
 
