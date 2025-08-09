@@ -1057,19 +1057,20 @@ namespace iiMenu.Menu
 
                             if (currentCategoryName == "Enabled Mods")
                             {
-                                List<string> enabledMods = new List<string>() { "Exit Enabled Mods" };
+                                List<ButtonInfo> enabledMods = new List<ButtonInfo>() { };
                                 int categoryIndex = 0;
                                 foreach (ButtonInfo[] buttonlist in Buttons.buttons)
                                 {
                                     foreach (ButtonInfo v in buttonlist)
                                     {
-                                        if (v.enabled && (!hideSettings || (hideSettings && !Buttons.categoryNames[categoryIndex].Contains("Settings"))))
-                                            enabledMods.Add(v.buttonText);
+                                        if (v.enabled && (!hideSettings || !Buttons.categoryNames[categoryIndex].Contains("Settings")))
+                                            enabledMods.Add(v);
                                     }
                                     categoryIndex++;
                                 }
-                                enabledMods = Alphabetize(enabledMods.ToArray()).ToList();
-                                toSortOf = StringsToInfos(enabledMods.ToArray());
+                                enabledMods = enabledMods.OrderBy(v => v.buttonText).ToList();
+                                enabledMods.Insert(0, GetIndex("Exit Enabled Mods"));
+                                toSortOf = enabledMods.ToArray();
                             }
 
                             Text watchTextText = watchText.GetComponent<Text>();
@@ -2702,8 +2703,19 @@ namespace iiMenu.Menu
                     }
                     else if (currentCategoryName == "Enabled Mods")
                     {
-                        List<ButtonInfo> enabledMods = new List<ButtonInfo>() { GetIndex("Exit Enabled Mods") };
-                        enabledMods.AddRange(Buttons.buttons.SelectMany(buttonlist => buttonlist).Where(v => v.enabled));
+                        List<ButtonInfo> enabledMods = new List<ButtonInfo>() { };
+                        int categoryIndex = 0;
+                        foreach (ButtonInfo[] buttonlist in Buttons.buttons)
+                        {
+                            foreach (ButtonInfo v in buttonlist)
+                            {
+                                if (v.enabled && (!hideSettings || !Buttons.categoryNames[categoryIndex].Contains("Settings")))
+                                    enabledMods.Add(v);
+                            }
+                            categoryIndex++;
+                        }
+                        enabledMods = enabledMods.OrderBy(v => v.buttonText).ToList();
+                        enabledMods.Insert(0, GetIndex("Exit Enabled Mods"));
 
                         renderButtons = enabledMods.ToArray();
                     }
@@ -5570,13 +5582,15 @@ namespace iiMenu.Menu
             if (currentCategoryName == "Enabled Mods")
             {
                 List<string> enabledMods = new List<string>() { "Exit Enabled Mods" };
+                int categoryIndex = 0;
                 foreach (ButtonInfo[] buttonlist in Buttons.buttons)
                 {
                     foreach (ButtonInfo v in buttonlist)
                     {
-                        if (v.enabled)
+                        if (v.enabled && (!hideSettings || !Buttons.categoryNames[categoryIndex].Contains("Settings")))
                             enabledMods.Add(v.buttonText);
                     }
+                    categoryIndex++;
                 }
                 lastPage = ((enabledMods.Count + pageSize - 1) / pageSize) - 1;
             }
