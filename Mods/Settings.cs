@@ -3444,7 +3444,7 @@ namespace iiMenu.Mods
             {
                 VRRig.LocalRig.leftHandPlayer.Stop();
                 VRRig.LocalRig.rightHandPlayer.Stop();
-                MakeButtonSound();
+                PlayButtonSound();
             }
         }
 
@@ -3465,7 +3465,7 @@ namespace iiMenu.Mods
             {
                 VRRig.LocalRig.leftHandPlayer.Stop();
                 VRRig.LocalRig.rightHandPlayer.Stop();
-                MakeButtonSound();
+                PlayButtonSound();
             }
         }
 
