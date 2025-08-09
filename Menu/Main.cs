@@ -3031,9 +3031,6 @@ namespace iiMenu.Menu
             promptText.font = activeFont;
             promptText.text = PromptMessage;
 
-            if (doCustomName)
-                promptText.text = customMenuName;
-
             if (translate)
                 promptText.text = TranslateText(promptText.text, output => ReloadMenu());
 
@@ -3104,6 +3101,16 @@ namespace iiMenu.Menu
                 text.resizeTextForBestFit = true;
                 text.resizeTextMinSize = 0;
 
+                if (translate)
+                    text.text = TranslateText(text.text, output => ReloadMenu());
+
+                if (lowercaseMode)
+                    text.text = text.text.ToLower();
+
+                if (uppercaseMode)
+                    text.text = text.text.ToUpper();
+
+
                 RectTransform textRect = text.GetComponent<RectTransform>();
                 textRect.sizeDelta = new Vector2(0.2f, 0.03f);
 
@@ -3120,7 +3127,7 @@ namespace iiMenu.Menu
                     OutlineCanvasObject(text);
 
                 if (shouldOutline)
-                    OutlineObj(button, !swapButtonColors);
+                    OutlineObj(button, true);
 
                 if (shouldRound)
                     RoundObj(button);
@@ -3173,11 +3180,20 @@ namespace iiMenu.Menu
                 textRect.localPosition = new Vector3(0.064f, -0.075f, -0.16f);
                 textRect.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
+                if (translate)
+                    text.text = TranslateText(text.text, output => ReloadMenu());
+
+                if (lowercaseMode)
+                    text.text = text.text.ToLower();
+
+                if (uppercaseMode)
+                    text.text = text.text.ToUpper();
+
                 if (outlineText)
                     OutlineCanvasObject(text);
 
                 if (shouldOutline)
-                    OutlineObj(button, !swapButtonColors);
+                    OutlineObj(button, true);
 
                 if (shouldRound)
                     RoundObj(button);
