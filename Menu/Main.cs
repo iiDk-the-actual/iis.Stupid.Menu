@@ -2519,9 +2519,9 @@ namespace iiMenu.Menu
                     searchTextObject = new GameObject
                     {
                         transform =
-                    {
-                        parent = canvasObj.transform
-                    }
+                        {
+                            parent = canvasObj.transform
+                        }
                     }.AddComponent<Text>();
 
                     searchTextObject.font = activeFont;
@@ -2546,7 +2546,7 @@ namespace iiMenu.Menu
 
                     RectTransform textTransform = searchTextObject.GetComponent<RectTransform>();
                     textTransform.localPosition = Vector3.zero;
-                    textTransform.sizeDelta = new Vector2(.2f, .03f);
+                    textTransform.sizeDelta = new Vector2(.2f, .03f * (buttonDistance / 0.1f));
                     if (NoAutoSizeText)
                         textTransform.sizeDelta = new Vector2(9f, 0.015f);
 
