@@ -1737,6 +1737,8 @@ namespace iiMenu.Menu
 
         private static void AddDebugButton()
         {
+            bool infoScreenEnabled = GetIndex("Info Screen").enabled;
+
             GameObject buttonObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
             if (!UnityInput.Current.GetKey(KeyCode.Q) && !isPcWhenSearching)
                 buttonObject.layer = 2;
@@ -1760,7 +1762,7 @@ namespace iiMenu.Menu
             buttonObject.AddComponent<Classes.Button>().relatedText = "Info Screen";
 
             if (shouldOutline)
-                OutlineObj(buttonObject, swapButtonColors ? isSearching : !isSearching);
+                OutlineObj(buttonObject, swapButtonColors ? infoScreenEnabled : !infoScreenEnabled);
 
             GradientColorKey[] pressedColors = new[]
             {
@@ -1777,7 +1779,7 @@ namespace iiMenu.Menu
             };
 
             ColorChanger colorChanger = buttonObject.AddComponent<ColorChanger>();
-            if (GetIndex("Info Screen").enabled)
+            if (infoScreenEnabled)
             {
                 colorChanger.isRainbow = themeType == 6;
                 colorChanger.isPastelRainbow = themeType == 51;
@@ -1829,7 +1831,7 @@ namespace iiMenu.Menu
             imageTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
             if (outlineText)
-                OutlineCanvasObject(searchImage, 0);
+                OutlineCanvasObject(searchImage, 2);
         }
 
         private static void AddReturnButton(bool offcenteredPosition)
@@ -4468,7 +4470,7 @@ namespace iiMenu.Menu
 
             if (!cubePool.TryGetValue(key, out GameObject visualizeGO))
             {
-                visualizeGO = visualizeGO = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                visualizeGO = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 Destroy(visualizeGO.GetComponent<Collider>());
 
                 visualizeGO.transform.position = position;
