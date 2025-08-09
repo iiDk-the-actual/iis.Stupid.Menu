@@ -948,14 +948,14 @@ namespace iiMenu.Menu
                         {
                             if (leftGrab == true && plastLeftGrip == false)
                             {
-                                MakeButtonSound("PreviousPage", true, true);
+                                PlayButtonSound("PreviousPage", true, true);
                                 Toggle("PreviousPage");
                             }
                             plastLeftGrip = leftGrab;
 
                             if (rightGrab == true && plastRightGrip == false)
                             {
-                                MakeButtonSound("NextPage", true, false);
+                                PlayButtonSound("NextPage", true, false);
                                 Toggle("NextPage");
                             }
                             plastRightGrip = rightGrab;
@@ -965,14 +965,14 @@ namespace iiMenu.Menu
                         {
                             if (leftTrigger > 0.5f && plastLeftGrip == false)
                             {
-                                MakeButtonSound("PreviousPage", true, true);
+                                PlayButtonSound("PreviousPage", true, true);
                                 Toggle("PreviousPage");
                             }
                             plastLeftGrip = leftTrigger > 0.5f;
 
                             if (rightTrigger > 0.5f && plastRightGrip == false)
                             {
-                                MakeButtonSound("NextPage", true, false);
+                                PlayButtonSound("NextPage", true, false);
                                 Toggle("NextPage");
                             }
                             plastRightGrip = rightTrigger > 0.5f;
@@ -5168,7 +5168,7 @@ namespace iiMenu.Menu
             } catch { }
         }
 
-        public static void MakeButtonSound(string buttonText = null, bool overlapHand = false, bool leftOverlap = false)
+        public static void PlayButtonSound(string buttonText = null, bool overlapHand = false, bool leftOverlap = false)
         {
             bool archiveRightHand = rightHand;
             if (overlapHand)

@@ -15,7 +15,7 @@ namespace iiMenu.Classes
 			if (Time.time > buttonCooldown && (collider == buttonCollider || collider == lKeyCollider || collider == rKeyCollider) && menu != null)
 			{
                 buttonCooldown = Time.time + 0.2f;
-				MakeButtonSound(relatedText);
+                PlayButtonSound(relatedText);
 
 				if (incremental)
 					ToggleIncremental(relatedText, positive);
