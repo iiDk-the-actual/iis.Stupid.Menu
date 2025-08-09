@@ -15,6 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\donate.png" />
     <None Remove="Resources\icon.png" />
     <None Remove="Resources\iimenu" />
     <None Remove="Resources\return.png" />
@@ -25,6 +26,7 @@
   </ItemGroup>
   
   <ItemGroup>
+    <EmbeddedResource Include="Resources\donate.png" />
     <EmbeddedResource Include="Resources\icon.png" />
     <EmbeddedResource Include="Resources\iimenu" />
     <EmbeddedResource Include="Resources\return.png" />
