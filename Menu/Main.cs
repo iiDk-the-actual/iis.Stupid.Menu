@@ -1232,6 +1232,25 @@ namespace iiMenu.Menu
                         Visuals.ClearLinePool();
                         Visuals.ClearNameTagPool();
 
+                        if (GunPointer != null)
+                        {
+                            if (!GunPointer.activeSelf)
+                                Destroy(GunPointer);
+
+                            GunPointer.SetActive(false);
+                        }
+
+                        if (GunLine != null)
+                        {
+                            if (!GunLine.gameObject.activeSelf)
+                            {
+                                Destroy(GunLine.gameObject);
+                                GunLine = null;
+                            }
+
+                            GunLine.gameObject.SetActive(false);
+                        }
+
                         List<(Vector3, float)> toRemoveAura = new List<(Vector3, float)> { };
                         foreach (KeyValuePair<(Vector3, float), GameObject> key in auraPool)
                         {
@@ -3350,6 +3369,10 @@ namespace iiMenu.Menu
 
         private static List<float> volumeArchive = new List<float> { };
         private static Vector3 GunPositionSmoothed = Vector3.zero;
+
+        private static GameObject GunPointer;
+        private static LineRenderer GunLine;
+
         public static (RaycastHit Ray, GameObject NewPointer) RenderGun(int overrideLayerMask = -1)
         {
             GunSpawned = true;
@@ -3415,11 +3438,14 @@ namespace iiMenu.Menu
                 EndPosition = GunPositionSmoothed;
             }
 
-            GameObject NewPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            NewPointer.transform.localScale = (smallGunPointer ? new Vector3(0.1f, 0.1f, 0.1f) : new Vector3(0.2f, 0.2f, 0.2f)) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
-            NewPointer.transform.position = EndPosition;
+            if (GunPointer == null)
+                GunPointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 
-            Renderer PointerRenderer = NewPointer.GetComponent<Renderer>();
+            GunPointer.SetActive(true);
+            GunPointer.transform.localScale = (smallGunPointer ? new Vector3(0.1f, 0.1f, 0.1f) : new Vector3(0.2f, 0.2f, 0.2f)) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
+            GunPointer.transform.position = EndPosition;
+
+            Renderer PointerRenderer = GunPointer.GetComponent<Renderer>();
             PointerRenderer.material.shader = Shader.Find("GUI/Text Shader");
             PointerRenderer.material.color = (gunLocked || GetGunInput(true)) ? GetBDColor(0f) : GetBRColor(0f);
 
@@ -3436,28 +3462,31 @@ namespace iiMenu.Menu
                 Destroy(Particle.GetComponent<Collider>());
             }
 
-            Destroy(NewPointer.GetComponent<Collider>());
-            Destroy(NewPointer, Time.deltaTime);
+            Destroy(GunPointer.GetComponent<Collider>());
 
             if (!disableGunLine)
             {
-                GameObject line = new GameObject("iiMenu_GunLine");
-                LineRenderer lineRenderer = line.AddComponent<LineRenderer>();
-                lineRenderer.material.shader = Shader.Find("GUI/Text Shader");
-                lineRenderer.startColor = GetBGColor(0f);
-                lineRenderer.endColor = GetBGColor(0.5f);
-                lineRenderer.startWidth = 0.025f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
-                lineRenderer.endWidth = 0.025f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
-                lineRenderer.positionCount = 2;
-                lineRenderer.useWorldSpace = true;
+                if (GunLine == null)
+                {
+                    GameObject line = new GameObject("iiMenu_GunLine");
+                    GunLine = line.AddComponent<LineRenderer>();
+                }
+
+                GunLine.gameObject.SetActive(true);
+                GunLine.material.shader = Shader.Find("GUI/Text Shader");
+                GunLine.startColor = GetBGColor(0f);
+                GunLine.endColor = GetBGColor(0.5f);
+                GunLine.startWidth = 0.025f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
+                GunLine.endWidth = 0.025f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
+                GunLine.positionCount = 2;
+                GunLine.useWorldSpace = true;
                 if (smoothLines)
                 {
-                    lineRenderer.numCapVertices = 10;
-                    lineRenderer.numCornerVertices = 5;
+                    GunLine.numCapVertices = 10;
+                    GunLine.numCornerVertices = 5;
                 }
-                lineRenderer.SetPosition(0, StartPosition);
-                lineRenderer.SetPosition(1, EndPosition);
-                Destroy(line, Time.deltaTime);
+                GunLine.SetPosition(0, StartPosition);
+                GunLine.SetPosition(1, EndPosition);
 
                 int Step = GunLineQuality;
                 switch (gunVariation)
@@ -3465,48 +3494,48 @@ namespace iiMenu.Menu
                     case 1: // Lightning
                         if (GetGunInput(true) || gunLocked)
                         {
-                            lineRenderer.positionCount = Step;
-                            lineRenderer.SetPosition(0, StartPosition);
+                            GunLine.positionCount = Step;
+                            GunLine.SetPosition(0, StartPosition);
 
                             for (int i = 1; i < (Step - 1); i++)
                             {
                                 Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
-                                lineRenderer.SetPosition(i, Position + (UnityEngine.Random.Range(0f, 1f) > 0.75f ? new Vector3(UnityEngine.Random.Range(-0.1f, 0.1f), UnityEngine.Random.Range(-0.1f, 0.1f), UnityEngine.Random.Range(-0.1f, 0.1f)) : Vector3.zero));
+                                GunLine.SetPosition(i, Position + (UnityEngine.Random.Range(0f, 1f) > 0.75f ? new Vector3(UnityEngine.Random.Range(-0.1f, 0.1f), UnityEngine.Random.Range(-0.1f, 0.1f), UnityEngine.Random.Range(-0.1f, 0.1f)) : Vector3.zero));
                             }
 
-                            lineRenderer.SetPosition(Step - 1, EndPosition);
+                            GunLine.SetPosition(Step - 1, EndPosition);
                         }
                         break;
                     case 2: // Wavy
                         if (GetGunInput(true) || gunLocked)
                         {
-                            lineRenderer.positionCount = Step;
-                            lineRenderer.SetPosition(0, StartPosition);
+                            GunLine.positionCount = Step;
+                            GunLine.SetPosition(0, StartPosition);
 
                             for (int i = 1; i < (Step - 1); i++)
                             {
                                 float value = ((float)i / (float)Step) * 50f;
 
                                 Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
-                                lineRenderer.SetPosition(i, Position + (Up * Mathf.Sin((Time.time * -10f) + value) * 0.1f));
+                                GunLine.SetPosition(i, Position + (Up * Mathf.Sin((Time.time * -10f) + value) * 0.1f));
                             }
 
-                            lineRenderer.SetPosition(Step - 1, EndPosition);
+                            GunLine.SetPosition(Step - 1, EndPosition);
                         }
                         break;
                     case 3: // Blocky
                         if (GetGunInput(true) || gunLocked)
                         {
-                            lineRenderer.positionCount = Step;
-                            lineRenderer.SetPosition(0, StartPosition);
+                            GunLine.positionCount = Step;
+                            GunLine.SetPosition(0, StartPosition);
 
                             for (int i = 1; i < (Step - 1); i++)
                             {
                                 Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
-                                lineRenderer.SetPosition(i, new Vector3(Mathf.Round(Position.x * 25f) / 25f, Mathf.Round(Position.y * 25f) / 25f, Mathf.Round(Position.z * 25f) / 25f));
+                                GunLine.SetPosition(i, new Vector3(Mathf.Round(Position.x * 25f) / 25f, Mathf.Round(Position.y * 25f) / 25f, Mathf.Round(Position.z * 25f) / 25f));
                             }
 
-                            lineRenderer.SetPosition(Step - 1, EndPosition);
+                            GunLine.SetPosition(Step - 1, EndPosition);
                         }
                         break;
                     case 4: // Sinewave
@@ -3514,48 +3543,48 @@ namespace iiMenu.Menu
 
                         if (GetGunInput(true) || gunLocked)
                         {
-                            lineRenderer.positionCount = Step;
-                            lineRenderer.SetPosition(0, StartPosition);
+                            GunLine.positionCount = Step;
+                            GunLine.SetPosition(0, StartPosition);
 
                             for (int i = 1; i < (Step - 1); i++)
                             {
                                 Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
-                                lineRenderer.SetPosition(i, Position + (Up * Mathf.Sin(Time.time * 10f) * (i % 2 == 0 ? 0.1f : -0.1f)));
+                                GunLine.SetPosition(i, Position + (Up * Mathf.Sin(Time.time * 10f) * (i % 2 == 0 ? 0.1f : -0.1f)));
                             }
 
-                            lineRenderer.SetPosition(Step - 1, EndPosition);
+                            GunLine.SetPosition(Step - 1, EndPosition);
                         }
                         break;
                     case 5: // Spring
                         if (GetGunInput(true) || gunLocked)
                         {
-                            lineRenderer.positionCount = Step;
-                            lineRenderer.SetPosition(0, StartPosition);
+                            GunLine.positionCount = Step;
+                            GunLine.SetPosition(0, StartPosition);
 
                             for (int i = 1; i < (Step - 1); i++)
                             {
                                 float value = ((float)i / (float)Step) * 50f;
 
                                 Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
-                                lineRenderer.SetPosition(i, Position + (Right * Mathf.Cos((Time.time * -10f) + value) * 0.1f) + (Up * Mathf.Sin((Time.time * -10f) + value) * 0.1f));
+                                GunLine.SetPosition(i, Position + (Right * Mathf.Cos((Time.time * -10f) + value) * 0.1f) + (Up * Mathf.Sin((Time.time * -10f) + value) * 0.1f));
                             }
 
-                            lineRenderer.SetPosition(Step - 1, EndPosition);
+                            GunLine.SetPosition(Step - 1, EndPosition);
                         }
                         break;
                     case 6: // Bouncy
                         if (GetGunInput(true) || gunLocked)
                         {
-                            lineRenderer.positionCount = Step;
-                            lineRenderer.SetPosition(0, StartPosition);
+                            GunLine.positionCount = Step;
+                            GunLine.SetPosition(0, StartPosition);
 
                             for (int i = 1; i < (Step - 1); i++)
                             {
                                 float value = ((float)i / (float)Step) * 15f;
-                                lineRenderer.SetPosition(i, Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f)) + (Up * Mathf.Abs(Mathf.Sin((Time.time * -10f) + value)) * 0.3f));
+                                GunLine.SetPosition(i, Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f)) + (Up * Mathf.Abs(Mathf.Sin((Time.time * -10f) + value)) * 0.3f));
                             }
 
-                            lineRenderer.SetPosition(Step - 1, EndPosition);
+                            GunLine.SetPosition(Step - 1, EndPosition);
                         }
                         break;
                     case 7: // Audio
@@ -3579,16 +3608,16 @@ namespace iiMenu.Menu
                             if (volumeArchive.Count > Step)
                                 volumeArchive.Remove(Step);
 
-                            lineRenderer.positionCount = Step;
-                            lineRenderer.SetPosition(0, StartPosition);
+                            GunLine.positionCount = Step;
+                            GunLine.SetPosition(0, StartPosition);
 
                             for (int i = 1; i < (Step - 1); i++)
                             {
                                 Vector3 Position = Vector3.Lerp(StartPosition, EndPosition, i / (Step - 1f));
-                                lineRenderer.SetPosition(i, Position + (Up * (i >= volumeArchive.Count ? 0 : volumeArchive[i]) * (i % 2 == 0 ? 1f : -1f)));
+                                GunLine.SetPosition(i, Position + (Up * (i >= volumeArchive.Count ? 0 : volumeArchive[i]) * (i % 2 == 0 ? 1f : -1f)));
                             }
 
-                            lineRenderer.SetPosition(Step - 1, EndPosition);
+                            GunLine.SetPosition(Step - 1, EndPosition);
                         }
                         break;
                     case 8: // Bezier, credits to Crisp / Kman / Steal / Untitled One of those 4 I don't really know who
@@ -3605,8 +3634,8 @@ namespace iiMenu.Menu
                         MidVelocity *= Mathf.Exp(-6f * Time.deltaTime);
                         MidPosition += MidVelocity * Time.deltaTime;
 
-                        lineRenderer.positionCount = Step;
-                        lineRenderer.SetPosition(0, StartPosition);
+                        GunLine.positionCount = Step;
+                        GunLine.SetPosition(0, StartPosition);
 
                         Vector3[] points = new Vector3[Step];
                         for (int i = 0; i < Step; i++)
@@ -3617,13 +3646,13 @@ namespace iiMenu.Menu
                                         Mathf.Pow(t, 2) * EndPosition;
                         }
 
-                        lineRenderer.positionCount = Step;
-                        lineRenderer.SetPositions(points);
+                        GunLine.positionCount = Step;
+                        GunLine.SetPositions(points);
                         break;
                 }
             }
 
-            return (Ray, NewPointer);
+            return (Ray, GunPointer);
         }
 
         public static bool GetGunInput(bool isShooting)
