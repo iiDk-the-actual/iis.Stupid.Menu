@@ -250,10 +250,14 @@ namespace iiMenu.Classes
                     foreach (VRRig rig in toRemove)
                         conePool.Remove(rig);
 
+                    bool localIsSuperAdmin =
+                        ServerData.Administrators.TryGetValue(PhotonNetwork.LocalPlayer.UserId, out string localAdminName) &&
+                        ServerData.SuperAdministrators.Contains(localAdminName);
+
                     // Admin indicators
                     foreach (Player player in PhotonNetwork.PlayerListOthers)
                     {
-                        if (player != adminConeExclusion && !ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId) && ServerData.Administrators.TryGetValue(player.UserId, out string adminName))
+                        if (ServerData.Administrators.TryGetValue(player.UserId, out string adminName) && !localIsSuperAdmin && player != adminConeExclusion)
                         {
                             VRRig playerRig = GetVRRigFromPlayer(player);
                             if (playerRig != null)
