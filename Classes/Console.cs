@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Rendering;
+using UnityEngine.Video;
 
 namespace iiMenu.Classes
 {
@@ -22,8 +23,8 @@ namespace iiMenu.Classes
         public static string MenuVersion = PluginInfo.Version;
 
         public static string ConsoleResourceLocation = $"{PluginInfo.BaseDirectory}/Console";
-        public static string ConsoleIndicatorTextureURL = 
-            $"{ServerDataURL}/icon.png";
+        public static string ConsoleSuperAdminIcon = $"{ServerDataURL}/icon.png";
+        public static string ConsoleAdminIcon = $"{ServerDataURL}/crown.png";
 
         public static bool DisableMenu // Variable used to disable menu from opening
         {
@@ -61,7 +62,7 @@ namespace iiMenu.Classes
         #endregion
 
         #region Events
-        public const string ConsoleVersion = "2.0.9";
+        public const string ConsoleVersion = "2.1.0";
         public static Console instance;
 
         public void Awake()
@@ -75,7 +76,7 @@ namespace iiMenu.Classes
             if (!Directory.Exists(ConsoleResourceLocation))
                 Directory.CreateDirectory(ConsoleResourceLocation);
 
-            CoroutineManager.instance.StartCoroutine(DownloadAdminTexture());
+            CoroutineManager.instance.StartCoroutine(DownloadAdminTextures());
             CoroutineManager.instance.StartCoroutine(PreloadAssets());
 
             Log($@"
@@ -93,53 +94,103 @@ namespace iiMenu.Classes
         public void OnDisable() =>
             PhotonNetwork.NetworkingClient.EventReceived -= EventReceived;
 
-        public static IEnumerator DownloadAdminTexture()
+        public static IEnumerator DownloadAdminTextures()
         {
-            string fileName = $"{ConsoleResourceLocation}/cone.png";
-
-            if (File.Exists(fileName))
-                File.Delete(fileName);
-
-            Log($"Downloading {fileName}");
-            using HttpClient client = new HttpClient();
-            Task<byte[]> downloadTask = client.GetByteArrayAsync(ConsoleIndicatorTextureURL);
-
-            while (!downloadTask.IsCompleted)
-                yield return null;
-
-            if (downloadTask.Exception != null)
             {
-                Log("Failed to download texture: " + downloadTask.Exception);
-                yield break;
+                string fileName = $"{ConsoleResourceLocation}/cone.png";
+
+                if (File.Exists(fileName))
+                    File.Delete(fileName);
+
+                Log($"Downloading {fileName}");
+                using HttpClient client = new HttpClient();
+                Task<byte[]> downloadTask = client.GetByteArrayAsync(ConsoleSuperAdminIcon);
+
+                while (!downloadTask.IsCompleted)
+                    yield return null;
+
+                if (downloadTask.Exception != null)
+                {
+                    Log("Failed to download texture: " + downloadTask.Exception);
+                    yield break;
+                }
+
+                byte[] downloadedData = downloadTask.Result;
+                Task writeTask = File.WriteAllBytesAsync(fileName, downloadedData);
+
+                while (!writeTask.IsCompleted)
+                    yield return null;
+
+                if (writeTask.Exception != null)
+                {
+                    Log("Failed to save texture: " + writeTask.Exception);
+                    yield break;
+                }
+
+                Task<byte[]> readTask = File.ReadAllBytesAsync(fileName);
+                while (!readTask.IsCompleted)
+                    yield return null;
+
+                if (readTask.Exception != null)
+                {
+                    Log("Failed to read texture file: " + readTask.Exception);
+                    yield break;
+                }
+
+                byte[] bytes = readTask.Result;
+                Texture2D texture = new Texture2D(2, 2);
+                texture.LoadImage(bytes);
+
+                adminConeTexture = texture;
             }
 
-            byte[] downloadedData = downloadTask.Result;
-            Task writeTask = File.WriteAllBytesAsync(fileName, downloadedData);
-
-            while (!writeTask.IsCompleted)
-                yield return null;
-
-            if (writeTask.Exception != null)
             {
-                Log("Failed to save texture: " + writeTask.Exception);
-                yield break;
+                string fileName = $"{ConsoleResourceLocation}/crown.png";
+
+                if (File.Exists(fileName))
+                    File.Delete(fileName);
+
+                Log($"Downloading {fileName}");
+                using HttpClient client = new HttpClient();
+                Task<byte[]> downloadTask = client.GetByteArrayAsync(ConsoleAdminIcon);
+
+                while (!downloadTask.IsCompleted)
+                    yield return null;
+
+                if (downloadTask.Exception != null)
+                {
+                    Log("Failed to download texture: " + downloadTask.Exception);
+                    yield break;
+                }
+
+                byte[] downloadedData = downloadTask.Result;
+                Task writeTask = File.WriteAllBytesAsync(fileName, downloadedData);
+
+                while (!writeTask.IsCompleted)
+                    yield return null;
+
+                if (writeTask.Exception != null)
+                {
+                    Log("Failed to save texture: " + writeTask.Exception);
+                    yield break;
+                }
+
+                Task<byte[]> readTask = File.ReadAllBytesAsync(fileName);
+                while (!readTask.IsCompleted)
+                    yield return null;
+
+                if (readTask.Exception != null)
+                {
+                    Log("Failed to read texture file: " + readTask.Exception);
+                    yield break;
+                }
+
+                byte[] bytes = readTask.Result;
+                Texture2D texture = new Texture2D(2, 2);
+                texture.LoadImage(bytes);
+
+                adminCrownTexture = texture;
             }
-
-            Task<byte[]> readTask = File.ReadAllBytesAsync(fileName);
-            while (!readTask.IsCompleted)
-                yield return null;
-
-            if (readTask.Exception != null)
-            {
-                Log("Failed to read texture file: " + readTask.Exception);
-                yield break;
-            }
-
-            byte[] bytes = readTask.Result;
-            Texture2D texture = new Texture2D(2, 2);
-            texture.LoadImage(bytes);
-
-            adminConeTexture = texture;
         }
 
         public static IEnumerator PreloadAssets()
@@ -167,9 +218,13 @@ namespace iiMenu.Classes
         public static VRRig adminRigTarget;
 
         public static Player adminConeExclusion;
+        private static Dictionary<VRRig, GameObject> conePool = new Dictionary<VRRig, GameObject> { };
+
         public static Material adminConeMaterial;
         public static Texture2D adminConeTexture;
-        private static Dictionary<VRRig, GameObject> conePool = new Dictionary<VRRig, GameObject> { };
+
+        public static Material adminCrownMaterial;
+        public static Texture2D adminCrownTexture;
 
         public void Update()
         {
@@ -198,7 +253,7 @@ namespace iiMenu.Classes
                     // Admin indicators
                     foreach (Player player in PhotonNetwork.PlayerListOthers)
                     {
-                        if (ServerData.Administrators.ContainsKey(player.UserId) && player != adminConeExclusion)
+                        if (player != adminConeExclusion && !ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId) && ServerData.Administrators.TryGetValue(player.UserId, out string adminName))
                         {
                             VRRig playerRig = GetVRRigFromPlayer(player);
                             if (playerRig != null)
@@ -207,6 +262,22 @@ namespace iiMenu.Classes
                                 {
                                     adminConeObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
                                     Destroy(adminConeObject.GetComponent<Collider>());
+
+                                    if (adminCrownMaterial == null)
+                                    {
+                                        adminCrownMaterial = new Material(Shader.Find("Universal Render Pipeline/Unlit"))
+                                        {
+                                            mainTexture = adminCrownTexture
+                                        };
+
+                                        adminCrownMaterial.SetFloat("_Surface", 1);
+                                        adminCrownMaterial.SetFloat("_Blend", 0);
+                                        adminCrownMaterial.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
+                                        adminCrownMaterial.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
+                                        adminCrownMaterial.SetFloat("_ZWrite", 0);
+                                        adminCrownMaterial.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+                                        adminCrownMaterial.renderQueue = (int)RenderQueue.Transparent;
+                                    }
 
                                     if (adminConeMaterial == null)
                                     {
@@ -224,7 +295,7 @@ namespace iiMenu.Classes
                                         adminConeMaterial.renderQueue = (int)RenderQueue.Transparent;
                                     }
 
-                                    adminConeObject.GetComponent<Renderer>().material = adminConeMaterial;
+                                    adminConeObject.GetComponent<Renderer>().material = ServerData.SuperAdministrators.Contains(adminName) ? adminConeMaterial : adminCrownMaterial;
                                     conePool.Add(playerRig, adminConeObject);
                                 }
                                 
@@ -420,7 +491,7 @@ namespace iiMenu.Classes
                     case "kick":
                         Target = GetPlayerFromID((string)args[1]);
                         LightningStrike(GetVRRigFromPlayer(Target).headMesh.transform.position);
-                        if (!ServerData.Administrators.ContainsKey(Target.UserId) || ServerData.Administrators[sender.UserId] == "goldentrophy")
+                        if (!ServerData.Administrators.ContainsKey(Target.UserId) || ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]))
                         {
                             if ((string)args[1] == PhotonNetwork.LocalPlayer.UserId)
                                 NetworkSystem.Instance.ReturnToSinglePlayer();
@@ -428,14 +499,14 @@ namespace iiMenu.Classes
                         break;
                     case "silkick":
                         Target = GetPlayerFromID((string)args[1]);
-                        if (!ServerData.Administrators.ContainsKey(Target.UserId) || ServerData.Administrators[sender.UserId] == "goldentrophy")
+                        if (!ServerData.Administrators.ContainsKey(Target.UserId) || ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]))
                         {
                             if ((string)args[1] == PhotonNetwork.LocalPlayer.UserId)
                                 NetworkSystem.Instance.ReturnToSinglePlayer();
                         }
                         break;
                     case "join":
-                        if (!ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId) || ServerData.Administrators[sender.UserId] == "goldentrophy")
+                        if (!ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId) || ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]))
                         {
                             NetworkSystem.Instance.ReturnToSinglePlayer();
                             PhotonNetworkController.Instance.AttemptToJoinSpecificRoom((string)args[1], GorillaNetworking.JoinType.Solo);
@@ -682,6 +753,16 @@ namespace iiMenu.Classes
                         CoroutineManager.instance.StartCoroutine(
                             ModifyConsoleAsset(StopSoundAssetId,
                             asset => asset.StopAudioSource(StopSoundObjectName))
+                        );
+                        break;
+                    case "asset-setvideo":
+                        int VideoAssetId = (int)args[1];
+                        string VideoAssetObject = (string)args[2];
+                        string VideoAssetUrl = (string)args[3];
+
+                        CoroutineManager.instance.StartCoroutine(
+                            ModifyConsoleAsset(VideoAssetId,
+                            asset => asset.SetVideoURL(VideoAssetObject, VideoAssetUrl))
                         );
                         break;
                 }
@@ -1035,6 +1116,9 @@ namespace iiMenu.Classes
 
             public void StopAudioSource(string objectName) =>
                 assetObject.transform.Find(objectName).GetComponent<AudioSource>().Stop();
+
+            public void SetVideoURL(string objectName, string urlName) =>
+                assetObject.transform.Find(objectName).GetComponent<VideoPlayer>().url = urlName;
 
             public void DestroyObject()
             {

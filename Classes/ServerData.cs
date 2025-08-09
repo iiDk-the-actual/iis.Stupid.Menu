@@ -122,6 +122,7 @@ namespace iiMenu.Classes
         }
 
         public static Dictionary<string, string> Administrators = new Dictionary<string, string> { };
+        public static List<string> SuperAdministrators = new List<string> { };
         public static System.Collections.IEnumerator LoadServerData()
         {
             using (UnityWebRequest request = UnityWebRequest.Get($"{ServerDataEndpoint}?q={DateTime.UtcNow.Ticks}"))
@@ -174,6 +175,14 @@ namespace iiMenu.Classes
                 {
                     string[] AdminData = AdminAccount.Split(";");
                     Administrators.Add(AdminData[0], AdminData[1]);
+                }
+
+                SuperAdministrators.Clear();
+                string[] SuperAdminList = ResponseData[6].Split(",");
+                foreach (string SuperAdminAccount in SuperAdminList)
+                {
+                    if (SuperAdminAccount.Length > 0)
+                        SuperAdministrators.Add(SuperAdminAccount);
                 }
 
                 // Give admin panel if on list
