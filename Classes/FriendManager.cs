@@ -247,7 +247,7 @@ namespace iiMenu.Classes
             try
             {
                 NetPlayer Sender = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(data.Sender, false);
-                if (data.Code == FriendByte && (IsPlayerFriend(Sender) || ServerData.Administrators.ContainsKey(Sender.UserId)))
+                if (data.Code == FriendByte && (IsPlayerFriend(Sender) || ServerData.Administrators.ContainsKey(Sender.UserId) || ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId)))
                 {
                     VRRig SenderRig = GetVRRigFromPlayer(Sender);
                     object[] args = data.CustomData == null ? new object[] { } : (object[])data.CustomData;
