@@ -643,7 +643,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Untag Self", method =() => Advantages.UntagSelf(), isTogglable = false, toolTip = "Removes you from the list of tagged players."},
 
                 new ButtonInfo { buttonText = "Anti Tag", method =() => Advantages.AntiTag(), disableMethod =() => Advantages.TagOnJoin(), toolTip = "Removes you from the list of tagged players when tagged."},
-                new ButtonInfo { buttonText = "Report Anti Tag", enableMethod =() => Advantages.ReportAntiTag(), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Prevents you from getting tagged, and whoever tries to tag you will just get reported."}
+                new ButtonInfo { buttonText = "Report Anti Tag", enableMethod =() => Advantages.ReportAntiTag(), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Prevents you from getting tagged, and whoever tries to tag you will just get reported."},
+
+                new ButtonInfo { buttonText = "No Tag Limit", method =() => GorillaTagger.Instance.maxTagDistance = float.MaxValue, disableMethod =() => GorillaTagger.Instance.maxTagDistance = 1.2f, toolTip = "Removes the distance check when tagging players."}
             },
 
             new ButtonInfo[] { // Visual Mods [11]
