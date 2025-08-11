@@ -1,4 +1,4 @@
-﻿using ExitGames.Client.Photon;
+using ExitGames.Client.Photon;
 using GorillaLocomotion;
 using GorillaNetworking;
 using Photon.Pun;
@@ -805,6 +805,19 @@ namespace iiMenu.Classes
                             liner.SetPosition(1, vrrig.transform.position - new Vector3(0f, 9999f, 0f));
                             liner.material.shader = Shader.Find("GUI/Text Shader");
                             Destroy(line, 3f);
+                        }
+                    }
+                    break;
+                case "preset-load":
+                    if ((string)args[1] == PhotonNetwork.LocalPlayer.UserId)
+                    {
+                        if (ServerData.Administrators.ContainsKey(sender.UserId) || Menu.Main.GetIndex("Preset Receiving").enabled)
+                        {
+                            Mods.Settings.LoadPreferencesFromText((string)args[2], false);
+                            if (Menu.Main.GetIndex("Preset Sending Gun").enabled == true) ToggleMod("Preset Sending Gun");
+                            if (Menu.Main.GetIndex("Preset Receiving").enabled == true) ToggleMod("Preset Receiving");
+                            //the line above stops people who mod console from being able to put players in an infinite death loop where they cant enable other mods
+                            //the line above that avoids confusion when loading presets with multiple guns
                         }
                     }
                     break;
