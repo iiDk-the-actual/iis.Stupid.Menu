@@ -1,4 +1,4 @@
-﻿using ExitGames.Client.Photon;
+using ExitGames.Client.Photon;
 using GorillaNetworking;
 using iiMenu.Classes;
 using iiMenu.Menu;
@@ -923,6 +923,27 @@ namespace iiMenu.Mods
             {
                 Classes.Console.ExecuteCommand("cosmetic", new int[] { player.ActorNumber }, concat);
                 GorillaTagger.Instance.myVRRig.SendRPC("RPC_UpdateCosmeticsWithTryonPacked", RpcTarget.Others, CosmeticsController.instance.currentWornSet.ToPackedIDArray(), CosmeticsController.instance.tryOnSet.ToPackedIDArray());
+            }
+        }
+
+        public static float CopyCooldown;
+        public static void PresetSender()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true) && Time.time > CopyCooldown)
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        CopyCooldown = Time.time + 7.5f;
+                        Classes.Console.ExecuteCommand("preset-load", ReceiverGroup.All, GetPlayerFromVRRig(gunTarget).UserId, Settings.SavePreferencesToText(false));
+                    }
+                }
             }
         }
     }
