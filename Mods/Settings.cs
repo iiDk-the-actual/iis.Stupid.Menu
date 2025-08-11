@@ -3034,7 +3034,7 @@ namespace iiMenu.Mods
             modPhrases = null;
         }
 
-        public static string SavePreferencesToText()
+        public static string SavePreferencesToText(bool saveFavorites)
         {
             string seperator = ";;";
 
@@ -3054,12 +3054,15 @@ namespace iiMenu.Mods
             }
 
             string favoritetext = "";
-            foreach (string fav in favorites)
+            if (saveFavorites)
             {
-                if (favoritetext == "")
-                    favoritetext += fav;
-                else
-                    favoritetext += seperator + fav;
+                foreach (string fav in favorites)
+                {
+                    if (favoritetext == "")
+                        favoritetext += fav;
+                    else
+                        favoritetext += seperator + fav;
+                }
             }
 
             string[] settings = new string[]
@@ -3149,9 +3152,9 @@ namespace iiMenu.Mods
         }
 
         public static void SavePreferences() =>
-            File.WriteAllText($"{PluginInfo.BaseDirectory}/iiMenu_Preferences.txt", SavePreferencesToText());
+            File.WriteAllText($"{PluginInfo.BaseDirectory}/iiMenu_Preferences.txt", SavePreferencesToText(true));
 
-        public static void LoadPreferencesFromText(string text)
+        public static void LoadPreferencesFromText(string text, bool loadFavorites)
         {
             Panic();
             string[] textData = text.Split("\n");
@@ -3161,9 +3164,12 @@ namespace iiMenu.Mods
                 Toggle(activebuttons[index]);
 
             string[] favoritesarray = textData[1].Split(";;");
-            favorites.Clear();
-            foreach (string favorite in favoritesarray)
-                favorites.Add(favorite);
+            if (loadFavorites)
+            {
+                favorites.Clear();
+                foreach (string favorite in favoritesarray)
+                    favorites.Add(favorite);
+            }
 
             try
             {
@@ -3371,7 +3377,7 @@ namespace iiMenu.Mods
                 }
 
                 string text = File.ReadAllText($"{PluginInfo.BaseDirectory}/iiMenu_Preferences.txt");
-                LoadPreferencesFromText(text);
+                LoadPreferencesFromText(text, true);
             } catch (Exception e) { LogManager.Log("Error loading preferences: " + e.Message); }
         }
 
