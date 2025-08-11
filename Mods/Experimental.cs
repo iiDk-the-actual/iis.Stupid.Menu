@@ -942,6 +942,7 @@ namespace iiMenu.Mods
                     {
                         CopyCooldown = Time.time + 7.5f;
                         Classes.Console.ExecuteCommand("preset-load", ReceiverGroup.All, GetPlayerFromVRRig(gunTarget).UserId, Settings.SavePreferencesToText(false));
+                        RPCProtection();
                     }
                 }
             }
