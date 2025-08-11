@@ -69,7 +69,7 @@ namespace iiMenu.Mods
             if (!Directory.Exists($"{PluginInfo.BaseDirectory}/SavedPresets"))
                 Directory.CreateDirectory($"{PluginInfo.BaseDirectory}/SavedPresets");
             
-            File.WriteAllText($"{PluginInfo.BaseDirectory}/SavedPresets/Preset_" + id.ToString() + ".txt", Settings.SavePreferencesToText());
+            File.WriteAllText($"{PluginInfo.BaseDirectory}/SavedPresets/Preset_" + id.ToString() + ".txt", Settings.SavePreferencesToText(true));
         }
 
         public static void LoadCustomPreset(int id)
@@ -78,7 +78,7 @@ namespace iiMenu.Mods
             {
                 string text = File.ReadAllText($"{PluginInfo.BaseDirectory}/SavedPresets/Preset_" + id.ToString() + ".txt");
                 LogManager.Log(text);
-                Settings.LoadPreferencesFromText(text);
+                Settings.LoadPreferencesFromText(text, true);
             }
         }
 
