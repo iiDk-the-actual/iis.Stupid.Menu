@@ -673,7 +673,7 @@ namespace iiMenu.Menu
                             {
                                 if (PreferenceBackupCount >= 5)
                                 {
-                                    File.WriteAllText($"{PluginInfo.BaseDirectory}/Backups/{ISO8601().Replace(":", ".")}.txt", Settings.SavePreferencesToText());
+                                    File.WriteAllText($"{PluginInfo.BaseDirectory}/Backups/{ISO8601().Replace(":", ".")}.txt", Settings.SavePreferencesToText(true));
                                     PreferenceBackupCount = 0;
                                 }
 
