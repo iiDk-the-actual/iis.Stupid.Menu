@@ -1590,6 +1590,9 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Replay Tutorial", method =() => Settings.ShowTutorial(), isTogglable = false, toolTip = "Replays the tutorial video."},
                 new ButtonInfo { buttonText = "Disorganize Menu", method =() => Settings.DisorganizeMenu(), isTogglable = false, toolTip = "Disorganizes the entire menu. This cannot be undone."},
+
+                new ButtonInfo { buttonText = "Preset Sending Gun", method =() => Experimental.PresetSender(), toolTip = "Send your preset to another player using Preset Receiving."},
+                new ButtonInfo { buttonText = "Preset Receiving", toolTip = "Allows you to receive a preset from another player using Preset Sending."},
             },
 
             new ButtonInfo[] { // Safety Settings [28]
