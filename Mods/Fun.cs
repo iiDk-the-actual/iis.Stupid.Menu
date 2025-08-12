@@ -2296,7 +2296,7 @@ Piece Name: {gunTarget.name}";
             ThrowableBug bug = GetBug("Floating Bug Holdable");
             ThrowableBug firefly = bug != null ? GetBug("Firefly") : bug;
 
-            string projectileName = Projectiles.ProjectileObjectNames[UnityEngine.Random.Range(0, Projectiles.ProjectileObjectNames.Length)];
+            string projectileName = Projectiles.ProjectileObjectNames[UnityEngine.Random.Range(2, Projectiles.ProjectileObjectNames.Length)];
             SnowballThrowable projectile = GetProjectile(projectileName);
             projectile.SetSnowballActiveLocal(true);
 
