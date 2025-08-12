@@ -79,7 +79,7 @@ namespace iiMenu.Classes
             {
                 if (!GorillaParent.instance.vrrigs.Contains(ghostRig.Key) || Time.time > ghostRig.Value)
                 {
-                    toRemoveRigs.Add(ghostRig.Key);
+                    toRemoveGhosts.Add(ghostRig.Key);
 
                     var ghostObjects = ghostRigPool[ghostRig.Key];
                     foreach (GameObject ghostObject in new[] { ghostObjects.Item1, ghostObjects.Item2, ghostObjects.Item3, ghostObjects.Item4 })
