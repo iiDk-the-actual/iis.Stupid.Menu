@@ -263,7 +263,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Above Players", toolTip = "Makes projectiles go above players." },
                 new ButtonInfo { buttonText = "Rain Projectiles", toolTip = "Makes projectiles fall around you like rain." },
 
-                new ButtonInfo { buttonText = "Projectile Aura", toolTip = "Makes projectiles go around you." },
+                new ButtonInfo { buttonText = "Projectile Aura", overlapText = "Orbit Projectiles", toolTip = "Makes the projectiles orbit around your head." },
+                new ButtonInfo { buttonText = "True Projectile Aura", overlapText = "Projectile Aura", toolTip = "Makes the projectiles random around you." },
                 new ButtonInfo { buttonText = "Projectile Fountain", toolTip = "Makes projectiles spurt out of your head, like a fountain." },
 
                 new ButtonInfo { buttonText = "Rainbow Projectiles", toolTip = "Makes projectiles be rainbow (real RGB)." },
