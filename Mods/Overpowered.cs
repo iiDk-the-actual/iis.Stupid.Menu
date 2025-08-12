@@ -281,6 +281,7 @@ namespace iiMenu.Mods
                     gunLocked = false;
             }
         }
+
         public static void GuardianKickAll()
         {
             if (rightTrigger > 0.5f && Time.time > crashAllDelay)
