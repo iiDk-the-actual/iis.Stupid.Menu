@@ -8,6 +8,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static iiMenu.Classes.RigManager;
@@ -494,10 +495,17 @@ namespace iiMenu.Mods.Spammers
                     startpos = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(time / 20), 2, MathF.Sin(time / 20));
                 }
 
+                if (GetIndex("True Projectile Aura").enabled)
+                {
+                    float time = Time.frameCount;
+                    startpos = GorillaTagger.Instance.headCollider.transform.position + RandomVector3(1f);
+                    charvel = RandomVector3(10f);
+                }
+
                 if (GetIndex("Projectile Fountain").enabled)
                 {
                     startpos = GorillaTagger.Instance.headCollider.transform.position + new Vector3(0, 1, 0);
-                    charvel = new Vector3(UnityEngine.Random.Range(-10, 10), -15, UnityEngine.Random.Range(-10, 10));
+                    charvel = new Vector3(UnityEngine.Random.Range(-10, 10), 15, UnityEngine.Random.Range(-10, 10));
                 }
 
                 if (GetIndex("Include Hand Velocity").enabled)
@@ -549,6 +557,13 @@ namespace iiMenu.Mods.Spammers
                     {
                         float time = Time.frameCount;
                         startpos = lockTarget.headMesh.transform.position + new Vector3(MathF.Cos(time / 20), 2, MathF.Sin(time / 20));
+                    }
+
+                    if (GetIndex("True Projectile Aura").enabled)
+                    {
+                        float time = Time.frameCount;
+                        startpos = GorillaTagger.Instance.headCollider.transform.position + RandomVector3(1f);
+                        charvel = RandomVector3(10f);
                     }
 
                     if (GetIndex("Projectile Fountain").enabled)
@@ -624,6 +639,12 @@ namespace iiMenu.Mods.Spammers
                 {
                     float time = Time.frameCount;
                     startpos = GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos(time / 20), 2, MathF.Sin(time / 20));
+                }
+
+                if (GetIndex("True Projectile Aura").enabled)
+                {
+                    float time = Time.frameCount;
+                    startpos = GorillaTagger.Instance.headCollider.transform.position + RandomVector3(1f);
                 }
 
                 if (GetIndex("Projectile Fountain").enabled)
