@@ -2297,22 +2297,22 @@ Piece Name: {gunTarget.name}";
             ThrowableBug firefly = bug != null ? GetBug("Firefly") : bug;
 
             string projectileName = Projectiles.ProjectileObjectNames[UnityEngine.Random.Range(2, Projectiles.ProjectileObjectNames.Length)];
-            SnowballThrowable projectile = GetProjectile(projectileName);
-            projectile.SetSnowballActiveLocal(true);
-
-            CoroutineManager.instance.StartCoroutine(Projectiles.DisableProjectile(projectile));
-
-            if (Overpowered.DisableCoroutine != null)
-                CoroutineManager.EndCoroutine(Overpowered.DisableCoroutine);
-
-            Overpowered.DisableCoroutine = CoroutineManager.RunCoroutine(Overpowered.DisableSnowball(false));
-
-            GetProjectile($"GrowingSnowballLeftAnchor").SetSnowballActiveLocal(true);
-            GetProjectile($"GrowingSnowballRightAnchor").SetSnowballActiveLocal(true);
-
+            
             if (rightGrab && Time.time > everythingSpamDelay)
             {
-                everythingSpamDelay = Time.time + 0.1f;
+                SnowballThrowable projectile = GetProjectile(projectileName);
+                projectile.SetSnowballActiveLocal(true);
+                CoroutineManager.instance.StartCoroutine(Projectiles.DisableProjectile(projectile));
+
+                if (Overpowered.DisableCoroutine != null)
+                    CoroutineManager.EndCoroutine(Overpowered.DisableCoroutine);
+
+                Overpowered.DisableCoroutine = CoroutineManager.RunCoroutine(Overpowered.DisableSnowball(false));
+
+                GetProjectile($"GrowingSnowballLeftAnchor").SetSnowballActiveLocal(true);
+                GetProjectile($"GrowingSnowballRightAnchor").SetSnowballActiveLocal(true);
+
+                everythingSpamDelay = Time.time + 0.0714f;
 
                 objectIndex++;
                 objectIndex %= 7; 
