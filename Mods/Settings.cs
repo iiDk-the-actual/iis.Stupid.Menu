@@ -1,4 +1,3 @@
-using BepInEx;
 using GorillaLocomotion;
 using GorillaNetworking;
 using iiMenu.Classes;
