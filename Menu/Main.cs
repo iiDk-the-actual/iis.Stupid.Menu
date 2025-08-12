@@ -1288,6 +1288,21 @@ namespace iiMenu.Menu
 
                         foreach ((Vector3, Quaternion, Vector3) item in toRemoveCube)
                             cubePool.Remove(item);
+
+                        List<string> toRemoveLabel = new List<string> { };
+                        foreach (KeyValuePair<string, GameObject> label in Visuals.labelDictionary)
+                        {
+                            if (!label.Value.activeSelf)
+                            {
+                                toRemoveLabel.Add(label.Key);
+                                Destroy(label.Value);
+                            }
+                            else
+                                label.Value.SetActive(false);
+                        }
+
+                        foreach (string item in toRemoveLabel)
+                            Visuals.labelDictionary.Remove(item);
                     } catch { }
 
                     if (ServerPos == Vector3.zero)
