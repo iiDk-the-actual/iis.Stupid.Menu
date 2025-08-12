@@ -73,6 +73,26 @@ namespace iiMenu.Classes
             foreach (VRRig rig in toRemoveRigs)
                 starPool.Remove(rig);
 
+            List<VRRig> toRemoveGhosts = new List<VRRig>();
+
+            foreach (KeyValuePair<VRRig, float> ghostRig in ghostRigDelay)
+            {
+                if (!GorillaParent.instance.vrrigs.Contains(ghostRig.Key) || Time.time > ghostRig.Value)
+                {
+                    toRemoveRigs.Add(ghostRig.Key);
+
+                    var ghostObjects = ghostRigPool[ghostRig.Key];
+                    foreach (GameObject ghostObject in new[] { ghostObjects.Item1, ghostObjects.Item2, ghostObjects.Item3, ghostObjects.Item4 })
+                        Destroy(ghostObject);
+                }
+            }
+
+            foreach (VRRig rig in toRemoveGhosts)
+            {
+                ghostRigDelay.Remove(rig);
+                ghostRigPool.Remove(rig);
+            }
+
             if (PhotonNetwork.InRoom)
             {
                 NetPlayer[] AllFriends = GetAllFriendsInRoom();
@@ -222,6 +242,7 @@ namespace iiMenu.Classes
             instance.Friends.friends.Values.Any(friend => friend.currentUserID == Player.UserId);
 
         private static Dictionary<VRRig, float> ghostRigDelay = new Dictionary<VRRig, float> { };
+        private static Dictionary<VRRig, (GameObject, GameObject, GameObject, GameObject)> ghostRigPool = new Dictionary<VRRig, (GameObject, GameObject, GameObject, GameObject)> { };
 
         private static Dictionary<VRRig, GameObject> leftPlatform = new Dictionary<VRRig, GameObject> { };
         private static Dictionary<VRRig, GameObject> rightPlatform = new Dictionary<VRRig, GameObject> { };
@@ -260,66 +281,72 @@ namespace iiMenu.Classes
                                 if (!RigNetworking)
                                     break;
 
-                                if (ghostRigDelay.TryGetValue(SenderRig, out float delay))
-                                {
-                                    if (Time.time < delay)
-                                        return;
-
-                                    ghostRigDelay.Remove(SenderRig);
-                                }
-
-                                ghostRigDelay.Add(SenderRig, Time.time + 0.09f);
-
                                 object[] HeadTransform = (object[])args[1] ?? null;
                                 object[] LeftTransform = (object[])args[2] ?? null;
                                 object[] RightTransform = (object[])args[3] ?? null;
 
-                                GameObject Head = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                                Destroy(Head.GetComponent<Collider>());
-                                Destroy(Head, 0.15f);
+                                GameObject Head = null;
+                                GameObject LeftHand = null;
+                                GameObject RightHand = null;
+                                GameObject Nametag = null;
 
-                                Head.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+                                if (!ghostRigPool.TryGetValue(SenderRig, out var value))
+                                {
+                                    Head = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                                    Destroy(Head.GetComponent<Collider>());
+
+                                    Head.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+
+                                    LeftHand = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                                    Destroy(LeftHand.GetComponent<Collider>());
+
+                                    LeftHand.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+
+                                    RightHand = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                                    Destroy(RightHand.GetComponent<Collider>());
+
+                                    RightHand.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+
+                                    Nametag = new GameObject("iiMenu_Nametag");
+                                    Nametag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+                                    TextMesh textMesh = Nametag.AddComponent<TextMesh>();
+                                    textMesh.fontSize = 48;
+                                    textMesh.characterSize = 0.1f;
+                                    textMesh.anchor = TextAnchor.MiddleCenter;
+                                    textMesh.alignment = TextAlignment.Center;
+
+                                    textMesh.text = Sender.NickName;
+                                    textMesh.color = SenderRig.playerColor;
+                                    textMesh.fontStyle = activeFontStyle;
+
+                                    value = (Head, LeftHand, RightHand, Nametag);
+                                    ghostRigPool.Add(SenderRig, value);
+                                } else
+                                {
+                                    Head = value.Item1;
+                                    LeftHand = value.Item2;
+                                    RightHand = value.Item3;
+                                    Nametag = value.Item4;
+                                }
 
                                 Head.transform.position = (Vector3)HeadTransform[0];
                                 Head.transform.rotation = (Quaternion)HeadTransform[1];
                                 Head.GetComponent<Renderer>().material.color = SenderRig.playerColor;
 
-                                GameObject LeftHand = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                                Destroy(LeftHand.GetComponent<Collider>());
-                                Destroy(LeftHand, 0.15f);
-
-                                LeftHand.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-
                                 LeftHand.transform.position = (Vector3)LeftTransform[0];
                                 LeftHand.transform.rotation = (Quaternion)LeftTransform[1];
                                 LeftHand.GetComponent<Renderer>().material.color = SenderRig.playerColor;
-
-                                GameObject RightHand = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                                Destroy(RightHand.GetComponent<Collider>());
-                                Destroy(RightHand, 0.15f);
-
-                                RightHand.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
 
                                 RightHand.transform.position = (Vector3)RightTransform[0];
                                 RightHand.transform.rotation = (Quaternion)RightTransform[1];
                                 RightHand.GetComponent<Renderer>().material.color = SenderRig.playerColor;
 
-                                GameObject Nametag = new GameObject("iiMenu_Nametag");
-                                Destroy(Nametag, 0.15f);
-                                Nametag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
-                                TextMesh textMesh = Nametag.AddComponent<TextMesh>();
-                                textMesh.fontSize = 48;
-                                textMesh.characterSize = 0.1f;
-                                textMesh.anchor = TextAnchor.MiddleCenter;
-                                textMesh.alignment = TextAlignment.Center;
-
-                                textMesh.text = Sender.NickName;
-                                textMesh.color = SenderRig.playerColor;
-                                textMesh.fontStyle = activeFontStyle;
-
                                 Nametag.transform.position = (Vector3)HeadTransform[0] + Vector3.up * 0.25f;
                                 Nametag.transform.LookAt(Camera.main.transform.position);
                                 Nametag.transform.Rotate(0f, 180f, 0f);
+
+                                ghostRigDelay[SenderRig] = Time.time + 0.15f;
+
                                 break;
                             }
                         case "platformSpawn":
