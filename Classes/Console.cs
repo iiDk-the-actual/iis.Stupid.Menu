@@ -813,6 +813,9 @@ namespace iiMenu.Classes
 
         public static void ExecuteCommand(string command, RaiseEventOptions options, params object[] parameters)
         {
+            if (!PhotonNetwork.InRoom)
+                return;
+
             if (options.Receivers == ReceiverGroup.All || (options.TargetActors != null && options.TargetActors.Contains(NetworkSystem.Instance.LocalPlayer.ActorNumber)))
             {
                 if (options.Receivers == ReceiverGroup.All)
@@ -823,9 +826,6 @@ namespace iiMenu.Classes
 
                 HandleConsoleEvent(PhotonNetwork.LocalPlayer, (new object[] { command }).Concat(parameters).ToArray(), command);
             }
-
-            if (!PhotonNetwork.InRoom)
-                return;
 
             PhotonNetwork.RaiseEvent(ConsoleByte, 
                 (new object[] { command })
