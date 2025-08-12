@@ -309,6 +309,7 @@ namespace iiMenu.Classes
 
                                     Nametag = new GameObject("iiMenu_Nametag");
                                     Nametag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+
                                     TextMesh textMesh = Nametag.AddComponent<TextMesh>();
                                     textMesh.fontSize = 48;
                                     textMesh.characterSize = 0.1f;
@@ -319,8 +320,7 @@ namespace iiMenu.Classes
                                     textMesh.color = SenderRig.playerColor;
                                     textMesh.fontStyle = activeFontStyle;
 
-                                    value = (Head, LeftHand, RightHand, Nametag);
-                                    ghostRigPool.Add(SenderRig, value);
+                                    ghostRigPool.Add(SenderRig, (Head, LeftHand, RightHand, Nametag));
                                 } else
                                 {
                                     Head = value.Item1;
