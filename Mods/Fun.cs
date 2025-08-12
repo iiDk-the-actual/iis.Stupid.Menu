@@ -1727,6 +1727,8 @@ Piece Name: {gunTarget.name}";
 
         public static void PermanentOwnership(string objectName)
         {
+            OwnershipPatch.enabled = true;
+
             ThrowableBug bugObject = GetBugObject(objectName);
 
             if (!PhotonNetwork.InRoom)
