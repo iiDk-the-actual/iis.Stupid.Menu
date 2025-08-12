@@ -1034,7 +1034,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Camera Aura", method =() => Fun.CameraAura(), toolTip = "Teleports the camera around you in random positions." },
                 new ButtonInfo { buttonText = "Balloon Aura", method =() => Fun.BalloonAura(), toolTip = "Teleports the balloons around you in random positions." },
                 new ButtonInfo { buttonText = "Glider Aura", method =() => Fun.GliderAura(), toolTip = "Teleports the camera around you in random positions." },
-                new ButtonInfo { buttonText = "Hoverboard Aura", method =() => Fun.HoverboardAura(), toolTip = "Orbits the hoverboards around you."},
+                new ButtonInfo { buttonText = "Hoverboard Aura", method =() => Fun.HoverboardAura(), toolTip = "Teleports the hoverboards around you in random positions."},
 
                 new ButtonInfo { buttonText = "Ride Bug", method =() => Fun.RideObject("Floating Bug Holdable"), toolTip = "Repeatedly teleports you on top of the bug." },
                 new ButtonInfo { buttonText = "Ride Firefly", method =() => Fun.RideObject("Firefly"), toolTip = "Repeatedly teleports you on top of the firefly." },
@@ -1362,6 +1362,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Snowball Hail <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.SnowballHail(), toolTip = "Hails snowballs around you when holding <color=green>trigger</color>."},
 
                 new ButtonInfo { buttonText = "Snowball Orbit <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.SnowballOrbit(), toolTip = "Orbits snowballs around you when holding <color=green>trigger</color>."},
+                new ButtonInfo { buttonText = "Snowball Aura <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.SnowballAura(), toolTip = "Randomly spawns snowballs around you when holding <color=green>trigger</color>."},
 
                 new ButtonInfo { buttonText = "Snowball Minigun", method =() => Overpowered.SnowballMinigun(), toolTip = "Spawns snowballs towards wherever your hand desires."},
                 new ButtonInfo { buttonText = "Give Snowball Minigun", method =() => Overpowered.GiveSnowballMinigun(), toolTip = "Gives whoever your hand desires a snowball minigun." },

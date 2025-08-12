@@ -1391,6 +1391,18 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void SnowballAura()
+        {
+            if (rightTrigger > 0.5f)
+            {
+                if (Time.time > snowballDelay)
+                {
+                    BetaSpawnSnowball(GorillaTagger.Instance.headCollider.transform.position + RandomVector3(), RandomVector3() * 20f, 5f, 0);
+                    snowballDelay = Time.time + snowballSpawnDelay;
+                }
+            }
+        }
+
         public static void SnowballGun()
         {
             if (GetGunInput(false))
