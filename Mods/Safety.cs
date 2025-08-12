@@ -452,6 +452,9 @@ namespace iiMenu.Mods
             if (mic == null)
                 return;
 
+            if (mic.SourceType != Recorder.InputSourceType.Microphone)
+                return;
+
             float volume = 0f;
             GorillaSpeakerLoudness recorder = VRRig.LocalRig.GetComponent<GorillaSpeakerLoudness>();
             if (recorder != null)
