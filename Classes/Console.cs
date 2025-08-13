@@ -844,7 +844,7 @@ namespace iiMenu.Classes
 
                         CoroutineManager.instance.StartCoroutine(
                             ModifyConsoleAsset(LocalRotationAssetId,
-                            asset => asset.SetRotation(TargetLocalRotation))
+                            asset => asset.SetLocalRotation(TargetLocalRotation))
                         );
                         break;
 
