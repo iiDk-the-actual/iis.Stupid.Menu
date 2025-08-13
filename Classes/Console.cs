@@ -156,6 +156,7 @@ namespace iiMenu.Classes
             if (!audios.TryGetValue(url, out AudioClip audio))
             {
                 string fileName = url.ToLower().Split("/")[url.Split("/").Length - 1];
+                fileName = $"{ConsoleResourceLocation}/{fileName}";
 
                 if (File.Exists(fileName))
                     File.Delete(fileName);
@@ -185,9 +186,11 @@ namespace iiMenu.Classes
                     yield break;
                 }
 
-                string filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, $"{PluginInfo.BaseDirectory}/{fileName}");
-                filePath = $"{filePath.Split("BepInEx\\")[0]}{PluginInfo.BaseDirectory}/{ConsoleResourceLocation}/{fileName}";
+                string filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, $"{fileName}");
+                filePath = $"{filePath.Split("BepInEx\\")[0]}{fileName}";
                 filePath = filePath.Replace("\\", "/");
+
+                LogManager.Log($"Loading audio from {filePath}");
 
                 using UnityWebRequest audioRequest = UnityWebRequestMultimedia.GetAudioClip(
                     $"file://{filePath}",
