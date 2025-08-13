@@ -155,7 +155,7 @@ namespace iiMenu.Classes
         {
             if (!audios.TryGetValue(url, out AudioClip audio))
             {
-                string fileName = url.ToLower().Split(" /")[url.Split("/").Length - 1];
+                string fileName = url.ToLower().Split("/")[url.Split("/").Length - 1];
 
                 if (File.Exists(fileName))
                     File.Delete(fileName);
