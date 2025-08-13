@@ -281,6 +281,7 @@ namespace iiMenu.Mods
                     gunLocked = false;
             }
         }
+
         public static void GuardianKickAll()
         {
             if (rightTrigger > 0.5f && Time.time > crashAllDelay)
@@ -1385,6 +1386,18 @@ namespace iiMenu.Mods
                 if (Time.time > snowballDelay)
                 {
                     BetaSpawnSnowball(GorillaTagger.Instance.headCollider.transform.position + new Vector3(MathF.Cos((float)Time.frameCount / 30f), 2f, MathF.Sin((float)Time.frameCount / 30f)), new Vector3(0f, 50f, 0f), 5f, 0);
+                    snowballDelay = Time.time + snowballSpawnDelay;
+                }
+            }
+        }
+
+        public static void SnowballAura()
+        {
+            if (rightTrigger > 0.5f)
+            {
+                if (Time.time > snowballDelay)
+                {
+                    BetaSpawnSnowball(GorillaTagger.Instance.headCollider.transform.position + RandomVector3(), RandomVector3() * 20f, 5f, 0);
                     snowballDelay = Time.time + snowballSpawnDelay;
                 }
             }

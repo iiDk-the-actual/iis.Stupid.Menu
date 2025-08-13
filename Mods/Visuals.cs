@@ -1,5 +1,6 @@
 using GorillaExtensions;
 using GorillaGameModes;
+using GorillaLocomotion;
 using GorillaNetworking;
 using iiMenu.Classes;
 using Photon.Pun;
@@ -138,7 +139,7 @@ namespace iiMenu.Mods
         {
             if (GetGunInput(false))
             {
-                var GunData = RenderGun(GorillaLocomotion.GTPlayer.Instance.locomotionEnabledLayers);
+                var GunData = RenderGun(GTPlayer.Instance.locomotionEnabledLayers);
                 RaycastHit Ray = GunData.Ray;
                 GameObject NewPointer = GunData.NewPointer;
                 
@@ -344,38 +345,68 @@ namespace iiMenu.Mods
             PerformanceModeStep = PerformanceModeStepIndex / 10f;
             GetIndex("Change Performance Visuals Step").overlapText = "Change Performance Visuals Step <color=grey>[</color><color=green>" + PerformanceModeStep.ToString() + "</color><color=grey>]</color>";
         }
+
         public static float PerformanceVisualDelay;
         public static int DelayChangeStep;
 
-        public static void VelocityLabel()
+        public static Dictionary<string, GameObject> labelDictionary = new Dictionary<string, GameObject> { };
+        public static Dictionary<bool, List<int>> labelDistances = new Dictionary<bool, List<int>> { };
+        public static float GetLabelDistance(bool leftHand)
         {
-            if (PerformanceVisuals)
+            if (labelDistances[leftHand][0] == Time.frameCount)
             {
-                if (Time.time < PerformanceVisualDelay)
-                {
-                    if (Time.frameCount != DelayChangeStep)
-                        return;
-                }
-                else
-                { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
+                labelDistances[leftHand].Add(Time.frameCount);
+                return 0.1f + (labelDistances[leftHand].Count * 0.1f);
+            }
+            else
+            {
+                labelDistances[leftHand].Clear();
+                labelDistances[leftHand].Add(Time.frameCount);
+                return 0.1f + (labelDistances[leftHand].Count * 0.1f);
+            }
+        }
+
+        public static void GetLabel(string codeName, bool leftHand, string text, Color color)
+        {
+            if (!labelDictionary.TryGetValue(codeName, out GameObject go))
+            {
+                go = new GameObject(codeName);
+                if (GetIndex("Hidden Labels").enabled)
+                    go.layer = 19;
+
+                go.transform.localScale = Vector3.one * 0.25f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
+
+                labelDictionary.Add(codeName, go);
             }
 
-            GameObject go = new GameObject("Lbl");
-            if (GetIndex("Hidden Labels").enabled) { go.layer = 19; }
-            go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
-            TextMesh textMesh = go.AddComponent<TextMesh>();
-            textMesh.color = GorillaTagger.Instance.rigidbody.velocity.magnitude >= GorillaLocomotion.GTPlayer.Instance.maxJumpSpeed ? Color.green : Color.white;
+            go.SetActive(true);
+            
+            TextMesh textMesh = go.GetOrAddComponent<TextMesh>();
+            textMesh.color = color;
             textMesh.fontSize = 24;
             textMesh.fontStyle = activeFontStyle;
             textMesh.characterSize = 0.1f;
             textMesh.anchor = TextAnchor.MiddleCenter;
             textMesh.alignment = TextAlignment.Center;
-            textMesh.text = string.Format("{0:F1}m/s", GorillaTagger.Instance.rigidbody.velocity.magnitude);
+            textMesh.text = text;
 
-            go.transform.position = GorillaTagger.Instance.rightHandTransform.position + new Vector3(0f, 0.1f, 0f);
+            go.transform.position = (leftHand ? GorillaTagger.Instance.leftHandTransform : GorillaTagger.Instance.rightHandTransform).position + Vector3.up * (GetLabelDistance(leftHand) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f));
             go.transform.LookAt(Camera.main.transform.position);
             go.transform.Rotate(0f, 180f, 0f);
-            UnityEngine.Object.Destroy(go, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
+        }
+
+        public static void VelocityLabel()
+        {
+            if (DoPerformanceCheck())
+                return;
+
+            GetLabel
+            (
+                "Velocity",
+                false,
+                string.Format("{0:F1}m/s", GorillaTagger.Instance.rigidbody.velocity.magnitude),
+                GorillaTagger.Instance.rigidbody.velocity.magnitude >= GTPlayer.Instance.maxJumpSpeed ? Color.green : Color.white
+            );
         }
 
         private static float startTime = 0f;
@@ -383,28 +414,13 @@ namespace iiMenu.Mods
         private static bool lastWasTagged = false;
         public static void TimeLabel()
         {
-            if (PerformanceVisuals)
-            {
-                if (Time.time < PerformanceVisualDelay)
-                {
-                    if (Time.frameCount != DelayChangeStep)
-                        return;
-                }
-                else
-                { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
-            }
+            if (DoPerformanceCheck())
+                return;
 
             if (PhotonNetwork.InRoom)
             {
-                bool isThereTagged = false;
-                foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-                {
-                    if (PlayerIsTagged(vrrig))
-                    {
-                        isThereTagged = true;
-                        break;
-                    }
-                }
+                bool isThereTagged = InfectedList().Count > 0;
+
                 if (isThereTagged)
                 {
                     bool playerIsTagged = PlayerIsTagged(VRRig.LocalRig);
@@ -416,24 +432,15 @@ namespace iiMenu.Mods
                     
                     lastWasTagged = playerIsTagged;
 
-                    GameObject go = new GameObject("Lbl");
-                    if (GetIndex("Hidden Labels").enabled) { go.layer = 19; }
-                    go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
-                    TextMesh textMesh = go.AddComponent<TextMesh>();
-                    textMesh.color = PlayerIsTagged(VRRig.LocalRig) ? Color.green : Color.white;
-                    textMesh.fontSize = 24;
-                    textMesh.fontStyle = activeFontStyle;
-                    textMesh.characterSize = 0.1f;
-                    textMesh.anchor = TextAnchor.MiddleCenter;
-                    textMesh.alignment = TextAlignment.Center;
-                    textMesh.text = !playerIsTagged ?
+                    GetLabel
+                    (
+                        "Time",
+                        false,
+                        !playerIsTagged ?
                         FormatUnix(Mathf.FloorToInt(Time.time - startTime)) :
-                        FormatUnix(Mathf.FloorToInt(endTime));
-
-                    go.transform.position = GorillaTagger.Instance.rightHandTransform.position + new Vector3(0f, GetIndex("Velocity Label").enabled ? 0.2f : 0.1f, 0f);
-                    go.transform.LookAt(Camera.main.transform.position);
-                    go.transform.Rotate(0f, 180f, 0f);
-                    UnityEngine.Object.Destroy(go, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
+                        FormatUnix(Mathf.FloorToInt(endTime)),
+                        playerIsTagged ? Color.green : Color.white
+                    );
                 }
                 else
                     startTime = Time.time;
@@ -442,16 +449,8 @@ namespace iiMenu.Mods
 
         public static void NearbyTaggerLabel()
         {
-            if (PerformanceVisuals)
-            {
-                if (Time.time < PerformanceVisualDelay)
-                {
-                    if (Time.frameCount != DelayChangeStep)
-                        return;
-                }
-                else
-                { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
-            }
+            if (DoPerformanceCheck())
+                return;
 
             if (!PlayerIsTagged(VRRig.LocalRig))
             {
@@ -476,68 +475,38 @@ namespace iiMenu.Mods
                     
                     if (closest < 10f)
                         colorn = Color.red;
-                    
-                    GameObject go = new GameObject("Lbl");
-                    if (GetIndex("Hidden Labels").enabled) { go.layer = 19; }
-                    go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
-                    TextMesh textMesh = go.AddComponent<TextMesh>();
-                    textMesh.color = colorn;
-                    textMesh.fontSize = 24;
-                    textMesh.fontStyle = activeFontStyle;
-                    textMesh.characterSize = 0.1f;
-                    textMesh.anchor = TextAnchor.MiddleCenter;
-                    textMesh.alignment = TextAlignment.Center;
-                    textMesh.text = string.Format("{0:F1}m", closest);
 
-                    go.transform.position = GorillaTagger.Instance.leftHandTransform.position + new Vector3(0f, GetIndex("Last Label").enabled ? 0.2f : 0.1f, 0f);
-                    go.transform.LookAt(Camera.main.transform.position);
-                    go.transform.Rotate(0f, 180f, 0f);
-                    UnityEngine.Object.Destroy(go, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
+                    GetLabel
+                    (
+                        "NearbyTagger",
+                        false,
+                        string.Format("{0:F1}m", closest),
+                        colorn
+                    );
                 }
             }
         }
 
         public static void LastLabel()
         {
-            if (PerformanceVisuals)
-            {
-                if (Time.time < PerformanceVisualDelay)
-                {
-                    if (Time.frameCount != DelayChangeStep)
-                        return;
-                }
-                else
-                { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
-            }
+            if (DoPerformanceCheck())
+                return;
 
-            bool isThereTagged = false;
-            int left = PhotonNetwork.PlayerList.Length;
-            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            if (PhotonNetwork.InRoom)
             {
-                if (PlayerIsTagged(vrrig))
-                {
-                    isThereTagged = true;
-                    left--;
-                }
-            }
-            if (PhotonNetwork.InRoom && isThereTagged)
-            {
-                GameObject go = new GameObject("Lbl");
-                if (GetIndex("Hidden Labels").enabled) { go.layer = 19; }
-                go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
-                TextMesh textMesh = go.AddComponent<TextMesh>();
-                textMesh.color = left <= 1 && !PlayerIsTagged(VRRig.LocalRig) ? Color.green : Color.white;
-                textMesh.fontSize = 24;
-                textMesh.fontStyle = activeFontStyle;
-                textMesh.characterSize = 0.1f;
-                textMesh.anchor = TextAnchor.MiddleCenter;
-                textMesh.alignment = TextAlignment.Center;
-                textMesh.text = left.ToString() + " left";
+                bool isThereTagged = InfectedList().Count > 0;
+                int left = PhotonNetwork.PlayerList.Length - InfectedList().Count;
 
-                go.transform.position = GorillaTagger.Instance.leftHandTransform.position + new Vector3(0f, 0.1f, 0f);
-                go.transform.LookAt(Camera.main.transform.position);
-                go.transform.Rotate(0f, 180f, 0f);
-                UnityEngine.Object.Destroy(go, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
+                if (isThereTagged)
+                {
+                    GetLabel
+                    (
+                        "LastLabel",
+                        false,
+                        left.ToString() + " left",
+                        left <= 1 && !PlayerIsTagged(VRRig.LocalRig) ? Color.green : Color.white
+                    );
+                }
             }
         }
 
@@ -564,7 +533,7 @@ namespace iiMenu.Mods
             visualizerObject.GetComponent<Renderer>().material.color = GetBGColor(0f);
             visualizerOutline.GetComponent<Renderer>().material.color = GetBRColor(0f);
 
-            Physics.Raycast(GorillaTagger.Instance.bodyCollider.transform.position - new Vector3(0f, 0.2f, 0f), Vector3.down, out var Ray, 512f, GorillaLocomotion.GTPlayer.Instance.locomotionEnabledLayers);
+            Physics.Raycast(GorillaTagger.Instance.bodyCollider.transform.position - new Vector3(0f, 0.2f, 0f), Vector3.down, out var Ray, 512f, GTPlayer.Instance.locomotionEnabledLayers);
             visualizerObject.transform.position = Ray.point;
             visualizerObject.transform.rotation = Quaternion.LookRotation(Ray.normal) * Quaternion.Euler(90f, 0f, 0f);
 
@@ -716,7 +685,7 @@ namespace iiMenu.Mods
                     Vector3 nextVelocity = velocity + Physics.gravity * 0.1f;
                     Vector3 nextPosition = position + velocity * 0.1f;
 
-                    if (Physics.Raycast(position, nextPosition - position, out RaycastHit hit, (nextPosition - position).magnitude, GorillaLocomotion.GTPlayer.Instance.locomotionEnabledLayers))
+                    if (Physics.Raycast(position, nextPosition - position, out RaycastHit hit, (nextPosition - position).magnitude, GTPlayer.Instance.locomotionEnabledLayers))
                     {
                         points[i] = hit.point;
                         i++;
@@ -3134,9 +3103,6 @@ namespace iiMenu.Mods
         static GameObject RightSphere = null;
         public static void ShowButtonColliders()
         {
-            if (DoPerformanceCheck())
-                return;
-
             if (LeftSphere == null || RightSphere == null)
             {
                 if (LeftSphere == null)
@@ -3186,7 +3152,7 @@ namespace iiMenu.Mods
             bool followMenuTheme = GetIndex("Follow Menu Theme").enabled;
             bool transparentTheme = GetIndex("Transparent Theme").enabled;
             bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
-            float lineWidth = (GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f) * (scaleWithPlayer ? GorillaLocomotion.GTPlayer.Instance.scale : 1f);
+            float lineWidth = (GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
 
             Color menuColor = GetBGColor(0f);
 
@@ -3225,7 +3191,7 @@ namespace iiMenu.Mods
             bool followMenuTheme = GetIndex("Follow Menu Theme").enabled;
             bool transparentTheme = GetIndex("Transparent Theme").enabled;
             bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
-            float lineWidth = (GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f) * (scaleWithPlayer ? GorillaLocomotion.GTPlayer.Instance.scale : 1f);
+            float lineWidth = (GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
 
             bool LocalTagged = PlayerIsTagged(VRRig.LocalRig);
             bool NoInfected = InfectedList().Count == 0;
@@ -3285,7 +3251,7 @@ namespace iiMenu.Mods
 
             bool transparentTheme = GetIndex("Transparent Theme").enabled;
             bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
-            float lineWidth = (GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f) * (scaleWithPlayer ? GorillaLocomotion.GTPlayer.Instance.scale : 1f);
+            float lineWidth = (GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
 
             NetPlayer currentTarget = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
 

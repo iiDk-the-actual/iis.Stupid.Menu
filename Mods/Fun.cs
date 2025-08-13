@@ -1727,6 +1727,8 @@ Piece Name: {gunTarget.name}";
 
         public static void PermanentOwnership(string objectName)
         {
+            OwnershipPatch.enabled = true;
+
             ThrowableBug bugObject = GetBugObject(objectName);
 
             if (!PhotonNetwork.InRoom)
@@ -2296,12 +2298,26 @@ Piece Name: {gunTarget.name}";
             ThrowableBug bug = GetBug("Floating Bug Holdable");
             ThrowableBug firefly = bug != null ? GetBug("Firefly") : bug;
 
+            string projectileName = Projectiles.ProjectileObjectNames[UnityEngine.Random.Range(2, Projectiles.ProjectileObjectNames.Length)];
+            
             if (rightGrab && Time.time > everythingSpamDelay)
             {
-                everythingSpamDelay = Time.time + 0.1f;
+                SnowballThrowable projectile = GetProjectile(projectileName);
+                projectile.SetSnowballActiveLocal(true);
+                CoroutineManager.instance.StartCoroutine(Projectiles.DisableProjectile(projectile));
+
+                if (Overpowered.DisableCoroutine != null)
+                    CoroutineManager.EndCoroutine(Overpowered.DisableCoroutine);
+
+                Overpowered.DisableCoroutine = CoroutineManager.RunCoroutine(Overpowered.DisableSnowball(false));
+
+                GetProjectile($"GrowingSnowballLeftAnchor").SetSnowballActiveLocal(true);
+                GetProjectile($"GrowingSnowballRightAnchor").SetSnowballActiveLocal(true);
+
+                everythingSpamDelay = Time.time + 0.0714f;
 
                 objectIndex++;
-                objectIndex %= 5; 
+                objectIndex %= 7; 
 
                 switch (objectIndex)
                 {
@@ -2420,6 +2436,12 @@ Piece Name: {gunTarget.name}";
                     case 3:
                     case 4:
                         BetaDropBoard(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation, GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength, Vector3.zero, RandomColor());
+                        break;
+                    case 5:
+                        Projectiles.BetaFireProjectile(projectileName, GorillaTagger.Instance.rightHandTransform.position, GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength, RandomColor());
+                        break;
+                    case 6:
+                        Overpowered.BetaSpawnSnowball(GorillaTagger.Instance.rightHandTransform.position, GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength, 5, 0);
                         break;
                 }
             }

@@ -263,7 +263,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Above Players", toolTip = "Makes projectiles go above players." },
                 new ButtonInfo { buttonText = "Rain Projectiles", toolTip = "Makes projectiles fall around you like rain." },
 
-                new ButtonInfo { buttonText = "Projectile Aura", toolTip = "Makes projectiles go around you." },
+                new ButtonInfo { buttonText = "Projectile Aura", overlapText = "Orbit Projectiles", toolTip = "Makes the projectiles orbit around your head." },
+                new ButtonInfo { buttonText = "True Projectile Aura", overlapText = "Projectile Aura", toolTip = "Makes the projectiles random around you." },
                 new ButtonInfo { buttonText = "Projectile Fountain", toolTip = "Makes projectiles spurt out of your head, like a fountain." },
 
                 new ButtonInfo { buttonText = "Rainbow Projectiles", toolTip = "Makes projectiles be rainbow (real RGB)." },
@@ -1033,7 +1034,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Camera Aura", method =() => Fun.CameraAura(), toolTip = "Teleports the camera around you in random positions." },
                 new ButtonInfo { buttonText = "Balloon Aura", method =() => Fun.BalloonAura(), toolTip = "Teleports the balloons around you in random positions." },
                 new ButtonInfo { buttonText = "Glider Aura", method =() => Fun.GliderAura(), toolTip = "Teleports the camera around you in random positions." },
-                new ButtonInfo { buttonText = "Hoverboard Aura", method =() => Fun.HoverboardAura(), toolTip = "Orbits the hoverboards around you."},
+                new ButtonInfo { buttonText = "Hoverboard Aura", method =() => Fun.HoverboardAura(), toolTip = "Teleports the hoverboards around you in random positions."},
 
                 new ButtonInfo { buttonText = "Ride Bug", method =() => Fun.RideObject("Floating Bug Holdable"), toolTip = "Repeatedly teleports you on top of the bug." },
                 new ButtonInfo { buttonText = "Ride Firefly", method =() => Fun.RideObject("Firefly"), toolTip = "Repeatedly teleports you on top of the firefly." },
@@ -1361,6 +1362,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Snowball Hail <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.SnowballHail(), toolTip = "Hails snowballs around you when holding <color=green>trigger</color>."},
 
                 new ButtonInfo { buttonText = "Snowball Orbit <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.SnowballOrbit(), toolTip = "Orbits snowballs around you when holding <color=green>trigger</color>."},
+                new ButtonInfo { buttonText = "Snowball Aura <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.SnowballAura(), toolTip = "Randomly spawns snowballs around you when holding <color=green>trigger</color>."},
 
                 new ButtonInfo { buttonText = "Snowball Minigun", method =() => Overpowered.SnowballMinigun(), toolTip = "Spawns snowballs towards wherever your hand desires."},
                 new ButtonInfo { buttonText = "Give Snowball Minigun", method =() => Overpowered.GiveSnowballMinigun(), toolTip = "Gives whoever your hand desires a snowball minigun." },
@@ -1599,6 +1601,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Exit Safety Settings", method =() => currentCategoryName = "Settings", isTogglable = false, toolTip = "Returns you back to the settings menu."},
 
                 new ButtonInfo { buttonText = "Change Anti Report Distance", overlapText = "Change Anti Report Distance <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method =() => Safety.ChangeAntiReportRange(), enableMethod =() => Safety.ChangeAntiReportRange(), disableMethod =() => Safety.ChangeAntiReportRange(false), incremental = true, isTogglable = false, toolTip = "Changes the distance threshold for the anti report mods."},
+                new ButtonInfo { buttonText = "Change FPS Spoof Value", overlapText = "Change FPS Spoof Value <color=grey>[</color><color=green>90</color><color=grey>]</color>", method =() => Safety.ChangeFPSSpoofValue(), enableMethod =() => Safety.ChangeFPSSpoofValue(), disableMethod =() => Safety.ChangeFPSSpoofValue(false), incremental = true, isTogglable = false, toolTip = "Changes the target FPS for the FPS Spoof mod."},
 
                 new ButtonInfo { buttonText = "Visualize Anti Report", toolTip = "Visualizes the distance threshold for the anti report mods."},
                 new ButtonInfo { buttonText = "Smart Anti Report", enableMethod =() => Safety.smartarp = true, disableMethod =() => Safety.smartarp = false, toolTip = "Makes the anti report mods only activate in non-modded public lobbies."},

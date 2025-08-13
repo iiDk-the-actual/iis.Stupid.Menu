@@ -452,6 +452,9 @@ namespace iiMenu.Mods
             if (mic == null)
                 return;
 
+            if (mic.SourceType != Recorder.InputSourceType.Microphone)
+                return;
+
             float volume = 0f;
             GorillaSpeakerLoudness recorder = VRRig.LocalRig.GetComponent<GorillaSpeakerLoudness>();
             if (recorder != null)
@@ -547,10 +550,26 @@ namespace iiMenu.Mods
             lastinlobbyagain = PhotonNetwork.InRoom;
         }
 
+        public static int fpsSpoofValue = 90;
         public static void FPSSpoof()
         {
             Patches.FPSPatch.enabled = true;
-            Patches.FPSPatch.spoofFPSValue = Random.Range(80, 95);
+            Patches.FPSPatch.spoofFPSValue = Random.Range(fpsSpoofValue - 10, fpsSpoofValue + 10);
+        }
+
+        public static void ChangeFPSSpoofValue(bool positive = true)
+        {
+            if (positive)
+                fpsSpoofValue += 5;
+            else
+                fpsSpoofValue -= 5;
+
+            if (fpsSpoofValue > 140)
+                fpsSpoofValue = 5;
+            if (fpsSpoofValue < 5)
+                fpsSpoofValue = 140;
+
+            GetIndex("Change FPS Spoof Value").overlapText = "Change FPS Spoof Value <color=grey>[</color><color=green>" + fpsSpoofValue.ToString() + "</color><color=grey>]</color>";
         }
 
         public static string[] namePrefix = new string[]

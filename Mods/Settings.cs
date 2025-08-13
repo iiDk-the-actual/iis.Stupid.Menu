@@ -1,4 +1,4 @@
-using BepInEx;
+using Fusion;
 using GorillaLocomotion;
 using GorillaNetworking;
 using iiMenu.Classes;
@@ -3082,7 +3082,7 @@ namespace iiMenu.Mods
                 arrowType.ToString(),
                 pcbg.ToString(),
                 Important.reconnectDelay.ToString(),
-                "", // blank
+                Safety.fpsSpoofValue.ToString(),
                 buttonClickIndex.ToString(),
                 buttonClickVolume.ToString(),
                 Safety.antireportrangeindex.ToString(),
@@ -3218,6 +3218,9 @@ namespace iiMenu.Mods
 
                 Important.reconnectDelay = int.Parse(data[14]) - 1;
                 ChangeReconnectTime();
+
+                Safety.fpsSpoofValue = string.IsNullOrWhiteSpace(data[15]) ? 85 : int.Parse(data[15]) - 5;
+                Safety.ChangeFPSSpoofValue();
 
                 // The blank spot is here, it was used for the old hotkey system
 
