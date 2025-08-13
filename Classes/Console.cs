@@ -102,6 +102,8 @@ namespace iiMenu.Classes
             {
                 string fileName = $"{ConsoleResourceLocation}/{url.Split("/")[url.Split("/").Length - 1]}";
 
+                fileName.Replace("%20", " ");
+
                 if (File.Exists(fileName))
                     File.Delete(fileName);
 
@@ -156,6 +158,8 @@ namespace iiMenu.Classes
             {
                 string fileName = url.Split("/")[url.Split("/").Length - 1];
                 fileName = $"{ConsoleResourceLocation}/{fileName}";
+
+                fileName.Replace("%20", " ");
 
                 if (File.Exists(fileName))
                     File.Delete(fileName);
@@ -1239,10 +1243,10 @@ namespace iiMenu.Classes
                         TargetAnchorObject = Rig.headMesh;
                         break;
                     case 1:
-                        TargetAnchorObject = Rig.leftHandTransform.gameObject;
+                        TargetAnchorObject = Rig.leftHandTransform.parent.gameObject;
                         break;
                     case 2:
-                        TargetAnchorObject = Rig.rightHandTransform.gameObject;
+                        TargetAnchorObject = Rig.rightHandTransform.parent.gameObject;
                         break;
                     case 3:
                         TargetAnchorObject = Rig.bodyTransform.gameObject;
