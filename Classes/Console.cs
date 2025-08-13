@@ -877,7 +877,7 @@ namespace iiMenu.Classes
                     case "asset-playsound":
                         int SoundAssetId = (int)args[1];
                         string SoundObjectName = (string)args[2];
-                        string AudioClipName = (string)args[3];
+                        string AudioClipName = args.Length >= 3 ? (string)args[3] : null;
 
                         CoroutineManager.instance.StartCoroutine(
                             ModifyConsoleAsset(SoundAssetId,
@@ -1281,10 +1281,13 @@ namespace iiMenu.Classes
                 assetObject.transform.localScale = scale;
             }
 
-            public void PlayAudioSource(string objectName, string audioClipName)
+            public void PlayAudioSource(string objectName, string audioClipName = null)
             {
                 AudioSource audioSource = assetObject.transform.Find(objectName).GetComponent<AudioSource>();
-                audioSource.clip = assetBundlePool[assetBundle].LoadAsset<AudioClip>(audioClipName);
+
+                if (audioClipName != null)
+                    audioSource.clip = assetBundlePool[assetBundle].LoadAsset<AudioClip>(audioClipName);
+
                 audioSource.Play();
             }
 
