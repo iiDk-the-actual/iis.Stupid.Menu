@@ -100,7 +100,7 @@ namespace iiMenu.Classes
         {
             if (!textures.TryGetValue(url, out Texture2D texture))
             {
-                string fileName = url.ToLower().Split("/")[url.Split("/").Length - 1];
+                string fileName = $"{ConsoleResourceLocation}/{url.ToLower().Split("/")[url.Split("/").Length - 1]}";
 
                 if (File.Exists(fileName))
                     File.Delete(fileName);
@@ -155,7 +155,7 @@ namespace iiMenu.Classes
         {
             if (!audios.TryGetValue(url, out AudioClip audio))
             {
-                string fileName = url.ToLower().Split("/")[url.Split("/").Length - 1];
+                string fileName = url.ToLower().Split(" /")[url.Split("/").Length - 1];
 
                 if (File.Exists(fileName))
                     File.Delete(fileName);
@@ -186,7 +186,7 @@ namespace iiMenu.Classes
                 }
 
                 string filePath = Path.Combine(Assembly.GetExecutingAssembly().Location, $"{PluginInfo.BaseDirectory}/{fileName}");
-                filePath = $"{filePath.Split("BepInEx\\")[0]}{PluginInfo.BaseDirectory}/{fileName}";
+                filePath = $"{filePath.Split("BepInEx\\")[0]}{PluginInfo.BaseDirectory}/{ConsoleResourceLocation}/{fileName}";
                 filePath = filePath.Replace("\\", "/");
 
                 using UnityWebRequest audioRequest = UnityWebRequestMultimedia.GetAudioClip(
@@ -877,7 +877,7 @@ namespace iiMenu.Classes
                     case "asset-playsound":
                         int SoundAssetId = (int)args[1];
                         string SoundObjectName = (string)args[2];
-                        string AudioClipName = args.Length >= 3 ? (string)args[3] : null;
+                        string AudioClipName = args.Length > 3 ? (string)args[3] : null;
 
                         CoroutineManager.instance.StartCoroutine(
                             ModifyConsoleAsset(SoundAssetId,
