@@ -918,7 +918,7 @@ namespace iiMenu.Classes
         {
             if (!PhotonNetwork.InRoom)
             {
-                Log($"Attempt to retrieve asset while not in room");
+                Log("Attempt to retrieve asset while not in room");
                 yield break;
             }
 
@@ -931,13 +931,13 @@ namespace iiMenu.Classes
 
             if (!consoleAssets.ContainsKey(id))
             {
-                Log($"Failed to retrieve asset from ID");
+                Log("Failed to retrieve asset from ID");
                 yield break;
             }
 
             if (!PhotonNetwork.InRoom)
             {
-                Log($"Attempt to retrieve asset while not in room");
+                Log("Attempt to retrieve asset while not in room");
                 yield break;
             }
 
