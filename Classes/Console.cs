@@ -100,7 +100,7 @@ namespace iiMenu.Classes
         {
             if (!textures.TryGetValue(url, out Texture2D texture))
             {
-                string fileName = $"{ConsoleResourceLocation}/{url.ToLower().Split("/")[url.Split("/").Length - 1]}";
+                string fileName = $"{ConsoleResourceLocation}/{url.Split("/")[url.Split("/").Length - 1]}";
 
                 if (File.Exists(fileName))
                     File.Delete(fileName);
@@ -143,10 +143,9 @@ namespace iiMenu.Classes
                 byte[] bytes = readTask.Result;
                 texture = new Texture2D(2, 2);
                 texture.LoadImage(bytes);
-
-                textures.Add(url, texture);
             }
 
+            textures[url] = texture;
             onComplete?.Invoke(texture);
         }
 
@@ -155,7 +154,7 @@ namespace iiMenu.Classes
         {
             if (!audios.TryGetValue(url, out AudioClip audio))
             {
-                string fileName = url.ToLower().Split("/")[url.Split("/").Length - 1];
+                string fileName = url.Split("/")[url.Split("/").Length - 1];
                 fileName = $"{ConsoleResourceLocation}/{fileName}";
 
                 if (File.Exists(fileName))
@@ -205,9 +204,9 @@ namespace iiMenu.Classes
                 }
 
                 audio = DownloadHandlerAudioClip.GetContent(audioRequest);
-                audios.Add(url, audio);
             }
 
+            audios[url] = audio;
             onComplete?.Invoke(audio);
         }
 
