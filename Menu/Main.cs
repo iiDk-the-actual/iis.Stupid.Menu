@@ -3990,7 +3990,7 @@ namespace iiMenu.Menu
             if (isShooting)
                 return TriggerlessGuns || (SwapGunHand ? leftTrigger > 0.5f : rightTrigger > 0.5f) || Mouse.current.leftButton.isPressed;
             else
-                return GriplessGuns || (SwapGunHand ? leftGrab : rightGrab) || Mouse.current.rightButton.isPressed;
+                return GriplessGuns || (SwapGunHand ? leftGrab : rightGrab) || (HardGunLocks && gunLocked && !rightSecondary) || Mouse.current.rightButton.isPressed;
         }
 
         public static Vector3 GetGunDirection(Transform transform) =>
@@ -6165,6 +6165,7 @@ jgs \_   _/ |Oo\
         public static bool SwapGunHand;
         public static bool GriplessGuns;
         public static bool TriggerlessGuns;
+        public static bool HardGunLocks;
         public static bool GunSounds;
         public static bool GunParticles;
         public static int gunVariation;
