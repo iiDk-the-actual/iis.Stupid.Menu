@@ -1598,6 +1598,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Exit Safety Settings", method =() => currentCategoryName = "Settings", isTogglable = false, toolTip = "Returns you back to the settings menu."},
 
                 new ButtonInfo { buttonText = "Change Anti Report Distance", overlapText = "Change Anti Report Distance <color=grey>[</color><color=green>Normal</color><color=grey>]</color>", method =() => Safety.ChangeAntiReportRange(), enableMethod =() => Safety.ChangeAntiReportRange(), disableMethod =() => Safety.ChangeAntiReportRange(false), incremental = true, isTogglable = false, toolTip = "Changes the distance threshold for the anti report mods."},
+                new ButtonInfo { buttonText = "Change FPS Spoof Value", overlapText = "Change FPS Spoof Value <color=grey>[</color><color=green>90</color><color=grey>]</color>", method =() => Safety.ChangeFPSSpoofValue(), enableMethod =() => Safety.ChangeFPSSpoofValue(), disableMethod =() => Safety.ChangeFPSSpoofValue(false), incremental = true, isTogglable = false, toolTip = "Changes the target FPS for the FPS Spoof mod."},
 
                 new ButtonInfo { buttonText = "Visualize Anti Report", toolTip = "Visualizes the distance threshold for the anti report mods."},
                 new ButtonInfo { buttonText = "Smart Anti Report", enableMethod =() => Safety.smartarp = true, disableMethod =() => Safety.smartarp = false, toolTip = "Makes the anti report mods only activate in non-modded public lobbies."},
