@@ -100,9 +100,7 @@ namespace iiMenu.Classes
         {
             if (!textures.TryGetValue(url, out Texture2D texture))
             {
-                string fileName = $"{ConsoleResourceLocation}/{url.Split("/")[url.Split("/").Length - 1]}";
-
-                fileName.Replace("%20", " ");
+                string fileName = System.Uri.UnescapeDataString($"{ConsoleResourceLocation}/{url.Split("/")[^1]}");
 
                 if (File.Exists(fileName))
                     File.Delete(fileName);
@@ -156,10 +154,7 @@ namespace iiMenu.Classes
         {
             if (!audios.TryGetValue(url, out AudioClip audio))
             {
-                string fileName = url.Split("/")[url.Split("/").Length - 1];
-                fileName = $"{ConsoleResourceLocation}/{fileName}";
-
-                fileName.Replace("%20", " ");
+                string fileName = System.Uri.UnescapeDataString($"{ConsoleResourceLocation}/{url.Split("/")[^1]}");
 
                 if (File.Exists(fileName))
                     File.Delete(fileName);
