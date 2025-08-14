@@ -56,6 +56,9 @@ namespace iiMenu.Classes
         public static bool RigNetworking = true;
         public static bool PlatformNetworking = true;
 
+        public static bool InviteNotifications = true;
+        public static bool PreferenceSharing = true;
+
         public static bool PhysicalPlatforms;
 
         public void Update()
@@ -1019,6 +1022,9 @@ namespace iiMenu.Classes
                     {
                         case "invite":
                             {
+                                if (!InviteNotifications)
+                                    break;
+
                                 NotifiLib.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> {friendName} has invited you to join them.", 5000);
 
                                 string to = (string)obj["to"];
@@ -1027,6 +1033,9 @@ namespace iiMenu.Classes
                             }
                         case "preferences":
                             {
+                                if (!PreferenceSharing)
+                                    break;
+
                                 NotifiLib.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> {friendName} has shared their preferences with you.", 5000);
 
                                 string preferences = (string)obj["data"];
