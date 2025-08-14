@@ -29,3 +29,10 @@ jobs:
 
     - name: Build
       run: dotnet build --no-restore -c Debug
+
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-output
+        path: |
+          **/bin/Debug/netstandard2.1/ii's Stupid Menu.dll
