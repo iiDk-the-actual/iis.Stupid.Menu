@@ -518,6 +518,12 @@ namespace iiMenu.Classes
 
         public static void InviteFriend(string uid)
         {
+            if (!NetworkSystem.Instance.InRoom)
+            {
+                NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in a room.", 5000);
+                return;
+            }
+
             _ = FriendWebSocket.instance.Send(JsonConvert.SerializeObject(new
             {
                 command = "invite",
