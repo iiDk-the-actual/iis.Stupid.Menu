@@ -2298,7 +2298,7 @@ Piece Name: {gunTarget.name}";
             ThrowableBug bug = GetBug("Floating Bug Holdable");
             ThrowableBug firefly = bug != null ? GetBug("Firefly") : bug;
 
-            string projectileName = Projectiles.ProjectileObjectNames[UnityEngine.Random.Range(2, Projectiles.ProjectileObjectNames.Length)];
+            string projectileName = Projectiles.ProjectileObjectNames[UnityEngine.Random.Range(1, Projectiles.ProjectileObjectNames.Length / 2) * 2];
             
             if (rightGrab && Time.time > everythingSpamDelay)
             {
@@ -2310,8 +2310,6 @@ Piece Name: {gunTarget.name}";
                     CoroutineManager.EndCoroutine(Overpowered.DisableCoroutine);
 
                 Overpowered.DisableCoroutine = CoroutineManager.RunCoroutine(Overpowered.DisableSnowball(false));
-
-                GetProjectile($"GrowingSnowballLeftAnchor").SetSnowballActiveLocal(true);
                 GetProjectile($"GrowingSnowballRightAnchor").SetSnowballActiveLocal(true);
 
                 everythingSpamDelay = Time.time + 0.0714f;
