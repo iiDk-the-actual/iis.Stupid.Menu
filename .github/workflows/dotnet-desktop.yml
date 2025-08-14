@@ -35,4 +35,4 @@ jobs:
       with:
         name: build-output
         path: |
-          **/bin/Debug/net8.0/
+          **/bin/Debug/netstandard2.1/
