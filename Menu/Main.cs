@@ -3519,6 +3519,9 @@ namespace iiMenu.Menu
             DeclineText = DeclineButton;
             AcceptAction = Accept;
             DeclineAction = Decline;
+
+            if (menu != null)
+                ReloadMenu();
         }
 
         private static void LoadAssetBundle()
