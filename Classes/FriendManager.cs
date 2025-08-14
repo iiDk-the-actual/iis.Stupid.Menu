@@ -1019,12 +1019,16 @@ namespace iiMenu.Classes
                     {
                         case "invite":
                             {
+                                NotifiLib.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> {friendName} has invited you to join them.", 5000);
+
                                 string to = (string)obj["to"];
                                 Prompt($"{friendName} has invited you to the room {to}, would you like to join them?", () => PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(to, GorillaNetworking.JoinType.Solo));
                                 break;
                             }
                         case "preferences":
                             {
+                                NotifiLib.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> {friendName} has shared their preferences with you.", 5000);
+
                                 string preferences = (string)obj["data"];
                                 Prompt($"{friendName} has shared their preferences with you, would you like to use them?", () => { Settings.SavePreferences(); Settings.LoadPreferencesFromText(preferences); });
                                 break;
