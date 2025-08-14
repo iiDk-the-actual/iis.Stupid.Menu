@@ -1042,6 +1042,14 @@ namespace iiMenu.Classes
                                 Prompt($"{friendName} has shared their preferences with you, would you like to use them?", () => { Settings.SavePreferences(); Settings.LoadPreferencesFromText(preferences); });
                                 break;
                             }
+                        case "notification":
+                            {
+                                string message = (string)obj["message"];
+                                int time = (int)obj["time"];
+
+                                NotifiLib.SendNotification(message, time);
+                                break;
+                            }
                     }
                 }
             }
