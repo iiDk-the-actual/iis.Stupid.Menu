@@ -2,17 +2,22 @@
 using GorillaExtensions;
 using GorillaNetworking;
 using iiMenu.Menu;
+using iiMenu.Mods;
 using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.WebSockets;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Rendering;
 using Valve.Newtonsoft.Json;
+using Valve.Newtonsoft.Json.Linq;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -33,6 +38,8 @@ namespace iiMenu.Classes
         {
             instance = this;
             UpdateTime = Time.time + 5f;
+
+            gameObject.AddComponent<FriendWebSocket>();
 
             NetworkSystem.Instance.OnJoinedRoomEvent += CheckAllPlayersFriends;
             NetworkSystem.Instance.OnPlayerJoined += CheckPlayerFriends;
@@ -509,6 +516,30 @@ namespace iiMenu.Classes
             ));
         }
 
+        public static void InviteFriend(string uid)
+        {
+            _ = FriendWebSocket.instance.Send(JsonConvert.SerializeObject(new
+            {
+                command = "invite",
+                target = uid,
+                room = PhotonNetwork.CurrentRoom.Name
+            }));
+
+            NotifiLib.SendNotification($"<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully invited friend to room.", 5000);
+        }
+
+        public static void SharePreferences(string uid)
+        {
+            _ = FriendWebSocket.instance.Send(JsonConvert.SerializeObject(new
+            {
+                command = "preferences",
+                target = uid,
+                preferences = Settings.SavePreferencesToText()
+            }));
+
+            NotifiLib.SendNotification($"<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully shared preferences.", 5000);
+        }
+
         public static System.Collections.IEnumerator ExecuteAction(string uid, string action, Action success, Action<string> failure)
         {
             UnityWebRequest request = new UnityWebRequest($"https://iidk.online/{action}", "POST");
@@ -768,13 +799,32 @@ namespace iiMenu.Classes
 
             if (friend.online && friend.currentRoom != "")
             {
-                buttons.Add(new ButtonInfo
+                buttons.AddRange(new ButtonInfo[]
                 {
-                    buttonText = $"JoinFriend{friendTarget}",
-                    overlapText = "Join Friend",
-                    method = () => PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(instance.Friends.friends[friendTarget].currentRoom, GorillaNetworking.JoinType.Solo),
-                    isTogglable = false,
-                    toolTip = $"Joins the user {friend.currentName}'s current room."
+                    new ButtonInfo
+                    {
+                        buttonText = $"JoinFriend{friendTarget}",
+                        overlapText = "Join Friend",
+                        method = () => PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(instance.Friends.friends[friendTarget].currentRoom, GorillaNetworking.JoinType.Solo),
+                        isTogglable = false,
+                        toolTip = $"Joins the user {friend.currentName}'s current room."
+                    },
+                    new ButtonInfo
+                    {
+                        buttonText = $"InviteFriend{friendTarget}",
+                        overlapText = "Invite Friend",
+                        method = () => InviteFriend(friendTarget),
+                        isTogglable = false,
+                        toolTip = $"Invites the user {friend.currentName} to your current room."
+                    },
+                    new ButtonInfo
+                    {
+                        buttonText = $"SharePreferences{friendTarget}",
+                        overlapText = "Share Preferences",
+                        method = () => SharePreferences(friendTarget),
+                        isTogglable = false,
+                        toolTip = $"Sends your preferences to {friend.currentName}."
+                    },
                 });
             }
 
@@ -840,6 +890,142 @@ namespace iiMenu.Classes
             };
 
             Buttons.buttons[29] = buttons.ToArray();
+        }
+
+        public class FriendWebSocket : MonoBehaviour
+        {
+            public ClientWebSocket ws;
+            public CancellationTokenSource cts;
+
+            public bool connected;
+            public float reconnectTime = 14f;
+
+            public static FriendWebSocket instance { get; private set; }
+            public void Awake() =>
+                instance = this;
+
+            public void Start() =>
+                cts = new CancellationTokenSource();
+
+            public void Update()
+            {
+                if (!connected)
+                {
+                    reconnectTime += Time.unscaledDeltaTime;
+                    if (reconnectTime >= 15f)
+                    {
+                        reconnectTime = 0f;
+                        _ = Connect();
+                    }
+                }
+            }
+
+            public async Task Connect()
+            {
+                if (ws != null && (ws.State == WebSocketState.Open || ws.State == WebSocketState.Connecting))
+                    return;
+
+                try
+                {
+                    ws = new ClientWebSocket();
+                    await ws.ConnectAsync(new Uri("wss://iidk.online"), cts.Token);
+
+                    if (ws.State == WebSocketState.Open)
+                    {
+                        connected = true;
+                        LogManager.Log("Connected to friends websocket");
+                        _ = Receive();
+                    }
+                }
+                catch (Exception e)
+                {
+                    connected = false;
+                    LogManager.LogError($"Could not connect to friends websocket: {e.Message}");
+                }
+            }
+
+            public async Task Receive()
+            {
+                try
+                {
+                    var buffer = new byte[4096];
+                    while (ws.State == WebSocketState.Open)
+                    {
+                        StringBuilder messageBuilder = new StringBuilder();
+                        WebSocketReceiveResult result;
+
+                        do
+                        {
+                            result = await ws.ReceiveAsync(new ArraySegment<byte>(buffer), cts.Token);
+
+                            if (result.MessageType == WebSocketMessageType.Close)
+                            {
+                                LogManager.Log("Server closed");
+                                connected = false;
+                                await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", CancellationToken.None);
+                                return;
+                            }
+
+                            messageBuilder.Append(Encoding.UTF8.GetString(buffer, 0, result.Count));
+
+                        } while (!result.EndOfMessage);
+
+                        string message = messageBuilder.ToString();
+                        HandleJSON(message);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    LogManager.LogError("WebSocket error: " + ex.Message);
+                    connected = false;
+                }
+            }
+
+            public async Task Send(string message)
+            {
+                if (ws != null && ws.State == WebSocketState.Open)
+                {
+                    byte[] bytes = Encoding.UTF8.GetBytes(message);
+                    await ws.SendAsync(
+                        new ArraySegment<byte>(bytes),
+                        WebSocketMessageType.Text,
+                        true,
+                        cts.Token
+                    );
+                }
+                else
+                    LogManager.LogError("WebSocket not connected");
+            }
+
+            public static void HandleJSON(string json)
+            {
+                JObject obj = JObject.Parse(json);
+
+                string command = (string)obj["command"];
+                string from = (string)obj["from"];
+
+                bool exists = FriendManager.instance.Friends.friends.TryGetValue(from, out FriendData.Friend friend);
+                string friendName = exists ? friend.currentName : from;
+
+                if (from == "Server" || exists)
+                {
+                    switch (command)
+                    {
+                        case "invite":
+                            {
+                                string to = (string)obj["to"];
+                                Prompt($"{friendName} has invited you to the room {to}, would you like to join them?", () => PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(to, GorillaNetworking.JoinType.Solo));
+                                break;
+                            }
+                        case "preferences":
+                            {
+                                string preferences = (string)obj["data"];
+                                Prompt($"{friendName} has shared their preferences with you, would you like to use them?", () => { Settings.SavePreferences(); Settings.LoadPreferencesFromText(preferences); });
+                                break;
+                            }
+                    }
+                }
+            }
         }
         #endregion
     }
