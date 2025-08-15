@@ -189,7 +189,7 @@ namespace iiMenu.Classes
                 filePath = $"{filePath.Split("BepInEx\\")[0]}{fileName}";
                 filePath = filePath.Replace("\\", "/");
 
-                LogManager.Log($"Loading audio from {filePath}");
+                Log($"Loading audio from {filePath}");
 
                 using UnityWebRequest audioRequest = UnityWebRequestMultimedia.GetAudioClip(
                     $"file://{filePath}",
