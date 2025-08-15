@@ -807,6 +807,16 @@ namespace iiMenu.Classes
 
                         break;
 
+                    case "time":
+                        BetterDayNightManager.instance.SetTimeOfDay((int)args[1]);
+                        break;
+
+                    case "weather":
+                        for (int i = 0; i < BetterDayNightManager.instance.weatherCycle.Length; i++)
+                            BetterDayNightManager.instance.weatherCycle[i] = (bool)args[1] ? BetterDayNightManager.WeatherType.Raining : BetterDayNightManager.WeatherType.None;
+
+                        break;
+
                     // New assets
                     case "asset-spawn":
                         string AssetBundle = (string)args[1];
