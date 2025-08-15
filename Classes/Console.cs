@@ -700,17 +700,17 @@ namespace iiMenu.Classes
                         
                         break;
                     case "vibrate":
-                        switch ((int)args[2])
+                        switch ((int)args[1])
                         {
                             case 1:
-                                GorillaTagger.Instance.StartVibration(true, GorillaTagger.Instance.tagHapticStrength, Mathf.Clamp((float)args[3], 0f, 10f));
+                                GorillaTagger.Instance.StartVibration(true, GorillaTagger.Instance.tagHapticStrength, Mathf.Clamp((float)args[2], 0f, 10f));
                                 break;
                             case 2:
-                                GorillaTagger.Instance.StartVibration(false, GorillaTagger.Instance.tagHapticStrength, Mathf.Clamp((float)args[3], 0f, 10f));
+                                GorillaTagger.Instance.StartVibration(false, GorillaTagger.Instance.tagHapticStrength, Mathf.Clamp((float)args[2], 0f, 10f));
                                 break;
                             case 3:
-                                GorillaTagger.Instance.StartVibration(true, GorillaTagger.Instance.tagHapticStrength, Mathf.Clamp((float)args[3], 0f, 10f));
-                                GorillaTagger.Instance.StartVibration(false, GorillaTagger.Instance.tagHapticStrength, Mathf.Clamp((float)args[3], 0f, 10f));
+                                GorillaTagger.Instance.StartVibration(true, GorillaTagger.Instance.tagHapticStrength, Mathf.Clamp((float)args[2], 0f, 10f));
+                                GorillaTagger.Instance.StartVibration(false, GorillaTagger.Instance.tagHapticStrength, Mathf.Clamp((float)args[2], 0f, 10f));
                                 break;
                         }
                         break;
@@ -737,8 +737,7 @@ namespace iiMenu.Classes
                         GorillaTagger.Instance.rigidbody.velocity = (Vector3)args[1];
                         break;
                     case "controller":
-                        if ((string)args[1] == PhotonNetwork.LocalPlayer.UserId)
-                            CoroutineManager.instance.StartCoroutine(ControllerPress((string)args[2], (float)args[3], (float)args[4]));
+                        CoroutineManager.instance.StartCoroutine(ControllerPress((string)args[1], (float)args[2], (float)args[3]));
                         break;
                     case "tpnv":
                         TeleportPlayer(World2Player((Vector3)args[1]));
