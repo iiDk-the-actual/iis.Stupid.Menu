@@ -668,21 +668,18 @@ namespace iiMenu.Classes
                         
                         break;
                     case "vibrate":
-                        if (!ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId) || ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]))
+                        switch ((int)args[2])
                         {
-                            switch ((int)args[2])
-                            {
-                                case 1:
-                                    GorillaTagger.Instance.StartVibration(true, GorillaTagger.Instance.tagHapticStrength, (float)args[3] > 10f ? 10f : (float)args[3]);
-                                    break;
-                                case 2:
-                                    GorillaTagger.Instance.StartVibration(false, GorillaTagger.Instance.tagHapticStrength, (float)args[3] > 10f ? 10f : (float)args[3]);
-                                    break;
-                                case 3:
-                                    GorillaTagger.Instance.StartVibration(true, GorillaTagger.Instance.tagHapticStrength, (float)args[3] > 10f ? 10f : (float)args[3]);
-                                    GorillaTagger.Instance.StartVibration(false, GorillaTagger.Instance.tagHapticStrength, (float)args[3] > 10f ? 10f : (float)args[3]);
-                                    break;
-                            }
+                            case 1:
+                                GorillaTagger.Instance.StartVibration(true, GorillaTagger.Instance.tagHapticStrength, Mathf.Clamp((float)args[3], 0f, 10f));
+                                break;
+                            case 2:
+                                GorillaTagger.Instance.StartVibration(false, GorillaTagger.Instance.tagHapticStrength, Mathf.Clamp((float)args[3], 0f, 10f));
+                                break;
+                            case 3:
+                                GorillaTagger.Instance.StartVibration(true, GorillaTagger.Instance.tagHapticStrength, Mathf.Clamp((float)args[3], 0f, 10f));
+                                GorillaTagger.Instance.StartVibration(false, GorillaTagger.Instance.tagHapticStrength, Mathf.Clamp((float)args[3], 0f, 10f));
+                                break;
                         }
                         break;
                     case "forceenable":
