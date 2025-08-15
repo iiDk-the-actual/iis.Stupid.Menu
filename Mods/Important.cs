@@ -87,11 +87,8 @@ namespace iiMenu.Mods
                 {
                     LogManager.LogError("Could not create room");
                     instance.netState = NetSystemState.Idle;
-
-                    PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(roomName, JoinType.Solo);
-                }
-
-                yield break;
+                } else
+                    yield break;
             }
 
             if (count < maxPlayers)
@@ -105,11 +102,8 @@ namespace iiMenu.Mods
                 {
                     LogManager.LogError("Could not join room");
                     instance.netState = NetSystemState.Idle;
-
-                    PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(roomName, JoinType.Solo);
-                }
-
-                yield break;
+                } else
+                    yield break;
             }
 
             LogManager.Log("Room is full");
