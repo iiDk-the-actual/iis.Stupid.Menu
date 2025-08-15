@@ -1025,10 +1025,13 @@ namespace iiMenu.Classes
                                 if (!InviteNotifications)
                                     break;
 
+                                string to = (string)obj["to"];
+                                if (PhotonNetwork.InRoom && PhotonNetwork.CurrentRoom.Name == to)
+                                    break;
+
                                 NotifiLib.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> {friendName} has invited you to join them.", 5000);
 
-                                string to = (string)obj["to"];
-                                Prompt($"{friendName} has invited you to the room {to}, would you like to join them?", () => PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(to, GorillaNetworking.JoinType.Solo));
+                                Prompt($"{friendName} has invited you to the room {to}, would you like to join them?", () => Important.QueueRoom(to));
                                 break;
                             }
                         case "preferences":
