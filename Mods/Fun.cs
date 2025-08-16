@@ -352,8 +352,7 @@ namespace iiMenu.Mods
 
         public static void BetaWaterSplash(Vector3 splashPosition, Quaternion splashRotation, float splashScale, float boundingRadius, bool bigSplash, bool enteringWater, object general = null)
         {
-            if (general == null)
-                general = RpcTarget.All;
+            general ??= RpcTarget.All;
 
             splashScale = Mathf.Clamp(splashScale, 1E-05f, 1f);
             boundingRadius = Mathf.Clamp(boundingRadius, 0.0001f, 0.5f);
@@ -926,7 +925,28 @@ namespace iiMenu.Mods
             }
         }
 
-        private static bool openOrClose;
+        public static void SetBasementDoorState(bool open)
+        {
+            if (Time.time > spamDelay)
+            {
+                delay = Time.time + 0.1f;
+
+                GetObject("Environment Objects/LocalObjects_Prefab/CityToBasement/DungeonEntrance/DungeonDoor_Prefab").GetComponent<PhotonView>().RPC("ChangeDoorState", RpcTarget.AllViaServer, new object[] { open ? GTDoor.DoorState.Opening : GTDoor.DoorState.Closing });
+                RPCProtection();
+            }
+        }
+
+        public static void SetElevatorDoorState(bool open)
+        {
+            if (Time.time > spamDelay)
+            {
+                delay = Time.time + 0.1f;
+
+                GRElevatorManager.ElevatorButtonPressed(open ? GRElevator.ButtonType.Open : GRElevator.ButtonType.Close, GRElevatorManager._instance.currentLocation);
+                RPCProtection();
+            }
+        }
+
         public static void BasementDoorSpam()
         {
             if (Time.time > spamDelay)
