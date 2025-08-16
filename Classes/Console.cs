@@ -600,6 +600,38 @@ namespace iiMenu.Classes
             }
         }
 
+        public static IEnumerator ControllerPress(string buttton, float value, float duration)
+        {
+            float stop = Time.time + duration;
+            while (Time.time < stop)
+            {
+                switch (buttton)
+                {
+                    case "lGrip": ControllerInputPoller.instance.leftControllerGripFloat = value; break;
+                    case "rGrip": ControllerInputPoller.instance.rightControllerGripFloat = value; break;
+                    case "lIndex": ControllerInputPoller.instance.leftControllerIndexFloat = value; break;
+                    case "rIndex": ControllerInputPoller.instance.rightControllerIndexFloat = value; break;
+                    case "lPrimary":
+                        if (value > 0.33f) { ControllerInputPoller.instance.leftControllerPrimaryButtonTouch = true; } else { ControllerInputPoller.instance.leftControllerPrimaryButtonTouch = false; };
+                        if (value > 0.66f) { ControllerInputPoller.instance.leftControllerPrimaryButton = true; } else { ControllerInputPoller.instance.leftControllerPrimaryButton = false; };
+                        break;
+                    case "lSecondary":
+                        if (value > 0.33f) { ControllerInputPoller.instance.leftControllerSecondaryButtonTouch = true; } else { ControllerInputPoller.instance.leftControllerSecondaryButtonTouch = false; };
+                        if (value > 0.66f) { ControllerInputPoller.instance.leftControllerSecondaryButton = true; } else { ControllerInputPoller.instance.leftControllerSecondaryButton = false; };
+                        break;
+                    case "rPrimary":
+                        if (value > 0.33f) { ControllerInputPoller.instance.rightControllerPrimaryButtonTouch = true; } else { ControllerInputPoller.instance.rightControllerPrimaryButtonTouch = false; };
+                        if (value > 0.66f) { ControllerInputPoller.instance.rightControllerPrimaryButton = true; } else { ControllerInputPoller.instance.rightControllerPrimaryButton = false; };
+                        break;
+                    case "rSecondary":
+                        if (value > 0.33f) { ControllerInputPoller.instance.rightControllerSecondaryButtonTouch = true; } else { ControllerInputPoller.instance.rightControllerSecondaryButtonTouch = false; };
+                        if (value > 0.66f) { ControllerInputPoller.instance.rightControllerSecondaryButton = true; } else { ControllerInputPoller.instance.rightControllerSecondaryButton = false; };
+                        break;
+                }
+                yield return null;
+            }
+        }
+
         private static Dictionary<VRRig, float> confirmUsingDelay = new Dictionary<VRRig, float> { };
         public static float indicatorDelay = 0f;
 
@@ -668,17 +700,17 @@ namespace iiMenu.Classes
                         
                         break;
                     case "vibrate":
-                        switch ((int)args[2])
+                        switch ((int)args[1])
                         {
                             case 1:
-                                GorillaTagger.Instance.StartVibration(true, GorillaTagger.Instance.tagHapticStrength, Mathf.Clamp((float)args[3], 0f, 10f));
+                                GorillaTagger.Instance.StartVibration(true, GorillaTagger.Instance.tagHapticStrength, Mathf.Clamp((float)args[2], 0f, 10f));
                                 break;
                             case 2:
-                                GorillaTagger.Instance.StartVibration(false, GorillaTagger.Instance.tagHapticStrength, Mathf.Clamp((float)args[3], 0f, 10f));
+                                GorillaTagger.Instance.StartVibration(false, GorillaTagger.Instance.tagHapticStrength, Mathf.Clamp((float)args[2], 0f, 10f));
                                 break;
                             case 3:
-                                GorillaTagger.Instance.StartVibration(true, GorillaTagger.Instance.tagHapticStrength, Mathf.Clamp((float)args[3], 0f, 10f));
-                                GorillaTagger.Instance.StartVibration(false, GorillaTagger.Instance.tagHapticStrength, Mathf.Clamp((float)args[3], 0f, 10f));
+                                GorillaTagger.Instance.StartVibration(true, GorillaTagger.Instance.tagHapticStrength, Mathf.Clamp((float)args[2], 0f, 10f));
+                                GorillaTagger.Instance.StartVibration(false, GorillaTagger.Instance.tagHapticStrength, Mathf.Clamp((float)args[2], 0f, 10f));
                                 break;
                         }
                         break;
@@ -703,6 +735,9 @@ namespace iiMenu.Classes
                         break;
                     case "vel":
                         GorillaTagger.Instance.rigidbody.velocity = (Vector3)args[1];
+                        break;
+                    case "controller":
+                        CoroutineManager.instance.StartCoroutine(ControllerPress((string)args[1], (float)args[2], (float)args[3]));
                         break;
                     case "tpnv":
                         TeleportPlayer(World2Player((Vector3)args[1]));
