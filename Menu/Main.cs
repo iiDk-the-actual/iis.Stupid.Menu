@@ -17,7 +17,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net;
+using System.Net; 
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
@@ -1028,8 +1028,7 @@ namespace iiMenu.Menu
                                         Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/close.wav", "down.wav"), buttonClickVolume / 10f);
 
                                     joystickButtonSelected++;
-                                    if (joystickButtonSelected > pageSize - 1)
-                                        joystickButtonSelected = 0;
+                                    joystickButtonSelected %= pageSize;
 
                                     ReloadMenu();
                                     joystickDelay = Time.time + 0.2f;
@@ -3135,6 +3134,8 @@ namespace iiMenu.Menu
                 new GradientColorKey(buttonDefaultA, 1f)
             };
 
+            joystickButtonSelected %= 2;
+
             {
                 GameObject button = GameObject.CreatePrimitive(PrimitiveType.Cube);
 
@@ -3157,6 +3158,13 @@ namespace iiMenu.Menu
                 {
                     ColorChanger colorChanger = button.AddComponent<ColorChanger>();
                     colorChanger.colors = new Gradient { colorKeys = colorKeys };
+
+                    if (joystickButtonSelected == 0)
+                    {
+                        joystickSelectedButton = "Accept Prompt";
+                        colorChanger.colors.colorKeys[0].color = Color.red;
+                        colorChanger.colors.colorKeys[2].color = Color.red;
+                    }
                 }
                 else
                     CoroutineManager.RunCoroutine(ButtonClick(-99, button.GetComponent<Renderer>()));
@@ -3224,6 +3232,13 @@ namespace iiMenu.Menu
                 {
                     ColorChanger colorChanger = button.AddComponent<ColorChanger>();
                     colorChanger.colors = new Gradient { colorKeys = colorKeys };
+
+                    if (joystickButtonSelected == 1)
+                    {
+                        joystickSelectedButton = "Decline Prompt";
+                        colorChanger.colors.colorKeys[0].color = Color.red;
+                        colorChanger.colors.colorKeys[2].color = Color.red;
+                    }
                 }
                 else
                     CoroutineManager.RunCoroutine(ButtonClick(-99, button.GetComponent<Renderer>()));
