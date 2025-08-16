@@ -1209,13 +1209,29 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "MasterLabel", overlapText = "You are not master client.", label = true},
 
-                new ButtonInfo { buttonText = "Guardian Self", method =() => Overpowered.GuardianSelf(), isTogglable = false, toolTip = "Makes you the guardian."},
+                new ButtonInfo { buttonText = "Guardian Self", method =() => Overpowered.GuardianSelf(), isTogglable = false, toolTip = "Makes you red."},
                 new ButtonInfo { buttonText = "Guardian Gun", method =() => Overpowered.GuardianGun(), toolTip = "Makes whoever your hand desires the guardian."},
                 new ButtonInfo { buttonText = "Guardian All", method =() => Overpowered.GuardianAll(), isTogglable = false, toolTip = "Makes everyone in the room the guardian."},
 
                 new ButtonInfo { buttonText = "Unguardian Self", method =() => Overpowered.UnguardianSelf(), isTogglable = false, toolTip = "Removes you from the guardian position."},
                 new ButtonInfo { buttonText = "Unguardian Gun", method =() => Overpowered.UnguardianGun(), toolTip = "Removes whoever your hand desires from the guardian position."},
                 new ButtonInfo { buttonText = "Unguardian All", method =() => Overpowered.UnguardianAll(), isTogglable = false, toolTip = "Removes everyone in the room from the guardian position."},
+
+                new ButtonInfo { buttonText = "Red Color Self", method =() => Overpowered.SetColorSelf(1), isTogglable = false, toolTip = "Changes your color to red."},
+                new ButtonInfo { buttonText = "Red Color Gun", method =() => Overpowered.SetColorGun(1), toolTip = "Changes whoever your hand desires' color to red."},
+                new ButtonInfo { buttonText = "Red Color All", method =() => Overpowered.SetColorAll(1), isTogglable = false, toolTip = "Changes everyone in the room's color to red."},
+
+                new ButtonInfo { buttonText = "Blue Color Self", method =() => Overpowered.SetColorSelf(0), isTogglable = false, toolTip = "Changes your color to blue."},
+                new ButtonInfo { buttonText = "Blue Color Gun", method =() => Overpowered.SetColorGun(0), toolTip = "Changes whoever your hand desires' color to blue."},
+                new ButtonInfo { buttonText = "Blue Color All", method =() => Overpowered.SetColorAll(0), isTogglable = false, toolTip = "Changes everyone in the room's color to blue."},
+
+                new ButtonInfo { buttonText = "Reset Color Self", method =() => Overpowered.SetColorSelf(-1), isTogglable = false, toolTip = "Resets your color back to what it was."},
+                new ButtonInfo { buttonText = "Reset Color Gun", method =() => Overpowered.SetColorGun(-1), toolTip = "Resets whoever your hand desires' color back to what it was."},
+                new ButtonInfo { buttonText = "Reset Color All", method =() => Overpowered.SetColorAll(-1), isTogglable = false, toolTip = "Resets everyone in the room's color back to what it was."},
+
+                new ButtonInfo { buttonText = "Strobe Color Self", method =() => Overpowered.StrobeColorSelf(), toolTip = "Flashes your color between red and blue."},
+                new ButtonInfo { buttonText = "Strobe Color Gun", method =() => Overpowered.StrobeColorGun(), toolTip = "Flashes whoever your hand desires' color between red and blue."},
+                new ButtonInfo { buttonText = "Strobe Color All", method =() => Overpowered.StrobeColorAll(), toolTip = "Flashes everyone in the room's color between red and blue."},
 
                 new ButtonInfo { buttonText = "Guardian Spaz", method =() => Overpowered.GuardianSpaz(), toolTip = "Spams the guardian position for everyone in the room."},
 
