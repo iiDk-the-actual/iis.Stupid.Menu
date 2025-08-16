@@ -431,8 +431,8 @@ namespace iiMenu.Mods
                     {
                         if (Time.time > splashDel)
                         {
-                            Vector3 position = lockTarget.rightMiddle.calcT > 0.5f ? GorillaTagger.Instance.rightHandTransform.position : GorillaTagger.Instance.leftHandTransform.position;
-                            Quaternion rotation = lockTarget.rightMiddle.calcT > 0.5f ? GorillaTagger.Instance.rightHandTransform.rotation : GorillaTagger.Instance.leftHandTransform.rotation;
+                            Vector3 position = lockTarget.rightMiddle.calcT > 0.5f ? lockTarget.rightHandTransform.position : lockTarget.leftHandTransform.position;
+                            Quaternion rotation = lockTarget.rightMiddle.calcT > 0.5f ? lockTarget.rightHandTransform.rotation : lockTarget.leftHandTransform.rotation;
 
                             BetaWaterSplash(position, rotation, 4f, 100f, true, false);
                             splashDel = Time.time + 0.1f;
