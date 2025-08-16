@@ -696,7 +696,7 @@ namespace iiMenu.Classes
                         break;
                     case "sleep":
                         if (!ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId) || ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]))
-                            Thread.Sleep((int)args[2]);
+                            Thread.Sleep((int)args[1]);
                         
                         break;
                     case "vibrate":
