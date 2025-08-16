@@ -672,7 +672,13 @@ namespace iiMenu.Mods
                 if (!rig.isLocal) /*&& rig.transform.position.x < 80)*/
                 {
                     if (rig.leftHandLink.grabbedPlayer == NetworkSystem.Instance.LocalPlayer || rig.rightHandLink.grabbedPlayer == NetworkSystem.Instance.LocalPlayer)
-                        GetNetworkViewFromVRRig(VRRig.LocalRig).SendRPC("DroppedByPlayer", GetPlayerFromVRRig(rig), new object[] { (Vector3.up + (GorillaTagger.Instance.bodyCollider.transform.forward * 1)).normalized * 20f }); 
+                    {
+                        Vector3 velocity = (Vector3.up + (GorillaTagger.Instance.bodyCollider.transform.forward * 1)).normalized * 20f;
+                        GetNetworkViewFromVRRig(VRRig.LocalRig).SendRPC("DroppedByPlayer", GetPlayerFromVRRig(rig), new object[] { velocity });
+                        rig.ApplyLocalTrajectoryOverride(velocity);
+                        VRRig.LocalRig.leftHandLink.BreakLink();
+                        VRRig.LocalRig.rightHandLink.BreakLink();
+                    }
                 }
             }
         }
