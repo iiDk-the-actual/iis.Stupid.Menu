@@ -1487,7 +1487,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Save Custom Preset 10", method =() => Presets.SaveCustomPreset(10), isTogglable = false, toolTip = "Saves a custom preset."},
                 new ButtonInfo { buttonText = "Load Custom Preset 10", method =() => Presets.LoadCustomPreset(10), isTogglable = false, toolTip = "Loads a custom preset."},
-                
+
                 new ButtonInfo { buttonText = "Quick Start Mods", method =() => Presets.SimplePreset(), isTogglable = false, toolTip = "Enables some mods that attempt to improve your experience using the menu."},
             },
 
@@ -1535,7 +1535,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Admin Disable Menu All", method =() => Experimental.AdminLockdownAll(true), toolTip = "Disables the menu of whoever your hand desires if they're using one."},
                 new ButtonInfo { buttonText = "Admin Enable Menu All", method =() => Experimental.AdminLockdownAll(false), toolTip = "Enables the menu of whoever your hand desires if they're using one."},
-                
+
                 new ButtonInfo { buttonText = "Admin Fully Disable Menu All", method =() => Experimental.AdminFullLockdownAll(true), isTogglable = false, toolTip = "Disables the menu of whoever your hand desires and turns off their mods if they're using one."},
                 new ButtonInfo { buttonText = "Admin Fully Enable Menu All", method =() => Experimental.AdminFullLockdownAll(false), isTogglable = false, toolTip = "Enables the menu of whoever your hand desires and turns off their mods if they're using one."},
 
@@ -1646,6 +1646,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Exit Keybind Settings", method =() => currentCategoryName = "Settings", isTogglable = false, toolTip = "Returns you back to the settings menu."},
 
                 new ButtonInfo { buttonText = "Non-Toggle Keybinds", enableMethod =() => ToggleBindings = false, disableMethod =() => ToggleBindings = true, toolTip = "Enables mods while holding down the button, instead of toggling them."},
+                new ButtonInfo { buttonText = "Overwrite Keybinds", enableMethod =() => OverwriteKeybinds = true, disableMethod =() => OverwriteKeybinds = false, toolTip = "Forces every button to be held down with keybinded mods."},
                 new ButtonInfo { buttonText = "Clear All Keybinds", method =() => Settings.ClearAllKeybinds(), isTogglable = false, toolTip = "Enables mods while holding down the button, instead of toggling them."},
 
                 new ButtonInfo { buttonText = "Keybind A", enableMethod =() => Settings.StartBind("A"), disableMethod =() => IsBinding = false, toolTip = "Enables binding mode, letting you bind a mod to a button."},
