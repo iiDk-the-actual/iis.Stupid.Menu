@@ -961,11 +961,8 @@ namespace iiMenu.Mods.Spammers
             }
         }
 
-        public static void ProjectileBlindAll()
-        {
-            if (rightTrigger > 0.5f)
-                ProjectileBlindPlayer(GetCurrentTargetRig());
-        }
+        public static void ProjectileBlindAll() =>
+             ProjectileBlindPlayer(GetCurrentTargetRig());
 
         public static void ProjectileBlindPlayer(NetPlayer player)
         {
@@ -1002,11 +999,8 @@ namespace iiMenu.Mods.Spammers
             }
         }
 
-        public static void ProjectileLagAll()
-        {
-            if (rightTrigger > 0.5f)
-                ProjectileLagPlayer(GetCurrentTargetRig());
-        }
+        public static void ProjectileLagAll() =>
+            ProjectileLagPlayer(GetCurrentTargetRig());
 
         public static void ProjectileLagPlayer(NetPlayer player)
         {

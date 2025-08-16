@@ -1953,6 +1953,83 @@ Piece Name: {gunTarget.name}";
             VRRig.LocalRig.hoverboardVisual.gameObject.SetActive(false);
         }
 
+        public static void HoverboardScreenTarget(VRRig rig, Color color)
+        {
+            Vector3 angVel = rig.headMesh.GetOrAddComponent<GorillaVelocityEstimator>().angularVelocity;
+
+            Vector3 HoverboardPos = rig.headMesh.transform.TransformPoint(-0.3f, 0.1f, 0.3725f) + (rig.LatestVelocity() * 0.5f);
+            Quaternion HoverboardRotation = (rig.headMesh.transform.rotation * Quaternion.Euler(angVel * Mathf.Rad2Deg * 0.1f)) * Quaternion.Euler(0f, 90f, 270f);
+
+            VRRig.LocalRig.enabled = false;
+            VRRig.LocalRig.transform.position = HoverboardPos - Vector3.up * 0.5f;
+
+            GTPlayer.Instance.SetHoverAllowed(true);
+
+            HoverboardVisual hoverboardVisual = VRRig.LocalRig.hoverboardVisual;
+
+            hoverboardVisual.SetIsHeld(true, hoverboardVisual.NominalParentTransform.InverseTransformPoint(HoverboardPos), hoverboardVisual.NominalParentTransform.InverseTransformRotation(HoverboardRotation), color);
+            GTPlayer.Instance.SetHoverActive(false);
+
+            hoverboardVisual.interpolatedLocalPosition = hoverboardVisual.NominalLocalPosition;
+            hoverboardVisual.interpolatedLocalRotation = hoverboardVisual.NominalLocalRotation;
+
+            GTPlayer.Instance.SetHoverboardPosRot(HoverboardPos, HoverboardRotation);
+        }
+
+        public static void HoverboardScreenGun(Color color)
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+
+                if (gunLocked && lockTarget != null)
+                    HoverboardScreenTarget(lockTarget, color);
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                {
+                    gunLocked = false;
+                    VRRig.LocalRig.enabled = true;
+                }
+            }
+        }
+
+        public static void HoverboardScreenAll(Color color)
+        {
+            SerializePatch.OverrideSerialization = () => {
+                MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
+
+                Vector3 archivePos = VRRig.LocalRig.transform.position;
+
+                foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
+                {
+                    HoverboardScreenTarget(GetVRRigFromPlayer(Player), color);
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                }
+
+                RPCProtection();
+
+                VRRig.LocalRig.enabled = true;
+
+                VRRig.LocalRig.transform.position = archivePos;
+
+
+                return false;
+            };
+        }
+
         public static void SpawnHoverboard()
         {
             BetaDropBoard(VRRig.LocalRig.transform.position, VRRig.LocalRig.transform.rotation, Vector3.zero, Vector3.zero, RandomColor());
@@ -4083,20 +4160,23 @@ Piece Name: {gunTarget.name}";
 
         public static void BecomeHoverboard()
         {
+            Vector3 HoverboardPos = GorillaTagger.Instance.bodyCollider.transform.position;
+            Quaternion HoverboardRotation = GorillaTagger.Instance.headCollider.transform.rotation;
+
             VRRig.LocalRig.enabled = false;
-            VRRig.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position - Vector3.up * 1f;
+            VRRig.LocalRig.transform.position = HoverboardPos - Vector3.up * 1f;
 
             GTPlayer.Instance.SetHoverAllowed(true);
             GTPlayer.Instance.SetHoverActive(true);
 
             HoverboardVisual hoverboardVisual = VRRig.LocalRig.hoverboardVisual;
 
-            hoverboardVisual.SetIsHeld(true, hoverboardVisual.NominalParentTransform.InverseTransformPoint(GorillaTagger.Instance.bodyCollider.transform.position), hoverboardVisual.NominalParentTransform.InverseTransformRotation(GorillaTagger.Instance.headCollider.transform.rotation), VRRig.LocalRig.playerColor);
+            hoverboardVisual.SetIsHeld(true, hoverboardVisual.NominalParentTransform.InverseTransformPoint(HoverboardPos), hoverboardVisual.NominalParentTransform.InverseTransformRotation(HoverboardRotation), VRRig.LocalRig.playerColor);
 
             hoverboardVisual.interpolatedLocalPosition = hoverboardVisual.NominalLocalPosition;
             hoverboardVisual.interpolatedLocalRotation = hoverboardVisual.NominalLocalRotation;
 
-            GTPlayer.Instance.SetHoverboardPosRot(GorillaTagger.Instance.bodyCollider.transform.position, GorillaTagger.Instance.headCollider.transform.rotation);
+            GTPlayer.Instance.SetHoverboardPosRot(HoverboardPos, HoverboardRotation);
         }
 
         public static void DestroyGliders()
