@@ -151,6 +151,128 @@ namespace iiMenu.Mods
             else { NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>"); }
         }
 
+        public static void SetPlayerColors(Dictionary<int, int> colors) // ActorNumber : Team // 0 = Blue, 1 = Red, -1 = None
+        {
+            MonkeBallGame.Instance.photonView.RPC("RequestSetGameStateRPC", RpcTarget.All, new object[]
+            {
+                (int)MonkeBallGame.GameState.Playing,
+                PhotonNetwork.Time + (MonkeBallGame.Instance.gameDuration - 1f),
+                NetworkSystem.Instance.AllNetPlayers
+                    .Where(p => colors.ContainsKey(p.ActorNumber))
+                    .Select(p => p.ActorNumber)
+                    .ToArray(),
+                NetworkSystem.Instance.AllNetPlayers
+                    .Where(p => colors.ContainsKey(p.ActorNumber))
+                    .Select(p => colors[p.ActorNumber])
+                    .ToArray(),
+                new int[MonkeBallGame.Instance.team.Count],
+                MonkeBallGame.Instance.startingBalls.Select(ball =>
+                    BitPackUtils.PackHandPosRotForNetwork(ball.transform.position, ball.transform.rotation))
+                    .ToArray(),
+                MonkeBallGame.Instance.startingBalls.Select(ball =>
+                    BitPackUtils.PackWorldPosForNetwork(ball.gameBall.GetVelocity()))
+                    .ToArray()
+            });
+        }
+
+        private static float playerColorDelay;
+        public static void SetColorSelf(int color) =>
+            SetPlayerColors(new Dictionary<int, int> { { NetworkSystem.Instance.LocalPlayer.ActorNumber, color } });
+
+        public static void SetColorGun(int color)
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true) && Time.time > playerColorDelay)
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        playerColorDelay = Time.time + 0.1f;
+                        if (PhotonNetwork.IsMasterClient)
+                            SetPlayerColors(new Dictionary<int, int> { { GetPlayerFromVRRig(gunTarget).ActorNumber, color } });
+                        else
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                    }
+                }
+            }
+        }
+
+        public static void SetColorAll(int color)
+        {
+            if (PhotonNetwork.IsMasterClient)
+                SetPlayerColors(NetworkSystem.Instance.AllNetPlayers.ToDictionary(p => p.ActorNumber, p => color));
+            else
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+        }
+
+        public static void StrobeColorSelf()
+        {
+            if (Time.time > playerColorDelay)
+            {
+                playerColorDelay = Time.time + 0.1f;
+                if (NetworkSystem.Instance.IsMasterClient)
+                    SetColorSelf(Time.time % 0.2f > 0.1f ? 1 : 0);
+                else
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+            }
+        }
+
+        public static void StrobeColorGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    if (Time.time > playerColorDelay)
+                    {
+                        playerColorDelay = Time.time + 0.1f;
+                        if (NetworkSystem.Instance.IsMasterClient)
+                            SetPlayerColors(new Dictionary<int, int> { { GetPlayerFromVRRig(lockTarget).ActorNumber, Time.time % 0.2f > 0.1f ? 1 : 0 } });
+                        else
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                    }
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget) && !PlayerIsTagged(gunTarget))
+                    {
+                        if (PhotonNetwork.IsMasterClient)
+                        {
+                            gunLocked = true;
+                            lockTarget = gunTarget;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
+        public static void StrobeColorAll()
+        {
+            if (Time.time > playerColorDelay)
+            {
+                playerColorDelay = Time.time + 0.1f;
+                if (NetworkSystem.Instance.IsMasterClient)
+                    SetColorAll(Time.time % 0.2f > 0.1f ? 1 : 0);
+                else
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+            }
+        }
+
         private static float guardianSpazDelay = 0f;
         private static bool guardianSpazToggle = false;
         public static void GuardianSpaz()
@@ -2989,7 +3111,7 @@ namespace iiMenu.Mods
         {
             if (rightGrab)
             {
-                if (PhotonNetwork.LocalPlayer.IsMasterClient)
+                if (PhotonNetwork.IsMasterClient)
                 {
                     CrittersPawn[] critters = GetAllType<CrittersPawn>();
                     if (critters.Length > 0)
@@ -3069,7 +3191,7 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true))
                 {
-                    if (PhotonNetwork.LocalPlayer.IsMasterClient)
+                    if (PhotonNetwork.IsMasterClient)
                     {
                         CrittersPawn[] critters = GetAllType<CrittersPawn>();
                         if (critters.Length > 0)
@@ -3306,7 +3428,7 @@ namespace iiMenu.Mods
         {
             if (rightGrab)
             {
-                if (PhotonNetwork.LocalPlayer.IsMasterClient)
+                if (PhotonNetwork.IsMasterClient)
                 {
                     CrittersActor Object = CrittersManager.instance.SpawnActor(type);
                     Object.MoveActor(GorillaTagger.Instance.rightHandTransform.position, GorillaTagger.Instance.rightHandTransform.rotation);
@@ -3380,7 +3502,7 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true))
                 {
-                    if (PhotonNetwork.LocalPlayer.IsMasterClient)
+                    if (PhotonNetwork.IsMasterClient)
                     {
                         CrittersActor Object = CrittersManager.instance.SpawnActor(type);
                         Object.MoveActor(NewPointer.transform.position + Vector3.up, RandomQuaternion());
