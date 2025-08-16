@@ -391,6 +391,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Flush RPCs", method =() => RPCProtection(), isTogglable = false, toolTip = "Flushes all RPC calls, good after you stop spamming." },
                 new ButtonInfo { buttonText = "Anti Crash", enableMethod =() => Patches.AntiCrashPatch.enabled = true, disableMethod =() => Patches.AntiCrashPatch.enabled = false, toolTip = "Prevents crashers from completely annihilating your computer."},
+                new ButtonInfo { buttonText = "Anti Kick", enableMethod =() => onlySerializeNecessary = true, method =() => Experimental.OnlySerializeNecessary(), disableMethod =() => onlySerializeNecessary = false, toolTip = "Only networks the necessities to prevent getting kicked."},
                 new ButtonInfo { buttonText = "Auto Clear Cache", method =() => Safety.AutoClearCache(), toolTip = "Automatically clears your game's cache (garbage collector) every minute to prevent memory leaks."},
                 new ButtonInfo { buttonText = "Anti Moderator", method =() => Safety.AntiModerator(), toolTip = "When someone with the stick joins, you get disconnected and their player ID and room code gets saved to a file."},
 
@@ -403,6 +404,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Oculus</color><color=grey>]</color>", enableMethod =() => AntiOculusReport = true, disableMethod =() => AntiOculusReport = false, toolTip = "Disconnects you from the room when you get reported with the Oculus report menu."},
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Anti Cheat</color><color=grey>]</color>", enableMethod =() => Patches.Safety.AntiCheat.AntiACReport = true, disableMethod =() => Patches.Safety.AntiCheat.AntiACReport = false, toolTip = "Disconnects you from the room when you get reported by the anti cheat."},
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Notify</color><color=grey>]</color>", method =() => Safety.AntiReportNotify(), toolTip = "Tells you when people come near your report button, but doesn't do anything."},
+                new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Overlay</color><color=grey>]</color>", method =() => Safety.AntiReportOverlay(), toolTip = "Shows you an overlay when people come near your report button, but doesn't do anythin."},
 
                 new ButtonInfo { buttonText = "Show Anti Cheat Reports <color=grey>[</color><color=green>Self</color><color=grey>]</color>", enableMethod =() => Patches.Safety.AntiCheat.AntiCheatSelf = true, disableMethod =() => Patches.Safety.AntiCheat.AntiCheatSelf = false, toolTip = "Gives you a notification every time you have been reported by the anti cheat."},
                 new ButtonInfo { buttonText = "Show Anti Cheat Reports <color=grey>[</color><color=green>All</color><color=grey>]</color>", enableMethod =() => Patches.Safety.AntiCheat.AntiCheatAll = true, disableMethod =() => Patches.Safety.AntiCheat.AntiCheatAll = false, toolTip = "Gives you a notification every time anyone has been reported by the anti cheat."},
@@ -1619,7 +1621,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Copy Custom Gamemode Script", method =() => Experimental.CopyCustomGamemodeScript(), isTogglable = false, toolTip = "Copies the lua script source code of the current custom map being played."},
 
                 new ButtonInfo { buttonText = "Better FPS Boost", enableMethod =() => Experimental.BetterFPSBoost(), disableMethod =() => Experimental.DisableBetterFPSBoost(), toolTip = "Makes everything one color, boosting your FPS."},
-
+                
                 new ButtonInfo { buttonText = "Replay Tutorial", method =() => Settings.ShowTutorial(), isTogglable = false, toolTip = "Replays the tutorial video."},
                 new ButtonInfo { buttonText = "Disorganize Menu", method =() => Settings.DisorganizeMenu(), isTogglable = false, toolTip = "Disorganizes the entire menu. This cannot be undone."},
             },

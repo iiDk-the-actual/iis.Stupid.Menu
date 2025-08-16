@@ -5155,6 +5155,7 @@ namespace iiMenu.Menu
         public static void OnPlayerSerialize(VRRig rig) =>
             playerPing[rig] = (int)Math.Abs((rig.velocityHistoryList[0].time * 1000) - PhotonNetwork.ServerTimestamp);
 
+        public static bool onlySerializeNecessary;
         public static void MassSerialize(bool exclude = false, PhotonView[] viewFilter = null, int timeOffset = 0)
         {
             if (!PhotonNetwork.InRoom)
@@ -5164,6 +5165,9 @@ namespace iiMenu.Menu
             {
                 NonAllocDictionary<int, PhotonView> photonViewList = Traverse.Create(typeof(PhotonNetwork)).Field("photonViewList").GetValue<NonAllocDictionary<int, PhotonView>>();
                 List<PhotonView> viewsToSerialize = new List<PhotonView> { };
+
+                if (onlySerializeNecessary)
+                    photonViewList = new NonAllocDictionary<int, PhotonView> { { 0, GorillaTagger.Instance.myVRRig.GetView } };
 
                 List<int> filteredViewIDs = viewFilter.Select(view => view.ViewID).ToList();
 
