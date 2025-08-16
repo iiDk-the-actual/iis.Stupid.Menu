@@ -1340,6 +1340,31 @@ namespace iiMenu.Menu
                             {
                                 if (v.enabled)
                                 {
+                                    bool _leftPrimary = leftPrimary;
+                                    bool _leftSecondary = leftSecondary;
+                                    bool _rightPrimary = rightPrimary;
+                                    bool _rightSecondary = rightSecondary;
+                                    bool _leftGrab = leftGrab;
+                                    bool _rightGrab = rightGrab;
+                                    float _leftTrigger = leftTrigger;
+                                    float _rightTrigger = rightTrigger;
+                                    bool _leftJoystickClick = leftJoystickClick;
+                                    bool _rightJoystickClick = rightJoystickClick;
+
+                                    if (OverwriteKeybinds && v.customBind != null)
+                                    {
+                                        leftPrimary = true;
+                                        leftSecondary = true;
+                                        rightPrimary = true;
+                                        rightSecondary = true;
+                                        leftGrab = true;
+                                        rightGrab = true;
+                                        leftTrigger = 1f;
+                                        rightTrigger = 1f;
+                                        leftJoystickClick = true;
+                                        rightJoystickClick = true;
+                                    }
+
                                     if (v.method != null)
                                     {
                                         try
@@ -1350,6 +1375,20 @@ namespace iiMenu.Menu
                                         {
                                             LogManager.LogError(string.Format("Error with mod method {0} at {1}: {2}", v.buttonText, exc.StackTrace, exc.Message));
                                         }
+                                    }
+
+                                    if (OverwriteKeybinds && v.customBind != null)
+                                    {
+                                        leftPrimary = _leftPrimary;
+                                        leftSecondary = _leftSecondary;
+                                        rightPrimary = _rightPrimary;
+                                        rightSecondary = _rightSecondary;
+                                        leftGrab = _leftGrab;
+                                        rightGrab = _rightGrab;
+                                        leftTrigger = _leftTrigger;
+                                        rightTrigger = _rightTrigger;
+                                        leftJoystickClick = _leftJoystickClick;
+                                        rightJoystickClick = _rightJoystickClick;
                                     }
                                 }
                             } catch { }
@@ -6250,6 +6289,7 @@ jgs \_   _/ |Oo\
         };
 
         public static bool ToggleBindings = true;
+        public static bool OverwriteKeybinds;
         public static bool IsBinding;
         public static string BindInput = "";
 
