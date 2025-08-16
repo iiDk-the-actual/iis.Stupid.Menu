@@ -616,6 +616,61 @@ namespace iiMenu.Mods
                 LoadSoundFromURL($"https://github.com/iiDk-the-actual/ModInfo/raw/main/killsounds/{sound}.wav", $"{sound}.wav");
         }
 
+        private static GameObject FreeCamObject;
+        private static Vector3 CameraVelocity;
+        public static void Freecam()
+        {
+            if (FreeCamObject == null)
+            {
+                FreeCamObject = new GameObject("iiMenu_CameraObj");
+                FreeCamObject.transform.position = GorillaTagger.Instance.headCollider.transform.position;
+            }
+
+            Camera FreeCamera = FreeCamObject.GetOrAddComponent<Camera>();
+            FreeCamera.nearClipPlane = 0.01f;
+            FreeCamera.cameraType = CameraType.Game;
+
+            Vector3 inputDirection = new Vector3(leftJoystick.x, rightJoystick.y, leftJoystick.y);
+
+            Vector3 playerForward = GTPlayer.Instance.bodyCollider.transform.forward;
+            playerForward.y = 0;
+            Vector3 playerRight = GTPlayer.Instance.bodyCollider.transform.right;
+            playerRight.y = 0;
+
+            Vector3 velocity = inputDirection.x * playerRight + inputDirection.y * Vector3.up + inputDirection.z * playerForward;
+            velocity *= Movement.flySpeed;
+
+            CameraVelocity = Vector3.Lerp(CameraVelocity, velocity, 0.12875f);
+            FreeCamObject.transform.position += CameraVelocity * Time.unscaledDeltaTime;
+            FreeCamObject.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
+        }
+
+        public static void ThirdPersonCamera()
+        {
+            if (FreeCamObject == null)
+            {
+                FreeCamObject = new GameObject("iiMenu_CameraObj");
+                FreeCamObject.transform.position = GorillaTagger.Instance.headCollider.transform.position;
+            }
+
+            Camera FreeCamera = FreeCamObject.GetOrAddComponent<Camera>();
+            FreeCamera.nearClipPlane = 0.01f;
+            FreeCamera.cameraType = CameraType.Game;
+
+            FreeCamObject.transform.position = GorillaTagger.Instance.bodyCollider.transform.TransformPoint(new Vector3(0f, 0.5f, -1.5f));
+            FreeCamObject.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
+        }
+
+        public static void DisableFreecam()
+        {
+            if (FreeCamObject != null)
+            {
+                UnityEngine.Object.Destroy(FreeCamObject.GetComponent<Camera>());
+                UnityEngine.Object.Destroy(FreeCamObject);
+                FreeCamObject = null;
+            }
+        }
+
         private static float muteDelay = 0f;
         public static void MuteGun()
         {
@@ -1540,13 +1595,14 @@ namespace iiMenu.Mods
 
                 if (GetGunInput(true))
                 {
-                    CoconutCamera camera = LckSocialCameraManager._instance._socialCameraInstance.CoconutCamera;
-                    camera.SetVisualsActive(true);
-                    camera.SetRecordingState(true);
+                    LckSocialCamera camera = GorillaTagger.Instance.myVRRig.gameObject.transform.Find("LCKNetworkedSocialCamera").GetComponent<LckSocialCamera>();
+                    camera.visible = true;
+                    camera.recording = true;
 
-                    LckSocialCameraManager._instance.cameraActive = true;
-                    LckSocialCameraManager._instance._socialCameraInstance.visible = true;
-                    LckSocialCameraManager._instance._socialCameraInstance.transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
+                    camera.CoconutCamera.SetVisualsActive(true);
+                    camera.CoconutCamera.SetRecordingState(true);
+
+                    camera.transform.position = NewPointer.transform.position + new Vector3(0f, 1f, 0f);
                 }
             }
         }

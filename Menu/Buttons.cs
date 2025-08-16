@@ -810,6 +810,9 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Tag Sounds", enableMethod =() => Fun.PreloadTagSounds(), method =() => Patches.TagPatch.enabled = true, disableMethod =() => Patches.TagPatch.enabled = false, toolTip = "Plays a selection of dramatic sound effects when tagging players. Credits to Wyndigo for the idea."},
 
+                new ButtonInfo { buttonText = "Free Camera <color=grey>[</color><color=green>J</color><color=grey>]</color>", method =() => Fun.Freecam(), disableMethod =() => Fun.DisableFreecam(), toolTip = "Exit your own body and fly around to your free will."},
+                new ButtonInfo { buttonText = "Third Person Camera", method =() => Fun.ThirdPersonCamera(), disableMethod =() => Fun.DisableFreecam(), toolTip = "Moves your camera to behind your head."},
+
                 new ButtonInfo { buttonText = "Mute Gun", method =() => Fun.MuteGun(), toolTip = "Mutes or unmutes whoever your hand desires."},
                 new ButtonInfo { buttonText = "Mute All", method =() => Fun.MuteAll(), disableMethod =() => Fun.UnmuteAll(), toolTip = "Mutes everyone in the room."},
 
