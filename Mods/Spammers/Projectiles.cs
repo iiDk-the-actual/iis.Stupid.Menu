@@ -964,28 +964,32 @@ namespace iiMenu.Mods.Spammers
         public static void ProjectileBlindAll()
         {
             SerializePatch.OverrideSerialization = () => {
-                MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
-
-                Vector3 archivePos = VRRig.LocalRig.transform.position;
-
-                foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
+                if (PhotonNetwork.InRoom)
                 {
-                    VRRig rig = GetVRRigFromPlayer(Player);
-                    VRRig.LocalRig.transform.position = rig.transform.position - Vector3.one * 3f;
+                    MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
 
-                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                    Vector3 archivePos = VRRig.LocalRig.transform.position;
 
-                    BetaFireProjectile("EggLeftHand_Anchor Variant", rig.headMesh.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, -15f, 0f), Color.black, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(rig)).ActorNumber } }, true);
+                    foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
+                    {
+                        VRRig rig = GetVRRigFromPlayer(Player);
+                        VRRig.LocalRig.transform.position = rig.transform.position - Vector3.one * 3f;
+
+                        SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+
+                        BetaFireProjectile("EggLeftHand_Anchor Variant", rig.headMesh.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, -15f, 0f), Color.black, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(rig)).ActorNumber } }, true);
+                    }
+
+                    RPCProtection();
+
+                    VRRig.LocalRig.enabled = true;
+
+                    VRRig.LocalRig.transform.position = archivePos;
+
+                    return false;
                 }
 
-                RPCProtection();
-
-                VRRig.LocalRig.enabled = true;
-
-                VRRig.LocalRig.transform.position = archivePos;
-
-
-                return false;
+                return true;
             };
         }
 
@@ -1027,28 +1031,32 @@ namespace iiMenu.Mods.Spammers
         public static void ProjectileLagAll()
         {
             SerializePatch.OverrideSerialization = () => {
-                MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
-
-                Vector3 archivePos = VRRig.LocalRig.transform.position;
-
-                foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
+                if (PhotonNetwork.InRoom)
                 {
-                    VRRig rig = GetVRRigFromPlayer(Player);
-                    VRRig.LocalRig.transform.position = rig.transform.position - Vector3.one * 3f;
+                    MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
 
-                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                    Vector3 archivePos = VRRig.LocalRig.transform.position;
 
-                    BetaFireProjectile("Fireworks_Anchor Variant_Left Hand", rig.headMesh.transform.position + new Vector3(0f, 0.1f, 0f) + rig.headMesh.transform.forward * -0.7f, new Vector3(0f, 15f, 0f), Color.black, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(rig)).ActorNumber } }, true);
+                    foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
+                    {
+                        VRRig rig = GetVRRigFromPlayer(Player);
+                        VRRig.LocalRig.transform.position = rig.transform.position - Vector3.one * 3f;
+
+                        SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+
+                        BetaFireProjectile("Fireworks_Anchor Variant_Left Hand", rig.headMesh.transform.position + new Vector3(0f, 0.1f, 0f) + rig.headMesh.transform.forward * -0.7f, new Vector3(0f, 15f, 0f), Color.black, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(rig)).ActorNumber } }, true);
+                    }
+
+                    RPCProtection();
+
+                    VRRig.LocalRig.enabled = true;
+
+                    VRRig.LocalRig.transform.position = archivePos;
+
+                    return false;
                 }
 
-                RPCProtection();
-
-                VRRig.LocalRig.enabled = true;
-
-                VRRig.LocalRig.transform.position = archivePos;
-
-
-                return false;
+                return true;
             };
         }
 
