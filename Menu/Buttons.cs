@@ -845,6 +845,12 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Arcade Teleporter Effect Spam", method =() => Fun.ArcadeTeleporterEffectSpam(), toolTip = "Spams the effects on the virtual stump teleporters in the arcade when holding <color=green>trigger</color>."},
                 new ButtonInfo { buttonText = "Stump Teleporter Effect Spam", method =() => Fun.StumpTeleporterEffectSpam(), toolTip = "Spams the effects on the virtual stump teleporter in forest when holding <color=green>trigger</color>."},
 
+                new ButtonInfo { buttonText = "Open Basement Door", method =() => Fun.SetBasementDoorState(true), toolTip = "Repeatedly opens the basement door."},
+                new ButtonInfo { buttonText = "Open Elevator Door", method =() => Fun.SetElevatorDoorState(true), toolTip = "Repeatedly opens the elevator door."},
+
+                new ButtonInfo { buttonText = "Close Basement Door", method =() => Fun.SetBasementDoorState(false), toolTip = "Repeatedly closes the basement door."},
+                new ButtonInfo { buttonText = "Close Elevator Door", method =() => Fun.SetElevatorDoorState(false), toolTip = "Repeatedly closes the elevator door."},
+
                 new ButtonInfo { buttonText = "Basement Door Spam", method =() => Fun.BasementDoorSpam(), toolTip = "Repeatedly opens and closes the basement door."},
                 new ButtonInfo { buttonText = "Elevator Door Spam", method =() => Fun.ElevatorDoorSpam(), toolTip = "Repeatedly opens and closes the elevator door."},
 
@@ -1182,10 +1188,10 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Spit Gun", method =() => Projectiles.SpitGun(), toolTip = "Makes whoever your hand desires spit." },
 
                 new ButtonInfo { buttonText = "Projectile Blind Gun", method =() => Projectiles.ProjectileBlindGun(), toolTip = "Blinds whoever your hand desires using the egg projectiles."},
-                new ButtonInfo { buttonText = "Projectile Blind All", method =() => Projectiles.ProjectileBlindAll(), toolTip = "Blinds everybody in the room using the egg projectiles."},
+                new ButtonInfo { buttonText = "Projectile Blind All", enableMethod =() => Projectiles.ProjectileBlindAll(), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Blinds everybody in the room using the egg projectiles."},
 
                 new ButtonInfo { buttonText = "Projectile Lag Gun", method =() => Projectiles.ProjectileLagGun(), toolTip = "Lags whoever your hand desires using the firework projectiles."},
-                new ButtonInfo { buttonText = "Projectile Lag All", method =() => Projectiles.ProjectileLagAll(), toolTip = "Lags everybody in the room using the firework projectiles."}
+                new ButtonInfo { buttonText = "Projectile Lag All", enableMethod =() => Projectiles.ProjectileLagAll(), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Lags everybody in the room using the firework projectiles."}
             },
 
             new ButtonInfo[] { // Master Mods [16]
