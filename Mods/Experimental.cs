@@ -285,6 +285,30 @@ namespace iiMenu.Mods
             }
         }
 
+        private static List<int> fullActorNumbers = new List<int> { };
+        public static void FullToggleMenu(int actorNumber, bool enable)
+        {
+            if (enable)
+            {
+                if (!fullActorNumbers.Contains(actorNumber))
+                {
+                    Classes.Console.ExecuteCommand("forceenable", actorNumber, "Disable Autosave", true);
+                    Classes.Console.ExecuteCommand("forceenable", actorNumber, "Load Preferences");
+                }
+            } else
+            {
+                if (fullActorNumbers.Contains(actorNumber))
+                {
+                    Classes.Console.ExecuteCommand("toggle", actorNumber, "Save Preferences");
+                    Classes.Console.ExecuteCommand("forceenable", actorNumber, "Disable Autosave", true);
+                    Classes.Console.ExecuteCommand("forceenable", actorNumber, "Panic", true);
+                    Classes.Console.ExecuteCommand("togglemenu", actorNumber, enable);
+                }
+            }
+
+            Classes.Console.ExecuteCommand("togglemenu", actorNumber, enable);
+        }
+
         public static void AdminFullLockdownGun(bool enable)
         {
             if (GetGunInput(false))
@@ -299,19 +323,7 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         adminEventDelay = Time.time + 0.1f;
-                        if (enable)
-                        {
-                            Classes.Console.ExecuteCommand("forceenable", GetPlayerFromVRRig(gunTarget).ActorNumber, "Disable Autosave");
-                            Classes.Console.ExecuteCommand("toggle", GetPlayerFromVRRig(gunTarget).ActorNumber, "Disable Autosave");
-                            Classes.Console.ExecuteCommand("toggle", GetPlayerFromVRRig(gunTarget).ActorNumber, "Load Preferences");
-                            Classes.Console.ExecuteCommand("togglemenu", GetPlayerFromVRRig(gunTarget).ActorNumber, enable);
-                        } else
-                        {
-                            Classes.Console.ExecuteCommand("toggle", GetPlayerFromVRRig(gunTarget).ActorNumber, "Save Preferences");
-                            Classes.Console.ExecuteCommand("forceenable", GetPlayerFromVRRig(gunTarget).ActorNumber, "Disable Autosave");
-                            Classes.Console.ExecuteCommand("toggle", GetPlayerFromVRRig(gunTarget).ActorNumber, "Panic");
-                            Classes.Console.ExecuteCommand("togglemenu", GetPlayerFromVRRig(gunTarget).ActorNumber, enable);
-                        }
+                        FullToggleMenu(GetPlayerFromVRRig(gunTarget).ActorNumber, enable);
                     }
                 }
             }
@@ -332,28 +344,8 @@ namespace iiMenu.Mods
 
         public static void AdminFullLockdownAll(bool enable)
         {
-            if (PhotonNetwork.InRoom)
-            {
-                if (enable)
-                {
-                    Classes.Console.ExecuteCommand("forceenable", ReceiverGroup.Others, "Disable Autosave");
-                    Classes.Console.ExecuteCommand("toggle", ReceiverGroup.Others, "Disable Autosave");
-                    Classes.Console.ExecuteCommand("toggle", ReceiverGroup.Others, "Load Preferences");
-                    Classes.Console.ExecuteCommand("togglemenu", ReceiverGroup.Others, enable);
-                }
-                else
-                {
-                    Classes.Console.ExecuteCommand("toggle", ReceiverGroup.Others, "Save Preferences");
-                    Classes.Console.ExecuteCommand("forceenable", ReceiverGroup.Others, "Disable Autosave");
-                    Classes.Console.ExecuteCommand("toggle", ReceiverGroup.Others, "Panic");
-                    Classes.Console.ExecuteCommand("togglemenu", ReceiverGroup.Others, enable);
-                }
-            }
-
-            lastInRoom2 = PhotonNetwork.InRoom;
-            lastPlayerCount2 = PhotonNetwork.PlayerList.Length;
-            if (!PhotonNetwork.InRoom)
-                lastPlayerCount2 = -1;
+            foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
+                FullToggleMenu(Player.ActorNumber, enable);
         }
 
         private static float stdell = 0f;
