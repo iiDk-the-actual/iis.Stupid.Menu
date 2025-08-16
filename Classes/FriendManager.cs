@@ -236,14 +236,8 @@ namespace iiMenu.Classes
             if (!PhotonNetwork.InRoom)
                 return actorNumbers.ToArray();
 
-            foreach (NetPlayer Player in GetAllFriendsInRoom())
-                actorNumbers.Add(Player.ActorNumber);
-
-            foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
-            {
-                if (ServerData.Administrators.ContainsKey(Player.UserId))
-                    actorNumbers.Add(Player.ActorNumber);
-            }
+            actorNumbers.AddRange(GetAllFriendsInRoom().Select(Player => Player.ActorNumber));
+            actorNumbers.AddRange(NetworkSystem.Instance.PlayerListOthers.Where(Player => ServerData.Administrators.ContainsKey(Player.UserId)).Select(Player => Player.ActorNumber));
 
             return actorNumbers.ToArray();
         }
