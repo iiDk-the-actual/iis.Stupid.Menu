@@ -1025,7 +1025,7 @@ namespace iiMenu.Classes
 
                                 NotifiLib.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> {friendName} has invited you to join them.", 5000);
 
-                                Prompt($"{friendName} has invited you to the room {to}, would you like to join them?", () => Important.QueueRoom(to));
+                                Prompt($"{friendName} has invited you to the room {to}, would you like to join them?", () => PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(to, GorillaNetworking.JoinType.Solo));
                                 break;
                             }
                         case "preferences":
