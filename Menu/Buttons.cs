@@ -268,7 +268,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "True Projectile Aura", overlapText = "Projectile Aura", toolTip = "Makes the projectiles random around you." },
                 new ButtonInfo { buttonText = "Projectile Fountain", toolTip = "Makes projectiles spurt out of your head, like a fountain." },
 
-                new ButtonInfo { buttonText = "Rainbow Projectiles", toolTip = "Makes projectiles be rainbow (real RGB)." },
+                new ButtonInfo { buttonText = "Rainbow Colored Projectiles", toolTip = "Makes projectiles be rainbow (real RGB)." },
                 new ButtonInfo { buttonText = "Hard Rainbow Projectiles", toolTip = "Makes projectiles be rainbow but ye rainbow tis very harsh (real RGB)." },
 
                 new ButtonInfo { buttonText = "RedProj", overlapText = "Red <color=grey>[</color><color=green>10</color><color=grey>]</color>", method =() => Projectiles.IncreaseRed(), enableMethod =() => Projectiles.IncreaseRed(), disableMethod =() => Projectiles.IncreaseRed(false), incremental = true, isTogglable = false, toolTip = "Makes projectiles more red." },
@@ -570,9 +570,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Freeze Rig Limbs <color=grey>[</color><color=green>A</color><color=grey>]</color>", method =() => Movement.FreezeRigLimbs(), toolTip = "Makes your hands and head freeze on your rig, but not your body, when holding <color=green>A</color>."},
                 new ButtonInfo { buttonText = "Freeze Rig Body <color=grey>[</color><color=green>A</color><color=grey>]</color>", method =() => Movement.FreezeRigBody(), toolTip = "Makes your body freeze on your rig, but not your hands and head, when holding <color=green>A</color>."},
 
-                new ButtonInfo { buttonText = "Paralyze Rig", method =() => Movement.ParalyzeRig(), disableMethod =() => VRRig.LocalRig.enabled = true, toolTip = "Removes your arms from your rig."},
+                new ButtonInfo { buttonText = "Paralyze Rig", method =() => Movement.ParalyzeRig(), disableMethod =() => VRRig.LocalRig.enabled = true, toolTip = "Removes your arms from your rig. Credits to Expansion for the idea."},
                 new ButtonInfo { buttonText = "Chicken Rig", method =() => Movement.ChickenRig(), disableMethod =() => VRRig.LocalRig.enabled = true, toolTip = "Makes your rig look like a chicken."},
-                new ButtonInfo { buttonText = "Amputate Rig", method =() => Movement.AmputateRig(), disableMethod =() => VRRig.LocalRig.enabled = true, toolTip = "Removes all of your limbs from your rig."},
+                new ButtonInfo { buttonText = "Amputate Rig", method =() => Movement.AmputateRig(), disableMethod =() => VRRig.LocalRig.enabled = true, toolTip = "Removes all of your limbs from your rig. Credits to Expansion for the idea."},
 
                 new ButtonInfo { buttonText = "Spin Rig Body", method =() => Movement.SetBodyPatch(true), disableMethod =() => Movement.SetBodyPatch(false), toolTip = "Makes your body spin around, but not your head."},
                 new ButtonInfo { buttonText = "Spaz Rig Body", method =() => Movement.SetBodyPatch(true, 1), disableMethod =() => Movement.SetBodyPatch(false), toolTip = "Gives your body a seizure, randomizing its rotation."},
@@ -885,9 +885,16 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Slow Throw", method =() => { Patches.VelocityPatch.enabled = true; Patches.VelocityPatch.multipleFactor = 0.1f; }, disableMethod =() => Patches.VelocityPatch.enabled = false, toolTip = "Multiplies your throw factor by 0.1."},
 
                 new ButtonInfo { buttonText = "Large Snowballs", enableMethod =() => Patches.EnablePatch.enabled = true, disableMethod =() => Patches.EnablePatch.enabled = false, toolTip = "Makes snowballs by default the largest size."},
-                new ButtonInfo { buttonText = "Fast Snowballs", method =() => Fun.FastSnowballs(), disableMethod =() => Fun.FixSnowballs(), toolTip = "Makes snowballs go really fast when thrown."},
-                new ButtonInfo { buttonText = "Slow Snowballs", method =() => Fun.SlowSnowballs(), disableMethod =() => Fun.FixSnowballs(), toolTip = "Makes snowballs go really slow when thrown."},
+                new ButtonInfo { buttonText = "Spaz Snowballs <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.SpazSnowballs(), toolTip = "Randomizes the size of the snowballs. Credits to test for the idea."},
+
                 new ButtonInfo { buttonText = "Multiply Snowballs", method =() => Patches.ThrowPatch.enabled = true, disableMethod =() => Patches.ThrowPatch.enabled = false, toolTip = "Multiplies the snowballs you spawn by 5."},
+
+                new ButtonInfo { buttonText = "Fast Snowballs", overlapText = "Fast Projectiles", method =() => Fun.FastSnowballs(), disableMethod =() => Fun.FixSnowballs(), toolTip = "Makes projectiles go really fast when thrown."},
+                new ButtonInfo { buttonText = "Slow Snowballs", overlapText = "Slow Projectiles", method =() => Fun.SlowSnowballs(), disableMethod =() => Fun.FixSnowballs(), toolTip = "Makes projectiles go really slow when thrown."},
+
+                new ButtonInfo { buttonText = "Rainbow Projectiles", enableMethod =() => Fun.HookProjectileColors(), method =() => Fun.projHookColor = Color.HSVToRGB((Time.frameCount / 180f) % 1f, 1f, 1f), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Changes your projectile's color to be rainbow"},
+                new ButtonInfo { buttonText = "Flash Projectiles", enableMethod =() => Fun.HookProjectileColors(), method =() => Fun.projHookColor = Time.time % 0.2f > 0.1f ? Color.white : Color.black, disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Changes your projectile's color to be rainbow"},
+                new ButtonInfo { buttonText = "Strobe Projectiles", enableMethod =() => Fun.HookProjectileColors(), method =() => Fun.projHookColor = RandomColor(), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Changes your projectile's color to be rainbow"},
 
                 new ButtonInfo { buttonText = "Snowball Buttocks", method =() => Fun.SnowballButtocks(), disableMethod =() => Fun.DisableSnowballGenitals(), toolTip = "Gives you fake buttocks using the snowballs." },
                 new ButtonInfo { buttonText = "Snowball Breasts", method =() => Fun.SnowballBreasts(), disableMethod =() => Fun.DisableSnowballGenitals(), toolTip = "Gives you fake breasts using the snowballs." },
@@ -1090,7 +1097,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Random Name Cycle", method =() => Fun.RandomNameCycle(), toolTip = "Sets your name on a loop to a bunch of random characters." },
                 new ButtonInfo { buttonText = "Custom Name Cycle", enableMethod =() => Fun.EnableCustomNameCycle(), method =() => Fun.NameCycle(Fun.names), toolTip = "Sets your name on a loop to whatever's in the file." },
 
-                new ButtonInfo { buttonText = "Strobe Color", method =() => Fun.StrobeColor(), toolTip = "Makes your character flash." },
+                new ButtonInfo { buttonText = "Strobe Color", overlapText = "Flash Color", method =() => Fun.FlashColor(), toolTip = "Makes your character flash." },
+                new ButtonInfo { buttonText = "Strobe Color", method =() => Fun.StrobeColor(), toolTip = "Makes your character random colors." },
                 new ButtonInfo { buttonText = "Rainbow Color", method =() => Fun.RainbowColor(), toolTip = "Makes your character rainbow." },
                 new ButtonInfo { buttonText = "Hard Rainbow Color", method =() => Fun.HardRainbowColor(), toolTip = "Makes your character flash from red, green, blue, and magenta." },
 
