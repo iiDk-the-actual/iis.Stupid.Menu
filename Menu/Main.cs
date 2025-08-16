@@ -5107,9 +5107,9 @@ namespace iiMenu.Menu
 
         public static void OnSerialize()
         {
-            ServerSyncPos = VRRig.LocalRig?.transform.position ?? ServerSyncPos;
-            ServerSyncLeftHandPos = VRRig.LocalRig?.leftHand.rigTarget.transform.position ?? ServerSyncLeftHandPos;
-            ServerSyncRightHandPos = VRRig.LocalRig?.rightHand.rigTarget.transform.position ?? ServerSyncRightHandPos;
+            ServerSyncPos = VRRig.LocalRig?.transform?.position ?? ServerSyncPos;
+            ServerSyncLeftHandPos = VRRig.LocalRig?.leftHand?.rigTarget?.transform?.position ?? ServerSyncLeftHandPos;
+            ServerSyncRightHandPos = VRRig.LocalRig?.rightHand?.rigTarget?.transform?.position ?? ServerSyncRightHandPos;
         }
 
         public static Dictionary<VRRig, int> playerPing = new Dictionary<VRRig, int> { };
