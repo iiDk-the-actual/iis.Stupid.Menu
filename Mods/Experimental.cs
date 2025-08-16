@@ -483,7 +483,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
                     adminEventDelay = Time.time + 0.1f;
-                    Classes.Console.ExecuteCommand("platf", ReceiverGroup.All, NewPointer.transform.position, RandomVector3(), UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), 1f);
+                    Classes.Console.ExecuteCommand("platf", ReceiverGroup.All, NewPointer.transform.position);
                 }
             }
         }
@@ -499,7 +499,7 @@ namespace iiMenu.Mods
                 if (GetGunInput(true) && Time.time > adminEventDelay)
                 {
                     adminEventDelay = Time.time + 0.1f;
-                    Classes.Console.ExecuteCommand("platf", ReceiverGroup.All, NewPointer.transform.position);
+                    Classes.Console.ExecuteCommand("platf", ReceiverGroup.All, NewPointer.transform.position, RandomVector3(), RandomQuaternion(), UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), 1f);
                 }
             }
         }
