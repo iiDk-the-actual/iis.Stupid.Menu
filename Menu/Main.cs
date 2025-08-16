@@ -631,10 +631,10 @@ namespace iiMenu.Menu
                         if (PhotonNetwork.InRoom)
                         {
                             if (!disableMasterClientNotifications)
-                                if (PhotonNetwork.LocalPlayer.IsMasterClient && !lastMasterClient)
+                                if (PhotonNetwork.IsMasterClient && !lastMasterClient)
                                     NotifiLib.SendNotification("<color=grey>[</color><color=purple>MASTER</color><color=grey>]</color> You are now master client.");
 
-                            lastMasterClient = PhotonNetwork.LocalPlayer.IsMasterClient;
+                            lastMasterClient = PhotonNetwork.IsMasterClient;
                         }
                     }
                     catch { }

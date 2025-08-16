@@ -13,7 +13,7 @@ namespace iiMenu.Mods
     {
         public static void TagSelf()
         {
-            if (PhotonNetwork.LocalPlayer.IsMasterClient)
+            if (PhotonNetwork.IsMasterClient)
             {
                 AddInfected(PhotonNetwork.LocalPlayer);
                 NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>You have been tagged.</color>");
@@ -151,7 +151,7 @@ namespace iiMenu.Mods
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget) && !PlayerIsTagged(gunTarget))
                     {
-                        if (PhotonNetwork.LocalPlayer.IsMasterClient)
+                        if (PhotonNetwork.IsMasterClient)
                         {
                             gunLocked = true;
                             lockTarget = gunTarget;
@@ -162,10 +162,7 @@ namespace iiMenu.Mods
             else
             {
                 if (gunLocked)
-                {
                     gunLocked = false;
-                    VRRig.LocalRig.enabled = true;
-                }
             }
         }
 
@@ -421,7 +418,7 @@ namespace iiMenu.Mods
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget) && !PlayerIsTagged(gunTarget))
                     {
-                        if (PhotonNetwork.LocalPlayer.IsMasterClient)
+                        if (PhotonNetwork.IsMasterClient)
                             AddInfected(RigManager.GetPlayerFromVRRig(gunTarget));
                         else
                         {
@@ -456,7 +453,7 @@ namespace iiMenu.Mods
 
         public static void TagPlayer(NetPlayer player)
         {
-            if (PhotonNetwork.LocalPlayer.IsMasterClient)
+            if (PhotonNetwork.IsMasterClient)
             {
                 AddInfected(player);
                 return;
@@ -526,7 +523,7 @@ namespace iiMenu.Mods
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget) && PlayerIsTagged(gunTarget))
                     {
-                        if (PhotonNetwork.LocalPlayer.IsMasterClient)
+                        if (PhotonNetwork.IsMasterClient)
                             RemoveInfected(RigManager.GetPlayerFromVRRig(gunTarget));
                         else
                             NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");

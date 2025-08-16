@@ -1055,7 +1055,7 @@ namespace iiMenu.Mods
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
-                        if (PhotonNetwork.LocalPlayer.IsMasterClient)
+                        if (PhotonNetwork.IsMasterClient)
                             GRPlayer.Get(GetPlayerFromVRRig(gunTarget).ActorNumber).currency = currency;
                         else
                             NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
@@ -1094,7 +1094,7 @@ namespace iiMenu.Mods
                     VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
-                        if (PhotonNetwork.LocalPlayer.IsMasterClient)
+                        if (PhotonNetwork.IsMasterClient)
                             GRPlayer.Get(GetPlayerFromVRRig(gunTarget).ActorNumber).currency = 0;
                         else
                             NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
