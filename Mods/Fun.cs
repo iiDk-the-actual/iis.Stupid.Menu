@@ -947,6 +947,7 @@ namespace iiMenu.Mods
             }
         }
 
+        private static bool openOrClose;
         public static void BasementDoorSpam()
         {
             if (Time.time > spamDelay)
@@ -1767,6 +1768,23 @@ Piece Name: {gunTarget.name}";
                 OwnershipPatch.blacklistedGuards.Add(bugObject.worldShareableInstance.guard);
         }
 
+        public static void SpazSnowballs()
+        {
+            if (leftGrab)
+            {
+                GrowingSnowballThrowable Snowball = GetProjectile("GrowingSnowballLeftAnchor") as GrowingSnowballThrowable;
+                Snowball.SetSnowballActiveLocal(true);
+                Snowball.SetSizeLevelAuthority(UnityEngine.Random.Range(1, 6));
+            }
+
+            if (rightGrab)
+            {
+                GrowingSnowballThrowable Snowball = GetProjectile("GrowingSnowballRightAnchor") as GrowingSnowballThrowable;
+                Snowball.SetSnowballActiveLocal(true);
+                Snowball.SetSizeLevelAuthority(UnityEngine.Random.Range(1, 6));
+            }
+        }
+
         public static void FastSnowballs()
         {
             foreach (SnowballMaker Maker in new[] { SnowballMaker.leftHandInstance, SnowballMaker.rightHandInstance })
@@ -1804,6 +1822,58 @@ Piece Name: {gunTarget.name}";
                     Throwable.maxWristSpeed = 4f;
                 }
             }
+        }
+
+        public static Color projHookColor = Color.white;
+        public static void HookProjectileColors()
+        {
+            SerializePatch.OverrideSerialization = () =>
+            {
+                if (PhotonNetwork.InRoom)
+                {
+                    MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
+
+                    List<SnowballThrowable> activeSnowballs = new List<SnowballThrowable> { };
+
+                    foreach (SnowballMaker Maker in new[] { SnowballMaker.leftHandInstance, SnowballMaker.rightHandInstance })
+                    {
+                        foreach (SnowballThrowable Throwable in Maker.snowballs)
+                        {
+                            if (Throwable.gameObject.activeSelf)
+                                activeSnowballs.Add(Throwable);
+                        }
+                    }
+
+                    if (activeSnowballs.Count <= 0)
+                    {
+                        SendSerialize(GorillaTagger.Instance.myVRRig.GetView);
+                        return false;
+                    }
+
+                    foreach (SnowballThrowable snowball in activeSnowballs)
+                        snowball.SetSnowballActiveLocal(false);
+
+                    VRRig.LocalRig.reliableState.SetIsDirty();
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView);
+
+                    foreach (SnowballThrowable snowball in activeSnowballs)
+                    {
+                        if (snowball is GrowingSnowballThrowable growingSnowball)
+                            growingSnowball.maintainSizeLevelUntilLocalTime = Time.time;
+
+                        snowball.randomizeColor = true;
+                        VRRig.LocalRig.SetThrowableProjectileColor(snowball.gameObject.name.ToLower().Contains("left"), projHookColor);
+                        snowball.SetSnowballActiveLocal(true);
+                        snowball.ApplyColor(projHookColor);
+                    }
+
+                    VRRig.LocalRig.reliableState.SetIsDirty();
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView);
+
+                    return false;
+                }
+                return true;
+            };
         }
 
         // These mods are kind of suggestive
@@ -2029,24 +2099,28 @@ Piece Name: {gunTarget.name}";
         public static void HoverboardScreenAll(Color color)
         {
             SerializePatch.OverrideSerialization = () => {
-                MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
-
-                Vector3 archivePos = VRRig.LocalRig.transform.position;
-
-                foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
+                if (PhotonNetwork.InRoom)
                 {
-                    HoverboardScreenTarget(GetVRRigFromPlayer(Player), color);
-                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                    MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
+
+                    Vector3 archivePos = VRRig.LocalRig.transform.position;
+
+                    foreach (NetPlayer Player in NetworkSystem.Instance.PlayerListOthers)
+                    {
+                        HoverboardScreenTarget(GetVRRigFromPlayer(Player), color);
+                        SendSerialize(GorillaTagger.Instance.myVRRig.GetView, new RaiseEventOptions() { TargetActors = new int[] { Player.ActorNumber } });
+                    }
+
+                    RPCProtection();
+
+                    VRRig.LocalRig.enabled = true;
+
+                    VRRig.LocalRig.transform.position = archivePos;
+
+                    return false;
                 }
 
-                RPCProtection();
-
-                VRRig.LocalRig.enabled = true;
-
-                VRRig.LocalRig.transform.position = archivePos;
-
-
-                return false;
+                return true;
             };
         }
 
@@ -2536,7 +2610,7 @@ Piece Name: {gunTarget.name}";
                         Projectiles.BetaFireProjectile(projectileName, GorillaTagger.Instance.rightHandTransform.position, GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength, RandomColor());
                         break;
                     case 6:
-                        Overpowered.BetaSpawnSnowball(GorillaTagger.Instance.rightHandTransform.position, GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength, 5, 0);
+                        Overpowered.BetaSpawnSnowball(GorillaTagger.Instance.rightHandTransform.position, GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength, Overpowered.snowballScale, 0);
                         break;
                 }
             }
@@ -4256,13 +4330,22 @@ Piece Name: {gunTarget.name}";
                 File.WriteAllText($"{PluginInfo.BaseDirectory}/iiMenu_CustomNameCycle.txt","YOUR\nTEXT\nHERE");
         }
 
-        public static void StrobeColor()
+        public static void FlashColor()
         {
             if (Time.time > colorChangerDelay)
             {
                 colorChangerDelay = Time.time + 0.05f;
                 strobeColor = !strobeColor;
-                ChangeColor(new Color(strobeColor ? 1 : 0, strobeColor ? 1 : 0, strobeColor ? 1 : 0));
+                ChangeColor(strobeColor ? Color.white : Color.black);
+            }
+        }
+
+        public static void StrobeColor()
+        {
+            if (Time.time > colorChangerDelay)
+            {
+                colorChangerDelay = Time.time + 0.05f;
+                ChangeColor(RandomColor());
             }
         }
 
