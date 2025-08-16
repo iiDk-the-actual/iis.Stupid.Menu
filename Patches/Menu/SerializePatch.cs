@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using iiMenu.Classes;
 using Photon.Pun;
 using System;
 
@@ -15,7 +16,13 @@ namespace iiMenu.Patches
             if (!PhotonNetwork.InRoom)
                 return true;
 
-            OnSerialize?.Invoke();
+            try
+            {
+                OnSerialize?.Invoke();
+            } catch (Exception e)
+            {
+                LogManager.LogError($"Error in SerializePatch.OnSerialize: ${e}");
+            }
 
             if (OverrideSerialization == null)
                 return true;
