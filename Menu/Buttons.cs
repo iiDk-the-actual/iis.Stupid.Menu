@@ -890,10 +890,25 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Slow Hoverboard", method =() => Fun.SlowHoverboard(), disableMethod =() => Fun.FixHoverboard(), toolTip = "Makes your hoverboard go really slow."},
 
                 new ButtonInfo { buttonText = "Rainbow Hoverboard", method =() => Fun.RainbowHoverboard(), toolTip = "Changes your hoverboard's color to be rainbow."},
-                new ButtonInfo { buttonText = "Strobe Hoverboard", method =() => Fun.StrobeHoverboard(), toolTip = "Changes your hoverboard's color to flash between black and white."},
-                new ButtonInfo { buttonText = "Random Hoverboard", method =() => Fun.RandomHoverboard(), toolTip = "Changes your hoverboard's color to flash random colors."},
+                new ButtonInfo { buttonText = "Strobe Hoverboard", overlapText = "Flash Hoverboard", method =() => Fun.StrobeHoverboard(), toolTip = "Changes your hoverboard's color to flash between black and white."},
+                new ButtonInfo { buttonText = "Random Hoverboard", overlapText = "Strobe Hoverboard", method =() => Fun.RandomHoverboard(), toolTip = "Changes your hoverboard's color to flash random colors."},
 
                 new ButtonInfo { buttonText = "Global Hoverboard", method =() => Fun.GlobalHoverboard(), disableMethod =() => Fun.DisableGlobalHoverboard(), toolTip = "Gives you the hoverboard no matter where you are."},
+
+                new ButtonInfo { buttonText = "Black Screen Gun", method =() => Fun.HoverboardScreenGun(Color.black), toolTip = "Uses the hoverboards to blind whoever your hand desires."},
+                new ButtonInfo { buttonText = "Black Screen All", method =() => Fun.HoverboardScreenAll(Color.black), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Uses the hoverboards to blind everyone in the room."},
+
+                new ButtonInfo { buttonText = "White Screen Gun", method =() => Fun.HoverboardScreenGun(Color.white), toolTip = "Uses the hoverboards to make whoever your hand desires' screen white."},
+                new ButtonInfo { buttonText = "White Screen All", method =() => Fun.HoverboardScreenAll(Color.white), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Uses the hoverboards to flash the screen of everyone in the room."},
+
+                new ButtonInfo { buttonText = "Flash Screen Gun", method =() => Fun.HoverboardScreenGun(Time.time % 0.2f > 0.1f ? Color.white : Color.black), toolTip = "Uses the hoverboards to flash the screen of whoever your hand desires."},
+                new ButtonInfo { buttonText = "Flash Screen All", method =() => Fun.HoverboardScreenAll(Time.time % 0.2f > 0.1f ? Color.white : Color.black), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Uses the hoverboards to blind everyone in the room."},
+
+                new ButtonInfo { buttonText = "Strobe Screen Gun", method =() => Fun.HoverboardScreenGun(RandomColor()), toolTip = "Uses the hoverboards to flash the screen of whoever your hand desires."},
+                new ButtonInfo { buttonText = "Strobe Screen All", method =() => Fun.HoverboardScreenAll(RandomColor()), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Uses the hoverboards to blind everyone in the room."},
+
+                new ButtonInfo { buttonText = "Rainbow Screen Gun", method =() => Fun.HoverboardScreenGun(Color.HSVToRGB((Time.frameCount / 180f) % 1f, 1f, 1f)), toolTip = "Uses the hoverboards to make the screen of whoever your hand desires rainbow."},
+                new ButtonInfo { buttonText = "Rainbow Screen All", method =() => Fun.HoverboardScreenAll(Color.HSVToRGB((Time.frameCount / 180f) % 1f, 1f, 1f)), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Uses the hoverboards to make the screen of everyone in the room rainbow."},
 
                 new ButtonInfo { buttonText = "Hoverboard Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Fun.HoverboardSpam(), toolTip = "Spams hoverboards from your hand when holding <color=green>grip</color>."},
                 new ButtonInfo { buttonText = "Spawn Hoverboard", method =() => Fun.SpawnHoverboard(), isTogglable = false, toolTip = "Spawns a hoverboard at your player position."},
@@ -1167,10 +1182,10 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Spit Gun", method =() => Projectiles.SpitGun(), toolTip = "Makes whoever your hand desires spit." },
 
                 new ButtonInfo { buttonText = "Projectile Blind Gun", method =() => Projectiles.ProjectileBlindGun(), toolTip = "Blinds whoever your hand desires using the egg projectiles."},
-                new ButtonInfo { buttonText = "Projectile Blind All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Projectiles.ProjectileBlindAll(), toolTip = "Blinds everybody in the room using the egg projectiles."},
+                new ButtonInfo { buttonText = "Projectile Blind All", method =() => Projectiles.ProjectileBlindAll(), toolTip = "Blinds everybody in the room using the egg projectiles."},
 
                 new ButtonInfo { buttonText = "Projectile Lag Gun", method =() => Projectiles.ProjectileLagGun(), toolTip = "Lags whoever your hand desires using the firework projectiles."},
-                new ButtonInfo { buttonText = "Projectile Lag All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Projectiles.ProjectileLagAll(), toolTip = "Blinds everybody in the room using the firework projectiles."}
+                new ButtonInfo { buttonText = "Projectile Lag All", method =() => Projectiles.ProjectileLagAll(), toolTip = "Lags everybody in the room using the firework projectiles."}
             },
 
             new ButtonInfo[] { // Master Mods [16]

@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using ExitGames.Client.Photon;
+using GorillaExtensions;
 using GorillaLocomotion;
 using GorillaLocomotion.Climbing;
 using GorillaLocomotion.Swimming;
@@ -2058,17 +2059,58 @@ namespace iiMenu.Mods
             }
         }
 
+        private static Quaternion grabHeadRot;
+
+        private static Vector3 grabLeftHandPos;
+        private static Quaternion grabLeftHandRot;
+
+        private static Vector3 grabRightHandPos;
+        private static Quaternion grabRightHandRot;
+
         public static void GrabRig()
         {
             if (rightGrab)
             {
+                if (grabHeadRot == Quaternion.identity)
+                    grabHeadRot = VRRig.LocalRig.transform.InverseTransformRotation(VRRig.LocalRig.head.rigTarget.transform.rotation);
+
+                if (grabLeftHandPos == Vector3.zero)
+                    grabLeftHandPos = VRRig.LocalRig.transform.InverseTransformPoint(VRRig.LocalRig.leftHand.rigTarget.transform.position);
+
+                if (grabLeftHandRot == Quaternion.identity)
+                    grabLeftHandRot = VRRig.LocalRig.transform.InverseTransformRotation(VRRig.LocalRig.leftHand.rigTarget.transform.rotation);
+
+                if (grabRightHandPos == Vector3.zero)
+                    grabRightHandPos = VRRig.LocalRig.transform.InverseTransformPoint(VRRig.LocalRig.rightHand.rigTarget.transform.position);
+
+                if (grabRightHandRot == Quaternion.identity)
+                    grabRightHandRot = VRRig.LocalRig.transform.InverseTransformRotation(VRRig.LocalRig.rightHand.rigTarget.transform.rotation);
+
                 VRRig.LocalRig.enabled = false;
 
                 VRRig.LocalRig.transform.position = GorillaTagger.Instance.rightHandTransform.position;
                 VRRig.LocalRig.transform.rotation = Quaternion.Euler(new Vector3(0f, GorillaTagger.Instance.rightHandTransform.rotation.eulerAngles.y, 0f));
+
+                VRRig.LocalRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.rightHandTransform.TransformRotation(grabHeadRot);
+
+                VRRig.LocalRig.leftHand.rigTarget.transform.position = GorillaTagger.Instance.rightHandTransform.TransformPoint(grabLeftHandPos);
+                VRRig.LocalRig.leftHand.rigTarget.transform.rotation = GorillaTagger.Instance.rightHandTransform.TransformRotation(grabLeftHandRot);
+
+                VRRig.LocalRig.rightHand.rigTarget.transform.position = GorillaTagger.Instance.rightHandTransform.TransformPoint(grabRightHandPos);
+                VRRig.LocalRig.rightHand.rigTarget.transform.rotation = GorillaTagger.Instance.rightHandTransform.TransformRotation(grabRightHandRot);
             }
             else
+            {
                 VRRig.LocalRig.enabled = true;
+
+                grabHeadRot = Quaternion.identity;
+
+                grabLeftHandPos = Vector3.zero;
+                grabRightHandPos = Vector3.zero;
+
+                grabLeftHandRot = Quaternion.identity;
+                grabRightHandRot = Quaternion.identity;
+            }
         }
 
         public static Vector3 offsetLH = Vector3.zero;
@@ -3536,7 +3578,6 @@ namespace iiMenu.Mods
                 VRRig.LocalRig.rightHand.rigTarget.rotation = archiveRotRight;
 
                 VRRig.LocalRig.head.rigTarget.transform.rotation = headRot;
-
 
                 return false;
             };
