@@ -1773,6 +1773,7 @@ Piece Name: {gunTarget.name}";
             if (leftGrab)
             {
                 GrowingSnowballThrowable Snowball = GetProjectile("GrowingSnowballLeftAnchor") as GrowingSnowballThrowable;
+                Snowball.randomizeColor = true;
                 Snowball.SetSnowballActiveLocal(true);
                 Snowball.SetSizeLevelAuthority(UnityEngine.Random.Range(1, 6));
             }
@@ -1780,6 +1781,7 @@ Piece Name: {gunTarget.name}";
             if (rightGrab)
             {
                 GrowingSnowballThrowable Snowball = GetProjectile("GrowingSnowballRightAnchor") as GrowingSnowballThrowable;
+                Snowball.randomizeColor = true;
                 Snowball.SetSnowballActiveLocal(true);
                 Snowball.SetSizeLevelAuthority(UnityEngine.Random.Range(1, 6));
             }
