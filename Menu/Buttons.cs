@@ -1298,8 +1298,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Orbit Monsters", method =() => Fun.OrbitMonsters(), toolTip = "Orbits the basement monsters around you." },
                 new ButtonInfo { buttonText = "Destroy Monsters", method =() => Fun.DestroyMonsters(), isTogglable = false, toolTip = "Sends the basement monsters to hell." },
 
-                new ButtonInfo { buttonText = "Infection to Tag", method =() => Overpowered.InfectionToTag(), isTogglable = false, toolTip = "Turns the game into tag instead of infection." },
-                new ButtonInfo { buttonText = "Tag to Infection", method =() => Overpowered.TagToInfection(), isTogglable = false, toolTip = "Turns the game into infection instead of tag." },
+                new ButtonInfo { buttonText = "Infection to Tag", method =() => Overpowered.InfectionToTag(), disableMethod =() => Overpowered.FixThreshold(), toolTip = "Turns the game into tag instead of infection." },
+                new ButtonInfo { buttonText = "Tag to Infection", method =() => Overpowered.TagToInfection(), disableMethod =() => Overpowered.FixThreshold(), toolTip = "Turns the game into infection instead of tag." },
 
                 new ButtonInfo { buttonText = "Untag Gun", method =() => Advantages.UntagGun(), toolTip = "Untags whoever your hand desires."},
                 new ButtonInfo { buttonText = "Untag All", method =() => Advantages.UntagAll(), isTogglable = false, toolTip = "Removes everyone from the list of tagged players."},

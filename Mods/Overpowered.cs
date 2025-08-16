@@ -2737,9 +2737,7 @@ namespace iiMenu.Mods
             else
             {
                 GorillaTagManager gorillaTagManager = (GorillaTagManager)GorillaGameManager.instance;
-                gorillaTagManager.SetisCurrentlyTag(true);
-                gorillaTagManager.ClearInfectionState();
-                gorillaTagManager.ChangeCurrentIt(GameMode.ParticipatingPlayers[UnityEngine.Random.Range(0, GameMode.ParticipatingPlayers.Count)]);
+                gorillaTagManager.infectedModeThreshold = PhotonNetwork.CurrentRoom.MaxPlayers + 1;
             }
         }
 
@@ -2750,12 +2748,14 @@ namespace iiMenu.Mods
             else
             {
                 GorillaTagManager gorillaTagManager = (GorillaTagManager)GorillaGameManager.instance;
-                gorillaTagManager.SetisCurrentlyTag(false);
-                gorillaTagManager.ClearInfectionState();
-                NetPlayer victim = GameMode.ParticipatingPlayers[UnityEngine.Random.Range(0, GameMode.ParticipatingPlayers.Count)];
-                gorillaTagManager.AddInfectedPlayer(victim);
-                gorillaTagManager.lastInfectedPlayer = victim;
+                gorillaTagManager.infectedModeThreshold = 1;
             }
+        }
+
+        public static void FixThreshold()
+        {
+            GorillaTagManager gorillaTagManager = (GorillaTagManager)GorillaGameManager.instance;
+            gorillaTagManager.infectedModeThreshold = 4;
         }
 
         public static void BetaSetStatus(int state, RaiseEventOptions reo)
