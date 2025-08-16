@@ -57,10 +57,28 @@ namespace iiMenu.Mods
                 } catch (Exception exception) { LogManager.LogError(string.Format("mat error {1} - {0}", exception.Message, exception.StackTrace)); }
             }
         }
+
         public static void DisableBetterFPSBoost()
         {
             foreach (KeyValuePair<Renderer, Material> v in oldMats)
                 v.Key.material = v.Value;
+        }
+
+        public static void OnlySerializeNecessary()
+        {
+            if (Patches.SerializePatch.OverrideSerialization == null)
+            {
+                Patches.SerializePatch.OverrideSerialization = () =>
+                {
+                    if (PhotonNetwork.InRoom)
+                    {
+                        SendSerialize(GorillaTagger.Instance.myVRRig.GetView);
+                        return false;
+                    }
+
+                    return true;
+                };
+            }
         }
 
         public static void DumpSoundData()
