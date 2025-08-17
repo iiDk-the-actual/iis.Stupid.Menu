@@ -812,6 +812,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Free Camera <color=grey>[</color><color=green>J</color><color=grey>]</color>", method =() => Fun.Freecam(), disableMethod =() => Fun.DisableFreecam(), toolTip = "Exit your own body and fly around to your free will."},
                 new ButtonInfo { buttonText = "Third Person Camera", method =() => Fun.ThirdPersonCamera(), disableMethod =() => Fun.DisableFreecam(), toolTip = "Moves your camera to behind your head."},
+                new ButtonInfo { buttonText = "Spectate Gun", method =() => Fun.SpectateGun(), disableMethod =() => Fun.DisableFreecam(), toolTip = "Lets you see through the eyes of whoever your hand desires."},
 
                 new ButtonInfo { buttonText = "Mute Gun", method =() => Fun.MuteGun(), toolTip = "Mutes or unmutes whoever your hand desires."},
                 new ButtonInfo { buttonText = "Mute All", method =() => Fun.MuteAll(), disableMethod =() => Fun.UnmuteAll(), toolTip = "Mutes everyone in the room."},
@@ -992,10 +993,19 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Critter Noise Effect Gun", method =() => Overpowered.EffectGun(CrittersManager.CritterEvent.NoiseMakerTriggered), toolTip = "Spams the noise particles at wherever your hand desires."},
                 new ButtonInfo { buttonText = "Critter Particle Effect Gun", method =() => Overpowered.EffectGun((CrittersManager.CritterEvent)UnityEngine.Random.Range(0, 4)), toolTip = "Spams every particle at wherever your hand desires."},
 
-                new ButtonInfo { buttonText = "Fire Sound Spam", enableMethod =() => Fun.CheckOwnedCosmetic("LBALH."), method =() => Fun.FireSoundSpam(), toolTip = "Spams fire sounds when holding <color=green>trigger</color>."},
-
+                new ButtonInfo { buttonText = "Fire Sound Spam <color=grey>[</color><color=green>T</color><color=grey>]</color>", enableMethod =() => Fun.CheckOwnedCosmetic("LBALH."), method =() => Fun.FireSoundSpam(), toolTip = "Spams fire sounds when holding <color=green>trigger</color>."},
+                
                 new ButtonInfo { buttonText = "Barrel Fling Gun", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelFlingGun(), toolTip = "Flings whoever your hand desires using the barrels."},
                 new ButtonInfo { buttonText = "Barrel Fling All", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelFlingAll(), toolTip = "Flings everyone in the room using the barrels."},
+
+                new ButtonInfo { buttonText = "White Color Gun", enableMethod =() => Fun.CheckOwnedThrowable(629), method =() => Fun.WhiteColorGun(), toolTip = "Sprays whoever your hand desires with the sunblock spray cosmetic."},
+                new ButtonInfo { buttonText = "White Color All", enableMethod =() => Fun.CheckOwnedThrowable(629), method =() => Fun.WhiteColorTarget(GetCurrentTargetRig()), disableMethod =() => VRRig.LocalRig.enabled = false, toolTip = "Sprays everyone in the room with the sunblock spray cosmetic."},
+
+                new ButtonInfo { buttonText = "Black Color Gun", enableMethod =() => Fun.CheckOwnedThrowable(600), method =() => Fun.BlackColorGun(), toolTip = "Uses the smoke bomb to make whoever your hand desires black."},
+                new ButtonInfo { buttonText = "Black Color All", enableMethod =() => Fun.CheckOwnedThrowable(600), method =() => Fun.BlackColorTarget(GetCurrentTargetRig()), disableMethod =() => VRRig.LocalRig.enabled = false, toolTip = "Uses the smoke bomb to make everyone in the room black."},
+
+                new ButtonInfo { buttonText = "Chicken Gun", enableMethod =() => Fun.CheckOwnedThrowable(651), method =() => Fun.ChickenGun(), toolTip = "Uses the smoke bomb to make whoever your hand desires black."},
+                new ButtonInfo { buttonText = "Chicken All", enableMethod =() => Fun.CheckOwnedThrowable(651), method =() => Fun.ChickenTarget(GetCurrentTargetRig()), disableMethod =() => VRRig.LocalRig.enabled = false, toolTip = "Uses the smoke bomb to make everyone in the room black."},
 
                 new ButtonInfo { buttonText = "Whoopee Cushion Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", enableMethod =() => Fun.CheckOwnedThrowable(626), method =() => Fun.ThrowableProjectileSpam(626), toolTip = "Spawns whoopee cushions on your hand when holding <color=green>grip</color>."},
                 new ButtonInfo { buttonText = "Whoopee Cushion Minigun <color=grey>[</color><color=green>G</color><color=grey>]</color>", enableMethod =() => Fun.CheckOwnedThrowable(626), method =() => Fun.ThrowableProjectileMinigun(626), toolTip = "Shoots whoopee cushions out of your hand when holding <color=green>grip</color>."},

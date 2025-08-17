@@ -662,6 +662,40 @@ namespace iiMenu.Mods
             FreeCamObject.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
         }
 
+        public static void SpectateGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    FreeCamObject.transform.position = lockTarget.headMesh.transform.position;
+                    FreeCamObject.transform.rotation = lockTarget.headMesh.transform.rotation;
+                }
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                {
+                    gunLocked = false;
+                    DisableFreecam();
+                }
+            }
+        }
+
         public static void DisableFreecam()
         {
             if (FreeCamObject != null)
@@ -3016,7 +3050,7 @@ Piece Name: {gunTarget.name}";
 
             DistancePatch.enabled = false;
             VRRig.LocalRig.enabled = true;
-            VRRig.LocalRig.SetActiveTransferrableObjectIndex(1, index);
+            
             GameObject proj = VRRig.LocalRig.myBodyDockPositions.allObjects[index].gameObject;
             proj.SetActive(true);
 
@@ -3097,6 +3131,174 @@ Piece Name: {gunTarget.name}";
         {
             VRRig TargetRig = GetCurrentTargetRig();
             SendBarrelProjectile(TargetRig.transform.position, new Vector3(0f, 5000f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(TargetRig)).ActorNumber } });
+        }
+
+        public static void WhiteColorTarget(VRRig rig)
+        {
+            int index = 629;
+            DisableThrowableCoroutine = CoroutineManager.instance.StartCoroutine(DisableThrowable(index));
+            TransferrableObject transferrableObject = VRRig.LocalRig.myBodyDockPositions.allObjects[index];
+
+            if (!CosmeticsOwned.Contains(transferrableObject.gameObject.name))
+            {
+                VRRig.LocalRig.enabled = false;
+                VRRig.LocalRig.transform.position = new Vector3(-51.4897f, 16.9286f, -120.1083f);
+            }
+
+            if (transferrableObject.gameObject.activeSelf == false)
+            {
+                VRRig.LocalRig.SetActiveTransferrableObjectIndex(1, index);
+
+                transferrableObject.gameObject.SetActive(true);
+                transferrableObject.storedZone = BodyDockPositions.DropPositions.RightArm;
+                transferrableObject.currentState = TransferrableObject.PositionState.InRightHand;
+            }
+            else
+            {
+                VRRig.LocalRig.enabled = false;
+                VRRig.LocalRig.transform.position = rig.transform.position - Vector3.up;
+
+                VRRig.LocalRig.leftHand.rigTarget.transform.position = rig.transform.position;
+                VRRig.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
+
+                VRRig.LocalRig.leftIndex.calcT = 1f;
+                VRRig.LocalRig.leftMiddle.calcT = 1f;
+
+                VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
+                VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
+            }
+        }
+
+        public static void WhiteColorGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (gunLocked && lockTarget != null)
+                    WhiteColorTarget(lockTarget);
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                {
+                    gunLocked = false;
+                    VRRig.LocalRig.enabled = true;
+                }
+            }
+        }
+
+        public static void BlackColorTarget(VRRig rig) =>
+            SendThrowableProjectile(600, rig.transform.position, Vector3.zero, Quaternion.identity);
+
+        public static void BlackColorGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (gunLocked && lockTarget != null)
+                    BlackColorTarget(lockTarget);
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                {
+                    gunLocked = false;
+                    VRRig.LocalRig.enabled = true;
+                }
+            }
+        }
+
+        public static void ChickenTarget(VRRig rig)
+        {
+            int index = 651;
+            DisableThrowableCoroutine = CoroutineManager.instance.StartCoroutine(DisableThrowable(index));
+            TransferrableObject transferrableObject = VRRig.LocalRig.myBodyDockPositions.allObjects[index];
+
+            if (!CosmeticsOwned.Contains(transferrableObject.gameObject.name))
+            {
+                VRRig.LocalRig.enabled = false;
+                VRRig.LocalRig.transform.position = new Vector3(-51.4897f, 16.9286f, -120.1083f);
+            }
+
+            if (transferrableObject.gameObject.activeSelf == false)
+            {
+                VRRig.LocalRig.SetActiveTransferrableObjectIndex(1, index);
+
+                transferrableObject.gameObject.SetActive(true);
+                transferrableObject.storedZone = BodyDockPositions.DropPositions.RightArm;
+                transferrableObject.currentState = TransferrableObject.PositionState.InRightHand;
+            }
+            else
+            {
+                VRRig.LocalRig.enabled = false;
+                VRRig.LocalRig.transform.position = rig.transform.position - Vector3.up;
+
+                VRRig.LocalRig.leftHand.rigTarget.transform.position = rig.transform.position + (Vector3.up * UnityEngine.Random.Range(-1f, 1f));
+                VRRig.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
+
+                VRRig.LocalRig.leftIndex.calcT = 1f;
+                VRRig.LocalRig.leftMiddle.calcT = 1f;
+
+                VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
+                VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
+            }
+        }
+
+        public static void ChickenGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (gunLocked && lockTarget != null)
+                    WhiteColorTarget(lockTarget);
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                {
+                    gunLocked = false;
+                    VRRig.LocalRig.enabled = true;
+                }
+            }
         }
 
         private static float throwableProjectileTimeout;
