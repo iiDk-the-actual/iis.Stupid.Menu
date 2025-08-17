@@ -672,6 +672,16 @@ namespace iiMenu.Mods
 
                 if (gunLocked && lockTarget != null)
                 {
+                    if (FreeCamObject == null)
+                    {
+                        FreeCamObject = new GameObject("iiMenu_CameraObj");
+                        FreeCamObject.transform.position = GorillaTagger.Instance.headCollider.transform.position;
+                    }
+
+                    Camera FreeCamera = FreeCamObject.GetOrAddComponent<Camera>();
+                    FreeCamera.nearClipPlane = 0.01f;
+                    FreeCamera.cameraType = CameraType.Game;
+
                     FreeCamObject.transform.position = lockTarget.headMesh.transform.position;
                     FreeCamObject.transform.rotation = lockTarget.headMesh.transform.rotation;
                 }
@@ -3096,6 +3106,53 @@ Piece Name: {gunTarget.name}";
                 EquipCosmetic("LBALH.");
         }
 
+        public static void BubblerGun(int index, Quaternion handRotation, float handOffset = 0.5f)
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun(GorillaLocomotion.GTPlayer.Instance.locomotionEnabledLayers);
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    DisableThrowableCoroutine = CoroutineManager.instance.StartCoroutine(DisableThrowable(index));
+                    TransferrableObject transferrableObject = VRRig.LocalRig.myBodyDockPositions.allObjects[index];
+
+                    if (!CosmeticsOwned.Contains(transferrableObject.gameObject.name))
+                    {
+                        VRRig.LocalRig.enabled = false;
+                        VRRig.LocalRig.transform.position = new Vector3(-51.4897f, 16.9286f, -120.1083f);
+                    }
+
+                    if (transferrableObject.gameObject.activeSelf == false)
+                    {
+                        VRRig.LocalRig.SetActiveTransferrableObjectIndex(1, index);
+
+                        transferrableObject.gameObject.SetActive(true);
+                        transferrableObject.storedZone = BodyDockPositions.DropPositions.RightArm;
+                        transferrableObject.currentState = TransferrableObject.PositionState.InRightHand;
+                    }
+                    else
+                    {
+                        VRRig.LocalRig.enabled = false;
+                        VRRig.LocalRig.transform.position = NewPointer.transform.position - (Vector3.up * 0.5f);
+
+                        VRRig.LocalRig.rightHand.rigTarget.transform.position = NewPointer.transform.position + (Vector3.up * handOffset);
+                        VRRig.LocalRig.rightHand.rigTarget.transform.rotation = handRotation;
+
+                        VRRig.LocalRig.rightIndex.calcT = 1f;
+                        VRRig.LocalRig.rightMiddle.calcT = 1f;
+
+                        VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+                        VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
+                    }
+                }
+            }
+            else
+                VRRig.LocalRig.enabled = true;
+        }
+
         public static void BarrelFlingGun()
         {
             if (GetGunInput(false))
@@ -3158,14 +3215,14 @@ Piece Name: {gunTarget.name}";
                 VRRig.LocalRig.enabled = false;
                 VRRig.LocalRig.transform.position = rig.transform.position - Vector3.up;
 
-                VRRig.LocalRig.leftHand.rigTarget.transform.position = rig.transform.position;
-                VRRig.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
+                VRRig.LocalRig.rightHand.rigTarget.transform.position = rig.transform.position;
+                VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
 
-                VRRig.LocalRig.leftIndex.calcT = 1f;
-                VRRig.LocalRig.leftMiddle.calcT = 1f;
+                VRRig.LocalRig.rightIndex.calcT = 1f;
+                VRRig.LocalRig.rightMiddle.calcT = 1f;
 
-                VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
-                VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
+                VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+                VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
             }
         }
 
@@ -3259,14 +3316,14 @@ Piece Name: {gunTarget.name}";
                 VRRig.LocalRig.enabled = false;
                 VRRig.LocalRig.transform.position = rig.transform.position - Vector3.up;
 
-                VRRig.LocalRig.leftHand.rigTarget.transform.position = rig.transform.position + (Vector3.up * UnityEngine.Random.Range(-1f, 1f));
-                VRRig.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
+                VRRig.LocalRig.rightHand.rigTarget.transform.position = rig.transform.position + (Vector3.up * UnityEngine.Random.Range(-1f, 1f));
+                VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
 
-                VRRig.LocalRig.leftIndex.calcT = 1f;
-                VRRig.LocalRig.leftMiddle.calcT = 1f;
+                VRRig.LocalRig.rightIndex.calcT = 1f;
+                VRRig.LocalRig.rightMiddle.calcT = 1f;
 
-                VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
-                VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
+                VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+                VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
             }
         }
 
@@ -3279,7 +3336,7 @@ Piece Name: {gunTarget.name}";
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (gunLocked && lockTarget != null)
-                    WhiteColorTarget(lockTarget);
+                    ChickenTarget(lockTarget);
 
                 if (GetGunInput(true))
                 {

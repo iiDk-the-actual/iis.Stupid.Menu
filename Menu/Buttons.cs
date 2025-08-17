@@ -994,7 +994,10 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Critter Particle Effect Gun", method =() => Overpowered.EffectGun((CrittersManager.CritterEvent)UnityEngine.Random.Range(0, 4)), toolTip = "Spams every particle at wherever your hand desires."},
 
                 new ButtonInfo { buttonText = "Fire Sound Spam <color=grey>[</color><color=green>T</color><color=grey>]</color>", enableMethod =() => Fun.CheckOwnedCosmetic("LBALH."), method =() => Fun.FireSoundSpam(), toolTip = "Spams fire sounds when holding <color=green>trigger</color>."},
-                
+
+                new ButtonInfo { buttonText = "Bubble Gun", enableMethod =() => Fun.CheckOwnedThrowable(33), method =() => Fun.BubblerGun(33, Quaternion.identity, 0.1f), toolTip = "Uses the bubbler to spawn bubbles at wherever your hand desires."},
+                new ButtonInfo { buttonText = "Fire Gun", enableMethod =() => Fun.CheckOwnedThrowable(175), method =() => Fun.BubblerGun(175, Quaternion.Euler(180f, 0f, 0f)), toolTip = "Uses the bubbler to spawn bubbles at wherever your hand desires."},
+
                 new ButtonInfo { buttonText = "Barrel Fling Gun", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelFlingGun(), toolTip = "Flings whoever your hand desires using the barrels."},
                 new ButtonInfo { buttonText = "Barrel Fling All", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelFlingAll(), toolTip = "Flings everyone in the room using the barrels."},
 
