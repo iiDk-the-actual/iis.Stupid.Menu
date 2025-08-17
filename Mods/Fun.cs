@@ -3166,25 +3166,23 @@ Piece Name: {gunTarget.name}";
                     if (transferrableObject.gameObject.activeSelf == false)
                     {
                         VRRig.LocalRig.SetActiveTransferrableObjectIndex(1, index);
-
                         transferrableObject.gameObject.SetActive(true);
-                        transferrableObject.storedZone = BodyDockPositions.DropPositions.RightArm;
-                        transferrableObject.currentState = TransferrableObject.PositionState.InRightHand;
                     }
-                    else
-                    {
-                        VRRig.LocalRig.enabled = false;
-                        VRRig.LocalRig.transform.position = NewPointer.transform.position - (Vector3.up * 0.5f);
 
-                        VRRig.LocalRig.rightHand.rigTarget.transform.position = NewPointer.transform.position + (Vector3.up * handOffset);
-                        VRRig.LocalRig.rightHand.rigTarget.transform.rotation = handRotation;
+                    transferrableObject.storedZone = BodyDockPositions.DropPositions.RightArm;
+                    transferrableObject.currentState = TransferrableObject.PositionState.InRightHand;
 
-                        VRRig.LocalRig.rightIndex.calcT = 1f;
-                        VRRig.LocalRig.rightMiddle.calcT = 1f;
+                    VRRig.LocalRig.enabled = false;
+                    VRRig.LocalRig.transform.position = NewPointer.transform.position - (Vector3.up * 0.5f);
 
-                        VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
-                        VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
-                    }
+                    VRRig.LocalRig.rightHand.rigTarget.transform.position = NewPointer.transform.position + (Vector3.up * handOffset);
+                    VRRig.LocalRig.rightHand.rigTarget.transform.rotation = handRotation;
+
+                    VRRig.LocalRig.rightIndex.calcT = 1f;
+                    VRRig.LocalRig.rightMiddle.calcT = 1f;
+
+                    VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+                    VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
                 }
             }
             else
@@ -3243,25 +3241,23 @@ Piece Name: {gunTarget.name}";
             if (transferrableObject.gameObject.activeSelf == false)
             {
                 VRRig.LocalRig.SetActiveTransferrableObjectIndex(1, index);
-
                 transferrableObject.gameObject.SetActive(true);
-                transferrableObject.storedZone = BodyDockPositions.DropPositions.RightArm;
-                transferrableObject.currentState = TransferrableObject.PositionState.InRightHand;
             }
-            else
-            {
-                VRRig.LocalRig.enabled = false;
-                VRRig.LocalRig.transform.position = rig.transform.position - Vector3.up;
 
-                VRRig.LocalRig.rightHand.rigTarget.transform.position = rig.transform.position;
-                VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
+            transferrableObject.storedZone = BodyDockPositions.DropPositions.RightArm;
+            transferrableObject.currentState = TransferrableObject.PositionState.InRightHand;
 
-                VRRig.LocalRig.rightIndex.calcT = 1f;
-                VRRig.LocalRig.rightMiddle.calcT = 1f;
+            VRRig.LocalRig.enabled = false;
+            VRRig.LocalRig.transform.position = rig.transform.position - Vector3.up;
 
-                VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
-                VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
-            }
+            VRRig.LocalRig.rightHand.rigTarget.transform.position = rig.transform.position;
+            VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
+
+            VRRig.LocalRig.rightIndex.calcT = 1f;
+            VRRig.LocalRig.rightMiddle.calcT = 1f;
+
+            VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+            VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
         }
 
         public static void WhiteColorGun()
@@ -3344,25 +3340,23 @@ Piece Name: {gunTarget.name}";
             if (transferrableObject.gameObject.activeSelf == false)
             {
                 VRRig.LocalRig.SetActiveTransferrableObjectIndex(1, index);
-
                 transferrableObject.gameObject.SetActive(true);
-                transferrableObject.storedZone = BodyDockPositions.DropPositions.RightArm;
-                transferrableObject.currentState = TransferrableObject.PositionState.InRightHand;
             }
-            else
-            {
-                VRRig.LocalRig.enabled = false;
-                VRRig.LocalRig.transform.position = rig.transform.position - Vector3.up;
 
-                VRRig.LocalRig.rightHand.rigTarget.transform.position = rig.transform.position + (Vector3.up * UnityEngine.Random.Range(-1f, 1f));
-                VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
+            transferrableObject.storedZone = BodyDockPositions.DropPositions.RightArm;
+            transferrableObject.currentState = TransferrableObject.PositionState.InRightHand;
 
-                VRRig.LocalRig.rightIndex.calcT = 1f;
-                VRRig.LocalRig.rightMiddle.calcT = 1f;
+            VRRig.LocalRig.enabled = false;
+            VRRig.LocalRig.transform.position = rig.transform.position - Vector3.up;
 
-                VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
-                VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
-            }
+            VRRig.LocalRig.rightHand.rigTarget.transform.position = rig.transform.position + (Vector3.up * UnityEngine.Random.Range(-1f, 1f));
+            VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
+
+            VRRig.LocalRig.rightIndex.calcT = 1f;
+            VRRig.LocalRig.rightMiddle.calcT = 1f;
+
+            VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+            VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
         }
 
         public static void ChickenGun()
@@ -3416,31 +3410,29 @@ Piece Name: {gunTarget.name}";
             if (transferrableObject.gameObject.activeSelf == false)
             {
                 VRRig.LocalRig.SetActiveTransferrableObjectIndex(1, index);
-
                 transferrableObject.gameObject.SetActive(true);
-                transferrableObject.storedZone = BodyDockPositions.DropPositions.RightArm;
-                transferrableObject.currentState = TransferrableObject.PositionState.InRightHand;
             }
-            else
+
+            transferrableObject.storedZone = BodyDockPositions.DropPositions.RightArm;
+            transferrableObject.currentState = TransferrableObject.PositionState.InRightHand;
+
+            if (Time.time > throwableProjectileTimeout)
             {
-                if (Time.time > throwableProjectileTimeout)
-                {
-                    ThrowableHoldableCosmetic projectile = transferrableObject.gameObject.GetComponent<ThrowableHoldableCosmetic>();
-                    throwableProjectileTimeout = Time.time + 0.31f;
+                ThrowableHoldableCosmetic projectile = transferrableObject.gameObject.GetComponent<ThrowableHoldableCosmetic>();
+                throwableProjectileTimeout = Time.time + 0.31f;
 
-                    Vector3 archivePosition = VRRig.LocalRig.transform.position;
-                    VRRig.LocalRig.transform.position = pos;
+                Vector3 archivePosition = VRRig.LocalRig.transform.position;
+                VRRig.LocalRig.transform.position = pos;
 
-                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, null, -10);
-                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView);
+                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, null, -10);
+                SendSerialize(GorillaTagger.Instance.myVRRig.GetView);
 
-                    projectile._events.Activate.RaiseAll(new object[] { pos, rot, vel, 1f });
+                projectile._events.Activate.RaiseAll(new object[] { pos, rot, vel, 1f });
 
-                    VRRig.LocalRig.transform.position = archivePosition;
-                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView);
+                VRRig.LocalRig.transform.position = archivePosition;
+                SendSerialize(GorillaTagger.Instance.myVRRig.GetView);
 
-                    RPCProtection();
-                }
+                RPCProtection();
             }
         }
 
@@ -3492,44 +3484,42 @@ Piece Name: {gunTarget.name}";
             if (transferrableObject.gameObject.activeSelf == false)
             {
                 VRRig.LocalRig.SetActiveTransferrableObjectIndex(1, index);
-
                 transferrableObject.gameObject.SetActive(true);
-                transferrableObject.storedZone = BodyDockPositions.DropPositions.RightArm;
-                transferrableObject.currentState = TransferrableObject.PositionState.InRightHand;
             }
-            else
+
+            transferrableObject.storedZone = BodyDockPositions.DropPositions.RightArm;
+            transferrableObject.currentState = TransferrableObject.PositionState.InRightHand;
+
+            if (Time.time > throwableProjectileTimeout)
             {
-                if (Time.time > throwableProjectileTimeout)
+                throwableProjectileTimeout = Time.time + 0.31f;
+                Vector3 archivePosition = VRRig.LocalRig.transform.position;
+                VRRig.LocalRig.transform.position = pos - vel;
+
+                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, null, -10);
+
+                VRRig.LocalRig.transform.position = pos;
+                SendSerialize(GorillaTagger.Instance.myVRRig.GetView);
+
+                vel = vel.ClampMagnitudeSafe(50f);
+
+                DeployableObject barrel = transferrableObject.GetComponent<DeployableObject>();
+
+                object[] data = new object[]
                 {
-                    throwableProjectileTimeout = Time.time + 0.31f;
-                    Vector3 archivePosition = VRRig.LocalRig.transform.position;
-                    VRRig.LocalRig.transform.position = pos - vel;
+                    barrel._deploySignal._signalID,
+                    PhotonNetwork.ServerTimestamp,
+                    BitPackUtils.PackWorldPosForNetwork(pos),
+                    BitPackUtils.PackQuaternionForNetwork(rot),
+                    BitPackUtils.PackWorldPosForNetwork(vel)
+                };
 
-                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, null, -10);
+                PhotonNetwork.RaiseEvent(177, data, options, SendOptions.SendReliable);
 
-                    VRRig.LocalRig.transform.position = pos;
-                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView);
+                VRRig.LocalRig.transform.position = archivePosition;
+                SendSerialize(GorillaTagger.Instance.myVRRig.GetView);
 
-                    vel = vel.ClampMagnitudeSafe(50f);
-
-                    DeployableObject barrel = transferrableObject.GetComponent<DeployableObject>();
-
-                    object[] data = new object[]
-                    {
-                        barrel._deploySignal._signalID,
-                        PhotonNetwork.ServerTimestamp,
-                        BitPackUtils.PackWorldPosForNetwork(pos),
-                        BitPackUtils.PackQuaternionForNetwork(rot),
-                        BitPackUtils.PackWorldPosForNetwork(vel)
-                    };
-
-                    PhotonNetwork.RaiseEvent(177, data, options, SendOptions.SendReliable);
-
-                    VRRig.LocalRig.transform.position = archivePosition;
-                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView);
-
-                    RPCProtection();
-                }
+                RPCProtection();
             }
         }
 
