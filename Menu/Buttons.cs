@@ -992,6 +992,23 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Critter Noise Effect Gun", method =() => Overpowered.EffectGun(CrittersManager.CritterEvent.NoiseMakerTriggered), toolTip = "Spams the noise particles at wherever your hand desires."},
                 new ButtonInfo { buttonText = "Critter Particle Effect Gun", method =() => Overpowered.EffectGun((CrittersManager.CritterEvent)UnityEngine.Random.Range(0, 4)), toolTip = "Spams every particle at wherever your hand desires."},
 
+                new ButtonInfo { buttonText = "Fire Sound Spam", enableMethod =() => Fun.CheckOwnedCosmetic("LBALH."), method =() => Fun.FireSoundSpam(), toolTip = "Spams fire sounds when holding <color=green>trigger</color>."},
+
+                new ButtonInfo { buttonText = "Barrel Fling Gun", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelFlingGun(), toolTip = "Flings whoever your hand desires using the barrels."},
+                new ButtonInfo { buttonText = "Barrel Fling All", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelFlingAll(), toolTip = "Flings everyone in the room using the barrels."},
+
+                new ButtonInfo { buttonText = "Whoopee Cushion Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", enableMethod =() => Fun.CheckOwnedThrowable(626), method =() => Fun.ThrowableProjectileSpam(626), toolTip = "Spawns whoopee cushions on your hand when holding <color=green>grip</color>."},
+                new ButtonInfo { buttonText = "Whoopee Cushion Minigun <color=grey>[</color><color=green>G</color><color=grey>]</color>", enableMethod =() => Fun.CheckOwnedThrowable(626), method =() => Fun.ThrowableProjectileMinigun(626), toolTip = "Shoots whoopee cushions out of your hand when holding <color=green>grip</color>."},
+                new ButtonInfo { buttonText = "Whoopee Cushion Gun", enableMethod =() => Fun.CheckOwnedThrowable(626), method =() => Fun.ThrowableProjectileGun(626), toolTip = "Spawns whoopee cushions at wherever your hand desires."},
+
+                new ButtonInfo { buttonText = "Smoke Bomb Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", enableMethod =() => Fun.CheckOwnedThrowable(600), method =() => Fun.ThrowableProjectileSpam(600), toolTip = "Spawns smoke bombs on your hand when holding <color=green>grip</color>."},
+                new ButtonInfo { buttonText = "Smoke Bomb Minigun <color=grey>[</color><color=green>G</color><color=grey>]</color>", enableMethod =() => Fun.CheckOwnedThrowable(600), method =() => Fun.ThrowableProjectileMinigun(626), toolTip = "Shoots smoke bombs out of your hand when holding <color=green>grip</color>."},
+                new ButtonInfo { buttonText = "Smoke Bomb Gun", enableMethod =() => Fun.CheckOwnedThrowable(600), method =() => Fun.ThrowableProjectileGun(600), toolTip = "Spawns smoke bombs at wherever your hand desires."},
+
+                new ButtonInfo { buttonText = "Firecracker Spam <color=grey>[</color><color=green>G</color><color=grey>]</color>", enableMethod =() => Fun.CheckOwnedThrowable(587), method =() => Fun.ThrowableProjectileSpam(587), toolTip = "Spawns firecrackers on your hand when holding <color=green>grip</color>."},
+                new ButtonInfo { buttonText = "Firecracker Minigun <color=grey>[</color><color=green>G</color><color=grey>]</color>", enableMethod =() => Fun.CheckOwnedThrowable(587), method =() => Fun.ThrowableProjectileMinigun(626), toolTip = "Shoots firecrackers out of your hand when holding <color=green>grip</color>."},
+                new ButtonInfo { buttonText = "Firecracker Gun", enableMethod =() => Fun.CheckOwnedThrowable(587), method =() => Fun.ThrowableProjectileGun(587), toolTip = "Spawns firecrackers at wherever your hand desires."},
+
                 new ButtonInfo { buttonText = "Spaz All Moles", method =() => Fun.SpazMoleMachines(), toolTip = "Gives the moles a seizure."},
                 new ButtonInfo { buttonText = "Auto Start Moles", method =() => Fun.AutoStartMoles(), toolTip = "Automatically starts the mole games."},
                 new ButtonInfo { buttonText = "Auto Hit Moles", method =() => Fun.AutoHitMoleType(false), toolTip = "Hits all of the moles automatically."},

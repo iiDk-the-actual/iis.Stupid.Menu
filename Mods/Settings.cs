@@ -3150,8 +3150,11 @@ namespace iiMenu.Mods
         public static void SavePreferences() =>
             File.WriteAllText($"{PluginInfo.BaseDirectory}/iiMenu_Preferences.txt", SavePreferencesToText());
 
+        public static int loadingPreferencesFrame;
         public static void LoadPreferencesFromText(string text)
         {
+            loadingPreferencesFrame = Time.frameCount;
+
             Panic();
             string[] textData = text.Split("\n");
 
