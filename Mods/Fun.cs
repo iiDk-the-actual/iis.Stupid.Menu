@@ -3163,7 +3163,7 @@ Piece Name: {gunTarget.name}";
                         VRRig.LocalRig.transform.position = new Vector3(-51.4897f, 16.9286f, -120.1083f);
                     }
 
-                    if (transferrableObject.gameObject.activeSelf == false)
+                    if (!transferrableObject.gameObject.activeSelf)
                     {
                         VRRig.LocalRig.SetActiveTransferrableObjectIndex(1, index);
                         transferrableObject.gameObject.SetActive(true);
@@ -3238,7 +3238,7 @@ Piece Name: {gunTarget.name}";
                 VRRig.LocalRig.transform.position = new Vector3(-51.4897f, 16.9286f, -120.1083f);
             }
 
-            if (transferrableObject.gameObject.activeSelf == false)
+            if (!transferrableObject.gameObject.activeSelf)
             {
                 VRRig.LocalRig.SetActiveTransferrableObjectIndex(1, index);
                 transferrableObject.gameObject.SetActive(true);
@@ -3337,7 +3337,7 @@ Piece Name: {gunTarget.name}";
                 VRRig.LocalRig.transform.position = new Vector3(-51.4897f, 16.9286f, -120.1083f);
             }
 
-            if (transferrableObject.gameObject.activeSelf == false)
+            if (!transferrableObject.gameObject.activeSelf)
             {
                 VRRig.LocalRig.SetActiveTransferrableObjectIndex(1, index);
                 transferrableObject.gameObject.SetActive(true);
@@ -3407,7 +3407,7 @@ Piece Name: {gunTarget.name}";
                 VRRig.LocalRig.transform.position = new Vector3(-51.4897f, 16.9286f, -120.1083f);
             }
 
-            if (transferrableObject.gameObject.activeSelf == false)
+            if (!transferrableObject.gameObject.activeSelf)
             {
                 VRRig.LocalRig.SetActiveTransferrableObjectIndex(1, index);
                 transferrableObject.gameObject.SetActive(true);
@@ -3481,7 +3481,7 @@ Piece Name: {gunTarget.name}";
                 VRRig.LocalRig.transform.position = new Vector3(-51.4897f, 16.9286f, -120.1083f);
             }
 
-            if (transferrableObject.gameObject.activeSelf == false)
+            if (!transferrableObject.gameObject.activeSelf)
             {
                 VRRig.LocalRig.SetActiveTransferrableObjectIndex(1, index);
                 transferrableObject.gameObject.SetActive(true);

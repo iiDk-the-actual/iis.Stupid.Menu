@@ -487,14 +487,14 @@ namespace iiMenu.Mods
             {
                 GTPlayer.Instance.transform.position += GorillaTagger.Instance.headCollider.transform.forward * Time.deltaTime * flySpeed;
                 GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
-                if (noclip == false)
+                if (!noclip)
                 {
                     noclip = true;
                     UpdateClipColliders(false);
                 }
             } else
             {
-                if (noclip == true)
+                if (noclip)
                 {
                     noclip = false;
                     UpdateClipColliders(true);
@@ -1983,7 +1983,7 @@ namespace iiMenu.Mods
             bool gripNoclip = GetIndex("Grip Noclip").enabled;
             if (gripNoclip ? rightGrab : rightTrigger > 0.5f || UnityInput.Current.GetKey(KeyCode.E))
             {
-                if (noclip == false)
+                if (!noclip)
                 {
                     noclip = true;
                     UpdateClipColliders(false);
@@ -1991,7 +1991,7 @@ namespace iiMenu.Mods
             }
             else
             {
-                if (noclip == true)
+                if (noclip)
                 {
                     noclip = false;
                     UpdateClipColliders(true);
@@ -2011,7 +2011,7 @@ namespace iiMenu.Mods
                 VRRig.LocalRig.enabled = false;
                 VRRig.LocalRig.transform.position = GorillaTagger.Instance.bodyCollider.transform.position - Vector3.up * 99999f;
             }
-            if (hit == true && lastHit2 == false)
+            if (hit && !lastHit2)
             {
                 invisMonke = !invisMonke;
                 if (invisMonke)
@@ -2030,7 +2030,7 @@ namespace iiMenu.Mods
                 ghostMonke = hit;
             
             VRRig.LocalRig.enabled = !ghostMonke;
-            if (hit == true && lastHit == false)
+            if (hit && !lastHit)
                 ghostMonke = !ghostMonke;
             
             lastHit = hit;

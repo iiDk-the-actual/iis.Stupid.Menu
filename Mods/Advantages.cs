@@ -267,7 +267,7 @@ namespace iiMenu.Mods
         {
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (PlayerIsTagged(VRRig.LocalRig) && !PlayerIsTagged(vrrig) && GorillaLocomotion.GTPlayer.Instance.disableMovement == false && Vector3.Distance(vrrig.headMesh.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < tagAuraDistance)
+                if (PlayerIsTagged(VRRig.LocalRig) && !PlayerIsTagged(vrrig) && !GorillaLocomotion.GTPlayer.Instance.disableMovement && Vector3.Distance(vrrig.headMesh.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < tagAuraDistance)
                     ReportTag(vrrig);
             }
         }
@@ -278,7 +278,7 @@ namespace iiMenu.Mods
             {
                 float distance = Vector3.Distance(vrrig.headMesh.transform.position, giving.transform.position);
 
-                if (PlayerIsTagged(giving) && !PlayerIsTagged(vrrig) && GorillaLocomotion.GTPlayer.Instance.disableMovement == false && distance < tagAuraDistance && !PlayerIsLocal(vrrig) && PlayerIsTagged(VRRig.LocalRig))
+                if (PlayerIsTagged(giving) && !PlayerIsTagged(vrrig) && !GorillaLocomotion.GTPlayer.Instance.disableMovement && distance < tagAuraDistance && !PlayerIsLocal(vrrig) && PlayerIsTagged(VRRig.LocalRig))
                     TagPlayer(RigManager.GetPlayerFromVRRig(vrrig));
             }
         }
@@ -584,7 +584,7 @@ namespace iiMenu.Mods
                             break;
                         }
                     }
-                    if (isInfectedPlayers == true)
+                    if (isInfectedPlayers)
                     {
                         foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                         {
