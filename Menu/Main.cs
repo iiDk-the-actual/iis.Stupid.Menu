@@ -6110,6 +6110,7 @@ jgs \_   _/ |Oo\
             get => _pageSize - buttonOffset;
             set => _pageSize = value;
         }
+
         public static int pageNumber;
         public static bool noPageNumber;
         public static bool disablePageButtons;
@@ -6215,6 +6216,7 @@ jgs \_   _/ |Oo\
         public static bool checkMode;
         public static bool lastChecker;
         public static bool highQualityText;
+        public static string CosmeticsOwned;
 
         public static Vector3 MidPosition;
         public static Vector3 MidVelocity;

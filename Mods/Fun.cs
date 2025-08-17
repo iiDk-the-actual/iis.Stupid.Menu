@@ -1,15 +1,16 @@
+using ExitGames.Client.Photon;
 using GorillaExtensions;
 using GorillaGameModes;
 using GorillaLocomotion;
 using GorillaNetworking;
 using GorillaTag;
+using GorillaTag.Cosmetics;
 using GorillaTagScripts;
 using iiMenu.Classes;
 using iiMenu.Menu;
 using iiMenu.Mods.Spammers;
 using iiMenu.Notifications;
 using iiMenu.Patches;
-using Liv.Lck.GorillaTag;
 using Photon.Pun;
 using Photon.Realtime;
 using Photon.Voice;
@@ -3008,6 +3009,233 @@ Piece Name: {gunTarget.name}";
             }
         }
 
+        public static Coroutine DisableThrowableCoroutine;
+        public static IEnumerator DisableThrowable(int index)
+        {
+            yield return new WaitForSeconds(0.3f);
+
+            DistancePatch.enabled = false;
+            VRRig.LocalRig.enabled = true;
+            VRRig.LocalRig.SetActiveTransferrableObjectIndex(1, index);
+            GameObject proj = VRRig.LocalRig.myBodyDockPositions.allObjects[index].gameObject;
+            proj.SetActive(true);
+
+            VRRig.LocalRig.myBodyDockPositions.allObjects[index].storedZone = BodyDockPositions.DropPositions.RightArm;
+            VRRig.LocalRig.myBodyDockPositions.allObjects[index].currentState = TransferrableObject.PositionState.InRightHand;
+        }
+
+        private static void EquipCosmetic(string cosmeticName)
+        {
+            CosmeticsController.instance.ApplyCosmeticItemToSet(CosmeticsController.instance.currentWornSet, CosmeticsController.instance.GetItemFromDict(cosmeticName), true, false);
+            CosmeticsController.instance.ApplyCosmeticItemToSet(VRRig.LocalRig.tryOnSet, CosmeticsController.instance.GetItemFromDict(cosmeticName), true, false);
+            CosmeticsController.instance.UpdateWornCosmetics(PhotonNetwork.InRoom);
+            RPCProtection();
+        }
+
+        public static void CheckOwnedCosmetic(string cosmeticName)
+        {
+            if (Time.frameCount == Settings.loadingPreferencesFrame)
+                return;
+
+            CosmeticsController.CosmeticItem cosmetic = CosmeticsController.instance.GetItemFromDict(cosmeticName);
+            if (!CosmeticsOwned.Contains(cosmeticName))
+            {
+                if (CosmeticsController.instance.currencyBalance >= cosmetic.cost)
+                    Prompt($"Looks like you don't own the cosmetic required for this mod, meaning it will only work in city. Would you like to purchase the cosmetic? ({cosmetic.cost}SR)", () => PurchaseCosmetic(cosmetic.itemName));
+                else
+                    Prompt($"Looks like you don't own the cosmetic required for this mod, meaning it will only work in city.", null, null, "Ok", "Close");
+            }
+        }
+
+        public static void CheckOwnedThrowable(int index)
+        {
+            if (Time.frameCount == Settings.loadingPreferencesFrame)
+                return;
+
+            string cosmeticName = VRRig.LocalRig.myBodyDockPositions.allObjects[index].gameObject.name;
+            CheckOwnedCosmetic(cosmeticName);
+        }
+
+        public static void FireSoundSpam()
+        {
+            if (rightTrigger > 0.5f)
+                EquipCosmetic("LBALH.");
+        }
+
+        public static void BarrelFlingGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (gunLocked && lockTarget != null)
+                    SendBarrelProjectile(lockTarget.transform.position, new Vector3(0f, 5000f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)).ActorNumber } });
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                {
+                    gunLocked = false;
+                    VRRig.LocalRig.enabled = true;
+                }
+            }
+        }
+
+        public static void BarrelFlingAll()
+        {
+            VRRig TargetRig = GetCurrentTargetRig();
+            SendBarrelProjectile(TargetRig.transform.position, new Vector3(0f, 5000f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(TargetRig)).ActorNumber } });
+        }
+
+        private static float throwableProjectileTimeout;
+        public static void SendThrowableProjectile(int index, Vector3 pos, Vector3 vel, Quaternion rot)
+        {
+            DistancePatch.enabled = true;
+
+            if (DisableThrowableCoroutine != null)
+                CoroutineManager.instance.StopCoroutine(DisableThrowableCoroutine);
+
+            DisableThrowableCoroutine = CoroutineManager.instance.StartCoroutine(DisableThrowable(index));
+            TransferrableObject transferrableObject = VRRig.LocalRig.myBodyDockPositions.allObjects[index];
+
+            if (!CosmeticsOwned.Contains(transferrableObject.gameObject.name))
+            {
+                VRRig.LocalRig.enabled = false;
+                VRRig.LocalRig.transform.position = new Vector3(-51.4897f, 16.9286f, -120.1083f);
+            }
+
+            if (transferrableObject.gameObject.activeSelf == false)
+            {
+                VRRig.LocalRig.SetActiveTransferrableObjectIndex(1, index);
+
+                transferrableObject.gameObject.SetActive(true);
+                transferrableObject.storedZone = BodyDockPositions.DropPositions.RightArm;
+                transferrableObject.currentState = TransferrableObject.PositionState.InRightHand;
+            }
+            else
+            {
+                if (Time.time > throwableProjectileTimeout)
+                {
+                    ThrowableHoldableCosmetic projectile = transferrableObject.gameObject.GetComponent<ThrowableHoldableCosmetic>();
+                    throwableProjectileTimeout = Time.time + 0.31f;
+
+                    Vector3 archivePosition = VRRig.LocalRig.transform.position;
+                    VRRig.LocalRig.transform.position = pos;
+
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, null, -10);
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView);
+
+                    projectile._events.Activate.RaiseAll(new object[] { pos, rot, vel, 1f });
+
+                    VRRig.LocalRig.transform.position = archivePosition;
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView);
+
+                    RPCProtection();
+                }
+            }
+        }
+
+        public static void ThrowableProjectileSpam(int projectileIndex)
+        {
+            if (rightGrab)
+                SendThrowableProjectile(projectileIndex, GorillaTagger.Instance.rightHandTransform.position, Vector3.zero, RandomQuaternion());
+        }
+
+        public static void ThrowableProjectileMinigun(int projectileIndex)
+        {
+            if (rightGrab)
+                SendThrowableProjectile(projectileIndex, GorillaTagger.Instance.rightHandTransform.position, GetGunDirection(GorillaTagger.Instance.rightHandTransform) * ShootStrength, RandomQuaternion());
+        }
+
+        public static void ThrowableProjectileGun(int projectileIndex)
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                    SendThrowableProjectile(projectileIndex, NewPointer.transform.position + new Vector3(0f, 0.1f, 0f), new Vector3(0f, 0f, 0f), RandomQuaternion());
+            }
+        }
+
+        public static void SendBarrelProjectile(Vector3 pos, Vector3 vel, Quaternion rot, RaiseEventOptions options = null)
+        {
+            if (options == null)
+                options = new RaiseEventOptions { Receivers = ReceiverGroup.All };
+
+            int index = 618;
+            DistancePatch.enabled = true;
+
+            if (DisableThrowableCoroutine != null)
+                CoroutineManager.instance.StopCoroutine(DisableThrowableCoroutine);
+
+            DisableThrowableCoroutine = CoroutineManager.instance.StartCoroutine(DisableThrowable(index));
+            TransferrableObject transferrableObject = VRRig.LocalRig.myBodyDockPositions.allObjects[index];
+
+            if (!CosmeticsOwned.Contains(transferrableObject.gameObject.name))
+            {
+                VRRig.LocalRig.enabled = false;
+                VRRig.LocalRig.transform.position = new Vector3(-51.4897f, 16.9286f, -120.1083f);
+            }
+
+            if (transferrableObject.gameObject.activeSelf == false)
+            {
+                VRRig.LocalRig.SetActiveTransferrableObjectIndex(1, index);
+
+                transferrableObject.gameObject.SetActive(true);
+                transferrableObject.storedZone = BodyDockPositions.DropPositions.RightArm;
+                transferrableObject.currentState = TransferrableObject.PositionState.InRightHand;
+            }
+            else
+            {
+                if (Time.time > throwableProjectileTimeout)
+                {
+                    throwableProjectileTimeout = Time.time + 0.31f;
+                    Vector3 archivePosition = VRRig.LocalRig.transform.position;
+                    VRRig.LocalRig.transform.position = pos - vel;
+
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView, null, -10);
+
+                    VRRig.LocalRig.transform.position = pos;
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView);
+
+                    vel = vel.ClampMagnitudeSafe(50f);
+
+                    DeployableObject barrel = transferrableObject.GetComponent<DeployableObject>();
+
+                    object[] data = new object[]
+                    {
+                        barrel._deploySignal._signalID,
+                        PhotonNetwork.ServerTimestamp,
+                        BitPackUtils.PackWorldPosForNetwork(pos),
+                        BitPackUtils.PackQuaternionForNetwork(rot),
+                        BitPackUtils.PackWorldPosForNetwork(vel)
+                    };
+
+                    PhotonNetwork.RaiseEvent(177, data, options, SendOptions.SendReliable);
+
+                    VRRig.LocalRig.transform.position = archivePosition;
+                    SendSerialize(GorillaTagger.Instance.myVRRig.GetView);
+
+                    RPCProtection();
+                }
+            }
+        }
+
         private static float startTimeBuilding = 0f;
         public static void EnableAtticAntiReport() =>
             startTimeBuilding = Time.time + 5f;
@@ -4752,6 +4980,23 @@ Piece Name: {gunTarget.name}";
         {
             CosmeticsController.instance.currentCart.Insert(0, CosmeticsController.instance.GetItemFromDict(cosmetic));
             CosmeticsController.instance.UpdateShoppingCart();
+        }
+
+        public static void PurchaseCosmetic(string cosmetic)
+        {
+            CosmeticsController.CosmeticItem hat = CosmeticsController.instance.GetItemFromDict(cosmetic);
+            PlayFabClientAPI.PurchaseItem(new PurchaseItemRequest
+            {
+                ItemId = hat.itemName,
+                Price = hat.cost,
+                VirtualCurrency = CosmeticsController.instance.currencyName,
+                CatalogVersion = CosmeticsController.instance.catalog
+            }, delegate (PurchaseItemResult result)
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Item \"" + ToTitleCase(hat.overrideDisplayName) + "\" has been purchased.", 5000);
+                CosmeticsController.instance.ProcessExternalUnlock(hat.itemName, false, false);
+                CosmeticsOwned += hat.itemName;
+            }, null, null, null);
         }
 
         private static int rememberdirectory = 0;
