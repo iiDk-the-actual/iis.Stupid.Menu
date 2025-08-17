@@ -14,6 +14,20 @@ namespace iiMenu.Mods
 {
     public class Safety
     {
+        public static void GeneralSafety()
+        {
+            if (!GetIndex("Anti Report <color=grey>[</color><color=green>Disconnect</color><color=grey>]</color>").enabled) AntiReportDisconnect();
+            if (!GetIndex("Anti Report <color=grey>[</color><color=green>Oculus</color><color=grey>]</color>").enabled) AntiOculusReport = true;
+            if (!GetIndex("Anti Report <color=grey>[</color><color=green>Anti Cheat</color><color=grey>]</color>").enabled) Patches.Safety.AntiCheat.AntiACReport = true;
+            if (!GetIndex("Anti Moderator").enabled) AntiModerator();
+        }
+
+        public static void DisableGeneral()
+        {
+            if (!GetIndex("Anti Report <color=grey>[</color><color=green>Oculus</color><color=grey>]</color>").enabled) AntiOculusReport = false;
+            if (!GetIndex("Anti Report <color=grey>[</color><color=green>Anti Cheat</color><color=grey>]</color>").enabled) Patches.Safety.AntiCheat.AntiACReport = false;
+        }
+
         public static void NoFinger()
         {
             ControllerInputPoller.instance.leftControllerGripFloat = 0f;
