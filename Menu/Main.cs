@@ -962,38 +962,33 @@ namespace iiMenu.Menu
 
                     if (menu != null)
                     {
-                        if (pageButtonType == 3)
+                        if (pageButtonType == 3 || pageButtonType == 4)
                         {
-                            if (leftGrab && !plastLeftGrip)
-                            {
-                                PlayButtonSound("PreviousPage", true, true);
-                                Toggle("PreviousPage");
-                            }
-                            plastLeftGrip = leftGrab;
+                            bool previousButton = pageButtonType == 3 ? leftGrab : leftTrigger > 0.5f;
+                            bool nextButton = pageButtonType == 3 ? leftGrab : leftTrigger > 0.5f;
 
-                            if (rightGrab && !plastRightGrip)
+                            if (Time.time > pageButtonChangeDelay)
                             {
-                                PlayButtonSound("NextPage", true, false);
-                                Toggle("NextPage");
-                            }
-                            plastRightGrip = rightGrab;
-                        }
+                                if (previousButton)
+                                {
+                                    pageButtonChangeDelay = Time.time + 0.2f;
+                                    PlayButtonSound("PreviousPage", true, true);
+                                    Toggle("PreviousPage");
+                                }
 
-                        if (pageButtonType == 4)
-                        {
-                            if (leftTrigger > 0.5f && !plastLeftGrip)
-                            {
-                                PlayButtonSound("PreviousPage", true, true);
-                                Toggle("PreviousPage");
+                                if (nextButton)
+                                {
+                                    pageButtonChangeDelay = Time.time + 0.2f;
+                                    PlayButtonSound("NextPage", true, false);
+                                    Toggle("NextPage");
+                                }
                             }
-                            plastLeftGrip = leftTrigger > 0.5f;
 
-                            if (rightTrigger > 0.5f && !plastRightGrip)
-                            {
-                                PlayButtonSound("NextPage", true, false);
-                                Toggle("NextPage");
-                            }
-                            plastRightGrip = rightTrigger > 0.5f;
+                            if (!previousButton && !nextButton)
+                                pageButtonChangeDelay = -1f;
+
+                            lastPrevious = previousButton;
+                            lastNext = nextButton;
                         }
                     }
 
@@ -6137,6 +6132,7 @@ jgs \_   _/ |Oo\
         public static bool disablePageButtons;
         public static bool swapButtonColors;
         public static int pageButtonType = 1;
+        public static float pageButtonChangeDelay;
 
         private static VRRig _giveGunTarget;
         public static VRRig giveGunTarget
@@ -6567,8 +6563,8 @@ jgs \_   _/ |Oo\
         public static bool lastHitRP;
         public static bool lastHitRS;
 
-        public static bool plastLeftGrip;
-        public static bool plastRightGrip;
+        public static bool lastPrevious;
+        public static bool lastNext;
 
         public static bool headspazType;
 
