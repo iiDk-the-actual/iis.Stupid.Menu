@@ -964,14 +964,14 @@ namespace iiMenu.Menu
                     {
                         if (pageButtonType == 3)
                         {
-                            if (leftGrab == true && plastLeftGrip == false)
+                            if (leftGrab && !plastLeftGrip)
                             {
                                 PlayButtonSound("PreviousPage", true, true);
                                 Toggle("PreviousPage");
                             }
                             plastLeftGrip = leftGrab;
 
-                            if (rightGrab == true && plastRightGrip == false)
+                            if (rightGrab && !plastRightGrip)
                             {
                                 PlayButtonSound("NextPage", true, false);
                                 Toggle("NextPage");
@@ -981,14 +981,14 @@ namespace iiMenu.Menu
 
                         if (pageButtonType == 4)
                         {
-                            if (leftTrigger > 0.5f && plastLeftGrip == false)
+                            if (leftTrigger > 0.5f && !plastLeftGrip)
                             {
                                 PlayButtonSound("PreviousPage", true, true);
                                 Toggle("PreviousPage");
                             }
                             plastLeftGrip = leftTrigger > 0.5f;
 
-                            if (rightTrigger > 0.5f && plastRightGrip == false)
+                            if (rightTrigger > 0.5f && !plastRightGrip)
                             {
                                 PlayButtonSound("NextPage", true, false);
                                 Toggle("NextPage");
@@ -3737,7 +3737,7 @@ namespace iiMenu.Menu
         {
             try
             {
-                if (hasRemovedThisFrame == false)
+                if (!hasRemovedThisFrame)
                 {
                     if (NoOverlapRPCs)
                         hasRemovedThisFrame = true;
