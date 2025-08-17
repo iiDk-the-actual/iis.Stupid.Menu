@@ -2167,8 +2167,22 @@ Piece Name: {gunTarget.name}";
             VRRig.LocalRig.hoverboardVisual.gameObject.SetActive(false);
         }
 
+        public static Coroutine DisableHoverboardCoroutine;
+        public static IEnumerator DisableHoverboard()
+        {
+            yield return new WaitForSeconds(0.3f);
+
+            GTPlayer.Instance.SetHoverActive(false);
+            VRRig.LocalRig.hoverboardVisual.SetIsHeld(false, Vector3.zero, Quaternion.identity, Color.black);
+        }
+
         public static void HoverboardScreenTarget(VRRig rig, Color color)
         {
+            if (DisableHoverboardCoroutine != null)
+                CoroutineManager.instance.StopCoroutine(DisableHoverboardCoroutine);
+
+            DisableHoverboardCoroutine = CoroutineManager.instance.StartCoroutine(DisableHoverboard());
+
             Vector3 angVel = rig.headMesh.GetOrAddComponent<GorillaVelocityEstimator>().angularVelocity;
 
             Vector3 HoverboardPos = rig.headMesh.transform.TransformPoint(-0.3f, 0.1f, 0.3725f) + (rig.LatestVelocity() * 0.5f);
@@ -3086,7 +3100,7 @@ Piece Name: {gunTarget.name}";
             proj.SetActive(true);
 
             VRRig.LocalRig.myBodyDockPositions.allObjects[index].storedZone = BodyDockPositions.DropPositions.RightArm;
-            VRRig.LocalRig.myBodyDockPositions.allObjects[index].currentState = TransferrableObject.PositionState.InRightHand;
+            VRRig.LocalRig.myBodyDockPositions.allObjects[index].currentState = TransferrableObject.PositionState.OnRightArm;
         }
 
         private static void EquipCosmetic(string cosmeticName)
