@@ -814,6 +814,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Third Person Camera", method =() => Fun.ThirdPersonCamera(), disableMethod =() => Fun.DisableFreecam(), toolTip = "Moves your camera to behind your head."},
                 new ButtonInfo { buttonText = "Spectate Gun", method =() => Fun.SpectateGun(), disableMethod =() => Fun.DisableFreecam(), toolTip = "Lets you see through the eyes of whoever your hand desires."},
 
+                new ButtonInfo { buttonText = "Nausea", method =() => Fun.Nausea(), disableMethod =() => Fun.DisableFreecam(), toolTip = "Gives you the Nausea effect from Minecraft."},
+
                 new ButtonInfo { buttonText = "Mute Gun", method =() => Fun.MuteGun(), toolTip = "Mutes or unmutes whoever your hand desires."},
                 new ButtonInfo { buttonText = "Mute All", method =() => Fun.MuteAll(), disableMethod =() => Fun.UnmuteAll(), toolTip = "Mutes everyone in the room."},
 

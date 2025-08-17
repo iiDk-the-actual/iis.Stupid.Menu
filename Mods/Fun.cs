@@ -662,13 +662,29 @@ namespace iiMenu.Mods
             FreeCamObject.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation;
         }
 
+        public static void Nausea()
+        {
+            if (FreeCamObject == null)
+            {
+                FreeCamObject = new GameObject("iiMenu_CameraObj");
+                FreeCamObject.transform.position = GorillaTagger.Instance.headCollider.transform.position;
+            }
+
+            float intensity = 15f;
+
+            Camera FreeCamera = FreeCamObject.GetOrAddComponent<Camera>();
+            FreeCamera.nearClipPlane = 0.01f;
+            FreeCamera.cameraType = CameraType.Game;
+
+            FreeCamObject.transform.position = GorillaTagger.Instance.headCollider.transform.position;
+            FreeCamObject.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation * Quaternion.Euler(Mathf.Sin(Time.time) * intensity, Mathf.Cos(Time.time * 0.7f) * intensity, Mathf.Sin(Time.time * 1.3f) * intensity);
+        }
+
         public static void SpectateGun()
         {
             if (GetGunInput(false))
             {
-                var GunData = RenderGun();
-                RaycastHit Ray = GunData.Ray;
-                GameObject NewPointer = GunData.NewPointer;
+                
 
                 if (gunLocked && lockTarget != null)
                 {
@@ -684,15 +700,20 @@ namespace iiMenu.Mods
 
                     FreeCamObject.transform.position = lockTarget.headMesh.transform.position;
                     FreeCamObject.transform.rotation = lockTarget.headMesh.transform.rotation;
-                }
-
-                if (GetGunInput(true))
+                } else
                 {
-                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
-                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    var GunData = RenderGun();
+                    RaycastHit Ray = GunData.Ray;
+                    GameObject NewPointer = GunData.NewPointer;
+
+                    if (GetGunInput(true))
                     {
-                        gunLocked = true;
-                        lockTarget = gunTarget;
+                        VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                        if (gunTarget && !PlayerIsLocal(gunTarget))
+                        {
+                            gunLocked = true;
+                            lockTarget = gunTarget;
+                        }
                     }
                 }
             }
