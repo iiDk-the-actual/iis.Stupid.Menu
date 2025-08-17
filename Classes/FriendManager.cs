@@ -531,6 +531,23 @@ namespace iiMenu.Classes
             NotifiLib.SendNotification($"<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully invited friend to room.", 5000);
         }
 
+        public static void RequestInviteFriend(string uid)
+        {
+            if (!NetworkSystem.Instance.InRoom)
+            {
+                NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in a room.", 5000);
+                return;
+            }
+
+            _ = FriendWebSocket.instance.Send(JsonConvert.SerializeObject(new
+            {
+                command = "reqinvite",
+                target = uid
+            }));
+
+            NotifiLib.SendNotification($"<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully requested invite from friend.", 5000);
+        }
+
         public static void SharePreferences(string uid)
         {
             _ = FriendWebSocket.instance.Send(JsonConvert.SerializeObject(new
@@ -822,6 +839,14 @@ namespace iiMenu.Classes
                     },
                     new ButtonInfo
                     {
+                        buttonText = $"RequestInviteFriend{friendTarget}",
+                        overlapText = "Request Invite",
+                        method = () => RequestInviteFriend(friendTarget),
+                        isTogglable = false,
+                        toolTip = $"Requests an invite from the user {friend.currentName}."
+                    },
+                    new ButtonInfo
+                    {
                         buttonText = $"SharePreferences{friendTarget}",
                         overlapText = "Share Preferences",
                         method = () => SharePreferences(friendTarget),
@@ -1026,6 +1051,19 @@ namespace iiMenu.Classes
                                 NotifiLib.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> {friendName} has invited you to join them.", 5000);
 
                                 Prompt($"{friendName} has invited you to the room {to}, would you like to join them?", () => PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(to, GorillaNetworking.JoinType.Solo));
+                                break;
+                            }
+                        case "reqinvite":
+                            {
+                                if (!InviteNotifications)
+                                    break;
+
+                                if (!PhotonNetwork.InRoom)
+                                    break;
+
+                                NotifiLib.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> {friendName} has requested an invite from you.", 5000);
+
+                                Prompt($"{friendName} has requested an invite from you, would you like to invite them?", () => InviteFriend(from));
                                 break;
                             }
                         case "preferences":
