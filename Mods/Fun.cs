@@ -3107,11 +3107,11 @@ Piece Name: {gunTarget.name}";
             {
                 if (!cosmetic.canTryOn)
                 {
-                    Prompt($"Looks like you don't own the cosmetic required for this mod ({cosmetic.overrideDisplayName}), but this cosmetic is currently offsale. This mod will only work for people with cosmetic giving mods.", null, null, "Ok", "Close");
+                    Prompt($"Looks like you don't own the cosmetic required for this mod ({ToTitleCase(cosmetic.overrideDisplayName)}), but this cosmetic is currently offsale. This mod will only work for people with cosmetic giving mods.", null, null, "Ok", "Close");
                 } else if (CosmeticsController.instance.currencyBalance >= cosmetic.cost)
-                    Prompt($"Looks like you don't own the cosmetic required for this mod ({cosmetic.overrideDisplayName}), meaning it will only work in city. Would you like to purchase the cosmetic? ({cosmetic.cost}SR)", () => PurchaseCosmetic(cosmetic.itemName));
+                    Prompt($"Looks like you don't own the cosmetic required for this mod ({ToTitleCase(cosmetic.overrideDisplayName)}), meaning it will only work in city. Would you like to purchase the cosmetic? ({cosmetic.cost}SR)", () => PurchaseCosmetic(cosmetic.itemName));
                 else
-                    Prompt($"Looks like you don't own the cosmetic required for this mod ({cosmetic.overrideDisplayName}), meaning it will only work in city.", null, null, "Ok", "Close");
+                    Prompt($"Looks like you don't own the cosmetic required for this mod ({ToTitleCase(cosmetic.overrideDisplayName)}), meaning it will only work in city.", null, null, "Ok", "Close");
             }
         }
 
