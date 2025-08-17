@@ -1161,6 +1161,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Auto Purchase Current Cosmetics", method =() => Fun.AutoPurchasePaidCosmetics(), toolTip = "Automatically purchases all cosmetics on your outfit until you own everything. This does use shiny rocks." },
                 new ButtonInfo { buttonText = "Disable Cosmetics on Tag", method =() => Fun.DisableCosmeticsOnTag(), toolTip = "Disables your cosmetics when you get tagged, good for ambush." },
 
+                new ButtonInfo { buttonText = "Unlock All Cosmetics", method =() => Fun.UnlockAllCosmetics(), toolTip = "Unlocks every cosmetic in the game. This mod is client sided." },
+                new ButtonInfo { buttonText = "Unlimited Shiny Rocks", method =() => CosmeticsController.instance.currencyBalance = int.MaxValue, toolTip = "Gives you 2 billion shiny rocks. This mod is client sided." },
+
                 new ButtonInfo { buttonText = "Sticky Holdables", method =() => Fun.StickyHoldables(), toolTip = "Makes your holdables sticky." },
                 new ButtonInfo { buttonText = "Spaz Holdables", method =() => Fun.SpazHoldables(), toolTip = "Spazzes out the positions of your holdables." },
 

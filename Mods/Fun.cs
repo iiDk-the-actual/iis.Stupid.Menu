@@ -5376,6 +5376,21 @@ Piece Name: {gunTarget.name}";
             lasttagged = PlayerIsTagged(VRRig.LocalRig);
         }
 
+        public static bool hasGivenCosmetics;
+        public static void UnlockAllCosmetics()
+        {
+            if (PostGetData.CosmeticsInitialized && !hasGivenCosmetics)
+            {
+                hasGivenCosmetics = true;
+
+                foreach (CosmeticsController.CosmeticItem item in CosmeticsController.instance.allCosmetics)
+                {
+                    if (!CosmeticsOwned.Contains(item.itemName))
+                        CosmeticsController.instance.ProcessExternalUnlock(item.itemName, false, false);
+                }
+            }
+        }
+
         private static float idgundelay = 0f;
         public static void CopyIDGun()
         {
