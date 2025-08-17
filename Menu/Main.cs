@@ -589,6 +589,17 @@ namespace iiMenu.Menu
                             fpsCount.text = fpsCount.text.ToUpper();
                     }
 
+                    // Title animation
+                    if (animatedTitle && title != null)
+                    {
+                        string targetString = doCustomName ? NoRichtextTags(customMenuName) : "ii's Stupid Menu";
+                        int length = (int)Mathf.PingPong(Time.time / 0.25f, targetString.Length);
+                        if (length > 0)
+                            title.text = targetString[..length];
+                        else
+                            title.text = "";
+                    }
+
                     // Title gradient
                     if (gradientTitle && title != null)
                         title.text = RichtextGradient(NoRichtextTags(title.text),
@@ -2447,6 +2458,16 @@ namespace iiMenu.Menu
                         new GradientColorKey(BrightenColor(buttonDefaultA, 0.95f), 0.5f),
                         new GradientColorKey(BrightenColor(buttonDefaultA), 1f)
                     });
+
+            if (animatedTitle)
+            {
+                string targetString = doCustomName ? NoRichtextTags(customMenuName) : "ii's Stupid Menu";
+                int length = (int)Mathf.PingPong(Time.time / 0.25f, targetString.Length);
+                if (length > 0)
+                    title.text = targetString[..length];
+                else
+                    title.text = "";
+            }
 
             title.fontSize = 1;
             title.color = titleColor;
@@ -6274,6 +6295,7 @@ jgs \_   _/ |Oo\
         public static bool dynamicAnimations;
         public static bool dynamicGradients;
         public static bool horizontalGradients;
+        public static bool animatedTitle;
         public static bool gradientTitle;
         public static string lastClickedName = "";
 
