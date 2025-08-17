@@ -1152,13 +1152,17 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Change Accessories", overlapText = "Change Cosmetics", method =() => Fun.ChangeAccessories(), toolTip = "Use your grips to change what hat you're wearing." },
                 new ButtonInfo { buttonText = "Spaz Accessories", overlapText = "Spaz Cosmetics <color=grey>[</color><color=green>All</color><color=grey>]</color>", method =() => Fun.SpazAccessories(), toolTip = "Spazzes your hats out for everyone when holding <color=green>trigger</color>." },
                 new ButtonInfo { buttonText = "Spaz Cosmetics <color=grey>[</color><color=green>Others</color><color=grey>]</color>", method =() => Fun.SpazAccessoriesOthers(), toolTip = "Spazzes your hats out for everyone except you when holding <color=green>trigger</color>." },
-                new ButtonInfo { buttonText = "Sticky Holdables", method =() => Fun.StickyHoldables(), toolTip = "Makes your holdables sticky." },
-                new ButtonInfo { buttonText = "Spaz Holdables", method =() => Fun.SpazHoldables(), toolTip = "Spazzes out the positions of your holdables." },
+
                 new ButtonInfo { buttonText = "Cosmetic Spoof", enableMethod =() => Fun.TryOnAnywhere(), disableMethod =() => Fun.TryOffAnywhere(), toolTip = "Lets you try on cosmetics from anywhere. Enable this mod after wearing the cosmetics." },
                 new ButtonInfo { buttonText = "Cosmetic Browser", method =() => Fun.CosmeticBrowser(), isTogglable = false, toolTip = "Browse through every cosmetic that you can try on and add it to your cart." },
                 new ButtonInfo { buttonText = "Auto Spoof Cosmetics", enableMethod =() => Fun.AutoLoadCosmetics(), disableMethod =() => Fun.NoAutoLoadCosmetics(), toolTip = "Automatically spoofs your cosmetics, making you appear with anything you're able to try-on." },
-                new ButtonInfo { buttonText = "Auto Purchase Cosmetics", method =() => Fun.AutoPurchaseCosmetics(), toolTip = "Automatically purchases any free cosmetics." },
+                
+                new ButtonInfo { buttonText = "Auto Purchase Cosmetics", overlapText = "Auto Purchase Free Cosmetics", method =() => Fun.AutoPurchaseCosmetics(), toolTip = "Automatically purchases any free cosmetics." },
+                new ButtonInfo { buttonText = "Auto Purchase Current Cosmetics", method =() => Fun.AutoPurchasePaidCosmetics(), toolTip = "Automatically purchases all cosmetics on your outfit until you own everything. This does use shiny rocks." },
                 new ButtonInfo { buttonText = "Disable Cosmetics on Tag", method =() => Fun.DisableCosmeticsOnTag(), toolTip = "Disables your cosmetics when you get tagged, good for ambush." },
+
+                new ButtonInfo { buttonText = "Sticky Holdables", method =() => Fun.StickyHoldables(), toolTip = "Makes your holdables sticky." },
+                new ButtonInfo { buttonText = "Spaz Holdables", method =() => Fun.SpazHoldables(), toolTip = "Spazzes out the positions of your holdables." },
 
                 new ButtonInfo { buttonText = "Get ID Self", method =() => Fun.CopySelfID(), isTogglable = false, toolTip = "Gets your player ID and copies it to the clipboard."},
                 new ButtonInfo { buttonText = "Get ID Gun", method =() => Fun.CopyIDGun(), toolTip = "Gets the player ID of whoever your hand desires and copies it to the clipboard." },

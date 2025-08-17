@@ -3108,7 +3108,7 @@ Piece Name: {gunTarget.name}";
                 if (!cosmetic.canTryOn)
                 {
                     Prompt($"Looks like you don't own the cosmetic required for this mod ({ToTitleCase(cosmetic.overrideDisplayName)}), but this cosmetic is currently offsale. This mod will only work for people with cosmetic giving mods.", null, null, "Ok", "Close");
-                } else if (CosmeticsController.instance.currencyBalance >= cosmetic.cost)
+                } else if (CosmeticsController.instance.CurrencyBalance >= cosmetic.cost)
                     Prompt($"Looks like you don't own the cosmetic required for this mod ({ToTitleCase(cosmetic.overrideDisplayName)}), meaning it will only work in city. Would you like to purchase the cosmetic? ({cosmetic.cost}SR)", () => PurchaseCosmetic(cosmetic.itemName));
                 else
                     Prompt($"Looks like you don't own the cosmetic required for this mod ({ToTitleCase(cosmetic.overrideDisplayName)}), meaning it will only work in city.", null, null, "Ok", "Close");
@@ -5278,6 +5278,7 @@ Piece Name: {gunTarget.name}";
             {
                 NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Item \"" + ToTitleCase(hat.overrideDisplayName) + "\" has been purchased.", 5000);
                 CosmeticsController.instance.ProcessExternalUnlock(hat.itemName, false, false);
+                CosmeticsController.instance.currencyBalance -= hat.cost;
                 CosmeticsOwned += hat.itemName;
             }, null, null, null);
         }
@@ -5327,19 +5328,33 @@ Piece Name: {gunTarget.name}";
                 lastTimeCosmeticsChecked = Time.time + 60f;
                 foreach (CosmeticsController.CosmeticItem hat in CosmeticsController.instance.allCosmetics)
                 {
-                    if (hat.cost == 0 && hat.canTryOn && !VRRig.LocalRig.concatStringOfCosmeticsAllowed.Contains(hat.itemName))
+                    if (hat.cost == 0 && hat.canTryOn && !CosmeticsOwned.Contains(hat.itemName))
+                        PurchaseCosmetic(hat.itemName);
+                }
+            }
+        }
+
+        private static float lastTimePaidCosmeticsChecked;
+        public static void AutoPurchasePaidCosmetics()
+        {
+            if (!GorillaComputer.instance.isConnectedToMaster)
+                lastTimePaidCosmeticsChecked = Time.time + 60f;
+
+            if (Time.time > lastTimePaidCosmeticsChecked)
+            {
+                lastTimePaidCosmeticsChecked = Time.time + 60f;
+
+                CosmeticsController.CosmeticItem[] items = CosmeticsController.instance.currentWornSet.items;
+                int allocatedShinyRocks = CosmeticsController.instance.CurrencyBalance;
+
+                foreach (CosmeticsController.CosmeticItem item in items
+                    .OrderByDescending(i => i.itemCategory == CosmeticsController.CosmeticCategory.Hat)
+                    .ThenBy(i => i.itemCategory == CosmeticsController.CosmeticCategory.Hat ? i.itemName : null))
+                {
+                    if (allocatedShinyRocks >= item.cost && item.canTryOn && !CosmeticsOwned.Contains(item.itemName))
                     {
-                        PlayFabClientAPI.PurchaseItem(new PurchaseItemRequest
-                        {
-                            ItemId = hat.itemName,
-                            Price = hat.cost,
-                            VirtualCurrency = CosmeticsController.instance.currencyName,
-                            CatalogVersion = CosmeticsController.instance.catalog
-                        }, delegate (PurchaseItemResult result)
-                        {
-                            NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Item \"" + ToTitleCase(hat.overrideDisplayName) + "\" has been purchased.", 5000);
-                            CosmeticsController.instance.ProcessExternalUnlock(hat.itemName, false, false);
-                        }, null, null, null);
+                        PurchaseCosmetic(item.itemName);
+                        allocatedShinyRocks -= item.cost;
                     }
                 }
             }
