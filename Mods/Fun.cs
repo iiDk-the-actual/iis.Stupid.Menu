@@ -2173,7 +2173,7 @@ Piece Name: {gunTarget.name}";
             yield return new WaitForSeconds(0.3f);
 
             GTPlayer.Instance.SetHoverActive(false);
-            VRRig.LocalRig.hoverboardVisual.SetIsHeld(false, Vector3.zero, Quaternion.identity, Color.black);
+            VRRig.LocalRig.hoverboardVisual.SetNotHeld();
         }
 
         public static void HoverboardScreenTarget(VRRig rig, Color color)
