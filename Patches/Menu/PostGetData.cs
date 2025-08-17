@@ -8,7 +8,11 @@ namespace iiMenu.Patches
     [HarmonyPatch(typeof(BundleManager), "CheckIfBundlesOwned")]
     public class PostGetData
     {
-        private static void Postfix() =>
+        public static bool CosmeticsInitialized;
+        private static void Postfix()
+        {
+            CosmeticsInitialized = true;
             CosmeticsOwned = CosmeticsController.instance.concatStringCosmeticsAllowed;
+        }
     }
 }
