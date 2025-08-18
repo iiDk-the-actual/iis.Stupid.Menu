@@ -3226,6 +3226,43 @@ Piece Name: {gunTarget.name}";
             SendBarrelProjectile(TargetRig.transform.position, new Vector3(0f, 5000f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(TargetRig)).ActorNumber } });
         }
 
+        public static void BarrelFlingTowardsGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (gunLocked && lockTarget != null)
+                    SendBarrelProjectile(lockTarget.transform.position, (GorillaTagger.Instance.bodyCollider.transform.position - lockTarget.transform.position).normalized * 5000f, Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)).ActorNumber } });
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                {
+                    gunLocked = false;
+                    VRRig.LocalRig.enabled = true;
+                }
+            }
+        }
+
+        public static void BarrelFlingTowardsAll()
+        {
+            VRRig TargetRig = GetCurrentTargetRig();
+            SendBarrelProjectile(TargetRig.transform.position, (GorillaTagger.Instance.bodyCollider.transform.position - TargetRig.transform.position).normalized * 5000f, Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(TargetRig)).ActorNumber } });
+        }
+
         public static void CityKickGun()
         {
             if (GetGunInput(false))
