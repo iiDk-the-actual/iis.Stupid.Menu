@@ -3110,11 +3110,10 @@ namespace iiMenu.Mods
                 notificationScaleIndex.ToString(),
                 overlayScaleIndex.ToString(),
                 arraylistScaleIndex.ToString(),
-                // Go up there's a blank spot up there
-                // Surely wouldn't that make some old saves have random new data?
                 ((int)MathF.Ceiling(playTime)).ToString(),
                 PhotonNetwork.LocalPlayer?.UserId ?? "null",
-                _pageSize.ToString()
+                _pageSize.ToString(),
+                Overpowered.snowballMultiplicationFactor.ToString()
             };
 
             string settingstext = string.Join(seperator, settings);
@@ -3319,6 +3318,9 @@ namespace iiMenu.Mods
 
                 _pageSize = int.Parse(data[49]) - 1;
                 ChangePageSize();
+
+                Overpowered.snowballMultiplicationFactor = int.Parse(data[50]) - 1;
+                Overpowered.ChangeSnowballMultiplicationFactor();
             }
             catch { LogManager.Log("Save file out of date"); }
 

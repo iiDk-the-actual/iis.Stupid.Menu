@@ -1450,7 +1450,24 @@ namespace iiMenu.Mods
             if (snowballScale < 1)
                 snowballScale = 5;
 
-            GetIndex("Change Snowball Scale").overlapText = "Change Snowball Scale <color=grey>[</color><color=green>" + (snowballScale).ToString() + "</color><color=grey>]</color>";
+            GetIndex("Change Snowball Scale").overlapText = "Change Snowball Scale <color=grey>[</color><color=green>" + snowballScale.ToString() + "</color><color=grey>]</color>";
+        }
+
+        public static int snowballMultiplicationFactor = 1;
+        public static void ChangeSnowballMultiplicationFactor(bool positive = true)
+        {
+            if (positive)
+                snowballMultiplicationFactor++;
+            else
+                snowballMultiplicationFactor--;
+
+            if (snowballMultiplicationFactor > 5)
+                snowballMultiplicationFactor = 1;
+
+            if (snowballMultiplicationFactor < 1)
+                snowballMultiplicationFactor = 5;
+
+            GetIndex("Change Snowball Multiplication Factor").overlapText = "Change Snowball Multiplication Factor <color=grey>[</color><color=green>" + snowballMultiplicationFactor.ToString() + "</color><color=grey>]</color>";
         }
 
         public static int lagIndex = 1;
@@ -1473,80 +1490,91 @@ namespace iiMenu.Mods
             GetIndex("Change Lag Power").overlapText = "Change Lag Power <color=grey>[</color><color=green>" + new string[] { "Light", "Heavy", "Spike" } [lagIndex] + "</color><color=grey>]</color>";
         }
 
-        public static float snowballSpawnDelay = 0.1f;
+        public static float _snowballSpawnDelay = 0.1f;
+        public static float snowballSpawnDelay
+        {
+            get { return _snowballSpawnDelay * snowballMultiplicationFactor; }
+            set { _snowballSpawnDelay = value; }
+        }
+
         public static bool SnowballHandIndex;
         public static void BetaSpawnSnowball(Vector3 Pos, Vector3 Vel, float Scale, int Mode, Player Target = null, bool NetworkSize = true, int customNetworkedSize = -1)
         {
-            try
+            for (int i = 0; i < snowballMultiplicationFactor; i++)
             {
-                Scale = snowballScale;
-
-                SnowballHandIndex = !SnowballHandIndex;
-                Vel = Vel.ClampMagnitudeSafe(50f);
-
-                bool isTooFar = Vector3.Distance(Pos, GorillaTagger.Instance.bodyCollider.transform.position) > 3.9f;
-                if (isTooFar)
+                try
                 {
-                    VRRig.LocalRig.enabled = false;
-                    VRRig.LocalRig.transform.position = Pos + new Vector3(0f, Vel.y > 0f ? -3f : 3f, 0f);
-                }
+                    Scale = snowballScale;
 
-                DistancePatch.enabled = true;
+                    SnowballHandIndex = !SnowballHandIndex;
+                    Vel = Vel.ClampMagnitudeSafe(50f);
 
-                if (DisableCoroutine != null)
-                    CoroutineManager.EndCoroutine(DisableCoroutine);
+                    bool isTooFar = Vector3.Distance(Pos, GorillaTagger.Instance.bodyCollider.transform.position) > 3.9f;
+                    if (isTooFar)
+                    {
+                        VRRig.LocalRig.enabled = false;
+                        VRRig.LocalRig.transform.position = Pos + new Vector3(0f, Vel.y > 0f ? -3f : 3f, 0f);
+                    }
 
-                DisableCoroutine = CoroutineManager.RunCoroutine(DisableSnowball(isTooFar));
+                    DistancePatch.enabled = true;
 
-                GrowingSnowballThrowable GrowingSnowball = GetProjectile($"GrowingSnowball{(SnowballHandIndex ? "Right" : "Left")}Anchor") as GrowingSnowballThrowable;
-                GrowingSnowball.SetSnowballActiveLocal(true);
+                    if (DisableCoroutine != null)
+                        CoroutineManager.EndCoroutine(DisableCoroutine);
 
-                switch (Mode)
-                {
-                    case 0:
-                        int increment = GetProjectileIncrement(Pos, Vel, Scale);
+                    DisableCoroutine = CoroutineManager.RunCoroutine(DisableSnowball(isTooFar));
 
-                        GrowingSnowball.SnowballThrowEventReceiver(NetworkSystem.Instance.LocalPlayer.ActorNumber, NetworkSystem.Instance.LocalPlayer.ActorNumber, new object[] { Pos, Vel, increment }, new PhotonMessageInfoWrapped { senderID = NetworkSystem.Instance.LocalPlayer.ActorNumber });
-                        GrowingSnowball.ChangeSizeEventReceiver(NetworkSystem.Instance.LocalPlayer.ActorNumber, NetworkSystem.Instance.LocalPlayer.ActorNumber, new object[] { customNetworkedSize > 0 ? customNetworkedSize : (int)Scale }, new PhotonMessageInfoWrapped { senderID = NetworkSystem.Instance.LocalPlayer.ActorNumber });
-                        
-                        GrowingSnowball.changeSizeEvent.RaiseOthers(customNetworkedSize > 0 ? customNetworkedSize : (int)Scale);
-                        GrowingSnowball.snowballThrowEvent.RaiseOthers(Pos, Vel, increment);
-                        break;
-                    case 1:
-                        GrowingSnowball.changeSizeEvent.RaiseOthers(customNetworkedSize > 0 ? customNetworkedSize : (int)Scale);
-                        GrowingSnowball.snowballThrowEvent.RaiseOthers(Pos, Vel, GetProjectileIncrement(Pos, Vel, Scale));
-                        break;
-                    case 2:
-                        PhotonNetwork.RaiseEvent(176, new object[]
-                        {
+                    GrowingSnowballThrowable GrowingSnowball = GetProjectile($"GrowingSnowball{(SnowballHandIndex ? "Right" : "Left")}Anchor") as GrowingSnowballThrowable;
+                    GrowingSnowball.SetSnowballActiveLocal(true);
+
+                    switch (Mode)
+                    {
+                        case 0:
+                            int increment = GetProjectileIncrement(Pos, Vel, Scale);
+
+                            GrowingSnowball.SnowballThrowEventReceiver(NetworkSystem.Instance.LocalPlayer.ActorNumber, NetworkSystem.Instance.LocalPlayer.ActorNumber, new object[] { Pos, Vel, increment }, new PhotonMessageInfoWrapped { senderID = NetworkSystem.Instance.LocalPlayer.ActorNumber });
+                            GrowingSnowball.ChangeSizeEventReceiver(NetworkSystem.Instance.LocalPlayer.ActorNumber, NetworkSystem.Instance.LocalPlayer.ActorNumber, new object[] { customNetworkedSize > 0 ? customNetworkedSize : (int)Scale }, new PhotonMessageInfoWrapped { senderID = NetworkSystem.Instance.LocalPlayer.ActorNumber });
+
+                            GrowingSnowball.changeSizeEvent.RaiseOthers(customNetworkedSize > 0 ? customNetworkedSize : (int)Scale);
+                            GrowingSnowball.snowballThrowEvent.RaiseOthers(Pos, Vel, increment);
+                            break;
+                        case 1:
+                            GrowingSnowball.changeSizeEvent.RaiseOthers(customNetworkedSize > 0 ? customNetworkedSize : (int)Scale);
+                            GrowingSnowball.snowballThrowEvent.RaiseOthers(Pos, Vel, GetProjectileIncrement(Pos, Vel, Scale));
+                            break;
+                        case 2:
+                            PhotonNetwork.RaiseEvent(176, new object[]
+                            {
                             GrowingSnowball.changeSizeEvent._eventId,
                             customNetworkedSize > 0 ? customNetworkedSize : (int)Scale
-                        }, new RaiseEventOptions
-                        {
-                            TargetActors = new int[] { Target.ActorNumber }
-                        }, new SendOptions
-                        {
-                            Reliability = false,
-                            Encrypt = true
-                        });
+                            }, new RaiseEventOptions
+                            {
+                                TargetActors = new int[] { Target.ActorNumber }
+                            }, new SendOptions
+                            {
+                                Reliability = false,
+                                Encrypt = true
+                            });
 
-                        PhotonNetwork.RaiseEvent(176, new object[]
-                        {
+                            PhotonNetwork.RaiseEvent(176, new object[]
+                            {
                             GrowingSnowball.snowballThrowEvent._eventId,
                             Pos,
                             Vel,
                             GetProjectileIncrement(Pos, Vel, Scale)
-                        }, new RaiseEventOptions
-                        {
-                            TargetActors = new int[] { Target.ActorNumber }
-                        }, new SendOptions
-                        {
-                            Reliability = false,
-                            Encrypt = true
-                        });
-                        break;
+                            }, new RaiseEventOptions
+                            {
+                                TargetActors = new int[] { Target.ActorNumber }
+                            }, new SendOptions
+                            {
+                                Reliability = false,
+                                Encrypt = true
+                            });
+                            break;
+                    }
                 }
-            } catch { }
+                catch { }
+            }
+            
             RPCProtection();
         }
 
