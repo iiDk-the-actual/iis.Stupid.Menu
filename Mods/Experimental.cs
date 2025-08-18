@@ -1,5 +1,6 @@
 ﻿using ExitGames.Client.Photon;
 using GorillaNetworking;
+using GorillaTagScripts.ModIO;
 using iiMenu.Classes;
 using iiMenu.Menu;
 using iiMenu.Notifications;
@@ -182,8 +183,18 @@ namespace iiMenu.Mods
             Process.Start(filePath);
         }
 
-        public static void CopyCustomGamemodeScript() =>
+        public static void CopyCustomGamemodeScript()
+        {
+            NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Copied map script to your clipboard.", 5000);
             GUIUtility.systemCopyBuffer = CustomGameMode.LuaScript;
+        }
+
+        public static void CopyCustomMapID()
+        {
+            string id = CustomMapManager.currentRoomMapModId.id.ToString();
+            NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> " + id, 5000);
+            GUIUtility.systemCopyBuffer = id;
+        }
 
         private static float adminEventDelay;
         public static void AdminKickGun()

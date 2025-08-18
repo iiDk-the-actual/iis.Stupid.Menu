@@ -1702,7 +1702,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Get Decryptable Cosmetic Data", method =() => Experimental.DecryptableCosmeticData(), isTogglable = false, toolTip = "Dumps the cosmetics and their data to a easily decryptable file for databases."},
                 new ButtonInfo { buttonText = "Get RPC Data", method =() => Experimental.DumpRPCData(), isTogglable = false, toolTip = "Dumps the data of every RPC to a file."},
 
-                new ButtonInfo { buttonText = "Copy Custom Gamemode Script", method =() => Experimental.CopyCustomGamemodeScript(), isTogglable = false, toolTip = "Copies the lua script source code of the current custom map being played."},
+                new ButtonInfo { buttonText = "Copy Custom Gamemode Script", method =() => Experimental.CopyCustomGamemodeScript(), isTogglable = false, toolTip = "Copies the Lua script source code of the current custom map being played."},
+                new ButtonInfo { buttonText = "Copy Custom Map ID", method =() => Experimental.CopyCustomMapID(), isTogglable = false, toolTip = "Copies the map ID of the current custom map being played."},
 
                 new ButtonInfo { buttonText = "Better FPS Boost", enableMethod =() => Experimental.BetterFPSBoost(), disableMethod =() => Experimental.DisableBetterFPSBoost(), toolTip = "Makes everything one color, boosting your FPS."},
                 
