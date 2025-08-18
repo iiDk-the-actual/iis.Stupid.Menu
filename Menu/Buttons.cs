@@ -1279,6 +1279,10 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Strobe Color Gun", method =() => Overpowered.StrobeColorGun(), toolTip = "Flashes whoever your hand desires' color between red and blue."},
                 new ButtonInfo { buttonText = "Strobe Color All", method =() => Overpowered.StrobeColorAll(), toolTip = "Flashes everyone in the room's color between red and blue."},
 
+                new ButtonInfo { buttonText = "Material Self", method =() => { if (Time.time > Overpowered.materialDelay) { Overpowered.MaterialTarget(VRRig.LocalRig); Overpowered.materialDelay = Time.time + 0.1f;  } }, toolTip = "Flashes the materials of yourself."},
+                new ButtonInfo { buttonText = "Material Gun", method =() => Overpowered.MaterialGun(), toolTip = "Flashes the materials of whoever your hand desires."},
+                new ButtonInfo { buttonText = "Material All", method =() => Overpowered.MaterialAll(), toolTip = "Flashes the materials of everyone in the room."},
+
                 new ButtonInfo { buttonText = "Guardian Spaz", method =() => Overpowered.GuardianSpaz(), toolTip = "Spams the guardian position for everyone in the room."},
 
                 new ButtonInfo { buttonText = "Spaz Prop Hunt", method =() => Overpowered.SpazPropHunt(), toolTip = "Repeatedly starts and ends the prop hunt gamemode."},
@@ -1353,6 +1357,10 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Spam Tag Self", method =() => Advantages.SpamTagSelf(), toolTip = "Adds and removes you from the list of tagged players."},
                 new ButtonInfo { buttonText = "Spam Tag Gun", method =() => Advantages.SpamTagGun(), toolTip = "Adds and removes you from the list of tagged players."},
                 new ButtonInfo { buttonText = "Spam Tag All", method =() => Advantages.SpamTagAll(), toolTip = "Adds and removes everyone from the list of tagged players."},
+
+                new ButtonInfo { buttonText = "Rock Self", method =() => Overpowered.RockSelf(), isTogglable = false, toolTip = "Sets yourself to rock."},
+                new ButtonInfo { buttonText = "Rock Gun", method =() => Overpowered.RockGun(), toolTip = "Sets whoever your hand desires to rock."},
+                new ButtonInfo { buttonText = "Rock All", method =() => Overpowered.RockAll(), toolTip = "Sets everyone in the room to rock."},
 
                 new ButtonInfo { buttonText = "Tag Lag", enableMethod =() => Advantages.SetTagCooldown(float.MaxValue), disableMethod =() => Advantages.SetTagCooldown(5f), toolTip = "Forces tag lag in the lobby, letting no one get tagged."},
 
