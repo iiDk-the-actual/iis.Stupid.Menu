@@ -52,4 +52,14 @@ namespace iiMenu.Patches
             return true;
         }
     }
+
+    [HarmonyPatch(typeof(DeployedChild), "Deploy")]
+    public class AntiCrashPatch4
+    {
+        public static void Postfix(DeployedChild __instance, DeployableObject parent, Vector3 launchPos, Quaternion launchRot, Vector3 releaseVel, bool isRemote = false)
+        {
+            if (AntiCrashPatch.enabled)
+                __instance._rigidbody.velocity = __instance._rigidbody.velocity.ClampMagnitudeSafe(100f);
+        }
+    }
 }
