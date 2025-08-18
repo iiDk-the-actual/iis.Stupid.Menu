@@ -1,0 +1,94 @@
+﻿using GorillaTagScripts.ModIO;
+using iiMenu.Classes;
+using iiMenu.Menu;
+using iiMenu.Mods.CustomMaps.Maps;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using static iiMenu.Menu.Main;
+
+namespace iiMenu.Mods.CustomMaps
+{
+    public class Manager
+    {
+        private static Dictionary<long, string> mapScriptArchives = new Dictionary<long, string> { };
+        public static void UpdateCustomMapsTab(long? overwriteId = null)
+        {
+            int category = GetCategory("Custom Maps");
+            if (overwriteId != -1 && CustomMapLoader.IsModLoaded())
+            {
+                long mapID = overwriteId ?? CustomMapLoader.LoadedMapModId;
+                if (!mapScriptArchives.ContainsKey(mapID))
+                    mapScriptArchives.Add(mapID, CustomGameMode.LuaScript);
+
+                List<ButtonInfo> buttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Custom Maps", method = () => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page." } };
+
+                CustomMap map = GetMapByID(mapID);
+                if (map == null)
+                    buttons.Add(new ButtonInfo { buttonText = "This map is not supported yet.", label = true });
+                else
+                    buttons.AddRange(map.Buttons);
+
+                Buttons.buttons[category] = buttons.ToArray();
+            }
+            else
+                Buttons.buttons[category] = new ButtonInfo[] {
+                        new ButtonInfo { buttonText = "Exit Custom Maps", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
+                        new ButtonInfo { buttonText = "You have not loaded a map.", label = true},
+                    };
+        }
+
+        public static void ModifyCustomScript(Dictionary<int, string> replacements)
+        {
+            string input = CustomGameMode.LuaScript;
+            string[] lines = input.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
+
+            foreach (KeyValuePair<int, string> kvp in replacements)
+            {
+                int lineIndex = kvp.Key;
+                if (lineIndex >= 0 && lineIndex < lines.Length)
+                {
+                    LogManager.Log("Replacing " + lines[lineIndex] + " with " + kvp.Value);
+                    lines[lineIndex] = kvp.Value;
+                }
+
+            }
+
+            CustomGameMode.LuaScript = string.Join(Environment.NewLine, lines);
+
+            if (NetworkSystem.Instance.InRoom)
+                LuauHud.Instance.RestartLuauScript();
+
+            CustomMapManager.ReturnToVirtualStump();
+        }
+
+        public static void RevertCustomScript(int[] lines)
+        {
+            Dictionary<int, string> replacements = new Dictionary<int, string> { };
+            foreach (int line in lines)
+                replacements.Add(line, mapScriptArchives[CustomMapManager.currentRoomMapModId].Split(new[] { "\r\n", "\n" }, StringSplitOptions.None)[line]);
+
+            ModifyCustomScript(replacements);
+        }
+
+        public static void RevertCustomScript(int line) =>
+            RevertCustomScript(new int[] { line });
+        
+        public static CustomMap GetMapByID(long id)
+        {
+            var mapTypes = Assembly.GetExecutingAssembly()
+                .GetTypes()
+                .Where(t => t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(CustomMap)));
+
+            foreach (var type in mapTypes)
+            {
+                var mapIdProp = type.GetProperty("MapID", BindingFlags.Public | BindingFlags.Static);
+                if (mapIdProp != null && (long)mapIdProp.GetValue(null) == id)
+                    return (CustomMap)Activator.CreateInstance(type);
+            }
+
+            return null;
+        }
+    }
+}

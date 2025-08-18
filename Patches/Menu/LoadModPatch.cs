@@ -1,6 +1,5 @@
 ﻿using GorillaTagScripts.ModIO;
 using HarmonyLib;
-using iiMenu.Mods;
 using ModIO;
 
 namespace iiMenu.Patches
@@ -9,13 +8,13 @@ namespace iiMenu.Patches
     public class LoadModPatch
     {
         public static void Prefix(ModId modId) =>
-            Fun.CustomMaps.UpdateCustomMapsTab(modId.id);
+            Mods.CustomMaps.Manager.UpdateCustomMapsTab(modId.id);
     }
 
     [HarmonyPatch(typeof(CustomMapManager), "UnloadMod")]
     public class UnloadModPatch
     {
         public static void Prefix(bool returnToSinglePlayerIfInPublic) =>
-            Fun.CustomMaps.UpdateCustomMapsTab(-1);
+            Mods.CustomMaps.Manager.UpdateCustomMapsTab(-1);
     }
 }
