@@ -42,6 +42,7 @@ namespace iiMenu.Mods
             {
                 instance.ReturnToSinglePlayer();
                 yield return new WaitUntil(() => instance.netState == NetSystemState.Idle);
+                yield return new WaitForSeconds(0.5f);
             }
 
             instance.netState = NetSystemState.Connecting;
