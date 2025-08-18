@@ -6,6 +6,7 @@ using GorillaNetworking;
 using GorillaTag;
 using GorillaTag.Cosmetics;
 using GorillaTagScripts;
+using GorillaTagScripts.ModIO;
 using iiMenu.Classes;
 using iiMenu.Menu;
 using iiMenu.Mods.Spammers;
@@ -5704,6 +5705,214 @@ Piece Name: {gunTarget.name}";
             filePath = filePath.Split("BepInEx\\")[0] + fileName;
 
             Process.Start(filePath);
+        }
+
+        public class CustomMaps
+        {
+            private static Dictionary<long, string> mapScriptArchives = new Dictionary<long, string> { };
+            public static void UpdateCustomMapsTab(long? overwriteId = null)
+            {
+                int category = GetCategory("Custom Maps");
+                if (overwriteId != -1 && CustomMapLoader.IsModLoaded())
+                {
+                    long mapID = overwriteId ?? CustomMapLoader.LoadedMapModId;
+                    if (!mapScriptArchives.ContainsKey(mapID))
+                        mapScriptArchives.Add(mapID, CustomGameMode.LuaScript);
+
+                    List<ButtonInfo> buttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Custom Maps", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."} };
+
+                    switch (mapID)
+                    {
+                        case 5135423: // Chimp Combat
+                            buttons.AddRange(new ButtonInfo[]
+                            {
+                                new ButtonInfo { buttonText = "Kill All Players", method =() => ChimpCombat.KillAll(), toolTip = "Kills everyone in the room."},
+                                new ButtonInfo { buttonText = "God Mode_", overlapText = "God Mode", enableMethod =() => ChimpCombat.GodMode(), disableMethod =() => ChimpCombat.DisableGodMode(), toolTip = "Prevents you from getting killed."},
+                                new ButtonInfo { buttonText = "No Grenade Cooldown", enableMethod =() => ChimpCombat.NoGrenadeCooldown(), disableMethod =() => ChimpCombat.DisableNoGrenadeCooldown(), toolTip = "Disables the cooldown on spawning grenades."},
+                                new ButtonInfo { buttonText = "No Shoot Cooldown", enableMethod =() => ChimpCombat.NoShootCooldown(), disableMethod =() => ChimpCombat.DisableNoShootCooldown(), toolTip = "Disables the cooldown on shooting."},
+                                new ButtonInfo { buttonText = "Rapid Fire", enableMethod =() => ChimpCombat.RapidFire(), disableMethod =() => ChimpCombat.DisableRapidFire(), toolTip = "Automatically shoots when holding down right trigger."},
+                                new ButtonInfo { buttonText = "Instant Kill", enableMethod =() => ChimpCombat.InstantKill(), disableMethod =() => ChimpCombat.DisableInstantKill(), toolTip = "Makes your gun instant kill players."},
+                                new ButtonInfo { buttonText = "Infinite Points", enableMethod =() => ChimpCombat.InfinitePoints(), disableMethod =() => ChimpCombat.DisableInfinitePoints(), toolTip = "Gives you an infinite amount of points."},
+                                new ButtonInfo { buttonText = "Infinite Ammo", enableMethod =() => ChimpCombat.InfiniteAmmo(), disableMethod =() => ChimpCombat.DisableInfiniteAmmo(), toolTip = "Gives you an infinite amount of ammo."},
+                            });
+
+                            break;
+                        case 4977315: // Mining Simulator
+                            buttons.AddRange(new ButtonInfo[]
+                            {
+                                new ButtonInfo { buttonText = "Instant Mine", enableMethod =() => MiningSimulator.InstantMine(), disableMethod =() => MiningSimulator.DisableInstantMine(), toolTip = "Instantly mines any blocks with your pickaxe."},
+                                new ButtonInfo { buttonText = "Mine Anything", enableMethod =() => MiningSimulator.MineAnything(), disableMethod =() => MiningSimulator.DisableMineAnything(), toolTip = "Lets you mine any block."},
+                                new ButtonInfo { buttonText = "Infinite Backpack", enableMethod =() => MiningSimulator.InfiniteBackpack(), disableMethod =() => MiningSimulator.DisableInfiniteBackpack(), toolTip = "Lets you mine more blocks even if your inventory is full."},
+                            });
+
+                            break;
+                        default:
+                            buttons.AddRange(new ButtonInfo[]
+                            {
+                                new ButtonInfo { buttonText = "This map is not supported yet.", label = true},
+                            });
+                            break;
+                    }
+
+                    Buttons.buttons[category] = buttons.ToArray();
+                } else
+                    Buttons.buttons[category] = new ButtonInfo[] {
+                        new ButtonInfo { buttonText = "Exit Custom Maps", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
+                        new ButtonInfo { buttonText = "You have not loaded a map.", label = true},
+                    };
+            }
+
+            public static void ModifyCustomScript(Dictionary<int, string> replacements)
+            {
+                string input = CustomGameMode.LuaScript;
+                string[] lines = input.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
+
+                foreach (KeyValuePair<int, string> kvp in replacements)
+                {
+                    int lineIndex = kvp.Key;
+                    if (lineIndex >= 0 && lineIndex < lines.Length)
+                    {
+                        LogManager.Log("Replacing " + lines[lineIndex] + " with " + kvp.Value);
+                        lines[lineIndex] = kvp.Value;
+                    }
+                        
+                }
+
+                CustomGameMode.LuaScript = string.Join(Environment.NewLine, lines);
+
+                if (NetworkSystem.Instance.InRoom)
+                    LuauHud.Instance.RestartLuauScript();
+
+                CustomMapManager.ReturnToVirtualStump();
+            }
+
+            public static void RevertCustomScript(int[] lines)
+            {
+                Dictionary<int, string> replacements = new Dictionary<int, string> { };
+                foreach (int line in lines)
+                    replacements.Add(line, mapScriptArchives[CustomMapManager.currentRoomMapModId].Split(new[] { "\r\n", "\n" }, StringSplitOptions.None)[line]);
+
+                ModifyCustomScript(replacements);
+            }
+
+            public static void RevertCustomScript(int line) =>
+                RevertCustomScript(new int[] { line });
+
+            public class ChimpCombat
+            {
+                public static void KillAll() =>
+                    PhotonNetwork.RaiseEvent(180, new object[] { "HitPlayer", (double)GetRandomPlayer(false).ActorNumber, (double)99999, (double)GetRandomPlayer(false).ActorNumber }, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendReliable);
+            
+                public static void GodMode()
+                {
+                    ModifyCustomScript(new Dictionary<int, string>
+                    {
+                        { 957, "if not IsMe then PlayerData[Player.playerID].Health -= Modules.roundToQuarter(dmg) end" }
+                    });
+                }
+
+                public static void DisableGodMode() =>
+                    RevertCustomScript(957);
+
+                public static void NoGrenadeCooldown()
+                {
+                    ModifyCustomScript(new Dictionary<int, string>
+                    {
+                        { 1296, "grenadeCooldown = 0" }
+                    });
+                }
+
+                public static void DisableNoGrenadeCooldown() =>
+                    RevertCustomScript(1296);
+
+                public static void NoShootCooldown()
+                {
+                    ModifyCustomScript(new Dictionary<int, string>
+                    {
+                        { 1243, "shootCooldown = 0" }
+                    });
+                }
+
+                public static void DisableNoShootCooldown() =>
+                    RevertCustomScript(1243);
+
+                public static void InfiniteAmmo()
+                {
+                    ModifyCustomScript(new Dictionary<int, string>
+                    {
+                        { 1244, "" }
+                    });
+                }
+
+                public static void DisableInfiniteAmmo() =>
+                    RevertCustomScript(1244);
+
+                public static void InstantKill()
+                {
+                    ModifyCustomScript(new Dictionary<int, string>
+                    {
+                        { 1278, "emitAndOnEvent(\"HitPlayer\", {found.playerID, 99999.0, LocalPlayer.playerID})" }
+                    });
+                }
+
+                public static void DisableInstantKill() =>
+                    RevertCustomScript(1278);
+
+                public static void InfinitePoints()
+                {
+                    ModifyCustomScript(new Dictionary<int, string>
+                    {
+                        { 461, "[\"Points\"] = 9999999.0," }
+                    });
+                }
+
+                public static void DisableInfinitePoints() =>
+                    RevertCustomScript(461);
+
+                public static void RapidFire()
+                {
+                    ModifyCustomScript(new Dictionary<int, string>
+                    {
+                        { 2041, "needsLetGoR = false" }
+                    });
+                }
+
+                public static void DisableRapidFire() =>
+                    RevertCustomScript(2041);
+            }
+
+            public class MiningSimulator
+            {
+                public static void InstantMine()
+                {
+                    ModifyCustomScript(new Dictionary<int, string>
+                    {
+                        { 844, "lastMinedTime = 0" }
+                    });
+                }
+                public static void DisableInstantMine() =>
+                    RevertCustomScript(844);
+
+                public static void MineAnything()
+                {
+                    ModifyCustomScript(new Dictionary<int, string>
+                    {
+                        { 831, "if true then" }
+                    });
+                }
+                public static void DisableMineAnything() =>
+                    RevertCustomScript(831);
+
+                public static void InfiniteBackpack()
+                {
+                    ModifyCustomScript(new Dictionary<int, string>
+                    {
+                        { 810, "if false then" }
+                    });
+                }
+                public static void DisableInfiniteBackpack() =>
+                    RevertCustomScript(810);
+            }
         }
     }
 }
