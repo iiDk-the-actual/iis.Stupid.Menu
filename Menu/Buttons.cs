@@ -776,6 +776,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Exit Fun Mods", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
 
                 new ButtonInfo { buttonText = "Soundboard", method =() => Sound.LoadSoundboard(), isTogglable = false, toolTip = "A working, customizable soundboard that lets you play audios through your microphone."},
+                new ButtonInfo { buttonText = "Custom Maps", method =() => currentCategoryName = "Custom Maps", isTogglable = false, toolTip = "Opens the custom maps tab."},
 
                 new ButtonInfo { buttonText = "Upside Down Head", method =() => Fun.UpsideDownHead(), disableMethod =() => Fun.FixHead(), toolTip = "Flips your head upside down on the Z axis."},
                 new ButtonInfo { buttonText = "Backwards Head", method =() => Fun.BackwardsHead(), disableMethod =() => Fun.FixHead(), toolTip = "Rotates your head 180 degrees on the Y axis."},
@@ -1834,6 +1835,12 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Intelligence", method =() => NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not find link."), isTogglable = false, toolTip = "Intelligence gave me the idea to add \"Auto Branch\" to the menu."},
 
                 new ButtonInfo { buttonText = "GNU General Public License Version 3", method =() => Process.Start("https://www.gnu.org/licenses/gpl-3.0.html"), isTogglable = false, toolTip = "The GNU General Public License Version 3 is the license that my menu uses. It proveides a \"free, copyleft license for software and other kinds of works.\""},
+            },
+
+            new ButtonInfo[] // Custom Maps [39]
+            {
+                new ButtonInfo { buttonText = "Exit Custom Maps", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
+                new ButtonInfo { buttonText = "You have not loaded a map.", label = true}
             }
         };
 
@@ -1877,7 +1884,8 @@ namespace iiMenu.Menu
             "Friend Settings",
             "Fun Settings",
             "Players",
-            "Credits"
+            "Credits",
+            "Custom Maps"
         };
     }
 }

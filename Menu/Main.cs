@@ -5170,6 +5170,7 @@ namespace iiMenu.Menu
 
             if (!disableRoomNotifications)
                 NotifiLib.SendNotification("<color=grey>[</color><color=blue>JOIN ROOM</color><color=grey>]</color> Room Code: " + lastRoom + "");
+
             RPCProtection();
         }
 
