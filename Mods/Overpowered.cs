@@ -273,6 +273,105 @@ namespace iiMenu.Mods
             }
         }
 
+        private static Dictionary<VRRig, int> materialState = new Dictionary<VRRig, int> { };
+        public static float materialDelay;
+        public static void MaterialTarget(VRRig rig)
+        {
+            if (!NetworkSystem.Instance.IsMasterClient)
+            {
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                return;
+            }
+                
+            NetPlayer player = GetPlayerFromVRRig(rig);
+            int state = 0;
+            materialState.TryGetValue(rig, out state);
+
+            state++;
+            state %= 6;
+
+            if (GorillaGameManager.instance.GameType() == GameModeType.Casual)
+            {
+                if (state < 4)
+                    state = 4;
+            }
+
+            materialState[rig] = state;
+
+            switch (state)
+            {
+                case 0:
+                    AddInfected(player);
+                    break;
+                case 1:
+                    RemoveInfected(player);
+                    break;
+                case 2:
+                    AddRock(player);
+                    break;
+                case 3:
+                    RemoveRock(player);
+                    break;
+                case 4:
+                    SetPlayerColors(new Dictionary<int, int> { { player.ActorNumber, 0 } });
+                    break;
+                case 5:
+                    SetPlayerColors(new Dictionary<int, int> { { player.ActorNumber, 1 } });
+                    break;
+            }
+        }
+
+        public static void MaterialGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    if (!NetworkSystem.Instance.IsMasterClient)
+                        NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                    else
+                    {
+                        if (Time.time > materialDelay)
+                        {
+                            materialDelay = Time.time + 0.1f;
+                            MaterialTarget(lockTarget);
+                        }
+                    }
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget) && !PlayerIsTagged(gunTarget))
+                    {
+                        if (PhotonNetwork.IsMasterClient)
+                        {
+                            gunLocked = true;
+                            lockTarget = gunTarget;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                    gunLocked = false;
+            }
+        }
+
+        public static void MaterialAll()
+        {
+            if (Time.time > materialDelay)
+            {
+                materialDelay = Time.time + 0.1f;
+                foreach (VRRig rig in GorillaParent.instance.vrrigs)
+                    MaterialTarget(rig);
+            }
+        }
+
         private static float guardianSpazDelay = 0f;
         private static bool guardianSpazToggle = false;
         public static void GuardianSpaz()
@@ -2766,6 +2865,50 @@ namespace iiMenu.Mods
         {
             GorillaTagManager gorillaTagManager = (GorillaTagManager)GorillaGameManager.instance;
             gorillaTagManager.infectedModeThreshold = 4;
+        }
+
+        private static float rockDebounce;
+        public static void RockSelf()
+        {
+            if (PhotonNetwork.IsMasterClient)
+                AddRock(NetworkSystem.Instance.LocalPlayer);
+            else
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+        }
+
+        public static void RockGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget) && Time.time > rockDebounce)
+                    {
+                        rockDebounce = Time.time + 0.1f;
+                        if (PhotonNetwork.IsMasterClient)
+                            AddRock(GetPlayerFromVRRig(gunTarget));
+                        else
+                            NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+                    }
+                }
+            }
+        }
+
+        public static void RockAll()
+        {
+            if (Time.time > rockDebounce)
+            {
+                rockDebounce = Time.time + 0.1f;
+                if (PhotonNetwork.IsMasterClient)
+                    AddRock(GetRandomPlayer(true));
+                else
+                    NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
+            }
         }
 
         public static void BetaSetStatus(int state, RaiseEventOptions reo)

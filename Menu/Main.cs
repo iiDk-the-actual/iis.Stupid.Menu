@@ -4568,6 +4568,50 @@ namespace iiMenu.Menu
             }
         }
 
+        public static void AddRock(NetPlayer plr)
+        {
+            switch (GorillaGameManager.instance.GameType())
+            {
+                case GorillaGameModes.GameModeType.Infection:
+                case GorillaGameModes.GameModeType.InfectionCompetitive:
+                case GorillaGameModes.GameModeType.FreezeTag:
+                case GorillaGameModes.GameModeType.PropHunt:
+                    GorillaTagManager tagManager = (GorillaTagManager)GorillaGameManager.instance;
+                    tagManager.ChangeCurrentIt(plr);
+
+                    break;
+                case GorillaGameModes.GameModeType.Ghost:
+                case GorillaGameModes.GameModeType.Ambush:
+                    GorillaAmbushManager ghostManager = (GorillaAmbushManager)GorillaGameManager.instance;
+                    ghostManager.ChangeCurrentIt(plr);
+
+                    break;
+            }
+        }
+
+        public static void RemoveRock(NetPlayer plr)
+        {
+            switch (GorillaGameManager.instance.GameType())
+            {
+                case GorillaGameModes.GameModeType.Infection:
+                case GorillaGameModes.GameModeType.InfectionCompetitive:
+                case GorillaGameModes.GameModeType.FreezeTag:
+                case GorillaGameModes.GameModeType.PropHunt:
+                    GorillaTagManager tagManager = (GorillaTagManager)GorillaGameManager.instance;
+                    if (tagManager.currentIt == plr)
+                        tagManager.ChangeCurrentIt(null);
+
+                    break;
+                case GorillaGameModes.GameModeType.Ghost:
+                case GorillaGameModes.GameModeType.Ambush:
+                    GorillaAmbushManager ghostManager = (GorillaAmbushManager)GorillaGameManager.instance;
+                    if (ghostManager.currentIt == plr)
+                        ghostManager.ChangeCurrentIt(null);
+
+                    break;
+            }
+        }
+
         // SteamVR bug causes teleporting of the player to the center of your playspace
         public static Vector3 World2Player(Vector3 world) => 
             world - GorillaTagger.Instance.bodyCollider.transform.position + GorillaTagger.Instance.transform.position;
