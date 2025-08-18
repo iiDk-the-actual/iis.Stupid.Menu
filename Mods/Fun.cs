@@ -400,7 +400,7 @@ namespace iiMenu.Mods
                     if (targets.Contains(NetworkSystem.Instance.LocalPlayer.ActorNumber))
                         ObjectPools.instance.Instantiate(GTPlayer.Instance.waterParams.rippleEffect, splashPosition, splashRotation, GTPlayer.Instance.waterParams.rippleEffectScale * boundingRadius * 2f, true);
 
-                    Overpowered.SpecialTargetRPC(GorillaTagger.Instance.myVRRig.GetView, "RPC_PlaySplashEffect", targets, parameters);
+                    Overpowered.SpecialTargetRPC(GorillaTagger.Instance.myVRRig.GetView, "RPC_PlaySplashEffect", new RaiseEventOptions { TargetActors = targets }, parameters);
                 }
             } catch { }
 
@@ -3226,6 +3226,73 @@ Piece Name: {gunTarget.name}";
             SendBarrelProjectile(TargetRig.transform.position, new Vector3(0f, 5000f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(TargetRig)).ActorNumber } });
         }
 
+        public static void CityKickGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (gunLocked && lockTarget != null)
+                    SendBarrelProjectile(lockTarget.transform.position, (new Vector3(-71.14215f, 13.73829f, -95.17883f) - lockTarget.transform.position).normalized * 5000f, Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(lockTarget)).ActorNumber } });
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                {
+                    gunLocked = false;
+                    VRRig.LocalRig.enabled = true;
+                }
+            }
+        }
+
+        public static void CityKickAll()
+        {
+            VRRig TargetRig = GetCurrentTargetRig();
+            SendBarrelProjectile(TargetRig.transform.position, (new Vector3(-71.14215f, 13.73829f, -95.17883f) - TargetRig.transform.position).normalized * 5000f, Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(TargetRig)).ActorNumber } });
+        }
+
+        private static float elevatorKickDelay;
+        public static void ElevatorKickGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget) && Time.time > elevatorKickDelay)
+                    {
+                        elevatorKickDelay = Time.time + 0.5f;
+
+                        GRElevator currentElevator = GRElevatorManager._instance.elevatorByLocation[GRElevatorManager._instance.currentLocation];
+                        Overpowered.SpecialTimeRPC(GRElevatorManager._instance.photonView, -750, "RemoteActivateTeleport", new RaiseEventOptions { Receivers = ReceiverGroup.Others }, (int)GRElevatorManager._instance.currentLocation, 2, GRElevatorManager.LowestActorNumberInElevator());
+                        RPCProtection();
+                    }
+                }
+            }
+        }
+
+        public static void ElevatorKickAll()
+        {
+            VRRig TargetRig = GetCurrentTargetRig();
+            SendBarrelProjectile(TargetRig.transform.position, (new Vector3(-71.14215f, 13.73829f, -95.17883f) - TargetRig.transform.position).normalized * 5000f, Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(TargetRig)).ActorNumber } });
+        }
+
         public static void WhiteColorTarget(VRRig rig)
         {
             int index = 629;
@@ -3343,14 +3410,14 @@ Piece Name: {gunTarget.name}";
                 transferrableObject.gameObject.SetActive(true);
             }
 
-            transferrableObject.storedZone = BodyDockPositions.DropPositions.RightArm;
+            transferrableObject.storedZone = BodyDockPositions.DropPositions.RightBack;
             transferrableObject.currentState = TransferrableObject.PositionState.InRightHand;
 
             VRRig.LocalRig.enabled = false;
-            VRRig.LocalRig.transform.position = rig.transform.position - Vector3.up;
+            VRRig.LocalRig.transform.position = rig.transform.position;
 
-            VRRig.LocalRig.rightHand.rigTarget.transform.position = rig.transform.position + (Vector3.up * UnityEngine.Random.Range(-1f, 1f));
-            VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
+            VRRig.LocalRig.rightHand.rigTarget.transform.position = rig.transform.position + (Vector3.up * ((Time.time * 5f % 1f) - 0.5f));
+            VRRig.LocalRig.rightHand.rigTarget.transform.rotation = Quaternion.identity;
 
             VRRig.LocalRig.rightIndex.calcT = 1f;
             VRRig.LocalRig.rightMiddle.calcT = 1f;

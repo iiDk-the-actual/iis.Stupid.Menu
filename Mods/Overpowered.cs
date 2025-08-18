@@ -2028,7 +2028,7 @@ namespace iiMenu.Mods
             catch { } // Not connected
         }
 
-        public static bool SpecialTargetRPC(PhotonView photonView, string method, int[] targetActors, object[] parameters)
+        public static bool SpecialTargetRPC(PhotonView photonView, string method, RaiseEventOptions options, params object[] parameters)
         {
             if (photonView != null && parameters != null && !string.IsNullOrEmpty(method))
             {
@@ -2045,16 +2045,21 @@ namespace iiMenu.Mods
                 
                 if (PhotonNetwork.PhotonServerSettings.RpcList.Contains(method))
                     rpcData[5] = (byte)PhotonNetwork.PhotonServerSettings.RpcList.IndexOf(method);
-                
-                if (targetActors.Contains(PhotonNetwork.LocalPlayer.ActorNumber))
+
+                if (options.Receivers == ReceiverGroup.All || (options.TargetActors != null && options.TargetActors.Contains(NetworkSystem.Instance.LocalPlayer.ActorNumber)))
+                {
+                    if (options.Receivers == ReceiverGroup.All)
+                        options.Receivers = ReceiverGroup.Others;
+
+                    if (options.TargetActors != null && options.TargetActors.Contains(NetworkSystem.Instance.LocalPlayer.ActorNumber))
+                        options.TargetActors = options.TargetActors.Where(id => id != NetworkSystem.Instance.LocalPlayer.ActorNumber).ToArray();
+
                     PhotonNetwork.ExecuteRpc(rpcData, PhotonNetwork.LocalPlayer);
-                
+                }
+
                 else
                 {
-                    PhotonNetwork.NetworkingClient.LoadBalancingPeer.OpRaiseEvent(200, rpcData, new RaiseEventOptions
-                    {
-                        TargetActors = targetActors
-                    }, new SendOptions
+                    PhotonNetwork.NetworkingClient.LoadBalancingPeer.OpRaiseEvent(200, rpcData, options, new SendOptions
                     {
                         Reliability = true,
                         DeliveryMode = DeliveryMode.ReliableUnsequenced,
@@ -2065,7 +2070,7 @@ namespace iiMenu.Mods
             return false;
         }
 
-        public static bool SpecialTimeRPC(PhotonView photonView, int timeOffset, string method, int[] targetActors, object[] parameters)
+        public static bool SpecialTimeRPC(PhotonView photonView, int timeOffset, string method, RaiseEventOptions options, params object[] parameters)
         {
             if (photonView != null && parameters != null && !string.IsNullOrEmpty(method))
             {
@@ -2083,15 +2088,20 @@ namespace iiMenu.Mods
                 if (PhotonNetwork.PhotonServerSettings.RpcList.Contains(method))
                     rpcData[5] = (byte)PhotonNetwork.PhotonServerSettings.RpcList.IndexOf(method);
 
-                if (targetActors.Contains(PhotonNetwork.LocalPlayer.ActorNumber) && targetActors.Length == 1)
+                if (options.Receivers == ReceiverGroup.All || (options.TargetActors != null && options.TargetActors.Contains(NetworkSystem.Instance.LocalPlayer.ActorNumber)))
+                {
+                    if (options.Receivers == ReceiverGroup.All)
+                        options.Receivers = ReceiverGroup.Others;
+
+                    if (options.TargetActors != null && options.TargetActors.Contains(NetworkSystem.Instance.LocalPlayer.ActorNumber))
+                        options.TargetActors = options.TargetActors.Where(id => id != NetworkSystem.Instance.LocalPlayer.ActorNumber).ToArray();
+
                     PhotonNetwork.ExecuteRpc(rpcData, PhotonNetwork.LocalPlayer);
+                }
 
                 else
                 {
-                    PhotonNetwork.NetworkingClient.LoadBalancingPeer.OpRaiseEvent(200, rpcData, new RaiseEventOptions
-                    {
-                        TargetActors = targetActors
-                    }, new SendOptions
+                    PhotonNetwork.NetworkingClient.LoadBalancingPeer.OpRaiseEvent(200, rpcData, options, new SendOptions
                     {
                         Reliability = true,
                         DeliveryMode = DeliveryMode.ReliableUnsequenced,
@@ -2582,7 +2592,7 @@ namespace iiMenu.Mods
                 else if (general is int[] targets)
                 {
                     for (int i = 0; i < lagAmount; i++)
-                        SpecialTargetRPC(FriendshipGroupDetection.Instance.photonView, "NotifyPartyMerging", targets, new object[] { null });
+                        SpecialTargetRPC(FriendshipGroupDetection.Instance.photonView, "NotifyPartyMerging", new RaiseEventOptions { TargetActors = targets }, new object[] { null });
                 }
 
                 RPCProtection();

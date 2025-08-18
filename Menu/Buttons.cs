@@ -1506,6 +1506,12 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Stump Kick Gun", method =() => Fun.StumpKickGun(), toolTip = "Kicks whoever your hand desires if they are in stump." },
                 new ButtonInfo { buttonText = "Stump Kick All", method =() => Fun.StumpKickAll(), isTogglable = false, toolTip = "Kicks everyone in stump." },
 
+                new ButtonInfo { buttonText = "City Kick Gun", method =() => Fun.CityKickGun(), toolTip = "Flings whoever your hand desires using the barrels into the clouds map to kick them."},
+                new ButtonInfo { buttonText = "City Kick All", method =() => Fun.CityKickAll(), toolTip = "Flings everyone in the room using the barrels into the clouds map to kick them."},
+
+                new ButtonInfo { buttonText = "Elevator Kick Gun", method =() => Fun.ElevatorKickGun(), toolTip = "Kicks whoever your hand desires if they are in the elevator."},
+                new ButtonInfo { buttonText = "Elevator Kick All", method =() => Fun.ElevatorKickAll(), isTogglable = false, toolTip = "Kicks everyone in the elevator."},
+
                 new ButtonInfo { buttonText = "Instant Party", method =() => Fun.InstantParty(), toolTip = "Makes parties form instantly, instead of having to wait a couple of seconds." },
                 new ButtonInfo { buttonText = "Leave Party", method =() => FriendshipGroupDetection.Instance.LeaveParty(), isTogglable = false, toolTip = "Leaves the party, incase you can't pull off the string." },
 
