@@ -3405,10 +3405,7 @@ Piece Name: {gunTarget.name}";
             }
 
             if (!transferrableObject.gameObject.activeSelf)
-            {
-                VRRig.LocalRig.SetActiveTransferrableObjectIndex(1, index);
-                transferrableObject.gameObject.SetActive(true);
-            }
+                EquipCosmetic("LMAQL.");
 
             transferrableObject.storedZone = BodyDockPositions.DropPositions.RightBack;
             transferrableObject.currentState = TransferrableObject.PositionState.InRightHand;
