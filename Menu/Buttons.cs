@@ -1007,6 +1007,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Barrel Fling Gun", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelFlingGun(), toolTip = "Flings whoever your hand desires using the barrels."},
                 new ButtonInfo { buttonText = "Barrel Fling All", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelFlingAll(), toolTip = "Flings everyone in the room using the barrels."},
 
+                new ButtonInfo { buttonText = "Barrel Fling Towards Gun", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelFlingTowardsGun(), toolTip = "Flings whoever your hand desires using the barrels towards you."},
+                new ButtonInfo { buttonText = "Barrel Fling Towards All", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelFlingTowardsAll(), toolTip = "Flings everyone in the room using the barrels towards you."},
+
                 new ButtonInfo { buttonText = "White Color Gun", enableMethod =() => Fun.CheckOwnedThrowable(629), method =() => Fun.WhiteColorGun(), toolTip = "Sprays whoever your hand desires with the sunblock spray cosmetic."},
                 new ButtonInfo { buttonText = "White Color All", enableMethod =() => Fun.CheckOwnedThrowable(629), method =() => Fun.WhiteColorTarget(GetCurrentTargetRig()), disableMethod =() => VRRig.LocalRig.enabled = false, toolTip = "Sprays everyone in the room with the sunblock spray cosmetic."},
 
