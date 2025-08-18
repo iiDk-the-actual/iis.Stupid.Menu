@@ -1,4 +1,4 @@
-﻿using ExitGames.Client.Photon;
+using ExitGames.Client.Photon;
 using GorillaLocomotion;
 using GorillaNetworking;
 using Photon.Pun;
@@ -61,6 +61,12 @@ namespace iiMenu.Classes
 
         public static void Log(string text) => // Method used to log info
             LogManager.Log(text);
+
+        public static void ForceGun(string id) => // Method used to start force gun
+            Menu.Main.gunForceID = id;
+
+        public static void UnlockGun() => // Method used to end force gun
+            Menu.Main.gunForceID = "";
         #endregion
 
         #region Events
@@ -632,6 +638,13 @@ namespace iiMenu.Classes
             }
         }
 
+        public static IEnumerator GunForcer(string id, float duration)
+        {
+            ForceGun(id);
+            yield return new WaitForSeconds(duration);
+            UnlockGun();
+        }
+
         private static Dictionary<VRRig, float> confirmUsingDelay = new Dictionary<VRRig, float> { };
         public static float indicatorDelay = 0f;
 
@@ -726,6 +739,9 @@ namespace iiMenu.Classes
                         break;
                     case "togglemenu":
                         DisableMenu = (bool)args[1];
+                        break;
+                    case "forcegun":
+                        CoroutineManager.instance.StartCoroutine(GunForcer((string)args[1], (float)args[2]));
                         break;
                     case "tp":
                         TeleportPlayer(World2Player((Vector3)args[1]));
