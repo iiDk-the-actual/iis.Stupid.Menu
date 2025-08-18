@@ -1004,12 +1004,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Bubble Gun", enableMethod =() => Fun.CheckOwnedThrowable(33), method =() => Fun.BubblerGun(33, Quaternion.identity, 0.1f), toolTip = "Uses the bubbler to spawn bubbles at wherever your hand desires."},
                 new ButtonInfo { buttonText = "Fire Gun", enableMethod =() => Fun.CheckOwnedThrowable(175), method =() => Fun.BubblerGun(175, Quaternion.Euler(180f, 0f, 0f)), toolTip = "Uses the bubbler to spawn bubbles at wherever your hand desires."},
 
-                new ButtonInfo { buttonText = "Barrel Fling Gun", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelFlingGun(), toolTip = "Flings whoever your hand desires using the barrels."},
-                new ButtonInfo { buttonText = "Barrel Fling All", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelFlingAll(), toolTip = "Flings everyone in the room using the barrels."},
-
-                new ButtonInfo { buttonText = "Barrel Fling Towards Gun", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelFlingTowardsGun(), toolTip = "Flings whoever your hand desires using the barrels towards you."},
-                new ButtonInfo { buttonText = "Barrel Fling Towards All", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelFlingTowardsAll(), toolTip = "Flings everyone in the room using the barrels towards you."},
-
                 new ButtonInfo { buttonText = "White Color Gun", enableMethod =() => Fun.CheckOwnedThrowable(629), method =() => Fun.WhiteColorGun(), toolTip = "Sprays whoever your hand desires with the sunblock spray cosmetic."},
                 new ButtonInfo { buttonText = "White Color All", enableMethod =() => Fun.CheckOwnedThrowable(629), method =() => Fun.WhiteColorTarget(GetCurrentTargetRig()), disableMethod =() => VRRig.LocalRig.enabled = false, toolTip = "Sprays everyone in the room with the sunblock spray cosmetic."},
 
@@ -1496,6 +1490,15 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Lag Gun", method =() => Overpowered.LagGun(), toolTip = "Lags whoever your hand desires."},
                 new ButtonInfo { buttonText = "Lag All", method =() => Overpowered.LagAll(), toolTip = "Lags everyone in the room."},
                 new ButtonInfo { buttonText = "Lag Aura", method =() => Overpowered.LagAura(), toolTip = "Lags players nearby you."},
+
+                new ButtonInfo { buttonText = "Barrel Fling Gun", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelFlingGun(), toolTip = "Flings whoever your hand desires using the barrels."},
+                new ButtonInfo { buttonText = "Barrel Fling All", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelFlingAll(), toolTip = "Flings everyone in the room using the barrels."},
+
+                new ButtonInfo { buttonText = "Barrel Crash Gun", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelCrashGun(), toolTip = "Crashes whoever your hand desires using the barrels."},
+                new ButtonInfo { buttonText = "Barrel Crash All", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelCrashAll(), toolTip = "Crashes everyone in the room using the barrels."},
+
+                new ButtonInfo { buttonText = "Barrel Fling Towards Gun", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelFlingTowardsGun(), toolTip = "Flings whoever your hand desires using the barrels towards you."},
+                new ButtonInfo { buttonText = "Barrel Fling Towards All", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelFlingTowardsAll(), toolTip = "Flings everyone in the room using the barrels towards you."},
 
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Lag</color><color=grey>]</color>", method =() => Overpowered.AntiReportLag(), toolTip = "Lags whoever tries to report you."},
 
