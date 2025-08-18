@@ -271,7 +271,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "True Projectile Aura", overlapText = "Projectile Aura", toolTip = "Makes the projectiles random around you." },
                 new ButtonInfo { buttonText = "Projectile Fountain", toolTip = "Makes projectiles spurt out of your head, like a fountain." },
 
-                new ButtonInfo { buttonText = "Rainbow Colored Projectiles", toolTip = "Makes projectiles be rainbow (real RGB)." },
+                new ButtonInfo { buttonText = "Rainbow Projectiles", toolTip = "Makes projectiles be rainbow (real RGB)." },
                 new ButtonInfo { buttonText = "Hard Rainbow Projectiles", toolTip = "Makes projectiles be rainbow but ye rainbow tis very harsh (real RGB)." },
 
                 new ButtonInfo { buttonText = "RedProj", overlapText = "Red <color=grey>[</color><color=green>10</color><color=grey>]</color>", method =() => Projectiles.IncreaseRed(), enableMethod =() => Projectiles.IncreaseRed(), disableMethod =() => Projectiles.IncreaseRed(false), incremental = true, isTogglable = false, toolTip = "Makes projectiles more red." },
@@ -904,9 +904,10 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Fast Snowballs", overlapText = "Fast Projectiles", method =() => Fun.FastSnowballs(), disableMethod =() => Fun.FixSnowballs(), toolTip = "Makes projectiles go really fast when thrown."},
                 new ButtonInfo { buttonText = "Slow Snowballs", overlapText = "Slow Projectiles", method =() => Fun.SlowSnowballs(), disableMethod =() => Fun.FixSnowballs(), toolTip = "Makes projectiles go really slow when thrown."},
 
-                new ButtonInfo { buttonText = "Rainbow Projectiles", enableMethod =() => Fun.HookProjectileColors(), method =() => Fun.projHookColor = Color.HSVToRGB((Time.frameCount / 180f) % 1f, 1f, 1f), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Changes your projectile's color to be rainbow"},
-                new ButtonInfo { buttonText = "Flash Projectiles", enableMethod =() => Fun.HookProjectileColors(), method =() => Fun.projHookColor = Time.time % 0.2f > 0.1f ? Color.white : Color.black, disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Changes your projectile's color to be rainbow"},
-                new ButtonInfo { buttonText = "Strobe Projectiles", enableMethod =() => Fun.HookProjectileColors(), method =() => Fun.projHookColor = RandomColor(), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Changes your projectile's color to be rainbow"},
+                new ButtonInfo { buttonText = "Rainbow Held Projectiles", enableMethod =() => Fun.HookProjectileColors(), method =() => Fun.projHookColor = Color.HSVToRGB((Time.frameCount / 180f) % 1f, 1f, 1f), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Changes your projectile's color to be rainbow"},
+                new ButtonInfo { buttonText = "Flash Held Projectiles", enableMethod =() => Fun.HookProjectileColors(), method =() => Fun.projHookColor = Time.time % 0.2f > 0.1f ? Color.white : Color.black, disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Changes your projectile's color to be rainbow"},
+                new ButtonInfo { buttonText = "Strobe Held Projectiles", enableMethod =() => Fun.HookProjectileColors(), method =() => Fun.projHookColor = RandomColor(), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Changes your projectile's color to be rainbow"},
+                new ButtonInfo { buttonText = "Custom Held Projectiles", enableMethod =() => Fun.HookProjectileColors(), method =() => Fun.projHookColor = new Color(Projectiles.red / 10f, Projectiles.green / 10f, Projectiles.blue / 10f), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Changes your projectile's color to be whatever your custom projectile color is set to in the projectile settings."},
 
                 new ButtonInfo { buttonText = "Snowball Buttocks", method =() => Fun.SnowballButtocks(), disableMethod =() => Fun.DisableSnowballGenitals(), toolTip = "Gives you fake buttocks using the snowballs." },
                 new ButtonInfo { buttonText = "Snowball Breasts", method =() => Fun.SnowballBreasts(), disableMethod =() => Fun.DisableSnowballGenitals(), toolTip = "Gives you fake breasts using the snowballs." },
