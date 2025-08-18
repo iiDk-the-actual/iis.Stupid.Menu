@@ -3768,6 +3768,7 @@ namespace iiMenu.Menu
         private static GameObject GunPointer;
         private static LineRenderer GunLine;
 
+        public static string gunForceID = "";
         public static (RaycastHit Ray, GameObject NewPointer) RenderGun(int? overrideLayerMask = null)
         {
             GunSpawned = true;
@@ -4047,11 +4048,21 @@ namespace iiMenu.Menu
                 }
             }
 
+            if (gunForceID != "")
+            {
+                VRRig rig = GetVRRigFromPlayer(GetPlayerFromID(gunForceID));
+                if (rig)
+                    Physics.Raycast(rig.bodyTransform.position + new Vector3(0f, 1.2f, 0f) + (Vector3.down / 4f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f)), Vector3.down, out Ray, 512f);
+            }
+
             return (Ray, GunPointer);
         }
 
         public static bool GetGunInput(bool isShooting)
         {
+            if (gunForceID != "")
+                return true;
+            
             if (giveGunTarget != null)
             {
                 if (isShooting)
