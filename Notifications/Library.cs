@@ -286,6 +286,10 @@ namespace iiMenu.Notifications
                         PreviousNotifi = NotificationText;
                         if (!NotificationText.Contains(Environment.NewLine))
                             NotificationText += Environment.NewLine;
+
+                        if (NotifiCounter > 0)
+                            NotificationText += Environment.NewLine;
+
                         NotifiText.text += NotificationText;
                     }
 
