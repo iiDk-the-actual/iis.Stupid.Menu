@@ -810,6 +810,107 @@ namespace iiMenu.Mods
                 GorillaPlayerScoreboardLine.ReportPlayer(player.UserId, GorillaPlayerLineButton.ButtonType.Cheating, player.NickName);
         }
 
+        private static float pressButtonDelay;
+        public static void TriggerAntiReportGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    VRRig.LocalRig.enabled = false;
+
+                    try
+                    {
+                        foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+                        {
+                            if (line.linePlayer == RigManager.GetPlayerFromVRRig(lockTarget) && Vector3.Distance(line.reportButton.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 50f)
+                            {
+                                Transform report = line.reportButton.gameObject.transform;
+
+                                VRRig.LocalRig.transform.position = report.transform.position;
+                                VRRig.LocalRig.leftHand.rigTarget.transform.position = report.transform.position;
+                                VRRig.LocalRig.rightHand.rigTarget.transform.position = report.transform.position;
+                            }
+                        }
+                    }
+                    catch { }
+
+                    if (Time.time > pressButtonDelay)
+                    {
+                        pressButtonDelay = Time.time + 0.1f;
+                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
+                            67,
+                            false,
+                            999999f
+                        });
+                        RPCProtection();
+                    }
+                }
+
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                if (gunLocked)
+                {
+                    VRRig.LocalRig.enabled = true;
+                    gunLocked = false;
+                }
+            }
+        }
+
+        public static void TriggerAntiReportAll()
+        {
+            if (rightTrigger > 0.5f)
+            {
+                VRRig.LocalRig.enabled = false;
+
+                try
+                {
+                    Player triggerAntiReportTarget = RigManager.GetRandomPlayer(false);
+                    foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+                    {
+                        if (RigManager.NetPlayerToPlayer(line.linePlayer) == triggerAntiReportTarget && Vector3.Distance(line.reportButton.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 50f)
+                        {
+                            Transform report = line.reportButton.gameObject.transform;
+
+                            VRRig.LocalRig.transform.position = report.transform.position;
+                            VRRig.LocalRig.leftHand.rigTarget.transform.position = report.transform.position;
+                            VRRig.LocalRig.rightHand.rigTarget.transform.position = report.transform.position;
+                        }
+                    }
+                }
+                catch { }
+
+                if (Time.time > pressButtonDelay)
+                {
+                    pressButtonDelay = Time.time + 0.1f;
+                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_PlayHandTap", RpcTarget.All, new object[]{
+                        67,
+                        false,
+                        999999f
+                    });
+                    RPCProtection();
+                }
+            }
+            else
+            {
+                VRRig.LocalRig.enabled = true;
+            }
+        }
+
         public static void MuteDJSets()
         {
             foreach (RadioButtonGroupWearable djSet in GetAllType<RadioButtonGroupWearable>())
@@ -3222,8 +3323,29 @@ Piece Name: {gunTarget.name}";
 
         public static void BarrelFlingAll()
         {
-            VRRig TargetRig = GetCurrentTargetRig();
-            SendBarrelProjectile(TargetRig.transform.position, new Vector3(0f, 50f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(TargetRig)).ActorNumber } });
+            SerializePatch.OverrideSerialization = () => false;
+
+            if (Time.time > throwableProjectileTimeout)
+            {
+                throwableProjectileTimeout = Time.time + 0.31f;
+                foreach (VRRig TargetRig in GorillaParent.instance.vrrigs)
+                {
+                    if (PlayerIsLocal(TargetRig)) continue;
+                    SendBarrelProjectile(TargetRig.transform.position, new Vector3(0f, 50f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(TargetRig)).ActorNumber } });
+                }
+            }
+        }
+
+        public static void BarrelPunchMod()
+        {
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (!rig.isLocal && (Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position, rig.headMesh.transform.position) < 0.25f || Vector3.Distance(GorillaTagger.Instance.rightHandTransform.position, rig.headMesh.transform.position) < 0.25f))
+                {
+                    Vector3 targetDirection = rig.headMesh.transform.position - GorillaTagger.Instance.headCollider.transform.position;
+                    SendBarrelProjectile(rig.transform.position, targetDirection.normalized * 50f, Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(rig)).ActorNumber } });
+                }
+            }
         }
 
         public static void BarrelCrashGun()
@@ -3259,8 +3381,17 @@ Piece Name: {gunTarget.name}";
 
         public static void BarrelCrashAll()
         {
-            VRRig TargetRig = GetCurrentTargetRig();
-            SendBarrelProjectile(TargetRig.transform.position, new Vector3(0f, 5000f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(TargetRig)).ActorNumber } });
+            SerializePatch.OverrideSerialization = () => false;
+
+            if (Time.time > throwableProjectileTimeout)
+            {
+                throwableProjectileTimeout = Time.time + 0.31f;
+                foreach (VRRig TargetRig in GorillaParent.instance.vrrigs)
+                {
+                    if (PlayerIsLocal(TargetRig)) continue;
+                    SendBarrelProjectile(TargetRig.transform.position, new Vector3(0f, 5000f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(TargetRig)).ActorNumber } });
+                }
+            }
         }
 
         public static void BarrelFlingTowardsGun()
@@ -3296,8 +3427,17 @@ Piece Name: {gunTarget.name}";
 
         public static void BarrelFlingTowardsAll()
         {
-            VRRig TargetRig = GetCurrentTargetRig();
-            SendBarrelProjectile(TargetRig.transform.position, (GorillaTagger.Instance.bodyCollider.transform.position - TargetRig.transform.position).normalized * 5000f, Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(TargetRig)).ActorNumber } });
+            SerializePatch.OverrideSerialization = () => false;
+
+            if (Time.time > throwableProjectileTimeout)
+            {
+                throwableProjectileTimeout = Time.time + 0.31f;
+                foreach (VRRig TargetRig in GorillaParent.instance.vrrigs)
+                {
+                    if (PlayerIsLocal(TargetRig)) continue;
+                    SendBarrelProjectile(TargetRig.transform.position, (GorillaTagger.Instance.bodyCollider.transform.position - TargetRig.transform.position).normalized * 5000f, Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(TargetRig)).ActorNumber } });
+                }
+            }
         }
 
         public static void CityKickGun()
@@ -3599,7 +3739,7 @@ Piece Name: {gunTarget.name}";
             }
         }
 
-        public static void SendBarrelProjectile(Vector3 pos, Vector3 vel, Quaternion rot, RaiseEventOptions options = null)
+        public static void SendBarrelProjectile(Vector3 pos, Vector3 vel, Quaternion rot, RaiseEventOptions options = null, bool disableCooldown = false)
         {
             if (options == null)
                 options = new RaiseEventOptions { Receivers = ReceiverGroup.All };
@@ -3630,7 +3770,9 @@ Piece Name: {gunTarget.name}";
 
             if (Time.time > throwableProjectileTimeout)
             {
-                throwableProjectileTimeout = Time.time + 0.31f;
+                if (!disableCooldown)
+                    throwableProjectileTimeout = Time.time + 0.31f;
+
                 Vector3 archivePosition = VRRig.LocalRig.transform.position;
                 VRRig.LocalRig.transform.position = pos - vel;
 
