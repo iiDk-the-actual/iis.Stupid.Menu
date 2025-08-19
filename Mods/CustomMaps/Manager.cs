@@ -74,7 +74,7 @@ namespace iiMenu.Mods.CustomMaps
 
         public static void RevertCustomScript(int line) =>
             RevertCustomScript(new int[] { line });
-        
+
         public static CustomMap GetMapByID(long id)
         {
             var mapTypes = Assembly.GetExecutingAssembly()
@@ -83,12 +83,13 @@ namespace iiMenu.Mods.CustomMaps
 
             foreach (var type in mapTypes)
             {
-                var mapIdProp = type.GetProperty("MapID", BindingFlags.Public | BindingFlags.Static);
-                if (mapIdProp != null && (long)mapIdProp.GetValue(null) == id)
-                    return (CustomMap)Activator.CreateInstance(type);
+                var instance = (CustomMap)Activator.CreateInstance(type);
+                if (instance.MapID == id)
+                    return instance;
             }
 
             return null;
         }
+
     }
 }
