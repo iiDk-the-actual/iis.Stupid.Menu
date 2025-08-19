@@ -827,6 +827,9 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Report Gun", method =() => Fun.ReportGun(), toolTip = "Reports whoever your hand desires for cheating."},
                 new ButtonInfo { buttonText = "Report All", method =() => Fun.ReportAll(), isTogglable = false, toolTip = "Reports everyone in the room for cheating."},
 
+                new ButtonInfo { buttonText = "Trigger Anti Report Gun", method =() => Fun.TriggerAntiReportGun(), toolTip = "Triggers whoever your hand desires' anti report if enabled."},
+                new ButtonInfo { buttonText = "Trigger Anti Report All", method =() => Fun.TriggerAntiReportAll(), toolTip = "Triggers everyone in the room's anti report if enabled."},
+
                 new ButtonInfo { buttonText = "Mute DJ Sets", method =() => Fun.MuteDJSets(), disableMethod =() => Fun.UnmuteDJSets(), toolTip = "Mutes every DJ set so you don't have to hear the worst music known to man."},
 
                 new ButtonInfo { buttonText = "Low Quality Microphone", method =() => Fun.SetMicrophoneQuality(6000, 08000), disableMethod =() => Fun.SetMicrophoneQuality(20000, 16000), toolTip = "Makes your microphone have really bad quality."},
@@ -1494,13 +1497,15 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Lag Aura", method =() => Overpowered.LagAura(), toolTip = "Lags players nearby you."},
 
                 new ButtonInfo { buttonText = "Barrel Fling Gun", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelFlingGun(), toolTip = "Flings whoever your hand desires using the barrels."},
-                new ButtonInfo { buttonText = "Barrel Fling All", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelFlingAll(), toolTip = "Flings everyone in the room using the barrels."},
+                new ButtonInfo { buttonText = "Barrel Fling All", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelFlingAll(), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Flings everyone in the room using the barrels."},
+
+                new ButtonInfo { buttonText = "Barrel Punch Mod", method =() => Fun.BarrelPunchMod(), toolTip = "Flings people when you punch them."},
 
                 new ButtonInfo { buttonText = "Barrel Crash Gun", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelCrashGun(), toolTip = "Crashes whoever your hand desires using the barrels."},
-                new ButtonInfo { buttonText = "Barrel Crash All", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelCrashAll(), toolTip = "Crashes everyone in the room using the barrels."},
+                new ButtonInfo { buttonText = "Barrel Crash All", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelCrashAll(), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Crashes everyone in the room using the barrels."},
 
                 new ButtonInfo { buttonText = "Barrel Fling Towards Gun", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelFlingTowardsGun(), toolTip = "Flings whoever your hand desires using the barrels towards you."},
-                new ButtonInfo { buttonText = "Barrel Fling Towards All", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelFlingTowardsAll(), toolTip = "Flings everyone in the room using the barrels towards you."},
+                new ButtonInfo { buttonText = "Barrel Fling Towards All", enableMethod =() => Fun.CheckOwnedThrowable(618), method =() => Fun.BarrelFlingTowardsAll(), disableMethod =() => Patches.SerializePatch.OverrideSerialization = null, toolTip = "Flings everyone in the room using the barrels towards you."},
 
                 new ButtonInfo { buttonText = "Anti Report <color=grey>[</color><color=green>Lag</color><color=grey>]</color>", method =() => Overpowered.AntiReportLag(), toolTip = "Lags whoever tries to report you."},
 
