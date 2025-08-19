@@ -827,7 +827,7 @@ namespace iiMenu.Mods
                     {
                         foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
                         {
-                            if (line.linePlayer == RigManager.GetPlayerFromVRRig(lockTarget) && Vector3.Distance(line.reportButton.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 50f)
+                            if (line.linePlayer == GetPlayerFromVRRig(lockTarget) && Vector3.Distance(line.reportButton.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 50f)
                             {
                                 Transform report = line.reportButton.gameObject.transform;
 
@@ -879,10 +879,10 @@ namespace iiMenu.Mods
 
                 try
                 {
-                    Player triggerAntiReportTarget = RigManager.GetRandomPlayer(false);
+                    Player triggerAntiReportTarget = GetRandomPlayer(false);
                     foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
                     {
-                        if (RigManager.NetPlayerToPlayer(line.linePlayer) == triggerAntiReportTarget && Vector3.Distance(line.reportButton.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 50f)
+                        if (NetPlayerToPlayer(line.linePlayer) == triggerAntiReportTarget && Vector3.Distance(line.reportButton.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 50f)
                         {
                             Transform report = line.reportButton.gameObject.transform;
 
