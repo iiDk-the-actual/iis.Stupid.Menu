@@ -2088,8 +2088,6 @@ namespace iiMenu.Mods
                         if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
                         {
                             Transform report = line.reportButton.gameObject.transform;
-                            if (GetIndex("Visualize Anti Report").enabled)
-                                VisualizeAura(report.position, Safety.threshold, Color.red);
 
                             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                             {
@@ -2109,6 +2107,8 @@ namespace iiMenu.Mods
                                     }
                                 }
                             }
+
+                            break;
                         }
                     }
                 }
@@ -2127,8 +2127,6 @@ namespace iiMenu.Mods
                         if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
                         {
                             Transform report = line.reportButton.gameObject.transform;
-                            if (GetIndex("Visualize Anti Report").enabled)
-                                VisualizeAura(report.position, Safety.threshold, Color.red);
                             
                             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                             {
@@ -2148,6 +2146,8 @@ namespace iiMenu.Mods
                                     }
                                 }
                             }
+
+                            break;
                         }
                     }
                 }
@@ -2778,8 +2778,6 @@ namespace iiMenu.Mods
                     if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
                     {
                         Transform report = line.reportButton.gameObject.transform;
-                        if (GetIndex("Visualize Anti Report").enabled)
-                            VisualizeAura(report.position, Safety.threshold, Color.red);
 
                         foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                         {
@@ -2799,6 +2797,8 @@ namespace iiMenu.Mods
                                 }
                             }
                         }
+
+                        break;
                     }
                 }
 
