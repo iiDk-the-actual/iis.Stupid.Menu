@@ -16,27 +16,24 @@ namespace iiMenu.Mods.CustomMaps
         public static void UpdateCustomMapsTab(long? overwriteId = null)
         {
             int category = GetCategory("Custom Maps");
+            List<ButtonInfo> buttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Custom Maps", method = () => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page." } };
+
             if (overwriteId != -1 && CustomMapLoader.IsModLoaded())
             {
                 long mapID = overwriteId ?? CustomMapLoader.LoadedMapModId;
                 if (!mapScriptArchives.ContainsKey(mapID))
                     mapScriptArchives.Add(mapID, CustomGameMode.LuaScript);
 
-                List<ButtonInfo> buttons = new List<ButtonInfo> { new ButtonInfo { buttonText = "Exit Custom Maps", method = () => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page." } };
-
                 CustomMap map = GetMapByID(mapID);
                 if (map == null)
                     buttons.Add(new ButtonInfo { buttonText = "This map is not supported yet.", label = true });
                 else
                     buttons.AddRange(map.Buttons);
-
-                Buttons.buttons[category] = buttons.ToArray();
             }
             else
-                Buttons.buttons[category] = new ButtonInfo[] {
-                        new ButtonInfo { buttonText = "Exit Custom Maps", method =() => currentCategoryName = "Main", isTogglable = false, toolTip = "Returns you back to the main page."},
-                        new ButtonInfo { buttonText = "You have not loaded a map.", label = true},
-                    };
+                buttons.Add(new ButtonInfo { buttonText = "You have not loaded a map.", label = true });
+
+            Buttons.buttons[category] = buttons.ToArray();
         }
 
         public static void ModifyCustomScript(Dictionary<int, string> replacements)
