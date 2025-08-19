@@ -2,6 +2,9 @@ using GorillaLocomotion;
 using GorillaNetworking;
 using iiMenu.Classes;
 using iiMenu.Notifications;
+using ModIO;
+using ModIOBrowser.Implementation;
+using Pathfinding.RVO;
 using Photon.Pun;
 using Photon.Realtime;
 using Photon.Voice.Unity;
@@ -164,6 +167,27 @@ namespace iiMenu.Mods
         public static int buttonClickTime;
         public static string buttonClickPlayer;
 
+        public static bool SmartAntiReport(NetPlayer linePlayer) =>
+            smartarp && linePlayer.UserId == buttonClickPlayer && Time.frameCount == buttonClickTime && PhotonNetwork.CurrentRoom.IsVisible && !PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED");
+
+        public static void VisualizeAntiReport()
+        {
+            try
+            {
+                foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+                {
+                    if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
+                    {
+                        Transform report = line.reportButton.gameObject.transform;
+                        VisualizeAura(report.position, threshold, Color.red);
+
+                        break;
+                    }
+                }
+            }
+            catch { } // Not connected
+        }
+
         public static float antiReportNotificationDelay;
         public static void AntiReportDisconnect()
         {
@@ -174,8 +198,6 @@ namespace iiMenu.Mods
                     if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
                     {
                         Transform report = line.reportButton.gameObject.transform;
-                        if (GetIndex("Visualize Anti Report").enabled)
-                            VisualizeAura(report.position, threshold, Color.red);
                         
                         foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                         {
@@ -186,7 +208,7 @@ namespace iiMenu.Mods
 
                                 if (D1 < threshold || D2 < threshold)
                                 {
-                                    if (!smartarp || (smartarp && line.linePlayer.UserId == buttonClickPlayer && Time.frameCount == buttonClickTime && PhotonNetwork.CurrentRoom.IsVisible && !PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED")))
+                                    if (!smartarp || SmartAntiReport(line.linePlayer))
                                     {
                                         NetworkSystem.Instance.ReturnToSinglePlayer();
                                         RPCProtection();
@@ -200,6 +222,8 @@ namespace iiMenu.Mods
                                 }
                             }
                         }
+
+                        break;
                     }
                 }
             }
@@ -215,8 +239,6 @@ namespace iiMenu.Mods
                     if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
                     {
                         Transform report = line.reportButton.gameObject.transform;
-                        if (GetIndex("Visualize Anti Report").enabled)
-                            VisualizeAura(report.position, threshold, Color.red);
                         
                         foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                         {
@@ -227,7 +249,7 @@ namespace iiMenu.Mods
 
                                 if (D1 < threshold || D2 < threshold)
                                 {
-                                    if (!smartarp || (smartarp && line.linePlayer.UserId == buttonClickPlayer && Time.frameCount == buttonClickTime && PhotonNetwork.CurrentRoom.IsVisible && !PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED")))
+                                    if (!smartarp || SmartAntiReport(line.linePlayer))
                                     {
                                         Important.Reconnect();
                                         RPCProtection();
@@ -241,6 +263,8 @@ namespace iiMenu.Mods
                                 }
                             }
                         }
+
+                        break;
                     }
                 }
             }
@@ -256,8 +280,6 @@ namespace iiMenu.Mods
                     if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
                     {
                         Transform report = line.reportButton.gameObject.transform;
-                        if (GetIndex("Visualize Anti Report").enabled)
-                            VisualizeAura(report.position, threshold, Color.red);
                         
                         foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                         {
@@ -268,7 +290,7 @@ namespace iiMenu.Mods
 
                                 if (D1 < threshold || D2 < threshold)
                                 {
-                                    if (!smartarp || (smartarp && line.linePlayer.UserId == buttonClickPlayer && Time.frameCount == buttonClickTime && PhotonNetwork.CurrentRoom.IsVisible && !PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED")))
+                                    if (!smartarp || SmartAntiReport(line.linePlayer))
                                     {
                                         RPCProtection();
                                         Important.JoinRandom();
@@ -282,6 +304,8 @@ namespace iiMenu.Mods
                                 }
                             }
                         }
+
+                        break;
                     }
                 }
             }
@@ -301,8 +325,6 @@ namespace iiMenu.Mods
                         if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
                         {
                             Transform report = line.reportButton.gameObject.transform;
-                            if (GetIndex("Visualize Anti Report").enabled)
-                                VisualizeAura(report.position, threshold, Color.red);
                             
                             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                             {
@@ -313,7 +335,7 @@ namespace iiMenu.Mods
 
                                     if (D1 < threshold || D2 < threshold)
                                     {
-                                        if (!smartarp || (smartarp && line.linePlayer.UserId == buttonClickPlayer && Time.frameCount == buttonClickTime && PhotonNetwork.CurrentRoom.IsVisible && !PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED")))
+                                        if (!smartarp || SmartAntiReport(line.linePlayer))
                                         {
                                             delaysonospam = Time.time + 0.1f;
 
@@ -330,6 +352,8 @@ namespace iiMenu.Mods
                                     }
                                 }
                             }
+
+                            break;
                         }
                     }
 
@@ -350,8 +374,6 @@ namespace iiMenu.Mods
                     if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
                     {
                         Transform report = line.reportButton.gameObject.transform;
-                        if (GetIndex("Visualize Anti Report").enabled)
-                            VisualizeAura(report.position, threshold, Color.red);
 
                         foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                         {
@@ -362,7 +384,7 @@ namespace iiMenu.Mods
 
                                 if (D1 < threshold || D2 < threshold)
                                 {
-                                    if (!smartarp || (smartarp && line.linePlayer.UserId == buttonClickPlayer && Time.frameCount == buttonClickTime && PhotonNetwork.CurrentRoom.IsVisible && !PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED")))
+                                    if (!smartarp || SmartAntiReport(line.linePlayer))
                                     {
                                         delaysonospam = Time.time + 0.1f;
 
@@ -379,6 +401,8 @@ namespace iiMenu.Mods
                                 }
                             }
                         }
+
+                        break;
                     }
 
                     NotifiLib.information["Anti-Report"] = notifyText;
@@ -396,7 +420,8 @@ namespace iiMenu.Mods
                 {
                     "Disconnect",
                     "Reconnect",
-                    "Join Random"
+                    "Join Random",
+                    "Notify"
                 };
                 for (int i = 0; i < types.Length - 1; i++)
                 {
@@ -429,6 +454,11 @@ namespace iiMenu.Mods
                         if (doNotification)
                             NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + subject.NickName + " attempted to report you, you have been disconnected and will be connected to a random lobby shortly.");
                         
+                        break;
+                    case 3:
+                        if (doNotification)
+                            NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + subject.NickName + " is reporting you.");
+
                         break;
                 }
             }
