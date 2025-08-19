@@ -1264,8 +1264,8 @@ namespace iiMenu.Menu
                             GunLine.gameObject.SetActive(false);
                         }
 
-                        List<(Vector3, float)> toRemoveAura = new List<(Vector3, float)> { };
-                        foreach (KeyValuePair<(Vector3, float), GameObject> key in auraPool)
+                        List<(long, float)> toRemoveAura = new List<(long, float)> { };
+                        foreach (KeyValuePair<(long, float), GameObject> key in auraPool)
                         {
                             if (!key.Value.activeSelf)
                             {
@@ -1276,7 +1276,7 @@ namespace iiMenu.Menu
                                 key.Value.SetActive(false);
                         }
 
-                        foreach ((Vector3, float) item in toRemoveAura)
+                        foreach ((long, float) item in toRemoveAura)
                             auraPool.Remove(item);
 
                         List<(Vector3, Quaternion, Vector3)> toRemoveCube = new List<(Vector3, Quaternion, Vector3)> { };
@@ -4683,10 +4683,11 @@ namespace iiMenu.Menu
             }
         }
 
-        public static Dictionary<(Vector3, float), GameObject> auraPool;
-        public static void VisualizeAura(Vector3 position, float range, Color color)
+        public static Dictionary<(long, float), GameObject> auraPool = new Dictionary<(long, float), GameObject> { };
+        public static void VisualizeAura(Vector3 position, float range, Color color, long? indexId = null)
         {
-            var key = (position, range);
+            long index = indexId ?? BitPackUtils.PackWorldPosForNetwork(position);
+            var key = (index, range);
 
             if (!auraPool.TryGetValue(key, out GameObject visualizeGO))
             {
@@ -4709,7 +4710,7 @@ namespace iiMenu.Menu
             auraRenderer.material.color = clr;
         }
 
-        public static Dictionary<(Vector3, Quaternion, Vector3), GameObject> cubePool;
+        public static Dictionary<(Vector3, Quaternion, Vector3), GameObject> cubePool = new Dictionary<(Vector3, Quaternion, Vector3), GameObject> { };
         public static void VisualizeCube(Vector3 position, Quaternion rotation, Vector3 scale, Color color)
         {
             var key = (position, rotation, scale);
