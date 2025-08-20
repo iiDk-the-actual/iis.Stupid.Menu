@@ -1,4 +1,4 @@
-﻿using BepInEx;
+using BepInEx;
 using BepInEx.Logging;
 using iiMenu.Menu;
 using iiMenu.Patches;
@@ -42,7 +42,8 @@ namespace iiMenu
                 "/Plugins",
                 "/Backups",
                 "/TTS",
-                "/PlayerInfo"
+                "/PlayerInfo",
+                "/CustomScripts"
             };
 
             foreach (string DirectoryString in ExistingDirectories)
