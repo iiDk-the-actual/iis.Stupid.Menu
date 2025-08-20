@@ -28,9 +28,7 @@ namespace iiMenu.Mods.CustomMaps
                 if (map == null)
                     buttons.Add(new ButtonInfo { buttonText = "This map is not supported yet.", label = true });
                 else
-                {
                     buttons.AddRange(map.Buttons);
-                }
 
                 buttons.Add(new ButtonInfo { buttonText = " ", label = true });
                 buttons.Add(new ButtonInfo { buttonText = "Edit custom script", method =() => editUserScript(), isTogglable = false, toolTip = "Opens your custom script for this map." });
