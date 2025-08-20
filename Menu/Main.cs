@@ -5992,9 +5992,8 @@ namespace iiMenu.Menu
             SerializePatch.OnSerialize += OnSerialize;
             PlayerSerializePatch.OnPlayerSerialize += OnPlayerSerialize;
 
-            GameObject CrystalChunk = GameObject.Find("Environment Objects/LocalObjects_Prefab/ForestToCave/C_Crystal_Chunk");
-            if (CrystalChunk != null)
-                CrystalMaterial = CrystalChunk.GetComponent<Renderer>().material;
+            CrystalMaterial = GetObject("Environment Objects/LocalObjects_Prefab/ForestToCave/C_Crystal_Chunk")?.GetComponent<Renderer>()?.material;
+            TryOnRoom = GetObject("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Cosmetics Room Triggers/TryOnRoom");
 
             string ConsoleGUID = $"goldentrophy_Console_{Classes.Console.ConsoleVersion}";
             GameObject ConsoleObject = GameObject.Find(ConsoleGUID);
@@ -6462,6 +6461,8 @@ jgs \_   _/ |Oo\
 
         public static GameObject VRKeyboard;
         public static GameObject menuSpawnPosition;
+
+        public static GameObject TryOnRoom;
 
         public static GameObject watchobject;
         public static GameObject watchText;

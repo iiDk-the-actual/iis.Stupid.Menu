@@ -39,7 +39,7 @@ namespace iiMenu.Patches
         {
             if (PhotonNetwork.InRoom)
             {
-                Vector3 target = new Vector3(-51.4897f, 16.9286f, -120.1083f);
+                Vector3 target = Menu.Main.TryOnRoom.transform.position;
 
                 VRRig.LocalRig.enabled = false;
                 VRRig.LocalRig.transform.position = target;
