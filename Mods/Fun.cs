@@ -3331,7 +3331,7 @@ Piece Name: {gunTarget.name}";
                 foreach (VRRig TargetRig in GorillaParent.instance.vrrigs)
                 {
                     if (PlayerIsLocal(TargetRig)) continue;
-                    SendBarrelProjectile(TargetRig.transform.position, new Vector3(0f, 50f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(TargetRig)).ActorNumber } });
+                    SendBarrelProjectile(TargetRig.transform.position, new Vector3(0f, 50f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(TargetRig)).ActorNumber } }, true);
                 }
             }
         }
@@ -3389,7 +3389,7 @@ Piece Name: {gunTarget.name}";
                 foreach (VRRig TargetRig in GorillaParent.instance.vrrigs)
                 {
                     if (PlayerIsLocal(TargetRig)) continue;
-                    SendBarrelProjectile(TargetRig.transform.position, new Vector3(0f, 5000f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(TargetRig)).ActorNumber } });
+                    SendBarrelProjectile(TargetRig.transform.position, new Vector3(0f, 5000f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(TargetRig)).ActorNumber } }, true);
                 }
             }
         }
@@ -3435,7 +3435,7 @@ Piece Name: {gunTarget.name}";
                 foreach (VRRig TargetRig in GorillaParent.instance.vrrigs)
                 {
                     if (PlayerIsLocal(TargetRig)) continue;
-                    SendBarrelProjectile(TargetRig.transform.position, (GorillaTagger.Instance.bodyCollider.transform.position - TargetRig.transform.position).normalized * 5000f, Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(TargetRig)).ActorNumber } });
+                    SendBarrelProjectile(TargetRig.transform.position, (GorillaTagger.Instance.bodyCollider.transform.position - TargetRig.transform.position).normalized * 5000f, Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(TargetRig)).ActorNumber } }, true);
                 }
             }
         }
