@@ -427,13 +427,13 @@ namespace iiMenu.Mods
         public static void DisableMouthMovement()
         {
             VRRig.LocalRig.shouldSendSpeakingLoudness = false;
-            MicPatch.returnAsNone = true;
+            MicPatch.enabled = true;
         }
 
         public static void EnableMouthMovement()
         {
             VRRig.LocalRig.shouldSendSpeakingLoudness = true;
-            MicPatch.returnAsNone = false;
+            MicPatch.enabled = false;
         }
 
         private static float lastTime;
