@@ -1256,6 +1256,13 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void BetterRigLerping(VRRig rig)
+        {
+            rig.LocalTrajectoryOverrideBlend = 1f;
+            rig.LocalTrajectoryOverridePosition = rig.syncPos;
+            rig.LocalTrajectoryOverrideVelocity = rig.LatestVelocity();
+        }
+
         public static void CosmeticESP() // Messy code lol
         {
             if (PerformanceVisuals)
