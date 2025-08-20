@@ -1,4 +1,4 @@
-﻿using GorillaTagScripts.ModIO;
+using GorillaTagScripts.ModIO;
 using iiMenu.Classes;
 using iiMenu.Menu;
 using iiMenu.Mods.CustomMaps.Maps;
@@ -28,7 +28,14 @@ namespace iiMenu.Mods.CustomMaps
                 if (map == null)
                     buttons.Add(new ButtonInfo { buttonText = "This map is not supported yet.", label = true });
                 else
+                {
                     buttons.AddRange(map.Buttons);
+                }
+
+                buttons.Add(new ButtonInfo { buttonText = " ", label = true });
+                buttons.Add(new ButtonInfo { buttonText = "Edit custom script", method =() => editUserScript(), isTogglable = false, toolTip = "Opens your custom script for this map." });
+                buttons.Add(new ButtonInfo { buttonText = "Delete custom script", method =() => deleteUserScript(), isTogglable = false, toolTip = "Deletes your custom script for this map." });
+                buttons.Add(new ButtonInfo { buttonText = "Run custom script", enableMethod =() => startUserScript(), disableMethod =() => stopUserScript(), toolTip = "Runs your custom script for this map." });
             }
             else
                 buttons.Add(new ButtonInfo { buttonText = "You have not loaded a map.", label = true });
@@ -57,6 +64,41 @@ namespace iiMenu.Mods.CustomMaps
             if (NetworkSystem.Instance.InRoom)
                 LuauHud.Instance.RestartLuauScript();
 
+            CustomMapManager.ReturnToVirtualStump();
+        }
+
+        public static void editUserScript()
+        {
+            string DirectoryTarget = System.IO.Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, $"{PluginInfo.BaseDirectory}/CustomScripts/{CustomMapLoader.LoadedMapModId}.lua").Split("BepInEx\\")[0] + $"{PluginInfo.BaseDirectory}/CustomScripts/{CustomMapLoader.LoadedMapModId}.lua";
+            if (!System.IO.File.Exists(DirectoryTarget))
+                System.IO.File.WriteAllText(DirectoryTarget, mapScriptArchives[CustomMapManager.currentRoomMapModId]);
+            System.Diagnostics.Process.Start(DirectoryTarget);
+        }
+
+        public static void deleteUserScript()
+        {
+            string DirectoryTarget = System.IO.Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, $"{PluginInfo.BaseDirectory}/CustomScripts/{CustomMapLoader.LoadedMapModId}.lua").Split("BepInEx\\")[0] + $"{PluginInfo.BaseDirectory}/CustomScripts/{CustomMapLoader.LoadedMapModId}.lua";
+            if (System.IO.File.Exists(DirectoryTarget))
+                System.IO.File.Delete(DirectoryTarget);
+        }
+
+        public static void startUserScript()
+        {
+            string DirectoryTarget = System.IO.Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, $"{PluginInfo.BaseDirectory}/CustomScripts/{CustomMapLoader.LoadedMapModId}.lua").Split("BepInEx\\")[0] + $"{PluginInfo.BaseDirectory}/CustomScripts/{CustomMapLoader.LoadedMapModId}.lua";
+            if (System.IO.File.Exists(DirectoryTarget))
+                CustomGameMode.LuaScript = System.IO.File.ReadAllText(DirectoryTarget);
+                
+            if (NetworkSystem.Instance.InRoom)
+                LuauHud.Instance.RestartLuauScript();
+            CustomMapManager.ReturnToVirtualStump();
+        }
+
+        public static void stopUserScript()
+        {
+            CustomGameMode.LuaScript = mapScriptArchives[CustomMapManager.currentRoomMapModId];
+
+            if (NetworkSystem.Instance.InRoom)
+                LuauHud.Instance.RestartLuauScript();
             CustomMapManager.ReturnToVirtualStump();
         }
 
