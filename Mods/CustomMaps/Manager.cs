@@ -31,9 +31,9 @@ namespace iiMenu.Mods.CustomMaps
                     buttons.AddRange(map.Buttons);
 
                 buttons.Add(new ButtonInfo { buttonText = " ", label = true });
-                buttons.Add(new ButtonInfo { buttonText = "Edit custom script", method =() => editUserScript(), isTogglable = false, toolTip = "Opens your custom script for this map." });
-                buttons.Add(new ButtonInfo { buttonText = "Delete custom script", method =() => deleteUserScript(), isTogglable = false, toolTip = "Deletes your custom script for this map." });
-                buttons.Add(new ButtonInfo { buttonText = "Run custom script", enableMethod =() => startUserScript(), disableMethod =() => stopUserScript(), toolTip = "Runs your custom script for this map." });
+                buttons.Add(new ButtonInfo { buttonText = "Edit Custom Script", method =() => editUserScript(), isTogglable = false, toolTip = "Opens your custom script for this map." });
+                buttons.Add(new ButtonInfo { buttonText = "Delete Custom Script", method =() => deleteUserScript(), isTogglable = false, toolTip = "Deletes your custom script for this map." });
+                buttons.Add(new ButtonInfo { buttonText = "Run Custom Script", enableMethod =() => startUserScript(), disableMethod =() => stopUserScript(), toolTip = "Runs your custom script for this map." });
             }
             else
                 buttons.Add(new ButtonInfo { buttonText = "You have not loaded a map.", label = true });
