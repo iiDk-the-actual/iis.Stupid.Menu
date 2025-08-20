@@ -4,6 +4,7 @@ using iiMenu.Classes;
 using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
+using System.Linq;
 using UnityEngine;
 using static iiMenu.Menu.Main;
 
@@ -29,41 +30,39 @@ namespace iiMenu.Mods
                 }
                 else
                 {
-                    foreach (VRRig rig in GorillaParent.instance.vrrigs)
+                    VRRig rig = GorillaParent.instance.vrrigs.Where(rig => PlayerIsTagged(rig)).OrderBy(rig => rig.LatestVelocity().magnitude).FirstOrDefault();
+                    if (PlayerIsTagged(rig))
                     {
-                        if (PlayerIsTagged(rig))
+                        VRRig.LocalRig.enabled = false;
+                        VRRig.LocalRig.transform.position = rig.rightHandTransform.position;
+
+                        if (GetIndex("Obnoxious Tag").enabled)
                         {
-                            VRRig.LocalRig.enabled = false;
-                            VRRig.LocalRig.transform.position = rig.rightHandTransform.position;
+                            Quaternion rotation = Quaternion.Euler(new Vector3(0, Random.Range(0, 360), 0));
+                            VRRig.LocalRig.transform.rotation = rotation;
 
-                            if (GetIndex("Obnoxious Tag").enabled)
-                            {
-                                Quaternion rotation = Quaternion.Euler(new Vector3(0, Random.Range(0, 360), 0));
-                                VRRig.LocalRig.transform.rotation = rotation;
+                            VRRig.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
+                            VRRig.LocalRig.leftHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + RandomVector3();
+                            VRRig.LocalRig.rightHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + RandomVector3();
 
-                                VRRig.LocalRig.head.rigTarget.transform.rotation = RandomQuaternion();
-                                VRRig.LocalRig.leftHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + RandomVector3();
-                                VRRig.LocalRig.rightHand.rigTarget.transform.position = VRRig.LocalRig.transform.position + RandomVector3();
+                            VRRig.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
+                            VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
 
-                                VRRig.LocalRig.leftHand.rigTarget.transform.rotation = RandomQuaternion();
-                                VRRig.LocalRig.rightHand.rigTarget.transform.rotation = RandomQuaternion();
+                            VRRig.LocalRig.leftIndex.calcT = 0f;
+                            VRRig.LocalRig.leftMiddle.calcT = 0f;
+                            VRRig.LocalRig.leftThumb.calcT = 0f;
 
-                                VRRig.LocalRig.leftIndex.calcT = 0f;
-                                VRRig.LocalRig.leftMiddle.calcT = 0f;
-                                VRRig.LocalRig.leftThumb.calcT = 0f;
+                            VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
+                            VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
+                            VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
 
-                                VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
-                                VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
-                                VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
+                            VRRig.LocalRig.rightIndex.calcT = 0f;
+                            VRRig.LocalRig.rightMiddle.calcT = 0f;
+                            VRRig.LocalRig.rightThumb.calcT = 0f;
 
-                                VRRig.LocalRig.rightIndex.calcT = 0f;
-                                VRRig.LocalRig.rightMiddle.calcT = 0f;
-                                VRRig.LocalRig.rightThumb.calcT = 0f;
-
-                                VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
-                                VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
-                                VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
-                            }
+                            VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+                            VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
+                            VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
                         }
                     }
                 }
