@@ -1042,6 +1042,7 @@ namespace iiMenu.Mods
             RPCProtection();
         }
 
+        public static float isDirtyDelay;
         public static void RainbowBracelet()
         {
             BraceletPatch.enabled = true;
@@ -1060,6 +1061,12 @@ namespace iiMenu.Mods
             VRRig.LocalRig.reliableState.braceletSelfIndex = 99;
             VRRig.LocalRig.reliableState.braceletBeadColors = rgbColors;
             VRRig.LocalRig.friendshipBraceletRightHand.UpdateBeads(rgbColors, 99);
+
+            if (Time.time > isDirtyDelay)
+            {
+                isDirtyDelay = Time.time + 0.1f;
+                VRRig.LocalRig.reliableState.SetIsDirty();
+            }
         }
 
         public static void RemoveRainbowBracelet()
@@ -1077,6 +1084,8 @@ namespace iiMenu.Mods
             VRRig.LocalRig.reliableState.braceletSelfIndex = 0;
             VRRig.LocalRig.reliableState.braceletBeadColors.Clear();
             VRRig.LocalRig.UpdateFriendshipBracelet();
+
+            VRRig.LocalRig.reliableState.SetIsDirty();
         }
 
         public static void GiveBuilderWatch()
