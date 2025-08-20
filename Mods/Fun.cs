@@ -3270,7 +3270,7 @@ Piece Name: {gunTarget.name}";
                     if (!CosmeticsOwned.Contains(transferrableObject.gameObject.name))
                     {
                         VRRig.LocalRig.enabled = false;
-                        VRRig.LocalRig.transform.position = new Vector3(-51.4897f, 16.9286f, -120.1083f);
+                        VRRig.LocalRig.transform.position = TryOnRoom.transform.position;
                     }
 
                     if (!transferrableObject.gameObject.activeSelf)
@@ -3525,7 +3525,7 @@ Piece Name: {gunTarget.name}";
             if (!CosmeticsOwned.Contains(transferrableObject.gameObject.name))
             {
                 VRRig.LocalRig.enabled = false;
-                VRRig.LocalRig.transform.position = new Vector3(-51.4897f, 16.9286f, -120.1083f);
+                VRRig.LocalRig.transform.position = TryOnRoom.transform.position;
             }
 
             if (!transferrableObject.gameObject.activeSelf)
@@ -3624,7 +3624,7 @@ Piece Name: {gunTarget.name}";
             if (!CosmeticsOwned.Contains(transferrableObject.gameObject.name))
             {
                 VRRig.LocalRig.enabled = false;
-                VRRig.LocalRig.transform.position = new Vector3(-51.4897f, 16.9286f, -120.1083f);
+                VRRig.LocalRig.transform.position = TryOnRoom.transform.position;
             }
 
             if (!transferrableObject.gameObject.activeSelf)
@@ -3691,7 +3691,7 @@ Piece Name: {gunTarget.name}";
             if (!CosmeticsOwned.Contains(transferrableObject.gameObject.name))
             {
                 VRRig.LocalRig.enabled = false;
-                VRRig.LocalRig.transform.position = new Vector3(-51.4897f, 16.9286f, -120.1083f);
+                VRRig.LocalRig.transform.position = TryOnRoom.transform.position;
             }
 
             if (!transferrableObject.gameObject.activeSelf)
@@ -3765,7 +3765,7 @@ Piece Name: {gunTarget.name}";
             if (!CosmeticsOwned.Contains(transferrableObject.gameObject.name))
             {
                 VRRig.LocalRig.enabled = false;
-                VRRig.LocalRig.transform.position = new Vector3(-51.4897f, 16.9286f, -120.1083f);
+                VRRig.LocalRig.transform.position = TryOnRoom.transform.position;
             }
 
             if (!transferrableObject.gameObject.activeSelf)
@@ -5601,12 +5601,12 @@ Piece Name: {gunTarget.name}";
         {
             RequestPatch.enabled = true;
             RequestPatch.currentCoroutine ??= CoroutineManager.RunCoroutine(RequestPatch.LoadCosmetics());
-            GetObject("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Cosmetics Room Triggers/TryOnRoom").GetComponent<CosmeticBoundaryTrigger>().enabled = false;
+            TryOnRoom.GetComponent<CosmeticBoundaryTrigger>().enabled = false;
         }
 
         public static void NoAutoLoadCosmetics()
         {
-            GetObject("Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Cosmetics Room Triggers/TryOnRoom").GetComponent<CosmeticBoundaryTrigger>().enabled = true;
+            TryOnRoom.GetComponent<CosmeticBoundaryTrigger>().enabled = true;
             RequestPatch.enabled = false;
         }
 
