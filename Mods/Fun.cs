@@ -3776,10 +3776,10 @@ Piece Name: {gunTarget.name}";
                 Vector3 archivePosition = VRRig.LocalRig.transform.position;
                 VRRig.LocalRig.transform.position = pos - vel;
 
-                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, null, -10);
+                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, options, -10);
 
                 VRRig.LocalRig.transform.position = pos;
-                SendSerialize(GorillaTagger.Instance.myVRRig.GetView);
+                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, options);
 
                 vel = vel.ClampMagnitudeSafe(50f);
 
@@ -3797,7 +3797,7 @@ Piece Name: {gunTarget.name}";
                 PhotonNetwork.RaiseEvent(177, data, options, SendOptions.SendReliable);
 
                 VRRig.LocalRig.transform.position = archivePosition;
-                SendSerialize(GorillaTagger.Instance.myVRRig.GetView);
+                SendSerialize(GorillaTagger.Instance.myVRRig.GetView, options);
 
                 RPCProtection();
             }
