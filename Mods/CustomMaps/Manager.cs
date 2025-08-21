@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Diagnostics;
+using System.IO;
 using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods.CustomMaps
@@ -67,24 +69,24 @@ namespace iiMenu.Mods.CustomMaps
 
         public static void editUserScript()
         {
-            string DirectoryTarget = System.IO.Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, $"{PluginInfo.BaseDirectory}/CustomScripts/{CustomMapLoader.LoadedMapModId}.luau").Split("BepInEx\\")[0] + $"{PluginInfo.BaseDirectory}/CustomScripts/{CustomMapLoader.LoadedMapModId}.luau";
-            if (!System.IO.File.Exists(DirectoryTarget))
-                System.IO.File.WriteAllText(DirectoryTarget, mapScriptArchives[CustomMapManager.currentRoomMapModId]);
-            System.Diagnostics.Process.Start(DirectoryTarget);
+            string DirectoryTarget = Path.Combine(Assembly.GetExecutingAssembly().Location, $"{PluginInfo.BaseDirectory}/CustomScripts/{CustomMapLoader.LoadedMapModId}.luau").Split("BepInEx\\")[0] + $"{PluginInfo.BaseDirectory}/CustomScripts/{CustomMapLoader.LoadedMapModId}.luau";
+            if (!File.Exists(DirectoryTarget))
+                File.WriteAllText(DirectoryTarget, mapScriptArchives[CustomMapManager.currentRoomMapModId]);
+            Process.Start(DirectoryTarget);
         }
 
         public static void deleteUserScript()
         {
-            string DirectoryTarget = System.IO.Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, $"{PluginInfo.BaseDirectory}/CustomScripts/{CustomMapLoader.LoadedMapModId}.luau").Split("BepInEx\\")[0] + $"{PluginInfo.BaseDirectory}/CustomScripts/{CustomMapLoader.LoadedMapModId}.luau";
-            if (System.IO.File.Exists(DirectoryTarget))
-                System.IO.File.Delete(DirectoryTarget);
+            string DirectoryTarget = Path.Combine(Assembly.GetExecutingAssembly().Location, $"{PluginInfo.BaseDirectory}/CustomScripts/{CustomMapLoader.LoadedMapModId}.luau").Split("BepInEx\\")[0] + $"{PluginInfo.BaseDirectory}/CustomScripts/{CustomMapLoader.LoadedMapModId}.luau";
+            if (File.Exists(DirectoryTarget))
+                File.Delete(DirectoryTarget);
         }
 
         public static void startUserScript()
         {
-            string DirectoryTarget = System.IO.Path.Combine(System.Reflection.Assembly.GetExecutingAssembly().Location, $"{PluginInfo.BaseDirectory}/CustomScripts/{CustomMapLoader.LoadedMapModId}.luau").Split("BepInEx\\")[0] + $"{PluginInfo.BaseDirectory}/CustomScripts/{CustomMapLoader.LoadedMapModId}.luau";
-            if (System.IO.File.Exists(DirectoryTarget))
-                CustomGameMode.LuaScript = System.IO.File.ReadAllText(DirectoryTarget);
+            string DirectoryTarget = Path.Combine(Assembly.GetExecutingAssembly().Location, $"{PluginInfo.BaseDirectory}/CustomScripts/{CustomMapLoader.LoadedMapModId}.luau").Split("BepInEx\\")[0] + $"{PluginInfo.BaseDirectory}/CustomScripts/{CustomMapLoader.LoadedMapModId}.luau";
+            if (File.Exists(DirectoryTarget))
+                CustomGameMode.LuaScript = File.ReadAllText(DirectoryTarget);
                 
             if (NetworkSystem.Instance.InRoom)
                 LuauHud.Instance.RestartLuauScript();
