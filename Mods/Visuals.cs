@@ -5,9 +5,11 @@ using GorillaNetworking;
 using iiMenu.Classes;
 using Photon.Pun;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 using UnityEngine.Rendering;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
@@ -1096,6 +1098,182 @@ namespace iiMenu.Mods
                 UnityEngine.Object.Destroy(nametag.Value);
 
             taggedNameTags.Clear();
+        }
+
+        public static Dictionary<string, string> modDictionary = new Dictionary<string, string> {
+            { "genesis", "Genesis" },
+            { "HP_Left", "Holdable Pad" },
+            { "GrateVersion", "Grate" },
+            { "void", "Void" },
+            { "BANANAOS", "Banana OS" },
+            { "GC", "Gorilla Craft" },
+            { "CarName", "Gorilla Vehicles" },
+            { "6p72ly3j85pau2g9mda6ib8px", "CCM V2" },
+            { "FPS-Nametags for Zlothy", "FPS Tags" },
+            { "cronos", "Cronos" },
+            { "ORBIT", "Orbit" },
+            { "Violet On Top", "Violet" },
+            { "MP25", "Monke Phone" },
+            { "GorillaWatch", "Gorilla Watch" },
+            { "InfoWatch", "Gorilla Info Watch" },
+            { "BananaPhone", "Banana Phone" },
+            { "Vivid", "Vivid" },
+            { "RGBA", "Custom Cosmetics" },
+            { "cheese is gouda", "Whos Icheating" },
+            { "shirtversion", "Gorilla Shirts" },
+            { "gpronouns", "Gorilla Pronouns" },
+            { "gfaces", "Gorilla Faces" },
+            { "monkephone", "Monke Phone" },
+            { "pmversion", "Player Models" },
+            { "gtrials", "Gorilla Trials" },
+            { "msp", "Monke Smartphone" },
+            { "gorillastats", "Gorilla Stats" },
+            { "using gorilladrift", "Gorilla Drift" },
+            { "monkehavocversion", "Monke Havoc" },
+            { "tictactoe", "Tic Tac Toe" },
+            { "ccolor", "Index" },
+            { "imposter", "Gorilla Among Us" },
+            { "spectapeversion", "Spec Tape" },
+            { "cats", "Cats" },
+            { "made by biotest05 :3", "Dogs" },
+            { "fys cool magic mod", "Fys Magic Mod" },
+            { "colour", "Custom Cosmetics" },
+            { "chainedtogether", "Chained Together" },
+            { "goofywalkversion", "Goofy Walk" },
+            { "void_menu_open", "Void" },
+            { "violetpaiduser", "Violet Paid" },
+            { "violetfree", "Violet Free" },
+            { "obsidianmc", "Obsidian.Lol" },
+            { "dark", "Shiba GT Dark" },
+            { "hidden menu", "Hidden" },
+            { "oblivionuser", "Oblivion" },
+            { "hgrehngio889584739_hugb\n", "Resurgence" },
+            { "eyerock reborn", "Eye Rock" },
+            { "asteroidlite", "Asteroid Lite" },
+            { "elux", "Elux" },
+            { "cokecosmetics", "Coke Cosmetx" },
+            { "GFaces", "G Faces" },
+            { "github.com/maroon-shadow/SimpleBoards", "Simple Boards" },
+            { "ObsidianMC", "Obsidian" },
+            { "hgrehngio889584739_hugb", "Resurgence" },
+            { "GTrials", "G Trials" },
+            { "github.com/ZlothY29IQ/GorillaMediaDisplay", "Gorilla Media Display" },
+            { "github.com/ZlothY29IQ/TooMuchInfo", "Too Much Info" },
+            { "github.com/ZlothY29IQ/RoomUtils-IW", "Room Utils IW" },
+            { "github.com/ZlothY29IQ/MonkeClick", "Monke Click" },
+            { "github.com/ZlothY29IQ/MonkeClick-CI", "Monke Click CI" },
+            { "github.com/ZlothY29IQ/MonkeRealism", "Monke Realism" },
+            { "MediaPad", "Media Pad" },
+            { "GorillaCinema", "Gorilla Cinema" },
+            { "ChainedTogetherActive", "Chained Together" },
+            { "GPronouns", "G Pronouns" },
+            { "CSVersion", "Custom Skin" },
+            { "github.com/ZlothY29IQ/Zloth-RecRoomRig", "Zloth Rec Room Rig" },
+            { "ShirtProperties", "Shirts Old" },
+            { "GorillaShirts", "Shirts" },
+            { "GS", "Old Shirts" },
+            { "6XpyykmrCthKhFeUfkYGxv7xnXpoe2", "CCM V2" },
+            { "Body Tracking", "Body Track Old" },
+            { "Body Estimation", "Han Body Est" },
+            { "Gorilla Track", "Body Track" },
+            { "CustomMaterial", "Custom Cosmetics" },
+            { "I like cheese", "Rec Room Rig" },
+            { "silliness", "Silliness" },
+        };
+
+        private static Dictionary<VRRig, GameObject> modNameTags = new Dictionary<VRRig, GameObject> { };
+        public static void ModTags()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> nametag in modNameTags)
+            {
+                if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
+                {
+                    UnityEngine.Object.Destroy(nametag.Value);
+                    modNameTags.Remove(nametag.Key);
+                }
+            }
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                try
+                {
+                    if (!vrrig.isLocal)
+                    {
+                        if (!modNameTags.ContainsKey(vrrig))
+                        {
+                            GameObject go = new GameObject("iiMenu_Modtag");
+                            go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+                            TextMesh textMesh = go.AddComponent<TextMesh>();
+                            textMesh.fontSize = 48;
+                            textMesh.characterSize = 0.1f;
+                            textMesh.anchor = TextAnchor.MiddleCenter;
+                            textMesh.alignment = TextAlignment.Center;
+
+                            modNameTags.Add(vrrig, go);
+                        }
+
+                        string specialMods = "";
+                        Dictionary<string, object> customProps = new Dictionary<string, object>();
+                        foreach (DictionaryEntry dictionaryEntry in NetPlayerToPlayer(GetPlayerFromVRRig(vrrig)).CustomProperties)
+                            customProps[dictionaryEntry.Key.ToString().ToLower()] = dictionaryEntry.Value;
+
+                        foreach (KeyValuePair<string, string> mod in modDictionary)
+                        {
+                            if (customProps.ContainsKey(mod.Key.ToLower()))
+                            {
+                                if (specialMods == null)
+                                    specialMods = mod.Value;
+                                else
+                                {
+                                    if (specialMods.Contains("&"))
+                                        specialMods = mod.Value + ", " + specialMods;
+                                    else
+                                        specialMods += " & " + mod.Value;
+                                }
+                            }
+                        }
+
+                        CosmeticsController.CosmeticSet cosmeticSet = vrrig.cosmeticSet;
+                        foreach (CosmeticsController.CosmeticItem cosmetic in cosmeticSet.items)
+                        {
+                            if (!cosmetic.isNullItem && !vrrig.concatStringOfCosmeticsAllowed.Contains(cosmetic.itemName))
+                            {
+                                if (specialMods == null)
+                                    specialMods = "Cosmetx";
+                                else
+                                {
+                                    if (specialMods.Contains("&"))
+                                        specialMods = "Cosmetx, " + specialMods;
+                                    else
+                                        specialMods += " & Cosmetx";
+                                }
+                                break;
+                            }
+                        }
+
+                        GameObject nameTag = modNameTags[vrrig];
+                        nameTag.GetComponent<TextMesh>().text = "";
+
+                        nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
+                        nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
+
+                        nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
+
+                        nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
+                        nameTag.transform.LookAt(Camera.main.transform.position);
+                        nameTag.transform.Rotate(0f, 180f, 0f);
+                    }
+                }
+                catch { }
+            }
+        }
+
+        public static void DisableModTags()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> nametag in modNameTags)
+                UnityEngine.Object.Destroy(nametag.Value);
+
+            modNameTags.Clear();
         }
 
         public static void FixRigColors()
