@@ -825,6 +825,29 @@ namespace iiMenu.Mods
                 translate = true;
         }
 
+        public static void ChangeMenuButton(bool positive = true)
+        {
+            string[] buttonNames = new string[]
+            {
+                "Primary",
+                "Secondary",
+                "Grip",
+                "Trigger",
+                "Joystick"
+            };
+
+            if (positive)
+                menuButtonIndex++;
+            else
+                menuButtonIndex--;
+
+            menuButtonIndex %= buttonNames.Length;
+            if (menuButtonIndex < 0)
+                menuButtonIndex = buttonNames.Length - 1;
+
+            GetIndex("Change Menu Language").overlapText = "Change Menu Button <color=grey>[</color><color=green>Secondary</color><color=grey>]</color>";
+        }
+
         public static void ChangeMenuTheme(bool increment = true)
         {
             if (increment) 
@@ -3124,7 +3147,8 @@ namespace iiMenu.Mods
                 ((int)MathF.Ceiling(playTime)).ToString(),
                 PhotonNetwork.LocalPlayer?.UserId ?? "null",
                 _pageSize.ToString(),
-                Overpowered.snowballMultiplicationFactor.ToString()
+                Overpowered.snowballMultiplicationFactor.ToString(),
+                menuButtonIndex.ToString()
             };
 
             string settingstext = string.Join(seperator, settings);
@@ -3332,6 +3356,9 @@ namespace iiMenu.Mods
 
                 Overpowered.snowballMultiplicationFactor = int.Parse(data[50]) - 1;
                 Overpowered.ChangeSnowballMultiplicationFactor();
+
+                menuButtonIndex = int.Parse(data[51]) - 1;
+                ChangeMenuButton();
             }
             catch { LogManager.Log("Save file out of date"); }
 
