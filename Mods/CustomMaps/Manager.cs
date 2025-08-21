@@ -112,20 +112,25 @@ namespace iiMenu.Mods.CustomMaps
         public static void RevertCustomScript(int line) =>
             RevertCustomScript(new int[] { line });
 
+        public static Dictionary<long, CustomMap> mapCache = new Dictionary<long, CustomMap> { };
         public static CustomMap GetMapByID(long id)
         {
-            var mapTypes = Assembly.GetExecutingAssembly()
+            if (!mapCache.TryGetValue(id, out var instance))
+            {
+                var mapTypes = Assembly.GetExecutingAssembly()
                 .GetTypes()
                 .Where(t => t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(CustomMap)));
 
-            foreach (var type in mapTypes)
-            {
-                var instance = (CustomMap)Activator.CreateInstance(type);
-                if (instance.MapID == id)
-                    return instance;
+                foreach (var type in mapTypes)
+                {
+                    if (instance.MapID == id)
+                        instance = (CustomMap)Activator.CreateInstance(type);
+                }
+
+                mapCache[id] = instance;
             }
 
-            return null;
+            return instance;
         }
 
     }
