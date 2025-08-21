@@ -680,6 +680,9 @@ namespace iiMenu.Mods
             FreeCamObject.transform.rotation = GorillaTagger.Instance.headCollider.transform.rotation * Quaternion.Euler(Mathf.Sin(Time.time) * intensity, Mathf.Cos(Time.time * 0.7f) * intensity, Mathf.Sin(Time.time * 1.3f) * intensity);
         }
 
+        public static void HueShift(Color color) =>
+            GameLightingManager.instance.SetAmbientLightDynamic(color);
+
         public static void SpectateGun()
         {
             if (GetGunInput(false))

@@ -821,6 +821,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Spectate Gun", method =() => Fun.SpectateGun(), disableMethod =() => Fun.DisableFreecam(), toolTip = "Lets you see through the eyes of whoever your hand desires."},
 
                 new ButtonInfo { buttonText = "Nausea", method =() => Fun.Nausea(), disableMethod =() => Fun.DisableFreecam(), toolTip = "Gives you the Nausea effect from Minecraft."},
+                new ButtonInfo { buttonText = "LSD", method =() => Fun.HueShift(Color.HSVToRGB((Time.frameCount / 180f) % 1f, 1f, 1f)), disableMethod =() => Fun.HueShift(Color.white), toolTip = "Hue shifts your game to a rainbow color."},
 
                 new ButtonInfo { buttonText = "Mute Gun", method =() => Fun.MuteGun(), toolTip = "Mutes or unmutes whoever your hand desires."},
                 new ButtonInfo { buttonText = "Mute All", method =() => Fun.MuteAll(), disableMethod =() => Fun.UnmuteAll(), toolTip = "Mutes everyone in the room."},
