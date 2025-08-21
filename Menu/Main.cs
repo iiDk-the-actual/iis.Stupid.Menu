@@ -30,6 +30,7 @@ using UnityEngine.Networking;
 using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.Video;
 using UnityEngine.XR;
 using Valve.VR;
 using static iiMenu.Classes.RigManager;
@@ -712,6 +713,25 @@ namespace iiMenu.Menu
                                 }
                             }
                         } catch { }
+                    }
+
+                    // Bad apple theme
+                    if (themeType == 63)
+                    {
+                        if (menu != null)
+                        {
+                            badAppleTime += Time.deltaTime;
+                            badAppleTime %= 203f;
+                        }
+                        
+                        if (videoPlayer != null)
+                        {
+                            if (videoPlayer.isPlaying && menu == null)
+                                videoPlayer.Stop();
+
+                            if (!videoPlayer.isPlaying && menu != null)
+                                videoPlayer.Play();
+                        }
                     }
 
                     // Gun sounds
@@ -1517,7 +1537,7 @@ namespace iiMenu.Menu
                 if (!UnityInput.Current.GetKey(KeyCode.Q) && !isPcWhenSearching)
                     buttonObject.layer = 2;
 
-                if (themeType == 30)
+                if (themeType == 30 || (themeType == 63 && buttonIndex >= 0))
                     buttonObject.GetComponent<Renderer>().enabled = false;
 
                 buttonObject.GetComponent<BoxCollider>().isTrigger = true;
@@ -1579,7 +1599,7 @@ namespace iiMenu.Menu
                  *   buttonObject.transform.localPosition = new Vector3(buttonObject.transform.localPosition.x, -buttonObject.transform.localPosition.y, buttonObject.transform.localPosition.z);
                  */
 
-                if (shouldOutline)
+                if (shouldOutline && !(themeType == 63 && buttonIndex >= 0))
                     OutlineObj(buttonObject, buttonIndex < 0 && swapButtonColors ? method.enabled : !method.enabled);
 
                 if (lastClickedName != method.buttonText)
@@ -2315,8 +2335,9 @@ namespace iiMenu.Menu
                 if (shouldRound)
                     RoundObj(menuBackground);
 
-                if (themeType == 25 || themeType == 26 || themeType == 27)
+                if (themeType == 25 || themeType == 26 || themeType == 27 || themeType == 63)
                 {
+                    Renderer menuBackgroundRenderer = menuBackground.GetComponent<Renderer>();
                     switch (themeType)
                     {
                         case 25:
@@ -2326,9 +2347,9 @@ namespace iiMenu.Menu
                                 pride.filterMode = FilterMode.Point;
                                 pride.wrapMode = TextureWrapMode.Clamp;
                             }
-                            menuBackground.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Unlit");
-                            menuBackground.GetComponent<Renderer>().material.color = Color.white;
-                            menuBackground.GetComponent<Renderer>().material.mainTexture = pride;
+                            menuBackgroundRenderer.material.shader = Shader.Find("Universal Render Pipeline/Unlit");
+                            menuBackgroundRenderer.material.color = Color.white;
+                            menuBackgroundRenderer.material.mainTexture = pride;
                             break;
                         case 26:
                             if (trans == null)
@@ -2337,9 +2358,9 @@ namespace iiMenu.Menu
                                 trans.filterMode = FilterMode.Point;
                                 trans.wrapMode = TextureWrapMode.Clamp;
                             }
-                            menuBackground.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Unlit");
-                            menuBackground.GetComponent<Renderer>().material.color = Color.white;
-                            menuBackground.GetComponent<Renderer>().material.mainTexture = trans;
+                            menuBackgroundRenderer.material.shader = Shader.Find("Universal Render Pipeline/Unlit");
+                            menuBackgroundRenderer.material.color = Color.white;
+                            menuBackgroundRenderer.material.mainTexture = trans;
                             break;
                         case 27:
                             if (gay == null)
@@ -2348,9 +2369,30 @@ namespace iiMenu.Menu
                                 gay.filterMode = FilterMode.Point;
                                 gay.wrapMode = TextureWrapMode.Clamp;
                             }
-                            menuBackground.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Unlit");
-                            menuBackground.GetComponent<Renderer>().material.color = Color.white;
-                            menuBackground.GetComponent<Renderer>().material.mainTexture = gay;
+                            menuBackgroundRenderer.material.shader = Shader.Find("Universal Render Pipeline/Unlit");
+                            menuBackgroundRenderer.material.color = Color.white;
+                            menuBackgroundRenderer.material.mainTexture = gay;
+                            break;
+                        case 63:
+                            if (videoPlayer == null)
+                            {
+                                videoPlayer = new GameObject("iiMenu_VideoPlayer").AddComponent<VideoPlayer>();
+                                videoPlayer.playOnAwake = true;
+                                videoPlayer.isLooping = true;
+                                videoPlayer.url = "https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/main/badapple.mp4";
+
+                                RenderTexture rt = new RenderTexture(192, 144, 0);
+                                rt.Create();
+
+                                videoPlayer.targetTexture = rt;
+                            }
+
+                            menuBackgroundRenderer.material.shader = Shader.Find("Universal Render Pipeline/Unlit");
+                            menuBackgroundRenderer.material.color = Color.white;
+                            menuBackgroundRenderer.material.SetTexture("_BaseMap", videoPlayer.targetTexture);
+
+                            videoPlayer.time = badAppleTime;
+
                             break;
                     }
                 }
@@ -6146,6 +6188,7 @@ jgs \_   _/ |Oo\
         public static bool NoOverlapRPCs = true;
         public static float loadPreferencesTime;
         public static float playTime;
+        public static float badAppleTime;
 
         public static bool thinMenu = true;
         public static bool longmenu;
@@ -6417,6 +6460,7 @@ jgs \_   _/ |Oo\
         public static GameObject menu;
         public static GameObject menuBackground;
         public static GameObject reference;
+        public static VideoPlayer videoPlayer;
         public static SphereCollider buttonCollider;
         public static GameObject canvasObj;
         public static AssetBundle assetBundle;

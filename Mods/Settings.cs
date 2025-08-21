@@ -832,7 +832,7 @@ namespace iiMenu.Mods
             else 
                 themeType--;
 
-            int themeCount = 62;
+            int themeCount = 63;
 
             if (themeType > themeCount)
                 themeType = 1;
@@ -1527,6 +1527,17 @@ namespace iiMenu.Mods
                     titleColor = Color.white;
                     textColor = Color.white;
                     textClicked = Color.white;
+                    break;
+                case 63: // Bad Apple (thanks random person in vc for idea)
+                    bgColorA = Color.black;
+                    bgColorB = Color.white;
+                    buttonDefaultA = Color.white;
+                    buttonDefaultB = Color.white;
+                    buttonClickedA = Color.black;
+                    buttonClickedB = Color.black;
+                    titleColor = Color.white;
+                    textColor = Color.white;
+                    textClicked = Color.black;
                     break;
             }
         }
