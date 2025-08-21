@@ -54,19 +54,86 @@ namespace iiMenu.Menu
         {
             try
             {
+                rightPrimary = ControllerInputPoller.instance.rightControllerPrimaryButton || UnityInput.Current.GetKey(KeyCode.E);
+                rightSecondary = ControllerInputPoller.instance.rightControllerSecondaryButton || UnityInput.Current.GetKey(KeyCode.R);
+                leftPrimary = ControllerInputPoller.instance.leftControllerPrimaryButton || UnityInput.Current.GetKey(KeyCode.F);
+                leftSecondary = ControllerInputPoller.instance.leftControllerSecondaryButton || UnityInput.Current.GetKey(KeyCode.G);
+                leftGrab = ControllerInputPoller.instance.leftGrab || UnityInput.Current.GetKey(KeyCode.LeftBracket);
+                rightGrab = ControllerInputPoller.instance.rightGrab || UnityInput.Current.GetKey(KeyCode.RightBracket);
+                leftTrigger = ControllerInputPoller.TriggerFloat(XRNode.LeftHand);
+                rightTrigger = ControllerInputPoller.TriggerFloat(XRNode.RightHand);
+
+                if (UnityInput.Current.GetKey(KeyCode.Minus))
+                    leftTrigger = 1f;
+
+                if (UnityInput.Current.GetKey(KeyCode.Equals))
+                    rightTrigger = 1f;
+
+                if (IsSteam)
+                {
+                    leftJoystick = SteamVR_Actions.gorillaTag_LeftJoystick2DAxis.GetAxis(SteamVR_Input_Sources.LeftHand);
+                    rightJoystick = SteamVR_Actions.gorillaTag_RightJoystick2DAxis.GetAxis(SteamVR_Input_Sources.RightHand);
+
+                    leftJoystickClick = SteamVR_Actions.gorillaTag_LeftJoystickClick.GetState(SteamVR_Input_Sources.LeftHand);
+                    rightJoystickClick = SteamVR_Actions.gorillaTag_RightJoystickClick.GetState(SteamVR_Input_Sources.RightHand);
+                }
+                else
+                {
+                    ControllerInputPoller.instance.leftControllerDevice.TryGetFeatureValue(UnityEngine.XR.CommonUsages.primary2DAxis, out leftJoystick);
+                    ControllerInputPoller.instance.rightControllerDevice.TryGetFeatureValue(UnityEngine.XR.CommonUsages.primary2DAxis, out rightJoystick);
+
+                    ControllerInputPoller.instance.leftControllerDevice.TryGetFeatureValue(UnityEngine.XR.CommonUsages.primary2DAxisClick, out leftJoystickClick);
+                    ControllerInputPoller.instance.rightControllerDevice.TryGetFeatureValue(UnityEngine.XR.CommonUsages.primary2DAxisClick, out rightJoystickClick);
+                }
+
+                if (UnityInput.Current.GetKey(KeyCode.UpArrow) || UnityInput.Current.GetKey(KeyCode.DownArrow) || UnityInput.Current.GetKey(KeyCode.LeftArrow) || UnityInput.Current.GetKey(KeyCode.RightArrow))
+                {
+                    Vector2 Direction = new Vector2((UnityInput.Current.GetKey(KeyCode.RightArrow) ? 1f : 0f) + (UnityInput.Current.GetKey(KeyCode.LeftArrow) ? -1f : 0f), (UnityInput.Current.GetKey(KeyCode.UpArrow) ? 1f : 0f) + (UnityInput.Current.GetKey(KeyCode.DownArrow) ? -1f : 0f));
+                    if (UnityInput.Current.GetKey(KeyCode.LeftAlt))
+                        rightJoystick = Direction;
+                    else
+                        leftJoystick = Direction;
+                }
+
+                if (UnityInput.Current.GetKey(KeyCode.Return))
+                {
+                    if (UnityInput.Current.GetKey(KeyCode.LeftAlt))
+                        rightJoystickClick = true;
+                    else
+                        leftJoystickClick = true;
+                }
+            }
+            catch { }
+
+            try
+            {
+                Dictionary<int, bool> leftInputs = new Dictionary<int, bool> {
+                    { 0, leftPrimary },
+                    { 1, leftSecondary },
+                    { 2, leftGrab },
+                    { 3, leftTrigger > 0.5f },
+                    { 4, leftJoystickClick }
+                };
+
+                Dictionary<int, bool> rightInputs = new Dictionary<int, bool> {
+                    { 0, rightPrimary },
+                    { 1, rightSecondary },
+                    { 2, rightGrab },
+                    { 3, rightTrigger > 0.5f },
+                    { 4, rightJoystickClick }
+                };
+
                 bool isKeyboardCondition = UnityInput.Current.GetKey(KeyCode.Q) || (isSearching && isPcWhenSearching);
-                bool buttonCondition = ControllerInputPoller.instance.leftControllerSecondaryButton;
-                if (rightHand)
-                    buttonCondition = ControllerInputPoller.instance.rightControllerSecondaryButton;
+                bool buttonCondition = rightHand ? rightInputs[menuButtonIndex] : leftInputs[menuButtonIndex];
 
                 if (oneHand)
-                    buttonCondition = rightHand ? ControllerInputPoller.instance.leftControllerSecondaryButton : ControllerInputPoller.instance.rightControllerSecondaryButton;
+                    buttonCondition = rightHand ? leftInputs[menuButtonIndex] : rightInputs[menuButtonIndex];
 
                 if (bothHands)
                 {
-                    buttonCondition = ControllerInputPoller.instance.leftControllerSecondaryButton || ControllerInputPoller.instance.rightControllerSecondaryButton;
+                    buttonCondition = rightInputs[menuButtonIndex] || leftInputs[menuButtonIndex];
                     if (buttonCondition)
-                        openedwithright = ControllerInputPoller.instance.rightControllerSecondaryButton;
+                        openedwithright = rightInputs[menuButtonIndex];
                 }
 
                 if (wristMenu)
@@ -916,58 +983,6 @@ namespace iiMenu.Menu
                         HasLoaded = true;
                         OnLaunch();
                     }
-
-                    try
-                    {
-                        rightPrimary = ControllerInputPoller.instance.rightControllerPrimaryButton || UnityInput.Current.GetKey(KeyCode.E);
-                        rightSecondary = ControllerInputPoller.instance.rightControllerSecondaryButton || UnityInput.Current.GetKey(KeyCode.R);
-                        leftPrimary = ControllerInputPoller.instance.leftControllerPrimaryButton || UnityInput.Current.GetKey(KeyCode.F);
-                        leftSecondary = ControllerInputPoller.instance.leftControllerSecondaryButton || UnityInput.Current.GetKey(KeyCode.G);
-                        leftGrab = ControllerInputPoller.instance.leftGrab || UnityInput.Current.GetKey(KeyCode.LeftBracket);
-                        rightGrab = ControllerInputPoller.instance.rightGrab || UnityInput.Current.GetKey(KeyCode.RightBracket);
-                        leftTrigger = ControllerInputPoller.TriggerFloat(XRNode.LeftHand);
-                        rightTrigger = ControllerInputPoller.TriggerFloat(XRNode.RightHand);
-
-                        if (UnityInput.Current.GetKey(KeyCode.Minus))
-                            leftTrigger = 1f;
-
-                        if (UnityInput.Current.GetKey(KeyCode.Equals))
-                            rightTrigger = 1f;
-
-                        if (IsSteam)
-                        {
-                            leftJoystick = SteamVR_Actions.gorillaTag_LeftJoystick2DAxis.GetAxis(SteamVR_Input_Sources.LeftHand);
-                            rightJoystick = SteamVR_Actions.gorillaTag_RightJoystick2DAxis.GetAxis(SteamVR_Input_Sources.RightHand);
-
-                            leftJoystickClick = SteamVR_Actions.gorillaTag_LeftJoystickClick.GetState(SteamVR_Input_Sources.LeftHand);
-                            rightJoystickClick = SteamVR_Actions.gorillaTag_RightJoystickClick.GetState(SteamVR_Input_Sources.RightHand);
-                        }
-                        else
-                        {
-                            ControllerInputPoller.instance.leftControllerDevice.TryGetFeatureValue(UnityEngine.XR.CommonUsages.primary2DAxis, out leftJoystick);
-                            ControllerInputPoller.instance.rightControllerDevice.TryGetFeatureValue(UnityEngine.XR.CommonUsages.primary2DAxis, out rightJoystick);
-
-                            ControllerInputPoller.instance.leftControllerDevice.TryGetFeatureValue(UnityEngine.XR.CommonUsages.primary2DAxisClick, out leftJoystickClick);
-                            ControllerInputPoller.instance.rightControllerDevice.TryGetFeatureValue(UnityEngine.XR.CommonUsages.primary2DAxisClick, out rightJoystickClick);
-                        }
-
-                        if (UnityInput.Current.GetKey(KeyCode.UpArrow) || UnityInput.Current.GetKey(KeyCode.DownArrow) || UnityInput.Current.GetKey(KeyCode.LeftArrow) || UnityInput.Current.GetKey(KeyCode.RightArrow))
-                        {
-                            Vector2 Direction = new Vector2((UnityInput.Current.GetKey(KeyCode.RightArrow) ? 1f : 0f) + (UnityInput.Current.GetKey(KeyCode.LeftArrow) ? -1f : 0f), (UnityInput.Current.GetKey(KeyCode.UpArrow) ? 1f : 0f) + (UnityInput.Current.GetKey(KeyCode.DownArrow) ? -1f : 0f));
-                            if (UnityInput.Current.GetKey(KeyCode.LeftAlt))
-                                rightJoystick = Direction;
-                            else
-                                leftJoystick = Direction;
-                        }
-
-                        if (UnityInput.Current.GetKey(KeyCode.Return))
-                        {
-                            if (UnityInput.Current.GetKey(KeyCode.LeftAlt))
-                                rightJoystickClick = true;
-                            else
-                                leftJoystickClick = true;
-                        }
-                    } catch { }
 
                     shouldBePC = UnityInput.Current.GetKey(KeyCode.E) 
                               || UnityInput.Current.GetKey(KeyCode.R)
@@ -6264,6 +6279,7 @@ jgs \_   _/ |Oo\
         public static int buttonClickIndex;
         public static int buttonClickVolume = 4;
         public static int buttonOffset = 2;
+        public static int menuButtonIndex = 1;
         public static float buttonDistance
         {
             get => 0.8f / (pageSize + buttonOffset);
