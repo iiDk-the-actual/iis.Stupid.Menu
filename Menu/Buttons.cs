@@ -1636,6 +1636,11 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Admin Flip Menu Gun", method =() => Experimental.FlipMenuGun(), toolTip = "Flips the menu of whoever your hand desires if they're using the menu."},
 
+                new ButtonInfo { buttonText = "Admin Freeze Gun", method =() => Experimental.AdminEnableGun(true, "Force Tag Freeze"), toolTip = "Freezes whoever your hand desires if they're using the menu."},
+                new ButtonInfo { buttonText = "Admin Unfreeze Gun", method =() => Experimental.AdminEnableGun(false, "Force Tag Freeze"), toolTip = "Unfreezes whoever your hand desires if they're using the menu."},
+                new ButtonInfo { buttonText = "Admin Mute Gun", method =() => Experimental.AdminEnableGun(true, "Mute Microphone"), toolTip = "Mutes whoever your hand desires if they're using the menu."},
+                new ButtonInfo { buttonText = "Admin Unmute Gun", method =() => Experimental.AdminEnableGun(false, "Mute Microphone"), toolTip = "Unmutes whoever your hand desires if they're using the menu"},
+
                 new ButtonInfo { buttonText = "Admin Disable Menu Gun", method =() => Experimental.AdminLockdownGun(true), toolTip = "Disables the menu of whoever your hand desires if they're using one."},
                 new ButtonInfo { buttonText = "Admin Enable Menu Gun", method =() => Experimental.AdminLockdownGun(false), toolTip = "Enables the menu of whoever your hand desires if they're using one."},
 

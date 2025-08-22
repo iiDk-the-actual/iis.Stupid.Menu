@@ -240,6 +240,26 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void AdminEnableGun(bool enable, string mod)
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true) && Time.time > adminEventDelay)
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        adminEventDelay = Time.time + 0.1f;
+                        Classes.Console.ExecuteCommand("forceenable", GetPlayerFromVRRig(gunTarget).ActorNumber, mod, enable);
+                    }
+                }
+            }
+        }
+
         public static void AdminTeleportGun()
         {
             if (GetGunInput(false))
