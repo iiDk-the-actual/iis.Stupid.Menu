@@ -1275,6 +1275,166 @@ namespace iiMenu.Mods
             modNameTags.Clear();
         }
 
+        public static Dictionary<string, string> verifiedDictionary = new Dictionary<string, string>
+        {
+            { "9DBC90CF7449EF64", "StyledSnail" },
+            { "33FFCE29A8DB5BB", "Jmancurly?" },
+            { "6FE5FF4D5DF68843", "Pine" },
+            { "52529F0635BE0CDF", "PapaSmurf" },
+            { "BAC5807405123060", "britishmonke" },
+            { "A6FFC7318E1301AF", "jmancurly" },
+            { "3B9FD2EEF24ACB3", "VMT" },
+            { "33FFA45DBFD33B01", "will" },
+            { "D6971CA01F82A975", "Elliot" },
+            { "7FB16B1EDEB71A4C", "Elliot" },
+            { "636D8846E76C9B5A", "Clown" },
+            { "65CB0CCF1AED2BF", "Ethyb" },
+            { "48437FE432DE48BE", "Rose" },
+            { "61AD990FF3A423B7", "Boda 1" },
+            { "AAB44BFD0BA34829", "Boda 2" },
+            { "6713DA80D2E9BFB5", "AHauntedArmy" },
+            { "B4A3FF01312B55B1", "Pluto" },
+            { "339E0D392565DC39", "kishark" },
+            { "F08CE3118F9E793E", "TurboAlligator" },
+            { "5380BEF3DA4A857D", "Tuxedo" },
+            { "D6E20BE9655C798", "TTTPIG 1" },
+            { "71AA09D13C0F408D", "TTTPIG 2" },
+            { "1D6E20BE9655C798", "TTTPIG 3" },
+            { "22A7BCEFFD7A0BBA", "TTTPIG 4" },
+            { "C3878B068886F6C3", "ZZEN" },
+            { "6F79BE7CB34642AC", "CodyO'Quinn" },
+            { "5AA1231973BE8A62", "Apollo" },
+            { "7F31BEEC604AE189", "ElectronicWall 1" },
+            { "42C809327652ECDD", "ElectronicWall 2" },
+            { "ECDE8A2FF8510934", "Antoca" },
+            { "80279945E7D3B57D", "Jolyne" },
+            { "7E44E8337DF02CC1", "Nunya" },
+            { "DE601BC40DB68CE0", "Graic" },
+            { "F5B5C64914C13B83", "HatGirl" },
+            { "660814E013F31EFA", "HOLLOWZZGT" },
+            { "2E408ED946D55D51", "Haunted" },
+            { "D345FE394607F946", "Bzzz the 18th" },
+            { "498D4C2F23853B37", "POGTROLL" },
+            { "BC9764E1EADF8BE0", "Circuit" },
+            { "D0CB396539676DD8", "FrogIlla" },
+            { "A1A99D33645E4A94", "STEAMVRAVTS / YEAT" },
+            { "CBCCBBB6C28A94CF", "PTMstar" },
+            { "6DC06EEFFE9DBD39", "Lucio" },
+            { "4ACA3C76B334B17F", "Wihz" },
+            { "571776944B6162F1", "CubCub" },
+            { "FB5FCEBC4A0E0387", "PepsiDee" },
+            { "8ED59EACCDC6BA86", "PepsiDee?" },
+            { "645222265FB972B", "Chaotic Asriel" },
+            { "BC99FA914F506AB8", "Lemming 1" },
+            { "3A16560CA65A51DE", "Lemming 2" },
+            { "59F3FE769DE93AB9", "Lemming 3" },
+            { "EE9FB127CF7DBBD5", "NOTMARK" },
+            { "54DCB69545BE0800", "Biffbish" },
+            { "A04005517920EB0", "K9" },
+            { "ABD60175B46E45C5", "Saltwater" },
+            { "964C4A68F65A804C", "YottaBite" },
+            { "8FECBBC89D69575E", "KyleTheScientist" },
+            { "4D5EB238C8253D04", "Person" },
+            { "8B047CEF4F695F3A", "AlecVR" },
+            { "E5883BD27F60F99A", "AlecVR?" },
+            { "70EEBA9507E8381E", "H4KPY?" },
+            { "911691C9FEB63D9F", "H4KPY?" },
+            { "D322FC7F6A9875DB", "DecalFree" },
+            { "FBE1690495D63A05", "Azora" },
+            { "3509A9A428FCD55C", "Polar" },
+            { "3F179DCC75FECA1", "Polar" },
+            { "450EE31CA7FBDE4C", "ProximusVR" },
+            { "180E486699D14963", "Legion" },
+            { "AC67B4E838EFB5D3", "PartyMonkeyGT" },
+            { "4BB02313F55AA741", "Mosa?" },
+            { "E61FD8B23F3264C0", "Authority" },
+            { "36B456067A5E1453", "Lofiat" },
+            { "FC8CB7FED6EFDC81", "CJVR" },
+            { "6C85D07DC2586DC9", "Arctrie" },
+            { "22CDF30B107A9BDB", "Durag" },
+            { "1940CCB76316556F", "Genet1c" },
+            { "6B4FB3EF97A8BB71", "Crisp" },
+            { "17BCC7B56F88287A", "Vortex" },
+            { "2D35DBED9A3BE6A0", "Tortise" },
+            { "2D7D32651E93866", "Graze" },
+            { "B4E45E48C5CE0656", "ZBR" },
+            { "F7EE771EB6794ABE", "OfficialLemon" },
+            { "36FD11C9FB61E50B", "Cryptik" }
+        };
+
+        private static Dictionary<VRRig, GameObject> verifiedNameTags = new Dictionary<VRRig, GameObject> { };
+        public static void VerifiedTags()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> nametag in verifiedNameTags)
+            {
+                if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
+                {
+                    UnityEngine.Object.Destroy(nametag.Value);
+                    verifiedNameTags.Remove(nametag.Key);
+                }
+            }
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                try
+                {
+                    if (!vrrig.isLocal)
+                    {
+                        if (!verifiedNameTags.ContainsKey(vrrig))
+                        {
+                            string userId = GetPlayerFromVRRig(vrrig).UserId;
+                            if (verifiedDictionary.TryGetValue(userId, out string name))
+                            {
+                                GameObject go = new GameObject("iiMenu_Verifiedtag");
+                                go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+                                TextMesh textMesh = go.AddComponent<TextMesh>();
+                                textMesh.fontSize = 48;
+                                textMesh.characterSize = 0.1f;
+                                textMesh.anchor = TextAnchor.MiddleCenter;
+                                textMesh.alignment = TextAlignment.Center;
+                                textMesh.GetComponent<TextMesh>().text = name;
+
+                                verifiedNameTags.Add(vrrig, go);
+                            } else if (ServerData.Administrators.TryGetValue(userId, out string adminName))
+                            {
+                                GameObject go = new GameObject("iiMenu_Verifiedtag");
+                                go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+                                TextMesh textMesh = go.AddComponent<TextMesh>();
+                                textMesh.fontSize = 48;
+                                textMesh.characterSize = 0.1f;
+                                textMesh.anchor = TextAnchor.MiddleCenter;
+                                textMesh.alignment = TextAlignment.Center;
+                                textMesh.GetComponent<TextMesh>().text = adminName;
+
+                                verifiedNameTags.Add(vrrig, go);
+                            }
+                        }
+
+                        if (verifiedNameTags.TryGetValue(vrrig, out GameObject nameTag))
+                        {
+                            nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
+                            nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
+
+                            nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
+
+                            nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
+                            nameTag.transform.LookAt(Camera.main.transform.position);
+                            nameTag.transform.Rotate(0f, 180f, 0f);
+                        }
+                    }
+                }
+                catch { }
+            }
+        }
+
+        public static void DisableVerifiedTags()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> nametag in modNameTags)
+                UnityEngine.Object.Destroy(nametag.Value);
+
+            modNameTags.Clear();
+        }
+
         public static void FixRigColors()
         {
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
