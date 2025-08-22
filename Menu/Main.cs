@@ -52,6 +52,7 @@ namespace iiMenu.Menu
     {
         public static void Prefix()
         {
+            #region Controls
             try
             {
                 rightPrimary = ControllerInputPoller.instance.rightControllerPrimaryButton || UnityInput.Current.GetKey(KeyCode.E);
@@ -104,9 +105,19 @@ namespace iiMenu.Menu
                 }
             }
             catch { }
+            #endregion
 
             try
             {
+                #region First Load Condition
+                if (!HasLoaded)
+                {
+                    HasLoaded = true;
+                    OnLaunch();
+                }
+                #endregion
+
+                #region Menu Spawn Condition
                 Dictionary<int, bool> leftInputs = new Dictionary<int, bool> {
                     { 0, leftPrimary },
                     { 1, leftSecondary },
@@ -181,385 +192,299 @@ namespace iiMenu.Menu
 
                 isMenuButtonHeld = buttonCondition;
                 if (buttonCondition && menu == null)
-                {
-                    if (dynamicSounds)
-                        Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/open.wav", "open.wav"), buttonClickVolume / 10f);
-
-                    Draw();
-
-                    if (dynamicAnimations)
-                        CoroutineManager.RunCoroutine(GrowCoroutine());
-
-                    if (!joystickMenu)
-                    {
-                        if (reference == null)
-                            CreateReference();
-                    }
-                }
+                    OpenMenu();
                 else
                 {
                     if (!buttonCondition && menu != null)
-                    {
-                        GetObject("Shoulder Camera").transform.Find("CM vcam1").gameObject.SetActive(true);
-
-                        if (dynamicSounds)
-                            Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/close.wav", "close.wav"), buttonClickVolume / 10f);
-
-                        try
-                        {
-                            if (isOnPC && TPC != null && TPC.transform.parent.gameObject.name.Contains("CameraTablet"))
-                            {
-                                isOnPC = false;
-                                TPC.transform.position = TPC.transform.parent.position;
-                                TPC.transform.rotation = TPC.transform.parent.rotation;
-                            }
-                        } catch { }
-
-                        smoothTargetPosition = Vector3.zero;
-                        smoothTargetRotation = Quaternion.identity;
-                        if (!dynamicAnimations)
-                        {
-                            if (dropOnRemove)
-                            {
-                                try
-                                {
-                                    Rigidbody comp = menu.AddComponent(typeof(Rigidbody)) as Rigidbody;
-
-                                    if (zeroGravityMenu)
-                                        comp.useGravity = false;
-
-                                    if (rightHand || (bothHands && openedwithright))
-                                    {
-                                        comp.velocity = GTPlayer.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0);
-                                        comp.angularVelocity = GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").GetOrAddComponent<GorillaVelocityEstimator>().angularVelocity;
-                                    }
-                                    else
-                                    {
-                                        comp.velocity = GTPlayer.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0);
-                                        comp.angularVelocity = GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").GetOrAddComponent<GorillaVelocityEstimator>().angularVelocity;
-                                    }
-
-                                    if (annoyingMode)
-                                    {
-                                        comp.velocity = new Vector3(UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33));
-                                        comp.angularVelocity = new Vector3(UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33));
-                                    }
-                                }
-                                catch { }
-
-                                if (menuTrail)
-                                {
-                                    try
-                                    {
-                                        TrailRenderer trail = menu.AddComponent<TrailRenderer>();
-
-                                        trail.startColor = bgColorA;
-                                        trail.endColor = bgColorB;
-                                        trail.startWidth = 0.025f;
-                                        trail.endWidth = 0f;
-                                        trail.minVertexDistance = 0.05f;
-
-                                        if (smoothLines)
-                                        {
-                                            trail.numCapVertices = 10;
-                                            trail.numCornerVertices = 5;
-                                        }
-
-                                        trail.material.shader = Shader.Find("Sprites/Default");
-                                        trail.time = 2f;
-                                    } catch { }
-                                }
-
-                                Destroy(menu, 5f);
-                                menu = null;
-                                Destroy(reference);
-                                reference = null;
-                            }
-                            else
-                            {
-                                Destroy(menu);
-                                menu = null;
-                                Destroy(reference);
-                                reference = null;
-                            }
-                        } else
-                        {
-                            CoroutineManager.RunCoroutine(ShrinkCoroutine());
-                            Destroy(reference);
-                            reference = null;
-                        }
-                    }
+                        CloseMenu();
                 }
 
                 if (buttonCondition && menu != null)
                     RecenterMenu();
+                #endregion
 
+                #region Custom Boards
+                if (!hasFoundAllBoards)
                 {
-                    hasRemovedThisFrame = false;
-
-                    if (!hasFoundAllBoards)
+                    try
                     {
-                        try
+                        foreach (GameObject board in objectBoards.Values)
+                            Destroy(board);
+
+                        objectBoards.Clear();
+
+                        CreateObjectBoard("City", "Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/CosmeticsScoreboardAnchor/GorillaScoreBoard");
+                        CreateObjectBoard("Arcade", "Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/Arcade_prefab/Arcade_Room/CosmeticsScoreboardAnchor/GorillaScoreBoard", new Vector3(-22.1964f, -21.4581f, 1.4f), new Vector3(270.0593f, 0f, 0f), new Vector3(23f, 2.1f, 21.6f));
+
+                        bool found = false;
+                        int indexOfThatThing = 0;
+                        for (int i = 0; i < GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.childCount; i++)
                         {
-                            foreach (GameObject board in objectBoards.Values)
-                                Destroy(board);
-
-                            objectBoards.Clear();
-
-                            CreateObjectBoard("City", "Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/CosmeticsScoreboardAnchor/GorillaScoreBoard");
-                            CreateObjectBoard("Arcade", "Environment Objects/LocalObjects_Prefab/City_WorkingPrefab/Arcade_prefab/Arcade_Room/CosmeticsScoreboardAnchor/GorillaScoreBoard", new Vector3(-22.1964f, -21.4581f, 1.4f), new Vector3(270.0593f, 0f, 0f), new Vector3(23f, 2.1f, 21.6f));
-
-                            //LogManager.Log("Looking for boards");
-                            bool found = false;
-                            int indexOfThatThing = 0;
-                            for (int i = 0; i < GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.childCount; i++)
+                            GameObject v = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.GetChild(i).gameObject;
+                            if (v.name.Contains(StumpLeaderboardID))
                             {
-                                GameObject v = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom").transform.GetChild(i).gameObject;
-                                if (v.name.Contains(StumpLeaderboardID))
+                                indexOfThatThing++;
+                                if (indexOfThatThing == StumpLeaderboardIndex)
                                 {
-                                    indexOfThatThing++;
-                                    if (indexOfThatThing == StumpLeaderboardIndex)
-                                    {
-                                        found = true;
-                                        if (StumpMat == null)
-                                            StumpMat = v.GetComponent<Renderer>().material;
+                                    found = true;
+                                    if (StumpMat == null)
+                                        StumpMat = v.GetComponent<Renderer>().material;
 
-                                        v.GetComponent<Renderer>().material = OrangeUI;
-                                        break;
-                                    }
+                                    v.GetComponent<Renderer>().material = OrangeUI;
+                                    break;
                                 }
-                            }
-
-                            bool found2 = false;
-                            indexOfThatThing = 0;
-                            for (int i = 0; i < GetObject("Environment Objects/LocalObjects_Prefab/Forest").transform.childCount; i++)
-                            {
-                                GameObject v = GetObject("Environment Objects/LocalObjects_Prefab/Forest").transform.GetChild(i).gameObject;
-                                if (v.name.Contains(ForestLeaderboardID))
-                                {
-                                    indexOfThatThing++;
-                                    if (indexOfThatThing == ForestLeaderboardIndex)
-                                    {
-                                        found2 = true;
-                                        if (ForestMat == null)
-                                            ForestMat = v.GetComponent<Renderer>().material;
-
-                                        v.GetComponent<Renderer>().material = OrangeUI;
-                                        break;
-                                    }
-                                }
-                            }
-                            if (found && found2)
-                            {
-                                GameObject vr = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomBoundaryStones/BoundaryStoneSet_Forest/wallmonitorforestbg");
-                                if (vr != null)
-                                    vr.GetComponent<Renderer>().material = OrangeUI;
-
-                                foreach (GorillaNetworkJoinTrigger joinTrigger in PhotonNetworkController.Instance.allJoinTriggers)
-                                {
-                                    try
-                                    {
-                                        JoinTriggerUI ui = joinTrigger.ui;
-                                        JoinTriggerUITemplate temp = ui.template;
-
-                                        temp.ScreenBG_AbandonPartyAndSoloJoin = OrangeUI;
-                                        temp.ScreenBG_AlreadyInRoom = OrangeUI;
-                                        temp.ScreenBG_ChangingGameModeSoloJoin = OrangeUI;
-                                        temp.ScreenBG_Error = OrangeUI;
-                                        temp.ScreenBG_InPrivateRoom = OrangeUI;
-                                        temp.ScreenBG_LeaveRoomAndGroupJoin = OrangeUI;
-                                        temp.ScreenBG_LeaveRoomAndSoloJoin = OrangeUI;
-                                        temp.ScreenBG_NotConnectedSoloJoin = OrangeUI;
-
-                                        TextMeshPro text = ui.screenText;
-                                        if (!udTMP.Contains(text))
-                                            udTMP.Add(text);
-                                    }
-                                    catch { }
-                                }
-                                PhotonNetworkController.Instance.UpdateTriggerScreens();
-
-                                string[] objectsWithTMPro = new string[]
-                                {
-                                    "Environment Objects/LocalObjects_Prefab/TreeRoom/CodeOfConductHeadingText",
-                                    "Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData",
-                                    "Environment Objects/LocalObjects_Prefab/TreeRoom/Data",
-                                    "Environment Objects/LocalObjects_Prefab/TreeRoom/FunctionSelect"
-                                };
-                                foreach (string objectName in objectsWithTMPro)
-                                {
-                                    GameObject obj = GetObject(objectName);
-                                    if (obj != null)
-                                    {
-                                        TextMeshPro text = obj.GetComponent<TextMeshPro>();
-                                        if (!udTMP.Contains(text))
-                                            udTMP.Add(text);
-                                    }
-                                    else
-                                        LogManager.Log("Could not find " + objectName);
-                                }
-
-                                Transform forestTransform = GetObject("Environment Objects/LocalObjects_Prefab/Forest/ForestScoreboardAnchor/GorillaScoreBoard").transform;
-                                for (int i = 0; i < forestTransform.transform.childCount; i++)
-                                {
-                                    GameObject v = forestTransform.GetChild(i).gameObject;
-                                    if ((v.name.Contains("Board Text") || v.name.Contains("Scoreboard_OfflineText")) && v.activeSelf)
-                                    {
-                                        TextMeshPro text = v.GetComponent<TextMeshPro>();
-                                        if (!udTMP.Contains(text))
-                                            udTMP.Add(text);
-                                    }
-                                }
-
-                                hasFoundAllBoards = true;
                             }
                         }
-                        catch (Exception exc)
+
+                        bool found2 = false;
+                        indexOfThatThing = 0;
+                        for (int i = 0; i < GetObject("Environment Objects/LocalObjects_Prefab/Forest").transform.childCount; i++)
                         {
-                            LogManager.LogError(string.Format("Error with board colors at {0}: {1}", exc.StackTrace, exc.Message));
-                            hasFoundAllBoards = false;
+                            GameObject v = GetObject("Environment Objects/LocalObjects_Prefab/Forest").transform.GetChild(i).gameObject;
+                            if (v.name.Contains(ForestLeaderboardID))
+                            {
+                                indexOfThatThing++;
+                                if (indexOfThatThing == ForestLeaderboardIndex)
+                                {
+                                    found2 = true;
+                                    if (ForestMat == null)
+                                        ForestMat = v.GetComponent<Renderer>().material;
+
+                                    v.GetComponent<Renderer>().material = OrangeUI;
+                                    break;
+                                }
+                            }
+                        }
+                        if (found && found2)
+                        {
+                            GameObject vr = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomBoundaryStones/BoundaryStoneSet_Forest/wallmonitorforestbg");
+                            if (vr != null)
+                                vr.GetComponent<Renderer>().material = OrangeUI;
+
+                            foreach (GorillaNetworkJoinTrigger joinTrigger in PhotonNetworkController.Instance.allJoinTriggers)
+                            {
+                                try
+                                {
+                                    JoinTriggerUI ui = joinTrigger.ui;
+                                    JoinTriggerUITemplate temp = ui.template;
+
+                                    temp.ScreenBG_AbandonPartyAndSoloJoin = OrangeUI;
+                                    temp.ScreenBG_AlreadyInRoom = OrangeUI;
+                                    temp.ScreenBG_ChangingGameModeSoloJoin = OrangeUI;
+                                    temp.ScreenBG_Error = OrangeUI;
+                                    temp.ScreenBG_InPrivateRoom = OrangeUI;
+                                    temp.ScreenBG_LeaveRoomAndGroupJoin = OrangeUI;
+                                    temp.ScreenBG_LeaveRoomAndSoloJoin = OrangeUI;
+                                    temp.ScreenBG_NotConnectedSoloJoin = OrangeUI;
+
+                                    TextMeshPro text = ui.screenText;
+                                    if (!udTMP.Contains(text))
+                                        udTMP.Add(text);
+                                }
+                                catch { }
+                            }
+                            PhotonNetworkController.Instance.UpdateTriggerScreens();
+
+                            string[] objectsWithTMPro = new string[]
+                            {
+                                "Environment Objects/LocalObjects_Prefab/TreeRoom/CodeOfConductHeadingText",
+                                "Environment Objects/LocalObjects_Prefab/TreeRoom/COCBodyText_TitleData",
+                                "Environment Objects/LocalObjects_Prefab/TreeRoom/Data",
+                                "Environment Objects/LocalObjects_Prefab/TreeRoom/FunctionSelect"
+                            };
+                            foreach (string objectName in objectsWithTMPro)
+                            {
+                                GameObject obj = GetObject(objectName);
+                                if (obj != null)
+                                {
+                                    TextMeshPro text = obj.GetComponent<TextMeshPro>();
+                                    if (!udTMP.Contains(text))
+                                        udTMP.Add(text);
+                                }
+                                else
+                                    LogManager.Log("Could not find " + objectName);
+                            }
+
+                            Transform forestTransform = GetObject("Environment Objects/LocalObjects_Prefab/Forest/ForestScoreboardAnchor/GorillaScoreBoard").transform;
+                            for (int i = 0; i < forestTransform.transform.childCount; i++)
+                            {
+                                GameObject v = forestTransform.GetChild(i).gameObject;
+                                if ((v.name.Contains("Board Text") || v.name.Contains("Scoreboard_OfflineText")) && v.activeSelf)
+                                {
+                                    TextMeshPro text = v.GetComponent<TextMeshPro>();
+                                    if (!udTMP.Contains(text))
+                                        udTMP.Add(text);
+                                }
+                            }
+
+                            hasFoundAllBoards = true;
                         }
                     }
-
-                    if (computerMonitor == null)
-                        computerMonitor = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/GorillaComputerObject/ComputerUI/monitor/monitorScreen");
-
-                    if (computerMonitor != null)
-                        computerMonitor.GetComponent<Renderer>().material = OrangeUI;
-
-                    try
+                    catch (Exception exc)
                     {
-                        if (!disableBoardColor)
-                            OrangeUI.color = GetBGColor(0f);
-                        else
-                            OrangeUI.color = new Color32(0, 59, 4, 255);
+                        LogManager.LogError(string.Format("Error with board colors at {0}: {1}", exc.StackTrace, exc.Message));
+                        hasFoundAllBoards = false;
+                    }
+                }
 
-                        if (motd == null)
-                        {
-                            GameObject motdObject = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/motdHeadingText");
-                            motd = Instantiate(motdObject, motdObject.transform.parent);
-                            motdObject.SetActive(false);
-                        }
+                if (computerMonitor == null)
+                    computerMonitor = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/TreeRoomInteractables/GorillaComputerObject/ComputerUI/monitor/monitorScreen");
 
-                        TextMeshPro motdTC = motd.GetComponent<TextMeshPro>();
-                        if (!udTMP.Contains(motdTC))
-                            udTMP.Add(motdTC);
+                if (computerMonitor != null)
+                    computerMonitor.GetComponent<Renderer>().material = OrangeUI;
 
-                        motdTC.richText = true;
-                        motdTC.fontSize = 70;
-                        motdTC.text = "Thanks for using ii's Stupid Menu!";
+                try
+                {
+                    if (!disableBoardColor)
+                        OrangeUI.color = GetBGColor(0f);
+                    else
+                        OrangeUI.color = new Color32(0, 59, 4, 255);
 
-                        if (doCustomName)
-                            motdTC.text = "Thanks for using " + NoRichtextTags(customMenuName) + "!";
-
-                        if (translate)
-                            motdTC.text = TranslateText(motdTC.text);
-
-                        if (lowercaseMode)
-                            motdTC.text = motdTC.text.ToLower();
-
-                        if (uppercaseMode)
-                            motdTC.text = motdTC.text.ToUpper();
-
-                        motdTC.color = titleColor;
-                        motdTC.overflowMode = TextOverflowModes.Overflow;
-
-                        if (motdText == null)
-                        {
-                            GameObject motdObject = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/motdBodyText");
-                            motdText = Instantiate(motdObject, motdObject.transform.parent);
-                            motdObject.SetActive(false);
-
-                            motdText.GetComponent<PlayFabTitleDataTextDisplay>().enabled = false;
-                        }
-
-                        TextMeshPro motdTextB = motdText.GetComponent<TextMeshPro>();
-                        if (!udTMP.Contains(motdTextB))
-                            udTMP.Add(motdTextB);
-
-                        motdTextB.richText = true;
-                        motdTextB.fontSize = 100;
-                        motdTextB.color = titleColor;
-
-                        if (fullModAmount < 0)
-                        {
-                            fullModAmount = 0;
-                            foreach (ButtonInfo[] buttons in Buttons.buttons)
-                                fullModAmount += buttons.Length;
-                        }
-
-                        motdTextB.text = string.Format(motdTemplate, PluginInfo.Version, fullModAmount);
-
-                        if (translate)
-                            motdTextB.text = TranslateText(motdTextB.text);
-
-                        if (lowercaseMode)
-                            motdTextB.text = motdTextB.text.ToLower();
-
-                        if (uppercaseMode)
-                            motdTextB.text = motdTextB.text.ToUpper();
-                    } catch { }
-
-                    try
+                    if (motd == null)
                     {
-                        Color targetColor = titleColor;
+                        GameObject motdObject = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/motdHeadingText");
+                        motd = Instantiate(motdObject, motdObject.transform.parent);
+                        motdObject.SetActive(false);
+                    }
 
-                        if (disableBoardColor || disableBoardTextColor)
-                            targetColor = Color.white;
+                    TextMeshPro motdTC = motd.GetComponent<TextMeshPro>();
+                    if (!udTMP.Contains(motdTC))
+                        udTMP.Add(motdTC);
 
-                        foreach (TextMeshPro txt in udTMP)
-                            txt.color = targetColor;
-                    } catch { }
+                    motdTC.richText = true;
+                    motdTC.fontSize = 70;
+                    motdTC.text = "Thanks for using ii's Stupid Menu!";
 
-                    // Search key press detector
-                    if (isSearching)
+                    if (doCustomName)
+                        motdTC.text = "Thanks for using " + NoRichtextTags(customMenuName) + "!";
+
+                    if (translate)
+                        motdTC.text = TranslateText(motdTC.text);
+
+                    if (lowercaseMode)
+                        motdTC.text = motdTC.text.ToLower();
+
+                    if (uppercaseMode)
+                        motdTC.text = motdTC.text.ToUpper();
+
+                    motdTC.color = titleColor;
+                    motdTC.overflowMode = TextOverflowModes.Overflow;
+
+                    if (motdText == null)
                     {
-                        List<KeyCode> keysPressed = new List<KeyCode>();
-                        foreach (KeyCode keyCode in allowedKeys)
+                        GameObject motdObject = GetObject("Environment Objects/LocalObjects_Prefab/TreeRoom/motdBodyText");
+                        motdText = Instantiate(motdObject, motdObject.transform.parent);
+                        motdObject.SetActive(false);
+
+                        motdText.GetComponent<PlayFabTitleDataTextDisplay>().enabled = false;
+                    }
+
+                    TextMeshPro motdTextB = motdText.GetComponent<TextMeshPro>();
+                    if (!udTMP.Contains(motdTextB))
+                        udTMP.Add(motdTextB);
+
+                    motdTextB.richText = true;
+                    motdTextB.fontSize = 100;
+                    motdTextB.color = titleColor;
+
+                    if (fullModAmount < 0)
+                    {
+                        fullModAmount = 0;
+                        foreach (ButtonInfo[] buttons in Buttons.buttons)
+                            fullModAmount += buttons.Length;
+                    }
+
+                    motdTextB.text = string.Format(motdTemplate, PluginInfo.Version, fullModAmount);
+
+                    if (translate)
+                        motdTextB.text = TranslateText(motdTextB.text);
+
+                    if (lowercaseMode)
+                        motdTextB.text = motdTextB.text.ToLower();
+
+                    if (uppercaseMode)
+                        motdTextB.text = motdTextB.text.ToUpper();
+                } catch { }
+
+                try
+                {
+                    Color targetColor = titleColor;
+
+                    if (disableBoardColor || disableBoardTextColor)
+                        targetColor = Color.white;
+
+                    foreach (TextMeshPro txt in udTMP)
+                        txt.color = targetColor;
+                } catch { }
+                #endregion
+
+                #region PC Search Keyboard
+                if (isSearching)
+                {
+                    List<KeyCode> keysPressed = new List<KeyCode>();
+                    foreach (KeyCode keyCode in allowedKeys)
+                    {
+                        if (UnityInput.Current.GetKey(keyCode))
                         {
-                            if (UnityInput.Current.GetKey(keyCode))
+                            keysPressed.Add(keyCode);
+
+                            if (!lastPressedKeys.Contains(keyCode))
                             {
-                                keysPressed.Add(keyCode);
-
-                                if (!lastPressedKeys.Contains(keyCode))
+                                if (UnityInput.Current.GetKey(KeyCode.LeftControl))
                                 {
-                                    if (UnityInput.Current.GetKey(KeyCode.LeftControl))
+                                    switch (keyCode)
                                     {
-                                        switch (keyCode)
-                                        {
-                                            case KeyCode.A:
-                                                searchText = "";
-                                                break;
-                                            case KeyCode.C:
-                                                GUIUtility.systemCopyBuffer = searchText;
-                                                break;
-                                            case KeyCode.V:
-                                                searchText = GUIUtility.systemCopyBuffer;
-                                                break;
-                                            case KeyCode.Backspace:
-                                                if (searchText.Length > 0)
-                                                    searchText = string.Join(" ", searchText.Split(' ').SkipLast(1));
-                                                break;
-                                        }
-                                    } else
+                                        case KeyCode.A:
+                                            searchText = "";
+                                            break;
+                                        case KeyCode.C:
+                                            GUIUtility.systemCopyBuffer = searchText;
+                                            break;
+                                        case KeyCode.V:
+                                            searchText = GUIUtility.systemCopyBuffer;
+                                            break;
+                                        case KeyCode.Backspace:
+                                            if (searchText.Length > 0)
+                                                searchText = string.Join(" ", searchText.Split(' ').SkipLast(1));
+                                            break;
+                                    }
+                                } else
+                                {
+                                    switch (keyCode)
                                     {
-                                        switch (keyCode)
-                                        {
-                                            case KeyCode.Space:
-                                                searchText += " ";
-                                                break;
-                                            case KeyCode.Backspace:
-                                                if (searchText.Length > 0)
-                                                    searchText = searchText[..^1];
-                                                break;
-                                            case KeyCode.Escape:
-                                                Toggle("Search");
-                                                break;
-                                            case KeyCode.Return:
-                                                List<ButtonInfo> searchedMods = new List<ButtonInfo> { };
-                                                if (nonGlobalSearch && currentCategoryName != "Main")
+                                        case KeyCode.Space:
+                                            searchText += " ";
+                                            break;
+                                        case KeyCode.Backspace:
+                                            if (searchText.Length > 0)
+                                                searchText = searchText[..^1];
+                                            break;
+                                        case KeyCode.Escape:
+                                            Toggle("Search");
+                                            break;
+                                        case KeyCode.Return:
+                                            List<ButtonInfo> searchedMods = new List<ButtonInfo> { };
+                                            if (nonGlobalSearch && currentCategoryName != "Main")
+                                            {
+                                                foreach (ButtonInfo v in Buttons.buttons[currentCategoryIndex])
                                                 {
-                                                    foreach (ButtonInfo v in Buttons.buttons[currentCategoryIndex])
+                                                    try
+                                                    {
+                                                        string buttonText = v.buttonText;
+                                                        if (v.overlapText != null)
+                                                            buttonText = v.overlapText;
+
+                                                        if (buttonText.Replace(" ", "").ToLower().Contains(searchText.Replace(" ", "").ToLower()))
+                                                            searchedMods.Add(v);
+                                                    }
+                                                    catch { }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                foreach (ButtonInfo[] buttonlist in Buttons.buttons)
+                                                {
+                                                    foreach (ButtonInfo v in buttonlist)
                                                     {
                                                         try
                                                         {
@@ -573,875 +498,873 @@ namespace iiMenu.Menu
                                                         catch { }
                                                     }
                                                 }
-                                                else
-                                                {
-                                                    foreach (ButtonInfo[] buttonlist in Buttons.buttons)
-                                                    {
-                                                        foreach (ButtonInfo v in buttonlist)
-                                                        {
-                                                            try
-                                                            {
-                                                                string buttonText = v.buttonText;
-                                                                if (v.overlapText != null)
-                                                                    buttonText = v.overlapText;
+                                            }
 
-                                                                if (buttonText.Replace(" ", "").ToLower().Contains(searchText.Replace(" ", "").ToLower()))
-                                                                    searchedMods.Add(v);
-                                                            }
-                                                            catch { }
-                                                        }
-                                                    }
-                                                }
-
-                                                ButtonInfo[] buttons = StringsToInfos(Alphabetize(InfosToStrings(searchedMods.ToArray())));
-                                                Toggle(buttons[0].buttonText);
-                                                break;
-                                            default:
-                                                searchText += 
-                                                    UnityInput.Current.GetKey(KeyCode.LeftShift) || UnityInput.Current.GetKey(KeyCode.RightShift) ? 
-                                                    keyCode.ToString().Capitalize() : keyCode.ToString().ToLower();
-                                                break;
-                                        }
+                                            ButtonInfo[] buttons = StringsToInfos(Alphabetize(InfosToStrings(searchedMods.ToArray())));
+                                            Toggle(buttons[0].buttonText);
+                                            break;
+                                        default:
+                                            searchText += 
+                                                UnityInput.Current.GetKey(KeyCode.LeftShift) || UnityInput.Current.GetKey(KeyCode.RightShift) ? 
+                                                keyCode.ToString().Capitalize() : keyCode.ToString().ToLower();
+                                            break;
                                     }
-
-                                    VRRig.LocalRig.PlayHandTapLocal(66, false, buttonClickVolume / 10f);
-                                    pageNumber = 0;
-                                    ReloadMenu();
-                                }
-                            }
-                        }
-
-                        lastPressedKeys = keysPressed;
-                    }
-
-                    if (Settings.TutorialObject != null)
-                        Settings.UpdateTutorial();
-
-                    // Get the camera (compatible with Yizzi)
-                    try
-                    {
-                        if (TPC == null)
-                        {
-                            try
-                            {
-                                TPC = GetObject("Player Objects/Third Person Camera/Shoulder Camera").GetComponent<Camera>();
-                            }
-                            catch
-                            {
-                                TPC = GetObject("Shoulder Camera").GetComponent<Camera>();
-                            }
-                        }
-                    } catch { }
-
-                    playTime += Time.unscaledDeltaTime;
-
-                    // FPS counter
-                    if (Time.time > fpsAvgTime || !fpsCountTimed)
-                    {
-                        lastDeltaTime = Mathf.Ceil(1f / Time.unscaledDeltaTime);
-                        fpsAvgTime = Time.time + 1f;
-                    }
-
-                    if (fpsCount != null)
-                    {
-                        string textToSet = $"FPS: {lastDeltaTime}";
-                        if (hidetitle && !noPageNumber) textToSet += "      ";
-                        if (disableFpsCounter) textToSet = "";
-                        if (hidetitle && !noPageNumber) textToSet += "Page " + (pageNumber + 1).ToString();
-
-                        fpsCount.text = textToSet;
-                        if (lowercaseMode)
-                            fpsCount.text = fpsCount.text.ToLower();
-
-                        if (uppercaseMode)
-                            fpsCount.text = fpsCount.text.ToUpper();
-                    }
-
-                    // Title animation
-                    if (animatedTitle && title != null)
-                    {
-                        string targetString = doCustomName ? NoRichtextTags(customMenuName) : "ii's Stupid Menu";
-                        int length = (int)Mathf.PingPong(Time.time / 0.25f, targetString.Length);
-                        if (length > 0)
-                            title.text = targetString[..length];
-                        else
-                            title.text = "";
-                    }
-
-                    // Title gradient
-                    if (gradientTitle && title != null)
-                        title.text = RichtextGradient(NoRichtextTags(title.text),
-                            new GradientColorKey[]
-                            {
-                                new GradientColorKey(BrightenColor(buttonDefaultA), 0f),
-                                new GradientColorKey(BrightenColor(buttonDefaultA, 0.95f), 0.5f),
-                                new GradientColorKey(BrightenColor(buttonDefaultA), 1f)
-                            });
-
-                    // Search text flashing cursor
-                    if (searchTextObject != null)
-                    {
-                        searchTextObject.text = searchText + (((Time.frameCount / 45) % 2) == 0 ? "|" : " ");
-
-                        if (lowercaseMode)
-                            searchTextObject.text = searchTextObject.text.ToLower();
-
-                        if (uppercaseMode)
-                            searchTextObject.text = searchTextObject.text.ToUpper();
-                    }
-
-                    // Fix for disorganized
-                    if (disorganized && currentCategoryName != "Main")
-                    {
-                        currentCategoryName = "Main";
-                        ReloadMenu();
-                    }
-
-                    // Fix for longmenu
-                    if (longmenu && pageNumber != 0)
-                    {
-                        pageNumber = 0;
-                        ReloadMenu();
-                    }
-
-                    // Master client notification
-                    try
-                    {
-                        if (PhotonNetwork.InRoom)
-                        {
-                            if (!disableMasterClientNotifications)
-                                if (PhotonNetwork.IsMasterClient && !lastMasterClient)
-                                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>MASTER</color><color=grey>]</color> You are now master client.");
-
-                            lastMasterClient = PhotonNetwork.IsMasterClient;
-                        }
-                    }
-                    catch { }
-
-                    if (PhotonNetwork.InRoom && PhotonNetwork.IsMasterClient)
-                        GetIndex("MasterLabel").overlapText = "You are master client.";
-                    else
-                        GetIndex("MasterLabel").overlapText = "You are not master client.";
-
-                    // Load preferences if failed
-                    try
-                    {
-                        if (!hasLoadedPreferences && Time.time > loadPreferencesTime + 5f)
-                        {
-                            loadPreferencesTime = Time.time;
-
-                            try {
-                                LogManager.Log("Loading preferences due to load errors");
-                                Settings.LoadPreferences();
-                            } catch
-                            {
-                                LogManager.Log("Could not load preferences");
-                            }
-                        }
-                    } catch { }
-
-                    try
-                    {
-                        if (Time.time > autoSaveDelay && !Lockdown)
-                        {
-                            autoSaveDelay = Time.time + 60f;
-                            Settings.SavePreferences();
-                            LogManager.Log("Automatically saved preferences");
-
-                            if (BackupPreferences)
-                            {
-                                if (PreferenceBackupCount >= 5)
-                                {
-                                    File.WriteAllText($"{PluginInfo.BaseDirectory}/Backups/{ISO8601().Replace(":", ".")}.txt", Settings.SavePreferencesToText());
-                                    PreferenceBackupCount = 0;
                                 }
 
-                                PreferenceBackupCount++;
+                                VRRig.LocalRig.PlayHandTapLocal(66, false, buttonClickVolume / 10f);
+                                pageNumber = 0;
+                                ReloadMenu();
                             }
                         }
                     }
-                    catch { }
 
-                    // Remove physical menu reference if too far away
-                    if (physicalMenu && menu != null)
+                    lastPressedKeys = keysPressed;
+                }
+                #endregion
+
+                #region Get Camera
+                try
+                {
+                    if (TPC == null)
                     {
                         try
                         {
-                            if (Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, menu.transform.position) < 1.5f)
+                            TPC = GetObject("Player Objects/Third Person Camera/Shoulder Camera").GetComponent<Camera>();
+                        }
+                        catch
+                        {
+                            TPC = GetObject("Shoulder Camera").GetComponent<Camera>();
+                        }
+                    }
+                } catch { }
+                #endregion
+
+                #region Menu Animations
+                if (Time.time > fpsAvgTime || !fpsCountTimed)
+                {
+                    lastDeltaTime = Mathf.Ceil(1f / Time.unscaledDeltaTime);
+                    fpsAvgTime = Time.time + 1f;
+                }
+
+                if (fpsCount != null)
+                {
+                    string textToSet = $"FPS: {lastDeltaTime}";
+                    if (hidetitle && !noPageNumber) textToSet += "      ";
+                    if (disableFpsCounter) textToSet = "";
+                    if (hidetitle && !noPageNumber) textToSet += "Page " + (pageNumber + 1).ToString();
+
+                    fpsCount.text = textToSet;
+                    if (lowercaseMode)
+                        fpsCount.text = fpsCount.text.ToLower();
+
+                    if (uppercaseMode)
+                        fpsCount.text = fpsCount.text.ToUpper();
+                }
+
+                if (animatedTitle && title != null)
+                {
+                    string targetString = doCustomName ? NoRichtextTags(customMenuName) : "ii's Stupid Menu";
+                    int length = (int)Mathf.PingPong(Time.time / 0.25f, targetString.Length);
+                    if (length > 0)
+                        title.text = targetString[..length];
+                    else
+                        title.text = "";
+                }
+
+                if (gradientTitle && title != null)
+                    title.text = RichtextGradient(NoRichtextTags(title.text),
+                        new GradientColorKey[]
+                        {
+                            new GradientColorKey(BrightenColor(buttonDefaultA), 0f),
+                            new GradientColorKey(BrightenColor(buttonDefaultA, 0.95f), 0.5f),
+                            new GradientColorKey(BrightenColor(buttonDefaultA), 1f)
+                        });
+
+                if (searchTextObject != null)
+                {
+                    searchTextObject.text = searchText + (((Time.frameCount / 45) % 2) == 0 ? "|" : " ");
+
+                    if (lowercaseMode)
+                        searchTextObject.text = searchTextObject.text.ToLower();
+
+                    if (uppercaseMode)
+                        searchTextObject.text = searchTextObject.text.ToUpper();
+                }
+                #endregion
+
+                #region Menu Features
+                // Fix for disorganized menu
+                if (disorganized && currentCategoryName != "Main")
+                {
+                    currentCategoryName = "Main";
+                    ReloadMenu();
+                }
+
+                // Fix for long menu
+                if (longmenu && pageNumber != 0)
+                {
+                    pageNumber = 0;
+                    ReloadMenu();
+                }
+
+                // Remove physical menu reference if too far away
+                if (physicalMenu && menu != null)
+                {
+                    try
+                    {
+                        if (Vector3.Distance(GorillaTagger.Instance.bodyCollider.transform.position, menu.transform.position) < 1.5f)
+                        {
+                            if (reference == null)
+                                CreateReference();
+                        }
+                        else
+                        {
+                            if (reference != null)
                             {
-                                if (reference == null)
-                                    CreateReference();
-                            } else
+                                Destroy(reference);
+                                reference = null;
+                            }
+                        }
+                    }
+                    catch { }
+                }
+
+                // Bad apple theme
+                if (themeType == 63)
+                {
+                    if (menu != null)
+                    {
+                        badAppleTime += Time.deltaTime;
+                        badAppleTime %= 203f;
+                    }
+
+                    if (videoPlayer != null)
+                    {
+                        if (videoPlayer.isPlaying && menu == null)
+                            videoPlayer.Stop();
+
+                        if (!videoPlayer.isPlaying && menu != null)
+                            videoPlayer.Play();
+                    }
+                }
+                else
+                {
+                    if (videoPlayer != null)
+                    {
+                        Destroy(videoPlayer.gameObject);
+                        videoPlayer = null;
+                    }
+                }
+
+                // Gun sounds
+                try
+                {
+                    if (GunSounds)
+                    {
+                        if (GunSpawned)
+                        {
+                            if (!lastGunSpawned)
                             {
-                                if (reference != null)
+                                AudioSource audioSource = SwapGunHand ? VRRig.LocalRig.leftHandPlayer : VRRig.LocalRig.rightHandPlayer;
+                                audioSource.volume = buttonClickVolume / 10f;
+                                audioSource.PlayOneShot(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/grip-press.wav", "grip-press.wav"));
+                            }
+
+                            if (GetGunInput(true) && (!lastGunTrigger || (audiomgrhand != null && !audiomgrhand.GetComponent<AudioSource>().isPlaying)))
+                            {
+                                AudioSource audioSource = SwapGunHand ? VRRig.LocalRig.leftHandPlayer : VRRig.LocalRig.rightHandPlayer;
+                                audioSource.volume = buttonClickVolume / 10f;
+                                audioSource.PlayOneShot(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/trigger-press.wav", "trigger-press.wav"));
+
+                                PlayHandAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/trigger-hold.wav", "trigger-hold.wav"), buttonClickVolume / 10f, SwapGunHand);
+                            }
+
+                            if (!GetGunInput(true) && lastGunTrigger)
+                            {
+                                AudioSource audioSource = SwapGunHand ? VRRig.LocalRig.leftHandPlayer : VRRig.LocalRig.rightHandPlayer;
+                                audioSource.volume = buttonClickVolume / 10f;
+                                audioSource.PlayOneShot(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/trigger-release.wav", "trigger-release.wav"));
+
+                                audiomgrhand?.GetComponent<AudioSource>().Stop();
+                            }
+                        }
+                        else
+                        {
+                            if (lastGunSpawned)
+                            {
+                                AudioSource audioSource = SwapGunHand ? VRRig.LocalRig.leftHandPlayer : VRRig.LocalRig.rightHandPlayer;
+                                audioSource.volume = buttonClickVolume / 10f;
+                                audioSource.PlayOneShot(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/grip-release.wav", "grip-release.wav"));
+                            }
+
+                            if (audiomgrhand != null && audiomgrhand.GetComponent<AudioSource>().isPlaying)
+                            {
+                                audiomgrhand.GetComponent<AudioSource>().Stop();
+
+                                AudioSource audioSource = SwapGunHand ? VRRig.LocalRig.leftHandPlayer : VRRig.LocalRig.rightHandPlayer;
+                                audioSource.volume = buttonClickVolume / 10f;
+                                audioSource.PlayOneShot(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/trigger-release.wav", "trigger-release.wav"));
+                            }
+                        }
+
+                        lastGunSpawned = GunSpawned;
+                        lastGunTrigger = GetGunInput(true);
+                    }
+                }
+                catch { }
+
+                GunSpawned = false;
+
+                if (annoyingMode)
+                {
+                    OrangeUI.color = new Color32(226, 74, 44, 255);
+                    int randy = UnityEngine.Random.Range(1, 400);
+                    if (randy == 21)
+                    {
+                        VRRig.LocalRig.PlayHandTapLocal(84, true, 0.4f);
+                        VRRig.LocalRig.PlayHandTapLocal(84, false, 0.4f);
+                        NotifiLib.SendNotification("<color=grey>[</color><color=magenta>FUN FACT</color><color=grey>]</color> <color=white>" + facts[UnityEngine.Random.Range(0, facts.Length - 1)] + "</color>");
+                    }
+                }
+
+                // Master client notification
+                try
+                {
+                    if (PhotonNetwork.InRoom)
+                    {
+                        if (!disableMasterClientNotifications)
+                            if (PhotonNetwork.IsMasterClient && !lastMasterClient)
+                                NotifiLib.SendNotification("<color=grey>[</color><color=purple>MASTER</color><color=grey>]</color> You are now master client.");
+
+                        lastMasterClient = PhotonNetwork.IsMasterClient;
+                    }
+                }
+                catch { }
+
+                if (PhotonNetwork.InRoom && PhotonNetwork.IsMasterClient)
+                    GetIndex("MasterLabel").overlapText = "You are master client.";
+                else
+                    GetIndex("MasterLabel").overlapText = "You are not master client.";
+
+                // Party kick code (to return back to the main lobby when you're done)
+                if (PhotonNetwork.InRoom)
+                {
+                    if (phaseTwo)
+                    {
+                        partyLastCode = null;
+                        phaseTwo = false;
+                        NotifiLib.ClearAllNotifications();
+                        NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Successfully " + (waitForPlayerJoin ? "banned" : "kicked") + " " + amountPartying.ToString() + " party member!</color>");
+                        FriendshipGroupDetection.Instance.LeaveParty();
+                    }
+                    else
+                    {
+                        if (partyLastCode != null && Time.time > partyTime && (!waitForPlayerJoin || PhotonNetwork.PlayerListOthers.Length > 0))
+                        {
+                            LogManager.Log("Attempting rejoin");
+                            NetworkSystem.Instance.ReturnToSinglePlayer();
+                            phaseTwo = true;
+                        }
+                    }
+                }
+                else
+                {
+                    if (phaseTwo)
+                    {
+                        if (partyLastCode != null && Time.time > partyTime && (!waitForPlayerJoin || PhotonNetwork.PlayerListOthers.Length > 0))
+                        {
+                            LogManager.Log("Attempting rejoin");
+                            PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(partyLastCode, GorillaNetworking.JoinType.Solo);
+                            partyTime = Time.time + Important.reconnectDelay;
+                        }
+                    }
+                }
+
+                // Recover from playing sound on soundboard code
+                try
+                {
+                    if (Sound.AudioIsPlaying)
+                    {
+                        if (Time.time > Sound.RecoverTime)
+                            Sound.FixMicrophone();
+                    }
+                }
+                catch { }
+                #endregion
+
+                #region Preferences
+                try
+                {
+                    if (!hasLoadedPreferences && Time.time > loadPreferencesTime + 5f)
+                    {
+                        loadPreferencesTime = Time.time;
+
+                        try {
+                            LogManager.Log("Loading preferences due to load errors");
+                            Settings.LoadPreferences();
+                        } catch
+                        {
+                            LogManager.Log("Could not load preferences");
+                        }
+                    }
+                } catch { }
+
+                try
+                {
+                    if (Time.time > autoSaveDelay && !Lockdown)
+                    {
+                        autoSaveDelay = Time.time + 60f;
+                        Settings.SavePreferences();
+                        LogManager.Log("Automatically saved preferences");
+
+                        if (BackupPreferences)
+                        {
+                            if (PreferenceBackupCount >= 5)
+                            {
+                                File.WriteAllText($"{PluginInfo.BaseDirectory}/Backups/{ISO8601().Replace(":", ".")}.txt", Settings.SavePreferencesToText());
+                                PreferenceBackupCount = 0;
+                            }
+
+                            PreferenceBackupCount++;
+                        }
+                    }
+                }
+                catch { }
+                #endregion
+
+                #region Ghostview
+                try
+                {
+                    if (!legacyGhostview && GhostRig == null)
+                    {
+                        GhostRig = Instantiate(VRRig.LocalRig, GTPlayer.Instance.transform.position, GTPlayer.Instance.transform.rotation);
+                        GhostRig.headBodyOffset = Vector3.zero;
+
+                        GhostRig.transform.Find("VR Constraints/LeftArm/Left Arm IK/SlideAudio").gameObject.SetActive(false);
+                        GhostRig.transform.Find("VR Constraints/RightArm/Right Arm IK/SlideAudio").gameObject.SetActive(false);
+                        GhostRig.transform.Find("RigAnchor/rig/bodySlideAudio").gameObject.SetActive(false);
+                        GhostRig.GetComponent<OwnershipGaurd>().enabled = false; 
+                            
+                        Visuals.FixRigMaterialESPColors(GhostRig);
+                            
+                        GhostRig.mainSkin.enabled = false;
+                        GhostRig.enabled = false;
+                        GhostRig.transform.position = new Vector3(99999f, 99999f, 99999f);
+                    }
+
+                    if (GhostMaterial == null)
+                        GhostMaterial = new Material(Shader.Find("GUI/Text Shader"));
+
+                    if (legacyGhostViewLeft == null)
+                    {
+                        legacyGhostViewLeft = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                        Destroy(legacyGhostViewLeft.GetComponent<SphereCollider>());
+
+                        legacyGhostViewLeft.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                    }
+
+                    if (legacyGhostViewRight == null)
+                    {
+                        legacyGhostViewRight = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                        Destroy(legacyGhostViewRight.GetComponent<SphereCollider>());
+
+                        legacyGhostViewRight.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                    }
+
+                    if ((!VRRig.LocalRig.enabled || ghostException) && !disableGhostview)
+                    {
+                        Color color = GetIndex("Swap Ghostview Colors").enabled ? GetBDColor(0f) : GetBGColor(0f);
+
+                        if (legacyGhostview)
+                        {
+                            if (GhostRig.enabled)
+                            {
+                                GhostRig.mainSkin.enabled = false;
+                                GhostRig.enabled = false;
+                                GhostRig.transform.position = new Vector3(99999f, 99999f, 99999f);
+                            }
+
+                            legacyGhostViewLeft.SetActive(true);
+                            legacyGhostViewLeft.transform.position = TrueLeftHand().position;
+                            legacyGhostViewLeft.GetComponent<Renderer>().material.color = color;
+
+                            legacyGhostViewRight.SetActive(true);
+                            legacyGhostViewRight.transform.position = TrueRightHand().position;
+                            legacyGhostViewRight.GetComponent<Renderer>().material.color = color;
+                        }
+                        else
+                        {
+                            GhostRig.enabled = true;
+                            GhostRig.mainSkin.enabled = true;
+
+                            Color ghm = color;
+                            ghm.a = 0.5f;
+
+                            GhostMaterial.color = ghm;
+                            GhostRig.mainSkin.material = GhostMaterial;
+                        }
+                    }
+                    else
+                    {
+                        GhostRig.mainSkin.enabled = false;
+                        GhostRig.enabled = false;
+                        GhostRig.transform.position = new Vector3(99999f, 99999f, 99999f);
+
+                        legacyGhostViewLeft.SetActive(false);
+
+                        legacyGhostViewRight.SetActive(false);
+                    }
+                }
+                catch { }
+                #endregion
+
+                #region Miscellaneous
+                hasRemovedThisFrame = false;
+
+                playTime += Time.unscaledDeltaTime;
+
+                if (Settings.TutorialObject != null)
+                    Settings.UpdateTutorial();
+
+                try
+                {
+                    if (PhotonNetwork.InRoom)
+                    {
+                        foreach (string id in muteIDs)
+                        {
+                            if (!mutedIDs.Contains(id))
+                            {
+                                string randomName = "gorilla";
+                                for (var i = 0; i < 4; i++)
+                                    randomName += UnityEngine.Random.Range(0, 9).ToString();
+
+                                object[] content = new object[] {
+                                    id,
+                                    true,
+                                    randomName,
+                                    NetworkSystem.Instance.LocalPlayer.NickName,
+                                    true,
+                                    NetworkSystem.Instance.RoomStringStripped()
+                                };
+
+                                PhotonNetwork.RaiseEvent(51, content, new RaiseEventOptions
                                 {
-                                    Destroy(reference);
-                                    reference = null;
+                                    TargetActors = new int[] { -1 },
+                                    Receivers = ReceiverGroup.All,
+                                    Flags = new WebFlags(1)
+                                }, SendOptions.SendReliable);
+
+                                mutedIDs.Add(id);
+                            }
+                        }
+                    }
+                }
+                catch { }
+
+                if (ServerPos == Vector3.zero)
+                    ServerPos = ServerSyncPos;
+                else
+                    ServerPos = Vector3.Lerp(ServerPos, VRRig.LocalRig.SanitizeVector3(ServerSyncPos), VRRig.LocalRig.lerpValueBody * 0.66f);
+
+                if (ServerLeftHandPos == Vector3.zero)
+                    ServerLeftHandPos = ServerSyncLeftHandPos;
+                else
+                    ServerLeftHandPos = Vector3.Lerp(ServerLeftHandPos, VRRig.LocalRig.SanitizeVector3(ServerSyncLeftHandPos), VRRig.LocalRig.lerpValueBody);
+
+                if (ServerRightHandPos == Vector3.zero)
+                    ServerRightHandPos = ServerSyncRightHandPos;
+                else
+                    ServerRightHandPos = Vector3.Lerp(ServerRightHandPos, VRRig.LocalRig.SanitizeVector3(ServerSyncRightHandPos), VRRig.LocalRig.lerpValueBody);
+                #endregion
+
+                shouldBePC = UnityInput.Current.GetKey(KeyCode.E) 
+                            || UnityInput.Current.GetKey(KeyCode.R)
+                            || UnityInput.Current.GetKey(KeyCode.F)
+                            || UnityInput.Current.GetKey(KeyCode.G)
+                            || UnityInput.Current.GetKey(KeyCode.LeftBracket)
+                            || UnityInput.Current.GetKey(KeyCode.RightBracket)
+                            || UnityInput.Current.GetKey(KeyCode.Minus)
+                            || UnityInput.Current.GetKey(KeyCode.Equals)
+                            || Mouse.current.leftButton.isPressed
+                            || Mouse.current.rightButton.isPressed;
+
+                #region Menu Navigation Features
+                if (menu != null)
+                {
+                    if (pageButtonType == 3 || pageButtonType == 4)
+                    {
+                        bool previousButton = pageButtonType == 3 ? leftGrab : leftTrigger > 0.5f;
+                        bool nextButton = pageButtonType == 3 ? leftGrab : leftTrigger > 0.5f;
+
+                        if (Time.time > pageButtonChangeDelay)
+                        {
+                            if (previousButton)
+                            {
+                                pageButtonChangeDelay = Time.time + 0.2f;
+                                PlayButtonSound("PreviousPage", true, true);
+                                Toggle("PreviousPage");
+                            }
+
+                            if (nextButton)
+                            {
+                                pageButtonChangeDelay = Time.time + 0.2f;
+                                PlayButtonSound("NextPage", true, false);
+                                Toggle("NextPage");
+                            }
+                        }
+
+                        if (!previousButton && !nextButton)
+                            pageButtonChangeDelay = -1f;
+
+                        lastPrevious = previousButton;
+                        lastNext = nextButton;
+                    }
+                }
+
+                try
+                {
+                    if (joystickMenu && joystickOpen)
+                    {
+                        Vector2 js = leftJoystick;
+                        if (Time.time > joystickDelay)
+                        {
+                            if (js.x > 0.5f)
+                            {
+                                if (dynamicSounds)
+                                    Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/next.wav", "next.wav"), buttonClickVolume / 10f);
+
+                                Toggle("NextPage");
+                                joystickDelay = Time.time + 0.2f;
+                            }
+                            if (js.x < -0.5f)
+                            {
+                                if (dynamicSounds)
+                                    Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/prev.wav", "prev.wav"), buttonClickVolume / 10f);
+
+                                Toggle("PreviousPage");
+                                joystickDelay = Time.time + 0.2f;
+                            }
+
+                            if (js.y > 0.5f)
+                            {
+                                if (dynamicSounds)
+                                    Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/open.wav", "up.wav"), buttonClickVolume / 10f);
+
+                                joystickButtonSelected--;
+                                if (joystickButtonSelected < 0)
+                                    joystickButtonSelected = pageSize - 1;
+
+                                ReloadMenu();
+                                joystickDelay = Time.time + 0.2f;
+                            }
+                            if (js.y < -0.5f)
+                            {
+                                if (dynamicSounds)
+                                    Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/close.wav", "down.wav"), buttonClickVolume / 10f);
+
+                                joystickButtonSelected++;
+                                joystickButtonSelected %= pageSize;
+
+                                ReloadMenu();
+                                joystickDelay = Time.time + 0.2f;
+                            }
+
+                            if (leftJoystickClick)
+                            {
+                                if (dynamicSounds)
+                                    Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/select.wav", "select.wav"), buttonClickVolume / 10f);
+
+                                Toggle(joystickSelectedButton, true);
+                                ReloadMenu();
+                                joystickDelay = Time.time + 0.2f;
+                            }
+                        }
+                    }
+                } catch { }
+
+                try
+                {
+                    if (watchMenu)
+                    {
+                        watchShell.GetComponent<Renderer>().material = OrangeUI;
+                        ButtonInfo[] toSortOf = Buttons.buttons[currentCategoryIndex];
+
+                        if (currentCategoryName == "Favorite Mods")
+                            toSortOf = StringsToInfos(favorites.ToArray());
+
+                        if (currentCategoryName == "Enabled Mods")
+                        {
+                            List<ButtonInfo> enabledMods = new List<ButtonInfo>() { };
+                            int categoryIndex = 0;
+                            foreach (ButtonInfo[] buttonlist in Buttons.buttons)
+                            {
+                                foreach (ButtonInfo v in buttonlist)
+                                {
+                                    if (v.enabled && (!hideSettings || !Buttons.categoryNames[categoryIndex].Contains("Settings")))
+                                        enabledMods.Add(v);
+                                }
+                                categoryIndex++;
+                            }
+                            enabledMods = enabledMods.OrderBy(v => v.buttonText).ToList();
+                            enabledMods.Insert(0, GetIndex("Exit Enabled Mods"));
+                            toSortOf = enabledMods.ToArray();
+                        }
+
+                        Text watchTextText = watchText.GetComponent<Text>();
+
+                        watchTextText.text = toSortOf[watchMenuIndex].buttonText;
+                        if (toSortOf[watchMenuIndex].overlapText != null)
+                            watchTextText.text = toSortOf[watchMenuIndex].overlapText;
+
+                        watchTextText.text += $"\n<color=grey>[{(watchMenuIndex + 1)}/{toSortOf.Length}]\n{DateTime.Now:hh:mm tt}</color>";
+                        watchTextText.color = titleColor;
+
+                        if (lowercaseMode)
+                            watchTextText.text = watchTextText.text.ToLower();
+
+                        if (uppercaseMode)
+                            searchTextObject.text = searchTextObject.text.ToUpper();
+
+                        if (watchIndicatorMat == null)
+                            watchIndicatorMat = new Material(Shader.Find("GorillaTag/UberShader"));
+
+                        watchIndicatorMat.color = toSortOf[watchMenuIndex].enabled ? GetBDColor(0f) : GetBRColor(0f);
+                        watchEnabledIndicator.GetComponent<Image>().material = watchIndicatorMat;
+
+                        Vector2 js = rightHand ? rightJoystick : leftJoystick;
+                        if (Time.time > wristMenuDelay)
+                        {
+                            if (js.x > 0.5f || (rightHand ? (js.y < -0.5f) : (js.y > 0.5f)))
+                            {
+                                watchMenuIndex++;
+                                if (watchMenuIndex > toSortOf.Length - 1)
+                                    watchMenuIndex = 0;
+
+                                wristMenuDelay = Time.time + 0.2f;
+                            }
+                            if (js.x < -0.5f || (rightHand ? (js.y > 0.5f) : (js.y < -0.5f)))
+                            {
+                                watchMenuIndex--;
+                                if (watchMenuIndex < 0)
+                                    watchMenuIndex = toSortOf.Length - 1;
+
+                                wristMenuDelay = Time.time + 0.2f;
+                            }
+                            if (rightHand ? rightJoystickClick : leftJoystickClick)
+                            {
+                                int archive = currentCategoryIndex;
+                                Toggle(toSortOf[watchMenuIndex].buttonText, true);
+                                if (currentCategoryIndex != archive)
+                                    watchMenuIndex = 0;
+
+                                wristMenuDelay = Time.time + 0.2f;
+                            }
+                        }
+                    }
+                } catch { }
+                #endregion
+
+                #region Mod Bindings
+                try
+                {
+                    // Custom mod binds
+                    Dictionary<string, bool> Inputs = new Dictionary<string, bool>
+                    {
+                        { "A", rightPrimary },
+                        { "B", rightSecondary },
+                        { "X", leftPrimary },
+                        { "Y", leftSecondary },
+                        { "LG", leftGrab },
+                        { "RG", rightGrab },
+                        { "LT", leftTrigger > 0.5f },
+                        { "RT", rightTrigger > 0.5f },
+                        { "LJ", leftJoystickClick },
+                        { "RJ", rightJoystickClick }
+                    };
+
+                    foreach (KeyValuePair<string, List<string>> Bind in ModBindings)
+                    {
+                        string BindInput = Bind.Key;
+                        List<string> BindedMods = Bind.Value;
+
+                        if (BindedMods.Count > 0)
+                        {
+                            bool BindValue = Inputs[BindInput];
+                            foreach (string ModName in BindedMods)
+                            {
+                                ButtonInfo Mod = GetIndex(ModName);
+                                if (Mod != null)
+                                {
+                                    Mod.customBind = BindInput;
+
+                                    if (ToggleBindings || !Mod.isTogglable)
+                                    {
+                                        if (BindValue && !BindStates[BindInput])
+                                            Toggle(ModName, true, true);
+                                    }
+
+                                    if (!ToggleBindings)
+                                    {
+                                        if ((BindValue && !Mod.enabled) || (!BindValue && Mod.enabled))
+                                            Toggle(ModName, true, true);
+                                    }
+                                }
+                            }
+
+                            BindStates[BindInput] = BindValue;
+                        }
+                    }
+                } catch { }
+                #endregion
+
+                #region Visual Clean Up
+                try
+                {
+                    Visuals.ClearLinePool();
+                    Visuals.ClearNameTagPool();
+
+                    if (GunPointer != null)
+                    {
+                        if (!GunPointer.activeSelf)
+                            Destroy(GunPointer);
+
+                        GunPointer.SetActive(false);
+                    }
+
+                    if (GunLine != null)
+                    {
+                        if (!GunLine.gameObject.activeSelf)
+                        {
+                            Destroy(GunLine.gameObject);
+                            GunLine = null;
+                        }
+
+                        GunLine.gameObject.SetActive(false);
+                    }
+
+                    List<(long, float)> toRemoveAura = new List<(long, float)> { };
+                    foreach (KeyValuePair<(long, float), GameObject> key in auraPool)
+                    {
+                        if (!key.Value.activeSelf)
+                        {
+                            toRemoveAura.Add(key.Key);
+                            Destroy(key.Value);
+                        }
+                        else
+                            key.Value.SetActive(false);
+                    }
+
+                    foreach ((long, float) item in toRemoveAura)
+                        auraPool.Remove(item);
+
+                    List<(Vector3, Quaternion, Vector3)> toRemoveCube = new List<(Vector3, Quaternion, Vector3)> { };
+                    foreach (KeyValuePair<(Vector3, Quaternion, Vector3), GameObject> key in cubePool)
+                    {
+                        if (!key.Value.activeSelf)
+                        {
+                            toRemoveCube.Add(key.Key);
+                            Destroy(key.Value);
+                        }
+                        else
+                            key.Value.SetActive(false);
+                    }
+
+                    foreach ((Vector3, Quaternion, Vector3) item in toRemoveCube)
+                        cubePool.Remove(item);
+
+                    List<string> toRemoveLabel = new List<string> { };
+                    foreach (KeyValuePair<string, GameObject> label in Visuals.labelDictionary)
+                    {
+                        if (!label.Value.activeSelf)
+                        {
+                            toRemoveLabel.Add(label.Key);
+                            Destroy(label.Value);
+                        }
+                        else
+                            label.Value.SetActive(false);
+                    }
+
+                    foreach (string item in toRemoveLabel)
+                        Visuals.labelDictionary.Remove(item);
+                } catch { }
+                #endregion
+
+                #region Execute Mods
+                // Plugins
+                foreach (KeyValuePair<string, Assembly> Plugin in Settings.LoadedPlugins)
+                {
+                    try
+                    {
+                        if (!Settings.disabledPlugins.Contains(Plugin.Key))
+                            PluginUpdate(Plugin.Value);
+                    }
+                    catch (Exception e) { LogManager.Log("Error with UPDATE plugin " + Plugin.Key + ": " + e.ToString()); }
+                }
+
+                // Menu
+                foreach (ButtonInfo[] buttonlist in Buttons.buttons)
+                {
+                    foreach (ButtonInfo v in buttonlist)
+                    {
+                        try
+                        {
+                            if (v.enabled)
+                            {
+                                bool _leftPrimary = leftPrimary;
+                                bool _leftSecondary = leftSecondary;
+                                bool _rightPrimary = rightPrimary;
+                                bool _rightSecondary = rightSecondary;
+                                bool _leftGrab = leftGrab;
+                                bool _rightGrab = rightGrab;
+                                float _leftTrigger = leftTrigger;
+                                float _rightTrigger = rightTrigger;
+                                bool _leftJoystickClick = leftJoystickClick;
+                                bool _rightJoystickClick = rightJoystickClick;
+
+                                if (OverwriteKeybinds && v.customBind != null)
+                                {
+                                    leftPrimary = true;
+                                    leftSecondary = true;
+                                    rightPrimary = true;
+                                    rightSecondary = true;
+                                    leftGrab = true;
+                                    rightGrab = true;
+                                    leftTrigger = 1f;
+                                    rightTrigger = 1f;
+                                    leftJoystickClick = true;
+                                    rightJoystickClick = true;
+                                }
+
+                                if (v.method != null)
+                                {
+                                    try
+                                    {
+                                        v.method.Invoke();
+                                    }
+                                    catch (Exception exc)
+                                    {
+                                        LogManager.LogError(string.Format("Error with mod method {0} at {1}: {2}", v.buttonText, exc.StackTrace, exc.Message));
+                                    }
+                                }
+
+                                if (OverwriteKeybinds && v.customBind != null)
+                                {
+                                    leftPrimary = _leftPrimary;
+                                    leftSecondary = _leftSecondary;
+                                    rightPrimary = _rightPrimary;
+                                    rightSecondary = _rightSecondary;
+                                    leftGrab = _leftGrab;
+                                    rightGrab = _rightGrab;
+                                    leftTrigger = _leftTrigger;
+                                    rightTrigger = _rightTrigger;
+                                    leftJoystickClick = _leftJoystickClick;
+                                    rightJoystickClick = _rightJoystickClick;
                                 }
                             }
                         } catch { }
                     }
-
-                    // Bad apple theme
-                    if (themeType == 63)
-                    {
-                        if (menu != null)
-                        {
-                            badAppleTime += Time.deltaTime;
-                            badAppleTime %= 203f;
-                        }
-                        
-                        if (videoPlayer != null)
-                        {
-                            if (videoPlayer.isPlaying && menu == null)
-                                videoPlayer.Stop();
-
-                            if (!videoPlayer.isPlaying && menu != null)
-                                videoPlayer.Play();
-                        }
-                    } else
-                    {
-                        if (videoPlayer != null)
-                        {
-                            Destroy(videoPlayer.gameObject);
-                            videoPlayer = null;
-                        }
-                    }
-
-                    // Gun sounds
-                    try
-                    {
-                        if (GunSounds)
-                        {
-                            if (GunSpawned)
-                            {
-                                if (!lastGunSpawned)
-                                {
-                                    AudioSource audioSource = SwapGunHand ? VRRig.LocalRig.leftHandPlayer : VRRig.LocalRig.rightHandPlayer;
-                                    audioSource.volume = buttonClickVolume / 10f;
-                                    audioSource.PlayOneShot(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/grip-press.wav", "grip-press.wav"));
-                                }
-
-                                if (GetGunInput(true) && (!lastGunTrigger || (audiomgrhand != null && !audiomgrhand.GetComponent<AudioSource>().isPlaying)))
-                                {
-                                    AudioSource audioSource = SwapGunHand ? VRRig.LocalRig.leftHandPlayer : VRRig.LocalRig.rightHandPlayer;
-                                    audioSource.volume = buttonClickVolume / 10f;
-                                    audioSource.PlayOneShot(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/trigger-press.wav", "trigger-press.wav"));
-
-                                    PlayHandAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/trigger-hold.wav", "trigger-hold.wav"), buttonClickVolume / 10f, SwapGunHand);
-                                }
-
-                                if (!GetGunInput(true) && lastGunTrigger)
-                                {
-                                    AudioSource audioSource = SwapGunHand ? VRRig.LocalRig.leftHandPlayer : VRRig.LocalRig.rightHandPlayer;
-                                    audioSource.volume = buttonClickVolume / 10f;
-                                    audioSource.PlayOneShot(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/trigger-release.wav", "trigger-release.wav"));
-
-                                    audiomgrhand?.GetComponent<AudioSource>().Stop();
-                                }
-                            } else
-                            {
-                                if (lastGunSpawned)
-                                {
-                                    AudioSource audioSource = SwapGunHand ? VRRig.LocalRig.leftHandPlayer : VRRig.LocalRig.rightHandPlayer;
-                                    audioSource.volume = buttonClickVolume / 10f;
-                                    audioSource.PlayOneShot(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/grip-release.wav", "grip-release.wav"));
-                                }
-
-                                if (audiomgrhand != null && audiomgrhand.GetComponent<AudioSource>().isPlaying)
-                                {
-                                    audiomgrhand.GetComponent<AudioSource>().Stop();
-
-                                    AudioSource audioSource = SwapGunHand ? VRRig.LocalRig.leftHandPlayer : VRRig.LocalRig.rightHandPlayer;
-                                    audioSource.volume = buttonClickVolume / 10f;
-                                    audioSource.PlayOneShot(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/trigger-release.wav", "trigger-release.wav"));
-                                }
-                            }
-
-                            lastGunSpawned = GunSpawned;
-                            lastGunTrigger = GetGunInput(true);
-                        }
-                    } catch { }
-
-                    GunSpawned = false;
-
-                    // Ghostview
-                    try
-                    {
-                        if (!legacyGhostview && GhostRig == null)
-                        {
-                            GhostRig = Instantiate(VRRig.LocalRig, GTPlayer.Instance.transform.position, GTPlayer.Instance.transform.rotation);
-                            GhostRig.headBodyOffset = Vector3.zero;
-
-                            GhostRig.transform.Find("VR Constraints/LeftArm/Left Arm IK/SlideAudio").gameObject.SetActive(false);
-                            GhostRig.transform.Find("VR Constraints/RightArm/Right Arm IK/SlideAudio").gameObject.SetActive(false);
-                            GhostRig.transform.Find("RigAnchor/rig/bodySlideAudio").gameObject.SetActive(false);
-                            GhostRig.GetComponent<OwnershipGaurd>().enabled = false; 
-                            
-                            Visuals.FixRigMaterialESPColors(GhostRig);
-                            
-                            GhostRig.mainSkin.enabled = false;
-                            GhostRig.enabled = false;
-                            GhostRig.transform.position = new Vector3(99999f, 99999f, 99999f);
-                        }
-
-                        if (GhostMaterial == null)
-                            GhostMaterial = new Material(Shader.Find("GUI/Text Shader"));
-
-                        if (legacyGhostViewLeft == null)
-                        {
-                            legacyGhostViewLeft = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                            Destroy(legacyGhostViewLeft.GetComponent<SphereCollider>());
-
-                            legacyGhostViewLeft.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-                        }
-
-                        if (legacyGhostViewRight == null)
-                        {
-                            legacyGhostViewRight = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                            Destroy(legacyGhostViewRight.GetComponent<SphereCollider>());
-
-                            legacyGhostViewRight.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-                        }
-
-                        if ((!VRRig.LocalRig.enabled || ghostException) && !disableGhostview)
-                        {
-                            Color color = GetIndex("Swap Ghostview Colors").enabled ? GetBDColor(0f) : GetBGColor(0f);
-
-                            if (legacyGhostview)
-                            {
-                                if (GhostRig.enabled)
-                                {
-                                    GhostRig.mainSkin.enabled = false;
-                                    GhostRig.enabled = false;
-                                    GhostRig.transform.position = new Vector3(99999f, 99999f, 99999f);
-                                }
-
-                                legacyGhostViewLeft.SetActive(true);
-                                legacyGhostViewLeft.transform.position = TrueLeftHand().position;
-                                legacyGhostViewLeft.GetComponent<Renderer>().material.color = color;
-
-                                legacyGhostViewRight.SetActive(true);
-                                legacyGhostViewRight.transform.position = TrueRightHand().position;
-                                legacyGhostViewRight.GetComponent<Renderer>().material.color = color;
-                            }
-                            else
-                            {
-                                GhostRig.enabled = true;
-                                GhostRig.mainSkin.enabled = true;
-
-                                Color ghm = color;
-                                ghm.a = 0.5f;
-
-                                GhostMaterial.color = ghm;
-                                GhostRig.mainSkin.material = GhostMaterial;
-                            }
-                        }
-                        else
-                        {
-                            GhostRig.mainSkin.enabled = false;
-                            GhostRig.enabled = false;
-                            GhostRig.transform.position = new Vector3(99999f, 99999f, 99999f);
-
-                            legacyGhostViewLeft.SetActive(false);
-
-                            legacyGhostViewRight.SetActive(false);
-                        }
-                    }
-                    catch { }
-
-                    try
-                    {
-                        if (PhotonNetwork.InRoom)
-                        {
-                            foreach (string id in muteIDs)
-                            {
-                                if (!mutedIDs.Contains(id))
-                                {
-                                    string randomName = "gorilla";
-                                    for (var i = 0; i < 4; i++)
-                                        randomName += UnityEngine.Random.Range(0, 9).ToString();
-
-                                    object[] content = new object[] {
-                                        id,
-                                        true,
-                                        randomName,
-                                        NetworkSystem.Instance.LocalPlayer.NickName,
-                                        true,
-                                        NetworkSystem.Instance.RoomStringStripped()
-                                    };
-
-                                    PhotonNetwork.RaiseEvent(51, content, new RaiseEventOptions
-                                    {
-                                        TargetActors = new int[] { -1 },
-                                        Receivers = ReceiverGroup.All,
-                                        Flags = new WebFlags(1)
-                                    }, SendOptions.SendReliable);
-
-                                    mutedIDs.Add(id);
-                                }
-                            }
-                        }
-                    }
-                    catch { }
-
-                    if (!HasLoaded)
-                    {
-                        HasLoaded = true;
-                        OnLaunch();
-                    }
-
-                    shouldBePC = UnityInput.Current.GetKey(KeyCode.E) 
-                              || UnityInput.Current.GetKey(KeyCode.R)
-                              || UnityInput.Current.GetKey(KeyCode.F)
-                              || UnityInput.Current.GetKey(KeyCode.G)
-                              || UnityInput.Current.GetKey(KeyCode.LeftBracket)
-                              || UnityInput.Current.GetKey(KeyCode.RightBracket)
-                              || UnityInput.Current.GetKey(KeyCode.Minus)
-                              || UnityInput.Current.GetKey(KeyCode.Equals)
-                              || Mouse.current.leftButton.isPressed
-                              || Mouse.current.rightButton.isPressed;
-
-                    if (menu != null)
-                    {
-                        if (pageButtonType == 3 || pageButtonType == 4)
-                        {
-                            bool previousButton = pageButtonType == 3 ? leftGrab : leftTrigger > 0.5f;
-                            bool nextButton = pageButtonType == 3 ? leftGrab : leftTrigger > 0.5f;
-
-                            if (Time.time > pageButtonChangeDelay)
-                            {
-                                if (previousButton)
-                                {
-                                    pageButtonChangeDelay = Time.time + 0.2f;
-                                    PlayButtonSound("PreviousPage", true, true);
-                                    Toggle("PreviousPage");
-                                }
-
-                                if (nextButton)
-                                {
-                                    pageButtonChangeDelay = Time.time + 0.2f;
-                                    PlayButtonSound("NextPage", true, false);
-                                    Toggle("NextPage");
-                                }
-                            }
-
-                            if (!previousButton && !nextButton)
-                                pageButtonChangeDelay = -1f;
-
-                            lastPrevious = previousButton;
-                            lastNext = nextButton;
-                        }
-                    }
-
-                    try
-                    {
-                        if (joystickMenu && joystickOpen)
-                        {
-                            Vector2 js = leftJoystick;
-                            if (Time.time > joystickDelay)
-                            {
-                                if (js.x > 0.5f)
-                                {
-                                    if (dynamicSounds)
-                                        Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/next.wav", "next.wav"), buttonClickVolume / 10f);
-
-                                    Toggle("NextPage");
-                                    joystickDelay = Time.time + 0.2f;
-                                }
-                                if (js.x < -0.5f)
-                                {
-                                    if (dynamicSounds)
-                                        Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/prev.wav", "prev.wav"), buttonClickVolume / 10f);
-
-                                    Toggle("PreviousPage");
-                                    joystickDelay = Time.time + 0.2f;
-                                }
-
-                                if (js.y > 0.5f)
-                                {
-                                    if (dynamicSounds)
-                                        Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/open.wav", "up.wav"), buttonClickVolume / 10f);
-
-                                    joystickButtonSelected--;
-                                    if (joystickButtonSelected < 0)
-                                        joystickButtonSelected = pageSize - 1;
-
-                                    ReloadMenu();
-                                    joystickDelay = Time.time + 0.2f;
-                                }
-                                if (js.y < -0.5f)
-                                {
-                                    if (dynamicSounds)
-                                        Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/close.wav", "down.wav"), buttonClickVolume / 10f);
-
-                                    joystickButtonSelected++;
-                                    joystickButtonSelected %= pageSize;
-
-                                    ReloadMenu();
-                                    joystickDelay = Time.time + 0.2f;
-                                }
-
-                                if (leftJoystickClick)
-                                {
-                                    if (dynamicSounds)
-                                        Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/select.wav", "select.wav"), buttonClickVolume / 10f);
-
-                                    Toggle(joystickSelectedButton, true);
-                                    ReloadMenu();
-                                    joystickDelay = Time.time + 0.2f;
-                                }
-                            }
-                        }
-                    } catch { }
-
-                    try
-                    {
-                        if (watchMenu)
-                        {
-                            watchShell.GetComponent<Renderer>().material = OrangeUI;
-                            ButtonInfo[] toSortOf = Buttons.buttons[currentCategoryIndex];
-
-                            if (currentCategoryName == "Favorite Mods")
-                                toSortOf = StringsToInfos(favorites.ToArray());
-
-                            if (currentCategoryName == "Enabled Mods")
-                            {
-                                List<ButtonInfo> enabledMods = new List<ButtonInfo>() { };
-                                int categoryIndex = 0;
-                                foreach (ButtonInfo[] buttonlist in Buttons.buttons)
-                                {
-                                    foreach (ButtonInfo v in buttonlist)
-                                    {
-                                        if (v.enabled && (!hideSettings || !Buttons.categoryNames[categoryIndex].Contains("Settings")))
-                                            enabledMods.Add(v);
-                                    }
-                                    categoryIndex++;
-                                }
-                                enabledMods = enabledMods.OrderBy(v => v.buttonText).ToList();
-                                enabledMods.Insert(0, GetIndex("Exit Enabled Mods"));
-                                toSortOf = enabledMods.ToArray();
-                            }
-
-                            Text watchTextText = watchText.GetComponent<Text>();
-
-                            watchTextText.text = toSortOf[watchMenuIndex].buttonText;
-                            if (toSortOf[watchMenuIndex].overlapText != null)
-                                watchTextText.text = toSortOf[watchMenuIndex].overlapText;
-
-                            watchTextText.text += $"\n<color=grey>[{(watchMenuIndex + 1)}/{toSortOf.Length}]\n{DateTime.Now:hh:mm tt}</color>";
-                            watchTextText.color = titleColor;
-
-                            if (lowercaseMode)
-                                watchTextText.text = watchTextText.text.ToLower();
-
-                            if (uppercaseMode)
-                                searchTextObject.text = searchTextObject.text.ToUpper();
-
-                            if (watchIndicatorMat == null)
-                                watchIndicatorMat = new Material(Shader.Find("GorillaTag/UberShader"));
-
-                            watchIndicatorMat.color = toSortOf[watchMenuIndex].enabled ? GetBDColor(0f) : GetBRColor(0f);
-                            watchEnabledIndicator.GetComponent<Image>().material = watchIndicatorMat;
-
-                            Vector2 js = rightHand ? rightJoystick : leftJoystick;
-                            if (Time.time > wristMenuDelay)
-                            {
-                                if (js.x > 0.5f || (rightHand ? (js.y < -0.5f) : (js.y > 0.5f)))
-                                {
-                                    watchMenuIndex++;
-                                    if (watchMenuIndex > toSortOf.Length - 1)
-                                        watchMenuIndex = 0;
-
-                                    wristMenuDelay = Time.time + 0.2f;
-                                }
-                                if (js.x < -0.5f || (rightHand ? (js.y > 0.5f) : (js.y < -0.5f)))
-                                {
-                                    watchMenuIndex--;
-                                    if (watchMenuIndex < 0)
-                                        watchMenuIndex = toSortOf.Length - 1;
-
-                                    wristMenuDelay = Time.time + 0.2f;
-                                }
-                                if (rightHand ? rightJoystickClick : leftJoystickClick)
-                                {
-                                    int archive = currentCategoryIndex;
-                                    Toggle(toSortOf[watchMenuIndex].buttonText, true);
-                                    if (currentCategoryIndex != archive)
-                                        watchMenuIndex = 0;
-
-                                    wristMenuDelay = Time.time + 0.2f;
-                                }
-                            }
-                        }
-                    } catch { }
-
-                    // Party kick code (to return back to the main lobby when you're done)
-                    if (PhotonNetwork.InRoom)
-                    {
-                        if (phaseTwo)
-                        {
-                            partyLastCode = null;
-                            phaseTwo = false;
-                            NotifiLib.ClearAllNotifications();
-                            NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> <color=white>Successfully " + (waitForPlayerJoin ? "banned" : "kicked") + " " + amountPartying.ToString() + " party member!</color>");
-                            FriendshipGroupDetection.Instance.LeaveParty();
-                        }
-                        else
-                        {
-                            if (partyLastCode != null && Time.time > partyTime && (!waitForPlayerJoin || PhotonNetwork.PlayerListOthers.Length > 0))
-                            {
-                                LogManager.Log("Attempting rejoin");
-                                NetworkSystem.Instance.ReturnToSinglePlayer();
-                                phaseTwo = true;
-                            }
-                        }
-                    } else
-                    {
-                        if (phaseTwo)
-                        {
-                            if (partyLastCode != null && Time.time > partyTime && (!waitForPlayerJoin || PhotonNetwork.PlayerListOthers.Length > 0))
-                            {
-                                LogManager.Log("Attempting rejoin");
-                                PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(partyLastCode, GorillaNetworking.JoinType.Solo);
-                                partyTime = Time.time + Important.reconnectDelay;
-                            }
-                        }
-                    }
-
-                    // Recover from playing sound on soundboard code
-                    try
-                    {
-                        if (Sound.AudioIsPlaying)
-                        {
-                            if (Time.time > Sound.RecoverTime)
-                                Sound.FixMicrophone();
-                        }
-                    } catch { }
-
-                    if (annoyingMode)
-                    {
-                        OrangeUI.color = new Color32(226, 74, 44, 255);
-                        int randy = UnityEngine.Random.Range(1, 400);
-                        if (randy == 21)
-                        {
-                            VRRig.LocalRig.PlayHandTapLocal(84, true, 0.4f);
-                            VRRig.LocalRig.PlayHandTapLocal(84, false, 0.4f);
-                            NotifiLib.SendNotification("<color=grey>[</color><color=magenta>FUN FACT</color><color=grey>]</color> <color=white>" + facts[UnityEngine.Random.Range(0, facts.Length - 1)] + "</color>");
-                        }
-                    }
-
-                    try
-                    {
-                        // Custom mod binds
-                        Dictionary<string, bool> Inputs = new Dictionary<string, bool>
-                        {
-                            { "A", rightPrimary },
-                            { "B", rightSecondary },
-                            { "X", leftPrimary },
-                            { "Y", leftSecondary },
-                            { "LG", leftGrab },
-                            { "RG", rightGrab },
-                            { "LT", leftTrigger > 0.5f },
-                            { "RT", rightTrigger > 0.5f },
-                            { "LJ", leftJoystickClick },
-                            { "RJ", rightJoystickClick }
-                        };
-
-                        foreach (KeyValuePair<string, List<string>> Bind in ModBindings)
-                        {
-                            string BindInput = Bind.Key;
-                            List<string> BindedMods = Bind.Value;
-
-                            if (BindedMods.Count > 0)
-                            {
-                                bool BindValue = Inputs[BindInput];
-                                foreach (string ModName in BindedMods)
-                                {
-                                    ButtonInfo Mod = GetIndex(ModName);
-                                    if (Mod != null)
-                                    {
-                                        Mod.customBind = BindInput;
-
-                                        if (ToggleBindings || !Mod.isTogglable)
-                                        {
-                                            if (BindValue && !BindStates[BindInput])
-                                                Toggle(ModName, true, true);
-                                        }
-
-                                        if (!ToggleBindings)
-                                        {
-                                            if ((BindValue && !Mod.enabled) || (!BindValue && Mod.enabled))
-                                                Toggle(ModName, true, true);
-                                        }
-                                    }
-                                }
-
-                                BindStates[BindInput] = BindValue;
-                            }
-                        }
-                    } catch { }
-
-                    try
-                    {
-                        Visuals.ClearLinePool();
-                        Visuals.ClearNameTagPool();
-
-                        if (GunPointer != null)
-                        {
-                            if (!GunPointer.activeSelf)
-                                Destroy(GunPointer);
-
-                            GunPointer.SetActive(false);
-                        }
-
-                        if (GunLine != null)
-                        {
-                            if (!GunLine.gameObject.activeSelf)
-                            {
-                                Destroy(GunLine.gameObject);
-                                GunLine = null;
-                            }
-
-                            GunLine.gameObject.SetActive(false);
-                        }
-
-                        List<(long, float)> toRemoveAura = new List<(long, float)> { };
-                        foreach (KeyValuePair<(long, float), GameObject> key in auraPool)
-                        {
-                            if (!key.Value.activeSelf)
-                            {
-                                toRemoveAura.Add(key.Key);
-                                Destroy(key.Value);
-                            }
-                            else
-                                key.Value.SetActive(false);
-                        }
-
-                        foreach ((long, float) item in toRemoveAura)
-                            auraPool.Remove(item);
-
-                        List<(Vector3, Quaternion, Vector3)> toRemoveCube = new List<(Vector3, Quaternion, Vector3)> { };
-                        foreach (KeyValuePair<(Vector3, Quaternion, Vector3), GameObject> key in cubePool)
-                        {
-                            if (!key.Value.activeSelf)
-                            {
-                                toRemoveCube.Add(key.Key);
-                                Destroy(key.Value);
-                            }
-                            else
-                                key.Value.SetActive(false);
-                        }
-
-                        foreach ((Vector3, Quaternion, Vector3) item in toRemoveCube)
-                            cubePool.Remove(item);
-
-                        List<string> toRemoveLabel = new List<string> { };
-                        foreach (KeyValuePair<string, GameObject> label in Visuals.labelDictionary)
-                        {
-                            if (!label.Value.activeSelf)
-                            {
-                                toRemoveLabel.Add(label.Key);
-                                Destroy(label.Value);
-                            }
-                            else
-                                label.Value.SetActive(false);
-                        }
-
-                        foreach (string item in toRemoveLabel)
-                            Visuals.labelDictionary.Remove(item);
-                    } catch { }
-
-                    if (ServerPos == Vector3.zero)
-                        ServerPos = ServerSyncPos;
-                    else
-                        ServerPos = Vector3.Lerp(ServerPos, VRRig.LocalRig.SanitizeVector3(ServerSyncPos), VRRig.LocalRig.lerpValueBody * 0.66f);
-
-                    if (ServerLeftHandPos == Vector3.zero)
-                        ServerLeftHandPos = ServerSyncLeftHandPos;
-                    else
-                        ServerLeftHandPos = Vector3.Lerp(ServerLeftHandPos, VRRig.LocalRig.SanitizeVector3(ServerSyncLeftHandPos), VRRig.LocalRig.lerpValueBody);
-
-                    if (ServerRightHandPos == Vector3.zero)
-                        ServerRightHandPos = ServerSyncRightHandPos;
-                    else
-                        ServerRightHandPos = Vector3.Lerp(ServerRightHandPos, VRRig.LocalRig.SanitizeVector3(ServerSyncRightHandPos), VRRig.LocalRig.lerpValueBody);
-
-                    // Execute plugin updates
-                    foreach (KeyValuePair<string, Assembly> Plugin in Settings.LoadedPlugins)
-                    {
-                        try
-                        {
-                            if (!Settings.disabledPlugins.Contains(Plugin.Key))
-                                PluginUpdate(Plugin.Value);
-                        }
-                        catch (Exception e) { LogManager.Log("Error with UPDATE plugin " + Plugin.Key + ": " + e.ToString()); }
-                    }
-
-                    // Execute mods
-                    foreach (ButtonInfo[] buttonlist in Buttons.buttons)
-                    {
-                        foreach (ButtonInfo v in buttonlist)
-                        {
-                            try
-                            {
-                                if (v.enabled)
-                                {
-                                    bool _leftPrimary = leftPrimary;
-                                    bool _leftSecondary = leftSecondary;
-                                    bool _rightPrimary = rightPrimary;
-                                    bool _rightSecondary = rightSecondary;
-                                    bool _leftGrab = leftGrab;
-                                    bool _rightGrab = rightGrab;
-                                    float _leftTrigger = leftTrigger;
-                                    float _rightTrigger = rightTrigger;
-                                    bool _leftJoystickClick = leftJoystickClick;
-                                    bool _rightJoystickClick = rightJoystickClick;
-
-                                    if (OverwriteKeybinds && v.customBind != null)
-                                    {
-                                        leftPrimary = true;
-                                        leftSecondary = true;
-                                        rightPrimary = true;
-                                        rightSecondary = true;
-                                        leftGrab = true;
-                                        rightGrab = true;
-                                        leftTrigger = 1f;
-                                        rightTrigger = 1f;
-                                        leftJoystickClick = true;
-                                        rightJoystickClick = true;
-                                    }
-
-                                    if (v.method != null)
-                                    {
-                                        try
-                                        {
-                                            v.method.Invoke();
-                                        }
-                                        catch (Exception exc)
-                                        {
-                                            LogManager.LogError(string.Format("Error with mod method {0} at {1}: {2}", v.buttonText, exc.StackTrace, exc.Message));
-                                        }
-                                    }
-
-                                    if (OverwriteKeybinds && v.customBind != null)
-                                    {
-                                        leftPrimary = _leftPrimary;
-                                        leftSecondary = _leftSecondary;
-                                        rightPrimary = _rightPrimary;
-                                        rightSecondary = _rightSecondary;
-                                        leftGrab = _leftGrab;
-                                        rightGrab = _rightGrab;
-                                        leftTrigger = _leftTrigger;
-                                        rightTrigger = _rightTrigger;
-                                        leftJoystickClick = _leftJoystickClick;
-                                        rightJoystickClick = _rightJoystickClick;
-                                    }
-                                }
-                            } catch { }
-                        }
-                    }
                 }
+                #endregion
             }
             catch (Exception exc)
             {
@@ -1616,11 +1539,6 @@ namespace iiMenu.Menu
                     }
                 }
 
-                /*
-                 * if (flip)
-                 *   buttonObject.transform.localPosition = new Vector3(buttonObject.transform.localPosition.x, -buttonObject.transform.localPosition.y, buttonObject.transform.localPosition.z);
-                 */
-
                 if (shouldOutline && !(themeType == 63 && buttonIndex >= 0))
                     OutlineObj(buttonObject, buttonIndex < 0 && swapButtonColors ? method.enabled : !method.enabled);
 
@@ -1743,7 +1661,7 @@ namespace iiMenu.Menu
                 OutlineCanvasObject(buttonText);
         }
 
-        private static void AddSearchButton() // Me :D -Twig
+        private static void AddSearchButton()
         {
             GameObject buttonObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
             if (!UnityInput.Current.GetKey(KeyCode.Q) && !isPcWhenSearching)
@@ -2222,7 +2140,7 @@ namespace iiMenu.Menu
             }
         }
 
-        public static void Draw()
+        public static GameObject CreateMenu()
         {
             menu = GameObject.CreatePrimitive(PrimitiveType.Cube);
 
@@ -2923,6 +2841,7 @@ namespace iiMenu.Menu
             }
 
             menu.transform.localScale *= scaleWithPlayer && XRSettings.isDeviceActive ? GTPlayer.Instance.scale * menuScale : menuScale;
+            return menu;
         }
 
         public static void RecenterMenu()
@@ -3027,7 +2946,7 @@ namespace iiMenu.Menu
                         new Vector3(-67.9299f, 11.9144f, -84.2019f),
                         new Vector3(-63f, 3.634f, -65f),
                         VRRig.LocalRig.transform.position += VRRig.LocalRig.transform.forward * 1.2f,
-                        TPC.transform.position
+                        TPC?.transform?.position ?? GorillaTagger.Instance.headCollider.transform.position
                     };
 
                     TPC.transform.position = pcpositions[pcbg];
@@ -3036,13 +2955,19 @@ namespace iiMenu.Menu
 
                     if (pcbg == 0)
                     {
-                        GameObject bg = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        bg.transform.localScale = new Vector3(10f, 10f, 0.01f);
-                        bg.transform.transform.position = TPC.transform.position + TPC.transform.forward;
+                        if (pcBackground == null)
+                        {
+                            pcBackground = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                            pcBackground.transform.localScale = new Vector3(10f, 10f, 0.01f);
+                            pcBackground.transform.transform.position = TPC.transform.position + TPC.transform.forward;
+
+                            OnMenuClosed += () => Destroy(pcBackground);
+                        }
+                        
                         Color realcolor = GetBGColor(0f);
-                        bg.GetComponent<Renderer>().material.color = new Color32((byte)(realcolor.r * 50), (byte)(realcolor.g * 50), (byte)(realcolor.b * 50), 255);
-                        Destroy(bg, Time.deltaTime * 3f);
+                        pcBackground.GetComponent<Renderer>().material.color = new Color32((byte)(realcolor.r * 50), (byte)(realcolor.g * 50), (byte)(realcolor.b * 50), 255);
                     }
+
                     menu.transform.parent = TPC.transform;
                     menu.transform.position = TPC.transform.position + (TPC.transform.forward * 0.5f) + (TPC.transform.up * 0f);
                     menu.transform.rotation = TPC.transform.rotation * Quaternion.Euler(-90f, 90f, 0f);
@@ -3102,6 +3027,114 @@ namespace iiMenu.Menu
                     smoothTargetRotation = Quaternion.Lerp(smoothTargetRotation, menu.transform.rotation, Time.deltaTime * 10f);
 
                 menu.transform.rotation = smoothTargetRotation;
+            }
+        }
+
+        public static event Action OnMenuOpened;
+        public static void OpenMenu()
+        {
+            OnMenuOpened?.Invoke();
+            if (dynamicSounds)
+                Play2DAudio(LoadSoundFromURL("https://github.com/iiDk-the-actual/ModInfo/raw/main/open.wav", "open.wav"), buttonClickVolume / 10f);
+
+            CreateMenu();
+
+            if (dynamicAnimations)
+                CoroutineManager.RunCoroutine(GrowCoroutine());
+
+            if (!joystickMenu)
+            {
+                if (reference == null)
+                    CreateReference();
+            }
+        }
+
+        public static event Action OnMenuClosed;
+        public static void CloseMenu()
+        {
+            OnMenuClosed?.Invoke();
+            GetObject("Shoulder Camera").transform.Find("CM vcam1").gameObject.SetActive(true);
+
+            try
+            {
+                if (isOnPC && TPC != null && TPC.transform.parent.gameObject.name.Contains("CameraTablet"))
+                {
+                    isOnPC = false;
+                    TPC.transform.position = TPC.transform.parent.position;
+                    TPC.transform.rotation = TPC.transform.parent.rotation;
+                }
+            }
+            catch { }
+
+            smoothTargetPosition = Vector3.zero;
+            smoothTargetRotation = Quaternion.identity;
+            if (!dynamicAnimations)
+            {
+                if (dropOnRemove)
+                {
+                    try
+                    {
+                        Rigidbody comp = menu.AddComponent(typeof(Rigidbody)) as Rigidbody;
+
+                        if (zeroGravityMenu)
+                            comp.useGravity = false;
+
+                        if (rightHand || (bothHands && openedwithright))
+                        {
+                            comp.velocity = GTPlayer.Instance.rightHandCenterVelocityTracker.GetAverageVelocity(true, 0);
+                            comp.angularVelocity = GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/RightHand Controller").GetOrAddComponent<GorillaVelocityEstimator>().angularVelocity;
+                        }
+                        else
+                        {
+                            comp.velocity = GTPlayer.Instance.leftHandCenterVelocityTracker.GetAverageVelocity(true, 0);
+                            comp.angularVelocity = GetObject("Player Objects/Player VR Controller/GorillaPlayer/TurnParent/LeftHand Controller").GetOrAddComponent<GorillaVelocityEstimator>().angularVelocity;
+                        }
+
+                        if (annoyingMode)
+                        {
+                            comp.velocity = new Vector3(UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33));
+                            comp.angularVelocity = new Vector3(UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33), UnityEngine.Random.Range(-33, 33));
+                        }
+                    }
+                    catch { }
+
+                    if (menuTrail)
+                    {
+                        try
+                        {
+                            TrailRenderer trail = menu.AddComponent<TrailRenderer>();
+
+                            trail.startColor = bgColorA;
+                            trail.endColor = bgColorB;
+                            trail.startWidth = 0.025f;
+                            trail.endWidth = 0f;
+                            trail.minVertexDistance = 0.05f;
+
+                            if (smoothLines)
+                            {
+                                trail.numCapVertices = 10;
+                                trail.numCornerVertices = 5;
+                            }
+
+                            trail.material.shader = Shader.Find("Sprites/Default");
+                            trail.time = 2f;
+                        }
+                        catch { }
+                    }
+                }
+
+                Destroy(menu);
+                menu = null;
+
+                Destroy(reference);
+                reference = null;
+            }
+            else
+            {
+                CoroutineManager.RunCoroutine(ShrinkCoroutine());
+
+                Destroy(reference);
+                reference = null;
             }
         }
 
@@ -5625,7 +5658,7 @@ namespace iiMenu.Menu
                 Destroy(menu);
                 menu = null;
 
-                Draw();
+                CreateMenu();
             }
 
             if (reference != null)
@@ -6482,6 +6515,7 @@ jgs \_   _/ |Oo\
         public static Camera TPC;
         public static GameObject menu;
         public static GameObject menuBackground;
+        public static GameObject pcBackground;
         public static GameObject reference;
         public static VideoPlayer videoPlayer;
         public static SphereCollider buttonCollider;
