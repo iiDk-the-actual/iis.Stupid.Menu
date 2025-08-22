@@ -289,8 +289,8 @@ namespace iiMenu.Mods
                             freezePool.Add(gunTarget, CoroutineManager.instance.StartCoroutine(FreezeCoroutine(gunTarget)));
                         if (!freeze && freezePool.ContainsKey(gunTarget))
                         {
-                            freezePool.Remove(gunTarget);
                             CoroutineManager.instance.StopCoroutine(freezePool[gunTarget]);
+                            freezePool.Remove(gunTarget);
                         }
                     }
                 }
