@@ -5865,7 +5865,7 @@ namespace iiMenu.Menu
                             return;
                         }
 
-                        if (fromMenu && !ignoreForce && ((leftGrab && !joystickMenu) || (joystickMenu && rightJoystick.y > 0.5f && leftTrigger > 0.5f)))
+                        if (fromMenu && !ignoreForce && menuButtonIndex != 2 && ((leftGrab && !joystickMenu) || (joystickMenu && rightJoystick.y > 0.5f && leftTrigger > 0.5f)))
                         {
                             if (IsBinding)
                             {
@@ -5924,7 +5924,7 @@ namespace iiMenu.Menu
                         }
                         else
                         {
-                            if (fromMenu && !ignoreForce && (leftTrigger > 0.5f) && !joystickMenu)
+                            if (fromMenu && !ignoreForce && menuButtonIndex != 3 && (leftTrigger > 0.5f) && !joystickMenu)
                             {
                                 if (!quickActions.Contains(target.buttonText))
                                 {
