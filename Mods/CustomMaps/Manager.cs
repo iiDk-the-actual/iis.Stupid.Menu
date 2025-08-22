@@ -125,8 +125,12 @@ namespace iiMenu.Mods.CustomMaps
 
                 foreach (var type in mapTypes)
                 {
-                    if (instance.MapID == id)
-                        instance = (CustomMap)Activator.CreateInstance(type);
+                    CustomMap mapInstance = (CustomMap)Activator.CreateInstance(type);
+                    if (mapInstance.MapID == id)
+                    {
+                        instance = mapInstance;
+                        break;
+                    }
                 }
 
                 mapCache[id] = instance;
@@ -134,6 +138,5 @@ namespace iiMenu.Mods.CustomMaps
 
             return instance;
         }
-
     }
 }
