@@ -845,7 +845,7 @@ namespace iiMenu.Mods
             if (menuButtonIndex < 0)
                 menuButtonIndex = buttonNames.Length - 1;
 
-            GetIndex("Change Menu Language").overlapText = "Change Menu Button <color=grey>[</color><color=green>Secondary</color><color=grey>]</color>";
+            GetIndex("Change Menu Button").overlapText = "Change Menu Button <color=grey>[</color><color=green>" + buttonNames[menuButtonIndex] + "</color><color=grey>]</color>";
         }
 
         public static void ChangeMenuTheme(bool increment = true)
