@@ -1204,7 +1204,7 @@ namespace iiMenu.Menu
                             {
                                 LogManager.Log("Attempting rejoin");
                                 PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(partyLastCode, GorillaNetworking.JoinType.Solo);
-                                partyTime = Time.time + (float)Important.reconnectDelay;
+                                partyTime = Time.time + Important.reconnectDelay;
                             }
                         }
                     }
