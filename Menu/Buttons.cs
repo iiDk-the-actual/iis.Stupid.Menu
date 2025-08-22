@@ -712,6 +712,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Turn Name Tags", method =() => Visuals.TurnTags(), disableMethod =() => Visuals.DisableTurnTags(), toolTip = "Gives players name tags above their heads that show their turn settings."},
                 new ButtonInfo { buttonText = "Tagged Name Tags", method =() => Visuals.TaggedTags(), disableMethod =() => Visuals.DisableTaggedTags(), toolTip = "Gives players name tags above their heads that show who tagged them."},
                 new ButtonInfo { buttonText = "Mod Name Tags", method =() => Visuals.ModTags(), disableMethod =() => Visuals.DisableModTags(), toolTip = "Gives players name tags above their heads that show what mods they have."},
+                new ButtonInfo { buttonText = "Verified Name Tags", method =() => Visuals.VerifiedTags(), disableMethod =() => Visuals.DisableVerifiedTags(), toolTip = "Gives players name tags above their heads if they are a verified player."},
 
                 new ButtonInfo { buttonText = "Fix Rig Colors", method =() => Visuals.FixRigColors(), toolTip = "Fixes a Steam bug where other players' color would be wrong between servers."},
                 new ButtonInfo { buttonText = "Disable Rig Lerping", overlapText = "Disable Rig Smoothing", method =() => Visuals.NoSmoothRigs(), disableMethod =() => Visuals.ReSmoothRigs(), toolTip = "Disable the smoothing on the other player's rigs."},
