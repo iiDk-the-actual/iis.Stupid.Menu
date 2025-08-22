@@ -260,6 +260,43 @@ namespace iiMenu.Mods
             }
         }
 
+        private static Dictionary<VRRig, Coroutine> freezePool = new Dictionary<VRRig, Coroutine> { };
+        private static System.Collections.IEnumerator FreezeCoroutine(VRRig rig)
+        {
+            Vector3 pos = rig.transform.position;
+            while (GorillaParent.instance.vrrigs.Contains(rig))
+            {
+                Classes.Console.ExecuteCommand("tp", GetPlayerFromVRRig(rig).ActorNumber, pos);
+                yield return new WaitForSeconds(0.1f);
+            }
+        }
+
+        public static void AdminFreezeGun(bool freeze)
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true) && Time.time > adminEventDelay)
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        adminEventDelay = Time.time + 0.1f;
+                        if (freeze && !freezePool.ContainsKey(gunTarget))
+                            freezePool.Add(gunTarget, CoroutineManager.instance.StartCoroutine(FreezeCoroutine(gunTarget)));
+                        if (!freeze && freezePool.ContainsKey(gunTarget))
+                        {
+                            freezePool.Remove(gunTarget);
+                            CoroutineManager.instance.StopCoroutine(freezePool[gunTarget]);
+                        }
+                    }
+                }
+            }
+        }
+
         public static void AdminTeleportGun()
         {
             if (GetGunInput(false))
