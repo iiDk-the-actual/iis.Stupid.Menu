@@ -1842,7 +1842,6 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Graze", method =() => Process.Start("https://github.com/The-Graze"), isTogglable = false, toolTip = "Graze gave me permission to use their color detection system."},
                 new ButtonInfo { buttonText = "Zvbex", method =() => Process.Start("https://guns.lol/zvbexisking"), isTogglable = false, toolTip = "Zvbex gave me permission to use their initial platform detection system."},
-                new ButtonInfo { buttonText = "HanSolo1000Falcon", method =() => Process.Start("https://github.com/HanSolo1000Falcon"), isTogglable = false, toolTip = "HanSolo1000Falcon gave me permission to use their improved checks for platform detection."},
                 new ButtonInfo { buttonText = "Shiny", method =() => Process.Start("https://github.com/Shiny003"), isTogglable = false, toolTip = "HanSolo1000Falcon gave me permission to use their PlayFab display name spoof patch."},
 
                 new ButtonInfo { buttonText = "KyleTheScientist", method =() => Process.Start("https://github.com/KyleTheScientist"), isTogglable = false, toolTip = "KyleTheScientist gave me the idea to add \"Bark Fly\" to the menu."},
