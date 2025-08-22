@@ -799,6 +799,13 @@ namespace iiMenu.Menu
                             if (!videoPlayer.isPlaying && menu != null)
                                 videoPlayer.Play();
                         }
+                    } else
+                    {
+                        if (videoPlayer != null)
+                        {
+                            Destroy(videoPlayer.gameObject);
+                            videoPlayer = null;
+                        }
                     }
 
                     // Gun sounds
