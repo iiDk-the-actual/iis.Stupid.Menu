@@ -1842,8 +1842,9 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Graze", method =() => Process.Start("https://github.com/The-Graze"), isTogglable = false, toolTip = "Graze gave me permission to use their color detection system."},
                 new ButtonInfo { buttonText = "Zvbex", method =() => Process.Start("https://guns.lol/zvbexisking"), isTogglable = false, toolTip = "Zvbex gave me permission to use their initial platform detection system."},
-                new ButtonInfo { buttonText = "Shiny", method =() => Process.Start("https://github.com/Shiny003"), isTogglable = false, toolTip = "HanSolo1000Falcon gave me permission to use their PlayFab display name spoof patch."},
-
+                new ButtonInfo { buttonText = "Shiny", method =() => Process.Start("https://github.com/Shiny003"), isTogglable = false, toolTip = "Shiny gave me permission to use their PlayFab display name spoof patch."},
+                
+                new ButtonInfo { buttonText = "Will", method =() => Process.Start("https://github.com/64will64"), isTogglable = false, toolTip = "Will gave me the idea to make body rotation mods."},
                 new ButtonInfo { buttonText = "KyleTheScientist", method =() => Process.Start("https://github.com/KyleTheScientist"), isTogglable = false, toolTip = "KyleTheScientist gave me the idea to add \"Bark Fly\" to the menu."},
                 new ButtonInfo { buttonText = "Gorilla Dev", method =() => Process.Start("https://github.com/GorillerDev"), isTogglable = false, toolTip = "Gorilla Dev gave me the idea to add \"Anti Report <color=grey>[</color><color=green>Oculus</color><color=grey>]</color>\" to the menu."},
                 new ButtonInfo { buttonText = "Intelligence", method =() => NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> Could not find link."), isTogglable = false, toolTip = "Intelligence gave me the idea to add \"Auto Branch\" to the menu."},
