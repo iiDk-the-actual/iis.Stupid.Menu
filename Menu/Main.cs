@@ -2936,16 +2936,13 @@ namespace iiMenu.Menu
                     if (physicalMenu)
                         Toggle("Physical Menu");
 
-                    if (GetIndex("First Person Camera").enabled)
-                        Toggle("First Person Camera");
-
                     Vector3[] pcpositions = new Vector3[]
                     {
                         new Vector3(10f, 10f, 10f),
                         new Vector3(10f, 10f, 10f),
                         new Vector3(-67.9299f, 11.9144f, -84.2019f),
                         new Vector3(-63f, 3.634f, -65f),
-                        VRRig.LocalRig.transform.position += VRRig.LocalRig.transform.forward * 1.2f,
+                        VRRig.LocalRig.transform.position + VRRig.LocalRig.transform.forward * 1.2f,
                         TPC?.transform?.position ?? GorillaTagger.Instance.headCollider.transform.position
                     };
 
