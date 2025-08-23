@@ -42,6 +42,7 @@ namespace iiMenu.Classes
         {
             GTPlayer.Instance.TeleportTo(position, GTPlayer.Instance.transform.rotation);
             Mods.Movement.lastPosition = position;
+            Menu.Main.closePosition = position;
         }
 
         public static void EnableMod(string mod, bool enable) // Method used to enable mods
