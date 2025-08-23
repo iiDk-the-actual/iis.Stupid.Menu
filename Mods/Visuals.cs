@@ -2,6 +2,7 @@ using GorillaExtensions;
 using GorillaGameModes;
 using GorillaLocomotion;
 using GorillaNetworking;
+using GorillaTag.Rendering;
 using iiMenu.Classes;
 using Photon.Pun;
 using System;
@@ -22,6 +23,15 @@ namespace iiMenu.Mods
             for (int i = 0; i < BetterDayNightManager.instance.weatherCycle.Length; i++)
                 BetterDayNightManager.instance.weatherCycle[i] = rain ? BetterDayNightManager.WeatherType.Raining : BetterDayNightManager.WeatherType.None;
         }
+
+        public static void DisableFog() =>
+            ZoneShaderSettings.activeInstance.SetGroundFogValue(Color.clear, 0f, 0f, 0f);
+
+        public static void EnableFog() =>
+            ZoneShaderSettings.activeInstance.SetGroundFogValue(Color.clear, 0f, 0f, 0f);
+
+        public static void ResetFog() =>
+            ZoneShaderSettings.activeInstance.SetGroundFogValue(new Color(0.9569f, 0.6941f, 0.502f, 0.1216f), 40f, 10f, 40f);
 
         private static bool previousFullbrightStatus;
         public static void SetFullbrightStatus(bool fullBright)

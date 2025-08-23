@@ -5,6 +5,7 @@ using GorillaLocomotion;
 using GorillaNetworking;
 using GorillaTag;
 using GorillaTag.Cosmetics;
+using GorillaTag.Rendering;
 using GorillaTagScripts;
 using iiMenu.Classes;
 using iiMenu.Menu;
@@ -681,7 +682,7 @@ namespace iiMenu.Mods
         }
 
         public static void HueShift(Color color) =>
-            GameLightingManager.instance.SetAmbientLightDynamic(color);
+            ZoneShaderSettings.activeInstance.SetGroundFogValue(color, 0f, float.MaxValue, 0f);
 
         public static void SpectateGun()
         {
