@@ -28,10 +28,10 @@ namespace iiMenu.Mods
             ZoneShaderSettings.activeInstance.SetGroundFogValue(Color.clear, 0f, 0f, 0f);
 
         public static void EnableFog() =>
-            ZoneShaderSettings.activeInstance.SetGroundFogValue(Color.clear, 0f, 0f, 0f);
+            ZoneShaderSettings.activeInstance.SetGroundFogValue(new Color(0.9569f, 0.6941f, 0.502f, 0.1216f), 40f, 10f, 40f);
 
         public static void ResetFog() =>
-            ZoneShaderSettings.activeInstance.SetGroundFogValue(new Color(0.9569f, 0.6941f, 0.502f, 0.1216f), 40f, 10f, 40f);
+            ZoneShaderSettings.activeInstance.CopySettings(ZoneShaderSettings.defaultsInstance);
 
         private static bool previousFullbrightStatus;
         public static void SetFullbrightStatus(bool fullBright)
