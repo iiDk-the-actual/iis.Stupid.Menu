@@ -1206,7 +1206,46 @@ namespace iiMenu.Mods
             {
                 try
                 {
-                    if (!vrrig.isLocal)
+                    string specialMods = null;
+                    Dictionary<string, object> customProps = new Dictionary<string, object>();
+                    foreach (DictionaryEntry dictionaryEntry in NetPlayerToPlayer(GetPlayerFromVRRig(vrrig)).CustomProperties)
+                        customProps[dictionaryEntry.Key.ToString().ToLower()] = dictionaryEntry.Value;
+
+                    foreach (KeyValuePair<string, string> mod in modDictionary)
+                    {
+                        if (customProps.ContainsKey(mod.Key.ToLower()))
+                        {
+                            if (specialMods == null)
+                                specialMods = mod.Value;
+                            else
+                            {
+                                if (specialMods.Contains("&"))
+                                    specialMods = mod.Value + ", " + specialMods;
+                                else
+                                    specialMods += " & " + mod.Value;
+                            }
+                        }
+                    }
+
+                    CosmeticsController.CosmeticSet cosmeticSet = vrrig.cosmeticSet;
+                    foreach (CosmeticsController.CosmeticItem cosmetic in cosmeticSet.items)
+                    {
+                        if (!cosmetic.isNullItem && !vrrig.concatStringOfCosmeticsAllowed.Contains(cosmetic.itemName))
+                        {
+                            if (specialMods == null)
+                                specialMods = "Cosmetx";
+                            else
+                            {
+                                if (specialMods.Contains("&"))
+                                    specialMods = "Cosmetx, " + specialMods;
+                                else
+                                    specialMods += " & Cosmetx";
+                            }
+                            break;
+                        }
+                    }
+
+                    if (!vrrig.isLocal && specialMods != null)
                     {
                         if (!modNameTags.ContainsKey(vrrig))
                         {
@@ -1221,47 +1260,8 @@ namespace iiMenu.Mods
                             modNameTags.Add(vrrig, go);
                         }
 
-                        string specialMods = "";
-                        Dictionary<string, object> customProps = new Dictionary<string, object>();
-                        foreach (DictionaryEntry dictionaryEntry in NetPlayerToPlayer(GetPlayerFromVRRig(vrrig)).CustomProperties)
-                            customProps[dictionaryEntry.Key.ToString().ToLower()] = dictionaryEntry.Value;
-
-                        foreach (KeyValuePair<string, string> mod in modDictionary)
-                        {
-                            if (customProps.ContainsKey(mod.Key.ToLower()))
-                            {
-                                if (specialMods == null)
-                                    specialMods = mod.Value;
-                                else
-                                {
-                                    if (specialMods.Contains("&"))
-                                        specialMods = mod.Value + ", " + specialMods;
-                                    else
-                                        specialMods += " & " + mod.Value;
-                                }
-                            }
-                        }
-
-                        CosmeticsController.CosmeticSet cosmeticSet = vrrig.cosmeticSet;
-                        foreach (CosmeticsController.CosmeticItem cosmetic in cosmeticSet.items)
-                        {
-                            if (!cosmetic.isNullItem && !vrrig.concatStringOfCosmeticsAllowed.Contains(cosmetic.itemName))
-                            {
-                                if (specialMods == null)
-                                    specialMods = "Cosmetx";
-                                else
-                                {
-                                    if (specialMods.Contains("&"))
-                                        specialMods = "Cosmetx, " + specialMods;
-                                    else
-                                        specialMods += " & Cosmetx";
-                                }
-                                break;
-                            }
-                        }
-
                         GameObject nameTag = modNameTags[vrrig];
-                        nameTag.GetComponent<TextMesh>().text = "";
+                        nameTag.GetComponent<TextMesh>().text = specialMods;
 
                         nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
                         nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
@@ -1283,6 +1283,89 @@ namespace iiMenu.Mods
                 UnityEngine.Object.Destroy(nametag.Value);
 
             modNameTags.Clear();
+        }
+
+        public static Dictionary<string, string> specialCosmetics = new Dictionary<string, string>
+        {
+            { "LBAAD.", "Administrator" },
+            { "LBAAK.", "Forest Guide" },
+            { "LBADE.", "Finger Painter" },
+            { "LBAGS.", "Illustrator" },
+            { "LMAPY.", "Forest Guide" },
+            { "LBANI.", "AA Creator" }
+        };
+
+        private static Dictionary<VRRig, GameObject> cosmeticNameTags = new Dictionary<VRRig, GameObject> { };
+        public static void CosmeticTags()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> nametag in cosmeticNameTags)
+            {
+                if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
+                {
+                    UnityEngine.Object.Destroy(nametag.Value);
+                    cosmeticNameTags.Remove(nametag.Key);
+                }
+            }
+
+            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
+            {
+                try
+                {
+                    string cosmetics = null;
+                    foreach (KeyValuePair<string, string> cosmetic in specialCosmetics)
+                    {
+                        if (vrrig.concatStringOfCosmeticsAllowed.Contains(cosmetic.Key))
+                        {
+                            if (cosmetics == null)
+                                cosmetics = cosmetic.Value;
+                            else
+                            {
+                                if (cosmetics.Contains("&"))
+                                    cosmetics = cosmetic.Value + ", " + cosmetics;
+                                else
+                                    cosmetics += " & " + cosmetic.Value;
+                            }
+                        }
+                    }
+
+                    if (!vrrig.isLocal && cosmetics == null)
+                    {
+                        if (!cosmeticNameTags.ContainsKey(vrrig))
+                        {
+                            GameObject go = new GameObject("iiMenu_Modtag");
+                            go.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+                            TextMesh textMesh = go.AddComponent<TextMesh>();
+                            textMesh.fontSize = 48;
+                            textMesh.characterSize = 0.1f;
+                            textMesh.anchor = TextAnchor.MiddleCenter;
+                            textMesh.alignment = TextAlignment.Center;
+
+                            cosmeticNameTags.Add(vrrig, go);
+                        }
+
+                        GameObject nameTag = cosmeticNameTags[vrrig];
+                        nameTag.GetComponent<TextMesh>().text = cosmetics;
+
+                        nameTag.GetComponent<TextMesh>().color = GetPlayerColor(vrrig);
+                        nameTag.GetComponent<TextMesh>().fontStyle = activeFontStyle;
+
+                        nameTag.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f) * vrrig.scaleFactor;
+
+                        nameTag.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * GetTagDistance(vrrig);
+                        nameTag.transform.LookAt(Camera.main.transform.position);
+                        nameTag.transform.Rotate(0f, 180f, 0f);
+                    }
+                }
+                catch { }
+            }
+        }
+
+        public static void DisableCosmeticTags()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> nametag in cosmeticNameTags)
+                UnityEngine.Object.Destroy(nametag.Value);
+
+            cosmeticNameTags.Clear();
         }
 
         public static Dictionary<string, string> verifiedDictionary = new Dictionary<string, string>
