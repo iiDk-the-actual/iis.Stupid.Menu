@@ -3335,20 +3335,15 @@ Piece Name: {gunTarget.name}";
             }
         }
 
-        public static float flingAllTimeout;
         public static void BarrelFlingAll()
         {
             SerializePatch.OverrideSerialization = () => false;
 
-            if (Time.time > flingAllTimeout)
+            foreach (VRRig TargetRig in GorillaParent.instance.vrrigs)
             {
-                flingAllTimeout = Time.time + 0.31f;
-                foreach (VRRig TargetRig in GorillaParent.instance.vrrigs)
-                {
-                    if (PlayerIsLocal(TargetRig)) continue;
-                    SendBarrelProjectile(TargetRig.transform.position, new Vector3(0f, 50f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(TargetRig)).ActorNumber } }, true);
-                    throwableProjectileTimeout = 0f;
-                }
+                if (PlayerIsLocal(TargetRig)) continue;
+                SendBarrelProjectile(TargetRig.transform.position, new Vector3(0f, 50f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(TargetRig)).ActorNumber } }, true);
+                throwableProjectileTimeout = 0f;
             }
         }
 
@@ -3399,15 +3394,11 @@ Piece Name: {gunTarget.name}";
         {
             SerializePatch.OverrideSerialization = () => false;
 
-            if (Time.time > flingAllTimeout)
+            foreach (VRRig TargetRig in GorillaParent.instance.vrrigs)
             {
-                flingAllTimeout = Time.time + 0.31f;
-                foreach (VRRig TargetRig in GorillaParent.instance.vrrigs)
-                {
-                    if (PlayerIsLocal(TargetRig)) continue;
-                    SendBarrelProjectile(TargetRig.transform.position, new Vector3(0f, 5000f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(TargetRig)).ActorNumber } }, true);
-                    throwableProjectileTimeout = 0f;
-                }
+                if (PlayerIsLocal(TargetRig)) continue;
+                SendBarrelProjectile(TargetRig.transform.position, new Vector3(0f, 5000f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(TargetRig)).ActorNumber } }, true);
+                throwableProjectileTimeout = 0f;
             }
         }
 
