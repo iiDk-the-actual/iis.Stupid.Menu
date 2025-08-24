@@ -1230,8 +1230,8 @@ namespace iiMenu.Menu
                     {
                         if (!GunPointer.activeSelf)
                             Destroy(GunPointer);
-
-                        GunPointer.SetActive(false);
+                        else
+                            GunPointer.SetActive(false);
                     }
 
                     if (GunLine != null)
@@ -1241,8 +1241,8 @@ namespace iiMenu.Menu
                             Destroy(GunLine.gameObject);
                             GunLine = null;
                         }
-
-                        GunLine.gameObject.SetActive(false);
+                        else
+                            GunLine.gameObject.SetActive(false);
                     }
 
                     List<(long, float)> toRemoveAura = new List<(long, float)> { };
@@ -5891,8 +5891,7 @@ namespace iiMenu.Menu
                         lastClickedName = "NextPage";
 
                     pageNumber++;
-                    if (pageNumber > lastPage)
-                        pageNumber = 0;
+                    pageNumber %= lastPage + 1;
                 }
                 else
                 {
