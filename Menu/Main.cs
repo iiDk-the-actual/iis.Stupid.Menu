@@ -147,6 +147,9 @@ namespace iiMenu.Menu
                         openedwithright = rightInputs[menuButtonIndex];
                 }
 
+                if (!XRSettings.isDeviceActive)
+                    buttonCondition = false;
+
                 if (wristMenu)
                 {
                     bool shouldOpen = Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position - (GorillaTagger.Instance.leftHandTransform.forward * 0.1f), TrueRightHand().position) < 0.1f;
@@ -183,9 +186,9 @@ namespace iiMenu.Menu
 
                     buttonCondition = true;
                 }
-                buttonCondition = buttonCondition || isKeyboardCondition;
-                buttonCondition = buttonCondition && !Lockdown;
-                buttonCondition = buttonCondition || isSearching;
+                buttonCondition |= isKeyboardCondition;
+                buttonCondition &= !Lockdown;
+                buttonCondition |= isSearching;
 
                 if (watchMenu)
                     buttonCondition = isKeyboardCondition;
