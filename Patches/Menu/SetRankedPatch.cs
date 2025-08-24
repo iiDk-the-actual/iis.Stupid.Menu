@@ -2,33 +2,44 @@
 using HarmonyLib;
 using Photon.Pun;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace iiMenu.Patches
 {
-    [HarmonyPatch(typeof(VRRig), "SetRankedInfo")]
+    [HarmonyPatch(typeof(RankedProgressionManager), "SetLocalProgressionData")]
     public class SetRankedPatch
     {
         public static bool enabled;
 
-        public static bool Prefix(VRRig __instance, float rankedELO, int rankedSubtierQuest, int rankedSubtierPC, bool broadcastToOtherClients = true)
+        public static bool Prefix(RankedProgressionManager __instance, GorillaTagCompetitiveServerApi.RankedModePlayerProgressionData data)
         {
-            if (__instance.isLocal && enabled)
+            if (enabled)
             {
-                __instance.SetRankedInfoLocal(Mods.Safety.targetElo, Mods.Safety.targetBadge, Mods.Safety.targetBadge);
-
-                FieldInfo rankedChanged = typeof(VRRig).GetField("OnRankedSubtierChanged", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
-                if (rankedChanged != null)
+                Dictionary<int, int[]> tierData = new Dictionary<int, int[]> 
                 {
-                    Action<int, int> del = rankedChanged.GetValue(__instance) as Action<int, int>;
-                    del?.Invoke(Mods.Safety.targetBadge, Mods.Safety.targetBadge);
+                    { 0, new int[] { 0, 0 } },
+                    { 1, new int[] { 0, 1 } },
+
+                    { 2, new int[] { 1, 0 } },
+                    { 3, new int[] { 1, 1 } },
+                    { 4, new int[] { 1, 2 } },
+
+                    { 5, new int[] { 2, 0 } },
+                    { 6, new int[] { 2, 1 } },
+                    { 7, new int[] { 2, 2 } },
+                };
+
+                foreach (GorillaTagCompetitiveServerApi.RankedModeProgressionPlatformData platformData in data.platformData)
+                {
+                    platformData.elo = Mods.Safety.targetElo;
+                    platformData.majorTier = tierData[Mods.Safety.targetBadge][0];
+                    platformData.minorTier = tierData[Mods.Safety.targetBadge][1];
                 }
-
-                if (__instance.netView != null && broadcastToOtherClients)
-                    __instance.netView.SendRPC("RPC_UpdateRankedInfo", RpcTarget.Others, new object[] { __instance.currentRankedELO, __instance.currentRankedSubTierQuest, __instance.currentRankedSubTierPC });
-
+                __instance.ProgressionData = data;
                 return false;
             }
+
             return true;
         }
     }
