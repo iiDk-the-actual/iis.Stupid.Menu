@@ -786,7 +786,7 @@ namespace iiMenu.Menu
                 // Recover from playing sound on soundboard code
                 try
                 {
-                    if (Sound.AudioIsPlaying)
+                    if (Sound.AudioIsPlaying && NetworkSystem.Instance.InRoom)
                     {
                         if (Time.time > Sound.RecoverTime)
                             Sound.FixMicrophone();
