@@ -3335,6 +3335,7 @@ Piece Name: {gunTarget.name}";
             }
         }
 
+        private static float barrelAllDelay;
         public static void BarrelFlingAll()
         {
             SerializePatch.OverrideSerialization = () => false;
@@ -3342,9 +3343,14 @@ Piece Name: {gunTarget.name}";
             foreach (VRRig TargetRig in GorillaParent.instance.vrrigs)
             {
                 if (PlayerIsLocal(TargetRig)) continue;
-                SendBarrelProjectile(TargetRig.transform.position, new Vector3(0f, 50f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(TargetRig)).ActorNumber } }, true);
-                throwableProjectileTimeout = 0f;
+                SendBarrelProjectile(TargetRig.transform.position, new Vector3(0f, 50f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(TargetRig)).ActorNumber } });
+                
+                if (Time.time > barrelAllDelay)
+                    throwableProjectileTimeout = 0f;
             }
+
+            if (Time.time > barrelAllDelay)
+                barrelAllDelay = Time.time + 0.3f;
         }
 
         public static void BarrelPunchMod()
@@ -3397,9 +3403,13 @@ Piece Name: {gunTarget.name}";
             foreach (VRRig TargetRig in GorillaParent.instance.vrrigs)
             {
                 if (PlayerIsLocal(TargetRig)) continue;
-                SendBarrelProjectile(TargetRig.transform.position, new Vector3(0f, 5000f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(TargetRig)).ActorNumber } }, true);
-                throwableProjectileTimeout = 0f;
+                SendBarrelProjectile(TargetRig.transform.position, new Vector3(0f, 5000f, 0f), Quaternion.identity, new RaiseEventOptions { TargetActors = new int[] { NetPlayerToPlayer(GetPlayerFromVRRig(TargetRig)).ActorNumber } });
+                if (Time.time > barrelAllDelay)
+                    throwableProjectileTimeout = 0f;
             }
+
+            if (Time.time > barrelAllDelay)
+                barrelAllDelay = Time.time + 0.3f;
         }
 
         public static void BarrelFlingTowardsGun()
@@ -3779,7 +3789,7 @@ Piece Name: {gunTarget.name}";
             if (Time.time > throwableProjectileTimeout)
             {
                 if (!disableCooldown)
-                    throwableProjectileTimeout = Time.time + 0.31f;
+                    throwableProjectileTimeout = Time.time + 0.3f;
 
                 Vector3 archivePosition = VRRig.LocalRig.transform.position;
                 VRRig.LocalRig.transform.position = pos - vel;
