@@ -1610,66 +1610,88 @@ namespace iiMenu.Mods
             rig.LocalTrajectoryOverrideVelocity = rig.LatestVelocity();
         }
 
-        public static void CosmeticESP() // Messy code lol
+        private static Dictionary<VRRig, GameObject> cosmeticIndicators = new Dictionary<VRRig, GameObject> { };
+        private static Dictionary<string, Texture2D> cosmeticTextures = new Dictionary<string, Texture2D> { };
+        public static void CosmeticESP()
         {
-            if (PerformanceVisuals)
+            foreach (KeyValuePair<VRRig, GameObject> nametag in cosmeticIndicators)
             {
-                if (Time.time < PerformanceVisualDelay)
+                if (!GorillaParent.instance.vrrigs.Contains(nametag.Key))
                 {
-                    if (Time.frameCount != DelayChangeStep)
-                        return;
+                    UnityEngine.Object.Destroy(nametag.Value);
+                    cosmeticIndicators.Remove(nametag.Key);
                 }
-                else
-                { PerformanceVisualDelay = Time.time + PerformanceModeStep; DelayChangeStep = Time.frameCount; }
             }
 
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (!vrrig.isLocal)
+                List<(string codename, string name)> cosmetics = new List<(string codename, string name)>
                 {
-                    bool showtracersplz = false;
-                    Color thecolor = vrrig.playerColor;
-                    if (vrrig.concatStringOfCosmeticsAllowed.Contains("LBADE") || vrrig.concatStringOfCosmeticsAllowed.Contains("LBAGS"))
+                    ("LBAAD.", "admin"),
+                    ("LBAAK.", "stick"),
+                    ("LMAPY.", "forestguide"),
+                    ("LBAGS.", "illustrator"),
+                    ("LBADE.", "fingerpainter"),
+                    ("LBANI.", "aa")
+                };
+
+                string currentCosmetic = null;
+                foreach (var (codename, name) in cosmetics)
+                {
+                    if (vrrig.concatStringOfCosmeticsAllowed.Contains(codename))
                     {
-                        thecolor = Color.green;
-                        showtracersplz = true;
-                    }
-                    if (vrrig.concatStringOfCosmeticsAllowed.Contains("LBANI"))
-                    {
-                        thecolor = Color.magenta;
-                        showtracersplz = true;
-                    }
-                    if (vrrig.concatStringOfCosmeticsAllowed.Contains("LBAAK") || vrrig.concatStringOfCosmeticsAllowed.Contains("LMAPY."))
-                    {
-                        thecolor = Color.red;
-                        showtracersplz = true;
-                    }
-                    if (vrrig.concatStringOfCosmeticsAllowed.Contains("LBAAD"))
-                    {
-                        thecolor = Color.white;
-                        showtracersplz = true;
-                    }
-                    
-                    if (showtracersplz)
-                    {
-                        GameObject line = new GameObject("Line");
-                        if (GetIndex("Hidden on Camera").enabled) { line.layer = 19; }
-                        LineRenderer liner = line.AddComponent<LineRenderer>();
-                        if (smoothLines)
-                        {
-                            liner.numCapVertices = 10;
-                            liner.numCornerVertices = 5;
-                        }
-                        if (GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = GetBGColor(0f); }
-                        if (GetIndex("Transparent Theme").enabled) { vrrig.mainSkin.material.color = new Color(vrrig.mainSkin.material.color.r, vrrig.mainSkin.material.color.g, vrrig.mainSkin.material.color.b, 0.5f); }
-                        liner.startColor = thecolor; liner.endColor = thecolor; liner.startWidth = 0.025f; liner.endWidth = 0.025f; liner.positionCount = 2; liner.useWorldSpace = true;
-                        liner.SetPosition(0, vrrig.transform.position + new Vector3(0f, 9999f, 0f));
-                        liner.SetPosition(1, vrrig.transform.position - new Vector3(0f, 9999f, 0f));
-                        liner.material.shader = Shader.Find("GUI/Text Shader");
-                        UnityEngine.Object.Destroy(line, PerformanceVisuals ? PerformanceModeStep : Time.deltaTime);
+                        currentCosmetic = name;
+                        break;
                     }
                 }
+
+                if (!vrrig.isLocal && currentCosmetic != null)
+                {
+                    if (!cosmeticIndicators.TryGetValue(vrrig, out GameObject indicator))
+                    {
+                        indicator = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        UnityEngine.Object.Destroy(indicator.GetComponent<Collider>());
+
+                        indicator.GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/Unlit");
+
+                        if (platformMat == null)
+                        {
+                            platformMat = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
+                            platformMat.color = Color.white;
+
+                            platformMat.SetFloat("_Surface", 1);
+                            platformMat.SetFloat("_Blend", 0);
+                            platformMat.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
+                            platformMat.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
+                            platformMat.SetFloat("_ZWrite", 0);
+                            platformMat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+                            platformMat.renderQueue = (int)RenderQueue.Transparent;
+                        }
+                        indicator.GetComponent<Renderer>().material = platformEspMat;
+                        cosmeticIndicators.Add(vrrig, indicator);
+                    }
+
+                    if (!cosmeticTextures.TryGetValue(currentCosmetic, out Texture2D texture))
+                    {
+                        texture = LoadTextureFromURL($"https://raw.githubusercontent.com/iiDk-the-actual/ModInfo/refs/heads/main/{currentCosmetic}.png", $"{currentCosmetic}.png");
+                        cosmeticTextures.Add(currentCosmetic, texture);
+                    }
+
+                    indicator.GetComponent<Renderer>().material.mainTexture = texture;
+
+                    indicator.transform.localScale = new Vector3(0.5f, 0.5f, 0.01f) * vrrig.scaleFactor;
+                    indicator.transform.position = vrrig.headMesh.transform.position + vrrig.headMesh.transform.up * (0.8f * vrrig.scaleFactor);
+                    indicator.transform.LookAt(GorillaTagger.Instance.headCollider.transform.position);
+                }
             }
+        }
+
+        public static void DisableCosmeticESP()
+        {
+            foreach (KeyValuePair<VRRig, GameObject> nametag in cosmeticIndicators)
+                UnityEngine.Object.Destroy(nametag.Value);
+
+            cosmeticIndicators.Clear();
         }
 
         // Credits to zvbex for the 'FIRST LOGIN' concat check
