@@ -696,7 +696,48 @@ namespace iiMenu.Mods
                 rankIndex = 2;
 
             targetRank = ((RankedProgressionManager.ERankedMatchmakingTier)rankIndex).ToString();
-            GetIndex("Change Ranked Tier").overlapText = "Change Ranked Tier <color=grey>[</color><color=green>" + targetRank + "</color><color=grey>]</color>";
+            GetIndex("Change Ranked Tier").overlapText = "Change Matchmaking Tier <color=grey>[</color><color=green>" + targetRank + "</color><color=grey>]</color>";
+        }
+
+        public static void ChangeELOValue(bool positive = true)
+        {
+            if (positive)
+                targetElo += 100;
+            else
+                targetElo += 100;
+
+            if (targetElo > 4000)
+                targetElo = 0;
+            if (targetElo < 0)
+                targetElo = 4000;
+
+            GetIndex("Change ELO Value").overlapText = "Change ELO Value <color=grey>[</color><color=green>" + targetElo + "</color><color=grey>]</color>";
+        }
+
+        public static void ChangeBadgeTier(bool positive = true)
+        {
+            string[] badgeNames = new string[]
+            {
+                "Wood",
+                "Rock",
+                "Bronze",
+                "Silver",
+                "Gold",
+                "Platinum",
+                "Crystal",
+                "Banana"
+            };
+
+            if (positive)
+                targetBadge++;
+            else
+                targetBadge--;
+
+            targetBadge %= 8;
+            if (targetBadge < 0)
+                targetBadge = 7;
+
+            GetIndex("Change Badge Tier").overlapText = "Change Badge Tier <color=grey>[</color><color=green>" + badgeNames[targetBadge] + "</color><color=grey>]</color>";
         }
 
         public static void SpoofRank(bool enabled, string tier = null)
@@ -709,6 +750,16 @@ namespace iiMenu.Mods
         {
             Patches.RankedPatch.enabled = enabled;
             Patches.RankedPatch.targetPlatform = target;
+        }
+
+        public static int targetElo = 4000;
+        public static int targetBadge = 7;
+        public static void SpoofBadge()
+        {
+            VRRig.LocalRig.currentRankedELO = targetElo;
+
+            VRRig.LocalRig.currentRankedSubTierQuest = targetBadge;
+            VRRig.LocalRig.currentRankedSubTierPC = targetBadge;
         }
     }
 }

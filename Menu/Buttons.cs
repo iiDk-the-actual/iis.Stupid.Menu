@@ -392,7 +392,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Fake Valve Tracking <color=grey>[</color><color=green>J</color><color=grey>]</color>", enableMethod =() => Patches.TorsoPatch.VRRigLateUpdate += Safety.FakeValveTracking, disableMethod =() => Patches.TorsoPatch.VRRigLateUpdate -= Safety.FakeValveTracking, toolTip = "Imitates what happens when your headset disconnects on a Valve Index when holding your <color=green>right joystick</color>."},
 
                 new ButtonInfo { buttonText = "Disable Gamemode Buttons", enableMethod =() => Safety.SetGamemodeButtonActive(false), disableMethod =() => Safety.SetGamemodeButtonActive(), toolTip = "Disables the gamemode buttons."},
-                new ButtonInfo { buttonText = "Spoof Support Page", method =() => Safety.SpoofSupportPage(), toolTip = "Makes the support page appear as if you are on Oculus."},
+                new ButtonInfo { buttonText = "Support Page Spoof", method =() => Safety.SpoofSupportPage(), toolTip = "Makes the support page appear as if you are on Oculus."},
 
                 new ButtonInfo { buttonText = "Flush RPCs", method =() => RPCProtection(), isTogglable = false, toolTip = "Flushes all RPC calls, good after you stop spamming." },
                 new ButtonInfo { buttonText = "Anti Crash", enableMethod =() => Patches.AntiCrashPatch.enabled = true, disableMethod =() => Patches.AntiCrashPatch.enabled = false, toolTip = "Prevents crashers from completely annihilating your computer."},
@@ -425,8 +425,6 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Name Spoof", enableMethod =() => Patches.ColorPatch.nameSpoofEnabled = true, disableMethod =() => Patches.ColorPatch.nameSpoofEnabled = false, toolTip = "Changes your name on the leaderboard to something random, but not on your rig."},
                 new ButtonInfo { buttonText = "Color Spoof", enableMethod =() => Patches.ColorPatch.patchEnabled = true, disableMethod =() => Patches.ColorPatch.patchEnabled = false, toolTip = "Makes your color appear different to every player."},
 
-                new ButtonInfo { buttonText = "Ranked Tier Spoof", method =() => Safety.SpoofRank(true, Safety.targetRank), disableMethod =() => Safety.SpoofRank(false), toolTip = "Spoofs your rank for competitive lobbies, letting you join higher or lower lobbies."},
-                new ButtonInfo { buttonText = "Ranked Platform Spoof", method =() => Safety.SpoofPlatform(true, "Quest"), disableMethod =() => Safety.SpoofPlatform(false), toolTip = "Spoofs your platform for competitive lobbies, letting you join quest lobbies."},
                 new ButtonInfo { buttonText = "Unload Menu", method =() => UnloadMenu(), isTogglable = false, toolTip = "Unloads the menu from your game."}
             },
 
@@ -864,6 +862,11 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Quest Noises <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Fun.QuestNoises(), toolTip = "Makes noises at the quest machine in city when holding <color=green>trigger</color>."},
                 new ButtonInfo { buttonText = "Max Quest Score", method =() => Fun.MaxQuestScore(), toolTip = "Gives you the maximum quest score in the game (99999)."},
                 new ButtonInfo { buttonText = "Custom Quest Score", method =() => Fun.CustomQuestScore(), toolTip = "Gives you a custom quest score. You can change this in the settings."},
+                
+                new ButtonInfo { buttonText = "Matchmaking Tier Spoof", method =() => Safety.SpoofRank(true, Safety.targetRank), disableMethod =() => Safety.SpoofRank(false), toolTip = "Spoofs your rank for competitive lobbies, letting you join higher or lower lobbies."},
+                new ButtonInfo { buttonText = "Matchmaking Platform Spoof", method =() => Safety.SpoofPlatform(true, "Quest"), disableMethod =() => Safety.SpoofPlatform(false), toolTip = "Spoofs your platform for competitive lobbies, letting you join quest lobbies."},
+
+                new ButtonInfo { buttonText = "Badge Tier Spoof", method =() => Safety.SpoofBadge(), toolTip = "Spoofs your competitive badge, showing that you have a higher rank than you really do."},
 
                 new ButtonInfo { buttonText = "Arcade Teleporter Effect Spam", method =() => Fun.ArcadeTeleporterEffectSpam(), toolTip = "Spams the effects on the virtual stump teleporters in the arcade when holding <color=green>trigger</color>."},
                 new ButtonInfo { buttonText = "Stump Teleporter Effect Spam", method =() => Fun.StumpTeleporterEffectSpam(), toolTip = "Spams the effects on the virtual stump teleporter in forest when holding <color=green>trigger</color>."},
@@ -1738,8 +1741,6 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Visualize Anti Report", method =() => Safety.VisualizeAntiReport(), toolTip = "Visualizes the distance threshold for the anti report mods."},
                 new ButtonInfo { buttonText = "Smart Anti Report", enableMethod =() => Safety.smartarp = true, disableMethod =() => Safety.smartarp = false, toolTip = "Makes the anti report mods only activate in non-modded public lobbies."},
-
-                new ButtonInfo { buttonText = "Change Ranked Tier", overlapText = "Change Ranked Tier <color=grey>[</color><color=green>High</color><color=grey>]</color>", method =() => Safety.ChangeRankedTier(), enableMethod =() => Safety.ChangeRankedTier(), disableMethod =() => Safety.ChangeRankedTier(false), incremental = true, isTogglable = false, toolTip = "Changes the targetted tier for the rank spoof mod."},
             },
 
             new ButtonInfo[] { // Temporary Category [29]
@@ -1813,6 +1814,10 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Bouncy Bug", toolTip = "Makes the bug bounce off of surfaces if using the bug colliders setting on the Bug Spam mod."},
 
                 new ButtonInfo { buttonText = "Change Custom Quest Score", overlapText = "Change Custom Quest Score <color=grey>[</color><color=green>0</color><color=grey>]</color>", method =() => Fun.ChangeCustomQuestScore(true), enableMethod =() => Fun.ChangeCustomQuestScore(true), disableMethod =() => Fun.ChangeCustomQuestScore(false), incremental = true, isTogglable = false, toolTip = "Changes the value of the \"Custom Quest Score\" mod." },
+                
+                new ButtonInfo { buttonText = "Change Ranked Tier", overlapText = "Change Matchmaking Tier <color=grey>[</color><color=green>High</color><color=grey>]</color>", method =() => Safety.ChangeRankedTier(), enableMethod =() => Safety.ChangeRankedTier(), disableMethod =() => Safety.ChangeRankedTier(false), incremental = true, isTogglable = false, toolTip = "Changes the targetted tier for the matchmaking spoof mod."},
+                new ButtonInfo { buttonText = "Change ELO Value", overlapText = "Change ELO Value <color=grey>[</color><color=green>4000</color><color=grey>]</color>", method =() => Safety.ChangeELOValue(), enableMethod =() => Safety.ChangeELOValue(), disableMethod =() => Safety.ChangeELOValue(false), incremental = true, isTogglable = false, toolTip = "Changes the targetted ELO for the badge spoof mod."},
+                new ButtonInfo { buttonText = "Change Badge Tier", overlapText = "Change Badge Tier <color=grey>[</color><color=green>Banana</color><color=grey>]</color>", method =() => Safety.ChangeBadgeTier(), enableMethod =() => Safety.ChangeBadgeTier(), disableMethod =() => Safety.ChangeBadgeTier(false), incremental = true, isTogglable = false, toolTip = "Changes the targetted tier for the badge spoof mod."},
 
                 new ButtonInfo { buttonText = "Zero Gravity Blocks", toolTip = "Removes the gravity from the blocks."},
                 new ButtonInfo { buttonText = "Random Block Type", toolTip = "Selects a random block when using block mods."},

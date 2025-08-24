@@ -3148,7 +3148,9 @@ namespace iiMenu.Mods
                 PhotonNetwork.LocalPlayer?.UserId ?? "null",
                 _pageSize.ToString(),
                 Overpowered.snowballMultiplicationFactor.ToString(),
-                menuButtonIndex.ToString()
+                menuButtonIndex.ToString(),
+                Safety.targetElo.ToString(),
+                Safety.targetBadge.ToString()
             };
 
             string settingstext = string.Join(seperator, settings);
@@ -3359,6 +3361,12 @@ namespace iiMenu.Mods
 
                 menuButtonIndex = int.Parse(data[51]) - 1;
                 ChangeMenuButton();
+
+                Safety.targetElo = int.Parse(data[52]) - 100;
+                Safety.ChangeELOValue();
+
+                Safety.targetBadge = int.Parse(data[53]) - 1;
+                Safety.ChangeBadgeTier();
             }
             catch { LogManager.Log("Save file out of date"); }
 
