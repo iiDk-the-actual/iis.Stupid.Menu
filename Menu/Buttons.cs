@@ -721,7 +721,7 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Streamer Remove Leaves", enableMethod =() => Visuals.EnableStreamerRemoveLeaves(), disableMethod =() => Visuals.DisableStreamerRemoveLeaves(), toolTip = "Removes leaves on trees in VR, but not on the camera. Good for streaming."},
                 new ButtonInfo { buttonText = "Remove Cosmetics", enableMethod =() => Visuals.DisableCosmetics(), disableMethod =() => Visuals.EnableCosmetics(), toolTip = "Locally toggles off your cosmetics, so you can wear sight-blocking cosmetics such as the eyepatch."},
 
-                new ButtonInfo { buttonText = "Cosmetic ESP", method =() => Visuals.CosmeticESP(), toolTip = "Shows beacons above people's heads if they are a Finger Painter, Illustrator, Administrator, Stick, or if they have any unreleased cosmetics."},
+                new ButtonInfo { buttonText = "Cosmetic ESP", method =() => Visuals.CosmeticESP(), disableMethod =() => Visuals.DisableCosmeticESP(), toolTip = "Shows icons above people's heads if they are a Finger Painter, Illustrator, Administrator, Stick, Forest Guide, or Another Axiom Creator."},
 
                 new ButtonInfo { buttonText = "Voice Indicators", method =() => Visuals.VoiceIndicators(), disableMethod =() => Visuals.DisableVoiceIndicators(), toolTip = "Puts voice indicators above people's heads when they're talking."},
                 new ButtonInfo { buttonText = "Voice ESP", method =() => Visuals.VoiceESP(), disableMethod =() => Visuals.DisableVoiceIndicators(), toolTip = "Puts voice indicators above people's heads when they're talking, but now they go through walls."},
