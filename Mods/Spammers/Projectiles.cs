@@ -50,7 +50,11 @@ namespace iiMenu.Mods.Spammers
             "HotDogLeftAnchor",
             "HotDogRightAnchor",
             "Fireworks_Anchor Variant_Left Hand",
-            "Fireworks_Anchor Variant_Right Hand"
+            "Fireworks_Anchor Variant_Right Hand",
+            "Papers_Anchor Variant_Left Hand",
+            "Papers_Anchor Variant_Right Hand",
+            "IceCreamScoopLeftAnchor",
+            "IceCreamScoopRightAnchor"
         };
 
         public static Coroutine RigCoroutine;
@@ -288,7 +292,9 @@ namespace iiMenu.Mods.Spammers
                 "Egg",
                 "Ice Cream",
                 "Hot Dog",
-                "Fireworks"
+                "Fireworks",
+                "Paper",
+                "Ice Cream Scoop"
             };
 
             if (positive)
