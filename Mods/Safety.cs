@@ -704,7 +704,7 @@ namespace iiMenu.Mods
             if (positive)
                 targetElo += 100;
             else
-                targetElo += 100;
+                targetElo -= 100;
 
             if (targetElo > 4000)
                 targetElo = 0;
@@ -756,10 +756,9 @@ namespace iiMenu.Mods
         public static int targetBadge = 7;
         public static void SpoofBadge()
         {
-            VRRig.LocalRig.currentRankedELO = targetElo;
-
-            VRRig.LocalRig.currentRankedSubTierQuest = targetBadge;
-            VRRig.LocalRig.currentRankedSubTierPC = targetBadge;
+            Patches.SetRankedPatch.enabled = true;
+            if (VRRig.LocalRig.currentRankedELO != targetElo || VRRig.LocalRig.currentRankedSubTierQuest != targetBadge || VRRig.LocalRig.currentRankedSubTierPC != targetBadge)
+                VRRig.LocalRig.SetRankedInfo(targetElo, targetBadge, targetBadge);
         }
     }
 }
