@@ -556,7 +556,7 @@ namespace iiMenu.Mods
                     reloaded = false;
                 }
 
-                if (startSilenceTime > 0f && !reloaded && Time.time - startSilenceTime >= 0.5f)
+                if (startSilenceTime > 0f && !reloaded && Time.time - startSilenceTime >= 0.25f)
                 {
                     mic.RestartRecording(true);
                     reloaded = true;
