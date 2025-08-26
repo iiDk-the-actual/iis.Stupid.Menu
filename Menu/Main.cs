@@ -6438,7 +6438,7 @@ jgs \_   _/ |Oo\
         public static bool gradientTitle;
         public static string lastClickedName = "";
 
-        public static string motdTemplate = "You are using build {0}. This menu was created by iiDk (@goldentrophy) on discord. " +
+        public static string motdTemplate = "You are using build {0}. This menu was created by iiDk (@crimsoncauldron) on Discord. " +
         "This menu is completely free and open sourced, if you paid for this menu you have been scammed. " +
         "There are a total of <b>{1}</b> mods on this menu. " +
         "<color=red>I, iiDk, am not responsible for any bans using this menu.</color> " +
