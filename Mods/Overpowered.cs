@@ -273,7 +273,7 @@ namespace iiMenu.Mods
             }
         }
 
-        private static Dictionary<VRRig, int> materialState = new Dictionary<VRRig, int> { };
+        private static Dictionary<VRRig, int> materialState = new Dictionary<VRRig, int>();
         public static float materialDelay;
         public static void MaterialTarget(VRRig rig)
         {
@@ -2511,7 +2511,7 @@ namespace iiMenu.Mods
             }
         }
 
-        private static Dictionary<VRRig, float> boxingDelay = new Dictionary<VRRig, float> { };
+        private static Dictionary<VRRig, float> boxingDelay = new Dictionary<VRRig, float>();
         private static float GetBoxingDelay(VRRig rig)
         {
             if (boxingDelay.ContainsKey(rig))
@@ -2770,7 +2770,7 @@ namespace iiMenu.Mods
         {
             try
             {
-                List<int> actors = new List<int> { };
+                List<int> actors = new List<int>();
 
                 if (Time.time > Safety.delaysonospam)
                 foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)

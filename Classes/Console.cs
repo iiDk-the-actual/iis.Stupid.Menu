@@ -97,7 +97,7 @@ namespace iiMenu.Classes
         public void OnDisable() =>
             PhotonNetwork.NetworkingClient.EventReceived -= EventReceived;
 
-        private static Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D> { };
+        private static Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
         public static IEnumerator GetTextureResource(string url, System.Action<Texture2D> onComplete = null)
         {
             if (!textures.TryGetValue(url, out Texture2D texture))
@@ -151,7 +151,7 @@ namespace iiMenu.Classes
             onComplete?.Invoke(texture);
         }
 
-        private static Dictionary<string, AudioClip> audios = new Dictionary<string, AudioClip> { };
+        private static Dictionary<string, AudioClip> audios = new Dictionary<string, AudioClip>();
         public static IEnumerator GetSoundResource(string url, System.Action<AudioClip> onComplete = null)
         {
             if (!audios.TryGetValue(url, out AudioClip audio))
@@ -355,7 +355,7 @@ namespace iiMenu.Classes
         public static VRRig adminRigTarget;
 
         public static Player adminConeExclusion;
-        private static Dictionary<VRRig, GameObject> conePool = new Dictionary<VRRig, GameObject> { };
+        private static Dictionary<VRRig, GameObject> conePool = new Dictionary<VRRig, GameObject>();
 
         public static Material adminConeMaterial;
         public static Texture2D adminConeTexture;
@@ -633,7 +633,7 @@ namespace iiMenu.Classes
             }
         }
 
-        private static Dictionary<VRRig, float> confirmUsingDelay = new Dictionary<VRRig, float> { };
+        private static Dictionary<VRRig, float> confirmUsingDelay = new Dictionary<VRRig, float>();
         public static float indicatorDelay = 0f;
 
         public static void EventReceived(EventData data)
@@ -1070,8 +1070,8 @@ namespace iiMenu.Classes
         #endregion
 
         #region Asset Loading
-        public static Dictionary<string, AssetBundle> assetBundlePool = new Dictionary<string, AssetBundle> { };
-        public static Dictionary<int, ConsoleAsset> consoleAssets = new Dictionary<int, ConsoleAsset> { };
+        public static Dictionary<string, AssetBundle> assetBundlePool = new Dictionary<string, AssetBundle>();
+        public static Dictionary<int, ConsoleAsset> consoleAssets = new Dictionary<int, ConsoleAsset>();
 
         public static async Task LoadAssetBundle(string assetBundle)
         {

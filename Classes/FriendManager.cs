@@ -32,7 +32,7 @@ namespace iiMenu.Classes
         private string FriendResponse;
         public const int FriendByte = 53;
 
-        public FriendData Friends = new FriendData { friends = new Dictionary<string, FriendData.Friend> { }, incoming = new Dictionary<string, FriendData.PendingFriend> { }, outgoing = new Dictionary<string, FriendData.PendingFriend> { } };
+        public FriendData Friends = new FriendData { friends = new Dictionary<string, FriendData.Friend>(), incoming = new Dictionary<string, FriendData.PendingFriend>(), outgoing = new Dictionary<string, FriendData.PendingFriend>() };
 
         public void Awake()
         {
@@ -51,7 +51,7 @@ namespace iiMenu.Classes
         private static Texture2D starTexture;
 
         private static float updateRigDelay;
-        private static Dictionary<VRRig, GameObject> starPool = new Dictionary<VRRig, GameObject> { };
+        private static Dictionary<VRRig, GameObject> starPool = new Dictionary<VRRig, GameObject>();
 
         public static bool RigNetworking = true;
         public static bool PlatformNetworking = true;
@@ -231,7 +231,7 @@ namespace iiMenu.Classes
 
         public static int[] GetAllNetworkActorNumbers()
         {
-            List<int> actorNumbers = new List<int> { };
+            List<int> actorNumbers = new List<int>();
 
             if (!PhotonNetwork.InRoom)
                 return actorNumbers.ToArray();
@@ -245,11 +245,11 @@ namespace iiMenu.Classes
         public static bool IsPlayerFriend(NetPlayer Player) =>
             instance.Friends.friends.Values.Any(friend => friend.currentUserID == Player.UserId);
 
-        private static Dictionary<VRRig, float> ghostRigDelay = new Dictionary<VRRig, float> { };
-        private static Dictionary<VRRig, (GameObject, GameObject, GameObject, GameObject)> ghostRigPool = new Dictionary<VRRig, (GameObject, GameObject, GameObject, GameObject)> { };
+        private static Dictionary<VRRig, float> ghostRigDelay = new Dictionary<VRRig, float>();
+        private static Dictionary<VRRig, (GameObject, GameObject, GameObject, GameObject)> ghostRigPool = new Dictionary<VRRig, (GameObject, GameObject, GameObject, GameObject)>();
 
-        private static Dictionary<VRRig, GameObject> leftPlatform = new Dictionary<VRRig, GameObject> { };
-        private static Dictionary<VRRig, GameObject> rightPlatform = new Dictionary<VRRig, GameObject> { };
+        private static Dictionary<VRRig, GameObject> leftPlatform = new Dictionary<VRRig, GameObject>();
+        private static Dictionary<VRRig, GameObject> rightPlatform = new Dictionary<VRRig, GameObject>();
 
         public static void PlatformSpawned(bool leftHand, Vector3 position, Quaternion rotation, Vector3 scale, PrimitiveType spawnType)
         {

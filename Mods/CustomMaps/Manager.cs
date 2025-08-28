@@ -14,7 +14,7 @@ namespace iiMenu.Mods.CustomMaps
 {
     public class Manager
     {
-        private static Dictionary<long, string> mapScriptArchives = new Dictionary<long, string> { };
+        private static Dictionary<long, string> mapScriptArchives = new Dictionary<long, string>();
         public static void UpdateCustomMapsTab(long? overwriteId = null)
         {
             int category = GetCategory("Custom Maps");
@@ -104,7 +104,7 @@ namespace iiMenu.Mods.CustomMaps
 
         public static void RevertCustomScript(int[] lines)
         {
-            Dictionary<int, string> replacements = new Dictionary<int, string> { };
+            Dictionary<int, string> replacements = new Dictionary<int, string>();
             foreach (int line in lines)
                 replacements.Add(line, mapScriptArchives[CustomMapManager.currentRoomMapModId].Split(new[] { "\r\n", "\n" }, StringSplitOptions.None)[line]);
 
@@ -114,7 +114,7 @@ namespace iiMenu.Mods.CustomMaps
         public static void RevertCustomScript(int line) =>
             RevertCustomScript(new int[] { line });
 
-        public static Dictionary<long, CustomMap> mapCache = new Dictionary<long, CustomMap> { };
+        public static Dictionary<long, CustomMap> mapCache = new Dictionary<long, CustomMap>();
         public static CustomMap GetMapByID(long id)
         {
             if (!mapCache.TryGetValue(id, out var instance))

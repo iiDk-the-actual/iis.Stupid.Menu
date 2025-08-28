@@ -319,8 +319,8 @@ namespace iiMenu.Mods
             RemoveButton(category, "DebugRoomB");
         }
 
-        public static Dictionary<string, Assembly> LoadedPlugins = new Dictionary<string, Assembly> { };
-        public static List<string> disabledPlugins = new List<string> { };
+        public static Dictionary<string, Assembly> LoadedPlugins = new Dictionary<string, Assembly>();
+        public static List<string> disabledPlugins = new List<string>();
         public static void LoadPlugins()
         {
             Buttons.buttons[GetCategory("Plugin Settings")] = new ButtonInfo[] { new ButtonInfo { buttonText = "Exit Plugin Settings", method = () => currentCategoryName = "Settings", isTogglable = false, toolTip = "Returns you back to the settings menu." } };
@@ -3386,7 +3386,7 @@ namespace iiMenu.Mods
                         string[] BindData = Bindings.Split(";;");
                         string BindName = BindData[0];
 
-                        List<string> Binds = new List<string> { };
+                        List<string> Binds = new List<string>();
 
                         for (int i = 1; i < BindData.Length; i++)
                         {

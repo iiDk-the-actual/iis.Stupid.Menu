@@ -26,7 +26,7 @@ namespace iiMenu.Notifications
 
         public static string PreviousNotifi;
 
-        public static Dictionary<string, string> information = new Dictionary<string, string> { };
+        public static Dictionary<string, string> information = new Dictionary<string, string>();
 
         public static Text NotifiText;
         public static Text ModText;
@@ -366,7 +366,7 @@ namespace iiMenu.Notifications
             }
         }
 
-        public static List<Coroutine> clearCoroutines = new List<Coroutine> { };
+        public static List<Coroutine> clearCoroutines = new List<Coroutine>();
 
     }
 }

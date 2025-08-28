@@ -21,7 +21,7 @@ namespace iiMenu.Mods
         public static void FixDuplicateButtons()
         {
             int duplicateButtons = 0;
-            List<string> previousNames = new List<string> { };
+            List<string> previousNames = new List<string>();
             foreach (ButtonInfo[] buttonn in Buttons.buttons)
             {
                 foreach (ButtonInfo button in buttonn)
@@ -39,7 +39,7 @@ namespace iiMenu.Mods
             NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully fixed " + duplicateButtons.ToString() + " broken buttons.");
         }
 
-        private static Dictionary<Renderer, Material> oldMats = new Dictionary<Renderer, Material> { };
+        private static Dictionary<Renderer, Material> oldMats = new Dictionary<Renderer, Material>();
         public static void BetterFPSBoost()
         {
             foreach (Renderer v in Resources.FindObjectsOfTypeAll<Renderer>())
@@ -260,7 +260,7 @@ namespace iiMenu.Mods
             }
         }
 
-        private static Dictionary<VRRig, Coroutine> freezePool = new Dictionary<VRRig, Coroutine> { };
+        private static Dictionary<VRRig, Coroutine> freezePool = new Dictionary<VRRig, Coroutine>();
         private static System.Collections.IEnumerator FreezeCoroutine(VRRig rig)
         {
             Vector3 pos = rig.transform.position;
@@ -353,7 +353,7 @@ namespace iiMenu.Mods
             }
         }
 
-        private static List<int> fullActorNumbers = new List<int> { };
+        private static List<int> fullActorNumbers = new List<int>();
         public static void FullToggleMenu(int actorNumber, bool enable)
         {
             if (enable)
@@ -758,7 +758,7 @@ namespace iiMenu.Mods
             catch { }
         }
 
-        private static Dictionary<VRRig, GameObject> nametags = new Dictionary<VRRig, GameObject> { };
+        private static Dictionary<VRRig, GameObject> nametags = new Dictionary<VRRig, GameObject>();
         public static void AdminMenuUserTags()
         {
             if (PhotonNetwork.InRoom && (!lastInRoom || PhotonNetwork.PlayerList.Length != lastPlayerCount))
