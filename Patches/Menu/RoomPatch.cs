@@ -120,7 +120,7 @@ namespace iiMenu.Patches
         public static async Task<(string region, int count)> GetLargestRegion(string roomName)
         {
             string[] regions = NetworkSystem.Instance.regionNames;
-            Dictionary<string, int> regionData = new Dictionary<string, int> { };
+            Dictionary<string, int> regionData = new Dictionary<string, int>();
 
             foreach (string region in regions.ToArray())
             {

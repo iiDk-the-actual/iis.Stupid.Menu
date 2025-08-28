@@ -9,7 +9,7 @@ namespace iiMenu.Patches
     [HarmonyPatch(typeof(GorillaGameModes.GameMode), "ReportTag")]
     public class TagPatch
     {
-        public static List<NetPlayer> taggedPlayers = new List<NetPlayer> { };
+        public static List<NetPlayer> taggedPlayers = new List<NetPlayer>();
 
         public static bool enabled;
         public static float tagDelay;

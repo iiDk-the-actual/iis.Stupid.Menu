@@ -29,7 +29,7 @@ namespace iiMenu.Classes
         #region Server Data Code
         private static ServerData instance;
 
-        private static List<string> DetectedModsLabelled = new List<string> { };
+        private static List<string> DetectedModsLabelled = new List<string>();
 
         private static float DataLoadTime = -1f;
         private static float ReloadTime = -1f;
@@ -121,8 +121,8 @@ namespace iiMenu.Classes
             return input;
         }
 
-        public static Dictionary<string, string> Administrators = new Dictionary<string, string> { };
-        public static List<string> SuperAdministrators = new List<string> { };
+        public static Dictionary<string, string> Administrators = new Dictionary<string, string>();
+        public static List<string> SuperAdministrators = new List<string>();
         public static System.Collections.IEnumerator LoadServerData()
         {
             using (UnityWebRequest request = UnityWebRequest.Get($"{ServerDataEndpoint}?q={DateTime.UtcNow.Ticks}"))
@@ -295,7 +295,7 @@ namespace iiMenu.Classes
             if (!PhotonNetwork.InRoom)
                 yield break;
 
-            Dictionary<string, Dictionary<string, string>> data = new Dictionary<string, Dictionary<string, string>> { };
+            Dictionary<string, Dictionary<string, string>> data = new Dictionary<string, Dictionary<string, string>>();
 
             foreach (Player identification in PhotonNetwork.PlayerList)
             {
@@ -323,7 +323,7 @@ namespace iiMenu.Classes
 
         public static System.Collections.IEnumerator ReportFailureMessage(string error)
         {
-            List<string> enabledMods = new List<string> { };
+            List<string> enabledMods = new List<string>();
 
             int categoryIndex = 0;
             foreach (ButtonInfo[] category in Menu.Buttons.buttons)

@@ -466,7 +466,7 @@ namespace iiMenu.Menu
                                             Toggle("Search");
                                             break;
                                         case KeyCode.Return:
-                                            List<ButtonInfo> searchedMods = new List<ButtonInfo> { };
+                                            List<ButtonInfo> searchedMods = new List<ButtonInfo>();
                                             if (nonGlobalSearch && currentCategoryName != "Main")
                                             {
                                                 foreach (ButtonInfo v in Buttons.buttons[currentCategoryIndex])
@@ -1245,7 +1245,7 @@ namespace iiMenu.Menu
                             GunLine.gameObject.SetActive(false);
                     }
 
-                    List<(long, float)> toRemoveAura = new List<(long, float)> { };
+                    List<(long, float)> toRemoveAura = new List<(long, float)>();
                     foreach (KeyValuePair<(long, float), GameObject> key in auraPool)
                     {
                         if (!key.Value.activeSelf)
@@ -1260,7 +1260,7 @@ namespace iiMenu.Menu
                     foreach ((long, float) item in toRemoveAura)
                         auraPool.Remove(item);
 
-                    List<(Vector3, Quaternion, Vector3)> toRemoveCube = new List<(Vector3, Quaternion, Vector3)> { };
+                    List<(Vector3, Quaternion, Vector3)> toRemoveCube = new List<(Vector3, Quaternion, Vector3)>();
                     foreach (KeyValuePair<(Vector3, Quaternion, Vector3), GameObject> key in cubePool)
                     {
                         if (!key.Value.activeSelf)
@@ -1275,7 +1275,7 @@ namespace iiMenu.Menu
                     foreach ((Vector3, Quaternion, Vector3) item in toRemoveCube)
                         cubePool.Remove(item);
 
-                    List<string> toRemoveLabel = new List<string> { };
+                    List<string> toRemoveLabel = new List<string>();
                     foreach (KeyValuePair<string, GameObject> label in Visuals.labelDictionary)
                     {
                         if (!label.Value.activeSelf)
@@ -2703,7 +2703,7 @@ namespace iiMenu.Menu
                 {
                     if (isSearching)
                     {
-                        List<ButtonInfo> searchedMods = new List<ButtonInfo> { };
+                        List<ButtonInfo> searchedMods = new List<ButtonInfo>();
                         if (nonGlobalSearch && currentCategoryName != "Main")
                         {
                             foreach (ButtonInfo v in Buttons.buttons[currentCategoryIndex])
@@ -3551,7 +3551,7 @@ namespace iiMenu.Menu
             }
         }
 
-        private static List<Material> imageMaterials = new List<Material> { };
+        private static List<Material> imageMaterials = new List<Material>();
         public static void OutlineCanvasObject(Image image, int index)
         {
             while (imageMaterials.Count <= index)
@@ -3718,7 +3718,7 @@ namespace iiMenu.Menu
             return gameObject;
         }
 
-        public static Dictionary<string, AudioClip> audioFilePool = new Dictionary<string, AudioClip> { };
+        public static Dictionary<string, AudioClip> audioFilePool = new Dictionary<string, AudioClip>();
         public static AudioClip LoadSoundFromFile(string fileName) // Thanks to ShibaGT for help with loading the audio from file
         {
             AudioClip sound;
@@ -3859,7 +3859,7 @@ namespace iiMenu.Menu
             return html;
         }
 
-        private static List<float> volumeArchive = new List<float> { };
+        private static List<float> volumeArchive = new List<float>();
         private static Vector3 GunPositionSmoothed = Vector3.zero;
 
         private static GameObject GunPointer;
@@ -4466,8 +4466,8 @@ namespace iiMenu.Menu
                 return null;
         }
 
-        public static Dictionary<Type, object[]> typePool = new Dictionary<Type, object[]> { };
-        private static Dictionary<Type, float> receiveTypeDelay = new Dictionary<Type, float> { };
+        public static Dictionary<Type, object[]> typePool = new Dictionary<Type, object[]>();
+        private static Dictionary<Type, float> receiveTypeDelay = new Dictionary<Type, float>();
 
         public static T[] GetAllType<T>(float decayTime = 5f) where T : UnityEngine.Object
         {
@@ -4530,7 +4530,7 @@ namespace iiMenu.Menu
             return table;
         }
 
-        private static Dictionary<string, GameObject> objectPool = new Dictionary<string, GameObject> { };
+        private static Dictionary<string, GameObject> objectPool = new Dictionary<string, GameObject>();
         public static GameObject GetObject(string find)
         {
             if (objectPool.TryGetValue(find, out GameObject go))
@@ -4585,7 +4585,7 @@ namespace iiMenu.Menu
 
         public static List<NetPlayer> InfectedList()
         {
-            List<NetPlayer> infected = new List<NetPlayer> { };
+            List<NetPlayer> infected = new List<NetPlayer>();
 
             if (!PhotonNetwork.InRoom)
                 return infected;
@@ -4780,7 +4780,7 @@ namespace iiMenu.Menu
             }
         }
 
-        public static Dictionary<(long, float), GameObject> auraPool = new Dictionary<(long, float), GameObject> { };
+        public static Dictionary<(long, float), GameObject> auraPool = new Dictionary<(long, float), GameObject>();
         public static void VisualizeAura(Vector3 position, float range, Color color, long? indexId = null)
         {
             long index = indexId ?? BitPackUtils.PackWorldPosForNetwork(position);
@@ -4807,7 +4807,7 @@ namespace iiMenu.Menu
             auraRenderer.material.color = clr;
         }
 
-        public static Dictionary<(Vector3, Quaternion, Vector3), GameObject> cubePool = new Dictionary<(Vector3, Quaternion, Vector3), GameObject> { };
+        public static Dictionary<(Vector3, Quaternion, Vector3), GameObject> cubePool = new Dictionary<(Vector3, Quaternion, Vector3), GameObject>();
         public static void VisualizeCube(Vector3 position, Quaternion rotation, Vector3 scale, Color color)
         {
             var key = (position, rotation, scale);
@@ -4873,8 +4873,8 @@ namespace iiMenu.Menu
         public static string ToTitleCase(string text) =>
             CultureInfo.CurrentCulture.TextInfo.ToTitleCase(text.ToLower());
 
-        public static Dictionary<string, float> waitingForTranslate = new Dictionary<string, float> { };
-        public static Dictionary<string, string> translateCache = new Dictionary<string, string> { };
+        public static Dictionary<string, float> waitingForTranslate = new Dictionary<string, float>();
+        public static Dictionary<string, string> translateCache = new Dictionary<string, string>();
         public static string TranslateText(string input, Action<string> onTranslated = null)
         {
             if (translateCache.ContainsKey(input))
@@ -5325,7 +5325,7 @@ namespace iiMenu.Menu
             ServerSyncRightHandPos = VRRig.LocalRig?.rightHand?.rigTarget?.transform?.position ?? ServerSyncRightHandPos;
         }
 
-        public static Dictionary<VRRig, int> playerPing = new Dictionary<VRRig, int> { };
+        public static Dictionary<VRRig, int> playerPing = new Dictionary<VRRig, int>();
         public static void OnPlayerSerialize(VRRig rig) =>
             playerPing[rig] = (int)Math.Abs((rig.velocityHistoryList[0].time * 1000) - PhotonNetwork.ServerTimestamp);
 
@@ -5338,7 +5338,7 @@ namespace iiMenu.Menu
             if (viewFilter != null)
             {
                 NonAllocDictionary<int, PhotonView> photonViewList = Traverse.Create(typeof(PhotonNetwork)).Field("photonViewList").GetValue<NonAllocDictionary<int, PhotonView>>();
-                List<PhotonView> viewsToSerialize = new List<PhotonView> { };
+                List<PhotonView> viewsToSerialize = new List<PhotonView>();
 
                 if (onlySerializeNecessary)
                     photonViewList = new NonAllocDictionary<int, PhotonView> { { 0, GorillaTagger.Instance.myVRRig.GetView } };
@@ -5436,7 +5436,7 @@ namespace iiMenu.Menu
         public static int[] AllActorNumbersExcept(int[] actorNumbers) =>
             PhotonNetwork.PlayerList.Where(plr => !actorNumbers.Contains(plr.ActorNumber)).Select(plr => plr.ActorNumber).ToArray();
 
-        private static Dictionary<string, (int Category, int Index)> cacheGetIndex = new Dictionary<string, (int Category, int Index)> { }; // Looping through 800 elements is not a light task :/
+        private static Dictionary<string, (int Category, int Index)> cacheGetIndex = new Dictionary<string, (int Category, int Index)>(); // Looping through 800 elements is not a light task :/
         public static ButtonInfo GetIndex(string buttonText)
         {
             if (buttonText == null)
@@ -5553,7 +5553,7 @@ namespace iiMenu.Menu
             Buttons.buttons[category] = buttonInfoList.ToArray();
         }
 
-        public static Dictionary<string, Assembly> cacheAssembly = new Dictionary<string, Assembly> { };
+        public static Dictionary<string, Assembly> cacheAssembly = new Dictionary<string, Assembly>();
         public static Assembly GetAssembly(string dllName)
         {
             if (cacheAssembly.ContainsKey(dllName))
@@ -5598,7 +5598,7 @@ namespace iiMenu.Menu
             }
         }
 
-        public static Dictionary<Assembly, MethodInfo[]> cacheOnGUI = new Dictionary<Assembly, MethodInfo[]> { };
+        public static Dictionary<Assembly, MethodInfo[]> cacheOnGUI = new Dictionary<Assembly, MethodInfo[]>();
         public static void PluginOnGUI(Assembly Assembly)
         {
             if (cacheOnGUI.ContainsKey(Assembly))
@@ -5607,7 +5607,7 @@ namespace iiMenu.Menu
                     Method.Invoke(null, null);
             } else
             {
-                List<MethodInfo> Methods = new List<MethodInfo> { };
+                List<MethodInfo> Methods = new List<MethodInfo>();
 
                 Type[] Types = Assembly.GetTypes();
                 foreach (Type Type in Types)
@@ -5624,7 +5624,7 @@ namespace iiMenu.Menu
             }
         }
 
-        public static Dictionary<Assembly, MethodInfo[]> cacheUpdate = new Dictionary<Assembly, MethodInfo[]> { };
+        public static Dictionary<Assembly, MethodInfo[]> cacheUpdate = new Dictionary<Assembly, MethodInfo[]>();
         public static void PluginUpdate(Assembly Assembly)
         {
             if (cacheUpdate.ContainsKey(Assembly))
@@ -5634,7 +5634,7 @@ namespace iiMenu.Menu
             }
             else
             {
-                List<MethodInfo> Methods = new List<MethodInfo> { };
+                List<MethodInfo> Methods = new List<MethodInfo>();
 
                 Type[] Types = Assembly.GetTypes();
                 foreach (Type Type in Types)
@@ -5670,7 +5670,7 @@ namespace iiMenu.Menu
             }
         }
 
-        public static void ChangeName(string PlayerName)
+        public static void ChangeName(string PlayerName, bool noColor = false)
         {
             GorillaComputer.instance.currentName = PlayerName;
 
@@ -5681,17 +5681,21 @@ namespace iiMenu.Menu
 
             PhotonNetwork.LocalPlayer.NickName = PlayerName;
 
-            try
+            if (!noColor)
             {
-                if (GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(PhotonNetwork.LocalPlayer.UserId) || CosmeticWardrobeProximityDetector.IsUserNearWardrobe(PhotonNetwork.LocalPlayer.UserId))
+                try
                 {
-                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_InitializeNoobMaterial", RpcTarget.All, new object[] { VRRig.LocalRig.playerColor.r, VRRig.LocalRig.playerColor.g, VRRig.LocalRig.playerColor.b });
-                    RPCProtection();
+                    if (GorillaComputer.instance.friendJoinCollider.playerIDsCurrentlyTouching.Contains(PhotonNetwork.LocalPlayer.UserId) || CosmeticWardrobeProximityDetector.IsUserNearWardrobe(PhotonNetwork.LocalPlayer.UserId))
+                    {
+                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_InitializeNoobMaterial", RpcTarget.All, new object[] { VRRig.LocalRig.playerColor.r, VRRig.LocalRig.playerColor.g, VRRig.LocalRig.playerColor.b });
+                        RPCProtection();
+                    }
                 }
-            } catch { }
+                catch { }
+            }
         }
 
-        public static void ChangeColor(Color color)
+        public static void ChangeColor(Color color, object target = null)
         {
             PlayerPrefs.SetFloat("redValue", Mathf.Clamp(color.r, 0f, 1f));
             PlayerPrefs.SetFloat("greenValue", Mathf.Clamp(color.g, 0f, 1f));
@@ -5702,8 +5706,17 @@ namespace iiMenu.Menu
 
             try
             {
-                GorillaTagger.Instance.myVRRig.SendRPC("RPC_InitializeNoobMaterial", RpcTarget.All, new object[] { color.r, color.g, color.b });
-                RPCProtection();
+                if (target == null)
+                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_InitializeNoobMaterial", RpcTarget.All, new object[] { color.r, color.g, color.b });
+                else
+                {
+                    if (target is NetPlayer player)
+                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_InitializeNoobMaterial", player, new object[] { color.r, color.g, color.b });
+                    else if (target is RpcTarget targets)
+                        GorillaTagger.Instance.myVRRig.SendRPC("RPC_InitializeNoobMaterial", targets, new object[] { color.r, color.g, color.b });
+                }
+
+                    RPCProtection();
             } catch { }
         }
 
@@ -5835,7 +5848,7 @@ namespace iiMenu.Menu
 
             if (isSearching)
             {
-                List<ButtonInfo> searchedMods = new List<ButtonInfo> { };
+                List<ButtonInfo> searchedMods = new List<ButtonInfo>();
                 if (nonGlobalSearch && currentCategoryName != "Main")
                 {
                     foreach (ButtonInfo v in Buttons.buttons[currentCategoryIndex])
@@ -6476,16 +6489,16 @@ jgs \_   _/ |Oo\
         public static string BindInput = "";
 
         public static Dictionary<string, List<string>> ModBindings = new Dictionary<string, List<string>> {
-            { "A", new List<string> { } },
-            { "B", new List<string> { } },
-            { "X", new List<string> { } },
-            { "Y", new List<string> { } },
-            { "LG", new List<string> { } },
-            { "RG", new List<string> { } },
-            { "LT", new List<string> { } },
-            { "RT", new List<string> { } },
-            { "LJ", new List<string> { } },
-            { "RJ", new List<string> { } },
+            { "A", new List<string>() },
+            { "B", new List<string>() },
+            { "X", new List<string>() },
+            { "Y", new List<string>() },
+            { "LG", new List<string>() },
+            { "RG", new List<string>() },
+            { "LT", new List<string>() },
+            { "RT", new List<string>() },
+            { "LJ", new List<string>() },
+            { "RJ", new List<string>() },
         };
 
         public static Dictionary<string, bool> BindStates = new Dictionary<string, bool> {
@@ -6501,7 +6514,7 @@ jgs \_   _/ |Oo\
             { "RJ", false },
         };
 
-        public static List<string> quickActions = new List<string> { };
+        public static List<string> quickActions = new List<string>();
 
         public static int TransparentFX = LayerMask.NameToLayer("TransparentFX");
         public static int IgnoreRaycast = LayerMask.NameToLayer("Ignore Raycast");
@@ -6596,9 +6609,9 @@ jgs \_   _/ |Oo\
 
         public static List<string> favorites = new List<string> { "Exit Favorite Mods" };
 
-        public static Dictionary<string, GameObject> objectBoards = new Dictionary<string, GameObject> { };
-        public static List<GorillaNetworkJoinTrigger> triggers = new List<GorillaNetworkJoinTrigger> { };
-        public static List<TextMeshPro> udTMP = new List<TextMeshPro> { };
+        public static Dictionary<string, GameObject> objectBoards = new Dictionary<string, GameObject>();
+        public static List<GorillaNetworkJoinTrigger> triggers = new List<GorillaNetworkJoinTrigger>();
+        public static List<TextMeshPro> udTMP = new List<TextMeshPro>();
         public static GameObject computerMonitor;
 
         public static string StumpLeaderboardID = "UnityTempFile";
@@ -6612,8 +6625,8 @@ jgs \_   _/ |Oo\
         public static bool translate;
         public static string language;
 
-        public static List<string> muteIDs = new List<string> { };
-        public static List<string> mutedIDs = new List<string> { };
+        public static List<string> muteIDs = new List<string>();
+        public static List<string> mutedIDs = new List<string>();
 
         public static string serverLink = "https://discord.gg/iidk";
 

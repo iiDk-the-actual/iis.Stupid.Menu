@@ -25,13 +25,13 @@ namespace iiMenu.Mods.Spammers
             if (!Directory.Exists($"{PluginInfo.BaseDirectory}/Sounds" + Subdirectory))
                 Directory.CreateDirectory($"{PluginInfo.BaseDirectory}/Sounds" + Subdirectory);
             
-            List<string> enabledSounds = new List<string> { };
+            List<string> enabledSounds = new List<string>();
             foreach (ButtonInfo binfo in Buttons.buttons[18])
             {
                 if (binfo.enabled)
                     enabledSounds.Add(binfo.overlapText);
             }
-            List<ButtonInfo> soundbuttons = new List<ButtonInfo> { };
+            List<ButtonInfo> soundbuttons = new List<ButtonInfo>();
             if (Subdirectory != "")
                 soundbuttons.Add(new ButtonInfo { buttonText = "Exit Parent Directory", overlapText = "Exit " + Subdirectory.Split("/")[^1], method = () => ExitParentDirectory(), isTogglable = false, toolTip = "Returns you back to the last folder." });
 

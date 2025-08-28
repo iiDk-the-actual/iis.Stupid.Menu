@@ -5,6 +5,7 @@ using iiMenu.Notifications;
 using Photon.Pun;
 using Photon.Realtime;
 using Photon.Voice.Unity;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using static iiMenu.Classes.RigManager;
@@ -591,7 +592,7 @@ namespace iiMenu.Mods
             string prefix = Random.Range(0, 3) == 0 ? namePrefix[Random.Range(0, namePrefix.Length - 1)] : "";
             string suffix = Random.Range(0, 3) == 0 ? nameSuffix[Random.Range(0, nameSuffix.Length - 1)] : "";
             string fName = prefix + names[Random.Range(0, names.Length - 1)] + suffix;
-            ChangeName( fName.Length > 12 ? fName[..12] : fName );
+            ChangeName(fName.Length > 12 ? fName[..12] : fName);
 
             Color[] colors = new Color[]
             {
@@ -636,6 +637,62 @@ namespace iiMenu.Mods
                 Fun.BecomeMinigamesKid();
             
             lastinlobbyagain = PhotonNetwork.InRoom;
+        }
+
+        private static List<VRRig> spoofedRigs = new List<VRRig>();
+        public static void NameSpoof()
+        {
+            List<VRRig> toRemove = new List<VRRig>();
+            foreach (VRRig rig in spoofedRigs)
+            {
+                if (!GorillaParent.instance.vrrigs.Contains(rig))
+                    toRemove.Add(rig);
+            }
+
+            foreach (VRRig rig in toRemove)
+                spoofedRigs.Remove(rig);
+
+            toRemove.Clear();
+
+            string archiveNickname = PhotonNetwork.NickName;
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (rig.isLocal) continue;
+                if (!spoofedRigs.Contains(rig))
+                {
+                    string prefix = Random.Range(0, 3) == 0 ? namePrefix[Random.Range(0, namePrefix.Length - 1)] : "";
+                    string suffix = Random.Range(0, 3) == 0 ? nameSuffix[Random.Range(0, nameSuffix.Length - 1)] : "";
+                    string fName = prefix + names[Random.Range(0, names.Length - 1)] + suffix;
+                    ChangeName(fName.Length > 12 ? fName[..12] : fName, true);
+
+                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_InitializeNoobMaterial", GetPlayerFromVRRig(rig), new object[] { Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f) });
+                }
+            }
+
+            if (PhotonNetwork.NickName != archiveNickname)
+                PhotonNetwork.NickName = archiveNickname;
+        }
+
+        public static void ColorSpoof()
+        {
+            List<VRRig> toRemove = new List<VRRig>();
+            foreach (VRRig rig in spoofedRigs)
+            {
+                if (!GorillaParent.instance.vrrigs.Contains(rig))
+                    toRemove.Add(rig);
+            }
+
+            foreach (VRRig rig in toRemove)
+                spoofedRigs.Remove(rig);
+
+            toRemove.Clear();
+
+            foreach (VRRig rig in GorillaParent.instance.vrrigs)
+            {
+                if (rig.isLocal) continue;
+                if (!spoofedRigs.Contains(rig))
+                    GorillaTagger.Instance.myVRRig.SendRPC("RPC_InitializeNoobMaterial", GetPlayerFromVRRig(rig), new object[] { Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f) });
+            }
         }
 
         public static int fpsSpoofValue = 90;

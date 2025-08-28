@@ -584,7 +584,7 @@ namespace iiMenu.Mods
             }
         }
 
-        public static List<object[]> keyLogs = new List<object[]> { };
+        public static List<object[]> keyLogs = new List<object[]>();
         public static bool keyboardTrackerEnabled = false;
         public static void KeyboardTracker()
         {
@@ -1058,7 +1058,7 @@ namespace iiMenu.Mods
 
                 VRRig.LocalRig.nonCosmeticRightHandItem.EnableItem(true);
             }
-            List<Color> rgbColors = new List<Color> { };
+            List<Color> rgbColors = new List<Color>();
             for (int i=0; i<10; i++)
                 rgbColors.Add(Color.HSVToRGB(((Time.frameCount / 180f) + (i / 10f)) % 1f, 1f, 1f));
             
@@ -1919,9 +1919,9 @@ Piece Name: {gunTarget.name}";
             if (blocks == null)
             {
                 if (GetBuilderTable() == null)
-                    return new Dictionary<int, string> { };
+                    return new Dictionary<int, string>();
 
-                blocks = new Dictionary<int, string> { };
+                blocks = new Dictionary<int, string>();
                 foreach (List<BuilderPiece> list in GetBuilderTable().builderPool.piecePools)
                 {
                     foreach (BuilderPiece piece in list)
@@ -2072,7 +2072,7 @@ Piece Name: {gunTarget.name}";
                 {
                     MassSerialize(true, new[] { GorillaTagger.Instance.myVRRig.GetView });
 
-                    List<SnowballThrowable> activeSnowballs = new List<SnowballThrowable> { };
+                    List<SnowballThrowable> activeSnowballs = new List<SnowballThrowable>();
 
                     foreach (SnowballMaker Maker in new[] { SnowballMaker.leftHandInstance, SnowballMaker.rightHandInstance })
                     {
@@ -4938,7 +4938,7 @@ Piece Name: {gunTarget.name}";
             }
         }
 
-        private static List<BuilderPiece> potentialgrabbedpieces = new List<BuilderPiece> { };
+        private static List<BuilderPiece> potentialgrabbedpieces = new List<BuilderPiece>();
         public static void GrabAllBlocksNearby()
         {
             if (rightGrab && Time.time > blockDelay)
@@ -5408,7 +5408,7 @@ Piece Name: {gunTarget.name}";
             lastHitRS = rightSecondary;
         }
 
-        private static Dictionary<string[], int[]> cachePacked = new Dictionary<string[], int[]> { };
+        private static Dictionary<string[], int[]> cachePacked = new Dictionary<string[], int[]>();
         public static int[] PackCosmetics(string[] Cosmetics)
         {
             if (cachePacked.ContainsKey(Cosmetics))
@@ -5425,7 +5425,7 @@ Piece Name: {gunTarget.name}";
         {
             if (ownedarchive == null)
             {
-                ownedarchive = new List<string> { };
+                ownedarchive = new List<string>();
                 foreach (CosmeticsController.CosmeticItem dearlord in CosmeticsController.instance.allCosmetics)
                 {
                     if (VRRig.LocalRig.concatStringOfCosmeticsAllowed.Contains(dearlord.itemName))
@@ -5439,7 +5439,7 @@ Piece Name: {gunTarget.name}";
         {
             if (tryonarchive == null)
             {
-                tryonarchive = new List<string> { };
+                tryonarchive = new List<string>();
                 foreach (CosmeticsController.CosmeticItem dearlord in CosmeticsController.instance.allCosmetics)
                 {
                     if (dearlord.canTryOn)
@@ -5459,7 +5459,7 @@ Piece Name: {gunTarget.name}";
                 int amnt = Math.Clamp(owned.Length, 0, 15);
                 if (amnt > 0)
                 {
-                    List<string> holyshit = new List<string> { };
+                    List<string> holyshit = new List<string>();
                     for (int i = 0; i <= amnt; i++)
                         holyshit.Add(owned[UnityEngine.Random.Range(0, owned.Length - 1)]);
                     
@@ -5488,7 +5488,7 @@ Piece Name: {gunTarget.name}";
                 int amnt = Math.Clamp(owned.Length, 0, 15);
                 if (amnt > 0)
                 {
-                    List<string> holyshit = new List<string> { };
+                    List<string> holyshit = new List<string>();
                     for (int i = 0; i <= amnt; i++)
                         holyshit.Add(owned[UnityEngine.Random.Range(0, owned.Length - 1)]);
                     if (VRRig.LocalRig.inTryOnRoom)

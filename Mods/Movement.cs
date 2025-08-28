@@ -1175,7 +1175,7 @@ namespace iiMenu.Mods
             if (posArchive != null)
                 return posArchive.ToArray();
 
-            posArchive = new List<Vector3> { };
+            posArchive = new List<Vector3>();
 
             Vector3[] TreeBranchOffsets = new Vector3[]
             {
@@ -1327,7 +1327,7 @@ namespace iiMenu.Mods
             GTPlayer.Instance.rightControllerTransform.parent.rotation = Quaternion.identity;
         
 
-        private static List<object[]> playerPositions = new List<object[]> { };
+        private static List<object[]> playerPositions = new List<object[]>();
         public static void Rewind()
         {
             if (rightTrigger > 0.5f)
@@ -1661,7 +1661,7 @@ namespace iiMenu.Mods
 
         public static int selectedCheckpoint = -1;
         public static float selectedCheckpointDelay;
-        public static List<GameObject> checkpoints = new List<GameObject> { };
+        public static List<GameObject> checkpoints = new List<GameObject>();
         public static void AdvancedCheckpoints()
         {
             if (rightGrab)
@@ -3647,7 +3647,7 @@ namespace iiMenu.Mods
             }
         }
 
-        public static Dictionary<VRRig, Vector3> followPositions = new Dictionary<VRRig, Vector3> { };
+        public static Dictionary<VRRig, Vector3> followPositions = new Dictionary<VRRig, Vector3>();
         public static void FollowAllPlayers()
         {
             SerializePatch.OverrideSerialization = () => {

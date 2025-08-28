@@ -194,7 +194,7 @@ namespace iiMenu.Mods
         private static Texture2D tapTxt;
         private static Texture2D warningTxt;
 
-        private static List<object[]> handTaps = new List<object[]> { };
+        private static List<object[]> handTaps = new List<object[]>();
         public static void OnHandTapGamesenseRing(VRRig rig, Vector3 position)
         {
             if (rig.isLocal)
@@ -218,7 +218,7 @@ namespace iiMenu.Mods
             bool hoc = GetIndex("Hidden on Camera").enabled;
             bool tt = GetIndex("Transparent Theme").enabled;
 
-            List<object[]> toRemove = new List<object[]> { };
+            List<object[]> toRemove = new List<object[]>();
             for (int i = 0; i < handTaps.Count; i++)
             {
                 object[] handTapData = handTaps[i];
@@ -360,8 +360,8 @@ namespace iiMenu.Mods
         public static float PerformanceVisualDelay;
         public static int DelayChangeStep;
 
-        public static Dictionary<string, GameObject> labelDictionary = new Dictionary<string, GameObject> { };
-        public static Dictionary<bool, List<int>> labelDistances = new Dictionary<bool, List<int>> { };
+        public static Dictionary<string, GameObject> labelDictionary = new Dictionary<string, GameObject>();
+        public static Dictionary<bool, List<int>> labelDistances = new Dictionary<bool, List<int>>();
         public static float GetLabelDistance(bool leftHand)
         {
             if (labelDistances[leftHand][0] == Time.frameCount)
@@ -613,7 +613,7 @@ namespace iiMenu.Mods
                 UnityEngine.Object.Destroy(rightHandPos);
         }
 
-        private static Dictionary<VRRig, LineRenderer> predictions = new Dictionary<VRRig, LineRenderer> { };
+        private static Dictionary<VRRig, LineRenderer> predictions = new Dictionary<VRRig, LineRenderer>();
         public static void JumpPredictions()
         {
             List<VRRig> toRemove = new List<VRRig>();
@@ -752,7 +752,7 @@ namespace iiMenu.Mods
             }
         }
 
-        private static Dictionary<VRRig, List<int>> ntDistanceList = new Dictionary<VRRig, List<int>> { };
+        private static Dictionary<VRRig, List<int>> ntDistanceList = new Dictionary<VRRig, List<int>>();
         public static float GetTagDistance(VRRig rig)
         {
             if (ntDistanceList.ContainsKey(rig))
@@ -774,7 +774,7 @@ namespace iiMenu.Mods
             }
         }
 
-        private static Dictionary<VRRig, GameObject> nametags = new Dictionary<VRRig, GameObject> { };
+        private static Dictionary<VRRig, GameObject> nametags = new Dictionary<VRRig, GameObject>();
         public static void NameTags()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in nametags)
@@ -825,7 +825,7 @@ namespace iiMenu.Mods
             nametags.Clear();
         }
 
-        private static Dictionary<VRRig, GameObject> velnametags = new Dictionary<VRRig, GameObject> { };
+        private static Dictionary<VRRig, GameObject> velnametags = new Dictionary<VRRig, GameObject>();
         public static void VelocityTags()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in velnametags)
@@ -879,7 +879,7 @@ namespace iiMenu.Mods
             velnametags.Clear();
         }
 
-        private static Dictionary<VRRig, GameObject> FPSnametags = new Dictionary<VRRig, GameObject> { };
+        private static Dictionary<VRRig, GameObject> FPSnametags = new Dictionary<VRRig, GameObject>();
         public static void FPSTags()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in FPSnametags)
@@ -933,7 +933,7 @@ namespace iiMenu.Mods
             FPSnametags.Clear();
         }
 
-        private static Dictionary<VRRig, GameObject> Pingnametags = new Dictionary<VRRig, GameObject> { };
+        private static Dictionary<VRRig, GameObject> Pingnametags = new Dictionary<VRRig, GameObject>();
         public static void PingTags()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in Pingnametags)
@@ -988,7 +988,7 @@ namespace iiMenu.Mods
             Pingnametags.Clear();
         }
 
-        private static Dictionary<VRRig, GameObject> turnNameTags = new Dictionary<VRRig, GameObject> { };
+        private static Dictionary<VRRig, GameObject> turnNameTags = new Dictionary<VRRig, GameObject>();
         public static void TurnTags()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in turnNameTags)
@@ -1045,7 +1045,7 @@ namespace iiMenu.Mods
             turnNameTags.Clear();
         }
 
-        private static Dictionary<VRRig, GameObject> taggedNameTags = new Dictionary<VRRig, GameObject> { };
+        private static Dictionary<VRRig, GameObject> taggedNameTags = new Dictionary<VRRig, GameObject>();
         public static void TaggedTags()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in taggedNameTags)
@@ -1190,7 +1190,7 @@ namespace iiMenu.Mods
             { "silliness", "Silliness" },
         };
 
-        private static Dictionary<VRRig, GameObject> modNameTags = new Dictionary<VRRig, GameObject> { };
+        private static Dictionary<VRRig, GameObject> modNameTags = new Dictionary<VRRig, GameObject>();
         public static void ModTags()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in modNameTags)
@@ -1295,7 +1295,7 @@ namespace iiMenu.Mods
             { "LBANI.", "AA Creator" }
         };
 
-        private static Dictionary<VRRig, GameObject> cosmeticNameTags = new Dictionary<VRRig, GameObject> { };
+        private static Dictionary<VRRig, GameObject> cosmeticNameTags = new Dictionary<VRRig, GameObject>();
         public static void CosmeticTags()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in cosmeticNameTags)
@@ -1455,7 +1455,7 @@ namespace iiMenu.Mods
             { "36FD11C9FB61E50B", "Cryptik" }
         };
 
-        private static Dictionary<VRRig, GameObject> verifiedNameTags = new Dictionary<VRRig, GameObject> { };
+        private static Dictionary<VRRig, GameObject> verifiedNameTags = new Dictionary<VRRig, GameObject>();
         public static void VerifiedTags()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in verifiedNameTags)
@@ -1558,7 +1558,7 @@ namespace iiMenu.Mods
             } 
         }
 
-        public static List<GameObject> leaves = new List<GameObject> { };
+        public static List<GameObject> leaves = new List<GameObject>();
         public static void EnableRemoveLeaves()
         {
             GameObject Forest = GetObject("Environment Objects/LocalObjects_Prefab/Forest");
@@ -1637,7 +1637,7 @@ namespace iiMenu.Mods
             leaves.Clear();
         }
 
-        public static List<GameObject> cosmetics = new List<GameObject> { };
+        public static List<GameObject> cosmetics = new List<GameObject>();
         public static void DisableCosmetics()
         {
             try
@@ -1693,8 +1693,8 @@ namespace iiMenu.Mods
             rig.LocalTrajectoryOverrideVelocity = rig.LatestVelocity();
         }
 
-        private static Dictionary<VRRig, GameObject> cosmeticIndicators = new Dictionary<VRRig, GameObject> { };
-        private static Dictionary<string, Texture2D> cosmeticTextures = new Dictionary<string, Texture2D> { };
+        private static Dictionary<VRRig, GameObject> cosmeticIndicators = new Dictionary<VRRig, GameObject>();
+        private static Dictionary<string, Texture2D> cosmeticTextures = new Dictionary<string, Texture2D>();
         public static void CosmeticESP()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in cosmeticIndicators)
@@ -1784,7 +1784,7 @@ namespace iiMenu.Mods
         private static Material platformEspMat;
         private static Texture2D steamtxt;
         private static Texture2D oculustxt;
-        private static Dictionary<VRRig, GameObject> platformIndicators = new Dictionary<VRRig, GameObject> { };
+        private static Dictionary<VRRig, GameObject> platformIndicators = new Dictionary<VRRig, GameObject>();
 
         public static bool IsPlayerSteam(VRRig Player)
         {
@@ -1907,7 +1907,7 @@ namespace iiMenu.Mods
         private static Material voiceEspMat;
         private static Texture2D voicetxt;
 
-        private static Dictionary<VRRig, GameObject> voiceIndicators = new Dictionary<VRRig, GameObject> { };
+        private static Dictionary<VRRig, GameObject> voiceIndicators = new Dictionary<VRRig, GameObject>();
         public static void VoiceIndicators()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in voiceIndicators)
@@ -2110,7 +2110,7 @@ namespace iiMenu.Mods
                 {
                     if (!boneESP.TryGetValue(vrrig, out List<LineRenderer> Lines))
                     {
-                        Lines = new List<LineRenderer> { };
+                        Lines = new List<LineRenderer>();
 
                         LineRenderer LineHead = vrrig.head.rigTarget.gameObject.GetOrAddComponent<LineRenderer>();
                         if (smoothLines)
@@ -2207,7 +2207,7 @@ namespace iiMenu.Mods
                 {
                     if (!boneESP.TryGetValue(vrrig, out List<LineRenderer> Lines))
                     {
-                        Lines = new List<LineRenderer> { };
+                        Lines = new List<LineRenderer>();
 
                         LineRenderer LineHead = vrrig.head.rigTarget.gameObject.GetOrAddComponent<LineRenderer>();
                         if (smoothLines)
@@ -2314,7 +2314,7 @@ namespace iiMenu.Mods
                 {
                     if (!boneESP.TryGetValue(vrrig, out List<LineRenderer> Lines))
                     {
-                        Lines = new List<LineRenderer> { };
+                        Lines = new List<LineRenderer>();
 
                         LineRenderer LineHead = vrrig.head.rigTarget.gameObject.GetOrAddComponent<LineRenderer>();
                         if (smoothLines)
@@ -2399,7 +2399,7 @@ namespace iiMenu.Mods
             boneESP.Clear();
         }
 
-        private static Dictionary<VRRig, SkinnedWireframeRenderer> wireframes = new Dictionary<VRRig, SkinnedWireframeRenderer> { };
+        private static Dictionary<VRRig, SkinnedWireframeRenderer> wireframes = new Dictionary<VRRig, SkinnedWireframeRenderer>();
         public static void CasualWireframeESP()
         {
             List<VRRig> toRemove = new List<VRRig>();
@@ -2718,7 +2718,7 @@ namespace iiMenu.Mods
             }
         }
 
-        private static Dictionary<VRRig, float> delays = new Dictionary<VRRig, float> { };
+        private static Dictionary<VRRig, float> delays = new Dictionary<VRRig, float>();
         public static void FixRigMaterialESPColors(VRRig rig)
         {
             if ((delays.ContainsKey(rig) && Time.time > delays[rig]) || !delays.ContainsKey(rig))
@@ -3327,7 +3327,7 @@ namespace iiMenu.Mods
             hollowBoxESP.Clear();
         }
 
-        private static Dictionary<VRRig, TrailRenderer> breadcrumbs = new Dictionary<VRRig, TrailRenderer> { };
+        private static Dictionary<VRRig, TrailRenderer> breadcrumbs = new Dictionary<VRRig, TrailRenderer>();
         public static void CasualBreadcrumbs()
         {
             List<VRRig> toRemove = new List<VRRig>();
