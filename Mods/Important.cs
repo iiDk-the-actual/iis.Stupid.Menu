@@ -38,12 +38,9 @@ namespace iiMenu.Mods
         {
             NetworkSystemPUN instance = (NetworkSystemPUN)NetworkSystem.Instance;
 
-            if (instance.InRoom)
-            {
-                instance.ReturnToSinglePlayer();
-                yield return new WaitUntil(() => instance.netState == NetSystemState.Idle);
-                yield return new WaitForSeconds(0.5f);
-            }
+            instance.ReturnToSinglePlayer();
+            yield return new WaitUntil(() => instance.netState == NetSystemState.Idle);
+            yield return new WaitForSeconds(0.5f);
 
             instance.netState = NetSystemState.Connecting;
 
