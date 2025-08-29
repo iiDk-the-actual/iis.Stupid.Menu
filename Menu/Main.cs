@@ -3261,8 +3261,8 @@ namespace iiMenu.Menu
                 button.GetComponent<BoxCollider>().isTrigger = true;
                 button.transform.parent = menu.transform;
                 button.transform.rotation = Quaternion.identity;
-                button.transform.localScale = new Vector3(0.09f, 0.4375f, 0.08f);
-                button.transform.localPosition = new Vector3(0.56f, 0.2375f, -0.43f);
+                button.transform.localScale = new Vector3(0.09f, DeclineText == null ? 0.9f : 0.4375f, 0.08f);
+                button.transform.localPosition = new Vector3(0.56f, DeclineText == null ? 0f : 0.2375f, -0.43f);
 
                 button.AddComponent<Classes.Button>().relatedText = "Accept Prompt";
                 button.GetComponent<Renderer>().material.color = buttonDefaultA;
@@ -3323,6 +3323,7 @@ namespace iiMenu.Menu
                     RoundObj(button);
             }
 
+            if (DeclineText != null)
             {
                 GameObject button = GameObject.CreatePrimitive(PrimitiveType.Cube);
 
@@ -3686,6 +3687,19 @@ namespace iiMenu.Menu
             DeclineText = DeclineButton;
             AcceptAction = Accept;
             DeclineAction = Decline;
+
+            if (menu != null)
+                ReloadMenu();
+        }
+
+        public static void PromptSingle(string Message, Action Accept = null, string AcceptButton = "Yes")
+        {
+            IsPrompting = true;
+            PromptMessage = Message;
+            AcceptText = AcceptButton;
+            DeclineText = null;
+            AcceptAction = Accept;
+            DeclineAction = null;
 
             if (menu != null)
                 ReloadMenu();
