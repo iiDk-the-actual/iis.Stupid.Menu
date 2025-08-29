@@ -194,7 +194,7 @@ namespace iiMenu.Mods
         private static Texture2D tapTxt;
         private static Texture2D warningTxt;
 
-        private static List<object[]> handTaps = new List<object[]>();
+        private static readonly List<object[]> handTaps = new List<object[]>();
         public static void OnHandTapGamesenseRing(VRRig rig, Vector3 position)
         {
             if (rig.isLocal)
@@ -287,7 +287,6 @@ namespace iiMenu.Mods
 
                 float x = Vector3.Dot(toTarget, camRight);
                 float y = Vector3.Dot(toTarget, camUp);
-                float z = Vector3.Dot(toTarget, camForward);
 
                 Vector2 dirInPlane = new Vector2(x, y).normalized;
 
@@ -613,7 +612,7 @@ namespace iiMenu.Mods
                 UnityEngine.Object.Destroy(rightHandPos);
         }
 
-        private static Dictionary<VRRig, LineRenderer> predictions = new Dictionary<VRRig, LineRenderer>();
+        private static readonly Dictionary<VRRig, LineRenderer> predictions = new Dictionary<VRRig, LineRenderer>();
         public static void JumpPredictions()
         {
             List<VRRig> toRemove = new List<VRRig>();
@@ -752,7 +751,7 @@ namespace iiMenu.Mods
             }
         }
 
-        private static Dictionary<VRRig, List<int>> ntDistanceList = new Dictionary<VRRig, List<int>>();
+        private static readonly Dictionary<VRRig, List<int>> ntDistanceList = new Dictionary<VRRig, List<int>>();
         public static float GetTagDistance(VRRig rig)
         {
             if (ntDistanceList.ContainsKey(rig))
@@ -774,7 +773,7 @@ namespace iiMenu.Mods
             }
         }
 
-        private static Dictionary<VRRig, GameObject> nametags = new Dictionary<VRRig, GameObject>();
+        private static readonly Dictionary<VRRig, GameObject> nametags = new Dictionary<VRRig, GameObject>();
         public static void NameTags()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in nametags)
@@ -825,7 +824,7 @@ namespace iiMenu.Mods
             nametags.Clear();
         }
 
-        private static Dictionary<VRRig, GameObject> velnametags = new Dictionary<VRRig, GameObject>();
+        private static readonly Dictionary<VRRig, GameObject> velnametags = new Dictionary<VRRig, GameObject>();
         public static void VelocityTags()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in velnametags)
@@ -879,7 +878,7 @@ namespace iiMenu.Mods
             velnametags.Clear();
         }
 
-        private static Dictionary<VRRig, GameObject> FPSnametags = new Dictionary<VRRig, GameObject>();
+        private static readonly Dictionary<VRRig, GameObject> FPSnametags = new Dictionary<VRRig, GameObject>();
         public static void FPSTags()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in FPSnametags)
@@ -933,7 +932,7 @@ namespace iiMenu.Mods
             FPSnametags.Clear();
         }
 
-        private static Dictionary<VRRig, GameObject> Pingnametags = new Dictionary<VRRig, GameObject>();
+        private static readonly Dictionary<VRRig, GameObject> Pingnametags = new Dictionary<VRRig, GameObject>();
         public static void PingTags()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in Pingnametags)
@@ -988,7 +987,7 @@ namespace iiMenu.Mods
             Pingnametags.Clear();
         }
 
-        private static Dictionary<VRRig, GameObject> turnNameTags = new Dictionary<VRRig, GameObject>();
+        private static readonly Dictionary<VRRig, GameObject> turnNameTags = new Dictionary<VRRig, GameObject>();
         public static void TurnTags()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in turnNameTags)
@@ -1045,7 +1044,7 @@ namespace iiMenu.Mods
             turnNameTags.Clear();
         }
 
-        private static Dictionary<VRRig, GameObject> taggedNameTags = new Dictionary<VRRig, GameObject>();
+        private static readonly Dictionary<VRRig, GameObject> taggedNameTags = new Dictionary<VRRig, GameObject>();
         public static void TaggedTags()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in taggedNameTags)
@@ -1190,7 +1189,7 @@ namespace iiMenu.Mods
             { "silliness", "Silliness" },
         };
 
-        private static Dictionary<VRRig, GameObject> modNameTags = new Dictionary<VRRig, GameObject>();
+        private static readonly Dictionary<VRRig, GameObject> modNameTags = new Dictionary<VRRig, GameObject>();
         public static void ModTags()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in modNameTags)
@@ -1295,7 +1294,7 @@ namespace iiMenu.Mods
             { "LBANI.", "AA Creator" }
         };
 
-        private static Dictionary<VRRig, GameObject> cosmeticNameTags = new Dictionary<VRRig, GameObject>();
+        private static readonly Dictionary<VRRig, GameObject> cosmeticNameTags = new Dictionary<VRRig, GameObject>();
         public static void CosmeticTags()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in cosmeticNameTags)
@@ -1455,7 +1454,7 @@ namespace iiMenu.Mods
             { "36FD11C9FB61E50B", "Cryptik" }
         };
 
-        private static Dictionary<VRRig, GameObject> verifiedNameTags = new Dictionary<VRRig, GameObject>();
+        private static readonly Dictionary<VRRig, GameObject> verifiedNameTags = new Dictionary<VRRig, GameObject>();
         public static void VerifiedTags()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in verifiedNameTags)
@@ -1693,8 +1692,8 @@ namespace iiMenu.Mods
             rig.LocalTrajectoryOverrideVelocity = rig.LatestVelocity();
         }
 
-        private static Dictionary<VRRig, GameObject> cosmeticIndicators = new Dictionary<VRRig, GameObject>();
-        private static Dictionary<string, Texture2D> cosmeticTextures = new Dictionary<string, Texture2D>();
+        private static readonly Dictionary<VRRig, GameObject> cosmeticIndicators = new Dictionary<VRRig, GameObject>();
+        private static readonly Dictionary<string, Texture2D> cosmeticTextures = new Dictionary<string, Texture2D>();
         public static void CosmeticESP()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in cosmeticIndicators)
@@ -1739,8 +1738,10 @@ namespace iiMenu.Mods
 
                         if (platformMat == null)
                         {
-                            platformMat = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
-                            platformMat.color = Color.white;
+                            platformMat = new Material(Shader.Find("Universal Render Pipeline/Unlit"))
+                            {
+                                color = Color.white
+                            };
 
                             platformMat.SetFloat("_Surface", 1);
                             platformMat.SetFloat("_Blend", 0);
@@ -1784,7 +1785,7 @@ namespace iiMenu.Mods
         private static Material platformEspMat;
         private static Texture2D steamtxt;
         private static Texture2D oculustxt;
-        private static Dictionary<VRRig, GameObject> platformIndicators = new Dictionary<VRRig, GameObject>();
+        private static readonly Dictionary<VRRig, GameObject> platformIndicators = new Dictionary<VRRig, GameObject>();
 
         public static bool IsPlayerSteam(VRRig Player)
         {
@@ -1907,7 +1908,7 @@ namespace iiMenu.Mods
         private static Material voiceEspMat;
         private static Texture2D voicetxt;
 
-        private static Dictionary<VRRig, GameObject> voiceIndicators = new Dictionary<VRRig, GameObject>();
+        private static readonly Dictionary<VRRig, GameObject> voiceIndicators = new Dictionary<VRRig, GameObject>();
         public static void VoiceIndicators()
         {
             foreach (KeyValuePair<VRRig, GameObject> nametag in voiceIndicators)
@@ -2080,7 +2081,7 @@ namespace iiMenu.Mods
             VRRig.LocalRig.mainSkin.material.color = new Color(VRRig.LocalRig.mainSkin.material.color.r, VRRig.LocalRig.mainSkin.material.color.g, VRRig.LocalRig.mainSkin.material.color.b, 1f);
         }
 
-        private static Dictionary<VRRig, List<LineRenderer>> boneESP = new Dictionary<VRRig, List<LineRenderer>>() { };
+        private static readonly Dictionary<VRRig, List<LineRenderer>> boneESP = new Dictionary<VRRig, List<LineRenderer>>() { };
         public static void CasualBoneESP()
         {
             bool fmt = GetIndex("Follow Menu Theme").enabled;
@@ -2399,7 +2400,7 @@ namespace iiMenu.Mods
             boneESP.Clear();
         }
 
-        private static Dictionary<VRRig, SkinnedWireframeRenderer> wireframes = new Dictionary<VRRig, SkinnedWireframeRenderer>();
+        private static readonly Dictionary<VRRig, SkinnedWireframeRenderer> wireframes = new Dictionary<VRRig, SkinnedWireframeRenderer>();
         public static void CasualWireframeESP()
         {
             List<VRRig> toRemove = new List<VRRig>();
@@ -2650,8 +2651,10 @@ namespace iiMenu.Mods
 
                 meshFilter = wireframeObj.AddComponent<MeshFilter>();
                 meshRenderer = wireframeObj.AddComponent<MeshRenderer>();
-                meshRenderer.material = new Material(Shader.Find("GUI/Text Shader"));
-                meshRenderer.material.color = Color.green;
+                meshRenderer.material = new Material(Shader.Find("GUI/Text Shader"))
+                {
+                    color = Color.green
+                };
 
                 lineMesh = new Mesh();
                 meshFilter.mesh = lineMesh;
@@ -2718,7 +2721,7 @@ namespace iiMenu.Mods
             }
         }
 
-        private static Dictionary<VRRig, float> delays = new Dictionary<VRRig, float>();
+        private static readonly Dictionary<VRRig, float> delays = new Dictionary<VRRig, float>();
         public static void FixRigMaterialESPColors(VRRig rig)
         {
             if ((delays.ContainsKey(rig) && Time.time > delays[rig]) || !delays.ContainsKey(rig))
@@ -2865,13 +2868,12 @@ namespace iiMenu.Mods
             }
         }
 
-        private static Dictionary<VRRig, GameObject> boxESP = new Dictionary<VRRig, GameObject>() { };
+        private static readonly Dictionary<VRRig, GameObject> boxESP = new Dictionary<VRRig, GameObject>() { };
         public static void CasualBoxESP()
         {
             bool fmt = GetIndex("Follow Menu Theme").enabled;
             bool hoc = GetIndex("Hidden on Camera").enabled;
             bool tt = GetIndex("Transparent Theme").enabled;
-            bool thinTracers = GetIndex("Thin Tracers").enabled;
 
             List<VRRig> toRemove = new List<VRRig>();
 
@@ -2923,7 +2925,6 @@ namespace iiMenu.Mods
             bool fmt = GetIndex("Follow Menu Theme").enabled;
             bool hoc = GetIndex("Hidden on Camera").enabled;
             bool tt = GetIndex("Transparent Theme").enabled;
-            bool thinTracers = GetIndex("Thin Tracers").enabled;
             bool selfTagged = PlayerIsTagged(VRRig.LocalRig);
 
             List<VRRig> toRemove = new List<VRRig>();
@@ -2982,7 +2983,6 @@ namespace iiMenu.Mods
             bool fmt = GetIndex("Follow Menu Theme").enabled;
             bool hoc = GetIndex("Hidden on Camera").enabled;
             bool tt = GetIndex("Transparent Theme").enabled;
-            bool thinTracers = GetIndex("Thin Tracers").enabled;
 
             List<VRRig> toRemove = new List<VRRig>();
             GorillaHuntManager hunt = (GorillaHuntManager)GorillaGameManager.instance;
@@ -3028,7 +3028,6 @@ namespace iiMenu.Mods
 
                     box.GetComponent<Renderer>().material.color = thecolor;
 
-                    bool playerTagged = PlayerIsTagged(vrrig);
                     box.SetActive(owner == target || theirTarget == NetworkSystem.Instance.LocalPlayer);
 
                     box.transform.position = vrrig.transform.position;
@@ -3045,7 +3044,7 @@ namespace iiMenu.Mods
             boxESP.Clear();
         }
 
-        private static Dictionary<VRRig, GameObject> hollowBoxESP = new Dictionary<VRRig, GameObject>() { };
+        private static readonly Dictionary<VRRig, GameObject> hollowBoxESP = new Dictionary<VRRig, GameObject>() { };
         public static void CasualHollowBoxESP()
         {
             bool fmt = GetIndex("Follow Menu Theme").enabled;
@@ -3309,8 +3308,6 @@ namespace iiMenu.Mods
                         box.layer = 19;
 
                     box.GetComponent<Renderer>().material.color = thecolor;
-
-                    bool playerTagged = PlayerIsTagged(vrrig);
                     box.SetActive(owner == target || theirTarget == NetworkSystem.Instance.LocalPlayer);
 
                     box.transform.position = vrrig.transform.position;
@@ -3327,7 +3324,7 @@ namespace iiMenu.Mods
             hollowBoxESP.Clear();
         }
 
-        private static Dictionary<VRRig, TrailRenderer> breadcrumbs = new Dictionary<VRRig, TrailRenderer>();
+        private static readonly Dictionary<VRRig, TrailRenderer> breadcrumbs = new Dictionary<VRRig, TrailRenderer>();
         public static void CasualBreadcrumbs()
         {
             List<VRRig> toRemove = new List<VRRig>();
@@ -3647,7 +3644,6 @@ namespace iiMenu.Mods
             if (GorillaGameManager.instance == null)
                 return;
 
-            bool followMenuTheme = GetIndex("Follow Menu Theme").enabled;
             bool transparentTheme = GetIndex("Transparent Theme").enabled;
             bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
             float lineWidth = (GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
@@ -4184,7 +4180,7 @@ namespace iiMenu.Mods
 
         // Cache backend
 
-        private static List<TextMesh> nameTagPool = new List<TextMesh>();
+        private static readonly List<TextMesh> nameTagPool = new List<TextMesh>();
 
         private static GameObject nameTagHolder = null;
 
@@ -4331,7 +4327,7 @@ namespace iiMenu.Mods
         }
 
 
-        private static List<LineRenderer> linePool = new List<LineRenderer>();
+        private static readonly List<LineRenderer> linePool = new List<LineRenderer>();
 
         private static GameObject lineRenderHolder = null;
 

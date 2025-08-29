@@ -29,7 +29,7 @@ namespace iiMenu.Classes
         #region Server Data Code
         private static ServerData instance;
 
-        private static List<string> DetectedModsLabelled = new List<string>();
+        private static readonly List<string> DetectedModsLabelled = new List<string>();
 
         private static float DataLoadTime = -1f;
         private static float ReloadTime = -1f;
