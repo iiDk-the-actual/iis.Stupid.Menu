@@ -494,7 +494,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Punch Mod", method =() => Movement.PunchMod(), toolTip = "Lets people punch you across the map."},
                 new ButtonInfo { buttonText = "Telekinesis", method =() => Movement.Telekinesis(), toolTip = "Lets people control you with nothing but the power of their finger."},
-                new ButtonInfo { buttonText = "Solid Players", method =() => Movement.SolidPlayers(), toolTip = "Lets you walk on top of other players."},
+                new ButtonInfo { buttonText = "Solid Players", method =() => Movement.SolidPlayers(), disableMethod =() => Movement.DisableSolidPlayers(), toolTip = "Lets you walk on top of other players."},
                 new ButtonInfo { buttonText = "Pull Mod <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Movement.PullMod(), toolTip = "Pulls you more whenever you walk to simulate speed without modifying your velocity."},
                 new ButtonInfo { buttonText = "Long Jump <color=grey>[</color><color=green>A</color><color=grey>]</color>", overlapText = "Playspace Abuse <color=grey>[</color><color=green>A</color><color=grey>]</color>", method =() => Movement.LongJump(), toolTip = "Makes you look like you're legitimately long jumping when holding <color=green>A</color>."},
                 new ButtonInfo { buttonText = "Velocity Long Arms", overlapText = "Predictions", enableMethod =() => Movement.CreateVelocityTrackers(), method =() => Movement.VelocityLongArms(), disableMethod =() => Movement.DestroyVelocityTrackers(), toolTip = "Moves your arms farther depending on how fast you move them."},
