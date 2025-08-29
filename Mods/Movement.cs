@@ -2867,34 +2867,70 @@ namespace iiMenu.Mods
             }
         }
 
+        public static Dictionary<VRRig, List<GameObject>> rigColliders = new Dictionary<VRRig, List<GameObject>>();
         public static void SolidPlayers()
         {
+            List<VRRig> toRemove = new List<VRRig>();
+            foreach (VRRig rig in rigColliders.Keys)
+            {
+                if (!GorillaParent.instance.vrrigs.Contains(rig))
+                    toRemove.Add(rig);
+            }
+
+            foreach (VRRig removeRig in toRemove)
+            {
+                foreach (GameObject gameObject in rigColliders[removeRig])
+                    UnityEngine.Object.Destroy(gameObject);
+            }
+
+            toRemove.Clear();
+
             foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
             {
-                if (!vrrig.isLocal && Vector3.Distance(vrrig.transform.position, GorillaTagger.Instance.headCollider.transform.position) < 5f)
+                if (vrrig.isLocal) continue;
+                if (!rigColliders.TryGetValue(vrrig, out List<GameObject> colliders))
                 {
-                    Vector3 pointA = vrrig.head.rigTarget.transform.position + new Vector3(0f, 0.16f, 0f);
-                    Vector3 pointB = vrrig.head.rigTarget.transform.position - new Vector3(0f, 0.4f, 0f);
+                    colliders = new List<GameObject>();
+
                     GameObject bodyCollider = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     bodyCollider.GetComponent<Renderer>().enabled = false;
-                    bodyCollider.transform.position = Vector3.Lerp(pointA, pointB, 0.5f);
-                    bodyCollider.transform.rotation = vrrig.transform.rotation;
                     bodyCollider.transform.localScale = new Vector3(0.3f, 0.55f, 0.3f);
-                    UnityEngine.Object.Destroy(bodyCollider, Time.deltaTime * 2);
 
-                    for (int i = 0; i < bones.Count(); i += 2)
+                    for (int i = 0; i < 19; i++)
                     {
-                        pointA = vrrig.mainSkin.bones[bones[i]].position;
-                        pointB = vrrig.mainSkin.bones[bones[i + 1]].position;
                         bodyCollider = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         bodyCollider.GetComponent<Renderer>().enabled = false;
-                        bodyCollider.transform.position = Vector3.Lerp(pointA, pointB, 0.5f);
-                        bodyCollider.transform.LookAt(pointB);
-                        bodyCollider.transform.localScale = new Vector3(0.2f, 0.2f, Vector3.Distance(pointA, pointB));
-                        UnityEngine.Object.Destroy(bodyCollider, Time.deltaTime * 2);
+                        bodyCollider.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
                     }
                 }
+
+                colliders[0].transform.position = vrrig.head.rigTarget.transform.position + new Vector3(0f, -0.12f, 0f);
+                colliders[0].transform.rotation = vrrig.transform.rotation;
+
+                for (int i = 0; i < 19; i++)
+                {
+                    GameObject boneCollider = colliders[i + 1];
+
+                    Vector3 pointA = vrrig.mainSkin.bones[bones[i * 2]].position;
+                    Vector3 pointB = vrrig.mainSkin.bones[bones[(i * 2) + 1]].position;
+
+                    boneCollider.GetComponent<Renderer>().enabled = false;
+                    boneCollider.transform.position = Vector3.Lerp(pointA, pointB, 0.5f);
+                    boneCollider.transform.LookAt(pointB);
+                    boneCollider.transform.localScale = new Vector3(0.2f, 0.2f, Vector3.Distance(pointA, pointB));
+                }
             }
+        }
+
+        public static void DisableSolidPlayers()
+        {
+            foreach (List<GameObject> gameObjects in rigColliders.Values)
+            {
+                foreach (GameObject gameObject in gameObjects)
+                    UnityEngine.Object.Destroy(gameObject);
+            }
+
+            rigColliders.Clear();
         }
 
         public static int pullPowerInt;
