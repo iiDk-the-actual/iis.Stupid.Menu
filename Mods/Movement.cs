@@ -2863,6 +2863,23 @@ namespace iiMenu.Mods
             }
         }
 
+        public static void SafetyBubble()
+        {
+            foreach (VRRig rig in 
+                GorillaParent.instance.vrrigs
+                    .Where(rig => rig != null && !rig.isLocal)
+                    .OrderBy(rig => Vector3.Distance(rig.transform.position, GorillaTagger.Instance.bodyCollider.transform.position)))
+            {
+                if (Vector3.Distance(rig.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) < 2f)
+                {
+                    Vector3 direction = GorillaTagger.Instance.bodyCollider.transform.position - rig.transform.position;
+                    direction = new Vector3(direction.x, 0f, direction.z).normalized;
+
+                    TeleportPlayer(GorillaTagger.Instance.bodyCollider.transform.position + (direction * 2f));
+                }
+            }
+        }
+
         public static Dictionary<VRRig, List<GameObject>> rigColliders = new Dictionary<VRRig, List<GameObject>>();
         public static void SolidPlayers()
         {

@@ -494,6 +494,7 @@ namespace iiMenu.Menu
 
                 new ButtonInfo { buttonText = "Punch Mod", method =() => Movement.PunchMod(), toolTip = "Lets people punch you across the map."},
                 new ButtonInfo { buttonText = "Telekinesis", method =() => Movement.Telekinesis(), toolTip = "Lets people control you with nothing but the power of their finger."},
+                new ButtonInfo { buttonText = "Safety Bubble", method =() => Movement.SafetyBubble(), toolTip = "Moves you away from players if they get too close to you."},
                 new ButtonInfo { buttonText = "Solid Players", method =() => Movement.SolidPlayers(), disableMethod =() => Movement.DisableSolidPlayers(), toolTip = "Lets you walk on top of other players."},
                 new ButtonInfo { buttonText = "Pull Mod <color=grey>[</color><color=green>G</color><color=grey>]</color>", method =() => Movement.PullMod(), toolTip = "Pulls you more whenever you walk to simulate speed without modifying your velocity."},
                 new ButtonInfo { buttonText = "Long Jump <color=grey>[</color><color=green>A</color><color=grey>]</color>", overlapText = "Playspace Abuse <color=grey>[</color><color=green>A</color><color=grey>]</color>", method =() => Movement.LongJump(), toolTip = "Makes you look like you're legitimately long jumping when holding <color=green>A</color>."},
@@ -1486,8 +1487,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Snowball Impact Effect Gun", method =() => Overpowered.SnowballImpactEffectGun(), toolTip = "Spawns snowball impact events on whoever your hand desires."},
 
                 new ButtonInfo { buttonText = "Snowball Punch Mod", method =() => Overpowered.SnowballPunchMod(), toolTip = "Flings people when you punch them."},
-                new ButtonInfo { buttonText = "Snowball Safety Bubble", method =() => Overpowered.SnowballSafetyBubble(), toolTip = "Anyone who gets too close to you will be launched away."},
 
+                new ButtonInfo { buttonText = "Snowball Fling Aura", method =() => Overpowered.SnowballSafetyBubble(), toolTip = "Anyone who gets too close to you will be launched away."},
                 new ButtonInfo { buttonText = "Snowball Fling Gun", method =() => Overpowered.SnowballFlingGun(), toolTip = "Flings whoever your hand desires."},
                 new ButtonInfo { buttonText = "Snowball Fling All <color=grey>[</color><color=green>T</color><color=grey>]</color>", method =() => Overpowered.SnowballFlingAll(), toolTip = "Flings everybody when holding <color=green>trigger</color>."},
 
