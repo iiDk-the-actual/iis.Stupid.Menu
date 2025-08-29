@@ -76,17 +76,13 @@ namespace iiMenu.Mods
 
         public static PrimitiveType GetPlatformPrimitiveType()
         {
-            switch (platformShape)
+            return platformShape switch
             {
-                case 0:
-                    return PrimitiveType.Sphere;
-                case 1:
-                    return PrimitiveType.Cube;
-                case 2:
-                    return PrimitiveType.Cylinder;
-                default:
-                    return PrimitiveType.Cube;
-            }
+                0 => PrimitiveType.Sphere,
+                1 => PrimitiveType.Cube,
+                2 => PrimitiveType.Cylinder,
+                _ => PrimitiveType.Cube,
+            };
         }
 
         public static Vector3 GetPlatformScale()
@@ -1327,7 +1323,7 @@ namespace iiMenu.Mods
             GTPlayer.Instance.rightControllerTransform.parent.rotation = Quaternion.identity;
         
 
-        private static List<object[]> playerPositions = new List<object[]>();
+        private static readonly List<object[]> playerPositions = new List<object[]>();
         public static void Rewind()
         {
             if (rightTrigger > 0.5f)
@@ -3636,21 +3632,24 @@ namespace iiMenu.Mods
 
             FixRigHandRotation();
 
-            VRRig.LocalRig.leftIndex.calcT = 0f;
-            VRRig.LocalRig.leftMiddle.calcT = 0f;
-            VRRig.LocalRig.leftThumb.calcT = 0f;
+            if (fingers)
+            {
+                VRRig.LocalRig.leftIndex.calcT = 0f;
+                VRRig.LocalRig.leftMiddle.calcT = 0f;
+                VRRig.LocalRig.leftThumb.calcT = 0f;
 
-            VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
-            VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
-            VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
+                VRRig.LocalRig.leftIndex.LerpFinger(1f, false);
+                VRRig.LocalRig.leftMiddle.LerpFinger(1f, false);
+                VRRig.LocalRig.leftThumb.LerpFinger(1f, false);
 
-            VRRig.LocalRig.rightIndex.calcT = 0f;
-            VRRig.LocalRig.rightMiddle.calcT = 0f;
-            VRRig.LocalRig.rightThumb.calcT = 0f;
+                VRRig.LocalRig.rightIndex.calcT = 0f;
+                VRRig.LocalRig.rightMiddle.calcT = 0f;
+                VRRig.LocalRig.rightThumb.calcT = 0f;
 
-            VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
-            VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
-            VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
+                VRRig.LocalRig.rightIndex.LerpFinger(1f, false);
+                VRRig.LocalRig.rightMiddle.LerpFinger(1f, false);
+                VRRig.LocalRig.rightThumb.LerpFinger(1f, false);
+            }
         }
 
         public static void FollowPlayerGun()

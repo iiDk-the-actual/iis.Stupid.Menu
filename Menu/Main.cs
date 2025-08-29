@@ -3552,7 +3552,7 @@ namespace iiMenu.Menu
             }
         }
 
-        private static List<Material> imageMaterials = new List<Material>();
+        private static readonly List<Material> imageMaterials = new List<Material>();
         public static void OutlineCanvasObject(Image image, int index)
         {
             while (imageMaterials.Count <= index)
@@ -3873,7 +3873,7 @@ namespace iiMenu.Menu
             return html;
         }
 
-        private static List<float> volumeArchive = new List<float>();
+        private static readonly List<float> volumeArchive = new List<float>();
         private static Vector3 GunPositionSmoothed = Vector3.zero;
 
         private static GameObject GunPointer;
@@ -4343,19 +4343,14 @@ namespace iiMenu.Menu
 
         public static AudioType GetAudioType(string extension)
         {
-            switch (extension.ToLower())
+            return extension.ToLower() switch
             {
-                case "mp3":
-                    return AudioType.MPEG;
-                case "wav":
-                    return AudioType.WAV;
-                case "ogg":
-                    return AudioType.OGGVORBIS;
-                case "aiff":
-                    return AudioType.AIFF;
-                default:
-                    return AudioType.WAV;
-            }
+                "mp3" => AudioType.MPEG,
+                "wav" => AudioType.WAV,
+                "ogg" => AudioType.OGGVORBIS,
+                "aiff" => AudioType.AIFF,
+                _ => AudioType.WAV,
+            };
         }
 
         public static string GetFullPath(Transform transform)
@@ -4481,7 +4476,7 @@ namespace iiMenu.Menu
         }
 
         public static Dictionary<Type, object[]> typePool = new Dictionary<Type, object[]>();
-        private static Dictionary<Type, float> receiveTypeDelay = new Dictionary<Type, float>();
+        private static readonly Dictionary<Type, float> receiveTypeDelay = new Dictionary<Type, float>();
 
         public static T[] GetAllType<T>(float decayTime = 5f) where T : UnityEngine.Object
         {
@@ -4544,7 +4539,7 @@ namespace iiMenu.Menu
             return table;
         }
 
-        private static Dictionary<string, GameObject> objectPool = new Dictionary<string, GameObject>();
+        private static readonly Dictionary<string, GameObject> objectPool = new Dictionary<string, GameObject>();
         public static GameObject GetObject(string find)
         {
             if (objectPool.TryGetValue(find, out GameObject go))
@@ -5173,11 +5168,10 @@ namespace iiMenu.Menu
             if (disableBoardColor)
                 return;
 
-            Vector3 position = Vector3.zero;
             Vector3 rotation = Vector3.zero;
             Vector3 scale = Vector3.zero;
             string gameObject = "";
-
+            Vector3 position;
             switch (scene.name)
             {
                 case "Canyon2":
@@ -5450,7 +5444,7 @@ namespace iiMenu.Menu
         public static int[] AllActorNumbersExcept(int[] actorNumbers) =>
             PhotonNetwork.PlayerList.Where(plr => !actorNumbers.Contains(plr.ActorNumber)).Select(plr => plr.ActorNumber).ToArray();
 
-        private static Dictionary<string, (int Category, int Index)> cacheGetIndex = new Dictionary<string, (int Category, int Index)>(); // Looping through 800 elements is not a light task :/
+        private static readonly Dictionary<string, (int Category, int Index)> cacheGetIndex = new Dictionary<string, (int Category, int Index)>(); // Looping through 800 elements is not a light task :/
         public static ButtonInfo GetIndex(string buttonText)
         {
             if (buttonText == null)
