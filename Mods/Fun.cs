@@ -2,6 +2,7 @@ using ExitGames.Client.Photon;
 using GorillaExtensions;
 using GorillaGameModes;
 using GorillaLocomotion;
+using GorillaLocomotion.Climbing;
 using GorillaNetworking;
 using GorillaTag;
 using GorillaTag.Cosmetics;
@@ -27,7 +28,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Animations.Rigging;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -3091,6 +3091,136 @@ Piece Name: {gunTarget.name}";
             ThrowableBug bug = GetBug(objectName);
             if (bug != null)
                 bug.maxNaturalSpeed = speed;
+        }
+
+        private static Dictionary<string, bool> lastInAirValues = new Dictionary<string, bool>();
+        public static void PhysicalObject(string objectName)
+        {
+            ThrowableBug bug = GetBug(objectName);
+            if (bug != null)
+            {
+                GorillaVelocityTracker tracker = bug.gameObject.GetOrAddComponent<GorillaVelocityTracker>();
+
+                if ((bug.currentState == TransferrableObject.PositionState.InLeftHand || bug.currentState == TransferrableObject.PositionState.InRightHand) && bug.GetComponent<ClampPosition>() != null)
+                    UnityEngine.Object.Destroy(bug.GetComponent<ClampPosition>());
+
+                bool inAir = bug.currentState == TransferrableObject.PositionState.None || bug.currentState == TransferrableObject.PositionState.Dropped;
+                bool lastInAir = true;
+                lastInAirValues.TryGetValue(objectName, out lastInAir);
+
+                if (inAir && !lastInAir)
+                {
+                    GameObject bugSpamObject = new GameObject("iiMenu_BugSpamObject");
+                    bugSpamObject.transform.localScale = Vector3.one * 0.2f;
+                    bugSpamObject.layer = 3;
+
+                    if (GetIndex("Bug Colliders").enabled)
+                    {
+                        SphereCollider collider = bugSpamObject.AddComponent<SphereCollider>();
+
+                        if (GetIndex("Bouncy Bug").enabled)
+                        {
+                            collider.material.bounciness = 1f;
+                            collider.material.bounceCombine = PhysicMaterialCombine.Maximum;
+                            collider.material.dynamicFriction = 0f;
+                        }
+                    }
+
+                    bugSpamObject.transform.position = bug.transform.position;
+                    bugSpamObject.transform.rotation = bug.transform.rotation;
+
+                    Rigidbody rigidbody = bugSpamObject.AddComponent<Rigidbody>();
+                    rigidbody.velocity = tracker.GetAverageVelocity(true, 0);
+                    rigidbody.angularVelocity = bug.velocityEstimator.angularVelocity;
+
+                    rigidbody.useGravity = !GetIndex("Zero Gravity Bugs").enabled;
+
+                    bug.gameObject.GetOrAddComponent<ClampPosition>().targetTransform = bugSpamObject.transform;
+
+                    bugSpamObject.AddComponent<DestroyOnRest>();
+                    UnityEngine.Object.Destroy(bugSpamObject, 30f);
+                }
+
+                lastInAirValues[objectName] = inAir;
+            }
+        }
+
+        private static bool grabbingCamera;
+        private static bool grabbingHand;
+
+        public static void PhysicalCamera()
+        {
+            LckSocialCamera camera = GorillaTagger.Instance.myVRRig.gameObject.transform.Find("LCKNetworkedSocialCamera").GetComponent<LckSocialCamera>();
+
+            if (!camera.visible)
+            {
+                camera.transform.position = GorillaTagger.Instance.rightHandTransform.position;
+                camera.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
+
+                camera.visible = true;
+                camera.recording = true;
+
+                camera.CoconutCamera.SetVisualsActive(true);
+                camera.CoconutCamera.SetRecordingState(true);
+            }
+
+            if (!grabbingCamera)
+            {
+                bool canGrabLeft = Vector3.Distance(GorillaTagger.Instance.leftHandTransform.position, camera.transform.position) < 0.3f && leftGrab;
+                bool canGrabRight = Vector3.Distance(GorillaTagger.Instance.rightHandTransform.position, camera.transform.position) < 0.3f && rightGrab;
+
+                if (canGrabLeft || canGrabRight)
+                {
+                    grabbingCamera = true;
+                    grabbingHand = canGrabLeft;
+                }
+            } else
+            {
+                Transform targetTransform = grabbingHand ?
+                    GorillaTagger.Instance.leftHandTransform :
+                    GorillaTagger.Instance.rightHandTransform;
+
+                camera.transform.position = targetTransform.position;
+                camera.transform.rotation = targetTransform.rotation;
+
+                GorillaVelocityTracker tracker = camera.gameObject.GetOrAddComponent<GorillaVelocityTracker>();
+                GorillaVelocityEstimator estimator = camera.gameObject.GetOrAddComponent<GorillaVelocityEstimator>();
+
+                if (grabbingHand ? !leftGrab : !rightGrab)
+                {
+                    grabbingCamera = false;
+
+                    GameObject bugSpamObject = new GameObject("iiMenu_BugSpamObject");
+                    bugSpamObject.transform.localScale = Vector3.one * 0.2f;
+                    bugSpamObject.layer = 3;
+
+                    if (GetIndex("Bug Colliders").enabled)
+                    {
+                        SphereCollider collider = bugSpamObject.AddComponent<SphereCollider>();
+
+                        if (GetIndex("Bouncy Bug").enabled)
+                        {
+                            collider.material.bounciness = 1f;
+                            collider.material.bounceCombine = PhysicMaterialCombine.Maximum;
+                            collider.material.dynamicFriction = 0f;
+                        }
+                    }
+
+                    bugSpamObject.transform.position = camera.transform.position;
+                    bugSpamObject.transform.rotation = camera.transform.rotation;
+
+                    Rigidbody rigidbody = bugSpamObject.AddComponent<Rigidbody>();
+                    rigidbody.velocity = tracker.GetAverageVelocity(true, 0);
+                    rigidbody.angularVelocity = estimator.angularVelocity;
+
+                    rigidbody.useGravity = !GetIndex("Zero Gravity Bugs").enabled;
+
+                    camera.gameObject.GetOrAddComponent<ClampPosition>().targetTransform = bugSpamObject.transform;
+
+                    bugSpamObject.AddComponent<DestroyOnRest>();
+                    UnityEngine.Object.Destroy(bugSpamObject, 30f);
+                }
+            }
         }
 
         public static void ObjectToHand(string objectName)
