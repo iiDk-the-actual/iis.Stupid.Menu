@@ -4,10 +4,10 @@ using iiMenu.Menu;
 using iiMenu.Mods.CustomMaps.Maps;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using static iiMenu.Menu.Main;
 
 namespace iiMenu.Mods.CustomMaps
