@@ -1,9 +1,5 @@
-﻿using GorillaNetworking;
-using HarmonyLib;
-using Photon.Pun;
-using System;
+﻿using HarmonyLib;
 using System.Collections.Generic;
-using System.Reflection;
 
 namespace iiMenu.Patches
 {
