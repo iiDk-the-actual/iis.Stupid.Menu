@@ -5345,7 +5345,7 @@ namespace iiMenu.Menu
 
             if (viewFilter != null)
             {
-                NonAllocDictionary<int, PhotonView> photonViewList = Traverse.Create(typeof(PhotonNetwork)).Field("photonViewList").GetValue<NonAllocDictionary<int, PhotonView>>();
+                NonAllocDictionary<int, PhotonView> photonViewList = PhotonNetwork.photonViewList;
                 List<PhotonView> viewsToSerialize = new List<PhotonView>();
 
                 if (onlySerializeNecessary)
