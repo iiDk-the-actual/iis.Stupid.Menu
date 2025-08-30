@@ -1909,18 +1909,6 @@ namespace iiMenu.Mods
             GTPlayer.Instance.jumpMultiplier = jmpt;
         }
 
-        public static void GripSpeedBoost()
-        {
-            if (rightGrab)
-                SpeedBoost();
-        }
-
-        public static void JoystickSpeedBoost()
-        {
-            if (rightJoystickClick)
-                SpeedBoost();
-        }
-
         public static void DynamicSpeedBoost()
         {
             bool isTagged = PlayerIsTagged(VRRig.LocalRig);
@@ -3363,24 +3351,6 @@ namespace iiMenu.Mods
             Vector3 velocity = direction * power;
 
             GorillaTagger.Instance.rigidbody.velocity = new Vector3(velocity.x, GorillaTagger.Instance.rigidbody.velocity.y, velocity.z);
-        }
-
-        public static void GripBunnyHop()
-        {
-            if (rightGrab)
-                BunnyHop();
-        }
-
-        public static void GripStrafe()
-        {
-            if (rightGrab)
-                Strafe();
-        }
-
-        public static void GripDynamicStrafe()
-        {
-            if (rightGrab)
-                DynamicStrafe();
         }
 
         public static void GroundHelper()

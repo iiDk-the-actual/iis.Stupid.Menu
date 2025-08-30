@@ -4857,6 +4857,19 @@ namespace iiMenu.Menu
             ausrc.PlayOneShot(sound);
         }
 
+        public static void PlayPositionAudio(AudioClip sound, float volume, float spatialBlend = 1f)
+        {
+            GameObject audiomgr = new GameObject("AudioMgr");
+            AudioSource temp = audiomgr.AddComponent<AudioSource>();
+            temp.spatialBlend = spatialBlend;
+
+            AudioSource ausrc = audiomgr.GetComponent<AudioSource>();
+            ausrc.volume = volume;
+            ausrc.PlayOneShot(sound);
+
+            Destroy(audiomgr, sound.length);
+        }
+
         public static GameObject audiomgrhand;
         public static void PlayHandAudio(AudioClip sound, float volume, bool left)
         {

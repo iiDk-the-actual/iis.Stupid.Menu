@@ -173,18 +173,6 @@ namespace iiMenu.Mods
             QueueRoom(roomName);
         }
 
-        public static void DisconnectR()
-        {
-            if ((GetIndex("Primary Room Mods").enabled && rightPrimary) || (GetIndex("Secondary Room Mods").enabled && rightSecondary) || (GetIndex("Joystick Room Mods").enabled && rightJoystickClick) || !(GetIndex("Primary Room Mods").enabled || GetIndex("Secondary Room Mods").enabled || GetIndex("Joystick Room Mods").enabled))
-                NetworkSystem.Instance.ReturnToSinglePlayer();
-        }
-
-        public static void ReconnectR()
-        {
-            if ((GetIndex("Primary Room Mods").enabled && rightPrimary) || (GetIndex("Secondary Room Mods").enabled && rightSecondary) || (GetIndex("Joystick Room Mods").enabled && rightJoystickClick) || !(GetIndex("Primary Room Mods").enabled || GetIndex("Secondary Room Mods").enabled || GetIndex("Joystick Room Mods").enabled))
-                Reconnect();
-        }
-
         public static void CancelReconnect()
         {
             if (queueCoroutine != null)
@@ -216,12 +204,6 @@ namespace iiMenu.Mods
         {
             yield return new WaitForSeconds(1.5f);
             JoinRandom();
-        }
-
-        public static void JoinRandomR()
-        {
-            if ((GetIndex("Primary Room Mods").enabled && rightPrimary) || (GetIndex("Secondary Room Mods").enabled && rightSecondary) || (GetIndex("Joystick Room Mods").enabled &&  rightJoystickClick) || !(GetIndex("Primary Room Mods").enabled || GetIndex("Secondary Room Mods").enabled || GetIndex("Joystick Room Mods").enabled))
-                JoinRandom();
         }
 
         public static void CreateRoom(string roomName, bool isPublic)

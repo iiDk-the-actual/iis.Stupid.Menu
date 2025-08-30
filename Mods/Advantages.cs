@@ -316,27 +316,6 @@ namespace iiMenu.Mods
                 TagAuraPlayer(vrrig);
         }
 
-        public static void GripTagAura()
-        {
-            if (rightGrab)
-                TagAura();
-        }
-
-        public static bool lastj;
-        public static bool jta;
-        public static void JoystickTagAura()
-        {
-            bool l = rightJoystickClick;
-
-            if (l && !lastj)
-                jta = !jta;
-
-            lastj = l;
-
-            if (jta)
-                TagAura();
-        }
-
         public static void TagReach()
         {
             if (PlayerIsTagged(VRRig.LocalRig))
