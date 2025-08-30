@@ -2894,24 +2894,6 @@ namespace iiMenu.Mods
             ChangeMenuTheme();
         }
 
-        public static void EnablePrimaryRoomMods()
-        {
-            GetIndex("Disconnect").isTogglable = true;
-            GetIndex("Reconnect").isTogglable = true;
-            GetIndex("Join Random").isTogglable = true;
-        }
-
-        public static void DisablePrimaryRoomMods()
-        {
-            GetIndex("Disconnect").enabled = false;
-            GetIndex("Reconnect").enabled = false;
-            GetIndex("Join Random").enabled = false;
-
-            GetIndex("Disconnect").isTogglable = false;
-            GetIndex("Reconnect").isTogglable = false;
-            GetIndex("Join Random").isTogglable = false;
-        }
-
         public static void DisablePageButtons()
         {
             if (GetIndex("Joystick Menu").enabled) {
