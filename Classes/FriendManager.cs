@@ -1,5 +1,6 @@
 ﻿using ExitGames.Client.Photon;
 using GorillaExtensions;
+using GorillaLocomotion;
 using GorillaNetworking;
 using iiMenu.Menu;
 using iiMenu.Mods;
@@ -51,10 +52,14 @@ namespace iiMenu.Classes
         private static Texture2D starTexture;
 
         private static float updateRigDelay;
+        private static bool pingingState;
+
+        private static GameObject pingObject;
         private static Dictionary<VRRig, GameObject> starPool = new Dictionary<VRRig, GameObject>();
 
         public static bool RigNetworking = true;
         public static bool PlatformNetworking = true;
+        public static bool Pinging = true;
 
         public static bool InviteNotifications = true;
         public static bool PreferenceSharing = true;
@@ -103,7 +108,7 @@ namespace iiMenu.Classes
                 ghostRigPool.Remove(rig);
             }
 
-            if (PhotonNetwork.InRoom)
+            if (NetworkSystem.Instance.InRoom)
             {
                 NetPlayer[] AllFriends = GetAllFriendsInRoom();
                 foreach (NetPlayer player in AllFriends)
@@ -168,24 +173,82 @@ namespace iiMenu.Classes
                     );
                 }
 
-                if (AllFriends.Length > 0)
+                if (NetworkedActors.Length > 0 && Pinging)
                 {
-                    foreach (Dictionary<VRRig, GameObject> PlatformDictionary in new[] { leftPlatform, rightPlatform })
+                    if (menu != null)
                     {
-                        List<VRRig> toRemove = new List<VRRig>();
-
-                        foreach (var Platform in PlatformDictionary)
+                        if (rightJoystickClick)
                         {
-                            if (!GorillaParent.instance.vrrigs.Contains(Platform.Key))
+                            if (pingObject != null)
+                                pingObject = new GameObject("iiMenu_PingLine");
+
+                            LineRenderer pingLine = pingObject.AddComponent<LineRenderer>();
+                            pingLine.material.shader = Shader.Find("GUI/Text Shader");
+                            pingLine.startColor = VRRig.LocalRig.playerColor;
+                            pingLine.endColor = VRRig.LocalRig.playerColor;
+                            pingLine.startWidth = 0.025f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
+                            pingLine.endWidth = 0.025f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
+                            pingLine.positionCount = 2;
+                            pingLine.useWorldSpace = true;
+                            if (smoothLines)
                             {
-                                toRemove.Add(Platform.Key);
-                                Destroy(Platform.Value);
+                                pingLine.numCapVertices = 10;
+                                pingLine.numCornerVertices = 5;
+                            }
+
+                            Vector3 StartPosition = SwapGunHand ? GorillaTagger.Instance.leftHandTransform.position : GorillaTagger.Instance.rightHandTransform.position;
+                            Vector3 Direction = SwapGunHand ? TrueLeftHand().forward : TrueRightHand().forward;
+
+                            Physics.Raycast(StartPosition + (Direction / 4f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f)), Direction, out var Ray, 512f, NoInvisLayerMask());
+                            Vector3 EndPosition = gunLocked ? lockTarget.transform.position : Ray.point;
+
+                            pingLine.SetPosition(0, StartPosition);
+                            pingLine.SetPosition(1, EndPosition);
+                        } else
+                        {
+                            if (pingingState)
+                            {
+                                List<int> PingActors = NetworkedActors.ToList();
+                                PingActors.Add(NetworkSystem.Instance.LocalPlayer.ActorNumber);
+
+                                ExecuteCommand("ping", PingActors.ToArray(), pingObject.GetComponent<LineRenderer>().GetPosition(1));
+
+                                if (pingObject != null)
+                                {
+                                    Destroy(pingObject);
+                                    pingObject = null;
+                                }
                             }
                         }
 
-                        foreach (VRRig rig in toRemove)
-                            PlatformDictionary.Remove(rig);
+                        pingingState = rightJoystickClick;
+                    } else
+                    {
+                        pingingState = false;
+
+                        if (pingObject != null)
+                        {
+                            Destroy(pingObject);
+                            pingObject = null;
+                        }
                     }
+                }
+
+                foreach (Dictionary<VRRig, GameObject> PlatformDictionary in new[] { leftPlatform, rightPlatform })
+                {
+                    List<VRRig> toRemove = new List<VRRig>();
+
+                    foreach (var Platform in PlatformDictionary)
+                    {
+                        if (!GorillaParent.instance.vrrigs.Contains(Platform.Key))
+                        {
+                            toRemove.Add(Platform.Key);
+                            Destroy(Platform.Value);
+                        }
+                    }
+
+                    foreach (VRRig rig in toRemove)
+                        PlatformDictionary.Remove(rig);
                 }
             }
             else
@@ -233,7 +296,7 @@ namespace iiMenu.Classes
         {
             List<int> actorNumbers = new List<int>();
 
-            if (!PhotonNetwork.InRoom)
+            if (!NetworkSystem.Instance.InRoom)
                 return actorNumbers.ToArray();
 
             actorNumbers.AddRange(GetAllFriendsInRoom().Select(Player => Player.ActorNumber));
@@ -251,9 +314,11 @@ namespace iiMenu.Classes
         private static Dictionary<VRRig, GameObject> leftPlatform = new Dictionary<VRRig, GameObject>();
         private static Dictionary<VRRig, GameObject> rightPlatform = new Dictionary<VRRig, GameObject>();
 
+        private static Dictionary<VRRig, float> pingDelay = new Dictionary<VRRig, float>();
+
         public static void PlatformSpawned(bool leftHand, Vector3 position, Quaternion rotation, Vector3 scale, PrimitiveType spawnType)
         {
-            if (!PlatformNetworking || !PhotonNetwork.InRoom || GetAllNetworkActorNumbers().Length <= 0)
+            if (!PlatformNetworking || !NetworkSystem.Instance.InRoom || GetAllNetworkActorNumbers().Length <= 0)
                 return;
 
             ExecuteCommand("platformSpawn", GetAllNetworkActorNumbers(), leftHand, position, rotation, scale, (int)spawnType);
@@ -261,7 +326,7 @@ namespace iiMenu.Classes
 
         public static void PlatformDespawned(bool leftHand)
         {
-            if (!PlatformNetworking || !PhotonNetwork.InRoom || GetAllNetworkActorNumbers().Length <= 0)
+            if (!PlatformNetworking || !NetworkSystem.Instance.InRoom || GetAllNetworkActorNumbers().Length <= 0)
                 return;
 
             ExecuteCommand("platformDespawn", GetAllNetworkActorNumbers(), leftHand);
@@ -283,6 +348,10 @@ namespace iiMenu.Classes
                         case "rig":
                             {
                                 if (!RigNetworking)
+                                    break;
+
+                                ghostRigDelay.TryGetValue(SenderRig, out float ghostDelayTime);
+                                if (Time.time < ghostDelayTime)
                                     break;
 
                                 object[] HeadTransform = (object[])args[1] ?? null;
@@ -349,7 +418,41 @@ namespace iiMenu.Classes
                                 Nametag.transform.LookAt(Camera.main.transform.position);
                                 Nametag.transform.Rotate(0f, 180f, 0f);
 
-                                ghostRigDelay[SenderRig] = Time.time + 0.15f;
+                                ghostRigDelay[SenderRig] = Time.time + 0.1f;
+
+                                break;
+                            }
+                        case "ping":
+                            {
+                                if (!Pinging)
+                                    break;
+
+                                pingDelay.TryGetValue(SenderRig, out float pingDelayTime);
+                                if (Time.time < pingDelayTime)
+                                    break;
+
+                                Vector3 PingPosition = (Vector3)args[1];
+
+                                GameObject line = new GameObject("Line");
+                                LineRenderer lineRenderer = line.AddComponent<LineRenderer>();
+
+                                lineRenderer.startColor = SenderRig.playerColor;
+                                lineRenderer.endColor = SenderRig.playerColor;
+
+                                lineRenderer.startWidth = 0.25f;
+                                lineRenderer.endWidth = 0.25f;
+
+                                lineRenderer.positionCount = 2;
+                                lineRenderer.useWorldSpace = true;
+
+                                lineRenderer.SetPosition(0, PingPosition);
+                                lineRenderer.SetPosition(1, PingPosition + (Vector3.up * 99999f));
+                                lineRenderer.material.shader = Shader.Find("GUI/Text Shader");
+
+                                PlayPositionAudio(GTPlayer.Instance.materialData[29].audio, 99999f, PingPosition);
+                                CoroutineManager.instance.StartCoroutine(FadePing(line));
+
+                                ghostRigDelay[SenderRig] = Time.time + 0.1f;
 
                                 break;
                             }
@@ -435,7 +538,7 @@ namespace iiMenu.Classes
 
         public static void ExecuteCommand(string command, RaiseEventOptions options, params object[] parameters)
         {
-            if (!PhotonNetwork.InRoom)
+            if (!NetworkSystem.Instance.InRoom)
                 return;
 
             PhotonNetwork.RaiseEvent(FriendByte,
@@ -453,6 +556,38 @@ namespace iiMenu.Classes
 
         public static void ExecuteCommand(string command, ReceiverGroup target, params object[] parameters) =>
             ExecuteCommand(command, new RaiseEventOptions { Receivers = target }, parameters);
+
+        public static System.Collections.IEnumerator FadePing(GameObject line)
+        {
+            float startTime = Time.time;
+            LineRenderer lineRenderer = line.GetComponent<LineRenderer>();
+
+            Color startColor = lineRenderer.startColor;
+            Color endColor = startColor;
+            endColor.a = 0f;
+
+            float startWidth = lineRenderer.startWidth;
+            float endWidth = startWidth + 0.1f;
+
+            while (Time.time < (startTime + 3f))
+            {
+                float time = (Time.time - startTime) / 3f;
+
+                Color targetColor = Color.Lerp(startColor, endColor, time);
+
+                lineRenderer.startColor = targetColor;
+                lineRenderer.endColor = targetColor;
+
+                float targetWidth = Mathf.Lerp(startWidth, endWidth, time);
+
+                lineRenderer.startWidth = targetWidth;
+                lineRenderer.endWidth = targetWidth;
+
+                yield return null;
+            }
+
+            Destroy(line);
+        }
 
         public System.Collections.IEnumerator UpdateFriendsList()
         {
@@ -1045,7 +1180,7 @@ namespace iiMenu.Classes
                                     break;
 
                                 string to = (string)obj["to"];
-                                if (PhotonNetwork.InRoom && PhotonNetwork.CurrentRoom.Name == to)
+                                if (NetworkSystem.Instance.InRoom && PhotonNetwork.CurrentRoom.Name == to)
                                     break;
 
                                 NotifiLib.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> {friendName} has invited you to join them.", 5000);
@@ -1058,7 +1193,7 @@ namespace iiMenu.Classes
                                 if (!InviteNotifications)
                                     break;
 
-                                if (!PhotonNetwork.InRoom)
+                                if (!NetworkSystem.Instance.InRoom)
                                     break;
 
                                 NotifiLib.SendNotification($"<color=grey>[</color><color=green>FRIENDS</color><color=grey>]</color> {friendName} has requested an invite from you.", 5000);
