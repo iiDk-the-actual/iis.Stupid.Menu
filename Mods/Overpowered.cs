@@ -805,7 +805,7 @@ namespace iiMenu.Mods
                 point.transform.localScale = Vector3.one * 0.2f;
             }
 
-            point.GetComponent<Renderer>().material.color = GetBDColor(0f);
+            point.GetComponent<Renderer>().material.color = buttonColors[1].GetCurrentColor();
 
             if (GetGunInput(false))
             {

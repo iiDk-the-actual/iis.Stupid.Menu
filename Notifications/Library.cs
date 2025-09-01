@@ -156,11 +156,11 @@ namespace iiMenu.Notifications
 
                 if (information.Count > 0)
                 {
-                    Color targetColor = GetIndex("Swap GUI Colors").enabled ? GetBDColor(0f) : GetBGColor(0f);
+                    Color targetColor = GetIndex("Swap GUI Colors").enabled ? buttonColors[1].GetCurrentColor() : backgroundColor.GetCurrentColor();
 
                     TextGenerationSettings settings = ModText.GetGenerationSettings(ModText.rectTransform.rect.size);
                     List<string> statsAlphabetized = information
-                        .Select(item => $"<color=#{ColorToHex(targetColor)}>{item.Key}</color> <color=#{ColorToHex(textColor)}>{item.Value}</color>")
+                        .Select(item => $"<color=#{ColorToHex(targetColor)}>{item.Key}</color> <color=#{ColorToHex(textColors[1].GetColor(0))}>{item.Value}</color>")
                         .OrderByDescending(item => StatsText.cachedTextGenerator.GetPreferredWidth(NoRichtextTags(item), settings))
                         .ToList();
 
@@ -210,12 +210,12 @@ namespace iiMenu.Notifications
                     int index = 0;
                     foreach (string v in sortedButtons)
                     {
-                        Color targetColor = GetIndex("Swap GUI Colors").enabled ? GetBDColor(index * -0.1f) : GetBGColor(index * -0.1f);
+                        Color targetColor = GetIndex("Swap GUI Colors").enabled ? buttonColors[1].GetCurrentColor(index * -0.1f) : backgroundColor.GetCurrentColor(index * -0.1f);
 
                         if (advancedArraylist)
                             enabledModsText += (flipArraylist ?
-                                  $"<color=#{ColorToHex(textColor)}>{v}</color><color=#{ColorToHex(targetColor)}> |</color>"
-                                : $"<color=#{ColorToHex(GetBGColor(index * -0.1f))}>| </color><color=#{ColorToHex(textColor)}>{v}</color>") + "\n";
+                                  $"<color=#{ColorToHex(textColors[1].GetColor(0))}>{v}</color><color=#{ColorToHex(targetColor)}> |</color>"
+                                : $"<color=#{ColorToHex(backgroundColor.GetCurrentColor(index * -0.1f))}>| </color><color=#{ColorToHex(textColors[1].GetColor(0))}>{v}</color>") + "\n";
                         else
                             enabledModsText += v + "\n";
 
@@ -223,7 +223,7 @@ namespace iiMenu.Notifications
                     }
 
                     ModText.text = enabledModsText;
-                    ModText.color = GetIndex("Swap GUI Colors").enabled ? textColor : GetBGColor(0f);
+                    ModText.color = GetIndex("Swap GUI Colors").enabled ? textColors[1].GetColor(0) : backgroundColor.GetCurrentColor();
                 }
                 else
                     ModText.text = "";

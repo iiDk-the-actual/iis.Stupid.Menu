@@ -327,8 +327,8 @@ namespace iiMenu.Mods
 
                 if (GetIndex("Visualize Tag Reach").enabled)
                 {
-                    VisualizeAura(GorillaTagger.Instance.leftHandTransform.position, tagReachDistance, GetBGColor(0f), -149286);
-                    VisualizeAura(GorillaTagger.Instance.rightHandTransform.position, tagReachDistance, GetBGColor(0f), -149285);
+                    VisualizeAura(GorillaTagger.Instance.leftHandTransform.position, tagReachDistance, backgroundColor.GetCurrentColor(), -149286);
+                    VisualizeAura(GorillaTagger.Instance.rightHandTransform.position, tagReachDistance, backgroundColor.GetCurrentColor(), -149285);
                 }
             }
         }

@@ -14,7 +14,7 @@ namespace iiMenu.Patches
             else
                 __result.GetComponent<Renderer>().material.shader = Shader.Find(shinymenu ? "Universal Render Pipeline/Lit" : "GorillaTag/UberShader");
             
-            __result.GetComponent<Renderer>().material.color = bgColorA;
+            __result.GetComponent<Renderer>().material.color = backgroundColor.GetColor(0);
         }
     }
 }

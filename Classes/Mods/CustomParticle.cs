@@ -27,7 +27,7 @@ namespace iiMenu.Classes
 		public void Update()
 		{
 			if (renderer != null)
-				renderer.material.color = GetBDColor(0f);
+				renderer.material.color = buttonColors[1].GetCurrentColor();
 
 			if (Time.time > spawnTime + 1f)
 			{

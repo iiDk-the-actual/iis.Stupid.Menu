@@ -339,7 +339,7 @@ namespace iiMenu.Menu
                 try
                 {
                     if (!disableBoardColor)
-                        OrangeUI.color = GetBGColor(0f);
+                        OrangeUI.color = backgroundColor.GetCurrentColor();
                     else
                         OrangeUI.color = new Color32(0, 59, 4, 255);
 
@@ -370,7 +370,7 @@ namespace iiMenu.Menu
                     if (uppercaseMode)
                         motdTC.text = motdTC.text.ToUpper();
 
-                    motdTC.color = titleColor;
+                    motdTC.color = textColors[0].GetCurrentColor();
                     motdTC.overflowMode = TextOverflowModes.Overflow;
 
                     if (motdText == null)
@@ -388,7 +388,7 @@ namespace iiMenu.Menu
 
                     motdTextB.richText = true;
                     motdTextB.fontSize = 100;
-                    motdTextB.color = titleColor;
+                    motdTextB.color = textColors[0].GetCurrentColor();
 
                     if (fullModAmount < 0)
                     {
@@ -411,7 +411,7 @@ namespace iiMenu.Menu
 
                 try
                 {
-                    Color targetColor = titleColor;
+                    Color targetColor = textColors[0].GetCurrentColor();
 
                     if (disableBoardColor || disableBoardTextColor)
                         targetColor = Color.white;
@@ -578,9 +578,9 @@ namespace iiMenu.Menu
                     title.text = RichtextGradient(NoRichtextTags(title.text),
                         new GradientColorKey[]
                         {
-                            new GradientColorKey(BrightenColor(buttonDefaultA), 0f),
-                            new GradientColorKey(BrightenColor(buttonDefaultA, 0.95f), 0.5f),
-                            new GradientColorKey(BrightenColor(buttonDefaultA), 1f)
+                            new GradientColorKey(BrightenColor(buttonColors[0].GetColor(0)), 0f),
+                            new GradientColorKey(BrightenColor(buttonColors[0].GetColor(0), 0.95f), 0.5f),
+                            new GradientColorKey(BrightenColor(buttonColors[0].GetColor(0)), 1f)
                         });
 
                 if (searchTextObject != null)
@@ -876,7 +876,7 @@ namespace iiMenu.Menu
 
                     if ((!VRRig.LocalRig.enabled || ghostException) && !disableGhostview)
                     {
-                        Color color = GetIndex("Swap Ghostview Colors").enabled ? GetBDColor(0f) : GetBGColor(0f);
+                        Color color = GetIndex("Swap Ghostview Colors").enabled ? buttonColors[1].GetCurrentColor() : backgroundColor.GetCurrentColor();
 
                         if (legacyGhostview)
                         {
@@ -1120,7 +1120,7 @@ namespace iiMenu.Menu
                             watchTextText.text = toSortOf[watchMenuIndex].overlapText;
 
                         watchTextText.text += $"\n<color=grey>[{(watchMenuIndex + 1)}/{toSortOf.Length}]\n{DateTime.Now:hh:mm tt}</color>";
-                        watchTextText.color = titleColor;
+                        watchTextText.color = textColors[0].GetCurrentColor();
 
                         if (lowercaseMode)
                             watchTextText.text = watchTextText.text.ToLower();
@@ -1131,7 +1131,7 @@ namespace iiMenu.Menu
                         if (watchIndicatorMat == null)
                             watchIndicatorMat = new Material(Shader.Find("GorillaTag/UberShader"));
 
-                        watchIndicatorMat.color = toSortOf[watchMenuIndex].enabled ? GetBDColor(0f) : GetBRColor(0f);
+                        watchIndicatorMat.color = toSortOf[watchMenuIndex].enabled ? buttonColors[1].GetCurrentColor() : buttonColors[0].GetCurrentColor();
                         watchEnabledIndicator.GetComponent<Image>().material = watchIndicatorMat;
 
                         Vector2 js = rightHand ? rightJoystick : leftJoystick;
@@ -1375,108 +1375,6 @@ namespace iiMenu.Menu
             }
         }
 
-        public static Color GetBGColor(float offset)
-        {
-            Gradient bg = new Gradient
-            {
-                colorKeys = new[]
-                {
-                    new GradientColorKey(bgColorA, 0f),
-                    new GradientColorKey(bgColorB, 0.5f),
-                    new GradientColorKey(bgColorA, 1f)
-                }
-            };
-            Color oColor = bg.Evaluate((Time.time / 2f + offset) % 1f);
-
-            switch (themeType)
-            {
-                case 6:
-                    {
-                        float h = ((Time.frameCount / 180f) + offset) % 1f;
-                        oColor = Color.HSVToRGB(h, 1f, 1f);
-                        break;
-                    }
-                case 47:
-                    {
-                        oColor = new Color32(
-                            (byte)UnityEngine.Random.Range(0, 255),
-                            (byte)UnityEngine.Random.Range(0, 255),
-                            (byte)UnityEngine.Random.Range(0, 255),
-                            255);
-                        break;
-                    }
-                case 51:
-                    {
-                        float h = (Time.frameCount / 180f) % 1f;
-                        oColor = Color.HSVToRGB(h, 0.3f, 1f);
-                        break;
-                    }
-                case 8:
-                    {
-                        oColor = GetPlayerColor(VRRig.LocalRig);
-                        break;
-                    }
-            }
-
-            return oColor;
-        }
-
-        public static Color GetBRColor(float offset)
-        {
-            Gradient bg = new Gradient
-            {
-                colorKeys = new[]
-                {
-                    new GradientColorKey(buttonDefaultA, 0f),
-                    new GradientColorKey(buttonDefaultB, 0.5f),
-                    new GradientColorKey(buttonDefaultA, 1f)
-                }
-            };
-            Color oColor = bg.Evaluate((Time.time / 2f + offset) % 1f);
-            return oColor;
-        }
-
-        public static Color GetBDColor(float offset)
-        {
-            Gradient bg = new Gradient
-            {
-                colorKeys = new[]
-                {
-                    new GradientColorKey(buttonClickedA, 0f),
-                    new GradientColorKey(buttonClickedB, 0.5f),
-                    new GradientColorKey(buttonClickedA, 1f)
-                }
-            };
-            Color oColor = bg.Evaluate((Time.time / 2f + offset) % 1f);
-            switch (themeType)
-            {
-                case 6:
-                    {
-                        float h = ((Time.frameCount / 180f) + offset) % 1f;
-                        oColor = Color.HSVToRGB(h, 1f, 1f);
-                        break;
-                    }
-                case 47:
-                    oColor = new Color32(
-                        (byte)UnityEngine.Random.Range(0, 255),
-                        (byte)UnityEngine.Random.Range(0, 255),
-                        (byte)UnityEngine.Random.Range(0, 255),
-                        255);
-                    break;
-                case 51:
-                    {
-                        float h = (Time.frameCount / 180f) % 1f;
-                        oColor = Color.HSVToRGB(h, 0.3f, 1f);
-                        break;
-                    }
-                case 8:
-                    oColor = GetPlayerColor(VRRig.LocalRig);
-                    break;
-            }
-
-            return oColor;
-        }
-
         private static void AddButton(float offset, int buttonIndex, ButtonInfo method)
         {
             if (!method.label)
@@ -1542,57 +1440,21 @@ namespace iiMenu.Menu
                     }
                 }
 
+                bool shouldSwap = swapButtonColors && buttonIndex < 0;
                 if (shouldOutline && !(themeType == 63 && buttonIndex >= 0))
-                    OutlineObj(buttonObject, buttonIndex < 0 && swapButtonColors ? method.enabled : !method.enabled);
+                    OutlineObj(buttonObject, shouldSwap ? method.enabled : !method.enabled);
 
                 if (lastClickedName != method.buttonText)
                 {
-                    bool shouldSwap = swapButtonColors && buttonIndex < 0;
-                    GradientColorKey[] pressedColors = new[]
-                    {
-                        new GradientColorKey(shouldSwap ? buttonDefaultA : buttonClickedA, 0f),
-                        new GradientColorKey(shouldSwap ? buttonDefaultB : buttonClickedB, 0.5f),
-                        new GradientColorKey(shouldSwap ? buttonDefaultA : buttonClickedA, 1f)
-                    };
-
-                    GradientColorKey[] releasedColors = new[]
-                    {
-                        new GradientColorKey(shouldSwap ? buttonClickedA : buttonDefaultA, 0f),
-                        new GradientColorKey(shouldSwap ? buttonClickedB : buttonDefaultB, 0.5f),
-                        new GradientColorKey(shouldSwap ? buttonClickedA : buttonDefaultA, 1f)
-                    };
-
                     ColorChanger colorChanger = buttonObject.AddComponent<ColorChanger>();
+                    colorChanger.colors = buttonColors[shouldSwap ^ method.enabled ? 1 : 0];
 
                     if (joystickMenu && buttonIndex == joystickButtonSelected)
                     {
-                        joystickSelectedButton = method.buttonText;
+                        ExtGradient gradient = colorChanger.colors.Clone();
+                        gradient.SetColor(0, Color.red);
 
-                        pressedColors[0].color = Color.red;
-                        pressedColors[2].color = Color.red;
-
-                        releasedColors[0].color = Color.red;
-                        releasedColors[2].color = Color.red;
-                    }
-
-                    if (method.enabled)
-                    {
-                        colorChanger.isRainbow = themeType == 6;
-                        colorChanger.isPastelRainbow = themeType == 51;
-                        colorChanger.isSlowFade = slowFadeColors;
-                        colorChanger.isEpileptic = themeType == 47;
-                        colorChanger.isMonkeColors = themeType == 8;
-                        colorChanger.colors = new Gradient
-                        {
-                            colorKeys = pressedColors
-                        };
-                    }
-                    else
-                    {
-                        colorChanger.colors = new Gradient
-                        {
-                            colorKeys = releasedColors
-                        };
+                        colorChanger.colors = gradient;
                     }
                 }
                 else
@@ -1641,10 +1503,11 @@ namespace iiMenu.Menu
 
             buttonText.supportRichText = true;
             buttonText.fontSize = 1;
-            buttonText.color = method.enabled ? textClicked : textColor;
 
             if (joystickMenu && buttonIndex == joystickButtonSelected && themeType == 30)
                 buttonText.color = Color.red;
+            else
+                buttonText.AddComponent<TextColorChanger>().colors = textColors[method.enabled ? 2 : 1];
 
             buttonText.alignment = checkMode ? TextAnchor.MiddleLeft : TextAnchor.MiddleCenter;
             buttonText.fontStyle = activeFontStyle;
@@ -1689,42 +1552,10 @@ namespace iiMenu.Menu
             buttonObject.AddComponent<Classes.Button>().relatedText = "Search";
 
             if (shouldOutline)
-                OutlineObj(buttonObject, swapButtonColors ? isSearching : !isSearching);
-
-            GradientColorKey[] pressedColors = new[]
-            {
-                new GradientColorKey(buttonClickedA, 0f),
-                new GradientColorKey(buttonClickedB, 0.5f),
-                new GradientColorKey(buttonClickedA, 1f)
-            };
-
-            GradientColorKey[] releasedColors = new[]
-            {
-                new GradientColorKey(buttonDefaultA, 0f),
-                new GradientColorKey(buttonDefaultB, 0.5f),
-                new GradientColorKey(buttonDefaultA, 1f)
-            };
+                OutlineObj(buttonObject, isSearching ^ !swapButtonColors);
 
             ColorChanger colorChanger = buttonObject.AddComponent<ColorChanger>();
-            if (isSearching)
-            {
-                colorChanger.isRainbow = themeType == 6;
-                colorChanger.isPastelRainbow = themeType == 51;
-                colorChanger.isSlowFade = slowFadeColors;
-                colorChanger.isEpileptic = themeType == 47;
-                colorChanger.isMonkeColors = themeType == 8;
-                colorChanger.colors = new Gradient
-                {
-                    colorKeys = swapButtonColors ? releasedColors : pressedColors
-                };
-            }
-            else
-            {
-                colorChanger.colors = new Gradient
-                {
-                    colorKeys = swapButtonColors ? pressedColors : releasedColors
-                };
-            }
+            colorChanger.colors = buttonColors[(isSearching ^ !swapButtonColors) ? 0 : 1];
 
             if (shouldRound)
                 RoundObj(buttonObject);
@@ -1744,7 +1575,7 @@ namespace iiMenu.Menu
 
             searchImage.material = searchMat;
             searchImage.material.SetTexture("_MainTex", searchIcon);
-            searchImage.color = isSearching ? textClicked : textColor;
+            searchImage.AddComponent<ImageColorChanger>().colors = textColors[isSearching ? 2 : 1];
 
             RectTransform imageTransform = searchImage.GetComponent<RectTransform>();
             imageTransform.localPosition = Vector3.zero;
@@ -1785,42 +1616,10 @@ namespace iiMenu.Menu
             buttonObject.AddComponent<Classes.Button>().relatedText = "Info Screen";
 
             if (shouldOutline)
-                OutlineObj(buttonObject, swapButtonColors ? infoScreenEnabled : !infoScreenEnabled);
-
-            GradientColorKey[] pressedColors = new[]
-            {
-                new GradientColorKey(buttonClickedA, 0f),
-                new GradientColorKey(buttonClickedB, 0.5f),
-                new GradientColorKey(buttonClickedA, 1f)
-            };
-
-            GradientColorKey[] releasedColors = new[]
-            {
-                new GradientColorKey(buttonDefaultA, 0f),
-                new GradientColorKey(buttonDefaultB, 0.5f),
-                new GradientColorKey(buttonDefaultA, 1f)
-            };
+                OutlineObj(buttonObject, infoScreenEnabled ^ swapButtonColors);
 
             ColorChanger colorChanger = buttonObject.AddComponent<ColorChanger>();
-            if (infoScreenEnabled)
-            {
-                colorChanger.isRainbow = themeType == 6;
-                colorChanger.isPastelRainbow = themeType == 51;
-                colorChanger.isSlowFade = slowFadeColors;
-                colorChanger.isEpileptic = themeType == 47;
-                colorChanger.isMonkeColors = themeType == 8;
-                colorChanger.colors = new Gradient
-                {
-                    colorKeys = swapButtonColors ? releasedColors : pressedColors
-                };
-            }
-            else
-            {
-                colorChanger.colors = new Gradient
-                {
-                    colorKeys = swapButtonColors ? pressedColors : releasedColors
-                };
-            }
+            colorChanger.colors = buttonColors[(infoScreenEnabled ^ swapButtonColors) ? 0 : 1];
 
             if (shouldRound)
                 RoundObj(buttonObject);
@@ -1840,7 +1639,7 @@ namespace iiMenu.Menu
 
             searchImage.material = debugMat;
             searchImage.material.SetTexture("_MainTex", debugIcon);
-            searchImage.color = textColor;
+            searchImage.AddComponent<ImageColorChanger>().colors = textColors[1];
 
             RectTransform imageTransform = searchImage.GetComponent<RectTransform>();
             imageTransform.localPosition = Vector3.zero;
@@ -1881,26 +1680,8 @@ namespace iiMenu.Menu
             if (shouldOutline)
                 OutlineObj(buttonObject, !swapButtonColors);
 
-            GradientColorKey[] pressedColors = new[]
-            {
-                new GradientColorKey(buttonClickedA, 0f),
-                new GradientColorKey(buttonClickedB, 0.5f),
-                new GradientColorKey(buttonClickedA, 1f)
-            };
-
-            GradientColorKey[] releasedColors = new[]
-            {
-                new GradientColorKey(buttonDefaultA, 0f),
-                new GradientColorKey(buttonDefaultB, 0.5f),
-                new GradientColorKey(buttonDefaultA, 1f)
-            };
-
             ColorChanger colorChanger = buttonObject.AddComponent<ColorChanger>();
-
-            colorChanger.colors = new Gradient
-            {
-                colorKeys = swapButtonColors ? pressedColors : releasedColors
-            };
+            colorChanger.colors = buttonColors[swapButtonColors ? 1 : 0];
 
             if (shouldRound)
                 RoundObj(buttonObject);
@@ -1919,8 +1700,8 @@ namespace iiMenu.Menu
                 donateMat = new Material(searchImage.material);
 
             searchImage.material = donateMat;
-            searchImage.material.SetTexture("_MainTex", donateIcon); 
-            searchImage.color = textColor;
+            searchImage.material.SetTexture("_MainTex", donateIcon);
+            searchImage.AddComponent<ImageColorChanger>().colors = textColors[1];
 
             RectTransform imageTransform = searchImage.GetComponent<RectTransform>();
             imageTransform.localPosition = Vector3.zero;
@@ -1967,17 +1748,10 @@ namespace iiMenu.Menu
             if (shouldOutline)
                 OutlineObj(buttonObject, !swapButtonColors);
 
-            GradientColorKey[] colorKeys = new[]
-            {
-                new GradientColorKey(swapButtonColors ? buttonClickedA : buttonDefaultA, 0f),
-                new GradientColorKey(swapButtonColors ? buttonClickedB : buttonDefaultB, 0.5f),
-                new GradientColorKey(swapButtonColors ? buttonClickedA : buttonDefaultA, 1f)
-            };
-
             if (lastClickedName != "Global Return")
             {
                 ColorChanger colorChanger = buttonObject.AddComponent<ColorChanger>();
-                colorChanger.colors = new Gradient { colorKeys = colorKeys };
+                colorChanger.colors = colorChanger.colors = buttonColors[swapButtonColors ? 1 : 0];
             }
             else
                 CoroutineManager.RunCoroutine(ButtonClick(-99, buttonObject.GetComponent<Renderer>()));
@@ -2001,7 +1775,7 @@ namespace iiMenu.Menu
 
             returnImage.material = returnMat;
             returnImage.material.SetTexture("_MainTex", returnIcon);
-            returnImage.color = textColor;
+            returnImage.AddComponent<ImageColorChanger>().colors = textColors[1];
 
             RectTransform imageTransform = returnImage.GetComponent<RectTransform>();
             imageTransform.localPosition = Vector3.zero;
@@ -2055,18 +1829,8 @@ namespace iiMenu.Menu
 
                 if (lastClickedName != method.buttonText + (increment ? "+" : "-"))
                 {
-                    GradientColorKey[] releasedColors = new[]
-                    {
-                        new GradientColorKey(buttonDefaultA, 0f),
-                        new GradientColorKey(buttonDefaultB, 0.5f),
-                        new GradientColorKey(buttonDefaultA, 1f)
-                    };
-
                     ColorChanger colorChanger = buttonObject.AddComponent<ColorChanger>();
-                    colorChanger.colors = new Gradient
-                    {
-                        colorKeys = releasedColors
-                    };
+                    colorChanger.colors = buttonColors[0];
                 }
                 else
                     CoroutineManager.RunCoroutine(ButtonClick(buttonIndex, buttonObject.GetComponent<Renderer>()));
@@ -2092,7 +1856,7 @@ namespace iiMenu.Menu
             buttonText.text = increment ? "+" : "-";
             buttonText.supportRichText = true;
             buttonText.fontSize = 1;
-            buttonText.color = textColor;
+            buttonText.AddComponent<TextColorChanger>().colors = textColors[1];
 
             buttonText.alignment = TextAnchor.MiddleCenter;
             buttonText.fontStyle = activeFontStyle;
@@ -2128,18 +1892,7 @@ namespace iiMenu.Menu
             else
             {
                 ColorChanger colorChanger = reference.AddComponent<ColorChanger>();
-                colorChanger.colors = new Gradient
-                {
-                    colorKeys = new[]
-                    {
-                        new GradientColorKey(bgColorA, 0f),
-                        new GradientColorKey(bgColorB, 0.5f),
-                        new GradientColorKey(bgColorA, 1f)
-                    }
-                };
-                colorChanger.isRainbow = themeType == 6;
-                colorChanger.isEpileptic = themeType == 47;
-                colorChanger.isMonkeColors = themeType == 8;
+                colorChanger.colors = backgroundColor;
             }
         }
 
@@ -2155,13 +1908,14 @@ namespace iiMenu.Menu
             if (annoyingMode)
             {
                 menu.transform.localScale = new Vector3(0.1f, UnityEngine.Random.Range(10f, 40f) / 100f, 0.3825f);
-                bgColorA = RandomColor();
-                bgColorB = RandomColor();
-                textColor = RandomColor();
-                buttonClickedA = RandomColor();
-                buttonClickedB = RandomColor();
-                buttonDefaultA = RandomColor();
-                buttonDefaultB = RandomColor();
+                backgroundColor = new ExtGradient { colors = ExtGradient.GetSimpleGradient(RandomColor(), RandomColor()) };
+
+                buttonColors[0] = new ExtGradient { colors = ExtGradient.GetSimpleGradient(RandomColor(), RandomColor()) };
+                buttonColors[1] = new ExtGradient { colors = ExtGradient.GetSimpleGradient(RandomColor(), RandomColor()) };
+
+                textColors[0] = new ExtGradient { colors = ExtGradient.GetSimpleGradient(RandomColor(), RandomColor()) };
+                textColors[1] = new ExtGradient { colors = ExtGradient.GetSimpleGradient(RandomColor(), RandomColor()) };
+                textColors[2] = new ExtGradient { colors = ExtGradient.GetSimpleGradient(RandomColor(), RandomColor()) };
             }
 
             if (themeType == 7)
@@ -2192,13 +1946,6 @@ namespace iiMenu.Menu
 
                 if (innerOutline || themeType == 34)
                 {
-                    GradientColorKey[] colors = new[]
-                    {
-                        new GradientColorKey(buttonClickedA, 0f),
-                        new GradientColorKey(buttonClickedB, 0.5f),
-                        new GradientColorKey(buttonClickedA, 1f)
-                    };
-
                     GameObject innerOutlineSegment = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     Destroy(innerOutlineSegment.GetComponent<BoxCollider>());
                     innerOutlineSegment.transform.parent = menuBackground.transform;
@@ -2207,15 +1954,7 @@ namespace iiMenu.Menu
                     innerOutlineSegment.transform.localScale = new Vector3(1.025f, 0.0065f, 0.98f);
 
                     ColorChanger colorChanger = innerOutlineSegment.AddComponent<ColorChanger>();
-                    colorChanger.colors = new Gradient
-                    {
-                        colorKeys = colors
-                    };
-                    colorChanger.isRainbow = themeType == 6;
-                    colorChanger.isPastelRainbow = themeType == 51;
-                    colorChanger.isSlowFade = slowFadeColors;
-                    colorChanger.isMonkeColors = themeType == 8;
-                    colorChanger.isEpileptic = themeType == 47;
+                    colorChanger.colors = buttonColors[1];
 
                     innerOutlineSegment = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     Destroy(innerOutlineSegment.GetComponent<BoxCollider>());
@@ -2225,15 +1964,7 @@ namespace iiMenu.Menu
                     innerOutlineSegment.transform.localScale = new Vector3(1.025f, 0.0065f, 0.98f);
 
                     colorChanger = innerOutlineSegment.AddComponent<ColorChanger>();
-                    colorChanger.colors = new Gradient
-                    {
-                        colorKeys = colors
-                    };
-                    colorChanger.isRainbow = themeType == 6;
-                    colorChanger.isPastelRainbow = themeType == 51;
-                    colorChanger.isSlowFade = slowFadeColors;
-                    colorChanger.isMonkeColors = themeType == 8;
-                    colorChanger.isEpileptic = themeType == 47;
+                    colorChanger.colors = buttonColors[1];
 
                     innerOutlineSegment = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     Destroy(innerOutlineSegment.GetComponent<BoxCollider>());
@@ -2243,15 +1974,7 @@ namespace iiMenu.Menu
                     innerOutlineSegment.transform.localScale = new Vector3(1.025f, 0.968125f, 0.005f);
 
                     colorChanger = innerOutlineSegment.AddComponent<ColorChanger>();
-                    colorChanger.colors = new Gradient
-                    {
-                        colorKeys = colors
-                    };
-                    colorChanger.isRainbow = themeType == 6;
-                    colorChanger.isPastelRainbow = themeType == 51;
-                    colorChanger.isSlowFade = slowFadeColors;
-                    colorChanger.isMonkeColors = themeType == 8;
-                    colorChanger.isEpileptic = themeType == 47;
+                    colorChanger.colors = buttonColors[1];
 
                     innerOutlineSegment = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     Destroy(innerOutlineSegment.GetComponent<BoxCollider>());
@@ -2261,15 +1984,7 @@ namespace iiMenu.Menu
                     innerOutlineSegment.transform.localScale = new Vector3(1.025f, 0.968125f, 0.005f);
 
                     colorChanger = innerOutlineSegment.AddComponent<ColorChanger>();
-                    colorChanger.colors = new Gradient
-                    {
-                        colorKeys = colors
-                    };
-                    colorChanger.isRainbow = themeType == 6;
-                    colorChanger.isPastelRainbow = themeType == 51;
-                    colorChanger.isSlowFade = slowFadeColors;
-                    colorChanger.isMonkeColors = themeType == 8;
-                    colorChanger.isEpileptic = themeType == 47;
+                    colorChanger.colors = buttonColors[1];
                 }
 
                 if (shouldOutline)
@@ -2349,22 +2064,8 @@ namespace iiMenu.Menu
                     }
                     else
                     {
-                        GradientColorKey[] backgroundColors = new[]
-                        {
-                            new GradientColorKey(bgColorA, 0f),
-                            new GradientColorKey(bgColorB, 0.5f),
-                            new GradientColorKey(bgColorA, 1f)
-                        };
                         ColorChanger colorChanger = menuBackground.AddComponent<ColorChanger>();
-                        colorChanger.colors = new Gradient
-                        {
-                            colorKeys = backgroundColors
-                        };
-                        colorChanger.isRainbow = themeType == 6;
-                        colorChanger.isPastelRainbow = themeType == 51;
-                        colorChanger.isSlowFade = slowFadeColors;
-                        colorChanger.isEpileptic = themeType == 47;
-                        colorChanger.isMonkeColors = themeType == 8;
+                        colorChanger.colors = backgroundColor;
                     }
                 }
             }
@@ -2434,9 +2135,9 @@ namespace iiMenu.Menu
                 title.text = RichtextGradient(NoRichtextTags(title.text),
                     new GradientColorKey[]
                     {
-                        new GradientColorKey(BrightenColor(buttonDefaultA), 0f),
-                        new GradientColorKey(BrightenColor(buttonDefaultA, 0.95f), 0.5f),
-                        new GradientColorKey(BrightenColor(buttonDefaultA), 1f)
+                        new GradientColorKey(BrightenColor(buttonColors[0].GetColor(0)), 0f),
+                        new GradientColorKey(BrightenColor(buttonColors[0].GetColor(0), 0.95f), 0.5f),
+                        new GradientColorKey(BrightenColor(buttonColors[0].GetColor(0)), 1f)
                     });
 
             if (animatedTitle)
@@ -2450,7 +2151,7 @@ namespace iiMenu.Menu
             }
 
             title.fontSize = 1;
-            title.color = titleColor;
+            title.AddComponent<TextColorChanger>().colors = textColors[0];
 
             title.supportRichText = true;
             title.fontStyle = activeFontStyle;
@@ -2491,7 +2192,7 @@ namespace iiMenu.Menu
                 buildLabel.text = buildLabel.text.ToUpper();
 
             buildLabel.fontSize = 1;
-            buildLabel.color = titleColor;
+            buildLabel.AddComponent<TextColorChanger>().colors = textColors[0];
             buildLabel.supportRichText = true;
             buildLabel.fontStyle = activeFontStyle;
             buildLabel.alignment = TextAnchor.MiddleRight;
@@ -2531,7 +2232,7 @@ namespace iiMenu.Menu
             if (uppercaseMode)
                 fps.text = fps.text.ToUpper();
 
-            fps.color = titleColor;
+            fps.AddComponent<TextColorChanger>().colors = textColors[0];
             fpsCount = fps;
             fps.fontSize = 1;
             fps.supportRichText = true;
@@ -2630,29 +2331,17 @@ namespace iiMenu.Menu
                     if (shouldOutline)
                         OutlineObj(searchBoxObject, true);
 
-                    GradientColorKey[] releasedColors = new[]
-                    {
-                        new GradientColorKey(buttonDefaultA, 0f),
-                        new GradientColorKey(buttonDefaultB, 0.5f),
-                        new GradientColorKey(buttonDefaultA, 1f)
-                    };
-
                     ColorChanger colorChanger = searchBoxObject.AddComponent<ColorChanger>();
-                    colorChanger.colors = new Gradient
-                    {
-                        colorKeys = releasedColors
-                    };
+                    colorChanger.colors = buttonColors[0];
+
                     if (joystickMenu && joystickButtonSelected == 0)
                     {
                         joystickSelectedButton = "SearchBar";
 
-                        colorChanger.isRainbow = false;
-                        colorChanger.isMonkeColors = false;
-                        colorChanger.isEpileptic = false;
-                        colorChanger.isMonkeColors = false;
+                        ExtGradient gradient = colorChanger.colors.Clone();
+                        gradient.SetColor(0, Color.red);
 
-                        colorChanger.colors.colorKeys[0].color = Color.red;
-                        colorChanger.colors.colorKeys[2].color = Color.red;
+                        colorChanger.colors = gradient;
                     }
 
                     if (shouldRound)
@@ -2676,10 +2365,11 @@ namespace iiMenu.Menu
 
                     searchTextObject.supportRichText = true;
                     searchTextObject.fontSize = 1;
-                    searchTextObject.color = textColor;
 
                     if (joystickMenu && joystickButtonSelected == 0 && themeType == 30)
                         searchTextObject.color = Color.red;
+                    else
+                        searchTextObject.AddComponent<TextColorChanger>().colors = textColors[1];
 
                     searchTextObject.alignment = TextAnchor.MiddleCenter;
                     searchTextObject.fontStyle = activeFontStyle;
@@ -2964,7 +2654,7 @@ namespace iiMenu.Menu
                             OnMenuClosed += () => Destroy(pcBackground);
                         }
                         
-                        Color realcolor = GetBGColor(0f);
+                        Color realcolor = backgroundColor.GetCurrentColor();
                         pcBackground.GetComponent<Renderer>().material.color = new Color32((byte)(realcolor.r * 50), (byte)(realcolor.g * 50), (byte)(realcolor.b * 50), 255);
                     }
 
@@ -3104,8 +2794,8 @@ namespace iiMenu.Menu
                         {
                             TrailRenderer trail = menu.AddComponent<TrailRenderer>();
 
-                            trail.startColor = bgColorA;
-                            trail.endColor = bgColorB;
+                            trail.startColor = backgroundColor.GetColor(0);
+                            trail.endColor = backgroundColor.GetColor(1);
                             trail.startWidth = 0.025f;
                             trail.endWidth = 0f;
                             trail.minVertexDistance = 0.05f;
@@ -3140,12 +2830,7 @@ namespace iiMenu.Menu
 
         private static void AddPageButtons()
         {
-            GradientColorKey[] Gradient = new GradientColorKey[]
-            {
-                new GradientColorKey(swapButtonColors ? buttonClickedA : buttonDefaultA, 0f),
-                new GradientColorKey(swapButtonColors ? buttonClickedB : buttonDefaultB, 0.5f),
-                new GradientColorKey(swapButtonColors ? buttonClickedA : buttonDefaultA, 1f)
-            };
+            ExtGradient Gradient = buttonColors[swapButtonColors ? 1 : 0];
 
             switch (pageButtonType)
             {
@@ -3223,7 +2908,7 @@ namespace iiMenu.Menu
 
             promptText.fontSize = 1;
             promptText.lineSpacing = 0.8f;
-            promptText.color = titleColor;
+            promptText.AddComponent<TextColorChanger>().colors = textColors[0];
 
             promptText.supportRichText = true;
             promptText.fontStyle = activeFontStyle;
@@ -3239,13 +2924,6 @@ namespace iiMenu.Menu
 
             if (outlineText)
                 OutlineCanvasObject(promptText);
-
-            GradientColorKey[] colorKeys = new GradientColorKey[]
-            {
-                new GradientColorKey(buttonDefaultA, 0f),
-                new GradientColorKey(buttonDefaultB, 0.5f),
-                new GradientColorKey(buttonDefaultA, 1f)
-            };
 
             joystickButtonSelected %= 2;
 
@@ -3265,18 +2943,20 @@ namespace iiMenu.Menu
                 button.transform.localPosition = new Vector3(0.56f, DeclineText == null ? 0f : 0.2375f, -0.43f);
 
                 button.AddComponent<Classes.Button>().relatedText = "Accept Prompt";
-                button.GetComponent<Renderer>().material.color = buttonDefaultA;
 
                 if (lastClickedName != "Accept Prompt")
                 {
                     ColorChanger colorChanger = button.AddComponent<ColorChanger>();
-                    colorChanger.colors = new Gradient { colorKeys = colorKeys };
+                    colorChanger.colors = buttonColors[0];
 
                     if (joystickButtonSelected == 0)
                     {
                         joystickSelectedButton = "Accept Prompt";
-                        colorChanger.colors.colorKeys[0].color = Color.red;
-                        colorChanger.colors.colorKeys[2].color = Color.red;
+
+                        ExtGradient gradient = colorChanger.colors.Clone();
+                        gradient.SetColor(0, Color.red);
+
+                        colorChanger.colors = gradient;
                     }
                 }
                 else
@@ -3286,10 +2966,11 @@ namespace iiMenu.Menu
                 text.font = activeFont;
                 text.text = AcceptText;
                 text.fontSize = 1;
-                text.color = textColor;
                 text.alignment = TextAnchor.MiddleCenter;
                 text.resizeTextForBestFit = true;
                 text.resizeTextMinSize = 0;
+
+                text.AddComponent<TextColorChanger>().colors = textColors[1];
 
                 if (translate)
                     text.text = TranslateText(text.text, output => ReloadMenu());
@@ -3340,18 +3021,20 @@ namespace iiMenu.Menu
                 button.transform.localPosition = new Vector3(0.56f, -0.2375f, -0.43f);
 
                 button.AddComponent<Classes.Button>().relatedText = "Decline Prompt";
-                button.GetComponent<Renderer>().material.color = buttonDefaultA;
 
                 if (lastClickedName != "Decline Prompt")
                 {
                     ColorChanger colorChanger = button.AddComponent<ColorChanger>();
-                    colorChanger.colors = new Gradient { colorKeys = colorKeys };
+                    colorChanger.colors = buttonColors[0];
 
                     if (joystickButtonSelected == 1)
                     {
                         joystickSelectedButton = "Decline Prompt";
-                        colorChanger.colors.colorKeys[0].color = Color.red;
-                        colorChanger.colors.colorKeys[2].color = Color.red;
+
+                        ExtGradient gradient = colorChanger.colors.Clone();
+                        gradient.SetColor(0, Color.red);
+
+                        colorChanger.colors = gradient;
                     }
                 }
                 else
@@ -3361,10 +3044,11 @@ namespace iiMenu.Menu
                 text.font = activeFont;
                 text.text = DeclineText;
                 text.fontSize = 1;
-                text.color = textColor;
                 text.alignment = TextAnchor.MiddleCenter;
                 text.resizeTextForBestFit = true;
                 text.resizeTextMinSize = 0;
+
+                text.AddComponent<TextColorChanger>().colors = textColors[1];
 
                 RectTransform textRect = text.GetComponent<RectTransform>();
                 textRect.sizeDelta = new Vector2(0.2f, 0.03f);
@@ -3398,10 +3082,10 @@ namespace iiMenu.Menu
             }
         }
 
-        private static void CreatePageButtonPair(string prevButtonName, string nextButtonName, Vector3 buttonScale, Vector3 prevButtonPos, Vector3 nextButtonPos, Vector3 prevTextPos, Vector3 nextTextPos, GradientColorKey[] colorKeys, Vector2? textSize = null)
+        private static void CreatePageButtonPair(string prevButtonName, string nextButtonName, Vector3 buttonScale, Vector3 prevButtonPos, Vector3 nextButtonPos, Vector3 prevTextPos, Vector3 nextTextPos, ExtGradient color, Vector2? textSize = null)
         {
-            GameObject prevButton = AdvancedAddButton(prevButtonName, buttonScale, prevButtonPos, prevTextPos, colorKeys, textSize, 0);
-            GameObject nextButton = AdvancedAddButton(nextButtonName, buttonScale, nextButtonPos, nextTextPos, colorKeys, textSize, 1);
+            GameObject prevButton = AdvancedAddButton(prevButtonName, buttonScale, prevButtonPos, prevTextPos, color, textSize, 0);
+            GameObject nextButton = AdvancedAddButton(nextButtonName, buttonScale, nextButtonPos, nextTextPos, color, textSize, 1);
 
             if (shouldOutline)
             {
@@ -3416,7 +3100,7 @@ namespace iiMenu.Menu
             }
         }
 
-        private static GameObject AdvancedAddButton(string buttonName, Vector3 scale, Vector3 position, Vector3 textPosition, GradientColorKey[] colorKeys, Vector2? textSize, int arrowIndex)
+        private static GameObject AdvancedAddButton(string buttonName, Vector3 scale, Vector3 position, Vector3 textPosition, ExtGradient color, Vector2? textSize, int arrowIndex)
         {
             GameObject button = GameObject.CreatePrimitive(PrimitiveType.Cube);
 
@@ -3433,12 +3117,11 @@ namespace iiMenu.Menu
             button.transform.localPosition = position;
 
             button.AddComponent<Classes.Button>().relatedText = buttonName;
-            button.GetComponent<Renderer>().material.color = buttonDefaultA;
 
             if (lastClickedName != buttonName)
             {
                 ColorChanger colorChanger = button.AddComponent<ColorChanger>();
-                colorChanger.colors = new Gradient { colorKeys = colorKeys };
+                colorChanger.colors = color;
             }
             else
                 CoroutineManager.RunCoroutine(ButtonClick(-99, button.GetComponent<Renderer>()));
@@ -3447,10 +3130,11 @@ namespace iiMenu.Menu
             text.font = activeFont;
             text.text = arrowTypes[arrowType][arrowIndex];
             text.fontSize = 1;
-            text.color = textColor;
             text.alignment = TextAnchor.MiddleCenter;
             text.resizeTextForBestFit = true;
             text.resizeTextMinSize = 0;
+
+            text.AddComponent<TextColorChanger>().colors = textColors[1];
 
             RectTransform textRect = text.GetComponent<RectTransform>();
             textRect.sizeDelta = textSize ?? new Vector2(0.2f, 0.03f);
@@ -3481,21 +3165,9 @@ namespace iiMenu.Menu
             gameObject.transform.rotation = Quaternion.identity;
             gameObject.transform.localPosition = toOut.transform.localPosition;
             gameObject.transform.localScale = toOut.transform.localScale + new Vector3(-0.01f, 0.01f, 0.0075f);
-            GradientColorKey[] array = new GradientColorKey[]
-            {
-                new GradientColorKey(shouldBeEnabled ? buttonClickedA : buttonDefaultA, 0f),
-                new GradientColorKey(shouldBeEnabled ? buttonClickedB : buttonDefaultB, 0.5f),
-                new GradientColorKey(shouldBeEnabled ? buttonClickedA : buttonDefaultA, 1f)
-            };
 
             ColorChanger colorChanger = gameObject.AddComponent<ColorChanger>();
-            colorChanger.colors = new Gradient
-            {
-                colorKeys = array
-            };
-            colorChanger.isRainbow = shouldBeEnabled && themeType == 6;
-            colorChanger.isMonkeColors = shouldBeEnabled && themeType == 8;
-            colorChanger.isEpileptic = shouldBeEnabled && themeType == 47;
+            colorChanger.colors = buttonColors[shouldBeEnabled ? 1 : 0];
 
             if (shouldRound)
                 RoundObj(gameObject, 0.024f);
@@ -3513,23 +3185,9 @@ namespace iiMenu.Menu
             gameObject.transform.rotation = toOut.transform.rotation;
             gameObject.transform.localPosition = toOut.transform.localPosition;
             gameObject.transform.localScale = toOut.transform.localScale + new Vector3(0.005f, 0.005f, -0.001f);
-            GradientColorKey[] array = new[]
-            {
-                new GradientColorKey(shouldBeEnabled ? buttonClickedA : buttonDefaultA, 0f),
-                new GradientColorKey(shouldBeEnabled ? buttonClickedB : buttonDefaultB, 0.5f),
-                new GradientColorKey(shouldBeEnabled ? buttonClickedA : buttonDefaultA, 1f)
-            };
 
             ColorChanger colorChanger = gameObject.AddComponent<ColorChanger>();
-            colorChanger.colors = new Gradient
-            {
-                colorKeys = array
-            };
-            colorChanger.isRainbow = shouldBeEnabled && themeType == 6;
-            colorChanger.isPastelRainbow = shouldBeEnabled && themeType == 51;
-            colorChanger.isSlowFade = slowFadeColors;
-            colorChanger.isMonkeColors = shouldBeEnabled && themeType == 8;
-            colorChanger.isEpileptic = shouldBeEnabled && themeType == 47;
+            colorChanger.colors = buttonColors[shouldBeEnabled ? 1 : 0];
         }
 
         public static Material outlineMat = new Material(Shader.Find("Sprites/Default"));
@@ -3953,7 +3611,7 @@ namespace iiMenu.Menu
 
             Renderer PointerRenderer = GunPointer.GetComponent<Renderer>();
             PointerRenderer.material.shader = Shader.Find("GUI/Text Shader");
-            PointerRenderer.material.color = (gunLocked || GetGunInput(true)) ? GetBDColor(0f) : GetBRColor(0f);
+            PointerRenderer.material.color = (gunLocked || GetGunInput(true)) ? buttonColors[1].GetCurrentColor() : buttonColors[0].GetCurrentColor();
 
             if (disableGunPointer)
                 PointerRenderer.enabled = false;
@@ -3980,8 +3638,8 @@ namespace iiMenu.Menu
 
                 GunLine.gameObject.SetActive(true);
                 GunLine.material.shader = Shader.Find("GUI/Text Shader");
-                GunLine.startColor = GetBGColor(0f);
-                GunLine.endColor = GetBGColor(0.5f);
+                GunLine.startColor = backgroundColor.GetCurrentColor();
+                GunLine.endColor = backgroundColor.GetCurrentColor(0.5f);
                 GunLine.startWidth = 0.025f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
                 GunLine.endWidth = 0.025f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
                 GunLine.positionCount = 2;
@@ -4404,25 +4062,28 @@ namespace iiMenu.Menu
             float elapsedTime = 0f;
             while (elapsedTime < 0.1f)
             {
-                render.material.color = buttonIndex < 0 && swapButtonColors ? Color.Lerp(GetBRColor(0f), GetBDColor(0f), elapsedTime / 0.1f) : Color.Lerp(GetBDColor(0f), GetBRColor(0f), elapsedTime / 0.1f);
+                int from = (buttonIndex < 0 && swapButtonColors) ? 0 : 1;
+                int to = 1 - from;
+
+                render.material.color = Color.Lerp(
+                    buttonColors[from].GetCurrentColor(),
+                    buttonColors[to].GetCurrentColor(),
+                    elapsedTime / 0.1f
+                );
+
                 elapsedTime += Time.deltaTime;
                 yield return null;
             }
 
             ColorChanger colorChanger = render.gameObject.AddComponent<ColorChanger>();
-            colorChanger.colors = new Gradient
-            {
-                colorKeys = new[]
-                {
-                    new GradientColorKey(buttonIndex < 0 && swapButtonColors ? buttonClickedA : buttonDefaultA, 0f),
-                    new GradientColorKey(buttonIndex < 0 && swapButtonColors ? buttonClickedB : buttonDefaultB, 0.5f),
-                    new GradientColorKey(buttonIndex < 0 && swapButtonColors ? buttonClickedA : buttonDefaultA, 1f)
-                }
-            };
+            colorChanger.colors = buttonColors[buttonIndex < 0 && swapButtonColors ? 1 : 0];
+
             if (joystickMenu && buttonIndex == joystickButtonSelected)
             {
-                colorChanger.colors.colorKeys[0].color = Color.red;
-                colorChanger.colors.colorKeys[2].color = Color.red;
+                ExtGradient gradient = colorChanger.colors.Clone();
+                gradient.SetColor(0, Color.red);
+
+                colorChanger.colors = gradient;
             }
         }
 
@@ -4435,7 +4096,7 @@ namespace iiMenu.Menu
             float elapsedTime = 0f;
             while (elapsedTime < 0.1f)
             {
-                render.material.color = Color.Lerp(GetBDColor(0f), GetBRColor(0f), elapsedTime / 0.1f);
+                render.material.color = Color.Lerp(buttonColors[1].GetCurrentColor(), buttonColors[0].GetCurrentColor(), elapsedTime / 0.1f);
                 elapsedTime += Time.deltaTime;
                 yield return null;
             }
@@ -6675,20 +6336,45 @@ jgs \_   _/ |Oo\
         };
 
         public static int themeType = 1;
-        public static bool slowFadeColors = false;
-        public static Color bgColorA = new Color32(255, 128, 0, 128);
-        public static Color bgColorB = new Color32(255, 102, 0, 128);
+        public static bool slowFadeColors;
 
-        public static Color buttonDefaultA = new Color32(170, 85, 0, 255);
-        public static Color buttonDefaultB = new Color32(170, 85, 0, 255);
+        public static ExtGradient backgroundColor = new ExtGradient
+        {
+            colors = ExtGradient.GetSimpleGradient(
+                new Color32(255, 128, 0, 128),
+                new Color32(255, 102, 0, 128)
+            )
+        };
 
-        public static Color buttonClickedA = new Color32(85, 42, 0, 255);
-        public static Color buttonClickedB = new Color32(85, 42, 0, 255);
+        public static ExtGradient[] buttonColors = new[]
+        {
+            new ExtGradient // Released
+            {
+                colors = ExtGradient.GetSolidGradient(new Color32(170, 85, 0, 255))
+            },
 
-        public static Color textColor = new Color32(255, 190, 125, 255);
-        public static Color titleColor = new Color32(255, 190, 125, 255);
-        public static Color textClicked = new Color32(255, 190, 125, 255);
-        public static Color colorChange = Color.black;
+            new ExtGradient // Pressed
+            {
+                colors = ExtGradient.GetSolidGradient(new Color32(85, 42, 0, 255))
+            }
+        };
+
+        public static ExtGradient[] textColors = new[]
+        {
+            new ExtGradient // Title
+            {
+                colors = ExtGradient.GetSolidGradient(new Color32(255, 190, 125, 255))
+            },
+
+            new ExtGradient // Button Released
+            {
+                colors = ExtGradient.GetSolidGradient(new Color32(255, 190, 125, 255))
+            },
+            new ExtGradient // Button Clicked
+            {
+                colors = ExtGradient.GetSolidGradient(new Color32(255, 190, 125, 255))
+            }
+        };
 
         public static Vector3 closePosition;
 
