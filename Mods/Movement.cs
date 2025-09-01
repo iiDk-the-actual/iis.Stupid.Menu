@@ -4286,6 +4286,7 @@ namespace iiMenu.Mods
                     }
 
                     FixRigHandRotation();
+                    IntercourseNoises();
 
                     VRRig.LocalRig.leftIndex.calcT = 0f;
                     VRRig.LocalRig.leftMiddle.calcT = 0f;
@@ -4336,6 +4337,10 @@ namespace iiMenu.Mods
                         true,
                         999999f
                     });
+
+                    if (GetIndex("Splash Intercourse").enabled)
+                        Fun.BetaWaterSplash(VRRig.LocalRig.transform.position, VRRig.LocalRig.transform.rotation, 4f, 100f, true, false);
+
                     RPCProtection();
                 }
                 else
