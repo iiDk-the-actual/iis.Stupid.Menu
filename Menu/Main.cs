@@ -23,6 +23,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Technie.PhysicsCreator.Rigid;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -134,7 +135,7 @@ namespace iiMenu.Menu
                     { 4, rightJoystickClick }
                 };
 
-                bool isKeyboardCondition = UnityInput.Current.GetKey(KeyCode.Q) || (isSearching && isPcWhenSearching);
+                bool isKeyboardCondition = UnityInput.Current.GetKey(KeyCode.Q) || (inTextInput && isKeyboardPc);
                 bool buttonCondition = rightHand ? rightInputs[menuButtonIndex] : leftInputs[menuButtonIndex];
 
                 if (oneHand)
@@ -187,8 +188,8 @@ namespace iiMenu.Menu
                     buttonCondition = true;
                 }
                 buttonCondition |= isKeyboardCondition;
+                buttonCondition |= inTextInput;
                 buttonCondition &= !Lockdown;
-                buttonCondition |= isSearching;
 
                 if (watchMenu)
                     buttonCondition = isKeyboardCondition;
@@ -422,7 +423,7 @@ namespace iiMenu.Menu
                 #endregion
 
                 #region PC Search Keyboard
-                if (isSearching)
+                if (inTextInput)
                 {
                     List<KeyCode> keysPressed = new List<KeyCode>();
                     foreach (KeyCode keyCode in allowedKeys)
@@ -438,17 +439,17 @@ namespace iiMenu.Menu
                                     switch (keyCode)
                                     {
                                         case KeyCode.A:
-                                            searchText = "";
+                                            keyboardInput = "";
                                             break;
                                         case KeyCode.C:
-                                            GUIUtility.systemCopyBuffer = searchText;
+                                            GUIUtility.systemCopyBuffer = keyboardInput;
                                             break;
                                         case KeyCode.V:
-                                            searchText = GUIUtility.systemCopyBuffer;
+                                            keyboardInput = GUIUtility.systemCopyBuffer;
                                             break;
                                         case KeyCode.Backspace:
-                                            if (searchText.Length > 0)
-                                                searchText = string.Join(" ", searchText.Split(' ').SkipLast(1));
+                                            if (keyboardInput.Length > 0)
+                                                keyboardInput = string.Join(" ", keyboardInput.Split(' ').SkipLast(1));
                                             break;
                                     }
                                 } else
@@ -456,38 +457,26 @@ namespace iiMenu.Menu
                                     switch (keyCode)
                                     {
                                         case KeyCode.Space:
-                                            searchText += " ";
+                                            keyboardInput += " ";
                                             break;
                                         case KeyCode.Backspace:
-                                            if (searchText.Length > 0)
-                                                searchText = searchText[..^1];
+                                            if (keyboardInput.Length > 0)
+                                                keyboardInput = keyboardInput[..^1];
                                             break;
                                         case KeyCode.Escape:
-                                            Toggle("Search");
+                                            if (isSearching)
+                                                Toggle("Search");
+                                            else
+                                                Toggle("Decline Prompt");
+
                                             break;
                                         case KeyCode.Return:
-                                            List<ButtonInfo> searchedMods = new List<ButtonInfo>();
-                                            if (nonGlobalSearch && currentCategoryName != "Main")
+                                            if (isSearching)
                                             {
-                                                foreach (ButtonInfo v in Buttons.buttons[currentCategoryIndex])
+                                                List<ButtonInfo> searchedMods = new List<ButtonInfo>();
+                                                if (nonGlobalSearch && currentCategoryName != "Main")
                                                 {
-                                                    try
-                                                    {
-                                                        string buttonText = v.buttonText;
-                                                        if (v.overlapText != null)
-                                                            buttonText = v.overlapText;
-
-                                                        if (buttonText.Replace(" ", "").ToLower().Contains(searchText.Replace(" ", "").ToLower()))
-                                                            searchedMods.Add(v);
-                                                    }
-                                                    catch { }
-                                                }
-                                            }
-                                            else
-                                            {
-                                                foreach (ButtonInfo[] buttonlist in Buttons.buttons)
-                                                {
-                                                    foreach (ButtonInfo v in buttonlist)
+                                                    foreach (ButtonInfo v in Buttons.buttons[currentCategoryIndex])
                                                     {
                                                         try
                                                         {
@@ -495,19 +484,40 @@ namespace iiMenu.Menu
                                                             if (v.overlapText != null)
                                                                 buttonText = v.overlapText;
 
-                                                            if (buttonText.Replace(" ", "").ToLower().Contains(searchText.Replace(" ", "").ToLower()))
+                                                            if (buttonText.Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()))
                                                                 searchedMods.Add(v);
                                                         }
                                                         catch { }
                                                     }
                                                 }
-                                            }
+                                                else
+                                                {
+                                                    foreach (ButtonInfo[] buttonlist in Buttons.buttons)
+                                                    {
+                                                        foreach (ButtonInfo v in buttonlist)
+                                                        {
+                                                            try
+                                                            {
+                                                                string buttonText = v.buttonText;
+                                                                if (v.overlapText != null)
+                                                                    buttonText = v.overlapText;
 
-                                            ButtonInfo[] buttons = StringsToInfos(Alphabetize(InfosToStrings(searchedMods.ToArray())));
-                                            Toggle(buttons[0].buttonText);
+                                                                if (buttonText.Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()))
+                                                                    searchedMods.Add(v);
+                                                            }
+                                                            catch { }
+                                                        }
+                                                    }
+                                                }
+
+                                                ButtonInfo[] buttons = StringsToInfos(Alphabetize(InfosToStrings(searchedMods.ToArray())));
+                                                Toggle(buttons[0].buttonText);
+                                            } else if (IsText)
+                                                Toggle("Accept Prompt");
+
                                             break;
                                         default:
-                                            searchText += 
+                                            keyboardInput += 
                                                 UnityInput.Current.GetKey(KeyCode.LeftShift) || UnityInput.Current.GetKey(KeyCode.RightShift) ? 
                                                 keyCode.ToString().Capitalize() : keyCode.ToString().ToLower();
                                             break;
@@ -583,15 +593,15 @@ namespace iiMenu.Menu
                             new GradientColorKey(BrightenColor(buttonColors[0].GetColor(0)), 1f)
                         });
 
-                if (searchTextObject != null)
+                if (keyboardInputObject != null)
                 {
-                    searchTextObject.text = searchText + (((Time.frameCount / 45) % 2) == 0 ? "|" : " ");
+                    keyboardInputObject.text = keyboardInput + (((Time.frameCount / 45) % 2) == 0 ? "|" : " ");
 
                     if (lowercaseMode)
-                        searchTextObject.text = searchTextObject.text.ToLower();
+                        keyboardInputObject.text = keyboardInputObject.text.ToLower();
 
                     if (uppercaseMode)
-                        searchTextObject.text = searchTextObject.text.ToUpper();
+                        keyboardInputObject.text = keyboardInputObject.text.ToUpper();
                 }
                 #endregion
 
@@ -1126,7 +1136,7 @@ namespace iiMenu.Menu
                             watchTextText.text = watchTextText.text.ToLower();
 
                         if (uppercaseMode)
-                            searchTextObject.text = searchTextObject.text.ToUpper();
+                            watchTextText.text = watchTextText.text.ToUpper();
 
                         if (watchIndicatorMat == null)
                             watchIndicatorMat = new Material(Shader.Find("GorillaTag/UberShader"));
@@ -1380,7 +1390,7 @@ namespace iiMenu.Menu
             if (!method.label)
             {
                 GameObject buttonObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                if (!UnityInput.Current.GetKey(KeyCode.Q) && !isPcWhenSearching)
+                if (!UnityInput.Current.GetKey(KeyCode.Q) && !isKeyboardPc)
                     buttonObject.layer = 2;
 
                 if (themeType == 30 || (themeType == 63 && buttonIndex >= 0))
@@ -1530,7 +1540,7 @@ namespace iiMenu.Menu
         private static void AddSearchButton()
         {
             GameObject buttonObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            if (!UnityInput.Current.GetKey(KeyCode.Q) && !isPcWhenSearching)
+            if (!UnityInput.Current.GetKey(KeyCode.Q) && !isKeyboardPc)
                 buttonObject.layer = 2;
 
             if (themeType == 30)
@@ -1597,7 +1607,7 @@ namespace iiMenu.Menu
             bool infoScreenEnabled = GetIndex("Info Screen").enabled;
 
             GameObject buttonObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            if (!UnityInput.Current.GetKey(KeyCode.Q) && !isPcWhenSearching)
+            if (!UnityInput.Current.GetKey(KeyCode.Q) && !isKeyboardPc)
                 buttonObject.layer = 2;
 
             if (themeType == 30)
@@ -1659,7 +1669,7 @@ namespace iiMenu.Menu
         private static void AddDonateButton()
         {
             GameObject buttonObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            if (!UnityInput.Current.GetKey(KeyCode.Q) && !isPcWhenSearching)
+            if (!UnityInput.Current.GetKey(KeyCode.Q) && !isKeyboardPc)
                 buttonObject.layer = 2;
 
             if (themeType == 30)
@@ -1721,7 +1731,7 @@ namespace iiMenu.Menu
         private static void AddReturnButton(bool offcenteredPosition)
         {
             GameObject buttonObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            if (!UnityInput.Current.GetKey(KeyCode.Q) && !isPcWhenSearching)
+            if (!UnityInput.Current.GetKey(KeyCode.Q) && !isKeyboardPc)
                 buttonObject.layer = 2;
 
             if (themeType == 30)
@@ -1800,7 +1810,7 @@ namespace iiMenu.Menu
             if (!method.label)
             {
                 GameObject buttonObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                if (!UnityInput.Current.GetKey(KeyCode.Q) && !isPcWhenSearching)
+                if (!UnityInput.Current.GetKey(KeyCode.Q) && !isKeyboardPc)
                     buttonObject.layer = 2;
 
                 if (themeType == 30)
@@ -2300,6 +2310,87 @@ namespace iiMenu.Menu
             if (!disablePageButtons && !IsPrompting)
                 AddPageButtons();
 
+            if (inTextInput)
+            {
+                GameObject searchBoxObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                if (!UnityInput.Current.GetKey(KeyCode.Q) && !isKeyboardPc)
+                    searchBoxObject.layer = 2;
+
+                if (themeType == 30)
+                    searchBoxObject.GetComponent<Renderer>().enabled = false;
+
+                searchBoxObject.GetComponent<BoxCollider>().isTrigger = true;
+                searchBoxObject.transform.parent = menu.transform;
+                searchBoxObject.transform.rotation = Quaternion.identity;
+
+                if (thinMenu)
+                    searchBoxObject.transform.localScale = new Vector3(0.09f, 0.9f, buttonDistance * 0.8f);
+                else
+                    searchBoxObject.transform.localScale = new Vector3(0.09f, 1.3f, buttonDistance * 0.8f);
+
+                searchBoxObject.transform.localPosition = new Vector3(0.56f, 0f, 0.28f - (buttonOffset * buttonDistance));
+
+                if (shouldOutline)
+                    OutlineObj(searchBoxObject, true);
+
+                ColorChanger colorChanger = searchBoxObject.AddComponent<ColorChanger>();
+                colorChanger.colors = buttonColors[0];
+
+                if (joystickMenu && joystickButtonSelected == 0)
+                {
+                    joystickSelectedButton = "SearchBar";
+
+                    ExtGradient gradient = colorChanger.colors.Clone();
+                    gradient.SetColor(0, Color.red);
+
+                    colorChanger.colors = gradient;
+                }
+
+                if (shouldRound)
+                    RoundObj(searchBoxObject);
+
+                keyboardInputObject = new GameObject
+                {
+                    transform =
+                        {
+                            parent = canvasObj.transform
+                        }
+                }.AddComponent<Text>();
+
+                keyboardInputObject.font = activeFont;
+                keyboardInputObject.text = keyboardInput + (((Time.frameCount / 45) % 2) == 0 ? "|" : "");
+                if (lowercaseMode)
+                    keyboardInputObject.text = keyboardInputObject.text.ToLower();
+
+                if (uppercaseMode)
+                    keyboardInputObject.text = keyboardInputObject.text.ToUpper();
+
+                keyboardInputObject.supportRichText = true;
+                keyboardInputObject.fontSize = 1;
+
+                if (joystickMenu && joystickButtonSelected == 0 && themeType == 30)
+                    keyboardInputObject.color = Color.red;
+                else
+                    keyboardInputObject.AddComponent<TextColorChanger>().colors = textColors[1];
+
+                keyboardInputObject.alignment = TextAnchor.MiddleCenter;
+                keyboardInputObject.fontStyle = activeFontStyle;
+                keyboardInputObject.resizeTextForBestFit = true;
+                keyboardInputObject.resizeTextMinSize = 0;
+
+                RectTransform textTransform = keyboardInputObject.GetComponent<RectTransform>();
+                textTransform.localPosition = Vector3.zero;
+                textTransform.sizeDelta = new Vector2(.2f, .03f * (buttonDistance / 0.1f));
+                if (NoAutoSizeText)
+                    textTransform.sizeDelta = new Vector2(9f, 0.015f);
+
+                textTransform.localPosition = new Vector3(.064f, 0, .111f - buttonOffset * buttonDistance / 2.6f);
+                textTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
+
+                if (outlineText)
+                    OutlineCanvasObject(keyboardInputObject, true);
+            }
+
             if (IsPrompting)
                 RenderPrompt();
             else
@@ -2307,87 +2398,6 @@ namespace iiMenu.Menu
                 // Button render code
                 int buttonIndexOffset = 0;
                 ButtonInfo[] renderButtons = new ButtonInfo[] { };
-
-                if (isSearching)
-                {
-                    GameObject searchBoxObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    if (!UnityInput.Current.GetKey(KeyCode.Q) && !isPcWhenSearching)
-                        searchBoxObject.layer = 2;
-
-                    if (themeType == 30)
-                        searchBoxObject.GetComponent<Renderer>().enabled = false;
-
-                    searchBoxObject.GetComponent<BoxCollider>().isTrigger = true;
-                    searchBoxObject.transform.parent = menu.transform;
-                    searchBoxObject.transform.rotation = Quaternion.identity;
-
-                    if (thinMenu)
-                        searchBoxObject.transform.localScale = new Vector3(0.09f, 0.9f, buttonDistance * 0.8f);
-                    else
-                        searchBoxObject.transform.localScale = new Vector3(0.09f, 1.3f, buttonDistance * 0.8f);
-
-                    searchBoxObject.transform.localPosition = new Vector3(0.56f, 0f, 0.28f - (buttonOffset * buttonDistance));
-
-                    if (shouldOutline)
-                        OutlineObj(searchBoxObject, true);
-
-                    ColorChanger colorChanger = searchBoxObject.AddComponent<ColorChanger>();
-                    colorChanger.colors = buttonColors[0];
-
-                    if (joystickMenu && joystickButtonSelected == 0)
-                    {
-                        joystickSelectedButton = "SearchBar";
-
-                        ExtGradient gradient = colorChanger.colors.Clone();
-                        gradient.SetColor(0, Color.red);
-
-                        colorChanger.colors = gradient;
-                    }
-
-                    if (shouldRound)
-                        RoundObj(searchBoxObject);
-
-                    searchTextObject = new GameObject
-                    {
-                        transform =
-                        {
-                            parent = canvasObj.transform
-                        }
-                    }.AddComponent<Text>();
-
-                    searchTextObject.font = activeFont;
-                    searchTextObject.text = searchText + (((Time.frameCount / 45) % 2) == 0 ? "|" : "");
-                    if (lowercaseMode)
-                        searchTextObject.text = searchTextObject.text.ToLower();
-
-                    if (uppercaseMode)
-                        searchTextObject.text = searchTextObject.text.ToUpper();
-
-                    searchTextObject.supportRichText = true;
-                    searchTextObject.fontSize = 1;
-
-                    if (joystickMenu && joystickButtonSelected == 0 && themeType == 30)
-                        searchTextObject.color = Color.red;
-                    else
-                        searchTextObject.AddComponent<TextColorChanger>().colors = textColors[1];
-
-                    searchTextObject.alignment = TextAnchor.MiddleCenter;
-                    searchTextObject.fontStyle = activeFontStyle;
-                    searchTextObject.resizeTextForBestFit = true;
-                    searchTextObject.resizeTextMinSize = 0;
-
-                    RectTransform textTransform = searchTextObject.GetComponent<RectTransform>();
-                    textTransform.localPosition = Vector3.zero;
-                    textTransform.sizeDelta = new Vector2(.2f, .03f * (buttonDistance / 0.1f));
-                    if (NoAutoSizeText)
-                        textTransform.sizeDelta = new Vector2(9f, 0.015f);
-
-                    textTransform.localPosition = new Vector3(.064f, 0, .111f - buttonOffset * buttonDistance / 2.6f);
-                    textTransform.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
-
-                    if (outlineText)
-                        OutlineCanvasObject(searchTextObject, true);
-                }
 
                 try
                 {
@@ -2404,7 +2414,7 @@ namespace iiMenu.Menu
                                     if (v.overlapText != null)
                                         buttonText = v.overlapText;
 
-                                    if (buttonText.Replace(" ", "").ToLower().Contains(searchText.Replace(" ", "").ToLower()))
+                                    if (buttonText.Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()))
                                         searchedMods.Add(v);
                                 }
                                 catch { }
@@ -2422,7 +2432,7 @@ namespace iiMenu.Menu
                                         if (v.overlapText != null)
                                             buttonText = v.overlapText;
 
-                                        if (buttonText.Replace(" ", "").ToLower().Contains(searchText.Replace(" ", "").ToLower()))
+                                        if (buttonText.Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()))
                                             searchedMods.Add(v);
                                     }
                                     catch { }
@@ -2539,7 +2549,7 @@ namespace iiMenu.Menu
 
         public static void RecenterMenu()
         {
-            bool isKeyboardCondition = UnityInput.Current.GetKey(KeyCode.Q) || (isSearching && isPcWhenSearching);
+            bool isKeyboardCondition = UnityInput.Current.GetKey(KeyCode.Q) || (inTextInput && isKeyboardPc);
             if (joystickMenu)
             {
                 menu.transform.position = GorillaTagger.Instance.headCollider.transform.position + GorillaTagger.Instance.headCollider.transform.forward + GorillaTagger.Instance.headCollider.transform.right * 0.3f + GorillaTagger.Instance.headCollider.transform.up * 0.2f;
@@ -2574,7 +2584,7 @@ namespace iiMenu.Menu
                             menu.transform.position = GorillaTagger.Instance.leftHandTransform.position;
                             menu.transform.rotation = GorillaTagger.Instance.leftHandTransform.rotation;
                         }
-                        if (isSearching && !isPcWhenSearching)
+                        if (isSearching && !isKeyboardPc)
                         {
                             if (Vector3.Distance(VRKeyboard.transform.position, GorillaTagger.Instance.bodyCollider.transform.position) > menuScale)
                             {
@@ -2916,10 +2926,9 @@ namespace iiMenu.Menu
             promptText.resizeTextForBestFit = true;
             promptText.resizeTextMinSize = 0;
             RectTransform component = promptText.GetComponent<RectTransform>();
-            component.localPosition = Vector3.zero;
-            component.sizeDelta = new Vector2(0.28f, 0.28f);
+            component.sizeDelta = new Vector2(0.28f, IsText ? 0.25f : 0.28f);
 
-            component.localPosition = new Vector3(0.06f, 0f, 0f);
+            component.localPosition = new Vector3(0.06f, 0f, IsText ? -0.025f : 0f);
             component.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
             if (outlineText)
@@ -2933,7 +2942,7 @@ namespace iiMenu.Menu
                 if (themeType == 30)
                     button.GetComponent<Renderer>().enabled = false;
 
-                if (!UnityInput.Current.GetKey(KeyCode.Q) && !(isSearching && isPcWhenSearching))
+                if (!UnityInput.Current.GetKey(KeyCode.Q) && !(inTextInput && isKeyboardPc))
                     button.layer = 2;
 
                 button.GetComponent<BoxCollider>().isTrigger = true;
@@ -2949,7 +2958,7 @@ namespace iiMenu.Menu
                     ColorChanger colorChanger = button.AddComponent<ColorChanger>();
                     colorChanger.colors = buttonColors[0];
 
-                    if (joystickButtonSelected == 0)
+                    if (joystickMenu && joystickButtonSelected == 0)
                     {
                         joystickSelectedButton = "Accept Prompt";
 
@@ -2960,10 +2969,11 @@ namespace iiMenu.Menu
                     }
                 }
                 else
-                    CoroutineManager.RunCoroutine(ButtonClick(-99, button.GetComponent<Renderer>()));
+                    CoroutineManager.RunCoroutine(ButtonClick(0, button.GetComponent<Renderer>()));
 
                 Text text = new GameObject { transform = { parent = canvasObj.transform } }.AddComponent<Text>();
                 text.font = activeFont;
+                text.fontStyle = activeFontStyle;
                 text.text = AcceptText;
                 text.fontSize = 1;
                 text.alignment = TextAnchor.MiddleCenter;
@@ -2991,7 +3001,7 @@ namespace iiMenu.Menu
                 if (NoAutoSizeText)
                     textRect.sizeDelta = new Vector2(9f, 0.015f);
 
-                textRect.localPosition = new Vector3(0.064f, 0.075f, -0.16f);
+                textRect.localPosition = new Vector3(0.064f, DeclineText != null ? 0.075f : 0f, -0.16f);
                 textRect.rotation = Quaternion.Euler(new Vector3(180f, 90f, 90f));
 
                 if (outlineText)
@@ -3011,7 +3021,7 @@ namespace iiMenu.Menu
                 if (themeType == 30)
                     button.GetComponent<Renderer>().enabled = false;
 
-                if (!UnityInput.Current.GetKey(KeyCode.Q) && !(isSearching && isPcWhenSearching))
+                if (!UnityInput.Current.GetKey(KeyCode.Q) && !(inTextInput && isKeyboardPc))
                     button.layer = 2;
 
                 button.GetComponent<BoxCollider>().isTrigger = true;
@@ -3027,7 +3037,7 @@ namespace iiMenu.Menu
                     ColorChanger colorChanger = button.AddComponent<ColorChanger>();
                     colorChanger.colors = buttonColors[0];
 
-                    if (joystickButtonSelected == 1)
+                    if (joystickMenu && joystickButtonSelected == 1)
                     {
                         joystickSelectedButton = "Decline Prompt";
 
@@ -3038,10 +3048,11 @@ namespace iiMenu.Menu
                     }
                 }
                 else
-                    CoroutineManager.RunCoroutine(ButtonClick(-99, button.GetComponent<Renderer>()));
+                    CoroutineManager.RunCoroutine(ButtonClick(1, button.GetComponent<Renderer>()));
 
                 Text text = new GameObject { transform = { parent = canvasObj.transform } }.AddComponent<Text>();
                 text.font = activeFont;
+                text.fontStyle = activeFontStyle;
                 text.text = DeclineText;
                 text.fontSize = 1;
                 text.alignment = TextAnchor.MiddleCenter;
@@ -3107,7 +3118,7 @@ namespace iiMenu.Menu
             if (themeType == 30)
                 button.GetComponent<Renderer>().enabled = false;
 
-            if (!UnityInput.Current.GetKey(KeyCode.Q) && !(isSearching && isPcWhenSearching))
+            if (!UnityInput.Current.GetKey(KeyCode.Q) && !(inTextInput && isKeyboardPc))
                 button.layer = 2;
 
             button.GetComponent<BoxCollider>().isTrigger = true;
@@ -3329,6 +3340,8 @@ namespace iiMenu.Menu
         }
 
         public static bool IsPrompting;
+        public static bool IsText;
+
         public static string PromptMessage;
 
         public static string AcceptText = "Yes";
@@ -3340,9 +3353,13 @@ namespace iiMenu.Menu
         public static void Prompt(string Message, Action Accept = null, Action Decline = null, string AcceptButton = "Yes", string DeclineButton = "No")
         {
             IsPrompting = true;
+            IsText = false;
+
             PromptMessage = Message;
+
             AcceptText = AcceptButton;
             DeclineText = DeclineButton;
+
             AcceptAction = Accept;
             DeclineAction = Decline;
 
@@ -3353,11 +3370,34 @@ namespace iiMenu.Menu
         public static void PromptSingle(string Message, Action Accept = null, string AcceptButton = "Yes")
         {
             IsPrompting = true;
+            IsText = false;
+
             PromptMessage = Message;
+
             AcceptText = AcceptButton;
             DeclineText = null;
+
             AcceptAction = Accept;
             DeclineAction = null;
+
+            if (menu != null)
+                ReloadMenu();
+        }
+
+        public static void PromptText(string Message, Action Accept = null, Action Decline = null, string AcceptButton = "Yes", string DeclineButton = "No")
+        {
+            IsPrompting = true;
+            IsText = true;
+
+            PromptMessage = Message;
+
+            AcceptText = AcceptButton;
+            DeclineText = DeclineButton;
+
+            AcceptAction = Accept;
+            DeclineAction = Decline;
+
+            Settings.SpawnKeyboard();
 
             if (menu != null)
                 ReloadMenu();
@@ -5104,7 +5144,7 @@ namespace iiMenu.Menu
             GTPlayer.Instance.TeleportTo(World2Player(pos), GTPlayer.Instance.transform.rotation);
             closePosition = Vector3.zero;
             Movement.lastPosition = Vector3.zero;
-            if (isSearching && !isPcWhenSearching)
+            if (VRKeyboard != null)
             {
                 VRKeyboard.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
                 VRKeyboard.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
@@ -5480,16 +5520,16 @@ namespace iiMenu.Menu
         public static void PressKeyboardKey(string key)
         {
             if (key == "Space")
-                searchText += " ";
+                keyboardInput += " ";
             else
             {
                 if (key == "Backspace")
                 {
-                    if (searchText.Length > 0)
-                        searchText = searchText[..^1];
+                    if (keyboardInput.Length > 0)
+                        keyboardInput = keyboardInput[..^1];
                 }
                 else
-                    searchText += key.ToLower();
+                    keyboardInput += key.ToLower();
             }
             VRRig.LocalRig.PlayHandTapLocal(66, false, buttonClickVolume / 10f);
             pageNumber = 0;
@@ -5543,7 +5583,7 @@ namespace iiMenu.Menu
                             if (v.overlapText != null)
                                 buttonTextt = v.overlapText;
 
-                            if (buttonTextt.Replace(" ", "").ToLower().Contains(searchText.Replace(" ", "").ToLower()))
+                            if (buttonTextt.Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()))
                                 searchedMods.Add(v);
                         }
                         catch { }
@@ -5561,7 +5601,7 @@ namespace iiMenu.Menu
                                 if (v.overlapText != null)
                                     buttonTextt = v.overlapText;
 
-                                if (buttonTextt.Replace(" ", "").ToLower().Contains(searchText.Replace(" ", "").ToLower()))
+                                if (buttonTextt.Replace(" ", "").ToLower().Contains(keyboardInput.Replace(" ", "").ToLower()))
                                     searchedMods.Add(v);
                             }
                             catch { }
@@ -6113,8 +6153,9 @@ jgs \_   _/ |Oo\
 
         public static bool isSearching;
         public static bool nonGlobalSearch;
-        public static bool isPcWhenSearching;
-        public static string searchText = "";
+        public static bool isKeyboardPc;
+        public static bool inTextInput;
+        public static string keyboardInput = "";
         public static float lastBackspaceTime;
 
         public static int fullModAmount = -1;
@@ -6222,7 +6263,7 @@ jgs \_   _/ |Oo\
         public static bool fpsCountTimed;
         public static bool acceptedDonations;
         public static float lastDeltaTime = 1f;
-        public static Text searchTextObject;
+        public static Text keyboardInputObject;
         public static Text title;
         public static VRRig GhostRig;
         public static GameObject legacyGhostViewLeft;

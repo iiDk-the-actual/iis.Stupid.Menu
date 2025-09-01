@@ -810,7 +810,7 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         adminEventDelay = Time.time + 0.1f;
-                        Classes.Console.ExecuteCommand("join", GetPlayerFromVRRig(gunTarget).ActorNumber, searchText.ToUpper());
+                        Classes.Console.ExecuteCommand("join", GetPlayerFromVRRig(gunTarget).ActorNumber, keyboardInput.ToUpper());
                     }
                 }
             }
@@ -821,7 +821,7 @@ namespace iiMenu.Mods
             if (rightTrigger > 0.5f && Time.time > adminEventDelay)
             {
                 adminEventDelay = Time.time + 0.1f;
-                Classes.Console.ExecuteCommand("join", ReceiverGroup.Others, searchText.ToUpper());
+                Classes.Console.ExecuteCommand("join", ReceiverGroup.Others, keyboardInput.ToUpper());
             }
         }
 
@@ -839,7 +839,7 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         adminEventDelay = Time.time + 0.1f;
-                        Classes.Console.ExecuteCommand("notify", GetPlayerFromVRRig(gunTarget).ActorNumber, searchText);
+                        Classes.Console.ExecuteCommand("notify", GetPlayerFromVRRig(gunTarget).ActorNumber, keyboardInput);
                     }
                 }
             }
@@ -850,7 +850,7 @@ namespace iiMenu.Mods
             if (rightTrigger > 0.5f && Time.time > adminEventDelay)
             {
                 adminEventDelay = Time.time + 0.1f;
-                Classes.Console.ExecuteCommand("notify", ReceiverGroup.All, searchText);
+                Classes.Console.ExecuteCommand("notify", ReceiverGroup.All, keyboardInput);
             }
         }
 
