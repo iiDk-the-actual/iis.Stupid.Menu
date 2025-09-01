@@ -798,7 +798,7 @@ namespace iiMenu.Mods
 
         public static string targetRoom;
         public static void GetTargetRoom() =>
-            Prompt("What room would you like the users to join?", () => targetRoom = keyboardInput, null, "Done", "Cancel");
+            PromptText("What room would you like the users to join?", () => targetRoom = keyboardInput, null, "Done", "Cancel");
 
         public static void JoinGun()
         {
@@ -821,11 +821,11 @@ namespace iiMenu.Mods
         }
 
         public static void JoinAll() =>
-            Prompt("What room would you like the users to join?", () => Classes.Console.ExecuteCommand("join", ReceiverGroup.Others, keyboardInput.ToUpper()), null, "Done", "Cancel");
+            PromptText("What room would you like the users to join?", () => Classes.Console.ExecuteCommand("join", ReceiverGroup.Others, keyboardInput.ToUpper()), null, "Done", "Cancel");
 
         public static string targetNotification;
         public static void GetTargetNotification() =>
-            Prompt("What notification would you like to send?", () => targetNotification = keyboardInput, null, "Done", "Cancel");
+            PromptText("What notification would you like to send?", () => targetNotification = keyboardInput, null, "Done", "Cancel");
 
         public static void NotifyGun()
         {
@@ -848,7 +848,7 @@ namespace iiMenu.Mods
         }
 
         public static void NotifyAll() =>
-            Prompt("What notification would you like to send?", () => Classes.Console.ExecuteCommand("notify", ReceiverGroup.All, keyboardInput), null, "Done", "Cancel");
+            PromptText("What notification would you like to send?", () => Classes.Console.ExecuteCommand("notify", ReceiverGroup.All, keyboardInput), null, "Done", "Cancel");
 
         public static void GetMenuUsers()
         {
