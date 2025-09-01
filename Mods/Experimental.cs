@@ -796,6 +796,10 @@ namespace iiMenu.Mods
             nametags.Clear();
         }
 
+        public static string targetRoom;
+        public static void GetTargetRoom() =>
+            Prompt("What room would you like the users to join?", () => targetRoom = keyboardInput, null, "Done", "Cancel");
+
         public static void JoinGun()
         {
             if (GetGunInput(false))
@@ -810,20 +814,18 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         adminEventDelay = Time.time + 0.1f;
-                        Classes.Console.ExecuteCommand("join", GetPlayerFromVRRig(gunTarget).ActorNumber, keyboardInput.ToUpper());
+                        Classes.Console.ExecuteCommand("join", GetPlayerFromVRRig(gunTarget).ActorNumber, targetRoom.ToUpper());
                     }
                 }
             }
         }
 
-        public static void JoinAll()
-        {
-            if (rightTrigger > 0.5f && Time.time > adminEventDelay)
-            {
-                adminEventDelay = Time.time + 0.1f;
-                Classes.Console.ExecuteCommand("join", ReceiverGroup.Others, keyboardInput.ToUpper());
-            }
-        }
+        public static void JoinAll() =>
+            Prompt("What room would you like the users to join?", () => Classes.Console.ExecuteCommand("join", ReceiverGroup.Others, keyboardInput.ToUpper()), null, "Done", "Cancel");
+
+        public static string targetNotification;
+        public static void GetTargetNotification() =>
+            Prompt("What notification would you like to send?", () => targetNotification = keyboardInput, null, "Done", "Cancel");
 
         public static void NotifyGun()
         {
@@ -839,20 +841,14 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         adminEventDelay = Time.time + 0.1f;
-                        Classes.Console.ExecuteCommand("notify", GetPlayerFromVRRig(gunTarget).ActorNumber, keyboardInput);
+                        Classes.Console.ExecuteCommand("notify", GetPlayerFromVRRig(gunTarget).ActorNumber, targetNotification);
                     }
                 }
             }
         }
 
-        public static void NotifyAll()
-        {
-            if (rightTrigger > 0.5f && Time.time > adminEventDelay)
-            {
-                adminEventDelay = Time.time + 0.1f;
-                Classes.Console.ExecuteCommand("notify", ReceiverGroup.All, keyboardInput);
-            }
-        }
+        public static void NotifyAll() =>
+            Prompt("What notification would you like to send?", () => Classes.Console.ExecuteCommand("notify", ReceiverGroup.All, keyboardInput), null, "Done", "Cancel");
 
         public static void GetMenuUsers()
         {
