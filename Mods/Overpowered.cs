@@ -2107,8 +2107,6 @@ namespace iiMenu.Mods
                                     }
                                 }
                             }
-
-                            break;
                         }
                     }
                 }
@@ -2146,8 +2144,6 @@ namespace iiMenu.Mods
                                     }
                                 }
                             }
-
-                            break;
                         }
                     }
                 }
@@ -2797,8 +2793,6 @@ namespace iiMenu.Mods
                                 }
                             }
                         }
-
-                        break;
                     }
                 }
 
