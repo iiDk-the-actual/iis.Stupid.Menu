@@ -15,12 +15,4 @@ namespace iiMenu.Patches
         public static bool Prefix(VRRig __instance) =>
             __instance.gameObject.name != "Local Gorilla Player(Clone)";
     }
-
-    // Thanks nugget for help with patch
-    [HarmonyPatch(typeof(VRRigJobManager), "DeregisterVRRig")]
-    public static class RigPatch3
-    {
-        public static bool Prefix(VRRigJobManager __instance, VRRig rig) =>
-            !rig.isLocal;
-    }
 }
