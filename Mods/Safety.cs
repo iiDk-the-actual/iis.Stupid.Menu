@@ -184,17 +184,16 @@ namespace iiMenu.Mods
             catch { } // Not connected
         }
 
-        public static float antiReportNotificationDelay;
-        public static void AntiReportDisconnect()
+        public static void AntiReport(System.Action<VRRig, Vector3> onReport)
         {
-            try
+            if (NetworkSystem.Instance.InRoom)
             {
                 foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
                 {
                     if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
                     {
                         Transform report = line.reportButton.gameObject.transform;
-                        
+
                         foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
                         {
                             if (!vrrig.isLocal)
@@ -205,196 +204,107 @@ namespace iiMenu.Mods
                                 if (D1 < threshold || D2 < threshold)
                                 {
                                     if (!smartarp || SmartAntiReport(line.linePlayer))
-                                    {
-                                        NetworkSystem.Instance.ReturnToSinglePlayer();
-                                        RPCProtection();
-
-                                        if (Time.time > antiReportNotificationDelay)
-                                        {
-                                            antiReportNotificationDelay = Time.time + 0.1f;
-                                            NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected.");
-                                        }
-                                    }
+                                        onReport?.Invoke(vrrig, report.transform.position);
                                 }
                             }
                         }
                     }
                 }
             }
-            catch { } // Not connected
+        }
+
+        public static float antiReportDelay;
+        public static void AntiReportDisconnect()
+        {
+            AntiReport((vrrig, position) =>
+            {
+                NetworkSystem.Instance.ReturnToSinglePlayer();
+                RPCProtection();
+
+                if (Time.time > antiReportDelay)
+                {
+                    antiReportDelay = Time.time + 1f;
+                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected.");
+                }
+            });
         }
 
         public static void AntiReportReconnect()
         {
-            try
+            AntiReport((vrrig, position) =>
             {
-                foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+                if (Time.time > antiReportDelay)
                 {
-                    if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
-                    {
-                        Transform report = line.reportButton.gameObject.transform;
-                        
-                        foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-                        {
-                            if (!vrrig.isLocal)
-                            {
-                                float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
-                                float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
+                    Important.Reconnect();
+                    RPCProtection();
 
-                                if (D1 < threshold || D2 < threshold)
-                                {
-                                    if (!smartarp || SmartAntiReport(line.linePlayer))
-                                    {
-                                        Important.Reconnect();
-                                        RPCProtection();
-
-                                        if (Time.time > antiReportNotificationDelay)
-                                        {
-                                            antiReportNotificationDelay = Time.time + 0.1f;
-                                            NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected and will be reconnected shortly.");
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    antiReportDelay = Time.time + 1f;
+                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected and will be reconnected shortly.");
                 }
-            }
-            catch { } // Not connected
+            });
         }
 
         public static void AntiReportJoinRandom()
         {
-            try
+            AntiReport((vrrig, position) =>
             {
-                foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+                if (Time.time > antiReportDelay)
                 {
-                    if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
-                    {
-                        Transform report = line.reportButton.gameObject.transform;
-                        
-                        foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-                        {
-                            if (!vrrig.isLocal)
-                            {
-                                float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
-                                float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
+                    Important.JoinRandom();
+                    RPCProtection();
 
-                                if (D1 < threshold || D2 < threshold)
-                                {
-                                    if (!smartarp || SmartAntiReport(line.linePlayer))
-                                    {
-                                        RPCProtection();
-                                        Important.JoinRandom();
-
-                                        if (Time.time > antiReportNotificationDelay)
-                                        {
-                                            antiReportNotificationDelay = Time.time + 0.1f;
-                                            NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected and will be connected to a random lobby shortly.");
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    antiReportDelay = Time.time + 1f;
+                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, you have been disconnected and will be reconnected shortly.");
                 }
-            }
-            catch { } // Not connected
+            });
         }
 
-        public static float delaysonospam = 0f;
+        public static float antiReportNotifyDelay;
         public static void AntiReportNotify()
         {
-            try
+            if (Time.time > antiReportNotifyDelay)
             {
-                if (Time.time > delaysonospam)
+                string notifyText = "";
+                AntiReport((vrrig, position) =>
                 {
-                    string notifyText = "";
-                    foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+                    antiReportNotifyDelay = Time.time + 0.1f;
+
+                    if (notifyText == "")
+                        notifyText = GetPlayerFromVRRig(vrrig).NickName;
+                    else
                     {
-                        if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
-                        {
-                            Transform report = line.reportButton.gameObject.transform;
-                            
-                            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-                            {
-                                if (!vrrig.isLocal)
-                                {
-                                    float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
-                                    float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
-
-                                    if (D1 < threshold || D2 < threshold)
-                                    {
-                                        if (!smartarp || SmartAntiReport(line.linePlayer))
-                                        {
-                                            delaysonospam = Time.time + 0.1f;
-
-                                            if (notifyText == "")
-                                                notifyText = GetPlayerFromVRRig(vrrig).NickName;
-                                            else
-                                            {
-                                                if (notifyText.Contains("&"))
-                                                    notifyText = GetPlayerFromVRRig(vrrig).NickName + ", " + notifyText;
-                                                else
-                                                    notifyText += " & " + GetPlayerFromVRRig(vrrig).NickName;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        if (notifyText.Contains("&"))
+                            notifyText = GetPlayerFromVRRig(vrrig).NickName + ", " + notifyText;
+                        else
+                            notifyText += " & " + GetPlayerFromVRRig(vrrig).NickName;
                     }
+                });
 
-                    if (notifyText != "")
-                        NotifiLib.SendNotification($"<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> {notifyText} {((notifyText.Contains("&") || notifyText.Contains(",")) ? "are" : "is")} reporting you.");
-                }
+                if (notifyText != "")
+                    NotifiLib.SendNotification($"<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> {notifyText} {((notifyText.Contains("&") || notifyText.Contains(",")) ? "are" : "is")} reporting you.");
             }
-            catch { } // Not connected
         }
 
         public static void AntiReportOverlay()
         {
-            try
+            if (Time.time > antiReportNotifyDelay)
             {
                 string notifyText = null;
-                foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+                AntiReport((vrrig, position) =>
                 {
-                    if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
+                    if (notifyText == null)
+                        notifyText = GetPlayerFromVRRig(vrrig).NickName;
+                    else
                     {
-                        Transform report = line.reportButton.gameObject.transform;
-
-                        foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-                        {
-                            if (!vrrig.isLocal)
-                            {
-                                float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
-                                float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
-
-                                if (D1 < threshold || D2 < threshold)
-                                {
-                                    if (!smartarp || SmartAntiReport(line.linePlayer))
-                                    {
-                                        delaysonospam = Time.time + 0.1f;
-
-                                        if (notifyText == null)
-                                            notifyText = GetPlayerFromVRRig(vrrig).NickName;
-                                        else
-                                        {
-                                            if (notifyText.Contains("&"))
-                                                notifyText = GetPlayerFromVRRig(vrrig).NickName + ", " + notifyText;
-                                            else
-                                                notifyText += " & " + GetPlayerFromVRRig(vrrig).NickName;
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        if (notifyText.Contains("&"))
+                            notifyText = GetPlayerFromVRRig(vrrig).NickName + ", " + notifyText;
+                        else
+                            notifyText += " & " + GetPlayerFromVRRig(vrrig).NickName;
                     }
+                });
 
-                    NotifiLib.information["Anti-Report"] = notifyText;
-                }
+                NotifiLib.information["Anti-Report"] = notifyText;
             }
-            catch { } // Not connected
         }
 
         public static void AntiReportFRT(Player subject, bool doNotification = true)

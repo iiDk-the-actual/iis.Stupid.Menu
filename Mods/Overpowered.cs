@@ -2076,79 +2076,31 @@ namespace iiMenu.Mods
             }
         }
 
-        private static float antireportfling;
+        private static float antiReportFlingDelay;
         public static void AntiReportFling()
         {
-            try
+            if (Time.time > antiReportFlingDelay)
             {
-                if (Time.time > antireportfling)
+                Safety.AntiReport((vrrig, position) =>
                 {
-                    foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
-                    {
-                        if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
-                        {
-                            Transform report = line.reportButton.gameObject.transform;
-
-                            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-                            {
-                                if (!vrrig.isLocal)
-                                {
-                                    float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
-                                    float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
-
-                                    if (D1 < Safety.threshold || D2 < Safety.threshold)
-                                    {
-                                        if (!Safety.smartarp || (Safety.smartarp && PhotonNetwork.CurrentRoom.IsVisible && !PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED")))
-                                        {
-                                            antireportfling = Time.time + 0.1f;
-                                            BetaSetVelocityPlayer(GetPlayerFromVRRig(vrrig), (vrrig.transform.position - report.position) * 50f);
-                                            NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they have been flung.");
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                    antiReportFlingDelay = Time.time + 0.1f;
+                    BetaSetVelocityPlayer(GetPlayerFromVRRig(vrrig), (vrrig.transform.position - position) * 50f);
+                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they have been flung.");
+                });
             }
-            catch { } // Not connected
         }
 
         public static void AntiReportSnowballFling()
         {
-            try
+            if (Time.time > snowballDelay)
             {
-                if (Time.time > snowballDelay)
+                Safety.AntiReport((vrrig, position) =>
                 {
-                    foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
-                    {
-                        if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
-                        {
-                            Transform report = line.reportButton.gameObject.transform;
-                            
-                            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-                            {
-                                if (!vrrig.isLocal)
-                                {
-                                    float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
-                                    float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
-
-                                    if (D1 < Safety.threshold || D2 < Safety.threshold)
-                                    {
-                                        if (!Safety.smartarp || (Safety.smartarp && PhotonNetwork.CurrentRoom.IsVisible && !PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED")))
-                                        {
-                                            snowballDelay = Time.time + snowballSpawnDelay;
-                                            BetaSpawnSnowball(report.position, new Vector3(0f, -500f, 0f), 5f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(vrrig)));
-                                            NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they have been flung.");
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                    snowballDelay = Time.time + snowballSpawnDelay;
+                    BetaSpawnSnowball(position, new Vector3(0f, -500f, 0f), 5f, 2, NetPlayerToPlayer(GetPlayerFromVRRig(vrrig)));
+                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they have been flung.");
+                });
             }
-            catch { } // Not connected
         }
 
         public static bool SpecialTargetRPC(PhotonView photonView, string method, RaiseEventOptions options, params object[] parameters)
@@ -2762,56 +2714,33 @@ namespace iiMenu.Mods
             }
         }
 
+        private static float antiReportLagDelay;
         public static void AntiReportLag()
         {
-            try
+            if (Time.time > antiReportLagDelay)
             {
                 List<int> actors = new List<int>();
 
-                if (Time.time > Safety.delaysonospam)
-                foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+                Safety.AntiReport((vrrig, position) =>
                 {
-                    if (line.linePlayer == NetworkSystem.Instance.LocalPlayer)
-                    {
-                        Transform report = line.reportButton.gameObject.transform;
-
-                        foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-                        {
-                            if (!vrrig.isLocal)
-                            {
-                                float D1 = Vector3.Distance(vrrig.rightHandTransform.position, report.position);
-                                float D2 = Vector3.Distance(vrrig.leftHandTransform.position, report.position);
-
-                                if (D1 < Safety.threshold || D2 < Safety.threshold)
-                                {
-                                    if (!Safety.smartarp || (Safety.smartarp && PhotonNetwork.CurrentRoom.IsVisible && !PhotonNetwork.CurrentRoom.CustomProperties.ToString().Contains("MODDED")))
-                                    {
-                                        actors.Add(GetPlayerFromVRRig(vrrig).ActorNumber);
-                                        NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they are being lagged.");
-                                        Safety.delaysonospam = Time.time + 0.1f;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                    antiReportLagDelay = Time.time + 0.1f;
+                    actors.Add(GetPlayerFromVRRig(vrrig).ActorNumber);
+                    NotifiLib.SendNotification("<color=grey>[</color><color=purple>ANTI-REPORT</color><color=grey>]</color> " + GetPlayerFromVRRig(vrrig).NickName + " attempted to report you, they are being lagged.");
+                });
 
                 if (actors.Count > 0)
                     LagTarget(actors.ToArray());
             }
-            catch { } // Not connected
         }
-
-      
 
         public static void SetRoomLock(bool status)
         {
-            ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable { { 254, status ? NetworkSystem.Instance.SessionIsPrivate : !NetworkSystem.Instance.SessionIsPrivate } };
-
-            Dictionary<byte, object> dictionary = new Dictionary<byte, object>();
-            dictionary.Add(251, hash);
-            dictionary.Add(250, false);
-            dictionary.Add(231, null);
+            Dictionary<byte, object> dictionary = new Dictionary<byte, object>
+            {
+                { 251, new ExitGames.Client.Photon.Hashtable { { 254, status ? NetworkSystem.Instance.SessionIsPrivate : !NetworkSystem.Instance.SessionIsPrivate } } },
+                { 250, false },
+                { 231, null }
+            };
 
             PhotonNetwork.CurrentRoom.LoadBalancingClient.LoadBalancingPeer.SendOperation(
                 252,
