@@ -45,35 +45,16 @@ namespace iiMenu.Mods
                         VRKeyboard.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
 
                         menuSpawnPosition = VRKeyboard.transform.Find("MenuSpawnPosition").gameObject;
-                        VRKeyboard.transform.Find("Canvas/Text").GetComponent<Text>().color = textColor;
+                        VRKeyboard.transform.Find("Canvas/Text").AddComponent<TextColorChanger>().colors = textColors[1];
 
                         VRKeyboard.transform.localScale *= scaleWithPlayer ? GTPlayer.Instance.scale * menuScale : menuScale;
                         menuSpawnPosition.transform.localScale *= scaleWithPlayer ? GTPlayer.Instance.scale * menuScale : menuScale;
 
                         ColorChanger backgroundColorChanger = VRKeyboard.transform.Find("Background").gameObject.AddComponent<ColorChanger>();
-                        backgroundColorChanger.colors = new Gradient
-                        {
-                            colorKeys = new[]
-                            {
-                                new GradientColorKey(bgColorA, 0f),
-                                new GradientColorKey(bgColorB, 0.5f),
-                                new GradientColorKey(bgColorA, 1f)
-                            }
-                        };
-                        backgroundColorChanger.isRainbow = themeType == 6;
-                        backgroundColorChanger.isEpileptic = themeType == 47;
-                        backgroundColorChanger.isMonkeColors = themeType == 8;
+                        backgroundColorChanger.colors = backgroundColor;
 
                         ColorChanger keyColorChanger = VRKeyboard.transform.Find("Keys/default").gameObject.AddComponent<ColorChanger>();
-                        keyColorChanger.colors = new Gradient
-                        {
-                            colorKeys = new[]
-                            {
-                                new GradientColorKey(buttonDefaultA, 0f),
-                                new GradientColorKey(buttonDefaultB, 0.5f),
-                                new GradientColorKey(buttonDefaultA, 1f)
-                            }
-                        };
+                        keyColorChanger.colors = buttonColors[0];
 
                         if (shouldOutline)
                             OutlineObjNonMenu(VRKeyboard.transform.Find("Background").gameObject, true);
@@ -94,49 +75,29 @@ namespace iiMenu.Mods
                     }
                 }
 
-                GradientColorKey[] colors = new[]
-                {
-                    new GradientColorKey(bgColorA, 0f),
-                    new GradientColorKey(bgColorB, 0.5f),
-                    new GradientColorKey(bgColorA, 1f)
-                };
-
                 if (lKeyReference == null)
                 {
                     lKeyReference = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                     lKeyReference.transform.parent = GorillaTagger.Instance.leftHandTransform;
-                    lKeyReference.GetComponent<Renderer>().material.color = bgColorA;
+                    lKeyReference.GetComponent<Renderer>().material.color = backgroundColor.GetColor(0);
                     lKeyReference.transform.localPosition = pointerOffset;
                     lKeyReference.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
                     lKeyCollider = lKeyReference.GetComponent<SphereCollider>();
 
-
                     ColorChanger colorChanger = lKeyReference.AddComponent<ColorChanger>();
-                    colorChanger.colors = new Gradient
-                    {
-                        colorKeys = colors
-                    };
-                    colorChanger.isRainbow = themeType == 6;
-                    colorChanger.isEpileptic = themeType == 47;
-                    colorChanger.isMonkeColors = themeType == 8;
+                    colorChanger.colors = backgroundColor;
                 }
                 if (rKeyReference == null)
                 {
                     rKeyReference = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                     rKeyReference.transform.parent = GorillaTagger.Instance.rightHandTransform;
-                    rKeyReference.GetComponent<Renderer>().material.color = bgColorA;
+                    rKeyReference.GetComponent<Renderer>().material.color = backgroundColor.GetColor(0);
                     rKeyReference.transform.localPosition = pointerOffset;
                     rKeyReference.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
                     rKeyCollider = rKeyReference.GetComponent<SphereCollider>();
 
                     ColorChanger colorChanger = rKeyReference.AddComponent<ColorChanger>();
-                    colorChanger.colors = new Gradient
-                    {
-                        colorKeys = colors
-                    };
-                    colorChanger.isRainbow = themeType == 6;
-                    colorChanger.isEpileptic = themeType == 47;
-                    colorChanger.isMonkeColors = themeType == 8;
+                    colorChanger.colors = backgroundColor;
                 }
             } else
             {
@@ -866,701 +827,2065 @@ namespace iiMenu.Mods
             if (GetIndex("Custom Menu Theme").enabled)
                 return;
 
-            switch (themeType) {
+            switch (themeType)
+            {
                 case 1: // Orange
-                    bgColorA = new Color32(255, 128, 0, 128);
-                    bgColorB = new Color32(255, 102, 0, 128);
-                    buttonDefaultA = new Color32(170, 85, 0, 255);
-                    buttonDefaultB = new Color32(170, 85, 0, 255);
-                    buttonClickedA = new Color32(85, 42, 0, 255);
-                    buttonClickedB = new Color32(85, 42, 0, 255);
-                    titleColor = new Color32(255, 190, 125, 255);
-                    textColor = new Color32(255, 190, 125, 255);
-                    textClicked = new Color32(255, 190, 125, 255);
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSimpleGradient(new Color32(255, 128, 0, 128), new Color32(255, 102, 0, 128))
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(170, 85, 0, 255))
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(85, 42, 0, 255))
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(255, 190, 125, 255))
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(255, 190, 125, 255))
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(255, 190, 125, 255))
+                        }
+                    };
                     break;
                 case 2: // Blue Magenta
-                    bgColorA = Color.blue;
-                    bgColorB = Color.magenta;
-                    buttonDefaultA = Color.black;
-                    buttonDefaultB = Color.black;
-                    buttonClickedA = Color.blue;
-                    buttonClickedB = Color.blue;
-                    titleColor = Color.white;
-                    textColor = Color.white;
-                    textClicked = Color.white;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSimpleGradient(Color.blue, Color.magenta)
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.blue)
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+                    };
                     break;
                 case 3: // Dark Mode
-                    bgColorA = Color.black;
-                    bgColorB = Color.black;
-                    buttonDefaultA = new Color32(50, 50, 50, 255);
-                    buttonDefaultB = new Color32(50, 50, 50, 255);
-                    buttonClickedA = new Color32(20, 20, 20, 255);
-                    buttonClickedB = new Color32(20, 20, 20, 255);
-                    titleColor = Color.white;
-                    textColor = Color.white;
-                    textClicked = Color.white;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSolidGradient(Color.black)
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(50, 50, 50, 255))
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(20, 20, 20, 255))
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+                    };
                     break;
                 case 4: // Strobe
-                    bgColorA = Color.white;
-                    bgColorB = Color.black;
-                    buttonDefaultA = Color.black;
-                    buttonDefaultB = Color.white;
-                    buttonClickedA = Color.white;
-                    buttonClickedB = Color.white;
-                    titleColor = Color.black;
-                    textColor = Color.black;
-                    textClicked = Color.black;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSimpleGradient(Color.white, Color.black)
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSimpleGradient(Color.black, Color.white)
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        }
+                    };
                     break;
                 case 5: // Kman
-                    bgColorA = Color.black;
-                    bgColorB = new Color32(110, 0, 0, 255);
-                    buttonDefaultA = Color.black;
-                    buttonDefaultB = new Color32(110, 0, 0, 255);
-                    buttonClickedA = new Color32(110, 0, 0, 255);
-                    buttonClickedB = new Color32(110, 0, 0, 255);
-                    titleColor = Color.white;
-                    textColor = Color.white;
-                    textClicked = Color.white;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSimpleGradient(Color.black, new Color32(110, 0, 0, 255))
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSimpleGradient(Color.black, new Color32(110, 0, 0, 255))
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(110, 0, 0, 255))
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+                    };
                     break;
                 case 6: // Rainbow
-                    bgColorA = Color.black;
-                    bgColorB = Color.black;
-                    buttonDefaultA = Color.black;
-                    buttonDefaultB = Color.black;
-                    buttonClickedA = Color.black;
-                    buttonClickedB = Color.black;
-                    titleColor = Color.white;
-                    textColor = Color.white;
-                    textClicked = Color.white;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSolidGradient(Color.black),
+                        rainbow = true
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black),
+                            rainbow = true
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+                    };
                     break;
                 case 7: // Cone
-                    bgColorA = new Color32(255, 128, 0, 128);
-                    bgColorB = new Color32(255, 128, 0, 128);
-                    buttonDefaultA = new Color32(170, 85, 0, 255);
-                    buttonDefaultB = new Color32(170, 85, 0, 255);
-                    buttonClickedA = new Color32(85, 42, 0, 255);
-                    buttonClickedB = new Color32(85, 42, 0, 255);
-                    titleColor = new Color32(255, 190, 125, 255);
-                    textColor = new Color32(255, 190, 125, 255);
-                    textClicked = new Color32(255, 190, 125, 255);
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSolidGradient(new Color32(255, 128, 0, 128))
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(170, 85, 0, 255))
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(85, 42, 0, 255))
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(255, 190, 125, 255))
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(255, 190, 125, 255))
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(255, 190, 125, 255))
+                        }
+                    };
                     GetIndex("Thin Menu").enabled = true;
                     thinMenu = true;
                     break;
                 case 8: // Player Material
-                    bgColorA = Color.black;
-                    bgColorB = Color.black;
-                    buttonDefaultA = Color.black;
-                    buttonDefaultB = Color.black;
-                    buttonClickedA = Color.black;
-                    buttonClickedB = Color.black;
-                    titleColor = Color.white;
-                    textColor = Color.white;
-                    textClicked = Color.white;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSolidGradient(Color.black),
+                        copyRigColor = true
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black),
+                            copyRigColor = true
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+                    };
                     break;
                 case 9: // Lava
-                    bgColorA = Color.black;
-                    bgColorB = new Color32(255, 111, 0, 255);
-                    buttonDefaultA = Color.black;
-                    buttonDefaultB = Color.black;
-                    buttonClickedA = new Color32(255, 111, 0, 255);
-                    buttonClickedB = Color.black;
-                    titleColor = Color.white;
-                    textColor = Color.white;
-                    textClicked = Color.white;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSimpleGradient(Color.black, new Color32(255, 111, 0, 255))
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSimpleGradient(new Color32(255, 111, 0, 255), Color.black)
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+                    };
                     break;
                 case 10: // Rock
-                    bgColorA = Color.black;
-                    bgColorB = Color.red;
-                    buttonDefaultA = Color.black;
-                    buttonDefaultB = Color.black;
-                    buttonClickedA = Color.red;
-                    buttonClickedB = Color.black;
-                    titleColor = Color.white;
-                    textColor = Color.white;
-                    textClicked = Color.white;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSimpleGradient(Color.black, Color.red)
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSimpleGradient(Color.red, Color.black)
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+                    };
                     break;
                 case 11: // Ice
-                    bgColorA = Color.black;
-                    bgColorB = new Color32(0, 174, 255, 255);
-                    buttonDefaultA = Color.black;
-                    buttonDefaultB = Color.black;
-                    buttonClickedA = new Color32(0, 174, 255, 255);
-                    buttonClickedB = Color.black;
-                    titleColor = Color.white;
-                    textColor = Color.white;
-                    textClicked = Color.white;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSimpleGradient(Color.black, new Color32(0, 174, 255, 255))
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSimpleGradient(new Color32(0, 174, 255, 255), Color.black)
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+                    };
                     break;
                 case 12: // Water
-                    bgColorA = new Color32(0, 136, 255, 255);
-                    bgColorB = new Color32(0, 174, 255, 255);
-                    buttonDefaultA = new Color32(0, 100, 188, 255);
-                    buttonDefaultB = new Color32(0, 100, 188, 255);
-                    buttonClickedA = new Color32(0, 174, 255, 255);
-                    buttonClickedB = new Color32(0, 136, 255, 255);
-                    titleColor = Color.black;
-                    textColor = Color.black;
-                    textClicked = Color.black;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSimpleGradient(new Color32(0, 136, 255, 255), new Color32(0, 174, 255, 255))
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(0, 100, 188, 255))
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSimpleGradient(new Color32(0, 174, 255, 255), new Color32(0, 136, 255, 255))
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        }
+                    };
                     break;
                 case 13: // Minty
-                    bgColorA = new Color32(0, 255, 246, 255);
-                    bgColorB = new Color32(0, 255, 144, 255);
-                    buttonDefaultA = Color.white;
-                    buttonDefaultB = Color.white;
-                    buttonClickedA = new Color32(0, 255, 144, 255);
-                    buttonClickedB = new Color32(0, 255, 246, 255);
-                    titleColor = Color.black;
-                    textColor = Color.black;
-                    textClicked = Color.black;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSimpleGradient(new Color32(0, 255, 246, 255), new Color32(0, 255, 144, 255))
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSimpleGradient(new Color32(0, 255, 144, 255), new Color32(0, 255, 246, 255))
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        }
+                    };
                     break;
                 case 14: // Pink
-                    bgColorA = new Color32(255, 130, 255, 255);
-                    bgColorB = Color.white;
-                    buttonDefaultA = new Color32(255, 130, 255, 255);
-                    buttonDefaultB = new Color32(255, 130, 255, 255);
-                    buttonClickedA = Color.white;
-                    buttonClickedB = Color.white;
-                    titleColor = Color.black;
-                    textColor = Color.black;
-                    textClicked = Color.black;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSimpleGradient(new Color32(255, 130, 255, 255), Color.white)
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(255, 130, 255, 255))
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        }
+                    };
                     break;
                 case 15: // Purple
-                    bgColorA = new Color32(122, 35, 159, 255);
-                    bgColorB = new Color32(60, 26, 89, 255);
-                    buttonDefaultA = new Color32(60, 26, 89, 255);
-                    buttonDefaultB = new Color32(60, 26, 89, 255);
-                    buttonClickedA = new Color32(122, 35, 159, 255);
-                    buttonClickedB = new Color32(122, 35, 159, 255);
-                    titleColor = Color.white;
-                    textColor = Color.white;
-                    textClicked = Color.white;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSimpleGradient(new Color32(122, 35, 159, 255), new Color32(60, 26, 89, 255))
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(60, 26, 89, 255))
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(122, 35, 159, 255))
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+                    };
                     break;
                 case 16: // Magenta Cyan
-                    bgColorA = Color.magenta;
-                    bgColorB = Color.cyan;
-                    buttonDefaultA = Color.black;
-                    buttonDefaultB = Color.black;
-                    buttonClickedA = Color.magenta;
-                    buttonClickedB = Color.cyan;
-                    titleColor = Color.white;
-                    textColor = Color.white;
-                    textClicked = Color.black;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSimpleGradient(Color.magenta, Color.cyan)
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSimpleGradient(Color.magenta, Color.cyan)
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        }
+                    };
                     break;
                 case 17: // Red Fade
-                    bgColorA = Color.red;
-                    bgColorB = Color.black;
-                    buttonDefaultA = Color.black;
-                    buttonDefaultB = Color.black;
-                    buttonClickedA = Color.red;
-                    buttonClickedB = Color.red;
-                    titleColor = Color.red;
-                    textColor = Color.red;
-                    textClicked = Color.black;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSimpleGradient(Color.red, Color.black)
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.red)
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.red)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.red)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        }
+                    };
                     break;
                 case 18: // Orange Fade
-                    bgColorA = new Color32(255, 128, 0, 255);
-                    bgColorB = Color.black;
-                    buttonDefaultA = Color.black;
-                    buttonDefaultB = Color.black;
-                    buttonClickedA = new Color32(255, 128, 0, 255);
-                    buttonClickedB = new Color32(255, 128, 0, 255);
-                    titleColor = new Color32(255, 128, 0, 255);
-                    textColor = new Color32(255, 128, 0, 255);
-                    textClicked = Color.black;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSimpleGradient(new Color32(255, 128, 0, 255), Color.black)
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(255, 128, 0, 255))
+                        }
+                    };
+                    textColors = new[]
+                    {
+                new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(255, 128, 0, 255))
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(255, 128, 0, 255))
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        }
+                    };
                     break;
                 case 19: // Yellow Fade
-                    bgColorA = Color.yellow;
-                    bgColorB = Color.black;
-                    buttonDefaultA = Color.black;
-                    buttonDefaultB = Color.black;
-                    buttonClickedA = Color.yellow;
-                    buttonClickedB = Color.yellow;
-                    titleColor = Color.yellow;
-                    textColor = Color.yellow;
-                    textClicked = Color.black;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSimpleGradient(Color.yellow, Color.black)
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.yellow)
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.yellow)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.yellow)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        }
+                    };
                     break;
                 case 20: // Green Fade
-                    bgColorA = Color.green;
-                    bgColorB = Color.black;
-                    buttonDefaultA = Color.black;
-                    buttonDefaultB = Color.black;
-                    buttonClickedA = Color.green;
-                    buttonClickedB = Color.green;
-                    titleColor = Color.green;
-                    textColor = Color.green;
-                    textClicked = Color.black;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSimpleGradient(Color.green, Color.black)
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.green)
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.green)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.green)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        }
+                    };
                     break;
                 case 21: // Blue Fade
-                    bgColorA = Color.blue;
-                    bgColorB = Color.black;
-                    buttonDefaultA = Color.black;
-                    buttonDefaultB = Color.black;
-                    buttonClickedA = Color.blue;
-                    buttonClickedB = Color.blue;
-                    titleColor = Color.blue;
-                    textColor = Color.blue;
-                    textClicked = Color.black;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSimpleGradient(Color.blue, Color.black)
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.blue)
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.blue)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.blue)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        }
+                    };
                     break;
                 case 22: // Purple Fade
-                    bgColorA = new Color32(119, 0, 255, 255);
-                    bgColorB = Color.black;
-                    buttonDefaultA = Color.black;
-                    buttonDefaultB = Color.black;
-                    buttonClickedA = new Color32(119, 0, 255, 255);
-                    buttonClickedB = new Color32(119, 0, 255, 255);
-                    titleColor = new Color32(119, 0, 255, 255);
-                    textColor = new Color32(119, 0, 255, 255);
-                    textClicked = Color.black;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSimpleGradient(new Color32(119, 0, 255, 255), Color.black)
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(119, 0, 255, 255))
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(119, 0, 255, 255))
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(119, 0, 255, 255))
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        }
+                    };
                     break;
                 case 23: // Magenta Fade
-                    bgColorA = Color.magenta;
-                    bgColorB = Color.black;
-                    buttonDefaultA = Color.black;
-                    buttonDefaultB = Color.black;
-                    buttonClickedA = Color.magenta;
-                    buttonClickedB = Color.magenta;
-                    titleColor = Color.magenta;
-                    textColor = Color.magenta;
-                    textClicked = Color.black;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSimpleGradient(Color.magenta, Color.black)
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.magenta)
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.magenta)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.magenta)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        }
+                    };
                     break;
                 case 24: // Banana
-                    bgColorA = new Color32(255, 255, 130, 255);
-                    bgColorB = Color.white;
-                    buttonDefaultA = Color.white;
-                    buttonDefaultB = Color.white;
-                    buttonClickedA = new Color32(255, 255, 130, 255);
-                    buttonClickedB = new Color32(255, 255, 130, 255);
-                    titleColor = Color.black;
-                    textColor = Color.black;
-                    textClicked = Color.black;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSimpleGradient(new Color32(255, 255, 130, 255), Color.white)
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(255, 255, 130, 255))
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        }
+                    };
                     break;
                 case 25: // Pride
-                    bgColorA = Color.red;
-                    bgColorB = Color.green;
-                    buttonDefaultA = Color.black;
-                    buttonDefaultB = Color.black;
-                    buttonClickedA = Color.white;
-                    buttonClickedB = Color.white;
-                    titleColor = Color.black;
-                    textColor = Color.white;
-                    textClicked = Color.black;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSimpleGradient(Color.red, Color.green)
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        }
+                    };
                     break;
                 case 26: // Trans
-                    bgColorA = new Color32(245, 169, 184, 255);
-                    bgColorB = new Color32(91, 206, 250, 255);
-                    buttonDefaultA = new Color32(245, 169, 184, 255);
-                    buttonDefaultB = new Color32(245, 169, 184, 255);
-                    buttonClickedA = new Color32(91, 206, 250, 255);
-                    buttonClickedB = new Color32(91, 206, 250, 255);
-                    titleColor = new Color32(91, 206, 250, 255);
-                    textColor = new Color32(91, 206, 250, 255);
-                    textClicked = new Color32(245, 169, 184, 255);
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSimpleGradient(new Color32(245, 169, 184, 255), new Color32(91, 206, 250, 255))
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(245, 169, 184, 255))
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(91, 206, 250, 255))
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(91, 206, 250, 255))
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(91, 206, 250, 255))
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(245, 169, 184, 255))
+                        }
+                    };
                     break;
                 case 27: // MLM or Gay
-                    bgColorA = new Color32(7, 141, 112, 255);
-                    bgColorB = new Color32(61, 26, 220, 255);
-                    buttonDefaultA = new Color32(7, 141, 112, 255);
-                    buttonDefaultB = new Color32(7, 141, 112, 255);
-                    buttonClickedA = new Color32(61, 26, 220, 255);
-                    buttonClickedB = new Color32(61, 26, 220, 255);
-                    titleColor = new Color32(61, 26, 220, 255);
-                    textColor = new Color32(61, 26, 220, 255);
-                    textClicked = new Color32(7, 141, 112, 255);
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSimpleGradient(new Color32(7, 141, 112, 255), new Color32(61, 26, 220, 255))
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(7, 141, 112, 255))
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(61, 26, 220, 255))
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(61, 26, 220, 255))
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(61, 26, 220, 255))
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(7, 141, 112, 255))
+                        }
+                    };
                     break;
                 case 28: // Steal (old)
-                    bgColorA = new Color32(50, 50, 50, 255);
-                    bgColorB = new Color32(50, 50, 50, 255);
-                    buttonDefaultA = new Color32(50, 50, 50, 255);
-                    buttonDefaultB = new Color32(50, 50, 50, 255);
-                    buttonClickedA = new Color32(75, 75, 75, 255);
-                    buttonClickedB = new Color32(75, 75, 75, 255);
-                    titleColor = Color.white;
-                    textColor = Color.white;
-                    textClicked = Color.white;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSolidGradient(new Color32(50, 50, 50, 255))
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(50, 50, 50, 255))
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(75, 75, 75, 255))
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+                    };
                     break;
                 case 29: // Silence
-                    bgColorA = Color.black;
-                    bgColorB = new Color32(80, 0, 80, 255);
-                    buttonDefaultA = Color.black;
-                    buttonDefaultB = Color.black;
-                    buttonClickedA = Color.black;
-                    buttonClickedB = Color.black;
-                    titleColor = Color.white;
-                    textColor = Color.white;
-                    textClicked = Color.green;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSimpleGradient(Color.black, new Color32(80, 0, 80, 255))
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.green)
+                        }
+                    };
                     break;
                 case 30: // Transparent
-                    bgColorA = Color.black;
-                    bgColorB = Color.black;
-                    buttonDefaultA = Color.white;
-                    buttonDefaultB = Color.white;
-                    buttonClickedA = Color.green;
-                    buttonClickedB = Color.green;
-                    titleColor = Color.white;
-                    textColor = Color.white;
-                    textClicked = Color.green;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSolidGradient(Color.black)
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.green)
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.green)
+                        }
+                    };
                     break;
                 case 31: // King
-                    bgColorA = new Color32(100, 60, 170, 255);
-                    bgColorB = new Color32(100, 60, 170, 255);
-                    buttonDefaultA = new Color32(150, 100, 240, 255);
-                    buttonDefaultB = new Color32(150, 100, 240, 255);
-                    buttonClickedA = new Color32(150, 100, 240, 255);
-                    buttonClickedB = new Color32(150, 100, 240, 255);
-                    titleColor = Color.white;
-                    textColor = Color.white;
-                    textClicked = Color.cyan;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSolidGradient(new Color32(100, 60, 170, 255))
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(150, 100, 240, 255))
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(150, 100, 240, 255))
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.cyan)
+                        }
+                    };
                     break;
                 case 32: // Scoreboard
-                    bgColorA = new Color32(0, 59, 4, 255);
-                    bgColorB = new Color32(0, 59, 4, 255);
-                    buttonDefaultA = new Color32(192, 190, 171, 255);
-                    buttonDefaultB = new Color32(192, 190, 171, 255);
-                    buttonClickedA = Color.red;
-                    buttonClickedB = Color.red;
-                    titleColor = Color.white;
-                    textColor = Color.black;
-                    textClicked = Color.black;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSolidGradient(new Color32(0, 59, 4, 255))
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(192, 190, 171, 255))
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.red)
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        }
+                    };
                     break;
                 case 33: // Scoreboard (banned)
-                    bgColorA = new Color32(225, 73, 43, 255);
-                    bgColorB = new Color32(225, 73, 43, 255);
-                    buttonDefaultA = new Color32(192, 190, 171, 255);
-                    buttonDefaultB = new Color32(192, 190, 171, 255);
-                    buttonClickedA = Color.red;
-                    buttonClickedB = Color.red;
-                    titleColor = Color.white;
-                    textColor = Color.black;
-                    textClicked = Color.black;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSolidGradient(new Color32(225, 73, 43, 255))
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(192, 190, 171, 255))
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.red)
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        }
+                    };
                     break;
                 case 34: // Rift
-                    bgColorA = new Color32(25, 25, 25, 255);
-                    bgColorB = new Color32(25, 25, 25, 255);
-                    buttonDefaultA = new Color32(40, 40, 40, 255);
-                    buttonDefaultB = new Color32(40, 40, 40, 255);
-                    buttonClickedA = new Color32(167, 66, 191, 255);
-                    buttonClickedB = new Color32(167, 66, 191, 255);
-                    titleColor = new Color32(144, 144, 144, 255);
-                    textColor = new Color32(144, 144, 144, 255);
-                    textClicked = Color.white;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSolidGradient(new Color32(25, 25, 25, 255))
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(40, 40, 40, 255))
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(167, 66, 191, 255))
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(144, 144, 144, 255))
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(144, 144, 144, 255))
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+                    };
                     break;
                 case 35: // Blurple Dark
-                    bgColorA = new Color32(26, 26, 61, 255);
-                    bgColorB = new Color32(26, 26, 61, 255);
-                    buttonDefaultA = new Color32(26, 26, 61, 255);
-                    buttonDefaultB = new Color32(26, 26, 61, 255);
-                    buttonClickedA = new Color32(43, 17, 84, 255);
-                    buttonClickedB = new Color32(43, 17, 84, 255);
-                    titleColor = Color.white;
-                    textColor = Color.white;
-                    textClicked = Color.white;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSolidGradient(new Color32(26, 26, 61, 255))
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(26, 26, 61, 255))
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(43, 17, 84, 255))
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+                    };
                     break;
                 case 36: // ShibaGT Gold
-                    bgColorA = Color.black;
-                    bgColorB = Color.gray;
-                    buttonDefaultA = Color.yellow;
-                    buttonDefaultB = Color.yellow;
-                    buttonClickedA = Color.magenta;
-                    buttonClickedB = Color.magenta;
-                    titleColor = Color.white;
-                    textColor = Color.black;
-                    textClicked = Color.black;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSimpleGradient(Color.black, Color.gray)
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.yellow)
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.magenta)
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        }
+                    };
                     break;
                 case 37: // ShibaGT Genesis
-                    bgColorA = Color.black;
-                    bgColorB = Color.black;
-                    buttonDefaultA = new Color32(32, 32, 32, 255);
-                    buttonDefaultB = new Color32(32, 32, 32, 255);
-                    buttonClickedA = new Color32(32, 32, 32, 255);
-                    buttonClickedB = new Color32(32, 32, 32, 255);
-                    titleColor = Color.white;
-                    textColor = Color.black;
-                    textClicked = Color.white;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSolidGradient(Color.black)
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(32, 32, 32, 255))
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(32, 32, 32, 255))
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+                    };
                     break;
                 case 38: // wyvern
-                    bgColorA = new Color32(199, 115, 173, 255);
-                    bgColorB = new Color32(165, 233, 185, 255);
-                    buttonDefaultA = new Color32(99, 58, 86, 255);
-                    buttonDefaultB = new Color32(83, 116, 92, 255);
-                    buttonClickedA = new Color32(99, 58, 86, 255);
-                    buttonClickedB = new Color32(83, 116, 92, 255);
-                    titleColor = Color.white;
-                    textColor = Color.white;
-                    textClicked = Color.green;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSimpleGradient(new Color32(199, 115, 173, 255), new Color32(165, 233, 185, 255))
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSimpleGradient(new Color32(99, 58, 86, 255), new Color32(83, 116, 92, 255))
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSimpleGradient(new Color32(99, 58, 86, 255), new Color32(83, 116, 92, 255))
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.green)
+                        }
+                    };
                     break;
                 case 39: // Steal (new)
-                    bgColorA = new Color32(27, 27, 27, 255);
-                    bgColorB = new Color32(27, 27, 27, 255);
-                    buttonDefaultA = new Color32(50, 50, 50, 255);
-                    buttonDefaultB = new Color32(50, 50, 50, 255);
-                    buttonClickedA = new Color32(66, 66, 66, 255);
-                    buttonClickedB = new Color32(66, 66, 66, 255);
-                    titleColor = Color.white;
-                    textColor = Color.white;
-                    textClicked = Color.white;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSolidGradient(new Color32(27, 27, 27, 255))
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(50, 50, 50, 255))
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(66, 66, 66, 255))
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+                    };
                     break;
                 case 40: // USA Menu (lol)
-                    bgColorA = Color.black;
-                    bgColorB = new Color32(100, 25, 125, 255);
-                    buttonDefaultA = new Color32(25, 25, 25, 255);
-                    buttonDefaultB = new Color32(25, 25, 25, 255);
-                    buttonClickedA = Color.green;
-                    buttonClickedB = Color.green;
-                    titleColor = Color.white;
-                    textColor = Color.white;
-                    textClicked = Color.white;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSimpleGradient(Color.black, new Color32(100, 25, 125, 255))
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(25, 25, 25, 255))
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.green)
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+                    };
                     break;
                 case 41: // Watch
-                    bgColorA = new Color32(27, 27, 27, 255);
-                    bgColorB = new Color32(27, 27, 27, 255);
-                    buttonDefaultA = Color.red;
-                    buttonDefaultB = Color.red;
-                    buttonClickedA = Color.green;
-                    buttonClickedB = Color.green;
-                    titleColor = Color.white;
-                    textColor = Color.white;
-                    textClicked = Color.white;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSolidGradient(new Color32(27, 27, 27, 255))
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.red)
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.green)
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+                    };
                     break;
                 case 42: // AZ Menu
-                    bgColorA = Color.black;
-                    bgColorB = new Color32(100, 0, 0, 255);
-                    buttonDefaultA = Color.black;
-                    buttonDefaultB = Color.black;
-                    buttonClickedA = new Color32(100, 0, 0, 255);
-                    buttonClickedB = new Color32(100, 0, 0, 255);
-                    titleColor = Color.white;
-                    textColor = Color.white;
-                    textClicked = Color.white;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSimpleGradient(Color.black, new Color32(100, 0, 0, 255))
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(100, 0, 0, 255))
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+                    };
                     break;
                 case 43: // ImGUI
-                    bgColorA = new Color32(21, 22, 23, 255);
-                    bgColorB = new Color32(21, 22, 23, 255);
-                    buttonDefaultA = new Color32(32, 50, 77, 255);
-                    buttonDefaultB = new Color32(32, 50, 77, 255);
-                    buttonClickedA = new Color32(60, 127, 206, 255);
-                    buttonClickedB = new Color32(60, 127, 206, 255);
-                    titleColor = Color.white;
-                    textColor = Color.white;
-                    textClicked = Color.white;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSolidGradient(new Color32(21, 22, 23, 255))
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(32, 50, 77, 255))
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(60, 127, 206, 255))
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+                    };
                     break;
                 case 44: // Clean Dark
-                    bgColorA = Color.black;
-                    bgColorB = Color.black;
-                    buttonDefaultA = Color.black;
-                    buttonDefaultB = Color.black;
-                    buttonClickedA = new Color32(10, 10, 10, 255);
-                    buttonClickedB = new Color32(10, 10, 10, 255);
-                    titleColor = Color.white;
-                    textColor = Color.white;
-                    textClicked = Color.white;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSolidGradient(Color.black)
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(10, 10, 10, 255))
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+                    };
                     break;
                 case 45: // Discord Light Mode (lmfao)
-                    bgColorA = Color.white;
-                    bgColorB = Color.white;
-                    buttonDefaultA = Color.white;
-                    buttonDefaultB = Color.white;
-                    buttonClickedA = new Color32(245, 245, 245, 255);
-                    buttonClickedB = new Color32(245, 245, 245, 255);
-                    titleColor = Color.black;
-                    textColor = Color.black;
-                    textClicked = Color.black;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSolidGradient(Color.white)
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(245, 245, 245, 255))
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        }
+                    };
                     break;
                 case 46: // The Hub
-                    bgColorA = Color.black;
-                    bgColorB = Color.black;
-                    buttonDefaultA = new Color32(255, 163, 26, 255);
-                    buttonDefaultB = new Color32(255, 163, 26, 255);
-                    buttonClickedA = Color.black;
-                    buttonClickedB = Color.black;
-                    titleColor = Color.white;
-                    textColor = Color.black;
-                    textClicked = Color.white;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSolidGradient(Color.black)
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(255, 163, 26, 255))
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+                    };
                     break;
                 case 47: // EPILEPTIC
-                    bgColorA = Color.black;
-                    bgColorB = Color.black;
-                    buttonDefaultA = Color.black;
-                    buttonDefaultB = Color.black;
-                    buttonClickedA = Color.black;
-                    buttonClickedB = Color.black;
-                    titleColor = Color.white;
-                    textColor = Color.white;
-                    textClicked = Color.white;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSolidGradient(Color.black),
+                        epileptic = true
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black),
+                            epileptic = true
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+                    };
                     break;
                 case 48: // Discord Blurple
-                    bgColorA = new Color32(111, 143, 255, 255);
-                    bgColorB = new Color32(163, 184, 255, 255);
-                    buttonDefaultA = new Color32(96, 125, 219, 255);
-                    buttonDefaultB = new Color32(96, 125, 219, 255);
-                    buttonClickedA = new Color32(147, 167, 226, 255);
-                    buttonClickedB = new Color32(147, 167, 226, 255);
-                    titleColor = new Color32(33, 33, 101, 255);
-                    textColor = new Color32(33, 33, 101, 255);
-                    textClicked = new Color32(33, 33, 101, 255);
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSimpleGradient(new Color32(111, 143, 255, 255), new Color32(163, 184, 255, 255))
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(96, 125, 219, 255))
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(147, 167, 226, 255))
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(33, 33, 101, 255))
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(33, 33, 101, 255))
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(33, 33, 101, 255))
+                        }
+                    };
                     break;
                 case 49: // VS Zero
-                    bgColorA = new Color32(19, 22, 27, 255);
-                    bgColorB = new Color32(19, 22, 27, 255);
-                    buttonDefaultA = new Color32(19, 22, 27, 255);
-                    buttonDefaultB = new Color32(19, 22, 27, 255);
-                    buttonClickedA = new Color32(16, 18, 22, 255);
-                    buttonClickedB = new Color32(16, 18, 22, 255);
-                    titleColor = new Color32(82, 96, 122, 255);
-                    textColor = new Color32(82, 96, 122, 255);
-                    textClicked = new Color32(82, 96, 122, 255);
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSolidGradient(new Color32(19, 22, 27, 255))
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(19, 22, 27, 255))
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(16, 18, 22, 255))
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(82, 96, 122, 255))
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(82, 96, 122, 255))
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(82, 96, 122, 255))
+                        }
+                    };
                     break;
                 case 50: // Weed theme (for v4.2.0) (also 50th theme)
-                    bgColorA = new Color32(0, 136, 16, 255);
-                    bgColorB = new Color32(0, 127, 14, 255);
-                    buttonDefaultA = new Color32(0, 158, 15, 255);
-                    buttonDefaultB = new Color32(0, 158, 15, 255);
-                    buttonClickedA = new Color32(0, 112, 11, 255);
-                    buttonClickedB = new Color32(0, 112, 11, 255);
-                    titleColor = Color.white;
-                    textColor = Color.white;
-                    textClicked = Color.white;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSimpleGradient(new Color32(0, 136, 16, 255), new Color32(0, 127, 14, 255))
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(0, 158, 15, 255))
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(0, 112, 11, 255))
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+                    };
                     break;
                 case 51: // Pastel Rainbow
-                    bgColorA = Color.white;
-                    bgColorB = Color.white;
-                    buttonDefaultA = Color.white;
-                    buttonDefaultB = Color.white;
-                    buttonClickedA = Color.white;
-                    buttonClickedB = Color.white;
-                    titleColor = Color.black;
-                    textColor = Color.black;
-                    textClicked = Color.black;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSolidGradient(Color.white),
+                        pastelRainbow = true
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white),
+                            pastelRainbow = true
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        }
+                    };
                     break;
                 case 52: // Rift Light
-                    bgColorA = new Color32(25, 25, 25, 255);
-                    bgColorB = new Color32(25, 25, 25, 255);
-                    buttonDefaultA = new Color32(40, 40, 40, 255);
-                    buttonDefaultB = new Color32(40, 40, 40, 255);
-                    buttonClickedA = new Color32(165, 137, 255, 255);
-                    buttonClickedB = new Color32(165, 137, 255, 255);
-                    titleColor = new Color32(144, 144, 144, 255);
-                    textColor = new Color32(144, 144, 144, 255);
-                    textClicked = Color.white;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSolidGradient(new Color32(25, 25, 25, 255))
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(40, 40, 40, 255))
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(165, 137, 255, 255))
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(144, 144, 144, 255))
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(144, 144, 144, 255))
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+                    };
                     break;
                 case 53: // Rose (Solace)
-                    bgColorA = new Color32(176, 12, 64, 255);
-                    bgColorB = new Color32(176, 12, 64, 255);
-                    buttonDefaultA = new Color32(140, 10, 51, 255);
-                    buttonDefaultB = new Color32(140, 10, 51, 255);
-                    buttonClickedA = new Color32(250, 2, 81, 255);
-                    buttonClickedB = new Color32(250, 2, 81, 255);
-                    titleColor = Color.white;
-                    textColor = Color.white;
-                    textClicked = Color.white;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSolidGradient(new Color32(176, 12, 64, 255))
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(140, 10, 51, 255))
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(250, 2, 81, 255))
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+                    };
                     break;
                 case 54: // Tenacity (Solace)
-                    bgColorA = new Color32(124, 25, 194, 255);
-                    bgColorB = new Color32(124, 25, 194, 255);
-                    buttonDefaultA = new Color32(88, 9, 145, 255);
-                    buttonDefaultB = new Color32(88, 9, 145, 255);
-                    buttonClickedA = new Color32(136, 9, 227, 255);
-                    buttonClickedB = new Color32(136, 9, 227, 255);
-                    titleColor = Color.white;
-                    textColor = Color.white;
-                    textClicked = Color.white;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSolidGradient(new Color32(124, 25, 194, 255))
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(88, 9, 145, 255))
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(136, 9, 227, 255))
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+                    };
                     break;
                 case 55: // e621 (for version 6.2.1)
-                    bgColorA = new Color32(1, 73, 149, 255);
-                    bgColorB = new Color32(1, 73, 149, 255);
-                    buttonDefaultA = new Color32(1, 46, 87, 255);
-                    buttonDefaultB = new Color32(1, 46, 87, 255);
-                    buttonClickedA = new Color32(0, 37, 74, 255);
-                    buttonClickedB = new Color32(0, 37, 74, 255);
-                    titleColor = new Color32(252, 179, 40, 255);
-                    textColor = Color.white;
-                    textClicked = Color.white;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSolidGradient(new Color32(1, 73, 149, 255))
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(1, 46, 87, 255))
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(0, 37, 74, 255))
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(252, 179, 40, 255))
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+                    };
                     break;
                 case 56: // Catppuccin Mocha
-                    bgColorA = new Color32(30, 30, 46, 255);
-                    bgColorB = new Color32(30, 30, 46, 255);
-                    buttonDefaultA = new Color32(88, 91, 112, 255);
-                    buttonDefaultB = new Color32(88, 91, 112, 255);
-                    buttonClickedA = new Color32(49, 50, 68, 255);
-                    buttonClickedB = new Color32(49, 50, 68, 255);
-                    titleColor = new Color32(205, 214, 244, 255);
-                    textColor = new Color32(186, 194, 222, 255);
-                    textClicked = new Color32(166, 173, 200, 255);
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSolidGradient(new Color32(30, 30, 46, 255))
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(88, 91, 112, 255))
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(49, 50, 68, 255))
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(205, 214, 244, 255))
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(186, 194, 222, 255))
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(166, 173, 200, 255))
+                        }
+                    };
                     break;
                 case 57: // Rexon
-                    bgColorA = new Color32(45, 25, 75, 255);
-                    bgColorB = new Color32(45, 25, 75, 255);
-                    buttonDefaultA = new Color32(40, 15, 60, 255);
-                    buttonDefaultB = new Color32(40, 15, 60, 255);
-                    buttonClickedA = new Color32(100, 30, 140, 255);
-                    buttonClickedB = new Color32(100, 30, 140, 255);
-                    titleColor = Color.white;
-                    textColor = Color.white;
-                    textClicked = Color.white;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSolidGradient(new Color32(45, 25, 75, 255))
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(40, 15, 60, 255))
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(100, 30, 140, 255))
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+                    };
                     break;
                 case 58: // Tenacity (Minecraft)
-                    bgColorA = new Color32(32, 32, 32, 255);
-                    bgColorB = new Color32(32, 32, 32, 255);
-                    buttonDefaultA = new Color32(45, 46, 51, 255);
-                    buttonDefaultB = new Color32(45, 46, 51, 255);
-                    buttonClickedA = new Color32(231, 133, 209, 255);
-                    buttonClickedB = new Color32(56, 155, 193, 255);
-                    titleColor = Color.white;
-                    textColor = Color.white;
-                    textClicked = Color.white;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSolidGradient(new Color32(32, 32, 32, 255))
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(45, 46, 51, 255))
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSimpleGradient(new Color32(231, 133, 209, 255), new Color32(56, 155, 193, 255))
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+                    };
                     break;
                 case 59: // Mint Blue (Opal v2)
-                    bgColorA = new Color32(32, 32, 32, 255);
-                    bgColorB = new Color32(32, 32, 32, 255);
-                    buttonDefaultA = new Color32(45, 46, 51, 255);
-                    buttonDefaultB = new Color32(45, 46, 51, 255);
-                    buttonClickedA = new Color32(40, 94, 93, 255);
-                    buttonClickedB = new Color32(66, 158, 157, 255);
-                    titleColor = Color.white;
-                    textColor = Color.white;
-                    textClicked = Color.white;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSolidGradient(new Color32(32, 32, 32, 255))
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(45, 46, 51, 255))
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSimpleGradient(new Color32(40, 94, 93, 255), new Color32(66, 158, 157, 255))
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+            };
                     break;
                 case 60: // Pink Blood (Opal v2)
-                    bgColorA = new Color32(32, 32, 32, 255);
-                    bgColorB = new Color32(32, 32, 32, 255);
-                    buttonDefaultA = new Color32(45, 46, 51, 255);
-                    buttonDefaultB = new Color32(45, 46, 51, 255);
-                    buttonClickedA = new Color32(255, 166, 201, 255);
-                    buttonClickedB = new Color32(228, 0, 70, 255);
-                    titleColor = Color.white;
-                    textColor = Color.white;
-                    textClicked = Color.white;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSolidGradient(new Color32(32, 32, 32, 255))
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(45, 46, 51, 255))
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSimpleGradient(new Color32(255, 166, 201, 255), new Color32(228, 0, 70, 255))
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+                    };
                     break;
                 case 61: // Purple Fire (Opal v2)
-                    bgColorA = new Color32(32, 32, 32, 255);
-                    bgColorB = new Color32(32, 32, 32, 255);
-                    buttonDefaultA = new Color32(45, 46, 51, 255);
-                    buttonDefaultB = new Color32(45, 46, 51, 255);
-                    buttonClickedA = new Color32(177, 162, 202, 255);
-                    buttonClickedB = new Color32(104, 71, 141, 255);
-                    titleColor = Color.white;
-                    textColor = Color.white;
-                    textClicked = Color.white;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSolidGradient(new Color32(32, 32, 32, 255))
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(45, 46, 51, 255))
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSimpleGradient(new Color32(177, 162, 202, 255), new Color32(104, 71, 141, 255))
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+                    };
                     break;
                 case 62: // Deep Ocean (Opal v2)
-                    bgColorA = new Color32(32, 32, 32, 255);
-                    bgColorB = new Color32(32, 32, 32, 255);
-                    buttonDefaultA = new Color32(45, 46, 51, 255);
-                    buttonDefaultB = new Color32(45, 46, 51, 255);
-                    buttonClickedA = new Color32(60, 82, 145, 255);
-                    buttonClickedB = new Color32(0, 20, 64, 255);
-                    titleColor = Color.white;
-                    textColor = Color.white;
-                    textClicked = Color.white;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSolidGradient(new Color32(32, 32, 32, 255))
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(new Color32(45, 46, 51, 255))
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSimpleGradient(new Color32(60, 82, 145, 255), new Color32(0, 20, 64, 255))
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        }
+                    };
                     break;
                 case 63: // Bad Apple (thanks random person in vc for idea)
-                    bgColorA = Color.black;
-                    bgColorB = Color.white;
-                    buttonDefaultA = Color.white;
-                    buttonDefaultB = Color.white;
-                    buttonClickedA = Color.black;
-                    buttonClickedB = Color.black;
-                    titleColor = Color.white;
-                    textColor = Color.white;
-                    textClicked = Color.black;
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSimpleGradient(Color.black, Color.white)
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        }
+                    };
+                    break;
+                case 64: // libyyyreal birthday
+                    backgroundColor = new ExtGradient
+                    {
+                        colors = ExtGradient.GetSimpleGradient(new Color32(255, 255, 255, 255), Color.white)
+                    };
+                    buttonColors = new[]
+                    {
+                        new ExtGradient // Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Pressed
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        }
+                    };
+                    textColors = new[]
+                    {
+                        new ExtGradient // Title
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Released
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.white)
+                        },
+                        new ExtGradient // Button Clicked
+                        {
+                            colors = ExtGradient.GetSolidGradient(Color.black)
+                        }
+                    };
                     break;
             }
         }
@@ -1644,7 +2969,7 @@ namespace iiMenu.Mods
             switch (modifyWhatId)
             {
                 case 0:
-                    r = (int)Math.Round(bgColorA.r * 10f);
+                    r = (int)Math.Round(backgroundColor.GetColor(0).r * 10f);
 
                     if (increase)
                         r++;
@@ -1656,13 +2981,13 @@ namespace iiMenu.Mods
                         r = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
-                        bgColorA = new Color(r / 10f, bgColorA.g, bgColorA.b);
+                        backgroundColor.SetColor(0, new Color(r / 10f, backgroundColor.GetColor(0).g, backgroundColor.GetColor(0).b));
 
                     GetIndex("Red").overlapText = "Red <color=grey>[</color><color=green>" + r.ToString() + "</color><color=grey>]</color>";
-                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(bgColorA) + ">Preview</color>";
+                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(backgroundColor.GetColor(0)) + ">Preview</color>";
                     break;
                 case 1:
-                    r = (int)Math.Round(bgColorB.r * 10f);
+                    r = (int)Math.Round(backgroundColor.GetColor(1).r * 10f);
 
                     if (increase)
                         r++;
@@ -1674,13 +2999,13 @@ namespace iiMenu.Mods
                         r = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
-                        bgColorB = new Color(r / 10f, bgColorB.g, bgColorB.b);
+                        backgroundColor.SetColor(1, new Color(r / 10f, backgroundColor.GetColor(1).g, backgroundColor.GetColor(1).b));
 
                     GetIndex("Red").overlapText = "Red <color=grey>[</color><color=green>" + r.ToString() + "</color><color=grey>]</color>";
-                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(bgColorB) + ">Preview</color>";
+                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(backgroundColor.GetColor(1)) + ">Preview</color>";
                     break;
                 case 2:
-                    r = (int)Math.Round(buttonDefaultA.r * 10f);
+                    r = (int)Math.Round(buttonColors[0].GetColor(0).r * 10f);
 
                     if (increase)
                         r++;
@@ -1692,13 +3017,13 @@ namespace iiMenu.Mods
                         r = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
-                        buttonDefaultA = new Color(r / 10f, buttonDefaultA.g, buttonDefaultA.b);
+                        buttonColors[0].SetColor(0, new Color(r / 10f, buttonColors[0].GetColor(0).g, buttonColors[0].GetColor(0).b));
 
                     GetIndex("Red").overlapText = "Red <color=grey>[</color><color=green>" + r.ToString() + "</color><color=grey>]</color>";
-                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonDefaultA) + ">Preview</color>";
+                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonColors[0].GetColor(0)) + ">Preview</color>";
                     break;
                 case 3:
-                    r = (int)Math.Round(buttonDefaultB.r * 10f);
+                    r = (int)Math.Round(buttonColors[0].GetColor(1).r * 10f);
 
                     if (increase)
                         r++;
@@ -1710,13 +3035,13 @@ namespace iiMenu.Mods
                         r = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
-                        buttonDefaultB = new Color(r / 10f, buttonDefaultB.g, buttonDefaultB.b);
+                        buttonColors[0].SetColor(1, new Color(r / 10f, buttonColors[0].GetColor(1).g, buttonColors[0].GetColor(1).b));
 
                     GetIndex("Red").overlapText = "Red <color=grey>[</color><color=green>" + r.ToString() + "</color><color=grey>]</color>";
-                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonDefaultB) + ">Preview</color>";
+                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonColors[0].GetColor(1)) + ">Preview</color>";
                     break;
                 case 4:
-                    r = (int)Math.Round(buttonClickedA.r * 10f);
+                    r = (int)Math.Round(buttonColors[1].GetColor(0).r * 10f);
 
                     if (increase)
                         r++;
@@ -1728,13 +3053,13 @@ namespace iiMenu.Mods
                         r = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
-                        buttonClickedA = new Color(r / 10f, buttonClickedA.g, buttonClickedA.b);
+                        buttonColors[1].SetColor(0, new Color(r / 10f, buttonColors[1].GetColor(0).g, buttonColors[1].GetColor(0).b));
 
                     GetIndex("Red").overlapText = "Red <color=grey>[</color><color=green>" + r.ToString() + "</color><color=grey>]</color>";
-                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonClickedA) + ">Preview</color>";
+                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonColors[1].GetColor(0)) + ">Preview</color>";
                     break;
                 case 5:
-                    r = (int)Math.Round(buttonClickedB.r * 10f);
+                    r = (int)Math.Round(buttonColors[1].GetColor(1).r * 10f);
 
                     if (increase)
                         r++;
@@ -1746,13 +3071,13 @@ namespace iiMenu.Mods
                         r = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
-                        buttonClickedB = new Color(r / 10f, buttonClickedB.g, buttonClickedB.b);
+                        buttonColors[1].SetColor(1, new Color(r / 10f, buttonColors[1].GetColor(1).g, buttonColors[1].GetColor(1).b));
 
                     GetIndex("Red").overlapText = "Red <color=grey>[</color><color=green>" + r.ToString() + "</color><color=grey>]</color>";
-                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonClickedB) + ">Preview</color>";
+                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonColors[1].GetColor(1)) + ">Preview</color>";
                     break;
                 case 6:
-                    r = (int)Math.Round(titleColor.r * 10f);
+                    r = (int)Math.Round(textColors[0].GetColor(0).r * 10f);
 
                     if (increase)
                         r++;
@@ -1764,13 +3089,13 @@ namespace iiMenu.Mods
                         r = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
-                        titleColor = new Color(r / 10f, titleColor.g, titleColor.b);
+                        textColors[0].SetColors(new Color(r / 10f, textColors[0].GetColor(0).g, textColors[0].GetColor(0).b));
 
                     GetIndex("Red").overlapText = "Red <color=grey>[</color><color=green>" + r.ToString() + "</color><color=grey>]</color>";
-                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(titleColor) + ">Preview</color>";
+                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(textColors[0].GetColor(0)) + ">Preview</color>";
                     break;
                 case 7:
-                    r = (int)Math.Round(textColor.r * 10f);
+                    r = (int)Math.Round(textColors[1].GetColor(0).r * 10f);
 
                     if (increase)
                         r++;
@@ -1781,13 +3106,13 @@ namespace iiMenu.Mods
                     if (r < 0)
                         r = 10;
 
-                    textColor = new Color(r / 10f, textColor.g, textColor.b);
+                    textColors[1].SetColors(new Color(r / 10f, textColors[1].GetColor(0).g, textColors[1].GetColor(0).b));
 
                     GetIndex("Red").overlapText = "Red <color=grey>[</color><color=green>" + r.ToString() + "</color><color=grey>]</color>";
-                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(textColor) + ">Preview</color>";
+                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(textColors[1].GetColor(0)) + ">Preview</color>";
                     break;
                 case 8:
-                    r = (int)Math.Round(textClicked.r * 10f);
+                    r = (int)Math.Round(textColors[2].GetColor(0).r * 10f);
 
                     if (increase)
                         r++;
@@ -1799,10 +3124,10 @@ namespace iiMenu.Mods
                         r = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
-                        textClicked = new Color(r / 10f, textClicked.g, textClicked.b);
+                        textColors[2].SetColors(new Color(r / 10f, textColors[2].GetColor(0).g, textColors[2].GetColor(0).b));
 
                     GetIndex("Red").overlapText = "Red <color=grey>[</color><color=green>" + r.ToString() + "</color><color=grey>]</color>";
-                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(textClicked) + ">Preview</color>";
+                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(textColors[2].GetColor(0)) + ">Preview</color>";
                     break;
             }
             UpdateWriteCustomTheme();
@@ -1813,7 +3138,7 @@ namespace iiMenu.Mods
             switch (modifyWhatId)
             {
                 case 0:
-                    g = (int)Math.Round(bgColorA.g * 10f);
+                    g = (int)Math.Round(backgroundColor.GetColor(0).g * 10f);
 
                     if (increase)
                         g++;
@@ -1825,13 +3150,13 @@ namespace iiMenu.Mods
                         g = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
-                        bgColorA = new Color(bgColorA.r, g / 10f, bgColorA.b);
+                        backgroundColor.SetColor(0, new Color(backgroundColor.GetColor(0).r, g / 10f, backgroundColor.GetColor(0).b));
 
                     GetIndex("Green").overlapText = "Green <color=grey>[</color><color=green>" + g.ToString() + "</color><color=grey>]</color>";
-                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(bgColorA) + ">Preview</color>";
+                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(backgroundColor.GetColor(0)) + ">Preview</color>";
                     break;
                 case 1:
-                    g = (int)Math.Round(bgColorB.g * 10f);
+                    g = (int)Math.Round(backgroundColor.GetColor(1).g * 10f);
 
                     if (increase)
                         g++;
@@ -1843,13 +3168,13 @@ namespace iiMenu.Mods
                         g = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
-                        bgColorB = new Color(bgColorB.r, g / 10f, bgColorB.b);
+                        backgroundColor.SetColor(1, new Color(backgroundColor.GetColor(1).r, g / 10f, backgroundColor.GetColor(1).b));
 
                     GetIndex("Green").overlapText = "Green <color=grey>[</color><color=green>" + g.ToString() + "</color><color=grey>]</color>";
-                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(bgColorB) + ">Preview</color>";
+                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(backgroundColor.GetColor(1)) + ">Preview</color>";
                     break;
                 case 2:
-                    g = (int)Math.Round(buttonDefaultA.g * 10f);
+                    g = (int)Math.Round(buttonColors[0].GetColor(0).g * 10f);
 
                     if (increase)
                         g++;
@@ -1861,13 +3186,13 @@ namespace iiMenu.Mods
                         g = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
-                        buttonDefaultA = new Color(buttonDefaultA.r, g / 10f, buttonDefaultA.b);
+                        buttonColors[0].SetColor(0, new Color(buttonColors[0].GetColor(0).r, g / 10f, buttonColors[0].GetColor(0).b));
 
                     GetIndex("Green").overlapText = "Green <color=grey>[</color><color=green>" + g.ToString() + "</color><color=grey>]</color>";
-                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonDefaultA) + ">Preview</color>";
+                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonColors[0].GetColor(0)) + ">Preview</color>";
                     break;
                 case 3:
-                    g = (int)Math.Round(buttonDefaultB.g * 10f);
+                    g = (int)Math.Round(buttonColors[0].GetColor(1).g * 10f);
 
                     if (increase)
                         g++;
@@ -1879,13 +3204,13 @@ namespace iiMenu.Mods
                         g = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
-                        buttonDefaultB = new Color(buttonDefaultB.r, g / 10f, buttonDefaultB.b);
+                        buttonColors[0].SetColor(1, new Color(buttonColors[0].GetColor(1).r, g / 10f, buttonColors[0].GetColor(1).b));
 
                     GetIndex("Green").overlapText = "Green <color=grey>[</color><color=green>" + g.ToString() + "</color><color=grey>]</color>";
-                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonDefaultB) + ">Preview</color>";
+                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonColors[0].GetColor(1)) + ">Preview</color>";
                     break;
                 case 4:
-                    g = (int)Math.Round(buttonClickedA.g * 10f);
+                    g = (int)Math.Round(buttonColors[1].GetColor(0).g * 10f);
 
                     if (increase)
                         g++;
@@ -1897,13 +3222,13 @@ namespace iiMenu.Mods
                         g = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
-                        buttonClickedA = new Color(buttonClickedA.r, g / 10f, buttonClickedA.b);
+                        buttonColors[1].SetColor(0, new Color(buttonColors[1].GetColor(0).r, g / 10f, buttonColors[1].GetColor(0).b));
 
                     GetIndex("Green").overlapText = "Green <color=grey>[</color><color=green>" + g.ToString() + "</color><color=grey>]</color>";
-                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonClickedA) + ">Preview</color>";
+                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonColors[1].GetColor(0)) + ">Preview</color>";
                     break;
                 case 5:
-                    g = (int)Math.Round(buttonClickedB.g * 10f);
+                    g = (int)Math.Round(buttonColors[1].GetColor(1).g * 10f);
 
                     if (increase)
                         g++;
@@ -1915,13 +3240,13 @@ namespace iiMenu.Mods
                         g = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
-                        buttonClickedB = new Color(buttonClickedB.r, g / 10f, buttonClickedB.b);
+                        buttonColors[1].SetColor(1, new Color(buttonColors[1].GetColor(1).r, g / 10f, buttonColors[1].GetColor(1).b));
 
                     GetIndex("Green").overlapText = "Green <color=grey>[</color><color=green>" + g.ToString() + "</color><color=grey>]</color>";
-                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonClickedB) + ">Preview</color>";
+                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonColors[1].GetColor(1)) + ">Preview</color>";
                     break;
                 case 6:
-                    g = (int)Math.Round(titleColor.g * 10f);
+                    g = (int)Math.Round(textColors[0].GetColor(0).g * 10f);
 
                     if (increase)
                         g++;
@@ -1933,13 +3258,13 @@ namespace iiMenu.Mods
                         g = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
-                        titleColor = new Color(titleColor.r, g / 10f, titleColor.b);
+                        textColors[0].SetColors(new Color(textColors[0].GetColor(0).r, g / 10f, textColors[0].GetColor(0).b));
 
                     GetIndex("Green").overlapText = "Green <color=grey>[</color><color=green>" + g.ToString() + "</color><color=grey>]</color>";
-                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(titleColor) + ">Preview</color>";
+                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(textColors[0].GetColor(0)) + ">Preview</color>";
                     break;
                 case 7:
-                    g = (int)Math.Round(textColor.g * 10f);
+                    g = (int)Math.Round(textColors[1].GetColor(0).g * 10f);
 
                     if (increase)
                         g++;
@@ -1951,13 +3276,13 @@ namespace iiMenu.Mods
                         g = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
-                        textColor = new Color(textColor.r, g / 10f, textColor.b);
+                        textColors[1].SetColors(new Color(textColors[1].GetColor(0).r, g / 10f, textColors[1].GetColor(0).b));
 
                     GetIndex("Green").overlapText = "Green <color=grey>[</color><color=green>" + g.ToString() + "</color><color=grey>]</color>";
-                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(textColor) + ">Preview</color>";
+                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(textColors[1].GetColor(0)) + ">Preview</color>";
                     break;
                 case 8:
-                    g = (int)Math.Round(textClicked.g * 10f);
+                    g = (int)Math.Round(textColors[2].GetColor(0).g * 10f);
 
                     if (increase)
                         g++;
@@ -1969,10 +3294,10 @@ namespace iiMenu.Mods
                         g = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
-                        textClicked = new Color(textClicked.r, g / 10f, textClicked.b);
+                        textColors[2].SetColors(new Color(textColors[2].GetColor(0).r, g / 10f, textColors[2].GetColor(0).b));
 
                     GetIndex("Green").overlapText = "Green <color=grey>[</color><color=green>" + g.ToString() + "</color><color=grey>]</color>";
-                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(textClicked) + ">Preview</color>";
+                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(textColors[2].GetColor(0)) + ">Preview</color>";
                     break;
             }
             UpdateWriteCustomTheme();
@@ -1983,7 +3308,7 @@ namespace iiMenu.Mods
             switch (modifyWhatId)
             {
                 case 0:
-                    b = (int)Math.Round(bgColorA.b * 10f);
+                    b = (int)Math.Round(backgroundColor.GetColor(0).b * 10f);
 
                     if (increase)
                         b++;
@@ -1995,13 +3320,13 @@ namespace iiMenu.Mods
                         b = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
-                        bgColorA = new Color(bgColorA.r, bgColorA.g, b / 10f);
+                        backgroundColor.SetColor(0, new Color(backgroundColor.GetColor(0).r, backgroundColor.GetColor(0).g, b / 10f));
 
                     GetIndex("Blue").overlapText = "Blue <color=grey>[</color><color=green>" + b.ToString() + "</color><color=grey>]</color>";
-                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(bgColorA) + ">Preview</color>";
+                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(backgroundColor.GetColor(0)) + ">Preview</color>";
                     break;
                 case 1:
-                    b = (int)Math.Round(bgColorB.b * 10f);
+                    b = (int)Math.Round(backgroundColor.GetColor(1).b * 10f);
 
                     if (increase)
                         b++;
@@ -2013,13 +3338,13 @@ namespace iiMenu.Mods
                         b = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
-                        bgColorB = new Color(bgColorB.r, bgColorB.g, b / 10f);
+                        backgroundColor.SetColor(1, new Color(backgroundColor.GetColor(1).r, backgroundColor.GetColor(1).g, b / 10f));
 
                     GetIndex("Blue").overlapText = "Blue <color=grey>[</color><color=green>" + b.ToString() + "</color><color=grey>]</color>";
-                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(bgColorB) + ">Preview</color>";
+                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(backgroundColor.GetColor(1)) + ">Preview</color>";
                     break;
                 case 2:
-                    b = (int)Math.Round(buttonDefaultA.b * 10f);
+                    b = (int)Math.Round(buttonColors[0].GetColor(0).b * 10f);
 
                     if (increase)
                         b++;
@@ -2031,13 +3356,13 @@ namespace iiMenu.Mods
                         b = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
-                        buttonDefaultA = new Color(buttonDefaultA.r, buttonDefaultA.g, b / 10f);
+                        buttonColors[0].SetColor(0, new Color(buttonColors[0].GetColor(0).r, buttonColors[0].GetColor(0).g, b / 10f));
 
                     GetIndex("Blue").overlapText = "Blue <color=grey>[</color><color=green>" + b.ToString() + "</color><color=grey>]</color>";
-                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonDefaultA) + ">Preview</color>";
+                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonColors[0].GetColor(0)) + ">Preview</color>";
                     break;
                 case 3:
-                    b = (int)Math.Round(buttonDefaultB.b * 10f);
+                    b = (int)Math.Round(buttonColors[0].GetColor(1).b * 10f);
 
                     if (increase)
                         b++;
@@ -2049,13 +3374,13 @@ namespace iiMenu.Mods
                         b = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
-                        buttonDefaultB = new Color(buttonDefaultB.r, buttonDefaultB.g, b / 10f);
+                        buttonColors[0].SetColor(1, new Color(buttonColors[0].GetColor(1).r, buttonColors[0].GetColor(1).g, b / 10f));
 
                     GetIndex("Blue").overlapText = "Blue <color=grey>[</color><color=green>" + b.ToString() + "</color><color=grey>]</color>";
-                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonDefaultB) + ">Preview</color>";
+                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonColors[0].GetColor(1)) + ">Preview</color>";
                     break;
                 case 4:
-                    b = (int)Math.Round(buttonClickedA.b * 10f);
+                    b = (int)Math.Round(buttonColors[1].GetColor(0).b * 10f);
 
                     if (increase)
                         b++;
@@ -2067,13 +3392,13 @@ namespace iiMenu.Mods
                         b = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
-                        buttonClickedA = new Color(buttonClickedA.r, buttonClickedA.g, b / 10f);
+                        buttonColors[1].SetColor(0, new Color(buttonColors[1].GetColor(0).r, buttonColors[1].GetColor(0).g, b / 10f));
 
                     GetIndex("Blue").overlapText = "Blue <color=grey>[</color><color=green>" + b.ToString() + "</color><color=grey>]</color>";
-                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonClickedA) + ">Preview</color>";
+                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonColors[1].GetColor(0)) + ">Preview</color>";
                     break;
                 case 5:
-                    b = (int)Math.Round(buttonClickedB.b * 10f);
+                    b = (int)Math.Round(buttonColors[1].GetColor(1).b * 10f);
 
                     if (increase)
                         b++;
@@ -2085,13 +3410,13 @@ namespace iiMenu.Mods
                         b = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
-                        buttonClickedB = new Color(buttonClickedB.r, buttonClickedB.g, b / 10f);
+                        buttonColors[1].SetColor(1, new Color(buttonColors[1].GetColor(1).r, buttonColors[1].GetColor(1).g, b / 10f));
 
                     GetIndex("Blue").overlapText = "Blue <color=grey>[</color><color=green>" + b.ToString() + "</color><color=grey>]</color>";
-                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonClickedB) + ">Preview</color>";
+                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(buttonColors[1].GetColor(1)) + ">Preview</color>";
                     break;
                 case 6:
-                    b = (int)Math.Round(titleColor.b * 10f);
+                    b = (int)Math.Round(textColors[0].GetColor(0).b * 10f);
 
                     if (increase)
                         b++;
@@ -2103,13 +3428,13 @@ namespace iiMenu.Mods
                         b = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
-                        titleColor = new Color(titleColor.r, titleColor.g, b / 10f);
+                        textColors[0].SetColors(new Color(textColors[0].GetColor(0).r, textColors[0].GetColor(0).g, b / 10f));
 
                     GetIndex("Blue").overlapText = "Blue <color=grey>[</color><color=green>" + b.ToString() + "</color><color=grey>]</color>";
-                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(titleColor) + ">Preview</color>";
+                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(textColors[0].GetColor(0)) + ">Preview</color>";
                     break;
                 case 7:
-                    b = (int)Math.Round(textColor.b * 10f);
+                    b = (int)Math.Round(textColors[1].GetColor(0).b * 10f);
 
                     if (increase)
                         b++;
@@ -2121,13 +3446,13 @@ namespace iiMenu.Mods
                         b = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
-                        textColor = new Color(textColor.r, textColor.g, b / 10f);
+                        textColors[1].SetColors(new Color(textColors[1].GetColor(0).r, textColors[1].GetColor(0).g, b / 10f));
 
                     GetIndex("Blue").overlapText = "Blue <color=grey>[</color><color=green>" + b.ToString() + "</color><color=grey>]</color>";
-                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(textColor) + ">Preview</color>";
+                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(textColors[1].GetColor(0)) + ">Preview</color>";
                     break;
                 case 8:
-                    b = (int)Math.Round(textClicked.b * 10f);
+                    b = (int)Math.Round(textColors[2].GetColor(0).b * 10f);
 
                     if (increase)
                         b++;
@@ -2139,10 +3464,10 @@ namespace iiMenu.Mods
                         b = 10;
 
                     if (GetIndex("Custom Menu Theme").enabled)
-                        textClicked = new Color(textClicked.r, textClicked.g, b / 10f);
+                        textColors[2].SetColors(new Color(textColors[2].GetColor(0).r, textColors[2].GetColor(0).g, b / 10f));
 
                     GetIndex("Blue").overlapText = "Blue <color=grey>[</color><color=green>" + b.ToString() + "</color><color=grey>]</color>";
-                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(textClicked) + ">Preview</color>";
+                    GetIndex("PreviewLabel").overlapText = "<color=#" + ColorToHex(textColors[2].GetColor(0)) + ">Preview</color>";
                     break;
             }
             UpdateWriteCustomTheme();
@@ -2196,10 +3521,10 @@ namespace iiMenu.Mods
 
             List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit First Color", method = () => CMTBackground(), isTogglable = false, toolTip = "Returns you back to the background menu." },
-                new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + ((int)Math.Round(bgColorA.r * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTRed(), enableMethod =() => CMTRed(), disableMethod =() => CMTRed(false), incremental = true, isTogglable = false, toolTip = "Change the red of the first color of the background." },
-                new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + ((int)Math.Round(bgColorA.g * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTGreen(), enableMethod =() => CMTGreen(), disableMethod =() => CMTGreen(false), incremental = true, isTogglable = false, toolTip = "Change the green of the first color of the background." },
-                new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>" + ((int)Math.Round(bgColorA.b * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTBlue(), enableMethod =() => CMTBlue(), disableMethod =() => CMTBlue(false), incremental = true, isTogglable = false, toolTip = "Change the blue of the first color of the background." },
-                new ButtonInfo { buttonText = "PreviewLabel", overlapText = "<color=#" + ColorToHex(bgColorA) + ">Preview</color>", label = true },
+                new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + ((int)Math.Round(backgroundColor.GetColor(0).r * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTRed(), enableMethod =() => CMTRed(), disableMethod =() => CMTRed(false), incremental = true, isTogglable = false, toolTip = "Change the red of the first color of the background." },
+                new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + ((int)Math.Round(backgroundColor.GetColor(0).g * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTGreen(), enableMethod =() => CMTGreen(), disableMethod =() => CMTGreen(false), incremental = true, isTogglable = false, toolTip = "Change the green of the first color of the background." },
+                new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>" + ((int)Math.Round(backgroundColor.GetColor(0).b * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTBlue(), enableMethod =() => CMTBlue(), disableMethod =() => CMTBlue(false), incremental = true, isTogglable = false, toolTip = "Change the blue of the first color of the background." },
+                new ButtonInfo { buttonText = "PreviewLabel", overlapText = "<color=#" + ColorToHex(backgroundColor.GetColor(0)) + ">Preview</color>", label = true },
             };
 
             Buttons.buttons[29] = literallybuttons.ToArray();
@@ -2211,10 +3536,10 @@ namespace iiMenu.Mods
 
             List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit Second Color", method = () => CMTBackground(), isTogglable = false, toolTip = "Returns you back to the background menu." },
-                new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + ((int)Math.Round(bgColorB.r * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTRed(), enableMethod =() => CMTRed(), disableMethod =() => CMTRed(false), incremental = true, isTogglable = false, toolTip = "Change the red of the second color of the background." },
-                new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + ((int)Math.Round(bgColorB.g * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTGreen(), enableMethod =() => CMTGreen(), disableMethod =() => CMTGreen(false), incremental = true, isTogglable = false, toolTip = "Change the green of the second color of the background." },
-                new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>" + ((int)Math.Round(bgColorB.b * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTBlue(), enableMethod =() => CMTBlue(), disableMethod =() => CMTBlue(false), incremental = true, isTogglable = false, toolTip = "Change the blue of the second color of the background." },
-                new ButtonInfo { buttonText = "PreviewLabel", overlapText = "<color=#" + ColorToHex(bgColorB) + ">Preview</color>", label = true },
+                new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + ((int)Math.Round(backgroundColor.GetColor(1).r * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTRed(), enableMethod =() => CMTRed(), disableMethod =() => CMTRed(false), incremental = true, isTogglable = false, toolTip = "Change the red of the second color of the background." },
+                new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + ((int)Math.Round(backgroundColor.GetColor(1).g * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTGreen(), enableMethod =() => CMTGreen(), disableMethod =() => CMTGreen(false), incremental = true, isTogglable = false, toolTip = "Change the green of the second color of the background." },
+                new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>" + ((int)Math.Round(backgroundColor.GetColor(1).b * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTBlue(), enableMethod =() => CMTBlue(), disableMethod =() => CMTBlue(false), incremental = true, isTogglable = false, toolTip = "Change the blue of the second color of the background." },
+                new ButtonInfo { buttonText = "PreviewLabel", overlapText = "<color=#" + ColorToHex(backgroundColor.GetColor(1)) + ">Preview</color>", label = true },
             };
 
             Buttons.buttons[29] = literallybuttons.ToArray();
@@ -2263,10 +3588,10 @@ namespace iiMenu.Mods
 
             List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit First Color", method = () => CMTButtonEnabled(), isTogglable = false, toolTip = "Returns you back to the enabled button menu." },
-                new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + ((int)Math.Round(buttonClickedA.r * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTRed(), enableMethod =() => CMTRed(), disableMethod =() => CMTRed(false), incremental = true, isTogglable = false, toolTip = "Change the red of the first color of the enabled button color." },
-                new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + ((int)Math.Round(buttonClickedA.g * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTGreen(), enableMethod =() => CMTGreen(), disableMethod =() => CMTGreen(false), incremental = true, isTogglable = false, toolTip = "Change the green of the first color of the enabled button color." },
-                new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>" + ((int)Math.Round(buttonClickedA.b * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTBlue(), enableMethod =() => CMTBlue(), disableMethod =() => CMTBlue(false), incremental = true, isTogglable = false, toolTip = "Change the blue of the first color of the enabled button color." },
-                new ButtonInfo { buttonText = "PreviewLabel", overlapText = "<color=#" + ColorToHex(buttonClickedA) + ">Preview</color>", label = true },
+                new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + ((int)Math.Round(buttonColors[1].GetColor(0).r * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTRed(), enableMethod =() => CMTRed(), disableMethod =() => CMTRed(false), incremental = true, isTogglable = false, toolTip = "Change the red of the first color of the enabled button color." },
+                new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + ((int)Math.Round(buttonColors[1].GetColor(0).g * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTGreen(), enableMethod =() => CMTGreen(), disableMethod =() => CMTGreen(false), incremental = true, isTogglable = false, toolTip = "Change the green of the first color of the enabled button color." },
+                new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>" + ((int)Math.Round(buttonColors[1].GetColor(0).b * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTBlue(), enableMethod =() => CMTBlue(), disableMethod =() => CMTBlue(false), incremental = true, isTogglable = false, toolTip = "Change the blue of the first color of the enabled button color." },
+                new ButtonInfo { buttonText = "PreviewLabel", overlapText = "<color=#" + ColorToHex(buttonColors[1].GetColor(0)) + ">Preview</color>", label = true },
             };
 
             Buttons.buttons[29] = literallybuttons.ToArray();
@@ -2278,10 +3603,10 @@ namespace iiMenu.Mods
 
             List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit Second Color", method = () => CMTButtonEnabled(), isTogglable = false, toolTip = "Returns you back to the enabled button menu." },
-                new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + ((int)Math.Round(buttonClickedB.r * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTRed(), enableMethod =() => CMTRed(), disableMethod =() => CMTRed(false), incremental = true, isTogglable = false, toolTip = "Change the red of the first color of the enabled button color." },
-                new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + ((int)Math.Round(buttonClickedB.g * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTGreen(), enableMethod =() => CMTGreen(), disableMethod =() => CMTGreen(false), incremental = true, isTogglable = false, toolTip = "Change the green of the first color of the enabled button color." },
-                new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>" + ((int)Math.Round(buttonClickedB.b * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTBlue(), enableMethod =() => CMTBlue(), disableMethod =() => CMTBlue(false), incremental = true, isTogglable = false, toolTip = "Change the blue of the first color of the enabled button color." },
-                new ButtonInfo { buttonText = "PreviewLabel", overlapText = "<color=#" + ColorToHex(buttonClickedB) + ">Preview</color>", label = true },
+                new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + ((int)Math.Round(buttonColors[1].GetColor(1).r * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTRed(), enableMethod =() => CMTRed(), disableMethod =() => CMTRed(false), incremental = true, isTogglable = false, toolTip = "Change the red of the first color of the enabled button color." },
+                new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + ((int)Math.Round(buttonColors[1].GetColor(1).g * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTGreen(), enableMethod =() => CMTGreen(), disableMethod =() => CMTGreen(false), incremental = true, isTogglable = false, toolTip = "Change the green of the first color of the enabled button color." },
+                new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>" + ((int)Math.Round(buttonColors[1].GetColor(1).b * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTBlue(), enableMethod =() => CMTBlue(), disableMethod =() => CMTBlue(false), incremental = true, isTogglable = false, toolTip = "Change the blue of the first color of the enabled button color." },
+                new ButtonInfo { buttonText = "PreviewLabel", overlapText = "<color=#" + ColorToHex(buttonColors[1].GetColor(1)) + ">Preview</color>", label = true },
             };
 
             Buttons.buttons[29] = literallybuttons.ToArray();
@@ -2293,10 +3618,10 @@ namespace iiMenu.Mods
 
             List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit First Color", method = () => CMTButtonDisabled(), isTogglable = false, toolTip = "Returns you back to the disabled button menu." },
-                new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + ((int)Math.Round(buttonDefaultA.r * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTRed(), enableMethod =() => CMTRed(), disableMethod =() => CMTRed(false), incremental = true, isTogglable = false, toolTip = "Change the red of the first color of the disabled button color." },
-                new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + ((int)Math.Round(buttonDefaultA.g * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTGreen(), enableMethod =() => CMTGreen(), disableMethod =() => CMTGreen(false), incremental = true, isTogglable = false, toolTip = "Change the green of the first color of the disabled button color." },
-                new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>" + ((int)Math.Round(buttonDefaultA.b * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTBlue(), enableMethod =() => CMTBlue(), disableMethod =() => CMTBlue(false), incremental = true, isTogglable = false, toolTip = "Change the blue of the first color of the disabled button color." },
-                new ButtonInfo { buttonText = "PreviewLabel", overlapText = "<color=#" + ColorToHex(buttonDefaultA) + ">Preview</color>", label = true },
+                new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + ((int)Math.Round(buttonColors[0].GetColor(0).r * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTRed(), enableMethod =() => CMTRed(), disableMethod =() => CMTRed(false), incremental = true, isTogglable = false, toolTip = "Change the red of the first color of the disabled button color." },
+                new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + ((int)Math.Round(buttonColors[0].GetColor(0).g * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTGreen(), enableMethod =() => CMTGreen(), disableMethod =() => CMTGreen(false), incremental = true, isTogglable = false, toolTip = "Change the green of the first color of the disabled button color." },
+                new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>" + ((int)Math.Round(buttonColors[0].GetColor(0).b * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTBlue(), enableMethod =() => CMTBlue(), disableMethod =() => CMTBlue(false), incremental = true, isTogglable = false, toolTip = "Change the blue of the first color of the disabled button color." },
+                new ButtonInfo { buttonText = "PreviewLabel", overlapText = "<color=#" + ColorToHex(buttonColors[0].GetColor(0)) + ">Preview</color>", label = true },
             };
 
             Buttons.buttons[29] = literallybuttons.ToArray();
@@ -2308,10 +3633,10 @@ namespace iiMenu.Mods
 
             List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit Second Color", method = () => CMTButtonDisabled(), isTogglable = false, toolTip = "Returns you back to the disabled button menu." },
-                new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + ((int)Math.Round(buttonDefaultB.r * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTRed(), enableMethod =() => CMTRed(), disableMethod =() => CMTRed(false), incremental = true, isTogglable = false, toolTip = "Change the red of the first color of the disabled button color." },
-                new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + ((int)Math.Round(buttonDefaultB.g * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTGreen(), enableMethod =() => CMTGreen(), disableMethod =() => CMTGreen(false), incremental = true, isTogglable = false, toolTip = "Change the green of the first color of the disabled button color." },
-                new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>" + ((int)Math.Round(buttonDefaultB.b * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTBlue(), enableMethod =() => CMTBlue(), disableMethod =() => CMTBlue(false), incremental = true, isTogglable = false, toolTip = "Change the blue of the first color of the disabled button color." },
-                new ButtonInfo { buttonText = "PreviewLabel", overlapText = "<color=#" + ColorToHex(buttonDefaultB) + ">Preview</color>", label = true },
+                new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + ((int)Math.Round(buttonColors[0].GetColor(1).r * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTRed(), enableMethod =() => CMTRed(), disableMethod =() => CMTRed(false), incremental = true, isTogglable = false, toolTip = "Change the red of the first color of the disabled button color." },
+                new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + ((int)Math.Round(buttonColors[0].GetColor(1).g * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTGreen(), enableMethod =() => CMTGreen(), disableMethod =() => CMTGreen(false), incremental = true, isTogglable = false, toolTip = "Change the green of the first color of the disabled button color." },
+                new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>" + ((int)Math.Round(buttonColors[0].GetColor(1).b * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTBlue(), enableMethod =() => CMTBlue(), disableMethod =() => CMTBlue(false), incremental = true, isTogglable = false, toolTip = "Change the blue of the first color of the disabled button color." },
+                new ButtonInfo { buttonText = "PreviewLabel", overlapText = "<color=#" + ColorToHex(buttonColors[0].GetColor(1)) + ">Preview</color>", label = true },
             };
 
             Buttons.buttons[29] = literallybuttons.ToArray();
@@ -2337,10 +3662,10 @@ namespace iiMenu.Mods
 
             List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit Title", method = () => CMTText(), isTogglable = false, toolTip = "Returns you back to the text menu." },
-                new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + ((int)Math.Round(titleColor.r * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTRed(), enableMethod =() => CMTRed(), disableMethod =() => CMTRed(false), incremental = true, isTogglable = false, toolTip = "Change the red of the title color." },
-                new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + ((int)Math.Round(titleColor.g * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTGreen(), enableMethod =() => CMTGreen(), disableMethod =() => CMTGreen(false), incremental = true, isTogglable = false, toolTip = "Change the green of the title color." },
-                new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>" + ((int)Math.Round(titleColor.b * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTBlue(), enableMethod =() => CMTBlue(), disableMethod =() => CMTBlue(false), incremental = true, isTogglable = false, toolTip = "Change the blue of the title color." },
-                new ButtonInfo { buttonText = "PreviewLabel", overlapText = "<color=#" + ColorToHex(titleColor) + ">Preview</color>", label = true },
+                new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + ((int)Math.Round(textColors[0].GetColor(0).r * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTRed(), enableMethod =() => CMTRed(), disableMethod =() => CMTRed(false), incremental = true, isTogglable = false, toolTip = "Change the red of the title color." },
+                new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + ((int)Math.Round(textColors[0].GetColor(0).g * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTGreen(), enableMethod =() => CMTGreen(), disableMethod =() => CMTGreen(false), incremental = true, isTogglable = false, toolTip = "Change the green of the title color." },
+                new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>" + ((int)Math.Round(textColors[0].GetColor(0).b * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTBlue(), enableMethod =() => CMTBlue(), disableMethod =() => CMTBlue(false), incremental = true, isTogglable = false, toolTip = "Change the blue of the title color." },
+                new ButtonInfo { buttonText = "PreviewLabel", overlapText = "<color=#" + ColorToHex(textColors[0].GetColor(0)) + ">Preview</color>", label = true },
             };
 
             Buttons.buttons[29] = literallybuttons.ToArray();
@@ -2352,10 +3677,10 @@ namespace iiMenu.Mods
 
             List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit Second Color", method = () => CMTText(), isTogglable = false, toolTip = "Returns you back to the text menu." },
-                new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + ((int)Math.Round(textClicked.r * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTRed(), enableMethod =() => CMTRed(), disableMethod =() => CMTRed(false), incremental = true, isTogglable = false, toolTip = "Change the red of the enabled text color." },
-                new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + ((int)Math.Round(textClicked.g * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTGreen(), enableMethod =() => CMTGreen(), disableMethod =() => CMTGreen(false), incremental = true, isTogglable = false, toolTip = "Change the green of the enabled text color." },
-                new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>" + ((int)Math.Round(textClicked.b * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTBlue(), enableMethod =() => CMTBlue(), disableMethod =() => CMTBlue(false), incremental = true, isTogglable = false, toolTip = "Change the blue of the enabled text color." },
-                new ButtonInfo { buttonText = "PreviewLabel", overlapText = "<color=#" + ColorToHex(textClicked) + ">Preview</color>", label = true },
+                new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + ((int)Math.Round(textColors[2].GetColor(0).r * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTRed(), enableMethod =() => CMTRed(), disableMethod =() => CMTRed(false), incremental = true, isTogglable = false, toolTip = "Change the red of the enabled text color." },
+                new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + ((int)Math.Round(textColors[2].GetColor(0).g * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTGreen(), enableMethod =() => CMTGreen(), disableMethod =() => CMTGreen(false), incremental = true, isTogglable = false, toolTip = "Change the green of the enabled text color." },
+                new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>" + ((int)Math.Round(textColors[2].GetColor(0).b * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTBlue(), enableMethod =() => CMTBlue(), disableMethod =() => CMTBlue(false), incremental = true, isTogglable = false, toolTip = "Change the blue of the enabled text color." },
+                new ButtonInfo { buttonText = "PreviewLabel", overlapText = "<color=#" + ColorToHex(textColors[2].GetColor(0)) + ">Preview</color>", label = true },
             };
 
             Buttons.buttons[29] = literallybuttons.ToArray();
@@ -2367,10 +3692,10 @@ namespace iiMenu.Mods
 
             List<ButtonInfo> literallybuttons = new List<ButtonInfo> {
                 new ButtonInfo { buttonText = "Exit Second Color", method = () => CMTText(), isTogglable = false, toolTip = "Returns you back to the text menu." },
-                new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + ((int)Math.Round(textColor.r * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTRed(), enableMethod =() => CMTRed(), disableMethod =() => CMTRed(false), incremental = true, isTogglable = false, toolTip = "Change the red of the disabled text color." },
-                new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + ((int)Math.Round(textColor.g * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTGreen(), enableMethod =() => CMTGreen(), disableMethod =() => CMTGreen(false), incremental = true, isTogglable = false, toolTip = "Change the green of the disabled text color." },
-                new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>" + ((int)Math.Round(textColor.b * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTBlue(), enableMethod =() => CMTBlue(), disableMethod =() => CMTBlue(false), incremental = true, isTogglable = false, toolTip = "Change the blue of the disabled text color." },
-                new ButtonInfo { buttonText = "PreviewLabel", overlapText = "<color=#" + ColorToHex(textColor) + ">Preview</color>", label = true },
+                new ButtonInfo { buttonText = "Red", overlapText = "Red <color=grey>[</color><color=green>" + ((int)Math.Round(textColors[1].GetColor(0).r * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTRed(), enableMethod =() => CMTRed(), disableMethod =() => CMTRed(false), incremental = true, isTogglable = false, toolTip = "Change the red of the disabled text color." },
+                new ButtonInfo { buttonText = "Green", overlapText = "Green <color=grey>[</color><color=green>" + ((int)Math.Round(textColors[1].GetColor(0).g * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTGreen(), enableMethod =() => CMTGreen(), disableMethod =() => CMTGreen(false), incremental = true, isTogglable = false, toolTip = "Change the green of the disabled text color." },
+                new ButtonInfo { buttonText = "Blue", overlapText = "Blue <color=grey>[</color><color=green>" + ((int)Math.Round(textColors[1].GetColor(0).b * 10f)).ToString() + "</color><color=grey>]</color>", method =() => CMTBlue(), enableMethod =() => CMTBlue(), disableMethod =() => CMTBlue(false), incremental = true, isTogglable = false, toolTip = "Change the blue of the disabled text color." },
+                new ButtonInfo { buttonText = "PreviewLabel", overlapText = "<color=#" + ColorToHex(textColors[1].GetColor(0)) + ">Preview</color>", label = true },
             };
 
             Buttons.buttons[29] = literallybuttons.ToArray();
@@ -2387,41 +3712,41 @@ namespace iiMenu.Mods
             string[] linesplit = File.ReadAllText($"{PluginInfo.BaseDirectory}/iiMenu_CustomThemeColor.txt").Split("\n");
 
             string[] a = linesplit[0].Split(",");
-            bgColorA = new Color32(byte.Parse(a[0]), byte.Parse(a[1]), byte.Parse(a[2]), 255);
+            backgroundColor.SetColor(0, new Color32(byte.Parse(a[0]), byte.Parse(a[1]), byte.Parse(a[2]), 255));
             a = linesplit[1].Split(",");
-            bgColorB = new Color32(byte.Parse(a[0]), byte.Parse(a[1]), byte.Parse(a[2]), 255);
+            backgroundColor.SetColor(1, new Color32(byte.Parse(a[0]), byte.Parse(a[1]), byte.Parse(a[2]), 255));
 
             a = linesplit[2].Split(",");
-            buttonDefaultA = new Color32(byte.Parse(a[0]), byte.Parse(a[1]), byte.Parse(a[2]), 255);
+            buttonColors[0].SetColor(0, new Color32(byte.Parse(a[0]), byte.Parse(a[1]), byte.Parse(a[2]), 255));
             a = linesplit[3].Split(",");
-            buttonDefaultB = new Color32(byte.Parse(a[0]), byte.Parse(a[1]), byte.Parse(a[2]), 255);
+            buttonColors[0].SetColor(1, new Color32(byte.Parse(a[0]), byte.Parse(a[1]), byte.Parse(a[2]), 255));
 
             a = linesplit[4].Split(",");
-            buttonClickedA = new Color32(byte.Parse(a[0]), byte.Parse(a[1]), byte.Parse(a[2]), 255);
+            buttonColors[1].SetColor(0, new Color32(byte.Parse(a[0]), byte.Parse(a[1]), byte.Parse(a[2]), 255));
             a = linesplit[5].Split(",");
-            buttonClickedB = new Color32(byte.Parse(a[0]), byte.Parse(a[1]), byte.Parse(a[2]), 255);
+            buttonColors[1].SetColor(1, new Color32(byte.Parse(a[0]), byte.Parse(a[1]), byte.Parse(a[2]), 255));
 
             a = linesplit[6].Split(",");
-            titleColor = new Color32(byte.Parse(a[0]), byte.Parse(a[1]), byte.Parse(a[2]), 255);
+            textColors[0].SetColors(new Color32(byte.Parse(a[0]), byte.Parse(a[1]), byte.Parse(a[2]), 255));
             a = linesplit[7].Split(",");
-            textColor = new Color32(byte.Parse(a[0]), byte.Parse(a[1]), byte.Parse(a[2]), 255);
+            textColors[1].SetColors(new Color32(byte.Parse(a[0]), byte.Parse(a[1]), byte.Parse(a[2]), 255));
             a = linesplit[8].Split(",");
-            textClicked = new Color32(byte.Parse(a[0]), byte.Parse(a[1]), byte.Parse(a[2]), 255);
+            textColors[2].SetColors(new Color32(byte.Parse(a[0]), byte.Parse(a[1]), byte.Parse(a[2]), 255));
         }
 
         public static void UpdateWriteCustomTheme()
         {
             Color[] clrs = new Color[]
             {
-                bgColorA,
-                bgColorB,
-                buttonDefaultA,
-                buttonDefaultB,
-                buttonClickedA,
-                buttonClickedB,
-                titleColor,
-                textColor,
-                textClicked
+                backgroundColor.GetColor(0),
+                backgroundColor.GetColor(1),
+                buttonColors[0].GetColor(0),
+                buttonColors[0].GetColor(1),
+                buttonColors[1].GetColor(0),
+                buttonColors[1].GetColor(1),
+                textColors[0].GetColor(0),
+                textColors[1].GetColor(1),
+                textColors[2].GetColor(2)
             };
 
             string output = "";

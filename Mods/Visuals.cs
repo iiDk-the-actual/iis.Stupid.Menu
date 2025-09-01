@@ -118,7 +118,7 @@ namespace iiMenu.Mods
             if (infoWatchClip) watchText += "Clip: " + (GUIUtility.systemCopyBuffer.Length > 20 ? GUIUtility.systemCopyBuffer[..20] : GUIUtility.systemCopyBuffer) + "\n";
 
             watchText += "</color>";
-            watchTextComponent.color = titleColor;
+            watchTextComponent.color = textColors[0].GetCurrentColor();
             watchTextComponent.text += watchText;
             if (lowercaseMode)
                 watchTextComponent.text = watchTextComponent.text.ToLower();
@@ -264,7 +264,7 @@ namespace iiMenu.Mods
                         gameObject.layer = 19;
 
                     if (fmt)
-                        targetColor = GetBGColor(0f);
+                        targetColor = backgroundColor.GetCurrentColor();
                     if (tt)
                         targetColor = new Color(targetColor.r, targetColor.g, targetColor.b, 0.5f);
 
@@ -540,8 +540,8 @@ namespace iiMenu.Mods
 
         public static void AudioVisualizer()
         {
-            visualizerObject.GetComponent<Renderer>().material.color = GetBGColor(0f);
-            visualizerOutline.GetComponent<Renderer>().material.color = GetBRColor(0f);
+            visualizerObject.GetComponent<Renderer>().material.color = backgroundColor.GetCurrentColor();
+            visualizerOutline.GetComponent<Renderer>().material.color = buttonColors[0].GetCurrentColor();
 
             Physics.Raycast(GorillaTagger.Instance.bodyCollider.transform.position - new Vector3(0f, 0.2f, 0f), Vector3.down, out var Ray, 512f, GTPlayer.Instance.locomotionEnabledLayers);
             visualizerObject.transform.position = Ray.point;
@@ -662,7 +662,7 @@ namespace iiMenu.Mods
                 Color color = GetPlayerColor(rig);
 
                 if (fmt) 
-                    color = GetBGColor(0f);
+                    color = backgroundColor.GetCurrentColor();
                 if (tt) 
                     color = new Color(color.r, color.g, color.b, 0.5f);
 
@@ -746,7 +746,7 @@ namespace iiMenu.Mods
                 {
                     Transform child = triggers.transform.GetChild(i);
                     if (child.gameObject.activeSelf)
-                        VisualizeCube(child.position, child.rotation, child.localScale, GetBGColor(0f));
+                        VisualizeCube(child.position, child.rotation, child.localScale, backgroundColor.GetCurrentColor());
                 } catch { }
             }
         }
@@ -2141,7 +2141,7 @@ namespace iiMenu.Mods
 
                     Color thecolor = vrrig.playerColor;
                     if (fmt) 
-                        thecolor = GetBGColor(0f);
+                        thecolor = backgroundColor.GetCurrentColor();
                     if (tt) 
                         thecolor.a = 0.5f;
                     if (hoc) 
@@ -2240,7 +2240,7 @@ namespace iiMenu.Mods
                     Color thecolor = selfTagged ? vrrig.playerColor : GetPlayerColor(vrrig);
 
                     if (fmt)
-                        thecolor = GetBGColor(0f);
+                        thecolor = backgroundColor.GetCurrentColor();
                     if (tt)
                         thecolor.a = 0.5f;
                     if (hoc)
@@ -2348,7 +2348,7 @@ namespace iiMenu.Mods
                     Color thecolor = owner == target ? GetPlayerColor(vrrig) : (theirTarget == NetworkSystem.Instance.LocalPlayer ? Color.red : Color.clear);
 
                     if (fmt)
-                        thecolor = GetBGColor(0f);
+                        thecolor = backgroundColor.GetCurrentColor();
                     if (tt)
                         thecolor.a = 0.5f;
                     if (hoc)
@@ -2438,7 +2438,7 @@ namespace iiMenu.Mods
                 Color color = GetPlayerColor(rig);
 
                 if (fmt)
-                    color = GetBGColor(0f);
+                    color = backgroundColor.GetCurrentColor();
                 if (tt)
                     color = new Color(color.r, color.g, color.b, 0.5f);
 
@@ -2505,7 +2505,7 @@ namespace iiMenu.Mods
                 Color thecolor = selfTagged ? rig.playerColor : GetPlayerColor(rig);
 
                 if (fmt)
-                    thecolor = GetBGColor(0f);
+                    thecolor = backgroundColor.GetCurrentColor();
                 if (tt)
                     thecolor.a = 0.5f;
                 if (hoc)
@@ -2583,7 +2583,7 @@ namespace iiMenu.Mods
                 Color thecolor = owner == target ? GetPlayerColor(rig) : (theirTarget == NetworkSystem.Instance.LocalPlayer ? Color.red : Color.clear);
 
                 if (fmt)
-                    thecolor = GetBGColor(0f);
+                    thecolor = backgroundColor.GetCurrentColor();
                 if (tt)
                     thecolor.a = 0.5f;
                 if (hoc)
@@ -2746,7 +2746,7 @@ namespace iiMenu.Mods
 
                     vrrig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
                     vrrig.mainSkin.material.color = vrrig.playerColor;
-                    if (GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = GetBGColor(0f); }
+                    if (GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = backgroundColor.GetCurrentColor(); }
                     if (GetIndex("Transparent Theme").enabled) { vrrig.mainSkin.material.color = new Color(vrrig.mainSkin.material.color.r, vrrig.mainSkin.material.color.g, vrrig.mainSkin.material.color.b, 0.5f); }
                 }
             }
@@ -2775,7 +2775,7 @@ namespace iiMenu.Mods
 
                             vrrig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
                             vrrig.mainSkin.material.color = GetPlayerColor(vrrig);
-                            if (GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = GetBGColor(0f); }
+                            if (GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = backgroundColor.GetCurrentColor(); }
                             if (GetIndex("Transparent Theme").enabled) { vrrig.mainSkin.material.color = new Color(vrrig.mainSkin.material.color.r, vrrig.mainSkin.material.color.g, vrrig.mainSkin.material.color.b, 0.5f); }
                         }
                         else
@@ -2796,7 +2796,7 @@ namespace iiMenu.Mods
 
                             vrrig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
                             vrrig.mainSkin.material.color = vrrig.playerColor;
-                            if (GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = GetBGColor(0f); }
+                            if (GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = backgroundColor.GetCurrentColor(); }
                             if (GetIndex("Transparent Theme").enabled) { vrrig.mainSkin.material.color = new Color(vrrig.mainSkin.material.color.r, vrrig.mainSkin.material.color.g, vrrig.mainSkin.material.color.b, 0.5f); }
                         }
                     }
@@ -2834,7 +2834,7 @@ namespace iiMenu.Mods
 
                     vrrig.mainSkin.material.shader = Shader.Find("GUI/Text Shader");
                     vrrig.mainSkin.material.color = vrrig.playerColor;
-                    if (GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = GetBGColor(0f); }
+                    if (GetIndex("Follow Menu Theme").enabled) { vrrig.mainSkin.material.color = backgroundColor.GetCurrentColor(); }
                     if (GetIndex("Transparent Theme").enabled) { vrrig.mainSkin.material.color = new Color(vrrig.mainSkin.material.color.r, vrrig.mainSkin.material.color.g, vrrig.mainSkin.material.color.b, 0.5f); }
                 } 
                 else 
@@ -2906,7 +2906,7 @@ namespace iiMenu.Mods
 
                     Color thecolor = vrrig.playerColor;
                     if (fmt)
-                        thecolor = GetBGColor(0f);
+                        thecolor = backgroundColor.GetCurrentColor();
                     if (tt)
                         thecolor.a = 0.5f;
                     if (hoc)
@@ -2958,7 +2958,7 @@ namespace iiMenu.Mods
 
                     Color thecolor = selfTagged ? vrrig.playerColor : GetPlayerColor(vrrig);
                     if (fmt)
-                        thecolor = GetBGColor(0f);
+                        thecolor = backgroundColor.GetCurrentColor();
                     if (tt)
                         thecolor.a = 0.5f;
                     if (hoc)
@@ -3020,7 +3020,7 @@ namespace iiMenu.Mods
 
                     Color thecolor = owner == target ? GetPlayerColor(vrrig) : (theirTarget == NetworkSystem.Instance.LocalPlayer ? Color.red : Color.clear);
                     if (fmt)
-                        thecolor = GetBGColor(0f);
+                        thecolor = backgroundColor.GetCurrentColor();
                     if (tt)
                         thecolor.a = 0.5f;
                     if (hoc)
@@ -3118,7 +3118,7 @@ namespace iiMenu.Mods
 
                     Color thecolor = vrrig.playerColor;
                     if (fmt)
-                        thecolor = GetBGColor(0f);
+                        thecolor = backgroundColor.GetCurrentColor();
                     if (tt)
                         thecolor.a = 0.5f;
                     if (hoc)
@@ -3206,7 +3206,7 @@ namespace iiMenu.Mods
 
                     Color thecolor = selfTagged ? vrrig.playerColor : GetPlayerColor(vrrig);
                     if (fmt)
-                        thecolor = GetBGColor(0f);
+                        thecolor = backgroundColor.GetCurrentColor();
                     if (tt)
                         thecolor.a = 0.5f;
                     if (hoc)
@@ -3301,7 +3301,7 @@ namespace iiMenu.Mods
 
                     Color thecolor = owner == target ? GetPlayerColor(vrrig) : (theirTarget == NetworkSystem.Instance.LocalPlayer ? Color.red : Color.clear);
                     if (fmt)
-                        thecolor = GetBGColor(0f);
+                        thecolor = backgroundColor.GetCurrentColor();
                     if (tt)
                         thecolor.a = 0.5f;
                     if (hoc)
@@ -3379,7 +3379,7 @@ namespace iiMenu.Mods
                 Color color = GetPlayerColor(rig);
 
                 if (fmt)
-                    color = GetBGColor(0f);
+                    color = backgroundColor.GetCurrentColor();
                 if (tt)
                     color = new Color(color.r, color.g, color.b, 0.5f);
 
@@ -3441,7 +3441,7 @@ namespace iiMenu.Mods
                 Color thecolor = selfTagged ? rig.playerColor : GetPlayerColor(rig);
 
                 if (fmt)
-                    thecolor = GetBGColor(0f);
+                    thecolor = backgroundColor.GetCurrentColor();
                 if (tt)
                     thecolor.a = 0.5f;
                 if (hoc)
@@ -3514,7 +3514,7 @@ namespace iiMenu.Mods
                 Color thecolor = owner == target ? GetPlayerColor(rig) : (theirTarget == NetworkSystem.Instance.LocalPlayer ? Color.red : Color.clear);
 
                 if (fmt)
-                    thecolor = GetBGColor(0f);
+                    thecolor = backgroundColor.GetCurrentColor();
                 if (tt)
                     thecolor.a = 0.5f;
                 if (hoc)
@@ -3580,10 +3580,10 @@ namespace iiMenu.Mods
                 }
             }
 
-            LeftSphere.GetComponent<Renderer>().material.color = bgColorA;
+            LeftSphere.GetComponent<Renderer>().material.color = backgroundColor.GetCurrentColor();
             LeftSphere.transform.localPosition = pointerOffset;
 
-            RightSphere.GetComponent<Renderer>().material.color = bgColorA;
+            RightSphere.GetComponent<Renderer>().material.color = backgroundColor.GetCurrentColor();
             RightSphere.transform.localPosition = pointerOffset;
         }
 
@@ -3610,7 +3610,7 @@ namespace iiMenu.Mods
             bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
             float lineWidth = (GetIndex("Thin Tracers").enabled ? 0.0075f : 0.025f) * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
 
-            Color menuColor = GetBGColor(0f);
+            Color menuColor = backgroundColor.GetCurrentColor();
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
             {
@@ -3764,7 +3764,7 @@ namespace iiMenu.Mods
             bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
             bool thinTracers = GetIndex("Thin Tracers").enabled;
 
-            Color menuColor = GetBGColor(0f);
+            Color menuColor = backgroundColor.GetCurrentColor();
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
             {
@@ -3807,7 +3807,7 @@ namespace iiMenu.Mods
             bool LocalTagged = PlayerIsTagged(VRRig.LocalRig);
             bool NoInfected = InfectedList().Count == 0;
 
-            Color menuColor = GetBGColor(0f);
+            Color menuColor = backgroundColor.GetCurrentColor();
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
             {
@@ -3871,7 +3871,7 @@ namespace iiMenu.Mods
             bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
             bool thinTracers = GetIndex("Thin Tracers").enabled;
 
-            Color menuColor = GetBGColor(0f);
+            Color menuColor = backgroundColor.GetCurrentColor();
 
             NetPlayer currentTarget = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
 
@@ -3935,14 +3935,14 @@ namespace iiMenu.Mods
             bool transparentTheme = GetIndex("Transparent Theme").enabled;
             bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
 
-            Color menuColor = GetBGColor(0f);
+            Color menuColor = backgroundColor.GetCurrentColor();
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
             {
                 if (playerRig.isLocal) // Skip local player
                     continue;
 
-                Color tagColor = followMenuTheme ? titleColor : Color.white;
+                Color tagColor = followMenuTheme ? textColors[0].GetCurrentColor() : Color.white;
                 Color backgroundColor = playerRig.playerColor;
 
                 if (followMenuTheme)
@@ -3997,14 +3997,14 @@ namespace iiMenu.Mods
             bool LocalTagged = PlayerIsTagged(VRRig.LocalRig);
             bool NoInfected = InfectedList().Count == 0;
 
-            Color menuColor = GetBGColor(0f);
+            Color menuColor = backgroundColor.GetCurrentColor();
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
             {
                 if (playerRig.isLocal) //skip local player
                     continue;
 
-                Color tagColor = followMenuTheme ? titleColor : Color.white;
+                Color tagColor = followMenuTheme ? textColors[0].GetCurrentColor() : Color.white;
                 Color backgroundColor = playerRig.playerColor;
 
                 if (!NoInfected)
@@ -4084,11 +4084,11 @@ namespace iiMenu.Mods
             bool transparentTheme = GetIndex("Transparent Theme").enabled;
             bool hiddenOnCamera = GetIndex("Hidden on Camera").enabled;
 
-            Color menuColor = GetBGColor(0f);
+            Color menuColor = backgroundColor.GetCurrentColor();
 
             NetPlayer currentTarget = sillyComputer.GetTargetOf(PhotonNetwork.LocalPlayer);
 
-            // Color bgColor = GetBGColor(0f); //dont need to call this function twice, just use a variable
+            // Color bgColor = backgroundColor.GetCurrentColor(); //dont need to call this function twice, just use a variable
 
             foreach (VRRig playerRig in GorillaParent.instance.vrrigs)
             {
@@ -4097,7 +4097,7 @@ namespace iiMenu.Mods
 
                 if (GetPlayerFromVRRig(playerRig) == currentTarget) // Use ID for quick comparison
                 {
-                    Color tagColor = followMenuTheme ? titleColor : Color.white;
+                    Color tagColor = followMenuTheme ? textColors[0].GetCurrentColor() : Color.white;
                     Color backgroundColor = playerRig.playerColor;
 
                     if (followMenuTheme)
@@ -4137,7 +4137,7 @@ namespace iiMenu.Mods
                 } 
                 else if (sillyComputer.IsTargetOf(GetPlayerFromVRRig(playerRig), PhotonNetwork.LocalPlayer))
                 {
-                    Color tagColor = followMenuTheme ? titleColor : Color.white;
+                    Color tagColor = followMenuTheme ? textColors[0].GetCurrentColor() : Color.white;
                     Color backgroundColor = Color.red;
 
                     if (followMenuTheme)

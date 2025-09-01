@@ -133,17 +133,10 @@ namespace iiMenu.Mods
                 FixStickyColliders(platform);
 
             ColorChanger colorChanger = platform.AddComponent<ColorChanger>();
-            colorChanger.colors = new Gradient
-            {
-                colorKeys = new GradientColorKey[]
-                {
-                    new GradientColorKey(bgColorA, 0f),
-                    new GradientColorKey(bgColorB, 0.5f),
-                    new GradientColorKey(bgColorA, 1f)
-                }
-            };
-            colorChanger.isRainbow = platformMode == 2;
-            colorChanger.isEpileptic = platformMode == 3;
+            colorChanger.colors = backgroundColor;
+
+            colorChanger.colors.rainbow |= platformMode == 2;
+            colorChanger.colors.epileptic |= platformMode == 3;
 
             if (GetIndex("Platform Outlines").enabled)
             {
@@ -155,15 +148,7 @@ namespace iiMenu.Mods
                 gameObject.transform.localScale = new Vector3(0.95f, 1.05f, 1.05f);
 
                 ColorChanger outlineColorChanger = gameObject.AddComponent<ColorChanger>();
-                outlineColorChanger.colors = new Gradient
-                {
-                    colorKeys = new GradientColorKey[]
-                    {
-                        new GradientColorKey(buttonDefaultA, 0f),
-                        new GradientColorKey(buttonDefaultB, 0.5f),
-                        new GradientColorKey(buttonDefaultA, 1f)
-                    }
-                };
+                outlineColorChanger.colors = buttonColors[0];
             }
             return platform;
         }
@@ -338,7 +323,7 @@ namespace iiMenu.Mods
             if (leftGrab)
             {
                 GameObject slipperyPlatform = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                slipperyPlatform.GetComponent<Renderer>().material.color = GetBGColor(0f);
+                slipperyPlatform.GetComponent<Renderer>().material.color = backgroundColor.GetCurrentColor();
                 slipperyPlatform.transform.localScale = new Vector3(0.025f, 0.3f, 0.4f);
                 slipperyPlatform.transform.localPosition = TrueLeftHand().position + (TrueLeftHand().right * 0.05f);
                 slipperyPlatform.transform.rotation = TrueLeftHand().rotation;
@@ -350,7 +335,7 @@ namespace iiMenu.Mods
             if (rightGrab)
             {
                 GameObject slipperyPlatform = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                slipperyPlatform.GetComponent<Renderer>().material.color = GetBGColor(0f);
+                slipperyPlatform.GetComponent<Renderer>().material.color = backgroundColor.GetCurrentColor();
                 slipperyPlatform.transform.localScale = new Vector3(0.025f, 0.3f, 0.4f);
                 slipperyPlatform.transform.localPosition = TrueRightHand().position + (TrueRightHand().right * -0.05f);
                 slipperyPlatform.transform.rotation = TrueRightHand().rotation;
@@ -389,7 +374,7 @@ namespace iiMenu.Mods
             {
                 GameObject platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 UnityEngine.Object.Destroy(platform.GetComponent<BoxCollider>());
-                platform.GetComponent<Renderer>().material.color = bgColorA;
+                platform.GetComponent<Renderer>().material.color = backgroundColor.GetCurrentColor();
                 platform.GetComponent<Renderer>().material.shader = Shader.Find("GorillaTag/UberShader");
                 platform.transform.localScale = new Vector3(0.025f, 0.3f, 0.4f);
                 platform.transform.position = GorillaTagger.Instance.rightHandTransform.position;
@@ -410,7 +395,7 @@ namespace iiMenu.Mods
                 {
                     GameObject platform = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     UnityEngine.Object.Destroy(platform.GetComponent<BoxCollider>());
-                    platform.GetComponent<Renderer>().material.color = bgColorA;
+                    platform.GetComponent<Renderer>().material.color = backgroundColor.GetCurrentColor();
                     platform.GetComponent<Renderer>().material.shader = Shader.Find("GorillaTag/UberShader");
                     platform.transform.localScale = new Vector3(0.025f, 0.3f, 0.4f);
                     platform.transform.position = NewPointer.transform.position;
@@ -792,8 +777,8 @@ namespace iiMenu.Mods
                     liner.numCornerVertices = 5;
                 }
                 liner.material.shader = Shader.Find("Sprites/Default");
-                liner.startColor = GetBGColor(0f) - new Color32(0, 0, 0, 128);
-                liner.endColor = GetBGColor(0.5f) - new Color32(0, 0, 0, 128);
+                liner.startColor = backgroundColor.GetCurrentColor() - new Color32(0, 0, 0, 128);
+                liner.endColor = backgroundColor.GetCurrentColor(0.5f) - new Color32(0, 0, 0, 128);
                 liner.startWidth = 0.025f;
                 liner.endWidth = 0.025f;
                 liner.positionCount = 2;
@@ -869,8 +854,8 @@ namespace iiMenu.Mods
                     liner.numCornerVertices = 5;
                 }
                 liner.material.shader = Shader.Find("Sprites/Default");
-                liner.startColor = GetBGColor(0f) - new Color32(0, 0, 0, 128);
-                liner.endColor = GetBGColor(0.5f) - new Color32(0, 0, 0, 128);
+                liner.startColor = backgroundColor.GetCurrentColor() - new Color32(0, 0, 0, 128);
+                liner.endColor = backgroundColor.GetCurrentColor(0.5f) - new Color32(0, 0, 0, 128);
                 liner.startWidth = 0.025f;
                 liner.endWidth = 0.025f;
                 liner.positionCount = 2;
@@ -935,8 +920,8 @@ namespace iiMenu.Mods
                     liner.numCornerVertices = 5;
                 }
                 liner.material.shader = Shader.Find("Sprites/Default");
-                liner.startColor = GetBGColor(0f) - new Color32(0, 0, 0, 128);
-                liner.endColor = GetBGColor(0.5f) - new Color32(0, 0, 0, 128);
+                liner.startColor = backgroundColor.GetCurrentColor() - new Color32(0, 0, 0, 128);
+                liner.endColor = backgroundColor.GetCurrentColor(0.5f) - new Color32(0, 0, 0, 128);
                 liner.startWidth = 0.025f;
                 liner.endWidth = 0.025f;
                 liner.positionCount = 2;
@@ -997,8 +982,8 @@ namespace iiMenu.Mods
                     liner.numCornerVertices = 5;
                 }
                 liner.material.shader = Shader.Find("Sprites/Default");
-                liner.startColor = GetBGColor(0f) - new Color32(0, 0, 0, 128);
-                liner.endColor = GetBGColor(0.5f) - new Color32(0, 0, 0, 128);
+                liner.startColor = backgroundColor.GetCurrentColor() - new Color32(0, 0, 0, 128);
+                liner.endColor = backgroundColor.GetCurrentColor(0.5f) - new Color32(0, 0, 0, 128);
                 liner.startWidth = 0.025f;
                 liner.endWidth = 0.025f;
                 liner.positionCount = 2;
@@ -1637,12 +1622,12 @@ namespace iiMenu.Mods
             {
                 if (rightPrimary)
                 {
-                    CheckPoint.GetComponent<Renderer>().material.color = bgColorA;
+                    CheckPoint.GetComponent<Renderer>().material.color = backgroundColor.GetColor(0);
                     TeleportPlayer(CheckPoint.transform.position);
                     GorillaTagger.Instance.rigidbody.velocity = Vector3.zero;
                 }
                 else
-                    CheckPoint.GetComponent<Renderer>().material.color = buttonDefaultA;
+                    CheckPoint.GetComponent<Renderer>().material.color = buttonColors[0].GetColor(0);
             }
         }
 
@@ -1680,7 +1665,7 @@ namespace iiMenu.Mods
                     newCheckpoint.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
                     newCheckpoint.transform.position = GorillaTagger.Instance.rightHandTransform.position;
                     newCheckpoint.GetComponent<Renderer>().material.shader = Shader.Find("GUI/Text Shader");
-                    newCheckpoint.GetComponent<Renderer>().material.color = GetBGColor(0f);
+                    newCheckpoint.GetComponent<Renderer>().material.color = backgroundColor.GetCurrentColor();
 
                     GameObject MeshHolder = new GameObject("Label");
                     MeshHolder.transform.parent = newCheckpoint.transform;
@@ -1719,7 +1704,7 @@ namespace iiMenu.Mods
 
             foreach (GameObject checkpoint in checkpoints)
             {
-                checkpoint.GetComponent<Renderer>().material.color = GetBGColor(0f);
+                checkpoint.GetComponent<Renderer>().material.color = backgroundColor.GetCurrentColor();
 
                 GameObject textObject = checkpoint.transform.Find("Label").gameObject;
                 textObject.transform.LookAt(Camera.main.transform.position);
@@ -1793,7 +1778,7 @@ namespace iiMenu.Mods
                     BombObject = null;
                 }
                 else
-                    BombObject.GetComponent<Renderer>().material.color = buttonDefaultA;
+                    BombObject.GetComponent<Renderer>().material.color = buttonColors[0].GetColor(0);
             }
         }
 

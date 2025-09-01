@@ -69,7 +69,7 @@ namespace iiMenu.Menu
                 GUI.skin.button.fontStyle = activeFontStyle;
                 GUI.skin.label.fontStyle = activeFontStyle;
 
-                Color guiColor = GetIndex("Swap GUI Colors").enabled ? textColor : GetBGColor(0f);
+                Color guiColor = GetIndex("Swap GUI Colors").enabled ? textColors[1].GetCurrentColor() : backgroundColor.GetCurrentColor();
 
                 GUI.color = guiColor;
                 GUI.backgroundColor = guiColor;
@@ -215,9 +215,9 @@ namespace iiMenu.Menu
                     {
                         if (advancedArraylist)
                         {
-                            string text = flipArraylist ? 
-                                  $"<color=#{ColorToHex(textColor)}>{v}</color><color=#{ColorToHex(GetBGColor(index * -0.1f))}> |</color>"
-                                : $"<color=#{ColorToHex(GetBGColor(index * -0.1f))}>| </color><color=#{ColorToHex(textColor)}>{v}</color>";
+                            string text = flipArraylist ?
+                                  $"<color=#{ColorToHex(textColors[1].GetCurrentColor())}>{v}</color><color=#{ColorToHex(backgroundColor.GetCurrentColor(index * -0.1f))}> |</color>"
+                                : $"<color=#{ColorToHex(backgroundColor.GetCurrentColor(index * -0.1f))}>| </color><color=#{ColorToHex(textColors[1].GetCurrentColor())}>{v}</color>";
 
                             Vector2 size = labelStyle.CalcSize(new GUIContent(text));
                             Rect labelRect = new Rect(flipArraylist ? Screen.width - (size.x + 15) : 10, y, size.x + 8, index == sortedButtons.Length - 1 ? size.y + 5 : size.y);
