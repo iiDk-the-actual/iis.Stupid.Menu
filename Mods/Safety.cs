@@ -178,8 +178,6 @@ namespace iiMenu.Mods
                     {
                         Transform report = line.reportButton.gameObject.transform;
                         VisualizeAura(report.position, threshold, Color.red);
-
-                        break;
                     }
                 }
             }
@@ -220,8 +218,6 @@ namespace iiMenu.Mods
                                 }
                             }
                         }
-
-                        break;
                     }
                 }
             }
@@ -261,8 +257,6 @@ namespace iiMenu.Mods
                                 }
                             }
                         }
-
-                        break;
                     }
                 }
             }
@@ -302,8 +296,6 @@ namespace iiMenu.Mods
                                 }
                             }
                         }
-
-                        break;
                     }
                 }
             }
@@ -350,8 +342,6 @@ namespace iiMenu.Mods
                                     }
                                 }
                             }
-
-                            break;
                         }
                     }
 
@@ -399,8 +389,6 @@ namespace iiMenu.Mods
                                 }
                             }
                         }
-
-                        break;
                     }
 
                     NotifiLib.information["Anti-Report"] = notifyText;
