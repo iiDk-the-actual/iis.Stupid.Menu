@@ -652,7 +652,7 @@ namespace iiMenu.Classes
         {
             if (!NetworkSystem.Instance.InRoom)
             {
-                NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in a room.", 5000);
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in a room.", 5000);
                 return;
             }
 
@@ -663,14 +663,14 @@ namespace iiMenu.Classes
                 room = PhotonNetwork.CurrentRoom.Name
             }));
 
-            NotifiLib.SendNotification($"<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully invited friend to room.", 5000);
+            NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully invited friend to room.", 5000);
         }
 
         public static void RequestInviteFriend(string uid)
         {
             if (!NetworkSystem.Instance.InRoom)
             {
-                NotifiLib.SendNotification($"<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in a room.", 5000);
+                NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> You are not in a room.", 5000);
                 return;
             }
 
@@ -680,7 +680,7 @@ namespace iiMenu.Classes
                 target = uid
             }));
 
-            NotifiLib.SendNotification($"<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully requested invite from friend.", 5000);
+            NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully requested invite from friend.", 5000);
         }
 
         public static void SharePreferences(string uid)
@@ -692,7 +692,21 @@ namespace iiMenu.Classes
                 preferences = Settings.SavePreferencesToText()
             }));
 
-            NotifiLib.SendNotification($"<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully shared preferences.", 5000);
+            NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully shared preferences.", 5000);
+        }
+
+        public static void SendFriendMessage(string uid, string message)
+        {
+            _ = FriendWebSocket.instance.Send(JsonConvert.SerializeObject(new
+            {
+                command = "message",
+                target = uid,
+                message,
+                name = PhotonNetwork.NickName,
+                color = ColorToHex(VRRig.LocalRig.playerColor)
+            }));
+
+            NotifiLib.SendNotification("<color=grey>[</color><color=green>SUCCESS</color><color=grey>]</color> Successfully sent message.", 5000);
         }
 
         public static System.Collections.IEnumerator ExecuteAction(string uid, string action, Action success, Action<string> failure)
@@ -987,6 +1001,14 @@ namespace iiMenu.Classes
                         method = () => SharePreferences(friendTarget),
                         isTogglable = false,
                         toolTip = $"Sends your preferences to {friend.currentName}."
+                    },
+                    new ButtonInfo
+                    {
+                        buttonText = $"SharePreferences{friendTarget}",
+                        overlapText = "Send Message",
+                        method = () => PromptText("What would you like to send?", () => SendFriendMessage(friendTarget, keyboardInput), null, "Done", "Cancel"),
+                        isTogglable = false,
+                        toolTip = $"Sends a message to {friend.currentName}."
                     },
                 });
             }
