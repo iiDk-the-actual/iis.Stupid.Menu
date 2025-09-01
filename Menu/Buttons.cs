@@ -1701,8 +1701,8 @@ namespace iiMenu.Menu
                 new ButtonInfo { buttonText = "Info Screen", method =() => Settings.Debug(), enableMethod =() => Settings.ShowDebug(), disableMethod =() => Settings.HideDebug(), toolTip = "Shows game and modding related information."},
                 new ButtonInfo { buttonText = "Donate Button", method =() => { NotifiLib.ClearAllNotifications(); acceptedDonations = true; File.WriteAllText($"{PluginInfo.BaseDirectory}/iiMenu_HideDonationButton.txt", "true"); Prompt("I've spent nearly two years building this menu. Your Patreon support helps me keep it growing, want to check it out?", () => Process.Start("https://patreon.com/iiDk")); }, isTogglable = false },
 
-                new ButtonInfo { buttonText = "Accept Prompt", method =() => { NotifiLib.ClearAllNotifications(); IsPrompting = false; AcceptAction?.Invoke(); }, isTogglable = false},
-                new ButtonInfo { buttonText = "Decline Prompt", method =() => { NotifiLib.ClearAllNotifications(); IsPrompting = false; DeclineAction?.Invoke(); }, isTogglable = false}
+                new ButtonInfo { buttonText = "Accept Prompt", method =() => { NotifiLib.ClearAllNotifications(); IsPrompting = false; if (inTextInput) Settings.DestroyKeyboard(); AcceptAction?.Invoke(); }, isTogglable = false},
+                new ButtonInfo { buttonText = "Decline Prompt", method =() => { NotifiLib.ClearAllNotifications(); IsPrompting = false; if (inTextInput) Settings.DestroyKeyboard(); DeclineAction?.Invoke(); }, isTogglable = false}
             },
 
             new ButtonInfo[] { // Sound Library [26]

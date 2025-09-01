@@ -30,98 +30,119 @@ namespace iiMenu.Mods
         public static void Search() // This took me like 4 hours
         {
             isSearching = !isSearching;
-            isPcWhenSearching = isOnPC;
+
             pageNumber = 0;
-            searchText = "";
-            lastPressedKeys.Add(KeyCode.Q);
+            keyboardInput = "";
+
             if (isSearching)
+                SpawnKeyboard();
+            else
+                DestroyKeyboard();
+        }
+
+        public static void SpawnKeyboard()
+        {
+            isKeyboardPc = isOnPC;
+            inTextInput = true;
+            keyboardInput = "";
+            
+            if (isOnPC)
+                lastPressedKeys.Add(KeyCode.Q);
+
+            if (!isKeyboardPc)
             {
-                if (!isPcWhenSearching)
+                if (VRKeyboard == null)
                 {
-                    if (VRKeyboard == null)
+                    VRKeyboard = LoadObject<GameObject>("keyboard");
+                    VRKeyboard.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
+                    VRKeyboard.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
+
+                    menuSpawnPosition = VRKeyboard.transform.Find("MenuSpawnPosition").gameObject;
+                    VRKeyboard.transform.Find("Canvas/Text").AddComponent<TextColorChanger>().colors = textColors[1];
+
+                    VRKeyboard.transform.localScale *= scaleWithPlayer ? GTPlayer.Instance.scale * menuScale : menuScale;
+                    menuSpawnPosition.transform.localScale *= scaleWithPlayer ? GTPlayer.Instance.scale * menuScale : menuScale;
+
+                    ColorChanger backgroundColorChanger = VRKeyboard.transform.Find("Background").gameObject.AddComponent<ColorChanger>();
+                    backgroundColorChanger.colors = backgroundColor;
+
+                    ColorChanger keyColorChanger = VRKeyboard.transform.Find("Keys/default").gameObject.AddComponent<ColorChanger>();
+                    keyColorChanger.colors = buttonColors[0];
+
+                    if (shouldOutline)
+                        OutlineObjNonMenu(VRKeyboard.transform.Find("Background").gameObject, true);
+
+                    for (int i = 0; i < VRKeyboard.transform.childCount; i++)
                     {
-                        VRKeyboard = LoadObject<GameObject>("keyboard");
-                        VRKeyboard.transform.position = GorillaTagger.Instance.bodyCollider.transform.position;
-                        VRKeyboard.transform.rotation = GorillaTagger.Instance.bodyCollider.transform.rotation;
+                        GameObject v = VRKeyboard.transform.GetChild(i).gameObject;
 
-                        menuSpawnPosition = VRKeyboard.transform.Find("MenuSpawnPosition").gameObject;
-                        VRKeyboard.transform.Find("Canvas/Text").AddComponent<TextColorChanger>().colors = textColors[1];
-
-                        VRKeyboard.transform.localScale *= scaleWithPlayer ? GTPlayer.Instance.scale * menuScale : menuScale;
-                        menuSpawnPosition.transform.localScale *= scaleWithPlayer ? GTPlayer.Instance.scale * menuScale : menuScale;
-
-                        ColorChanger backgroundColorChanger = VRKeyboard.transform.Find("Background").gameObject.AddComponent<ColorChanger>();
-                        backgroundColorChanger.colors = backgroundColor;
-
-                        ColorChanger keyColorChanger = VRKeyboard.transform.Find("Keys/default").gameObject.AddComponent<ColorChanger>();
-                        keyColorChanger.colors = buttonColors[0];
-
-                        if (shouldOutline)
-                            OutlineObjNonMenu(VRKeyboard.transform.Find("Background").gameObject, true);
-
-                        for (int i = 0; i < VRKeyboard.transform.childCount; i++)
+                        if (v.name != "Canvas" && v.name != "MenuSpawnPosition" && v.name != "Background" && v.name != "Keys" && !v.name.Contains("Cube"))
                         {
-                            GameObject v = VRKeyboard.transform.GetChild(i).gameObject;
+                            v.AddComponent<KeyboardKey>().key = v.name;
+                            v.layer = 2;
 
-                            if (v.name != "Canvas" && v.name != "MenuSpawnPosition" && v.name != "Background" && v.name != "Keys" && !v.name.Contains("Cube"))
-                            {
-                                v.AddComponent<KeyboardKey>().key = v.name;
-                                v.layer = 2;
-
-                                if (shouldOutline)
-                                    OutlineObjNonMenu(v, true);
-                            }
+                            if (shouldOutline)
+                                OutlineObjNonMenu(v, true);
                         }
                     }
                 }
+            }
 
-                if (lKeyReference == null)
-                {
-                    lKeyReference = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                    lKeyReference.transform.parent = GorillaTagger.Instance.leftHandTransform;
-                    lKeyReference.GetComponent<Renderer>().material.color = backgroundColor.GetColor(0);
-                    lKeyReference.transform.localPosition = pointerOffset;
-                    lKeyReference.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
-                    lKeyCollider = lKeyReference.GetComponent<SphereCollider>();
-
-                    ColorChanger colorChanger = lKeyReference.AddComponent<ColorChanger>();
-                    colorChanger.colors = backgroundColor;
-                }
-                if (rKeyReference == null)
-                {
-                    rKeyReference = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                    rKeyReference.transform.parent = GorillaTagger.Instance.rightHandTransform;
-                    rKeyReference.GetComponent<Renderer>().material.color = backgroundColor.GetColor(0);
-                    rKeyReference.transform.localPosition = pointerOffset;
-                    rKeyReference.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
-                    rKeyCollider = rKeyReference.GetComponent<SphereCollider>();
-
-                    ColorChanger colorChanger = rKeyReference.AddComponent<ColorChanger>();
-                    colorChanger.colors = backgroundColor;
-                }
-            } else
+            if (lKeyReference == null)
             {
-                if (lKeyReference != null)
-                {
-                    UnityEngine.Object.Destroy(lKeyReference);
-                    lKeyReference = null;
-                }
-                if (rKeyReference != null)
-                {
-                    UnityEngine.Object.Destroy(rKeyReference);
-                    rKeyReference = null;
-                }
-                if (VRKeyboard != null)
-                {
-                    UnityEngine.Object.Destroy(VRKeyboard);
-                    VRKeyboard = null;
-                }
-                if (TPC != null && TPC.transform.parent.gameObject.name.Contains("CameraTablet") && isOnPC)
-                {
-                    isOnPC = false;
-                    TPC.transform.position = TPC.transform.parent.position;
-                    TPC.transform.rotation = TPC.transform.parent.rotation;
-                }
+                lKeyReference = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                lKeyReference.transform.parent = GorillaTagger.Instance.leftHandTransform;
+                lKeyReference.GetComponent<Renderer>().material.color = backgroundColor.GetColor(0);
+                lKeyReference.transform.localPosition = pointerOffset;
+                lKeyReference.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
+                lKeyCollider = lKeyReference.GetComponent<SphereCollider>();
+
+                ColorChanger colorChanger = lKeyReference.AddComponent<ColorChanger>();
+                colorChanger.colors = backgroundColor;
+            }
+
+            if (rKeyReference == null)
+            {
+                rKeyReference = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                rKeyReference.transform.parent = GorillaTagger.Instance.rightHandTransform;
+                rKeyReference.GetComponent<Renderer>().material.color = backgroundColor.GetColor(0);
+                rKeyReference.transform.localPosition = pointerOffset;
+                rKeyReference.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
+                rKeyCollider = rKeyReference.GetComponent<SphereCollider>();
+
+                ColorChanger colorChanger = rKeyReference.AddComponent<ColorChanger>();
+                colorChanger.colors = backgroundColor;
+            }
+        }
+
+        public static void DestroyKeyboard()
+        {
+            inTextInput = false;
+            isKeyboardPc = false;
+
+            if (lKeyReference != null)
+            {
+                UnityEngine.Object.Destroy(lKeyReference);
+                lKeyReference = null;
+            }
+
+            if (rKeyReference != null)
+            {
+                UnityEngine.Object.Destroy(rKeyReference);
+                rKeyReference = null;
+            }
+
+            if (VRKeyboard != null)
+            {
+                UnityEngine.Object.Destroy(VRKeyboard);
+                VRKeyboard = null;
+            }
+
+            if (TPC != null && TPC.transform.parent.gameObject.name.Contains("CameraTablet") && isOnPC)
+            {
+                isOnPC = false;
+                TPC.transform.position = TPC.transform.parent.position;
+                TPC.transform.rotation = TPC.transform.parent.rotation;
             }
         }
 
