@@ -838,7 +838,7 @@ namespace iiMenu.Mods
             else 
                 themeType--;
 
-            int themeCount = 63;
+            int themeCount = 64;
 
             if (themeType > themeCount)
                 themeType = 1;
@@ -2877,16 +2877,16 @@ namespace iiMenu.Mods
                         }
                     };
                     break;
-                case 64: // libyyyreal birthday
+                case 64: // coolkidd
                     backgroundColor = new ExtGradient
                     {
-                        colors = ExtGradient.GetSimpleGradient(new Color32(255, 255, 255, 255), Color.white)
+                        colors = ExtGradient.GetSolidGradient(Color.red)
                     };
                     buttonColors = new[]
                     {
                         new ExtGradient // Released
                         {
-                            colors = ExtGradient.GetSolidGradient(Color.white)
+                            colors = ExtGradient.GetSolidGradient(Color.red)
                         },
                         new ExtGradient // Pressed
                         {
@@ -2897,7 +2897,7 @@ namespace iiMenu.Mods
                     {
                         new ExtGradient // Title
                         {
-                            colors = ExtGradient.GetSolidGradient(Color.white)
+                            colors = ExtGradient.GetSolidGradient(Color.black)
                         },
                         new ExtGradient // Button Released
                         {
@@ -2905,7 +2905,7 @@ namespace iiMenu.Mods
                         },
                         new ExtGradient // Button Clicked
                         {
-                            colors = ExtGradient.GetSolidGradient(Color.black)
+                            colors = ExtGradient.GetSolidGradient(Color.white)
                         }
                     };
                     break;
@@ -4697,6 +4697,9 @@ namespace iiMenu.Mods
 
                 Safety.targetBadge = int.Parse(data[53]) - 1;
                 Safety.ChangeBadgeTier();
+
+                Movement.playspaceAbuseIndex = int.Parse(data[54]) - 1;
+                Movement.ChangePlayspaceAbuseSpeed();
             }
             catch { LogManager.Log("Save file out of date"); }
 
