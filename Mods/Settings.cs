@@ -4479,7 +4479,8 @@ namespace iiMenu.Mods
                 Overpowered.snowballMultiplicationFactor.ToString(),
                 menuButtonIndex.ToString(),
                 Safety.targetElo.ToString(),
-                Safety.targetBadge.ToString()
+                Safety.targetBadge.ToString(),
+                Movement.playspaceAbuseIndex.ToString()
             };
 
             string settingstext = string.Join(seperator, settings);
