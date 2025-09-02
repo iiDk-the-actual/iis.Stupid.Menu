@@ -27,6 +27,11 @@ namespace iiMenu.Classes
 
         public void Update()
         {
+            targetRenderer.enabled = !colors.transparent;
+
+            if (colors.transparent)
+                return;
+
             if (!Main.dynamicGradients)
                 targetRenderer.material.color = colors.GetCurrentColor();
             else

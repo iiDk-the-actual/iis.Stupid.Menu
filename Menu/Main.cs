@@ -1404,7 +1404,7 @@ namespace iiMenu.Menu
                 if (!UnityInput.Current.GetKey(KeyCode.Q) && !isKeyboardPc)
                     buttonObject.layer = 2;
 
-                if (themeType == 30 || (themeType == 63 && buttonIndex >= 0))
+                if (themeType == 63 && buttonIndex >= 0)
                     buttonObject.GetComponent<Renderer>().enabled = false;
 
                 buttonObject.GetComponent<BoxCollider>().isTrigger = true;
@@ -1554,9 +1554,6 @@ namespace iiMenu.Menu
             if (!UnityInput.Current.GetKey(KeyCode.Q) && !isKeyboardPc)
                 buttonObject.layer = 2;
 
-            if (themeType == 30)
-                buttonObject.GetComponent<Renderer>().enabled = false;
-
             buttonObject.GetComponent<BoxCollider>().isTrigger = true;
             buttonObject.transform.parent = menu.transform;
             buttonObject.transform.rotation = Quaternion.identity;
@@ -1621,9 +1618,6 @@ namespace iiMenu.Menu
             if (!UnityInput.Current.GetKey(KeyCode.Q) && !isKeyboardPc)
                 buttonObject.layer = 2;
 
-            if (themeType == 30)
-                buttonObject.GetComponent<Renderer>().enabled = false;
-
             buttonObject.GetComponent<BoxCollider>().isTrigger = true;
             buttonObject.transform.parent = menu.transform;
             buttonObject.transform.rotation = Quaternion.identity;
@@ -1683,9 +1677,6 @@ namespace iiMenu.Menu
             if (!UnityInput.Current.GetKey(KeyCode.Q) && !isKeyboardPc)
                 buttonObject.layer = 2;
 
-            if (themeType == 30)
-                buttonObject.GetComponent<Renderer>().enabled = false;
-
             buttonObject.GetComponent<BoxCollider>().isTrigger = true;
             buttonObject.transform.parent = menu.transform;
             buttonObject.transform.rotation = Quaternion.identity;
@@ -1744,9 +1735,6 @@ namespace iiMenu.Menu
             GameObject buttonObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
             if (!UnityInput.Current.GetKey(KeyCode.Q) && !isKeyboardPc)
                 buttonObject.layer = 2;
-
-            if (themeType == 30)
-                buttonObject.GetComponent<Renderer>().enabled = false;
 
             buttonObject.GetComponent<BoxCollider>().isTrigger = true;
             buttonObject.transform.parent = menu.transform;
@@ -1823,9 +1811,6 @@ namespace iiMenu.Menu
                 GameObject buttonObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 if (!UnityInput.Current.GetKey(KeyCode.Q) && !isKeyboardPc)
                     buttonObject.layer = 2;
-
-                if (themeType == 30)
-                    buttonObject.GetComponent<Renderer>().enabled = false;
 
                 buttonObject.GetComponent<BoxCollider>().isTrigger = true;
                 buttonObject.transform.parent = menu.transform;
@@ -1951,9 +1936,6 @@ namespace iiMenu.Menu
             {
                 menuBackground = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 Destroy(menuBackground.GetComponent<BoxCollider>());
-
-                if (themeType == 30)
-                    menuBackground.GetComponent<Renderer>().enabled = false;
 
                 menuBackground.transform.parent = menu.transform;
                 menuBackground.transform.localPosition = new Vector3(0.50f, 0f, 0f);
@@ -2326,9 +2308,6 @@ namespace iiMenu.Menu
                 GameObject searchBoxObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 if (!UnityInput.Current.GetKey(KeyCode.Q) && !isKeyboardPc)
                     searchBoxObject.layer = 2;
-
-                if (themeType == 30)
-                    searchBoxObject.GetComponent<Renderer>().enabled = false;
 
                 searchBoxObject.GetComponent<BoxCollider>().isTrigger = true;
                 searchBoxObject.transform.parent = menu.transform;
@@ -2950,9 +2929,6 @@ namespace iiMenu.Menu
             {
                 GameObject button = GameObject.CreatePrimitive(PrimitiveType.Cube);
 
-                if (themeType == 30)
-                    button.GetComponent<Renderer>().enabled = false;
-
                 if (!UnityInput.Current.GetKey(KeyCode.Q) && !(inTextInput && isKeyboardPc))
                     button.layer = 2;
 
@@ -3028,9 +3004,6 @@ namespace iiMenu.Menu
             if (DeclineText != null)
             {
                 GameObject button = GameObject.CreatePrimitive(PrimitiveType.Cube);
-
-                if (themeType == 30)
-                    button.GetComponent<Renderer>().enabled = false;
 
                 if (!UnityInput.Current.GetKey(KeyCode.Q) && !(inTextInput && isKeyboardPc))
                     button.layer = 2;
@@ -3126,9 +3099,6 @@ namespace iiMenu.Menu
         {
             GameObject button = GameObject.CreatePrimitive(PrimitiveType.Cube);
 
-            if (themeType == 30)
-                button.GetComponent<Renderer>().enabled = false;
-
             if (!UnityInput.Current.GetKey(KeyCode.Q) && !(inTextInput && isKeyboardPc))
                 button.layer = 2;
 
@@ -3179,8 +3149,6 @@ namespace iiMenu.Menu
         public static void OutlineObj(GameObject toOut, bool shouldBeEnabled)
         {
             GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            if (themeType == 30)
-                gameObject.GetComponent<Renderer>().enabled = false;
 
             Destroy(gameObject.GetComponent<BoxCollider>());
             gameObject.transform.parent = menu.transform;
@@ -3198,8 +3166,6 @@ namespace iiMenu.Menu
         public static void OutlineObjNonMenu(GameObject toOut, bool shouldBeEnabled)
         {
             GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            if (themeType == 30)
-                gameObject.GetComponent<Renderer>().enabled = false;
 
             Destroy(gameObject.GetComponent<BoxCollider>());
             gameObject.transform.parent = toOut.transform.parent;
