@@ -171,12 +171,12 @@ namespace iiMenu.Mods
 
         public static GameObject leftplat = null;
         public static GameObject rightplat = null;
-        public static void Platforms()
+        public static void Platforms(bool? left = null, bool? right = null)
         {
             if (platformMode == 6)
                 Projectiles.GrabProjectile();
 
-            if (leftGrab)
+            if (left ?? leftGrab)
             {
                 if (leftplat == null)
                 {
@@ -241,7 +241,7 @@ namespace iiMenu.Mods
                 }
             }
 
-            if (rightGrab)
+            if (right ?? rightGrab)
             {
                 if (rightplat == null)
                 {
@@ -305,17 +305,6 @@ namespace iiMenu.Mods
                     FriendManager.PlatformDespawned(false);
                 }
             }
-        }
-
-        public static void TriggerPlatforms()
-        {
-            bool lt = leftGrab;
-            bool rt = rightGrab;
-            leftGrab = leftTrigger > 0.5f;
-            rightGrab = rightTrigger > 0.5f;
-            Platforms();
-            leftGrab = lt;
-            rightGrab = rt;
         }
 
         public static void Frozone()
