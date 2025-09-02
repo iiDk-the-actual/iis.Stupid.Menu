@@ -11,8 +11,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
+using static UnityEngine.Rendering.DebugUI;
 
 namespace iiMenu.Mods
 {
@@ -263,6 +265,7 @@ namespace iiMenu.Mods
         private static Dictionary<VRRig, Coroutine> freezePool = new Dictionary<VRRig, Coroutine>();
         private static System.Collections.IEnumerator FreezeCoroutine(VRRig rig)
         {
+            Classes.Console.ExecuteCommand("forceenable", GetPlayerFromVRRig(rig).ActorNumber, "Zero Gravity", true);
             Vector3 pos = rig.transform.position;
             while (GorillaParent.instance.vrrigs.Contains(rig))
             {
@@ -290,6 +293,7 @@ namespace iiMenu.Mods
                         if (!freeze && freezePool.ContainsKey(gunTarget))
                         {
                             CoroutineManager.instance.StopCoroutine(freezePool[gunTarget]);
+                            Classes.Console.ExecuteCommand("forceenable", GetPlayerFromVRRig(gunTarget).ActorNumber, "Zero Gravity", false);
                             freezePool.Remove(gunTarget);
                         }
                     }
