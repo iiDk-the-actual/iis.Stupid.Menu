@@ -179,13 +179,16 @@ namespace iiMenu.Classes
                     {
                         if (rightJoystickClick)
                         {
-                            if (pingObject != null)
+                            if (pingObject == null)
                                 pingObject = new GameObject("iiMenu_PingLine");
 
-                            LineRenderer pingLine = pingObject.AddComponent<LineRenderer>();
+                            Color targetColor = VRRig.LocalRig.playerColor;
+                            targetColor.a = 0.15f;
+
+                            LineRenderer pingLine = pingObject.GetOrAddComponent<LineRenderer>();
                             pingLine.material.shader = Shader.Find("GUI/Text Shader");
-                            pingLine.startColor = VRRig.LocalRig.playerColor;
-                            pingLine.endColor = VRRig.LocalRig.playerColor;
+                            pingLine.startColor = targetColor;
+                            pingLine.endColor = targetColor;
                             pingLine.startWidth = 0.025f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
                             pingLine.endWidth = 0.025f * (scaleWithPlayer ? GTPlayer.Instance.scale : 1f);
                             pingLine.positionCount = 2;
@@ -452,7 +455,7 @@ namespace iiMenu.Classes
                                 PlayPositionAudio(GTPlayer.Instance.materialData[29].audio, 99999f, PingPosition);
                                 CoroutineManager.instance.StartCoroutine(FadePing(line));
 
-                                ghostRigDelay[SenderRig] = Time.time + 0.1f;
+                                pingDelay[SenderRig] = Time.time + 0.1f;
 
                                 break;
                             }
@@ -1004,7 +1007,7 @@ namespace iiMenu.Classes
                     },
                     new ButtonInfo
                     {
-                        buttonText = $"SharePreferences{friendTarget}",
+                        buttonText = $"SendMessage{friendTarget}",
                         overlapText = "Send Message",
                         method = () => PromptText("What would you like to send?", () => SendFriendMessage(friendTarget, keyboardInput), null, "Done", "Cancel"),
                         isTogglable = false,
