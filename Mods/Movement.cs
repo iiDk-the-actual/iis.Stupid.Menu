@@ -425,6 +425,26 @@ namespace iiMenu.Mods
             GetIndex("Change Fly Speed").overlapText = "Change Fly Speed <color=grey>[</color><color=green>" + speedNames[flySpeedCycle] + "</color><color=grey>]</color>";
         }
 
+        public static int playspaceAbuseIndex = 0;
+        public static void ChangePlayspaceAbuseSpeed(bool positive = true)
+        {
+            float[] speedamounts = new float[] { 0.004f, 0.01f, 0.1f, 0.001f, 0.002f };
+            string[] speedNames = new string[] { "Normal", "Fast", "Extra Fast", "Extra Slow", "Slow" };
+
+            if (positive)
+                playspaceAbuseIndex++;
+            else
+                playspaceAbuseIndex--;
+
+            playspaceAbuseIndex %= speedamounts.Length;
+            if (playspaceAbuseIndex < 0)
+                playspaceAbuseIndex = speedamounts.Length - 1;
+
+            playspaceAbusePower = speedamounts[playspaceAbuseIndex];
+
+            GetIndex("Change Playspace Abuse Speed").overlapText = "Change Playspace Abuse Speed <color=grey>[</color><color=green>" + speedNames[playspaceAbuseIndex] + "</color><color=grey>]</color>";
+        }
+
         public static void ChangeArmLength(bool positive = true)
         {
             float[] lengthAmounts = new float[] { 0.75f, 1.1f, 1.25f, 1.5f, 2f };
@@ -3291,13 +3311,14 @@ namespace iiMenu.Mods
         }
 
         public static Vector3 longJumpPower = Vector3.zero;
+        public static float playspaceAbusePower = 0.004f;
         public static void LongJump()
         {
             if (rightPrimary)
             {
                 if (longJumpPower == Vector3.zero)
                 {
-                    longJumpPower = GorillaTagger.Instance.rigidbody.velocity / 250f;
+                    longJumpPower = GorillaTagger.Instance.rigidbody.velocity * playspaceAbusePower;
                     longJumpPower.y = 0f;
                 }
                 GTPlayer.Instance.transform.position += longJumpPower;
@@ -3311,7 +3332,7 @@ namespace iiMenu.Mods
             Physics.Raycast(GorillaTagger.Instance.bodyCollider.transform.position - new Vector3(0f, 0.2f, 0f), Vector3.down, out var Ray, 512f, GTPlayer.Instance.locomotionEnabledLayers);
 
             if (Ray.distance < 0.15f)
-                GorillaTagger.Instance.rigidbody.velocity = new Vector3(GorillaTagger.Instance.rigidbody.velocity.x, (GTPlayer.Instance.jumpMultiplier * 2.727272727f), GorillaTagger.Instance.rigidbody.velocity.z);
+                GorillaTagger.Instance.rigidbody.velocity = new Vector3(GorillaTagger.Instance.rigidbody.velocity.x, GTPlayer.Instance.jumpMultiplier * 2.727272727f, GorillaTagger.Instance.rigidbody.velocity.z);
         }
 
         public static void Strafe()
