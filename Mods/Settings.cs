@@ -199,7 +199,8 @@ namespace iiMenu.Mods
             TutorialSelector.startColor = BrightenColor(new Color32(255, 128, 0, 128));
             TutorialSelector.endColor = BrightenColor(new Color32(255, 102, 0, 128));
 
-            Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position + (-GorillaTagger.Instance.rightHandTransform.up / 4f), -GorillaTagger.Instance.rightHandTransform.up, out var Ray, 512f, NoInvisLayerMask());
+            Vector3 Direction = TrueRightHand().forward;
+            Physics.Raycast(GorillaTagger.Instance.rightHandTransform.position + (Direction / 4f), Direction, out var Ray, 512f, NoInvisLayerMask());
             if (!XRSettings.isDeviceActive)
             {
                 Ray ray = TPC.ScreenPointToRay(Mouse.current.position.ReadValue());
