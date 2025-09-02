@@ -553,9 +553,20 @@ namespace iiMenu.Menu
                 #endregion
 
                 #region Menu Animations
+
+                if (fpsCountAverage)
+                {
+                    fpsAverageNumber *= 99f;
+                    fpsAverageNumber += 1f / Time.unscaledDeltaTime;
+                    fpsAverageNumber /= 100f;
+                }
+                else
+                {
+                    fpsAverageNumber = 1f / Time.unscaledDeltaTime;
+                }
                 if (Time.time > fpsAvgTime || !fpsCountTimed)
                 {
-                    lastDeltaTime = Mathf.Ceil(1f / Time.unscaledDeltaTime);
+                    lastDeltaTime = Mathf.Ceil(fpsAverageNumber);
                     fpsAvgTime = Time.time + 1f;
                 }
 
@@ -6260,7 +6271,9 @@ jgs \_   _/ |Oo\
         public static AssetBundle assetBundle;
         public static Text fpsCount;
         private static float fpsAvgTime;
+        private static float fpsAverageNumber;
         public static bool fpsCountTimed;
+        public static bool fpsCountAverage;
         public static bool acceptedDonations;
         public static float lastDeltaTime = 1f;
         public static Text keyboardInputObject;
