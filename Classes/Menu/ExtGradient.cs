@@ -29,6 +29,14 @@ namespace iiMenu.Classes
             if (copyRigColor)
                 return Main.GetPlayerColor(VRRig.LocalRig);
 
+            if (transparent)
+            {
+                Color targetColor = colors[index].color;
+                targetColor.a = 0f;
+
+                return targetColor;
+            }
+
             if (customColor != null)
                 return customColor?.Invoke() ?? Color.magenta;
 
@@ -84,6 +92,14 @@ namespace iiMenu.Classes
             if (copyRigColor)
                 return Main.GetPlayerColor(VRRig.LocalRig);
 
+            if (transparent)
+            {
+                Color targetColor = new Gradient { colorKeys = colors }.Evaluate(time);
+                targetColor.a = 0f;
+
+                return targetColor;
+            }
+
             if (customColor != null)
                 return customColor?.Invoke() ?? Color.magenta;
 
@@ -115,6 +131,8 @@ namespace iiMenu.Classes
 
         public bool epileptic;
         public bool copyRigColor;
+
+        public bool transparent;
 
         public Func<Color> customColor;
     }

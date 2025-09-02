@@ -1788,17 +1788,20 @@ namespace iiMenu.Mods
                 case 30: // Transparent
                     backgroundColor = new ExtGradient
                     {
-                        colors = ExtGradient.GetSolidGradient(Color.black)
+                        colors = ExtGradient.GetSolidGradient(Color.black),
+                        transparent = true
                     };
                     buttonColors = new[]
                     {
                         new ExtGradient // Released
                         {
-                            colors = ExtGradient.GetSolidGradient(Color.white)
+                            colors = ExtGradient.GetSolidGradient(Color.white),
+                            transparent = true
                         },
                         new ExtGradient // Pressed
                         {
-                            colors = ExtGradient.GetSolidGradient(Color.green)
+                            colors = ExtGradient.GetSolidGradient(Color.green),
+                            transparent = true
                         }
                     };
                     textColors = new[]
