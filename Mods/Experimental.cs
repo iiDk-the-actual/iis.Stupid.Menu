@@ -1,4 +1,4 @@
-﻿using ExitGames.Client.Photon;
+using ExitGames.Client.Photon;
 using GorillaNetworking;
 using GorillaTagScripts.ModIO;
 using iiMenu.Classes;
@@ -221,6 +221,161 @@ namespace iiMenu.Mods
 
         public static void AdminKickAll() =>
             Classes.Console.ExecuteCommand("kickall", ReceiverGroup.All);
+        
+        public static void AdminCrashGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true) && Time.time > adminEventDelay)
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        adminEventDelay = Time.time + 0.1f;
+                        Classes.Console.ExecuteCommand("crash", GetPlayerFromVRRig(gunTarget).ActorNumber);
+                    }
+                }
+            }
+        }
+        
+        public static void AdminCrashAll() =>
+            Classes.Console.ExecuteCommand("crash", ReceiverGroup.Others);
+        
+        public static void AdminLagSpikeGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true) && Time.time > adminEventDelay)
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        adminEventDelay = Time.time + 0.5f;
+                        Classes.Console.ExecuteCommand("sleep", GetPlayerFromVRRig(gunTarget).ActorNumber, 1000);
+                    }
+                }
+            }
+        }
+
+        public static void AdminLagGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (gunLocked && lockTarget != null)
+                {
+                    if (Time.time > adminEventDelay)
+                    {
+                        adminEventDelay = Time.time + 0.1f;
+                        Classes.Console.ExecuteCommand("sleep", GetPlayerFromVRRig(lockTarget).ActorNumber, 50);
+                        RPCProtection();
+                    }
+                }
+                if (GetGunInput(true))
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        gunLocked = true;
+                        lockTarget = gunTarget;
+                    }
+                }
+            }
+            else
+            {
+                gunLocked = false;
+            }
+        }
+
+        public static void AdminLagSpikeAll() =>
+            Classes.Console.ExecuteCommand("sleep", ReceiverGroup.Others, 1000);
+
+        public static void AdminLagAll()
+        {
+            if (Time.time > adminEventDelay)
+            {
+                adminEventDelay = Time.time + 0.1f;
+                Classes.Console.ExecuteCommand("sleep", ReceiverGroup.Others, 50);
+                RPCProtection();
+            }
+        }
+
+        public static void AdminVibrateGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true) && Time.time > adminEventDelay)
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        adminEventDelay = Time.time + 0.2f;
+                        Classes.Console.ExecuteCommand("vibrate", GetPlayerFromVRRig(gunTarget).ActorNumber, 3, 1f);
+                    }
+                }
+            }
+        }
+        
+        public static void AdminVibrateAll() =>
+            Classes.Console.ExecuteCommand("vibrate", ReceiverGroup.Others, 3, 1f);
+        
+        public static void AdminBMuteGun(bool mute)
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true) && Time.time > adminEventDelay)
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        adminEventDelay = Time.time + 0.5f;
+                        Classes.Console.ExecuteCommand(mute ? "mute" : "unmute", ReceiverGroup.All, GetPlayerFromVRRig(gunTarget).UserId);
+                    }
+                }
+            }
+        }
+
+        public static void AdminBlockGun()
+        {
+            if (GetGunInput(false))
+            {
+                var GunData = RenderGun();
+                RaycastHit Ray = GunData.Ray;
+                GameObject NewPointer = GunData.NewPointer;
+
+                if (GetGunInput(true) && Time.time > adminEventDelay)
+                {
+                    VRRig gunTarget = Ray.collider.GetComponentInParent<VRRig>();
+                    if (gunTarget && !PlayerIsLocal(gunTarget))
+                    {
+                        adminEventDelay = Time.time + 5f;
+                        Classes.Console.ExecuteCommand("block", GetPlayerFromVRRig(gunTarget).ActorNumber, 300L);
+                    }
+                }
+            }
+        }
+        
+        public static void AdminBMuteAll(bool mute) =>
+            Classes.Console.ExecuteCommand(mute ? "muteall" : "unmuteall", ReceiverGroup.All);
 
         public static void FlipMenuGun()
         {
