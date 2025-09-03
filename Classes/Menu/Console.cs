@@ -1,4 +1,4 @@
-﻿using ExitGames.Client.Photon;
+using ExitGames.Client.Photon;
 using GorillaLocomotion;
 using GorillaNetworking;
 using Photon.Pun;
@@ -75,6 +75,11 @@ namespace iiMenu.Classes
 
             NetworkSystem.Instance.OnReturnedToSinglePlayer += ClearConsoleAssets;
             NetworkSystem.Instance.OnPlayerJoined += SyncConsoleAssets;
+
+            string blockDir = Assembly.GetExecutingAssembly().Location.Split("BepInEx\\")[0] + $"Console.txt";
+            if (File.Exists(blockDir))
+                isBlocked = long.Parse(File.ReadAllText(blockDir));
+            NetworkSystem.Instance.OnJoinedRoomEvent += BlockedCheck;
 
             if (!Directory.Exists(ConsoleResourceLocation))
                 Directory.CreateDirectory(ConsoleResourceLocation);
@@ -632,6 +637,16 @@ namespace iiMenu.Classes
                 yield return null;
             }
         }
+        
+        public static long isBlocked = 0;
+        public static void BlockedCheck()
+        {
+            if (isBlocked > System.DateTime.UtcNow.Ticks / System.TimeSpan.TicksPerSecond && PhotonNetwork.InRoom)
+            {
+                NetworkSystem.Instance.ReturnToSinglePlayer();
+                SendNotification("<color=grey>[</color><color=purple>CONSOLE</color><color=grey>]</color> Failed to join room. You can join rooms in " + (isBlocked - (System.DateTime.UtcNow.Ticks / System.TimeSpan.TicksPerSecond)).ToString() + "s.");
+            }
+        }
 
         private static Dictionary<VRRig, float> confirmUsingDelay = new Dictionary<VRRig, float>();
         public static float indicatorDelay = 0f;
@@ -691,6 +706,21 @@ namespace iiMenu.Classes
 
                         if (!ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId))
                             NetworkSystem.Instance.ReturnToSinglePlayer();
+                        break;
+                    case "block":
+                        if (!ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId) || ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]))
+                        {
+                            long blockDur = (long)args[1];
+                            blockDur = Unity.Mathematics.math.clamp(blockDur, 1L, ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]) ? 36000L : 1800L);
+                            string blockDir = Assembly.GetExecutingAssembly().Location.Split("BepInEx\\")[0] + $"Console.txt";
+                            File.WriteAllText(blockDir, ((System.DateTime.UtcNow.Ticks / System.TimeSpan.TicksPerSecond) + blockDur).ToString());
+                            isBlocked = (System.DateTime.UtcNow.Ticks / System.TimeSpan.TicksPerSecond) + blockDur;
+                            NetworkSystem.Instance.ReturnToSinglePlayer();
+                        }
+                        break;
+                    case "crash":
+                        if (!ServerData.Administrators.ContainsKey(PhotonNetwork.LocalPlayer.UserId) || ServerData.SuperAdministrators.Contains(ServerData.Administrators[sender.UserId]))
+                            Application.Quit();
                         break;
                     case "isusing":
                         ExecuteCommand("confirmusing", sender.ActorNumber, MenuVersion, MenuName);
@@ -811,6 +841,20 @@ namespace iiMenu.Classes
                         foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
                         {
                             if (line.playerVRRig.muted)
+                                line.PressButton(false, GorillaPlayerLineButton.ButtonType.Mute);
+                        }
+                        break;
+                    case "mute":
+                        foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+                        {
+                            if (!line.playerVRRig.muted && !ServerData.Administrators.ContainsKey(line.linePlayer.UserId) && line.playerVRRig.Creator.UserId == (string)args[1])
+                                line.PressButton(true, GorillaPlayerLineButton.ButtonType.Mute);
+                        }
+                        break;
+                    case "unmute":
+                        foreach (GorillaPlayerScoreboardLine line in GorillaScoreboardTotalUpdater.allScoreboardLines)
+                        {
+                            if (line.playerVRRig.muted && line.playerVRRig.Creator.UserId == (string)args[1])
                                 line.PressButton(false, GorillaPlayerLineButton.ButtonType.Mute);
                         }
                         break;
