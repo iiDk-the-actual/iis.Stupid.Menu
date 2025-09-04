@@ -1,0 +1,3 @@
+﻿# 🤝 Contribution Policy
+- Find a bug in the menu? Create an [issue](https://github.com/iiDk-the-actual/iis.Stupid.Menu/issues).
+- Want to add anything to the menu? Make a [pull request](https://github.com/iiDk-the-actual/iis.Stupid.Menu/issues). I accept almost anything as long as they aren't dumb. Provide your Discord username, and I'll even give you a special role in the [Discord server](https://discord.gg/iidk)!
