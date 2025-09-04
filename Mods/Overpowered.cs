@@ -2862,14 +2862,14 @@ namespace iiMenu.Mods
             }
         }
 
-        public static void BetaSetStatus(int state, RaiseEventOptions reo)
+        public static void BetaSetStatus(RoomSystem.StatusEffects state, RaiseEventOptions reo)
         {
             if (!NetworkSystem.Instance.IsMasterClient)
                 NotifiLib.SendNotification("<color=grey>[</color><color=red>ERROR</color><color=grey>]</color> <color=white>You are not master client.</color>");
             else
             {
                 object[] statusSendData = new object[1];
-                statusSendData[0] = state;
+                statusSendData[0] = (int)state;
                 object[] sendEventData = new object[3];
                 sendEventData[0] = NetworkSystem.Instance.ServerTimestamp;
                 sendEventData[1] = (byte)2;
@@ -2892,7 +2892,7 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         NetPlayer player = GetPlayerFromVRRig(gunTarget);
-                        BetaSetStatus(0, new RaiseEventOptions { TargetActors = new int[1] { player.ActorNumber } });
+                        BetaSetStatus(RoomSystem.StatusEffects.TaggedTime, new RaiseEventOptions { TargetActors = new int[1] { player.ActorNumber } });
                         RPCProtection();
                         kgDebounce = Time.time + 1f;
                     }
@@ -2904,7 +2904,7 @@ namespace iiMenu.Mods
         {
             if (Time.time > kgDebounce)
             {
-                BetaSetStatus(0, new RaiseEventOptions { Receivers = ReceiverGroup.Others });
+                BetaSetStatus(RoomSystem.StatusEffects.TaggedTime, new RaiseEventOptions { Receivers = ReceiverGroup.Others });
                 RPCProtection();
                 kgDebounce = Time.time + 1f;
             }
@@ -2924,7 +2924,7 @@ namespace iiMenu.Mods
                     if (gunTarget && !PlayerIsLocal(gunTarget))
                     {
                         NetPlayer owner = GetPlayerFromVRRig(gunTarget);
-                        BetaSetStatus(1, new RaiseEventOptions { TargetActors = new int[1] { owner.ActorNumber } });
+                        BetaSetStatus(RoomSystem.StatusEffects.JoinedTaggedTime, new RaiseEventOptions { TargetActors = new int[1] { owner.ActorNumber } });
                         RPCProtection();
                         kgDebounce = Time.time + 0.5f;
                     }
@@ -2936,14 +2936,11 @@ namespace iiMenu.Mods
         {
             if (Time.time > kgDebounce)
             {
-                BetaSetStatus(1, new RaiseEventOptions { Receivers = ReceiverGroup.Others });
+                BetaSetStatus(RoomSystem.StatusEffects.JoinedTaggedTime, new RaiseEventOptions { Receivers = ReceiverGroup.Others });
                 RPCProtection();
                 kgDebounce = Time.time + 0.5f;
             }
         }
-        
-        public static void SetPlayerStatus(int status, NetPlayer player) =>
-            BetaSetStatus(status, new RaiseEventOptions { TargetActors = new int[1] { player.ActorNumber } });
 
         public static void GliderBlindGun()
         {
