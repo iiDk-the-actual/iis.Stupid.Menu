@@ -33,21 +33,20 @@ Let's bring back the **collaborative spirit** of modding. No paywalls. No secret
 Yes! But there’s a catch—you gotta play fair. **GPL-3.0 License rules apply**, which means:  
 - If you use my code, your project **must** also be open-source.  
 - Give credit where it's due.  
-- No shady stuff.  
+- No shady stuff. 
 
-Need help or want to collaborate? Hit me up on my [Linktree](https://linktr.ee/iiWasHere) or join the [Discord server](https://discord.gg/iidk).  
-Feel like something is missing? Make a pull request if you want code added to this menu.
+Need help or want to collaborate? Contact me from the links on my [website](https://iidk.dev) or join the [Discord server](https://discord.gg/iidk).  
+Feel like something is missing? Read the [Contributing](https://github.com/iiDk-the-actual/iis.Stupid.Menu/?tab=contributing-ov-file) tab.
 
 > **"You wouldn’t steal a method."**  
 > [🎥 (Or would you?)](https://www.youtube.com/watch?v=zMBqPdMzZ9E)  
 
 ---
 
-# 📥 Installation (It’s Easy, I Promise)  
+# 📥 Installation  
 1️⃣ **Download** the latest release 👉 [here](https://github.com/iiDk-the-actual/iis.Stupid.Menu/releases/latest)  
 2️⃣ **Drag & Drop** `iis_Stupid_Menu.dll` into your **plugins** folder  
 3️⃣ **Launch** Gorilla Tag and enjoy!
-Done. That’s it. Go have fun. 🎮🔥
 
 ## 🧱 Building from Source (For Developers)
 
