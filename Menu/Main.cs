@@ -737,6 +737,30 @@ namespace iiMenu.Menu
                 }
                 catch { }
 
+                // Gun Vibrations
+                try
+                {
+                    if (GunVibrations)
+                    {
+                        if (GunSpawned)
+                        {
+                            if (!lastGunSpawnedVibration)
+                                GorillaTagger.Instance.StartVibration(SwapGunHand, GorillaTagger.Instance.tagHapticStrength / 2f, 0.05f);
+
+                            if (GetGunInput(true))
+                                GorillaTagger.Instance.StartVibration(SwapGunHand, GorillaTagger.Instance.tagHapticStrength / 2f, GorillaTagger.Instance.tagHapticDuration / 2f);
+                        }
+                        else
+                        {
+                            if (lastGunSpawnedVibration)
+                                GorillaTagger.Instance.StartVibration(SwapGunHand, GorillaTagger.Instance.tagHapticStrength / 2f, 0.015f);
+                        }
+
+                        lastGunSpawnedVibration = GunSpawned;
+                    }
+                }
+                catch { }
+
                 GunSpawned = false;
 
                 if (annoyingMode)
@@ -6104,6 +6128,7 @@ jgs \_   _/ |Oo\
         public static bool TriggerlessGuns;
         public static bool HardGunLocks;
         public static bool GunSounds;
+        public static bool GunVibrations;
         public static bool GunParticles;
         public static int gunVariation;
         public static int GunDirection;
@@ -6115,6 +6140,8 @@ jgs \_   _/ |Oo\
 
         public static bool lastGunSpawned;
         public static bool lastGunTrigger;
+
+        public static bool lastGunSpawnedVibration;
 
         public static int fontCycle;
         public static int fontStyleType = 2;
