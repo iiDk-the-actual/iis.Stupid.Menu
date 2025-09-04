@@ -17,6 +17,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
+using UnityEngine.SocialPlatforms;
 using static iiMenu.Classes.RigManager;
 using static iiMenu.Menu.Main;
 
@@ -3290,8 +3291,18 @@ namespace iiMenu.Mods
         }
 
         private static float timerPower = 1.25f;
-        public static void Timer() =>
-            Time.timeScale = timerPower;
+        public static void Timer()
+        {
+            float extraFactor = timerPower - 1f;
+            if (extraFactor <= 0f) return;
+
+            Rigidbody rb = GorillaTagger.Instance.rigidbody;
+
+            float dt = Time.fixedDeltaTime * extraFactor;
+
+            Vector3 displacement = rb.velocity * dt;
+            rb.position += displacement;
+        }
 
         public static void FlickJump()
         {
