@@ -2721,15 +2721,12 @@ namespace iiMenu.Mods
             }
         }
 
-        private static readonly Dictionary<VRRig, float> delays = new Dictionary<VRRig, float>();
+        private static readonly List<VRRig> convertedRigs = new List<VRRig>();
         public static void FixRigMaterialESPColors(VRRig rig)
         {
-            if ((delays.ContainsKey(rig) && Time.time > delays[rig]) || !delays.ContainsKey(rig))
+            if (!convertedRigs.Contains(rig))
             {
-                if (delays.ContainsKey(rig))
-                    delays[rig] = Time.time + 5f;
-                else
-                    delays.Add(rig, Time.time + 5f);
+                convertedRigs.Add(rig);
 
                 rig.mainSkin.sharedMesh.colors32 = Enumerable.Repeat((Color32)Color.white, rig.mainSkin.sharedMesh.colors32.Length).ToArray();
                 rig.mainSkin.sharedMesh.colors = Enumerable.Repeat(Color.white, rig.mainSkin.sharedMesh.colors.Length).ToArray();
